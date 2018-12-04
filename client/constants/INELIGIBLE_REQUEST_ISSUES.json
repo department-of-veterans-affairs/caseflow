@@ -4,5 +4,7 @@
   "before_ama": "is ineligible because it has a prior decision date before February 14, 2019",
   "previous_higher_level_review": "is ineligible because it was last processed as a Higher-Level Review and this can't be done twice in a row",
   "legacy_issue_not_withdrawn": "is ineligible because the same issue is under review as a Legacy Appeal but the claimant didn’t choose to withdraw their issue from the legacy system.",
-  "legacy_appeal_not_eligible": "is ineligible because the same issue is under review as a Legacy Appeal and that appeal is outside the window of eligibility."
+  "legacy_appeal_not_eligible": "is ineligible because the same issue is under review as a Legacy Appeal and that appeal is outside the window of eligibility.",
+  "adding_this_issue_vacols_optin": "Adding this issue will automatically close VACOLS issue",
+  "vacols_optin_issue_closed": "VACOLS issue has been closed"
 }

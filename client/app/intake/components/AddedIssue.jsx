@@ -29,7 +29,7 @@ class AddedIssue extends React.PureComponent {
   getEligibility() {
     let { issue, formType, legacyOptInApproved } = this.props;
 
-    // console.log('getEligibility', formType, issue);
+    // console.log('getEligibility', formType, issue, legacyOptInApproved);
 
     let errorMsg = '';
     const cssKlassesWithError = ['issue-desc', 'not-eligible'];
@@ -45,11 +45,15 @@ class AddedIssue extends React.PureComponent {
       );
     } else if (issue.ineligibleReason) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
-    } else if (issue.timely === false && formType !== 'supplemental_claim' && issue.untimelyExemption !== 'true') {
+    } else if (issue.timely === false &&
+               formType !== 'supplemental_claim' &&
+               issue.untimelyExemption !== 'true' &&
+               !issue.vacolsId
+    ) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.untimely;
     } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
-    } else if (issue.beforeAma) {
+    } else if (issue.beforeAma && !issue.vacolsId) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
     } else if (issue.vacolsId) {
       if (!legacyOptInApproved) {
@@ -63,6 +67,14 @@ class AddedIssue extends React.PureComponent {
       return { errorMsg,
         cssKlasses: cssKlassesWithError };
     }
+  }
+
+  legacyIssueFor(vacolsSequenceId) {
+    let { issue, legacyAppeals } = this.props;
+
+    let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
+
+    return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(vacolsSequenceId, 10) })[0];
   }
 
   render() {
@@ -89,6 +101,12 @@ class AddedIssue extends React.PureComponent {
       { issue.notes && <span className="issue-notes">Notes:&nbsp;{ issue.notes }</span> }
       { issue.untimelyExemptionNotes &&
         <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>
+      }
+      { issue.vacolsId && !eligibleState.errorMsg &&
+        <div className="issue-vacols">
+          <span className="msg">{ INELIGIBLE_REQUEST_ISSUES.adding_this_issue_vacols_optin }:</span>
+          <span className="desc">{ this.legacyIssueFor(issue.vacolsSequenceId).description }</span>
+        </div>
       }
     </div>;
   }
