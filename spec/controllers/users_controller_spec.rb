@@ -57,7 +57,7 @@ RSpec.describe UsersController, type: :controller do
 
     context "when role is passed" do
       it "should return a list of hearing coordinators" do
-        get :index, params: { role: "Hearing" }
+        get :index, params: { role: "HearingCoordinator" }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["coordinators"].size).to eq 3
