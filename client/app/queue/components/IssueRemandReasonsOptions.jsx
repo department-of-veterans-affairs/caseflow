@@ -102,8 +102,10 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
 
     const updatedIssues = issues.map((issue) => {
       if (issue.id === issueId) {
-        return { ...issue,
-          remand_reasons: remandReasons };
+        return {
+          ...issue,
+          remand_reasons: remandReasons
+        };
       }
 
       return issue;
