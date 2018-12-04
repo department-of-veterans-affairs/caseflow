@@ -83,6 +83,7 @@ export default class DailyDocket extends React.Component {
 
   componentWillUnmount = () => {
     this.props.onResetSaveSuccessful();
+    this.props.onCancelRemoveHearingDay();
   };
 
   emptyFunction = () => {
@@ -306,6 +307,12 @@ export default class DailyDocket extends React.Component {
     return dailyDocketRows;
   };
 
+  getRemoveHearingDayMessage = () => {
+    return 'Once the hearing day is removed, users will no longer be able to ' +
+      `schedule Veterans for this ${this.props.dailyDocket.hearingType} hearing day on ` +
+      `${moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')}.`;
+  };
+
   render() {
     const dailyDocketColumns = [
       {
@@ -343,17 +350,20 @@ export default class DailyDocket extends React.Component {
     ];
 
     const dailyDocketRows = this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings), false);
+    const cancelButton = <Button linkStyling onClick={this.props.onCancelRemoveHearingDay}>Go back</Button>;
+    const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.props.deleteHearingDay}>
+      Confirm
+    </Button>;
 
     return <AppSegment filledBackground>
       {this.props.displayRemoveHearingDayModal && <div>
         <Modal
-            title="Remove Hearing Day"
-            closeHandler={() => {}}
-            noDivider
-            confirmButton={() => {}}
-            cancelButton={() => {}}
+          title="Remove Hearing Day"
+          closeHandler={this.props.onCancelRemoveHearingDay}
+          confirmButton={confirmButton}
+          cancelButton={cancelButton}
         >
-          Do you want to remove this hearing day?
+          {this.getRemoveHearingDayMessage()}
         </Modal>
       </div>}
       { this.props.saveSuccessful && <Alert
@@ -389,7 +399,7 @@ export default class DailyDocket extends React.Component {
       </div>
       { _.isEmpty(dailyDocketRows) && <div {...topMarginStyling}>
         <StatusMessage
-          title= {"No Veterans are scheduled for this hearing day."}
+          title= "No Veterans are scheduled for this hearing day."
           type="status"
         /></div>}
       { !_.isEmpty(this.previouslyScheduledHearings(this.props.hearings)) && <div>
