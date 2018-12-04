@@ -104,10 +104,6 @@ class HearingDayAddModal extends React.Component {
       return;
     }
 
-    console.log("state at confirm is: ", this.state);
-    console.log("redux RO: ", this.props.selectedRegionalOffice);
-    console.log("redux Hearing Day added: ", this.props.selectedHearingDay);
-
     this.props.closeModal();
   };
 

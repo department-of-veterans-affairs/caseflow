@@ -297,6 +297,12 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.notes
       }
     });
+  case ACTIONS.HEARING_DAY_MODIFIED:
+    return update(state, {
+      hearingDayModified: {
+        $set: action.payload.hearingDayModified
+      }
+    });
   case ACTIONS.RECEIVE_JUDGES:
     return update(state, {
       activeJudges: {

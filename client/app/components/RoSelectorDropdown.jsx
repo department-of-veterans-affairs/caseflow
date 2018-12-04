@@ -100,7 +100,7 @@ class RoSelectorDropdown extends React.Component {
 RoSelectorDropdown.propTypes = {
   regionalOffices: PropTypes.object,
   onChange: PropTypes.func,
-  value: PropTypes.string,
+  value: PropTypes.object || PropTypes.string,
   placeholder: PropTypes.string,
   staticOptions: PropTypes.array,
   hideLabel: PropTypes.bool,

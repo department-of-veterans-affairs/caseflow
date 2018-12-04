@@ -272,6 +272,13 @@ export const setNotes = (notes) => ({
   }
 });
 
+export const onHearingDayModified = (hearingDayModified) => ({
+  type: ACTIONS.HEARING_DAY_MODIFIED,
+  payload: {
+    hearingDayModified
+  }
+});
+
 export const onReceiveJudges = (activeJudges) => ({
   type: ACTIONS.RECEIVE_JUDGES,
   payload: {

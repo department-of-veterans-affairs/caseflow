@@ -12,7 +12,12 @@ import SearchableDropdown from '../../components/SearchableDropdown'
 import Checkbox from '../../components/Checkbox'
 import TextareaField from '../../components/TextareaField';
 import {bindActionCreators} from "redux";
-import {selectHearingCoordinator, selectVlj, selectHearingRoom, setNotes} from "../actions";
+import {selectHearingCoordinator,
+  selectVlj,
+  selectHearingRoom,
+  setNotes,
+  onHearingDayModified
+} from "../actions";
 
 const notesFieldStyling = css({
   height: '100px',
@@ -21,8 +26,9 @@ const notesFieldStyling = css({
 
 const roomOptions = [
     {label: "", value: ""},
-    {label: "1W.0002", value: "1"},
-    {label: "1W.0003", value: "2"}
+    {label: "1W0002", value: "1"},
+    {label: "1W0003", value: "2"},
+    {label: "1W436", value: "9"}
   ];
 
 const titleStyling = css({
@@ -55,7 +61,6 @@ class HearingDayEditModal extends React.Component {
   };
 
   onClickConfirm = () => {
-    console.log("state at confirm is: ", this.state);
     this.props.closeModal();
   };
 
@@ -81,18 +86,22 @@ class HearingDayEditModal extends React.Component {
 
   onRoomChange = (value) => {
     this.props.selectHearingRoom(value);
+    this.props.onHearingDayModified(true);
   };
 
   onVljChange = (value) => {
     this.props.selectVlj(value);
+    this.props.onHearingDayModified(true);
   };
 
   onCoordinatorChange = (value) => {
     this.props.selectHearingCoordinator(value);
+    this.props.onHearingDayModified(true);
   };
 
   onNotesChange = (value) => {
     this.props.setNotes(value);
+    this.props.onHearingDayModified(true);
   }
 
   modalMessage = () => {
@@ -178,6 +187,7 @@ HearingDayEditModal.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  hearingRoom: state.hearingSchedule.hearingRoom,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   notes: state.hearingSchedule.notes,
@@ -190,6 +200,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   selectHearingCoordinator,
   selectHearingRoom,
   setNotes,
+  onHearingDayModified
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HearingDayEditModal));

@@ -91,7 +91,6 @@ export class ListScheduleContainer extends React.Component {
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      console.log("coordinators from user:", resp);
       let activeCoordinators = [];
 
       _.forEach(resp.coordinators, (value, key) => {

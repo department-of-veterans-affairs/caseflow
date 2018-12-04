@@ -20,11 +20,11 @@ import {
   selectVlj,
   selectHearingCoordinator,
   setNotes,
+  onHearingDayModified,
   onReceiveJudges,
   onReceiveCoordinators
 } from '../actions';
 import HearingDayEditModal from "../components/HearingDayEditModal";
-import {formatDateStr} from "../../util/DateUtil";
 import Alert from "../../components/Alert";
 
 export class DailyDocketContainer extends React.Component {
@@ -102,7 +102,6 @@ export class DailyDocketContainer extends React.Component {
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      console.log("coordinators from user:", resp.coordinators);
       let activeCoordinators = [];
 
       _.forEach(resp.coordinators, (value, key) => {
@@ -127,20 +126,42 @@ export class DailyDocketContainer extends React.Component {
     this.setState({showModalAlert: false});
     this.setState({modalOpen: true});
 
-    this.props.selectHearingRoom('');
-    this.props.selectVlj('');
-    this.props.selectHearingCoordinator('');
-    this.props.setNotes('');
+    this.props.selectHearingRoom(this.props.dailyDocket.roomInfo);
+    this.props.selectVlj(this.props.dailyDocket.judgeId);
+    this.props.selectHearingCoordinator(this.props.dailyDocket.bvaPoc);
+    this.props.setNotes(this.props.dailyDocket.notes);
+    this.props.onHearingDayModified(false);
   }
 
   closeModal = () => {
     this.setState({modalOpen: false});
     this.setState({showModalAlert: true})
 
-    console.log("Edited hearing room: ", this.props.hearingRoom);
-    console.log("Edited hearing day vlj: ", this.props.vlj);
-    console.log("Edited hearing day coordinator: ", this.props.coordinator);
-    console.log("Edited hearing day notes: ", this.props.notes);
+    if (this.props.hearingDayModified) {
+      let data = {hearing_key: this.props.dailyDocket.id}
+
+      if (this.props.hearingRoom) {
+        data["room_info"] = this.props.hearingRoom.value;
+      }
+
+      if (this.props.vlj) {
+        data["judge_id"] = this.props.vlj.value;
+      }
+
+      if (this.props.coordinator) {
+        data["bva_poc"] = this.props.coordinator.label;
+      }
+
+      if (this.props.notes) {
+        data["notes"] = this.props.notes;
+      }
+
+      ApiUtil.put(`/hearings/${this.props.dailyDocket.id}/hearing_day`, {data: data}).then((response) => {
+        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+        console.log("updated hearing: ", resp);
+      });
+    }
   }
 
   cancelModal = () => {
@@ -205,7 +226,8 @@ const mapStateToProps = (state) => ({
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   hearingRoom: state.hearingSchedule.hearingRoom,
-  notes: state.hearingSchedule.notes
+  notes: state.hearingSchedule.notes,
+  hearingDayModified: state.hearingSchedule.hearingDayModified
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -221,6 +243,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   selectVlj,
   selectHearingCoordinator,
   setNotes,
+  onHearingDayModified,
   onReceiveJudges,
   onReceiveCoordinators
 }, dispatch);
