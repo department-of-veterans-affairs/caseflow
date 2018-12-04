@@ -53,7 +53,9 @@ class AppealsController < ApplicationController
     no_cache
     respond_to do |format|
       format.html { render template: "queue/index" }
+
       format.json do
+        root_task = RootTask.find_or_create_by!(appeal: appeal)
         id = params[:appeal_id]
         MetricsService.record("Get appeal information for ID #{id}",
                               service: :queue,

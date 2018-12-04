@@ -18,12 +18,8 @@ class RootTask < GenericTask
     []
   end
 
-  def no_actions_available?(_user)
-    status == Constants.TASK_STATUSES.completed
-  end
-
   def no_actions_available?(user)
-    !(MailTeam.singleton.user_has_access?(user) && status != Constants.TASK_STATUSES.completed)
+    completed?
   end
 
   class << self
