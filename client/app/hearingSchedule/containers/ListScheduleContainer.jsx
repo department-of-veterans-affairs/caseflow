@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter } from "react-router-dom";
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ListSchedule from '../components/ListSchedule';
@@ -24,9 +24,9 @@ import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
-import Alert from "../../components/Alert";
-import HearingDayAddModal from '../components/HearingDayAddModal'
-import _ from "lodash";
+import Alert from '../../components/Alert';
+import HearingDayAddModal from '../components/HearingDayAddModal';
+import _ from 'lodash';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -40,13 +40,14 @@ export class ListScheduleContainer extends React.Component {
     this.state = {
       dateRangeKey: `${props.startDate}->${props.endDate}`,
       modalOpen: false,
-      showModalAlert: false
+      showModalAlert: false,
+      serverError: false
     };
   }
 
   componentDidMount = () => {
     this.props.onSelectedHearingDayChange('');
-    this.setState({showModalAlert: false})
+    this.setState({ showModalAlert: false });
   }
 
   loadHearingSchedule = () => {
@@ -66,34 +67,34 @@ export class ListScheduleContainer extends React.Component {
   };
 
   loadActiveJudges = () => {
-    let requestUrl = '/users?role=Judge';
+    let requestUrl = '/users?role=HearingJudge';
 
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       let activeJudges = [];
 
-      _.forEach(resp.judges, (value, key) => {
+      _.forEach(resp.hearingJudges, (value) => {
         activeJudges.push({
-          label: value.fullName,
-          value: value.cssId
+          label: `${value.firstName} ${value.middleName} ${value.lastName}`,
+          value: value.vacolsAttorneyId
         });
       });
 
       this.props.onReceiveJudges(_.orderBy(activeJudges, (judge) => judge.label, 'asc'));
-    })
+    });
 
   };
 
   loadActiveCoordinators = () => {
-    let requestUrl = '/users?role=Hearing';
+    let requestUrl = '/users?role=HearingCoordinator';
 
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       let activeCoordinators = [];
 
-      _.forEach(resp.coordinators, (value, key) => {
+      _.forEach(resp.coordinators, (value) => {
         activeCoordinators.push({
           label: value.fullName,
           value: value.cssId
@@ -101,7 +102,7 @@ export class ListScheduleContainer extends React.Component {
       });
 
       this.props.onReceiveCoordinators(_.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc'));
-    })
+    });
 
   };
 
@@ -112,8 +113,8 @@ export class ListScheduleContainer extends React.Component {
   ]);
 
   openModal = () => {
-    this.setState({showModalAlert: false});
-    this.setState({modalOpen: true});
+    this.setState({ showModalAlert: false });
+    this.setState({ modalOpen: true });
     this.props.onSelectedHearingDayChange('');
     this.props.selectHearingType('');
     this.props.selectVlj('');
@@ -122,50 +123,65 @@ export class ListScheduleContainer extends React.Component {
   }
 
   closeModal = () => {
-    this.setState({modalOpen: false});
-    this.setState({showModalAlert: true});
+    this.setState({ modalOpen: false });
+    this.setState({ showModalAlert: true });
 
     let data = {
       hearing_type: this.props.hearingType.value,
       hearing_date: this.props.selectedHearingDay,
-      room_info: "1",
+      room_info: '1',
       judge_id: this.props.vlj.value,
+      bva_poc: this.props.coordinator.label,
       notes: this.props.notes
     };
 
     if (this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.value !== '') {
-      data["regional_office"] = this.props.selectedRegionalOffice.value
+      data.regional_office = this.props.selectedRegionalOffice.value;
     }
 
-    ApiUtil.post('/hearings/hearing_day.json', {data: data})
-      .then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-
-      console.log("added hearing day result: ", resp);
-    });
-  }
+    ApiUtil.post('/hearings/hearing_day.json', { data }).
+      then({}, () => {
+        this.setState({ serverError: true });
+      });
+  };
 
   cancelModal = () => {
-    this.setState({modalOpen: false})
-  }
+    this.setState({ modalOpen: false });
+  };
 
   getAlertTitle = () => {
-    return `You have successfully added Hearing Day ${formatDateStr(this.props.selectedHearingDay)} `
+    if (this.state.serverError) {
+      return 'An Error Occurred';
+    }
+
+    return `You have successfully added Hearing Day ${formatDateStr(this.props.selectedHearingDay)} `;
   };
 
   getAlertMessage = () => {
+    if (this.state.serverError) {
+      return 'You are unable to complete this action.';
+    }
+
     return <p>To add Veterans to this date, click Schedule Veterans</p>;
   };
 
+  getAlertType = () => {
+    if (this.state.serverError) {
+      return 'error';
+    }
+
+    return 'success';
+  }
+
   showAlert = () => {
     return this.state.showModalAlert;
-  }
+  };
 
   render() {
     return (
       <React.Fragment>
         <QueueCaseSearchBar />
-        {this.showAlert() && <Alert type="success" title={this.getAlertTitle()} scrollOnAlert={false}>
+        {this.showAlert() && <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
           {this.getAlertMessage()}
         </Alert>}
         <AppSegment filledBackground>
@@ -186,8 +202,8 @@ export class ListScheduleContainer extends React.Component {
             openModal={this.openModal} />
           {this.state.modalOpen &&
             <HearingDayAddModal
-            closeModal={this.closeModal}
-            cancelModal={this.cancelModal} />
+              closeModal={this.closeModal}
+              cancelModal={this.cancelModal} />
           }
         </AppSegment>
       </React.Fragment>
@@ -204,7 +220,7 @@ const mapStateToProps = (state) => ({
   hearingType: state.hearingSchedule.hearingType,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
-  notes: state.hearingSchedule.notes,
+  notes: state.hearingSchedule.notes
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

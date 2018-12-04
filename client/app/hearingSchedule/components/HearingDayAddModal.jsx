@@ -1,27 +1,26 @@
 import React from 'react';
-import { withRouter } from "react-router-dom";
+import { withRouter } from 'react-router-dom';
 import connect from 'react-redux/es/connect/connect';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import COPY from '../../../COPY.json';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
-import StatusMessage from '../../components/StatusMessage'
-import {fullWidth} from "../../queue/constants";
-import RoSelectorDropdown from "../../components/RoSelectorDropdown";
-import DateSelector from "../../components/DateSelector";
-import SearchableDropdown from '../../components/SearchableDropdown'
+import StatusMessage from '../../components/StatusMessage';
+import { fullWidth } from '../../queue/constants';
+import RoSelectorDropdown from '../../components/RoSelectorDropdown';
+import DateSelector from '../../components/DateSelector';
+import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
-import {bindActionCreators} from "redux";
+import { bindActionCreators } from 'redux';
 import { onSelectedHearingDayChange,
   selectHearingType,
   selectVlj,
   selectHearingCoordinator,
   setNotes
-} from "../actions";
-import { onRegionalOfficeChange } from '../../components/common/actions'
-import Checkbox from "../../components/Checkbox";
+} from '../actions';
+import { onRegionalOfficeChange } from '../../components/common/actions';
+import Checkbox from '../../components/Checkbox';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -48,10 +47,13 @@ const statusMsgDetailStyle = css({
 });
 
 const hearingTypeOptions = [
-    {label: "", value: ""},
-    {label: "Video", value: "V"},
-    {label: "Central", value: "C"}
-  ];
+  { label: '',
+    value: '' },
+  { label: 'Video',
+    value: 'V' },
+  { label: 'Central',
+    value: 'C' }
+];
 
 const titleStyling = css({
   marginBottom: 0,
@@ -86,7 +88,8 @@ class HearingDayAddModal extends React.Component {
   };
 
   onClickConfirm = () => {
-    let errorMessages = []
+    let errorMessages = [];
+
     if (this.props.selectedHearingDay === '') {
       errorMessages.push('Please make sure you have entered a Hearing Date');
     }
@@ -99,8 +102,10 @@ class HearingDayAddModal extends React.Component {
       errorMessages.push('Please make sure you select a Regional Office');
     }
 
-    if (errorMessages.length > 0){
-      this.setState({error: true, errorMessages: errorMessages});
+    if (errorMessages.length > 0) {
+      this.setState({ error: true,
+        errorMessages });
+
       return;
     }
 
@@ -110,9 +115,10 @@ class HearingDayAddModal extends React.Component {
   getAlertTitle = () => {
     if (this.state.videoSelected) {
       return <span {...statusMsgTitleStyle}>Hearing type is a Video hearing</span>;
-    } else {
-      return <span {...statusMsgTitleStyle}>Cannot create New Hearing Day</span>;
     }
+
+    return <span {...statusMsgTitleStyle}>Cannot create New Hearing Day</span>;
+
   };
 
   getAlertMessage = () => {
@@ -120,7 +126,7 @@ class HearingDayAddModal extends React.Component {
       {
         this.state.errorMessages.map((item, i) => <li key={i}>{item}</li>)
       }
-    </ul>
+    </ul>;
   };
 
   modalCancelButton = () => {
@@ -135,17 +141,17 @@ class HearingDayAddModal extends React.Component {
     this.props.selectHearingType(value);
 
     switch (value.value) {
-      case 'V':
-        this.setState({videoSelected: true});
-        this.setState({centralOfficeSelected: false});
-        break;
-      case 'C':
-        this.setState({videoSelected: false});
-        this.setState({centralOfficeSelected: true});
-        break;
-      default:
-        this.setState({videoSelected: false});
-        this.setState({centralOfficeSelected: false});
+    case 'V':
+      this.setState({ videoSelected: true });
+      this.setState({ centralOfficeSelected: false });
+      break;
+    case 'C':
+      this.setState({ videoSelected: false });
+      this.setState({ centralOfficeSelected: true });
+      break;
+    default:
+      this.setState({ videoSelected: false });
+      this.setState({ centralOfficeSelected: false });
     }
   };
 
@@ -162,7 +168,7 @@ class HearingDayAddModal extends React.Component {
   }
 
   onRoomNotRequired = () => {
-    this.setState({roomNotRequired: !this.state.roomNotRequired})
+    this.setState({ roomNotRequired: !this.state.roomNotRequired });
   }
 
   modalMessage = () => {
@@ -170,15 +176,14 @@ class HearingDayAddModal extends React.Component {
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
         <p {...spanStyling} >Please select the details of the new hearing day </p>
         <div {...statusMsgTitleStyle}>
-        {
-          (this.state.error && !this.state.roError) &&
+          {
+            (this.state.error && !this.state.roError) &&
             <StatusMessage
               title= {this.getAlertTitle()}
               type="alert"
               messageText={this.getAlertMessage()}
-              wrapInAppSegment={false} >
-            </StatusMessage>
-        }
+              wrapInAppSegment={false} />
+          }
         </div>
         <b {...titleStyling} >Select Hearing Date</b>
         <DateSelector
@@ -191,60 +196,59 @@ class HearingDayAddModal extends React.Component {
         <SearchableDropdown
           name="hearingType"
           label="Select Hearing Type"
-          strongLabel={true}
+          strongLabel
           value={this.props.hearingType}
           onChange={this.onHearingTypeChange}
-          options={hearingTypeOptions}/>
+          options={hearingTypeOptions} />
         {
           this.state.roError &&
           <StatusMessage
             title= {this.getAlertTitle()}
             type="alert"
             messageText={this.getAlertMessage()}
-            wrapInAppSegment={false} >
-          </StatusMessage>
+            wrapInAppSegment={false} />
         }
         {this.state.videoSelected &&
         <RoSelectorDropdown
           label="Select Regional Office (RO)"
-          strongLabel={true}
+          strongLabel
           onChange={this.props.onRegionalOfficeChange}
           value={this.props.selectedRegionalOffice}
-          staticOptions={centralOfficeStaticEntry}/>
+          staticOptions={centralOfficeStaticEntry} />
         }
         {(this.state.videoSelected || this.state.centralOfficeSelected) &&
         <SearchableDropdown
           name="vlj"
           label="Select VLJ (Optional)"
-          strongLabel={true}
+          strongLabel
           value={this.props.vlj}
           onChange={this.onVljChange}
-          options={this.props.activeJudges}/>
+          options={this.props.activeJudges} />
         }
         {(this.state.videoSelected || this.state.centralOfficeSelected) &&
         <SearchableDropdown
           name="coordinator"
           label="Select Hearing Coordinator (Optional)"
-          strongLabel={true}
+          strongLabel
           value={this.props.coordinator}
           onChange={this.onCoordinatorChange}
-          options={this.props.activeCoordinators}/>
+          options={this.props.activeCoordinators} />
         }
         <TextareaField
           name="Notes (Optional)"
-          strongLabel={true}
+          strongLabel
           onChange={this.onNotesChange}
           textAreaStyling={notesFieldStyling}
           value={this.props.notes} />
         <Checkbox
           name="roomNotRequired"
           label="Board Hearing Room Not Required"
-          strongLabel={true}
+          strongLabel
           value={this.state.roomNotRequired}
           onChange={this.onRoomNotRequired}
-          {...roomNotRequiredStyling}/>
+          {...roomNotRequiredStyling} />
       </div>
-    </React.Fragment>
+    </React.Fragment>;
   };
 
   render() {

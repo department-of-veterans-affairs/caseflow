@@ -24,15 +24,16 @@ import {
   onReceiveJudges,
   onReceiveCoordinators
 } from '../actions';
-import HearingDayEditModal from "../components/HearingDayEditModal";
-import Alert from "../../components/Alert";
+import HearingDayEditModal from '../components/HearingDayEditModal';
+import Alert from '../../components/Alert';
 
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       modalOpen: false,
-      showModalAlert: false
+      showModalAlert: false,
+      serverError: false
     };
   }
 
@@ -77,34 +78,34 @@ export class DailyDocketContainer extends React.Component {
   };
 
   loadActiveJudges = () => {
-    let requestUrl = '/users?role=Judge';
+    let requestUrl = '/users?role=HearingJudge';
 
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       let activeJudges = [];
 
-      _.forEach(resp.judges, (value, key) => {
+      _.forEach(resp.hearingJudges, (value) => {
         activeJudges.push({
-          label: value.fullName,
-          value: value.cssId
+          label: `${value.firstName} ${value.middleName} ${value.lastName}`,
+          value: value.vacolsAttorneyId
         });
       });
 
       this.props.onReceiveJudges(_.orderBy(activeJudges, (judge) => judge.label, 'asc'));
-    })
+    });
 
   };
 
   loadActiveCoordinators = () => {
-    let requestUrl = '/users?role=Hearing';
+    let requestUrl = '/users?role=HearingCoordinator';
 
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       let activeCoordinators = [];
 
-      _.forEach(resp.coordinators, (value, key) => {
+      _.forEach(resp.coordinators, (value) => {
         activeCoordinators.push({
           label: value.fullName,
           value: value.cssId
@@ -112,7 +113,7 @@ export class DailyDocketContainer extends React.Component {
       });
 
       this.props.onReceiveCoordinators(_.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc'));
-    })
+    });
 
   };
 
@@ -123,8 +124,8 @@ export class DailyDocketContainer extends React.Component {
   ]);
 
   openModal = () => {
-    this.setState({showModalAlert: false});
-    this.setState({modalOpen: true});
+    this.setState({ showModalAlert: false });
+    this.setState({ modalOpen: true });
 
     this.props.selectHearingRoom(this.props.dailyDocket.roomInfo);
     this.props.selectVlj(this.props.dailyDocket.judgeId);
@@ -134,47 +135,62 @@ export class DailyDocketContainer extends React.Component {
   }
 
   closeModal = () => {
-    this.setState({modalOpen: false});
-    this.setState({showModalAlert: true})
+    this.setState({ modalOpen: false });
+    this.setState({ showModalAlert: true });
 
     if (this.props.hearingDayModified) {
-      let data = {hearing_key: this.props.dailyDocket.id}
+      let data = { hearing_key: this.props.dailyDocket.id };
 
       if (this.props.hearingRoom) {
-        data["room_info"] = this.props.hearingRoom.value;
+        data.room_info = this.props.hearingRoom.value;
       }
 
       if (this.props.vlj) {
-        data["judge_id"] = this.props.vlj.value;
+        data.judge_id = this.props.vlj.value;
       }
 
       if (this.props.coordinator) {
-        data["bva_poc"] = this.props.coordinator.label;
+        data.bva_poc = this.props.coordinator.label;
       }
 
       if (this.props.notes) {
-        data["notes"] = this.props.notes;
+        data.notes = this.props.notes;
       }
 
-      ApiUtil.put(`/hearings/${this.props.dailyDocket.id}/hearing_day`, {data: data}).then((response) => {
-        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-
-        console.log("updated hearing: ", resp);
-      });
+      ApiUtil.put(`/hearings/${this.props.dailyDocket.id}/hearing_day`, { data }).
+        then({}, () => {
+          this.setState({ serverError: true });
+        });
     }
   }
 
   cancelModal = () => {
-    this.setState({modalOpen: false})
+    this.setState({ modalOpen: false });
   }
 
   getAlertTitle = () => {
-    return 'You have successfully completed this action'
+    if (this.state.serverError) {
+      return 'An Error Occurred';
+    }
+
+    return 'You have successfully completed this action';
   };
 
   getAlertMessage = () => {
+    if (this.state.serverError) {
+      return 'You are unable to complete this action.';
+    }
+
     return <p>You can view your new updates, listed below</p>;
   };
+
+  getAlertType = () => {
+    if (this.state.serverError) {
+      return 'error';
+    }
+
+    return 'success';
+  }
 
   showAlert = () => {
     return this.state.showModalAlert;
@@ -190,7 +206,7 @@ export class DailyDocketContainer extends React.Component {
       failStatusMessageProps={{
         title: 'Unable to load the daily docket.'
       }}>
-      {this.showAlert() && <Alert type="success" title={this.getAlertTitle()} scrollOnAlert={false}>
+      {this.showAlert() && <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
         {this.getAlertMessage()}
       </Alert>}
       <DailyDocket

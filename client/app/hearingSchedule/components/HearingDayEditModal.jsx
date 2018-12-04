@@ -1,23 +1,22 @@
 import React from 'react';
-import { withRouter } from "react-router-dom";
+import { withRouter } from 'react-router-dom';
 import connect from 'react-redux/es/connect/connect';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
-import COPY from '../../../COPY.json';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
-import {fullWidth} from "../../queue/constants";
-import SearchableDropdown from '../../components/SearchableDropdown'
-import Checkbox from '../../components/Checkbox'
+import { fullWidth } from '../../queue/constants';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
-import {bindActionCreators} from "redux";
-import {selectHearingCoordinator,
+import { bindActionCreators } from 'redux';
+import { selectHearingCoordinator,
   selectVlj,
   selectHearingRoom,
   setNotes,
   onHearingDayModified
-} from "../actions";
+} from '../actions';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -25,21 +24,15 @@ const notesFieldStyling = css({
 });
 
 const roomOptions = [
-    {label: "", value: ""},
-    {label: "1W0002", value: "1"},
-    {label: "1W0003", value: "2"},
-    {label: "1W436", value: "9"}
-  ];
-
-const titleStyling = css({
-  marginBottom: 0,
-  padding: 0
-});
-
-const centralOfficeStaticEntry = [{
-  label: 'Central',
-  value: 'C'
-}];
+  { label: '',
+    value: '' },
+  { label: '1W0002',
+    value: '1' },
+  { label: '1W0003',
+    value: '2' },
+  { label: '1W436',
+    value: '9' }
+];
 
 class HearingDayEditModal extends React.Component {
   constructor(props) {
@@ -48,7 +41,7 @@ class HearingDayEditModal extends React.Component {
     this.state = {
       modifyRoom: false,
       modifyVlj: false,
-      modifyCoordinator: false,
+      modifyCoordinator: false
     };
   }
 
@@ -73,15 +66,15 @@ class HearingDayEditModal extends React.Component {
   };
 
   onModifyRoom = () => {
-    this.setState({modifyRoom: !this.state.modifyRoom});
+    this.setState({ modifyRoom: !this.state.modifyRoom });
   };
 
   onModifyVlj = () => {
-    this.setState({modifyVlj: !this.state.modifyVlj});
+    this.setState({ modifyVlj: !this.state.modifyVlj });
   };
 
   onModifyCoordinator = () => {
-    this.setState({modifyCoordinator: !this.state.modifyCoordinator});
+    this.setState({ modifyCoordinator: !this.state.modifyCoordinator });
   };
 
   onRoomChange = (value) => {
@@ -110,25 +103,25 @@ class HearingDayEditModal extends React.Component {
         <Checkbox
           name="roomEdit"
           label="Change Room"
-          strongLabel={true}
+          strongLabel
           value={this.state.modifyRoom}
           onChange={this.onModifyRoom} />
         <Checkbox
           name="vljEdit"
           label="Change VLJ"
-          strongLabel={true}
+          strongLabel
           value={this.state.modifyVlj}
           onChange={this.onModifyVlj} />
         <Checkbox
           name="coordinatorEdit"
           label="Change Coordinator"
-          strongLabel={true}
+          strongLabel
           value={this.state.modifyCoordinator}
           onChange={this.onModifyCoordinator} />
         <SearchableDropdown
           name="room"
           label="Select Room"
-          strongLabel={true}
+          strongLabel
           readOnly={!this.state.modifyRoom}
           value={this.props.hearingRoom}
           onChange={this.onRoomChange}
@@ -137,29 +130,29 @@ class HearingDayEditModal extends React.Component {
         <SearchableDropdown
           name="vlj"
           label="Select VLJ"
-          strongLabel={true}
+          strongLabel
           readOnly={!this.state.modifyVlj}
           value={this.props.vlj}
           onChange={this.onVljChange}
           options={this.props.activeJudges}
-          placeholder="Select..."/>
+          placeholder="Select..." />
         <SearchableDropdown
           name="coordinator"
           label="Select Hearing Coordinator"
-          strongLabel={true}
+          strongLabel
           readOnly={!this.state.modifyCoordinator}
           value={this.props.coordinator}
           onChange={this.onCoordinatorChange}
           options={this.props.activeCoordinators}
-          placeholder="Select..."/>
+          placeholder="Select..." />
         <TextareaField
           name="Notes"
-          strongLabel={true}
+          strongLabel
           onChange={this.onNotesChange}
           textAreaStyling={notesFieldStyling}
           value={this.props.notes} />
       </div>
-    </React.Fragment>
+    </React.Fragment>;
   };
 
   render() {

@@ -61,7 +61,7 @@ const backLinkStyling = css({
 });
 
 const editLinkStyling = css({
-  marginLeft: '30px',
+  marginLeft: '30px'
 });
 
 const alertStyling = css({

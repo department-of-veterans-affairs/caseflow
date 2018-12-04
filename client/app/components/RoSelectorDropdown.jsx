@@ -51,7 +51,7 @@ class RoSelectorDropdown extends React.Component {
     return _.orderBy(regionalOfficeDropdowns, (ro) => ro.label, 'asc');
   };
 
-  labelMessage = this.props.label || "Regional Office";
+  labelMessage = this.props.label || 'Regional Office';
 
   render() {
     const { readOnly, onChange, value, placeholder, strongLabel, hideLabel } = this.props;

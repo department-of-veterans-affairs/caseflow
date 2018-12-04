@@ -264,7 +264,6 @@ export const selectHearingRoom = (hearingRoom) => ({
   }
 });
 
-
 export const setNotes = (notes) => ({
   type: ACTIONS.SET_NOTES,
   payload: {
