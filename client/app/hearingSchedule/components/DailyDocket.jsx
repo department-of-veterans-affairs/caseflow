@@ -11,6 +11,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert';
+import Modal from '../../components/Modal';
 import StatusMessage from '../../components/StatusMessage';
 import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
@@ -344,6 +345,17 @@ export default class DailyDocket extends React.Component {
     const dailyDocketRows = this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings), false);
 
     return <AppSegment filledBackground>
+      {this.props.displayRemoveHearingDayModal && <div>
+        <Modal
+            title="Remove Hearing Day"
+            closeHandler={() => {}}
+            noDivider
+            confirmButton={() => {}}
+            cancelButton={() => {}}
+        >
+          Do you want to remove this hearing day?
+        </Modal>
+      </div>}
       { this.props.saveSuccessful && <Alert
         type="success"
         styling={alertStyling}
@@ -357,7 +369,7 @@ export default class DailyDocket extends React.Component {
           { _.isEmpty(this.props.hearings) &&
           <Button
             linkStyling
-            onClick={this.props.deleteHearingDay}
+            onClick={this.props.onClickRemoveHearingDay}
           >Remove Hearing Day</Button> }
         </div>
       </div>

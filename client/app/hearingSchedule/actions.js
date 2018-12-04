@@ -235,3 +235,7 @@ export const toggleLocationFilterVisibility = () => ({
 export const toggleVljFilterVisibility = () => ({
   type: ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN
 });
+
+export const onClickRemoveHearingDay = () => ({
+  type: ACTIONS.ON_CLICK_REMOVE_HEARING_DAY
+});

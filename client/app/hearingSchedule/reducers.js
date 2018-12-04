@@ -267,6 +267,12 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       $toggle: ['filterVljIsOpen']
     });
+  case ACTIONS.ON_CLICK_REMOVE_HEARING_DAY:
+    return update(state, {
+      displayRemoveHearingDayModal: {
+        $set: true
+      }
+    });
   default:
     return state;
   }

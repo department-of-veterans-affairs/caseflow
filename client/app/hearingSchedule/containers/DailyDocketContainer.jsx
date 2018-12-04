@@ -16,7 +16,8 @@ import {
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
   onHearingDateUpdate,
-  onHearingTimeUpdate
+  onHearingTimeUpdate,
+  onClickRemoveHearingDay
 } from '../actions';
 
 export class DailyDocketContainer extends React.Component {
@@ -88,11 +89,13 @@ export class DailyDocketContainer extends React.Component {
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
-        deleteHearingDay={this.deleteHearingDay}
         saveHearing={this.saveHearing}
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
         onCancelHearingUpdate={this.props.onCancelHearingUpdate}
+        onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
+        displayRemoveHearingDayModal={this.props.displayRemoveHearingDayModal}
+        deleteHearingDay={this.deleteHearingDay}
       />
     </LoadingDataDisplay>;
 
@@ -104,7 +107,8 @@ const mapStateToProps = (state) => ({
   dailyDocket: state.hearingSchedule.dailyDocket,
   hearings: state.hearingSchedule.hearings,
   hearingDayOptions: state.hearingSchedule.hearingDayOptions,
-  saveSuccessful: state.hearingSchedule.saveSuccessful
+  saveSuccessful: state.hearingSchedule.saveSuccessful,
+  displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -115,7 +119,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
   onHearingDateUpdate,
-  onHearingTimeUpdate
+  onHearingTimeUpdate,
+  onClickRemoveHearingDay
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));
