@@ -48,7 +48,7 @@ describe DecisionReview do
     ]
   end
 
-  context "#serialized_contestable_issues_by_date", focus: true do
+  context "#serialized_contestable_issues_by_date" do
     subject { higher_level_review.serialized_contestable_issues_by_date }
     it "creates a list of contestable rating and decision issues" do
       expect(subject[profile_date]).to contain_exactly(
