@@ -16,6 +16,10 @@ class DecisionIssue < ApplicationRecord
     decision_review.is_a?(HigherLevelReview) ? decision_review.id : nil
   end
 
+  def approx_decision_date
+    profile_date ? profile_date.to_date : end_product_last_action_date
+  end
+
   private
 
   def appeal?
