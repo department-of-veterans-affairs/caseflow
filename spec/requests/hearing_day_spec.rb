@@ -18,7 +18,7 @@ RSpec.describe "Hearing Schedule", type: :request do
     end
   end
 
-  describe "Create a schedule slot - Caseflow", focus: true do
+  describe "Create a schedule slot - Caseflow" do
     it "Create one schedule day" do
       post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
                                               hearing_date: "7-Jun-2019", room_info: "1",
