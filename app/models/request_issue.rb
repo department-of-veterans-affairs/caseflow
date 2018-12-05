@@ -168,9 +168,18 @@ class RequestIssue < ApplicationRecord
     attempted!
     decision_issues.delete_all
     create_decision_issues
+
+    if end_product_establishment.decision_issues_sync_complete?
+      create_dta_supplemental_claim
+
+    end_product_establishment.on_decision_issue_sync_processed
   end
 
   private
+
+  def create_dta_supplemental_claim
+
+  end
 
   def create_decision_issues
     if rating?
