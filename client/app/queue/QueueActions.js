@@ -19,14 +19,15 @@ import type {
 } from './types/models';
 
 export const onReceiveQueue = (
-  { tasks, amaTasks, appeals }:
+  { tasks, amaTasks, appeals, higherLevelReviews }:
   { tasks: Tasks, amaTasks: Tasks, appeals: BasicAppeals }
 ) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
   payload: {
     tasks,
     amaTasks,
-    appeals
+    appeals,
+    higherLevelReviews
   }
 });
 

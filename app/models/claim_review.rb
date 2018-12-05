@@ -108,6 +108,10 @@ class ClaimReview < DecisionReview
     request_issues.find { |reqi| reqi.description == description }
   end
 
+  def external_id
+    id
+  end
+
   private
 
   def informal_conference?

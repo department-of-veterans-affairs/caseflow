@@ -99,7 +99,32 @@ const extractAppealsFromTasks =
   (tasks: Array<Object>):
     BasicAppeals => {
     return tasks.reduce((accumulator, task) => {
-      if (!accumulator[task.attributes.external_appeal_id]) {
+      if (!accumulator[task.attributes.external_appeal_id] && (task.attributes.appeal_type === 'Appeal' || task.attributes.appeal_type === 'LegacyAppeal')) {
+        accumulator[task.attributes.external_appeal_id] = {
+          id: task.attributes.appeal_id,
+          type: task.attributes.appeal_type,
+          externalId: task.attributes.external_appeal_id,
+          docketName: task.attributes.docket_name,
+          isLegacyAppeal: task.attributes.docket_name === 'legacy',
+          caseType: task.attributes.case_type,
+          isAdvancedOnDocket: task.attributes.aod,
+          issueCount: task.attributes.issue_count,
+          docketNumber: task.attributes.docket_number,
+          veteranFullName: task.attributes.veteran_full_name,
+          veteranFileNumber: task.attributes.veteran_file_number,
+          isPaperCase: task.attributes.paper_case
+        };
+      }
+
+      return accumulator;
+    }, {});
+  };
+
+const extractHigherLevelReviewsFromTasks =
+  (tasks: Array<Object>):
+    BasicAppeals => {
+    return tasks.reduce((accumulator, task) => {
+      if (!accumulator[task.attributes.external_appeal_id] && task.attributes.appeal_type === 'HigherLevelReview') {
         accumulator[task.attributes.external_appeal_id] = {
           id: task.attributes.appeal_id,
           type: task.attributes.appeal_type,
@@ -124,6 +149,7 @@ export const extractAppealsAndAmaTasks =
 (tasks: Array<Object>): { appeals: BasicAppeals, amaTasks: Tasks, tasks: Tasks } => ({
   tasks: {},
   appeals: extractAppealsFromTasks(tasks),
+  higherLevelReviews: extractHigherLevelReviewsFromTasks(tasks),
   amaTasks: prepareTasksForStore(tasks) });
 
 export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {

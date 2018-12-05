@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
@@ -8,6 +9,7 @@ import { css } from 'glamor';
 import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
 import QueueSelectorDropdown from './components/QueueSelectorDropdown';
+import NonCompOrganizationQueue from './NonCompOrganizationQueue';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -26,12 +28,20 @@ const containerStyles = css({
   position: 'relative'
 });
 
+const NON_COMP_ORGANIZATIONS = ['nca'];
+
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
   }
 
   render = () => {
+    const urlChunks = this.props.history.location.pathname.split('/');
+
+    if (NON_COMP_ORGANIZATIONS.includes(urlChunks[urlChunks.length - 1])) {
+      return <NonCompOrganizationQueue {...this.props} />;
+    }
+
     const tabs = [
       {
         label: sprintf(
@@ -95,7 +105,7 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue));
 
 const TaskTableTab = ({ description, tasks }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>

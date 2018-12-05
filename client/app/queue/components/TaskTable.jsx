@@ -117,7 +117,7 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
-  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.label]
+  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.label] || task.label
 
   caseTaskColumn = () => {
     return this.props.includeTask ? {
@@ -272,8 +272,30 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
+  claimantLinkColumn = () => {
+    return this.props.includeClaimantLink ? {
+      header: "Claimant",
+      valueFunction: (task) => {
+        return task.appeal.veteranFullName;
+      },
+      getSortValue: (task) => task.appeal.veteranFullName
+    } : null;
+  }
+
+  claimantSsnColumn = () => {
+    return this.props.includeClaimantSsn ? {
+      header: "Veteran SSN",
+      valueFunction: (task) => {
+        return task.appeal.veteranFileNumber;
+      },
+      getSortValue: (task) => task.appeal.veteranFileNumber
+    } : null;
+  }
+
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
     _.compact([
+      this.claimantLinkColumn(),
+      this.claimantSsnColumn(),
       this.caseHearingColumn(),
       this.caseSelectColumn(),
       this.caseDetailsColumn(),

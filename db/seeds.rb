@@ -75,6 +75,12 @@ class SeedDB
   end
 
   def create_org_queue_users
+    nca = NonComp.create!(name: "National Cemetery Association", url: "nca")
+    (0..5).each do |n|
+      u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{n}", full_name: "NCA team member #{n}")
+      OrganizationsUser.add_user_to_organization(u, nca)
+    end
+
     translation = Organization.create!(name: "Translation", url: "translation")
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{n}", full_name: "Translation team member #{n}")
@@ -246,6 +252,19 @@ class SeedDB
 
   def create_api_key
     ApiKey.new(consumer_name: "PUBLIC", key_string: "PUBLICDEMO123").save!
+  end
+
+  def create_higher_level_review_tasks
+    (0..5).each do |n|
+      higher_level_review = FactoryBot.create(
+        :higher_level_review,
+        request_issues: FactoryBot.create_list(:request_issue, 3),
+        veteran_file_number: FactoryBot.create(:veteran).file_number
+      )
+      FactoryBot.create(:higher_level_review_task,
+                        assigned_to: Organization.find_by(name: "National Cemetery Association"),
+                        appeal: higher_level_review)
+    end
   end
 
   def create_ama_appeals
@@ -556,6 +575,7 @@ class SeedDB
     create_ama_appeals
     create_users
     create_tasks
+    create_higher_level_review_tasks
 
     setup_dispatch
     create_previously_held_hearing_data

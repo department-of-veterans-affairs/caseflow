@@ -4,7 +4,6 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
-  has_many :tasks, as: :appeal
   has_many :decision_issues, through: :request_issues
   has_many :decisions
   has_one :special_issue_list
@@ -114,17 +113,9 @@ class Appeal < DecisionReview
     docket_type == "direct_review"
   end
 
-  def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
-  end
-
   def veteran_name
     # For consistency with LegacyAppeal.veteran_name
     veteran && veteran.name.formatted(:form)
-  end
-
-  def veteran_full_name
-    veteran && veteran.name.formatted(:readable_full)
   end
 
   def veteran_middle_initial
@@ -158,10 +149,6 @@ class Appeal < DecisionReview
   end
 
   delegate :first_name, :last_name, :name_suffix, :ssn, to: :veteran, prefix: true, allow_nil: true
-
-  def number_of_issues
-    issues[:request_issues].size
-  end
 
   def appellant
     claimants.first

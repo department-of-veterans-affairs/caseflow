@@ -40,6 +40,7 @@ const getTasks = (state: State): Tasks => state.queue.tasks;
 const getAmaTasks = (state: State): Tasks => state.queue.amaTasks;
 const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
+const getHigherLevelReviews = (state: State): BasicAppeals => state.queue.higherLevelReviews;
 const getUserCssId = (state: State): string => state.ui.userCssId;
 const getAppealId = (state: State, props: Object): string => props.appealId;
 const getActiveOrganizationId = (state: State): ?number => state.ui.activeOrganizationId;
@@ -58,8 +59,8 @@ export const getActiveModalType = createSelector(
 );
 
 export const tasksWithAppealSelector = createSelector(
-  [getTasks, getAmaTasks, getAppeals, getAppealDetails],
-  (tasks: Tasks, amaTasks: Tasks, appeals: BasicAppeals, appealDetails: AppealDetails) : Array<TaskWithAppeal> => {
+  [getTasks, getAmaTasks, getAppeals, getAppealDetails, getHigherLevelReviews],
+  (tasks: Tasks, amaTasks: Tasks, appeals: BasicAppeals, appealDetails: AppealDetails, higherLevelReviews) : Array<TaskWithAppeal> => {
     return [
       ..._.map(tasks, (task) => ({
         ...task,
@@ -68,13 +69,26 @@ export const tasksWithAppealSelector = createSelector(
           ..._.find(appealDetails, (appealDetail) => task.externalAppealId === appealDetail.externalId)
         }
       })),
-      ..._.map(amaTasks, (amaTask) => ({
-        ...amaTask,
-        appeal: {
-          ..._.find(appeals, (appeal) => amaTask.externalAppealId === appeal.externalId),
-          ..._.find(appealDetails, (appealDetail) => amaTask.externalAppealId === appealDetail.externalId)
+      ..._.map(amaTasks, (amaTask) => {
+        const type = amaTask.appealType;
+        let appeal;
+
+        if (type === 'Appeal' || type === 'LegacyAppeal') {
+          appeal = {
+            ..._.find(appeals, (appeal) => amaTask.externalAppealId === appeal.externalId),
+            ..._.find(appealDetails, (appealDetail) => amaTask.externalAppealId === appealDetail.externalId)
+          };
+        } else if (type === 'HigherLevelReview') {
+          appeal = {
+            ..._.find(higherLevelReviews, (appeal) => amaTask.externalAppealId === appeal.externalId)
+          }
         }
-      }))
+
+        return {
+          ...amaTask,
+          appeal 
+        }
+      })
     ];
   }
 );

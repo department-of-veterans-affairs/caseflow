@@ -10,6 +10,7 @@ class DecisionReview < ApplicationRecord
 
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
+  has_many :tasks, as: :appeal
 
   before_destroy :remove_issues!
 
@@ -95,6 +96,14 @@ class DecisionReview < ApplicationRecord
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+  end
+
+  def veteran_full_name
+    veteran && veteran.name.formatted(:readable_full)
+  end
+
+  def number_of_issues
+    request_issues.count
   end
 
   def remove_issues!

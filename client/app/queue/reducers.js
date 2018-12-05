@@ -22,6 +22,7 @@ export const initialState = {
   amaTasks: {},
   appeals: {},
   appealDetails: {},
+  higherLevelReviews: {},
   editingIssue: {},
   docCountForAppeal: {},
   newDocsForAppeal: {},
@@ -62,6 +63,9 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       },
       amaTasks: {
         $merge: action.payload.amaTasks ? action.payload.amaTasks : {}
+      },
+      higherLevelReviews: {
+        $merge: action.payload.higherLevelReviews
       }
     });
   case ACTIONS.RECEIVE_APPEAL_DETAILS:
