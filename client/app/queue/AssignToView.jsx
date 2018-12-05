@@ -134,9 +134,15 @@ class AssignToView extends React.Component<Props, ViewState> {
   }
 
   getAssignee = () => {
-    const action = selectedAction(this.props);
+    let assignee = 'person';
 
-    return action ? action.label : 'person';
+    taskActionData(this.props).options.forEach((opt) => {
+      if (opt.value === this.state.selectedValue) {
+        assignee = opt.label;
+      }
+    });
+
+    return assignee;
   }
 
   reassignTask = () => {
