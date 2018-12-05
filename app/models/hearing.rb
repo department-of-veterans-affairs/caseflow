@@ -88,7 +88,6 @@ class Hearing < ApplicationRecord
     regional_office_name
   end
 
-
   # rubocop:disable Metrics/MethodLength
   def vacols_attributes
     {
