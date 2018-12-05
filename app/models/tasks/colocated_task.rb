@@ -77,6 +77,16 @@ class ColocatedTask < Task
     false
   end
 
+  def assign_to_privacy_team_data
+    org = PrivacyTeam.singleton
+
+    {
+      selected: org,
+      options: [{ label: org.name, value: org.id }],
+      type: GenericTask.name
+    }
+  end
+
   private
 
   def update_location_in_vacols

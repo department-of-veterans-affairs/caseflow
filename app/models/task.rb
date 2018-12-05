@@ -191,16 +191,6 @@ class Task < ApplicationRecord
     }
   end
 
-  def assign_to_privacy_team_data
-    org = PrivacyTeam.singleton
-
-    {
-      selected: org,
-      options: [{ label: org.name, value: org.id }],
-      type: GenericTask.name
-    }
-  end
-
   def mail_assign_to_organization_data
     assign_to_organization_data.merge(type: MailTask.name)
   end
