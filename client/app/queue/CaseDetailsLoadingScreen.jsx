@@ -50,32 +50,30 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
 
     const promises = [];
 
-    if (appealType === 'Appeal' || appealType === 'LegacyAppeal') {
-      if (!appealDetails || !(appealId in appealDetails))  {
-        promises.push(
-          ApiUtil.get(`/appeals/${appealId}`).then((response) => {
-            this.props.setCanEditAod(response.body.can_edit_aod);
-            this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
-          })
-        );
-      }
-
-      const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
-        const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
-
-        if (legacyTasks && [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.judge].includes(userRole)) {
-          this.props.onReceiveTasks({ amaTasks: {},
-            tasks: prepareLegacyTasksForStore(response.body.tasks) });
-        } else {
-          this.props.onReceiveTasks({ tasks: {},
-            amaTasks: prepareTasksForStore(response.body.tasks) });
-        }
-      });
-
-      promises.push(taskPromise);
-
-      return Promise.all(promises);
+    if (!appealDetails || !(appealId in appealDetails))  {
+      promises.push(
+        ApiUtil.get(`/appeals/${appealId}?appeal_type=${appealType}`).then((response) => {
+          this.props.setCanEditAod(response.body.can_edit_aod);
+          this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
+        })
+      );
     }
+
+    const taskPromise = ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}&appeal_type=${appealType}`).then((response) => {
+      const legacyTasks = _.every(response.body.tasks, (task) => task.attributes.appeal_type === 'LegacyAppeal');
+
+      if (legacyTasks && [USER_ROLE_TYPES.attorney, USER_ROLE_TYPES.judge].includes(userRole)) {
+        this.props.onReceiveTasks({ amaTasks: {},
+          tasks: prepareLegacyTasksForStore(response.body.tasks) });
+      } else {
+        this.props.onReceiveTasks({ tasks: {},
+          amaTasks: prepareTasksForStore(response.body.tasks) });
+      }
+    });
+
+    promises.push(taskPromise);
+
+    return Promise.all(promises);
   };
 
   loadAttorneysOfJudge = () => {

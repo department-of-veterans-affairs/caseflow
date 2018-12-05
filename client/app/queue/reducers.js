@@ -75,6 +75,9 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       },
       appealDetails: {
         $merge: action.payload.appealDetails
+      },
+      higherLevelReviews: {
+        $merge: action.payload.higherLevelReviews
       }
     });
   case ACTIONS.RECEIVE_TASKS:

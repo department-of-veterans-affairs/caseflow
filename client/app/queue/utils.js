@@ -248,7 +248,20 @@ export const prepareAppealForStore =
   (appeals: Array<Object>):
     { appeals: BasicAppeals, appealDetails: AppealDetails } => {
 
-    const appealHash = appeals.reduce((accumulator, appeal) => {
+    const higherLevelReviews = appeals.filter((appeal) => appeal.attributes.type === 'HigherLevelReview').reduce((accumulator, higherLevelReview) => {
+      accumulator[higherLevelReview.attributes.external_id] = {
+        id: higherLevelReview.id,
+        issues: prepareAppealIssuesForStore(higherLevelReview),
+        externalId: higherLevelReview.attributes.external_id,
+        issueCount: higherLevelReview.attributes.issues.length,
+        veteranFullName: higherLevelReview.attributes.veteran_full_name,
+        veteranFileNumber: higherLevelReview.attributes.veteran_file_number,
+      };
+
+      return accumulator;
+    }, {});
+
+    const appealHash = appeals.filter((appeal) => appeal.attributes.type === 'Appeal' || appeal.type === 'LegacyAppeal').reduce((accumulator, appeal) => {
       const {
         attributes: { issues }
       } = appeal;
@@ -273,7 +286,7 @@ export const prepareAppealForStore =
       return accumulator;
     }, {});
 
-    const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
+    const appealDetailsHash = appeals.filter((appeal) => appeal.attributes.type === 'Appeal' || appeal.type === 'LegacyAppeal').reduce((accumulator, appeal) => {
       accumulator[appeal.attributes.external_id] = {
         hearings: prepareAppealHearingsForStore(appeal),
         completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
@@ -302,7 +315,8 @@ export const prepareAppealForStore =
 
     return {
       appeals: appealHash,
-      appealDetails: appealDetailsHash
+      appealDetails: appealDetailsHash,
+      higherLevelReviews
     };
   };
 

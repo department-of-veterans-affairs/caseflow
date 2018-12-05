@@ -258,7 +258,7 @@ class SeedDB
     (0..5).each do |n|
       higher_level_review = FactoryBot.create(
         :higher_level_review,
-        request_issues: FactoryBot.create_list(:request_issue, 3),
+        request_issues: FactoryBot.create_list(:request_issue, 3, description: "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"),
         veteran_file_number: FactoryBot.create(:veteran).file_number
       )
       FactoryBot.create(:higher_level_review_task,

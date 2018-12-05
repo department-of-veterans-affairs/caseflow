@@ -53,6 +53,10 @@ class HigherLevelReview < ClaimReview
     rating ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
   end
 
+  def serializer_class
+    ::WorkQueue::HigherLevelReviewSerializer
+  end
+
   private
 
   def informal_conference?

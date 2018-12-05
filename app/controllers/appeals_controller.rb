@@ -68,7 +68,8 @@ class AppealsController < ApplicationController
   helper_method :appeal, :url_appeal_uuid
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id]) if params[:appeal_type] == "Appeal" || params[:appeal_type] == "LegacyAppeal"
+    @appeal = HigherLevelReview.find(params[:appeal_id]) if params[:appeal_type] == "HigherLevelReview"
   end
 
   def url_appeal_uuid

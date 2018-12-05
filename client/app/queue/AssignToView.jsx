@@ -87,6 +87,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       data: {
         tasks: [{
           type: this.taskActionData().type ? this.taskActionData().type : 'GenericTask',
+          appeal_type: appeal.type,
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,

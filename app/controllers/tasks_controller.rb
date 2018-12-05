@@ -13,7 +13,8 @@ class TasksController < ApplicationController
     JudgeAssignTask: JudgeAssignTask,
     ScheduleHearingTask: ScheduleHearingTask,
     MailTask: MailTask,
-    InformalHearingPresentationTask: InformalHearingPresentationTask
+    InformalHearingPresentationTask: InformalHearingPresentationTask,
+    HigherLevelReviewTask: HigherLevelReviewTask
   }.freeze
 
   QUEUES = {
@@ -139,7 +140,8 @@ class TasksController < ApplicationController
   end
 
   def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+    @appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id]) if params[:appeal_type] == "Appeal" || params[:appeal_type] == "LegacyAppeal"
+    @appeal = HigherLevelReview.find(params[:appeal_id]) if params[:appeal_type] == "HigherLevelReview"
   end
 
   def invalid_type_error
@@ -157,10 +159,13 @@ class TasksController < ApplicationController
 
   def create_params
     @create_params ||= [params.require("tasks")].flatten.map do |task|
+      appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]) if task[:appeal_type] == "Appeal" || task[:appeal_type] == "LegacyAppeal"
+      appeal = HigherLevelReview.find(task[:external_id]) if task[:appeal_type] == "HigherLevelReview"
+
       task = task.permit(:type, :instructions, :action, :label, :assigned_to_id,
                          :assigned_to_type, :external_id, :parent_id, business_payloads: [:description, values: {}])
         .merge(assigned_by: current_user)
-        .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
+        .merge(appeal: appeal)
 
       task.delete(:external_id)
       task = task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
