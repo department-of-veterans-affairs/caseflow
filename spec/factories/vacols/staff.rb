@@ -34,8 +34,8 @@ FactoryBot.define do
     trait :hearing_coordinator do
       stitle "HRG"
       sactive "A"
-      snamel "Smith#{n}"
-      snamef "John#{n}"
+      snamel "Smith#{Random.rand(1..5)}"
+      snamef "John#{Random.rand(1..5)}"
       snamemi ""
     end
 

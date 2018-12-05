@@ -5,6 +5,8 @@
 class HearingDay < ApplicationRecord
   belongs_to :judge, class_name: "User"
 
+  before_create :verify_room_availability
+
   HEARING_TYPES = {
     video: "V",
     travel: "T",
@@ -145,5 +147,11 @@ class HearingDay < ApplicationRecord
     def current_user_css_id
       RequestStore.store[:current_user].css_id.upcase
     end
+  end
+
+  private
+
+  def verify_room_availability
+    hearing_count_for_day = where(hearing_date: hearing_date)
   end
 end
