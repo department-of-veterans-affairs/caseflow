@@ -2,7 +2,6 @@ FactoryBot.define do
   factory :decision_issue do
     sequence(:participant_id, 500_000_000)
     disposition "allowed"
-    disposition_date 3.days.ago
 
     transient do
       request_issues []

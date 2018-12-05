@@ -88,6 +88,13 @@ class RequestIssue < ApplicationRecord
       return unless request_issue && request_issue.status_active?
       request_issue
     end
+
+    def find_active_by_contested_decision_id(contested_decision_issue_id)
+      request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id,
+                                       removed_at: nil, ineligible_reason: nil)
+      return unless request_issue && request_issue.status_active?
+      request_issue
+    end
   end
 
   def status_active?
@@ -195,10 +202,9 @@ class RequestIssue < ApplicationRecord
       decision_issues.create!(
         participant_id: review_request.veteran.participant_id,
         disposition: contention_disposition[:disposition],
-        # use epe last_synced_at as a proxy for when the decision was made
-        disposition_date: end_product_establishment.last_synced_at,
         decision_review: review_request,
-        benefit_type: benefit_type
+        benefit_type: benefit_type,
+        end_product_last_action_date: end_product_establishment.result.last_action_date
       )
     end
   end
@@ -218,7 +224,8 @@ class RequestIssue < ApplicationRecord
         decision_text: rating_issue.decision_text,
         profile_date: rating_issue.profile_date,
         decision_review: review_request,
-        benefit_type: benefit_type
+        benefit_type: benefit_type,
+        end_product_last_action_date: end_product_establishment.result.last_action_date
       )
     end
   end

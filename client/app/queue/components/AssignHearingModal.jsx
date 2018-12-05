@@ -265,6 +265,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const timeOptions = this.getTimeOptions();
 
     if (!selectedHearingTime) {
+
       return {};
     }
 
