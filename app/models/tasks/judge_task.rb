@@ -2,18 +2,12 @@ class JudgeTask < Task
   include RoundRobinAssigner
 
   def available_actions(_user)
-    if action.eql? "assign"
-      [
-        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
-      ]
-    else
-      [
-        {
-          label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,
-          value: "dispatch_decision/special_issues"
-        }
-      ]
-    end
+    actions = [{ label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL, value: "dispatch_decision/special_issues" }]
+    actions = [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h] if action.eql? "assign"
+
+    actions << Constants.TASK_ACTIONS.MARK_COMPLETE.to_h if parent && parent.is_a?(QualityReviewTask)
+
+    actions
   end
 
   def no_actions_available?(user)
@@ -41,6 +35,17 @@ class JudgeTask < Task
 
   def self.verify_user_can_assign!(user)
     QualityReview.singleton.user_has_access?(user) || super(user)
+  end
+
+  def update_from_params(params, _current_user)
+    return super unless parent && parent.is_a?(QualityReviewTask)
+
+    params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
+
+    update_status(params.delete("status")) if params.key?("status")
+    update(params)
+
+    [self]
   end
 
   def when_child_task_completed
