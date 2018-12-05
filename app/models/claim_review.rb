@@ -109,7 +109,7 @@ class ClaimReview < DecisionReview
   end
 
   def external_id
-    id
+    id.to_s
   end
 
   private

@@ -43,6 +43,7 @@ const getAppealDetails = (state: State): AppealDetails => state.queue.appealDeta
 const getHigherLevelReviews = (state: State): BasicAppeals => state.queue.higherLevelReviews;
 const getUserCssId = (state: State): string => state.ui.userCssId;
 const getAppealId = (state: State, props: Object): string => props.appealId;
+const getAppealType = (state: State, props: Object): string => props.appealType;
 const getActiveOrganizationId = (state: State): ?number => state.ui.activeOrganizationId;
 const getTaskUniqueId = (state: State, props: Object): string => props.taskId;
 const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
@@ -113,8 +114,16 @@ export const appealsWithDetailsSelector = createSelector(
 );
 
 export const appealWithDetailSelector = createSelector(
-  [appealsWithDetailsSelector, getAppealId],
-  (appeals: Appeals, appealId: string) => appeals[appealId]
+  [appealsWithDetailsSelector, getHigherLevelReviews, getAppealId, getAppealType],
+  (appeals: Appeals, higherLevelReviews, appealId: string, appealType: string) => {
+    if (appealType === 'Appeal' || appealType === 'LegacyAppeal') {
+      return appeals[appealId];  
+    }
+
+    if (appealType === 'HigherLevelReview') {
+      return higherLevelReviews[appealId];  
+    }
+  }
 );
 
 export const getTasksForAppeal = createSelector(

@@ -13,6 +13,7 @@ import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { renderAppealType } from '../utils';
@@ -276,7 +277,7 @@ class TaskTable extends React.PureComponent<Props> {
     return this.props.includeClaimantLink ? {
       header: "Claimant",
       valueFunction: (task) => {
-        return task.appeal.veteranFullName;
+        return <Link to={`/queue/${task.appeal.type}/${task.appeal.id}`}>{task.appeal.veteranFullName}</Link>;
       },
       getSortValue: (task) => task.appeal.veteranFullName
     } : null;

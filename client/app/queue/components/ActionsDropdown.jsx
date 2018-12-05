@@ -43,7 +43,7 @@ type Props = Params & {|
 class ActionsDropdown extends React.PureComponent<Props> {
   changeRoute = (option: ?OptionType) => {
     const {
-      appealId,
+      appeal,
       task,
       history
     } = this.props;
@@ -52,10 +52,10 @@ class ActionsDropdown extends React.PureComponent<Props> {
       return;
     }
 
-    this.props.stageAppeal(appealId);
+    this.props.stageAppeal(appeal.externalId);
     this.props.resetDecisionOptions();
 
-    history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${option.value}`);
+    history.push(`/queue/${appeal.type}/${appeal.externalId}/tasks/${task.uniqueId}/${option.value}`);
   };
 
   render = () => {
@@ -74,7 +74,6 @@ class ActionsDropdown extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps) => ({
-  appeal: state.queue.appeals[ownProps.appealId],
   changedAppeals: _.keys(state.queue.stagedChanges.appeals),
   featureToggles: state.ui.featureToggles
 });

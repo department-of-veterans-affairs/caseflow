@@ -185,6 +185,7 @@ Rails.application.routes.draw do
     get '/', to: 'queue#index'
     get '/beaam', to: 'queue#index'
     get '/appeals/:vacols_id', to: 'queue#index'
+    get '/HigherLevelReview/:vacols_id', to: 'queue#index'
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end

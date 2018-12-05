@@ -298,7 +298,7 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       {this.showActionsSection() &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          <ActionsDropdown task={primaryTask} appealId={appeal.externalId} />
+          <ActionsDropdown task={primaryTask} appeal={appeal} />
         </div>
       }
     </div>;
@@ -309,7 +309,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   const { featureToggles, userRole, canEditAod } = state.ui;
 
   return {
-    appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
+    appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId, appealType: ownProps.appealType }),
     featureToggles,
     userRole,
     primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],

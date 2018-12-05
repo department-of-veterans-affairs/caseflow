@@ -21,6 +21,8 @@ import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiRed
 import { CaseTimeline } from './CaseTimeline';
 import { getQueryParams } from '../util/QueryParamsUtil';
 
+import HigherLevelReviewDetailsView from './HigherLevelReviewDetailsView';
+
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 
@@ -56,10 +58,15 @@ class CaseDetailsView extends React.PureComponent {
     const {
       appealId,
       appeal,
+      appealType,
       error,
       success,
       featureToggles
     } = this.props;
+
+    if (appealType === 'HigherLevelReview') {
+      return <HigherLevelReviewDetailsView appealId={appealId} appealType={appealType} />;
+    }
 
     return <AppSegment filledBackground>
       <CaseTitle appeal={appeal} appealId={appealId} redirectUrl={window.location.pathname} />
