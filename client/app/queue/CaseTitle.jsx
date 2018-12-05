@@ -90,7 +90,8 @@ class CaseTitle extends React.PureComponent {
           <span className={appeal.hearings.length > 0 ? null : displayNone} {...badgeStyle}>
             <HearingBadge hearing={appeal.hearings[0]} {...displayInline} />
           </span>
-          <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle} style={{paddingLeft: '5px'}}>
+          <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle}
+            style={{ paddingLeft: '5px' }}>
             <AodBadge appeal={appeal} className={displayInline} />
             {this.props.canEditAod && <span {...editButton}>
               <Link
