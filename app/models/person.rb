@@ -17,7 +17,7 @@ class Person < ApplicationRecord
   end
 
   def advanced_on_docket_based_on_age
-    date_of_birth && date_of_birth < 75.years.ago
+    date_of_birth && date_of_birth <= 75.years.ago
   end
 
   private
