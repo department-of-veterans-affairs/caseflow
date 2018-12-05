@@ -20,7 +20,7 @@ class RootTask < GenericTask
   def no_actions_available?(user)
     if HearingsManagement.singleton.user_has_access?(user) && legacy?
       hearing_task = children.find { |task| task.is_a?(ScheduleHearingTask) }
-      return hearing_task.status == Constants.TASK_STATUSES if hearing_task
+      return hearing_task.status == Constants.TASK_STATUSES.completed if hearing_task
       return false
     end
 
