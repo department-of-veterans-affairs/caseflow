@@ -174,7 +174,7 @@ export default class AssignHearings extends React.Component {
       if (time === '12:00 am ET') {
         return '';
 
-      } else if (selectedHearingDay) {
+      } else {
         return time;
       }
 
