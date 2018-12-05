@@ -20,16 +20,6 @@ class DecisionIssue < ApplicationRecord
     profile_date ? profile_date.to_date : end_product_last_action_date
   end
 
-  def title_of_active_review
-    request_issue = RequestIssue.find_active_by_contested_decision_id(id)
-    request_issue.review_title if request_issue
-  end
-
-  def source_higher_level_review
-    return unless decision_review
-    decision_review.is_a?(HigherLevelReview) ? decision_review.id : nil
-  end
-
   def issue_category
     # TODO: figure out how to calculate this
     return unless request_issues.any?
