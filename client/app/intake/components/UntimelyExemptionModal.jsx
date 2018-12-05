@@ -19,8 +19,8 @@ class UntimelyExemptionModal extends React.Component {
   }
 
   onAddIssue = () => {
-    const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
-    const notes = this.props.intakeData.currentIssueAndNotes.notes;
+    const currentIssueData = this.props.intakeData.currentIssueAndNotes;
+    const currentIssue = currentIssueData.currentIssue;
 
     if (currentIssue.reference_id) {
       this.props.addRatingRequestIssue({
@@ -28,9 +28,12 @@ class UntimelyExemptionModal extends React.Component {
         issueId: currentIssue.reference_id,
         ratings: this.props.intakeData.ratings,
         isRating: true,
-        notes,
+        notes: currentIssueData.notes,
         untimelyExemption: this.state.untimelyExemption,
-        untimelyExemptionNotes: this.state.untimelyExemptionNotes
+        untimelyExemptionNotes: this.state.untimelyExemptionNotes,
+        vacolsId: currentIssueData.vacolsId,
+        vacolsSequenceId: currentIssueData.vacolsSequenceId,
+        eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn
       });
     } else {
       this.props.addNonratingRequestIssue({
@@ -40,7 +43,10 @@ class UntimelyExemptionModal extends React.Component {
         untimelyExemptionNotes: this.state.untimelyExemptionNotes,
         category: currentIssue.category,
         description: currentIssue.description,
-        decisionDate: currentIssue.decisionDate
+        decisionDate: currentIssue.decisionDate,
+        vacolsId: currentIssueData.vacolsId,
+        vacolsSequenceId: currentIssueData.vacolsSequenceId,
+        eligibleForSocOptIn: currentIssueData.eligibleForSocOptIn
       });
     }
     this.props.closeHandler();

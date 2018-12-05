@@ -114,12 +114,13 @@ Rails.application.routes.draw do
   resources :beaam_appeals, only: [:index]
 
   resources :regional_offices, only: [:index]
+  get '/regional_offices/:regional_office/open_hearing_dates', to: "regional_offices#open_hearing_dates"
 
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
-    resources :hearing_day, only: [:index, :show]
+    resources :hearing_day, only: [:index, :show, :destroy]
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key

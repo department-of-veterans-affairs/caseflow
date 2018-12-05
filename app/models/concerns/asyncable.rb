@@ -66,6 +66,10 @@ module Asyncable
         .where(arel_table[submitted_at_column].lteq(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
         .order_by_oldest_submitted
     end
+
+    def run_async?
+      !Rails.env.development? && !Rails.env.test?
+    end
   end
 
   def submit_for_processing!
@@ -103,6 +107,6 @@ module Asyncable
   private
 
   def run_async?
-    !Rails.env.development? && !Rails.env.test?
+    self.class.run_async?
   end
 end

@@ -3,6 +3,7 @@
 # Caseflow DB. For now all schedule data is sent to the
 # VACOLS DB (Aug 2018 implementation).
 class HearingDay < ApplicationRecord
+  acts_as_paranoid
   belongs_to :judge, class_name: "User"
 
   HEARING_TYPES = {
@@ -10,6 +11,13 @@ class HearingDay < ApplicationRecord
     travel: "T",
     central: "C"
   }.freeze
+
+  def to_hash
+    as_json.each_with_object({}) do |(k, v), result|
+      result[k.to_sym] = v
+    end.merge(judge_first_name: judge ? judge.full_name.split(" ").first : nil,
+              judge_last_name: judge ? judge.full_name.split(" ").last : nil)
+  end
 
   # These dates indicate the date in which we pull parent records into Caseflow. For
   # legacy appeals, the children hearings will continue to be stored in VACOLS.
@@ -50,8 +58,12 @@ class HearingDay < ApplicationRecord
     def update_schedule(updated_hearings)
       updated_hearings.each do |hearing_hash|
         hearing_to_update = HearingDay.find_hearing_day(hearing_hash[:hearing_type], hearing_hash[:id])
-        hearing_hash.delete(:hearing_key)
-        HearingDay.update_hearing_day(hearing_to_update, hearing_hash)
+        update_hash = if hearing_to_update.is_a?(HearingDay)
+                        { judge: User.find_by_css_id_or_create_with_default_station_id(hearing_hash[:css_id]) }
+                      else
+                        { judge_id: hearing_hash[:judge_id] }
+                      end
+        HearingDay.update_hearing_day(hearing_to_update, update_hash)
       end
     end
 
@@ -124,33 +136,15 @@ class HearingDay < ApplicationRecord
     private
 
     def enrich_with_judge_names(hearing_days)
-      vlj_ids = []
       hearing_days_hash = []
       hearing_days.each do |hearing_day|
         hearing_days_hash << hearing_day.to_hash
-        vlj_ids << hearing_day[:judge_id]
       end
-
-      judges = User.css_ids_by_vlj_ids(vlj_ids)
-
-      hearing_days_hash.each_with_object([]) do |hearing_day, result|
-        judge_info = judges[hearing_day[:judge_id]]
-        if !judge_info.nil?
-          hearing_day = hearing_day.merge(judge_first_name: judge_info[:first_name],
-                                          judge_last_name: judge_info[:last_name])
-        end
-        result << hearing_day
-      end
+      hearing_days_hash
     end
 
     def current_user_css_id
       RequestStore.store[:current_user].css_id.upcase
-    end
-  end
-
-  def to_hash
-    as_json.each_with_object({}) do |(k, v), result|
-      result[k.to_sym] = v
     end
   end
 end

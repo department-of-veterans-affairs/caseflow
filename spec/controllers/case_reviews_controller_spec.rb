@@ -57,7 +57,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
             expect(task.parent.reload.status).to eq "assigned"
-            expect(task.parent.action).to eq "review"
+            expect(task.parent.type).to eq JudgeReviewTask.name
 
             expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
           end
@@ -76,7 +76,8 @@ RSpec.describe CaseReviewsController, type: :controller do
               "issues": [{ "disposition": "allowed", "description": "wonderful life",
                            "request_issue_ids": [request_issue1.id, request_issue3.id] },
                          { "disposition": "remanded", "description": "great moments",
-                           "request_issue_ids": [request_issue2.id] }]
+                           "request_issue_ids": [request_issue2.id],
+                           "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
             }
           end
           let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
@@ -102,11 +103,14 @@ RSpec.describe CaseReviewsController, type: :controller do
 
             expect(request_issue2.decision_issues.first.disposition).to eq "remanded"
             expect(request_issue2.decision_issues.first.description).to eq "great moments"
+            expect(request_issue2.decision_issues.first.remand_reasons.size).to eq 1
+            expect(request_issue2.decision_issues.first.remand_reasons.first.code).to eq "va_records"
+            expect(request_issue2.decision_issues.first.remand_reasons.first.post_aoj).to eq true
 
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
             expect(task.parent.reload.status).to eq "assigned"
-            expect(task.parent.action).to eq "review"
+            expect(task.parent.type).to eq JudgeReviewTask.name
 
             expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
             FeatureToggle.disable!(:ama_decision_issues)

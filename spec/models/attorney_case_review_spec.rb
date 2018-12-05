@@ -12,7 +12,11 @@ describe AttorneyCaseReview do
     let(:decision_issue1) { create(:decision_issue) }
     let(:request_issue2) { create(:request_issue, review_request: appeal, decision_issues: [decision_issue1]) }
 
-    let(:decision_issue2) { create(:decision_issue) }
+    let(:remand_reason1) { create(:ama_remand_reason) }
+    let(:remand_reason2) { create(:ama_remand_reason) }
+    let(:decision_issue2) do
+      create(:decision_issue, remand_reasons: [remand_reason1, remand_reason2])
+    end
     let(:request_issue3) { create(:request_issue, review_request: appeal, decision_issues: [decision_issue2]) }
     let(:request_issue4) { create(:request_issue, review_request: appeal) }
 
@@ -28,13 +32,21 @@ describe AttorneyCaseReview do
       [{ disposition: "allowed", description: "something1",
          request_issue_ids: [request_issue1.id, request_issue2.id] },
        { disposition: "remanded", description: "something2",
-         request_issue_ids: [request_issue1.id, request_issue2.id] },
+         request_issue_ids: [request_issue1.id, request_issue2.id],
+         remand_reasons: [
+           { code: "va_records", post_aoj: false },
+           { code: "incorrect_notice_sent", post_aoj: true }
+         ] },
        { disposition: "allowed", description: "something3",
          request_issue_ids: [request_issue3.id, request_issue4.id] },
        { disposition: "allowed", description: "something4",
          request_issue_ids: [request_issue5.id] },
        { disposition: "remanded", description: "something5",
-         request_issue_ids: [request_issue5.id] },
+         request_issue_ids: [request_issue5.id],
+         remand_reasons: [
+           { code: "va_records", post_aoj: false },
+           { code: "incorrect_notice_sent", post_aoj: true }
+         ] },
        { disposition: "allowed", description: "something6",
          request_issue_ids: [request_issue6.id] }]
     end
@@ -44,15 +56,31 @@ describe AttorneyCaseReview do
     it "should create and delete decision issues" do
       subject
       old_decision_issue_ids = [decision_issue1.id, decision_issue2.id, decision_issue3.id, decision_issue4.id]
+      old_remand_reasons_ids = [remand_reason1.id, remand_reason2.id]
       expect(DecisionIssue.where(id: old_decision_issue_ids)).to eq []
       expect(RequestDecisionIssue.where(decision_issue_id: old_decision_issue_ids)).to eq []
+      expect(RemandReason.where(id: old_remand_reasons_ids)).to eq []
       expect(request_issue1.reload.decision_issues.size).to eq 2
       expect(request_issue2.reload.decision_issues.size).to eq 2
       expect(request_issue1.decision_issues).to eq request_issue2.decision_issues
+      expect(request_issue1.decision_issues[0].disposition).to eq "allowed"
+      expect(request_issue1.decision_issues[0].description).to eq "something1"
+
+      expect(request_issue1.decision_issues[1].disposition).to eq "remanded"
+      expect(request_issue1.decision_issues[1].description).to eq "something2"
+
+      expect(request_issue1.decision_issues[1].remand_reasons.size).to eq 2
+      expect(request_issue1.decision_issues[1].remand_reasons[0].code).to eq "va_records"
+      expect(request_issue1.decision_issues[1].remand_reasons[0].post_aoj).to eq false
+
+      expect(request_issue1.decision_issues[1].remand_reasons[1].code).to eq "incorrect_notice_sent"
+      expect(request_issue1.decision_issues[1].remand_reasons[1].post_aoj).to eq true
+
       expect(request_issue3.reload.decision_issues.size).to eq 1
       expect(request_issue4.reload.decision_issues.size).to eq 1
       expect(request_issue3.reload.decision_issues.first).to eq request_issue4.decision_issues.first
       expect(request_issue5.reload.decision_issues.size).to eq 2
+      expect(request_issue5.decision_issues[1].remand_reasons.size).to eq 2
       expect(request_issue6.decision_issues.size).to eq 1
     end
   end

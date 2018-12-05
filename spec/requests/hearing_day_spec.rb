@@ -196,7 +196,8 @@ RSpec.describe "Hearing Schedule", type: :request do
       }
       get "/hearings/hearing_day", headers: headers
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearings"].size).to be(2)
+      # We don't pull in VACOLS hearings later than 1/1
+      expect(JSON.parse(response.body)["hearings"].size).to be(1)
       expect(JSON.parse(response.body)["tbhearings"].size).to be(0)
     end
   end
@@ -298,6 +299,17 @@ RSpec.describe "Hearing Schedule", type: :request do
       get "/hearings/schedule/assign/veterans", params: { regional_office: "RO04" }, headers: headers
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)["veterans"].size).to be(1)
+    end
+  end
+
+  describe "Delete a hearing day" do
+    let!(:hearing_day) { create(:hearing_day) }
+
+    it "Deletes the hearing day" do
+      delete "/hearings/hearing_day/#{hearing_day.id}"
+      expect(response).to have_http_status(:success)
+      expect(HearingDay.all.count).to eq(0)
+      expect(HearingDay.with_deleted.count).to eq(1)
     end
   end
 end
