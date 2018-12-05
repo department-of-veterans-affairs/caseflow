@@ -90,10 +90,23 @@ class Hearings::HearingDayController < HearingScheduleController
     }, status: :ok
   end
 
+  def destroy
+    hearing_day.destroy!
+    render json: {}
+  end
+
   private
 
   def hearing
     @hearing ||= HearingDay.find_hearing_day(update_params[:hearing_type], update_params[:hearing_key])
+  end
+
+  def hearing_day
+    @hearing_day ||= HearingDay.find(hearing_day_id)
+  end
+
+  def hearing_day_id
+    params[:id]
   end
 
   def fetch_hearings(hearing_day, id)

@@ -46,9 +46,22 @@ RSpec.feature "User organization" do
       expect(user_with_role.organizations.count).to eq(0)
     end
 
-    scenario "Organization task list view shows queue switcher dropdown" do
-      visit organization.path
-      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+    context "the user is in a judge team" do
+      let!(:judge) { FactoryBot.create(:user) }
+      let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(user, judgeteam)
+      end
+
+      it "Organization task list view shows queue switcher dropdown" do
+        visit organization.path
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(organization.name)
+        expect(page).to_not have_content(judgeteam.name)
+      end
     end
   end
 

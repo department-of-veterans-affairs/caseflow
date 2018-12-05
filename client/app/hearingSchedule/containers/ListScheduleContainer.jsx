@@ -14,11 +14,13 @@ import {
   selectHearingCoordinator,
   setNotes,
   onReceiveJudges,
-  onReceiveCoordinators
+  onReceiveCoordinators,
+  onResetDeleteSuccessful
 } from '../actions';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Alert from '../../components/Alert';
 import COPY from '../../../COPY.json';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
@@ -49,6 +51,10 @@ export class ListScheduleContainer extends React.Component {
     this.props.onSelectedHearingDayChange('');
     this.setState({ showModalAlert: false });
   }
+
+  componentWillUnmount = () => {
+    this.props.onResetDeleteSuccessful();
+  };
 
   loadHearingSchedule = () => {
     let requestUrl = '/hearings/hearing_day.json';
@@ -220,7 +226,8 @@ const mapStateToProps = (state) => ({
   hearingType: state.hearingSchedule.hearingType,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
-  notes: state.hearingSchedule.notes
+  notes: state.hearingSchedule.notes,
+  successfulHearingDayDelete: state.hearingSchedule.successfulHearingDayDelete
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -233,7 +240,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   selectHearingCoordinator,
   setNotes,
   onReceiveJudges,
-  onReceiveCoordinators
+  onReceiveCoordinators,
+  onResetDeleteSuccessful,
 }, dispatch);
 
 ListScheduleContainer.propTypes = {

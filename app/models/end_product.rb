@@ -63,7 +63,7 @@ class EndProduct
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
-  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code,
+  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :last_action_date,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter
 
   attr_writer :payee_code, :claimant_participant_id, :benefit_type_code
@@ -212,7 +212,8 @@ class EndProduct
         claim_date: parse_claim_date(hash[:claim_receive_date]),
         claim_type_code: hash[:claim_type_code],
         modifier: hash[:end_product_type_code],
-        status_type_code: hash[:status_type_code]
+        status_type_code: hash[:status_type_code],
+        last_action_date: hash[:last_action_date]
       )
     end
 

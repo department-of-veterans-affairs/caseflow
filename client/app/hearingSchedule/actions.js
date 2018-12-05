@@ -291,3 +291,22 @@ export const onReceiveCoordinators = (activeCoordinators) => ({
     activeCoordinators
   }
 });
+
+export const onClickRemoveHearingDay = () => ({
+  type: ACTIONS.ON_CLICK_REMOVE_HEARING_DAY
+});
+
+export const onCancelRemoveHearingDay = () => ({
+  type: ACTIONS.CANCEL_REMOVE_HEARING_DAY
+});
+
+export const onSuccessfulHearingDayDelete = (date) => ({
+  type: ACTIONS.SUCCESSFUL_HEARING_DAY_DELETE,
+  payload: {
+    date
+  }
+});
+
+export const onResetDeleteSuccessful = () => ({
+  type: ACTIONS.RESET_DELETE_SUCCESSFUL
+});

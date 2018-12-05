@@ -315,6 +315,26 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.activeCoordinators
       }
     });
+  case ACTIONS.ON_CLICK_REMOVE_HEARING_DAY:
+    return update(state, {
+      displayRemoveHearingDayModal: {
+        $set: true
+      }
+    });
+  case ACTIONS.CANCEL_REMOVE_HEARING_DAY:
+    return update(state, {
+      $unset: ['displayRemoveHearingDayModal']
+    });
+  case ACTIONS.SUCCESSFUL_HEARING_DAY_DELETE:
+    return update(state, {
+      successfulHearingDayDelete: {
+        $set: action.payload.date
+      }
+    });
+  case ACTIONS.RESET_DELETE_SUCCESSFUL:
+    return update(state, {
+      $unset: ['successfulHearingDayDelete']
+    });
   default:
     return state;
   }
