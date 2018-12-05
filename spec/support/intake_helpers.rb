@@ -123,10 +123,12 @@ module IntakeHelpers
 
     # intervertebral disc syndrome, degenerative arthritis of the spine
     allow(AppealRepository).to receive(:issues).with("vacols2")
-      .and_return([
-                    Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243]),
-                    Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242])
-                  ])
+      .and_return(
+        [
+          Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243], disposition: nil),
+          Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242], disposition: nil)
+        ]
+      )
   end
 
   def setup_inactive_eligible_legacy_appeal(veteran_file_number)

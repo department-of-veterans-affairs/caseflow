@@ -184,9 +184,9 @@ class RequestIssue < ApplicationRecord
 
   def vacols_issue
     return unless vacols_id && vacols_sequence_id
-    @vacols_issue ||= begin
-      vacols_case_issue = VACOLS::CaseIssue.find_by(isskey: vacols_id, issseq: vacols_sequence_id)
-      Issue.load_from_vacols(vacols_case_issue.attributes) if vacols_case_issue
+    @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
+      # coerce both into strings since VACOLS may store as int
+      issue.vacols_sequence_id.to_s == vacols_sequence_id.to_s
     end
   end
 

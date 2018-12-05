@@ -7,6 +7,7 @@ import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISS
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 import Alert from '../../components/Alert';
+import { legacyIssue } from '../util/issues';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -105,19 +106,6 @@ class IneligibleIssuesList extends React.PureComponent {
 }
 
 class VacolsOptInList extends React.PureComponent {
-
-  legacyIssue(issue) {
-    let { legacyAppeals } = this.props;
-
-    if (issue.vacolsIssue) {
-      return issue.vacolsIssue;
-    }
-
-    let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
-
-    return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
-  }
-
   render = () =>
     <Fragment>
       <ul className="cf-success-checklist cf-left-padding">
@@ -125,7 +113,7 @@ class VacolsOptInList extends React.PureComponent {
           <strong>{INELIGIBLE_REQUEST_ISSUES.vacols_optin_issue_closed}</strong>
           {this.props.issues.map((ri, i) =>
             <p key={`vacols-issue-${i}`} className="">
-              {this.legacyIssue(ri).description}
+              {legacyIssue(ri, this.props.legacyAppeals).description}
             </p>)}
         </li>
       </ul>

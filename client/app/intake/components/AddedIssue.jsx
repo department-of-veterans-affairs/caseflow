@@ -3,6 +3,8 @@ import React from 'react';
 
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
 
+import { legacyIssue } from '../util/issues';
+
 class AddedIssue extends React.PureComponent {
   needsEligibilityCheck() {
     let { issue, requestIssues } = this.props;
@@ -69,18 +71,6 @@ class AddedIssue extends React.PureComponent {
     }
   }
 
-  legacyIssue() {
-    let { issue, legacyAppeals } = this.props;
-
-    if (issue.vacolsIssue) {
-      return issue.vacolsIssue;
-    }
-
-    let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
-
-    return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
-  }
-
   render() {
     let { issue, issueIdx } = this.props;
     let eligibleState = {
@@ -109,7 +99,7 @@ class AddedIssue extends React.PureComponent {
       { issue.vacolsId && !eligibleState.errorMsg &&
         <div className="issue-vacols">
           <span className="msg">{ INELIGIBLE_REQUEST_ISSUES.adding_this_issue_vacols_optin }:</span>
-          <span className="desc">{ this.legacyIssue().description }</span>
+          <span className="desc">{ legacyIssue(issue, this.props.legacyAppeals).description }</span>
         </div>
       }
     </div>;

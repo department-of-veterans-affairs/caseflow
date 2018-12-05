@@ -23,6 +23,20 @@ const getClaimantField = (formType, veteran, intakeData) => {
   return [];
 };
 
+export const legacyIssue = (issue, legacyAppeals) => {
+  if (issue.vacolsIssue) {
+    return issue.vacolsIssue;
+  }
+
+  let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
+
+  if (!legacyAppeal) {
+    throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
+  }
+
+  return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
+};
+
 export const formatRatings = (ratings, requestIssues = []) => {
   const result = _.keyBy(_.map(ratings, (rating) => {
     return _.assign(rating,
