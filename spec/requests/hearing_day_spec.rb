@@ -301,4 +301,15 @@ RSpec.describe "Hearing Schedule", type: :request do
       expect(JSON.parse(response.body)["veterans"].size).to be(1)
     end
   end
+
+  describe "Delete a hearing day" do
+    let!(:hearing_day) { create(:hearing_day) }
+
+    it "Deletes the hearing day" do
+      delete "/hearings/hearing_day/#{hearing_day.id}"
+      expect(response).to have_http_status(:success)
+      expect(HearingDay.all.count).to eq(0)
+      expect(HearingDay.with_deleted.count).to eq(1)
+    end
+  end
 end

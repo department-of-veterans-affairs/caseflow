@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import moment from 'moment';
 import DailyDocket from '../components/DailyDocket';
@@ -15,7 +16,10 @@ import {
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
   onHearingDateUpdate,
-  onHearingTimeUpdate
+  onHearingTimeUpdate,
+  onClickRemoveHearingDay,
+  onCancelRemoveHearingDay,
+  onSuccessfulHearingDayDelete
 } from '../actions';
 
 export class DailyDocketContainer extends React.Component {
@@ -60,6 +64,14 @@ export class DailyDocketContainer extends React.Component {
       });
   };
 
+  deleteHearingDay = () => {
+    ApiUtil.delete(`/hearings/hearing_day/${this.props.dailyDocket.id}`).
+      then(() => {
+        this.props.onSuccessfulHearingDayDelete(this.props.dailyDocket.hearingDate);
+        this.props.history.push('/schedule');
+      });
+  };
+
   createHearingPromise = () => Promise.all([this.loadHearingDay()]);
 
   render() {
@@ -84,6 +96,10 @@ export class DailyDocketContainer extends React.Component {
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
         onCancelHearingUpdate={this.props.onCancelHearingUpdate}
+        onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
+        displayRemoveHearingDayModal={this.props.displayRemoveHearingDayModal}
+        onCancelRemoveHearingDay={this.props.onCancelRemoveHearingDay}
+        deleteHearingDay={this.deleteHearingDay}
       />
     </LoadingDataDisplay>;
 
@@ -95,7 +111,8 @@ const mapStateToProps = (state) => ({
   dailyDocket: state.hearingSchedule.dailyDocket,
   hearings: state.hearingSchedule.hearings,
   hearingDayOptions: state.hearingSchedule.hearingDayOptions,
-  saveSuccessful: state.hearingSchedule.saveSuccessful
+  saveSuccessful: state.hearingSchedule.saveSuccessful,
+  displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -106,7 +123,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
   onHearingDateUpdate,
-  onHearingTimeUpdate
+  onHearingTimeUpdate,
+  onClickRemoveHearingDay,
+  onCancelRemoveHearingDay,
+  onSuccessfulHearingDayDelete
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));
