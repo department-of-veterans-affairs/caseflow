@@ -22,8 +22,8 @@ const containingDivStyling = css({
   border: `1px solid ${COLORS.GREY_LIGHT}`,
   display: 'grid',
   margin: 'auto',
-  margin: 'auto',
   width: '110%',
+  // maxWidth: '110%',
   width: '100%',
   // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
   // margin: '-2rem -3rem 0 -3rem',
@@ -125,7 +125,8 @@ const descriptionStyle = css({
 
 const caseInfo = css({
   paddingBottom: '50px',
-  marginLeft: '10px'
+  marginLeft: '10px',
+  minHeight: '260px'
 });
 
 const caseTitleStyle = css({
