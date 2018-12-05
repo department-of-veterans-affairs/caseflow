@@ -122,18 +122,16 @@ export default class DailyDocket extends React.Component {
 
   getAppellantInformation = (hearing) => {
     const appellantName = hearing.appellantMiFormatted || hearing.veteranMiFormatted;
-    const appellantDocketName = hearing.docketName;
-    const appellantDocketNumber = hearing.docketNumber;
 
-    return <div><b>{appellantName}</b><br/>
-    <DocketTypeBadge name={appellantDocketName} number={appellantDocketNumber} />
-    <b><Link
-      href={`/queue/appeals/${hearing.appealVacolsId}`}
-      name={hearing.vbmsId} >
-      {hearing.vbmsId}
-    </Link></b> <br />
-    {hearing.appellantAddressLine1}<br />
-    {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
+    return <div><b>{appellantName}</b><br />
+      <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
+      <b><Link
+        href={`/queue/appeals/${hearing.appealVacolsId}`}
+        name={hearing.vbmsId} >
+        {hearing.vbmsId}
+      </Link></b> <br />
+      {hearing.appellantAddressLine1}<br />
+      {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
     </div>;
   };
 
