@@ -52,7 +52,7 @@ const roomOptions = [
   { label: '1W439',
     value: '12' },
   { label: '1W440',
-    value: '13' },
+    value: '13' }
 ];
 
 class HearingDayEditModal extends React.Component {
