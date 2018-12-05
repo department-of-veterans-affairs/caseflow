@@ -114,7 +114,7 @@ const NewTasksTab = connect(
   (state: State) => ({ tasks: newTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
     return <React.Fragment>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
+      <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
         includeTask
@@ -131,7 +131,7 @@ const PendingTasksTab = connect(
   (state: State) => ({ tasks: pendingTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
     return <React.Fragment>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION}</p>
+      <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
         includeTask
@@ -148,7 +148,7 @@ const OnHoldTasksTab = connect(
   (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
     return <React.Fragment>
-      <p>{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
+      <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
         includeTask
@@ -165,7 +165,7 @@ const CompleteTasksTab = connect(
   (state: State) => ({ tasks: completeTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => {
     return <React.Fragment>
-      <p>{COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
+      <p className="cf-margin-top-0">{COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
         includeTask

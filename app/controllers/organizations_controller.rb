@@ -5,7 +5,7 @@ class OrganizationsController < ApplicationController
   skip_before_action :deny_vso_access
 
   def show
-    render "organizations/show"
+    render "queue/index"
   end
 
   private
