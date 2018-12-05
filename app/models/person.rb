@@ -16,11 +16,11 @@ class Person < ApplicationRecord
     end
   end
 
-  def advanced_on_docket_based_on_age
-    date_of_birth && date_of_birth <= 75.years.ago
-  end
-
   private
+
+  def advanced_on_docket_based_on_age
+    date_of_birth && date_of_birth < 75.years.ago
+  end
 
   def advanced_on_docket_motion_granted(appeal_receipt_date)
     advance_on_docket_motions.any? do |advance_on_docket_motion|

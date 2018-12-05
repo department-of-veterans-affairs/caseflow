@@ -22,7 +22,7 @@ class Appeal < DecisionReview
   }
   scope :aod_due_to_age, lambda {
     joins(claimants: :person)
-      .where("people.date_of_birth < ?", 75.years.ago)
+      .where("people.date_of_birth <= ?", 75.years.ago)
   }
 
   scope :not_aod, lambda {
