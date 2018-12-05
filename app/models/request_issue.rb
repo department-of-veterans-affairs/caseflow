@@ -295,10 +295,7 @@ class RequestIssue < ApplicationRecord
     return unless vacols_id
     return unless review_request.serialized_legacy_appeals.any?
 
-    legacy_appeal = review_request.serialized_legacy_appeals.find { |appeal| appeal[:vacols_id] == vacols_id }
-
-    # TODO: check eligible on issue, not parent appeal
-    if !legacy_appeal[:eligible_for_soc_opt_in]
+    if !vacols_issue.eligible_for_opt_in?
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
   end
