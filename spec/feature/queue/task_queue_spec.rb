@@ -98,6 +98,24 @@ RSpec.feature "Task queue" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_tasks.length)
     end
+
+    it "does not show queue switcher dropdown" do
+      expect(page).to_not have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+    end
+
+    context "attorney user in an organization with assigned tasks" do
+      let(:organization) { FactoryBot.create(:organization) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(attorney_user, organization)
+        attorney_user.reload
+        visit "/queue"
+      end
+
+      it "shows queue switcher dropdown" do
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+      end
+    end
   end
 
   context "VSO employee" do
