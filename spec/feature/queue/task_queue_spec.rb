@@ -282,4 +282,68 @@ RSpec.feature "Task queue" do
       expect(page).to_not have_content(judgeteam.name)
     end
   end
+
+  describe "JudgeTask" do
+    let!(:judge_user) { FactoryBot.create(:user) }
+    let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+
+    let!(:root_task) { FactoryBot.create(:root_task) }
+    let!(:appeal) { root_task.appeal }
+
+    before do
+      User.authenticate!(user: judge_user)
+      visit("/queue/appeals/#{appeal.external_id}")
+    end
+
+    context "when it was created from a QualityReviewTask" do
+      let!(:qr_team) { QualityReview.singleton }
+      let!(:qr_user) { FactoryBot.create(:user) }
+      let!(:qr_relationship) { OrganizationsUser.add_user_to_organization(qr_user, qr_team) }
+      let!(:qr_org_task) { QualityReviewTask.create_from_root_task(root_task) }
+      let!(:qr_task_params) do
+        [{
+          appeal: appeal,
+          parent_id: qr_org_task.id,
+          assigned_to_id: qr_user.id,
+          assigned_to_type: qr_user.class.name,
+          assigned_by: qr_user
+        }]
+      end
+      let!(:qr_person_task) { QualityReviewTask.create_many_from_params(qr_task_params, qr_user).first }
+
+      let!(:judge_task_params) do
+        [{
+          appeal: appeal,
+          parent_id: qr_person_task.id,
+          assigned_to_id: judge_user.id,
+          assigned_to_type: judge_user.class.name,
+          assigned_by: qr_user
+        }]
+      end
+      let!(:judge_task) { JudgeAssignTask.create_many_from_params(judge_task_params, qr_user).first }
+
+      it "should display an option to mark task complete" do
+        expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
+
+        find(".Select-control", text: "Select an action…").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+        find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
+
+        expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
+        expect(judge_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
+      end
+    end
+
+    context "when it was created through case distribution" do
+      before do
+        FactoryBot.create(:ama_judge_task, appeal: appeal, assigned_to: judge_user)
+      end
+
+      it "should not display an option to mark task complete" do
+        find(".Select-control", text: "Select an action…").click
+        expect(page).to_not have_content(Constants.TASK_ACTIONS.MARK_COMPLETE.label)
+      end
+    end
+  end
 end
