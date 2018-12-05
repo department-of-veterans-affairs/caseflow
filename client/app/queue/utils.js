@@ -251,6 +251,7 @@ export const prepareAppealForStore =
     const higherLevelReviews = appeals.filter((appeal) => appeal.attributes.type === 'HigherLevelReview').reduce((accumulator, higherLevelReview) => {
       accumulator[higherLevelReview.attributes.external_id] = {
         id: higherLevelReview.id,
+        type: higherLevelReview.attributes.type,
         issues: prepareAppealIssuesForStore(higherLevelReview),
         externalId: higherLevelReview.attributes.external_id,
         issueCount: higherLevelReview.attributes.issues.length,
