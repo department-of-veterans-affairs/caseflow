@@ -104,10 +104,12 @@ module IntakeHelpers
 
     # ankylosis of hip, limitation of thigh motion (extension)
     allow(AppealRepository).to receive(:issues).with("vacols1")
-      .and_return([
-                    Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250]),
-                    Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251])
-                  ])
+      .and_return(
+        [
+          Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250], disposition: nil),
+          Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251], disposition: nil)
+        ]
+      )
   end
 
   def setup_active_ineligible_legacy_appeal(veteran_file_number)
@@ -138,10 +140,12 @@ module IntakeHelpers
 
     # impairment of hip, impairment of femur
     allow(AppealRepository).to receive(:issues).with("vacols3")
-      .and_return([
-                    Generators::Issue.build(id: "vacols3", vacols_sequence_id: 1, codes: %w[02 15 03 5254]),
-                    Generators::Issue.build(id: "vacols3", vacols_sequence_id: 2, codes: %w[02 15 03 5255])
-                  ])
+      .and_return(
+        [
+          Generators::Issue.build(id: "vacols3", vacols_sequence_id: 1, codes: %w[02 15 03 5254], disposition: nil),
+          Generators::Issue.build(id: "vacols3", vacols_sequence_id: 2, codes: %w[02 15 03 5255], disposition: nil)
+        ]
+      )
   end
 
   def setup_inactive_ineligible_legacy_appeal(veteran_file_number)
