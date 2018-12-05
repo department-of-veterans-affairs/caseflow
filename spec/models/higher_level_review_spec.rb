@@ -229,7 +229,7 @@ describe HigherLevelReview do
         )
       end
 
-      it "creates a supplemental claim and request issues", focus: true do
+      it "creates a supplemental claim and request issues" do
         subject
         supplemental_claim = SupplementalClaim.find_by(
           is_dta_error: true,
