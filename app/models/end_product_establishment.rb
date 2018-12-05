@@ -249,13 +249,14 @@ class EndProductEstablishment < ApplicationRecord
 
   def on_decision_issue_sync_processed
     if decision_issues_sync_complete?
-      decision_review.on_decision_issues_sync_processed(self)
+      source.on_decision_issues_sync_processed(self)
+    end
   end
 
   private
 
   def decision_issues_sync_complete?
-    request_issues.all(&:processed?)
+    request_issues.all?(&:processed?)
   end
 
   def potential_decision_ratings

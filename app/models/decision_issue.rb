@@ -21,7 +21,8 @@ class DecisionIssue < ApplicationRecord
   end
 
   def issue_category
-    # todo: figure out how to calculate this
+    # TODO: figure out how to calculate this
+    return unless request_issues.any?
     request_issues.first.issue_category
   end
 

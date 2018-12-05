@@ -53,8 +53,8 @@ class HigherLevelReview < ClaimReview
     rating ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
   end
 
-  def on_decision_issues_sync_processed(end_product_establishment)
-    super { create_dta_supplemental_claim }
+  def on_decision_issues_sync_processed(_end_product_establishment)
+    create_dta_supplemental_claim
   end
 
   private
@@ -103,7 +103,8 @@ class HigherLevelReview < ClaimReview
         rating_issue_profile_date: dta_decision_issue.profile_date,
         description: dta_decision_issue.description,
         issue_category: dta_decision_issue.issue_category,
-        decision_date: dta_decision_issue.profile_date
+        benefit_type: dta_decision_issue.benefit_type,
+        decision_date: dta_decision_issue.approx_decision_date
       )
     end
   end

@@ -629,4 +629,65 @@ describe EndProductEstablishment do
       end
     end
   end
+
+  context "#on_decision_issue_sync_processed" do
+    subject { end_product_establishment.on_decision_issue_sync_processed }
+    let(:processed_at) { Time.zone.now }
+    let!(:request_issues) do
+      [
+        create(:request_issue,
+               review_request: source,
+               decision_sync_processed_at: Time.zone.now),
+        create(:request_issue,
+               review_request: source,
+               decision_sync_processed_at: processed_at)
+      ]
+    end
+
+    context "when decision issues are all synced" do
+      context "when source is a higher level review" do
+        let!(:claimant) do
+          Claimant.create!(
+            review_request: source,
+            participant_id: veteran.participant_id,
+            payee_code: "10"
+          )
+        end
+
+        let!(:decision_issue) do
+          create(:decision_issue,
+                 decision_review: source,
+                 disposition: HigherLevelReview::DTA_ERROR_PMR,
+                 rating_issue_reference_id: "rating1")
+        end
+
+        it "creats a supplemental claim if dta errors exist" do
+          subject
+
+          expect(SupplementalClaim.find_by(
+                   is_dta_error: true,
+                   veteran_file_number: source.veteran_file_number
+          )).to_not be_nil
+        end
+      end
+
+      context "when source is a supplemental claim" do
+        let(:source) { SupplementalClaim.new(veteran_file_number: veteran_file_number) }
+
+        it "does nothing" do
+          subject
+          expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
+        end
+      end
+    end
+
+    context "when decision issues are not all synced" do
+      let(:processed_at) { nil }
+
+      it "does nothing" do
+        subject
+        expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
+      end
+    end
+  end
 end
