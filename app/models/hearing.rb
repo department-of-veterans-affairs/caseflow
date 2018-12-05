@@ -88,9 +88,6 @@ class Hearing < ApplicationRecord
     regional_office_name
   end
 
-  def docket_name
-    "legacy"
-  end
 
   # rubocop:disable Metrics/MethodLength
   def vacols_attributes
@@ -137,6 +134,7 @@ class Hearing < ApplicationRecord
     :number_of_documents_after_certification, \
     :veteran,  \
     :sanitized_vbms_id, \
+    :docket_name,
     to: :appeal, allow_nil: true
 
   delegate :vacols_id, to: :appeal, prefix: true
