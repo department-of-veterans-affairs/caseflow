@@ -60,6 +60,12 @@ const displayInline = css({
   display: 'inline'
 });
 
+const editButton = css({
+  marginLeft: '35px',
+  position: 'inherit',
+  fontSize: '14px'
+});
+
 class CaseTitle extends React.PureComponent {
   render = () => {
     const {
@@ -84,8 +90,14 @@ class CaseTitle extends React.PureComponent {
           <HearingBadge hearing={appeal.hearings[0]} {...displayInline} />
         </span>
 
-        <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle}>
+        <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle} style={{ paddingLeft: '5px' }}>
           <AodBadge appeal={appeal} className={displayInline} />
+          {this.props.canEditAod && <span {...editButton}>
+            <Link
+              to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
+              Edit
+            </Link>
+          </span>}
         </span>
       </span>
 

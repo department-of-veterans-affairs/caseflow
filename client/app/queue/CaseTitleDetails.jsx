@@ -104,7 +104,7 @@ export class CaseTitleDetails extends React.PureComponent {
       { !taskAssignedToVso && primaryTask && primaryTask.documentId &&
         <React.Fragment>
           <h4>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
-          <div><CopyTextButton text={primaryTask.documentId} /></div>
+          <div><CopyTextButton text={primaryTask.documentId}/></div>
         </React.Fragment> }
     </CaseTitleScaffolding>;
   };
