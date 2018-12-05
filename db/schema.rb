@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181203174849) do
+ActiveRecord::Schema.define(version: 20181203231527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -185,7 +185,6 @@ ActiveRecord::Schema.define(version: 20181203174849) do
 
   create_table "decision_issues", force: :cascade do |t|
     t.string "disposition"
-    t.string "disposition_date"
     t.string "description"
     t.datetime "promulgation_date"
     t.datetime "profile_date"
@@ -195,6 +194,7 @@ ActiveRecord::Schema.define(version: 20181203174849) do
     t.string "decision_review_type"
     t.integer "decision_review_id"
     t.string "benefit_type"
+    t.date "end_product_last_action_date"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
   end
 
@@ -681,17 +681,19 @@ ActiveRecord::Schema.define(version: 20181203174849) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
+    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
-    t.string "ineligible_reason"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.datetime "created_at"
     t.string "benefit_type"
+    t.integer "contested_decision_issue_id"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
+    t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
