@@ -52,8 +52,6 @@ class AppealsController < ApplicationController
   def show
     no_cache
 
-    RootTask.find_or_create_by!(appeal: appeal)
-
     respond_to do |format|
       format.html { render template: "queue/index" }
 
