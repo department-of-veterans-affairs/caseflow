@@ -245,7 +245,7 @@ RSpec.feature "Case details" do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       # TODO: Why isn't the document count coming through here?
       # click_on "View #{appeal.documents.count} documents"
-      click_on "View Veteran's documents"
+      click_on "View"
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("Caseflow> Reader")
