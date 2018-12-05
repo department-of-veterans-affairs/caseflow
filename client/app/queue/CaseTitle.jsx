@@ -6,7 +6,6 @@ import { bindActionCreators } from 'redux';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import ReaderLink from './ReaderLink';
 import CopyTextButton from '../components/CopyTextButton';
@@ -23,9 +22,11 @@ const containingDivStyling = css({
   border: `1px solid ${COLORS.GREY_LIGHT}`,
   display: 'grid',
   margin: 'auto',
+  margin: 'auto',
   width: '110%',
+  width: '100%',
   // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
-  margin: '-2rem -3rem 0 -3rem',
+  // margin: '-2rem -3rem 0 -3rem',
   padding: '0 0 1.5rem 4rem',
   '& > *': {
     display: 'inline-block',
@@ -57,7 +58,7 @@ const listItemStyling = css({
   display: 'inline',
   padding: '0 5px 0 6px',
   fontSize: '14px',
-  ':first-child': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
+  ':first-child': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` }
 });
 
 const spanStyle = css({
@@ -98,7 +99,7 @@ const redType = css({
 });
 
 const displayNone = css({
-  display: 'none',
+  display: 'none'
 });
 
 const displayInline = css({
@@ -115,11 +116,11 @@ const thStyle = css({
   border: 'none',
   backgroundColor: '#F8F8F8',
   margin: '5px 0 0 20px',
-  paddingLeft: '0',
+  paddingLeft: '0'
 });
 
 const descriptionStyle = css({
-  marginLeft: '10px',
+  marginLeft: '10px'
 });
 
 const caseInfo = css({
@@ -138,12 +139,8 @@ class CaseTitle extends React.PureComponent {
     const {
       appeal,
       primaryTask,
-      appealId,
       redirectUrl,
-      taskType,
-      analyticsSource,
-      veteranCaseListIsVisible,
-      canEditAod
+      veteranCaseListIsVisible
     } = this.props;
 
     return <CaseTitleScaffolding {...caseTitleStyle}>
@@ -152,11 +149,12 @@ class CaseTitle extends React.PureComponent {
       </React.Fragment>
 
       <span>
-        <span {...headerSupportStyling}>{' Veteran ID '}</span>
+        <span {...headerSupportStyling}> Veteran ID </span>
         <CopyTextButton text={appeal.veteranFileNumber} />
       </span>
 
-      <span {...descriptionStyle} style={{color: 'red', marginLeft: '0px'}}>
+      <span {...descriptionStyle} style={{ color: 'red',
+        marginLeft: '0px' }}>
         {''}
       </span>
 
@@ -167,16 +165,17 @@ class CaseTitle extends React.PureComponent {
       </React.Fragment>
 
       <span {...badgeStyle}>
-        <HearingBadge hearing={appeal.hearings[0]} className={displayInline} className={appeal.hearings.length != 0 ? null : displayNone}/>
+        <HearingBadge hearing={appeal.hearings[0]} {...displayInline}
+          className={appeal.hearings.length > 0 ? null : displayNone} />
       </span>
 
       <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle}>
-        <AodBadge appeal={appeal} className={displayInline}/>
+        <AodBadge appeal={appeal} className={displayInline} />
       </span>
 
-      <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle} style={{paddingLeft: '5px'}}>
-        <SpecialtyCaseBadge appeal={appeal.hearings[0]} className={displayInline}/>
-        {<span {...editButton}>
+      <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle} style={{ paddingLeft: '5px' }}>
+        <SpecialtyCaseBadge appeal={appeal.hearings[0]} className={displayInline} />
+        {this.props.canEditAod && <span {...editButton}>
           <Link
             to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
             Edit
@@ -184,23 +183,28 @@ class CaseTitle extends React.PureComponent {
         </span>}
       </span>
 
-      <br style={{display: 'block',lineHeight:'210%', content: "", height:'5px', visibility: 'hidden', marginBottom: '1px'}}/>
+      <br style={{ display: 'block',
+        lineHeight: '210%',
+        content: '',
+        height: '5px',
+        visibility: 'hidden',
+        marginBottom: '1px' }} />
 
       <span {...caseInfo}>
         <th {...thStyle}>
           <React.Fragment>
-            <span {...titleStyle} className={rightMargin}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL.toUpperCase()}</span><br/>
+            <span {...titleStyle} className={rightMargin}>
+              {COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL.toUpperCase()}</span><br />
             <span {...spanStyle} {...positionAbsolute}>
               <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
             </span>
           </React.Fragment>
         </th>
 
-
         <th {...thStyle}>
           <React.Fragment>
-            <span {...titleStyle}></span><br/>
-            <span {...descriptionStyle} style={{color: COLORS.GREY_LIGHT}}>
+            <span {...titleStyle}></span><br />
+            <span {...descriptionStyle} style={{ color: COLORS.GREY_LIGHT }}>
               {'|'}
             </span>
           </React.Fragment>
@@ -208,17 +212,17 @@ class CaseTitle extends React.PureComponent {
 
         <th {...thStyle}>
           <React.Fragment>
-            <span {...titleStyle}>{'VETERAN DOCUMENTS'}</span><br/>
-            <span {...descriptionStyle} style={{color: 'red'}}>
-              <ReaderLink appealId={appeal.id} appeal={appeal} redirectUrl={window.location.pathname} longMessage />
+            <span {...titleStyle}>VETERAN DOCUMENTS</span><br />
+            <span {...descriptionStyle} style={{ color: 'red' }}>
+              <ReaderLink appealId={appeal.id} appeal={appeal} redirectUrl={redirectUrl} longMessage />
             </span>
           </React.Fragment>
         </th>
 
         <th {...thStyle}>
           <React.Fragment>
-            <span {...titleStyle}></span><br/>
-            <span {...descriptionStyle} style={{color: COLORS.GREY_LIGHT}}>
+            <span {...titleStyle}></span><br />
+            <span {...descriptionStyle} style={{ color: COLORS.GREY_LIGHT }}>
               {'|'}
             </span>
           </React.Fragment>
@@ -226,25 +230,25 @@ class CaseTitle extends React.PureComponent {
 
         <th {...thStyle}>
           <React.Fragment>
-              <span {...titleStyle}>{'TYPE'}</span><br/>
-              <span  {...descriptionStyle} className={appeal.caseType == 'CAVC' ? redType : null}>{appeal.caseType}</span>
+            <span {...titleStyle}>TYPE</span><br />
+            <span {...descriptionStyle} className={appeal.caseType === 'CAVC' ? redType : null}>{appeal.caseType}</span>
           </React.Fragment>
         </th>
 
         <th className={primaryTask && primaryTask.documentId ? null : displayNone} {...thStyle}>
           <React.Fragment>
-            <span {...titleStyle}></span><br/>
-            <span {...descriptionStyle} style={{color: COLORS.GREY_LIGHT}}>
+            <span {...titleStyle}></span><br />
+            <span {...descriptionStyle} style={{ color: COLORS.GREY_LIGHT }}>
               {'|'}
             </span>
           </React.Fragment>
         </th>
 
-        {<th className={primaryTask && primaryTask.documentId ? null : displayNone}  {...thStyle}>
+        {<th className={primaryTask && primaryTask.documentId ? null : displayNone} {...thStyle}>
           <React.Fragment>
             <span {...divStyle}>
-             <span {...titleStyle}>{'DECISION DOCUMENT ID'}</span><br/>
-             <CopyTextButton text={primaryTask ? primaryTask.documentId : null} />
+              <span {...titleStyle}>DECISION DOCUMENT ID</span><br />
+              <CopyTextButton text={primaryTask ? primaryTask.documentId : null} />
             </span>
           </React.Fragment>
         </th>}
@@ -283,6 +287,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(CaseTitle);
 
 const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
   <ul {...ulStyling}>
-    {props.children.map((child, i) => child && <li key={i} {...listItemStyling} className={i==8? newRow : null}>{child}</li>)}
+    {props.children.map((child, i) => child && <li key={i} {...listItemStyling}
+      className={i === 8 ? newRow : null}>{child}</li>)}
   </ul>
 </div>;

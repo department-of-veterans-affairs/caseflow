@@ -28,9 +28,6 @@ class NewFile extends React.Component<Props> {
   }
 
   render = () => {
-    /*console.log('--INSIDE NewFile--');
-    console.log(this.props.docs);*/
-
     if (this.props.docs && this.props.docs.length > 0) {
       return <Tooltip id="newfile-tip" text={COPY.NEW_FILE_ICON_TOOLTIP} offset={{ top: '-10px' }}>
         <NewFileIcon />
@@ -43,7 +40,8 @@ class NewFile extends React.Component<Props> {
                 <polygon id="Path-Copy" fill="#844E9F" points="2.25 5 2.25 6 6.75 6 6.75 5"></polygon>
                 <polygon id="Path-Copy-2" fill="#844E9F" points="2.25 7 2.25 8 6.75 8 6.75 7"></polygon>
               </g>
-              <text id="NEW" fontFamily="SourceSansPro-Regular, Source Sans Pro" fontSize="13" fontWeight="normal" letterSpacing="-0.75" fill="#844E9F">
+              <text id="NEW" fontFamily="SourceSansPro-Regular, Source Sans Pro" fontSize="13" fontWeight="normal"
+                letterSpacing="-0.75" fill="#844E9F">
                 <tspan x="10" y="13">N</tspan>
                 <tspan x="17.661" y="13">E</tspan>
                 <tspan x="24.512" y="13">W</tspan>
@@ -52,7 +50,6 @@ class NewFile extends React.Component<Props> {
           </g>
         </svg>
       </Tooltip>;
-
 
     }
 
