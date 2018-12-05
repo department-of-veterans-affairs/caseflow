@@ -25,6 +25,13 @@ class Appeal < DecisionReview
       .where("people.date_of_birth < ?", 75.years.ago)
   }
 
+  scope :not_aod, -> {
+    joins(claimants: :person)
+      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
+      .where("people.date_of_birth >= ?", 75.years.ago)
+      .where("advance_on_docket_motions.id IS NULL")
+  }
+
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
   def all_aod
@@ -34,6 +41,11 @@ class Appeal < DecisionReview
   def all_priority
     # TODO: add cavc appeals
     all_aod
+  end
+
+  def all_nonpriority
+    # TODO: exclude cavc appeals
+    not_aod
   end
 
   def document_fetcher
