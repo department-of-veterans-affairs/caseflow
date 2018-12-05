@@ -17,7 +17,7 @@ class RegionalOfficesController < ApplicationController
     render json: {
       hearing_days: hearing_days.map do |day|
         {
-          hearing_pkseq: day[:id],
+          hearing_id: day[:id],
           hearing_date: day[:hearing_date],
           hearing_type: day[:hearing_type],
           room_info: day[:room_info],

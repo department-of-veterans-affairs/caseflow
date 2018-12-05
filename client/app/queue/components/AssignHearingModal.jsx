@@ -148,7 +148,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
             description: 'Update Task',
             values: {
               regional_office_value: selectedRegionalOffice.value,
-              hearing_pkseq: selectedHearingDay.value.hearingPkseq,
+              hearing_pkseq: selectedHearingDay.value.hearingId,
               hearing_type: this.getHearingType(),
               hearing_date: this.formatHearingDate()
             }
@@ -160,9 +160,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     return this.props.requestPatch(`/tasks/${scheduleHearingTask.taskId}`, payload, this.getSuccessMsg()).
       then((resp) => {
         const response = JSON.parse(resp.text);
-
-        // Review with team to see why this is failing.
-        this.props.onReceiveAmaTasks(response.tasks.data);
+        
         history.goBack();
       }, () => {
         this.props.showErrorMessage({
