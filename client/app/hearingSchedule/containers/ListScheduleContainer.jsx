@@ -26,7 +26,6 @@ import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
-import Alert from '../../components/Alert';
 import HearingDayAddModal from '../components/HearingDayAddModal';
 import _ from 'lodash';
 
@@ -160,12 +159,20 @@ export class ListScheduleContainer extends React.Component {
       return 'An Error Occurred';
     }
 
+    if (this.props.successfulHearingDayDelete) {
+      return `You have successfully removed Hearing Day ${formatDateStr(this.props.successfulHearingDayDelete)}`;
+    }
+
     return `You have successfully added Hearing Day ${formatDateStr(this.props.selectedHearingDay)} `;
   };
 
   getAlertMessage = () => {
     if (this.state.serverError) {
       return 'You are unable to complete this action.';
+    }
+
+    if (this.props.successfulHearingDayDelete) {
+      return '';
     }
 
     return <p>To add Veterans to this date, click Schedule Veterans</p>;
@@ -187,7 +194,8 @@ export class ListScheduleContainer extends React.Component {
     return (
       <React.Fragment>
         <QueueCaseSearchBar />
-        {this.showAlert() && <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
+        {(this.showAlert() || this.props.successfulHearingDayDelete) &&
+        <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
           {this.getAlertMessage()}
         </Alert>}
         <AppSegment filledBackground>
@@ -241,7 +249,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setNotes,
   onReceiveJudges,
   onReceiveCoordinators,
-  onResetDeleteSuccessful,
+  onResetDeleteSuccessful
 }, dispatch);
 
 ListScheduleContainer.propTypes = {

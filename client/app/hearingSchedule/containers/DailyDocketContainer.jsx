@@ -123,10 +123,10 @@ export class DailyDocketContainer extends React.Component {
 
   deleteHearingDay = () => {
     ApiUtil.delete(`/hearings/hearing_day/${this.props.dailyDocket.id}`).
-    then(() => {
-      this.props.onSuccessfulHearingDayDelete(this.props.dailyDocket.hearingDate);
-      this.props.history.push('/schedule');
-    });
+      then(() => {
+        this.props.onSuccessfulHearingDayDelete(this.props.dailyDocket.hearingDate);
+        this.props.history.push('/schedule');
+      });
   };
 
   createHearingPromise = () => Promise.all([

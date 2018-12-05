@@ -6,7 +6,7 @@ class HearingDay < ApplicationRecord
   acts_as_paranoid
   belongs_to :judge, class_name: "User"
 
-  before_create :verify_room_availability
+  # before_create :verify_room_availability
 
   HEARING_TYPES = {
     video: "V",
