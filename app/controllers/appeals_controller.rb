@@ -51,10 +51,8 @@ class AppealsController < ApplicationController
 
   def show
     no_cache
-
     respond_to do |format|
       format.html { render template: "queue/index" }
-
       format.json do
         id = params[:appeal_id]
         MetricsService.record("Get appeal information for ID #{id}",
