@@ -46,6 +46,14 @@ const listItemStyling = css({
   '& > h4': { textTransform: 'uppercase' }
 });
 
+const spanStyle = css({
+  border: '2px',
+  borderStyle: 'solid',
+  borderColor: '#DCDCDC',
+  padding: '5px',
+  backgroundColor: 'white'
+});
+
 const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
   <ul {...listStyling}>
     {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
@@ -68,7 +76,9 @@ export class CaseTitleDetails extends React.PureComponent {
     return <CaseTitleScaffolding>
       <React.Fragment>
         <h4>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</h4>
-        <div><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</div>
+        <span {...spanStyle}>
+          <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
+        </span>
       </React.Fragment>
 
       { !taskAssignedToVso &&
