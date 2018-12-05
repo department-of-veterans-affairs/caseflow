@@ -23,6 +23,7 @@ const notesFieldStyling = css({
   fontSize: '10pt'
 });
 
+// May explore building API to get from back-end at future point.
 const roomOptions = [
   { label: '',
     value: '' },

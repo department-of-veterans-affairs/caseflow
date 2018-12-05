@@ -52,7 +52,7 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
-  describe "GET /users?role=Hearing" do
+  describe "GET /users?role=HearingCoordinator" do
     let!(:coordinators) { create_list(:staff, 3, :hearing_coordinator) }
 
     context "when role is passed" do

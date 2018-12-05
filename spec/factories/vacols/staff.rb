@@ -34,6 +34,9 @@ FactoryBot.define do
     trait :hearing_coordinator do
       stitle "HRG"
       sactive "A"
+      snamel "Smith#{n}"
+      snamef "John#{n}"
+      snamemi ""
     end
 
     trait :attorney_judge_role do
