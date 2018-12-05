@@ -138,6 +138,7 @@ class RequestIssue < ApplicationRecord
       ramp_claim_id: ramp_claim_id,
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id,
+      vacols_issue: vacols_issue.try(:intake_attributes),
       ineligible_reason: ineligible_reason,
       title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
@@ -180,6 +181,14 @@ class RequestIssue < ApplicationRecord
   end
 
   private
+
+  def vacols_issue
+    return unless vacols_id && vacols_sequence_id
+    @vacols_issue ||= begin
+      vacols_case_issue = VACOLS::CaseIssue.find_by(isskey: vacols_id, issseq: vacols_sequence_id)
+      Issue.load_from_vacols(vacols_case_issue.attributes) if vacols_case_issue
+    end
+  end
 
   def create_decision_issues
     if rating?

@@ -189,6 +189,7 @@ class Issue
     {
       vacols_id: id,
       vacols_sequence_id: vacols_sequence_id,
+      eligible_for_soc_opt_in: eligible_for_opt_in?,
       description: friendly_description,
       disposition: disposition,
       close_date: close_date,
@@ -231,7 +232,7 @@ class Issue
   end
 
   def disposition_date_after_legacy_appeal_soc?
-    return false unless disposition_date.present?
+    return false if disposition_date.blank?
     return false unless legacy_appeal
     return disposition_date > legacy_appeal.soc_date if legacy_appeal.soc_date
     legacy_appeal.ssoc_dates.any? { |ssoc_date| disposition_date > ssoc_date }

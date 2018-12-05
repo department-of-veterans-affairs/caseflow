@@ -382,7 +382,12 @@ describe Issue do
       create(:case_with_soc, :status_advance, case_issues: [vacols_case_issue], bfkey: vacols_id, bfdsoc: soc_date)
     end
     let(:vacols_case_issue) do
-      create(:case_issue, isskey: vacols_id, issdc: Issue.disposition_code_for_sym(disposition), issdcls: disposition_date)
+      create(
+        :case_issue,
+        isskey: vacols_id,
+        issdc: Issue.disposition_code_for_sym(disposition),
+        issdcls: disposition_date
+      )
     end
     let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
     let(:issue) { Issue.load_from_vacols(vacols_case_issue.attributes) }

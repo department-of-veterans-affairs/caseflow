@@ -92,7 +92,10 @@ export const formatRequestIssues = (requestIssues) => {
         ineligibleReason: issue.ineligible_reason,
         contentionText: issue.contention_text,
         untimelyExemption: issue.untimelyExemption,
-        untimelyExemptionNotes: issue.untimelyExemptionNotes
+        untimelyExemptionNotes: issue.untimelyExemptionNotes,
+        vacolsId: issue.vacols_id,
+        vacolsSequenceId: issue.vacols_sequence_id,
+        vacolsIssue: issue.vacols_issue
       };
     }
 
@@ -102,7 +105,10 @@ export const formatRequestIssues = (requestIssues) => {
         description: issue.description,
         contentionText: issue.contention_text,
         notes: issue.notes,
-        isUnidentified: issue.is_unidentified
+        isUnidentified: issue.is_unidentified,
+        vacolsId: issue.vacols_id,
+        vacolsSequenceId: issue.vacols_sequence_id,
+        vacolsIssue: issue.vacols_issue
       };
     }
 
@@ -120,7 +126,10 @@ export const formatRequestIssues = (requestIssues) => {
       contentionText: issue.contention_text,
       rampClaimId: issue.ramp_claim_id,
       untimelyExemption: issue.untimelyExemption,
-      untimelyExemptionNotes: issue.untimelyExemptionNotes
+      untimelyExemptionNotes: issue.untimelyExemptionNotes,
+      vacolsId: issue.vacols_id,
+      vacolsSequenceId: issue.vacols_sequence_id,
+      vacolsIssue: issue.vacols_issue
     };
   });
 };

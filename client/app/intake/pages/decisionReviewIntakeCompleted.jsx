@@ -104,6 +104,34 @@ class IneligibleIssuesList extends React.PureComponent {
     </Fragment>;
 }
 
+class VacolsOptInList extends React.PureComponent {
+
+  legacyIssue(issue) {
+    let { legacyAppeals } = this.props;
+
+    if (issue.vacolsIssue) {
+      return issue.vacolsIssue;
+    }
+
+    let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
+
+    return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
+  }
+
+  render = () =>
+    <Fragment>
+      <ul className="cf-success-checklist cf-left-padding">
+        <li>
+          <strong>{INELIGIBLE_REQUEST_ISSUES.vacols_optin_issue_closed}</strong>
+          {this.props.issues.map((ri, i) =>
+            <p key={`vacols-issue-${i}`} className="">
+              {this.legacyIssue(ri).description}
+            </p>)}
+        </li>
+      </ul>
+    </Fragment>;
+}
+
 class DecisionReviewIntakeCompleted extends React.PureComponent {
   render() {
     const {
@@ -115,9 +143,11 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     const completedReview = this.props.decisionReviews[selectedForm.key];
     const {
       requestIssues,
-      informalConference
+      informalConference,
+      legacyAppeals
     } = completedReview;
     const ineligibleRequestIssues = requestIssues.filter((ri) => ri.ineligibleReason);
+    const vacolsOptInIssues = requestIssues.filter((ri) => ri.vacolsId);
 
     switch (intakeStatus) {
     case INTAKE_STATES.NONE:
@@ -138,6 +168,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       checklist={getChecklistItems(formType, requestIssues, informalConference)}
       wrapInAppSegment={false}
     />
+    { vacolsOptInIssues.length > 0 && <VacolsOptInList issues={vacolsOptInIssues} legacyAppeals={legacyAppeals} /> }
     { ineligibleRequestIssues.length > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
     </div>
     ;

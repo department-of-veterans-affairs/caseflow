@@ -72,6 +72,10 @@ class AddedIssue extends React.PureComponent {
   legacyIssue() {
     let { issue, legacyAppeals } = this.props;
 
+    if (issue.vacolsIssue) {
+      return issue.vacolsIssue;
+    }
+
     let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
 
     return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
