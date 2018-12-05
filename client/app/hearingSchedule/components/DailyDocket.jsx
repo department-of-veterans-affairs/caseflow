@@ -15,7 +15,7 @@ import Modal from '../../components/Modal';
 import StatusMessage from '../../components/StatusMessage';
 import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
-import DocketTypeBadge from '../../queue/components/DocketTypeBadge';
+import DocketTypeBadge from '../../components/DocketTypeBadge';
 
 const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
