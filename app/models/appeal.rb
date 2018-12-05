@@ -16,7 +16,25 @@ class Appeal < DecisionReview
     validates_associated :claimants
   end
 
+  scope :aod_motions, -> {
+    joins(claimants: { person: :advance_on_docket_motions })
+      .where("advance_on_docket_motions.created_at > appeals.established_at")
+  }
+  scope :aod_due_to_age, -> {
+    joins(claimants: :person)
+      .where("people.date_of_birth < ?", 75.years.ago)
+  }
+
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
+
+  def all_aod
+    [aod_motions + aod_due_to_age].uniq(&:id)
+  end
+
+  def all_priority
+    # TODO: add cavc appeals
+    all_aod
+  end
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
