@@ -13,6 +13,7 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
+import DocketTypeBadge from '../../queue/components/DocketTypeBadge';
 
 const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
@@ -121,12 +122,16 @@ export default class DailyDocket extends React.Component {
 
   getAppellantInformation = (hearing) => {
     const appellantName = hearing.appellantMiFormatted || hearing.veteranMiFormatted;
+    const appellantDocketName = hearing.docketName;
+    const appellantDocketNumber = hearing.docketNumber;
 
-    return <div><b>{appellantName} (<Link
+    return <div><b>{appellantName}</b><br/>
+    <DocketTypeBadge name={appellantDocketName} number={appellantDocketNumber} />
+    <b><Link
       href={`/queue/appeals/${hearing.appealVacolsId}`}
       name={hearing.vbmsId} >
       {hearing.vbmsId}
-    </Link>)</b> <br />
+    </Link></b> <br />
     {hearing.appellantAddressLine1}<br />
     {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
     </div>;
