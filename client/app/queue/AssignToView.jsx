@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
 
 import COPY from '../../COPY.json';
 
@@ -49,8 +50,11 @@ type ViewState = {|
 |};
 
 const taskActionData = (props) => {
-  // TODO: Throw an error if two options have the same url.
-  // TASK_ACTIONS cannot share the same url or this function will break.
+  // Make sure each task action has a unique URL so that we can determine which action we are selecting.
+  if (props.task.availableActions.length > _.uniq(props.task.availableActions.map((opt) => opt.value))) {
+    throw new Error('Task actions cannot share the same URL');
+  }
+
   const relevantAction = props.task.availableActions.
     find((action) => props.history.location.pathname.endsWith(action.value));
 
