@@ -9,6 +9,8 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import { COLORS } from '../constants/AppConstants';
 import CopyTextButton from '../components/CopyTextButton';
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
+import HearingBadge from './components/HearingBadge';
+import AodBadge from './components/AodBadge';
 
 const containingDivStyling = css({
 
@@ -36,12 +38,26 @@ const listStyling = css({
 const listItemStyling = css({
   display: 'inline',
   padding: '0.5rem 1.5rem 0.5rem 0',
-  ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
+  ':nth-child(1)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
   ':not(:first-child)': { paddingLeft: '1.5rem' }
 });
 
 const viewCasesStyling = css({
   cursor: 'pointer'
+});
+
+const badgeStyle = css({
+  marginRight: '26px',
+  marginLeft: '-20px',
+  fontSize: '14px'
+});
+
+ const displayNone = css({
+  display: 'none'
+});
+
+const displayInline = css({
+  display: 'inline'
 });
 
 class CaseTitle extends React.PureComponent {
@@ -62,6 +78,17 @@ class CaseTitle extends React.PureComponent {
           { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
         </Link>
       </span>
+
+      <span>
+        <span className={appeal.hearings.length > 0 ? null : displayNone} {...badgeStyle}>
+          <HearingBadge hearing={appeal.hearings[0]} {...displayInline} />
+        </span>
+
+        <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle}>
+          <AodBadge appeal={appeal} className={displayInline} />
+        </span>
+      </span>
+
     </CaseTitleScaffolding>;
   }
 }

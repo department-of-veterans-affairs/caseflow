@@ -26,7 +26,7 @@ export default class ReaderLink extends React.PureComponent {
     } = this.props;
 
     return longMessage ?
-      <React.Fragment>View Veteran's documents <NewFile externalAppealId={appeal.externalId} /></React.Fragment> :
+      <React.Fragment>View{ this.getAppealDocumentCount() } <NewFile externalAppealId={appeal.externalId} /></React.Fragment> :
       <React.Fragment>View docs <NewFile externalAppealId={appeal.externalId} /></React.Fragment>;
   };
 
@@ -67,7 +67,6 @@ export default class ReaderLink extends React.PureComponent {
       <Link {...linkProps} onClick={this.readerLinkAnalytics}>
         {this.getLinkText()}
       </Link>
-      {this.getAppealDocumentCount()}
     </React.Fragment>;
   };
 }

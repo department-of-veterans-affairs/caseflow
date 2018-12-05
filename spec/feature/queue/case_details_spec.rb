@@ -474,6 +474,20 @@ RSpec.feature "Case details" do
       end
     end
 
+    describe "Universal Case Title" do
+      context "when appeal has hearings" do
+        let!(:appeal) { FactoryBot.create(:appeal) }
+        let(:user) { FactoryBot.create(:user) }
+         it "should display hearings badge" do
+          allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user).and_return(true)
+          User.authenticate!(user: user)
+          visit "/queue/appeals/#{appeal.uuid}"
+          byebug
+          expect(page).to have_content(" Issue 2 DESCRIPTION ")
+        end
+      end
+    end
+
     describe "CaseTimeline shows judge & attorney tasks" do
       let!(:user) { FactoryBot.create(:user) }
       let!(:appeal) { FactoryBot.create(:appeal) }

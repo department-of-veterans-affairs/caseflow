@@ -9,6 +9,8 @@ export const CERTIFICATION_DATA_OVERALL_TIMEOUT = 180000;
 export const COLORS = {
   ...COMMON_COLORS,
   GREEN: '#2e8540',
+  RED: '#e31c3d',
+  PURPLE: '#844e9f',
   GREY: '#5b616b',
   GOLD_LIGHTEST: '#FFF1D2',
   GOLD_LIGHTER: '#FAD980',

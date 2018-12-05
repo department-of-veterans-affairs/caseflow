@@ -71,12 +71,6 @@ export class CaseTitleDetails extends React.PureComponent {
         <div><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</div>
       </React.Fragment>
 
-      { !taskAssignedToVso && primaryTask && primaryTask.documentId &&
-        <React.Fragment>
-          <h4>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
-          <div><CopyTextButton text={primaryTask.documentId} /></div>
-        </React.Fragment> }
-
       { !taskAssignedToVso &&
         <React.Fragment>
           <h4>Veteran Documents</h4>
@@ -106,6 +100,12 @@ export class CaseTitleDetails extends React.PureComponent {
           </span>}
         </div>
       </React.Fragment>
+
+      { !taskAssignedToVso && primaryTask && primaryTask.documentId &&
+        <React.Fragment>
+          <h4>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
+          <div><CopyTextButton text={primaryTask.documentId} /></div>
+        </React.Fragment> }
     </CaseTitleScaffolding>;
   };
 }

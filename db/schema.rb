@@ -683,12 +683,12 @@ ActiveRecord::Schema.define(version: 20181203231527) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
-    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
+    t.string "ineligible_reason"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.datetime "created_at"
@@ -758,6 +758,14 @@ ActiveRecord::Schema.define(version: 20181203231527) do
     t.boolean "us_territory_claim_american_samoa_guam_northern_mariana_isla", default: false
     t.boolean "us_territory_claim_puerto_rico_and_virgin_islands", default: false
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
+  end
+
+  create_table "staff_field_for_organizations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name", null: false
+    t.string "values", default: [], null: false, array: true
+    t.boolean "exclude", default: false
+    t.index ["organization_id"], name: "index_staff_field_for_organizations_on_organization_id"
   end
 
   create_table "supplemental_claims", force: :cascade do |t|
