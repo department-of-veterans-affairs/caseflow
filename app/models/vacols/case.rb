@@ -288,6 +288,18 @@ class VACOLS::Case < VACOLS::Record
     result.first["locstto"]
   end
 
+  def status_advanced_or_remanded_or_completed?
+    %w[ADV REM HIS].include?(bfmpro)
+  end
+
+  def remanded?
+    bfmpro == "REM"
+  end
+
+  def closed?
+    bfddec.present?
+  end
+
   ##
   # This method takes an array of vacols ids and fetches their aod status.
   #

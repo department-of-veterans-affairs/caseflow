@@ -98,6 +98,24 @@ RSpec.feature "Task queue" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_tasks.length)
     end
+
+    it "does not show queue switcher dropdown" do
+      expect(page).to_not have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+    end
+
+    context "attorney user in an organization with assigned tasks" do
+      let(:organization) { FactoryBot.create(:organization) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(attorney_user, organization)
+        attorney_user.reload
+        visit "/queue"
+      end
+
+      it "shows queue switcher dropdown" do
+        expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+      end
+    end
   end
 
   context "VSO employee" do
@@ -219,6 +237,115 @@ RSpec.feature "Task queue" do
 
     it "shows queue switcher dropdown" do
       expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+    end
+  end
+
+  describe "VLJ support staff task action" do
+    let!(:attorney) { FactoryBot.create(:user) }
+    let!(:staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+    let!(:vlj_support_staffer) { FactoryBot.create(:user) }
+    let!(:judgeteam) { JudgeTeam.create_for_judge(attorney) }
+
+    before do
+      OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton)
+      OrganizationsUser.add_user_to_organization(vlj_support_staffer, judgeteam)
+      User.authenticate!(user: vlj_support_staffer)
+    end
+
+    context "when a ColocatedTask has been assigned through the Colocated organization to an individual" do
+      before do
+        ColocatedTask.create_many_from_params([{
+                                                assigned_by: attorney,
+                                                action: :aoj,
+                                                appeal: appeal
+                                              }], attorney)
+      end
+
+      it "should be actionable" do
+        visit("/queue/appeals/#{appeal.external_id}")
+
+        find(".Select-control", text: "Select an action…").click
+        find("div", class: "Select-option", text: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY).click
+        find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
+
+        expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
+      end
+    end
+
+    it "shows queue switcher dropdown" do
+      visit("/queue/")
+      expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
+
+      find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+      expect(page).to have_content(Colocated.singleton.name)
+      expect(page).to_not have_content(judgeteam.name)
+    end
+  end
+
+  describe "JudgeTask" do
+    let!(:judge_user) { FactoryBot.create(:user) }
+    let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+
+    let!(:root_task) { FactoryBot.create(:root_task) }
+    let!(:appeal) { root_task.appeal }
+
+    context "when it was created from a QualityReviewTask" do
+      let!(:qr_team) { QualityReview.singleton }
+      let!(:qr_user) { FactoryBot.create(:user) }
+      let!(:qr_relationship) { OrganizationsUser.add_user_to_organization(qr_user, qr_team) }
+      let!(:qr_org_task) { QualityReviewTask.create_from_root_task(root_task) }
+      let!(:qr_task_params) do
+        [{
+          appeal: appeal,
+          parent_id: qr_org_task.id,
+          assigned_to_id: qr_user.id,
+          assigned_to_type: qr_user.class.name,
+          assigned_by: qr_user
+        }]
+      end
+      let!(:qr_person_task) { QualityReviewTask.create_many_from_params(qr_task_params, qr_user).first }
+
+      let!(:judge_task_params) do
+        [{
+          appeal: appeal,
+          parent_id: qr_person_task.id,
+          assigned_to_id: judge_user.id,
+          assigned_to_type: judge_user.class.name,
+          assigned_by: qr_user
+        }]
+      end
+      let!(:judge_task) { JudgeAssignTask.create_many_from_params(judge_task_params, qr_user).first }
+
+      before do
+        User.authenticate!(user: judge_user)
+        visit("/queue/appeals/#{appeal.external_id}")
+      end
+
+      it "should display an option to mark task complete" do
+        expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
+
+        find(".Select-control", text: "Select an action…").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+        find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
+
+        expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
+        expect(judge_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
+      end
+    end
+
+    context "when it was created through case distribution" do
+      before do
+        FactoryBot.create(:ama_judge_task, appeal: appeal, assigned_to: judge_user)
+        User.authenticate!(user: judge_user)
+        visit("/queue/appeals/#{appeal.external_id}")
+      end
+
+      it "should not display an option to mark task complete" do
+        find(".Select-control", text: "Select an action…").click
+        expect(page).to_not have_content(Constants.TASK_ACTIONS.MARK_COMPLETE.label)
+      end
     end
   end
 end

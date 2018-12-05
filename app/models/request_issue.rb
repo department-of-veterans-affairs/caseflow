@@ -16,8 +16,17 @@ class RequestIssue < ApplicationRecord
     duplicate_of_issue_in_active_review: "duplicate_of_issue_in_active_review",
     untimely: "untimely",
     previous_higher_level_review: "previous_higher_level_review",
-    before_ama: "before_ama"
+    before_ama: "before_ama",
+    legacy_issue_not_withdrawn: "legacy_issue_not_withdrawn",
+    legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
   }
+
+  class ErrorCreatingDecisionIssue < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id} cannot create decision issue " \
+        "due to not having any matching rating issues or contentions")
+    end
+  end
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
@@ -68,12 +77,21 @@ class RequestIssue < ApplicationRecord
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],
         untimely_exemption_notes: data[:untimely_exemption_notes],
-        ramp_claim_id: data[:ramp_claim_id]
+        ramp_claim_id: data[:ramp_claim_id],
+        vacols_id: data[:vacols_id],
+        vacols_sequence_id: data[:vacols_sequence_id]
       ).validate_eligibility!
     end
 
     def find_active_by_reference_id(reference_id)
       request_issue = unscoped.find_by(rating_issue_reference_id: reference_id, removed_at: nil, ineligible_reason: nil)
+      return unless request_issue && request_issue.status_active?
+      request_issue
+    end
+
+    def find_active_by_contested_decision_id(contested_decision_issue_id)
+      request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id,
+                                       removed_at: nil, ineligible_reason: nil)
       return unless request_issue && request_issue.status_active?
       request_issue
     end
@@ -118,6 +136,8 @@ class RequestIssue < ApplicationRecord
       notes: notes,
       is_unidentified: is_unidentified,
       ramp_claim_id: ramp_claim_id,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id,
       ineligible_reason: ineligible_reason,
       title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
@@ -128,6 +148,8 @@ class RequestIssue < ApplicationRecord
     check_for_untimely!
     check_for_previous_higher_level_review!
     check_for_before_ama!
+    check_for_legacy_issue_not_withdrawn!
+    check_for_legacy_appeal_not_eligible!
     self
   end
 
@@ -147,7 +169,66 @@ class RequestIssue < ApplicationRecord
     contested_decision_issue && contested_decision_issue.request_issues.first
   end
 
+  def sync_decision_issues!
+    return if processed?
+
+    attempted!
+    decision_issues.delete_all
+    create_decision_issues
+  end
+
   private
+
+  def create_decision_issues
+    if rating?
+      return unless end_product_establishment.associated_rating
+      create_decision_issues_from_rating
+    end
+
+    create_decision_issue_from_disposition if decision_issues.empty?
+
+    fail ErrorCreatingDecisionIssue, id if decision_issues.empty?
+    processed!
+  end
+
+  def matching_rating_issues
+    @matching_rating_issues ||= end_product_establishment.associated_rating.issues.select do |rating_issue|
+      rating_issue.contention_reference_id == contention_reference_id
+    end
+  end
+
+  def create_decision_issue_from_disposition
+    if contention_disposition
+      decision_issues.create!(
+        participant_id: review_request.veteran.participant_id,
+        disposition: contention_disposition[:disposition],
+        decision_review: review_request,
+        benefit_type: benefit_type,
+        end_product_last_action_date: end_product_establishment.result.last_action_date
+      )
+    end
+  end
+
+  def contention_disposition
+    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
+      disposition[:contention_id].to_i == contention_reference_id
+    end
+  end
+
+  def create_decision_issues_from_rating
+    matching_rating_issues.each do |rating_issue|
+      decision_issues.create!(
+        rating_issue_reference_id: rating_issue.reference_id,
+        participant_id: rating_issue.participant_id,
+        promulgation_date: rating_issue.promulgation_date,
+        decision_text: rating_issue.decision_text,
+        profile_date: rating_issue.profile_date,
+        decision_review: review_request,
+        benefit_type: benefit_type,
+        end_product_last_action_date: end_product_establishment.result.last_action_date
+      )
+    end
+  end
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
   def fetch_contested_rating_issue_ui_hash
@@ -186,6 +267,27 @@ class RequestIssue < ApplicationRecord
 
     if decision_or_promulgation_date && decision_or_promulgation_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
+    end
+  end
+
+  def check_for_legacy_issue_not_withdrawn!
+    return unless eligible?
+    return unless vacols_id
+
+    if !review_request.legacy_opt_in_approved
+      self.ineligible_reason = :legacy_issue_not_withdrawn
+    end
+  end
+
+  def check_for_legacy_appeal_not_eligible!
+    return unless eligible?
+    return unless vacols_id
+    return unless review_request.serialized_legacy_appeals.any?
+
+    legacy_appeal = review_request.serialized_legacy_appeals.find { |appeal| appeal[:vacols_id] == vacols_id }
+
+    if !legacy_appeal[:eligible_for_soc_opt_in]
+      self.ineligible_reason = :legacy_appeal_not_eligible
     end
   end
 

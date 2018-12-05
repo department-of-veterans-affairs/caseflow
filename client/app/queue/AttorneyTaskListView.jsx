@@ -4,9 +4,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
+import { css } from 'glamor';
 
 import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
+import QueueSelectorDropdown from './components/QueueSelectorDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
@@ -32,11 +34,16 @@ import type { TaskWithAppeal } from './types/models';
 
 type Params = {||};
 
+const containerStyles = css({
+  position: 'relative'
+});
+
 type Props = Params & {|
   tasks: Array<TaskWithAppeal>,
   workableTasks: Array<TaskWithAppeal>,
   onHoldTasks: Array<TaskWithAppeal>,
   completedTasks: Array<TaskWithAppeal>,
+  organizations: Array<Object>,
   messages: Object,
   resetSaveState: typeof resetSaveState,
   resetSuccessMessages: typeof resetSuccessMessages,
@@ -67,7 +74,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
   };
 
   render = () => {
-    const { messages } = this.props;
+    const { messages, organizations } = this.props;
     const noOpenTasks = !_.size([...this.props.workableTasks, ...this.props.onHoldTasks]);
     const noCasesMessage = noOpenTasks ?
       <p>
@@ -103,21 +110,17 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
       }
     ];
 
-    return <AppSegment filledBackground>
-      <div>
-        <h1 {...fullWidth}>{COPY.ATTORNEY_QUEUE_TABLE_TITLE}</h1>
-        {messages.error && <Alert type="error" title={messages.error.title}>
-          {messages.error.detail}
-        </Alert>}
-        {messages.success && <Alert type="success" title={messages.success.title}>
-          {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
-        </Alert>}
-        {noCasesMessage}
-        <TabWindow
-          name="tasks-attorney-list"
-          tabs={tabs}
-        />
-      </div>
+    return <AppSegment filledBackground styling={containerStyles}>
+      <h1 {...fullWidth}>{COPY.ATTORNEY_QUEUE_TABLE_TITLE}</h1>
+      <QueueSelectorDropdown organizations={organizations} />
+      {messages.error && <Alert type="error" title={messages.error.title}>
+        {messages.error.detail}
+      </Alert>}
+      {messages.success && <Alert type="success" title={messages.success.title}>
+        {messages.success.detail || COPY.ATTORNEY_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
+      </Alert>}
+      {noCasesMessage}
+      <TabWindow name="tasks-attorney-list" tabs={tabs} />
     </AppSegment>;
   }
 }
@@ -130,7 +133,8 @@ const mapStateToProps = (state) => {
       }
     },
     ui: {
-      messages
+      messages,
+      organizations
     }
   } = state;
 
@@ -139,6 +143,7 @@ const mapStateToProps = (state) => {
     onHoldTasks: onHoldTasksByAssigneeCssIdSelector(state),
     completedTasks: completeTasksByAssigneeCssIdSelector(state),
     messages,
+    organizations,
     taskDecision
   });
 };
@@ -156,7 +161,7 @@ const mapDispatchToProps = (dispatch) => ({
 export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView): React.ComponentType<Params>);
 
 const TaskTableTab = ({ description, tasks }) => <React.Fragment>
-  <p>{description}</p>
+  <p className="cf-margin-top-0" >{description}</p>
   <TaskTable
     includeDetailsLink
     includeType

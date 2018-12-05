@@ -78,8 +78,20 @@ describe SyncReviewsJob do
       let!(:request_issue) { create(:request_issue) }
 
       it "ignores request issues that are not flagged" do
-        expect(DecisionRatingIssueSyncJob).to_not receive(:perform_later).with(request_issue)
-        expect(DecisionRatingIssueSyncJob).to receive(:perform_later).with(pending_request_issue)
+        expect(DecisionIssueSyncJob).to_not receive(:perform_later).with(request_issue)
+        expect(DecisionIssueSyncJob).to receive(:perform_later).with(pending_request_issue)
+
+        SyncReviewsJob.perform_now("limit" => 2)
+      end
+    end
+
+    context "when there are legacy optins awaiting processing" do
+      let!(:pending_legacy_optin) { create(:legacy_issue_optin).tap(&:submit_for_processing!) }
+      let!(:legacy_optin) { create(:legacy_issue_optin) }
+
+      it "ignores legacy optins that are not flagged" do
+        expect(LegacyOptinProcessJob).to_not receive(:perform_later).with(legacy_optin)
+        expect(LegacyOptinProcessJob).to receive(:perform_later).with(pending_legacy_optin)
 
         SyncReviewsJob.perform_now("limit" => 2)
       end

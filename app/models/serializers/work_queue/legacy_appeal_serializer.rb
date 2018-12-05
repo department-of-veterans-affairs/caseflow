@@ -1,6 +1,7 @@
 class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge
+  attribute :sanitized_hearing_request_type
 
   attribute :timeline
 
