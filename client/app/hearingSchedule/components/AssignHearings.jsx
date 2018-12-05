@@ -174,10 +174,9 @@ export default class AssignHearings extends React.Component {
       if (time === '12:00 am ET') {
         return '';
 
-      } else {
-        return time;
       }
 
+      return time;
     };
 
     const qry = `?hearingDate=${date}&regionalOffice=${SROVal}&hearingTime=${timer()}`;
