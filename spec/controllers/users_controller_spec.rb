@@ -73,7 +73,7 @@ RSpec.describe UsersController, type: :controller do
         get :index, params: { role: "HearingJudge" }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
-        expect(response_body["judges"].size).to eq 2
+        expect(response_body["hearingJudges"].size).to eq 3
       end
     end
   end

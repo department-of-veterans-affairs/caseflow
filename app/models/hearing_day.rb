@@ -149,9 +149,9 @@ class HearingDay < ApplicationRecord
     end
   end
 
-  private
-
-  def verify_room_availability
-    hearing_count_for_day = where(hearing_date: hearing_date)
-  end
+  #   private
+  #
+  #   def verify_room_availability
+  #     hearing_count_for_day = where(hearing_date: hearing_date)
+  #   end
 end
