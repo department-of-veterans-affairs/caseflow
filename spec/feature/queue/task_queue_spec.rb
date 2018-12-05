@@ -290,11 +290,6 @@ RSpec.feature "Task queue" do
     let!(:root_task) { FactoryBot.create(:root_task) }
     let!(:appeal) { root_task.appeal }
 
-    before do
-      User.authenticate!(user: judge_user)
-      visit("/queue/appeals/#{appeal.external_id}")
-    end
-
     context "when it was created from a QualityReviewTask" do
       let!(:qr_team) { QualityReview.singleton }
       let!(:qr_user) { FactoryBot.create(:user) }
@@ -322,6 +317,11 @@ RSpec.feature "Task queue" do
       end
       let!(:judge_task) { JudgeAssignTask.create_many_from_params(judge_task_params, qr_user).first }
 
+      before do
+        User.authenticate!(user: judge_user)
+        visit("/queue/appeals/#{appeal.external_id}")
+      end
+
       it "should display an option to mark task complete" do
         expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
 
@@ -338,6 +338,8 @@ RSpec.feature "Task queue" do
     context "when it was created through case distribution" do
       before do
         FactoryBot.create(:ama_judge_task, appeal: appeal, assigned_to: judge_user)
+        User.authenticate!(user: judge_user)
+        visit("/queue/appeals/#{appeal.external_id}")
       end
 
       it "should not display an option to mark task complete" do
