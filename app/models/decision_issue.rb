@@ -20,6 +20,12 @@ class DecisionIssue < ApplicationRecord
     profile_date ? profile_date.to_date : end_product_last_action_date
   end
 
+  def issue_category
+    # TODO: figure out how to calculate this
+    return unless request_issues.any?
+    request_issues.first.issue_category
+  end
+
   private
 
   def appeal?

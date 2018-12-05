@@ -10,6 +10,7 @@ class DecisionReview < ApplicationRecord
 
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
+  has_many :decision_issues, as: :decision_review
 
   before_destroy :remove_issues!
 
@@ -124,6 +125,10 @@ class DecisionReview < ApplicationRecord
     [].tap do |specials|
       specials << vacols_optin_special_issue if needs_vacols_optin_special_issue?
     end
+  end
+
+  def on_decision_issues_sync_processed(end_product_establishment)
+    # no-op, can be overwritten
   end
 
   def serialized_contestable_issues_by_date
