@@ -64,4 +64,17 @@ RSpec.describe UsersController, type: :controller do
       end
     end
   end
+
+  describe "GET /users?role=HearingJudge" do
+    let!(:judges) { create_list(:staff, 2, :judge_role) }
+
+    context "when role is passed" do
+      it "should return a list of judges" do
+        get :index, params: { role: "HearingJudge" }
+        expect(response.status).to eq 200
+        response_body = JSON.parse(response.body)
+        expect(response_body["judges"].size).to eq 2
+      end
+    end
+  end
 end
