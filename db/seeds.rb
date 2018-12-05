@@ -561,8 +561,7 @@ class SeedDB
                                        issprog: "02",
                                        isscode: "15",
                                        isslev1: "04",
-                                       isslev2: lev2,
-                                       isskey: legacy_vacols_id)
+                                       isslev2: lev2)
     end
     correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: 100)
     folder = VACOLS::Folder.find_or_create_by(ticknum: legacy_vacols_id, tinum: 1)
