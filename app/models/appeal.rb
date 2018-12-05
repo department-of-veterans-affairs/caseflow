@@ -16,16 +16,16 @@ class Appeal < DecisionReview
     validates_associated :claimants
   end
 
-  scope :aod_motions, -> {
+  scope :aod_motions, lambda {
     joins(claimants: { person: :advance_on_docket_motions })
       .where("advance_on_docket_motions.created_at > appeals.established_at")
   }
-  scope :aod_due_to_age, -> {
+  scope :aod_due_to_age, lambda {
     joins(claimants: :person)
       .where("people.date_of_birth < ?", 75.years.ago)
   }
 
-  scope :not_aod, -> {
+  scope :not_aod, lambda {
     joins(claimants: :person)
       .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
       .where("people.date_of_birth >= ?", 75.years.ago)
