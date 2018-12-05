@@ -16,13 +16,14 @@ import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
 
 const editButton = css({
-  float: 'right'
+  float: 'right',
+  marginLeft: '0.5rem'
 });
 
 const containingDivStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
   display: 'block',
-  padding: '0 0 1.5rem 4rem',
+  padding: '0 0 0 2rem',
 
   '& > *': {
     display: 'inline-block',
@@ -40,21 +41,28 @@ const listItemStyling = css({
   display: 'inline',
   float: 'left',
   padding: '0.5rem 1.5rem 0.5rem 0',
-  ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
-  ':not(:first-child)': { paddingLeft: '1.5rem' },
-
+  // ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
+  ':not(:first-child)': {
+    '& > div': {
+      borderLeft: `1px solid ${COLORS.GREY_LIGHT}`,
+      paddingLeft: '1.5rem'
+    },
+    '& > h4': {
+      paddingLeft: '1.5rem'
+    }
+  },
   '& > h4': { textTransform: 'uppercase' }
 });
 
-const spanStyle = css({
-  border: '2px',
+const docketBadgeContainerStyle = css({
+  border: '1px',
   borderStyle: 'solid',
   borderColor: '#DCDCDC',
-  padding: '5px',
+  padding: '0.5rem 1rem 0.5rem 0.5rem',
   backgroundColor: 'white'
 });
 
-const CaseTitleScaffolding = (props) => <div {...containingDivStyling}>
+const CaseDetailTitleScaffolding = (props) => <div {...containingDivStyling}>
   <ul {...listStyling}>
     {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
   </ul>
@@ -73,10 +81,10 @@ export class CaseTitleDetails extends React.PureComponent {
     // TODO: Replace this with userIsVsoEmployee (see case title)
     const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
-    return <CaseTitleScaffolding>
+    return <CaseDetailTitleScaffolding>
       <React.Fragment>
         <h4>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</h4>
-        <span {...spanStyle}>
+        <span {...docketBadgeContainerStyle}>
           <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
         </span>
       </React.Fragment>
@@ -102,6 +110,7 @@ export class CaseTitleDetails extends React.PureComponent {
             aod: appeal.isAdvancedOnDocket,
             type: appeal.caseType
           })}
+
           {!appeal.isLegacyAppeal && this.props.canEditAod && <span {...editButton}>
             <Link
               to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
@@ -114,9 +123,9 @@ export class CaseTitleDetails extends React.PureComponent {
       { !taskAssignedToVso && primaryTask && primaryTask.documentId &&
         <React.Fragment>
           <h4>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
-          <div><CopyTextButton text={primaryTask.documentId}/></div>
+          <div><CopyTextButton text={primaryTask.documentId} /></div>
         </React.Fragment> }
-    </CaseTitleScaffolding>;
+    </CaseDetailTitleScaffolding>;
   };
 }
 

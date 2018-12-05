@@ -70,13 +70,13 @@ class CaseDetailsView extends React.PureComponent {
       {success && <Alert type="success" title={success.title} scrollOnAlert={false}>
         {success.detail}
       </Alert>}
+      <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname} />
       { this.props.veteranCaseListIsVisible &&
         <VeteranCasesView
           caseflowVeteranId={appeal.caseflowVeteranId}
           veteranId={appeal.veteranFileNumber}
         />
       }
-      <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname} />
       <CaseSnapshot appealId={appealId} />
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>

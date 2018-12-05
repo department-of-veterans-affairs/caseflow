@@ -11,7 +11,6 @@ import {
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import ActionsDropdown from './components/ActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
-import CopyTextButton from '../components/CopyTextButton';
 
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
