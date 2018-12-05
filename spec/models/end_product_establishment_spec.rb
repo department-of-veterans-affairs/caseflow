@@ -306,7 +306,7 @@ describe EndProductEstablishment do
 
       it "does not create a new claimant letter" do
         subject
-        expect(Fakes::BGSService.manage_claimant_letter_v2_requests).to eq({})
+        expect(Fakes::BGSService.manage_claimant_letter_v2_requests).to be_nil
         expect(end_product_establishment.doc_reference_id).to eq("doc_exists")
       end
     end
