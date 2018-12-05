@@ -158,9 +158,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     };
 
     return this.props.requestPatch(`/tasks/${scheduleHearingTask.taskId}`, payload, this.getSuccessMsg()).
-      then((resp) => {
-        const response = JSON.parse(resp.text);
-        
+      then(() => {
+
         history.goBack();
       }, () => {
         this.props.showErrorMessage({
