@@ -3,10 +3,16 @@ import { connect } from 'react-redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ListSchedule from '../components/ListSchedule';
 import { hearingSchedStyling } from '../components/ListScheduleDateSearch';
-import { onViewStartDateChange, onViewEndDateChange, onReceiveHearingSchedule } from '../actions';
+import {
+  onViewStartDateChange,
+  onViewEndDateChange,
+  onReceiveHearingSchedule,
+  onResetDeleteSuccessful
+} from '../actions';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Alert from '../../components/Alert';
 import COPY from '../../../COPY.json';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
@@ -20,6 +26,10 @@ const actionButtonsStyling = css({
 });
 
 export class ListScheduleContainer extends React.Component {
+
+  componentWillUnmount = () => {
+    this.props.onResetDeleteSuccessful();
+  };
 
   loadHearingSchedule = () => {
     let requestUrl = '/hearings/hearing_day.json';
@@ -45,6 +55,10 @@ export class ListScheduleContainer extends React.Component {
     return (
       <React.Fragment>
         <QueueCaseSearchBar />
+        { this.props.successfulHearingDayDelete && <Alert
+          type="success"
+          title={`You have successfully removed Hearing Day ${formatDateStr(this.props.successfulHearingDayDelete)}`}
+        />}
         <AppSegment filledBackground>
           <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
           {this.props.userRoleBuild &&
@@ -67,13 +81,15 @@ export class ListScheduleContainer extends React.Component {
 const mapStateToProps = (state) => ({
   hearingSchedule: state.hearingSchedule.hearingSchedule,
   startDate: state.hearingSchedule.viewStartDate,
-  endDate: state.hearingSchedule.viewEndDate
+  endDate: state.hearingSchedule.viewEndDate,
+  successfulHearingDayDelete: state.hearingSchedule.successfulHearingDayDelete
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onViewStartDateChange,
   onViewEndDateChange,
-  onReceiveHearingSchedule
+  onReceiveHearingSchedule,
+  onResetDeleteSuccessful
 }, dispatch);
 
 ListScheduleContainer.propTypes = {

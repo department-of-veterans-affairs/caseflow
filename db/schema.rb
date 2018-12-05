@@ -415,6 +415,8 @@ ActiveRecord::Schema.define(version: 20181203231527) do
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
     t.string "bva_poc"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
