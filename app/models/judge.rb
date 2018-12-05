@@ -32,7 +32,7 @@ class Judge
   end
 
   def attorneys
-    JudgeTeam.for_judge(user).try(:non_admins) || []
+    JudgeTeam.for_judge(user).try(:attorneys) || []
   end
 
   private
