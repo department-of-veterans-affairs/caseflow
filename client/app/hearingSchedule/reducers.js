@@ -297,6 +297,18 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       $unset: ['displayLockModal']
     });
+  case ACTIONS.UPDATE_LOCK:
+    return update(state, {
+      dailyDocket: {
+        lock: {
+          $set: action.payload.lock
+        }
+      },
+      displayLockSuccessMessage: {
+        $set: true
+      },
+      $unset: ['displayLockModal']
+    });
   default:
     return state;
   }

@@ -71,6 +71,11 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def update
+    hearing_day.update!(update_params)
+    render json: { hearing_day: hearing_day.to_hash }
+  end
+
+  def update_other
     return record_not_found unless hearing
     params.delete(:hearing_key)
     updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
@@ -129,7 +134,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def update_params
-    params.permit(:judge_id, :regional_office, :hearing_key, :hearing_type)
+    params.permit(:judge_id, :regional_office, :hearing_key, :hearing_type, :lock)
       .merge(updated_by: current_user)
   end
 

@@ -262,3 +262,10 @@ export const onDisplayLockModal = () => ({
 export const onCancelDisplayLockModal = () => ({
   type: ACTIONS.CANCEL_DISPLAY_LOCK_MODAL
 });
+
+export const onUpdateLock = (lock) => ({
+  type: ACTIONS.UPDATE_LOCK,
+  payload: {
+    lock
+  }
+});

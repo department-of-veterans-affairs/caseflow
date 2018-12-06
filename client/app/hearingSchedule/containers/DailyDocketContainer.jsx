@@ -21,7 +21,8 @@ import {
   onCancelRemoveHearingDay,
   onSuccessfulHearingDayDelete,
   onDisplayLockModal,
-  onCancelDisplayLockModal
+  onCancelDisplayLockModal,
+  onUpdateLock
 } from '../actions';
 
 export class DailyDocketContainer extends React.Component {
@@ -66,6 +67,13 @@ export class DailyDocketContainer extends React.Component {
       });
   };
 
+  updateLockHearingDay = (lock) => () => {
+    ApiUtil.patch(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { lock }).
+      then(() => {
+        this.props.onUpdateLock(lock);
+      });
+  };
+
   deleteHearingDay = () => {
     ApiUtil.delete(`/hearings/hearing_day/${this.props.dailyDocket.id}`).
       then(() => {
@@ -105,6 +113,7 @@ export class DailyDocketContainer extends React.Component {
         onDisplayLockModal={this.props.onDisplayLockModal}
         onCancelDisplayLockModal={this.props.onCancelDisplayLockModal}
         displayLockModal={this.props.displayLockModal}
+        updateLockHearingDay={this.updateLockHearingDay}
       />
     </LoadingDataDisplay>;
 
@@ -134,7 +143,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCancelRemoveHearingDay,
   onSuccessfulHearingDayDelete,
   onDisplayLockModal,
-  onCancelDisplayLockModal
+  onCancelDisplayLockModal,
+  onUpdateLock
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

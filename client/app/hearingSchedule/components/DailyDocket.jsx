@@ -372,8 +372,10 @@ export default class DailyDocket extends React.Component {
     </Button>;
 
     const cancelLockModalButton = <Button linkStyling onClick={this.props.onCancelDisplayLockModal}>Go back</Button>;
-    const confirmLockModalButton = <Button classNames={['usa-button-secondary']} onClick={() => {}}>
-      Confirm
+    const confirmLockModalButton = <Button
+      classNames={['usa-button-secondary']}
+      onClick={this.props.updateLockHearingDay(!this.props.dailyDocket.lock)}>
+        Confirm
     </Button>;
 
     return <AppSegment filledBackground>
