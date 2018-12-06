@@ -1,7 +1,7 @@
 class ExternalApi::FacilitiesLocatorService
-
-  def self.find_closest(point, ids)
-    {}
+  class << self
+    def get_nearest(point, ids)
+      []
+    end
   end
-
 end

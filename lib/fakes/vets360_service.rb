@@ -1,7 +1,7 @@
-class Fakes::Vets360Service
+class Fakes::Vets360Service < ExternalApi::Vets360Service
 
   def self.geocode(address)
-    [46.7296,94.6859]
+    [0.0,0.0]
   end
 
 end
