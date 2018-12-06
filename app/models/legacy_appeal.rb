@@ -150,19 +150,6 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  class << self
-    attr_writer :facilities_locator_service
-    attr_writer :vets360_service
-
-    def facilities_locator_service
-      @facilities_locator_service ||= ExternalApi::FacilitiesLocatorService
-    end
-
-    def vets360_service
-      @vets360_service ||= ExternalApi::Vets360Service
-    end
-  end
-
   # If we do not yet have the vbms_id saved in Caseflow's DB, then
   # we want to fetch it from VACOLS, save it to the DB, then return it
   def vbms_id
