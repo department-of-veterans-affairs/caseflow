@@ -10,23 +10,16 @@ class RootTask < GenericTask
   def available_actions(user)
     return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if MailTeam.singleton.user_has_access?(user)
 
-    if HearingsManagement.singleton.user_has_access?(user) && legacy?
+    if HearingsManagement.singleton.user_has_access?(user) && legacy? &&
+       children.select { |t| t.is_a?(ScheduleHearingTask) && t.status == Constants.TASK_STATUSES.completed }.empty?
       return [Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h]
     end
 
     []
   end
 
-  def no_actions_available?(user)
-    if HearingsManagement.singleton.user_has_access?(user) && legacy?
-      open_hearing_task = children.find do |task|
-        task.is_a?(ScheduleHearingTask) && task.status != Constants.TASK_STATUSES.completed
-      end
-      return true if open_hearing_task
-      return false
-    end
-
-    !(MailTeam.singleton.user_has_access?(user) && status != Constants.TASK_STATUSES.completed)
+  def no_actions_available?
+    completed?
   end
 
   class << self
