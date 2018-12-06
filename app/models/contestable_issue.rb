@@ -23,7 +23,7 @@ class ContestableIssue
       new(
         rating_reference_id: decision_issue.rating_issue_reference_id,
         decision_issue_reference_id: decision_issue.id,
-        date: decision_issue.profile_date.to_date,
+        date: decision_issue.approx_decision_date,
         description: decision_issue.decision_text, # TODO: also work with disposition
         title_of_active_review: decision_issue.title_of_active_review,
         source_higher_level_review: decision_issue.source_higher_level_review,
