@@ -530,6 +530,22 @@ describe EndProductEstablishment do
         end
       end
 
+      context "when VBMS/BGS causes a transient error" do
+        before do
+          # rubocop:disable Metrics/LineLength
+          # from https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3116/
+          sample_transient_error_body = '<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Header/><env:Body><env:Fault><faultcode xmlns:ns1="http://www.w3.org/2003/05/soap-envelope">ns1:Server</faultcode><faultstring>gov.va.vba.vbms.ws.VbmsWSException: WssVerification Exception - Security Verification Exception GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</faultstring><detail><cdm:faultDetailBean xmlns:cdm="http://vbms.vba.va.gov/cdm" cdm:message="gov.va.vba.vbms.ws.VbmsWSException: WssVerification Exception - Security Verification Exception GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" cdm:exceptionClassName="gov.va.vba.vbms.ws.VbmsWSException" cdm:uid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" cdm:serverException="true"/></detail></env:Fault></env:Body></env:Envelope>'
+          # rubocop:enable Metrics/LineLength
+          allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(
+            VBMS::HTTPError.new(500, sample_transient_error_body)
+          )
+        end
+
+        it "re-raises a transient error" do
+          expect { subject }.to raise_error(EndProductEstablishment::TransientBGSSyncError)
+        end
+      end
+
       context "when source exists" do
         context "when source implements on_sync" do
           let(:source) { create(:ramp_election) }
