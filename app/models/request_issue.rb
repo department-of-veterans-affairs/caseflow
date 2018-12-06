@@ -175,6 +175,8 @@ class RequestIssue < ApplicationRecord
     attempted!
     decision_issues.delete_all
     create_decision_issues
+
+    end_product_establishment.on_decision_issue_sync_processed
   end
 
   private
