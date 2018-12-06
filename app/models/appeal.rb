@@ -238,6 +238,10 @@ class Appeal < DecisionReview
 
   private
 
+  def contestable_decision_issues
+    DecisionIssue.where(participant_id: veteran.participant_id)
+  end
+
   def bgs
     BGSService.new
   end

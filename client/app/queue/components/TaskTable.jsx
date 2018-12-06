@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
-import DocketTypeBadge from './DocketTypeBadge';
+import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';

@@ -415,6 +415,8 @@ ActiveRecord::Schema.define(version: 20181203231527) do
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
     t.string "bva_poc"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
@@ -681,17 +683,19 @@ ActiveRecord::Schema.define(version: 20181203231527) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
+    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
-    t.string "ineligible_reason"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.datetime "created_at"
     t.string "benefit_type"
+    t.integer "contested_decision_issue_id"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
+    t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"

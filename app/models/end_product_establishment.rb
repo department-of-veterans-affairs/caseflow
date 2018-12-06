@@ -238,11 +238,26 @@ class EndProductEstablishment < ApplicationRecord
   def sync_decision_issues!
     request_issues.each do |request_issue|
       request_issue.submit_for_processing!
-      DecisionIssueSyncJob.perform_later(request_issue)
+
+      if run_async?
+        DecisionIssueSyncJob.perform_later(request_issue)
+      else
+        DecisionIssueSyncJob.perform_now(request_issue)
+      end
+    end
+  end
+
+  def on_decision_issue_sync_processed
+    if decision_issues_sync_complete?
+      source.on_decision_issues_sync_processed(self)
     end
   end
 
   private
+
+  def decision_issues_sync_complete?
+    request_issues.all?(&:processed?)
+  end
 
   def potential_decision_ratings
     Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
