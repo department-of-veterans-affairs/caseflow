@@ -158,7 +158,8 @@ RSpec.feature "Edit issues" do
       expect(page).to have_button("Save", disabled: true)
 
       # remove
-      click_remove_intake_issue("1")
+      issue_num = find_intake_issue_number_by_text(issue_description)
+      click_remove_intake_issue(issue_num)
       click_remove_issue_confirmation
       expect(page).not_to have_content(issue_description)
 
