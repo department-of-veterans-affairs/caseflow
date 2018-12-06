@@ -123,7 +123,8 @@ RSpec.feature "Edit issues" do
       expect(page).to have_content("nonrating description")
 
       # remove an issue
-      click_remove_intake_issue("2")
+      nonrating_intake_num = find_intake_issue_number_by_text("Military Retired Pay")
+      click_remove_intake_issue(nonrating_intake_num)
       click_remove_issue_confirmation
       expect(page).not_to have_content("nonrating description")
 
