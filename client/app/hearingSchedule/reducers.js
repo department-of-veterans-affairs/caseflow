@@ -287,6 +287,16 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       $unset: ['successfulHearingDayDelete']
     });
+  case ACTIONS.DISPLAY_LOCK_MODAL:
+    return update(state, {
+      displayLockModal: {
+        $set: true
+      }
+    });
+  case ACTIONS.CANCEL_DISPLAY_LOCK_MODAL:
+    return update(state, {
+      $unset: ['displayLockModal']
+    });
   default:
     return state;
   }

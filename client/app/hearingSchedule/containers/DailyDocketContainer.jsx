@@ -19,7 +19,9 @@ import {
   onHearingTimeUpdate,
   onClickRemoveHearingDay,
   onCancelRemoveHearingDay,
-  onSuccessfulHearingDayDelete
+  onSuccessfulHearingDayDelete,
+  onDisplayLockModal,
+  onCancelDisplayLockModal
 } from '../actions';
 
 export class DailyDocketContainer extends React.Component {
@@ -100,6 +102,9 @@ export class DailyDocketContainer extends React.Component {
         displayRemoveHearingDayModal={this.props.displayRemoveHearingDayModal}
         onCancelRemoveHearingDay={this.props.onCancelRemoveHearingDay}
         deleteHearingDay={this.deleteHearingDay}
+        onDisplayLockModal={this.props.onDisplayLockModal}
+        onCancelDisplayLockModal={this.props.onCancelDisplayLockModal}
+        displayLockModal={this.props.displayLockModal}
       />
     </LoadingDataDisplay>;
 
@@ -112,7 +117,8 @@ const mapStateToProps = (state) => ({
   hearings: state.hearingSchedule.hearings,
   hearingDayOptions: state.hearingSchedule.hearingDayOptions,
   saveSuccessful: state.hearingSchedule.saveSuccessful,
-  displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal
+  displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal,
+  displayLockModal: state.hearingSchedule.displayLockModal
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -126,7 +132,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onHearingTimeUpdate,
   onClickRemoveHearingDay,
   onCancelRemoveHearingDay,
-  onSuccessfulHearingDayDelete
+  onSuccessfulHearingDayDelete,
+  onDisplayLockModal,
+  onCancelDisplayLockModal
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

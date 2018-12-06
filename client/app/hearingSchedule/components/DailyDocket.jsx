@@ -67,7 +67,7 @@ const alertStyling = css({
 });
 
 const topMarginStyling = css({
-  marginTop: '100px'
+  marginTop: '170px'
 });
 
 export default class DailyDocket extends React.Component {
@@ -313,6 +313,19 @@ export default class DailyDocket extends React.Component {
       `${moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')}.`;
   };
 
+  getDisplayLockModalTitle = () => {
+    return this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day';
+  };
+
+  getDisplayLockModalMessage = () => {
+    if (this.props.dailyDocket.lock) {
+      return '';
+    }
+
+    return 'Completing this action will not allow more Veterans to be scheduled for this day. You can still ' +
+      'make changes to the existing slots.';
+  };
+
   render() {
     const dailyDocketColumns = [
       {
@@ -355,6 +368,11 @@ export default class DailyDocket extends React.Component {
       Confirm
     </Button>;
 
+    const cancelLockModalButton = <Button linkStyling onClick={this.props.onCancelDisplayLockModal}>Go back</Button>;
+    const confirmLockModalButton = <Button classNames={['usa-button-secondary']} onClick={() => {}}>
+      Confirm
+    </Button>;
+
     return <AppSegment filledBackground>
       {this.props.displayRemoveHearingDayModal && <div>
         <Modal
@@ -366,6 +384,16 @@ export default class DailyDocket extends React.Component {
           {this.getRemoveHearingDayMessage()}
         </Modal>
       </div>}
+      {this.props.displayLockModal && <div>
+        <Modal
+          title={this.getDisplayLockModalTitle()}
+          closeHandler={this.props.onCancelDisplayLockModal}
+          confirmButton={confirmLockModalButton}
+          cancelButton={cancelLockModalButton}
+        >
+          {this.getDisplayLockModalMessage()}
+        </Modal>
+      </div>}
       { this.props.saveSuccessful && <Alert
         type="success"
         styling={alertStyling}
@@ -375,7 +403,15 @@ export default class DailyDocket extends React.Component {
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
         <div {...backLinkStyling}>
-          <Link to="/schedule">&lt; Back to schedule</Link>&nbsp;&nbsp;
+          <Link to="/schedule">&lt; Back to schedule</Link>
+        </div>
+        <div>
+          <Button
+            linkStyling
+            onClick={this.props.onDisplayLockModal}
+          >
+            {this.props.dailyDocket.lock ? 'Unlock scheduling veterans' : 'Lock scheduling veterans'}
+          </Button>&nbsp;&nbsp;
           { _.isEmpty(this.props.hearings) &&
           <Button
             linkStyling
