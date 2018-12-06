@@ -20,15 +20,6 @@ class EndProductEstablishment < ApplicationRecord
   class InvalidEndProductError < StandardError; end
   class NoAvailableModifiers < StandardError; end
 
-  class BGSSyncError < RuntimeError
-    def initialize(error, end_product_establishment)
-      Raven.extra_context(end_product_establishment: end_product_establishment.id)
-      super(error.message).tap do |result|
-        result.set_backtrace(error.backtrace)
-      end
-    end
-  end
-
   CANCELED_STATUS = "CAN".freeze
   CLEARED_STATUS = "CLR".freeze
 
@@ -173,7 +164,7 @@ class EndProductEstablishment < ApplicationRecord
   rescue EstablishedEndProductNotFound => e
     raise e
   rescue StandardError => e
-    raise BGSSyncError.new(e, self)
+    raise BGSSyncError.from_bgs_error(e, self)
   end
 
   def fetch_dispositions_from_vbms
