@@ -2,8 +2,8 @@ import { css } from 'glamor';
 import _ from 'lodash';
 import * as React from 'react';
 
-import Tooltip from '../../components/Tooltip';
-import { COLORS } from '../../constants/AppConstants';
+import Tooltip from './Tooltip';
+import { COLORS } from '../constants/AppConstants';
 
 const badgeStyling = css({
   display: 'inline-block',
