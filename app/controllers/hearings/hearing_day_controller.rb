@@ -248,7 +248,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def rooms_are_available(params)
     # Coming from Add Hearing Day modal but no room required
-    if params.key?(:assign_room) && !params[:assign_room]
+    if params.key?(:assign_room) && params[:assign_room] == "false"
       params.delete(:assign_room)
       params[:room_info] = ""
       return true
