@@ -30,6 +30,7 @@ import Button from '../components/Button';
 
 import type { Appeal, Task } from './types/models';
 import type { UiStateMessage } from './types/state';
+import update from 'immutability-helper';
 
 type ComponentState = {|
   label: ?string,
@@ -53,15 +54,20 @@ type Props = Params & {|
   setAppealAttrs: typeof setAppealAttrs
 |};
 
+const adminActionTemplate = () => {
+  return {
+    actionLabel: null,
+    instructions: '',
+    isHidden: false
+  };
+};
+
 class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
   constructor(props) {
     super(props);
 
     this.state = {
-      adminActions: [{
-        label: null,
-        instructions: ''  
-      }],
+      adminActions: [adminActionTemplate()]
     };
   }
 
@@ -104,31 +110,48 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 
   singleIssueTemplate = (index) => {
     const { highlightFormItems } = this.props;
-    const { instructions } = this.state.adminActions[index];
+    const { instructions, actionLabel, isHidden } = this.state.adminActions[index];
+
+    if (isHidden) {
+      return null;
+    }
 
     return <React.Fragment>
-    <div {...marginTop(4)}>
-      <SearchableDropdown
-        errorMessage={highlightFormItems && !this.state.label ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-        name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
-        placeholder="Select an action type"
-        options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
-          label,
-          value
-        }))}
-        onChange={(option) => option && this.setState({ label: option.value })}
-        value={this.state.label} />
-    </div>
-    <div {...marginTop(4)}>
-      <TextareaField
-        errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-        name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-        onChange={(value) => this.setState({ instructions: value })}
-        value={instructions} />
-    </div>
-    {/*// TODO: Put this text in COPY.json*/}
-    <Button willNeverBeLoading>+ Add another action</Button>
-  </React.Fragment>};
+      <div {...marginTop(4)}>
+        <SearchableDropdown
+          errorMessage={highlightFormItems && !actionLabel ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
+          placeholder="Select an action type"
+          options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
+            label,
+            value
+          }))}
+          onChange={(option) => this.setState(update(this.state, { adminActions: { [index]: { actionLabel: {$set: option.value} } } } ) ) }
+          value={actionLabel} />
+      </div>
+      <div {...marginTop(4)}>
+        <TextareaField
+          errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+          onChange={(value) => this.setState(update(this.state, { adminActions: { [index]: { instructions: {$set: value} } } } ) ) }
+          value={instructions} />
+      </div>
+      {/* TODO: Put this text in COPY.json */}
+      {this.state.adminActions.filter((action) => action.isHidden === false).length > 1 &&
+        <Button
+          willNeverBeLoading
+          linkStyling
+          name="Remove this action"
+          onClick={ () => this.setState(update(this.state, { adminActions: { [index]: { isHidden: { $set: true } } } })) } />
+      }
+      {index === this.state.adminActions.length - 1 &&
+        <Button
+          willNeverBeLoading
+          name="+ Add another action"
+          onClick={ () => this.setState(update(this.state, { adminActions: { [this.state.adminActions.length]: {$set: adminActionTemplate() } } })) } />
+      }
+    </React.Fragment>;
+  };
 
   render = () => {
     const { error } = this.props;
