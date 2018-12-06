@@ -31,6 +31,9 @@
   "CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL": "Assigned to you",
   "CASE_LIST_TABLE_POST_DECISION_LABEL": "Post-decision",
   "CASE_LIST_TABLE_CASE_STORAGE_LABEL": "Case storage",
+  "CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL": "Switch views",
+  "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
+  "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
 
   "CASE_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
@@ -253,5 +256,21 @@
   "CASE_TIMELINE_FORM_9_RECEIVED": "Form 9 received",
   "CASE_TIMELINE_FORM_9_PENDING": "Form 9 pending",
   "CASE_TIMELINE_NOD_RECEIVED": "Notice of disagreement received",
-  "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending"
+  "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending",
+  "CASE_TIMELINE_JUDGE_TASK": "Decision signed by judge",
+  "CASE_TIMELINE_ATTORNEY_TASK": "Decision drafted by attorney",
+
+  "DECISION_ISSUE_MODAL_TITLE": "Describe what the Veteran is appealing and what you decided.",
+  "DECISION_ISSUE_MODAL_SUB_TITLE": "You can also add additional decisions to better address the Veteran's concerns or situation.",
+  "DECISION_ISSUE_MODAL_DESCRIPTION": "Description",
+  "DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE": "Ex: Increased rating for arthritis is granted with an evaluation of 90%",
+  "DECISION_ISSUE_MODAL_DISPOSITION": "Disposition",
+  "DECISION_ISSUE_MODAL_BENEFIT_TYPE": "Benefit type",
+  "DECISION_ISSUE_PAGE_TITLE": "Add decisions",
+  "DECISION_ISSUE_PAGE_EXPLANATION": "Add decisions to each issue the Veteran is appealing. Any decisions you add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",
+
+  "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
+
+  "JUDGE_ASSIGN_TASK_LABEL": "assign",
+  "JUDGE_REVIEW_TASK_LABEL": "review"
 }

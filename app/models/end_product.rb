@@ -63,7 +63,7 @@ class EndProduct
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
-  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code,
+  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :last_action_date,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter
 
   attr_writer :payee_code, :claimant_participant_id, :benefit_type_code
@@ -121,6 +121,14 @@ class EndProduct
     }
   end
 
+  # this is used for intake
+  def serialize
+    {
+      claim_id: claim_id,
+      claim_type_code: claim_type_code
+    }
+  end
+
   def to_vbms_hash
     {
       benefit_type_code: benefit_type_code,
@@ -158,6 +166,10 @@ class EndProduct
     @contentions ||= claim_id ? VBMSService.fetch_contentions(claim_id: claim_id) : nil
   end
 
+  def ramp?
+    RAMP_CODES.key?(claim_type_code)
+  end
+
   private
 
   def label
@@ -185,13 +197,23 @@ class EndProduct
   end
 
   class << self
+    # If you change this method, you will need to clear cache in prod for your changes to
+    # take effect immediately. See DecisionReview#cached_serialized_ratings
+    def deserialize(end_product_hash)
+      new(
+        claim_id: end_product_hash[:claim_id],
+        claim_type_code: end_product_hash[:claim_type_code]
+      )
+    end
+
     def from_bgs_hash(hash)
       new(
         claim_id: hash[:benefit_claim_id],
         claim_date: parse_claim_date(hash[:claim_receive_date]),
         claim_type_code: hash[:claim_type_code],
         modifier: hash[:end_product_type_code],
-        status_type_code: hash[:status_type_code]
+        status_type_code: hash[:status_type_code],
+        last_action_date: hash[:last_action_date]
       )
     end
 

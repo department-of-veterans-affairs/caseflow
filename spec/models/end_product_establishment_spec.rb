@@ -46,6 +46,7 @@ describe EndProductEstablishment do
       benefit_type_code: benefit_type_code,
       doc_reference_id: doc_reference_id,
       development_item_reference_id: development_item_reference_id,
+      established_at: 30.days.ago,
       user: current_user
     )
   end
@@ -570,67 +571,122 @@ describe EndProductEstablishment do
     end
   end
 
-  context "#sync_decision_issues!" do
-    let(:rating) do
+  context "#associated_rating" do
+    subject { end_product_establishment.associated_rating }
+    let(:associated_claims) { [] }
+
+    let(:promulgation_date) { end_product_establishment.established_at + 1.day }
+
+    let!(:rating) do
       Generators::Rating.build(
-        issues: issues
+        participant_id: veteran.participant_id,
+        promulgation_date: promulgation_date,
+        associated_claims: associated_claims
       )
     end
 
-    let(:contention_ref_id) { "123456" }
-    let(:reference_id) { "Issue1" }
-
-    let(:issues) do
-      [
-        {
-          reference_id: reference_id,
-          decision_text: "Decision1",
-          contention_reference_id: contention_ref_id,
-          profile_date: Time.zone.today
-        },
-        { reference_id: "Issue2", decision_text: "Decision2" }
-      ]
-    end
-
-    let(:higher_level_review) { create(:higher_level_review) }
-    let(:end_product_establishment) { create(:end_product_establishment, :cleared, source: higher_level_review) }
-    let!(:request_issues) do
-      [
-        create(
-          :request_issue,
-          review_request: higher_level_review,
-          end_product_establishment: end_product_establishment,
-          contention_reference_id: contention_ref_id
-        )
-      ]
-    end
-
-    subject { end_product_establishment.sync_decision_issues! }
-
-    before do
-      allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([rating])
-    end
-
-    it "connects rating issues with request issues based on contention_reference_id" do
-      expect(request_issues.first.decision_issues.count).to eq(0)
-
-      subject
-
-      expect(request_issues.first.decision_issues.count).to eq(1)
-      expect(request_issues.first.decision_issues.first.rating_issue_reference_id).to eq(reference_id)
-    end
-
-    context "EPE has cleared but rating has not yet been posted" do
-      before do
-        allow(end_product_establishment).to receive(:potential_decision_ratings).and_return([])
+    context "when ep is one of many associated to the rating" do
+      let(:associated_claims) do
+        [
+          { clm_id: "09123", bnft_clm_tc: end_product_establishment.code },
+          { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
+        ]
       end
 
-      it "marks the RequestIssue for later sync via DecisionRatingIssueSyncJob" do
-        subject
+      it {
+        is_expected.to have_attributes(
+          participant_id: rating.participant_id,
+          promulgation_date: rating.promulgation_date
+        )
+      }
+    end
 
-        request_issue = end_product_establishment.request_issues.first
-        expect(request_issue.submitted?).to eq(true)
-        expect(request_issue.processed?).to eq(false)
+    context "when associated rating only has 1 ep" do
+      let(:associated_claims) do
+        [
+          { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
+        ]
+      end
+
+      it {
+        is_expected.to have_attributes(
+          participant_id: rating.participant_id,
+          promulgation_date: rating.promulgation_date
+        )
+      }
+
+      context "when rating is before established_at date" do
+        let!(:another_rating) do
+          Generators::Rating.build(
+            participant_id: veteran.participant_id,
+            promulgation_date: end_product_establishment.established_at + 1.day,
+            associated_claims: []
+          )
+        end
+        let(:promulgation_date) { end_product_establishment.established_at - 1.day }
+
+        it { is_expected.to eq(nil) }
+      end
+    end
+  end
+
+  context "#on_decision_issue_sync_processed" do
+    subject { end_product_establishment.on_decision_issue_sync_processed }
+    let(:processed_at) { Time.zone.now }
+    let!(:request_issues) do
+      [
+        create(:request_issue,
+               review_request: source,
+               decision_sync_processed_at: Time.zone.now),
+        create(:request_issue,
+               review_request: source,
+               decision_sync_processed_at: processed_at)
+      ]
+    end
+
+    context "when decision issues are all synced" do
+      context "when source is a higher level review" do
+        let!(:claimant) do
+          Claimant.create!(
+            review_request: source,
+            participant_id: veteran.participant_id,
+            payee_code: "10"
+          )
+        end
+
+        let!(:decision_issue) do
+          create(:decision_issue,
+                 decision_review: source,
+                 disposition: HigherLevelReview::DTA_ERROR_PMR,
+                 rating_issue_reference_id: "rating1")
+        end
+
+        it "creats a supplemental claim if dta errors exist" do
+          subject
+
+          expect(SupplementalClaim.find_by(
+                   is_dta_error: true,
+                   veteran_file_number: source.veteran_file_number
+          )).to_not be_nil
+        end
+      end
+
+      context "when source is a supplemental claim" do
+        let(:source) { SupplementalClaim.new(veteran_file_number: veteran_file_number) }
+
+        it "does nothing" do
+          subject
+          expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
+        end
+      end
+    end
+
+    context "when decision issues are not all synced" do
+      let(:processed_at) { nil }
+
+      it "does nothing" do
+        subject
+        expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
       end
     end
   end

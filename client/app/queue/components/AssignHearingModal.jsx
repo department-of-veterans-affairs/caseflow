@@ -11,10 +11,10 @@ import {
   resetSuccessMessages,
   requestPatch
 } from '../uiReducer/uiActions';
-import { onRegionalOfficeChange } from '../../components/common/actions';
+import { onRegionalOfficeChange, onHearingDateChange, onHearingTimeChange } from '../../components/common/actions';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
-import { getTime, formatDate, formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
+import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
 
 import type {
   State
@@ -22,16 +22,14 @@ import type {
 
 import { withRouter } from 'react-router-dom';
 import RadioField from '../../components/RadioField';
-import Button from '../../components/Button';
-import InlineForm from '../../components/InlineForm';
 import RoSelectorDropdown from '../../components/RoSelectorDropdown';
+import HearingDateDropdown from '../../components/HearingDateDropdown';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
   taskById,
   appealWithDetailSelector
 } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
-import DateSelector from '../../components/DateSelector';
 import _ from 'lodash';
 import type { Appeal, Task } from '../types/models';
 import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants/constants';
@@ -46,8 +44,11 @@ type Params = {|
 type Props = Params & {|
   // From state
   savePending: boolean,
-  selectedRegionalOffice: Object,
+  selectedRegionalOffice: string,
   history: Object,
+  hearingDay: Object,
+  selectedHearingDate: string,
+  selectedHearingTime: string,
   // Action creators
   showErrorMessage: typeof showErrorMessage,
   resetErrorMessages: typeof resetErrorMessages,
@@ -56,25 +57,14 @@ type Props = Params & {|
   resetSaveState: typeof resetSaveState,
   onRegionalOfficeChange: typeof onRegionalOfficeChange,
   requestPatch: typeof requestPatch,
-  onReceiveAmaTasks: typeof onReceiveAmaTasks
+  onReceiveAmaTasks: typeof onReceiveAmaTasks,
+  onHearingDateChange: typeof onHearingDateChange,
+  onHearingTimeChange: typeof onHearingTimeChange
 |};
 
 type LocalState = {|
-  selectedDate: '',
-  selectedTime: string,
-  roEdit: boolean,
-  dateEdit: boolean
+  timeOptions: Array<Object>
 |}
-
-const buttonLinksStyling = css({
-  marginRight: '30px',
-  width: '150px'
-});
-
-const titleStyling = css({
-  marginBottom: 0,
-  padding: 0
-});
 
 const centralOfficeStaticEntry = [{
   label: 'Central',
@@ -82,42 +72,72 @@ const centralOfficeStaticEntry = [{
 }];
 
 class AssignHearingModal extends React.PureComponent<Props, LocalState> {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      selectedDate: '',
-      selectedTime: '',
-      roEdit: false,
-      dateEdit: false
-    };
+  getTimeOptions = () => {
+    const { appeal: { sanitizedHearingRequestType } } = this.props;
+
+    if (sanitizedHearingRequestType === 'video') {
+      return [
+        { displayText: '8:30 am',
+          value: '8:30 am ET' },
+        { displayText: '12:30 pm',
+          value: '12:30 pm ET' }
+      ];
+    }
+
+    return [
+      { displayText: '9:00 am',
+        value: '9:00 am ET' },
+      { displayText: '1:00 pm',
+        value: '1:00 pm ET' }
+    ];
+
+  }
+
+  getRO = () => {
+    const { appeal, hearingDay } = this.props;
+    const { sanitizedHearingRequestType } = appeal;
+
+    if (sanitizedHearingRequestType === 'central_office') {
+      return 'C';
+    } else if (hearingDay.regionalOffice) {
+      return hearingDay.regionalOffice;
+    } else if (appeal.regionalOffice) {
+      return appeal.regionalOffice.key;
+    }
+
+    return '';
   }
 
   componentWillMount = () => {
-    this.props.onRegionalOfficeChange(this.props.task.taskBusinessPayloads[0].values.regional_office_value);
-  };
+    const { hearingDay } = this.props;
 
-  onROClick = () => {
-    this.setState({ roEdit: true });
-  };
+    this.props.onRegionalOfficeChange(this.getRO());
 
-  onDateClick = () => {
-    this.setState({ dateEdit: true });
-    this.setState({ selectedDate: this.formatDateString(this.props.task.taskBusinessPayloads[0].values.hearing_date) });
+    if (hearingDay.hearingDate) {
+      this.props.onHearingDateChange(hearingDay.hearingDate);
+      this.props.onHearingTimeChange(hearingDay.hearingTime);
+    }
   };
 
   formatDateString = (dateToFormat) => {
-    const formattedDate = formatDate(dateToFormat);
+    const formattedDate = formatDateStr(dateToFormat);
 
     return formatDateStringForApi(formattedDate);
   };
 
   formatHearingDate = () => {
-    const dateParts = this.state.selectedDate.split('-');
+    const { selectedHearingDate, selectedHearingTime } = this.props;
+
+    if (!selectedHearingTime || !selectedHearingDate) {
+      return null;
+    }
+
+    const dateParts = selectedHearingDate.split('-');
     const year = parseInt(dateParts[0], 10);
     const month = parseInt(dateParts[1], 10) - 1;
     const day = parseInt(dateParts[2], 10);
-    const timeParts = this.state.selectedTime.split(':');
+    const timeParts = selectedHearingTime.split(':');
     let hour = parseInt(timeParts[0], 10);
 
     if (hour === 1) {
@@ -129,15 +149,33 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     return hearingDate;
   };
 
-  getRegionalOffice = (regionalOffice) => {
-    return regionalOffice.value ? regionalOffice.value : regionalOffice;
-  };
+  validateForm = () => {
+
+    const hearingDate = this.formatHearingDate();
+    const { selectedHearingTime } = this.props;
+
+    if (hearingDate === null || !selectedHearingTime) {
+
+      this.props.showErrorMessage({
+        title: 'Required Fields',
+        detail: 'Please fill in Date of Hearing and Time fields'
+      });
+
+      return false;
+    }
+
+    return true;
+
+  }
 
   submit = () => {
-    const {
-      task,
-      appeal
-    } = this.props;
+    const { task, appeal, selectedHearingDate, selectedRegionalOffice } = this.props;
+    const values = {
+      regional_office_value: selectedRegionalOffice,
+      hearing_pkseq: task.taskBusinessPayloads[0].values.hearing_pkseq,
+      hearing_type: task.taskBusinessPayloads[0].values.hearing_type,
+      hearing_date: this.formatHearingDate()
+    };
 
     const payload = {
       data: {
@@ -145,20 +183,15 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           status: 'completed',
           business_payloads: {
             description: 'Update Task',
-            values: {
-              regional_office_value: this.getRegionalOffice(this.props.selectedRegionalOffice),
-              hearing_pkseq: this.props.task.taskBusinessPayloads[0].values.hearing_pkseq,
-              hearing_type: this.props.task.taskBusinessPayloads[0].values.hearing_type,
-              hearing_date: this.formatHearingDate()
-            }
+            values
           }
         }
       }
     };
 
-    const hearingType = this.props.task.taskBusinessPayloads[0].values.hearing_type ===
+    const hearingType = task.taskBusinessPayloads[0].values.hearing_type ===
                           CENTRAL_OFFICE_HEARING ? 'CO' : VIDEO_HEARING;
-    const hearingDateStr = formatDateStr(this.state.selectedDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
+    const hearingDateStr = formatDateStr(selectedHearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const title = `You have successfully assigned ${appeal.veteranFullName} to a ${hearingType} hearing ` +
                   `on ${hearingDateStr}.`;
 
@@ -187,78 +220,55 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       });
   };
 
+  getSelectedTimeOption = () => {
+    const { selectedHearingTime } = this.props;
+    const timeOptions = this.getTimeOptions();
+
+    if (!selectedHearingTime) {
+
+      return {};
+    }
+
+    return _.find(timeOptions, (option) => option.value === selectedHearingTime);
+  }
+
   render = () => {
-    if (!this.props.task) {
-      return null;
-    }
+    const {
+      selectedHearingDate, selectedRegionalOffice,
+      selectedHearingTime
+    } = this.props;
 
-    const hearingDateStr = formatDate(this.props.task.taskBusinessPayloads[0].values.hearing_date);
-    // In state date is formatted YYY-MM-DD
-
-    if (this.state.selectedDate === '') {
-      this.setState({
-        selectedDate: this.formatDateString(this.props.task.taskBusinessPayloads[0].values.hearing_date)
-      });
-    }
-    const timeStr = getTime(this.props.task.taskBusinessPayloads[0].values.hearing_date);
-
-    const timeOptions = this.props.task.taskBusinessPayloads[0].values.hearing_type === VIDEO_HEARING ?
-      [{ displayText: '8:30 am',
-        value: '8:30 am ET' }, { displayText: '12:30 pm',
-        value: '12:30 pm ET' }] :
-      [{ displayText: '9:00 am',
-        value: '9:00 am ET' }, { displayText: '1:00 pm',
-        value: '1:00 pm ET' }];
-    const selectedTime = _.find(timeOptions, (option) => option.value === timeStr);
-
-    if (selectedTime && this.state.selectedTime === '') {
-      this.setState({ selectedTime: selectedTime.value });
-    }
+    const timeOptions = this.getTimeOptions();
 
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
-        <b {...titleStyling} >Regional Office</b>
-        {this.state.roEdit &&
-          <RoSelectorDropdown
-            onChange={this.props.onRegionalOfficeChange}
-            value={this.props.selectedRegionalOffice}
-            staticOptions={centralOfficeStaticEntry} />
-        }
-        {!this.state.roEdit &&
-              <InlineForm>
-                <p {...buttonLinksStyling}> {this.props.task.taskBusinessPayloads[0].values.regional_office_label} </p>
-                <Button
-                  name="Change"
-                  linkStyling
-                  onClick={this.onROClick} />
-              </InlineForm>
-        }
-        <b {...titleStyling} >Date of hearing</b>
-        {this.state.dateEdit &&
-          <DateSelector
-            name="hearingDate"
-            label={false}
-            value={this.state.selectedDate}
-            onChange={(option) => option && this.setState({ selectedDate: option })}
-            type="date"
-          />
-        }
-        {!this.state.dateEdit &&
-          <InlineForm>
-            <p {...buttonLinksStyling}>{hearingDateStr}</p>
-            <Button
-              name="Change"
-              linkStyling
-              onClick={this.onDateClick} />
-          </InlineForm>
-        }
+        <RoSelectorDropdown
+          onChange={(opt) => {
+            this.props.onRegionalOfficeChange(opt.value);
+          }}
+          value={selectedRegionalOffice}
+          readOnly
+          changePrompt
+          staticOptions={centralOfficeStaticEntry} />
+
+        {selectedRegionalOffice && <HearingDateDropdown
+          key={selectedRegionalOffice}
+          regionalOffice={selectedRegionalOffice}
+          onChange={(opt) => {
+            this.props.onHearingDateChange(opt.value);
+          }}
+          value={selectedHearingDate}
+          readOnly={false}
+          changePrompt
+        />}
+
         <RadioField
           name="time"
           label="Time"
           strongLabel
           options={timeOptions}
-          onChange={(option) => option && this.setState({ selectedTime: option })}
-          value={this.state.selectedTime} />
+          onChange={this.props.onHearingTimeChange}
+          value={selectedHearingTime} />
       </div>
     </React.Fragment>;
   }
@@ -269,7 +279,10 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending,
   selectedRegionalOffice: state.components.selectedRegionalOffice,
-  regionalOffices: state.components.regionalOffices
+  regionalOfficeOptions: state.components.regionalOffices,
+  hearingDay: state.ui.hearingDay,
+  selectedHearingDate: state.components.selectedHearingDate,
+  selectedHearingTime: state.components.selectedHearingTime
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -279,7 +292,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   resetSuccessMessages,
   requestPatch,
   onReceiveAmaTasks,
-  onRegionalOfficeChange
+  onRegionalOfficeChange,
+  onHearingDateChange,
+  onHearingTimeChange
 }, dispatch);
 
 export default (withRouter(
@@ -288,4 +303,3 @@ export default (withRouter(
       button: 'Schedule' }
   ))
 ): React.ComponentType<Params>);
-

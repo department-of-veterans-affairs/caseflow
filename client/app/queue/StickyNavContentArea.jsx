@@ -8,24 +8,14 @@ const sectionNavigationContainerStyling = css({
   float: 'left',
   paddingRight: '3rem',
   position: 'sticky',
-  top: 0,
+  top: '3rem',
   width: '20%',
   '@media (max-width: 1020px)': {
-    paddingTop: '1rem',
     backgroundColor: COLORS.WHITE,
-    paddingRight: 0
-  }
-});
-
-const sectionNavStyling = css({
-  '@media (max-width: 1020px)': {
-    '&': {
-      display: 'flex',
-      flexFlow: 'row wrap'
-    },
-    '& > *': {
-      flex: '1 auto'
-    }
+    paddingTop: '1rem',
+    top: 0,
+    paddingRight: 0,
+    width: '100%'
   }
 });
 
@@ -57,7 +47,7 @@ const sectionNavigationListStyling = css({
     marginBottom: '1rem',
     '& > li': {
       padding: '0.75rem 0.75rem',
-      fontSize: '1.25rem',
+      fontSize: '1.5rem',
       flexGrow: 1,
       '&:first-child': {
         borderRadius: '5px 0 0 5px'
@@ -79,7 +69,8 @@ const sectionBodyStyling = css({
   float: 'left',
   width: '80%',
   '@media (max-width: 1020px)': {
-    flex: '1 100%'
+    flex: '1 100%',
+    width: '100%'
   }
 });
 
@@ -90,7 +81,7 @@ export default class StickyNavContentArea extends React.PureComponent {
     // Ignore undefined child elements.
     const childElements = this.props.children.filter((child) => typeof child === 'object');
 
-    return <div {...sectionNavStyling}>
+    return <React.Fragment>
       <aside {...sectionNavigationContainerStyling}>
         <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
           {childElements.map((child, i) =>
@@ -101,7 +92,7 @@ export default class StickyNavContentArea extends React.PureComponent {
       <div {...sectionBodyStyling}>
         {childElements.map((child, i) => <ContentSection key={i} element={child} />)}
       </div>
-    </div>;
+    </React.Fragment>;
   };
 }
 

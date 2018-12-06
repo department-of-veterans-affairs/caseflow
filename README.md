@@ -96,9 +96,15 @@ Unfortunately, the link on the website points to a version for older macOS that 
 
 ### Install Docker
 
-Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Once it's installed, go into the Docker's advanced preferences and limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
+Install Docker on your machine via Homebrew:
 
-After installation is complete, run:
+```
+    brew cask install docker
+```
+
+Once Docker's installed, run the application and go into advanced preferences to limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
+
+Back in the terminal, run:
 ```
 docker login -u dsvaappeals
 ```
@@ -111,19 +117,30 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 #### macOS
 
-1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit. You'll need to make an Oracle account.
-
-2) Copy both zip files into `~/Library/Caches/Homebrew` and leave them zipped.
-
-3) Install via Homebrew:
+1) Run the Homebrew install command for the "Instant Client Package - Basic" library:
 
 ```
     brew tap InstantClientTap/instantclient
-    brew install instantclient-basic instantclient-sdk
+    brew install instantclient-basic
 ```
 
+2) Homebrew will error and give you instructions to complete a successful installation:
+
+    - Follow the link to the download page
+    - Log in or create an Oracle account
+    - Accept the license agreement
+    - Download the linked zip file
+    - Move and rename the file
+    - rerun the `brew install instantclient-basic` command
+
+3) Do the same thing for the "Instant Client Package - SDK" library; run the install command:
+
+    `brew install instantclient-sdk`
+
+    ...and follow the corresponding steps in Homebrew's error message.
+
 #### Windows
-1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
+1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html) for Windows 32 or 64bit.
 
 2) Unzip both packages into `[DIR]`
 
@@ -133,7 +150,7 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 Note: This has only been tested on Debian based OS. However, it should also work
 for Fedora based OS.
 
- 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
+ 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
 
  1. Unzip both packages into `/opt/oracle/instantclient_11_2`
 

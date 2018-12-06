@@ -1,5 +1,6 @@
 class Appeal < DecisionReview
   include Taskable
+  include LegacyOptinable
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -10,7 +11,9 @@ class Appeal < DecisionReview
 
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
+    validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, if: :legacy_opt_in_enabled?
+    validates_associated :claimants
   end
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
@@ -90,12 +93,14 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.where(type: "JudgeTask").order(:created_at).last
+    task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
     task ? task.assigned_to.try(:full_name) : ""
   end
 
   def eligible_request_issues
-    request_issues.select(&:eligible?)
+    # It's possible that two users create issues around the same time and the sequencer gets thrown off
+    # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
+    request_issues.select(&:eligible?).sort_by(&:id)
   end
 
   def issues
@@ -190,7 +195,12 @@ class Appeal < DecisionReview
   end
 
   def create_issues!(new_issues)
-    new_issues.each(&:save!)
+    new_issues.each do |issue|
+      # temporary until ticket for appeals benefit type by issue is implemented
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
+      issue.update!(benefit_type: "compensation")
+      create_legacy_issue_optin(issue) if issue.vacols_id
+    end
   end
 
   def serializer_class
@@ -225,7 +235,25 @@ class Appeal < DecisionReview
     RootTask.create_root_and_sub_tasks!(self)
   end
 
+  def timeline
+    [
+      {
+        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
+        date: decision_date
+      },
+      tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC").map(&:timeline_details),
+      {
+        title: receipt_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
+        date: receipt_date
+      }
+    ].flatten
+  end
+
   private
+
+  def contestable_decision_issues
+    DecisionIssue.where(participant_id: veteran.participant_id)
+  end
 
   def bgs
     BGSService.new

@@ -6,6 +6,8 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { BrowserRouter } from 'react-router-dom';
 
+import COPY from '../../COPY.json';
+
 const options = [{ title: 'Help',
   link: '/help' },
 { title: 'Switch User',
@@ -24,7 +26,7 @@ const Unauthorized = (props) => <BrowserRouter>
       }} />
     <AppFrame>
       <StatusMessage title= "Drat!">
-             You aren't authorized to use this part of Caseflow yet.
+        { COPY.UNAUTHORIZED_PAGE_ACCESS_MESSAGE }
         { props.dependenciesFaked &&
             <p className="cf-msg-screen-text">
               <a href="/test/users">

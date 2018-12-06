@@ -3,7 +3,9 @@ require "rails_helper"
 RSpec.feature "Case details" do
   let(:attorney_first_name) { "Robby" }
   let(:attorney_last_name) { "McDobby" }
-  let!(:attorney_user) { FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}") }
+  let!(:attorney_user) do
+    FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}")
+  end
   let!(:vacols_atty) do
     FactoryBot.create(
       :staff,
@@ -448,6 +450,59 @@ RSpec.feature "Case details" do
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, ""))
+      end
+    end
+
+    describe "Issue order by created_at in Case Details page" do
+      context "when there are two issues" do
+        let!(:appeal) { FactoryBot.create(:appeal) }
+        issue_description = "Head trauma 1"
+        issue_description2 = "Head trauma 2"
+        let!(:request_issue) do
+          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description,
+                                            review_request_type: "Appeal")
+        end
+        let!(:request_issue2) do
+          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description2,
+                                            review_request_type: "Appeal")
+        end
+
+        it "should display sorted issues" do
+          visit "/queue/appeals/#{appeal.uuid}"
+          expect(page).to have_content(issue_description + " Issue 2 DESCRIPTION " + issue_description2)
+        end
+      end
+    end
+
+    describe "CaseTimeline shows judge & attorney tasks" do
+      let!(:user) { FactoryBot.create(:user) }
+      let!(:appeal) { FactoryBot.create(:appeal) }
+      let!(:appeal2) { FactoryBot.create(:appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
+      let!(:attorney_task) do
+        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
+                                   completed_at: Time.zone.now - 4.days)
+      end
+      let!(:judge_task) do
+        create(:ama_judge_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
+                                       status: Constants.TASK_STATUSES.completed,
+                                       completed_at: Time.zone.now)
+      end
+
+      before do
+        # This attribute needs to be set here due to update_parent_status hook in the task model
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+
+      it "should display judge & attorney tasks" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
+        expect(page).to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+      end
+
+      it "should NOT display judge & attorney tasks" do
+        visit "/queue/appeals/#{appeal2.uuid}"
+        expect(page).not_to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
       end
     end
   end

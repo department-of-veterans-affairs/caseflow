@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
@@ -23,15 +24,21 @@ type Params = {|
 |};
 
 type Props = Params & {|
-  highlight: boolean
+  highlight: boolean,
+  noStyling: boolean
 |}
 
 class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
   getStyling = () => {
     const {
       highlight,
+      noStyling,
       issue: { disposition }
     } = this.props;
+
+    if (noStyling) {
+      return;
+    }
 
     if (highlight && !disposition) {
       return css({
@@ -93,8 +100,8 @@ class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
   };
 }
 
-const mapStateToProps = (state) => ({
-  highlight: state.ui.highlightFormItems
+const mapStateToProps = (state, ownProps) => ({
+  highlight: _.isUndefined(ownProps.highlight) ? state.ui.highlightFormItems : ownProps.highlight
 });
 
 export default (connect(mapStateToProps)(SelectIssueDispositionDropdown): React.ComponentType<Params>);

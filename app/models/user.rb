@@ -209,7 +209,7 @@ class User < ApplicationRecord
     self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
   end
 
-  def administrated_teams
+  def administered_teams
     organizations_users.select(&:admin?).map(&:organization)
   end
 
@@ -226,6 +226,10 @@ class User < ApplicationRecord
 
   def user_info_for_idt
     self.class.user_repository.user_info_for_idt(css_id)
+  end
+
+  def selectable_organizations
+    organizations.select(&:selectable_in_queue?)
   end
 
   private

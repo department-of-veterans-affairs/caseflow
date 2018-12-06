@@ -198,6 +198,22 @@ describe User do
     end
   end
 
+  context "#selectable_organizations" do
+    let(:judge) { FactoryBot.create :user }
+    let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
+
+    subject { user.selectable_organizations }
+
+    before do
+      OrganizationsUser.add_user_to_organization(user, judgeteam)
+    end
+
+    it "excludes judge teams from the organization list" do
+      is_expected.to be_empty
+      expect(user.organizations).to include judgeteam
+    end
+  end
+
   context "#when BGS data is setup" do
     let(:participant_id) { "123456" }
     let(:vso_participant_id) { "123456" }
@@ -381,24 +397,24 @@ describe User do
     end
   end
 
-  describe ".administrated_teams" do
+  describe ".administered_teams" do
   end
 
-  describe ".administrated_teams" do
+  describe ".administered_teams" do
     let(:org) { create(:organization) }
     let(:user) { create(:user) }
 
     context "when user belongs to one organization but is not an admin" do
       before { OrganizationsUser.add_user_to_organization(user, org) }
       it "should return an empty list" do
-        expect(user.administrated_teams).to eq([])
+        expect(user.administered_teams).to eq([])
       end
     end
 
     context "when user is an admin of one organization" do
       before { OrganizationsUser.make_user_admin(user, org) }
       it "should return a list that contains the single organization" do
-        expect(user.administrated_teams).to eq([org])
+        expect(user.administered_teams).to eq([org])
       end
     end
 
@@ -411,7 +427,7 @@ describe User do
         admin_orgs.each { |o| OrganizationsUser.make_user_admin(user, o) }
       end
       it "should return a list of all teams user is an admin for" do
-        expect(user.administrated_teams).to eq(admin_orgs)
+        expect(user.administered_teams).to eq(admin_orgs)
       end
     end
   end

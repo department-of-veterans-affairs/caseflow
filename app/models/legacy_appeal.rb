@@ -520,6 +520,10 @@ class LegacyAppeal < ApplicationRecord
     status == "Remand"
   end
 
+  def advance?
+    status == "Advance"
+  end
+
   def decided_by_bva?
     !active? && LegacyAppeal.bva_dispositions.include?(disposition)
   end
@@ -701,6 +705,23 @@ class LegacyAppeal < ApplicationRecord
 
   def external_id
     vacols_id
+  end
+
+  def timeline
+    [
+      {
+        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
+        date: decision_date
+      },
+      {
+        title: form9_date ? COPY::CASE_TIMELINE_FORM_9_RECEIVED : COPY::CASE_TIMELINE_FORM_9_PENDING,
+        date: form9_date
+      },
+      {
+        title: nod_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
+        date: nod_date
+      }
+    ]
   end
 
   private

@@ -57,8 +57,13 @@ export type UiState = {
   userIsVsoEmployee: boolean,
   feedbackUrl: string,
   veteranCaseListIsVisible: boolean,
-  organizationIds: Array<number>,
-  canEditAod: boolean
+  organizations: Array<Object>,
+  canEditAod: boolean,
+  hearingDay: {
+    hearingDate: ?string,
+    hearingTime: ?string,
+    regionalOffice: ?string
+  }
 };
 
 export type UsersById = { [number]: ?User };
@@ -89,6 +94,7 @@ export type QueueState = {|
   attorneys: Attorneys,
   newDocsForAppeal: NewDocsForAppeal,
   organizationId: ?number,
+  organizations: Array<Object>,
   specialIssues: Object,
   loadingAppealDetail: Object
 |};
@@ -96,6 +102,8 @@ export type QueueState = {|
 export type CommonComponentState = {|
   regionalOffices: Array<Object>,
   selectedRegionalOffice: { label: string, value: string },
+  selectedHearingDate: string,
+  selectedHearingTime: string
 |};
 
 export type State = {

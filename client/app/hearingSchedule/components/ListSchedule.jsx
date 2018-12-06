@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
 import Table from '../../components/Table';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
 import FilterRibbon from '../../components/FilterRibbon';
@@ -111,13 +111,14 @@ class ListSchedule extends React.Component {
   getHearingScheduleRows = () => {
     const { hearingSchedule } = this.props;
 
-    return _.map(hearingSchedule, (hearingDay) => ({
-      hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDate(hearingDay.hearingDate)}</Link>,
-      hearingType: hearingDay.hearingType,
-      regionalOffice: hearingDay.regionalOffice,
-      room: hearingDay.roomInfo,
-      vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
-    }));
+    return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.hearingDate, 'asc').
+      map((hearingDay) => ({
+        hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDateStr(hearingDay.hearingDate)}</Link>,
+        hearingType: hearingDay.hearingType,
+        regionalOffice: hearingDay.regionalOffice,
+        room: hearingDay.roomInfo,
+        vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
+      }));
   };
 
   getHearingScheduleColumns = (hearingScheduleRows) => {
@@ -288,7 +289,8 @@ const mapStateToProps = (state) => ({
   filterLocationIsOpen: state.hearingSchedule.filterLocationIsOpen,
   filterVljIsOpen: state.hearingSchedule.filterVljIsOpen,
   startDate: state.hearingSchedule.viewStartDate,
-  endDate: state.hearingSchedule.viewEndDate
+  endDate: state.hearingSchedule.viewEndDate,
+  hearingSchedule: state.hearingSchedule.hearingSchedule
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
