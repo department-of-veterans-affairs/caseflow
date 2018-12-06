@@ -93,4 +93,21 @@ describe RootTask do
       end
     end
   end
+
+  describe ".available_actions_unwrapper for a legacy appeal" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:vacols_case) { create(:case, bfcorlid: "123456789S") }
+    let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:root_task) { RootTask.find(FactoryBot.create(:root_task, appeal: appeal ).id) }
+
+    subject { root_task.available_actions_unwrapper(user) }
+
+    context "when user is member of Hearing Management" do
+      before { allow_any_instance_of(HearingsManagement).to receive(:user_has_access?).and_return(true) }
+
+      it "should return a list that includes only the schedule veteran task" do
+        expect(subject).to eq([root_task.build_action_hash(Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h)])
+      end
+    end
+  end
 end
