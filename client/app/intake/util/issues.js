@@ -330,6 +330,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         rampClaimId: issue.rampClaimId,
         vacolsId: issue.vacolsId,
         vacolsSequenceId: issue.vacolsSequenceId,
+        vacolsIssue: issue.vacolsIssue,
         eligibleForSocOptIn: issue.eligibleForSocOptIn
       };
     }
@@ -348,6 +349,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       ineligibleReason: issue.ineligibleReason,
       vacolsId: issue.vacolsId,
       vacolsSequenceId: issue.vacolsSequenceId,
+      vacolsIssue: issue.vacolsIssue,
       eligibleForSocOptIn: issue.eligibleForSocOptIn
     };
   });

@@ -689,7 +689,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def matchable_to_request_issue?
-    issues.select(&:active?).any? && (active? || eligible_for_soc_opt_in?)
+    issues.any? && (active? || eligible_for_soc_opt_in?)
   end
 
   def eligible_for_soc_opt_in?

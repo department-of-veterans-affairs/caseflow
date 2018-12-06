@@ -99,72 +99,59 @@ module IntakeHelpers
         bfkey: "vacols1",
         bfcorlid: "#{veteran_file_number}S",
         bfdnod: 3.days.ago,
-        bfdsoc: 3.days.ago
-      ))
-
-    # ankylosis of hip, limitation of thigh motion (extension)
-    allow(AppealRepository).to receive(:issues).with("vacols1")
-      .and_return(
-        [
-          Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250], disposition: nil),
-          Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251], disposition: nil)
+        bfdsoc: 3.days.ago,
+        case_issues: [
+          create(:case_issue, :ankylosis_of_hip), create(:case_issue, :limitation_of_thigh_motion_extension)
         ]
-      )
+      ))
   end
 
   def setup_active_ineligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
-      create(:case,
-             :status_active,
-             bfkey: "vacols2",
-             bfcorlid: "#{veteran_file_number}S",
-             bfdnod: 4.years.ago,
-             bfdsoc: 4.months.ago))
-
-    # intervertebral disc syndrome, degenerative arthritis of the spine
-    allow(AppealRepository).to receive(:issues).with("vacols2")
-      .and_return(
-        [
-          Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243], disposition: nil),
-          Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242], disposition: nil)
+      create(
+        :case,
+        :status_active,
+        bfkey: "vacols2",
+        bfcorlid: "#{veteran_file_number}S",
+        bfdnod: 4.years.ago,
+        bfdsoc: 4.months.ago,
+        case_issues: [
+          create(:case_issue, :intervertebral_disc_syndrome),
+          create(:case_issue, :degenerative_arthritis_of_the_spine)
         ]
-      )
+      ))
   end
 
   def setup_inactive_eligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
-      create(:case,
-             :status_complete,
-             bfkey: "vacols3",
-             bfcorlid: "#{veteran_file_number}S",
-             bfdnod: 4.days.ago,
-             bfdsoc: 4.days.ago))
-
-    # impairment of hip, impairment of femur
-    allow(AppealRepository).to receive(:issues).with("vacols3")
-      .and_return(
-        [
-          Generators::Issue.build(id: "vacols3", vacols_sequence_id: 1, codes: %w[02 15 03 5254], disposition: nil),
-          Generators::Issue.build(id: "vacols3", vacols_sequence_id: 2, codes: %w[02 15 03 5255], disposition: nil)
+      create(
+        :case,
+        :status_complete,
+        bfkey: "vacols3",
+        bfcorlid: "#{veteran_file_number}S",
+        bfdnod: 4.days.ago,
+        bfdsoc: 4.days.ago,
+        case_issues: [
+          create(:case_issue, :impairment_of_hip),
+          create(:case_issue, :impairment_of_femur)
         ]
-      )
+      ))
   end
 
   def setup_inactive_ineligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
-      create(:case,
-             :status_complete,
-             bfkey: "vacols4",
-             bfcorlid: "#{veteran_file_number}S",
-             bfdnod: 4.years.ago,
-             bfdsoc: 4.months.ago))
-
-    # typhoid arthritis, caisson disease of bones
-    allow(AppealRepository).to receive(:issues).with("vacols4")
-      .and_return([
-                    Generators::Issue.build(id: "vacols4", vacols_sequence_id: 1, codes: %w[02 15 03 5006]),
-                    Generators::Issue.build(id: "vacols4", vacols_sequence_id: 2, codes: %w[02 15 03 5011])
-                  ])
+      create(
+        :case,
+        :status_complete,
+        bfkey: "vacols4",
+        bfcorlid: "#{veteran_file_number}S",
+        bfdnod: 4.years.ago,
+        bfdsoc: 4.months.ago,
+        case_issues: [
+          create(:case_issue, :typhoid_arthritis),
+          create(:case_issue, :caisson_disease_of_bones)
+        ]
+      ))
   end
 
   def setup_legacy_opt_in_appeals(veteran_file_number)

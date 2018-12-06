@@ -5,6 +5,8 @@ class ClaimReviewProcessJob < CaseflowJob
   application_attr :intake
 
   def perform(claim_review)
+    # restore whatever the user was when we finish, in case we are not running async (as during tests)
+    current_user = RequestStore.store[:current_user]
     RequestStore.store[:application] = "intake"
     RequestStore.store[:current_user] = User.system_user
 
@@ -14,5 +16,7 @@ class ClaimReviewProcessJob < CaseflowJob
       claim_review.update_error!(err.to_s)
       Raven.capture_exception(err)
     end
+
+    RequestStore.store[:current_user] = current_user
   end
 end
