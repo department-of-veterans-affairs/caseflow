@@ -19,6 +19,7 @@ class Appeal < DecisionReview
   scope :aod_motions, lambda {
     joins(claimants: { person: :advance_on_docket_motions })
       .where("advance_on_docket_motions.created_at > appeals.established_at")
+      .where("advance_on_docket_motions.status = ?", "granted")
   }
   scope :aod_due_to_age, lambda {
     joins(claimants: :person)

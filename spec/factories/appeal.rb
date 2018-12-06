@@ -26,9 +26,18 @@ FactoryBot.define do
       end
     end
 
-    trait :advanced_on_docket do
-      claimants { [create(:claimant, :advanced_on_docket)] }
+    trait :advanced_on_docket_due_to_age do
+      claimants { [create(:claimant, :advanced_on_docket_due_to_age)] }
     end
+
+    trait :advanced_on_docket_due_to_motion do
+      claimants do
+        claimant = create(:claimant) 
+        another_claimant = create(:claimant) 
+        create(:advance_on_docket_motion, person: claimant.person, granted: true)
+        [claimant, another_claimant]
+      end
+    end    
 
     transient do
       documents []

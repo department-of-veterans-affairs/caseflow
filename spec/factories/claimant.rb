@@ -4,9 +4,9 @@ FactoryBot.define do
     sequence(:participant_id)
     review_request_type "Appeal"
 
-    trait :advanced_on_docket do
-      after(:create) do |claimant, _evaluator|
-        create(:person, date_of_birth: 76.years.ago, participant_id: claimant.participant_id)
+    trait :advanced_on_docket_due_to_age do
+      after(:create) do |claimant, evaluator|
+        claimant.person.update!(date_of_birth: 76.years.ago)
       end
     end
   end

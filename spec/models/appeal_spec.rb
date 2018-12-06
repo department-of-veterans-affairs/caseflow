@@ -1,4 +1,17 @@
 describe Appeal do
+
+
+  context "priority and non-priority appeals" do
+    let(:non_aod_appeal) do
+      let(:participant_id) { "1111111" }
+      create(:person, participant_id: participant_id)
+      create(:claimant, participant_id: participant_id)
+
+
+    end
+
+  end
+
   context "#document_fetcher" do
     let(:veteran_file_number) { "64205050" }
     let(:appeal) do
@@ -60,7 +73,7 @@ describe Appeal do
   context "#advanced_on_docket" do
     context "when a claimant is advanced_on_docket" do
       let(:appeal) do
-        create(:appeal, claimants: [create(:claimant, :advanced_on_docket)])
+        create(:appeal, claimants: [create(:claimant, :advanced_on_docket_due_to_age)])
       end
 
       it "returns true" do
