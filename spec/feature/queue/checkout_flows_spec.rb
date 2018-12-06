@@ -571,9 +571,12 @@ RSpec.feature "Checkout flows" do
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
       find("label", text: "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}").click
 
-      expect(page).to have_content("Please provide more details about quality of work")
-      areas_of_improvement = Constants::JUDGE_CASE_REVIEW_OPTIONS["AREAS_FOR_IMPROVEMENT"]["issues_are_not_addressed"]
-      find("label", text: areas_of_improvement).click
+      # areas of improvement
+      areas_of_improvement = page.find_all(
+        :xpath, "//fieldset[@class='checkbox-wrapper-Identify areas for improvement cf-form-checkboxes']//label"
+      )
+      areas_of_improvement[0].double_click
+      areas_of_improvement[5].double_click
 
       dummy_note = generate_words 5
       fill_in "additional-factors", with: dummy_note
@@ -651,7 +654,11 @@ RSpec.feature "Checkout flows" do
         find("label", text: "1 - Does not meet expectations").click
 
         # areas of improvement
-        find("#issues_are_not_addressed", visible: false).sibling("label").click
+        areas_of_improvement = page.find_all(
+          :xpath, "//fieldset[@class='checkbox-wrapper-Identify areas for improvement cf-form-checkboxes']//label"
+        )
+        areas_of_improvement[0].double_click
+        areas_of_improvement[5].double_click
 
         dummy_note = generate_words 5
         fill_in "additional-factors", with: dummy_note
