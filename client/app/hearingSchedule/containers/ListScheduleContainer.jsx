@@ -15,7 +15,8 @@ import {
   setNotes,
   onReceiveJudges,
   onReceiveCoordinators,
-  onResetDeleteSuccessful
+  onResetDeleteSuccessful,
+  onAssignHearingRoom
 } from '../actions';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -42,7 +43,8 @@ export class ListScheduleContainer extends React.Component {
       dateRangeKey: `${props.startDate}->${props.endDate}`,
       modalOpen: false,
       showModalAlert: false,
-      serverError: false
+      serverError: false,
+      noRoomsAvailable: false
     };
   }
 
@@ -125,6 +127,7 @@ export class ListScheduleContainer extends React.Component {
     this.props.selectVlj('');
     this.props.selectHearingCoordinator('');
     this.props.setNotes('');
+    this.props.onAssignHearingRoom(true);
   }
 
   closeModal = () => {
@@ -134,10 +137,10 @@ export class ListScheduleContainer extends React.Component {
     let data = {
       hearing_type: this.props.hearingType.value,
       hearing_date: this.props.selectedHearingDay,
-      room_info: '1',
       judge_id: this.props.vlj.value,
       bva_poc: this.props.coordinator.label,
-      notes: this.props.notes
+      notes: this.props.notes,
+      assign_room: !this.props.roomNotRequired
     };
 
     if (this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.value !== '') {
@@ -145,8 +148,14 @@ export class ListScheduleContainer extends React.Component {
     }
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
-      then({}, () => {
-        this.setState({ serverError: true });
+      then({}, (error) => {
+        if (error.response.body && error.response.body.errors &&
+          error.response.body.errors[0].title === 'No rooms available') {
+          this.setState({ noRoomsAvailable: true });
+        } else {
+          // All other server errors
+          this.setState({ serverError: true });
+        }
       });
   };
 
@@ -159,16 +168,24 @@ export class ListScheduleContainer extends React.Component {
       return 'An Error Occurred';
     }
 
+    if (this.state.noRoomsAvailable) {
+      return `No Rooms Available for Hearing Day ${formatDateStr(this.props.selectedHearingDay)}`;
+    }
+
     if (this.props.successfulHearingDayDelete) {
       return `You have successfully removed Hearing Day ${formatDateStr(this.props.successfulHearingDayDelete)}`;
     }
 
-    return `You have successfully added Hearing Day ${formatDateStr(this.props.selectedHearingDay)} `;
+    return `You have successfully added Hearing Day ${formatDateStr(this.props.selectedHearingDay)}`;
   };
 
   getAlertMessage = () => {
     if (this.state.serverError) {
       return 'You are unable to complete this action.';
+    }
+
+    if (this.state.noRoomsAvailable) {
+      return 'All hearing rooms are taken for the date you selected.';
     }
 
     if (this.props.successfulHearingDayDelete) {
@@ -180,6 +197,10 @@ export class ListScheduleContainer extends React.Component {
 
   getAlertType = () => {
     if (this.state.serverError) {
+      return 'error';
+    }
+
+    if (this.state.noRoomsAvailable) {
       return 'error';
     }
 
@@ -235,6 +256,7 @@ const mapStateToProps = (state) => ({
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   notes: state.hearingSchedule.notes,
+  roomNotRequired: state.hearingSchedule.roomNotRequired,
   successfulHearingDayDelete: state.hearingSchedule.successfulHearingDayDelete
 });
 
@@ -247,6 +269,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   selectVlj,
   selectHearingCoordinator,
   setNotes,
+  onAssignHearingRoom,
   onReceiveJudges,
   onReceiveCoordinators,
   onResetDeleteSuccessful

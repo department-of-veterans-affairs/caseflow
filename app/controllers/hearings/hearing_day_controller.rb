@@ -63,6 +63,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   # Create a hearing schedule day
   def create
+    return no_available_rooms unless rooms_are_available(params)
     hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) if hearing.nil?
     render json: {
@@ -243,5 +244,54 @@ class Hearings::HearingDayController < HearingScheduleController
     else
       { id: json_hash[:data][:id] }.merge(json_hash[:data][:attributes])
     end
+  end
+
+  def rooms_are_available(params)
+    # Coming from Add Hearing Day modal but no room required
+    if params.key?(:assign_room) && !params[:assign_room]
+      params.delete(:assign_room)
+      params[:room_info] = ""
+      return true
+    end
+    # Coming from regular create from RO algorithm
+    if !params.key?(:assign_room) && !params[:room_info].nil?
+      return true
+    end
+    # Coming from Add Hearing Day modal and room required
+    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date]).group(:room_info).count
+    Rails.logger.info("Count for day is #{hearing_count_by_room} for date #{params[:hearing_date]}")
+
+    available_room = select_available_room(hearing_count_by_room)
+
+    Rails.logger.info("Final available_room value is: #{available_room}")
+    params.delete(:assign_room)
+    params[:room_info] = available_room if !available_room.nil?
+    !available_room.nil?
+  end
+
+  def select_available_room(hearing_count_by_room)
+    available_room = nil
+    (1..13).each do |n|
+      room_count = hearing_count_by_room[n.to_s]
+      Rails.logger.info("room_count is: #{room_count}")
+      if room_count.nil?
+        available_room = n.to_s
+        break
+      end
+      if !room_count.nil? && room_count == 0
+        available_room = n.to_s
+        break
+      end
+    end
+    available_room
+  end
+
+  def no_available_rooms
+    render json: {
+      "errors": [
+        "title": "No rooms available",
+        "detail": "All rooms are taken for the date selected."
+      ]
+    }, status: 404
   end
 end

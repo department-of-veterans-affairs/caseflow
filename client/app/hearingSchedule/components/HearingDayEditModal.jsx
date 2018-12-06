@@ -31,7 +31,7 @@ const roomOptions = [
     value: '1' },
   { label: '1W200B',
     value: '2' },
-  { label: '1200C',
+  { label: '1W200C',
     value: '3' },
   { label: '1W424',
     value: '4' },
@@ -65,6 +65,26 @@ class HearingDayEditModal extends React.Component {
       modifyCoordinator: false
     };
   }
+
+  componentWillMount = () => {
+    // find labels in options before passing values to modal
+    if (this.props.dailyDocket.roomInfo) {
+      const roomInfo = this.props.dailyDocket.roomInfo.split(' ');
+
+      this.props.selectHearingRoom(roomInfo[0]);
+    }
+  };
+
+  formatRoomOptions = () => {
+    return roomOptions.map((room) => {
+      if (room.value === '') {
+        return room;
+      }
+
+      return { label: `${room.value} (${room.label})`,
+        value: room.value };
+    });
+  };
 
   modalConfirmButton = () => {
     return <Button
@@ -146,7 +166,7 @@ class HearingDayEditModal extends React.Component {
           readOnly={!this.state.modifyRoom}
           value={this.props.hearingRoom}
           onChange={this.onRoomChange}
-          options={roomOptions}
+          options={this.formatRoomOptions()}
           placeholder="Select..." />
         <SearchableDropdown
           name="vlj"
@@ -201,6 +221,7 @@ HearingDayEditModal.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  dailyDocket: state.hearingSchedule.dailyDocket,
   hearingRoom: state.hearingSchedule.hearingRoom,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,

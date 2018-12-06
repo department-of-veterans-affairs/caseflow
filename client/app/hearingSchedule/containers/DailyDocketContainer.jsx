@@ -139,12 +139,14 @@ export class DailyDocketContainer extends React.Component {
     this.setState({ showModalAlert: false });
     this.setState({ modalOpen: true });
 
-    this.props.selectHearingRoom(this.props.dailyDocket.roomInfo);
+    // find labels in options before passing values to modal
+    const coordinator = _.find(this.props.activeCoordinators, { label: this.props.dailyDocket.bvaPoc });
+
     this.props.selectVlj(this.props.dailyDocket.judgeId);
-    this.props.selectHearingCoordinator(this.props.dailyDocket.bvaPoc);
+    this.props.selectHearingCoordinator(coordinator);
     this.props.setNotes(this.props.dailyDocket.notes);
     this.props.onHearingDayModified(false);
-  }
+  };
 
   closeModal = () => {
     this.setState({ modalOpen: false });
@@ -260,6 +262,7 @@ const mapStateToProps = (state) => ({
   hearingRoom: state.hearingSchedule.hearingRoom,
   notes: state.hearingSchedule.notes,
   hearingDayModified: state.hearingSchedule.hearingDayModified,
+  activeCoordinators: state.hearingSchedule.activeCoordinators,
   displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal
 });
 

@@ -297,6 +297,12 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.notes
       }
     });
+  case ACTIONS.ASSIGN_HEARING_ROOM:
+    return update(state, {
+      roomNotRequired: {
+        $set: action.payload.roomNotRequired
+      }
+    });
   case ACTIONS.HEARING_DAY_MODIFIED:
     return update(state, {
       hearingDayModified: {

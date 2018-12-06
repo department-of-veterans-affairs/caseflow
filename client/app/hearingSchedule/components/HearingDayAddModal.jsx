@@ -17,7 +17,8 @@ import { onSelectedHearingDayChange,
   selectHearingType,
   selectVlj,
   selectHearingCoordinator,
-  setNotes
+  setNotes,
+  onAssignHearingRoom
 } from '../actions';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import Checkbox from '../../components/Checkbox';
@@ -74,8 +75,7 @@ class HearingDayAddModal extends React.Component {
       centralOfficeSelected: false,
       error: false,
       errorMessages: [],
-      roError: false,
-      roomNotRequired: true
+      roError: false
     };
   }
 
@@ -167,8 +167,8 @@ class HearingDayAddModal extends React.Component {
     this.props.setNotes(value);
   }
 
-  onRoomNotRequired = () => {
-    this.setState({ roomNotRequired: !this.state.roomNotRequired });
+  onRoomNotRequired = (value) => {
+    this.props.onAssignHearingRoom(value);
   }
 
   modalMessage = () => {
@@ -244,7 +244,7 @@ class HearingDayAddModal extends React.Component {
           name="roomNotRequired"
           label="Board Hearing Room Not Required"
           strongLabel
-          value={this.state.roomNotRequired}
+          value={this.props.roomNotRequired}
           onChange={this.onRoomNotRequired}
           {...roomNotRequiredStyling} />
       </div>
@@ -283,6 +283,7 @@ const mapStateToProps = (state) => ({
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   notes: state.hearingSchedule.notes,
+  roomNotRequired: state.hearingSchedule.roomNotRequired,
   activeJudges: state.hearingSchedule.activeJudges,
   activeCoordinators: state.hearingSchedule.activeCoordinators
 });
@@ -293,7 +294,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   selectHearingType,
   selectVlj,
   selectHearingCoordinator,
-  setNotes
+  setNotes,
+  onAssignHearingRoom
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HearingDayAddModal));

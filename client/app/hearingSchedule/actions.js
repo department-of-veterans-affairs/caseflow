@@ -310,3 +310,10 @@ export const onSuccessfulHearingDayDelete = (date) => ({
 export const onResetDeleteSuccessful = () => ({
   type: ACTIONS.RESET_DELETE_SUCCESSFUL
 });
+
+export const onAssignHearingRoom = (roomNotRequired) => ({
+  type: ACTIONS.ASSIGN_HEARING_ROOM,
+  payload: {
+    roomNotRequired
+  }
+});
