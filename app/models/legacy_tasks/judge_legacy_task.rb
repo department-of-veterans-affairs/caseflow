@@ -20,10 +20,7 @@ class JudgeLegacyTask < LegacyTask
       [review_action]
     else
       [
-        {
-          label: COPY::JUDGE_CHECKOUT_ASSIGN_TO_ATTORNEY_LABEL,
-          value: "assign"
-        }
+        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
       ]
     end
   end

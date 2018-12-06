@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
+import moment from 'moment';
 import DailyDocket from '../components/DailyDocket';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
@@ -13,7 +15,11 @@ import {
   onCancelHearingUpdate,
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
-  onHearingDateUpdate
+  onHearingDateUpdate,
+  onHearingTimeUpdate,
+  onClickRemoveHearingDay,
+  onCancelRemoveHearingDay,
+  onSuccessfulHearingDayDelete
 } from '../actions';
 
 export class DailyDocketContainer extends React.Component {
@@ -36,7 +42,14 @@ export class DailyDocketContainer extends React.Component {
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      date: hearing.editedDate ? hearing.editedDate : hearing.date
+      master_record_updated: hearing.editedDate ? hearing.editedDate : null,
+      date: hearing.editedTime ? moment(hearing.date).set({
+        // eslint-disable-next-line id-length
+        h: hearing.editedTime.split(':')[0],
+        // eslint-disable-next-line id-length
+        m: hearing.editedTime.split(':')[1]
+
+      }) : hearing.date
     };
   };
 
@@ -48,6 +61,14 @@ export class DailyDocketContainer extends React.Component {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
         this.props.onReceiveSavedHearing(resp);
+      });
+  };
+
+  deleteHearingDay = () => {
+    ApiUtil.delete(`/hearings/hearing_day/${this.props.dailyDocket.id}`).
+      then(() => {
+        this.props.onSuccessfulHearingDayDelete(this.props.dailyDocket.hearingDate);
+        this.props.history.push('/schedule');
       });
   };
 
@@ -70,10 +91,15 @@ export class DailyDocketContainer extends React.Component {
         onHearingNotesUpdate={this.props.onHearingNotesUpdate}
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
+        onHearingTimeUpdate={this.props.onHearingTimeUpdate}
         saveHearing={this.saveHearing}
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
         onCancelHearingUpdate={this.props.onCancelHearingUpdate}
+        onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
+        displayRemoveHearingDayModal={this.props.displayRemoveHearingDayModal}
+        onCancelRemoveHearingDay={this.props.onCancelRemoveHearingDay}
+        deleteHearingDay={this.deleteHearingDay}
       />
     </LoadingDataDisplay>;
 
@@ -85,7 +111,8 @@ const mapStateToProps = (state) => ({
   dailyDocket: state.hearingSchedule.dailyDocket,
   hearings: state.hearingSchedule.hearings,
   hearingDayOptions: state.hearingSchedule.hearingDayOptions,
-  saveSuccessful: state.hearingSchedule.saveSuccessful
+  saveSuccessful: state.hearingSchedule.saveSuccessful,
+  displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -95,7 +122,11 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCancelHearingUpdate,
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
-  onHearingDateUpdate
+  onHearingDateUpdate,
+  onHearingTimeUpdate,
+  onClickRemoveHearingDay,
+  onCancelRemoveHearingDay,
+  onSuccessfulHearingDayDelete
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

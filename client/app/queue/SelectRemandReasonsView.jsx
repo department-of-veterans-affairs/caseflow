@@ -32,8 +32,8 @@ class SelectRemandReasonsView extends React.Component {
   getPageName = () => PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()];
 
   getNextStepUrl = () => {
-    const { appealId, userRole, checkoutFlow } = this.props;
-    const baseUrl = `/queue/appeals/${appealId}/${checkoutFlow}`;
+    const { appealId, userRole, checkoutFlow, taskId } = this.props;
+    const baseUrl = `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}`;
 
     return `${baseUrl}/${userRole === USER_ROLE_TYPES.judge ? 'evaluate' : 'submit'}`;
   }
@@ -108,7 +108,8 @@ SelectRemandReasonsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = appeal.issues;
+  const issues = (state.ui.featureToggles.ama_decision_issues && !appeal.isLegacyAppeal) ?
+    appeal.decisionIssues : appeal.issues;
 
   return {
     appeal,

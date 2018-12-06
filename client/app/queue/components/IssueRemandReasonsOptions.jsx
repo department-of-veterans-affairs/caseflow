@@ -18,8 +18,7 @@ import {
   getIssueDiagnosticCodeLabel
 } from '../utils';
 import {
-  startEditingAppealIssue,
-  saveEditedAppealIssue
+  editStagedAppeal
 } from '../QueueActions';
 import {
   fullWidth,
@@ -65,8 +64,8 @@ type Params = Props & {|
   issues: Issues,
   appeal: Appeal,
   highlight: boolean,
-  startEditingAppealIssue: typeof startEditingAppealIssue,
-  saveEditedAppealIssue: Function
+  amaDecisionIssues: boolean,
+  editStagedAppeal: typeof editStagedAppeal
 |};
 
 type RemandReasonOption = {|
@@ -96,11 +95,25 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
     this.state = _.fromPairs(pairs);
   }
 
-  updateIssue = (attributes) => {
-    const { appealId, issueId } = this.props;
+  updateIssue = (remandReasons) => {
+    const { appeal, appealId, issueId, amaDecisionIssues } = this.props;
+    const useDecisionIssues = !appeal.isLegacyAppeal && amaDecisionIssues;
+    const issues = useDecisionIssues ? appeal.decisionIssues : appeal.issues;
 
-    this.props.startEditingAppealIssue(appealId, issueId, attributes);
-    this.props.saveEditedAppealIssue(appealId);
+    const updatedIssues = issues.map((issue) => {
+      if (issue.id === issueId) {
+        return {
+          ...issue,
+          remand_reasons: remandReasons
+        };
+      }
+
+      return issue;
+    });
+
+    const attributes = useDecisionIssues ? { decisionIssues: updatedIssues } : { issues: updatedIssues };
+
+    this.props.editStagedAppeal(appealId, attributes);
   };
 
   getChosenOptions = (): Array<RemandReasonOption> => _.filter(this.state, (val) => val.checked);
@@ -161,7 +174,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       compact().
       value();
 
-    this.updateIssue({ remand_reasons: remandReasons });
+    this.updateIssue(remandReasons);
   };
 
   scrollToWarning = () => {
@@ -174,12 +187,16 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
     });
   };
 
-  toggleRemandReason = (checked, event) => this.setState({
-    [event.target.id.split('-')[1]]: {
-      checked,
-      post_aoj: null
-    }
-  });
+  toggleRemandReason = (checked, event) => {
+    const splitId = event.target.id.split('-');
+
+    this.setState({
+      [splitId[splitId.length - 1]]: {
+        checked,
+        post_aoj: null
+      }
+    });
+  }
 
   getCheckbox = (option, onChange, values) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
@@ -293,6 +310,11 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       <div {...smallBottomMargin}>
         Program: {appeal.isLegacyAppeal ? getIssueProgramDescription(issue) : issue.program}
       </div>
+      {!appeal.isLegacyAppeal &&
+        <div {...smallBottomMargin}>
+          Issue description: {issue.description}
+        </div>
+      }
       {appeal.isLegacyAppeal &&
         <React.Fragment>
           <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
@@ -317,7 +339,8 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = appeal.issues;
+  const issues = (state.ui.featureToggles.ama_decision_issues && !appeal.isLegacyAppeal) ?
+    appeal.decisionIssues : appeal.issues;
 
   return {
     appeal,
@@ -325,13 +348,13 @@ const mapStateToProps = (state, ownProps) => {
       VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
     ].includes(issue.disposition)),
     issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
-    highlight: state.ui.highlightFormItems
+    highlight: state.ui.highlightFormItems,
+    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  startEditingAppealIssue,
-  saveEditedAppealIssue
+  editStagedAppeal
 }, dispatch);
 
 export default (connect(

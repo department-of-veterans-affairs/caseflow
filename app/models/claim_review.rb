@@ -1,31 +1,31 @@
 # A claim review is a short hand term to refer to either a supplemental claim or
 # higher level review as defined in the Appeals Modernization Act of 2017
 
-class ClaimReview < AmaReview
+class ClaimReview < DecisionReview
   include Asyncable
+  include LegacyOptinable
 
   has_many :end_product_establishments, as: :source
   has_one :intake, as: :detail
 
+  with_options if: :saving_review do
+    validates :receipt_date, :benefit_type, presence: { message: "blank" }
+    validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
+    validates_associated :claimants
+  end
+
+  validates :legacy_opt_in_approved, inclusion: {
+    in: [true, false], message: "blank"
+  }, if: [:legacy_opt_in_enabled?, :saving_review]
+
   self.abstract_class = true
 
-  def ui_hash(ama_enabled)
-    {
-      veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
-        fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
-      },
-      relationships: ama_enabled && veteran && veteran.relationships,
-      receiptDate: receipt_date.to_formatted_s(:json_date),
+  def ui_hash
+    super.merge(
       benefitType: benefit_type,
-      claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
       payeeCode: payee_code,
-      legacyOptInApproved: legacy_opt_in_approved,
-      ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
-    }
+      hasClearedEP: cleared_ep?
+    )
   end
 
   # The Asyncable module requires we define these.
@@ -51,7 +51,7 @@ class ClaimReview < AmaReview
     end
   end
 
-  def issue_code(_rated)
+  def issue_code(*)
     fail Caseflow::Error::MustImplementInSubclass
   end
 
@@ -59,12 +59,12 @@ class ClaimReview < AmaReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      issue.update!(end_product_establishment: end_product_establishment_for_issue(issue))
+      issue.update!(
+        end_product_establishment: end_product_establishment_for_issue(issue),
+        benefit_type: benefit_type
+      )
+      create_legacy_issue_optin(issue) if issue.vacols_id
     end
-  end
-
-  def mark_rated_request_issues_to_reassociate!
-    request_issues.select(&:rated?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -76,7 +76,7 @@ class ClaimReview < AmaReview
     end_product_establishments.each do |end_product_establishment|
       end_product_establishment.perform!
       end_product_establishment.create_contentions!
-      end_product_establishment.associate_rated_issues!
+      end_product_establishment.associate_rating_request_issues!
       if informal_conference?
         end_product_establishment.generate_claimant_letter!
         end_product_establishment.generate_tracked_item!
@@ -94,14 +94,25 @@ class ClaimReview < AmaReview
 
   def on_sync(end_product_establishment)
     if end_product_establishment.status_cleared?
-      sync_dispositions(end_product_establishment.reference_id)
-      veteran.sync_rating_issues!
+      end_product_establishment.sync_decision_issues!
       # allow higher level reviews to do additional logic on dta errors
       yield if block_given?
     end
   end
 
+  def cleared_ep?
+    end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
+  end
+
+  def find_request_issue_by_description(description)
+    request_issues.find { |reqi| reqi.description == description }
+  end
+
   private
+
+  def contestable_decision_issues
+    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+  end
 
   def informal_conference?
     false
@@ -112,20 +123,8 @@ class ClaimReview < AmaReview
   end
 
   def end_product_establishment_for_issue(issue)
-    ep_code = issue_code(issue.rated? || issue.is_unidentified?)
+    ep_code = issue_code(rating: (issue.rating? || issue.is_unidentified?))
     end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
-  end
-
-  def sync_dispositions(reference_id)
-    fetch_dispositions_from_vbms(reference_id).each do |disposition|
-      matching_request_issue(disposition.contention_id).update!(
-        disposition: disposition.disposition
-      )
-    end
-  end
-
-  def fetch_dispositions_from_vbms(reference_id)
-    VBMSService.get_dispositions!(claim_id: reference_id)
   end
 
   def matching_request_issue(contention_id)

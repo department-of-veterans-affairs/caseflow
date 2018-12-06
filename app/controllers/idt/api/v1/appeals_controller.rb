@@ -17,6 +17,10 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     render(json: { message: e.message }, status: 400)
   end
 
+  rescue_from Caseflow::Error::DocumentUploadFailedInVBMS do |e|
+    render(e.serialize_response)
+  end
+
   rescue_from ActiveRecord::RecordNotFound do |_e|
     render(json: { message: "Record not found" }, status: 404)
   end
@@ -42,7 +46,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def tasks_assigned_to_user
     tasks = if user.attorney_in_vacols? || user.judge_in_vacols?
-              LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.active? }
+              LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.activated? }
             else
               []
             end
@@ -50,7 +54,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     if feature_enabled?(:idt_ama_appeals)
       tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
     end
-    tasks.reject { |task| task.action == "assign" }
+    tasks.reject { |task| task.action == "assign" || task.is_a?(JudgeAssignTask) }
   end
 
   def role
@@ -62,7 +66,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def appeals_by_file_number
-    appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:active?)
+    appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:activated?)
     if feature_enabled?(:idt_ama_appeals)
       appeals += Appeal.where(veteran_file_number: file_number)
     end
@@ -71,6 +75,9 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def outcode_params
     keys = %w[citation_number decision_date redacted_document_location]
+    if feature_enabled?(:decision_document_upload)
+      keys << "file"
+    end
     params.require(keys)
 
     # Have to do this because params.require() returns an array of the parameter values.
@@ -81,7 +88,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ActiveModelSerializers::SerializableResource.new(
       appeal,
       serializer: ::Idt::V1::AppealDetailsSerializer,
-      include_addresses: Constants::BvaDispatchTeams::USERS[Rails.current_env].include?(user.css_id),
+      include_addresses: BvaDispatch.singleton.user_has_access?(user),
       base_url: request.base_url
     ).as_json
   end

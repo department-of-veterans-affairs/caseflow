@@ -1,11 +1,4 @@
 class SupplementalClaim < ClaimReview
-  with_options if: :saving_review do
-    validates :receipt_date, :benefit_type, presence: { message: "blank" }
-  end
-  validates :legacy_opt_in_approved, inclusion: {
-    in: [true, false], message: "blank"
-  }, if: [:legacy_opt_in_enabled?, :saving_review]
-
   END_PRODUCT_CODES = {
     rating: "040SCR",
     nonrating: "040SCNR",
@@ -15,7 +8,7 @@ class SupplementalClaim < ClaimReview
 
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       formType: "supplemental_claim",
       isDtaError: is_dta_error
@@ -38,10 +31,10 @@ class SupplementalClaim < ClaimReview
     END_PRODUCT_MODIFIERS
   end
 
-  def issue_code(rated)
-    issue_code_type = rated ? :rating : :nonrating
+  def issue_code(rating: true)
+    issue_code_type = rating ? :rating : :nonrating
     if is_dta_error?
-      issue_code_type = rated ? :dta_rating : :dta_nonrating
+      issue_code_type = "dta_#{issue_code_type}".to_sym
     end
     END_PRODUCT_CODES[issue_code_type]
   end

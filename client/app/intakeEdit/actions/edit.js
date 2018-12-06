@@ -11,9 +11,11 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
   });
 
   const data = formatIssues(state);
+
   const pathMap = {
     higher_level_review: 'higher_level_reviews',
-    supplemental_claim: 'supplemental_claims'
+    supplemental_claim: 'supplemental_claims',
+    appeal: 'appeals'
   };
 
   return ApiUtil.patch(`/${pathMap[formType]}/${claimId}/update`, { data }, ENDPOINT_NAMES.REQUEST_ISSUES_UPDATE).

@@ -11,7 +11,7 @@ class EndProductEstablishment < ApplicationRecord
   class ContentionCreationFailed < StandardError; end
 
   attr_accessor :valid_modifiers, :special_issues
-  # In AMA reviews, we may create 2 end products at the same time. To avoid using
+  # In decision reviews, we may create 2 end products at the same time. To avoid using
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
   belongs_to :source, polymorphic: true
@@ -146,8 +146,6 @@ class EndProductEstablishment < ApplicationRecord
     # do not cancel ramp reviews for now
     return if source.is_a?(RampReview)
 
-    active_request_issues = request_issues.select { |request_issue| request_issue.removed_at.nil? }
-
     if active_request_issues.empty?
       cancel!
     end
@@ -157,8 +155,12 @@ class EndProductEstablishment < ApplicationRecord
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
-
     fail EstablishedEndProductNotFound unless result
+
+    # load contentions now, in case "source" needs them.
+    # this VBMS call is slow and will cause the transaction below
+    # to timeout in some cases.
+    contentions
 
     transaction do
       update!(
@@ -174,11 +176,16 @@ class EndProductEstablishment < ApplicationRecord
     raise BGSSyncError.new(e, self)
   end
 
+  def fetch_dispositions_from_vbms
+    VBMSService.get_dispositions!(claim_id: reference_id)
+  end
+
   def status_canceled?
     synced_status == CANCELED_STATUS
   end
 
-  def status_cleared?
+  def status_cleared?(sync: false)
+    sync! if sync
     synced_status == CLEARED_STATUS
   end
 
@@ -187,17 +194,16 @@ class EndProductEstablishment < ApplicationRecord
     !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
-  def associate_rated_issues!
-    is_rated = true
-    return if code != source.issue_code(is_rated)
-    return if unassociated_rated_request_issues.count == 0
+  def associate_rating_request_issues!
+    return if code != source.issue_code(rating: true)
+    return if unassociated_rating_request_issues.count == 0
 
-    VBMSService.associate_rated_issues!(
+    VBMSService.associate_rating_request_issues!(
       claim_id: reference_id,
-      rated_issue_contention_map: rated_issue_contention_map(rated_request_issues)
+      rating_issue_contention_map: rating_issue_contention_map(rating_request_issues)
     )
 
-    RequestIssue.where(id: rated_request_issues.map(&:id)).update_all(
+    RequestIssue.where(id: rating_request_issues.map(&:id)).update_all(
       rating_issue_associated_at: Time.zone.now
     )
   end
@@ -216,33 +222,74 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def request_issues
+    return [] unless source.try(:request_issues)
+    source.request_issues.select { |ri| ri.end_product_establishment == self }
+  end
+
+  def active_request_issues
+    request_issues.select { |request_issue| request_issue.removed_at.nil? && request_issue.status_active? }
+  end
+
+  def associated_rating
+    @associated_rating ||= fetch_associated_rating
+  end
+
+  def sync_decision_issues!
+    request_issues.each do |request_issue|
+      request_issue.submit_for_processing!
+
+      if run_async?
+        DecisionIssueSyncJob.perform_later(request_issue)
+      else
+        DecisionIssueSyncJob.perform_now(request_issue)
+      end
+    end
+  end
+
+  def on_decision_issue_sync_processed
+    if decision_issues_sync_complete?
+      source.on_decision_issues_sync_processed(self)
+    end
+  end
+
   private
+
+  def decision_issues_sync_complete?
+    request_issues.all?(&:processed?)
+  end
+
+  def potential_decision_ratings
+    Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
+  end
 
   def cancel!
     transaction do
       # delete end product in bgs & set sync status to canceled
-      BGSService.new.cancel_end_product(:veteran_file_number, :code, :modifier)
+      BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
     end
   end
 
-  def request_issues
-    source.request_issues.select { |ri| ri.end_product_establishment == self }
+  def fetch_associated_rating
+    potential_decision_ratings.find do |rating|
+      rating.associated_end_products.any? { |end_product| end_product.claim_id == reference_id }
+    end
   end
 
-  def rated_request_issues
-    request_issues.select(&:rated?)
+  def rating_request_issues
+    request_issues.select(&:rating?)
   end
 
-  def unassociated_rated_request_issues
-    rated_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
+  def unassociated_rating_request_issues
+    rating_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
   end
 
   def request_issues_ready_for_contentions
     request_issues.select { |ri| ri.contention_reference_id.nil? && ri.eligible? }
   end
 
-  def rated_issue_contention_map(request_issues_to_associate)
+  def rating_issue_contention_map(request_issues_to_associate)
     request_issues_to_associate.inject({}) do |contention_map, issue|
       contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
       contention_map

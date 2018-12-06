@@ -210,51 +210,58 @@ class VACOLS::Case < VACOLS::Record
     )
   end
 
-  # rubocop:disable Metrics/MethodLength
   def update_vacols_location!(location)
+    self.class.batch_update_vacols_location(location, [bfkey])
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def self.batch_update_vacols_location(location, vacols_ids)
     unless location
-      Rails.logger.error "THERE IS A BUG IN YOUR CODE! It attempted to assign a case to a falsy location. " \
+      Rails.logger.error "THERE IS A BUG IN YOUR CODE! It attempted to assign a case to a falsey location. " \
                          "Unfortunately, I can't throw an exception here because code may depend on this method " \
                          "failing silently. Please validate before passing it to this method."
       return
     end
 
-    conn = self.class.connection
+    return if vacols_ids.empty?
 
-    # Note: we use conn.quote here from ActiveRecord to deter SQL injection
-    location = conn.quote(location)
+    user_id = (RequestStore.store[:current_user].try(:vacols_uniq_id) || "DSUSER").upcase
 
-    vacols_user_id = RequestStore.store[:current_user].vacols_uniq_id || ""
-    user_db_id = conn.quote(vacols_user_id.upcase)
-    case_id = conn.quote(bfkey)
+    conn = connection
 
-    MetricsService.record("VACOLS: update_vacols_location! #{bfkey}",
+    MetricsService.record("VACOLS: batch_update_vacols_location",
                           service: :vacols,
-                          name: "update_vacols_location") do
+                          name: "batch_update_vacols_location") do
       conn.transaction do
-        conn.execute(<<-SQL)
-          UPDATE BRIEFF
-          SET BFDLOCIN = SYSDATE,
-              BFCURLOC = #{location},
+        conn.execute(sanitize_sql_array([<<-SQL, location, vacols_ids]))
+          update BRIEFF
+          set BFDLOCIN = SYSDATE,
+              BFCURLOC = ?,
               BFDLOOUT = SYSDATE,
               BFORGTIC = NULL
-          WHERE BFKEY = #{case_id}
+          where BFKEY in (?)
         SQL
 
-        conn.execute(<<-SQL)
-          UPDATE PRIORLOC
-          SET LOCDIN = SYSDATE,
-              LOCSTRCV = #{user_db_id},
+        conn.execute(sanitize_sql_array([<<-SQL, user_id, vacols_ids]))
+          update PRIORLOC
+          set LOCDIN = SYSDATE,
+              LOCSTRCV = ?,
               LOCEXCEP = 'Y'
-          WHERE LOCKEY = #{case_id} and LOCDIN is NULL
+          where LOCKEY in (?) and LOCDIN is null
         SQL
 
-        conn.execute(<<-SQL)
-          INSERT into PRIORLOC
-            (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
-          VALUES
-           (SYSDATE, SYSDATE, #{location}, #{user_db_id}, #{case_id})
-        SQL
+        insert_strs = vacols_ids.map do |vacols_id|
+          sanitize_sql_array(
+            [
+              "into PRIORLOC (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY) values (SYSDATE, SYSDATE, ?, ?, ?)",
+              location,
+              user_id,
+              vacols_id
+            ]
+          )
+        end
+
+        conn.execute("insert all #{insert_strs.join(' ')} select 1 from dual")
       end
     end
   end
@@ -279,6 +286,18 @@ class VACOLS::Case < VACOLS::Record
     end
 
     result.first["locstto"]
+  end
+
+  def status_advanced_or_remanded_or_completed?
+    %w[ADV REM HIS].include?(bfmpro)
+  end
+
+  def remanded?
+    bfmpro == "REM"
+  end
+
+  def closed?
+    bfddec.present?
   end
 
   ##

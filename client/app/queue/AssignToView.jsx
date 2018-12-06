@@ -3,19 +3,15 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
 
 import COPY from '../../COPY.json';
 
 import {
-  actionableTasksForAppeal,
-  appealWithDetailSelector,
-  tasksForAppealAssignedToUserSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector
+  taskById,
+  appealWithDetailSelector
 } from './selectors';
-import { prepareTasksForStore } from './utils';
 
-import { setTaskAttrs } from './QueueActions';
+import { onReceiveAmaTasks } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
@@ -31,6 +27,7 @@ import type { Appeal, Task } from './types/models';
 
 type Params = {|
   appealId: string,
+  taskId: string,
   task: Task,
   isReassignAction: boolean,
   isTeamAssign: boolean,
@@ -42,7 +39,7 @@ type Props = Params & {|
   highlightFormItems: boolean,
   requestPatch: typeof requestPatch,
   requestSave: typeof requestSave,
-  setTaskAttrs: typeof setTaskAttrs
+  onReceiveAmaTasks: typeof onReceiveAmaTasks
 |};
 
 type ViewState = {|
@@ -106,8 +103,10 @@ class AssignToView extends React.Component<Props, ViewState> {
     }
 
     return this.props.requestSave('/tasks', payload, successMsg).
-      then(() => {
-        this.props.setTaskAttrs(task.uniqueId, { status: 'on_hold' });
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+
+        this.props.onReceiveAmaTasks(response.tasks.data);
       });
   }
 
@@ -154,16 +153,20 @@ class AssignToView extends React.Component<Props, ViewState> {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        _.map(preparedTasks, (preparedTask) => this.props.setTaskAttrs(preparedTask.uniqueId, preparedTask));
+        this.props.onReceiveAmaTasks(response.tasks.data);
       });
   }
 
   render = () => {
     const {
-      highlightFormItems
+      highlightFormItems,
+      task
     } = this.props;
+
+    if (!task || task.availableActions.length === 0) {
+      return null;
+    }
 
     return <React.Fragment>
       <SearchableDropdown
@@ -193,9 +196,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
     highlightFormItems,
-    task: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0] ||
-      incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0] ||
-      actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
+    task: taskById(state, { taskId: ownProps.taskId }),
     appeal: appealWithDetailSelector(state, ownProps)
   };
 };
@@ -203,7 +204,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   requestSave,
-  setTaskAttrs
+  onReceiveAmaTasks
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(

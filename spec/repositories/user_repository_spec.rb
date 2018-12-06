@@ -23,8 +23,8 @@ describe UserRepository do
     context "when a user has the acting judge flag set but no attorney ID" do
       let!(:staff) { create(:staff, svlj: "A", sdomainid: css_id, sattyid: nil, sactive: "A") }
 
-      it "should return a judge role" do
-        expect(subject).to eq ["judge"]
+      it "should return an empty role" do
+        expect(subject).to eq []
       end
     end
 
@@ -33,6 +33,14 @@ describe UserRepository do
 
       it "should return a co-located role" do
         expect(subject).to eq ["colocated"]
+      end
+    end
+
+    context "when a user is both a co-located admin and a dispatcher" do
+      let!(:staff) { create(:staff, sdept: "DSP", stitle: "A2", sattyid: nil, sdomainid: css_id) }
+
+      it "should return a co-located role" do
+        expect(subject).to eq %w[colocated dispatch]
       end
     end
 

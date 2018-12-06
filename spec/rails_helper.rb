@@ -55,6 +55,8 @@ end
 
 FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
+ENV["TZ"] ||= "America/New York"
+
 Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options = ::Selenium::WebDriver::Chrome::Options.new
 
@@ -172,10 +174,11 @@ end
 
 User.prepend(StubbableUser)
 
-def reset_application!
+def clean_application!
   User.clear_stub!
   Fakes::CAVCDecisionRepository.clean!
   Fakes::BGSService.clean!
+  Fakes::VBMSService.clean!
 end
 
 def current_user
@@ -248,6 +251,7 @@ RSpec.configure do |config|
   config.after(:each) do
     Timecop.return
     Rails.cache.clear
+    Fakes::BGSService.clean!
     Time.zone = @spec_time_zone
   end
 

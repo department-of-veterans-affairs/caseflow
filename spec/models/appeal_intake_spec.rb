@@ -68,6 +68,7 @@ describe AppealIntake do
     let(:claimant) { nil }
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
+    let(:veteran_is_not_claimant) { "false" }
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
     let(:request_params) do
@@ -76,7 +77,8 @@ describe AppealIntake do
         docket_type: docket_type,
         claimant: claimant,
         payee_code: payee_code,
-        legacy_opt_in_approved: legacy_opt_in_approved
+        legacy_opt_in_approved: legacy_opt_in_approved,
+        veteran_is_not_claimant: veteran_is_not_claimant
       )
     end
 
@@ -86,7 +88,8 @@ describe AppealIntake do
       expect(intake.detail).to have_attributes(
         receipt_date: Date.new(2018, 5, 25),
         docket_type: "hearing",
-        legacy_opt_in_approved: true
+        legacy_opt_in_approved: true,
+        veteran_is_not_claimant: false
       )
     end
 
@@ -96,7 +99,7 @@ describe AppealIntake do
       expect(intake.detail.claimants.count).to eq 1
       expect(intake.detail.claimants.first).to have_attributes(
         participant_id: intake.veteran.participant_id,
-        payee_code: "00"
+        payee_code: nil
       )
     end
 
@@ -115,6 +118,7 @@ describe AppealIntake do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
+      let(:veteran_is_not_claimant) { "true" }
 
       it "adds other relationship to claimants" do
         subject
@@ -122,8 +126,20 @@ describe AppealIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: "1234",
-          payee_code: "10"
+          payee_code: nil
         )
+      end
+
+      context "claimant is nil" do
+        let(:claimant) { nil }
+        let(:receipt_date) { 3.days.from_now }
+
+        it "is expected to add an error that claimant cannot be blank" do
+          expect(subject).to be_falsey
+          expect(detail.errors[:claimant]).to include("blank")
+          expect(detail.errors[:receipt_date]).to include("in_future")
+          expect(detail.claimants).to be_empty
+        end
       end
     end
   end
@@ -131,13 +147,15 @@ describe AppealIntake do
   context "#complete!" do
     subject { intake.complete!(params) }
 
-    let(:params) do
-      { request_issues: [
+    let(:params) { { request_issues: issue_data } }
+
+    let(:issue_data) do
+      [
         { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" },
-        { decision_text: "non-rated issue decision text",
+        { decision_text: "nonrating request issue decision text",
           issue_category: "test issue category",
           decision_date: "2018-12-25" }
-      ] }
+      ]
     end
 
     let(:detail) do
@@ -161,9 +179,33 @@ describe AppealIntake do
       expect(intake.detail.request_issues.second).to have_attributes(
         issue_category: "test issue category",
         decision_date: Date.new(2018, 12, 25),
-        description: "non-rated issue decision text"
+        description: "nonrating request issue decision text"
       )
       expect(intake.detail.tasks.count).to eq 1
+    end
+
+    context "when a legacy VACOLS opt-in occurs" do
+      let(:issue_data) do
+        [
+          {
+            profile_date: "2018-04-30",
+            reference_id: "reference-id",
+            decision_text: "decision text",
+            vacols_id: "a-vacols-issue",
+            vacols_sequence_id: "vacols-seq"
+          }
+        ]
+      end
+
+      it "submits a LegacyIssueOptin" do
+        expect(LegacyIssueOptin.count).to eq 0
+        expect(LegacyOptinProcessJob).to receive(:perform_now).once
+
+        subject
+
+        expect(LegacyIssueOptin.count).to eq 1
+        expect(LegacyIssueOptin.first).to be_submitted
+      end
     end
   end
 end

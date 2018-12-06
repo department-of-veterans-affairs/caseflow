@@ -1,5 +1,6 @@
-class Appeal < AmaReview
+class Appeal < DecisionReview
   include Taskable
+  include LegacyOptinable
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -10,7 +11,9 @@ class Appeal < AmaReview
 
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
+    validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, if: :legacy_opt_in_enabled?
+    validates_associated :claimants
   end
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
@@ -32,17 +35,59 @@ class Appeal < AmaReview
     end
   end
 
+  def ui_hash
+    super.merge(
+      docketType: docket_type,
+      formType: "appeal"
+    )
+  end
+
   def type
     "Original"
   end
+
+  # Returns the most directly responsible party for an appeal when it is at the Board,
+  # mirroring Legacy Appeals' location code in VACOLS
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
+  def location_code
+    location_code = nil
+    root_task = tasks.first.root_task if !tasks.empty?
+
+    if root_task && root_task.status == Constants.TASK_STATUSES.completed
+      location_code = COPY::CASE_LIST_TABLE_POST_DECISION_LABEL
+    else
+      active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+      if active_tasks == [root_task]
+        location_code = COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
+      elsif !active_tasks.empty?
+        most_recent_assignee = active_tasks.order(updated_at: :desc).first.assigned_to
+        location_code = if most_recent_assignee.is_a?(Organization)
+                          most_recent_assignee.name
+                        else
+                          most_recent_assignee.css_id
+                        end
+      end
+    end
+
+    location_code
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def attorney_case_reviews
     tasks.map(&:attorney_case_reviews).flatten
   end
 
   def reviewing_judge_name
-    task = tasks.where(type: "JudgeTask").order(:created_at).last
+    task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
     task ? task.assigned_to.try(:full_name) : ""
+  end
+
+  def eligible_request_issues
+    # It's possible that two users create issues around the same time and the sequencer gets thrown off
+    # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
+    request_issues.select(&:eligible?).sort_by(&:id)
   end
 
   def issues
@@ -136,10 +181,13 @@ class Appeal < AmaReview
     "not implemented for AMA"
   end
 
-  def create_issues!(request_issues_data:)
-    request_issues.destroy_all unless request_issues.empty?
-
-    request_issues_data.map { |data| request_issues.from_intake_data(data).save! }
+  def create_issues!(new_issues)
+    new_issues.each do |issue|
+      # temporary until ticket for appeals benefit type by issue is implemented
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
+      issue.update!(benefit_type: "compensation")
+      create_legacy_issue_optin(issue) if issue.vacols_id
+    end
   end
 
   def serializer_class
@@ -174,7 +222,25 @@ class Appeal < AmaReview
     RootTask.create_root_and_sub_tasks!(self)
   end
 
+  def timeline
+    [
+      {
+        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
+        date: decision_date
+      },
+      tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC").map(&:timeline_details),
+      {
+        title: receipt_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
+        date: receipt_date
+      }
+    ].flatten
+  end
+
   private
+
+  def contestable_decision_issues
+    DecisionIssue.where(participant_id: veteran.participant_id)
+  end
 
   def bgs
     BGSService.new

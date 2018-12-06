@@ -4,17 +4,17 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
-import NonRatedIssuesUnconnected from '../../components/NonRatedIssues';
-import RatedIssuesUnconnected from '../../components/RatedIssues';
+import NonratingRequestIssuesUnconnected from '../../components/NonratingRequestIssues';
+import RatingRequestIssuesUnconnected from '../../components/RatingRequestIssues';
 import IssueCounter from '../../components/IssueCounter';
 import {
   completeIntake,
   setIssueSelected,
-  newNonRatedIssue,
+  newNonratingRequestIssue,
   setIssueCategory,
   setIssueDescription,
   setIssueDecisionDate
-} from '../../actions/ama';
+} from '../../actions/decisionReview';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, REQUEST_STATE } from '../../constants';
 import { getIntakeStatus, issueCountSelector } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
@@ -54,32 +54,32 @@ class Finish extends React.PureComponent {
         If you are unable to find one or more issues, enter these in the "other issues" section.
       </p>
 
-      <RatedIssues />
-      <NonRatedIssues />
+      <RatingRequestIssues />
+      <NonratingRequestIssues />
     </div>;
   }
 }
 
-const NonRatedIssues = connect(
+const NonratingRequestIssues = connect(
   ({ appeal }) => ({
-    nonRatedIssues: appeal.nonRatedIssues
+    nonRatingRequestIssues: appeal.nonRatingRequestIssues
   }),
   (dispatch) => bindActionCreators({
-    newNonRatedIssue,
+    newNonratingRequestIssue,
     setIssueCategory,
     setIssueDescription,
     setIssueDecisionDate
   }, dispatch)
-)(NonRatedIssuesUnconnected);
+)(NonratingRequestIssuesUnconnected);
 
-const RatedIssues = connect(
+const RatingRequestIssues = connect(
   ({ appeal }) => ({
     ratings: appeal.ratings
   }),
   (dispatch) => bindActionCreators({
     setIssueSelected
   }, dispatch)
-)(RatedIssuesUnconnected);
+)(RatingRequestIssuesUnconnected);
 
 const mapStateToProps = (state) => {
   return {

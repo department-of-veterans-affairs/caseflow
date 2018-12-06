@@ -23,7 +23,7 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Alert from '../components/Alert';
 import JudgeSelectComponent from './JudgeSelectComponent';
-import { tasksForAppealAssignedToUserSelector } from './selectors';
+import { taskById } from './selectors';
 
 import {
   fullWidth,
@@ -46,6 +46,7 @@ import type { UiStateMessage } from './types/state';
 
 type Params = {|
   appealId: string,
+  taskId: string,
   checkoutFlow: string,
   nextStep: string
 |};
@@ -57,6 +58,7 @@ type Props = Params & {|
   decision: Object,
   task: Task,
   highlightFormItems: Boolean,
+  amaDecisionIssues: Boolean,
   userRole: string,
   error: ?UiStateMessage,
   // dispatch
@@ -90,10 +92,11 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     const {
       checkoutFlow,
       appeal,
+      taskId,
       appealId
     } = this.props;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
-    const prevUrl = `/queue/appeals/${appealId}`;
+    const prevUrl = `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}`;
 
     if (checkoutFlow === DECISION_TYPES.DRAFT_DECISION) {
       return dispositions.includes(VACOLS_DISPOSITIONS.REMANDED) ?
@@ -109,6 +112,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       task: { taskId },
       appeal: {
         issues,
+        decisionIssues,
         veteranFullName,
         externalId: appealId,
         isLegacyAppeal
@@ -116,10 +120,12 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       checkoutFlow,
       decision,
       userRole,
-      judges
+      judges,
+      amaDecisionIssues
     } = this.props;
 
-    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issues, { isLegacyAppeal });
+    const issuesToPass = !isLegacyAppeal && amaDecisionIssues ? decisionIssues : issues;
+    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issuesToPass, { isLegacyAppeal });
 
     const fields = {
       type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ?
@@ -227,12 +233,12 @@ const mapStateToProps = (state, ownProps) => {
   return {
     appeal,
     judges,
-    // Attorneys should only have one task assigned to them from this appeal.
-    task: tasksForAppealAssignedToUserSelector(state, { appealId: ownProps.appealId })[0],
+    task: taskById(state, { taskId: ownProps.taskId }),
     decision,
     error,
     userRole,
-    highlightFormItems
+    highlightFormItems,
+    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues
   };
 };
 

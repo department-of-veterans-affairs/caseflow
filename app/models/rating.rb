@@ -10,44 +10,58 @@ class Rating
   ONE_YEAR_PLUS_DAYS = 372.days
   TWO_LIFETIMES_DAYS = 250.years
 
-  def issues
-    @issues ||= fetch_issues
+  def ui_hash
+    serialize
   end
 
   # If you change this method, you will need
   # to clear cache in prod for your changes to
   # take effect immediately.
-  # See AmaReview#cached_serialized_timely_ratings.
-  def ui_hash
+  # See DecisionReview#cached_serialized_timely_ratings.
+  def serialize
     {
       participant_id: participant_id,
       profile_date: profile_date,
       promulgation_date: promulgation_date,
-      issues: issues.map(&:ui_hash)
+      issues: issues.map(&:serialize)
     }
+  end
+
+  def associated_end_products
+    associated_claims_data.map do |claim_data|
+      EndProduct.new(
+        claim_id: claim_data[:clm_id],
+        claim_type_code: claim_data[:bnft_clm_tc]
+      )
+    end
+  end
+
+  def issues
+    return [] if rating_profile[:rating_issues].nil?
+
+    [rating_profile[:rating_issues]].flatten.map do |issue_data|
+      RatingIssue.from_bgs_hash(self, issue_data)
+    end
   end
 
   private
 
-  def fetch_issues
-    response = BGSService.new.fetch_rating_profile(
+  def associated_claims_data
+    return [] if rating_profile[:associated_claims].nil?
+    [rating_profile[:associated_claims]].flatten
+  end
+
+  def fetch_rating_profile
+    BGSService.new.fetch_rating_profile(
       participant_id: participant_id,
       profile_date: profile_date
     )
-
-    return [] if response[:rating_issues].nil?
-
-    [response[:rating_issues]].flatten.map do |issue_data|
-      RatingIssue.from_bgs_hash(
-        issue_data.merge(
-          promulgation_date: promulgation_date,
-          participant_id: participant_id,
-          profile_date: profile_date
-        )
-      )
-    end
   rescue Savon::Error
-    []
+    {}
+  end
+
+  def rating_profile
+    @rating_profile ||= fetch_rating_profile
   end
 
   class << self
@@ -56,11 +70,18 @@ class Rating
     end
 
     def fetch_timely(participant_id:, from_date:)
-      start_date = from_date - ONE_YEAR_PLUS_DAYS
+      fetch_in_range(
+        participant_id: participant_id,
+        start_date: from_date - ONE_YEAR_PLUS_DAYS,
+        end_date: Time.zone.today
+      )
+    end
+
+    def fetch_in_range(participant_id:, start_date:, end_date:)
       response = BGSService.new.fetch_ratings_in_range(
         participant_id: participant_id,
         start_date: start_date,
-        end_date: Time.zone.today
+        end_date: end_date
       )
 
       unsorted = ratings_from_bgs_response(response).select do |rating|

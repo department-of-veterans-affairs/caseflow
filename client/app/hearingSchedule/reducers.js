@@ -57,6 +57,7 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
             'editedNotes',
             'editedDisposition',
             'editedDate',
+            'editedTime',
             'edited'
           ] }
       }
@@ -96,6 +97,15 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
       hearings: {
         [action.payload.hearingId]: {
           editedDate: { $set: action.payload.date },
+          edited: { $set: true }
+        }
+      }
+    });
+  case ACTIONS.HEARING_TIME_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedTime: { $set: action.payload.time },
           edited: { $set: true }
         }
       }
@@ -256,6 +266,26 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
   case ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN:
     return update(state, {
       $toggle: ['filterVljIsOpen']
+    });
+  case ACTIONS.ON_CLICK_REMOVE_HEARING_DAY:
+    return update(state, {
+      displayRemoveHearingDayModal: {
+        $set: true
+      }
+    });
+  case ACTIONS.CANCEL_REMOVE_HEARING_DAY:
+    return update(state, {
+      $unset: ['displayRemoveHearingDayModal']
+    });
+  case ACTIONS.SUCCESSFUL_HEARING_DAY_DELETE:
+    return update(state, {
+      successfulHearingDayDelete: {
+        $set: action.payload.date
+      }
+    });
+  case ACTIONS.RESET_DELETE_SUCCESSFUL:
+    return update(state, {
+      $unset: ['successfulHearingDayDelete']
     });
   default:
     return state;

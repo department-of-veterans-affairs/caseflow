@@ -10,11 +10,11 @@ import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
 import {
   setBenefitType,
-  setClaimantNotVeteran,
+  setVeteranIsNotClaimant,
   setClaimant,
   setPayeeCode,
   setLegacyOptInApproved
-} from '../../actions/ama';
+} from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -71,7 +71,7 @@ class Review extends React.PureComponent {
 
       <RadioField
         name="informal-conference"
-        label="Did the Veteran request an informal conference?"
+        label="Was an informal conference requested?"
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
@@ -82,7 +82,7 @@ class Review extends React.PureComponent {
 
       <RadioField
         name="same-office"
-        label="Did the Veteran request review by the same office?"
+        label="Was an interview by the same office requested?"
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
@@ -103,14 +103,20 @@ class Review extends React.PureComponent {
 }
 
 const SelectClaimantConnected = connect(
-  ({ higherLevelReview }) => ({
-    claimantNotVeteran: higherLevelReview.claimantNotVeteran,
+  ({ higherLevelReview, intake }) => ({
+    isVeteranDeceased: intake.veteran.isDeceased,
+    veteranIsNotClaimant: higherLevelReview.veteranIsNotClaimant,
+    veteranIsNotClaimantError: higherLevelReview.veteranIsNotClaimantError,
     claimant: higherLevelReview.claimant,
+    claimantError: higherLevelReview.claimantError,
     payeeCode: higherLevelReview.payeeCode,
-    relationships: higherLevelReview.relationships
+    payeeCodeError: higherLevelReview.payeeCodeError,
+    relationships: higherLevelReview.relationships,
+    benefitType: higherLevelReview.benefitType,
+    formType: intake.formType
   }),
   (dispatch) => bindActionCreators({
-    setClaimantNotVeteran,
+    setVeteranIsNotClaimant,
     setClaimant,
     setPayeeCode
   }, dispatch)

@@ -12,10 +12,6 @@ class Task < ApplicationRecord
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
 
-  after_update :update_parent_status
-
-  validate :on_hold_duration_is_set, on: :update
-
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym    => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
@@ -27,19 +23,26 @@ class Task < ApplicationRecord
     []
   end
 
+  def label
+    action
+  end
+
   # available_actions() returns an array of options from selected by the subclass
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
-    return [] if no_actions_available?(user)
-
-    available_actions(user).map do |a|
-      { label: a[:label], value: a[:value], data: a[:func] ? send(a[:func]) : nil }
-    end
+    no_actions_available?(user) ? [] : available_actions(user).map { |action| build_action_hash(action) }
   end
 
-  def no_actions_available?(_user)
-    [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
+  def build_action_hash(action)
+    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func]) : nil }
+  end
+
+  def no_actions_available?(user)
+    return true if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
+
+    # Users who are assigned a subtask of an organization don't have actions on the organizational task.
+    assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
   end
 
   def assigned_by_display_name
@@ -56,6 +59,14 @@ class Task < ApplicationRecord
 
   def self.recently_completed
     where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+  end
+
+  def self.incomplete
+    where.not(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def self.incomplete_or_recently_completed
+    incomplete.or(recently_completed)
   end
 
   def self.create_many_from_params(params_array, current_user)
@@ -80,6 +91,17 @@ class Task < ApplicationRecord
     update(params)
 
     [self]
+  end
+
+  def update_status(new_status)
+    return unless new_status
+
+    case new_status
+    when Constants.TASK_STATUSES.completed
+      mark_as_complete!
+    else
+      update!(status: new_status)
+    end
   end
 
   def legacy?
@@ -138,8 +160,7 @@ class Task < ApplicationRecord
   end
 
   def self.verify_user_can_assign!(user)
-    unless user.attorney_in_vacols? ||
-           (user.judge_in_vacols? && FeatureToggle.enabled?(:judge_assignment_to_attorney, user: user))
+    unless user.attorney_in_vacols? || user.judge_in_vacols?
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
     end
   end
@@ -192,9 +213,20 @@ class Task < ApplicationRecord
 
   def assign_to_judge_data
     {
-      selected: root_task.children.find { |task| task.type == JudgeTask.name }.assigned_to,
+      selected: root_task.children.find { |task| task.is_a?(JudgeTask) }.assigned_to,
       options: users_to_options(Judge.list_all),
-      type: JudgeTask.name
+      type: JudgeAssignTask.name
+    }
+  end
+
+  def timeline_title
+    "#{type} completed"
+  end
+
+  def timeline_details
+    {
+      title: timeline_title,
+      date: completed_at
     }
   end
 
@@ -214,16 +246,6 @@ class Task < ApplicationRecord
       return mark_as_complete! if assigned_to.is_a?(Organization)
       return update!(status: :assigned) if on_hold?
     end
-  end
-
-  def on_hold_duration_is_set
-    if saved_change_to_status? && on_hold? && !on_hold_duration && colocated_task?
-      errors.add(:on_hold_duration, "has to be specified")
-    end
-  end
-
-  def update_parent_status
-    parent.when_child_task_completed if saved_change_to_status? && completed? && parent
   end
 
   def set_assigned_at_and_update_parent_status

@@ -17,6 +17,7 @@ export type Judges = { [string]: User };
 export type Address = {
   address_line_1: string,
   address_line_2: string,
+  address_line_3: ?string,
   city: string,
   state: string,
   zip: string,
@@ -53,7 +54,7 @@ export type Task = {
   uniqueId: string,
   isLegacy: boolean,
   type: ?string,
-  action: string,
+  label: string,
   appealId: number,
   appealType: string,
   externalAppealId: string,
@@ -109,6 +110,7 @@ export type Hearing = {
 
 export type AppealDetail = {
   issues: Array<Object>,
+  decisionIssues: Array<Object>,
   hearings: Array<Hearing>,
   completedHearingOnPreviousAppeal: boolean,
   appellantFullName: string,
@@ -145,7 +147,13 @@ export type BasicAppeal = {
   veteranFileNumber: string,
   isPaperCase: ?boolean,
   tasks?: Array<Task>,
-  issueCount: number
+  issueCount: number,
+  sanitizedHearingRequestType?: string,
+  regionalOffice?: ?{
+    key: ?string,
+    city: ?string,
+    state: ?string
+  }
 };
 
 export type BasicAppeals = { [string]: BasicAppeal };
@@ -162,3 +170,11 @@ export type Attorneys = {
 export type TaskWithAppeal = Task & {
   appeal: Appeal
 };
+
+export type Distribution = {|
+  id: number,
+  status: string,
+  created_at: string,
+  updated_at: string,
+  distributed_cases_count: number
+|};

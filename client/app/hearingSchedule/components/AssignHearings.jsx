@@ -10,8 +10,8 @@ import { css } from 'glamor';
 import moment from 'moment';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
-import ApiUtil from '../../util/ApiUtil';
 import { renderAppealType } from '../../queue/utils';
+import ApiUtil from '../../util/ApiUtil';
 import StatusMessage from '../../components/StatusMessage';
 
 const sectionNavigationListStyling = css({
@@ -22,6 +22,8 @@ const sectionNavigationListStyling = css({
   }
 });
 
+const roSelectionStyling = css({ marginTop: '10px' });
+
 export default class AssignHearings extends React.Component {
 
   onSelectedHearingDayChange = (hearingDay) => () => {
@@ -29,6 +31,14 @@ export default class AssignHearings extends React.Component {
   };
 
   onClick = (vacolsId) => {
+    const values = {
+      regional_office_value: this.props.selectedRegionalOffice.value,
+      regional_office_label: this.props.selectedRegionalOffice.label,
+      hearing_pkseq: this.props.selectedHearingDay.id,
+      hearing_type: this.props.selectedHearingDay.hearingType,
+      hearing_date: this.props.selectedHearingDay.hearingDate
+    };
+
     const payload = {
       data: {
         tasks: [
@@ -39,13 +49,7 @@ export default class AssignHearings extends React.Component {
             assigned_to_id: this.props.userId,
             business_payloads: {
               description: 'Create Task',
-              values: {
-                regional_office_value: this.props.selectedRegionalOffice.value,
-                regional_office_label: this.props.selectedRegionalOffice.label,
-                hearing_pkseq: this.props.selectedHearingDay.id,
-                hearing_type: this.props.selectedHearingDay.hearingType,
-                hearing_date: this.props.selectedHearingDay.hearingDate
-              }
+              values
             }
           }
         ]
@@ -69,11 +73,11 @@ export default class AssignHearings extends React.Component {
   };
 
   formatAvailableHearingDays = () => {
-    return <div className="usa-width-one-fourth">
+    return <div className="usa-width-one-fourth" {...roSelectionStyling}>
       <h3>Hearings to Schedule</h3>
       <h4>Available Hearing Days</h4>
       <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
-        {Object.values(this.props.upcomingHearingDays).slice(0, 9).
+        {_.orderBy(Object.values(this.props.upcomingHearingDays), (hearingDay) => hearingDay.hearingDate, 'asc').
           map((hearingDay) => {
             const { selectedHearingDay } = this.props;
             const dateSelected = selectedHearingDay &&
@@ -107,6 +111,11 @@ export default class AssignHearings extends React.Component {
   };
 
   getHearingTime = (date, regionalOfficeTimezone) => {
+
+    if (this.props.selectedRegionalOffice.label === 'Central') {
+      return <div>{getTime(date)} </div>;
+    }
+
     return <div>
       {getTime(date)} /<br />{getTimeInDifferentTimeZone(date, regionalOfficeTimezone)}
     </div>;
@@ -142,6 +151,7 @@ export default class AssignHearings extends React.Component {
 
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
+      vacolsId: hearing.appealVacolsId,
       caseDetails: `${hearing.appellantMiFormatted || hearing.veteranMiFormatted} | ${hearing.vbmsId}`,
       type: renderAppealType({
         caseType: hearing.appealType,
@@ -155,15 +165,33 @@ export default class AssignHearings extends React.Component {
 
   veteransReadyForHearing = () => {
 
+    const { selectedHearingDay, selectedRegionalOffice } = this.props;
+    const date = moment(selectedHearingDay.hearingDate).format('YYYY-MM-DD');
+    const SROVal = selectedRegionalOffice.value;
+    const timer = () => {
+      let time = getTime(selectedHearingDay.hearingDate);
+
+      if (time === '12:00 am ET') {
+        return '';
+
+      }
+
+      return time;
+    };
+
+    const qry = `?hearingDate=${date}&regionalOffice=${SROVal}&hearingTime=${timer()}`;
+
     const tabWindowColumns = [
       {
         header: 'Case details',
         align: 'left',
         valueName: 'caseDetails',
         valueFunction: (veteran) => <Link
-          href={`/queue/appeals/${veteran.vacolsId}`}
+          href={`/queue/appeals/${veteran.vacolsId}/${qry}`}
           name={veteran.vacolsId}
-          onClick={this.onClick.bind(this, veteran.vacolsId)} >
+          onClick={() => {
+            this.onClick(veteran.vacolsId);
+          }}>
           {veteran.caseDetails}
         </Link>
       },
@@ -211,13 +239,14 @@ export default class AssignHearings extends React.Component {
         columns={tabWindowColumns}
         rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
         summary="scheduled-hearings-table"
+        slowReRendersAreOk
       />;
 
     };
 
-    const selectedHearingDay = this.props.selectedHearingDay;
-
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
+    const scheduledOrder = _.sortBy(
+      (this.props.selectedHearingDay.hearings), 'date');
 
     return <div className="usa-width-three-fourths">
       <h1>
@@ -231,8 +260,9 @@ export default class AssignHearings extends React.Component {
             label: 'Scheduled',
             page: <Table
               columns={tabWindowColumns}
-              rowObjects={this.tableScheduledHearingsRows(this.props.selectedHearingDay.hearings)}
+              rowObjects={this.tableScheduledHearingsRows(scheduledOrder)}
               summary="scheduled-hearings-table"
+              slowReRendersAreOk
             />
           },
           {

@@ -11,6 +11,9 @@ class Hearing < ApplicationRecord
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :representative
   vacols_attr_accessor :regional_office_key, :master_record
+  vacols_attr_accessor :docket_number, :appeal_type, :appellant_address_line_1
+  vacols_attr_accessor :appellant_address_line_2, :appellant_city, :appellant_state
+  vacols_attr_accessor :appellant_zip, :appellant_country
 
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
@@ -66,10 +69,10 @@ class Hearing < ApplicationRecord
     appeals << self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
   end
 
-  def update(hearing_hash)
+  def update_caseflow_and_vacols(hearing_hash)
     ActiveRecord::Base.multi_transaction do
       self.class.repository.update_vacols_hearing!(vacols_record, hearing_hash)
-      super
+      update!(hearing_hash)
     end
   end
 
@@ -78,7 +81,7 @@ class Hearing < ApplicationRecord
   end
 
   def readable_location
-    if request_type == "CO"
+    if request_type == Hearing::CO_HEARING
       return "Washington DC"
     end
 
@@ -110,6 +113,7 @@ class Hearing < ApplicationRecord
       appellant_middle_initial: appellant_middle_initial,
       appellant_last_name: appellant_last_name,
       appeal_vacols_id: appeal_vacols_id
+
     }
   end
 
@@ -124,23 +128,16 @@ class Hearing < ApplicationRecord
   delegate \
     :veteran_age, \
     :veteran_sex, \
-    :appellant_city, \
-    :appellant_state, \
     :vbms_id, \
     :number_of_documents, \
     :number_of_documents_after_certification, \
     :veteran,  \
     :veteran_full_address, \
     :sanitized_vbms_id, \
-    :docket_number, \
-    :appellant_address_line_1, \
-    :appellant_city, \
-    :appellant_state, \
-    :appellant_zip, \
-    :closest_alternate_hearing_location, \
+    :docket_name,
     to: :appeal, allow_nil: true
 
-  delegate :type, to: :appeal, prefix: true
+  delegate :vacols_id, to: :appeal, prefix: true
 
   def to_hash(current_user_id)
     serializable_hash(
@@ -170,12 +167,14 @@ class Hearing < ApplicationRecord
         :current_issue_count,
         :prepped,
         :docket_number,
+        :docket_name,
         :appeal_type,
         :appellant_address_line_1,
         :appellant_city,
         :appellant_state,
         :appellant_zip,
-        :readable_location
+        :readable_location,
+        :appeal_vacols_id
       ],
       except: :military_service
     ).merge(

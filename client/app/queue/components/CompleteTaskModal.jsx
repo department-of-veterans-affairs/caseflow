@@ -9,16 +9,13 @@ import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import {
-  actionableTasksForAppeal,
-  appealWithDetailSelector,
-  incompleteOrganizationTasksByAssigneeIdSelector,
-  tasksForAppealAssignedToUserSelector
+  taskById,
+  appealWithDetailSelector
 } from '../selectors';
-import { setTaskAttrs } from '../QueueActions';
+import { onReceiveAmaTasks } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
-import { prepareTasksForStore } from '../utils';
 import editModalBase from './EditModalBase';
 
 import type { State } from '../types/state';
@@ -26,6 +23,7 @@ import type { Task, Appeal } from '../types/models';
 
 type Params = {|
   task: Task,
+  taskId: string,
   appeal: Appeal,
   appealId: string,
   modalType: string,
@@ -35,7 +33,7 @@ type Props = Params & {|
   saveState: boolean,
   history: Object,
   requestPatch: typeof requestPatch,
-  setTaskAttrs: typeof setTaskAttrs
+  onReceiveAmaTasks: typeof onReceiveAmaTasks
 |};
 
 const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
@@ -82,7 +80,7 @@ class CompleteTaskModal extends React.Component<Props> {
 
   getContentArgs = () => ({
     assignerName: this.getTaskAssignerName(),
-    teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.action],
+    teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.label],
     appeal: this.props.appeal
   });
 
@@ -104,9 +102,8 @@ class CompleteTaskModal extends React.Component<Props> {
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
-        const preparedTasks = prepareTasksForStore(response.tasks.data);
 
-        this.props.setTaskAttrs(task.uniqueId, preparedTasks[task.uniqueId]);
+        this.props.onReceiveAmaTasks(response.tasks.data);
       });
   }
 
@@ -117,22 +114,20 @@ class CompleteTaskModal extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => ({
-  task: tasksForAppealAssignedToUserSelector(state, ownProps)[0] ||
-    actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0] ||
-    incompleteOrganizationTasksByAssigneeIdSelector(state, { appealId: ownProps.appealId })[0],
+  task: taskById(state, { taskId: ownProps.taskId }),
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  setTaskAttrs
+  onReceiveAmaTasks
 }, dispatch);
 
 const propsToText = (props) => {
   return {
     title: SEND_TO_LOCATION_MODAL_TYPE_ATTRS[props.modalType].title({
-      teamName: (props.task && props.task.action) ? CO_LOCATED_ADMIN_ACTIONS[props.task.action] : ''
+      teamName: (props.task && props.task.label) ? CO_LOCATED_ADMIN_ACTIONS[props.task.label] : ''
     }),
     button: SEND_TO_LOCATION_MODAL_TYPE_ATTRS[props.modalType].buttonText
   };

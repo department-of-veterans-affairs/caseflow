@@ -199,6 +199,10 @@ class Form8 < ApplicationRecord
     path
   end
 
+  def source
+    "VACOLS"
+  end
+
   def fetch_from_s3_and_save(destination_path)
     S3Service.fetch_file(FORM8_S3_SUB_BUCKET + "/" + pdf_filename, destination_path)
   end

@@ -132,7 +132,19 @@ class Fakes::VBMSService
                Generators::Random.external_id
 
     # return fake end product
-    OpenStruct.new(claim_id: claim_id)
+    generate_end_product_for_claim(veteran_hash: veteran_hash, claim_hash: claim_hash, claim_id: claim_id)
+  end
+
+  def self.generate_end_product_for_claim(veteran_hash:, claim_hash:, claim_id:)
+    Generators::EndProduct.build(
+      veteran_file_number: veteran_hash[:file_number],
+      bgs_attrs: {
+        benefit_claim_id: claim_id,
+        claim_receive_date: claim_hash[:date].to_formatted_s(:short_date),
+        end_product_type_code: claim_hash[:end_product_modifier],
+        end_product_code: claim_hash[:claim_type_code]
+      }
+    )
   end
 
   def self.get_dispositions!(claim_id:)
@@ -160,10 +172,10 @@ class Fakes::VBMSService
     end
   end
 
-  def self.associate_rated_issues!(claim_id:, rated_issue_contention_map:)
+  def self.associate_rating_request_issues!(claim_id:, rating_issue_contention_map:)
     Rails.logger.info("Submitting rated issues to VBMS...")
     Rails.logger.info("Claim id:\n #{claim_id}")
-    Rails.logger.info("Rated issue contention map: #{rated_issue_contention_map.inspect}")
+    Rails.logger.info("Rating issue contention map: #{rating_issue_contention_map.inspect}")
 
     true
   end
@@ -173,5 +185,18 @@ class Fakes::VBMSService
     Rails.logger.info("Contention: #{contention.inspect}")
 
     true
+  end
+
+  # Used in test to clean fake VBMS state.
+  def self.clean!
+    self.document_records = nil
+    self.end_product_claim_id = nil
+    self.uploaded_form8 = nil
+    self.uploaded_form8_appeal = nil
+    self.manifest_vbms_fetched_at = nil
+    self.manifest_vva_fetched_at = nil
+    self.contention_records = nil
+    self.end_product_claim_ids_by_file_number = nil
+    self.disposition_records = nil
   end
 end

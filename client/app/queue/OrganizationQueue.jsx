@@ -2,20 +2,29 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
+import { css } from 'glamor';
 
+import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
+import QueueSelectorDropdown from './components/QueueSelectorDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
-  tasksWithAppealSelector
+  getUnassignedOrganizationalTasks,
+  getAssignedOrganizationalTasks,
+  getCompletedOrganizationalTasks,
+  tasksByOrganization
 } from './selectors';
+
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
+
+const containerStyles = css({
+  position: 'relative'
+});
 
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
@@ -23,24 +32,46 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   render = () => {
-    const noTasks = !_.size(this.props.tasks);
+    const tabs = [
+      {
+        label: sprintf(
+          COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
+        page: <TaskTableTab
+          description={
+            sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
+              this.props.organizationName)}
+          tasks={this.props.unassignedTasks}
+        />
+      },
+      {
+        label: sprintf(
+          COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
+        page: <TaskTableTab
+          description={
+            sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
+              this.props.organizationName)}
+          tasks={this.props.assignedTasks}
+        />
+      },
+      {
+        label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
+        page: <TaskTableTab
+          description={
+            sprintf(COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION,
+              this.props.organizationName)}
+          tasks={this.props.completedTasks}
+        />
+      }
+    ];
 
-    const content = noTasks ?
-      <p>{COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.</p> :
-      <TaskTable
-        includeDetailsLink
-        includeType
-        includeDocketNumber
-        includeIssueCount
-        includeDaysWaiting
-        includeReaderLink
-        tasks={this.props.tasks}
-      />;
-
-    return <AppSegment filledBackground>
+    return <AppSegment filledBackground styling={containerStyles}>
       <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
-        {content}
+        <QueueSelectorDropdown organizations={this.props.organizations} />
+        <TabWindow
+          name="tasks-organization-queue"
+          tabs={tabs}
+        />
       </div>
     </AppSegment>;
   };
@@ -50,11 +81,13 @@ OrganizationQueue.propTypes = {
   tasks: PropTypes.array.isRequired
 };
 
-const mapStateToProps = (state) => {
-  return ({
-    tasks: tasksWithAppealSelector(state)
-  });
-};
+const mapStateToProps = (state) => ({
+  organizations: state.ui.organizations,
+  unassignedTasks: getUnassignedOrganizationalTasks(state),
+  assignedTasks: getAssignedOrganizationalTasks(state),
+  completedTasks: getCompletedOrganizationalTasks(state),
+  tasks: tasksByOrganization(state)
+});
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
@@ -63,3 +96,16 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
+
+const TaskTableTab = ({ description, tasks }) => <React.Fragment>
+  <p className="cf-margin-top-0">{description}</p>
+  <TaskTable
+    includeDetailsLink
+    includeTask
+    includeType
+    includeDocketNumber
+    includeDaysWaiting
+    includeReaderLink
+    tasks={tasks}
+  />
+</React.Fragment>;

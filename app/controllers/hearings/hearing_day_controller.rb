@@ -25,34 +25,29 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def show
-    hearing_day = HearingDay.find_hearing_day(nil, params[:id])
+    hearing_day = HearingDayRepository.to_canonical_hash(HearingDay.find_hearing_day(nil, params[:id]))
+    hearings, regional_office = fetch_hearings(hearing_day, params[:id]).values_at(:hearings, :regional_office)
 
-    hearings = []
+    hearing_day_options = HearingDay.load_days_with_open_hearing_slots(
+      Time.zone.today.beginning_of_day,
+      Time.zone.today.beginning_of_day + 365.days,
+      regional_office
+    )
 
-    if hearing_day[:hearing_type] == "V"
-      hearings = HearingRepository.fetch_video_hearings_for_parent(params[:id])
-      regional_office = hearing_day[:regional_office]
-    end
-    if hearing_day[:hearing_type] == "C"
-      hearings = HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date])
-      regional_office = "C"
-    end
-
-    render json: { hearing_day: json_hearing(hearing_day).merge(
-      hearings: hearings.map { |hearing| hearing.to_hash(current_user.id) },
-      hearing_day_options:
-        HearingDay.load_days_with_hearings(Time.zone.today.beginning_of_day,
-                                           Time.zone.today.beginning_of_day + 365.days,
-                                           regional_office)
-    ) }
+    render json: {
+      hearing_day: json_hearing(hearing_day).merge(
+        hearings: hearings.map { |hearing| hearing.to_hash(current_user.id) },
+        hearing_day_options: hearing_day_options
+      )
+    }
   end
 
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    enriched_hearings = HearingDay.load_days_with_hearings(Time.zone.today.beginning_of_day,
-                                                           Time.zone.today.beginning_of_day + 365.days,
-                                                           regional_office)
+    enriched_hearings = HearingDay.load_days_with_open_hearing_slots(Time.zone.today.beginning_of_day,
+                                                                     Time.zone.today.beginning_of_day + 182.days,
+                                                                     regional_office)
     enriched_hearings.each do |hearing_day|
       hearing_day[:hearings] = hearing_day[:hearings].map { |hearing| hearing.to_hash(current_user.id) }
     end
@@ -95,10 +90,42 @@ class Hearings::HearingDayController < HearingScheduleController
     }, status: :ok
   end
 
+  def destroy
+    hearing_day.destroy!
+    render json: {}
+  end
+
   private
 
   def hearing
     @hearing ||= HearingDay.find_hearing_day(update_params[:hearing_type], update_params[:hearing_key])
+  end
+
+  def hearing_day
+    @hearing_day ||= HearingDay.find(hearing_day_id)
+  end
+
+  def hearing_day_id
+    params[:id]
+  end
+
+  def fetch_hearings(hearing_day, id)
+    if hearing_day[:hearing_type] == "V"
+      {
+        hearings: HearingRepository.fetch_video_hearings_for_parent(id),
+        regional_office: hearing_day[:regional_office]
+      }
+    elsif hearing_day[:hearing_type] == "C"
+      {
+        hearings: HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date]),
+        regional_office: "C"
+      }
+    else
+      {
+        hearings: [],
+        regional_office: nil
+      }
+    end
   end
 
   def update_params

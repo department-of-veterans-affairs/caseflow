@@ -5,6 +5,7 @@
     "MARK_COMPLETE": { "label": "Mark task complete", "value": "modal/mark_task_complete" },
     "REASSIGN_TO_PERSON": { "label": "Re-assign to person", "value": "modal/reassign_to_person", "func": "assign_to_user_data" },
     "RETURN_TO_JUDGE": { "label": "Return to judge", "value": "modal/assign_to_person", "func": "assign_to_judge_data" },
-    "SCHEDULE_VETERAN": { "label": "Schedule Veteran", "value": "modal/schedule_veteran" }
+    "SCHEDULE_VETERAN": { "label": "Schedule Veteran", "value": "modal/schedule_veteran" },
+    "ASSIGN_TO_ATTORNEY": { "label": "Assign to attorney", "value": "modal/assign_to_attorney" },
+    "JUDGE_CHECKOUT": { "label": "Ready for Dispatch", "value": "dispatch_decision/special_issues" }
 }
-

@@ -1,18 +1,35 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ListSchedule from '../components/ListSchedule';
-import { onViewStartDateChange, onViewEndDateChange, onReceiveHearingSchedule } from '../actions';
+import { hearingSchedStyling } from '../components/ListScheduleDateSearch';
+import {
+  onViewStartDateChange,
+  onViewEndDateChange,
+  onReceiveHearingSchedule,
+  onResetDeleteSuccessful
+} from '../actions';
 import { bindActionCreators } from 'redux';
-import { LOGO_COLORS } from '../../constants/AppConstants';
+import { css } from 'glamor';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Alert from '../../components/Alert';
+import COPY from '../../../COPY.json';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
 
 const dateFormatString = 'YYYY-MM-DD';
 
+const actionButtonsStyling = css({
+  marginRight: '25px'
+});
+
 export class ListScheduleContainer extends React.Component {
+
+  componentWillUnmount = () => {
+    this.props.onResetDeleteSuccessful();
+  };
 
   loadHearingSchedule = () => {
     let requestUrl = '/hearings/hearing_day.json';
@@ -35,44 +52,44 @@ export class ListScheduleContainer extends React.Component {
   ]);
 
   render() {
-    const loadingDataDisplay = <LoadingDataDisplay
-      createLoadPromise={this.createHearingPromise}
-      loadingComponentProps={{
-        spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
-        message: 'Loading the hearing schedule...'
-      }}
-      failStatusMessageProps={{
-        title: 'Unable to load the hearing schedule.'
-      }}>
+    return (
       <React.Fragment>
         <QueueCaseSearchBar />
-        <ListSchedule
-          hearingSchedule={this.props.hearingSchedule}
-          startDateValue={this.props.startDate}
-          startDateChange={this.props.onViewStartDateChange}
-          endDateValue={this.props.endDate}
-          endDateChange={this.props.onViewEndDateChange}
-          onApply={this.createHearingPromise}
-          userRoleAssign={this.props.userRoleAssign}
-          userRoleBuild={this.props.userRoleBuild}
-        />
+        { this.props.successfulHearingDayDelete && <Alert
+          type="success"
+          title={`You have successfully removed Hearing Day ${formatDateStr(this.props.successfulHearingDayDelete)}`}
+        />}
+        <AppSegment filledBackground>
+          <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
+          {this.props.userRoleBuild &&
+            <span className="cf-push-right">
+              <Link button="secondary" to="/schedule/build">Build schedule</Link>
+            </span>
+          }{this.props.userRoleAssign &&
+            <span className="cf-push-right"{...actionButtonsStyling} >
+              <Link button="primary" to="/schedule/assign">Schedule Veterans</Link>
+            </span>
+          }
+          <div className="cf-help-divider" {...hearingSchedStyling} ></div>
+          <ListSchedule onApply={this.createHearingPromise} />
+        </AppSegment>
       </React.Fragment>
-    </LoadingDataDisplay>;
-
-    return <div>{loadingDataDisplay}</div>;
+    );
   }
 }
 
 const mapStateToProps = (state) => ({
   hearingSchedule: state.hearingSchedule.hearingSchedule,
   startDate: state.hearingSchedule.viewStartDate,
-  endDate: state.hearingSchedule.viewEndDate
+  endDate: state.hearingSchedule.viewEndDate,
+  successfulHearingDayDelete: state.hearingSchedule.successfulHearingDayDelete
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onViewStartDateChange,
   onViewEndDateChange,
-  onReceiveHearingSchedule
+  onReceiveHearingSchedule,
+  onResetDeleteSuccessful
 }, dispatch);
 
 ListScheduleContainer.propTypes = {

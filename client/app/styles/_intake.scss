@@ -3,11 +3,35 @@
   padding-left: 0.5em;
 }
 
-// the .cf-app-segment is needed in this rule so .cf-intake-statusmessage-checklist has a higher
-// specificity than the existing .cf-success-checklist class.
-.cf-app-segment .cf-intake-statusmessage-checklist {
-  max-width: 800px;
-  margin: 50px auto 65px;
+// the .cf-app-intake ancestor is needed for these rules to ensure a higher
+// specificity than the stock .cf component classes.
+.cf-app-intake {
+  .cf-success-checklist,
+  .cf-ineligible-checklist {
+    max-width: 800px;
+    margin: 50px auto 65px;
+  }
+
+  .cf-ineligible-checklist {
+    list-style-type: none;
+    margin-bottom: 20px;
+
+    li {
+      background: url(#{$image-url}/icons/asterisk.svg) no-repeat left top transparent;
+      background-size: 22px 22px;
+      background-position-y: 4px;
+      padding-left: 38px;
+      padding-top: 3px;
+    }
+  }
+
+  .cf-msg-screen-deck {
+    text-align: left;
+
+    strong {
+      color: $color-black;
+    }
+  }
 }
 
 .cf-intake-substeps {
@@ -44,7 +68,7 @@
   margin-top: 10px;
 }
 
-.cf-non-rated-issue {
+.cf-nonrating-request-issue {
   display: grid;
   grid-column-gap: 10px;
   grid-template-columns: auto auto 120px;
@@ -63,6 +87,26 @@
   color: $color-gray-dark;
   width: 750px;
   max-height: 95%;
+
+  h1 {
+    text-align: center;
+    border-bottom: 1px solid $color-gray-lighter;
+  }
+
+  h2 {
+    margin-bottom: 10px;
+  }
+
+  .cf-form-radio-options {
+    margin-top: 0;
+    margin-bottom: 14px;
+  }
+
+  .cf-form-radio {
+    legend {
+      margin-bottom: 14px;
+    }
+  }
 
   @media only screen and (max-width: 760px) {
     width: 650px;
@@ -95,7 +139,7 @@
   margin-left: 1em;
 }
 
-.add-non-rated-issue {
+.add-nonrating-request-issue {
   max-width: 350px;
 
   .decision-date {
@@ -178,6 +222,6 @@
   }
 
   p {
-    margin: .5rem;
+    margin: .5rem 0;
   }
 }

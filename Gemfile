@@ -6,7 +6,7 @@ gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "5.1.6"
+gem "rails", "5.1.6.1"
 # Use sqlite3 as the database for Active Record
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
@@ -91,6 +91,10 @@ gem "zero_downtime_migrations"
 # nokogiri versions before 1.8.3 are affected by CVE-2018-8048. Explicitly define nokogiri version here to avoid that.
 # https://github.com/sparklemotion/nokogiri/pull/1746
 gem "nokogiri", "1.8.5"
+
+# rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
+# Explicitly define rack version here to avoid that.
+gem "rack", "~> 2.0.6"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB

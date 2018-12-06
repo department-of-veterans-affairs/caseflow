@@ -44,11 +44,6 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           Idt::Token.activate_proposed_token(key, "ANOTHER_TEST_ID")
           request.headers["TOKEN"] = t
         end
-
-        it "returns an error", skip: "fails intermittently, debugging in future PR" do
-          get :list
-          expect(response.status).to eq 403
-        end
       end
 
       context "and user is a judge" do
@@ -77,8 +72,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         let!(:tasks) do
           [
-            create(:ama_judge_task, assigned_to: user, appeal: ama_appeals.first, action: "assign"),
-            create(:ama_judge_task, assigned_to: user, appeal: ama_appeals.second, action: "review")
+            create(:ama_judge_task, assigned_to: user, appeal: ama_appeals.first),
+            create(:ama_judge_review_task, assigned_to: user, appeal: ama_appeals.second)
           ]
         end
 
@@ -120,6 +115,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
         let(:vacols_case1) do
           create(:case,
+                 :status_active,
                  :assigned,
                  user: user,
                  assigner: assigner1,
@@ -128,7 +124,13 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                  bfdloout: 2.days.ago.to_date)
         end
         let(:vacols_case2) do
-          create(:case, :assigned, user: user, assigner: assigner2, document_id: "5678", bfdloout: 4.days.ago.to_date)
+          create(:case,
+                 :status_active,
+                 :assigned,
+                 user: user,
+                 assigner: assigner2,
+                 document_id: "5678",
+                 bfdloout: 4.days.ago.to_date)
         end
 
         let!(:appeals) do
@@ -306,10 +308,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
 
           context "and the user is from dispatch" do
-            # BVATEST1 is defined in Constants::BvaDispatchTeams
-            let(:user) { create(:user, css_id: "BVATEST1", full_name: "George Michael") }
+            let(:user) { create(:user) }
 
             before do
+              OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
               allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
                 address_line_1: "1234 K St.",
                 address_line_2: "APT 3",
@@ -484,6 +486,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       { appeal_id: root_task.appeal.external_id,
         citation_number: citation_number,
         decision_date: Date.new(1989, 12, 13).to_s,
+        file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW",
         redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
     end
 
@@ -493,6 +496,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
+      FeatureToggle.enable!(:decision_document_upload)
+    end
+
+    after do
+      FeatureToggle.disable!(:decision_document_upload)
     end
 
     context "when some params are missing" do
@@ -519,10 +527,23 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
     end
 
+    context "when VBMS failure" do
+      before { BvaDispatchTask.create_and_assign(root_task) }
+
+      it "should throw an error" do
+        allow(VBMSService).to receive(:upload_document_to_vbms).and_raise(VBMS::HTTPError.new(503, "VBMS is down"))
+        post :outcode, params: params
+        expect(response.status).to eq(502)
+        response_detail = JSON.parse(response.body)["errors"][0]["detail"]
+        expect(response_detail).to eq "Document upload failed due to VBMS experiencing issues."
+      end
+    end
+
     context "when single BvaDispatchTask exists for user and appeal combination" do
       before { BvaDispatchTask.create_and_assign(root_task) }
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
+        expect(VBMSService).to receive(:upload_document_to_vbms)
         post :outcode, params: params
         expect(response.status).to eq(200)
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
@@ -530,12 +551,19 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         task = tasks[0]
         expect(task.status).to eq("completed")
         expect(task.parent.status).to eq("completed")
+        expect(S3Service.files["decisions/" + root_task.appeal.external_id + ".pdf"]).to_not eq nil
       end
     end
 
     context "when multiple BvaDispatchTasks exists for user and appeal combination" do
       let(:task_count) { 4 }
-      before { task_count.times { BvaDispatchTask.create_and_assign(root_task) } }
+      before do
+        task_count.times do
+          personal_task = BvaDispatchTask.create_and_assign(root_task)
+          # Set status of org-level task to completed to avoid getting caught by GenericTask.verify_org_task_unique.
+          personal_task.parent.update!(status: Constants.TASK_STATUSES.completed)
+        end
+      end
 
       it "should throw an error" do
         post :outcode, params: params

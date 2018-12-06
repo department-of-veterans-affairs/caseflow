@@ -28,17 +28,6 @@ describe GenericTask do
       end
     end
 
-    context "when task is assigned to a VSO the user is a member of" do
-      let(:vso) { Vso.find(FactoryBot.create(:vso).id) }
-      let(:task) { GenericTask.find(FactoryBot.create(:generic_task, assigned_to: vso).id) }
-      let(:user) { FactoryBot.create(:user) }
-      let(:expected_actions) { [Constants.TASK_ACTIONS.MARK_COMPLETE.to_h] }
-      before { allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true) }
-      it "should return only mark complete actions" do
-        expect(subject).to eq(expected_actions)
-      end
-    end
-
     context "when task is assigned to an organization the user is a member of" do
       let(:org) { Organization.find(FactoryBot.create(:organization).id) }
       let(:task) { GenericTask.find(FactoryBot.create(:generic_task, assigned_to: org).id) }
@@ -349,6 +338,25 @@ describe GenericTask do
 
         task.reload
         expect(task.children.length).to eq(completed_children_cnt)
+      end
+    end
+  end
+
+  describe ".verify_org_task_unique" do
+    context "when attempting to create two tasks for different appeals assigned to the same organization" do
+      let(:organization) { FactoryBot.create(:organization) }
+      let(:appeals) { FactoryBot.create_list(:appeal, 2) }
+      it "should succeed" do
+        expect do
+          appeals.each do |a|
+            root_task = RootTask.create(appeal: a)
+            GenericTask.create!(
+              assigned_to: organization,
+              parent_id: root_task.id,
+              appeal: a
+            )
+          end
+        end.to_not raise_error
       end
     end
   end

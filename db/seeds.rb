@@ -45,18 +45,23 @@ class SeedDB
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
-    create_colocated_user
+    create_colocated_users
     create_vso_user
-    create_org_queue_user
+    create_org_queue_users
     create_qr_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
   end
 
-  def create_colocated_user
-    user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases")
+  def create_colocated_users
+    secondary_user = FactoryBot.create(:user, full_name: "Secondary VLJ support staff", roles: %w[Reader])
+    FactoryBot.create(:staff, :colocated_role, user: secondary_user, sdept: "DSP")
+    OrganizationsUser.add_user_to_organization(secondary_user, Colocated.singleton)
+
+    user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
+    OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
   end
 
   def create_vso_user
@@ -66,19 +71,24 @@ class SeedDB
       full_name: "VSO user associated with PVA",
       roles: %w[VSO]
     )
-    FactoryBot.create(:staff, user: u, sdept: "PVA")
-    FeatureToggle.enable!(:vso_queue, users: [u.css_id])
+    OrganizationsUser.add_user_to_organization(u, Organization.find_by(name: "Paralyzed Veterans Of America"))
   end
 
-  def create_org_queue_user
-    u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER", full_name: "Translation team member")
+  def create_org_queue_users
     translation = Organization.create!(name: "Translation", url: "translation")
-    OrganizationsUser.add_user_to_organization(u, translation)
+    (0..5).each do |n|
+      u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{n}", full_name: "Translation team member #{n}")
+      OrganizationsUser.add_user_to_organization(u, translation)
+    end
   end
 
   def create_qr_user
-    u = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
-    OrganizationsUser.add_user_to_organization(u, QualityReview.singleton)
+    qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
+    OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
+
+    # Create two QR tasks. One assigned to the organization and one assigned to both the organization and a QR user.
+    create_task_at_quality_review
+    create_task_at_quality_review(qr_user)
   end
 
   def create_mail_team_user
@@ -95,7 +105,8 @@ class SeedDB
       FactoryBot.create_list(
         :request_issue,
         [3, 4, 5].sample,
-        description: "Kidney problems",
+        description: "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011",
+        notes: "Pain disorder with 100\% evaluation per examination",
         review_request: root.appeal
       )
       parent = FactoryBot.create(
@@ -238,6 +249,9 @@ class SeedDB
   end
 
   def create_ama_appeals
+    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+    notes = "Pain disorder with 100\% evaluation per examination"
+
     @appeal_with_vso = FactoryBot.create(
       :appeal,
       claimants: [
@@ -246,68 +260,68 @@ class SeedDB
       ],
       veteran_file_number: "701305078",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: "Head trauma")
+      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "783740847",
       docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: "Knee pain")
+      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "963360019",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 2, description: "PTSD")
+      request_issues: FactoryBot.create_list(:request_issue, 2, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "604969679",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Tinnitus")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "228081153",
       docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Tinnitus")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "152003980",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: "PTSD")
+      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "375273128",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Knee pain")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "682007349",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 5, description: "Veteran reports hearing loss in left ear")
+      request_issues: FactoryBot.create_list(:request_issue, 5, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "231439628S",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: "Back pain")
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "975191063",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 8, description: "Kidney problems")
+      request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
     )
 
     LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
@@ -344,7 +358,7 @@ class SeedDB
     FactoryBot.create(:attorney_case_review, task_id: child.id)
   end
 
-  def create_task_at_colocated(appeal, judge, attorney, colocated)
+  def create_task_at_colocated(appeal, judge, attorney, colocated_user)
     parent = FactoryBot.create(
       :ama_judge_task,
       :on_hold,
@@ -362,11 +376,19 @@ class SeedDB
       appeal: appeal
     )
 
+    org_task = FactoryBot.create(:ama_colocated_task,
+                                 appeal: appeal,
+                                 parent: child,
+                                 assigned_by: attorney,
+                                 assigned_to: Colocated.singleton)
+
     FactoryBot.create(:ama_colocated_task,
                       appeal: appeal,
-                      parent: child,
+                      parent: org_task,
+                      action: org_task.action,
+                      instructions: org_task.instructions,
                       assigned_by: attorney,
-                      assigned_to: colocated)
+                      assigned_to: colocated_user)
   end
 
   def create_task_at_attorney_review(appeal, judge, attorney)
@@ -388,6 +410,60 @@ class SeedDB
     )
   end
 
+  def create_task_at_quality_review(qr_user = nil)
+    root_task = FactoryBot.create(:root_task)
+    appeal = root_task.appeal
+
+    judge = FactoryBot.create(:user)
+    FactoryBot.create(:staff, :judge_role, user: judge)
+    judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
+
+    atty = FactoryBot.create(:user)
+    FactoryBot.create(:staff, :attorney_role, user: atty)
+    atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
+    atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
+
+    # Happens in CaseReviewConcern.update_task_and_issue_dispositions()
+    atty_task.mark_as_complete!
+    judge_task.mark_as_complete!
+
+    qr_org_task = QualityReviewTask.create_from_root_task(root_task)
+
+    if qr_user
+      qr_task_params = [{
+        appeal: appeal,
+        parent_id: qr_org_task.id,
+        assigned_to_id: qr_user.id,
+        assigned_to_type: qr_user.class.name,
+        assigned_by: qr_user
+      }]
+      QualityReviewTask.create_many_from_params(qr_task_params, qr_user).first
+    end
+  end
+
+  def create_colocated_legacy_tasks(attorney, colocated_user)
+    [
+      { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
+      { vacols_id: "2226048", trait: :in_progress },
+      { vacols_id: "2249056", trait: :in_progress },
+      { vacols_id: "2306397", trait: :on_hold }
+    ].each do |attrs|
+      org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
+                        status: Constants.TASK_STATUSES.on_hold,
+                        assigned_by: attorney,
+                        assigned_to: Colocated.singleton }.merge(attrs[:additional] || {})
+      org_task = FactoryBot.create(:colocated_task, org_task_args)
+
+      personal_task_args = org_task_args.merge(
+        parent: org_task,
+        action: org_task.action,
+        instructions: org_task.instructions,
+        assigned_to: colocated_user
+      )
+      FactoryBot.create(*[:colocated_task, attrs[:trait]].compact, personal_task_args)
+    end
+  end
+
   def create_tasks
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
@@ -407,32 +483,15 @@ class SeedDB
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 
-    # Colocated tasks with legacy appeals
-    FactoryBot.create(:colocated_task,
-                      appeal: LegacyAppeal.find_by(vacols_id: "2096907"),
-                      assigned_by: attorney,
-                      assigned_to: colocated,
-                      action: "schedule_hearing")
+    create_colocated_legacy_tasks(attorney, colocated)
 
-    FactoryBot.create(:colocated_task,
-                      :in_progress,
-                      appeal: LegacyAppeal.find_by(vacols_id: "2226048"),
-                      assigned_by: attorney,
-                      assigned_to: colocated)
-
-    FactoryBot.create(:colocated_task,
-                      :in_progress,
-                      appeal: LegacyAppeal.find_by(vacols_id: "2249056"),
-                      assigned_by: attorney,
-                      assigned_to: colocated)
-
-    FactoryBot.create(:colocated_task,
-                      :on_hold,
-                      appeal: LegacyAppeal.find_by(vacols_id: "2306397"),
-                      assigned_by: attorney,
-                      assigned_to: colocated)
-
-    FactoryBot.create(:generic_task, assigned_by: judge, assigned_to: translation_org)
+    FactoryBot.create_list(
+      :generic_task,
+      5,
+      assigned_by: judge,
+      assigned_to: translation_org,
+      parent: FactoryBot.create(:root_task)
+    )
   end
 
   def create_vsos

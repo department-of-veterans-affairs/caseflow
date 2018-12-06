@@ -1,51 +1,30 @@
 import React from 'react';
 import _ from 'lodash';
-import COPY from '../../../COPY.json';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Table from '../../components/Table';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
-import PropTypes from 'prop-types';
-import BasicDateRangeSelector from '../../components/BasicDateRangeSelector';
 import FilterRibbon from '../../components/FilterRibbon';
-import InlineForm from '../../components/InlineForm';
+import PropTypes from 'prop-types';
 import { CSVLink } from 'react-csv';
-import { toggleTypeFilterVisibility, toggleLocationFilterVisibility,
-  toggleVljFilterVisibility, onReceiveHearingSchedule } from '../actions';
+import {
+  toggleTypeFilterVisibility, toggleLocationFilterVisibility,
+  toggleVljFilterVisibility, onReceiveHearingSchedule,
+  onViewStartDateChange, onViewEndDateChange
+} from '../actions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
-
-const hearingSchedStyling = css({
-  marginTop: '50px'
-});
+import LoadingDataDisplay from '../../components/LoadingDataDisplay';
+import ListScheduleDateSearch from './ListScheduleDateSearch';
 
 const downloadButtonStyling = css({
   marginTop: '60px'
 });
 
-const actionButtonsStyling = css({
-  marginRight: '25px'
-});
-
-const inlineFormStyling = css({
-  '> div': {
-    ' & .cf-inline-form': {
-      lineHeight: '2em',
-      marginTop: '20px'
-    },
-    '& .question-label': {
-      paddingLeft: 0
-    },
-    '& .cf-form-textinput': {
-      marginTop: 0,
-      marginRight: 30
-    },
-    '& input': {
-      marginRight: 0
-    }
-  }
+export const hearingSchedStyling = css({
+  marginTop: '50px'
 });
 
 const formatVljName = (lastName, firstName) => {
@@ -87,72 +66,68 @@ const filterSchedule = (scheduleToFilter, filterName, value) => {
   return filteredSchedule;
 };
 
+const inlineFormStyling = css({
+  '> div': {
+    ' & .cf-inline-form': {
+      lineHeight: '2em',
+      marginTop: '20px'
+    },
+    '& .question-label': {
+      paddingLeft: 0
+    },
+    '& .cf-form-textinput': {
+      marginTop: 0,
+      marginRight: 30
+    },
+    '& input': {
+      marginRight: 0
+    }
+  }
+});
+
+const clearfix = css({
+  '::after': {
+    content: ' ',
+    clear: 'both',
+    display: 'block'
+  }
+});
+
 class ListSchedule extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      filteredByList: []
+      filteredByList: [],
+      dateRangeKey: `${props.startDate}->${props.endDate}`
     };
   }
 
-  componentDidMount = () => {
-    this.setState({
-      filteredByList: []
-    });
+  // forces remount of LoadingDataDisplay
+  setDateRangeKey = () => {
+    this.setState({ dateRangeKey: `${this.props.startDate}->${this.props.endDate}` });
+  }
+
+  getHearingScheduleRows = () => {
+    const { hearingSchedule } = this.props;
+
+    return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.hearingDate, 'asc').
+      map((hearingDay) => ({
+        hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDateStr(hearingDay.hearingDate)}</Link>,
+        hearingType: hearingDay.hearingType,
+        regionalOffice: hearingDay.regionalOffice,
+        room: hearingDay.roomInfo,
+        vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
+      }));
   };
 
-  render() {
-    const {
-      hearingSchedule
-    } = this.props;
+  getHearingScheduleColumns = (hearingScheduleRows) => {
 
-    const clearFilteredByList = () => {
-      this.setState({
-        filteredByList: []
-      });
-      this.props.onApply();
-    };
+    const uniqueHearingTypes = populateFilterDropDowns(hearingScheduleRows, 'hearingType');
+    const uniqueVljs = populateFilterDropDowns(hearingScheduleRows, 'vlj');
+    const uniqueLocations = populateFilterDropDowns(hearingScheduleRows, 'regionalOffice');
 
-    const setTypeSelectedValue = (value) => {
-      this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, 'hearingType', value));
-      this.setState({
-        filteredByList: this.state.filteredByList.concat(['Hearing Type'])
-      });
-      this.props.toggleTypeFilterVisibility();
-    };
-
-    const setLocationSelectedValue = (value) => {
-      this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, 'regionalOffice', value));
-      this.setState({
-        filteredByList: this.state.filteredByList.concat(['Hearing Location'])
-      });
-      this.props.toggleLocationFilterVisibility();
-    };
-
-    const setVljSelectedValue = (value) => {
-      this.props.onReceiveHearingSchedule(filterSchedule(hearingSchedule, 'judgeName', value));
-      this.setState({
-        filteredByList: this.state.filteredByList.concat(['VLJ'])
-      });
-      this.props.toggleVljFilterVisibility();
-    };
-
-    const hearingScheduleRows = _.map(hearingSchedule, (hearingDay) => ({
-      hearingDate: formatDate(hearingDay.hearingDate),
-      hearingType: hearingDay.hearingType,
-      regionalOffice: hearingDay.regionalOffice,
-      room: hearingDay.roomInfo,
-      vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
-    }));
-
-    const removeCoDuplicates = _.uniqWith(hearingScheduleRows, _.isEqual);
-    const uniqueHearingTypes = populateFilterDropDowns(removeCoDuplicates, 'hearingType');
-    const uniqueVljs = populateFilterDropDowns(removeCoDuplicates, 'vlj');
-    const uniqueLocations = populateFilterDropDowns(removeCoDuplicates, 'regionalOffice');
-    const fileName = `HearingSchedule ${this.props.startDateValue}-${this.props.endDateValue}.csv`;
-
-    const hearingScheduleColumns = [
+    return [
       {
         header: 'Date',
         align: 'left',
@@ -171,7 +146,7 @@ class ListSchedule extends React.Component {
         isDropdownFilterOpen: this.props.filterTypeIsOpen,
         anyFiltersAreSet: false,
         toggleDropdownFilterVisiblity: this.props.toggleTypeFilterVisibility,
-        setSelectedValue: setTypeSelectedValue
+        setSelectedValue: this.setTypeSelectedValue
       },
       {
         header: 'Regional Office',
@@ -182,7 +157,7 @@ class ListSchedule extends React.Component {
         isDropdownFilterOpen: this.props.filterLocationIsOpen,
         anyFiltersAreSet: false,
         toggleDropdownFilterVisiblity: this.props.toggleLocationFilterVisibility,
-        setSelectedValue: setLocationSelectedValue
+        setSelectedValue: this.setLocationSelectedValue
       },
       {
         header: 'Room',
@@ -201,64 +176,97 @@ class ListSchedule extends React.Component {
         isDropdownFilterOpen: this.props.filterVljIsOpen,
         anyFiltersAreSet: false,
         toggleDropdownFilterVisiblity: this.props.toggleVljFilterVisibility,
-        setSelectedValue: setVljSelectedValue
+        setSelectedValue: this.setVljSelectedValue
       }
     ];
+  }
 
-    return <AppSegment filledBackground>
-      <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
-      {this.props.userRoleBuild && <span className="cf-push-right">
-        <Link button="secondary" to="/schedule/build">Build schedule</Link>
-      </span>}
-      {this.props.userRoleAssign &&
-        <span className="cf-push-right"{...actionButtonsStyling} >
-          <Link button="primary" to="/schedule/assign">Schedule Veterans</Link></span>
-      }
-      <div className="cf-help-divider" {...hearingSchedStyling} ></div>
-      <div className="cf-push-left" {...inlineFormStyling} >
-        <InlineForm>
-          <BasicDateRangeSelector
-            startDateName="fromDate"
-            startDateValue={this.props.startDateValue}
-            startDateLabel={COPY.HEARING_SCHEDULE_VIEW_START_DATE_LABEL}
-            endDateName="toDate"
-            endDateValue={this.props.endDateValue}
-            endDateLabel={COPY.HEARING_SCHEDULE_VIEW_END_DATE_LABEL}
-            onStartDateChange={this.props.startDateChange}
-            onEndDateChange={this.props.endDateChange}
-          />
-          <div {...hearingSchedStyling}>
-            <Link
-              name="apply"
-              to="/schedule"
-              onClick={this.props.onApply}>
-              {COPY.HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK}
-            </Link>
+  clearFilteredByList = () => {
+    this.setState({
+      filteredByList: []
+    });
+    this.props.onApply();
+  };
+
+  setTypeSelectedValue = (value) => {
+    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'hearingType', value));
+    this.setState({
+      filteredByList: this.state.filteredByList.concat(['Hearing Type'])
+    });
+    this.props.toggleTypeFilterVisibility();
+  };
+
+  setLocationSelectedValue = (value) => {
+    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'regionalOffice', value));
+    this.setState({
+      filteredByList: this.state.filteredByList.concat(['Hearing Location'])
+    });
+    this.props.toggleLocationFilterVisibility();
+  };
+
+  setVljSelectedValue = (value) => {
+    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'judgeName', value));
+    this.setState({
+      filteredByList: this.state.filteredByList.concat(['VLJ'])
+    });
+    this.props.toggleVljFilterVisibility();
+  };
+
+  render() {
+    const hearingScheduleRows = this.getHearingScheduleRows();
+    const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
+
+    return (
+      <React.Fragment>
+        <div {...clearfix}>
+          <div className="cf-push-left" {...inlineFormStyling} >
+            <ListScheduleDateSearch
+              startDateValue={this.props.startDate}
+              startDateChange={this.props.onViewStartDateChange}
+              endDateValue={this.props.endDate}
+              endDateChange={this.props.onViewEndDateChange}
+              onApply={this.setDateRangeKey} />
           </div>
-        </InlineForm>
-        <FilterRibbon
-          filteredByList={this.state.filteredByList}
-          clearAllFilters={clearFilteredByList} />
-      </div>
-      <div className="cf-push-right" {...downloadButtonStyling} >
-        <Button
-          classNames={['usa-button-secondary']}>
-          <CSVLink
-            data={removeCoDuplicates}
-            target="_blank"
-            filename={fileName}>
-            Download current view
-          </CSVLink>
-        </Button>
-      </div>
-      <div {...hearingSchedStyling} className="section-hearings-list">
-        <Table
-          columns={hearingScheduleColumns}
-          rowObjects={removeCoDuplicates}
-          summary="hearing-schedule"
-        />
-      </div>
-    </AppSegment>;
+          <div className="cf-push-right" {...downloadButtonStyling} >
+            <Button
+              classNames={['usa-button-secondary']}>
+              <CSVLink
+                data={hearingScheduleRows}
+                target="_blank"
+                filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
+                Download current view
+              </CSVLink>
+            </Button>
+          </div>
+        </div>
+        <div className="section-hearings-list">
+          <LoadingDataDisplay
+            key={this.state.dateRangeKey}
+            createLoadPromise={this.props.onApply}
+            loadingComponentProps={{
+              spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+              message: 'Loading the hearing schedule...'
+            }}
+            failStatusMessageProps={{
+              title: 'Unable to load the hearing schedule.'
+            }}>
+
+            <div className="cf-push-left">
+              <FilterRibbon
+                filteredByList={this.state.filteredByList}
+                clearAllFilters={this.clearFilteredByList} />
+            </div>
+            <Table
+              columns={hearingScheduleColumns}
+              rowObjects={hearingScheduleRows}
+              summary="hearing-schedule"
+              slowReRendersAreOk />
+
+          </LoadingDataDisplay>
+        </div>
+      </React.Fragment>
+
+    );
   }
 }
 
@@ -273,24 +281,24 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
-  startDateValue: PropTypes.string,
-  endDateValue: PropTypes.string,
-  startDateChange: PropTypes.func,
-  endDateChange: PropTypes.func,
-  onApply: PropTypes.func,
-  userRole: PropTypes.string
+  onApply: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
   filterTypeIsOpen: state.hearingSchedule.filterTypeIsOpen,
   filterLocationIsOpen: state.hearingSchedule.filterLocationIsOpen,
-  filterVljIsOpen: state.hearingSchedule.filterVljIsOpen
+  filterVljIsOpen: state.hearingSchedule.filterVljIsOpen,
+  startDate: state.hearingSchedule.viewStartDate,
+  endDate: state.hearingSchedule.viewEndDate,
+  hearingSchedule: state.hearingSchedule.hearingSchedule
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   toggleTypeFilterVisibility,
   toggleLocationFilterVisibility,
   toggleVljFilterVisibility,
+  onViewStartDateChange,
+  onViewEndDateChange,
   onReceiveHearingSchedule
 }, dispatch);
 

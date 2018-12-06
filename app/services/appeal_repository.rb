@@ -276,12 +276,13 @@ class AppealRepository
       return appeals_ready_for_co_hearing_schedule
     end
 
-    cavc_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57", bfac: "7")
-      .order("folder.tinum").limit(30)
-    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).joins(:folder)
-      .where("aod = 1").where(bfregoff: regional_office, bfcurloc: "57").order("folder.tinum").limit(30)
-    other_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57")
-      .order("folder.tinum").limit(30)
+    cavc_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57", bfac: "7", bfdocind: "V",
+                                                   bfhr: "2").order("folder.tinum").limit(30)
+    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).joins(:folder).where("aod = 1").where(
+      bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V"
+    ).order("folder.tinum").limit(30)
+    other_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfhr: "2", bfcurloc: "57",
+                                                    bfdocind: "V").order("folder.tinum").limit(30)
 
     aod_vacols_ids = aod_cases.pluck(:bfkey)
 
@@ -295,10 +296,16 @@ class AppealRepository
   def self.appeals_ready_for_co_hearing_schedule
     cavc_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57", bfac: "7").order("folder.tinum").limit(30)
     aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD)
-      .joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
+      .joins(:folder).where("aod = 1").where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
     other_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
 
-    (cavc_cases + aod_cases + other_cases).uniq.first(30).map { |case_record| build_appeal(case_record, true) }
+    aod_vacols_ids = aod_cases.pluck(:bfkey)
+
+    (cavc_cases + aod_cases + other_cases).uniq.first(30).map do |case_record|
+      build_appeal(case_record, true).tap do |appeal|
+        appeal.aod = aod_vacols_ids.include?(appeal.vacols_id)
+      end
+    end
   end
 
   def self.update_location_after_dispatch!(appeal:)
@@ -617,6 +624,22 @@ class AppealRepository
     VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
   end
 
+  def self.docket_counts_by_priority_and_readiness
+    MetricsService.record("VACOLS: docket_counts_by_priority_and_readiness",
+                          name: "docket_counts_by_priority_and_readiness",
+                          service: :vacols) do
+      VACOLS::CaseDocket.counts_by_priority_and_readiness
+    end
+  end
+
+  def self.nod_count
+    MetricsService.record("VACOLS: nod_count",
+                          name: "nod_count",
+                          service: :vacols) do
+      VACOLS::CaseDocket.nod_count
+    end
+  end
+
   def self.regular_non_aod_docket_count
     MetricsService.record("VACOLS: regular_non_aod_docket_count",
                           name: "regular_non_aod_docket_count",
@@ -640,6 +663,22 @@ class AppealRepository
                           name: "docket_counts_by_month",
                           service: :vacols) do
       VACOLS::CaseDocket.docket_counts_by_month
+    end
+  end
+
+  def self.distribute_priority_appeals(judge, genpop, limit)
+    MetricsService.record("VACOLS: distribute_priority_appeals",
+                          name: "distribute_priority_appeals",
+                          service: :vacols) do
+      VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit)
+    end
+  end
+
+  def self.distribute_nonpriority_appeals(judge, genpop, range, limit)
+    MetricsService.record("VACOLS: distribute_nonpriority_appeals",
+                          name: "distribute_nonpriority_appeals",
+                          service: :vacols) do
+      VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit)
     end
   end
 

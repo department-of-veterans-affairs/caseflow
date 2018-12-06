@@ -19,10 +19,32 @@ class ApplicationController < ApplicationBaseController
   rescue_from Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.error "Vacols error occured: #{e.message}"
     Raven.capture_exception(e)
-    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+    if e.class.method_defined?(:serialize_response)
+      render(e.serialize_response)
+    else
+      render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+    end
   end
 
   private
+
+  def handle_non_critical_error(endpoint, err)
+    if !err.class.method_defined? :serialize_response
+      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
+      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
+    end
+
+    DataDogService.increment_counter(
+      metric_group: "errors",
+      metric_name: "non_critical",
+      app_name: RequestStore[:application],
+      attrs: {
+        endpoint: endpoint
+      }
+    )
+
+    render err.serialize_response
+  end
 
   def current_user
     @current_user ||= begin
@@ -116,7 +138,7 @@ class ApplicationController < ApplicationBaseController
       return false if current_user.admin?
       return false if current_user.organization_queue_user? || current_user.vso_employee?
       return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
-      return false if current_user.colocated_in_vacols? && feature_enabled?(:colocated_queue)
+      return false if current_user.colocated_in_vacols?
       return true
     end
     false
@@ -135,9 +157,6 @@ class ApplicationController < ApplicationBaseController
       # This feature toggle control access of attorneys to create admin actions for co-located users
       feature_enabled?(:attorney_assignment_to_colocated) ||
         current_user.organizations.pluck(:name).include?(QualityReview.singleton.name)
-    elsif current_user.judge_in_vacols?
-      # This feature toggle control access of judges to assign cases to attorneys
-      feature_enabled?(:judge_assignment_to_attorney)
     else
       true
     end

@@ -365,7 +365,7 @@ describe Veteran do
       RequestStore[:current_user] = create(:user)
 
       allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_ids)
-        .with(participant_ids).and_return(poas)
+        .with(array_including(participant_ids)).and_return(poas)
     end
 
     after do
@@ -416,42 +416,21 @@ describe Veteran do
     end
   end
 
-  context "#sync_rating_issues!" do
-    let(:rating) do
-      Generators::Rating.build(
-        issues: issues
-      )
+  describe ".find_by_file_number_or_ssn" do
+    let(:file_number) { "123456789" }
+    let(:ssn) { file_number.to_s.reverse } # our fakes do this
+    let!(:veteran) { create(:veteran, file_number: file_number) }
+
+    it "fetches based on file_number" do
+      expect(described_class.find_by_file_number_or_ssn(file_number)).to eq(veteran)
     end
 
-    let(:contention_ref_id) { "123456" }
-
-    let(:issues) do
-      [
-        {
-          reference_id: "Issue1",
-          decision_text: "Decision1",
-          contention_reference_id: contention_ref_id,
-          profile_date: Time.zone.today
-        },
-        { reference_id: "Issue2", decision_text: "Decision2" }
-      ]
+    it "fetches based on SSN" do
+      expect(described_class.find_by_file_number_or_ssn(ssn)).to eq(veteran)
     end
 
-    let!(:request_issues) do
-      [create(:request_issue, contention_reference_id: contention_ref_id)]
-    end
-
-    subject { veteran.sync_rating_issues! }
-
-    it "connects rating issues with request issues based on contention_reference_id" do
-      allow(veteran).to receive(:timely_ratings).and_return([rating])
-
-      expect(request_issues.first.decision_rating_issues.count).to eq(0)
-
-      subject
-
-      expect(request_issues.first.decision_rating_issues.count).to eq(1)
-      expect(request_issues.first.decision_rating_issues.first.reference_id).to eq("Issue1")
+    it "returns nil if a Veteran does not exist in BGS or Caseflow" do
+      expect(described_class.find_by_file_number_or_ssn("000000000")).to be_nil
     end
   end
 end

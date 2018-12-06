@@ -4,7 +4,7 @@ class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count, :new_documents]
   # Only whitelist endpoints VSOs should have access to.
-  skip_before_action :deny_vso_access, only: [:index, :show_case_list, :show]
+  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
 
   def index
     get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
@@ -51,23 +51,49 @@ class AppealsController < ApplicationController
 
   def show
     no_cache
-
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        id = params[:id]
+        id = params[:appeal_id]
         MetricsService.record("Get appeal information for ID #{id}",
                               service: :queue,
                               name: "AppealsController.show") do
-          appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
-
-          render json: { appeal: json_appeals([appeal])[:data][0] }
+          render json: { appeal: json_appeals([appeal])[:data][0],
+                         can_edit_aod: AodTeam.singleton.user_has_access?(current_user) }
         end
       end
     end
   end
 
+  helper_method :appeal, :url_appeal_uuid
+
+  def appeal
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
+  end
+
+  def url_appeal_uuid
+    params[:appeal_id]
+  end
+
+  def update
+    if request_issues_update.perform!
+      render json: {
+        requestIssues: appeal.request_issues.map(&:ui_hash)
+      }
+    else
+      render json: { error_code: request_issues_update.error_code }, status: 422
+    end
+  end
+
   private
+
+  def request_issues_update
+    @request_issues_update ||= RequestIssuesUpdate.new(
+      user: current_user,
+      review: appeal,
+      request_issues_data: params[:request_issues]
+    )
+  end
 
   def set_application
     RequestStore.store[:application] = "queue"
@@ -117,10 +143,6 @@ class AppealsController < ApplicationController
     end
   end
 
-  def appeal
-    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
-  end
-
   def file_access_prohibited_error
     render json: {
       "errors": [
@@ -137,24 +159,6 @@ class AppealsController < ApplicationController
         "detail": "Veteran ID should be included as HTTP_VETERAN_ID element of request headers"
       ]
     }, status: 400
-  end
-
-  def handle_non_critical_error(endpoint, err)
-    if !err.class.method_defined? :serialize_response
-      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
-      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
-    end
-
-    DataDogService.increment_counter(
-      metric_group: "errors",
-      metric_name: "non_critical",
-      app_name: RequestStore[:application],
-      attrs: {
-        endpoint: endpoint
-      }
-    )
-
-    render err.serialize_response
   end
 
   def json_appeals(appeals)

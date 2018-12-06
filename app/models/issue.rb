@@ -185,12 +185,38 @@ class Issue
     }
   end
 
+  def intake_attributes
+    {
+      vacols_id: id,
+      vacols_sequence_id: vacols_sequence_id,
+      description: friendly_description,
+      disposition: disposition,
+      close_date: close_date,
+      note: note
+    }
+  end
+
   attr_writer :remand_reasons
   def remand_reasons
     @remand_reasons ||= self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
   end
 
+  # For status (BFMPRO) of ADV or REM, for the most part, having a disposition means the issue is closed.
+  # On appeal where the status is REM (remanded) the issues with disposition "3" are still active.
+  # rubocop:disable Metrics/CyclomaticComplexity
+  def closed?
+    return false if disposition.nil?
+    return false if disposition == "3" && legacy_appeal.remand?
+    return true if legacy_appeal.remand? || legacy_appeal.advance? || !legacy_appeal.active?
+    false
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity
+
   private
+
+  def legacy_appeal
+    @legacy_appeal ||= LegacyAppeal.find_by(vacols_id: id)
+  end
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def friendly_description_for_codes(code_array)

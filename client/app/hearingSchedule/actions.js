@@ -79,6 +79,14 @@ export const onHearingDateUpdate = (hearingId, date) => ({
   }
 });
 
+export const onHearingTimeUpdate = (hearingId, time) => ({
+  type: ACTIONS.HEARING_TIME_UPDATE,
+  payload: {
+    hearingId,
+    time
+  }
+});
+
 export const onSelectedHearingDayChange = (selectedHearingDay) => ({
   type: ACTIONS.SELECTED_HEARING_DAY_CHANGE,
   payload: {
@@ -226,4 +234,23 @@ export const toggleLocationFilterVisibility = () => ({
 
 export const toggleVljFilterVisibility = () => ({
   type: ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN
+});
+
+export const onClickRemoveHearingDay = () => ({
+  type: ACTIONS.ON_CLICK_REMOVE_HEARING_DAY
+});
+
+export const onCancelRemoveHearingDay = () => ({
+  type: ACTIONS.CANCEL_REMOVE_HEARING_DAY
+});
+
+export const onSuccessfulHearingDayDelete = (date) => ({
+  type: ACTIONS.SUCCESSFUL_HEARING_DAY_DELETE,
+  payload: {
+    date
+  }
+});
+
+export const onResetDeleteSuccessful = () => ({
+  type: ACTIONS.RESET_DELETE_SUCCESSFUL
 });

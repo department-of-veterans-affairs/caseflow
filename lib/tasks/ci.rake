@@ -88,7 +88,7 @@ namespace :ci do
     $stdout.sync = true
 
     api_url = "https://circleci.com/api/v1.1/project/github/#{ENV['CIRCLE_PROJECT_USERNAME']}/#{ENV['CIRCLE_PROJECT_REPONAME']}/#{ENV['CIRCLE_BUILD_NUM']}/artifacts" # rubocop:disable Metrics/LineLength
-    coverage_dir = "/tmp/coverage"
+    coverage_dir = "~/coverage/combined"
     SimpleCov.coverage_dir(coverage_dir)
     # Set the merge_timeout very large so that we don't exclude results
     # just because the runs took a long time.
@@ -116,9 +116,23 @@ namespace :ci do
     # This prints code coverage statistics as a side effect, which we want
     # in the build log.
     result.format!
-    if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
-      puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min.to_i}% covered.\
-                  This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%\n").red
+
+    File.open("#{ENV['COVERAGE_DIR']}/merged_results.json", "w") do |f|
+      f.write(JSON.pretty_generate(result.to_hash))
+    end
+
+    undercovered_files = result.covered_percentages.zip(result.filenames).select do |c|
+      c.first < CODE_COVERAGE_THRESHOLD
+    end
+
+    if !undercovered_files.empty?
+      puts Rainbow("The expected minimum coverage per file is: #{CODE_COVERAGE_THRESHOLD}%").red
+      puts Rainbow("File Name - Percentage").red
+
+      undercovered_files.map do |undercovered_file|
+        puts Rainbow("#{undercovered_file.second} - #{undercovered_file.first.to_i}%").red
+      end
+
       exit!(1)
     else
       puts Rainbow("Code coverage threshold met\n").green

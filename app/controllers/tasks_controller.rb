@@ -2,16 +2,18 @@ class TasksController < ApplicationController
   include Errors
 
   before_action :verify_task_access, only: [:create]
-  skip_before_action :deny_vso_access, only: [:index, :update, :for_appeal]
+  skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
     AttorneyTask: AttorneyTask,
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
-    JudgeTask: JudgeTask,
+    JudgeTask: JudgeAssignTask,
+    JudgeAssignTask: JudgeAssignTask,
     ScheduleHearingTask: ScheduleHearingTask,
-    MailTask: MailTask
+    MailTask: MailTask,
+    InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
 
   QUEUES = {
@@ -61,7 +63,10 @@ class TasksController < ApplicationController
     tasks = task_class.create_many_from_params(create_params, current_user)
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
-    render json: { tasks: json_tasks(tasks) }, status: :created
+
+    tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
+
+    render json: { tasks: json_tasks(tasks_to_return) }, status: :created
   end
 
   # To update attorney task
@@ -81,7 +86,9 @@ class TasksController < ApplicationController
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    render json: { tasks: json_tasks(tasks) }
+    tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
+
+    render json: { tasks: json_tasks(tasks_to_return) }
   end
 
   def for_appeal
@@ -107,6 +114,10 @@ class TasksController < ApplicationController
   end
 
   def verify_task_access
+    if current_user.vso_employee? && task_class != InformalHearingPresentationTask
+      fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
+    end
+
     redirect_to("/unauthorized") unless can_assign_task?
   end
 
@@ -146,13 +157,17 @@ class TasksController < ApplicationController
 
   def create_params
     @create_params ||= [params.require("tasks")].flatten.map do |task|
-      task = task.permit(:type, :instructions, :action, :assigned_to_id,
+      task = task.permit(:type, :instructions, :action, :label, :assigned_to_id,
                          :assigned_to_type, :external_id, :parent_id, business_payloads: [:description, values: {}])
         .merge(assigned_by: current_user)
         .merge(appeal: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(task[:external_id]))
 
       task.delete(:external_id)
       task = task.merge(assigned_to_type: User.name) if !task[:assigned_to_type]
+
+      # Allow actions to be passed with either the key "action" or "label" while we transition to using "label" in place
+      # of "action" so requests coming from browsers that have older versions of the javascript bundle succeed.
+      task = task.merge(action: task.delete(:label)) if task[:label]
 
       task
     end

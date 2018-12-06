@@ -45,6 +45,10 @@ const smallTopMargin = css({
   }
 });
 
+const roSelectionStyling = css({
+  marginTop: '10px',
+  marginBottom: '10px' });
+
 class AssignHearingsContainer extends React.PureComponent {
 
   componentDidMount = () => {
@@ -108,11 +112,13 @@ class AssignHearingsContainer extends React.PureComponent {
           to="/schedule">
           {COPY.HEARING_SCHEDULE_ASSIGN_HEARINGS_VIEW_SCHEDULE_LINK}
         </Link>
-        <RoSelectorDropdown
-          onChange={this.props.onRegionalOfficeChange}
-          value={this.props.selectedRegionalOffice}
-          staticOptions={centralOfficeStaticEntry}
-        />
+        <section className="usa-form-large" {...roSelectionStyling}>
+          <RoSelectorDropdown
+            onChange={this.props.onRegionalOfficeChange}
+            value={this.props.selectedRegionalOffice ? this.props.selectedRegionalOffice : null}
+            staticOptions={centralOfficeStaticEntry}
+          />
+        </section>
         {this.props.selectedRegionalOffice && <LoadingDataDisplay
           key={this.props.selectedRegionalOffice.value}
           createLoadPromise={this.createLoadPromise}
