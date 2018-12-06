@@ -119,6 +119,7 @@ RSpec.feature "Checkout flows" do
       let(:decision_issue_text) { "This is a test decision issue" }
       let(:decision_issue_disposition) { "Remanded" }
       let(:benefit_type) { "Education" }
+      let(:old_benefit_type) { Constants::BENEFIT_TYPES[appeal.request_issues.first.benefit_type] }
 
       scenario "veteran is the appellant" do
         visit "/queue"
@@ -153,7 +154,7 @@ RSpec.feature "Checkout flows" do
         find(".Select-control", text: "Select Disposition").click
         find("div", class: "Select-option", text: decision_issue_disposition).click
 
-        find(".Select-control", text: "Benefit type").click
+        find(".Select-control", text: old_benefit_type).click
         find("div", class: "Select-option", text: benefit_type).click
 
         click_on "Save"
@@ -187,7 +188,7 @@ RSpec.feature "Checkout flows" do
 
         expect(appeal.decision_issues.count).to eq(1)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
-        expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.lowecase)
+        expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
         expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
       end
     end
