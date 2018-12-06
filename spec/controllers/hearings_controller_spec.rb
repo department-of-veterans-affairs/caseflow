@@ -53,12 +53,13 @@ RSpec.describe HearingsController, type: :controller do
                        "offset" => "-500"
                      }
                    },
-                   prepped: true
-                 }
+                   prepped: true }
         patch :update, as: :json, params: { id: hearing.id, hearing: params }
         expect(response.status).to eq 200
 
-        expect(VACOLS::CaseHearing.last.hearing_date).to eq(DateTime.new(2019, 4, 2, 10).in_time_zone("Eastern Time (US & Canada)"))
+        expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id]).hearing_date).to eq(
+          Time.new(2019, 4, 2, 10).in_time_zone("Eastern Time (US & Canada)")
+        )
       end
     end
 
