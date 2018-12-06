@@ -65,7 +65,6 @@ class HearingRepository
 
     def slot_new_hearing(parent_record_id, time, appeal)
       hearing_day = HearingDay.find_hearing_day(nil, parent_record_id)
-
       if hearing_day[:hearing_type] == "C"
         update_co_hearing(
           hearing_day[:hearing_date].to_datetime.change(

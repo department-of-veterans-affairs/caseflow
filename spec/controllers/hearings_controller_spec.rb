@@ -24,8 +24,21 @@ RSpec.describe HearingsController, type: :controller do
       expect(response_body["prepped"]).to eq true
     end
 
-    context "when setting disposition as postponed"
-      it "should create a new hearing", focus: true do
+    context "when setting disposition as postponed" do
+      let(:hearing_date) { Date.new(2019, 4, 2) }
+      let(:hearing_day) do
+        HearingDay.create_hearing_day(
+          hearing_type: "C",
+          hearing_date: hearing_date,
+          room_info: "123",
+          judge_id: "456",
+          regional_office: "RO18"
+        )
+      end
+
+      before { Time.zone = "America/New_York" }
+
+      it "should create a new hearing" do
         params = { notes: "Test",
                    hold_open: 30,
                    transcript_requested: false,
@@ -33,7 +46,7 @@ RSpec.describe HearingsController, type: :controller do
                    add_on: true,
                    disposition: :postponed,
                    master_record_updated: {
-                     "id" => hearing.case_hearing.vdkey,
+                     "id" => hearing_day[:id],
                      "time" => {
                        "h" => "9",
                        "m" => "00",
@@ -44,8 +57,8 @@ RSpec.describe HearingsController, type: :controller do
                  }
         patch :update, as: :json, params: { id: hearing.id, hearing: params }
         expect(response.status).to eq 200
-        
-        binding.pry
+
+        expect(VACOLS::CaseHearing.last.hearing_date).to eq(DateTime.new(2019, 4, 2, 10).in_time_zone("Eastern Time (US & Canada)"))
       end
     end
 
