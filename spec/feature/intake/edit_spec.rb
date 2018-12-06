@@ -120,13 +120,13 @@ RSpec.feature "Edit issues" do
     scenario "allows adding/removing issues" do
       visit "appeals/#{appeal.uuid}/edit/"
 
-      expect(page).to have_content("nonrating description")
+      expect(page).to have_content(nonrating_request_issue.description)
 
       # remove an issue
-      nonrating_intake_num = find_intake_issue_number_by_text("Military Retired Pay")
+      nonrating_intake_num = find_intake_issue_number_by_text(nonrating_request_issue.issue_category)
       click_remove_intake_issue(nonrating_intake_num)
       click_remove_issue_confirmation
-      expect(page).not_to have_content("nonrating description")
+      expect(page).not_to have_content(nonrating_request_issue.description)
 
       # add a different issue
       click_intake_add_issue
