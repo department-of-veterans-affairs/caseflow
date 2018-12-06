@@ -196,7 +196,7 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
 
-  routedAssignHearingModal = (props) => <AssignHearingModal {...props.match.params} />;
+  routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
   routedSendColocatedTaskModal = (props) =>
     <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
