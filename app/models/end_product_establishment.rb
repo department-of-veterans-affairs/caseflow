@@ -27,7 +27,13 @@ class EndProductEstablishment < ApplicationRecord
   class ContentionCreationFailed < StandardError; end
   class InvalidEndProductError < StandardError; end
   class NoAvailableModifiers < StandardError; end
-
+  # Many BGS calls fail in off-hours because BGS has maintenance time, so it's useful to classify
+  # these transient errors and ignore the in our reporting tools. These are marked transient because
+  # they're self-resolving and a request can be retried (this typically happens during jobs)
+  #
+  # Only add new kinds of transient BGS errors when you have investigated that they are expected,
+  # and they happen frequently enough to pollute the alerts channel.
+  class TransientBGSSyncError < BGSSyncError; end
   class BGSSyncError < RuntimeError
     def initialize(error, end_product_establishment)
       Raven.extra_context(end_product_establishment_id: end_product_establishment.id)
@@ -80,13 +86,6 @@ class EndProductEstablishment < ApplicationRecord
       end
     end
   end
-  # Many BGS calls fail in off-hours because BGS has maintenance time, so it's useful to classify
-  # these transient errors and ignore the in our reporting tools. These are marked transient because
-  # they're self-resolving and a request can be retried (this typically happens during jobs)
-  #
-  # Only add new kinds of transient BGS errors when you have investigated that they are expected,
-  # and they happen frequently enough to pollute the alerts channel.
-  class TransientBGSSyncError < BGSSyncError; end
 
   class << self
     def order_by_sync_priority
