@@ -1,5 +1,5 @@
 class Docket
-  include ActiveModel::ActiveModel
+  include ActiveModel::Model
 
   def docket_type
     fail Caseflow::Error::MustImplementInSubclass
