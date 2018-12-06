@@ -249,7 +249,7 @@ RSpec.feature "Case details" do
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("Caseflow> Reader")
-      expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
+      expect(page).to have_content("Back to Your Queue #{appeal.veteran_full_name}")
     end
   end
 
