@@ -33,7 +33,6 @@ class EndProductEstablishment < ApplicationRecord
   #
   # Only add new kinds of transient BGS errors when you have investigated that they are expected,
   # and they happen frequently enough to pollute the alerts channel.
-  class TransientBGSSyncError < BGSSyncError; end
   class BGSSyncError < RuntimeError
     def initialize(error, end_product_establishment)
       Raven.extra_context(end_product_establishment_id: end_product_establishment.id)
@@ -86,6 +85,7 @@ class EndProductEstablishment < ApplicationRecord
       end
     end
   end
+  class TransientBGSSyncError < BGSSyncError; end
 
   class << self
     def order_by_sync_priority
