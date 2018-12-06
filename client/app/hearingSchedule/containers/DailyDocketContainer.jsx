@@ -19,7 +19,8 @@ import {
   onHearingTimeUpdate,
   onClickRemoveHearingDay,
   onCancelRemoveHearingDay,
-  onSuccessfulHearingDayDelete
+  onSuccessfulHearingDayDelete,
+  handleDailyDocketServerError
 } from '../actions';
 
 export class DailyDocketContainer extends React.Component {
@@ -69,7 +70,9 @@ export class DailyDocketContainer extends React.Component {
       then(() => {
         this.props.onSuccessfulHearingDayDelete(this.props.dailyDocket.hearingDate);
         this.props.history.push('/schedule');
-      });
+      }, (err) => {
+      this.props.handleDailyDocketServerError(err);
+    });
   };
 
   createHearingPromise = () => Promise.all([this.loadHearingDay()]);
@@ -126,7 +129,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onHearingTimeUpdate,
   onClickRemoveHearingDay,
   onCancelRemoveHearingDay,
-  onSuccessfulHearingDayDelete
+  onSuccessfulHearingDayDelete,
+  handleDailyDocketServerError
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

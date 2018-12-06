@@ -101,6 +101,13 @@ export const onSchedulePeriodError = (error) => ({
   }
 });
 
+export const handleDailyDocketServerError = (err) => ({
+  type: ACTIONS.HANDLE_DAILY_DOCKET_SERVER_ERROR,
+  payload: {
+    err
+  }
+});
+
 export const removeSchedulePeriodError = () => ({
   type: ACTIONS.REMOVE_SCHEDULE_PERIOD_ERROR
 });

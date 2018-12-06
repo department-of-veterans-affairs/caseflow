@@ -283,6 +283,11 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.date
       }
     });
+  case ACTIONS.HANDLE_DAILY_DOCKET_SERVER_ERROR:
+    return update(state, {
+      dailyDocketServerError: { $set: action.payload.err }
+    });
+
   case ACTIONS.RESET_DELETE_SUCCESSFUL:
     return update(state, {
       $unset: ['successfulHearingDayDelete']
