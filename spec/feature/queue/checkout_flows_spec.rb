@@ -571,8 +571,8 @@ RSpec.feature "Checkout flows" do
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
       find("label", text: "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}").click
 
-      # areas of improvement
-      find("#issues_are_not_addressed", visible: false).sibling("label").click
+      expect(page).to have_content("Please provide more details about quality of work")
+      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["AREAS_FOR_IMPROVEMENT"]["issues_are_not_addressed"]).click
 
       dummy_note = generate_words 5
       fill_in "additional-factors", with: dummy_note
