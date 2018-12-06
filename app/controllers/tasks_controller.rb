@@ -81,8 +81,6 @@ class TasksController < ApplicationController
   #   on_hold_duration: "something"
   # }
   def update
-    redirect_to("/unauthorized") && return unless task.can_be_accessed_by_user?(current_user)
-
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
