@@ -16,7 +16,9 @@ class RequestIssue < ApplicationRecord
     duplicate_of_issue_in_active_review: "duplicate_of_issue_in_active_review",
     untimely: "untimely",
     previous_higher_level_review: "previous_higher_level_review",
-    before_ama: "before_ama"
+    before_ama: "before_ama",
+    legacy_issue_not_withdrawn: "legacy_issue_not_withdrawn",
+    legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
   }
 
   class ErrorCreatingDecisionIssue < StandardError
@@ -86,6 +88,13 @@ class RequestIssue < ApplicationRecord
       return unless request_issue && request_issue.status_active?
       request_issue
     end
+
+    def find_active_by_contested_decision_id(contested_decision_issue_id)
+      request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id,
+                                       removed_at: nil, ineligible_reason: nil)
+      return unless request_issue && request_issue.status_active?
+      request_issue
+    end
   end
 
   def status_active?
@@ -127,6 +136,8 @@ class RequestIssue < ApplicationRecord
       notes: notes,
       is_unidentified: is_unidentified,
       ramp_claim_id: ramp_claim_id,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id,
       ineligible_reason: ineligible_reason,
       title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
@@ -137,6 +148,8 @@ class RequestIssue < ApplicationRecord
     check_for_untimely!
     check_for_previous_higher_level_review!
     check_for_before_ama!
+    check_for_legacy_issue_not_withdrawn!
+    check_for_legacy_appeal_not_eligible!
     self
   end
 
@@ -162,6 +175,8 @@ class RequestIssue < ApplicationRecord
     attempted!
     decision_issues.delete_all
     create_decision_issues
+
+    end_product_establishment.on_decision_issue_sync_processed
   end
 
   private
@@ -189,9 +204,9 @@ class RequestIssue < ApplicationRecord
       decision_issues.create!(
         participant_id: review_request.veteran.participant_id,
         disposition: contention_disposition[:disposition],
-        # use epe last_synced_at as a proxy for when the decision was made
-        disposition_date: end_product_establishment.last_synced_at,
-        decision_review: review_request
+        decision_review: review_request,
+        benefit_type: benefit_type,
+        end_product_last_action_date: end_product_establishment.result.last_action_date
       )
     end
   end
@@ -210,7 +225,9 @@ class RequestIssue < ApplicationRecord
         promulgation_date: rating_issue.promulgation_date,
         decision_text: rating_issue.decision_text,
         profile_date: rating_issue.profile_date,
-        decision_review: review_request
+        decision_review: review_request,
+        benefit_type: benefit_type,
+        end_product_last_action_date: end_product_establishment.result.last_action_date
       )
     end
   end
@@ -252,6 +269,27 @@ class RequestIssue < ApplicationRecord
 
     if decision_or_promulgation_date && decision_or_promulgation_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
+    end
+  end
+
+  def check_for_legacy_issue_not_withdrawn!
+    return unless eligible?
+    return unless vacols_id
+
+    if !review_request.legacy_opt_in_approved
+      self.ineligible_reason = :legacy_issue_not_withdrawn
+    end
+  end
+
+  def check_for_legacy_appeal_not_eligible!
+    return unless eligible?
+    return unless vacols_id
+    return unless review_request.serialized_legacy_appeals.any?
+
+    legacy_appeal = review_request.serialized_legacy_appeals.find { |appeal| appeal[:vacols_id] == vacols_id }
+
+    if !legacy_appeal[:eligible_for_soc_opt_in]
+      self.ineligible_reason = :legacy_appeal_not_eligible
     end
   end
 

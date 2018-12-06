@@ -183,7 +183,9 @@ class Appeal < DecisionReview
 
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      issue.save!
+      # temporary until ticket for appeals benefit type by issue is implemented
+      # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
+      issue.update!(benefit_type: "compensation")
       create_legacy_issue_optin(issue) if issue.vacols_id
     end
   end
@@ -235,6 +237,10 @@ class Appeal < DecisionReview
   end
 
   private
+
+  def contestable_decision_issues
+    DecisionIssue.where(participant_id: veteran.participant_id)
+  end
 
   def bgs
     BGSService.new

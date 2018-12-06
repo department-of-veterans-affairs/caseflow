@@ -3,6 +3,7 @@
 # Caseflow DB. For now all schedule data is sent to the
 # VACOLS DB (Aug 2018 implementation).
 class HearingDay < ApplicationRecord
+  acts_as_paranoid
   belongs_to :judge, class_name: "User"
 
   HEARING_TYPES = {

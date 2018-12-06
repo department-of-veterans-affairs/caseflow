@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :request_issue do
     review_request_type "Appeal"
+    benefit_type "compensation"
     sequence(:review_request_id) { |n| "review#{n}" }
 
     factory :request_issue_with_epe do

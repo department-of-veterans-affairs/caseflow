@@ -133,6 +133,7 @@ class Hearing < ApplicationRecord
     :number_of_documents_after_certification, \
     :veteran,  \
     :sanitized_vbms_id, \
+    :docket_name,
     to: :appeal, allow_nil: true
 
   delegate :vacols_id, to: :appeal, prefix: true
@@ -163,6 +164,7 @@ class Hearing < ApplicationRecord
         :current_issue_count,
         :prepped,
         :docket_number,
+        :docket_name,
         :appeal_type,
         :appellant_address_line_1,
         :appellant_city,

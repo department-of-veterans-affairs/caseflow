@@ -30,11 +30,13 @@ RSpec.feature "Checkout flows" do
   let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
   context "given a valid appeal and an attorney user" do
+    let(:issue_note) { "Test note" }
+    let(:issue_description) { "Tinnitus" }
     let!(:appeal) do
       FactoryBot.create(
         :appeal,
         number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus")
+        request_issues: FactoryBot.build_list(:request_issue, 1, description: issue_description, notes: issue_note)
       )
     end
 
@@ -103,6 +105,86 @@ RSpec.feature "Checkout flows" do
       expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
       expect(page.current_path).to eq("/queue")
+    end
+
+    context "when ama issue feature toggle is turned on" do
+      before do
+        FeatureToggle.enable!(:ama_decision_issues)
+      end
+
+      after do
+        FeatureToggle.disable!(:ama_decision_issues)
+      end
+
+      let(:decision_issue_text) { "This is a test decision issue" }
+      let(:decision_issue_disposition) { "Remanded" }
+
+      scenario "veteran is the appellant" do
+        visit "/queue"
+        click_on "(#{appeal.veteran_file_number})"
+
+        # Ensure the issue is on the case details screen
+        expect(page).to have_content(issue_description)
+        expect(page).to have_content(issue_note)
+
+        click_dropdown 0
+
+        click_on "Continue"
+
+        # Ensure the issue is on the select disposition screen
+        expect(page).to have_content(issue_description)
+        expect(page).to have_content(issue_note)
+
+        expect(page).to have_content COPY::DECISION_ISSUE_PAGE_TITLE
+
+        click_on "Continue"
+
+        expect(page).to have_content "Each request issue must have at least one decision issue"
+
+        click_on "+ Add Decision"
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        click_on "Save"
+
+        expect(page).to have_content "This field is required"
+        fill_in "Text Box", with: decision_issue_text
+
+        find(".Select-control", text: "Select Disposition").click
+        find("div", class: "Select-option", text: decision_issue_disposition).click
+
+        click_on "Save"
+
+        # Ensure the decision issue is on the select disposition screen
+        expect(page).to have_content(decision_issue_text)
+        expect(page).to have_content(decision_issue_disposition)
+
+        click_on "Continue"
+
+        find_field("Service treatment records", visible: false).sibling("label").click
+        find_field("Post AOJ", visible: false).sibling("label").click
+
+        click_on "Continue"
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+
+        document_id = Array.new(35).map { rand(10) }.join
+        fill_in "document_id", with: document_id
+        expect(page.find("#document_id").value.length).to eq 30
+
+        fill_in "notes", with: "note"
+
+        safe_click "#select-judge"
+        click_dropdown 0
+
+        click_on "Continue"
+        expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
+
+        expect(page.current_path).to eq("/queue")
+
+        expect(appeal.decision_issues.count).to eq(1)
+        expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
+        expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
+      end
     end
   end
 
