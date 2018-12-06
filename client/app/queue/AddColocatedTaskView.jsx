@@ -26,6 +26,7 @@ import {
 import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import DispatchSuccessDetail from './components/DispatchSuccessDetail';
+import Button from '../components/Button';
 
 import type { Appeal, Task } from './types/models';
 import type { UiStateMessage } from './types/state';
@@ -57,8 +58,10 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     super(props);
 
     this.state = {
-      label: null,
-      instructions: ''
+      adminActions: [{
+        label: null,
+        instructions: ''  
+      }],
     };
   }
 
@@ -99,9 +102,37 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       });
   }
 
+  singleIssueTemplate = (index) => {
+    const { highlightFormItems } = this.props;
+    const { instructions } = this.state.adminActions[index];
+
+    return <React.Fragment>
+    <div {...marginTop(4)}>
+      <SearchableDropdown
+        errorMessage={highlightFormItems && !this.state.label ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+        name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
+        placeholder="Select an action type"
+        options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
+          label,
+          value
+        }))}
+        onChange={(option) => option && this.setState({ label: option.value })}
+        value={this.state.label} />
+    </div>
+    <div {...marginTop(4)}>
+      <TextareaField
+        errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+        name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+        onChange={(value) => this.setState({ instructions: value })}
+        value={instructions} />
+    </div>
+    {/*// TODO: Put this text in COPY.json*/}
+    <Button willNeverBeLoading>+ Add another action</Button>
+  </React.Fragment>};
+
   render = () => {
-    const { highlightFormItems, error } = this.props;
-    const { instructions } = this.state;
+    const { error } = this.props;
+    const { adminActions } = this.state;
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
@@ -111,25 +142,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       {error && <Alert title={error.title} type="error">
         {error.detail}
       </Alert>}
-      <div {...marginTop(4)}>
-        <SearchableDropdown
-          errorMessage={highlightFormItems && !this.state.label ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-          name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
-          placeholder="Select an action type"
-          options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
-            label,
-            value
-          }))}
-          onChange={(option) => option && this.setState({ label: option.value })}
-          value={this.state.label} />
-      </div>
-      <div {...marginTop(4)}>
-        <TextareaField
-          errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-          name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-          onChange={(value) => this.setState({ instructions: value })}
-          value={instructions} />
-      </div>
+      { adminActions.map((obj, index) => this.singleIssueTemplate(index)) }
     </React.Fragment>;
   }
 }
