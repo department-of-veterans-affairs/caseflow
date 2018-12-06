@@ -584,10 +584,10 @@ RSpec.describe TasksController, type: :controller do
     context "when some other user updates another user's task" do
       let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: create(:user)) }
 
-      it "should return not be successful" do
+      it "should return an error" do
         User.stub = colocated
         patch :update, params: { task: { status: Constants.TASK_STATUSES.in_progress }, id: admin_action.id }
-        expect(response.status).to eq 302
+        expect(response.status).to eq(403)
       end
     end
   end
