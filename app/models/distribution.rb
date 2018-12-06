@@ -70,7 +70,6 @@ class Distribution < ApplicationRecord
   end
 
   def judge_has_no_unassigned_cases
-    binding.pry
     return false if assigned_tasks.any?
 
     legacy_tasks = QueueRepository.tasks_for_user(judge.css_id)
