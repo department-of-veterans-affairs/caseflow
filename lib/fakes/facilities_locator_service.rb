@@ -1,5 +1,5 @@
 class Fakes::FacilitiesLocatorService < ExternalApi::FacilitiesLocatorService
-  def self.get_nearest(_point, _ids) # rubocop:disable Metrics/MethodLength
+  def self.get_distance(_point, _ids) # rubocop:disable Metrics/MethodLength
     [
       {
         "id": "vha_688",
@@ -10,6 +10,7 @@ class Fakes::FacilitiesLocatorService < ExternalApi::FacilitiesLocatorService
         "lat": 38.9311137,
         "long": -77.0109110499999,
         "website": "http://www.washingtondc.va.gov",
+        "distance": 500,
         "address": {
           "mailing": {
             "address_1": "50 Irving Street, Northwest",
