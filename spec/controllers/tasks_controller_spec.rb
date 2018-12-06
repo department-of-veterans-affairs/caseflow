@@ -636,7 +636,7 @@ RSpec.describe TasksController, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 1
+        expect(response_body["tasks"].length).to eq 2
 
         task = response_body["tasks"][0]
         expect(task["type"]).to eq "colocated_tasks"
@@ -663,7 +663,7 @@ RSpec.describe TasksController, type: :controller do
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 
-        expect(appeal.tasks.count).to eq 2
+        expect(appeal.tasks.count).to eq 3
       end
     end
   end
