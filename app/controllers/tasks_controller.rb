@@ -91,7 +91,7 @@ class TasksController < ApplicationController
 
   def for_appeal
     no_cache
-
+    RootTask.find_or_create_by!(appeal: appeal)
     # VSO users should only get tasks assigned to them or their organization.
     if current_user.vso_employee?
       return json_vso_tasks
