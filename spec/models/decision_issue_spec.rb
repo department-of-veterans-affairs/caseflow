@@ -38,4 +38,15 @@ describe RequestIssue do
       end
     end
   end
+
+  context "#issue_category" do
+    let(:decision_issue) do
+      create(:decision_issue,
+             request_issues: [create(:request_issue, issue_category: "test category")])
+    end
+
+    it "finds the issue category" do
+      expect(decision_issue.issue_category).to eq("test category")
+    end
+  end
 end
