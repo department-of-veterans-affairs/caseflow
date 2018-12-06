@@ -194,22 +194,6 @@ class LegacyAppeal < ApplicationRecord
     vbms_id.ends_with?("C") ? (veteran && veteran.ssn) : sanitized_vbms_id
   end
 
-  def veteran_full_address
-    "#{veteran.address_line_1} #{veteran.address_line_2} #{veteran.city}, #{veteran.state} #{veteran.zip}"
-  end
-
-  def alternate_location_ids
-    # use regional_office_key
-    RegionalOffice::CITIES[regional_office_key][:alternate_hearing_locations]
-    []
-  end
-
-  def closest_alternate_hearing_location
-    lat_lng = LegacyAppeal.vets360_service.geocode(veteran_full_address)
-    LegacyAppeal.facilities_locator_service.get_closest(lat_lng, alternate_location_ids)[:data][0]
-  end
-
-
   delegate :address_line_1,
            :address_line_2,
            :address_line_3,

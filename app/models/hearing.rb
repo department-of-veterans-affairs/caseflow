@@ -132,7 +132,6 @@ class Hearing < ApplicationRecord
     :number_of_documents, \
     :number_of_documents_after_certification, \
     :veteran,  \
-    :veteran_full_address, \
     :sanitized_vbms_id, \
     :docket_name,
     to: :appeal, allow_nil: true
@@ -155,14 +154,12 @@ class Hearing < ApplicationRecord
         :representative_name,
         :regional_office_name,
         :regional_office_timezone,
-        :closest_alternate_hearing_location,
         :venue,
         :veteran_name,
         :veteran_mi_formatted,
         :appellant_last_first_mi,
         :appellant_mi_formatted,
         :veteran_fi_last_formatted,
-        :veteran_full_address,
         :vbms_id,
         :current_issue_count,
         :prepped,
