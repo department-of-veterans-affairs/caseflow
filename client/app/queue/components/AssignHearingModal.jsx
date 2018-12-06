@@ -213,7 +213,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   }
 
   getSuccessMsg = () => {
-    const { appeal, selectedHearingDay } = this.props;
+    const { appeal, selectedHearingDay, selectedRegionalOffice } = this.props;
 
     const hearingDateStr = formatDateStr(selectedHearingDay.value.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const title = `You have successfully assigned ${appeal.veteranFullName} ` +
@@ -223,7 +223,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       <p>
         To assign another veteran please use the "Schedule Veterans" link below.
         You can also use the hearings section below to view the hearing in new tab.<br /><br />
-        <Link href="/hearings/schedule/assign">Back to Schedule Veterans</Link>
+       <Link href={`/hearings/schedule/assign?roValue=${selectedRegionalOffice.value}`}>Back to Schedule Veterans</Link>
       </p>
     );
 
