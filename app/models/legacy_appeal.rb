@@ -781,6 +781,12 @@ class LegacyAppeal < ApplicationRecord
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
+  def reopen_appeal_on_rollback?
+    # Shows whether an appeal was closed due to a legacy issue opt-in
+    # which should be reversed if an opted-in issue is rolled back
+    case_record.bfmpro == "HIS" && case_record.bfcurloc == "99" && disposition == "AMA Opt-in"
+  end
+
   class << self
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
@@ -841,14 +847,15 @@ class LegacyAppeal < ApplicationRecord
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def reopen(appeals:, user:, disposition:, safeguards: true)
+    def reopen(appeals:, user:, disposition:, safeguards: true, reopen_issues: true)
       repository.transaction do
         appeals.each do |reopen_appeal|
           reopen_single(
             appeal: reopen_appeal,
             user: user,
             disposition: disposition,
-            safeguards: safeguards
+            safeguards: safeguards,
+            reopen_issues: reopen_issues
           )
         end
       end
@@ -939,7 +946,7 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
-    def reopen_single(appeal:, user:, disposition:, safeguards:)
+    def reopen_single(appeal:, user:, disposition:, safeguards:, reopen_issues: true)
       disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
@@ -961,7 +968,8 @@ class LegacyAppeal < ApplicationRecord
         repository.reopen_undecided_appeal!(
           appeal: appeal,
           user: user,
-          safeguards: safeguards
+          safeguards: safeguards,
+          reopen_issues: reopen_issues
         )
       end
     end

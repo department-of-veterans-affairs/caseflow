@@ -4,7 +4,16 @@ module LegacyOptinable
   private
 
   def create_legacy_issue_optin(request_issue)
-    legacy_optin = LegacyIssueOptin.create!(request_issue: request_issue).tap(&:submit_for_processing!)
+    create_legacy_issue_optin_action(request_issue: request_issue, action: :opt_in)
+  end
+
+  def rollback_legacy_issue_opt_in(request_issue)
+    create_legacy_issue_optin_action(request_issue: request_issue, action: :rollback)
+  end
+
+  def create_legacy_issue_optin_action(request_issue:, action:)
+    # check that the optin is complete before starting the rollback?
+    legacy_optin = LegacyIssueOptin.create!(request_issue: request_issue, action: action).tap(&:submit_for_processing!)
     if LegacyIssueOptin.run_async?
       LegacyOptinProcessJob.perform_later(legacy_optin)
     else
@@ -13,10 +22,10 @@ module LegacyOptinable
   end
 
   def vacols_optin_special_issue
-    { code: "VO", narrative: "VACOLS Opt-in" }
+    { code: "VO", narrative: "AMA SOC/SSOC Opt-in" }
   end
 
   def needs_vacols_optin_special_issue?
-    request_issues.any?(&:vacols_id)
+    request_issues.any?(&:legacy_issue_opted_in?)
   end
 end

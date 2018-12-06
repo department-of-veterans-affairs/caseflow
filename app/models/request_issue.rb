@@ -1,5 +1,6 @@
 class RequestIssue < ApplicationRecord
   include Asyncable
+  include LegacyOptinable
 
   belongs_to :review_request, polymorphic: true
   belongs_to :end_product_establishment
@@ -168,6 +169,15 @@ class RequestIssue < ApplicationRecord
     attempted!
     decision_issues.delete_all
     create_decision_issues
+  end
+
+  def legacy_issue_opted_in?
+    eligible? && vacols_id
+  end
+
+  def remove!
+    update!(review_request: nil)
+    rollback_legacy_issue_opt_in(self) if legacy_issue_opted_in?
   end
 
   private
