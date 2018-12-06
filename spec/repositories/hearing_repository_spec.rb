@@ -4,6 +4,34 @@ describe HearingRepository do
     Time.zone = "America/Chicago"
   end
 
+  context ".slot_new_hearing" do
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let(:time) do
+      {
+        "h" => "9",
+        "m" => "00",
+        "offset" => "-500"
+      }
+    end
+    let(:staff_record) { create(:staff) }
+
+    before do
+      RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: staff_record.slogid)
+
+      HearingDay.create_hearing_day(
+        hearing_type: "C",
+        hearing_date: 1.day.from_now.to_s,
+        room_info: "123",
+        judge_id: "456",
+        regional_office: "RO18"
+      )
+    end
+
+    it "slots hearing at correct time" do
+      HearingRepository.slot_new_hearing(VACOLS::CaseHearing.first.hearing_pkseq, time, legacy_appeal)
+    end
+  end
+
   context ".set_vacols_values" do
     subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
     let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }

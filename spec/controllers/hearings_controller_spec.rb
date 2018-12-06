@@ -24,6 +24,31 @@ RSpec.describe HearingsController, type: :controller do
       expect(response_body["prepped"]).to eq true
     end
 
+    context "when setting disposition as postponed"
+      it "should create a new hearing", focus: true do
+        params = { notes: "Test",
+                   hold_open: 30,
+                   transcript_requested: false,
+                   aod: :granted,
+                   add_on: true,
+                   disposition: :postponed,
+                   master_record_updated: {
+                     "id" => hearing.case_hearing.vdkey,
+                     "time" => {
+                       "h" => "9",
+                       "m" => "00",
+                       "offset" => "-500"
+                     }
+                   },
+                   prepped: true
+                 }
+        patch :update, as: :json, params: { id: hearing.id, hearing: params }
+        expect(response.status).to eq 200
+        
+        binding.pry
+      end
+    end
+
     it "should return not found" do
       patch :update, params: { id: "78484", hearing: { notes: "Test", hold_open: 30, transcript_requested: false } }
       expect(response.status).to eq 404
