@@ -103,7 +103,7 @@ class Generators::Rating
     def populate_issue_ids(attrs)
       return unless attrs[:issues]
       # gives a unique id to each issue that is tied to a specific participant_id
-      attrs[:issues].each_with_index.map do |issue, i|
+      attrs[:issues].map do |issue|
         issue[:reference_id] ||= "#{attrs[:participant_id]}#{generate_external_id}"
         issue
       end
