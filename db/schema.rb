@@ -556,6 +556,15 @@ ActiveRecord::Schema.define(version: 20181129230649) do
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
 
+  create_table "ihp_writing_vsos", force: :cascade do |t|
+    t.bigint "organization_id"
+  end
+
+  create_table "vso_appeals", force: :cascade do |t|
+    t.bigint "organization_id"
+    t.bigint "appeal_id"
+  end
+
   create_table "people", force: :cascade do |t|
     t.string "participant_id", null: false
     t.date "date_of_birth"

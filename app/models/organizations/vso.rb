@@ -1,4 +1,7 @@
 class Vso < Organization
+  has_one :ihp_writing_vso
+  has_many :appeals, through: :vso_appeals
+
   def user_has_access?(user)
     return false unless user.roles.include?("VSO")
 
