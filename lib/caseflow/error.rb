@@ -178,40 +178,42 @@ module Caseflow::Error
     def self.from_bgs_error(error, epe)
       case error.body
       when /WssVerification Exception - Security Verification Exception/
+        # This occasionally happens when client/server timestamps get out of sync. Uncertain why this
+        # happens or how to fix it - it only happens occasionally.
+        #
         # A more detailed message is
         #   "WSSecurityException: The message has expired (WSSecurityEngine: Invalid timestamp The
         #    security semantics of the message have expired)"
         #
-        # This is a transient error that occasionally happens when client/server timestamps get out of sync
-        #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2884/
-        TransientBGSError.new("wss_verification_exception", epe)
+        TransientBGSError.new(error, epe)
       when /ShareException thrown in findVeteranByPtcpntId./
-        # You may also see "Retrieving Contention list failed. System error." in the body, more
-        # context:
+        # Some context:
         #   "So when the call to get contentions occurred, our BGS call runs through the
         #   Tuxedo layer to get further information, but ran into the issue with BDN and failed the
         #   remainder of the call"
         #
+        # BDN = Benefits Delivery Network
+        #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2910/
-        TransientBGSError.new("share_exception_find_veteran_by_ptcpnt_id", epe)
+        TransientBGSError.new(error, epe)
       when /Connection timed out - connect(2) for "bepprod.vba.va.gov" port 443/
         # Transient timeouts to BGS because of connectivity issues
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
-        TransientBGSError.new("connection_timeout_bepprod", epe)
+        TransientBGSError.new(error, epe)
       when /Unable to find SOAP operation: :find_benefit_claim/
         # Transient failure because a VBMS service is unavailable
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2891/
-        TransientBGSError.new("unable_to_find_soap_operation", epe)
+        TransientBGSError.new(error, epe)
       when /HTTP error (504): upstream request timeout/
-        # Transient failure when, for example, a WSDL is unavailable. The originating error could be
-        # a Wasabi::Resolver::HTTPError
+        # Transient failure when, for example, a WSDL is unavailable. For example, the originating
+        # error could be a Wasabi::Resolver::HTTPError
         #  "Error: 504 for url http://localhost:10001/BenefitClaimServiceBean/BenefitClaimWebService?WSDL"
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
-        TransientBGSError.new("upstream_504_timeout", epe)
+        TransientBGSError.new(error, epe)
       else
         new(error, epe)
       end
