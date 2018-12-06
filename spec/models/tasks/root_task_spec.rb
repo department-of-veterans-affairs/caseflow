@@ -98,7 +98,7 @@ describe RootTask do
     let(:user) { FactoryBot.create(:user) }
     let(:vacols_case) { create(:case, bfcorlid: "123456789S") }
     let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
-    let(:root_task) { RootTask.find(FactoryBot.create(:root_task, appeal: appeal ).id) }
+    let(:root_task) { RootTask.find(FactoryBot.create(:root_task, appeal: appeal).id) }
 
     subject { root_task.available_actions_unwrapper(user) }
 
