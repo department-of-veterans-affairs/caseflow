@@ -7,18 +7,12 @@
 # the current status of the EP when the EndProductEstablishment is synced.
 
 class EndProductEstablishment < ApplicationRecord
-  class EstablishedEndProductNotFound < StandardError; end
-  class ContentionCreationFailed < StandardError; end
-
   attr_accessor :valid_modifiers, :special_issues
   # In decision reviews, we may create 2 end products at the same time. To avoid using
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
   belongs_to :source, polymorphic: true
   belongs_to :user
-
-  class InvalidEndProductError < StandardError; end
-  class NoAvailableModifiers < StandardError; end
 
   CANCELED_STATUS = "CAN".freeze
   CLEARED_STATUS = "CLR".freeze
@@ -28,6 +22,71 @@ class EndProductEstablishment < ApplicationRecord
     "1" => "CPL",
     "2" => "CPD"
   }.freeze
+
+  class EstablishedEndProductNotFound < StandardError; end
+  class ContentionCreationFailed < StandardError; end
+  class InvalidEndProductError < StandardError; end
+  class NoAvailableModifiers < StandardError; end
+
+  class BGSSyncError < RuntimeError
+    def initialize(error, end_product_establishment)
+      Raven.extra_context(end_product_establishment_id: end_product_establishment.id)
+      super(error.message).tap do |result|
+        result.set_backtrace(error.backtrace)
+      end
+    end
+
+    def self.from_bgs_error(error, epe)
+      case error.try(:body)
+      when /WssVerification Exception - Security Verification Exception/
+        # This occasionally happens when client/server timestamps get out of sync. Uncertain why this
+        # happens or how to fix it - it only happens occasionally.
+        #
+        # A more detailed message is
+        #   "WSSecurityException: The message has expired (WSSecurityEngine: Invalid timestamp The
+        #    security semantics of the message have expired)"
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2884/
+        TransientBGSSyncError.new(error, epe)
+      when /ShareException thrown in findVeteranByPtcpntId./
+        # Some context:
+        #   "So when the call to get contentions occurred, our BGS call runs through the
+        #   Tuxedo layer to get further information, but ran into the issue with BDN and failed the
+        #   remainder of the call"
+        #
+        # BDN = Benefits Delivery Network
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2910/
+        TransientBGSSyncError.new(error, epe)
+      when /Connection timed out - connect(2) for "bepprod.vba.va.gov" port 443/
+        # Transient timeouts to BGS because of connectivity issues
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
+        TransientBGSSyncError.new(error, epe)
+      when /Unable to find SOAP operation: :find_benefit_claim/
+        # Transient failure because a VBMS service is unavailable
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2891/
+        TransientBGSSyncError.new(error, epe)
+      when /HTTP error (504): upstream request timeout/
+        # Transient failure when, for example, a WSDL is unavailable. For example, the originating
+        # error could be a Wasabi::Resolver::HTTPError
+        #  "Error: 504 for url http://localhost:10001/BenefitClaimServiceBean/BenefitClaimWebService?WSDL"
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
+        TransientBGSSyncError.new(error, epe)
+      else
+        new(error, epe)
+      end
+    end
+  end
+  # Many BGS calls fail in off-hours because BGS has maintenance time, so it's useful to classify
+  # these transient errors and ignore the in our reporting tools. These are marked transient because
+  # they're self-resolving and a request can be retried (this typically happens during jobs)
+  #
+  # Only add new kinds of transient BGS errors when you have investigated that they are expected,
+  # and they happen frequently enough to pollute the alerts channel.
+  class TransientBGSSyncError < BGSSyncError; end
 
   class << self
     def order_by_sync_priority
