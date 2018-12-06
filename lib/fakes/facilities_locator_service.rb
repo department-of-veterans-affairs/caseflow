@@ -1,6 +1,5 @@
 class Fakes::FacilitiesLocatorService < ExternalApi::FacilitiesLocatorService
-
-  def self.get_nearest(point, ids)
+  def self.get_nearest(_point, _ids) # rubocop:disable Metrics/MethodLength
     [
       {
         "id": "vha_688",
