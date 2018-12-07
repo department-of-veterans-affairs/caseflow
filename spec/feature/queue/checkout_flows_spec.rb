@@ -109,7 +109,7 @@ RSpec.feature "Checkout flows" do
 
     context "when ama issue feature toggle is turned on" do
       before do
-        FeatureToggle.enable!(:ama_decision_issues)
+        FeatureToggle.enable!(:ama_decision_issues, users: [attorney_user.css_id])
       end
 
       after do
@@ -117,6 +117,8 @@ RSpec.feature "Checkout flows" do
       end
 
       let(:decision_issue_text) { "This is a test decision issue" }
+      let(:updated_decision_issue_text) { "This is updated text" }
+
       let(:decision_issue_disposition) { "Remanded" }
 
       scenario "veteran is the appellant", focus: true do
@@ -186,17 +188,20 @@ RSpec.feature "Checkout flows" do
         expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
 
         User.authenticate!(user: judge_user)
-        FeatureToggle.disable!(:ama_decision_issues)
-
         visit "/queue"
         click_on "(#{appeal.veteran_file_number})"
         click_dropdown 0
 
         # Skip the special issues page
         click_on "Continue"
+        
         expect(page).to have_content(decision_issue_text)
 
+        click_on "Edit"
+        fill_in "Text Box", with: updated_decision_issue_text
+        click_on "Save"
         click_on "Continue"
+
         expect(page).to have_content("Review Remand Reasons")
 
         click_on "Continue"
@@ -209,7 +214,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
         expect(appeal.decision_issues.count).to eq(1)
-        expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
+        expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
         expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
       end
     end

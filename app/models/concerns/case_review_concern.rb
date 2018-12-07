@@ -23,7 +23,8 @@ module CaseReviewConcern
     end
 
     # Remove this check when feature flag 'ama_decision_issues' is enabled for all
-    if FeatureToggle.enabled?(:ama_decision_issues, user: RequestStore.store[:current_user])
+    if FeatureToggle.enabled?(:ama_decision_issues, user: RequestStore.store[:current_user]) ||
+       issues.first[:request_issue_ids]
       delete_and_create_decision_issues
     else
       update_issue_dispositions
