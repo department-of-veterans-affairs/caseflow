@@ -19,35 +19,35 @@ class Appeal < DecisionReview
   scope :aod_motions, lambda {
     joins(claimants: { person: :advance_on_docket_motions })
       .where("advance_on_docket_motions.created_at > appeals.established_at")
-      .where("advance_on_docket_motions.status = ?", "granted")
+      .where("advance_on_docket_motions.granted = ?", true)
   }
   scope :aod_due_to_age, lambda {
     joins(claimants: :person)
       .where("people.date_of_birth <= ?", 75.years.ago)
   }
 
-  scope :not_aod, lambda {
+  scope :no_aod_motions, lambda {
+    # find appeals that have no a
     joins(claimants: :person)
       .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
-      .where("people.date_of_birth >= ?", 75.years.ago)
+      .where("people.date_of_birth > ?", 75.years.ago)
       .where("advance_on_docket_motions.id IS NULL")
   }
 
+  scope :no_applicable_aod_motions, lambda {
+    # find appeals where there are aod motions for that person, but none apply -
+    # none of the motions were:
+    # - created after the appeal established at date AND
+    # - granted
+    joins(claimants: { person: :advance_on_docket_motions })
+      .where("people.date_of_birth > ?", 75.years.ago)
+      .where("advance_on_docket_motions.created_at > appeals.established_at")
+      .where("advance_on_docket_motions.granted = ?", true)
+  }
+
+
+
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
-
-  def all_aod
-    [aod_motions + aod_due_to_age].uniq(&:id)
-  end
-
-  def all_priority
-    # TODO: add cavc appeals
-    all_aod
-  end
-
-  def all_nonpriority
-    # TODO: exclude cavc appeals
-    not_aod
-  end
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
@@ -276,4 +276,15 @@ class Appeal < DecisionReview
   def bgs
     BGSService.new
   end
+
+  def self.all_priority
+    # TODO: add cavc appeals
+    [aod_motions + aod_due_to_age].flatten.uniq(&:id)
+  end
+
+  def self.all_nonpriority
+    # TODO: exclude cavc appeals
+    [no_aod_motions].flatten
+  end
+
 end

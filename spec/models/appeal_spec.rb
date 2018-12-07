@@ -1,15 +1,31 @@
 describe Appeal do
+  context "priority and non-priority appeals", focus: true do
+    let!(:appeal) { create(:appeal) }
+    let!(:aod_age_appeal) { create(:appeal, :advanced_on_docket_due_to_age) } 
+    let!(:aod_motion_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) } 
+    let!(:denied_aod_motion_appeal) { create(:appeal, :denied_advance_on_docket) } 
+    let!(:inapplicable_aod_motion_appeal) { create(:appeal, :inapplicable_aod_motion) } 
 
-
-  context "priority and non-priority appeals" do
-    let(:non_aod_appeal) do
-      let(:participant_id) { "1111111" }
-      create(:person, participant_id: participant_id)
-      create(:claimant, participant_id: participant_id)
-
-
+    context "#all_priority" do
+      subject { Appeal.all_priority }
+      it "returns aod appeals due to age and motion" do
+        expect(subject.include?(aod_age_appeal)).to eq(true)
+        expect(subject.include?(aod_motion_appeal)).to eq(true)
+        expect(subject.include?(appeal)).to eq(false)
+        expect(subject.include?(denied_aod_motion_appeal)).to eq(false)
+        expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(false)
+      end
     end
 
+    context "#all_nonpriority" do
+      subject { Appeal.all_nonpriority }
+      it "returns non aod appeals" do
+        expect(subject.include?(appeal)).to eq(true)
+        expect(subject.include?(aod_motion_appeal)).to eq(false)
+        expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
+        expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
+      end
+    end
   end
 
   context "#document_fetcher" do
