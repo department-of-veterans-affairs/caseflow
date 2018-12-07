@@ -63,10 +63,10 @@ class LegacyOptInModal extends React.Component {
         vacolsId: this.state.vacolsId,
         vacolsSequenceId: this.state.vacolsSequenceId,
         eligibleForSocOptIn: this.state.eligibleForSocOptIn });
-    } else if (currentIssue.reference_id) {
+    } else if (currentIssue.ratingIssueReferenceId) {
       this.props.addRatingRequestIssue({
-        issueId: currentIssue.reference_id,
-        ratings: this.props.intakeData.ratings,
+        contestableIssueIndex: currentIssue.index,
+        contestableIssues: this.props.intakeData.contestableIssues,
         isRating: true,
         vacolsId: this.state.vacolsId,
         vacolsSequenceId: this.state.vacolsSequenceId,

@@ -8,7 +8,8 @@ class DecisionReviewIntake < Intake
       legacy_opt_in_approved: detail.legacy_opt_in_approved,
       legacyAppeals: detail.serialized_legacy_appeals,
       ratings: detail.serialized_ratings,
-      requestIssues: detail.request_issues.map(&:ui_hash)
+      requestIssues: detail.request_issues.map(&:ui_hash),
+      contestableIssuesByDate: detail.contestable_issues.map(&:serialize)
     )
   rescue Rating::NilRatingProfileListError
     cancel!(reason: "system_error")

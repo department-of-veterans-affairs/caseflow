@@ -139,7 +139,7 @@ class RequestIssue < ApplicationRecord
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id,
       ineligible_reason: ineligible_reason,
-      title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+      title_of_active_review: title_of_active_review
     }
   end
 
@@ -177,6 +177,10 @@ class RequestIssue < ApplicationRecord
     create_decision_issues
 
     end_product_establishment.on_decision_issue_sync_processed
+  end
+
+  def title_of_active_review
+    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
 
   private

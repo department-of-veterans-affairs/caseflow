@@ -125,6 +125,17 @@ export const formatRequestIssues = (requestIssues) => {
   });
 };
 
+export const formatContestableIssues = (contestableIssues) => {
+  return contestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
+    contestableIssue.index = String(index);
+
+    contestableIssuesByDate[contestableIssue.date] = contestableIssuesByDate[contestableIssue.date] || {};
+    contestableIssuesByDate[contestableIssue.date][index] = contestableIssue
+
+    return contestableIssuesByDate;
+  }, {})
+}
+
 const ratingIssuesById = (ratings) => {
   return _.reduce(ratings, (result, rating) => {
     _.forEach(rating.issues, (issue, id) => {
@@ -143,6 +154,16 @@ export const issueById = (ratings, issueId) => {
 
   return currentRating.issues[issueId];
 };
+
+export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
+  console.log("issueByIndex", contestableIssuesByDate, issueIndex);
+  const currentContestableIssueGroup = _.filter(
+    contestableIssuesByDate,
+    (contestableIssues) => _.some(contestableIssues, { index: issueIndex })
+  )[0];
+
+  return currentContestableIssueGroup[issueIndex];
+}
 
 const formatUnidentifiedIssues = (state) => {
   // only used for the new add intake flow
@@ -170,9 +191,9 @@ const formatRatingRequestIssues = (state) => {
       filter((issue) => issue.isRating && !issue.isUnidentified).
       map((issue) => {
         return {
-          reference_id: issue.id,
-          decision_text: ratingIssues[issue.id],
-          profile_date: issue.profileDate,
+          reference_id: issue.ratingIssueReferenceId,
+          decision_text: issue.description,
+          profile_date: issue.ratingIssueProfileDate,
           notes: issue.notes,
           untimely_exemption: issue.untimelyExemption,
           untimely_exemption_notes: issue.untimelyExemptionNotes,
@@ -288,17 +309,20 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
-      const profileDate = new Date(issue.profileDate);
+      // todo: date works for contestable issue
+      // and profile_date works for request issue (for the edit page)
+      // fix this to use same keys
+      const profileDate = new Date(issue.date || issue.profileDate);
 
       return {
         referenceId: issue.id,
-        text: ratingIssues[issue.id],
-        date: formatDateStr(issue.profileDate),
+        text: issue.description,//ratingIssues[issue.id],
+        date: formatDateStr(profileDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
-        profileDate: issue.profileDate,
+        profileDate: profileDate,
         timely: issue.timely,
         beforeAma: profileDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
