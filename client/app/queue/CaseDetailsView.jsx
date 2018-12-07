@@ -16,6 +16,7 @@ import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
 import CaseSnapshot from './CaseSnapshot';
+import CurrentlyActiveTasks from './CurrentlyActiveTasks';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
@@ -79,7 +80,9 @@ class CaseDetailsView extends React.PureComponent {
       }
       <CaseSnapshot appealId={appealId} />
       <hr {...horizontalRuleStyling} />
+
       <StickyNavContentArea>
+        <CurrentlyActiveTasks title="Currently Active Tasks" appealId={appealId} />
         <CaseDetailsIssueList
           amaIssueType={featureToggles.ama_decision_issues}
           title="Issues"
