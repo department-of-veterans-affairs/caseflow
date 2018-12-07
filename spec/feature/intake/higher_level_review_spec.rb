@@ -23,6 +23,9 @@ RSpec.feature "Higher-Level Review" do
     FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
+  let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
+  let(:intake_constants) { Constants.INTAKE_STRINGS }
+
   let(:veteran_file_number) { "123412345" }
 
   let(:veteran) do
@@ -800,7 +803,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content("2 issues")
       # this nonrating request issue is timely
       expect(page).to_not have_content(
-        "Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+        "Description for Active Duty Adjustments #{ineligible_constants.untimely}"
       )
 
       # add unidentified issue
@@ -821,7 +824,7 @@ RSpec.feature "Higher-Level Review" do
       add_untimely_exemption_response("Yes")
       expect(page).to have_content("5 issues")
       expect(page).to have_content("I am an exemption note")
-      expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+      expect(page).to_not have_content("5. Really old injury #{ineligible_constants.untimely}")
 
       # remove and re-add with different answer to exemption
       click_remove_intake_issue("5")
@@ -830,7 +833,7 @@ RSpec.feature "Higher-Level Review" do
       add_untimely_exemption_response("No")
       expect(page).to have_content("5 issues")
       expect(page).to have_content("I am an exemption note")
-      expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+      expect(page).to have_content("5. Really old injury #{ineligible_constants.untimely}")
 
       # add untimely nonrating request issue
       click_intake_add_issue
@@ -844,7 +847,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content("6 issues")
       expect(page).to have_content("I am a nonrating exemption note")
       expect(page).to have_content(
-        "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
+        "Another Description for Active Duty Adjustments #{ineligible_constants.untimely}"
       )
 
       # add prior reviewed issue
@@ -852,14 +855,14 @@ RSpec.feature "Higher-Level Review" do
       add_intake_rating_issue("Already reviewed injury")
       expect(page).to have_content("7 issues")
       expect(page).to have_content(
-        "7. Already reviewed injury #{Constants.INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review}"
+        "7. Already reviewed injury #{ineligible_constants.previous_higher_level_review}"
       )
 
       # add before_ama ratings
       click_intake_add_issue
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
       expect(page).to have_content(
-        "8. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        "8. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
       )
 
       # Eligible because it comes from a RAMP decision
@@ -877,7 +880,7 @@ RSpec.feature "Higher-Level Review" do
         date: "10/19/2017"
       )
       expect(page).to have_content(
-        "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        "A nonrating issue before AMA #{ineligible_constants.before_ama}"
       )
 
       click_intake_finish
@@ -1118,7 +1121,7 @@ RSpec.feature "Higher-Level Review" do
           add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
           expect(page).to have_content(
-            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+            "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
           )
 
           # Expect untimely exemption modal for untimely issue
@@ -1145,11 +1148,20 @@ RSpec.feature "Higher-Level Review" do
 
           expect(page).to have_content("Description for Active Duty Adjustments")
 
+          # add eligible legacy issue
+          click_intake_add_issue
+          add_intake_rating_issue("PTSD denied")
+          add_intake_rating_issue("ankylosis of hip")
+
+          expect(page).to have_content(
+            "#{intake_constants.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+          )
+
           click_intake_finish
 
           ineligible_checklist = find("ul.cf-ineligible-checklist")
           expect(ineligible_checklist).to have_content(
-            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
+            "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
           )
 
           expect(RequestIssue.find_by(
@@ -1158,6 +1170,8 @@ RSpec.feature "Higher-Level Review" do
                    vacols_id: "vacols2",
                    vacols_sequence_id: "1"
           )).to_not be_nil
+
+          expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
         end
       end
 
@@ -1176,14 +1190,14 @@ RSpec.feature "Higher-Level Review" do
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
-            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+            "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
           )
 
           click_intake_finish
 
           ineligible_checklist = find("ul.cf-ineligible-checklist")
           expect(ineligible_checklist).to have_content(
-            "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
+            "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
           )
 
           expect(RequestIssue.find_by(
@@ -1192,6 +1206,8 @@ RSpec.feature "Higher-Level Review" do
                    vacols_id: "vacols1",
                    vacols_sequence_id: "1"
           )).to_not be_nil
+
+          expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
         end
       end
 

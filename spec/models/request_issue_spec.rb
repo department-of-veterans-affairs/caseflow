@@ -381,10 +381,12 @@ describe RequestIssue do
           bfdsoc: 3.days.ago
         ))
         allow(AppealRepository).to receive(:issues).with("vacols1")
-          .and_return([
-                        Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250]),
-                        Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251])
-                      ])
+          .and_return(
+            [
+              Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250], disposition: nil),
+              Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251], disposition: nil)
+            ]
+          )
 
         # Active and not eligible
         create(:legacy_appeal, vacols_case: create(
@@ -396,10 +398,12 @@ describe RequestIssue do
           bfdsoc: 4.months.ago
         ))
         allow(AppealRepository).to receive(:issues).with("vacols2")
-          .and_return([
-                        Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243]),
-                        Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242])
-                      ])
+          .and_return(
+            [
+              Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243], disposition: nil),
+              Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242], disposition: nil)
+            ]
+          )
       end
 
       after do
