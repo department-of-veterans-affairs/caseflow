@@ -11,7 +11,7 @@ import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
-import { requestSave } from './uiReducer/uiActions';
+import { highlightInvalidFormItems, requestSave } from './uiReducer/uiActions';
 import { onReceiveAmaTasks, setAppealAttrs } from './QueueActions';
 
 import {
@@ -32,9 +32,14 @@ import type { Appeal, Task } from './types/models';
 import type { UiStateMessage } from './types/state';
 import update from 'immutability-helper';
 
+type AdminActionType = {|
+  actionLabel: ?string,
+  instructions: string,
+  isHidden: boolean
+|};
+
 type ComponentState = {|
-  label: ?string,
-  instructions: string
+  adminActions: Array<AdminActionType>
 |};
 
 type Params = {|
@@ -49,6 +54,7 @@ type Props = Params & {|
   appeal: Appeal,
   task: Task,
   // dispatch
+  highlightInvalidFormItems: typeof highlightInvalidFormItems,
   requestSave: typeof requestSave,
   onReceiveAmaTasks: typeof onReceiveAmaTasks,
   setAppealAttrs: typeof setAppealAttrs
@@ -71,17 +77,33 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     };
   }
 
-  validateForm = () => Object.values(this.state).every(Boolean);
+  getVisibleAdminActions = () => this.state.adminActions.filter((action) => !action.isHidden);
+
+  removeAdminActionFields = (index) => {
+    this.setState(update(this.state, { adminActions: { [index]: { isHidden: { $set: true } } } }));
+  }
+
+  addAdminActionFields = () => {
+    this.props.highlightInvalidFormItems(false);
+    this.setState(update(this.state, { adminActions: { [this.state.adminActions.length]: { $set: adminActionTemplate() } } }));
+  }
+
+  validateForm = () => this.getVisibleAdminActions().every((action) => Boolean(action.actionLabel) && Boolean(action.instructions));
 
   buildPayload = () => {
     const { task, appeal } = this.props;
 
-    return {
-      ...this.state,
-      type: 'ColocatedTask',
-      external_id: appeal.externalId,
-      parent_id: appeal.isLegacyAppeal ? null : task.taskId
-    };
+    return this.getVisibleAdminActions().map(
+      (action) => {
+        return {
+          label: action.actionLabel,
+          instructions: action.instructions,
+          type: 'ColocatedTask',
+          external_id: appeal.externalId,
+          parent_id: appeal.isLegacyAppeal ? null : task.taskId
+        };
+      }
+    );
   }
 
   goToNextStep = () => {
@@ -126,29 +148,30 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
             label,
             value
           }))}
-          onChange={(option) => this.setState(update(this.state, { adminActions: { [index]: { actionLabel: {$set: option.value} } } } ) ) }
+          onChange={(option) => this.setState(update(this.state, { adminActions: { [index]: { actionLabel: { $set: option.value } } } }))}
           value={actionLabel} />
       </div>
       <div {...marginTop(4)}>
         <TextareaField
           errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-          onChange={(value) => this.setState(update(this.state, { adminActions: { [index]: { instructions: {$set: value} } } } ) ) }
+          onChange={(value) => this.setState(update(this.state, { adminActions: { [index]: { instructions: { $set: value } } } }))}
           value={instructions} />
       </div>
       {/* TODO: Put this text in COPY.json */}
-      {this.state.adminActions.filter((action) => action.isHidden === false).length > 1 &&
+      {this.getVisibleAdminActions().length > 1 &&
         <Button
           willNeverBeLoading
           linkStyling
           name="Remove this action"
-          onClick={ () => this.setState(update(this.state, { adminActions: { [index]: { isHidden: { $set: true } } } })) } />
+          onClick={() => this.removeAdminActionFields(index)} />
       }
-      {this.state.adminActions.map( (action, index) => !action.isHidden ? index : null ).filter(x => x !== null).pop() === index &&
+      {this.state.adminActions.map((action, idx) => action.isHidden ? null : idx).filter((x) => x !== null).
+        pop() === index &&
         <Button
           willNeverBeLoading
           name="+ Add another action"
-          onClick={ () => this.setState(update(this.state, { adminActions: { [this.state.adminActions.length]: {$set: adminActionTemplate() } } })) } />
+          onClick={() => this.addAdminActionFields()} />
       }
     </React.Fragment>;
   };
@@ -178,6 +201,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  highlightInvalidFormItems,
   requestSave,
   onReceiveAmaTasks,
   setAppealAttrs
