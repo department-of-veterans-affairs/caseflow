@@ -47,56 +47,45 @@ const getEndProductUpdate = ({
   const issueFilter = isRating
    ? ((i) => !i.ineligibleReason && (i.isRating || i.isUnidentified))
    : ((i) => !i.ineligibleReason && i.isRating === false);
-  const epBefore = issuesBefore.some(issueFilter);
-  const epAfter = issuesAfter.some(issueFilter);
+  const filteredIssuesBefore = issuesBefore.filter(issueFilter);
+  const filteredIssuesAfter = issuesAfter.filter(issueFilter);
+  const epBefore = filteredIssuesBefore.length > 0;
+  const epAfter = filteredIssuesAfter.length > 0;
+  const epChanged = !_.isEqual(filteredIssuesBefore, filteredIssuesAfter);
 
   if (epBefore && !epAfter) { // removing ep
     return <Fragment>
       <strong>A {claimReviewName} {epType} EP is being canceled.</strong>
       <p>All contentions on this EP were removed</p>
     </Fragment>;
-  } else if (epBefore && epAfter) { // updating contentions on ep
+  } else if (epBefore && epAfter && epChanged) { // updating contentions on ep
     return <Fragment>
       <strong>Contentions on {claimReviewName} {epType} EP are being updated:</strong>
-      {after.map((ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>)}
+      {filteredIssuesAfter.map((ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>)}
     </Fragment>;
   } else if (!epBefore && epAfter) { // establishing ep
     return <Fragment>
       <strong>A {claimReviewName} {epType} EP is being established:</strong>
-      {after.map((ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>)}
+      {filteredIssuesAfter.map((ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>)}
     </Fragment>;
   }
 };
 
-const getChecklistItems = (formType, issuesBefore, issuesAfter, isInformalConferenceRequested) => {
-  const checklist = [];
-
-  const ratingEpUpdate = getEndProductUpdate({
+const getChecklistItems = (formType, issuesBefore, issuesAfter, isInformalConferenceRequested) => _.compact([
+  getEndProductUpdate({
     formType,
-    ratingType: 'Rating',
+    isRating: true,
     issuesBefore,
     issuesAfter
-  });
-  if (ratingEpUpdate) {
-    checklist.push(ratingEpUpdate);
-  }
-
-  const nonratingEpUpdate = getEndProductUpdate({
+  }),
+  getEndProductUpdate({
     formType,
-    ratingType: 'Nonrating',
+    isRating: false,
     issuesBefore,
     issuesAfter
-  });
-  if (nonratingEpUpdate) {
-    checklist.push(nonratingEpUpdate);
-  }
-
-  if (isInformalConferenceRequested) {
-    checklist.push('Informal Conference Tracked Item');
-  }
-
-  return checklist;
-};
+  }),
+  isInformalConferenceRequested ? 'Informal Conference Tracked Item' : null
+]);
 
 const ineligibilityCopy = (issue) => {
   if (issue.titleOfActiveReview) {
@@ -154,7 +143,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
       type="success"
       leadMessageList={leadMessageList({ veteran,
         formName: selectedForm.name,
-        requestIssues })}
+        requestIssues: issuesAfter })}
       checklist={getChecklistItems(formType, issuesBefore, issuesAfter, informalConference)}
       wrapInAppSegment={false}
     />
