@@ -70,14 +70,18 @@ class Distribution < ApplicationRecord
   end
 
   def judge_has_no_unassigned_cases
-    pending_statuses = [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
-    assigned_tasks = judge.tasks.select do |t|
-      ((t.is_a?(JudgeTask) && t.action == "assign") || t.is_a?(JudgeAssignTask)) && pending_statuses.include?(t.status)
-    end
     return false if assigned_tasks.any?
 
     legacy_tasks = QueueRepository.tasks_for_user(judge.css_id)
     legacy_tasks.none? { |task| task.assigned_to_attorney_date.nil? }
+  end
+
+  def assigned_tasks
+    pending_statuses = [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
+    judge.tasks.select do |t|
+      assigned_legacy_task = t.is_a?(JudgeLegacyTask) && t.action == "assign"
+      (assigned_legacy_task || t.is_a?(JudgeAssignTask)) && pending_statuses.include?(t.status)
+    end
   end
 
   def batch_size
