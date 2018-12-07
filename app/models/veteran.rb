@@ -40,6 +40,10 @@ class Veteran < ApplicationRecord
     FullName.new(first_name, "", last_name)
   end
 
+  def full_address
+    "#{address_line1}#{address_line2 ? " #{address_line2}" : ''}, #{city} #{state} #{zip_code}"
+  end
+
   def country_requires_zip?
     COUNTRIES_REQUIRING_ZIP.include?(country && country.upcase)
   end

@@ -37,19 +37,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     end
 
     context "when request header contains valid token" do
-      context "and user is not an attorney" do
-        before do
-          create(:user, css_id: "ANOTHER_TEST_ID")
-          key, t = Idt::Token.generate_one_time_key_and_proposed_token
-          Idt::Token.activate_proposed_token(key, "ANOTHER_TEST_ID")
-          request.headers["TOKEN"] = t
-        end
-      end
-
       context "and user is a judge" do
         let(:role) { :judge_role }
 
         before do
+          create(:staff, role, sdomainid: user.css_id)
           request.headers["TOKEN"] = token
         end
 
@@ -107,6 +99,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let(:role) { :attorney_role }
 
         before do
+          create(:staff, role, sdomainid: user.css_id)
           request.headers["TOKEN"] = token
         end
 
