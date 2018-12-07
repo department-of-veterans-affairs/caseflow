@@ -1,5 +1,4 @@
 AllCops:
-  TargetRubyVersion: 2.2
   TargetRailsVersion: 4.2
   Include:
     - '**/config.ru'
@@ -111,6 +110,9 @@ Style/TernaryParentheses:
   EnforcedStyle: require_parentheses_when_complex
 
 Style/IfUnlessModifier:
+  Enabled: false
+
+Style/RedundantBegin:
   Enabled: false
 
 Naming/FileName:

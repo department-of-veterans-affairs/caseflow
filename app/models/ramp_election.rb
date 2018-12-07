@@ -31,10 +31,8 @@ class RampElection < RampReview
     transaction do
       issues.destroy_all
 
-      if contentions
-        contentions.each do |contention|
-          issues.create!(contention: contention)
-        end
+      contentions&.each do |contention|
+        issues.create!(contention: contention)
       end
     end
   end
