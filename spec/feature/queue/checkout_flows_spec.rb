@@ -186,6 +186,7 @@ RSpec.feature "Checkout flows" do
         expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
 
         User.authenticate!(user: judge_user)
+        FeatureToggle.disable!(:ama_decision_issues)
 
         visit "/queue"
         click_on "(#{appeal.veteran_file_number})"

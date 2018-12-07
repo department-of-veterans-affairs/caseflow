@@ -320,16 +320,20 @@ EvaluateDecisionView.propTypes = {
   appealId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
-  highlight: state.ui.highlightFormItems,
-  taskOptions: state.queue.stagedChanges.taskDecision.opts,
-  task: taskById(state, { taskId: ownProps.taskId }),
-  decision: state.queue.stagedChanges.taskDecision,
-  userRole: state.ui.userRole,
-  error: state.ui.messages.error,
-  amaDecisionIssues: state.ui.featureToggles.ama_decision_issues
-});
+const mapStateToProps = (state, ownProps) => {
+  const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
+
+  return {
+    appeal,
+    highlight: state.ui.highlightFormItems,
+    taskOptions: state.queue.stagedChanges.taskDecision.opts,
+    task: taskById(state, { taskId: ownProps.taskId }),
+    decision: state.queue.stagedChanges.taskDecision,
+    userRole: state.ui.userRole,
+    error: state.ui.messages.error,
+    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || appeal.decisionIssues.length
+  }
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal,
