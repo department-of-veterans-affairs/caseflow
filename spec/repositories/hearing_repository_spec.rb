@@ -14,21 +14,14 @@ describe HearingRepository do
       }
     end
     let(:staff_record) { create(:staff) }
+    let(:hearing_day) { create(:hearing_day) }
 
     before do
       RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: staff_record.slogid)
-
-      HearingDay.create_hearing_day(
-        hearing_type: "C",
-        hearing_date: 1.day.from_now.to_s,
-        room_info: "123",
-        judge_id: "456",
-        regional_office: "RO18"
-      )
     end
 
     it "slots hearing at correct time" do
-      HearingRepository.slot_new_hearing(VACOLS::CaseHearing.first.hearing_pkseq, time, legacy_appeal)
+      HearingRepository.slot_new_hearing(hearing_day.id, time, legacy_appeal)
     end
   end
 
