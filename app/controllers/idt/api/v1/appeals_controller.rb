@@ -54,7 +54,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     if feature_enabled?(:idt_ama_appeals)
       tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
     end
-    tasks.reject { |task| task.action == "assign" || task.is_a?(JudgeAssignTask) }
+    tasks.reject { |task| (task.is_a?(JudgeLegacyTask) && task.action == "assign") || task.is_a?(JudgeAssignTask) }
   end
 
   def role
