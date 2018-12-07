@@ -138,6 +138,7 @@ class RequestIssue < ApplicationRecord
       ramp_claim_id: ramp_claim_id,
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id,
+      vacols_issue: vacols_issue.try(:intake_attributes),
       ineligible_reason: ineligible_reason,
       title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
     }
@@ -180,6 +181,14 @@ class RequestIssue < ApplicationRecord
   end
 
   private
+
+  def vacols_issue
+    return unless vacols_id && vacols_sequence_id
+    @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
+      # coerce both into strings since VACOLS may store as int
+      issue.vacols_sequence_id.to_s == vacols_sequence_id.to_s
+    end
+  end
 
   def create_decision_issues
     if rating?
@@ -286,9 +295,7 @@ class RequestIssue < ApplicationRecord
     return unless vacols_id
     return unless review_request.serialized_legacy_appeals.any?
 
-    legacy_appeal = review_request.serialized_legacy_appeals.find { |appeal| appeal[:vacols_id] == vacols_id }
-
-    if !legacy_appeal[:eligible_for_soc_opt_in]
+    if !vacols_issue.eligible_for_opt_in?
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
   end
