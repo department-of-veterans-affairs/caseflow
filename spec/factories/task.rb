@@ -65,7 +65,7 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :ama_attorney_task do
+    factory :ama_attorney_task, class: AttorneyTask do
       type AttorneyTask.name
       appeal_type Appeal.name
       appeal { create(:appeal) }
