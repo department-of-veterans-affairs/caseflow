@@ -114,7 +114,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       }
     };
     const successMsg = {
-      title: sprintf(COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE, CO_LOCATED_ADMIN_ACTIONS[this.state.label]),
+      title: sprintf(COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE, this.getVisibleAdminActions().length, this.getVisibleAdminActions().map((action) => CO_LOCATED_ADMIN_ACTIONS[action.actionLabel]).join(", ")),
       detail: <DispatchSuccessDetail task={task} />
     };
 
