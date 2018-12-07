@@ -21,6 +21,7 @@ class UntimelyExemptionModal extends React.Component {
   onAddIssue = () => {
     const currentIssueData = this.props.intakeData.currentIssueAndNotes;
     const currentIssue = currentIssueData.currentIssue;
+
     if (currentIssue.ratingIssueReferenceId) {
       this.props.addRatingRequestIssue({
         timely: false,

@@ -46,13 +46,16 @@ class AddIssuesModal extends React.Component {
     if (this.props.formType === 'supplemental_claim') {
       return false;
     }
-    const currentIssue = issueByIndex(this.props.intakeData.contestableIssues, this.state.selectedContestableIssueIndex);
+    const currentIssue = issueByIndex(this.props.intakeData.contestableIssues,
+      this.state.selectedContestableIssueIndex);
 
     return !currentIssue.timely;
   }
 
   onAddIssue = () => {
-    const currentIssue = issueByIndex(this.props.intakeData.contestableIssues, this.state.selectedContestableIssueIndex);
+    const currentIssue = issueByIndex(this.props.intakeData.contestableIssues,
+      this.state.selectedContestableIssueIndex);
+
     if (this.hasLegacyAppeals()) {
       this.props.toggleLegacyOptInModal({ currentIssue,
         notes: this.state.notes });
@@ -86,18 +89,21 @@ class AddIssuesModal extends React.Component {
 
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
 
-    const contestableIssuesSections = _.map(intakeData.contestableIssues, (contestableIssuesByIndex, date) => {
-      const radioOptions = _.map(contestableIssuesByIndex, (issue) => {
-        const foundIndex = _.findIndex(addedIssues, {index: issue.index});
-        const text = foundIndex === -1 ?
-          issue.description :
-          `${issue.description} (already selected for issue ${foundIndex + 1})`;
-        return {
-          displayText: text,
-          value: issue.index,
-          disabled: foundIndex !== -1
-        };
-      });
+    const contestableIssuesSections = _.map(intakeData.contestableIssues,
+      (contestableIssuesByIndex, date) => {
+        const radioOptions = _.map(contestableIssuesByIndex, (issue) => {
+          const foundIndex = _.findIndex(addedIssues, { index: issue.index });
+          const text = foundIndex === -1 ?
+            issue.description :
+            `${issue.description} (already selected for issue ${foundIndex + 1})`;
+
+          return {
+            displayText: text,
+            value: issue.index,
+            disabled: foundIndex !== -1
+          };
+        }
+      );
 
       return <RadioField
         vertical

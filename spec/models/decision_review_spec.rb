@@ -53,7 +53,8 @@ describe DecisionReview do
     it "creates a list of contestable rating and decision issues" do
       expect(subject.map(&:serialize)).to contain_exactly(
         { # this rating issue got replaced with a decision issue
-          ratingReferenceId: "123",
+          ratingIssueReferenceId: "123",
+          ratingIssueProfileDate: profile_date,
           decisionIssueReferenceId: decision_issues.first.id,
           date: profile_date,
           description: "decision issue 1",
@@ -63,7 +64,8 @@ describe DecisionReview do
           timely: true
         },
         { 
-          ratingReferenceId: "456",
+          ratingIssueReferenceId: "456",
+          ratingIssueProfileDate: profile_date,
           decisionIssueReferenceId: nil,
           date: profile_date,
           description: "rating issue 2",
@@ -73,7 +75,8 @@ describe DecisionReview do
           timely: true
         },
         {
-          ratingReferenceId: "789",
+          ratingIssueReferenceId: "789",
+          ratingIssueProfileDate: profile_date + 1.day,
           decisionIssueReferenceId: decision_issues.second.id,
           date: profile_date + 1.day,
           description: "decision issue 2",
@@ -83,7 +86,8 @@ describe DecisionReview do
           timely: true
         },
         {
-          ratingReferenceId: nil,
+          ratingIssueReferenceId: nil,
+          ratingIssueProfileDate: profile_date + 2.days,
           decisionIssueReferenceId: decision_issues.third.id,
           date: profile_date + 2.days,
           description: "decision issue 3",

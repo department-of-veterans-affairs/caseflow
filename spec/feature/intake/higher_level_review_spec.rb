@@ -660,8 +660,7 @@ RSpec.feature "Higher-Level Review" do
           { reference_id: "xyz456", decision_text: "PTSD denied 2" },
           { reference_id: supplemental_claim_reference_id,
             decision_text: "to be replaced by decision issue",
-            contention_reference_id: supplemental_claim_contention_reference_id
-          },
+            contention_reference_id: supplemental_claim_contention_reference_id },
           { reference_id: duplicate_reference_id, decision_text: "Old injury" },
           {
             reference_id: higher_level_review_reference_id,
@@ -728,8 +727,8 @@ RSpec.feature "Higher-Level Review" do
 
     let(:previous_supplemental_claim) do
       create(:supplemental_claim,
-        veteran_file_number: veteran.file_number,
-        benefit_type: "compensation")
+             veteran_file_number: veteran.file_number,
+             benefit_type: "compensation")
     end
 
     let!(:previous_sc_request_issue) do
@@ -743,15 +742,14 @@ RSpec.feature "Higher-Level Review" do
 
     let!(:decision_issue) do
       create(:decision_issue,
-        decision_review: previous_supplemental_claim,
-        request_issues: [previous_sc_request_issue],
-        rating_issue_reference_id: supplemental_claim_reference_id,
-        participant_id: veteran.participant_id,
-        promulgation_date: another_promulgation_date,
-        decision_text: "supplemental claim decision issue",
-        profile_date: profile_date,
-        benefit_type: previous_supplemental_claim.benefit_type,
-      )
+             decision_review: previous_supplemental_claim,
+             request_issues: [previous_sc_request_issue],
+             rating_issue_reference_id: supplemental_claim_reference_id,
+             participant_id: veteran.participant_id,
+             promulgation_date: another_promulgation_date,
+             decision_text: "supplemental claim decision issue",
+             profile_date: profile_date,
+             benefit_type: previous_supplemental_claim.benefit_type)
     end
 
     context "Veteran has no ratings" do

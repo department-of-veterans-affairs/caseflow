@@ -144,7 +144,6 @@ class DecisionReview < ApplicationRecord
   end
 
   def unfiltered_contestable_issues_from_ratings
-
     cached_rating_issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
   end
 

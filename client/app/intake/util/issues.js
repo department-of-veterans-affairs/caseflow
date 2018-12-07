@@ -129,15 +129,16 @@ export const formatContestableIssues = (contestableIssues) => {
   // order by date, otherwise all decision issues will always
   // come after rating issues regardless of date
   const orderedContestableIssues = _.orderBy(contestableIssues, ['date'], ['desc']);
+
   return orderedContestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
     contestableIssue.index = String(index);
 
     contestableIssuesByDate[contestableIssue.date] = contestableIssuesByDate[contestableIssue.date] || {};
-    contestableIssuesByDate[contestableIssue.date][index] = contestableIssue
+    contestableIssuesByDate[contestableIssue.date][index] = contestableIssue;
 
     return contestableIssuesByDate;
-  }, {})
-}
+  }, {});
+};
 
 const ratingIssuesById = (ratings) => {
   return _.reduce(ratings, (result, rating) => {
@@ -159,14 +160,13 @@ export const issueById = (ratings, issueId) => {
 };
 
 export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
-  console.log("issueByIndex", contestableIssuesByDate, issueIndex);
   const currentContestableIssueGroup = _.filter(
     contestableIssuesByDate,
     (contestableIssues) => _.some(contestableIssues, { index: issueIndex })
   )[0];
 
   return currentContestableIssueGroup[issueIndex];
-}
+};
 
 const formatUnidentifiedIssues = (state) => {
   // only used for the new add intake flow
@@ -186,8 +186,6 @@ const formatUnidentifiedIssues = (state) => {
 };
 
 const formatRatingRequestIssues = (state) => {
-  const ratingIssues = ratingIssuesById(state.ratings);
-
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.
@@ -299,8 +297,6 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 
 export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
-  let ratingIssues = ratingIssuesById(intakeData.ratings);
-
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue) => {
@@ -319,13 +315,13 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
 
       return {
         referenceId: issue.id,
-        text: issue.description,//ratingIssues[issue.id],
+        text: issue.description,
         date: formatDateStr(profileDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
-        profileDate: profileDate,
+        profileDate,
         timely: issue.timely,
         beforeAma: profileDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,

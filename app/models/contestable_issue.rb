@@ -2,7 +2,7 @@
 class ContestableIssue
   include ActiveModel::Model
 
-  attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id, :title_of_active_review,
+  attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id,
                 :source_higher_level_review, :contesting_decision_review, :decision_issue_reference_id,
                 :promulgation_date, :rating_issue_profile_date
 
