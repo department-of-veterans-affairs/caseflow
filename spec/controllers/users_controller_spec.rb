@@ -4,9 +4,10 @@ RSpec.describe UsersController, type: :controller do
 
   describe "GET /users?role=Judge" do
     let!(:judges) { create_list(:staff, 2, :judge_role) }
+    let!(:attorneys) { create_list(:staff, 2, :attorney_role) }
 
     context "when role is passed" do
-      it "should return a list of judges" do
+      it "should return a list of only judges" do
         get :index, params: { role: "Judge" }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
@@ -15,7 +16,7 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context "when role is not passed" do
-      it "should be successful" do
+      it "should return an empty hash" do
         get :index
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
@@ -25,29 +26,42 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "GET /users?role=Attorney" do
-    context "when judge ID is passed" do
-      let!(:judge) { User.create(css_id: "BVARZIEMANN1", station_id: User::BOARD_STATION_ID) }
+    let(:judge) { Judge.new(FactoryBot.create(:user)) }
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
+    let(:team_member_count) { 3 }
+    let(:solo_count) { 3 }
+    let(:team_attorneys) { FactoryBot.create_list(:user, team_member_count) }
+    let(:solo_attorneys) { FactoryBot.create_list(:user, solo_count) }
 
-      it "should return a list of attorneys associated with the judge" do
-        get :index, params: { role: "Attorney", judge_css_id: judge.css_id }
+    before do
+      [team_attorneys, solo_attorneys].flatten.each do |attorney|
+        create(:staff, :attorney_role, user: attorney)
+      end
+
+      team_attorneys.each do |attorney|
+        OrganizationsUser.add_user_to_organization(attorney, judge_team)
+      end
+    end
+
+    context "when judge ID is passed" do
+      subject { get :index, params: { role: "Attorney", judge_css_id: judge.user.css_id } }
+
+      it "should return a list of attorneys on the judge's team" do
+        subject
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq 3
+        expect(response_body["attorneys"].size).to eq team_member_count
       end
     end
 
     context "when judge ID is not passed" do
-      let!(:staff_attorney) { create(:staff, :attorney_role, sdomainid: "BVACFRANECKI1") }
-      let!(:judges) { create_list(:staff, 2, :judge_role) }
+      subject { get :index, params: { role: "Attorney" } }
 
       it "should return a list of all attorneys" do
-        get :index, params: { role: "Attorney" }
+        subject
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
-        # four regular attorneys and one attorney acting as a judge
-        expect(response_body["attorneys"].size).to eq 4
-        attorney = response_body["attorneys"].select { |e| e["css_id"] == staff_attorney.sdomainid }[0]
-        expect(attorney["judge_css_id"]).to eq "BVARZIEMANN1"
+        expect(response_body["attorneys"].size).to eq team_member_count + solo_count + 1
       end
     end
   end
