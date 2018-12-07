@@ -20,6 +20,7 @@ import { onReceiveTasks } from '../../queue/QueueActions';
 import { setUserCssId } from '../../queue/uiReducer/uiActions';
 import RoSelectorDropdown from '../../components/RoSelectorDropdown';
 import AssignHearings from '../components/AssignHearings';
+import { getQueryParams } from '../../util/QueryParamsUtil';
 
 const centralOfficeStaticEntry = [{
   label: 'Central',
@@ -53,7 +54,11 @@ class AssignHearingsContainer extends React.PureComponent {
 
   componentDidMount = () => {
     this.props.setUserCssId(this.props.userCssId);
-    this.props.onRegionalOfficeChange('');
+  }
+
+  onRegionalOfficeChange = (opt) => {
+    window.history.replaceState('', '', `?roValue=${opt.value}`);
+    this.props.onRegionalOfficeChange(opt);
   }
 
   loadUpcomingHearingDays = () => {
@@ -114,8 +119,8 @@ class AssignHearingsContainer extends React.PureComponent {
         </Link>
         <section className="usa-form-large" {...roSelectionStyling}>
           <RoSelectorDropdown
-            onChange={this.props.onRegionalOfficeChange}
-            value={this.props.selectedRegionalOffice ? this.props.selectedRegionalOffice : null}
+            onChange={this.onRegionalOfficeChange}
+            value={this.props.selectedRegionalOffice || getQueryParams(window.location.search).roValue}
             staticOptions={centralOfficeStaticEntry}
           />
         </section>
