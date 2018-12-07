@@ -82,11 +82,11 @@ describe('EstablishClaim', () => {
         expect(wrapper.find('.cf-modal-body')).to.have.length(0);
 
         // click cancel to open modal
-        findElementById(wrapper, 'button-Cancel').simulate('click');
+        wrapper.find('#button-Cancel').hostNodes().simulate('click');
         expect(wrapper.find('.cf-modal-body')).to.have.length(1);
 
         // Click go back and close modal
-        findElementById(wrapper, 'Stop-Processing-Claim-button-id-0').simulate('click');
+        wrapper.find('#Stop-Processing-Claim-button-id-0').hostNodes().simulate('click');
         expect(wrapper.find('.cf-modal-body')).to.have.length(0);
       });
     });

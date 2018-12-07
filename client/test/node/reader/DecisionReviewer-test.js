@@ -109,12 +109,12 @@ describe('DecisionReviewer', () => {
       context('when expanded comments', () => {
         it('can view comments', () => {
           expect(wrapper.text()).to.not.include('Test Comment');
-          findElementById(wrapper, 'expand-2-comments-button').simulate('click');
+          wrapper.find('#expand-2-comments-button').hostNodes().simulate('click');
           expect(wrapper.text()).to.include('Test Comment');
         });
 
         it('page number is displayed', asyncTest(async() => {
-          findElementById(wrapper, 'expand-2-comments-button').simulate('click');
+          wrapper.find('#expand-2-comments-button').hostNodes().simulate('click');
           expect(wrapper.text()).to.include(`Page ${annotations[0].page}`);
         }));
       });
@@ -128,7 +128,7 @@ describe('DecisionReviewer', () => {
           expect(textArray[1]).to.include(formatDateStr(documents[1].received_at));
           expect(textArray[2]).to.include(formatDateStr(documents[0].received_at));
 
-          findElementById(wrapper, 'receipt-date-header').simulate('click');
+          wrapper.find('#receipt-date-header').hostNodes().simulate('click');
           expect(wrapper.find('#receipt-date-header .cf-sort-arrowdown')).to.have.length(1);
 
           textArray = wrapper.find('tr').map((node) => node.text());
@@ -137,7 +137,7 @@ describe('DecisionReviewer', () => {
         });
 
         it('type ordered correctly', () => {
-          findElementById(wrapper, 'type-header').simulate('click');
+          wrapper.find('#type-header').hostNodes().simulate('click');
           expect(wrapper.find('#type-header .cf-sort-arrowdown')).to.have.length(1);
 
           let textArray = wrapper.find('tr').map((node) => node.text());
@@ -145,7 +145,7 @@ describe('DecisionReviewer', () => {
           expect(textArray[1]).to.include(documents[0].type);
           expect(textArray[2]).to.include(documents[1].type);
 
-          findElementById(wrapper, 'type-header').simulate('click');
+          wrapper.find('#type-header').hostNodes().simulate('click');
           expect(wrapper.find('#type-header .cf-sort-arrowup')).to.have.length(1);
 
           textArray = wrapper.find('tr').map((node) => node.text());
