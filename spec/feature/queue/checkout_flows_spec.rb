@@ -113,7 +113,7 @@ RSpec.feature "Checkout flows" do
       end
 
       after do
-        FeatureToggle.disable!(:ama_decision_issues)
+        FeatureToggle.disable!(:ama_decision_issues, users: [attorney_user.css_id])
       end
 
       let(:decision_issue_text) { "This is a test decision issue" }
