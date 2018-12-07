@@ -119,7 +119,7 @@ RSpec.feature "Checkout flows" do
       let(:decision_issue_text) { "This is a test decision issue" }
       let(:decision_issue_disposition) { "Remanded" }
 
-      scenario "veteran is the appellant" do
+      scenario "veteran is the appellant", focus: true do
         visit "/queue"
         click_on "(#{appeal.veteran_file_number})"
 
@@ -180,6 +180,32 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
         expect(page.current_path).to eq("/queue")
+
+        expect(appeal.decision_issues.count).to eq(1)
+        expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
+        expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
+
+        User.authenticate!(user: judge_user)
+
+        visit "/queue"
+        click_on "(#{appeal.veteran_file_number})"
+        click_dropdown 0
+
+        # Skip the special issues page
+        click_on "Continue"
+        expect(page).to have_content(decision_issue_text)
+
+        click_on "Continue"
+        expect(page).to have_content("Review Remand Reasons")
+
+        click_on "Continue"
+        expect(page).to have_content("Evaluate Decision")
+
+        find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+        find("label", text: "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}").click
+        click_on "Continue"
+
+        expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
         expect(appeal.decision_issues.count).to eq(1)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
