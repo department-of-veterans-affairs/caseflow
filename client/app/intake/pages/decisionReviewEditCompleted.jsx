@@ -2,9 +2,8 @@ import React, { Fragment } from 'react';
 import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
+import { PAGE_PATHS, FORM_TYPES } from '../constants';
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
-import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 import Alert from '../../components/Alert';
 
@@ -40,30 +39,30 @@ const getEndProductUpdate = ({
   formType,
   isRating,
   issuesBefore,
-  issuesAfter,
+  issuesAfter
 }) => {
   const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
   const epType = isRating ? 'Rating' : 'Nonrating';
-  const issueFilter = isRating
-   ? ((i) => !i.ineligibleReason && (i.isRating || i.isUnidentified))
-   : ((i) => !i.ineligibleReason && i.isRating === false);
+  const issueFilter = isRating ?
+    (i) => !i.ineligibleReason && (i.isRating || i.isUnidentified) :
+    (i) => !i.ineligibleReason && i.isRating === false;
   const filteredIssuesBefore = issuesBefore.filter(issueFilter);
   const filteredIssuesAfter = issuesAfter.filter(issueFilter);
   const epBefore = filteredIssuesBefore.length > 0;
   const epAfter = filteredIssuesAfter.length > 0;
   const epChanged = !_.isEqual(filteredIssuesBefore, filteredIssuesAfter);
 
-  if (epBefore && !epAfter) { // removing ep
+  if (epBefore && !epAfter) {
     return <Fragment>
       <strong>A {claimReviewName} {epType} EP is being canceled.</strong>
       <p>All contentions on this EP were removed</p>
     </Fragment>;
-  } else if (epBefore && epAfter && epChanged) { // updating contentions on ep
+  } else if (epBefore && epAfter && epChanged) {
     return <Fragment>
       <strong>Contentions on {claimReviewName} {epType} EP are being updated:</strong>
       {filteredIssuesAfter.map((ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>)}
     </Fragment>;
-  } else if (!epBefore && epAfter) { // establishing ep
+  } else if (!epBefore && epAfter) {
     return <Fragment>
       <strong>A {claimReviewName} {epType} EP is being established:</strong>
       {filteredIssuesAfter.map((ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>)}
@@ -117,12 +116,14 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
     const {
       veteran,
       formType,
-      intakeStatus,
       issuesBefore,
       issuesAfter,
       informalConference
     } = this.props;
-    if (!issuesBefore) return <Redirect to={PAGE_PATHS.BEGIN} />;
+
+    if (!issuesBefore) {
+      return <Redirect to={PAGE_PATHS.BEGIN} />;
+    }
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const ineligibleRequestIssues = issuesAfter.filter((ri) => ri.ineligibleReason);

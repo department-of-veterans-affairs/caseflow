@@ -136,8 +136,7 @@ class ClaimReview < DecisionReview
   end
 
   def cleared_ep?
-    false
-    # end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
+    end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
 
   def find_request_issue_by_description(description)
