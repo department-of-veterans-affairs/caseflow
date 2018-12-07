@@ -5,7 +5,7 @@ class Issue
   include ActiveModel::Model
   include ActiveModel::Serialization
 
-  attr_accessor :id, :vacols_sequence_id, :codes, :disposition,
+  attr_accessor :id, :vacols_sequence_id, :codes, :disposition, :disposition_date,
                 :disposition_id, :readable_disposition, :close_date, :note
 
   # Labels are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
@@ -191,7 +191,9 @@ class Issue
       vacols_id: id,
       vacols_sequence_id: vacols_sequence_id,
       description: friendly_description,
+      disposition_id: disposition_id,
       disposition: disposition,
+      disposition_date: disposition_date,
       close_date: close_date,
       note: note
     }
@@ -203,11 +205,11 @@ class Issue
   end
 
   # For status (BFMPRO) of ADV or REM, for the most part, having a disposition means the issue is closed.
-  # On appeal where the status is REM (remanded) the issues with disposition "3" are still active.
+  # On appeal where the status is REM (remanded) the issues with disposition_code of "3" are still active.
   # rubocop:disable Metrics/CyclomaticComplexity
   def closed?
     return false if disposition.nil?
-    return false if disposition == "3" && legacy_appeal.remand?
+    return false if disposition == :remand && legacy_appeal.remand?
     return true if legacy_appeal.remand? || legacy_appeal.advance? || !legacy_appeal.active?
     false
   end
@@ -271,6 +273,7 @@ class Issue
         disposition_id: hash["issdc"] || nil,
         # readable disposition is a string, i.e. "Remanded"
         readable_disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[hash["issdc"]],
+        disposition_date: hash["issdcls"],
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
       )
     end
@@ -284,20 +287,29 @@ class Issue
         vacols_id: vacols_id,
         vacols_sequence_id: vacols_sequence_id,
         issue_attrs: {
-          disposition: disposition_code,
-          disposition_date: Time.zone.today
+          issdc: disposition_code,
+          issdcls: Time.zone.today
         }
       )
     end
 
-    def reopen_undecided_opt_in_issue_in_vacols!(vacols_id:, vacols_sequence_id:, disposition_code:)
-      fail "Issue disposition code has changed from disposition code: #{disposition_code}" unless disposition == disposition_code
+    def rollback_disposition_in_vacols!(
+      vacols_id:,
+      vacols_sequence_id:,
+      disposition_code_to_rollback:,
+      original_disposition_code:,
+      original_disposition_date:
+    )
+      if disposition_id != disposition_code_to_rollback
+        fail "The disposition code has changed from #{disposition_code_to_rollback}"
+      end
+
       update_in_vacols!(
         vacols_id: vacols_id,
         vacols_sequence_id: vacols_sequence_id,
         issue_attrs: {
-          disposition: nil,
-          disposition_date: nil
+          issdc: original_disposition_code,
+          issdcls: original_disposition_date
         }
       )
     end

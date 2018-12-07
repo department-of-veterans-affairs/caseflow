@@ -80,7 +80,8 @@ class RequestIssue < ApplicationRecord
         untimely_exemption_notes: data[:untimely_exemption_notes],
         ramp_claim_id: data[:ramp_claim_id],
         vacols_id: data[:vacols_id],
-        vacols_sequence_id: data[:vacols_sequence_id]
+        vacols_sequence_id: data[:vacols_sequence_id],
+        vacols_issue: data[:vacols_issue]
       ).validate_eligibility!
     end
 
@@ -177,7 +178,7 @@ class RequestIssue < ApplicationRecord
 
   def remove!
     update!(review_request: nil)
-    rollback_legacy_issue_opt_in(self) if legacy_issue_opted_in?
+    create_legacy_issue_optin(self, action: :rollback) if legacy_issue_opted_in?
   end
 
   private

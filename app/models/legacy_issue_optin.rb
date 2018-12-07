@@ -13,14 +13,13 @@ class LegacyIssueOptin < ApplicationRecord
 
   def perform!
     attempted!
-    update!(original_appeal: legacy_appeal.serialize)
+    update!(original_appeal: legacy_appeal.serialize) # pseudocode
 
     case action
     when :opt_in
-      close_legacy_issue_in_vacols
-      close_legacy_appeal_in_vacols if legacy_appeal_needs_closing?
+      opt_in_legacy_issue
     when :rollback
-      reopen_legacy_issue_in_vacols
+      rollback_legacy_issue_opt_in
     end
 
     clear_error!
@@ -28,6 +27,20 @@ class LegacyIssueOptin < ApplicationRecord
   end
 
   private
+
+  def opt_in_legacy_issue
+    case request_issue.vacols_issue[:disposition_code]
+    when nil
+      transaction do
+        close_legacy_issue_in_vacols
+        close_legacy_appeal_in_vacols if legacy_appeal_needs_closing?
+      end
+    when '3'
+      close_remanded_issue
+    when *WHITELIST_DISPOSITION_CODES
+      close_legacy_issue_in_vacols
+    end
+  end
 
   def close_legacy_issue_in_vacols
     Issue.close_in_vacols!(
@@ -48,33 +61,26 @@ class LegacyIssueOptin < ApplicationRecord
 
   def legacy_appeal_needs_closing?
     # if all the issues are closed, the appeal should be closed.
-    # maybe need to add a check for if the issue has been moved to a post remand appeal
+    # depending on how we do remanded issues
+    # might need to add a check for if the issue has been moved to a post remand appeal
     # in which case it would still appear active on the original appeal
     legacy_appeal.issues.reject(&:closed?).empty?
   end
 
-  def reopen_legacy_issue_in_vacols
-    case request_issue.vacols_disposition_code
+  def rollback_legacy_issue_opt_in
+    case request_issue.vacols_issue[:disposition_code]
     when nil
-      reopen_undecided_legacy_issue_in_vacols
+      reopen_undecided_issue
     when '3'
-      reopen_remanded_legacy_issue_in_vacols
+      reopen_remanded_issue
     when *WHITELIST_DISPOSITION_CODES
-      reopen_whitelist_legacy_issue_in_vacols
+      rollback_issue_disposition
     end
   end
 
-  def reopen_undecided_legacy_issue_in_vacols
-    # check that it has a disposition of "O" as a safeguard?
+  def reopen_undecided_issue
     transaction do
-      Issue.update_in_vacols!(
-        vacols_id: request_issue.vacols_id,
-        vacols_sequence_id: request_issue.vacols_sequence_id,
-        issue_attrs: {
-          disposition: nil,
-          disposition_date: nil,
-        }
-      )
+      rollback_issue_disposition
 
       if legacy_appeal.reopen_appeal_on_rollback?
         LegacyAppeal.reopen(
@@ -87,18 +93,20 @@ class LegacyIssueOptin < ApplicationRecord
     end
   end
 
-  def reopen_whitelist_legacy_issue_in_vacols
-    Issue.update_in_vacols!(
+  def rollback_issue_disposition
+    Issue.rollback_disposition_in_vacols!(
       vacols_id: request_issue.vacols_id,
       vacols_sequence_id: request_issue.vacols_sequence_id,
-      issue_attrs: {
-        disposition: request_issue.vacols_disposition_code,
-        disposition_date: nil,
-      }
+      disposition_code_to_rollback: VACOLS_DISPOSITION_CODE,
+      original_disposition_code: request_issue.vacols_issue[:disposition_code],
+      original_disposition_date: request_issue.vacols_issue[:disposition_date]
     )
   end
 
-  def reopen_remanded_legacy_issue_in_vacols
+  def close_remanded_issue
+  end
+
+  def reopen_remanded_issue
     # delete the follow-up issue, isskey is follow_up_appeal key
       # and issseq is the vacols sequence id
     # if the original appeal is in HIS status,
