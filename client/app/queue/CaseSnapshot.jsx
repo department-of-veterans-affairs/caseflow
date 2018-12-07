@@ -9,6 +9,7 @@ import {
   appealWithDetailSelector
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
+import DocketTypeBadge from './../components/DocketTypeBadge';
 import ActionsDropdown from './components/ActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 

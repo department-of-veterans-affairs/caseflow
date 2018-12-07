@@ -530,6 +530,35 @@ describe EndProductEstablishment do
         end
       end
 
+      context "when VBMS/BGS has a transient internal error" do
+        before do
+          # from https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3116/
+          # rubocop:disable Metrics/LineLength
+          sample_transient_error_body = '<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Header/><env:Body><env:Fault><faultcode xmlns:ns1="http://www.w3.org/2003/05/soap-envelope">ns1:Server</faultcode><faultstring>gov.va.vba.vbms.ws.VbmsWSException: WssVerification Exception - Security Verification Exception GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</faultstring><detail><cdm:faultDetailBean xmlns:cdm="http://vbms.vba.va.gov/cdm" cdm:message="gov.va.vba.vbms.ws.VbmsWSException: WssVerification Exception - Security Verification Exception GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" cdm:exceptionClassName="gov.va.vba.vbms.ws.VbmsWSException" cdm:uid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" cdm:serverException="true"/></detail></env:Fault></env:Body></env:Envelope>'
+          # rubocop:enable Metrics/LineLength
+          error = VBMS::HTTPError.new(500, sample_transient_error_body)
+          allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(error)
+        end
+
+        it "re-raises a transient ignorable error" do
+          expect { subject }.to raise_error(EndProductEstablishment::TransientBGSSyncError)
+        end
+      end
+
+      context "when VBMS/BGS has a transient network error" do
+        before do
+          # from https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
+          # rubocop:disable Metrics/LineLength
+          error = Errno::ETIMEDOUT.new('Connection timed out - Connection timed out - connect(2) for "bepprod.vba.va.gov" port 443 (bepprod.vba.va.gov:443)')
+          # rubocop:enable Metrics/LineLength
+          allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(error)
+        end
+
+        it "re-raises a transient ignorable error" do
+          expect { subject }.to raise_error(EndProductEstablishment::TransientBGSSyncError)
+        end
+      end
+
       context "when source exists" do
         context "when source implements on_sync" do
           let(:source) { create(:ramp_election) }
@@ -626,6 +655,67 @@ describe EndProductEstablishment do
         let(:promulgation_date) { end_product_establishment.established_at - 1.day }
 
         it { is_expected.to eq(nil) }
+      end
+    end
+  end
+
+  context "#on_decision_issue_sync_processed" do
+    subject { end_product_establishment.on_decision_issue_sync_processed }
+    let(:processed_at) { Time.zone.now }
+    let!(:request_issues) do
+      [
+        create(:request_issue,
+               review_request: source,
+               decision_sync_processed_at: Time.zone.now),
+        create(:request_issue,
+               review_request: source,
+               decision_sync_processed_at: processed_at)
+      ]
+    end
+
+    context "when decision issues are all synced" do
+      context "when source is a higher level review" do
+        let!(:claimant) do
+          Claimant.create!(
+            review_request: source,
+            participant_id: veteran.participant_id,
+            payee_code: "10"
+          )
+        end
+
+        let!(:decision_issue) do
+          create(:decision_issue,
+                 decision_review: source,
+                 disposition: HigherLevelReview::DTA_ERROR_PMR,
+                 rating_issue_reference_id: "rating1")
+        end
+
+        it "creats a supplemental claim if dta errors exist" do
+          subject
+
+          expect(SupplementalClaim.find_by(
+                   is_dta_error: true,
+                   veteran_file_number: source.veteran_file_number
+          )).to_not be_nil
+        end
+      end
+
+      context "when source is a supplemental claim" do
+        let(:source) { SupplementalClaim.new(veteran_file_number: veteran_file_number) }
+
+        it "does nothing" do
+          subject
+          expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
+        end
+      end
+    end
+
+    context "when decision issues are not all synced" do
+      let(:processed_at) { nil }
+
+      it "does nothing" do
+        subject
+        expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
       end
     end
   end

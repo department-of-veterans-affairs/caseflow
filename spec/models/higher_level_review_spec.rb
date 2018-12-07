@@ -195,4 +195,87 @@ describe HigherLevelReview do
       expect(subject).to be_nil
     end
   end
+
+  context "#on_decision_issues_sync_processed" do
+    subject { higher_level_review.on_decision_issues_sync_processed(end_product_establishment) }
+
+    let(:end_product_establishment) do
+      create(:end_product_establishment,
+             source: higher_level_review)
+    end
+
+    context "when there are dta errors" do
+      let!(:decision_issues) do
+        [
+          create(:decision_issue,
+                 decision_review: higher_level_review,
+                 disposition: HigherLevelReview::DTA_ERROR_PMR,
+                 rating_issue_reference_id: "rating1"),
+          create(:decision_issue,
+                 decision_review: higher_level_review,
+                 disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
+                 rating_issue_reference_id: "rating2"),
+          create(:decision_issue,
+                 decision_review: higher_level_review,
+                 disposition: "not a dta error")
+        ]
+      end
+
+      let!(:claimant) do
+        Claimant.create!(
+          review_request: higher_level_review,
+          participant_id: veteran.participant_id,
+          payee_code: "10"
+        )
+      end
+
+      it "creates a supplemental claim and request issues" do
+        subject
+        supplemental_claim = SupplementalClaim.find_by(
+          is_dta_error: true,
+          veteran_file_number: higher_level_review.veteran_file_number,
+          receipt_date: Time.zone.now.to_date,
+          benefit_type: higher_level_review.benefit_type,
+          legacy_opt_in_approved: higher_level_review.legacy_opt_in_approved,
+          veteran_is_not_claimant: higher_level_review.veteran_is_not_claimant
+        )
+
+        expect(supplemental_claim).to_not be_nil
+        expect(RequestIssue.where(review_request: supplemental_claim).length).to eq(2)
+
+        first_dta_request_issue = RequestIssue.find_by(
+          review_request: supplemental_claim,
+          contested_decision_issue_id: decision_issues.first.id,
+          rating_issue_reference_id: "rating1",
+          rating_issue_profile_date: decision_issues.first.profile_date,
+          issue_category: decision_issues.first.issue_category,
+          benefit_type: higher_level_review.benefit_type,
+          decision_date: decision_issues.first.approx_decision_date
+        )
+
+        expect(first_dta_request_issue).to_not be_nil
+
+        second_dta_request_issue = RequestIssue.find_by(
+          review_request: supplemental_claim,
+          contested_decision_issue_id: decision_issues.second.id,
+          rating_issue_reference_id: "rating2",
+          rating_issue_profile_date: decision_issues.second.profile_date,
+          issue_category: decision_issues.second.issue_category,
+          benefit_type: higher_level_review.benefit_type,
+          decision_date: decision_issues.second.approx_decision_date
+        )
+
+        expect(second_dta_request_issue).to_not be_nil
+      end
+    end
+
+    context "when there are no dta errors" do
+      it "does nothing" do
+        subject
+
+        expect(SupplementalClaim.where(is_dta_error: true).empty?).to eq(true)
+        expect(RequestIssue.all.empty?).to eq(true)
+      end
+    end
+  end
 end
