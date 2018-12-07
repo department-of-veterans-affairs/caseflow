@@ -569,7 +569,8 @@ RSpec.feature "Checkout flows" do
       expect(page).to_not have_content("One Touch Initiative")
 
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
-      find("label", text: "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}").click
+      text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
+      find("label", text: text_to_click).click
       find("#issues_are_not_addressed", visible: false).sibling("label").click
 
       dummy_note = generate_words 5
@@ -640,7 +641,8 @@ RSpec.feature "Checkout flows" do
         find("label", text: COPY::JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD).click
 
         find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
-        find("label", text: "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}").click
+        text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
+        find("label", text: text_to_click).click
 
         find("#issues_are_not_addressed", visible: false).sibling("label").click
 
@@ -675,7 +677,7 @@ RSpec.feature "Checkout flows" do
         case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
 
         expect(case_complexity_opts.first.text).to eq(
-          (Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).to_s
+          (Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"])
         )
         expect(case_quality_opts.last.text).to eq(
           "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
