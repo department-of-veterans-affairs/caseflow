@@ -24,7 +24,7 @@ class JudgeTask < Task
     super(params.merge(type: JudgeAssignTask.name))
   end
 
-  def self.verify_user_can_assign!(user)
+  def self.verify_user_can_create!(user)
     QualityReview.singleton.user_has_access?(user) || super(user)
   end
 
