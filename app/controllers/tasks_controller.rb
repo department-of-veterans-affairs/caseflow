@@ -80,8 +80,6 @@ class TasksController < ApplicationController
   #   on_hold_duration: "something"
   # }
   def update
-    redirect_to("/unauthorized") && return unless task.can_be_accessed_by_user?(current_user)
-
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
@@ -92,7 +90,7 @@ class TasksController < ApplicationController
 
   def for_appeal
     no_cache
-
+    RootTask.find_or_create_by!(appeal: appeal)
     # VSO users should only get tasks assigned to them or their organization.
     if current_user.vso_employee?
       return json_vso_tasks
