@@ -34,7 +34,7 @@ class BvaDispatchTask < GenericTask
 
       decision.upload!
     rescue ActiveRecord::RecordInvalid => e
-      raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message =~ /^Validation failed:/
+      raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message.match?(/^Validation failed:/)
       raise e
     rescue VBMS::HTTPError => e
       Raven.capture_exception(e)

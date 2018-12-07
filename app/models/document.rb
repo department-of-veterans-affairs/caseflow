@@ -64,7 +64,7 @@ class Document < ApplicationRecord
   end
 
   def receipt_date
-    received_at && received_at.to_date
+    received_at&.to_date
   end
 
   def match_vbms_document_from(vbms_documents)
