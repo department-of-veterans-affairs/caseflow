@@ -22,7 +22,7 @@ class ContestableIssue
     def from_decision_issue(decision_issue, contesting_decision_review)
       new(
         rating_issue_reference_id: decision_issue.rating_issue_reference_id,
-        rating_issue_profile_date: decision_issue.profile_date && decision_issue.profile_date.to_date,
+        rating_issue_profile_date: decision_issue.profile_date.try(:to_date),
         decision_issue_reference_id: decision_issue.id,
         date: decision_issue.approx_decision_date,
         description: decision_issue.decision_text, # TODO: also work with disposition
@@ -49,7 +49,7 @@ class ContestableIssue
   private
 
   def title_of_active_review
-    conflicting_request_issue && conflicting_request_issue.review_title
+    conflicting_request_issue.try(:review_title)
   end
 
   def conflicting_request_issue
