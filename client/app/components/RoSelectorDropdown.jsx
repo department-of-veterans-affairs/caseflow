@@ -54,7 +54,7 @@ class RoSelectorDropdown extends React.Component {
   labelMessage = this.props.label || 'Regional Office';
 
   render() {
-    const { readOnly, onChange, value, placeholder, strongLabel, hideLabel } = this.props;
+    const { readOnly, onChange, value, placeholder, strongLabel, hideLabel, errorMessage } = this.props;
     const regionalOfficeOptions = this.regionalOfficeOptions();
     const selectedRegionalOffice = _.find(regionalOfficeOptions, (opt) => opt.value === value) || {};
 
@@ -70,7 +70,7 @@ class RoSelectorDropdown extends React.Component {
           onChange={onChange}
           value={value}
           placeholder={placeholder}
-
+          errorMessage={errorMessage}
         />
       );
     }
@@ -107,7 +107,8 @@ RoSelectorDropdown.propTypes = {
   label: PropTypes.string,
   strongLabel: PropTypes.bool,
   readOnly: PropTypes.bool,
-  changePrompt: PropTypes.bool
+  changePrompt: PropTypes.bool,
+  errorMessage: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({

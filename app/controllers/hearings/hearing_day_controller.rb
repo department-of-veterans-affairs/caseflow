@@ -63,7 +63,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   # Create a hearing schedule day
   def create
-    return no_available_rooms unless rooms_are_available(params)
+    return no_available_rooms unless rooms_are_available
     hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) if hearing.nil?
     render json: {
@@ -246,27 +246,31 @@ class Hearings::HearingDayController < HearingScheduleController
     end
   end
 
-  def rooms_are_available(params)
+  def rooms_are_available
     # Coming from Add Hearing Day modal but no room required
-    if params.key?(:assign_room) && params[:assign_room] == "false"
+    if do_not_assign_room
       params.delete(:assign_room)
       params[:room_info] = ""
       return true
     end
     # Coming from regular create from RO algorithm
-    if !params.key?(:assign_room) && !params[:room_info].nil?
-      return true
-    end
+    return if no_assign_room_logic_required
+
     # Coming from Add Hearing Day modal and room required
     hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date]).group(:room_info).count
-    Rails.logger.info("Count for day is #{hearing_count_by_room} for date #{params[:hearing_date]}")
-
     available_room = select_available_room(hearing_count_by_room)
 
-    Rails.logger.info("Final available_room value is: #{available_room}")
     params.delete(:assign_room)
     params[:room_info] = available_room if !available_room.nil?
     !available_room.nil?
+  end
+
+  def no_assign_room_logic_required
+    !params.key?(:assign_room) && !params[:room_info].nil?
+  end
+
+  def do_not_assign_room
+    params.key?(:assign_room) && (!params[:assign_room] || params[:assign_room] == "false")
   end
 
   def select_available_room(hearing_count_by_room)

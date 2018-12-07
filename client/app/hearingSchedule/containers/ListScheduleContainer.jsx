@@ -127,7 +127,7 @@ export class ListScheduleContainer extends React.Component {
     this.props.selectVlj('');
     this.props.selectHearingCoordinator('');
     this.props.setNotes('');
-    this.props.onAssignHearingRoom(true);
+    this.props.onAssignHearingRoom(false);
   }
 
   closeModal = () => {

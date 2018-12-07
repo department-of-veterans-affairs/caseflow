@@ -382,13 +382,17 @@ export default class DailyDocket extends React.Component {
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
         <div {...backLinkStyling}>
-          <Link to="/schedule">&lt; Back to schedule</Link>&nbsp;&nbsp;
           <Link
-            {...editLinkStyling}
-            linkStyling="true"
-            onClick={this.props.openModal} >
-            Edit Hearing Date
+            linkStyling
+            to="/schedule" >
+            &lt; Back to schedule
           </Link>&nbsp;&nbsp;
+          <Button
+            {...editLinkStyling}
+            linkStyling
+            onClick={this.props.openModal} >
+            Edit Hearing Day
+          </Button>&nbsp;&nbsp;
           { _.isEmpty(this.props.hearings) &&
           <Button
             linkStyling

@@ -256,11 +256,11 @@ class ListSchedule extends React.Component {
               <FilterRibbon
                 filteredByList={this.state.filteredByList}
                 clearAllFilters={this.clearFilteredByList} />
-              <Link
-                linkStyling="true"
+              <Button
+                linkStyling
                 onClick={this.props.openModal} >
                 Add Hearing Date
-              </Link>
+              </Button>
             </div>
             <Table
               columns={hearingScheduleColumns}

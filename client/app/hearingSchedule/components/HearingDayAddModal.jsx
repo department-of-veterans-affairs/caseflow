@@ -6,7 +6,6 @@ import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
-import StatusMessage from '../../components/StatusMessage';
 import { fullWidth } from '../../queue/constants';
 import RoSelectorDropdown from '../../components/RoSelectorDropdown';
 import DateSelector from '../../components/DateSelector';
@@ -73,9 +72,11 @@ class HearingDayAddModal extends React.Component {
     this.state = {
       videoSelected: false,
       centralOfficeSelected: false,
-      error: false,
+      dateError: false,
+      typeError: false,
+      roError: false,
       errorMessages: [],
-      roError: false
+      roErrorMessages: []
     };
   }
 
@@ -89,44 +90,56 @@ class HearingDayAddModal extends React.Component {
 
   onClickConfirm = () => {
     let errorMessages = [];
+    let roErrorMessages = [];
 
     if (this.props.selectedHearingDay === '') {
+      this.setState({ dateError: true });
       errorMessages.push('Please make sure you have entered a Hearing Date');
     }
 
     if (this.props.hearingType === '') {
+      this.setState({ typeError: true });
       errorMessages.push('Please make sure you have entered a Hearing Type');
     }
 
     if (this.state.videoSelected && !this.props.selectedRegionalOffice) {
-      errorMessages.push('Please make sure you select a Regional Office');
+      this.setState({ roError: true });
+      roErrorMessages.push('Please make sure you select a Regional Office');
     }
 
     if (errorMessages.length > 0) {
-      this.setState({ error: true,
-        errorMessages });
+      this.setState({ errorMessages });
+    }
 
+    if (roErrorMessages.length > 0) {
+      this.setState({ roErrorMessages });
+    }
+
+    if (errorMessages.length > 0 || roErrorMessages.length > 0) {
       return;
     }
 
     this.props.closeModal();
   };
 
-  getAlertTitle = () => {
-    if (this.state.videoSelected) {
-      return <span {...statusMsgTitleStyle}>Hearing type is a Video hearing</span>;
-    }
-
-    return <span {...statusMsgTitleStyle}>Cannot create New Hearing Day</span>;
-
+  getDateTypeErrorMessages = () => {
+    return <div>
+      <span {...statusMsgTitleStyle}>Cannot create a New Hearing Day</span>
+      <ul {...statusMsgDetailStyle} >
+        {
+          this.state.errorMessages.map((item, i) => <li key={i}>{item}</li>)
+        }
+      </ul></div>;
   };
 
-  getAlertMessage = () => {
-    return <ul {...statusMsgDetailStyle} >
-      {
-        this.state.errorMessages.map((item, i) => <li key={i}>{item}</li>)
-      }
-    </ul>;
+  getRoErrorMessages = () => {
+    return <div>
+      <span {...statusMsgTitleStyle}>Hearing type is a Video hearing</span>
+      <ul {...statusMsgDetailStyle} >
+        {
+          this.state.roErrorMessages.map((item, i) => <li key={i}>{item}</li>)
+        }
+      </ul></div>;
   };
 
   modalCancelButton = () => {
@@ -137,8 +150,14 @@ class HearingDayAddModal extends React.Component {
     this.props.cancelModal();
   };
 
+  onHearingDateChange = (option) => {
+    this.props.onSelectedHearingDayChange(option);
+    this.resetErrorState();
+  };
+
   onHearingTypeChange = (value) => {
     this.props.selectHearingType(value);
+    this.resetErrorState();
 
     switch (value.value) {
     case 'V':
@@ -155,6 +174,17 @@ class HearingDayAddModal extends React.Component {
     }
   };
 
+  onRegionalOfficeChange = (option) => {
+    this.props.onRegionalOfficeChange(option);
+    this.resetErrorState();
+  };
+
+  resetErrorState = () => {
+    this.setState({ dateError: false });
+    this.setState({ typeError: false });
+    this.setState({ roError: false });
+  };
+
   onVljChange = (value) => {
     this.props.selectVlj(value);
   };
@@ -165,54 +195,40 @@ class HearingDayAddModal extends React.Component {
 
   onNotesChange = (value) => {
     this.props.setNotes(value);
-  }
+  };
 
   onRoomNotRequired = (value) => {
     this.props.onAssignHearingRoom(value);
-  }
+  };
 
   modalMessage = () => {
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
         <p {...spanStyling} >Please select the details of the new hearing day </p>
-        <div {...statusMsgTitleStyle}>
-          {
-            (this.state.error && !this.state.roError) &&
-            <StatusMessage
-              title= {this.getAlertTitle()}
-              type="alert"
-              messageText={this.getAlertMessage()}
-              wrapInAppSegment={false} />
-          }
-        </div>
         <b {...titleStyling} >Select Hearing Date</b>
         <DateSelector
           name="hearingDate"
           label={false}
+          errorMessage={((this.state.dateError && this.state.typeError) || (this.state.dateError)) ?
+            this.getDateTypeErrorMessages() : null}
           value={this.props.selectedHearingDay}
-          onChange={(option) => option && this.props.onSelectedHearingDayChange(option)}
+          onChange={this.onHearingDateChange}
           type="date"
         />
         <SearchableDropdown
           name="hearingType"
           label="Select Hearing Type"
           strongLabel
+          errorMessage={(!this.state.dateError && this.state.typeError) ? this.getDateTypeErrorMessages() : null}
           value={this.props.hearingType}
           onChange={this.onHearingTypeChange}
           options={hearingTypeOptions} />
-        {
-          this.state.roError &&
-          <StatusMessage
-            title= {this.getAlertTitle()}
-            type="alert"
-            messageText={this.getAlertMessage()}
-            wrapInAppSegment={false} />
-        }
         {this.state.videoSelected &&
         <RoSelectorDropdown
           label="Select Regional Office (RO)"
           strongLabel
-          onChange={this.props.onRegionalOfficeChange}
+          errorMessage={this.state.roError ? this.getRoErrorMessages() : null}
+          onChange={this.onRegionalOfficeChange}
           value={this.props.selectedRegionalOffice}
           staticOptions={centralOfficeStaticEntry} />
         }
