@@ -144,7 +144,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
           name="Remove this action"
           onClick={ () => this.setState(update(this.state, { adminActions: { [index]: { isHidden: { $set: true } } } })) } />
       }
-      {index === this.state.adminActions.length - 1 &&
+      {this.state.adminActions.map( (action, index) => !action.isHidden ? index : null ).filter(x => x !== null).pop() === index &&
         <Button
           willNeverBeLoading
           name="+ Add another action"
