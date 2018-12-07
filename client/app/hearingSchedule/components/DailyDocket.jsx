@@ -380,7 +380,7 @@ export default class DailyDocket extends React.Component {
       { this.props.dailyDocketServerError && <Alert
         type="error"
         title={`Unable to delete Hearing Day 
-          ${moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')} in Caseflow.`}
+          ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')} in Caseflow.`}
         message="Please delete the hearing day through VACOLS"
       />}
 
