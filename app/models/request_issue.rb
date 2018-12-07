@@ -179,11 +179,11 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.on_decision_issue_sync_processed
   end
 
+  private
+
   def title_of_active_review
     duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
-
-  private
 
   def create_decision_issues
     if rating?

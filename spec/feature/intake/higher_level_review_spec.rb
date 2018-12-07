@@ -639,19 +639,29 @@ RSpec.feature "Higher-Level Review" do
     end
 
     let(:higher_level_review_reference_id) { "hlr123" }
+    let(:supplemental_claim_reference_id) { "sc123" }
+    let(:supplemental_claim_contention_reference_id) { 5678 }
     let(:contention_reference_id) { 1234 }
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old1234" }
+
     let(:active_epe) { create(:end_product_establishment, :active) }
 
-    let!(:timely_ratings) do
+    let(:another_promulgation_date) { receipt_date - 4.days }
+    let(:another_profile_date) { receipt_date - 50.days }
+
+    let!(:another_rating) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: receipt_date - 40.days,
-        profile_date: receipt_date - 50.days,
+        promulgation_date: another_promulgation_date,
+        profile_date: another_profile_date,
         issues: [
           { reference_id: "xyz123", decision_text: "Left knee granted 2" },
           { reference_id: "xyz456", decision_text: "PTSD denied 2" },
+          { reference_id: supplemental_claim_reference_id,
+            decision_text: "to be replaced by decision issue",
+            contention_reference_id: supplemental_claim_contention_reference_id
+          },
           { reference_id: duplicate_reference_id, decision_text: "Old injury" },
           {
             reference_id: higher_level_review_reference_id,
@@ -716,6 +726,34 @@ RSpec.feature "Higher-Level Review" do
       )
     end
 
+    let(:previous_supplemental_claim) do
+      create(:supplemental_claim,
+        veteran_file_number: veteran.file_number,
+        benefit_type: "compensation")
+    end
+
+    let!(:previous_sc_request_issue) do
+      create(
+        :request_issue,
+        review_request: previous_supplemental_claim,
+        rating_issue_reference_id: supplemental_claim_reference_id,
+        contention_reference_id: supplemental_claim_contention_reference_id
+      )
+    end
+
+    let!(:decision_issue) do
+      create(:decision_issue,
+        decision_review: previous_supplemental_claim,
+        request_issues: [previous_sc_request_issue],
+        rating_issue_reference_id: supplemental_claim_reference_id,
+        participant_id: veteran.participant_id,
+        promulgation_date: another_promulgation_date,
+        decision_text: "supplemental claim decision issue",
+        profile_date: profile_date,
+        benefit_type: previous_supplemental_claim.benefit_type,
+      )
+    end
+
     context "Veteran has no ratings" do
       scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
         start_higher_level_review(veteran_no_ratings)
@@ -761,6 +799,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
       expect(page).to have_content("Old injury")
+      expect(page).to have_content("supplemental claim decision issue")
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
@@ -819,6 +858,7 @@ RSpec.feature "Higher-Level Review" do
       click_intake_add_issue
       add_intake_rating_issue("Really old injury")
       add_untimely_exemption_response("Yes")
+
       expect(page).to have_content("5 issues")
       expect(page).to have_content("I am an exemption note")
       expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
@@ -868,6 +908,12 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content(
         "9. Issue before AMA Activation from RAMP Decision date:"
       )
+
+      # Add decision issue
+      # todo: add this back in when we allow decision issues to be selected
+      # click_intake_add_issue
+      # add_intake_rating_issue("supplemental claim decision issue", "decision issue with note")
+      # expect(page).to have_content("10. supplemental claim decision issue")
 
       click_intake_add_issue
       click_intake_no_matching_issues
@@ -922,6 +968,17 @@ RSpec.feature "Higher-Level Review" do
         station: "499"
       )
       expect(non_rating_end_product_establishment).to_not be_nil
+
+      # make sure request issue is contesting decision issue
+      # todo: add this back in when we allow decision issues to be selected
+      # expect(RequestIssue.find_by(
+      #          review_request: higher_level_review,
+      #          contested_decision_issue_id: decision_issue.id,
+      #          description: "supplemental claim decision issue",
+      #          end_product_establishment_id: end_product_establishment.id,
+      #          notes: "decision issue with note",
+      #          benefit_type: "compensation"
+      # )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,

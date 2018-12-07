@@ -49,11 +49,16 @@ class ContestableIssue
   private
 
   def title_of_active_review
-    conflicting_request_issue && conflicting_request_issue.title_of_active_review
+    conflicting_request_issue && conflicting_request_issue.review_title
   end
 
   def conflicting_request_issue
-    contesting_decision_review.request_issues.find_by(rating_issue_reference_id: rating_issue_reference_id)
+    return unless rating_issue_reference_id
+    return unless contesting_decision_review
+    found_request_issue = RequestIssue.find_active_by_reference_id(rating_issue_reference_id)
+
+    return unless found_request_issue && found_request_issue.review_request_id != contesting_decision_review.id
+    found_request_issue
   end
 
   def timely?

@@ -126,7 +126,10 @@ export const formatRequestIssues = (requestIssues) => {
 };
 
 export const formatContestableIssues = (contestableIssues) => {
-  return contestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
+  // order by date, otherwise all decision issues will always
+  // come after rating issues regardless of date
+  const orderedContestableIssues = _.orderBy(contestableIssues, ['date'], ['desc']);
+  return orderedContestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
     contestableIssue.index = String(index);
 
     contestableIssuesByDate[contestableIssue.date] = contestableIssuesByDate[contestableIssue.date] || {};
