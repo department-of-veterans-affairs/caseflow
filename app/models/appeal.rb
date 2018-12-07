@@ -28,7 +28,7 @@ class Appeal < DecisionReview
            :new_documents_for_user, :manifest_vva_fetched_at, to: :document_fetcher
 
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
-    if UUID_REGEX.match(id)
+    if UUID_REGEX.match?(id)
       find_by_uuid!(id)
     else
       LegacyAppeal.find_or_create_by_vacols_id(id)
@@ -120,15 +120,15 @@ class Appeal < DecisionReview
 
   def veteran_name
     # For consistency with LegacyAppeal.veteran_name
-    veteran && veteran.name.formatted(:form)
+    veteran&.name&.formatted(:form)
   end
 
   def veteran_full_name
-    veteran && veteran.name.formatted(:readable_full)
+    veteran&.name&.formatted(:readable_full)
   end
 
   def veteran_middle_initial
-    veteran && veteran.name.middle_initial
+    veteran&.name&.middle_initial
   end
 
   def veteran_is_deceased
@@ -136,7 +136,7 @@ class Appeal < DecisionReview
   end
 
   def veteran_death_date
-    veteran && veteran.date_of_death
+    veteran&.date_of_death
   end
 
   delegate :address_line_1,
@@ -201,7 +201,7 @@ class Appeal < DecisionReview
 
   # For now power_of_attorney returns the first claimant's power of attorney
   def power_of_attorney
-    claimants.first.power_of_attorney if claimants.first
+    claimants.first&.power_of_attorney
   end
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney, allow_nil: true
 

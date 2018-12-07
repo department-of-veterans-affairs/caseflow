@@ -29,12 +29,10 @@ class SyncReviewsJob < CaseflowJob
 
   def perform_ramp_refiling_reprocessing
     RampRefiling.need_to_reprocess.each do |ramp_refiling|
-      begin
-        ramp_refiling.create_end_product_and_contentions!
-      rescue StandardError => e
-        # Rescue and capture errors so they don't cause the job to stop
-        Raven.capture_exception(e)
-      end
+      ramp_refiling.create_end_product_and_contentions!
+    rescue StandardError => e
+      # Rescue and capture errors so they don't cause the job to stop
+      Raven.capture_exception(e)
     end
   end
 

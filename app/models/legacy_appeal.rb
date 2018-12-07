@@ -143,11 +143,9 @@ class LegacyAppeal < ApplicationRecord
   end
 
   cache_attribute :cached_number_of_documents_after_certification do
-    begin
-      number_of_documents_after_certification
-    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
-      nil
-    end
+    number_of_documents_after_certification
+  rescue Caseflow::Error::EfolderError, VBMS::HTTPError
+    nil
   end
 
   # If we do not yet have the vbms_id saved in Caseflow's DB, then
@@ -191,7 +189,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran_ssn
-    vbms_id.ends_with?("C") ? (veteran && veteran.ssn) : sanitized_vbms_id
+    vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
   end
 
   delegate :address_line_1,
@@ -269,7 +267,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran_death_date
-    veteran && veteran.date_of_death
+    veteran&.date_of_death
   end
 
   attr_writer :cavc_decisions

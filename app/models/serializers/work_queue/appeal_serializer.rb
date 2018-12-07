@@ -45,17 +45,17 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :appellant_full_name do
-    object.claimants[0].name if object.claimants && object.claimants.any?
+    object.claimants[0].name if object.claimants&.any?
   end
 
   attribute :appellant_address do
-    if object.claimants && object.claimants.any?
+    if object.claimants&.any?
       object.claimants[0].address
     end
   end
 
   attribute :appellant_relationship do
-    object.claimants[0].relationship if object.claimants && object.claimants.any?
+    object.claimants[0].relationship if object.claimants&.any?
   end
 
   attribute :veteran_file_number do

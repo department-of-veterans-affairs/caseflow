@@ -45,11 +45,11 @@ class DecisionReview < ApplicationRecord
   def ui_hash
     {
       veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
+        name: veteran&.name&.formatted(:readable_short),
         fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
+        formName: veteran&.name&.formatted(:form)
       },
-      relationships: veteran && veteran.relationships,
+      relationships: veteran&.relationships,
       claimant: claimant_participant_id,
       veteranIsNotClaimant: veteran_is_not_claimant,
       receiptDate: receipt_date.to_formatted_s(:json_date),
