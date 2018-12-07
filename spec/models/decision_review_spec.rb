@@ -63,7 +63,7 @@ describe DecisionReview do
           sourceHigherLevelReview: nil,
           timely: true
         },
-        { 
+        {
           ratingIssueReferenceId: "456",
           ratingIssueProfileDate: profile_date,
           decisionIssueReferenceId: nil,
@@ -85,17 +85,15 @@ describe DecisionReview do
           sourceHigherLevelReview: nil,
           timely: true
         },
-        {
-          ratingIssueReferenceId: nil,
-          ratingIssueProfileDate: profile_date + 2.days,
-          decisionIssueReferenceId: decision_issues.third.id,
-          date: profile_date + 2.days,
-          description: "decision issue 3",
-          rampClaimId: nil,
-          titleOfActiveReview: nil,
-          sourceHigherLevelReview: nil,
-          timely: true
-        }
+        ratingIssueReferenceId: nil,
+        ratingIssueProfileDate: profile_date + 2.days,
+        decisionIssueReferenceId: decision_issues.third.id,
+        date: profile_date + 2.days,
+        description: "decision issue 3",
+        rampClaimId: nil,
+        titleOfActiveReview: nil,
+        sourceHigherLevelReview: nil,
+        timely: true
       )
     end
   end

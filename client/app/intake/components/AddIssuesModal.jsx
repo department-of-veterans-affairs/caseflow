@@ -103,18 +103,18 @@ class AddIssuesModal extends React.Component {
             disabled: foundIndex !== -1
           };
         }
-      );
+        );
 
-      return <RadioField
-        vertical
-        label={<h3>Past decisions from { formatDateStr(date) }</h3>}
-        name="rating-radio"
-        options={radioOptions}
-        key={date}
-        value={this.state.selectedContestableIssueIndex}
-        onChange={this.radioOnChange}
-      />;
-    });
+        return <RadioField
+          vertical
+          label={<h3>Past decisions from { formatDateStr(date) }</h3>}
+          name="rating-radio"
+          options={radioOptions}
+          key={date}
+          value={this.state.selectedContestableIssueIndex}
+          onChange={this.radioOnChange}
+        />;
+      });
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 

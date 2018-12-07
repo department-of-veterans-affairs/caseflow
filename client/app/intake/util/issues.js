@@ -140,16 +140,6 @@ export const formatContestableIssues = (contestableIssues) => {
   }, {});
 };
 
-const ratingIssuesById = (ratings) => {
-  return _.reduce(ratings, (result, rating) => {
-    _.forEach(rating.issues, (issue, id) => {
-      result[id] = issue.decision_text;
-    });
-
-    return result;
-  }, {});
-};
-
 export const issueById = (ratings, issueId) => {
   const currentRating = _.filter(
     ratings,
