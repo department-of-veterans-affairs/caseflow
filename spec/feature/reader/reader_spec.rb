@@ -235,19 +235,21 @@ RSpec.feature "Reader" do
       end
 
       context "When both document source manifest retrieval times are set" do
-        scenario "Both times display on the page" do
+        scenario "Both times display on the page and there are no document alerts" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
           expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
           expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
+          expect(page).to_not have_css(".section--document-list .usa-alert")
         end
       end
 
       context "When VVA manifest retrieval time is nil" do
         let(:vva_fetched_ts) { nil }
-        scenario "Only VBMS time displays on the page" do
+        scenario "Only VBMS time displays on the page and error alert is shown" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
           expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
           expect(page).to_not have_css("#vva-manifest-retrieved-at")
+          expect(find(".section--document-list .usa-alert-error").text).to have_content("Some documents could not be loaded at this time")
         end
       end
 
