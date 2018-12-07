@@ -28,6 +28,21 @@ import {
 
 export class DailyDocketContainer extends React.Component {
 
+  componentDidUpdate = (prevProps) => {
+    if (!((_.isNil(prevProps.saveSuccessful) && this.props.saveSuccessful) || _.isNil(this.props.saveSuccessful))) {
+      this.props.onResetSaveSuccessful();
+    }
+    if (!((_.isNil(prevProps.displayLockSuccessMessage) && this.props.displayLockSuccessMessage) ||
+        _.isNil(this.props.displayLockSuccessMessage))) {
+      this.props.onResetLockSuccessMessage();
+    }
+  };
+
+  componentWillUnmount = () => {
+    this.props.onResetSaveSuccessful();
+    this.props.onCancelRemoveHearingDay();
+  };
+
   loadHearingDay = () => {
     const requestUrl = `/hearings/hearing_day/${this.props.match.params.hearingDayId}`;
 
@@ -69,7 +84,7 @@ export class DailyDocketContainer extends React.Component {
   };
 
   updateLockHearingDay = (lock) => () => {
-    ApiUtil.patch(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { data: { lock: lock } }).
+    ApiUtil.patch(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { data: { lock } }).
       then(() => {
         this.props.onUpdateLock(lock);
       });

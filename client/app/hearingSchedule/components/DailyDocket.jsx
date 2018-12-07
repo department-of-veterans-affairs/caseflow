@@ -73,43 +73,19 @@ const topMarginStyling = css({
 
 export default class DailyDocket extends React.Component {
 
-  componentDidUpdate = (prevProps) => {
-    if (!((_.isNil(prevProps.saveSuccessful) && this.props.saveSuccessful) || _.isNil(this.props.saveSuccessful))) {
-      this.props.onResetSaveSuccessful();
-    }
-    if (!((_.isNil(prevProps.displayLockSuccessMessage) && this.props.displayLockSuccessMessage) || _.isNil(this.props.displayLockSuccessMessage))) {
-      this.props.onResetLockSuccessMessage();
-    }
-  };
-
-  componentWillUnmount = () => {
-    this.props.onResetSaveSuccessful();
-    this.props.onCancelRemoveHearingDay();
-  };
-
-  onHearingNotesUpdate = (hearingId) => (notes) => {
-    this.props.onHearingNotesUpdate(hearingId, notes);
-  };
+  onHearingNotesUpdate = (hearingId) => (notes) => this.props.onHearingNotesUpdate(hearingId, notes);
 
   onHearingDispositionUpdate = (hearingId) => (disposition) => {
     this.props.onHearingDispositionUpdate(hearingId, disposition.value);
   };
 
-  onHearingDateUpdate = (hearingId) => (date) => {
-    this.props.onHearingDateUpdate(hearingId, date.value);
-  };
+  onHearingDateUpdate = (hearingId) => (date) => this.props.onHearingDateUpdate(hearingId, date.value);
 
-  onHearingTimeUpdate = (hearingId) => (time) => {
-    this.props.onHearingTimeUpdate(hearingId, time);
-  };
+  onHearingTimeUpdate = (hearingId) => (time) => this.props.onHearingTimeUpdate(hearingId, time);
 
-  saveHearing = (hearing) => () => {
-    this.props.saveHearing(hearing);
-  };
+  saveHearing = (hearing) => () => this.props.saveHearing(hearing);
 
-  cancelHearingUpdate = (hearing) => () => {
-    this.props.onCancelHearingUpdate(hearing);
-  };
+  cancelHearingUpdate = (hearing) => () => this.props.onCancelHearingUpdate(hearing);
 
   previouslyScheduled = (hearing) => {
     return hearing.disposition === 'postponed' || hearing.disposition === 'cancelled';
@@ -149,8 +125,7 @@ export default class DailyDocket extends React.Component {
       {getTimeInDifferentTimeZone(hearing.date, hearing.regionalOfficeTimezone)} <br />
       {hearing.regionalOfficeName}
     </div>;
-
-  }
+  };
 
   getDispositionDropdown = (hearing, readOnly) => {
     return <SearchableDropdown
@@ -373,8 +348,10 @@ export default class DailyDocket extends React.Component {
         Confirm
     </Button>;
 
-    const lockSuccessMessageTitle = this.props.dailyDocket.lock ? "You have successfully locked this Hearing Day" : "You have successfully unlocked this Hearing Day";
-    const lockSuccessMessage = this.props.dailyDocket.lock ? "You cannot add more veterans to this hearing day, but you can edit existing entries" : "You can now add more veterans to this hearing day";
+    const lockSuccessMessageTitle = this.props.dailyDocket.lock ? 'You have successfully locked this Hearing ' +
+      'Day' : 'You have successfully unlocked this Hearing Day';
+    const lockSuccessMessage = this.props.dailyDocket.lock ? 'You cannot add more veterans to this hearing day, ' +
+      'but you can edit existing entries' : 'You can now add more veterans to this hearing day';
 
     return <AppSegment filledBackground>
       {this.props.displayRemoveHearingDayModal && <div>
@@ -411,15 +388,13 @@ export default class DailyDocket extends React.Component {
       />}
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
-        <div {...backLinkStyling}>
-          <Link to="/schedule">&lt; Back to schedule</Link>
-        </div>
+        <div {...backLinkStyling}><Link to="/schedule">&lt; Back to schedule</Link></div>
         <div>
           <Button
             linkStyling
             onClick={this.props.onDisplayLockModal}
           >
-            {this.props.dailyDocket.lock ? 'Unlock scheduling veterans' : 'Lock scheduling veterans'}
+            {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
           </Button>&nbsp;&nbsp;
           { _.isEmpty(this.props.hearings) &&
           <Button
