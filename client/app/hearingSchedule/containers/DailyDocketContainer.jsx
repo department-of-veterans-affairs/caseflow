@@ -132,6 +132,7 @@ export class DailyDocketContainer extends React.Component {
         updateLockHearingDay={this.updateLockHearingDay}
         displayLockSuccessMessage={this.props.displayLockSuccessMessage}
         onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
+        userRoleBuild={this.props.userRoleBuild}
       />
     </LoadingDataDisplay>;
 

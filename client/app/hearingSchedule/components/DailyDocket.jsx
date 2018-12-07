@@ -396,7 +396,7 @@ export default class DailyDocket extends React.Component {
           >
             {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
           </Button>&nbsp;&nbsp;
-          { _.isEmpty(this.props.hearings) &&
+          { _.isEmpty(this.props.hearings) && this.props.userRoleBuild &&
           <Button
             linkStyling
             onClick={this.props.onClickRemoveHearingDay}
