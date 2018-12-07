@@ -75,36 +75,12 @@ class Hearings::HearingDayController < HearingScheduleController
     render json: hearing_day.to_hash
   end
 
-  def update_other
-    return record_not_found unless hearing
-    params.delete(:hearing_key)
-    updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
-
-    json_hearing = if updated_hearing.class.equal?(TrueClass)
-                     if hearing.is_a?(HearingDay)
-                       json_hearing(hearing)
-                     else
-                       json_created_hearings(hearing)
-                     end
-                   else
-                     json_tb_hearings(updated_hearing)
-                   end
-
-    render json: {
-      hearing: json_hearing
-    }, status: :ok
-  end
-
   def destroy
     hearing_day.destroy!
     render json: {}
   end
 
   private
-
-  def hearing
-    @hearing ||= HearingDay.find_hearing_day(update_params[:hearing_type], update_params[:hearing_key])
-  end
 
   def hearing_day
     @hearing_day ||= HearingDay.find(hearing_day_id)

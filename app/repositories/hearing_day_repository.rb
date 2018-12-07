@@ -7,11 +7,6 @@ class HearingDayRepository
       to_canonical_hash(VACOLS::CaseHearing.create_hearing!(hearing_hash)) if hearing_hash.present?
     end
 
-    def update_vacols_hearing!(hearing, hearing_hash)
-      hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
-      hearing.update_hearing!(hearing_hash) if hearing_hash.present?
-    end
-
     # Query Operations
     def find_hearing_day(hearing_type, hearing_key)
       if hearing_type.nil? || hearing_type == "V" || hearing_type == "C"

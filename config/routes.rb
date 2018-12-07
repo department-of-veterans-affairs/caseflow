@@ -134,7 +134,6 @@ Rails.application.routes.draw do
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
-  put 'hearings/:hearing_key/hearing_day', to: "hearings/hearing_day#update_other"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/schedule/assign/veterans', to: "hearings/hearing_day#appeals_ready_for_hearing_schedule"
