@@ -120,12 +120,13 @@ RSpec.feature "Edit issues" do
     scenario "allows adding/removing issues" do
       visit "appeals/#{appeal.uuid}/edit/"
 
-      expect(page).to have_content("nonrating description")
+      expect(page).to have_content(nonrating_request_issue.description)
 
       # remove an issue
-      click_remove_intake_issue("2")
+      nonrating_intake_num = find_intake_issue_number_by_text(nonrating_request_issue.issue_category)
+      click_remove_intake_issue(nonrating_intake_num)
       click_remove_issue_confirmation
-      expect(page).not_to have_content("nonrating description")
+      expect(page).not_to have_content(nonrating_request_issue.description)
 
       # add a different issue
       click_intake_add_issue
@@ -157,7 +158,8 @@ RSpec.feature "Edit issues" do
       expect(page).to have_button("Save", disabled: true)
 
       # remove
-      click_remove_intake_issue("1")
+      issue_num = find_intake_issue_number_by_text(issue_description)
+      click_remove_intake_issue(issue_num)
       click_remove_issue_confirmation
       expect(page).not_to have_content(issue_description)
 
@@ -403,7 +405,7 @@ RSpec.feature "Edit issues" do
           rating_issue_profile_date: rating_before_ama.profile_date,
           review_request: higher_level_review,
           description: "Issue with legacy issue not withdrawn",
-          vacols_id: "123",
+          vacols_id: "vacols1",
           vacols_sequence_id: "1",
           contention_reference_id: "1234567",
           ineligible_reason: :legacy_issue_not_withdrawn
@@ -417,7 +419,7 @@ RSpec.feature "Edit issues" do
           review_request: higher_level_review,
           description: "Issue connected to ineligible legacy appeal",
           contention_reference_id: "12345678",
-          vacols_id: "321",
+          vacols_id: "vacols2",
           vacols_sequence_id: "2",
           ineligible_reason: :legacy_appeal_not_eligible
         )

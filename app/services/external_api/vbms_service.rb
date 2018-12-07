@@ -27,7 +27,7 @@ class ExternalApi::VBMSService
     request = VBMS::Requests::GetDocumentContent.new(vbms_id)
 
     result = send_and_log_request(vbms_id, request)
-    result && result.content
+    result&.content
   end
 
   def self.fetch_documents_for(appeal, _user = nil)

@@ -23,6 +23,20 @@ const getClaimantField = (formType, veteran, intakeData) => {
   return [];
 };
 
+export const legacyIssue = (issue, legacyAppeals) => {
+  if (issue.vacolsIssue) {
+    return issue.vacolsIssue;
+  }
+
+  let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
+
+  if (!legacyAppeal) {
+    throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
+  }
+
+  return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
+};
+
 export const formatRatings = (ratings, requestIssues = []) => {
   const result = _.keyBy(_.map(ratings, (rating) => {
     return _.assign(rating,
@@ -92,7 +106,10 @@ export const formatRequestIssues = (requestIssues) => {
         ineligibleReason: issue.ineligible_reason,
         contentionText: issue.contention_text,
         untimelyExemption: issue.untimelyExemption,
-        untimelyExemptionNotes: issue.untimelyExemptionNotes
+        untimelyExemptionNotes: issue.untimelyExemptionNotes,
+        vacolsId: issue.vacols_id,
+        vacolsSequenceId: issue.vacols_sequence_id,
+        vacolsIssue: issue.vacols_issue
       };
     }
 
@@ -102,7 +119,10 @@ export const formatRequestIssues = (requestIssues) => {
         description: issue.description,
         contentionText: issue.contention_text,
         notes: issue.notes,
-        isUnidentified: issue.is_unidentified
+        isUnidentified: issue.is_unidentified,
+        vacolsId: issue.vacols_id,
+        vacolsSequenceId: issue.vacols_sequence_id,
+        vacolsIssue: issue.vacols_issue
       };
     }
 
@@ -120,7 +140,10 @@ export const formatRequestIssues = (requestIssues) => {
       contentionText: issue.contention_text,
       rampClaimId: issue.ramp_claim_id,
       untimelyExemption: issue.untimelyExemption,
-      untimelyExemptionNotes: issue.untimelyExemptionNotes
+      untimelyExemptionNotes: issue.untimelyExemptionNotes,
+      vacolsId: issue.vacols_id,
+      vacolsSequenceId: issue.vacols_sequence_id,
+      vacolsIssue: issue.vacols_issue
     };
   });
 };
@@ -320,6 +343,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         rampClaimId: issue.rampClaimId,
         vacolsId: issue.vacolsId,
         vacolsSequenceId: issue.vacolsSequenceId,
+        vacolsIssue: issue.vacolsIssue,
         eligibleForSocOptIn: issue.eligibleForSocOptIn
       };
     }
@@ -338,6 +362,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       ineligibleReason: issue.ineligibleReason,
       vacolsId: issue.vacolsId,
       vacolsSequenceId: issue.vacolsSequenceId,
+      vacolsIssue: issue.vacolsIssue,
       eligibleForSocOptIn: issue.eligibleForSocOptIn
     };
   });
