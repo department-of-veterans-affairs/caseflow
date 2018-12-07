@@ -509,7 +509,8 @@ describe RequestIssue do
                 profile_date: ratings.profile_date,
                 decision_review_type: "HigherLevelReview",
                 decision_review_id: review.id,
-                benefit_type: "compensation"
+                benefit_type: "compensation",
+                end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
               )
               expect(rating_request_issue.processed?).to eq(true)
             end
@@ -534,10 +535,10 @@ describe RequestIssue do
               expect(rating_request_issue.decision_issues.first).to have_attributes(
                 participant_id: veteran.participant_id,
                 disposition: "allowed",
-                disposition_date: end_product_establishment.last_synced_at,
                 decision_review_type: "HigherLevelReview",
                 decision_review_id: review.id,
-                benefit_type: "compensation"
+                benefit_type: "compensation",
+                end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
               )
               expect(rating_request_issue.processed?).to eq(true)
             end
@@ -575,10 +576,10 @@ describe RequestIssue do
           expect(request_issue.decision_issues.first).to have_attributes(
             participant_id: veteran.participant_id,
             disposition: "allowed",
-            disposition_date: end_product_establishment.last_synced_at,
             decision_review_type: "HigherLevelReview",
             decision_review_id: review.id,
-            benefit_type: "compensation"
+            benefit_type: "compensation",
+            end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
           )
           expect(request_issue.processed?).to eq(true)
         end

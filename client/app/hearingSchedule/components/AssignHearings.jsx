@@ -11,7 +11,6 @@ import moment from 'moment';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import { renderAppealType } from '../../queue/utils';
-import ApiUtil from '../../util/ApiUtil';
 import StatusMessage from '../../components/StatusMessage';
 
 const sectionNavigationListStyling = css({
@@ -28,35 +27,6 @@ export default class AssignHearings extends React.Component {
 
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
-  };
-
-  onClick = (vacolsId) => {
-    const values = {
-      regional_office_value: this.props.selectedRegionalOffice.value,
-      regional_office_label: this.props.selectedRegionalOffice.label,
-      hearing_pkseq: this.props.selectedHearingDay.id,
-      hearing_type: this.props.selectedHearingDay.hearingType,
-      hearing_date: this.props.selectedHearingDay.hearingDate
-    };
-
-    const payload = {
-      data: {
-        tasks: [
-          {
-            type: 'ScheduleHearingTask',
-            external_id: vacolsId,
-            assigned_to_type: 'User',
-            assigned_to_id: this.props.userId,
-            business_payloads: {
-              description: 'Create Task',
-              values
-            }
-          }
-        ]
-      }
-    };
-
-    ApiUtil.post('/tasks', payload);
   };
 
   roomInfo = (hearingDay) => {
@@ -167,9 +137,19 @@ export default class AssignHearings extends React.Component {
 
     const { selectedHearingDay, selectedRegionalOffice } = this.props;
     const date = moment(selectedHearingDay.hearingDate).format('YYYY-MM-DD');
-    const time = getTime(selectedHearingDay.hearingDate);
     const SROVal = selectedRegionalOffice.value;
-    const qry = `?hearingDate=${date}&regionalOffice=${SROVal}&hearingTime=${time}`;
+    const timer = () => {
+      let time = getTime(selectedHearingDay.hearingDate);
+
+      if (time === '12:00 am ET') {
+        return '';
+
+      }
+
+      return time;
+    };
+
+    const qry = `?hearingDate=${date}&regionalOffice=${SROVal}&hearingTime=${timer()}`;
 
     const tabWindowColumns = [
       {
@@ -178,10 +158,7 @@ export default class AssignHearings extends React.Component {
         valueName: 'caseDetails',
         valueFunction: (veteran) => <Link
           href={`/queue/appeals/${veteran.vacolsId}/${qry}`}
-          name={veteran.vacolsId}
-          onClick={() => {
-            this.onClick(veteran.vacolsId);
-          }}>
+          name={veteran.vacolsId}>
           {veteran.caseDetails}
         </Link>
       },

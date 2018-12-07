@@ -2,7 +2,6 @@ FactoryBot.define do
   factory :decision_issue do
     sequence(:participant_id, 500_000_000)
     disposition "allowed"
-    disposition_date 3.days.ago
 
     transient do
       request_issues []
@@ -17,7 +16,7 @@ FactoryBot.define do
         decision_issue.save
       end
 
-      if evaluator.remand_reasons
+      if evaluator.remand_reasons.any?
         decision_issue.remand_reasons << evaluator.remand_reasons
         decision_issue.disposition = "remanded"
         decision_issue.save
