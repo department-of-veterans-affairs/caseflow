@@ -34,7 +34,7 @@ class AttorneyTask < Task
   private
 
   def parent_attorney_child_count
-    errors.add(:parent, "has too many children") if parent&.children_attorney_tasks&.length >= 1
+    errors.add(:parent, "has too many children") if parent&.children_attorney_tasks&.length &.>= 1
   end
 
   def assigned_to_role_is_valid
