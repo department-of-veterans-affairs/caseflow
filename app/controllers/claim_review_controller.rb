@@ -4,9 +4,8 @@ class ClaimReviewController < ApplicationController
   def update
     if request_issues_update.perform!
       render json: {
-        requestIssues: claim_review.request_issues.map(&:ui_hash),
-        addedIssues: request_issues_update.created_issues.map(&:ui_hash),
-        removedIssues: request_issues_update.removed_issues.map(&:ui_hash)
+        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity

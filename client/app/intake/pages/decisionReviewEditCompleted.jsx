@@ -117,26 +117,15 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
     const {
       veteran,
       formType,
-      intakeStatus
-    } = this.props;
-    const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const completedReview = this.props.decisionReviews[selectedForm.key];
-    const {
+      intakeStatus,
       issuesBefore,
       issuesAfter,
       informalConference
-    } = completedReview;
-    const ineligibleRequestIssues = issuesAfter.filter((ri) => ri.ineligibleReason);
+    } = this.props;
+    if (!issuesBefore) return <Redirect to={PAGE_PATHS.BEGIN} />;
 
-    switch (intakeStatus) {
-    case INTAKE_STATES.NONE:
-      return <Redirect to={PAGE_PATHS.BEGIN} />;
-    case INTAKE_STATES.STARTED:
-      return <Redirect to={PAGE_PATHS.REVIEW} />;
-    case INTAKE_STATES.REVIEWED:
-      return <Redirect to={PAGE_PATHS.FINISH} />;
-    default:
-    }
+    const selectedForm = _.find(FORM_TYPES, { key: formType });
+    const ineligibleRequestIssues = issuesAfter.filter((ri) => ri.ineligibleReason);
 
     return <div><StatusMessage
       title="Claim Issues Saved"
@@ -157,17 +146,8 @@ export default connect(
   (state) => ({
     formType: state.formType,
     veteran: state.veteran,
-    decisionReviews: {
-      supplemental_claim: {
-        issuesBefore: state.issuesBefore,
-        issuesAfter: state.issuesAfter
-      },
-      higher_level_review: {
-        issuesBefore: state.issuesBefore,
-        issuesAfter: state.issuesAfter,
-        informalConference: state.informalConference
-      }
-    },
-    intakeStatus: null
+    issuesBefore: state.issuesBefore,
+    issuesAfter: state.issuesAfter,
+    informalConference: state.informalConference
   })
 )(DecisionReviewEditCompletedPage);

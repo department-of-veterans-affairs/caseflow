@@ -25,10 +25,8 @@ export const mapDataToInitialState = function(props = {}) {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
     requestIssuesUpdateErrorCode: null,
-    // issuesAfter: null,
-    // issuesBefore: null,
-    issuesAfter: formatRequestIssues(serverIntake.issuesAfter),
-    issuesBefore: formatRequestIssues(serverIntake.issuesBefore)
+    issuesAfter: null,
+    issuesBefore: null
   };
 };
 
