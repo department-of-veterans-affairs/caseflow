@@ -332,7 +332,7 @@ const mapStateToProps = (state, ownProps) => {
     userRole: state.ui.userRole,
     error: state.ui.messages.error,
     amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || appeal.decisionIssues.length
-  }
+  };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

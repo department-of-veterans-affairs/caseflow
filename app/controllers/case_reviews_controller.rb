@@ -77,6 +77,7 @@ class CaseReviewsController < ApplicationController
       .merge(judge: current_user, task_id: params[:task_id])
   end
 
+  # rubocop:disable Metrics/MethodLength
   def issues_params
     if ama? && feature_enabled?(:ama_decision_issues)
       [
@@ -94,7 +95,7 @@ class CaseReviewsController < ApplicationController
           :decision_issue_id
         ]
       ]
-   else
+    else
       [
         :id,
         :disposition,
@@ -114,6 +115,7 @@ class CaseReviewsController < ApplicationController
       ]
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def ama?
     params["task_id"] !~ LegacyTask::TASK_ID_REGEX

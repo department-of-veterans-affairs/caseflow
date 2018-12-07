@@ -121,7 +121,7 @@ RSpec.feature "Checkout flows" do
 
       let(:decision_issue_disposition) { "Remanded" }
 
-      scenario "veteran is the appellant", focus: true do
+      scenario "veteran is the appellant" do
         visit "/queue"
         click_on "(#{appeal.veteran_file_number})"
 
@@ -195,7 +195,7 @@ RSpec.feature "Checkout flows" do
 
         # Skip the special issues page
         click_on "Continue"
-        
+
         expect(page).to have_content(decision_issue_text)
 
         # Update the decision issue
