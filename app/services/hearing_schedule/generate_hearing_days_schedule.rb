@@ -11,8 +11,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   attr_reader :available_days, :ros
 
-  MAX_NUMBER_OF_DAYS_PER_DATE = 10
-  VIDEO_ROOM_STARTING_NUM = 4
+  MAX_NUMBER_OF_DAYS_PER_DATE = 12
+  BVA_VIDEO_ROOMS = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
   def initialize(schedule_period)
     @amortized = 0
@@ -234,7 +234,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def get_room_numbers(date, num_of_rooms)
     Array.new(num_of_rooms) do |_room_num|
       @date_allocated[date] ||= 0
-      value = { room_num: VIDEO_ROOM_STARTING_NUM + @date_allocated[date] }
+      value = { room_num: BVA_VIDEO_ROOMS[@date_allocated[date]] }
       @date_allocated[date] += 1
       value
     end
