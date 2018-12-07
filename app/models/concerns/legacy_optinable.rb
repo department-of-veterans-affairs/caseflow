@@ -13,7 +13,7 @@ module LegacyOptinable
   end
 
   def vacols_optin_special_issue
-    { code: "VO", narrative: "VACOLS Opt-in" }
+    { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O }
   end
 
   def needs_vacols_optin_special_issue?
