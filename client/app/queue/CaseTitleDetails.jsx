@@ -99,7 +99,7 @@ export class CaseTitleDetails extends React.PureComponent {
               redirectUrl={redirectUrl}
               appeal={appeal}
               taskType={taskType}
-              longMessage />
+              docCountWithinLink />
           </div>
         </React.Fragment> }
 

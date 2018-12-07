@@ -46,7 +46,7 @@ class AppealDocumentCount extends React.PureComponent {
       return null;
     }
 
-    return `${this.props.docCountForAppeal} docs`;
+    return this.props.docCountForAppeal;
   }
 }
 
