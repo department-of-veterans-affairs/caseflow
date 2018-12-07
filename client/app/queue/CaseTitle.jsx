@@ -6,14 +6,12 @@ import { bindActionCreators } from 'redux';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
-import ReaderLink from './ReaderLink';
 import CopyTextButton from '../components/CopyTextButton';
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
 const containingDivStyling = css({
-  borderBottom: `1px solid ${COLORS.GREY_LIGHT}`,
+
   display: 'block',
   // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
   margin: '-2rem -4rem 0 -4rem',
@@ -38,7 +36,7 @@ const listStyling = css({
 const listItemStyling = css({
   display: 'inline',
   padding: '0.5rem 1.5rem 0.5rem 0',
-  ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
+  ':nth-child(1)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
   ':not(:first-child)': { paddingLeft: '1.5rem' }
 });
 
@@ -46,14 +44,26 @@ const viewCasesStyling = css({
   cursor: 'pointer'
 });
 
+const badgeStyle = css({
+  marginRight: '26px',
+  marginLeft: '-20px',
+  fontSize: '14px'
+});
+
+const displayNone = css({
+  display: 'none'
+});
+
+const editButton = css({
+  marginLeft: '35px',
+  position: 'inherit',
+  fontSize: '14px'
+});
+
 class CaseTitle extends React.PureComponent {
   render = () => {
     const {
       appeal,
-      appealId,
-      redirectUrl,
-      taskType,
-      analyticsSource,
       veteranCaseListIsVisible
     } = this.props;
 
@@ -63,19 +73,25 @@ class CaseTitle extends React.PureComponent {
         <CopyTextButton text={appeal.veteranFileNumber} />
       </React.Fragment>
 
-      { !this.props.userIsVsoEmployee && <ReaderLink
-        appealId={appealId}
-        analyticsSource={CATEGORIES[analyticsSource.toUpperCase()]}
-        redirectUrl={redirectUrl}
-        appeal={appeal}
-        taskType={taskType}
-        longMessage /> }
-
       <span {...viewCasesStyling}>
         <Link onClick={this.props.toggleVeteranCaseList}>
           { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
         </Link>
       </span>
+
+      <React.Fragment>
+        <span style={{ float: 'right' }}>
+          <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle}
+            style={{ paddingLeft: '5px' }}>
+            {this.props.canEditAod && <span {...editButton}>
+              <Link
+                to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
+                Edit
+              </Link>
+            </span>}
+          </span>
+        </span>
+      </React.Fragment>
     </CaseTitleScaffolding>;
   }
 }

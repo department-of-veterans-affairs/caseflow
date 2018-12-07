@@ -140,11 +140,11 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content(poa_name)
         expect(page).to have_content(poa_address)
 
-        expect(page).to have_content("View Veteran's documents")
+        expect(page.text).to match(/View (\d+) docs/)
         expect(page).to have_selector("text", id: "NEW")
         expect(page).to have_content("5 docs")
 
-        click_on "View Veteran's documents"
+        find("a", text: /View (\d+) docs/).click
         expect(page).to have_content("Claims Folder")
 
         visit "/queue"
