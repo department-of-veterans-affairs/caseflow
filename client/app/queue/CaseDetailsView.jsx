@@ -14,7 +14,6 @@ import VeteranCasesView from './VeteranCasesView';
 import CaseHearingsDetail from './CaseHearingsDetail';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import CaseTitle from './CaseTitle';
-import CaseTitleDetails from './CaseTitleDetails';
 import CaseSnapshot from './CaseSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
@@ -70,7 +69,6 @@ class CaseDetailsView extends React.PureComponent {
       {success && <Alert type="success" title={success.title} scrollOnAlert={false}>
         {success.detail}
       </Alert>}
-      <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname} />
       { this.props.veteranCaseListIsVisible &&
         <VeteranCasesView
           caseflowVeteranId={appeal.caseflowVeteranId}
