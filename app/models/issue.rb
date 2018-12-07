@@ -234,8 +234,9 @@ class Issue
   def disposition_date_after_legacy_appeal_soc?
     return false if disposition_date.blank?
     return false unless legacy_appeal
-    return disposition_date > legacy_appeal.soc_date if legacy_appeal.soc_date
-    legacy_appeal.ssoc_dates.any? { |ssoc_date| disposition_date > ssoc_date }
+    # the close_date is our local normalized disposition_date
+    return close_date > legacy_appeal.soc_date if legacy_appeal.soc_date
+    legacy_appeal.ssoc_dates.any? { |ssoc_date| close_date > ssoc_date }
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
