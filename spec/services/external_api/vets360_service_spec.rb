@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe ExternalApi::Vets360Service, focus: true do
+describe ExternalApi::Vets360Service do
   context "#geocode" do
     subject { Vets360Service.geocode("425 Eye St. NW, Washington, DC") }
 

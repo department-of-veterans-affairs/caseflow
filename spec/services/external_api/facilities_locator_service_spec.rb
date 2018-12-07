@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe ExternalApi::FacilitiesLocatorService, focus: true do
+describe ExternalApi::FacilitiesLocatorService do
   context "#get_distance" do
     subject { FacilitiesLocatorService.get_distance([0.0, 0.0], ["vha_688"]) }
 
