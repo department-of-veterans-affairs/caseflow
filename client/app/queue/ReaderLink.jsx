@@ -22,23 +22,22 @@ export default class ReaderLink extends React.PureComponent {
   getLinkText = () => {
     const {
       appeal,
-      docCountWithinLink,
-      docCountBelowLink
+      longMessage
     } = this.props;
 
-    return <React.Fragment>
-      <React.Fragment>View { docCountWithinLink && <AppealDocumentCount appeal={this.props.appeal} /> } docs
-        <NewFile externalAppealId={appeal.externalId} /></React.Fragment>
-      { docCountBelowLink &&
-        <div {...documentCountSizeStyling}>
-          <AppealDocumentCount loadingText appeal={this.props.appeal} />
-        </div>
-      }
-    </React.Fragment>;
+    return longMessage ?
+      <React.Fragment>View Veteran's documents <NewFile externalAppealId={appeal.externalId} /></React.Fragment> :
+      <React.Fragment>View docs <NewFile externalAppealId={appeal.externalId} /></React.Fragment>;
   };
 
   getAppealDocumentCount = () => {
-    return <AppealDocumentCount appeal={this.props.appeal} />;
+    if (this.props.longMessage) {
+      return <span>&nbsp;<AppealDocumentCount appeal={this.props.appeal} /></span>;
+    }
+
+    return <div {...documentCountSizeStyling}>
+      <AppealDocumentCount loadingText appeal={this.props.appeal} />
+    </div>;
   }
 
   render = () => {
@@ -68,6 +67,7 @@ export default class ReaderLink extends React.PureComponent {
       <Link {...linkProps} onClick={this.readerLinkAnalytics}>
         {this.getLinkText()}
       </Link>
+      {this.getAppealDocumentCount()}
     </React.Fragment>;
   };
 }
@@ -75,14 +75,12 @@ export default class ReaderLink extends React.PureComponent {
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
   appeal: PropTypes.object.isRequired,
-  docCountWithinLink: PropTypes.bool,
-  docCountBelowLink: PropTypes.bool,
+  longMessage: PropTypes.bool,
   redirectUrl: PropTypes.string,
   taskType: PropTypes.string,
   appealId: PropTypes.string.isRequired
 };
 
 ReaderLink.defaultProps = {
-  docCountWithinLink: false,
-  docCountBelowLink: false
+  longMessage: false
 };

@@ -46,7 +46,9 @@ class AppealDocumentCount extends React.PureComponent {
       return null;
     }
 
-    return this.props.docCountForAppeal;
+    return <span {...documentCountStyling}>
+      {`${this.props.docCountForAppeal} docs`}
+    </span>;
   }
 }
 
