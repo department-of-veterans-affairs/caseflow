@@ -105,7 +105,7 @@ class HearingDay < ApplicationRecord
         total_slots = HearingDayRepository
           .fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)
 
-        next unless scheduled_hearings.length < total_slots
+        next unless scheduled_hearings.length < total_slots && !hearing_day[:lock]
         enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room_info)
         enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] = total_slots
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = scheduled_hearings
