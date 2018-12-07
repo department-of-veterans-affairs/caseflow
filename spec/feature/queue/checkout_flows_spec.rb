@@ -187,6 +187,7 @@ RSpec.feature "Checkout flows" do
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
         expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
 
+        # Switch to the judge and ensure they can update decision issues
         User.authenticate!(user: judge_user)
         visit "/queue"
         click_on "(#{appeal.veteran_file_number})"
@@ -197,6 +198,7 @@ RSpec.feature "Checkout flows" do
         
         expect(page).to have_content(decision_issue_text)
 
+        # Update the decision issue
         click_on "Edit"
         fill_in "Text Box", with: updated_decision_issue_text
         click_on "Save"
@@ -213,6 +215,7 @@ RSpec.feature "Checkout flows" do
 
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
+        # The decision issue should have the new content the judge added
         expect(appeal.decision_issues.count).to eq(1)
         expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
         expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
