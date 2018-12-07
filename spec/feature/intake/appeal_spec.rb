@@ -701,7 +701,7 @@ RSpec.feature "Appeal Intake" do
         add_intake_rating_issue("ankylosis of hip")
 
         expect(page).to have_content(
-          "#{Constants.INELIGIBLE_REQUEST_ISSUES.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
         )
 
         click_intake_finish

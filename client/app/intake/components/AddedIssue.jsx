@@ -56,7 +56,7 @@ class AddedIssue extends React.PureComponent {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.untimely;
     } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
-    } else if (issue.beforeAma && !issue.vacolsId) {
+    } else if (issue.beforeAma) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
     } else if (issue.vacolsId) {
       if (!legacyOptInApproved) {
