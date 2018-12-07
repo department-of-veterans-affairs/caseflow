@@ -6,7 +6,7 @@ import {
   actionableTasksForAppeal,
   appealWithDetailSelector
 } from './selectors';
-import DocketTypeBadge from './components/DocketTypeBadge';
+import DocketTypeBadge from './../components/DocketTypeBadge';
 import CopyTextButton from '../components/CopyTextButton';
 import ReaderLink from './ReaderLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
