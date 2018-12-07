@@ -45,9 +45,8 @@ const listItemStyling = css({
   ':not(:first-child)': {
     '& > div': {
       borderLeft: `1px solid ${COLORS.GREY_LIGHT}`,
-      paddingLeft: '1.5rem'
     },
-    '& > h4': {
+    '& > *': {
       paddingLeft: '1.5rem'
     }
   },
@@ -57,9 +56,9 @@ const listItemStyling = css({
 const docketBadgeContainerStyle = css({
   border: '1px',
   borderStyle: 'solid',
-  borderColor: '#DCDCDC',
+  borderColor: COLORS.GREY_LIGHT,
   padding: '0.5rem 1rem 0.5rem 0.5rem',
-  backgroundColor: 'white'
+  backgroundColor: COLORS.WHITE
 });
 
 const CaseDetailTitleScaffolding = (props) => <div {...containingDivStyling}>
@@ -75,11 +74,12 @@ export class CaseTitleDetails extends React.PureComponent {
       appealId,
       redirectUrl,
       taskType,
-      primaryTask
+      primaryTask,
+      userIsVsoEmployee
     } = this.props;
 
     // TODO: Replace this with userIsVsoEmployee (see case title)
-    const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
+    const taskAssignedToVso = userIsVsoEmployee;
 
     return <CaseDetailTitleScaffolding>
       <React.Fragment>
@@ -137,7 +137,8 @@ const mapStateToProps = (state, ownProps) => {
     featureToggles,
     userRole,
     primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
-    canEditAod
+    canEditAod,
+    userIsVsoEmployee: state.ui.userIsVsoEmployee
   };
 };
 
