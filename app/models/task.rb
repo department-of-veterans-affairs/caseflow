@@ -145,7 +145,7 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete
   end
 
-  def can_be_accessed_by_user?(user)
+  def can_be_updated_by_user?(user)
     if assigned_to == user ||
        assigned_by == user ||
        (parent && parent.assigned_to == user) ||
@@ -156,7 +156,7 @@ class Task < ApplicationRecord
   end
 
   def verify_user_can_update!(user)
-    unless can_be_accessed_by_user?(user)
+    unless can_be_updated_by_user?(user)
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
     end
   end

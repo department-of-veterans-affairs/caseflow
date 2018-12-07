@@ -67,7 +67,7 @@ class GenericTask < Task
     [sibling, self, children_to_update].flatten
   end
 
-  def can_be_accessed_by_user?(user)
+  def can_be_updated_by_user?(user)
     available_actions_unwrapper(user).any?
   end
 
