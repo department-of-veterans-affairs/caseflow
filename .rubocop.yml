@@ -112,6 +112,9 @@ Style/TernaryParentheses:
 Style/IfUnlessModifier:
   Enabled: false
 
+Style/RedundantBegin:
+  Enabled: false
+
 Naming/FileName:
   Enabled: false
 

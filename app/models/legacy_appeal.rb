@@ -143,9 +143,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   cache_attribute :cached_number_of_documents_after_certification do
-    number_of_documents_after_certification
-  rescue Caseflow::Error::EfolderError, VBMS::HTTPError
-    nil
+    begin
+      number_of_documents_after_certification
+    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
+      nil
+    end
   end
 
   # If we do not yet have the vbms_id saved in Caseflow's DB, then

@@ -118,9 +118,11 @@ class Hearing < ApplicationRecord
   end
 
   cache_attribute :cached_number_of_documents do
-    number_of_documents
-  rescue Caseflow::Error::EfolderError, VBMS::HTTPError
-    nil
+    begin
+      number_of_documents
+    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
+      nil
+    end
   end
 
   delegate \
