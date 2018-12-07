@@ -369,12 +369,21 @@ export default class DailyDocket extends React.Component {
           {this.getRemoveHearingDayMessage()}
         </Modal>
       </div>}
+
       { this.props.saveSuccessful && <Alert
         type="success"
         styling={alertStyling}
         title={`You have successfully updated ${this.props.saveSuccessful.appellantMiFormatted ||
           this.props.saveSuccessful.veteranMiFormatted}'s hearing.`}
       /> }
+
+      { this.props.dailyDocketServerError && <Alert
+        type="error"
+        title={`Unable to delete Hearing Day 
+          ${moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')} in Caseflow.`}
+        message="Please delete the hearing day through VACOLS"
+      />}
+
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
         <div {...backLinkStyling}>

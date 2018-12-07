@@ -71,8 +71,8 @@ export class DailyDocketContainer extends React.Component {
         this.props.onSuccessfulHearingDayDelete(this.props.dailyDocket.hearingDate);
         this.props.history.push('/schedule');
       }, (err) => {
-      this.props.handleDailyDocketServerError(err);
-    });
+        this.props.handleDailyDocketServerError(err);
+      });
   };
 
   createHearingPromise = () => Promise.all([this.loadHearingDay()]);
@@ -103,6 +103,7 @@ export class DailyDocketContainer extends React.Component {
         displayRemoveHearingDayModal={this.props.displayRemoveHearingDayModal}
         onCancelRemoveHearingDay={this.props.onCancelRemoveHearingDay}
         deleteHearingDay={this.deleteHearingDay}
+        dailyDocketServerError={this.props.dailyDocketServerError}
       />
     </LoadingDataDisplay>;
 
@@ -115,6 +116,7 @@ const mapStateToProps = (state) => ({
   hearings: state.hearingSchedule.hearings,
   hearingDayOptions: state.hearingSchedule.hearingDayOptions,
   saveSuccessful: state.hearingSchedule.saveSuccessful,
+  dailyDocketServerError: state.hearingSchedule.dailyDocketServerError,
   displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal
 });
 
