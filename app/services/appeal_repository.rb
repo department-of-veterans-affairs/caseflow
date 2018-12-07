@@ -352,7 +352,10 @@ class AppealRepository
 
     # App logic should prevent this, but because this is a destructive operation
     # add an additional failsafe
-    fail AppealNotValidToClose if case_record.bfdc
+    if case_record.bfdc
+      Raven.extra_context(undecided_appeal_id: appeal.id)
+      fail AppealNotValidToClose
+    end
 
     VACOLS::Case.transaction do
       case_record.update_attributes!(

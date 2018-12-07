@@ -355,7 +355,7 @@ describe RampRefilingIntake do
 
     let(:params) do
       {
-        issue_ids: source_issues && source_issues.map(&:id),
+        issue_ids: source_issues&.map(&:id),
         has_ineligible_issue: true
       }
     end

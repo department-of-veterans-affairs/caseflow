@@ -3,7 +3,7 @@
 class Form8 < ApplicationRecord
   include UploadableDocument
 
-  FORM8_S3_SUB_BUCKET = "form_8".freeze
+  FORM8_S3_SUB_BUCKET = "form_8"
 
   FORM_FIELDS = [
     :vacols_id,
