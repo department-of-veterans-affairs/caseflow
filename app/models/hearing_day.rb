@@ -40,15 +40,6 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    def update_hearing_day(hearing, hearing_hash)
-      if hearing.is_a?(HearingDay)
-        hearing_hash = hearing_hash.merge(updated_by: current_user_css_id)
-        hearing.update(hearing_hash)
-      else
-        HearingDayRepository.update_vacols_hearing!(hearing, hearing_hash)
-      end
-    end
-
     def create_schedule(scheduled_hearings)
       scheduled_hearings.each do |hearing_hash|
         HearingDay.create_hearing_day(hearing_hash)
