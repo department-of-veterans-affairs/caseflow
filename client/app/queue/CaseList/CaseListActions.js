@@ -2,8 +2,14 @@ import { SEARCH_ERROR_FOR } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from './actionTypes';
 import _ from 'lodash';
-import { onReceiveAppealDetails } from '../QueueActions';
-import { prepareAppealForStore } from '../utils';
+import {
+  onReceiveAppealDetails,
+  onReceiveClaimReviewDetails
+} from '../QueueActions';
+import {
+  prepareAppealForStore,
+  prepareClaimReviewForStore
+} from '../utils';
 
 export const clearCaseListSearch = () => ({
   type: Constants.CLEAR_CASE_LIST_SEARCH
@@ -49,6 +55,13 @@ export const onReceiveAppealsUsingVeteranId = (appeals) => (dispatch) => {
   dispatch(onReceiveAppealDetails(prepareAppealForStore(appeals)));
   dispatch({
     type: Constants.RECEIVED_APPEALS_USING_VETERAN_ID_SUCCESS
+  });
+};
+
+export const onReceiveClaimReviewsUsingVeteranId = (claimReviews) => (dispatch) => {
+  dispatch(onReceiveClaimReviewDetails(prepareClaimReviewForStore(claimReviews)));
+  dispatch({
+    type: Constants.RECEIVED_CLAIM_REVIEWS_USING_VETERAN_ID_SUCCESS
   });
 };
 

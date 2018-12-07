@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -19,8 +20,14 @@ import CaseListTable from './CaseListTable';
 import OtherReviewsTable from './OtherReviewsTable';
 import { fullWidth } from './constants';
 
-import { onReceiveAppealsUsingVeteranId } from './CaseList/CaseListActions';
-import { appealsByCaseflowVeteranId } from './selectors';
+import {
+  onReceiveAppealsUsingVeteranId,
+  onReceiveClaimReviewsUsingVeteranId
+} from './CaseList/CaseListActions';
+import {
+  appealsByCaseflowVeteranId,
+  claimReviewsByCaseflowVeteranId
+} from './selectors';
 
 import COPY from '../../COPY.json';
 
@@ -41,12 +48,14 @@ class CaseListView extends React.PureComponent {
 
     return ApiUtil.get(`/cases/${caseflowVeteranId}`).
       then((response) => {
-        debugger;
-        console.log("RESPONSE");
-        console.log(response)
         const returnedObject = JSON.parse(response.text);
 
+        const claimReviews = returnedObject.claim_reviews.map((review) => {
+          return _.assignIn(review, { caseflow_veteran_id: this.props.caseflowVeteranId });
+        });
+
         this.props.onReceiveAppealsUsingVeteranId(returnedObject.appeals);
+        this.props.onReceiveClaimReviewsUsingVeteranId(claimReviews);
       });
   };
 
@@ -57,6 +66,7 @@ class CaseListView extends React.PureComponent {
   </React.Fragment>;
 
   caseListTable = () => {
+    let otherReviewsTable;
     const appealsCount = this.props.appeals.length;
 
     if (!appealsCount) {
@@ -65,6 +75,12 @@ class CaseListView extends React.PureComponent {
         <hr {...horizontalRuleStyling} />
         <p><Link href="/help">Caseflow Help</Link></p>
       </div>;
+    }
+
+    const claimReviewsCount = this.props.claimReviews && this.props.claimReviews.length;
+
+    if (claimReviewsCount) {
+      otherReviewsTable = <OtherReviewsTable reviews={this.props.claimReviews} />
     }
 
     // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
@@ -81,8 +97,8 @@ class CaseListView extends React.PureComponent {
       <h3 className="cf-push-left" {...fullWidth}>Appeals</h3>
       <CaseListTable appeals={this.props.appeals} />
 
-      <h3 className="cf-push-left" {...fullWidth}>Other Reviews</h3>
-      <OtherReviewsTable reviews={this.props.claim_reviews} />
+      <h3 className="cf-push-left" {...fullWidth}>Other Decision Reviews</h3>
+      {otherReviewsTable}
     </div>;
   }
 
@@ -115,12 +131,16 @@ CaseListView.defaultProps = {
   caseflowVeteranId: ''
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  appeals: appealsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId })
-});
+const mapStateToProps = (state, ownProps) => {
+  return {
+    appeals: appealsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId }),
+    claimReviews: claimReviewsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId })
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveAppealsUsingVeteranId
+  onReceiveAppealsUsingVeteranId,
+  onReceiveClaimReviewsUsingVeteranId
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseListView);

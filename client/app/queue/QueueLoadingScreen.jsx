@@ -17,7 +17,7 @@ import {
   getNewDocuments
 } from './QueueActions';
 import { setUserId } from './uiReducer/uiActions';
-import type { BasicAppeals, Tasks } from './types/models';
+import type { BasicAppeals, Tasks, ClaimReviews } from './types/models';
 import type { State, UsersById } from './types/state';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
@@ -34,6 +34,7 @@ type Props = Params & {|
   // From state
   tasks: Tasks,
   appeals: BasicAppeals,
+  claimReviews: ClaimReviews,
   amaTasks: Tasks,
   loadedUserId: number,
   judges: UsersById,
@@ -142,12 +143,13 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State) => {
-  const { tasks, amaTasks, appeals } = state.queue;
+  const { tasks, amaTasks, appeals, claimReviews } = state.queue;
 
   return {
     tasks,
     appeals,
     amaTasks,
+    claimReviews,
     loadedUserId: state.ui.loadedUserId
   };
 };

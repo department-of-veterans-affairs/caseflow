@@ -51,40 +51,15 @@ class ClaimReview < DecisionReview
 
     def find_all_by_file_number(file_number)
       claim_reviews = HigherLevelReview.where(veteran_file_number: file_number) + SupplementalClaim.where(veteran_file_number: file_number)
-      #.all?
-      # [1] + [3, 4] => [1, 3, 4]
-      #.order?
       claim_reviews.map(&:search_table_ui_hash)
-
-
-      # claim_reviews.map{ |review| {
-
-      #   if review.is_a?(HigherLevelReview)
-      #     review_type = "higher_level_review"
-      #   elsif review.is_a?(SupplementalClaim)
-      #     review_type = "supplemental_claim"
-      #   end
-
-      #   {
-      #     # EP Code(s)
-      #     ep_codes: review.ep_codes,
-      #     # Appellant name
-      #     claimant_names: review.claimants.map(&:name),
-      #     # Review type
-      #     review_type: review_type,
-      #     # Benefit type
-      #     benefit_type: review.benefit_type,
-      #     # EP Status
-      #     ep_status: review.end_product_establishments.map(&:synced_status),
-      #     # Decision date
-      #     decision_date: review.establishment_processed_at
-      #   }
-      # }
     end
   end
 
   def search_table_ui_hash
     {
+      claim_id: id,
+      # File number
+      veteran_file_number: veteran_file_number,
       # EP Code(s)
       ep_codes: ep_codes,
       # Appellant name
