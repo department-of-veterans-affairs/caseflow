@@ -208,6 +208,15 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
   )
 );
 
+export const onHoldTasksForAttorney: (State) => Array<Task> = createSelector(
+  [onHoldTasksByAssigneeCssIdSelector, incompleteTasksByAssignerCssIdSelector],
+  (onHoldByAssignee: Array<Task>, incompleteByAssigner: Array<Task>) => {
+    const onHoldTasksWithDuplicates = onHoldByAssignee.concat(incompleteByAssigner);
+
+    return _.filter(onHoldTasksWithDuplicates, (task) => task.assignedTo.type === 'User');
+  }
+);
+
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
