@@ -9,13 +9,16 @@ class LegacyOptinProcessJob < CaseflowJob
     RequestStore.store[:application] = "intake"
     RequestStore.store[:current_user] = User.system_user
 
+    return_value = nil
+
     begin
-      legacy_optin.perform!
+      return_value = legacy_optin.perform!
     rescue StandardError => err # TODO: define exceptions
       legacy_optin.update_error!(err.to_s)
       Raven.capture_exception(err)
     end
 
     RequestStore.store[:current_user] = current_user
+    return_value
   end
 end
