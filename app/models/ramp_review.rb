@@ -56,6 +56,10 @@ class RampReview < ApplicationRecord
     HIGHER_LEVEL_REVIEW_OPTIONS.include?(option_selected)
   end
 
+  def on_decision_issues_sync_processed(end_product_establishment)
+    # no-op, can be overwritten
+  end
+
   # If an EP with the exact same traits has already been created. Use that instead
   # of creating a new EP. This prevents duplicate EP errors and allows this method
   # to be idempotent

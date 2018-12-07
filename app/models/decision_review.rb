@@ -10,6 +10,7 @@ class DecisionReview < ApplicationRecord
 
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
+  has_many :decision_issues, as: :decision_review
 
   before_destroy :remove_issues!
 
@@ -55,7 +56,8 @@ class DecisionReview < ApplicationRecord
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
+      requestIssues: request_issues.map(&:ui_hash),
+      contestableIssuesByDate: serialized_contestable_issues_by_date
     }
   end
 
@@ -125,7 +127,46 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def on_decision_issues_sync_processed(end_product_establishment)
+    # no-op, can be overwritten
+  end
+
+  def serialized_contestable_issues_by_date
+    contestable_issues.inject({}) do |result, contestable_issue|
+      (result[contestable_issue.date] ||= []) << contestable_issue.serialize
+      result
+    end
+  end
+
   private
+
+  def cached_rating_issues
+    return unless receipt_date
+
+    cached_serialized_ratings.inject([]) do |result, rating_hash|
+      result + rating_hash[:issues].map { |rating_issue_hash| RatingIssue.deserialize(rating_issue_hash) }
+    end
+  end
+
+  def unfiltered_contestable_issues_from_ratings
+    cached_rating_issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
+  end
+
+  def contestable_issues_from_ratings
+    unfiltered_contestable_issues_from_ratings.reject do |contestable_issue|
+      contestable_issues_from_decision_issues.any? do |potential_duplicate|
+        contestable_issue.rating_reference_id == potential_duplicate.rating_reference_id
+      end
+    end
+  end
+
+  def contestable_issues_from_decision_issues
+    contestable_decision_issues.map { |decision_issue| ContestableIssue.from_decision_issue(decision_issue, self) }
+  end
+
+  def contestable_issues
+    contestable_issues_from_ratings + contestable_issues_from_decision_issues
+  end
 
   def available_legacy_appeals
     # If a Veteran does not opt-in to withdraw legacy appeals, do not show inactive appeals

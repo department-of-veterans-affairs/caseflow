@@ -110,6 +110,10 @@ class ClaimReview < DecisionReview
 
   private
 
+  def contestable_decision_issues
+    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+  end
+
   def informal_conference?
     false
   end

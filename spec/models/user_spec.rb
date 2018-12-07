@@ -198,6 +198,22 @@ describe User do
     end
   end
 
+  context "#selectable_organizations" do
+    let(:judge) { FactoryBot.create :user }
+    let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
+
+    subject { user.selectable_organizations }
+
+    before do
+      OrganizationsUser.add_user_to_organization(user, judgeteam)
+    end
+
+    it "excludes judge teams from the organization list" do
+      is_expected.to be_empty
+      expect(user.organizations).to include judgeteam
+    end
+  end
+
   context "#when BGS data is setup" do
     let(:participant_id) { "123456" }
     let(:vso_participant_id) { "123456" }
