@@ -13,7 +13,7 @@ class ScheduleHearingTask < GenericTask
   end
 
   def update_from_params(params, current_user)
-    verify_user_access!(current_user)
+    verify_user_can_update!(current_user)
 
     task_payloads = params.delete(:business_payloads)
     hearing_date = task_payloads[:values][:hearing_date]

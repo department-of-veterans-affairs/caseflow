@@ -71,7 +71,7 @@ describe GenericTask do
     end
   end
 
-  describe ".verify_user_access!" do
+  describe ".verify_user_can_update!" do
     let(:user) { FactoryBot.create(:user) }
     let(:other_user) { FactoryBot.create(:user) }
     let(:org) { FactoryBot.create(:organization) }
@@ -85,28 +85,28 @@ describe GenericTask do
     context "task assignee is current user" do
       let(:assignee) { user }
       it "should not raise an error" do
-        expect { task.verify_user_access!(user) }.to_not raise_error
+        expect { task.verify_user_can_update!(user) }.to_not raise_error
       end
     end
 
     context "task assignee is organization to which current user belongs" do
       let(:assignee) { org }
       it "should not raise an error" do
-        expect { task.verify_user_access!(user) }.to_not raise_error
+        expect { task.verify_user_can_update!(user) }.to_not raise_error
       end
     end
 
     context "task assignee is a different person" do
       let(:assignee) { other_user }
       it "should raise an error" do
-        expect { task.verify_user_access!(user) }.to raise_error(Caseflow::Error::ActionForbiddenError)
+        expect { task.verify_user_can_update!(user) }.to raise_error(Caseflow::Error::ActionForbiddenError)
       end
     end
 
     context "task assignee is organization to which current user does not belong" do
       let(:assignee) { other_org }
       it "should raise an error" do
-        expect { task.verify_user_access!(user) }.to raise_error(Caseflow::Error::ActionForbiddenError)
+        expect { task.verify_user_can_update!(user) }.to raise_error(Caseflow::Error::ActionForbiddenError)
       end
     end
   end

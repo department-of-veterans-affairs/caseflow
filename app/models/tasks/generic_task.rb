@@ -47,7 +47,7 @@ class GenericTask < Task
   # rubocop:enable Metrics/MethodLength
 
   def update_from_params(params, current_user)
-    verify_user_access!(current_user)
+    verify_user_can_update!(current_user)
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
@@ -89,7 +89,7 @@ class GenericTask < Task
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent.assigned_to_id == params[:assigned_to_id] &&
                                                            parent.assigned_to_type == params[:assigned_to_type]
 
-      parent.verify_user_access!(user)
+      parent.verify_user_can_update!(user)
 
       params = modify_params(params)
       child = create_child_task(parent, user, params)
