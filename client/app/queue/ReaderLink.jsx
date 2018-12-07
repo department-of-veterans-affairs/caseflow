@@ -27,9 +27,10 @@ export default class ReaderLink extends React.PureComponent {
     } = this.props;
 
     return <React.Fragment>
-      <React.Fragment>View { docCountWithinLink && <AppealDocumentCount appeal={this.props.appeal} /> } docs <NewFile externalAppealId={appeal.externalId} /></React.Fragment>
+      <React.Fragment>View { docCountWithinLink && <AppealDocumentCount appeal={this.props.appeal} /> } docs
+      <NewFile externalAppealId={appeal.externalId} /></React.Fragment>
       { docCountBelowLink &&
-        <div {...documentCountStyling}>
+        <div {...documentCountSizeStyling}>
           <AppealDocumentCount loadingText appeal={this.props.appeal} />
         </div>
       }

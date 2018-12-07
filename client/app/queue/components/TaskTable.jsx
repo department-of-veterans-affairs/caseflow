@@ -268,7 +268,7 @@ class TaskTable extends React.PureComponent<Props> {
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
           appeal={task.appeal}
-          docCountBelowLink/>;
+          docCountBelowLink />;
       }
     } : null;
   }

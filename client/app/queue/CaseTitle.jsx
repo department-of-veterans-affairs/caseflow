@@ -9,8 +9,6 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import { COLORS } from '../constants/AppConstants';
 import CopyTextButton from '../components/CopyTextButton';
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
-import HearingBadge from './components/HearingBadge';
-import AodBadge from './components/AodBadge';
 
 const containingDivStyling = css({
 
@@ -54,10 +52,6 @@ const badgeStyle = css({
 
 const displayNone = css({
   display: 'none'
-});
-
-const displayInline = css({
-  display: 'inline'
 });
 
 const editButton = css({

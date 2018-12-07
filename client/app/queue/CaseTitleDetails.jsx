@@ -44,7 +44,7 @@ const listItemStyling = css({
   // ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
   ':not(:first-child)': {
     '& > div': {
-      borderLeft: `1px solid ${COLORS.GREY_LIGHT}`,
+      borderLeft: `1px solid ${COLORS.GREY_LIGHT}`
     },
     '& > *': {
       paddingLeft: '1.5rem'
