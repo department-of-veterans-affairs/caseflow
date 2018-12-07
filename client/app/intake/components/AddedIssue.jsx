@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
+import INTAKE_STRINGS from '../../../constants/INTAKE_STRINGS.json';
 
 import { legacyIssue } from '../util/issues';
 
@@ -98,7 +99,7 @@ class AddedIssue extends React.PureComponent {
       }
       { issue.vacolsId && !eligibleState.errorMsg &&
         <div className="issue-vacols">
-          <span className="msg">{ INELIGIBLE_REQUEST_ISSUES.adding_this_issue_vacols_optin }:</span>
+          <span className="msg">{ INTAKE_STRINGS.adding_this_issue_vacols_optin }:</span>
           <span className="desc">{ legacyIssue(issue, this.props.legacyAppeals).description }</span>
         </div>
       }

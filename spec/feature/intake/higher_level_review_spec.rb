@@ -24,6 +24,7 @@ RSpec.feature "Higher-Level Review" do
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
+  let(:intake_constants) { Constants.INTAKE_STRINGS }
 
   let(:veteran_file_number) { "123412345" }
 
@@ -1153,7 +1154,7 @@ RSpec.feature "Higher-Level Review" do
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
-            "#{ineligible_constants.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+            "#{intake_constants.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
           )
 
           click_intake_finish
@@ -1170,7 +1171,7 @@ RSpec.feature "Higher-Level Review" do
                    vacols_sequence_id: "1"
           )).to_not be_nil
 
-          expect(page).to have_content(ineligible_constants.vacols_optin_issue_closed)
+          expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
         end
       end
 
@@ -1206,7 +1207,7 @@ RSpec.feature "Higher-Level Review" do
                    vacols_sequence_id: "1"
           )).to_not be_nil
 
-          expect(page).to_not have_content(ineligible_constants.vacols_optin_issue_closed)
+          expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
         end
       end
 

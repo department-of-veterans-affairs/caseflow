@@ -718,7 +718,7 @@ RSpec.feature "Appeal Intake" do
                  vacols_sequence_id: "1"
         )).to_not be_nil
 
-        expect(page).to have_content(Constants.INELIGIBLE_REQUEST_ISSUES.vacols_optin_issue_closed)
+        expect(page).to have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
       end
     end
 
@@ -754,7 +754,7 @@ RSpec.feature "Appeal Intake" do
                  vacols_sequence_id: "1"
         )).to_not be_nil
 
-        expect(page).to_not have_content(Constants.INELIGIBLE_REQUEST_ISSUES.vacols_optin_issue_closed)
+        expect(page).to_not have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
       end
     end
 
