@@ -148,8 +148,19 @@ export const tasksByAssigneeCssIdSelector = createSelector(
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
+export const tasksByAssignerCssIdSelector = createSelector(
+  [tasksWithAppealSelector, getUserCssId],
+  (tasks: Array<TaskWithAppeal>, cssId: string) =>
+    _.filter(tasks, (task) => task.assignedBy.cssId === cssId)
+);
+
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
+  (tasks: Tasks) => incompleteTasksSelector(tasks)
+);
+
+export const incompleteTasksByAssignerCssIdSelector = createSelector(
+  [tasksByAssignerCssIdSelector],
   (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
 
