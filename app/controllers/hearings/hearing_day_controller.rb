@@ -72,7 +72,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def update
     hearing_day.update!(update_params)
-    render json: { hearing_day: hearing_day.to_hash }
+    render json: hearing_day.to_hash
   end
 
   def update_other

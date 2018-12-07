@@ -47,7 +47,7 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.RESET_SAVE_SUCCESSFUL:
     return update(state, {
-      $unset: ['saveSuccessful']
+      $unset: ['saveSuccessful', 'displayLockSuccessMessage']
     });
   case ACTIONS.CANCEL_HEARING_UPDATE:
     return update(state, {
@@ -308,6 +308,10 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: true
       },
       $unset: ['displayLockModal']
+    });
+  case ACTIONS.RESET_LOCK_SUCCESS_MESSAGE:
+    return update(state, {
+      $unset: ['displayLockSuccessMessage']
     });
   default:
     return state;

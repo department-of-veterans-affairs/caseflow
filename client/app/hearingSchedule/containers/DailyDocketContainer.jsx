@@ -22,7 +22,8 @@ import {
   onSuccessfulHearingDayDelete,
   onDisplayLockModal,
   onCancelDisplayLockModal,
-  onUpdateLock
+  onUpdateLock,
+  onResetLockSuccessMessage
 } from '../actions';
 
 export class DailyDocketContainer extends React.Component {
@@ -68,7 +69,7 @@ export class DailyDocketContainer extends React.Component {
   };
 
   updateLockHearingDay = (lock) => () => {
-    ApiUtil.patch(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { lock }).
+    ApiUtil.patch(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { data: { lock: lock } }).
       then(() => {
         this.props.onUpdateLock(lock);
       });
@@ -114,6 +115,8 @@ export class DailyDocketContainer extends React.Component {
         onCancelDisplayLockModal={this.props.onCancelDisplayLockModal}
         displayLockModal={this.props.displayLockModal}
         updateLockHearingDay={this.updateLockHearingDay}
+        displayLockSuccessMessage={this.props.displayLockSuccessMessage}
+        onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
       />
     </LoadingDataDisplay>;
 
@@ -127,7 +130,8 @@ const mapStateToProps = (state) => ({
   hearingDayOptions: state.hearingSchedule.hearingDayOptions,
   saveSuccessful: state.hearingSchedule.saveSuccessful,
   displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal,
-  displayLockModal: state.hearingSchedule.displayLockModal
+  displayLockModal: state.hearingSchedule.displayLockModal,
+  displayLockSuccessMessage: state.hearingSchedule.displayLockSuccessMessage
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -144,7 +148,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onSuccessfulHearingDayDelete,
   onDisplayLockModal,
   onCancelDisplayLockModal,
-  onUpdateLock
+  onUpdateLock,
+  onResetLockSuccessMessage
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

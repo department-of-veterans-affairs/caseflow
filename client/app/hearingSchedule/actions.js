@@ -269,3 +269,7 @@ export const onUpdateLock = (lock) => ({
     lock
   }
 });
+
+export const onResetLockSuccessMessage = () => ({
+  type: ACTIONS.RESET_LOCK_SUCCESS_MESSAGE
+});
