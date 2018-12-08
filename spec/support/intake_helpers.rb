@@ -153,6 +153,10 @@ module IntakeHelpers
     safe_click "#button-submit-review"
   end
 
+  def click_edit_submit
+    safe_click "#button-submit-update"
+  end
+
   def click_intake_no_matching_issues
     safe_click ".no-matching-issues"
   end
@@ -164,7 +168,22 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
-  def add_intake_nonrating_issue(category:, description:, date:, legacy_issues: false)
+  def get_claim_id(claim_review)
+    issue = claim_review.request_issues.first
+    ep_code = claim_review.issue_code(rating: (issue.rating? || issue.is_unidentified?))
+
+    EndProductEstablishment.find_by(
+      source: claim_review,
+      code: ep_code
+    ).reference_id
+  end
+
+  def add_intake_nonrating_issue(
+    category: "Active Duty Adjustments",
+    description: "Some description",
+    date: "01/01/2016",
+    legacy_issues: false
+  )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
     expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
     expect(page).to have_button(add_button_text, disabled: true)
