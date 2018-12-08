@@ -92,9 +92,20 @@ export const validNonratingRequestIssue = (issue) => {
   return true;
 };
 
+const contestableIssueIndexByRequestIssue = (contestableIssuesByDate, requestIssue) => {
+  const foundContestableIssue = _.reduce(contestableIssuesByDate, (foundIssue, contestableIssues) => {
+    return _.find(contestableIssues, {
+      decisionIssueId: requestIssue.contested_decision_issue_id,
+      ratingIssueReferenceId: requestIssue.reference_id
+    }) || foundIssue;
+  }, null);
+
+  return foundContestableIssue && foundContestableIssue.index;
+};
+
 // formatRequestIssues takes an array of requestIssues in the server ui_hash format
 // and returns objects useful for displaying in UI
-export const formatRequestIssues = (requestIssues) => {
+export const formatRequestIssues = (requestIssues, contestableIssues) => {
   return requestIssues.map((issue) => {
     // Nonrating issues
     if (issue.category) {
@@ -130,6 +141,7 @@ export const formatRequestIssues = (requestIssues) => {
     const issueDate = new Date(issue.profile_date);
 
     return {
+      index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
       isRating: true,
       id: issue.reference_id,
       profileDate: issueDate.toISOString(),
@@ -161,15 +173,6 @@ export const formatContestableIssues = (contestableIssues) => {
 
     return contestableIssuesByDate;
   }, {});
-};
-
-export const issueById = (ratings, issueId) => {
-  const currentRating = _.filter(
-    ratings,
-    (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId })
-  )[0];
-
-  return currentRating.issues[issueId];
 };
 
 export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
@@ -213,7 +216,8 @@ const formatRatingRequestIssues = (state) => {
           untimely_exemption_notes: issue.untimelyExemptionNotes,
           ramp_claim_id: issue.rampClaimId,
           vacols_id: issue.vacolsId,
-          vacols_sequence_id: issue.vacolsSequenceId
+          vacols_sequence_id: issue.vacolsSequenceId,
+          contested_decision_isssue_id: issue.decisionIssueId
         };
       });
   }

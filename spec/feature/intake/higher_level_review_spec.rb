@@ -911,10 +911,9 @@ RSpec.feature "Higher-Level Review" do
       )
 
       # Add decision issue
-      # todo: add this back in when we allow decision issues to be selected
-      # click_intake_add_issue
-      # add_intake_rating_issue("supplemental claim decision issue", "decision issue with note")
-      # expect(page).to have_content("10. supplemental claim decision issue")
+      click_intake_add_issue
+      add_intake_rating_issue("supplemental claim decision issue", "decision issue with note")
+      expect(page).to have_content("10. supplemental claim decision issue")
 
       click_intake_add_issue
       click_intake_no_matching_issues
@@ -971,15 +970,14 @@ RSpec.feature "Higher-Level Review" do
       expect(non_rating_end_product_establishment).to_not be_nil
 
       # make sure request issue is contesting decision issue
-      # todo: add this back in when we allow decision issues to be selected
-      # expect(RequestIssue.find_by(
-      #          review_request: higher_level_review,
-      #          contested_decision_issue_id: decision_issue.id,
-      #          description: "supplemental claim decision issue",
-      #          end_product_establishment_id: end_product_establishment.id,
-      #          notes: "decision issue with note",
-      #          benefit_type: "compensation"
-      # )).to_not be_nil
+      expect(RequestIssue.find_by(
+               review_request: higher_level_review,
+               contested_decision_issue_id: decision_issue.id,
+               description: "supplemental claim decision issue",
+               end_product_establishment_id: end_product_establishment.id,
+               notes: "decision issue with note",
+               benefit_type: "compensation"
+      )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,

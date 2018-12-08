@@ -1125,7 +1125,7 @@ RSpec.feature "Edit issues" do
     end
 
     context "when there is a rating end product" do
-      let!(:request_issue) do
+      let(:request_issue) do
         RequestIssue.create!(
           rating_issue_reference_id: "def456",
           rating_issue_profile_date: rating.profile_date,
@@ -1134,8 +1134,10 @@ RSpec.feature "Edit issues" do
         )
       end
 
+      let(:request_issues) {[request_issue]}
+
       before do
-        supplemental_claim.create_issues!([request_issue])
+        supplemental_claim.create_issues!(request_issues)
         supplemental_claim.process_end_product_establishments!
       end
 
@@ -1217,6 +1219,76 @@ RSpec.feature "Edit issues" do
         add_intake_unidentified_issue("This is an unidentified issue")
         expect(page).to have_content("4 issues")
         expect(page).to have_content("This is an unidentified issue")
+      end
+
+      context "has decision issues" do
+        let(:supplemental_claim_reference_id) { "sc123" }
+        let(:previous_supplemental_claim) do
+          create(:supplemental_claim,
+                 veteran_file_number: veteran.file_number,
+                 benefit_type: "compensation")
+        end
+
+        let!(:previous_sc_request_issue) do
+          create(
+            :request_issue,
+            review_request: previous_supplemental_claim,
+            rating_issue_reference_id: supplemental_claim_reference_id,
+            # contention_reference_id: supplemental_claim_contention_reference_id
+          )
+        end
+
+        let!(:decision_issue) do
+          create(:decision_issue,
+                 decision_review: previous_supplemental_claim,
+                 request_issues: [previous_sc_request_issue],
+                 rating_issue_reference_id: supplemental_claim_reference_id,
+                 participant_id: veteran.participant_id,
+                 promulgation_date: Time.zone.now - 1.day,
+                 decision_text: "another supplemental claim decision issue",
+                 profile_date: Time.zone.now - 1.day,
+                 benefit_type: previous_supplemental_claim.benefit_type)
+        end
+
+        let!(:decision_issue_contested) do
+          create(:decision_issue,
+                 # request_issues: [original_request_issue],
+                 decision_review: previous_supplemental_claim,
+                 decision_text: "contested supplemental claim decision issue",
+                 profile_date: Time.zone.now - 2.day,
+                 promulgation_date: Time.zone.now - 2.day,
+                 benefit_type: supplemental_claim.benefit_type)
+        end
+
+        let(:decision_request_issue) do
+          create(
+            :request_issue,
+            review_request: supplemental_claim,
+            description: "currently contesting decision issue",
+            decision_date: Time.zone.now - 2.day,
+            contested_decision_issue_id: decision_issue_contested.id
+          )
+        end
+
+        let(:request_issues) {[request_issue, decision_request_issue]}
+
+
+        it "shows decision isssues and allows adding/removing issues", :focus => true do
+          visit "supplemental_claims/#{rating_ep_claim_id}/edit"
+          binding.pry
+          expect(page).to have_content("currently contesting decision issue")
+
+          # check that we cannot add the same issue again
+          click_intake_add_issue
+          expect(page).to have_css("input[disabled]", visible: false)
+
+          # remove original decision issue
+          # add new decision issue
+
+          # check that original_request_issue is closed
+
+          # check that new request issue is created contesting the new decision issue
+        end
       end
 
       it "enables save button only when dirty" do

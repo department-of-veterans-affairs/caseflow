@@ -10,6 +10,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     return state;
   }
 
+  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate)
+
   return update(state, {
     isStarted: {
       $set: Boolean(serverIntake.id)
@@ -48,10 +50,10 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: formatRatings(serverIntake.ratings)
     },
     contestableIssues: {
-      $set: formatContestableIssues(serverIntake.contestableIssuesByDate)
+      $set: contestableIssues
     },
     requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues)
+      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)

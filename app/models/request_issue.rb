@@ -79,7 +79,8 @@ class RequestIssue < ApplicationRecord
         untimely_exemption_notes: data[:untimely_exemption_notes],
         ramp_claim_id: data[:ramp_claim_id],
         vacols_id: data[:vacols_id],
-        vacols_sequence_id: data[:vacols_sequence_id]
+        vacols_sequence_id: data[:vacols_sequence_id],
+        contested_decision_issue_id: data[:contested_decision_isssue_id]
       ).validate_eligibility!
     end
 
@@ -140,7 +141,8 @@ class RequestIssue < ApplicationRecord
       vacols_sequence_id: vacols_sequence_id,
       vacols_issue: vacols_issue.try(:intake_attributes),
       ineligible_reason: ineligible_reason,
-      title_of_active_review: title_of_active_review
+      title_of_active_review: title_of_active_review,
+      contested_decision_issue_id: contested_decision_issue_id
     }
   end
 

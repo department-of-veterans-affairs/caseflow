@@ -19,8 +19,8 @@ export const mapDataToInitialState = function(props = {}) {
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
-    addedIssues: formatRequestIssues(serverIntake.requestIssues),
-    originalIssues: formatRequestIssues(serverIntake.requestIssues),
+    addedIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
+    originalIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
