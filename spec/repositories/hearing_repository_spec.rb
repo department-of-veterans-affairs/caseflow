@@ -14,7 +14,7 @@ describe HearingRepository do
       }
     end
     let(:staff_record) { create(:staff) }
-    let(:hearing_day) { create(:hearing_day) }
+    let(:hearing_day) { create(:hearing_day, hearing_date: Date.new(2019, 3, 2)) }
 
     before do
       RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: staff_record.slogid)
@@ -22,6 +22,9 @@ describe HearingRepository do
 
     it "slots hearing at correct time" do
       HearingRepository.slot_new_hearing(hearing_day.id, time, legacy_appeal)
+
+      expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
+        .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
     end
   end
 
