@@ -109,10 +109,10 @@ module CaseReviewConcern
   end
 
   def vacols_id
-    task_id.split("-", 2).first if task_id
+    task_id&.split("-", 2)&.first
   end
 
   def created_in_vacols_date
-    task_id.split("-", 2).second.to_date if task_id
+    task_id&.split("-", 2)&.second&.to_date
   end
 end

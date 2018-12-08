@@ -147,6 +147,8 @@ describe AppealIntake do
   context "#complete!" do
     subject { intake.complete!(params) }
 
+    let(:legacy_opt_in_approved) { false }
+
     let(:params) { { request_issues: issue_data } }
 
     let(:issue_data) do
@@ -161,7 +163,8 @@ describe AppealIntake do
     let(:detail) do
       Appeal.create!(
         veteran_file_number: "64205555",
-        receipt_date: 3.days.ago
+        receipt_date: 3.days.ago,
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 
@@ -197,14 +200,28 @@ describe AppealIntake do
         ]
       end
 
-      it "submits a LegacyIssueOptin" do
-        expect(LegacyIssueOptin.count).to eq 0
-        expect(LegacyOptinProcessJob).to receive(:perform_now).once
+      context "legacy_opt_in_approved is false" do
+        it "does not submit a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
 
-        subject
+          subject
 
-        expect(LegacyIssueOptin.count).to eq 1
-        expect(LegacyIssueOptin.first).to be_submitted
+          expect(LegacyIssueOptin.count).to eq 0
+        end
+      end
+
+      context "legacy_opt_approved is true" do
+        let(:legacy_opt_in_approved) { true }
+
+        it "submits a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
+          expect(LegacyOptinProcessJob).to receive(:perform_now).once
+
+          subject
+
+          expect(LegacyIssueOptin.count).to eq 1
+          expect(LegacyIssueOptin.first).to be_submitted
+        end
       end
     end
   end

@@ -19,7 +19,7 @@ describe LegacyAppeal do
       create(:case, bfcorlid: "123456789S")
     end
 
-    let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1)] }
+    let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1, disposition: nil)] }
 
     scenario "when is active but not eligible" do
       allow(appeal).to receive(:active?).and_return(true)

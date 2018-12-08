@@ -95,6 +95,7 @@ export class AddIssuesPage extends React.Component {
                 issueIdx={index}
                 requestIssues={intakeData.requestIssues}
                 legacyOptInApproved={intakeData.legacyOptInApproved}
+                legacyAppeals={intakeData.legacyAppeals}
                 formType={formType} />
               <div className="issue-action">
                 <Button

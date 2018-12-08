@@ -10,7 +10,7 @@ class DecisionIssue < ApplicationRecord
 
   def title_of_active_review
     request_issue = RequestIssue.find_active_by_contested_decision_id(id)
-    request_issue.review_title if request_issue
+    request_issue&.review_title
   end
 
   def source_higher_level_review

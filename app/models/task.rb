@@ -86,7 +86,9 @@ class Task < ApplicationRecord
     params
   end
 
-  def update_from_params(params, _current_user)
+  def update_from_params(params, current_user)
+    verify_user_access!(current_user)
+
     params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
     update(params)
 
@@ -136,7 +138,7 @@ class Task < ApplicationRecord
 
   def mark_as_complete!
     update!(status: :completed)
-    parent.when_child_task_completed if parent
+    parent&.when_child_task_completed
   end
 
   def when_child_task_completed
@@ -198,7 +200,7 @@ class Task < ApplicationRecord
   def assign_to_user_data
     users = if assigned_to.is_a?(Organization)
               assigned_to.users
-            elsif parent && parent.assigned_to.is_a?(Organization)
+            elsif parent&.assigned_to.is_a?(Organization)
               parent.assigned_to.users.reject { |u| u == assigned_to }
             else
               []

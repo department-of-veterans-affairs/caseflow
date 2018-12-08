@@ -145,7 +145,7 @@ class RampElectionIntake < Intake
   end
 
   def existing_ramp_election_active?
-    existing_ramp_election && existing_ramp_election.end_product_active?
+    existing_ramp_election&.end_product_active?
   end
 
   def use_existing_ramp_election
