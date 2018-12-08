@@ -18,9 +18,6 @@ import {
   getIssueDiagnosticCodeLabel
 } from '../utils';
 import {
-  editStagedAppeal
-} from '../QueueActions';
-import {
   fullWidth,
   REMAND_REASONS,
   LEGACY_REMAND_REASONS,
@@ -64,8 +61,7 @@ type Params = Props & {|
   issues: Issues,
   appeal: Appeal,
   highlight: boolean,
-  amaDecisionIssues: boolean,
-  editStagedAppeal: typeof editStagedAppeal
+  amaDecisionIssues: boolean
 |};
 
 type RemandReasonOption = {|
@@ -100,20 +96,10 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
     const useDecisionIssues = !appeal.isLegacyAppeal && amaDecisionIssues;
     const issues = useDecisionIssues ? appeal.decisionIssues : appeal.issues;
 
-    const updatedIssues = issues.map((issue) => {
-      if (issue.id === issueId) {
-        return {
-          ...issue,
-          remand_reasons: remandReasons
-        };
-      }
-
-      return issue;
-    });
-
-    const attributes = useDecisionIssues ? { decisionIssues: updatedIssues } : { issues: updatedIssues };
-
-    this.props.editStagedAppeal(appealId, attributes);
+    return {
+      ..._.find(issues, (issue) => issue.id === issueId),
+      remand_reasons: remandReasons
+    };
   };
 
   getChosenOptions = (): Array<RemandReasonOption> => _.filter(this.state, (val) => val.checked);
@@ -174,7 +160,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       compact().
       value();
 
-    this.updateIssue(remandReasons);
+    return this.updateIssue(remandReasons);
   };
 
   scrollToWarning = () => {
@@ -353,11 +339,7 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  editStagedAppeal
-}, dispatch);
-
 export default (connect(
-  mapStateToProps, mapDispatchToProps, null, { withRef: true }
+  mapStateToProps, null, null, { withRef: true }
 )(IssueRemandReasonsOptions): React.ComponentType<Props, State>
 );
