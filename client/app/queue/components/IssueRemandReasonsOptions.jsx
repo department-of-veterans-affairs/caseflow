@@ -325,8 +325,8 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = ((state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)) &&
-    !appeal.isLegacyAppeal) ? appeal.decisionIssues : appeal.issues;
+  const amaDecisionIssues = state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
+  const issues = (amaDecisionIssues && !appeal.isLegacyAppeal) ? appeal.decisionIssues : appeal.issues;
 
   return {
     appeal,
@@ -335,7 +335,7 @@ const mapStateToProps = (state, ownProps) => {
     ].includes(issue.disposition)),
     issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
     highlight: state.ui.highlightFormItems,
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues
+    amaDecisionIssues
   };
 };
 
