@@ -42,6 +42,7 @@ module CaseReviewConcern
       decision_issue = DecisionIssue.create!(
         disposition: issue_attrs[:disposition],
         description: issue_attrs[:description],
+        benefit_type: issue_attrs[:benefit_type],
         participant_id: appeal.veteran.participant_id
       )
       request_issues.each do |request_issue|
