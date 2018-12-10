@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { css } from 'glamor';
@@ -92,7 +91,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
   }
 
   updateIssue = (remandReasons) => {
-    const { appeal, appealId, issueId, amaDecisionIssues } = this.props;
+    const { appeal, issueId, amaDecisionIssues } = this.props;
     const useDecisionIssues = !appeal.isLegacyAppeal && amaDecisionIssues;
     const issues = useDecisionIssues ? appeal.decisionIssues : appeal.issues;
 
