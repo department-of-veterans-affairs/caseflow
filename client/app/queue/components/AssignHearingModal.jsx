@@ -108,7 +108,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   addScheduleHearingTask = () => {
     const {
-      scheduleHearingTask, appeal, userId
+      scheduleHearingTask, appeal, userId, setLoading
     } = this.props;
 
     if (!scheduleHearingTask) {
@@ -125,10 +125,13 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         }
       };
 
+      setLoading(true);
+
       return ApiUtil.post('/tasks', payload).then((response) => {
         const resp = JSON.parse(response.text);
 
         this.props.onReceiveAmaTasks(resp.tasks.data);
+        setLoading(false);
       });
     }
   }
