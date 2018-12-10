@@ -81,6 +81,7 @@ export default class ContestedIssues extends React.PureComponent {
             {openDecisionHandler && <span>
               <Button
                 name="Edit"
+                id={`edit-issue-${decisionIssue.id}`}
                 onClick={openDecisionHandler([requestIssue.id], decisionIssue)}
                 classNames={['cf-btn-link']}
               />

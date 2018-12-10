@@ -190,6 +190,9 @@ RSpec.feature "Checkout flows" do
         find_field("Post AOJ", visible: false).sibling("label").click
 
         click_on "Continue"
+        # For some reason clicking too quickly on the next remand reason breaks the test.
+        # Adding sleeps is bad... but I'm not sure how else to get this to work.
+        sleep 1
 
         all("label", text: "Medical examinations", visible: false, count: 2)[1].click
         all("label", text: "Pre AOJ", visible: false, count: 2)[1].click
@@ -230,14 +233,22 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(decision_issue_text)
 
         # Update the decision issue
-        click_on "Edit"
+        all("button", text: "Edit", count: 2)[0].click
         fill_in "Text Box", with: updated_decision_issue_text
         click_on "Save"
         click_on "Continue"
 
         expect(page).to have_content("Review Remand Reasons")
+        click_on "Continue"
+        expect(page).to have_content("Issue 2 of 2")
+        expect(find("input", id: "2-medical_examinations", visible: false).checked?).to eq(true)
+        # Again, hate to add a sleep, but for some reason clicking continue too soon doesn't go
+        # to the next page. I think it's related to how we're using continue to load the next
+        # section of the remand reason screen.
+        sleep 1
 
         click_on "Continue"
+
         expect(page).to have_content("Evaluate Decision")
 
         find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
@@ -247,9 +258,10 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
         # The decision issue should have the new content the judge added
-        expect(appeal.decision_issues.count).to eq(1)
+        expect(appeal.decision_issues.count).to eq(2)
         expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
         expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
+        expect(appeal.decision_issues.second.remand_reasons.first.code).to eq("medical_examinations")
       end
     end
   end

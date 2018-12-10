@@ -26,7 +26,7 @@ module CaseReviewConcern
     # if a request_issue_id is passed that means this case is already using the new issue
     # editing flow and we need to continue to use it.
     if FeatureToggle.enabled?(:ama_decision_issues, user: RequestStore.store[:current_user]) ||
-       issues&.first && issue.first[:request_issue_ids]
+       issues&.first && issues.first[:request_issue_ids]
       delete_and_create_decision_issues
     else
       update_issue_dispositions
