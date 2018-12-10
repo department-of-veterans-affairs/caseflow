@@ -218,16 +218,13 @@ export default class DailyDocket extends React.Component {
       options={this.getHearingDateOptions(hearing)}
       value={hearing.editedDate ? hearing.editedDate : hearing.id}
       onChange={this.onHearingDateUpdate(hearing.id)}
-      readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
-    />
+      readOnly={readOnly || hearing.editedDisposition !== 'postponed'} />
     <RadioField
       name={`hearingTime${hearing.id}`}
       options={this.getHearingTimeOptions(hearing, readOnly)}
       value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.date, timezone)}
       onChange={this.onHearingTimeUpdate(hearing.id)}
-      hideLabel
-    />
-    </div>;
+      hideLabel /></div>;
   };
 
   getNotesField = (hearing) => {
@@ -243,15 +240,13 @@ export default class DailyDocket extends React.Component {
     return hearing.edited ? <div>
       <Button
         linkStyling
-        onClick={this.cancelHearingUpdate(hearing)}
-      >
+        onClick={this.cancelHearingUpdate(hearing)}>
         Cancel
       </Button>
       <Button
         styling={buttonStyling}
         disabled={hearing.dateEdited && !hearing.dispositionEdited}
-        onClick={this.saveHearing(hearing)}
-      >
+        onClick={this.saveHearing(hearing)}>
         Save
       </Button>
     </div> : null;
@@ -270,8 +265,7 @@ export default class DailyDocket extends React.Component {
         disposition: this.getDispositionDropdown(hearing, readOnly),
         hearingLocation: this.getHearingLocationDropdown(hearing),
         hearingDay: this.getHearingDayDropdown(hearing, readOnly)
-      },
-      {
+      }, {
         number: null,
         appellantInformation: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
         hearingTime: <div>{hearing.currentIssueCount} issues</div>,
@@ -363,8 +357,7 @@ export default class DailyDocket extends React.Component {
           title="Remove Hearing Day"
           closeHandler={this.props.onCancelRemoveHearingDay}
           confirmButton={confirmButton}
-          cancelButton={cancelButton}
-        >
+          cancelButton={cancelButton} >
           {this.getRemoveHearingDayMessage()}
         </Modal>
       </div>}
@@ -373,8 +366,7 @@ export default class DailyDocket extends React.Component {
           title={this.getDisplayLockModalTitle()}
           closeHandler={this.props.onCancelDisplayLockModal}
           confirmButton={confirmLockModalButton}
-          cancelButton={cancelLockModalButton}
-        >
+          cancelButton={cancelLockModalButton} >
           {this.getDisplayLockModalMessage()}
         </Modal>
       </div>}
@@ -382,22 +374,17 @@ export default class DailyDocket extends React.Component {
         type="success"
         styling={alertStyling}
         title={`You have successfully updated ${this.props.saveSuccessful.appellantMiFormatted ||
-          this.props.saveSuccessful.veteranMiFormatted}'s hearing.`}
-      /> }
+          this.props.saveSuccessful.veteranMiFormatted}'s hearing.`} /> }
       { this.props.displayLockSuccessMessage && <Alert
         type="success"
         styling={alertStyling}
         title={lockSuccessMessageTitle}
-        message={lockSuccessMessage}
-      />}
+        message={lockSuccessMessage} /> }
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
         <div {...backLinkStyling}>
           <Link
-            linkStyling
-            to="/schedule" >
-            &lt; Back to schedule
-          </Link>&nbsp;&nbsp;
+            linkStyling to="/schedule" >&lt; Back to schedule</Link>&nbsp;&nbsp;
           <Button
             {...editLinkStyling}
             linkStyling
@@ -412,8 +399,10 @@ export default class DailyDocket extends React.Component {
           { _.isEmpty(this.props.hearings) && this.props.userRoleBuild &&
           <Button
             linkStyling
-            onClick={this.props.onClickRemoveHearingDay}
-          >Remove Hearing Day</Button> }
+            onClick={this.props.onClickRemoveHearingDay} >
+            Remove Hearing Day
+          </Button>
+          }
         </div>
       </div>
       <span className="cf-push-right">
@@ -427,14 +416,12 @@ export default class DailyDocket extends React.Component {
           rowObjects={dailyDocketRows}
           summary="dailyDocket"
           bodyStyling={tableRowStyling}
-          slowReRendersAreOk
-        />}
+          slowReRendersAreOk />}
       </div>
       { _.isEmpty(dailyDocketRows) && <div {...topMarginStyling}>
         <StatusMessage
           title= "No Veterans are scheduled for this hearing day."
-          type="status"
-        /></div>}
+          type="status" /></div>}
       { !_.isEmpty(this.previouslyScheduledHearings(this.props.hearings)) && <div>
         <h1>Previously Scheduled</h1>
         <div {...noMarginStyling}>
