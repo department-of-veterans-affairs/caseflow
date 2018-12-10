@@ -553,7 +553,7 @@ class RegionalOffice
 
   def compute_station_key
     result = STATIONS.find { |_station, ros| [*ros].include? key }
-    result && result.first
+    result&.first
   end
 
   class << self

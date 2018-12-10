@@ -74,8 +74,7 @@ class GenericTask < Task
   private
 
   def task_is_assigned_to_user_within_organiztaion?(user)
-    parent &&
-      parent.assigned_to.is_a?(Organization) &&
+    parent&.assigned_to.is_a?(Organization) &&
       assigned_to.is_a?(User) &&
       parent.assigned_to.user_has_access?(user)
   end

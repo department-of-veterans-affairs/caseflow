@@ -33,7 +33,7 @@ class JudgeCaseAssignmentToAttorney
   end
 
   def created_in_vacols_date
-    task_id.split("-", 2).second.to_date if task_id
+    task_id&.split("-", 2)&.second&.to_date
   end
 
   def vacols_id
@@ -47,7 +47,7 @@ class JudgeCaseAssignmentToAttorney
   private
 
   def vacols_id_from_task_id
-    task_id.split("-", 2).first if task_id
+    task_id&.split("-", 2)&.first
   end
 
   def assigned_by_role_is_valid
