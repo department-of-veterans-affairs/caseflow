@@ -31,12 +31,10 @@ import Button from '../components/Button';
 
 import type { Appeal, Task } from './types/models';
 import type { UiStateMessage } from './types/state';
-import update from 'immutability-helper';
 
 type AdminActionType = {|
   actionLabel: ?string,
-  instructions: string,
-  isHidden: boolean
+  instructions: string
 |};
 
 type ComponentState = {|
@@ -65,7 +63,7 @@ const adminActionTemplate = () => {
   return {
     actionLabel: null,
     instructions: '',
-    isHidden: false
+    key: _.uniqueId('action_')
   };
 };
 
@@ -78,23 +76,31 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     };
   }
 
-  getVisibleAdminActions = () => this.state.adminActions.filter((action) => !action.isHidden);
+  removeAdminActionField = (index) => {
+    const fields = [...this.state.adminActions];
 
-  removeAdminActionFields = (index) => {
-    this.setState(update(this.state, { adminActions: { [index]: { isHidden: { $set: true } } } }));
+    fields.splice(index, 1);
+    this.setState({ adminActions: fields });
   }
 
-  addAdminActionFields = () => {
+  updateAdminActionField = (index, key, value) => {
+    const fields = [...this.state.adminActions];
+
+    fields[index][key] = value;
+    this.setState({ adminActions: fields });
+  }
+
+  addAdminActionField = () => {
     this.props.highlightInvalidFormItems(false);
-    this.setState(update(this.state, { adminActions: { [this.state.adminActions.length]: { $set: adminActionTemplate() } } }));
+    this.setState({ adminActions: [...this.state.adminActions, adminActionTemplate()] });
   }
 
-  validateForm = () => this.getVisibleAdminActions().every((action) => Boolean(action.actionLabel) && Boolean(action.instructions));
+  validateForm = () => this.state.adminActions.every((action) => Boolean(action.actionLabel) && Boolean(action.instructions));
 
   buildPayload = () => {
     const { task, appeal } = this.props;
 
-    return this.getVisibleAdminActions().map(
+    return this.state.adminActions.map(
       (action) => {
         return {
           label: action.actionLabel,
@@ -114,12 +120,11 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
         tasks: this.buildPayload()
       }
     };
-    const visibleActions = this.getVisibleAdminActions();
     const msgTitle = COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE;
-    const msgSubject = pluralize(COPY.ADD_COLOCATED_TASK_CONFIRMATION_SUBJECT, visibleActions.length);
-    const msgActions = visibleActions.map((action) => CO_LOCATED_ADMIN_ACTIONS[action.actionLabel]).join(', ');
+    const msgSubject = pluralize(COPY.ADD_COLOCATED_TASK_CONFIRMATION_SUBJECT, this.state.adminActions.length);
+    const msgActions = this.state.adminActions.map((action) => CO_LOCATED_ADMIN_ACTIONS[action.actionLabel]).join(', ');
     const successMsg = {
-      title: sprintf(msgTitle, visibleActions.length, msgSubject, msgActions),
+      title: sprintf(msgTitle, this.state.adminActions.length, msgSubject, msgActions),
       detail: <DispatchSuccessDetail task={task} />
     };
 
@@ -135,15 +140,11 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       });
   }
 
-  singleIssueTemplate = (index) => {
+  singleIssueTemplate = (action, total, index) => {
     const { highlightFormItems } = this.props;
-    const { instructions, actionLabel, isHidden } = this.state.adminActions[index];
+    const { instructions, actionLabel, key } = action;
 
-    if (isHidden) {
-      return null;
-    }
-
-    return <React.Fragment>
+    return <React.Fragment key={key}>
       <div {...marginTop(4)}>
         <SearchableDropdown
           errorMessage={highlightFormItems && !actionLabel ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
@@ -153,33 +154,42 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
             label,
             value
           }))}
-          onChange={(option) => this.setState(update(this.state, { adminActions: { [index]: { actionLabel: { $set: option.value } } } }))}
+          onChange={(option) => this.updateAdminActionField(index, 'actionLabel', option.value)}
           value={actionLabel} />
       </div>
       <div {...marginTop(4)}>
         <TextareaField
           errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-          onChange={(value) => this.setState(update(this.state, { adminActions: { [index]: { instructions: { $set: value } } } }))}
+          onChange={(value) => this.updateAdminActionField(index, 'instructions', value)}
           value={instructions} />
       </div>
       {/* TODO: Put this text in COPY.json */}
-      {this.getVisibleAdminActions().length > 1 &&
+      {total > 1 &&
         <Button
           willNeverBeLoading
           linkStyling
           name="Remove this action"
-          onClick={() => this.removeAdminActionFields(index)} />
+          onClick={() => this.removeAdminActionField(index)} />
       }
-      {this.state.adminActions.map((action, idx) => action.isHidden ? null : idx).filter((x) => x !== null).
-        pop() === index &&
+      {index === total - 1 &&
         <Button
           willNeverBeLoading
           name="+ Add another action"
-          onClick={() => this.addAdminActionFields()} />
+          onClick={() => this.addAdminActionField()} />
       }
     </React.Fragment>;
   };
+
+  actionFormList = (actions) => {
+    const total = actions.length;
+
+    return (
+      <React.Fragment>
+        { actions.map((action, index) => this.singleIssueTemplate(action, total, index)) }
+      </React.Fragment>
+    );
+  }
 
   render = () => {
     const { error } = this.props;
@@ -193,7 +203,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       {error && <Alert title={error.title} type="error">
         {error.detail}
       </Alert>}
-      { adminActions.map((obj, index) => this.singleIssueTemplate(index)) }
+    { this.actionFormList(adminActions) }
     </React.Fragment>;
   }
 }
