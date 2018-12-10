@@ -28,15 +28,15 @@ class LegacyIssueOptin < ApplicationRecord
 
   private
 
-  def record_original_disposition
+  def record_previous_disposition
     update!(
-      original_disposition_code: legacy_issue.disposition_id,
-      original_disposition_date: legacy_issue.disposition_date
+      previous_disposition_code: legacy_issue.disposition_id,
+      previous_disposition_date: legacy_issue.disposition_date
     )
   end
 
   def opt_in_legacy_issue
-    record_original_disposition
+    record_current_disposition
     transaction do
       close_legacy_issue_in_vacols
 
@@ -79,6 +79,14 @@ class LegacyIssueOptin < ApplicationRecord
     )
   end
 
+  def original_disposition_code
+    LegacyIssueOptin.find_by(request_issue_id: request_issue_id, action: :opt_in).previous_disposition_code
+  end
+
+  def original_disposition_date
+    LegacyIssueOptin.find_by(request_issue_id: request_issue_id, action: :opt_in).previous_disposition_date
+  end
+
   def close_legacy_appeal_in_vacols
     LegacyAppeal.close(
       appeals: [legacy_appeal],
@@ -108,12 +116,42 @@ class LegacyIssueOptin < ApplicationRecord
     legacy_appeal.case_record.bfmpro == "HIS" && legacy_appeal.case_record.bfcurloc == "99"
   end
 
+  def remanded_issues
+    # if the appeal is ready to be closed, all issues that used to
+    # have a disposition of "3" should be closed with "O" now
+
+    # if the appeal has been closed, and is being reopened, the same
+    # issues would have a disposition of "3" again
+
+    LegacyIssueOptin.where(
+      vacols_id: vacols_id,
+      previous_disposition_code: '3'
+    ).pluck(:vacols_sequence_id, :previous_disposition_date).uniq
+  end
+
   def revert_closed_remand_issues
     # put all remand issues with "O" back to "3"
+    remanded_issues.each do |remand_issue|
+      Issue.rollback_disposition_in_vacols!(
+        vacols_id: vacols_id,
+        vacols_sequence_id: remand_issue[0],
+        disposition_code_to_rollback: VACOLS_DISPOSITION_CODE,
+        original_disposition_code: '3',
+        original_disposition_date: remand_issue[1]
+      )
+    end
   end
 
   def revert_open_remand_issues
-    # put all remand issues with "3" back to "O"
+    # if this is happening, all remanded issues should have a disposition
+    # of "3" on a "HIS" appeal. This is rolling back and putting them back at "O"
+    remanded_issues.each do |remand_issue|
+      Issue.close_in_vacols!(
+        vacols_id: vacols_id,
+        vacols_sequence_id: remand_issue[0],
+        disposition_code: VACOLS_DISPOSITION_CODE
+      )
+    end
   end
 
   def legacy_appeal

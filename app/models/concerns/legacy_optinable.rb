@@ -5,7 +5,12 @@ module LegacyOptinable
 
   def create_legacy_issue_optin(request_issue:, action:)
     # check that the optin is complete before starting the rollback?
-    legacy_optin = LegacyIssueOptin.create!(request_issue: request_issue, action: action).tap(&:submit_for_processing!)
+    legacy_optin = LegacyIssueOptin.create!(
+      request_issue: request_issue,
+      action: action,
+      vacols_id: request_issue.vacols_id,
+      vacols_sequence_id: request_issue.vacols_sequence_id
+    ).tap(&:submit_for_processing!)
     if LegacyIssueOptin.run_async?
       LegacyOptinProcessJob.perform_later(legacy_optin)
     else
