@@ -20,10 +20,33 @@ import {
   onClickRemoveHearingDay,
   onCancelRemoveHearingDay,
   onSuccessfulHearingDayDelete,
+  onDisplayLockModal,
+  onCancelDisplayLockModal,
+  onUpdateLock,
+  onResetLockSuccessMessage,
   handleDailyDocketServerError
 } from '../actions';
 
 export class DailyDocketContainer extends React.Component {
+
+  componentDidUpdate = (prevProps) => {
+    if (!((_.isNil(prevProps.saveSuccessful) && this.props.saveSuccessful) || _.isNil(this.props.saveSuccessful))) {
+      this.props.onResetSaveSuccessful();
+    }
+    if (!((_.isNil(prevProps.displayLockSuccessMessage) && this.props.displayLockSuccessMessage) ||
+        _.isNil(this.props.displayLockSuccessMessage))) {
+      this.props.onResetLockSuccessMessage();
+    }
+     if (!((_.isNil(prevProps.dailyDocketServerError) && this.props.dailyDocketServerError) || _.isNil(this.props.dailyDocketServerError))) {
+      this.props.handleDailyDocketServerError();
+    }
+  };
+
+  componentWillUnmount = () => {
+    this.props.onResetSaveSuccessful();
+    this.props.onCancelRemoveHearingDay();
+    this.props.handleDailyDocketServerError();
+  };
 
   loadHearingDay = () => {
     const requestUrl = `/hearings/hearing_day/${this.props.match.params.hearingDayId}`;
@@ -39,18 +62,37 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
-  formatHearing = (hearing) => {
-    return {
-      disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
-      notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      master_record_updated: hearing.editedDate ? hearing.editedDate : null,
-      date: hearing.editedTime ? moment(hearing.date).set({
+  getTime = (hearing) => {
+    if (hearing.editedTime) {
+      return {
         // eslint-disable-next-line id-length
         h: hearing.editedTime.split(':')[0],
         // eslint-disable-next-line id-length
-        m: hearing.editedTime.split(':')[1]
+        m: hearing.editedTime.split(':')[1],
+        offset: moment.tz('America/New_York').format('Z')
+      };
+    }
+    const timeObject = moment(hearing.date);
 
-      }) : hearing.date
+    return {
+      // eslint-disable-next-line id-length
+      h: timeObject.hours(),
+      // eslint-disable-next-line id-length
+      m: timeObject.minutes(),
+      offset: timeObject.format('Z')
+    };
+
+  }
+
+  formatHearing = (hearing) => {
+    const time = this.getTime(hearing);
+
+    return {
+      disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
+      notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
+      master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
+        time } : null,
+      date: hearing.editedTime ? moment(hearing.date).set(time) : hearing.date
     };
   };
 
@@ -62,6 +104,13 @@ export class DailyDocketContainer extends React.Component {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
         this.props.onReceiveSavedHearing(resp);
+      });
+  };
+
+  updateLockHearingDay = (lock) => () => {
+    ApiUtil.patch(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { data: { lock } }).
+      then(() => {
+        this.props.onUpdateLock(lock);
       });
   };
 
@@ -103,6 +152,13 @@ export class DailyDocketContainer extends React.Component {
         displayRemoveHearingDayModal={this.props.displayRemoveHearingDayModal}
         onCancelRemoveHearingDay={this.props.onCancelRemoveHearingDay}
         deleteHearingDay={this.deleteHearingDay}
+        onDisplayLockModal={this.props.onDisplayLockModal}
+        onCancelDisplayLockModal={this.props.onCancelDisplayLockModal}
+        displayLockModal={this.props.displayLockModal}
+        updateLockHearingDay={this.updateLockHearingDay}
+        displayLockSuccessMessage={this.props.displayLockSuccessMessage}
+        onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
+        userRoleBuild={this.props.userRoleBuild}
         dailyDocketServerError={this.props.dailyDocketServerError}
       />
     </LoadingDataDisplay>;
@@ -116,8 +172,10 @@ const mapStateToProps = (state) => ({
   hearings: state.hearingSchedule.hearings,
   hearingDayOptions: state.hearingSchedule.hearingDayOptions,
   saveSuccessful: state.hearingSchedule.saveSuccessful,
-  dailyDocketServerError: state.hearingSchedule.dailyDocketServerError,
-  displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal
+  displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal,
+  displayLockModal: state.hearingSchedule.displayLockModal,
+  displayLockSuccessMessage: state.hearingSchedule.displayLockSuccessMessage,
+  dailyDocketServerError: state.hearingSchedule.dailyDocketServerError
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -132,6 +190,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onClickRemoveHearingDay,
   onCancelRemoveHearingDay,
   onSuccessfulHearingDayDelete,
+  onDisplayLockModal,
+  onCancelDisplayLockModal,
+  onUpdateLock,
+  onResetLockSuccessMessage,
   handleDailyDocketServerError
 }, dispatch);
 
