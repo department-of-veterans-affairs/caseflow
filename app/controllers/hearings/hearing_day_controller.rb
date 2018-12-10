@@ -253,8 +253,9 @@ class Hearings::HearingDayController < HearingScheduleController
       params[:room_info] = ""
       return true
     end
-    # Coming from regular create from RO algorithm
-    return if no_assign_room_logic_required
+    # Return if coming from regular create from RO algorithm
+    # where no assign_room variable is included in params
+    return true unless params.key?(:assign_room)
 
     # Coming from Add Hearing Day modal and room required
     hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date]).group(:room_info).count
@@ -265,25 +266,20 @@ class Hearings::HearingDayController < HearingScheduleController
     !available_room.nil?
   end
 
-  def no_assign_room_logic_required
-    !params.key?(:assign_room) && !params[:room_info].nil?
-  end
-
   def do_not_assign_room
     params.key?(:assign_room) && (!params[:assign_room] || params[:assign_room] == "false")
   end
 
   def select_available_room(hearing_count_by_room)
     available_room = nil
-    (1..13).each do |n|
-      room_count = hearing_count_by_room[n.to_s]
-      Rails.logger.info("room_count is: #{room_count}")
+    (1..HearingRooms::ROOMS.size).each do |hearing_room|
+      room_count = hearing_count_by_room[hearing_room.to_s]
       if room_count.nil?
-        available_room = n.to_s
+        available_room = hearing_room.to_s
         break
       end
       if !room_count.nil? && room_count == 0
-        available_room = n.to_s
+        available_room = hearing_room.to_s
         break
       end
     end
