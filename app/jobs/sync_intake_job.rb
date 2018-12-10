@@ -13,16 +13,14 @@ class SyncIntakeJob < CaseflowJob
     appeals_to_reclose = RampClosedAppeal.appeals_to_reclose
     reclosed_appeals = []
     appeals_to_reclose.each do |appeal|
-      begin
-        appeal.reclose!
-        reclosed_appeals << appeal
-      rescue StandardError => e
-        # Rescue and capture errors so they don't cause the job to stop
-        Raven.capture_exception(e)
-      end
+      appeal.reclose!
+      reclosed_appeals << appeal
+    rescue StandardError => e
+      # Rescue and capture errors so they don't cause the job to stop
+      Raven.capture_exception(e, extra: { ramp_closed_appeal_id: appeal.id })
     end
     slack_service.send_notification(
-      "Intake: Successfully reclosed #{reclosed_appeals.count} out of #{appeals_to_reclose.count} RAMP VACOLS appeals)"
+      "Intake: Successfully reclosed #{reclosed_appeals.count} out of #{appeals_to_reclose.count} RAMP VACOLS appeals"
     )
   end
 end

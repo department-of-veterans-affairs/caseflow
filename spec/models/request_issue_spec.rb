@@ -381,10 +381,12 @@ describe RequestIssue do
           bfdsoc: 3.days.ago
         ))
         allow(AppealRepository).to receive(:issues).with("vacols1")
-          .and_return([
-                        Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250]),
-                        Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251])
-                      ])
+          .and_return(
+            [
+              Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250], disposition: nil),
+              Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251], disposition: nil)
+            ]
+          )
 
         # Active and not eligible
         create(:legacy_appeal, vacols_case: create(
@@ -396,10 +398,12 @@ describe RequestIssue do
           bfdsoc: 4.months.ago
         ))
         allow(AppealRepository).to receive(:issues).with("vacols2")
-          .and_return([
-                        Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243]),
-                        Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242])
-                      ])
+          .and_return(
+            [
+              Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243], disposition: nil),
+              Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242], disposition: nil)
+            ]
+          )
       end
 
       after do
@@ -509,7 +513,8 @@ describe RequestIssue do
                 profile_date: ratings.profile_date,
                 decision_review_type: "HigherLevelReview",
                 decision_review_id: review.id,
-                benefit_type: "compensation"
+                benefit_type: "compensation",
+                end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
               )
               expect(rating_request_issue.processed?).to eq(true)
             end
@@ -534,10 +539,10 @@ describe RequestIssue do
               expect(rating_request_issue.decision_issues.first).to have_attributes(
                 participant_id: veteran.participant_id,
                 disposition: "allowed",
-                disposition_date: end_product_establishment.last_synced_at,
                 decision_review_type: "HigherLevelReview",
                 decision_review_id: review.id,
-                benefit_type: "compensation"
+                benefit_type: "compensation",
+                end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
               )
               expect(rating_request_issue.processed?).to eq(true)
             end
@@ -575,10 +580,10 @@ describe RequestIssue do
           expect(request_issue.decision_issues.first).to have_attributes(
             participant_id: veteran.participant_id,
             disposition: "allowed",
-            disposition_date: end_product_establishment.last_synced_at,
             decision_review_type: "HigherLevelReview",
             decision_review_id: review.id,
-            benefit_type: "compensation"
+            benefit_type: "compensation",
+            end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
           )
           expect(request_issue.processed?).to eq(true)
         end

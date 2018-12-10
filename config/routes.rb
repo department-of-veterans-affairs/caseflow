@@ -120,7 +120,7 @@ Rails.application.routes.draw do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
-    resources :hearing_day, only: [:index, :show]
+    resources :hearing_day, only: [:index, :show, :destroy, :update]
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
@@ -134,10 +134,9 @@ Rails.application.routes.draw do
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
-  put 'hearings/:hearing_key/hearing_day', to: "hearings/hearing_day#update"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
-  get 'hearings/schedule/assign/veterans', to: "hearings/hearing_day#veterans_ready_for_hearing"
+  get 'hearings/schedule/assign/veterans', to: "hearings/hearing_day#appeals_ready_for_hearing_schedule"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
 
   resources :hearings, only: [:update]

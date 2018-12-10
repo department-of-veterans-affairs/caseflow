@@ -10,6 +10,7 @@ class DecisionReview < ApplicationRecord
 
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
+  has_many :decision_issues, as: :decision_review
 
   before_destroy :remove_issues!
 
@@ -44,18 +45,19 @@ class DecisionReview < ApplicationRecord
   def ui_hash
     {
       veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
+        name: veteran&.name&.formatted(:readable_short),
         fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
+        formName: veteran&.name&.formatted(:form)
       },
-      relationships: veteran && veteran.relationships,
+      relationships: veteran&.relationships,
       claimant: claimant_participant_id,
       veteranIsNotClaimant: veteran_is_not_claimant,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
+      requestIssues: request_issues.map(&:ui_hash),
+      contestableIssuesByDate: contestable_issues.map(&:serialize)
     }
   end
 
@@ -106,8 +108,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def serialized_legacy_appeals
-    return [] unless FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
-    return [] unless available_legacy_appeals
+    return [] unless legacy_opt_in_enabled?
+    return [] unless available_legacy_appeals.any?
 
     available_legacy_appeals.map do |legacy_appeal|
       {
@@ -125,7 +127,37 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def on_decision_issues_sync_processed(end_product_establishment)
+    # no-op, can be overwritten
+  end
+
+  def contestable_issues
+    contestable_issues_from_ratings + contestable_issues_from_decision_issues
+  end
+
   private
+
+  def cached_rating_issues
+    cached_serialized_ratings.inject([]) do |result, rating_hash|
+      result + rating_hash[:issues].map { |rating_issue_hash| RatingIssue.deserialize(rating_issue_hash) }
+    end
+  end
+
+  def unfiltered_contestable_issues_from_ratings
+    cached_rating_issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
+  end
+
+  def contestable_issues_from_ratings
+    unfiltered_contestable_issues_from_ratings.reject do |contestable_issue|
+      contestable_issues_from_decision_issues.any? do |potential_duplicate|
+        contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
+      end
+    end
+  end
+
+  def contestable_issues_from_decision_issues
+    contestable_decision_issues.map { |decision_issue| ContestableIssue.from_decision_issue(decision_issue, self) }
+  end
 
   def available_legacy_appeals
     # If a Veteran does not opt-in to withdraw legacy appeals, do not show inactive appeals
@@ -174,6 +206,6 @@ class DecisionReview < ApplicationRecord
   end
 
   def legacy_opt_in_enabled?
-    FeatureToggle.enabled?(:intake_legacy_opt_in)
+    FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
   end
 end

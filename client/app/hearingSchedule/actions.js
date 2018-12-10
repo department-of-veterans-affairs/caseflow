@@ -235,3 +235,41 @@ export const toggleLocationFilterVisibility = () => ({
 export const toggleVljFilterVisibility = () => ({
   type: ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN
 });
+
+export const onClickRemoveHearingDay = () => ({
+  type: ACTIONS.ON_CLICK_REMOVE_HEARING_DAY
+});
+
+export const onCancelRemoveHearingDay = () => ({
+  type: ACTIONS.CANCEL_REMOVE_HEARING_DAY
+});
+
+export const onSuccessfulHearingDayDelete = (date) => ({
+  type: ACTIONS.SUCCESSFUL_HEARING_DAY_DELETE,
+  payload: {
+    date
+  }
+});
+
+export const onResetDeleteSuccessful = () => ({
+  type: ACTIONS.RESET_DELETE_SUCCESSFUL
+});
+
+export const onDisplayLockModal = () => ({
+  type: ACTIONS.DISPLAY_LOCK_MODAL
+});
+
+export const onCancelDisplayLockModal = () => ({
+  type: ACTIONS.CANCEL_DISPLAY_LOCK_MODAL
+});
+
+export const onUpdateLock = (lock) => ({
+  type: ACTIONS.UPDATE_LOCK,
+  payload: {
+    lock
+  }
+});
+
+export const onResetLockSuccessMessage = () => ({
+  type: ACTIONS.RESET_LOCK_SUCCESS_MESSAGE
+});

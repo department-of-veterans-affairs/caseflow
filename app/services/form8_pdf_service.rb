@@ -3,8 +3,8 @@
 require "pdf_forms"
 
 class Form8PdfService
-  PDF_PAGE_1 = "form1[0].#subform[0].#area[0].".freeze
-  PDF_PAGE_2 = "form1[0].#subform[1].".freeze
+  PDF_PAGE_1 = "form1[0].#subform[0].#area[0]."
+  PDF_PAGE_2 = "form1[0].#subform[1]."
 
   # Currently, the only thing on Page 2 of the VA Form 8 is the continued
   # remarks. As a result, we'll just say anything except for that is actually
@@ -42,7 +42,7 @@ class Form8PdfService
     certification_date: "TextField1[10]"
   }.freeze
 
-  PDF_CHECKBOX_SYMBOL = "1".freeze
+  PDF_CHECKBOX_SYMBOL = "1"
 
   # Rubocop complains about the number of conditions here,
   # but IMO it's pretty clear and I don't want to break it up

@@ -87,7 +87,14 @@ class RequestIssue < ApplicationRecord
 
     def find_active_by_reference_id(reference_id)
       request_issue = unscoped.find_by(rating_issue_reference_id: reference_id, removed_at: nil, ineligible_reason: nil)
-      return unless request_issue && request_issue.status_active?
+      return unless request_issue&.status_active?
+      request_issue
+    end
+
+    def find_active_by_contested_decision_id(contested_decision_issue_id)
+      request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id,
+                                       removed_at: nil, ineligible_reason: nil)
+      return unless request_issue&.status_active?
       request_issue
     end
   end
@@ -133,8 +140,9 @@ class RequestIssue < ApplicationRecord
       ramp_claim_id: ramp_claim_id,
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id,
+      vacols_issue: vacols_issue.try(:intake_attributes),
       ineligible_reason: ineligible_reason,
-      title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+      title_of_active_review: title_of_active_review
     }
   end
 
@@ -161,7 +169,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def previous_request_issue
-    contested_decision_issue && contested_decision_issue.request_issues.first
+    contested_decision_issue&.request_issues&.first
   end
 
   def sync_decision_issues!
@@ -170,6 +178,8 @@ class RequestIssue < ApplicationRecord
     attempted!
     decision_issues.delete_all
     create_decision_issues
+
+    end_product_establishment.on_decision_issue_sync_processed
   end
 
   def legacy_issue_opted_in?
@@ -182,6 +192,18 @@ class RequestIssue < ApplicationRecord
   end
 
   private
+
+  def title_of_active_review
+    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+  end
+
+  def vacols_issue
+    return unless vacols_id && vacols_sequence_id
+    @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
+      # coerce both into strings since VACOLS may store as int
+      issue.vacols_sequence_id.to_s == vacols_sequence_id.to_s
+    end
+  end
 
   def create_decision_issues
     if rating?
@@ -206,10 +228,9 @@ class RequestIssue < ApplicationRecord
       decision_issues.create!(
         participant_id: review_request.veteran.participant_id,
         disposition: contention_disposition[:disposition],
-        # use epe last_synced_at as a proxy for when the decision was made
-        disposition_date: end_product_establishment.last_synced_at,
         decision_review: review_request,
-        benefit_type: benefit_type
+        benefit_type: benefit_type,
+        end_product_last_action_date: end_product_establishment.result.last_action_date
       )
     end
   end
@@ -229,7 +250,8 @@ class RequestIssue < ApplicationRecord
         decision_text: rating_issue.decision_text,
         profile_date: rating_issue.profile_date,
         decision_review: review_request,
-        benefit_type: benefit_type
+        benefit_type: benefit_type,
+        end_product_last_action_date: end_product_establishment.result.last_action_date
       )
     end
   end
@@ -288,9 +310,7 @@ class RequestIssue < ApplicationRecord
     return unless vacols_id
     return unless review_request.serialized_legacy_appeals.any?
 
-    legacy_appeal = review_request.serialized_legacy_appeals.find { |appeal| appeal[:vacols_id] == vacols_id }
-
-    if !legacy_appeal[:eligible_for_soc_opt_in]
+    if !vacols_issue.eligible_for_opt_in?
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
   end
