@@ -281,6 +281,14 @@ const errorTasksAndAppealsOfAttorney = ({ attorneyId, error }) => ({
   }
 });
 
+export const errorFetchingDocumentCount = (appealId: string, error: Object) => ({
+  type: ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT,
+  payload: {
+    appealId,
+    error
+  }
+});
+
 export const fetchTasksAndAppealsOfAttorney = (attorneyId: string, params: Object) => (dispatch: Dispatch) => {
   const requestOptions = {
     timeout: true
