@@ -119,8 +119,11 @@ RSpec.feature "Checkout flows" do
       let(:decision_issue_text) { "This is a test decision issue" }
       let(:updated_decision_issue_text) { "This is updated text" }
 
+<<<<<<< HEAD
       let(:other_issue_tex) { "This is a second issue" }
 
+=======
+>>>>>>> ccb69ce6ae9d9241cad86da71384249b29553030
       let(:decision_issue_disposition) { "Remanded" }
       let(:benefit_type) { "Education" }
       let(:old_benefit_type) { Constants::BENEFIT_TYPES[appeal.request_issues.first.benefit_type] }
@@ -239,6 +242,7 @@ RSpec.feature "Checkout flows" do
         click_on "Continue"
 
         expect(page).to have_content("Review Remand Reasons")
+
         click_on "Continue"
         expect(page).to have_content("Issue 2 of 2")
         expect(find("input", id: "2-medical_examinations", visible: false).checked?).to eq(true)
