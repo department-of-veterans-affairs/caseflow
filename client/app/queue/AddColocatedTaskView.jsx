@@ -95,7 +95,9 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     this.setState({ adminActions: [...this.state.adminActions, adminActionTemplate()] });
   }
 
-  validateForm = () => this.state.adminActions.every((action) => Boolean(action.actionLabel) && Boolean(action.instructions));
+  validateForm = () => this.state.adminActions.every(
+    (action) => Boolean(action.actionLabel) && Boolean(action.instructions)
+  );
 
   buildPayload = () => {
     const { task, appeal } = this.props;
@@ -203,7 +205,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       {error && <Alert title={error.title} type="error">
         {error.detail}
       </Alert>}
-    { this.actionFormList(adminActions) }
+      { this.actionFormList(adminActions) }
     </React.Fragment>;
   }
 }
