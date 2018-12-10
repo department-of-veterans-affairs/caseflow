@@ -365,9 +365,9 @@ RSpec.feature "Checkout flows" do
 
         issue_dispositions = page.find_all(".Select-control", text: "Select Disposition", count: appeal.issues.length)
 
-        # We want one exactly issue to be a remand to make the remand reason screen show up.
+        # We want two issues to be a remand to make the remand reason screen show up.
         issue_dispositions.each_with_index do |row, index|
-          disposition = (index == 0) ? "Remanded" : "Allowed"
+          disposition = (index == 0 || index == 1) ? "Remanded" : "Allowed"
           row.click
           page.find("div", class: "Select-option", text: disposition).click
         end
@@ -376,8 +376,17 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.first.note)
 
-        find_field("Service treatment records", visible: false).sibling("label").click
-        find_field("After certification", visible: false).sibling("label").click
+        page.all('label', text: 'Current findings')[0].click
+        page.all('label', text: 'After certification')[0].click
+        click_on "Continue"
+
+        expect(page).to have_content("Select Remand Reasons")
+        expect(page).to have_content(appeal.issues.second.note)
+        page.all('label', text: 'Current findings')[1].click
+        page.all('label', text: 'Before certification')[1].click
+
+        page.all('label', text: 'Nexus opinion')[1].click
+        page.all('label', text: 'After certification')[2].click
 
         click_on "Continue"
         expect(page).to have_content("Submit Draft Decision for Review")
@@ -398,6 +407,9 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
         expect(page.current_path).to eq("/queue")
+        expect(appeal.reload.issues.first.remand_reasons.size).to eq 1
+        expect(appeal.issues.second.remand_reasons.size).to eq 2
+        expect(appeal.issues.third.remand_reasons.size).to eq 0
       end
 
       scenario "submits omo request" do
