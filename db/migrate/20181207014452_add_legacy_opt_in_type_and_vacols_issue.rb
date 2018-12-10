@@ -1,7 +1,10 @@
 class AddLegacyOptInTypeAndVacolsIssue < ActiveRecord::Migration[5.1]
   def change
-    add_column :request_issues, :vacols_issue, :json
     add_column :legacy_issue_optins, :action, :string
     add_column :legacy_issue_optins, :original_appeal, :json
+    add_column :legacy_issue_optins, :vacols_id, :string
+    add_column :legacy_issue_optins, :vacols_sequence_id, :string
+    add_column :legacy_issue_optins, :original_disposition_code, :string
+    add_column :legacy_issue_optins, :original_disposition_date, :date
   end
 end

@@ -29,16 +29,9 @@ class LegacyIssueOptin < ApplicationRecord
   private
 
   def opt_in_legacy_issue
-    case request_issue.vacols_issue[:disposition_code]
-    when nil
-      transaction do
-        close_legacy_issue_in_vacols
-        close_legacy_appeal_in_vacols if legacy_appeal_needs_closing?
-      end
-    when '3'
-      close_remanded_issue
-    when *WHITELIST_DISPOSITION_CODES
+    transaction do
       close_legacy_issue_in_vacols
+      close_legacy_appeal_in_vacols if legacy_appeal_needs_closing?
     end
   end
 
@@ -61,9 +54,8 @@ class LegacyIssueOptin < ApplicationRecord
 
   def legacy_appeal_needs_closing?
     # if all the issues are closed, the appeal should be closed.
-    # depending on how we do remanded issues
-    # might need to add a check for if the issue has been moved to a post remand appeal
-    # in which case it would still appear active on the original appeal
+    # if any of the issues with a disposition of "O" were remands
+    # open the post-remand appeal, and convert the issue dispositions to 3
     legacy_appeal.issues.reject(&:closed?).empty?
   end
 
@@ -83,12 +75,14 @@ class LegacyIssueOptin < ApplicationRecord
       rollback_issue_disposition
 
       if legacy_appeal.reopen_appeal_on_rollback?
-        LegacyAppeal.reopen(
-          appeals: [legacy_appeal],
-          user: RequestStore.store[:current_user],
-          disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE],
-          reopen_issues: false
-          )
+        transaction do
+          LegacyAppeal.reopen(
+            appeals: [legacy_appeal],
+            user: RequestStore.store[:current_user],
+            disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE],
+            reopen_issues: false
+            )
+        end
       end
     end
   end
@@ -103,18 +97,19 @@ class LegacyIssueOptin < ApplicationRecord
     )
   end
 
-  def close_remanded_issue
-  end
-
   def reopen_remanded_issue
-    # delete the follow-up issue, isskey is follow_up_appeal key
-      # and issseq is the vacols sequence id
-    # if the original appeal is in HIS status,
-      # update the original appeal's attributes back to Remand stuff
-    # delete the follow-up appeal if no issues
+    # check if
+    # put the disposition back to 3
+    # reopen using the remand version of reopening
+    # check if the post-remand appeal has any issues left
+
   end
 
   def legacy_appeal
     @legacy_appeal ||= LegacyAppeal.find_or_create_by_vacols_id(request_issue.vacols_id)
+  end
+
+  def legacy_issue
+    
   end
 end

@@ -191,7 +191,7 @@ class Issue
       vacols_id: id,
       vacols_sequence_id: vacols_sequence_id,
       description: friendly_description,
-      disposition_id: disposition_id,
+      disposition_code: disposition_id,
       disposition: disposition,
       disposition_date: disposition_date,
       close_date: close_date,
