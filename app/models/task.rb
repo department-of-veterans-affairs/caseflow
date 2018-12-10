@@ -12,7 +12,7 @@ class Task < ApplicationRecord
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
 
-  after_update :update_parent_status
+  after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym    => Constants.TASK_STATUSES.assigned,
@@ -101,6 +101,7 @@ class Task < ApplicationRecord
 
   def update_status(new_status)
     return unless new_status
+
     update!(status: new_status)
   end
 
@@ -232,7 +233,11 @@ class Task < ApplicationRecord
   private
 
   def update_parent_status
-    parent.when_child_task_completed if saved_change_to_attribute?("status") && completed? && parent
+    parent.when_child_task_completed
+  end
+
+  def status_changed_to_completed_and_has_parent?
+    saved_change_to_attribute?("status") && completed? && parent
   end
 
   def users_to_options(users)
