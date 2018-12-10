@@ -240,7 +240,7 @@ class EstablishClaim < Dispatch::Task
   end
 
   def sent_email
-    claim_establishment && claim_establishment.sent_email
+    claim_establishment&.sent_email
   end
 
   def ep_created?

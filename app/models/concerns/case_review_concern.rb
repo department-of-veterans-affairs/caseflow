@@ -42,6 +42,7 @@ module CaseReviewConcern
       decision_issue = DecisionIssue.create!(
         disposition: issue_attrs[:disposition],
         description: issue_attrs[:description],
+        benefit_type: issue_attrs[:benefit_type],
         participant_id: appeal.veteran.participant_id
       )
       request_issues.each do |request_issue|
@@ -108,10 +109,10 @@ module CaseReviewConcern
   end
 
   def vacols_id
-    task_id.split("-", 2).first if task_id
+    task_id&.split("-", 2)&.first
   end
 
   def created_in_vacols_date
-    task_id.split("-", 2).second.to_date if task_id
+    task_id&.split("-", 2)&.second&.to_date
   end
 end
