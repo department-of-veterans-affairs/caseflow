@@ -49,7 +49,7 @@ class SelectRemandReasonsView extends React.Component {
       issuesRendered,
       renderedChildren
     } = this.state;
-    const useDecisionIssues = !appeal.isLegacyAppeal && (amaDecisionIssues || appeal.decisionIssues);
+    const useDecisionIssues = !appeal.isLegacyAppeal && (amaDecisionIssues || !_.isEmpty(appeal.decisionIssues));
 
     if (issuesRendered < issues.length) {
       this.setState({ issuesRendered: Math.min(issuesRendered + 1, issues.length) });

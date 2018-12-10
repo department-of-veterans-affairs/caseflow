@@ -119,11 +119,13 @@ RSpec.feature "Checkout flows" do
       let(:decision_issue_text) { "This is a test decision issue" }
       let(:updated_decision_issue_text) { "This is updated text" }
 
+      let(:other_issue_tex) { "This is a second issue" }
+
       let(:decision_issue_disposition) { "Remanded" }
       let(:benefit_type) { "Education" }
       let(:old_benefit_type) { Constants::BENEFIT_TYPES[appeal.request_issues.first.benefit_type] }
 
-      scenario "veteran is the appellant" do
+      scenario "veteran is the appellant", focus: true do
         visit "/queue"
         click_on "(#{appeal.veteran_file_number})"
 
@@ -145,6 +147,7 @@ RSpec.feature "Checkout flows" do
 
         expect(page).to have_content "Each request issue must have at least one decision issue"
 
+        # Add a first decision issue
         click_on "+ Add Decision"
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
@@ -161,14 +164,35 @@ RSpec.feature "Checkout flows" do
 
         click_on "Save"
 
+        # Add a second decision issue
+        click_on "+ Add Decision"
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: other_issue_tex
+
+        find(".Select-control", text: "Select Disposition").click
+        find("div", class: "Select-option", text: decision_issue_disposition).click
+
+        find(".Select-control", text: old_benefit_type).click
+        find("div", class: "Select-option", text: benefit_type).click
+
+        click_on "Save"
+
         # Ensure the decision issue is on the select disposition screen
         expect(page).to have_content(decision_issue_text)
         expect(page).to have_content(decision_issue_disposition)
+
+        expect(page).to have_content(other_issue_tex)
 
         click_on "Continue"
 
         find_field("Service treatment records", visible: false).sibling("label").click
         find_field("Post AOJ", visible: false).sibling("label").click
+
+        click_on "Continue"
+
+        all("label", text: "Medical examinations", visible: false, count: 2)[1].click
+        all("label", text: "Pre AOJ", visible: false, count: 2)[1].click
 
         click_on "Continue"
 
@@ -188,10 +212,11 @@ RSpec.feature "Checkout flows" do
 
         expect(page.current_path).to eq("/queue")
 
-        expect(appeal.decision_issues.count).to eq(1)
+        expect(appeal.decision_issues.count).to eq(2)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
         expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
         expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
+        expect(appeal.decision_issues.second.remand_reasons.first.code).to eq("medical_examinations")
 
         # Switch to the judge and ensure they can update decision issues
         User.authenticate!(user: judge_user)
