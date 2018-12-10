@@ -83,51 +83,25 @@ describe HearingDay do
   end
 
   context "update hearing" do
-    let(:hearing) do
-      RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
-      Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
-      HearingDay.create_hearing_day(hearing_hash)
-    end
+    let(:hearing_day) { create(:hearing_day) }
 
-    let(:test_hearing_date_vacols) do
-      current_date = Time.zone.today
-      Time.use_zone("Eastern Time (US & Canada)") do
-        Time.zone.local(current_date.year, current_date.month, current_date.day, 8, 30, 0).to_datetime
-      end
-    end
-
-    let(:test_hearing_date_caseflow) do
-      Time.zone.local(2019, 5, 15, 12, 30, 0).to_datetime # UTC
-    end
-
-    context "update judge attribute in VACOLS hearing day" do
+    context "updates attributes in hearing day" do
       let(:hearing_hash) do
-        { hearing_type: "C",
-          hearing_date: test_hearing_date_vacols,
+        { hearing_type: "V",
+          hearing_date: Date.new(2019, 12, 7),
           regional_office: "RO89",
-          room_info: "5" }
+          room_info: "5",
+          lock: true }
       end
 
-      it "updates judge" do
-        hearing_id = hearing[:id] + 1
-        hearing_to_update = HearingDay.find_hearing_day(nil, hearing_id)
-        HearingDay.update_hearing_day(hearing_to_update, judge_id: "987")
-        expect(hearing_to_update[:board_member]).to eq "987"
-      end
-    end
-
-    context "update judge attribute in Caseflow hearing day" do
-      let(:hearing_hash) do
-        { hearing_type: "C",
-          hearing_date: test_hearing_date_caseflow,
-          regional_office: "RO89",
-          room_info: "5" }
-      end
-
-      it "updates judge", skip: "This is passing locally but failing on Jenkins" do
-        hearing_to_update = HearingDay.find_hearing_day(nil, hearing[:id])
-        HearingDay.update_hearing_day(hearing_to_update, judge_id: "987")
-        expect(hearing_to_update[:judge_id]).to_s.to eq "987"
+      it "updates attributes" do
+        HearingDay.find(hearing_day.id).update!(hearing_hash)
+        updated_hearing_day = HearingDay.find(hearing_day.id).reload
+        expect(updated_hearing_day.hearing_type).to eql("V")
+        expect(updated_hearing_day.hearing_date).to eql(Date.new(2019, 12, 7))
+        expect(updated_hearing_day.regional_office).to eql("RO89")
+        expect(updated_hearing_day.room_info).to eql("5")
+        expect(updated_hearing_day.lock).to eql(true)
       end
     end
   end
