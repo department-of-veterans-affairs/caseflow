@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -352,9 +354,6 @@ export default class DailyDocket extends React.Component {
       'Day' : 'You have successfully unlocked this Hearing Day';
     const lockSuccessMessage = this.props.dailyDocket.lock ? 'You cannot add more veterans to this hearing day, ' +
       'but you can edit existing entries' : 'You can now add more veterans to this hearing day';
-    const dailyDocketServerErrorTitle = 'Unable to delete Hearing Day ' + 
-    `${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')} ` + ' in Caseflow';
-    const dailyDocketServerErrorMessage = 'Please delete the hearing day through VACOLS';
 
     return <AppSegment filledBackground>
       {this.props.displayRemoveHearingDayModal && <div>
@@ -392,12 +391,13 @@ export default class DailyDocket extends React.Component {
         title={lockSuccessMessageTitle}
         message={lockSuccessMessage}
       />}
-      
-       { this.props.dailyDocketServerError && <Alert
+
+      { this.props.dailyDocketServerError && <Alert
         type="error"
         styling={alertStyling}
-        title={dailyDocketServerErrorTitle}
-        message={dailyDocketServerErrorMessage}
+        title={` Unable to delete Hearing Day 
+                ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')} in Caseflow.`}
+        message="Please delete the hearing day through VACOLS"
       />}
 
       <div className="cf-push-left">

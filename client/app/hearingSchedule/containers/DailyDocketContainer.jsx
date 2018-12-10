@@ -24,7 +24,8 @@ import {
   onCancelDisplayLockModal,
   onUpdateLock,
   onResetLockSuccessMessage,
-  handleDailyDocketServerError
+  handleDailyDocketServerError,
+  onResetDailyDocketAfterError
 } from '../actions';
 
 export class DailyDocketContainer extends React.Component {
@@ -37,15 +38,16 @@ export class DailyDocketContainer extends React.Component {
         _.isNil(this.props.displayLockSuccessMessage))) {
       this.props.onResetLockSuccessMessage();
     }
-     if (!((_.isNil(prevProps.dailyDocketServerError) && this.props.dailyDocketServerError) || _.isNil(this.props.dailyDocketServerError))) {
-      this.props.handleDailyDocketServerError();
+    if (!((_.isNil(prevProps.dailyDocketServerError) && this.props.dailyDocketServerError) ||
+      _.isNil(this.props.dailyDocketServerError))) {
+      this.props.onResetDailyDocketAfterError();
     }
   };
 
   componentWillUnmount = () => {
     this.props.onResetSaveSuccessful();
     this.props.onCancelRemoveHearingDay();
-    this.props.handleDailyDocketServerError();
+    this.props.onResetDailyDocketAfterError();
   };
 
   loadHearingDay = () => {
@@ -160,6 +162,7 @@ export class DailyDocketContainer extends React.Component {
         onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
         userRoleBuild={this.props.userRoleBuild}
         dailyDocketServerError={this.props.dailyDocketServerError}
+        onResetDailyDocketAfterError={this.props.onResetDailyDocketAfterError}
       />
     </LoadingDataDisplay>;
 
@@ -194,7 +197,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCancelDisplayLockModal,
   onUpdateLock,
   onResetLockSuccessMessage,
-  handleDailyDocketServerError
+  handleDailyDocketServerError,
+  onResetDailyDocketAfterError
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

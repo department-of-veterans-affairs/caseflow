@@ -289,6 +289,11 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
       displayRemoveHearingDayModal: { $set: false }
     });
 
+  case ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR:
+    return update(state, {
+      $unset: ['dailyDocketServerError']
+    });
+
   case ACTIONS.RESET_DELETE_SUCCESSFUL:
     return update(state, {
       $unset: ['successfulHearingDayDelete']
