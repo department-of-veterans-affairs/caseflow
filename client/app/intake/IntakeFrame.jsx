@@ -14,7 +14,7 @@ import Alert from '../components/Alert';
 import SelectFormPage, { SelectFormButton } from './pages/selectForm';
 import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
-import FinishPage, { FinishButtons } from './pages/finish';
+import { FinishButtons } from './pages/finish';
 import { IntakeAddIssuesPage } from './pages/addIssues';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
@@ -84,11 +84,6 @@ class IntakeFrame extends React.PureComponent {
                   render={() => <ReviewPage featureToggles={this.props.featureToggles} />} />
                 <PageRoute
                   exact
-                  path={PAGE_PATHS.FINISH}
-                  title="Finish Processing | Caseflow Intake"
-                  component={FinishPage} />
-                <PageRoute
-                  exact
                   path={PAGE_PATHS.ADD_ISSUES}
                   title="Add / Remove Issues | Caseflow Intake"
                   component={IntakeAddIssuesPage} />
@@ -108,12 +103,10 @@ class IntakeFrame extends React.PureComponent {
                 exact
                 path={PAGE_PATHS.REVIEW}
                 component={ReviewButtons} />
-              {[PAGE_PATHS.FINISH, PAGE_PATHS.ADD_ISSUES].map((path) =>
-                <Route key={path}
-                  exact
-                  path={path}
-                  component={FinishButtons} />
-              )}
+              <Route
+                exact
+                path={PAGE_PATHS.ADD_ISSUES}
+                component={FinishButtons} />
               <Route
                 exact
                 path={PAGE_PATHS.COMPLETED}

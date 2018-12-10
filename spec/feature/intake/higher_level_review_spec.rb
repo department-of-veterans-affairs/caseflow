@@ -8,7 +8,6 @@ RSpec.feature "Higher-Level Review" do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
-    FeatureToggle.disable!(:intake_enable_add_issues_page)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 11, 28))
@@ -188,7 +187,7 @@ RSpec.feature "Higher-Level Review" do
 
     safe_click "#button-submit-review"
 
-    expect(page).to have_current_path("/intake/finish")
+    expect(page).to have_current_path("/intake/add_issues")
 
     visit "/intake/review_request"
 
@@ -204,16 +203,11 @@ RSpec.feature "Higher-Level Review" do
     expect(find_field("Bob Vance, Spouse", visible: false)).to be_checked
     expect(find("#legacy-opt-in_false", visible: false)).to be_checked
 
+    binding.pry
+
     safe_click "#button-submit-review"
 
-    expect(page).to have_current_path("/intake/finish")
-
-    expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 09/15/2018")
-    expect(page).to have_content("Left knee granted")
-    expect(page).to have_content("Untimely rating issue 1")
-    expect(page).to have_button("Establish EP", disabled: true)
-    expect(page).to have_content("0 issues")
+    expect(page).to have_current_path("/intake/add_issues")
 
     higher_level_review = HigherLevelReview.find_by(veteran_file_number: veteran_file_number)
     expect(higher_level_review).to_not be_nil
@@ -229,27 +223,26 @@ RSpec.feature "Higher-Level Review" do
 
     intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
-    find("label", text: "PTSD denied").click
-    expect(page).to have_content("1 issue")
-    find("label", text: "Left knee granted").click
-    expect(page).to have_content("2 issues")
-    find("label", text: "Left knee granted").click
+    binding.pry
+
+    click_intake_add_issue
+    add_intake_rating_issue("PTSD denied")
     expect(page).to have_content("1 issue")
 
     click_intake_add_issue
+    add_intake_rating_issue("Left knee granted")
+    expect(page).to have_content("2 issues")
 
-    safe_click ".Select"
-
-    fill_in "Issue category", with: "Active Duty Adjustments"
-    find("#issue-category").send_keys :enter
-
+    click_remove_intake_issue(2)
     expect(page).to have_content("1 issue")
 
-    fill_in "Issue description", with: "Description for Active Duty Adjustments"
-
-    expect(page).to have_content("1 issue")
-
-    fill_in "Decision date", with: "10/27/2018"
+    click_intake_add_issue
+    click_intake_no_matching_issues
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "10/27/2018"
+    )
 
     expect(page).to have_content("2 issues")
 

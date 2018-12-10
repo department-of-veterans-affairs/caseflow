@@ -2,10 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS } from '../constants';
-import RampElectionPage, { FinishButtons as RampElectionButtons } from './rampElection/finish';
-import RampRefilingPage, { FinishButtons as RampRefilingButtons } from './rampRefiling/finish';
-import SupplementalClaimPage, { FinishButtons as SupplementalClaimButtons } from './supplementalClaim/finish';
-import HigherLevelReviewPage, { FinishButtons as HigherLevelReviewButtons } from './higherLevelReview/finish';
+import { FinishButtons as RampElectionButtons } from './rampElection/finish';
+import { FinishButtons as RampRefilingButtons } from './rampRefiling/finish';
+import { FinishButtons as SupplementalClaimButtons } from './supplementalClaim/finish';
+import { FinishButtons as HigherLevelReviewButtons } from './higherLevelReview/finish';
 import AppealPage, { FinishButtons as AppealButtons } from './appeal/finish';
 import SwitchOnForm from '../components/SwitchOnForm';
 
