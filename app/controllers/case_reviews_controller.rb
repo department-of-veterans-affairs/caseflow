@@ -78,6 +78,9 @@ class CaseReviewsController < ApplicationController
   end
 
   def issues_params
+    # This is a combined list of params from the old and new issue editing methods.
+    # If new params like request_issue_ids exist in the request, we default to
+    # using the new issue editing flow.
     [
       :id,
       :disposition,

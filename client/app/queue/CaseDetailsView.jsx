@@ -79,7 +79,7 @@ class CaseDetailsView extends React.PureComponent {
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
         <CaseDetailsIssueList
-          amaIssueType={featureToggles.ama_decision_issues || appeal.decisionIssues.length}
+          amaIssueType={featureToggles.ama_decision_issues || appeal.decisionIssues}
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
           issues={appeal.issues}

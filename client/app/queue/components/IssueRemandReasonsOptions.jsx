@@ -339,7 +339,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = ((state.ui.featureToggles.ama_decision_issues || appeal.decisionIssues.length) &&
+  const issues = ((state.ui.featureToggles.ama_decision_issues || appeal.decisionIssues) &&
     !appeal.isLegacyAppeal) ? appeal.decisionIssues : appeal.issues;
 
   return {
