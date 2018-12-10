@@ -546,6 +546,35 @@ class SeedDB
     FactoryBot.create(:case_hearing, :disposition_held, user: user, folder_nr: appeal.vacols_id)
   end
 
+  def create_legacy_issues_eligible_for_opt_in
+    # this vet number exists in local/vacols VBMS and BGS setup csv files.
+    veteran_file_number_legacy_opt_in = "872958715S"
+    legacy_vacols_id = "LEGACYID"
+
+    # always delete and start fresh
+    VACOLS::Case.where(bfkey: legacy_vacols_id).delete_all
+    VACOLS::CaseIssue.where(isskey: legacy_vacols_id).delete_all
+
+    case_issues = []
+    %w[5240 5241 5242 5243 5250].each do |lev2|
+      case_issues << FactoryBot.create(:case_issue,
+                                       issprog: "02",
+                                       isscode: "15",
+                                       isslev1: "04",
+                                       isslev2: lev2)
+    end
+    correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: 100)
+    folder = VACOLS::Folder.find_or_create_by(ticknum: legacy_vacols_id, tinum: 1)
+    vacols_case = FactoryBot.create(:case_with_soc,
+                                    :status_advance,
+                                    case_issues: case_issues,
+                                    correspondent: correspondent,
+                                    folder: folder,
+                                    bfkey: legacy_vacols_id,
+                                    bfcorlid: veteran_file_number_legacy_opt_in)
+    FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
   def seed
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
@@ -559,6 +588,7 @@ class SeedDB
 
     setup_dispatch
     create_previously_held_hearing_data
+    create_legacy_issues_eligible_for_opt_in
 
     return if Rails.env.development?
 

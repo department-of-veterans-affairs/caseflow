@@ -57,10 +57,10 @@ class Helpers::Sanitizers
     record.attributes.each do |k, v|
       next if !v.is_a?(String) || ignore_pii_in_fields.include?("#{record.class.name}-#{k}")
 
-      errors.push("WARNING -- Probable vetid: #{record.class.name}-#{k}-#{v}") if VETID_REGEX.match(v)
-      errors.push("WARNING -- Probable email: #{record.class.name}-#{k}-#{v}") if EMAIL_REGEX.match(v)
-      errors.push("WARNING -- Probable phone number: #{record.class.name}-#{k}-#{v}") if PHONE_REGEX.match(v)
-      errors.push("WARNING -- Possible PII in freetext: #{record.class.name}-#{k}-#{v}") if SENTENCE_REGEX.match(v)
+      errors.push("WARNING -- Probable vetid: #{record.class.name}-#{k}-#{v}") if VETID_REGEX.match?(v)
+      errors.push("WARNING -- Probable email: #{record.class.name}-#{k}-#{v}") if EMAIL_REGEX.match?(v)
+      errors.push("WARNING -- Probable phone number: #{record.class.name}-#{k}-#{v}") if PHONE_REGEX.match?(v)
+      errors.push("WARNING -- Possible PII in freetext: #{record.class.name}-#{k}-#{v}") if SENTENCE_REGEX.match?(v)
     end
   end
 
@@ -330,7 +330,7 @@ class Helpers::Sanitizers
 
     # Note we only keep board_members when they have number IDs, not RO letter IDs
     hearing.assign_attributes(
-      board_member: ONLY_NUMBER_REGEX.match(hearing.board_member) ? hearing.board_member : nil,
+      board_member: ONLY_NUMBER_REGEX.match?(hearing.board_member) ? hearing.board_member : nil,
       repname: ::Faker::Name.name,
       rep_state: ::Faker::Address.state_abbr,
       notes1: random_or_nil(::Faker::Lorem.sentence),
