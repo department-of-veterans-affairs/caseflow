@@ -63,7 +63,7 @@ class ClaimReview < DecisionReview
         end_product_establishment: end_product_establishment_for_issue(issue),
         benefit_type: benefit_type
       )
-      create_legacy_issue_optin(issue) if issue.vacols_id
+      create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
     end
   end
 

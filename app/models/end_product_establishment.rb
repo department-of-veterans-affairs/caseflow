@@ -41,8 +41,9 @@ class EndProductEstablishment < ApplicationRecord
       end
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def self.from_bgs_error(error, epe)
-      case error.try(:body)
+      case error.try(:body) || error.message
       when /WssVerification Exception - Security Verification Exception/
         # This occasionally happens when client/server timestamps get out of sync. Uncertain why this
         # happens or how to fix it - it only happens occasionally.
@@ -63,7 +64,7 @@ class EndProductEstablishment < ApplicationRecord
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2910/
         TransientBGSSyncError.new(error, epe)
-      when /Connection timed out - connect(2) for "bepprod.vba.va.gov" port 443/
+      when /Connection timed out - connect\(2\) for "bepprod.vba.va.gov" port 443/
         # Transient timeouts to BGS because of connectivity issues
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
@@ -85,6 +86,7 @@ class EndProductEstablishment < ApplicationRecord
       end
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
   class TransientBGSSyncError < BGSSyncError; end
 
   class << self
@@ -146,7 +148,7 @@ class EndProductEstablishment < ApplicationRecord
       issue = issues_without_contentions.find do |i|
         i.contention_text == contention.text && i.contention_reference_id.nil?
       end
-      issue && issue.update!(contention_reference_id: contention.id)
+      issue&.update!(contention_reference_id: contention.id)
     end
 
     fail ContentionCreationFailed if issues_without_contentions.any? { |issue| issue.contention_reference_id.nil? }
