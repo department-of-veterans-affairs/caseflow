@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import pluralize from 'pluralize';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -113,8 +114,12 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
         tasks: this.buildPayload()
       }
     };
+    const visibleActions = this.getVisibleAdminActions();
+    const msgTitle = COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE;
+    const msgSubject = pluralize(COPY.ADD_COLOCATED_TASK_CONFIRMATION_SUBJECT, visibleActions.length);
+    const msgActions = visibleActions.map((action) => CO_LOCATED_ADMIN_ACTIONS[action.actionLabel]).join(', ');
     const successMsg = {
-      title: sprintf(COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE, this.getVisibleAdminActions().length, this.getVisibleAdminActions().map((action) => CO_LOCATED_ADMIN_ACTIONS[action.actionLabel]).join(", ")),
+      title: sprintf(msgTitle, visibleActions.length, msgSubject, msgActions),
       detail: <DispatchSuccessDetail task={task} />
     };
 
