@@ -338,8 +338,6 @@ class Issue
         vacols_id: vacols_id,
         vacols_sequence_id: vacols_sequence_id,
         issue_attrs: {
-          issdc: original_disposition_code,
-          issdcls: original_disposition_date
           disposition: original_disposition_code,
           disposition_date: original_disposition_date
         }

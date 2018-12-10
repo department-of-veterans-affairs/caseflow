@@ -781,12 +781,6 @@ class LegacyAppeal < ApplicationRecord
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
-  def reopen_appeal_on_rollback?
-    # Shows whether an appeal was closed due to a legacy issue opt-in
-    # which should be reversed if an opted-in issue is rolled back
-    case_record.bfmpro == "HIS" && case_record.bfcurloc == "99" && disposition == Constants::VACOLS_DISPOSITIONS_BY_ID["O"]
-  end
-
   class << self
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
