@@ -87,10 +87,12 @@ export class ListScheduleContainer extends React.Component {
       let activeJudges = [];
 
       _.forEach(resp.hearingJudges, (value) => {
-        activeJudges.push({
-          label: `${value.firstName} ${value.middleName} ${value.lastName}`,
-          value: value.vacolsAttorneyId
-        });
+        if (value.vacolsAttorneyId !== null) {
+          activeJudges.push({
+            label: `${value.firstName} ${value.middleName} ${value.lastName}`,
+            value: value.vacolsAttorneyId
+          });
+        }
       });
 
       activeJudges = _.orderBy(activeJudges, (judge) => judge.label, 'asc');
