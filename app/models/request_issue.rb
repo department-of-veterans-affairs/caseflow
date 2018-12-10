@@ -85,14 +85,14 @@ class RequestIssue < ApplicationRecord
 
     def find_active_by_reference_id(reference_id)
       request_issue = unscoped.find_by(rating_issue_reference_id: reference_id, removed_at: nil, ineligible_reason: nil)
-      return unless request_issue && request_issue.status_active?
+      return unless request_issue&.status_active?
       request_issue
     end
 
     def find_active_by_contested_decision_id(contested_decision_issue_id)
       request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id,
                                        removed_at: nil, ineligible_reason: nil)
-      return unless request_issue && request_issue.status_active?
+      return unless request_issue&.status_active?
       request_issue
     end
   end
@@ -140,7 +140,7 @@ class RequestIssue < ApplicationRecord
       vacols_sequence_id: vacols_sequence_id,
       vacols_issue: vacols_issue.try(:intake_attributes),
       ineligible_reason: ineligible_reason,
-      title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+      title_of_active_review: title_of_active_review
     }
   end
 
@@ -167,7 +167,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def previous_request_issue
-    contested_decision_issue && contested_decision_issue.request_issues.first
+    contested_decision_issue&.request_issues&.first
   end
 
   def sync_decision_issues!
@@ -181,6 +181,10 @@ class RequestIssue < ApplicationRecord
   end
 
   private
+
+  def title_of_active_review
+    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+  end
 
   def vacols_issue
     return unless vacols_id && vacols_sequence_id

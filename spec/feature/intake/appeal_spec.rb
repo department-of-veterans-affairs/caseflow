@@ -416,7 +416,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("Add issue 2")
     expect(page).to have_content("Does issue 2 match any of these issues")
     expect(page).to have_content("Left knee granted 2 (already selected for issue 1)")
-    expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
+    expect(page).to have_css("input[disabled]", visible: false)
 
     # Add nonrating issue
     click_intake_no_matching_issues

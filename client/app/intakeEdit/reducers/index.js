@@ -2,7 +2,7 @@ import { ACTIONS } from '../constants';
 import { applyCommonReducers } from '../../intake/reducers/common';
 import { REQUEST_STATE } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
-import { formatRequestIssues, formatRatings } from '../../intake/util/issues';
+import { formatRequestIssues, formatRatings, formatContestableIssues } from '../../intake/util/issues';
 import { formatRelationships } from '../../intake/util';
 
 export const mapDataToInitialState = function(props = {}) {
@@ -10,6 +10,7 @@ export const mapDataToInitialState = function(props = {}) {
 
   serverIntake.ratings = formatRatings(serverIntake.ratings);
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
+  serverIntake.contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 
   return {
     ...serverIntake,
