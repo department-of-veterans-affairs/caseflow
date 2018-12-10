@@ -107,6 +107,10 @@ class HearingRepository
     end
 
     def create_child_video_hearing(hearing_pkseq, hearing_date, appeal)
+      if hearing_date.to_date > HearingDay::CASEFLOW_V_PARENT_DATE
+        return create_caseflow_child_video_hearing(hearing_pkseq, hearing_date, appeal)
+      end
+
       hearing = VACOLS::CaseHearing.find(hearing_pkseq)
       hearing_hash = to_hash(hearing)
       hearing_hash[:folder_nr] = appeal.vacols_id
@@ -115,6 +119,20 @@ class HearingRepository
       hearing_hash.delete(:hearing_pkseq)
       hearing_hash[:hearing_type] = "V"
       VACOLS::CaseHearing.create_child_hearing!(hearing_hash)
+    end
+
+    def create_caseflow_child_video_hearing(id, hearing_date, appeal)
+      hearing_day = HearingDay.find(id)
+
+      VACOLS::CaseHearing.create_child_hearing!(
+        folder_nr: appeal.vacols_id,
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
+        vdkey: hearing_day.id,
+        hearing_type: hearing_day.hearing_type,
+        room: hearing_day.room_info,
+        board_member: hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil,
+        vdbvapoc: hearing_day.bva_poc
+      )
     end
 
     def load_vacols_data(hearing)
