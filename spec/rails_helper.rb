@@ -228,7 +228,7 @@ RSpec.configure do |config|
   # Thus this will only run once (to initially compile assets) and not on
   # subsequent test runs
   if !File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js") &&
-     !ENV["REACT_ON_RAILS_ENV"] == "HOT"
+     ENV["REACT_ON_RAILS_ENV"] != "HOT"
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
   config.before(:all) do
