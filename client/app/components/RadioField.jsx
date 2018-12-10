@@ -44,7 +44,7 @@ export default class RadioField extends React.Component {
     let labelClass = '';
 
     if (hideLabel) {
-      labelClass += ' hidden-field';
+      labelClass += ' usa-sr-only';
     }
 
     // Since HTML5 IDs should not contain spaces...
