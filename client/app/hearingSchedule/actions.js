@@ -254,3 +254,22 @@ export const onSuccessfulHearingDayDelete = (date) => ({
 export const onResetDeleteSuccessful = () => ({
   type: ACTIONS.RESET_DELETE_SUCCESSFUL
 });
+
+export const onDisplayLockModal = () => ({
+  type: ACTIONS.DISPLAY_LOCK_MODAL
+});
+
+export const onCancelDisplayLockModal = () => ({
+  type: ACTIONS.CANCEL_DISPLAY_LOCK_MODAL
+});
+
+export const onUpdateLock = (lock) => ({
+  type: ACTIONS.UPDATE_LOCK,
+  payload: {
+    lock
+  }
+});
+
+export const onResetLockSuccessMessage = () => ({
+  type: ACTIONS.RESET_LOCK_SUCCESS_MESSAGE
+});

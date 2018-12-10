@@ -59,7 +59,7 @@ describe Appeal do
       let(:vacols_id) { "something" }
 
       it "includes VACOLS opt-in" do
-        expect(subject).to include(code: "VO", narrative: "VACOLS Opt-in")
+        expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
       end
     end
   end

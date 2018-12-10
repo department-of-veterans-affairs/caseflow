@@ -33,7 +33,8 @@ describe ContestableIssue do
     it "can be serialized" do
       contestable_issue = subject
       expect(contestable_issue).to have_attributes(
-        rating_reference_id: rating_issue.reference_id,
+        rating_issue_reference_id: rating_issue.reference_id,
+        rating_issue_profile_date: profile_date,
         decision_issue_reference_id: nil,
         date: profile_date,
         description: rating_issue.decision_text,
@@ -41,7 +42,8 @@ describe ContestableIssue do
       )
 
       expect(contestable_issue.serialize).to eq(
-        ratingReferenceId: rating_issue.reference_id,
+        ratingIssueReferenceId: rating_issue.reference_id,
+        ratingIssueProfileDate: profile_date,
         decisionIssueReferenceId: nil,
         date: profile_date,
         description: rating_issue.decision_text,
@@ -57,7 +59,8 @@ describe ContestableIssue do
 
       it "can be serialized" do
         expect(subject.serialize).to eq(
-          ratingReferenceId: rating_issue.reference_id,
+          ratingIssueReferenceId: rating_issue.reference_id,
+          ratingIssueProfileDate: profile_date,
           decisionIssueReferenceId: nil,
           date: profile_date,
           description: rating_issue.decision_text,
@@ -76,7 +79,8 @@ describe ContestableIssue do
     it "can be serialized" do
       contestable_issue = subject
       expect(contestable_issue).to have_attributes(
-        rating_reference_id: "rating1",
+        rating_issue_reference_id: "rating1",
+        rating_issue_profile_date: profile_date,
         decision_issue_reference_id: decision_issue.id,
         date: profile_date,
         description: decision_issue.decision_text,
@@ -84,7 +88,8 @@ describe ContestableIssue do
       )
 
       expect(contestable_issue.serialize).to eq(
-        ratingReferenceId: "rating1",
+        ratingIssueReferenceId: "rating1",
+        ratingIssueProfileDate: profile_date,
         decisionIssueReferenceId: decision_issue.id,
         date: profile_date,
         description: decision_issue.decision_text,
@@ -100,7 +105,8 @@ describe ContestableIssue do
 
       it "can be serialized" do
         expect(subject.serialize).to eq(
-          ratingReferenceId: "rating1",
+          ratingIssueReferenceId: "rating1",
+          ratingIssueProfileDate: profile_date,
           decisionIssueReferenceId: decision_issue.id,
           date: profile_date,
           description: decision_issue.decision_text,

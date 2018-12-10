@@ -585,10 +585,10 @@ RSpec.describe TasksController, type: :controller do
     context "when some other user updates another user's task" do
       let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: create(:user)) }
 
-      it "should return not be successful" do
+      it "should return an error" do
         User.stub = colocated
         patch :update, params: { task: { status: Constants.TASK_STATUSES.in_progress }, id: admin_action.id }
-        expect(response.status).to eq 302
+        expect(response.status).to eq(403)
       end
     end
   end
@@ -637,7 +637,7 @@ RSpec.describe TasksController, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 1
+        expect(response_body["tasks"].length).to eq 2
 
         task = response_body["tasks"][0]
         expect(task["type"]).to eq "colocated_tasks"
@@ -664,7 +664,7 @@ RSpec.describe TasksController, type: :controller do
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 
-        expect(appeal.tasks.count).to eq 2
+        expect(appeal.tasks.count).to eq 3
       end
     end
   end

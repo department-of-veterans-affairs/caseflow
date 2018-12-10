@@ -38,7 +38,7 @@ FactoryBot.define do
           defolder: vacols_case.bfkey,
           deadusr: slogid ? slogid : "TEST",
           demdusr: assigner_slogid ? assigner_slogid : "ASSIGNER",
-          dereceive: (evaluator.user && evaluator.user.vacols_roles.include?("judge")) ? Time.zone.today : nil,
+          dereceive: (evaluator.user&.vacols_roles&.include?("judge")) ? Time.zone.today : nil,
           dedocid: evaluator.document_id || nil,
           deatty: sattyid || "100"
         )
@@ -271,7 +271,7 @@ FactoryBot.define do
     trait :paper_case do
       after(:build) do |vacols_case, _evaluator|
         vacols_case.folder.tivbms = "N" if %w[Y 1 0].include?(vacols_case.folder.tivbms)
-        vacols_case.folder.tisubj2 = "N" if vacols_case.folder.tisubj2 && vacols_case.folder.tisubj2.eq?("Y")
+        vacols_case.folder.tisubj2 = "N" if vacols_case.folder.tisubj2&.eq?("Y")
       end
     end
 
