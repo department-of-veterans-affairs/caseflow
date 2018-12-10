@@ -218,6 +218,14 @@ describe VACOLS::CaseDocket do
         end
       end
     end
+
+    context "when the case contains a specialty case team issue" do
+      let!(:sct_issue) { create(:case_issue, :education, isskey: nonpriority_ready_case.bfkey) }
+
+      it "does not distribute the case" do
+        expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+      end
+    end
   end
 
   context ".distribute_priority_appeals" do
@@ -354,6 +362,14 @@ describe VACOLS::CaseDocket do
             expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           end
         end
+      end
+    end
+
+    context "when the case contains a specialty case team issue" do
+      let!(:sct_issue) { create(:case_issue, :education, isskey: aod_ready_case.bfkey) }
+
+      it "does not distribute the case" do
+        expect(aod_ready_case.reload.bfcurloc).to eq("81")
       end
     end
   end

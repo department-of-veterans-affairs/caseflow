@@ -109,15 +109,21 @@ RSpec.feature "Checkout flows" do
 
     context "when ama issue feature toggle is turned on" do
       before do
-        FeatureToggle.enable!(:ama_decision_issues)
+        FeatureToggle.enable!(:ama_decision_issues, users: [attorney_user.css_id])
       end
 
       after do
-        FeatureToggle.disable!(:ama_decision_issues)
+        FeatureToggle.disable!(:ama_decision_issues, users: [attorney_user.css_id])
       end
 
       let(:decision_issue_text) { "This is a test decision issue" }
+      let(:updated_decision_issue_text) { "This is updated text" }
+
+      let(:other_issue_tex) { "This is a second issue" }
+
       let(:decision_issue_disposition) { "Remanded" }
+      let(:benefit_type) { "Education" }
+      let(:old_benefit_type) { Constants::BENEFIT_TYPES[appeal.request_issues.first.benefit_type] }
 
       scenario "veteran is the appellant" do
         visit "/queue"
@@ -141,6 +147,7 @@ RSpec.feature "Checkout flows" do
 
         expect(page).to have_content "Each request issue must have at least one decision issue"
 
+        # Add a first decision issue
         click_on "+ Add Decision"
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
@@ -152,16 +159,43 @@ RSpec.feature "Checkout flows" do
         find(".Select-control", text: "Select Disposition").click
         find("div", class: "Select-option", text: decision_issue_disposition).click
 
+        find(".Select-control", text: old_benefit_type).click
+        find("div", class: "Select-option", text: benefit_type).click
+
+        click_on "Save"
+
+        # Add a second decision issue
+        click_on "+ Add Decision"
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: other_issue_tex
+
+        find(".Select-control", text: "Select Disposition").click
+        find("div", class: "Select-option", text: decision_issue_disposition).click
+
+        find(".Select-control", text: old_benefit_type).click
+        find("div", class: "Select-option", text: benefit_type).click
+
         click_on "Save"
 
         # Ensure the decision issue is on the select disposition screen
         expect(page).to have_content(decision_issue_text)
         expect(page).to have_content(decision_issue_disposition)
 
+        expect(page).to have_content(other_issue_tex)
+
         click_on "Continue"
 
         find_field("Service treatment records", visible: false).sibling("label").click
         find_field("Post AOJ", visible: false).sibling("label").click
+
+        click_on "Continue"
+        # For some reason clicking too quickly on the next remand reason breaks the test.
+        # Adding sleeps is bad... but I'm not sure how else to get this to work.
+        sleep 1
+
+        all("label", text: "Medical examinations", visible: false, count: 2)[1].click
+        all("label", text: "Pre AOJ", visible: false, count: 2)[1].click
 
         click_on "Continue"
 
@@ -181,9 +215,54 @@ RSpec.feature "Checkout flows" do
 
         expect(page.current_path).to eq("/queue")
 
-        expect(appeal.decision_issues.count).to eq(1)
+        expect(appeal.decision_issues.count).to eq(2)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
+        expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
         expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
+        expect(appeal.decision_issues.second.remand_reasons.first.code).to eq("medical_examinations")
+
+        # Switch to the judge and ensure they can update decision issues
+        User.authenticate!(user: judge_user)
+        visit "/queue"
+        click_on "(#{appeal.veteran_file_number})"
+        click_dropdown 0
+
+        # Skip the special issues page
+        click_on "Continue"
+
+        expect(page).to have_content(decision_issue_text)
+
+        # Update the decision issue
+        all("button", text: "Edit", count: 2)[0].click
+        fill_in "Text Box", with: updated_decision_issue_text
+        click_on "Save"
+        click_on "Continue"
+
+        expect(page).to have_content("Review Remand Reasons")
+
+        click_on "Continue"
+        expect(page).to have_content("Issue 2 of 2")
+        expect(find("input", id: "2-medical_examinations", visible: false).checked?).to eq(true)
+        # Again, hate to add a sleep, but for some reason clicking continue too soon doesn't go
+        # to the next page. I think it's related to how we're using continue to load the next
+        # section of the remand reason screen.
+        sleep 1
+
+        click_on "Continue"
+
+        expect(page).to have_content("Evaluate Decision")
+
+        find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+        find("label", text: "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}").click
+        click_on "Continue"
+
+        expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+
+        # The decision issue should have the new content the judge added
+        expect(appeal.decision_issues.count).to eq(2)
+        expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
+        expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
+        expect(appeal.decision_issues.second.remand_reasons.first.code).to eq("medical_examinations")
       end
     end
   end
@@ -286,9 +365,9 @@ RSpec.feature "Checkout flows" do
 
         issue_dispositions = page.find_all(".Select-control", text: "Select Disposition", count: appeal.issues.length)
 
-        # We want one exactly issue to be a remand to make the remand reason screen show up.
+        # We want two issues to be a remand to make the remand reason screen show up.
         issue_dispositions.each_with_index do |row, index|
-          disposition = (index == 0) ? "Remanded" : "Allowed"
+          disposition = (index == 0 || index == 1) ? "Remanded" : "Allowed"
           row.click
           page.find("div", class: "Select-option", text: disposition).click
         end
@@ -297,8 +376,17 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.first.note)
 
-        find_field("Service treatment records", visible: false).sibling("label").click
-        find_field("After certification", visible: false).sibling("label").click
+        page.all("label", text: "Current findings", count: 1)[0].click
+        page.all("label", text: "After certification", count: 1)[0].click
+        click_on "Continue"
+
+        expect(page).to have_content("Select Remand Reasons")
+        expect(page).to have_content(appeal.issues.second.note)
+        page.all("label", text: "Current findings", count: 2)[1].click
+        page.all("label", text: "Before certification", count: 2)[1].click
+
+        page.all("label", text: "Nexus opinion", count: 2)[1].click
+        page.all("label", text: "After certification", count: 3)[2].click
 
         click_on "Continue"
         expect(page).to have_content("Submit Draft Decision for Review")
@@ -319,6 +407,9 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
         expect(page.current_path).to eq("/queue")
+        expect(appeal.reload.issues.first.remand_reasons.size).to eq 1
+        expect(appeal.issues.second.remand_reasons.size).to eq 2
+        expect(appeal.issues.third.remand_reasons.size).to eq 0
       end
 
       scenario "submits omo request" do

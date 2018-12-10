@@ -195,10 +195,13 @@ describe HigherLevelReviewIntake do
 
     let(:params) { { request_issues: [issue_data] } }
 
+    let(:legacy_opt_in_approved) { true }
+
     let(:detail) do
       HigherLevelReview.create!(
         veteran_file_number: "64205555",
-        receipt_date: 3.days.ago
+        receipt_date: 3.days.ago,
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 

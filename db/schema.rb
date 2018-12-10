@@ -416,6 +416,7 @@ ActiveRecord::Schema.define(version: 20181206130120) do
     t.string "updated_by", null: false
     t.string "bva_poc"
     t.datetime "deleted_at"
+    t.boolean "lock"
     t.text "notes"
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
@@ -684,12 +685,12 @@ ActiveRecord::Schema.define(version: 20181206130120) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
-    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
+    t.string "ineligible_reason"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.datetime "created_at"
