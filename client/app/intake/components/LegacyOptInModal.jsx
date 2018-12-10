@@ -11,6 +11,8 @@ import {
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 
+import _ from 'lodash';
+
 const NO_MATCH_TEXT = 'None of these match';
 
 class LegacyOptInModal extends React.Component {
@@ -30,7 +32,15 @@ class LegacyOptInModal extends React.Component {
     const legacyValues = value.split('-');
     const vacolsSequenceId = legacyValues.length > 1 ? legacyValues[1] : null;
     const legacyAppeal = this.props.intakeData.legacyAppeals.find((appeal) => appeal.vacols_id === legacyValues[0]);
-    const eligibleForSocOptIn = legacyAppeal && legacyAppeal.eligible_for_soc_opt_in;
+
+    let eligibleForSocOptIn, vacolsIssue;
+
+    if (vacolsSequenceId) {
+      vacolsIssue = _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(vacolsSequenceId, 10) })[0];
+      eligibleForSocOptIn = vacolsIssue.eligible_for_soc_opt_in;
+    } else {
+      eligibleForSocOptIn = legacyAppeal && legacyAppeal.eligible_for_soc_opt_in;
+    }
 
     if (vacolsSequenceId) {
       this.setState({
