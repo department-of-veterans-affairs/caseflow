@@ -31,50 +31,14 @@ RSpec.describe "Hearing Schedule", type: :request do
     end
   end
 
-  describe "Assign judge to hearing - VACOLS" do
-    let!(:hearing) do
-      RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create
-      Generators::Vacols::CaseHearing.create(hearing_type: HearingDay::HEARING_TYPES[:video],
-                                             hearing_date: "11-Jun-2017", regional_office: "RO27", room: "3")
-    end
+  describe "Assign judge to hearing day" do
+    let!(:hearing_day) { create(:hearing_day) }
+    let!(:judge) { create(:user) }
 
     it "Assign a judge to a schedule day" do
-      put "/hearings/#{hearing.hearing_pkseq + 1}/hearing_day", params: { judge_id: "105" }
+      patch "/hearings/hearing_day/#{hearing_day.id}", params: { judge_id: judge.id }
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearing"]["judge_id"]).to eq("105")
-      expect(JSON.parse(response.body)["hearing"]["regional_office"]).to eq("Louisville, KY")
-    end
-  end
-
-  describe "Assign judge to hearing - Caseflow" do
-    let!(:hearing) do
-      RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create
-      HearingDay.create(hearing_type: HearingDay::HEARING_TYPES[:central],
-                        hearing_date: "11-Jun-2019", room_info: "3", created_by: "ramiro", updated_by: "ramiro")
-    end
-
-    it "Assign a judge to a schedule day", skip: "This is failing on jenkins" do
-      put "/hearings/#{hearing.id}/hearing_day", params: { judge_id: "105" }
-      expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearing"]["judge_id"]).to_s.to eq("105")
-    end
-  end
-
-  describe "Modify RO in Travel Board Hearing - VACOLS Only" do
-    let!(:hearing) do
-      RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create
-      Generators::Vacols::TravelBoardSchedule.create({})
-    end
-
-    it "Update RO in master TB schedule" do
-      hearing
-      put "/hearings/#{hearing.tbyear}-#{hearing.tbtrip}-#{hearing.tbleg}/hearing_day",
-          params: { hearing_type: HearingDay::HEARING_TYPES[:travel], regional_office: "RO27" }
-      expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearing"]["tbro"]).to eq("RO27")
+      expect(JSON.parse(response.body)["judge_id"]).to eq(judge.id)
     end
   end
 
