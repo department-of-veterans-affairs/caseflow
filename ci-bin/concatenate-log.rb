@@ -10,7 +10,7 @@ artifacts_url = "https://circleci.com/api/v1.1/project"\
 artifacts = JSON.parse(open(artifacts_url).read)
 
 log_file_urls = artifacts.map do |artifact|
-  if artifact["path"] =~ /\.log$/
+  if artifact["path"].match?(/\.log$/)
     artifact["url"]
   end
 end.compact

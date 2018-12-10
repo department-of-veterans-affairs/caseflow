@@ -1,6 +1,8 @@
 class DecisionIssue < ApplicationRecord
   validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) },
                           allow_nil: true, if: :appeal?
+  validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) },
+                           allow_nil: true, if: :appeal?
   has_many :request_decision_issues, dependent: :destroy
   has_many :request_issues, through: :request_decision_issues
   has_many :remand_reasons, dependent: :destroy
@@ -8,7 +10,7 @@ class DecisionIssue < ApplicationRecord
 
   def title_of_active_review
     request_issue = RequestIssue.find_active_by_contested_decision_id(id)
-    request_issue.review_title if request_issue
+    request_issue&.review_title
   end
 
   def source_higher_level_review

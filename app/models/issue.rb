@@ -5,7 +5,7 @@ class Issue
   include ActiveModel::Model
   include ActiveModel::Serialization
 
-  attr_accessor :id, :vacols_sequence_id, :codes, :disposition,
+  attr_accessor :id, :vacols_sequence_id, :codes, :disposition, :disposition_date,
                 :disposition_id, :readable_disposition, :close_date, :note
 
   # Labels are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
@@ -132,7 +132,7 @@ class Issue
   end
 
   def active?
-    !disposition
+    disposition.nil? || in_remand?
   end
 
   def allowed?
@@ -189,6 +189,7 @@ class Issue
     {
       vacols_id: id,
       vacols_sequence_id: vacols_sequence_id,
+      eligible_for_soc_opt_in: eligible_for_opt_in?,
       description: friendly_description,
       disposition: disposition,
       close_date: close_date,
@@ -203,19 +204,39 @@ class Issue
 
   # For status (BFMPRO) of ADV or REM, for the most part, having a disposition means the issue is closed.
   # On appeal where the status is REM (remanded) the issues with disposition "3" are still active.
-  # rubocop:disable Metrics/CyclomaticComplexity
   def closed?
     return false if disposition.nil?
-    return false if disposition == "3" && legacy_appeal.remand?
+    return false if in_remand?
     return true if legacy_appeal.remand? || legacy_appeal.advance? || !legacy_appeal.active?
     false
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
+
+  def eligible_for_opt_in?
+    return false unless legacy_appeal.eligible_for_soc_opt_in?
+    return disposition_date_after_legacy_appeal_soc? if disposition_is_failure_to_respond?
+    active?
+  end
 
   private
 
   def legacy_appeal
     @legacy_appeal ||= LegacyAppeal.find_by(vacols_id: id)
+  end
+
+  def disposition_is_failure_to_respond?
+    [:remand_failure_to_respond, :advance_failure_to_respond].include?(disposition)
+  end
+
+  def in_remand?
+    legacy_appeal.try(:remand?) && remanded?
+  end
+
+  def disposition_date_after_legacy_appeal_soc?
+    return false if disposition_date.blank?
+    return false unless legacy_appeal
+    # the close_date is our local normalized disposition_date
+    return close_date > legacy_appeal.soc_date if legacy_appeal.soc_date
+    legacy_appeal.ssoc_dates.any? { |ssoc_date| close_date > ssoc_date }
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -254,6 +275,13 @@ class Issue
       RemandReasonRepository
     end
 
+    def disposition_code_for_sym(symbol)
+      return nil if symbol.nil?
+      Constants::VACOLS_DISPOSITIONS_BY_ID.keys.find do |code|
+        symbol == Constants::VACOLS_DISPOSITIONS_BY_ID[code].parameterize.underscore.to_sym
+      end
+    end
+
     def load_from_vacols(hash)
       disposition = nil
       if hash["issdc"]
@@ -268,6 +296,7 @@ class Issue
         # disposition is a snake_case symbol, i.e. :remanded
         disposition: disposition,
         disposition_id: hash["issdc"] || nil,
+        disposition_date: hash["issdcls"],
         # readable disposition is a string, i.e. "Remanded"
         readable_disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[hash["issdc"]],
         close_date: AppealRepository.normalize_vacols_date(hash["issdcls"])
@@ -279,11 +308,12 @@ class Issue
     end
 
     def close_in_vacols!(vacols_id:, vacols_sequence_id:, disposition_code:)
+      disposition = disposition_code.is_a?(Symbol) ? disposition_code_for_sym(disposition_code) : disposition_code
       update_in_vacols!(
         vacols_id: vacols_id,
         vacols_sequence_id: vacols_sequence_id,
         issue_attrs: {
-          disposition: disposition_code,
+          disposition: disposition,
           disposition_date: Time.zone.today
         }
       )

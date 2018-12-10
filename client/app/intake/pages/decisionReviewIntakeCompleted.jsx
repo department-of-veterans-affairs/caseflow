@@ -4,9 +4,11 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
+import INTAKE_STRINGS from '../../../constants/INTAKE_STRINGS.json';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 import Alert from '../../components/Alert';
+import { legacyIssue } from '../util/issues';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -104,6 +106,21 @@ class IneligibleIssuesList extends React.PureComponent {
     </Fragment>;
 }
 
+class VacolsOptInList extends React.PureComponent {
+  render = () =>
+    <Fragment>
+      <ul className="cf-success-checklist cf-left-padding">
+        <li>
+          <strong>{INTAKE_STRINGS.vacols_optin_issue_closed}</strong>
+          {this.props.issues.map((ri, i) =>
+            <p key={`vacols-issue-${i}`} className="">
+              {legacyIssue(ri, this.props.legacyAppeals).description}
+            </p>)}
+        </li>
+      </ul>
+    </Fragment>;
+}
+
 class DecisionReviewIntakeCompleted extends React.PureComponent {
   render() {
     const {
@@ -115,9 +132,11 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     const completedReview = this.props.decisionReviews[selectedForm.key];
     const {
       requestIssues,
-      informalConference
+      informalConference,
+      legacyAppeals
     } = completedReview;
     const ineligibleRequestIssues = requestIssues.filter((ri) => ri.ineligibleReason);
+    const vacolsOptInIssues = requestIssues.filter((ri) => ri.vacolsId && !ri.ineligibleReason);
 
     switch (intakeStatus) {
     case INTAKE_STATES.NONE:
@@ -138,6 +157,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       checklist={getChecklistItems(formType, requestIssues, informalConference)}
       wrapInAppSegment={false}
     />
+    { vacolsOptInIssues.length > 0 && <VacolsOptInList issues={vacolsOptInIssues} legacyAppeals={legacyAppeals} /> }
     { ineligibleRequestIssues.length > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
     </div>
     ;

@@ -74,7 +74,7 @@ class RatingIssue
   def title_of_active_review
     return unless reference_id
     request_issue = RequestIssue.find_active_by_reference_id(reference_id)
-    request_issue.review_title if request_issue
+    request_issue&.review_title
   end
 
   def source_higher_level_review
@@ -88,7 +88,7 @@ class RatingIssue
   end
 
   def ramp_claim_id
-    associated_ramp_ep && associated_ramp_ep.claim_id
+    associated_ramp_ep&.claim_id
   end
 
   def contention_reference_id

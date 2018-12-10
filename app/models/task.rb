@@ -138,7 +138,7 @@ class Task < ApplicationRecord
 
   def mark_as_complete!
     update!(status: :completed)
-    parent.when_child_task_completed if parent
+    parent&.when_child_task_completed
   end
 
   def when_child_task_completed
@@ -200,7 +200,7 @@ class Task < ApplicationRecord
   def assign_to_user_data
     users = if assigned_to.is_a?(Organization)
               assigned_to.users
-            elsif parent && parent.assigned_to.is_a?(Organization)
+            elsif parent&.assigned_to.is_a?(Organization)
               parent.assigned_to.users.reject { |u| u == assigned_to }
             else
               []
