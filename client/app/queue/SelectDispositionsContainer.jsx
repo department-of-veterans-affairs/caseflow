@@ -8,7 +8,7 @@ class SelectDispositionsContainer extends React.PureComponent {
   render = () => {
     const { appeal, featureToggles, ...otherProps } = this.props;
 
-    if (!appeal.isLegacyAppeal && (featureToggles.ama_decision_issues || appeal.decisionIssues)) {
+    if (!appeal.isLegacyAppeal && (featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues))) {
       return <SelectDispositionsView {...otherProps} />;
     }
 

@@ -238,7 +238,7 @@ const mapStateToProps = (state, ownProps) => {
     error,
     userRole,
     highlightFormItems,
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || appeal.decisionIssues
+    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)
   };
 };
 
