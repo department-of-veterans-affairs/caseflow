@@ -68,52 +68,24 @@ const alertStyling = css({
 });
 
 const topMarginStyling = css({
-  marginTop: '100px'
+  marginTop: '170px'
 });
 
 export default class DailyDocket extends React.Component {
 
-  componentDidUpdate = (prevProps) => {
-    if (_.isNil(prevProps.saveSuccessful) && this.props.saveSuccessful) {
-
-      return;
-    }
-
-    this.props.onResetSaveSuccessful();
-  };
-
-  componentWillUnmount = () => {
-    this.props.onResetSaveSuccessful();
-    this.props.onCancelRemoveHearingDay();
-  };
-
-  emptyFunction = () => {
-    // This is a placeholder for when we add onChange functions to the page.
-  };
-
-  onHearingNotesUpdate = (hearingId) => (notes) => {
-    this.props.onHearingNotesUpdate(hearingId, notes);
-  };
+  onHearingNotesUpdate = (hearingId) => (notes) => this.props.onHearingNotesUpdate(hearingId, notes);
 
   onHearingDispositionUpdate = (hearingId) => (disposition) => {
     this.props.onHearingDispositionUpdate(hearingId, disposition.value);
   };
 
-  onHearingDateUpdate = (hearingId) => (date) => {
-    this.props.onHearingDateUpdate(hearingId, date.value);
-  };
+  onHearingDateUpdate = (hearingId) => (date) => this.props.onHearingDateUpdate(hearingId, date.value);
 
-  onHearingTimeUpdate = (hearingId) => (time) => {
-    this.props.onHearingTimeUpdate(hearingId, time);
-  };
+  onHearingTimeUpdate = (hearingId) => (time) => this.props.onHearingTimeUpdate(hearingId, time);
 
-  saveHearing = (hearing) => () => {
-    this.props.saveHearing(hearing);
-  };
+  saveHearing = (hearing) => () => this.props.saveHearing(hearing);
 
-  cancelHearingUpdate = (hearing) => () => {
-    this.props.onCancelHearingUpdate(hearing);
-  };
+  cancelHearingUpdate = (hearing) => () => this.props.onCancelHearingUpdate(hearing);
 
   previouslyScheduled = (hearing) => {
     return hearing.disposition === 'postponed' || hearing.disposition === 'cancelled';
@@ -153,8 +125,7 @@ export default class DailyDocket extends React.Component {
       {getTimeInDifferentTimeZone(hearing.date, hearing.regionalOfficeTimezone)} <br />
       {hearing.regionalOfficeName}
     </div>;
-
-  }
+  };
 
   getDispositionDropdown = (hearing, readOnly) => {
     return <SearchableDropdown
@@ -201,7 +172,6 @@ export default class DailyDocket extends React.Component {
       name="Hearing Location"
       options={this.getHearingLocationOptions(hearing)}
       value={hearing.readableLocation}
-      onChange={this.emptyFunction}
       readOnly
     />;
   };
@@ -316,6 +286,19 @@ export default class DailyDocket extends React.Component {
       `${moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')}.`;
   };
 
+  getDisplayLockModalTitle = () => {
+    return this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day';
+  };
+
+  getDisplayLockModalMessage = () => {
+    if (this.props.dailyDocket.lock) {
+      return 'This hearing day is locked. Do you want to unlock the hearing day';
+    }
+
+    return 'Completing this action will not allow more Veterans to be scheduled for this day. You can still ' +
+      'make changes to the existing slots.';
+  };
+
   render() {
     const dailyDocketColumns = [
       {
@@ -358,6 +341,18 @@ export default class DailyDocket extends React.Component {
       Confirm
     </Button>;
 
+    const cancelLockModalButton = <Button linkStyling onClick={this.props.onCancelDisplayLockModal}>Go back</Button>;
+    const confirmLockModalButton = <Button
+      classNames={['usa-button-secondary']}
+      onClick={this.props.updateLockHearingDay(!this.props.dailyDocket.lock)}>
+        Confirm
+    </Button>;
+
+    const lockSuccessMessageTitle = this.props.dailyDocket.lock ? 'You have successfully locked this Hearing ' +
+      'Day' : 'You have successfully unlocked this Hearing Day';
+    const lockSuccessMessage = this.props.dailyDocket.lock ? 'You cannot add more veterans to this hearing day, ' +
+      'but you can edit existing entries' : 'You can now add more veterans to this hearing day';
+
     return <AppSegment filledBackground>
       {this.props.displayRemoveHearingDayModal && <div>
         <Modal
@@ -369,17 +364,39 @@ export default class DailyDocket extends React.Component {
           {this.getRemoveHearingDayMessage()}
         </Modal>
       </div>}
+      {this.props.displayLockModal && <div>
+        <Modal
+          title={this.getDisplayLockModalTitle()}
+          closeHandler={this.props.onCancelDisplayLockModal}
+          confirmButton={confirmLockModalButton}
+          cancelButton={cancelLockModalButton}
+        >
+          {this.getDisplayLockModalMessage()}
+        </Modal>
+      </div>}
       { this.props.saveSuccessful && <Alert
         type="success"
         styling={alertStyling}
         title={`You have successfully updated ${this.props.saveSuccessful.appellantMiFormatted ||
           this.props.saveSuccessful.veteranMiFormatted}'s hearing.`}
       /> }
+      { this.props.displayLockSuccessMessage && <Alert
+        type="success"
+        styling={alertStyling}
+        title={lockSuccessMessageTitle}
+        message={lockSuccessMessage}
+      />}
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
-        <div {...backLinkStyling}>
-          <Link to="/schedule">&lt; Back to schedule</Link>&nbsp;&nbsp;
-          { _.isEmpty(this.props.hearings) &&
+        <div {...backLinkStyling}><Link to="/schedule">&lt; Back to schedule</Link></div>
+        <div>
+          <Button
+            linkStyling
+            onClick={this.props.onDisplayLockModal}
+          >
+            {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
+          </Button>&nbsp;&nbsp;
+          { _.isEmpty(this.props.hearings) && this.props.userRoleBuild &&
           <Button
             linkStyling
             onClick={this.props.onClickRemoveHearingDay}

@@ -7,11 +7,6 @@ class HearingDayRepository
       to_canonical_hash(VACOLS::CaseHearing.create_hearing!(hearing_hash)) if hearing_hash.present?
     end
 
-    def update_vacols_hearing!(hearing, hearing_hash)
-      hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
-      hearing.update_hearing!(hearing_hash) if hearing_hash.present?
-    end
-
     # Query Operations
     def find_hearing_day(hearing_type, hearing_key)
       if hearing_type.nil? || hearing_type == "V" || hearing_type == "C"
@@ -84,15 +79,15 @@ class HearingDayRepository
       ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
     end
 
-    def to_canonical_hash(hearing)
-      if hearing.is_a?(HearingDay)
-        return hearing.to_hash
+    def to_canonical_hash(hearing_day)
+      if hearing_day.is_a?(HearingDay)
+        return hearing_day.to_hash
       end
-      hearing_hash = hearing.as_json.each_with_object({}) do |(k, v), result|
+      hearing_day_hash = hearing_day.as_json.each_with_object({}) do |(k, v), result|
         result[HearingDayMapper::COLUMN_NAME_REVERSE_MAP[k.to_sym]] = v
       end
-      hearing_hash.delete(nil)
-      values_hash = hearing_hash.each_with_object({}) do |(k, v), result|
+      hearing_day_hash.delete(nil)
+      values_hash = hearing_day_hash.each_with_object({}) do |(k, v), result|
         result[k] = if k.to_s == "regional_office" && !v.nil?
                       v[6, v.length]
                     elsif k.to_s == "hearing_date"
