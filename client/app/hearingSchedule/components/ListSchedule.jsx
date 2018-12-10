@@ -235,7 +235,7 @@ class ListSchedule extends React.Component {
                 data={hearingScheduleRows}
                 target="_blank"
                 filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
-                Download Current View
+                Download current view
               </CSVLink>
             </Button>
           </div>

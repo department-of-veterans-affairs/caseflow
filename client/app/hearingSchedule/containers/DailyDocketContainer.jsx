@@ -205,9 +205,10 @@ export class DailyDocketContainer extends React.Component {
 
   closeModal = () => {
     this.setState({ modalOpen: false });
-    this.setState({ showModalAlert: true });
 
     if (this.props.hearingDayModified) {
+      this.setState({ showModalAlert: true });
+
       let data = { hearing_key: this.props.dailyDocket.id };
 
       if (this.props.hearingRoom) {

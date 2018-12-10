@@ -89,21 +89,13 @@ class HearingDayEditModal extends React.Component {
   modalConfirmButton = () => {
     return <Button
       classNames={['usa-button-secondary']}
-      onClick={this.onClickConfirm}
+      onClick={this.props.closeModal}
     >Confirm
     </Button>;
   };
 
-  onClickConfirm = () => {
-    this.props.closeModal();
-  };
-
   modalCancelButton = () => {
-    return <Button linkStyling onClick={this.onCancelModal}>Go back</Button>;
-  };
-
-  onCancelModal = () => {
-    this.props.cancelModal();
+    return <Button linkStyling onClick={this.props.cancelModal}>Go back</Button>;
   };
 
   onModifyRoom = () => {
@@ -143,19 +135,19 @@ class HearingDayEditModal extends React.Component {
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
         <Checkbox
           name="roomEdit"
-          label="Change Room"
+          label={<strong>Change Room</strong>}
           strongLabel
           value={this.state.modifyRoom}
           onChange={this.onModifyRoom} />
         <Checkbox
           name="vljEdit"
-          label="Change VLJ"
+          label={<strong>Change VLJ</strong>}
           strongLabel
           value={this.state.modifyVlj}
           onChange={this.onModifyVlj} />
         <Checkbox
           name="coordinatorEdit"
-          label="Change Coordinator"
+          label={<strong>Change Coordinator</strong>}
           strongLabel
           value={this.state.modifyCoordinator}
           onChange={this.onModifyCoordinator} />

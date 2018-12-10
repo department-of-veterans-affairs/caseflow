@@ -47,8 +47,6 @@ const statusMsgDetailStyle = css({
 });
 
 const hearingTypeOptions = [
-  { label: '',
-    value: '' },
   { label: 'Video',
     value: 'V' },
   { label: 'Central',
@@ -161,16 +159,16 @@ class HearingDayAddModal extends React.Component {
 
     switch (value.value) {
     case 'V':
-      this.setState({ videoSelected: true });
-      this.setState({ centralOfficeSelected: false });
+      this.setState({ videoSelected: true,
+        centralOfficeSelected: false });
       break;
     case 'C':
-      this.setState({ videoSelected: false });
-      this.setState({ centralOfficeSelected: true });
+      this.setState({ videoSelected: false,
+        centralOfficeSelected: true });
       break;
     default:
-      this.setState({ videoSelected: false });
-      this.setState({ centralOfficeSelected: false });
+      this.setState({ videoSelected: false,
+        centralOfficeSelected: false });
     }
   };
 
@@ -180,9 +178,9 @@ class HearingDayAddModal extends React.Component {
   };
 
   resetErrorState = () => {
-    this.setState({ dateError: false });
-    this.setState({ typeError: false });
-    this.setState({ roError: false });
+    this.setState({ dateError: false,
+      typeError: false,
+      roError: false });
   };
 
   onVljChange = (value) => {
@@ -209,7 +207,7 @@ class HearingDayAddModal extends React.Component {
         <DateSelector
           name="hearingDate"
           label={false}
-          errorMessage={((this.state.dateError && this.state.typeError) || (this.state.dateError)) ?
+          errorMessage={this.state.dateError ?
             this.getDateTypeErrorMessages() : null}
           value={this.props.selectedHearingDay}
           onChange={this.onHearingDateChange}
@@ -233,22 +231,22 @@ class HearingDayAddModal extends React.Component {
           staticOptions={centralOfficeStaticEntry} />
         }
         {(this.state.videoSelected || this.state.centralOfficeSelected) &&
-        <SearchableDropdown
-          name="vlj"
-          label="Select VLJ (Optional)"
-          strongLabel
-          value={this.props.vlj}
-          onChange={this.onVljChange}
-          options={this.props.activeJudges} />
-        }
-        {(this.state.videoSelected || this.state.centralOfficeSelected) &&
-        <SearchableDropdown
-          name="coordinator"
-          label="Select Hearing Coordinator (Optional)"
-          strongLabel
-          value={this.props.coordinator}
-          onChange={this.onCoordinatorChange}
-          options={this.props.activeCoordinators} />
+        <React.Fragment>
+          <SearchableDropdown
+            name="vlj"
+            label="Select VLJ (Optional)"
+            strongLabel
+            value={this.props.vlj}
+            onChange={this.onVljChange}
+            options={this.props.activeJudges} />
+          <SearchableDropdown
+            name="coordinator"
+            label="Select Hearing Coordinator (Optional)"
+            strongLabel
+            value={this.props.coordinator}
+            onChange={this.onCoordinatorChange}
+            options={this.props.activeCoordinators} />
+        </React.Fragment>
         }
         <TextareaField
           name="Notes (Optional)"

@@ -15,8 +15,7 @@ export default class Dropdown extends React.Component {
       required,
       value,
       defaultText,
-      readOnly,
-      strongLabel
+      readOnly
     } = this.props;
 
     // Use empty string instead of null or undefined,
@@ -28,17 +27,9 @@ export default class Dropdown extends React.Component {
     //
     value = (value === null || typeof value === 'undefined') ? '' : value;
 
-    const labelContents = <span>
-      {label || name} {required && <span className="cf-required">Required</span>}
-    </span>;
-
     return <div className="cf-form-dropdown">
       <label htmlFor={name}>
-        {
-          strongLabel ?
-            <strong>{labelContents}</strong> :
-            labelContents
-        }
+        {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
       <select value={value} onChange={this.onChange} id={name} disabled={readOnly}>
@@ -63,6 +54,5 @@ Dropdown.propTypes = {
   options: PropTypes.array.isRequired,
   readOnly: PropTypes.bool,
   required: PropTypes.bool,
-  value: PropTypes.string,
-  strongLabel: PropTypes.bool
+  value: PropTypes.string
 };
