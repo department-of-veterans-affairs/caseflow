@@ -55,7 +55,7 @@ class ContestableIssue
   def conflicting_request_issue
     return unless rating_issue_reference_id
     return unless contesting_decision_review
-    found_request_issue = RequestIssue.find_active_by_reference_id(rating_issue_reference_id)
+    found_request_issue = RequestIssue.find_active_by_rating_issue_reference_id(rating_issue_reference_id)
 
     return unless found_request_issue && found_request_issue.review_request_id != contesting_decision_review.id
     found_request_issue

@@ -2,13 +2,12 @@ import { ACTIONS } from '../constants';
 import { applyCommonReducers } from '../../intake/reducers/common';
 import { REQUEST_STATE } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
-import { formatRequestIssues, formatRatings, formatContestableIssues } from '../../intake/util/issues';
+import { formatRequestIssues, formatContestableIssues } from '../../intake/util/issues';
 import { formatRelationships } from '../../intake/util';
 
 export const mapDataToInitialState = function(props = {}) {
   const { serverIntake, claimId, featureToggles } = props;
 
-  serverIntake.ratings = formatRatings(serverIntake.ratings);
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
   serverIntake.contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 

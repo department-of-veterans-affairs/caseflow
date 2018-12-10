@@ -37,27 +37,6 @@ export const legacyIssue = (issue, legacyAppeals) => {
   return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
 };
 
-export const formatRatings = (ratings, requestIssues = []) => {
-  const result = _.keyBy(_.map(ratings, (rating) => {
-    return _.assign(rating,
-      { issues: _.keyBy(rating.issues, 'reference_id') }
-    );
-  }), 'profile_date');
-
-  _.forEach(requestIssues, (requestIssue) => {
-    // filter out nil dates (request issues that are not yet rated)
-    if (requestIssue.reference_id) {
-      _.forEach(result, (rating) => {
-        if (rating.issues[requestIssue.reference_id]) {
-          rating.issues[requestIssue.reference_id].isSelected = true;
-        }
-      });
-    }
-  });
-
-  return result;
-};
-
 export const validateDate = (date) => {
   const datePattern = /^(0[1-9]|1[0-2])[/](0[1-9]|[12][0-9]|3[01])[/](19|20)\d\d$/;
 
@@ -94,10 +73,10 @@ export const validNonratingRequestIssue = (issue) => {
 
 const contestableIssueIndexByRequestIssue = (contestableIssuesByDate, requestIssue) => {
   const foundContestableIssue = _.reduce(contestableIssuesByDate, (foundIssue, contestableIssues) => {
-    return _.find(contestableIssues, {
+    return foundIssue || _.find(contestableIssues, {
       decisionIssueId: requestIssue.contested_decision_issue_id,
-      ratingIssueReferenceId: requestIssue.reference_id
-    }) || foundIssue;
+      ratingIssueReferenceId: requestIssue.rating_issue_reference_id
+    });
   }, null);
 
   return foundContestableIssue && foundContestableIssue.index;
@@ -138,13 +117,15 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
     }
 
     // Rating issues
-    const issueDate = new Date(issue.profile_date);
+    const issueDate = new Date(issue.rating_issue_profile_date);
 
     return {
       index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
       isRating: true,
-      id: issue.reference_id,
-      profileDate: issueDate.toISOString(),
+      ratingIssueReferenceId: issue.rating_issue_reference_id,
+      ratingIssueProfileDate: issueDate.toISOString(),
+      date: issue.decision_date,
+      decisionIssueId: issue.contested_decision_issue_id,
       notes: issue.notes,
       description: issue.description,
       ineligibleReason: issue.ineligible_reason,
@@ -208,9 +189,9 @@ const formatRatingRequestIssues = (state) => {
       filter((issue) => issue.isRating && !issue.isUnidentified).
       map((issue) => {
         return {
-          reference_id: issue.ratingIssueReferenceId,
+          rating_issue_reference_id: issue.ratingIssueReferenceId,
           decision_text: issue.description,
-          profile_date: issue.ratingIssueProfileDate,
+          rating_issue_profile_date: issue.ratingIssueProfileDate,
           notes: issue.notes,
           untimely_exemption: issue.untimelyExemption,
           untimely_exemption_notes: issue.untimelyExemptionNotes,

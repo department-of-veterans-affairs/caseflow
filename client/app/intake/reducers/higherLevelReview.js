@@ -1,7 +1,7 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
 import { formatDateStr } from '../../util/DateUtil';
-import { formatRatings, formatRequestIssues, formatContestableIssues } from '../util/issues';
+import { formatRequestIssues, formatContestableIssues } from '../util/issues';
 import { getReceiptDateError, getBlankOptionError, getPageError, formatRelationships } from '../util';
 import { update } from '../../util/ReducerUtil';
 
@@ -45,9 +45,6 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
-    },
-    ratings: {
-      $set: formatRatings(serverIntake.ratings)
     },
     contestableIssues: {
       $set: contestableIssues
