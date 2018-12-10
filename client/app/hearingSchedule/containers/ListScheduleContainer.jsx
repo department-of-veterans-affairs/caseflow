@@ -32,6 +32,11 @@ import _ from 'lodash';
 
 const dateFormatString = 'YYYY-MM-DD';
 
+const emptyValueEntry = [{
+  label: '',
+  value: ''
+}];
+
 const actionButtonsStyling = css({
   marginRight: '25px'
 });
@@ -88,7 +93,9 @@ export class ListScheduleContainer extends React.Component {
         });
       });
 
-      this.props.onReceiveJudges(_.orderBy(activeJudges, (judge) => judge.label, 'asc'));
+      activeJudges = _.orderBy(activeJudges, (judge) => judge.label, 'asc');
+      activeJudges.unshift(emptyValueEntry);
+      this.props.onReceiveJudges(activeJudges);
     });
 
   };
@@ -108,7 +115,9 @@ export class ListScheduleContainer extends React.Component {
         });
       });
 
-      this.props.onReceiveCoordinators(_.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc'));
+      activeCoordinators = _.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc');
+      activeCoordinators.unshift(emptyValueEntry);
+      this.props.onReceiveCoordinators(activeCoordinators);
     });
 
   };
@@ -122,6 +131,8 @@ export class ListScheduleContainer extends React.Component {
   openModal = () => {
     this.setState({ showModalAlert: false });
     this.setState({ modalOpen: true });
+    this.setState({ serverError: false });
+    this.setState({ noRoomsAvailable: false });
     this.props.onSelectedHearingDayChange('');
     this.props.selectHearingType('');
     this.props.selectVlj('');
@@ -148,7 +159,25 @@ export class ListScheduleContainer extends React.Component {
     }
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
-      then({}, (error) => {
+      then((response) => {
+        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+        const newHearing = resp.hearing;
+        const nameParts = this.props.vlj.label.split(' ');
+
+        if (nameParts.length > 0) {
+          newHearing.judgeFirstName = nameParts[0];
+          newHearing.judgeMiddleName = nameParts[1];
+          newHearing.judgeLastName = nameParts[2];
+        }
+
+        let newHearings = Object.assign({}, this.props.hearingSchedule);
+
+        newHearings[newHearings.size] = newHearing;
+
+        this.props.onReceiveHearingSchedule(newHearings);
+
+      }, (error) => {
         if (error.response.body && error.response.body.errors &&
           error.response.body.errors[0].title === 'No rooms available') {
           this.setState({ noRoomsAvailable: true });

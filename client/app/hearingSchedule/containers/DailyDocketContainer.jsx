@@ -31,6 +31,11 @@ import {
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
 
+const emptyValueEntry = [{
+  label: '',
+  value: ''
+}];
+
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -96,7 +101,9 @@ export class DailyDocketContainer extends React.Component {
         });
       });
 
-      this.props.onReceiveJudges(_.orderBy(activeJudges, (judge) => judge.label, 'asc'));
+      activeJudges = _.orderBy(activeJudges, (judge) => judge.label, 'asc');
+      activeJudges.unshift(emptyValueEntry);
+      this.props.onReceiveJudges(activeJudges);
     });
 
   };
@@ -116,7 +123,9 @@ export class DailyDocketContainer extends React.Component {
         });
       });
 
-      this.props.onReceiveCoordinators(_.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc'));
+      activeCoordinators = _.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc');
+      activeCoordinators.unshift(emptyValueEntry);
+      this.props.onReceiveCoordinators(activeCoordinators);
     });
 
   };
@@ -172,7 +181,21 @@ export class DailyDocketContainer extends React.Component {
       }
 
       ApiUtil.put(`/hearings/${this.props.dailyDocket.id}/hearing_day`, { data }).
-        then({}, () => {
+        then((response) => {
+          const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+          const editedHearingDay = resp.hearing;
+          const nameParts = this.props.vlj.label.split(' ');
+
+          if (nameParts.length > 0) {
+            editedHearingDay.judgeFirstName = nameParts[0];
+            editedHearingDay.judgeMiddleName = nameParts[1];
+            editedHearingDay.judgeLastName = nameParts[2];
+          }
+          editedHearingDay.judgeId = this.props.vlj.value;
+
+          this.props.onReceiveDailyDocket(Object.assign({}, editedHearingDay));
+        }, () => {
           this.setState({ serverError: true });
         });
     }
