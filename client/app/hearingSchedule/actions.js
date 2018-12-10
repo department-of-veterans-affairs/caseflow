@@ -281,9 +281,6 @@ export const handleDailyDocketServerError = (err) => ({
   }
 });
 
-export const onResetDailyDocketAfterError = (err) => ({
-  type: ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR,
-  payload: {
-    err
-  }
+export const onResetDailyDocketAfterError = () => ({
+  type: ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR
 });
