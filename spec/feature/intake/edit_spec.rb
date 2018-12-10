@@ -762,7 +762,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("Add issue 3")
         expect(page).to have_content("Does issue 3 match any of these issues")
         expect(page).to have_content("Left knee granted (already selected for issue 1)")
-        expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+        expect(page).to have_css("input[disabled]", visible: false)
 
         # Add nonrating issue
         click_intake_no_matching_issues
@@ -1201,7 +1201,7 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("Add issue 3")
         expect(page).to have_content("Does issue 3 match any of these issues")
         expect(page).to have_content("Left knee granted (already selected for issue 1)")
-        expect(page).to have_css("input[disabled][id='rating-radio_abc123']", visible: false)
+        expect(page).to have_css("input[disabled]", visible: false)
 
         # Add nonrating issue
         click_intake_no_matching_issues

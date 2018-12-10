@@ -48,12 +48,13 @@ describe DecisionReview do
     ]
   end
 
-  context "#serialized_contestable_issues_by_date" do
-    subject { higher_level_review.serialized_contestable_issues_by_date }
+  context "#contestable_issues" do
+    subject { higher_level_review.contestable_issues }
     it "creates a list of contestable rating and decision issues" do
-      expect(subject[profile_date]).to contain_exactly(
+      expect(subject.map(&:serialize)).to contain_exactly(
         { # this rating issue got replaced with a decision issue
-          ratingReferenceId: "123",
+          ratingIssueReferenceId: "123",
+          ratingIssueProfileDate: profile_date,
           decisionIssueReferenceId: decision_issues.first.id,
           date: profile_date,
           description: "decision issue 1",
@@ -62,29 +63,30 @@ describe DecisionReview do
           sourceHigherLevelReview: nil,
           timely: true
         },
-        ratingReferenceId: "456",
-        decisionIssueReferenceId: nil,
-        date: profile_date,
-        description: "rating issue 2",
-        rampClaimId: nil,
-        titleOfActiveReview: nil,
-        sourceHigherLevelReview: nil,
-        timely: true
-      )
-
-      expect(subject[profile_date + 1.day]).to contain_exactly(
-        ratingReferenceId: "789",
-        decisionIssueReferenceId: decision_issues.second.id,
-        date: profile_date + 1.day,
-        description: "decision issue 2",
-        rampClaimId: nil,
-        titleOfActiveReview: nil,
-        sourceHigherLevelReview: nil,
-        timely: true
-      )
-
-      expect(subject[profile_date + 2.days]).to contain_exactly(
-        ratingReferenceId: nil,
+        {
+          ratingIssueReferenceId: "456",
+          ratingIssueProfileDate: profile_date,
+          decisionIssueReferenceId: nil,
+          date: profile_date,
+          description: "rating issue 2",
+          rampClaimId: nil,
+          titleOfActiveReview: nil,
+          sourceHigherLevelReview: nil,
+          timely: true
+        },
+        {
+          ratingIssueReferenceId: "789",
+          ratingIssueProfileDate: profile_date + 1.day,
+          decisionIssueReferenceId: decision_issues.second.id,
+          date: profile_date + 1.day,
+          description: "decision issue 2",
+          rampClaimId: nil,
+          titleOfActiveReview: nil,
+          sourceHigherLevelReview: nil,
+          timely: true
+        },
+        ratingIssueReferenceId: nil,
+        ratingIssueProfileDate: profile_date + 2.days,
         decisionIssueReferenceId: decision_issues.third.id,
         date: profile_date + 2.days,
         description: "decision issue 3",

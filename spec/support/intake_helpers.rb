@@ -65,7 +65,7 @@ module IntakeHelpers
 
   def find_intake_issue_by_number(number)
     find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
-      if node.find(".issue-num").text =~ /^#{number}\./
+      if node.find(".issue-num").text.match?(/^#{number}\./)
         return node
       end
     end
@@ -73,7 +73,7 @@ module IntakeHelpers
 
   def find_intake_issue_by_text(text)
     find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
-      if node.text =~ /#{text}/
+      if node.text.match?(/#{text}/)
         return node
       end
     end

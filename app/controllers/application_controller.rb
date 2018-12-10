@@ -148,7 +148,7 @@ class ApplicationController < ApplicationBaseController
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def deny_vso_access
-    redirect_to "/unauthorized" if current_user && current_user.vso_employee?
+    redirect_to "/unauthorized" if current_user&.vso_employee?
   end
 
   # :nocov:
@@ -214,7 +214,7 @@ class ApplicationController < ApplicationBaseController
   helper_method :test_user?
 
   def verify_authentication
-    return true if current_user && current_user.authenticated?
+    return true if current_user&.authenticated?
 
     session["return_to"] = request.original_url
     redirect_to login_path
