@@ -22,8 +22,11 @@ module CaseReviewConcern
       task.parent.update(assigned_to_id: reviewing_judge_id)
     end
 
-    # Remove this check when feature flag 'ama_decision_issues' is enabled for all
-    if FeatureToggle.enabled?(:ama_decision_issues, user: RequestStore.store[:current_user])
+    # Remove this check when feature flag 'ama_decision_issues' is enabled for all. Similarly,
+    # if a request_issue_id is passed that means this case is already using the new issue
+    # editing flow and we need to continue to use it.
+    if FeatureToggle.enabled?(:ama_decision_issues, user: RequestStore.store[:current_user]) ||
+       issues&.first && issues.first[:request_issue_ids]
       delete_and_create_decision_issues
     else
       update_issue_dispositions
@@ -42,6 +45,7 @@ module CaseReviewConcern
       decision_issue = DecisionIssue.create!(
         disposition: issue_attrs[:disposition],
         description: issue_attrs[:description],
+        benefit_type: issue_attrs[:benefit_type],
         participant_id: appeal.veteran.participant_id
       )
       request_issues.each do |request_issue|
@@ -108,10 +112,10 @@ module CaseReviewConcern
   end
 
   def vacols_id
-    task_id.split("-", 2).first if task_id
+    task_id&.split("-", 2)&.first
   end
 
   def created_in_vacols_date
-    task_id.split("-", 2).second.to_date if task_id
+    task_id&.split("-", 2)&.second&.to_date
   end
 end

@@ -416,7 +416,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("Add issue 2")
     expect(page).to have_content("Does issue 2 match any of these issues")
     expect(page).to have_content("Left knee granted 2 (already selected for issue 1)")
-    expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
+    expect(page).to have_css("input[disabled]", visible: false)
 
     # Add nonrating issue
     click_intake_no_matching_issues
@@ -695,6 +695,15 @@ RSpec.feature "Appeal Intake" do
 
         expect(page).to have_content("Description for Active Duty Adjustments")
 
+        # add eligible legacy issue
+        click_intake_add_issue
+        add_intake_rating_issue("PTSD denied")
+        add_intake_rating_issue("ankylosis of hip")
+
+        expect(page).to have_content(
+          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+        )
+
         click_intake_finish
 
         ineligible_checklist = find("ul.cf-ineligible-checklist")
@@ -708,6 +717,8 @@ RSpec.feature "Appeal Intake" do
                  vacols_id: "vacols2",
                  vacols_sequence_id: "1"
         )).to_not be_nil
+
+        expect(page).to have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
       end
     end
 
@@ -742,6 +753,8 @@ RSpec.feature "Appeal Intake" do
                  vacols_id: "vacols1",
                  vacols_sequence_id: "1"
         )).to_not be_nil
+
+        expect(page).to_not have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
       end
     end
 

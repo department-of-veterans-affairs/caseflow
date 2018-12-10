@@ -38,18 +38,37 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
-  formatHearing = (hearing) => {
-    return {
-      disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
-      notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      master_record_updated: hearing.editedDate ? hearing.editedDate : null,
-      date: hearing.editedTime ? moment(hearing.date).set({
+  getTime = (hearing) => {
+    if (hearing.editedTime) {
+      return {
         // eslint-disable-next-line id-length
         h: hearing.editedTime.split(':')[0],
         // eslint-disable-next-line id-length
-        m: hearing.editedTime.split(':')[1]
+        m: hearing.editedTime.split(':')[1],
+        offset: moment.tz('America/New_York').format('Z')
+      };
+    }
+    const timeObject = moment(hearing.date);
 
-      }) : hearing.date
+    return {
+      // eslint-disable-next-line id-length
+      h: timeObject.hours(),
+      // eslint-disable-next-line id-length
+      m: timeObject.minutes(),
+      offset: timeObject.format('Z')
+    };
+
+  }
+
+  formatHearing = (hearing) => {
+    const time = this.getTime(hearing);
+
+    return {
+      disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
+      notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
+      master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
+        time } : null,
+      date: hearing.editedTime ? moment(hearing.date).set(time) : hearing.date
     };
   };
 

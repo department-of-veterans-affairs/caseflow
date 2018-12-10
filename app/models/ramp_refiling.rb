@@ -73,7 +73,7 @@ class RampRefiling < RampReview
         matching_issue = issues.find do |issue|
           issue.description == contention.text && issue.contention_reference_id.nil?
         end
-        matching_issue && matching_issue.update!(contention_reference_id: contention.id)
+        matching_issue&.update!(contention_reference_id: contention.id)
       end
 
       fail ContentionCreationFailed if issues.any? { |issue| !issue.contention_reference_id }

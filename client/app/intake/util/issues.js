@@ -23,6 +23,20 @@ const getClaimantField = (formType, veteran, intakeData) => {
   return [];
 };
 
+export const legacyIssue = (issue, legacyAppeals) => {
+  if (issue.vacolsIssue) {
+    return issue.vacolsIssue;
+  }
+
+  let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
+
+  if (!legacyAppeal) {
+    throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
+  }
+
+  return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
+};
+
 export const formatRatings = (ratings, requestIssues = []) => {
   const result = _.keyBy(_.map(ratings, (rating) => {
     return _.assign(rating,
@@ -92,7 +106,10 @@ export const formatRequestIssues = (requestIssues) => {
         ineligibleReason: issue.ineligible_reason,
         contentionText: issue.contention_text,
         untimelyExemption: issue.untimelyExemption,
-        untimelyExemptionNotes: issue.untimelyExemptionNotes
+        untimelyExemptionNotes: issue.untimelyExemptionNotes,
+        vacolsId: issue.vacols_id,
+        vacolsSequenceId: issue.vacols_sequence_id,
+        vacolsIssue: issue.vacols_issue
       };
     }
 
@@ -102,7 +119,10 @@ export const formatRequestIssues = (requestIssues) => {
         description: issue.description,
         contentionText: issue.contention_text,
         notes: issue.notes,
-        isUnidentified: issue.is_unidentified
+        isUnidentified: issue.is_unidentified,
+        vacolsId: issue.vacols_id,
+        vacolsSequenceId: issue.vacols_sequence_id,
+        vacolsIssue: issue.vacols_issue
       };
     }
 
@@ -120,18 +140,26 @@ export const formatRequestIssues = (requestIssues) => {
       contentionText: issue.contention_text,
       rampClaimId: issue.ramp_claim_id,
       untimelyExemption: issue.untimelyExemption,
-      untimelyExemptionNotes: issue.untimelyExemptionNotes
+      untimelyExemptionNotes: issue.untimelyExemptionNotes,
+      vacolsId: issue.vacols_id,
+      vacolsSequenceId: issue.vacols_sequence_id,
+      vacolsIssue: issue.vacols_issue
     };
   });
 };
 
-const ratingIssuesById = (ratings) => {
-  return _.reduce(ratings, (result, rating) => {
-    _.forEach(rating.issues, (issue, id) => {
-      result[id] = issue.decision_text;
-    });
+export const formatContestableIssues = (contestableIssues) => {
+  // order by date, otherwise all decision issues will always
+  // come after rating issues regardless of date
+  const orderedContestableIssues = _.orderBy(contestableIssues, ['date'], ['desc']);
 
-    return result;
+  return orderedContestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
+    contestableIssue.index = String(index);
+
+    contestableIssuesByDate[contestableIssue.date] = contestableIssuesByDate[contestableIssue.date] || {};
+    contestableIssuesByDate[contestableIssue.date][index] = contestableIssue;
+
+    return contestableIssuesByDate;
   }, {});
 };
 
@@ -142,6 +170,15 @@ export const issueById = (ratings, issueId) => {
   )[0];
 
   return currentRating.issues[issueId];
+};
+
+export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
+  const currentContestableIssueGroup = _.filter(
+    contestableIssuesByDate,
+    (contestableIssues) => _.some(contestableIssues, { index: issueIndex })
+  )[0];
+
+  return currentContestableIssueGroup[issueIndex];
 };
 
 const formatUnidentifiedIssues = (state) => {
@@ -162,17 +199,15 @@ const formatUnidentifiedIssues = (state) => {
 };
 
 const formatRatingRequestIssues = (state) => {
-  const ratingIssues = ratingIssuesById(state.ratings);
-
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.
       filter((issue) => issue.isRating && !issue.isUnidentified).
       map((issue) => {
         return {
-          reference_id: issue.id,
-          decision_text: ratingIssues[issue.id],
-          profile_date: issue.profileDate,
+          reference_id: issue.ratingIssueReferenceId,
+          decision_text: issue.description,
+          profile_date: issue.ratingIssueProfileDate,
           notes: issue.notes,
           untimely_exemption: issue.untimelyExemption,
           untimely_exemption_notes: issue.untimelyExemptionNotes,
@@ -275,8 +310,6 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 
 export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
-  let ratingIssues = ratingIssuesById(intakeData.ratings);
-
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue) => {
@@ -288,17 +321,20 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
-      const profileDate = new Date(issue.profileDate);
+      // todo: date works for contestable issue
+      // and profile_date works for request issue (for the edit page)
+      // fix this to use same keys
+      const profileDate = new Date(issue.date || issue.profileDate);
 
       return {
         referenceId: issue.id,
-        text: ratingIssues[issue.id],
-        date: formatDateStr(issue.profileDate),
+        text: issue.description,
+        date: formatDateStr(profileDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
-        profileDate: issue.profileDate,
+        profileDate,
         timely: issue.timely,
         beforeAma: profileDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
@@ -307,6 +343,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         rampClaimId: issue.rampClaimId,
         vacolsId: issue.vacolsId,
         vacolsSequenceId: issue.vacolsSequenceId,
+        vacolsIssue: issue.vacolsIssue,
         eligibleForSocOptIn: issue.eligibleForSocOptIn
       };
     }
@@ -325,6 +362,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       ineligibleReason: issue.ineligibleReason,
       vacolsId: issue.vacolsId,
       vacolsSequenceId: issue.vacolsSequenceId,
+      vacolsIssue: issue.vacolsIssue,
       eligibleForSocOptIn: issue.eligibleForSocOptIn
     };
   });

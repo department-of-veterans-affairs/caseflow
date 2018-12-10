@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { css } from 'glamor';
@@ -17,9 +16,6 @@ import {
   getIssueTypeDescription,
   getIssueDiagnosticCodeLabel
 } from '../utils';
-import {
-  editStagedAppeal
-} from '../QueueActions';
 import {
   fullWidth,
   REMAND_REASONS,
@@ -64,8 +60,7 @@ type Params = Props & {|
   issues: Issues,
   appeal: Appeal,
   highlight: boolean,
-  amaDecisionIssues: boolean,
-  editStagedAppeal: typeof editStagedAppeal
+  amaDecisionIssues: boolean
 |};
 
 type RemandReasonOption = {|
@@ -96,24 +91,14 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
   }
 
   updateIssue = (remandReasons) => {
-    const { appeal, appealId, issueId, amaDecisionIssues } = this.props;
+    const { appeal, issueId, amaDecisionIssues } = this.props;
     const useDecisionIssues = !appeal.isLegacyAppeal && amaDecisionIssues;
     const issues = useDecisionIssues ? appeal.decisionIssues : appeal.issues;
 
-    const updatedIssues = issues.map((issue) => {
-      if (issue.id === issueId) {
-        return {
-          ...issue,
-          remand_reasons: remandReasons
-        };
-      }
-
-      return issue;
-    });
-
-    const attributes = useDecisionIssues ? { decisionIssues: updatedIssues } : { issues: updatedIssues };
-
-    this.props.editStagedAppeal(appealId, attributes);
+    return {
+      ..._.find(issues, (issue) => issue.id === issueId),
+      remand_reasons: remandReasons
+    };
   };
 
   getChosenOptions = (): Array<RemandReasonOption> => _.filter(this.state, (val) => val.checked);
@@ -174,7 +159,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       compact().
       value();
 
-    this.updateIssue(remandReasons);
+    return this.updateIssue(remandReasons);
   };
 
   scrollToWarning = () => {
@@ -339,8 +324,8 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = (state.ui.featureToggles.ama_decision_issues && !appeal.isLegacyAppeal) ?
-    appeal.decisionIssues : appeal.issues;
+  const amaDecisionIssues = state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
+  const issues = (amaDecisionIssues && !appeal.isLegacyAppeal) ? appeal.decisionIssues : appeal.issues;
 
   return {
     appeal,
@@ -349,15 +334,11 @@ const mapStateToProps = (state, ownProps) => {
     ].includes(issue.disposition)),
     issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
     highlight: state.ui.highlightFormItems,
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues
+    amaDecisionIssues
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  editStagedAppeal
-}, dispatch);
-
 export default (connect(
-  mapStateToProps, mapDispatchToProps, null, { withRef: true }
+  mapStateToProps, null, null, { withRef: true }
 )(IssueRemandReasonsOptions): React.ComponentType<Props, State>
 );

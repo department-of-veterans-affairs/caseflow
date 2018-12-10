@@ -63,11 +63,18 @@ class HearingRepository
       end
     end
 
-    def slot_new_hearing(parent_record_id, appeal)
+    def slot_new_hearing(parent_record_id, time, appeal)
       hearing_day = HearingDay.find_hearing_day(nil, parent_record_id)
 
       if hearing_day[:hearing_type] == "C"
-        update_co_hearing(hearing_day[:hearing_date], appeal)
+        update_co_hearing(
+          hearing_day[:hearing_date].to_datetime.change(
+            hour: time["h"].to_i,
+            minute: time["m"],
+            offset: time["offset"]
+          ),
+          appeal
+        )
       else
         create_child_video_hearing(parent_record_id, hearing_day[:hearing_date], appeal)
       end
