@@ -88,6 +88,10 @@ RSpec.feature "Case Assignment flows" do
 
       expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, selected_opt))
       expect(page.current_path).to eq "/queue"
+
+      visit "/queue"
+      expect(page).to have_content(sprintf(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 1))
+      expect(page).to have_content(sprintf(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
     end
   end
 end
