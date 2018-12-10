@@ -86,7 +86,11 @@ export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
       appealId
     }
   });
-  ApiUtil.get(`/appeals/${appealId}/new_documents`).then((response) => {
+  const requestOptions = {
+    timeout: { response: 5 * 60 * 1000 }
+  };
+
+  ApiUtil.get(`/appeals/${appealId}/new_documents`, requestOptions).then((response) => {
     const resp = JSON.parse(response.text);
 
     dispatch(receiveNewDocuments({
