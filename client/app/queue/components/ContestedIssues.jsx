@@ -130,19 +130,19 @@ export default class ContestedIssues extends React.PureComponent {
         </div>
         { shouldShowError &&
           <span {...errorTextSpacing} className="usa-input-error-message">
-            Each request issue must have at least one decision issue
+            You must add a decision before you continue.
           </span>
         }
         <div {...indentedIssueStyling} className={shouldShowError ? 'usa-input-error' : ''}>
-          {issue.description}
           <div {...verticalSpaceDiv}>Benefit type: {BENEFIT_TYPES[issue.program]}</div>
+          {issue.description}
           <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>
           {this.decisionIssues(issue)}
           { openDecisionHandler &&
             <React.Fragment>
               <div {...buttonDiv}>
                 <Button
-                  name="+ Add Decision"
+                  name="+ Add decision"
                   onClick={openDecisionHandler([issue.id])}
                   classNames={['usa-button-secondary']}
                 />

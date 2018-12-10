@@ -110,7 +110,7 @@
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA": "OMO - VHA",
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME": "OMO - IME",
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
-  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
+  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision ready for review",
   "ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL": "Add admin action",
 
   "REMAND_REASONS_SCREEN_SUBHEAD_LABEL": "Please %s the appropriate remand reason(s) for all the remand dispositions.",
