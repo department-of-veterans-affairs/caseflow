@@ -183,7 +183,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def legacy_issue_opted_in?
-    eligible? && vacols_id
+    eligible? && vacols_id && vacols_sequence_id
   end
 
   def remove!

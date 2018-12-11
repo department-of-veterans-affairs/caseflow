@@ -696,7 +696,9 @@ class LegacyAppeal < ApplicationRecord
     return false unless nod_date
     return false unless soc_date
 
-    soc_date > soc_eligible_date || nod_date > nod_eligible_date
+    return true if soc_date > soc_eligible_date || nod_date > nod_eligible_date
+    return true if ssoc_dates && ssoc_dates.any? { |ssoc_date| ssoc_date > soc_eligible_date }
+    return false
   end
 
   def serializer_class
@@ -722,6 +724,19 @@ class LegacyAppeal < ApplicationRecord
         date: nod_date
       }
     ]
+  end
+
+  def serialize_for_opt_in
+    # Saving extra information about an appeal when it is opted in
+    # for future proofing
+    {
+      vacols_id: vacols_id,
+      bfmpro: case_record.bfmpro,
+      bfcurloc: case_record.bfcurloc,
+      bfddec: case_record.bfddec,
+      bfdc: case_record.bfdc,
+      issues: issues.map(&:intake_attributes)
+    }
   end
 
   private

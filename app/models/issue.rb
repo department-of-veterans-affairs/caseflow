@@ -192,10 +192,10 @@ class Issue
       vacols_sequence_id: vacols_sequence_id,
       eligible_for_soc_opt_in: eligible_for_opt_in?,
       description: friendly_description,
-      disposition_code: disposition_id,
       disposition: disposition,
-      disposition_date: disposition_date,
+      disposition_code: disposition_id,
       close_date: close_date,
+      disposition_date: disposition_date,
       note: note
     }
   end
@@ -299,7 +299,6 @@ class Issue
         # disposition is a snake_case symbol, i.e. :remanded
         disposition: disposition,
         disposition_id: hash["issdc"] || nil,
-        disposition_date: hash["issdcls"],
         # readable disposition is a string, i.e. "Remanded"
         readable_disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[hash["issdc"]],
         disposition_date: hash["issdcls"],

@@ -9,12 +9,10 @@ class LegacyIssueOptin < ApplicationRecord
   }
 
   VACOLS_DISPOSITION_CODE = "O".freeze # oh not zero
-  WHITELIST_DISPOSITION_CODES = ['G', 'X'].freeze
 
   def perform!
     attempted!
-    update!(original_appeal: legacy_appeal.serialize) # pseudocode
-
+    record_previous_disposition
     case action
     when :opt_in
       opt_in_legacy_issue
@@ -29,14 +27,15 @@ class LegacyIssueOptin < ApplicationRecord
   private
 
   def record_previous_disposition
+    # previous_appeal also saved for future-proofing
     update!(
+      previous_appeal: legacy_appeal.serialize_for_opt_in
       previous_disposition_code: legacy_issue.disposition_id,
       previous_disposition_date: legacy_issue.disposition_date
     )
   end
 
   def opt_in_legacy_issue
-    record_current_disposition
     transaction do
       close_legacy_issue_in_vacols
 
@@ -53,7 +52,7 @@ class LegacyIssueOptin < ApplicationRecord
     transaction do
       if legacy_appeal_needs_reopened?
         reopen_legacy_appeal
-        if legacy_appeal.remand? # Can I ensure that this gets reloaded?
+        if legacy_appeal.remand? # Can I ensure that legacy_appeal gets reloaded after reopen?
           revert_open_remand_issues
         end
       end
@@ -63,16 +62,16 @@ class LegacyIssueOptin < ApplicationRecord
 
   def close_legacy_issue_in_vacols
     Issue.close_in_vacols!(
-      vacols_id: request_issue.vacols_id,
-      vacols_sequence_id: request_issue.vacols_sequence_id,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id,
       disposition_code: VACOLS_DISPOSITION_CODE
     )
   end
 
   def rollback_issue_disposition
     Issue.rollback_disposition_in_vacols!(
-      vacols_id: request_issue.vacols_id,
-      vacols_sequence_id: request_issue.vacols_sequence_id,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id,
       disposition_code_to_rollback: VACOLS_DISPOSITION_CODE,
       original_disposition_code: original_disposition_code,
       original_disposition_date: original_disposition_date
@@ -107,8 +106,6 @@ class LegacyIssueOptin < ApplicationRecord
 
   def legacy_appeal_needs_closing?
     # if all the issues are closed, the appeal should be closed.
-    # if any of the issues with a disposition of "O" were remands
-    # open the post-remand appeal, and convert the issue dispositions to 3
     legacy_appeal.active? && legacy_appeal.issues.reject(&:closed?).empty?
   end
 
@@ -155,7 +152,7 @@ class LegacyIssueOptin < ApplicationRecord
   end
 
   def legacy_appeal
-    @legacy_appeal ||= LegacyAppeal.find_or_create_by_vacols_id(request_issue.vacols_id)
+    @legacy_appeal ||= LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
 
   def legacy_issue
