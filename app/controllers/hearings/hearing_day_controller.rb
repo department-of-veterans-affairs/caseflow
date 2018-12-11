@@ -117,6 +117,7 @@ class Hearings::HearingDayController < HearingScheduleController
                   :hearing_type,
                   :room_info,
                   :bva_poc,
+                  :notes,
                   :lock)
       .merge(updated_by: current_user.css_id)
   end
