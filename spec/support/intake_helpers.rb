@@ -105,7 +105,8 @@ module IntakeHelpers
         bfdnod: 3.days.ago,
         bfdsoc: 3.days.ago,
         case_issues: [
-          create(:case_issue, :ankylosis_of_hip), create(:case_issue, :limitation_of_thigh_motion_extension)
+          create(:case_issue, :ankylosis_of_hip),
+          create(:case_issue, :limitation_of_thigh_motion_extension)
         ]
       ))
   end
@@ -137,7 +138,7 @@ module IntakeHelpers
         bfdsoc: 4.days.ago,
         case_issues: [
           create(:case_issue, :impairment_of_hip),
-          create(:case_issue, :impairment_of_femur)
+          create(:case_issue, :impairment_of_femur, :disposition_opted_in)
         ]
       ))
   end

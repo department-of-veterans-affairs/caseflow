@@ -59,7 +59,8 @@ RSpec.feature "Higher-Level Review" do
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
-        { reference_id: "def456", decision_text: "PTSD denied" }
+        { reference_id: "def456", decision_text: "PTSD denied" },
+        { reference_id: "def789", decision_text: "Looks like a VACOLS issue" }
       ]
     )
   end
@@ -1182,6 +1183,15 @@ RSpec.feature "Higher-Level Review" do
 
           expect(page).to have_content(
             "#{intake_constants.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+          )
+
+          # add ineligible legacy issue (already opted-in)
+          click_intake_add_issue
+          add_intake_rating_issue("Looks like a VACOLS issue")
+          add_intake_rating_issue("impairment of femur")
+
+          expect(page).to have_content(
+            "Looks like a VACOLS issue #{ineligible_constants.legacy_appeal_not_eligible}"
           )
 
           click_intake_finish
