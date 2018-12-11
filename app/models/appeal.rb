@@ -222,13 +222,18 @@ class Appeal < DecisionReview
     RootTask.create_root_and_sub_tasks!(self)
   end
 
+  def filter_duplicate_organizational_tasks(tasks)
+    tasks.reject { |t| t.assigned_to_type == "Organization" && t.children.pluck(:assigned_to_type).include?("User") }
+  end
+
   def timeline
     [
       {
         title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
         date: decision_date
       },
-      tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC").map(&:timeline_details),
+      filter_duplicate_organizational_tasks(tasks.where(status: Constants.TASK_STATUSES.completed)
+      .order("completed_at DESC")).map(&:timeline_details),
       {
         title: receipt_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
         date: receipt_date
