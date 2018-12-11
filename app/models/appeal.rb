@@ -32,17 +32,17 @@ class Appeal < DecisionReview
       .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
       .where("people.date_of_birth > ?", 75.years.ago)
       .where("advance_on_docket_motions.id IS NULL")
+
+      Person.left_outer_joins(:advance_on_docket_motions).select("advance_on_docket_motions.person_id, count(advance_on_docket_motions.id) as motions_count").group("advance_on_docket_motions.person_id").where("advance_on_docket_motions.granted IS true").having("count(advance_on_docket_motions.id) > 0").map(&:attributes)
+
   }
 
   scope :no_applicable_aod_motions, lambda {
-    # find appeals where there are aod motions for that person, but none apply -
-    # none of the motions were:
-    # - created after the appeal established at date AND
-    # - granted
-    joins(claimants: { person: :advance_on_docket_motions })
-      .where("people.date_of_birth > ?", 75.years.ago)
-      .where("advance_on_docket_motions.created_at > appeals.established_at")
-      .where("advance_on_docket_motions.granted = ?", true)
+    joins(claimants: :person)
+      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
+      .select("appeals.id, count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) as motions_applicable_count")
+      .group("appeals.id, advance_on_docket_motions.created_at")
+      .select { |person| person.motions_applicable_count == 0 }
   }
 
 
