@@ -190,7 +190,22 @@ class Task < ApplicationRecord
   end
 
   def mail_assign_to_organization_data
-    assign_to_organization_data.merge(type: MailTask.name)
+    {
+      options: [
+        {
+          value: AddressChangeMailTask.name,
+          label: AddressChangeMailTask.label
+        },
+        {
+          value: PowerOfAttorneyRelatedMailTask.name,
+          label: PowerOfAttorneyRelatedMailTask.label
+        },
+        {
+          value: EvidenceOrArgumentMailTask.name,
+          label: EvidenceOrArgumentMailTask.label
+        }
+      ]
+    }
   end
 
   def assign_to_user_data

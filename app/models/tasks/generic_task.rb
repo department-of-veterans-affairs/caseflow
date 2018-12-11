@@ -113,8 +113,6 @@ class GenericTask < Task
       )
     end
 
-    private
-
     def child_assigned_by_id(parent, current_user)
       return current_user.id if current_user
       return parent.assigned_to_id if parent && parent.assigned_to_type == User.name

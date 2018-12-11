@@ -12,6 +12,11 @@ class TasksController < ApplicationController
     JudgeAssignTask: JudgeAssignTask,
     ScheduleHearingTask: ScheduleHearingTask,
     MailTask: MailTask,
+    # TODO: Can I register these classes with the parent MailTask component somehow? And then call them here to
+    # loop over those registered classes?
+    AddressChangeMailTask: AddressChangeMailTask,
+    EvidenceOrArgumentMailTask: EvidenceOrArgumentMailTask,
+    PowerOfAttorneyRelatedMailTask: PowerOfAttorneyRelatedMailTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
 
