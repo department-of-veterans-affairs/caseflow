@@ -62,7 +62,9 @@ type Props = Params & {|
   requestPatch: typeof requestPatch,
   onReceiveAmaTasks: typeof onReceiveAmaTasks,
   onHearingDayChange: typeof onHearingDayChange,
-  onHearingTimeChange: typeof onHearingTimeChange
+  onHearingTimeChange: typeof onHearingTimeChange,
+  // Inherited from EditModalBase
+  setLoading: Function,
 |};
 
 type LocalState = {|
