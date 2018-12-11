@@ -63,7 +63,7 @@ class ClaimReview < DecisionReview
         end_product_establishment: end_product_establishment_for_issue(issue),
         benefit_type: benefit_type
       )
-      create_legacy_issue_optin(issue, action: :opt_in) if issue.vacols_id && issue.eligible?
+      create_legacy_issue_optin(request_issue: issue, action: :opt_in) if issue.legacy_issue_opted_in?
     end
   end
 

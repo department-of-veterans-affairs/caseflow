@@ -186,7 +186,7 @@ class Appeal < DecisionReview
       # temporary until ticket for appeals benefit type by issue is implemented
       # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
       issue.update!(benefit_type: "compensation")
-      create_legacy_issue_optin(issue, action: :opt_in) if issue.vacols_id && issue.eligible?
+      create_legacy_issue_optin(request_issue: issue, action: :opt_in) if issue.legacy_issue_opted_in?
     end
   end
 

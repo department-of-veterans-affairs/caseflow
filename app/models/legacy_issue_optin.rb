@@ -14,9 +14,9 @@ class LegacyIssueOptin < ApplicationRecord
     attempted!
     record_previous_disposition
     case action
-    when :opt_in
+    when "opt_in"
       opt_in_legacy_issue
-    when :rollback
+    when "rollback"
       rollback_legacy_issue_opt_in
     end
 
@@ -38,7 +38,6 @@ class LegacyIssueOptin < ApplicationRecord
   def opt_in_legacy_issue
     transaction do
       close_legacy_issue_in_vacols
-
       if legacy_appeal_needs_closing?
         if legacy_appeal.remand?
           revert_closed_remand_issues
@@ -106,7 +105,7 @@ class LegacyIssueOptin < ApplicationRecord
 
   def legacy_appeal_needs_closing?
     # if all the issues are closed, the appeal should be closed.
-    legacy_appeal.active? && legacy_appeal.issues.reject(&:closed?).empty?
+    legacy_appeal.active? && AppealRepository.issues(vacols_id).reject(&:closed?).empty?
   end
 
   def legacy_appeal_needs_reopened?

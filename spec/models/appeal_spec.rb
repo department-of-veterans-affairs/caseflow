@@ -14,8 +14,9 @@ describe Appeal do
   context "#special_issues" do
     let(:appeal) { create(:appeal) }
     let(:vacols_id) { nil }
+    let(:vacols_sequence_id) { nil }
     let!(:request_issue) do
-      create(:request_issue, review_request: appeal, vacols_id: vacols_id)
+      create(:request_issue, review_request: appeal, vacols_id: vacols_id, vacols_sequence_id: vacols_sequence_id)
     end
 
     subject { appeal.reload.special_issues }
@@ -28,6 +29,7 @@ describe Appeal do
 
     context "VACOLS opt-in" do
       let(:vacols_id) { "something" }
+      let(:vacols_sequence_id) { 1 }
 
       it "includes VACOLS opt-in" do
         expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)

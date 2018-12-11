@@ -80,8 +80,7 @@ class RequestIssue < ApplicationRecord
         untimely_exemption_notes: data[:untimely_exemption_notes],
         ramp_claim_id: data[:ramp_claim_id],
         vacols_id: data[:vacols_id],
-        vacols_sequence_id: data[:vacols_sequence_id],
-        vacols_issue: data[:vacols_issue]
+        vacols_sequence_id: data[:vacols_sequence_id]
       ).validate_eligibility!
     end
 
@@ -188,13 +187,7 @@ class RequestIssue < ApplicationRecord
 
   def remove!
     update!(review_request: nil)
-    create_legacy_issue_optin(self, action: :rollback) if legacy_issue_opted_in?
-  end
-
-  private
-
-  def title_of_active_review
-    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+    create_legacy_issue_optin(request_issue: self, action: :rollback) if legacy_issue_opted_in?
   end
 
   def vacols_issue
@@ -203,6 +196,12 @@ class RequestIssue < ApplicationRecord
       # coerce both into strings since VACOLS may store as int
       issue.vacols_sequence_id.to_s == vacols_sequence_id.to_s
     end
+  end
+
+  private
+
+  def title_of_active_review
+    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
   end
 
   def create_decision_issues

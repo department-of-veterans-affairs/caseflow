@@ -31,8 +31,14 @@ describe HigherLevelReview do
 
   context "#special_issues" do
     let(:vacols_id) { nil }
+    let(:vacols_sequence_id) { nil }
     let!(:request_issue) do
-      create(:request_issue, review_request: higher_level_review, vacols_id: vacols_id)
+      create(
+        :request_issue,
+        review_request: higher_level_review,
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id
+      )
     end
 
     subject { higher_level_review.special_issues }
@@ -45,6 +51,7 @@ describe HigherLevelReview do
 
     context "VACOLS opt-in" do
       let(:vacols_id) { "something" }
+      let(:vacols_sequence_id) { 1 }
 
       it "includes VACOLS opt-in" do
         expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
