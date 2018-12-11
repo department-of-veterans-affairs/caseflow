@@ -14,8 +14,12 @@ export const getPageError = (responseErrorCodes) => (
 // otherwise we send over a string true/false and reloading turns it into a boolean
 // which messes up logic on backend which expects a string
 export const convertStringToBoolean = (string) => {
-  if(string == 'true') return true;
-  if(string == 'false') return false;
+  if (string === 'true') {
+    return true;
+  } else if (string === 'false') {
+    return false;
+  }
+
   return null;
 };
 
