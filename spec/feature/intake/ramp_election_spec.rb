@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "RAMP Election Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
 
@@ -166,6 +169,8 @@ RSpec.feature "RAMP Election Intake" do
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
     click_intake_continue
 
+    binding.pry
+
     expect(page).to have_content("Finish processing Higher-Level Review election")
 
     click_label "confirm-finish"
@@ -224,7 +229,7 @@ RSpec.feature "RAMP Election Intake" do
 
     # Validate that visiting the finish page takes you back to
     # the review request page if you haven't yet reviewed the intake
-    visit "/intake/finish"
+    visit "/intake/completed"
 
     within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Higher-Level Review with Informal Conference").click
