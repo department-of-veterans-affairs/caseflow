@@ -12,6 +12,8 @@ class Task < ApplicationRecord
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
 
+  after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
+
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym    => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
@@ -98,12 +100,7 @@ class Task < ApplicationRecord
   def update_status(new_status)
     return unless new_status
 
-    case new_status
-    when Constants.TASK_STATUSES.completed
-      mark_as_complete!
-    else
-      update!(status: new_status)
-    end
+    update!(status: new_status)
   end
 
   def legacy?
@@ -137,8 +134,7 @@ class Task < ApplicationRecord
   end
 
   def mark_as_complete!
-    update!(status: :completed)
-    parent.when_child_task_completed if parent
+    update!(status: Constants.TASK_STATUSES.completed)
   end
 
   def when_child_task_completed
@@ -200,7 +196,7 @@ class Task < ApplicationRecord
   def assign_to_user_data
     users = if assigned_to.is_a?(Organization)
               assigned_to.users
-            elsif parent && parent.assigned_to.is_a?(Organization)
+            elsif parent&.assigned_to.is_a?(Organization)
               parent.assigned_to.users.reject { |u| u == assigned_to }
             else
               []
@@ -234,6 +230,14 @@ class Task < ApplicationRecord
 
   private
 
+  def update_parent_status
+    parent.when_child_task_completed
+  end
+
+  def status_changed_to_completed_and_has_parent?
+    saved_change_to_attribute?("status") && completed? && parent
+  end
+
   def users_to_options(users)
     users.map do |user|
       {
@@ -245,7 +249,7 @@ class Task < ApplicationRecord
 
   def update_status_if_children_tasks_are_complete
     if children.any? && children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.empty?
-      return mark_as_complete! if assigned_to.is_a?(Organization)
+      return update!(status: Constants.TASK_STATUSES.completed) if assigned_to.is_a?(Organization)
       return update!(status: :assigned) if on_hold?
     end
   end

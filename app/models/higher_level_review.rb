@@ -32,7 +32,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def end_product_description
-    rating_end_product_establishment && rating_end_product_establishment.description
+    rating_end_product_establishment&.description
   end
 
   def end_product_base_modifier

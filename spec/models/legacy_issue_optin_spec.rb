@@ -79,7 +79,7 @@ describe LegacyIssueOptin do
       vacols_case_issue.reload
       vacols_case.reload
       expect(vacols_case_issue.issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
-      expect(issue.disposition).to eq(:ama_opt_in)
+      expect(issue.disposition).to eq(:ama_soc_ssoc_opt_in)
       expect(issue).to be_closed
       expect(vacols_case).to_not be_closed
       expect(subject).to be_processed
@@ -95,7 +95,7 @@ describe LegacyIssueOptin do
         vacols_case.reload
         expect(vacols_case).to be_closed
         expect(vacols_case.bfdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
-        expect(issue.disposition).to eq(:ama_opt_in)
+        expect(issue.disposition).to eq(:ama_soc_ssoc_opt_in)
         expect(issue).to be_closed
         expect(subject).to be_processed
       end
