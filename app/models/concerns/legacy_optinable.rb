@@ -4,7 +4,6 @@ module LegacyOptinable
   private
 
   def create_legacy_issue_optin(request_issue:, action:)
-    # check that the optin is complete before starting the rollback?
     legacy_optin = LegacyIssueOptin.create!(
       request_issue: request_issue,
       action: action,

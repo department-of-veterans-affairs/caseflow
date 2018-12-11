@@ -11,20 +11,42 @@ class LegacyIssueOptin < ApplicationRecord
   VACOLS_DISPOSITION_CODE = "O".freeze # oh not zero
 
   def perform!
-    attempted!
-    record_previous_disposition
-    case action
-    when "opt_in"
-      opt_in_legacy_issue
-    when "rollback"
-      rollback_legacy_issue_opt_in
+    begin
+      attempted!
+      process_opt_in!
+    rescue StandardError => err
+      update_error!(err.to_s)
+      Raven.capture_exception(err)
     end
-
-    clear_error!
-    processed!
   end
 
   private
+
+  def process_opt_in!
+    return if processed?
+    if ready_to_process?
+      record_previous_disposition
+      case action
+      when "opt_in"
+        opt_in_legacy_issue
+      when "rollback"
+        rollback_legacy_issue_opt_in
+      end
+
+      clear_error!
+      processed!
+    else
+      update_error!("Other issues on same appeal are still being processed")
+    end
+  end
+
+  def ready_to_process?
+    # check that no other opt-ins are in process for the current appeal
+    LegacyIssueOptin
+      .where(vacols_id: vacols_id, processed_at: nil)
+      .where.not(id: id)
+      .count == 0
+  end
 
   def record_previous_disposition
     # previous_appeal also saved for future-proofing
