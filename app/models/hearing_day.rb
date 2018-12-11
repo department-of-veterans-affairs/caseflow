@@ -25,7 +25,8 @@ class HearingDay < ApplicationRecord
     hearings.each do |hearing|
       hearing.update_caseflow_and_vacols(
         room: room,
-        bva_poc: bva_poc
+        bva_poc: bva_poc,
+        judge_id: judge ? judge.vacols_attorney_id : nil
       )
     end
   end

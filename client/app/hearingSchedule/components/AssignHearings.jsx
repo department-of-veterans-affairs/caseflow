@@ -30,16 +30,13 @@ export default class AssignHearings extends React.Component {
   };
 
   room = (hearingDay) => {
-    let room = hearingDay.room;
-
     if (this.props.selectedRegionalOffice.label === 'St. Petersburg, FL') {
-      return room;
+      return hearingDay.room;
     } else if (this.props.selectedRegionalOffice.label === 'Winston-Salem, NC') {
-      return room;
+      return hearingDay.room;
     }
 
-    return room = '';
-
+    return '';
   };
 
   formatAvailableHearingDays = () => {

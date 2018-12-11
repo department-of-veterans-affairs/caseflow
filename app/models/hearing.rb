@@ -13,7 +13,7 @@ class Hearing < ApplicationRecord
   vacols_attr_accessor :regional_office_key, :master_record
   vacols_attr_accessor :docket_number, :appeal_type, :appellant_address_line_1
   vacols_attr_accessor :appellant_address_line_2, :appellant_city, :appellant_state
-  vacols_attr_accessor :appellant_zip, :appellant_country, :room, :bva_poc
+  vacols_attr_accessor :appellant_zip, :appellant_country, :room, :bva_poc, :judge_id
 
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge

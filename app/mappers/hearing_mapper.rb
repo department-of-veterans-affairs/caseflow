@@ -20,7 +20,8 @@ module HearingMapper
         representative_name: representative_name_to_vacols_format(hearing_info[:representative_name]),
         folder_nr: hearing_info[:folder_nr],
         room: hearing_info[:room],
-        bva_poc: hearing_info[:bva_poc]
+        bva_poc: hearing_info[:bva_poc],
+        judge_id: hearing_info[:judge_id]
       }.select do |k, _v|
         hearing_info.keys.map(&:to_sym).include?(k) || (k.to_sym == :hearing_date && hearing_info[:date])
         # only send updates to key/values that are passed
