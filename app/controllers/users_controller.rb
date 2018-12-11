@@ -8,9 +8,6 @@ class UsersController < ApplicationController
       return render json: { attorneys: Attorney.list_all }
     when Constants::USER_ROLE_TYPES["hearing_coordinator"]
       return render json: { coordinators: User.list_hearing_coordinators }
-    when Constants::USER_ROLE_TYPES["hearing_judge"]
-      # This method includes attorney id which is required for hearings
-      return render json: { hearingJudges: Judge.list_all_with_name_and_id }
     end
     render json: {}
   end
