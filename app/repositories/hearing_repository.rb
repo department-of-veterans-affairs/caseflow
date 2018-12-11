@@ -100,7 +100,7 @@ class HearingRepository
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date_str),
         vdkey: hearing_day.id,
         hearing_type: hearing_day.hearing_type,
-        room: hearing_day.room_info,
+        room: hearing_day.room,
         board_member: attorney_id,
         vdbvapoc: hearing_day.bva_poc
       )
@@ -129,7 +129,7 @@ class HearingRepository
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
         vdkey: hearing_day.id,
         hearing_type: hearing_day.hearing_type,
-        room: hearing_day.room_info,
+        room: hearing_day.room,
         board_member: hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil,
         vdbvapoc: hearing_day.bva_poc
       )
@@ -237,6 +237,7 @@ class HearingRepository
         appellant_first_name: vacols_record.sspare2,
         appellant_middle_initial: vacols_record.sspare3,
         appellant_last_name: vacols_record.sspare1,
+        room: vacols_record.room,
         regional_office_key: ro,
         type: type,
         date: date,

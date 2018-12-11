@@ -12,6 +12,21 @@ class HearingDay < ApplicationRecord
     central: "C"
   }.freeze
 
+  after_update(&:update_children_records)
+
+  def update_children_records
+    hearings = if hearing_type == HEARING_TYPES[:central]
+                 HearingRepository.fetch_co_hearings_for_parent(hearing_date)
+               else
+                 HearingRepository.fetch_video_hearings_for_parent(id)
+               end
+    hearings.each do |hearing|
+      hearing.update_caseflow_and_vacols(
+        room: room
+      )
+    end
+  end
+
   def to_hash
     as_json.each_with_object({}) do |(k, v), result|
       result[k.to_sym] = v
@@ -92,7 +107,7 @@ class HearingDay < ApplicationRecord
           .fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)
 
         next unless scheduled_hearings.length < total_slots && !hearing_day[:lock]
-        enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room_info)
+        enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room)
         enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] = total_slots
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = scheduled_hearings
       end

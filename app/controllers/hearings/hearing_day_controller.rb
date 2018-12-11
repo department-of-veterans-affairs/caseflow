@@ -117,7 +117,7 @@ class Hearings::HearingDayController < HearingScheduleController
   def create_params
     params.permit(:hearing_type,
                   :hearing_date,
-                  :room_info,
+                  :room,
                   :judge_id,
                   :regional_office)
       .merge(created_by: current_user, updated_by: current_user)
@@ -163,7 +163,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def json_hearing(hearing)
     hearing.as_json.each_with_object({}) do |(k, v), converted|
-      converted[k] = if k == "room_info"
+      converted[k] = if k == "room"
                        HearingDayMapper.label_for_room(v)
                      elsif k == "regional_office" && !v.nil?
                        HearingDayMapper.city_for_regional_office(v)

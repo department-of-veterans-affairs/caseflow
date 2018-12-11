@@ -18,7 +18,8 @@ module HearingMapper
         add_on: add_on_to_vacols_format(hearing_info[:add_on]),
         transcript_requested: transcript_requested_to_vacols_format(hearing_info[:transcript_requested]),
         representative_name: representative_name_to_vacols_format(hearing_info[:representative_name]),
-        folder_nr: hearing_info[:folder_nr]
+        folder_nr: hearing_info[:folder_nr],
+        room: hearing_info[:room]
       }.select do |k, _v|
         hearing_info.keys.map(&:to_sym).include?(k) || (k.to_sym == :hearing_date && hearing_info[:date])
         # only send updates to key/values that are passed
