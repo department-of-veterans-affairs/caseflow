@@ -697,13 +697,16 @@ RSpec.feature "Edit issues" do
     context "when there is a rating end product" do
       let(:contention_ref_id) { "123" }
       let!(:request_issue) do
-        RequestIssue.create!(
+        create(:request_issue,
           rating_issue_reference_id: "def456",
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "PTSD denied"
         )
       end
+
+      let(:request_issues) {[request_issue]}
+
       let(:rating_ep_claim_id) do
         EndProductEstablishment.find_by(
           source: higher_level_review,
@@ -712,8 +715,53 @@ RSpec.feature "Edit issues" do
       end
 
       before do
-        higher_level_review.create_issues!([request_issue])
+        higher_level_review.create_issues!(request_issues)
         higher_level_review.process_end_product_establishments!
+      end
+
+      context "has decision issues" do
+        let(:contested_decision_issue) { setup_prior_decision_issues(veteran) }
+        let(:decision_request_issue) do
+          create(
+            :request_issue,
+            review_request: higher_level_review,
+            description: "currently contesting decision issue",
+            decision_date: Time.zone.now - 2.day,
+            contested_decision_issue_id: contested_decision_issue.id
+          )
+        end
+
+        let(:request_issues) {[request_issue, decision_request_issue]}
+
+        it "shows decision isssues and allows adding/removing issues" do
+          visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
+          expect(page).to have_content("currently contesting decision issue")
+          # check that we cannot add the same issue again
+          click_intake_add_issue
+          expect(page).to have_css("input[disabled]", visible: false)
+          safe_click ".close-modal"
+
+          # remove original decision issue
+          click_remove_intake_issue_by_text("currently contesting decision issue")
+          click_remove_issue_confirmation
+
+          # add new decision issue
+          click_intake_add_issue
+          add_intake_rating_issue("contested supplemental claim decision issue")
+          expect(page).to have_content("contested supplemental claim decision issue")
+          safe_click("#button-submit-update")
+          expect(page).to have_content("Edit Confirmed")
+
+          # check that decision_request_issue is closed
+          updated_request_issue = RequestIssue.find_by(id: decision_request_issue.id)
+          expect(updated_request_issue.review_request).to be_nil
+
+          # check that new request issue is created contesting the decision issue
+          expect(RequestIssue.find_by(review_request: higher_level_review,
+            contested_decision_issue_id: contested_decision_issue.id,
+            description: contested_decision_issue.decision_text
+          )).to_not be_nil
+        end
       end
 
       it "shows request issues and allows adding/removing issues" do
@@ -815,7 +863,6 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("The review originally had 1 issue but now has 7.")
 
         safe_click "#Number-of-issues-has-changed-button-id-1"
-
         expect(page).to have_content("Edit Confirmed")
 
         # assert server has updated data for nonrating and unidentified issues
@@ -1222,72 +1269,48 @@ RSpec.feature "Edit issues" do
       end
 
       context "has decision issues" do
-        let(:supplemental_claim_reference_id) { "sc123" }
-        let(:previous_supplemental_claim) do
-          create(:supplemental_claim,
-                 veteran_file_number: veteran.file_number,
-                 benefit_type: "compensation")
-        end
-
-        let!(:previous_sc_request_issue) do
-          create(
-            :request_issue,
-            review_request: previous_supplemental_claim,
-            rating_issue_reference_id: supplemental_claim_reference_id,
-            # contention_reference_id: supplemental_claim_contention_reference_id
-          )
-        end
-
-        let!(:decision_issue) do
-          create(:decision_issue,
-                 decision_review: previous_supplemental_claim,
-                 request_issues: [previous_sc_request_issue],
-                 rating_issue_reference_id: supplemental_claim_reference_id,
-                 participant_id: veteran.participant_id,
-                 promulgation_date: Time.zone.now - 1.day,
-                 decision_text: "another supplemental claim decision issue",
-                 profile_date: Time.zone.now - 1.day,
-                 benefit_type: previous_supplemental_claim.benefit_type)
-        end
-
-        let!(:decision_issue_contested) do
-          create(:decision_issue,
-                 # request_issues: [original_request_issue],
-                 decision_review: previous_supplemental_claim,
-                 decision_text: "contested supplemental claim decision issue",
-                 profile_date: Time.zone.now - 2.day,
-                 promulgation_date: Time.zone.now - 2.day,
-                 benefit_type: supplemental_claim.benefit_type)
-        end
-
+        let(:contested_decision_issue) { setup_prior_decision_issues(veteran) }
         let(:decision_request_issue) do
           create(
             :request_issue,
             review_request: supplemental_claim,
             description: "currently contesting decision issue",
             decision_date: Time.zone.now - 2.day,
-            contested_decision_issue_id: decision_issue_contested.id
+            contested_decision_issue_id: contested_decision_issue.id
           )
         end
 
         let(:request_issues) {[request_issue, decision_request_issue]}
 
-
-        it "shows decision isssues and allows adding/removing issues", :focus => true do
+        it "shows decision isssues and allows adding/removing issues" do
           visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-          binding.pry
           expect(page).to have_content("currently contesting decision issue")
 
           # check that we cannot add the same issue again
           click_intake_add_issue
           expect(page).to have_css("input[disabled]", visible: false)
+          safe_click ".close-modal"
 
           # remove original decision issue
+          click_remove_intake_issue_by_text("currently contesting decision issue")
+          click_remove_issue_confirmation
+
           # add new decision issue
+          click_intake_add_issue
+          add_intake_rating_issue("contested supplemental claim decision issue")
+          expect(page).to have_content("contested supplemental claim decision issue")
+          safe_click("#button-submit-update")
+          expect(page).to have_content("Edit Confirmed")
 
-          # check that original_request_issue is closed
+          # check that decision_request_issue is closed
+          updated_request_issue = RequestIssue.find_by(id: decision_request_issue.id)
+          expect(updated_request_issue.review_request).to be_nil
 
-          # check that new request issue is created contesting the new decision issue
+          # check that new request issue is created contesting the decision issue
+          expect(RequestIssue.find_by(review_request: supplemental_claim,
+            contested_decision_issue_id: contested_decision_issue.id,
+            description: contested_decision_issue.decision_text
+          )).to_not be_nil
         end
       end
 

@@ -196,6 +196,7 @@ class RequestIssue < ApplicationRecord
   private
 
   def build_contested_issue
+    return unless review_request
     if contested_decision_issue
       ContestableIssue.from_decision_issue(contested_decision_issue, review_request)
     elsif rating?

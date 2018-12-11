@@ -59,6 +59,11 @@ module IntakeHelpers
     issue_el.find(".remove-issue").click
   end
 
+  def click_remove_intake_issue_by_text(text)
+    issue_el = find_intake_issue_by_text(text)
+    issue_el.find(".remove-issue").click
+  end
+
   def click_remove_issue_confirmation
     safe_click ".remove-issue"
   end
@@ -159,6 +164,23 @@ module IntakeHelpers
     setup_active_ineligible_legacy_appeal(veteran_file_number)
     setup_inactive_eligible_legacy_appeal(veteran_file_number)
     setup_inactive_ineligible_legacy_appeal(veteran_file_number)
+  end
+
+  def setup_prior_decision_issues(veteran, benefit_type: "compensation")
+    decision_issue_rating_reference_id = "decisionSC123"
+    supplemental_claim_with_decision_issues = create(:supplemental_claim,
+      veteran_file_number: veteran.file_number,
+      benefit_type: benefit_type)
+
+    contested_decision_issue = create(:decision_issue,
+     decision_review: supplemental_claim_with_decision_issues,
+     participant_id: veteran.participant_id,
+     decision_text: "contested supplemental claim decision issue",
+     profile_date: Time.zone.now - 2.day,
+     promulgation_date: Time.zone.now - 2.day,
+     benefit_type: supplemental_claim_with_decision_issues.benefit_type)
+
+    contested_decision_issue
   end
 end
 # rubocop:enable Metrics/ModuleLength
