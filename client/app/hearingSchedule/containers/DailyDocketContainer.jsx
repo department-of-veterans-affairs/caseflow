@@ -209,7 +209,7 @@ export class DailyDocketContainer extends React.Component {
     if (this.props.hearingDayModified) {
       this.setState({ showModalAlert: true });
 
-      let data = { hearing_key: this.props.dailyDocket.id };
+      let data = { id: this.props.dailyDocket.id };
 
       if (this.props.hearingRoom) {
         data.room_info = this.props.hearingRoom.value;
@@ -227,7 +227,7 @@ export class DailyDocketContainer extends React.Component {
         data.notes = this.props.notes;
       }
 
-      ApiUtil.put(`/hearings/${this.props.dailyDocket.id}/hearing_day`, { data }).
+      ApiUtil.put(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { data }).
         then((response) => {
           const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
