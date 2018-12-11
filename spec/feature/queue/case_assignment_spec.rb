@@ -1,12 +1,5 @@
 require "rails_helper"
 
-def click_dropdown(opt_idx, container = page)
-  dropdown = container.find(".Select-control")
-  dropdown.click
-  yield if block_given?
-  dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
-end
-
 def generate_text(length)
   charset = ("A".."Z").to_a.concat(("a".."z").to_a)
   Array.new(length) { charset.sample }.join
@@ -70,14 +63,14 @@ RSpec.feature "Case Assignment flows" do
     scenario "adds colocated task" do
       visit "/queue"
       click_on "#{appeals[0].veteran_full_name} (#{appeals[0].sanitized_vbms_id})"
-      click_dropdown 2
+      click_dropdown(index: 2)
 
       expect(page).to have_content("Submit admin action")
 
       opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length)
       selected_opt = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
 
-      click_dropdown opt_idx do
+      click_dropdown(index: opt_idx) do
         visible_options = page.find_all(".Select-option")
         expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
       end
