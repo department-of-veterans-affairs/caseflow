@@ -36,7 +36,7 @@ const listStyling = css({
 const listItemStyling = css({
   display: 'inline',
   padding: '0.5rem 1.5rem 0.5rem 0',
-  ':nth-child(1)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
+  ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
   ':not(:first-child)': { paddingLeft: '1.5rem' }
 });
 
