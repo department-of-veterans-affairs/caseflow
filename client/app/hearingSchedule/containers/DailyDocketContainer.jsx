@@ -8,6 +8,7 @@ import DailyDocket from '../components/DailyDocket';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
+import { namePartToSortBy } from '../utils';
 import {
   onReceiveDailyDocket,
   onReceiveSavedHearing,
@@ -37,10 +38,10 @@ import {
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
 
-const emptyValueEntry = [{
+const emptyValueEntry = {
   label: '',
   value: ''
-}];
+};
 
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
@@ -132,22 +133,20 @@ export class DailyDocketContainer extends React.Component {
   };
 
   loadActiveJudges = () => {
-    let requestUrl = '/users?role=HearingJudge';
+    let requestUrl = '/users?role=Judge';
 
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      const sortedJudges = _.sortBy(resp.hearingJudges, (judge) => judge.lastName, 'asc');
+      const sortedJudges = _.sortBy(resp.judges, (judge) => namePartToSortBy(judge.fullName), 'asc');
 
       let activeJudges = [];
 
       _.forEach(sortedJudges, (value) => {
-        if (value.vacolsAttorneyId !== null) {
-          activeJudges.push({
-            label: `${value.firstName} ${value.middleName} ${value.lastName}`,
-            value: value.vacolsAttorneyId
-          });
-        }
+        activeJudges.push({
+          label: value.fullName,
+          value: value.id
+        });
       });
 
       activeJudges.unshift(emptyValueEntry);
@@ -239,19 +238,11 @@ export class DailyDocketContainer extends React.Component {
 
       ApiUtil.put(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { data }).
         then((response) => {
-          const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+          const editedHearingDay = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-          const editedHearingDay = resp.hearing;
-          const nameParts = this.props.vlj.label.split(' ');
+          editedHearingDay.hearingType = this.props.dailyDocket.hearingType;
 
-          if (nameParts.length > 0) {
-            editedHearingDay.judgeFirstName = nameParts[0];
-            editedHearingDay.judgeMiddleName = nameParts[1];
-            editedHearingDay.judgeLastName = nameParts[2];
-          }
-          editedHearingDay.judgeId = this.props.vlj.value;
-
-          this.props.onReceiveDailyDocket(Object.assign({}, editedHearingDay));
+          this.props.onReceiveDailyDocket(editedHearingDay, this.props.hearings, this.props.hearingDayOptions);
         }, () => {
           this.setState({ serverError: true });
         });
@@ -329,6 +320,7 @@ export class DailyDocketContainer extends React.Component {
         userRoleBuild={this.props.userRoleBuild}
         dailyDocketServerError={this.props.dailyDocketServerError}
         onResetDailyDocketAfterError={this.props.onResetDailyDocketAfterError}
+        notes={this.props.notes}
       />
       {this.state.modalOpen &&
       <HearingDayEditModal
