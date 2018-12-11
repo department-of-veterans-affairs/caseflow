@@ -404,7 +404,7 @@ RSpec.feature "AmaQueue" do
       fill_in "taskInstructions", with: quality_review_instructions
 
       click_on "Submit"
-      expect(page).to have_content("On hold (1)")
+      expect(page).to have_content("On hold (3)")
 
       User.authenticate!(user: judge_user)
 
