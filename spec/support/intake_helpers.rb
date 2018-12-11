@@ -23,6 +23,10 @@ module IntakeHelpers
     safe_click "#button-finish-intake"
   end
 
+  def click_intake_continue
+    safe_click "#button-submit-review"
+  end
+
   def click_intake_no_matching_issues
     safe_click ".no-matching-issues"
   end
