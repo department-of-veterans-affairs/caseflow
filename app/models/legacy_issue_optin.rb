@@ -29,7 +29,7 @@ class LegacyIssueOptin < ApplicationRecord
   def record_previous_disposition
     # previous_appeal also saved for future-proofing
     update!(
-      previous_appeal: legacy_appeal.serialize_for_opt_in
+      previous_appeal: legacy_appeal.serialize_for_opt_in,
       previous_disposition_code: legacy_issue.disposition_id,
       previous_disposition_date: legacy_issue.disposition_date
     )
@@ -101,7 +101,7 @@ class LegacyIssueOptin < ApplicationRecord
       user: RequestStore.store[:current_user],
       disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE],
       reopen_issues: false
-      )
+    )
   end
 
   def legacy_appeal_needs_closing?
@@ -122,7 +122,7 @@ class LegacyIssueOptin < ApplicationRecord
 
     LegacyIssueOptin.where(
       vacols_id: vacols_id,
-      previous_disposition_code: '3'
+      previous_disposition_code: "3"
     ).pluck(:vacols_sequence_id, :previous_disposition_date).uniq
   end
 
@@ -133,7 +133,7 @@ class LegacyIssueOptin < ApplicationRecord
         vacols_id: vacols_id,
         vacols_sequence_id: remand_issue[0],
         disposition_code_to_rollback: VACOLS_DISPOSITION_CODE,
-        original_disposition_code: '3',
+        original_disposition_code: "3",
         original_disposition_date: remand_issue[1]
       )
     end

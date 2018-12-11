@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181205201428) do
+ActiveRecord::Schema.define(version: 20181207014452) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -531,6 +531,12 @@ ActiveRecord::Schema.define(version: 20181205201428) do
     t.datetime "attempted_at"
     t.datetime "processed_at"
     t.string "error"
+    t.string "action"
+    t.string "vacols_id"
+    t.integer "vacols_sequence_id"
+    t.string "previous_disposition_code"
+    t.date "previous_disposition_date"
+    t.json "previous_appeal"
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
   end
 

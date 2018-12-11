@@ -697,8 +697,8 @@ class LegacyAppeal < ApplicationRecord
     return false unless soc_date
 
     return true if soc_date > soc_eligible_date || nod_date > nod_eligible_date
-    return true if ssoc_dates && ssoc_dates.any? { |ssoc_date| ssoc_date > soc_eligible_date }
-    return false
+    return true if ssoc_dates&.any? { |ssoc_date| ssoc_date > soc_eligible_date }
+    false
   end
 
   def serializer_class
