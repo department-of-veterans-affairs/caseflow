@@ -222,7 +222,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const propsToText = (props) => {
-  const action = selectedAction(props);
+  // I think the editModalBase higher order component is still calling this after all of the actions have run and the
+  // task's available actions have been updated to reflect the updated status of the task.
+  const action = props.task && props.task.availableActions.length > 0 ? selectedAction(props) : null;
 
   return {
     title: props.assigneeAlreadySelected && action ? `Assign task to ${action.label}` : COPY.ASSIGN_TO_PAGE_TITLE
