@@ -480,7 +480,7 @@ RSpec.feature "Supplemental Claim Intake" do
     end
   end
 
-  context "For new Add / Remove Issues page" do
+  context "Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)
       expect(row).to have_text(text)
