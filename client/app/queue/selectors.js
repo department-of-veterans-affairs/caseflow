@@ -148,8 +148,19 @@ export const tasksByAssigneeCssIdSelector = createSelector(
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
+export const tasksByAssignerCssIdSelector = createSelector(
+  [tasksWithAppealSelector, getUserCssId],
+  (tasks: Array<TaskWithAppeal>, cssId: string) =>
+    _.filter(tasks, (task) => task.assignedBy.cssId === cssId)
+);
+
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
+  (tasks: Tasks) => incompleteTasksSelector(tasks)
+);
+
+export const incompleteTasksByAssignerCssIdSelector = createSelector(
+  [tasksByAssignerCssIdSelector],
   (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
 
@@ -195,6 +206,15 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
   (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
     taskIsOnHold(task) && !taskHasNewDocuments(task, newDocsForAppeal)
   )
+);
+
+export const onHoldTasksForAttorney: (State) => Array<Task> = createSelector(
+  [onHoldTasksByAssigneeCssIdSelector, incompleteTasksByAssignerCssIdSelector],
+  (onHoldByAssignee: Array<Task>, incompleteByAssigner: Array<Task>) => {
+    const onHoldTasksWithDuplicates = onHoldByAssignee.concat(incompleteByAssigner);
+
+    return _.filter(onHoldTasksWithDuplicates, (task) => task.assignedTo.type === 'User');
+  }
 );
 
 export const judgeReviewTasksSelector = createSelector(
