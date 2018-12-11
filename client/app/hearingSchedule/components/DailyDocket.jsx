@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -361,6 +363,7 @@ export default class DailyDocket extends React.Component {
           {this.getRemoveHearingDayMessage()}
         </Modal>
       </div>}
+
       {this.props.displayLockModal && <div>
         <Modal
           title={this.getDisplayLockModalTitle()}
@@ -370,6 +373,7 @@ export default class DailyDocket extends React.Component {
           {this.getDisplayLockModalMessage()}
         </Modal>
       </div>}
+
       { this.props.saveSuccessful && <Alert
         type="success"
         styling={alertStyling}
@@ -380,6 +384,12 @@ export default class DailyDocket extends React.Component {
         styling={alertStyling}
         title={lockSuccessMessageTitle}
         message={lockSuccessMessage} /> }
+      { this.props.dailyDocketServerError && <Alert
+        type="error"
+        styling={alertStyling}
+        title={` Unable to delete Hearing Day 
+                ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')} in Caseflow.`}
+        message="Please delete the hearing day through VACOLS" />}
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
         <div {...backLinkStyling}>

@@ -30,7 +30,9 @@ import {
   onDisplayLockModal,
   onCancelDisplayLockModal,
   onUpdateLock,
-  onResetLockSuccessMessage
+  onResetLockSuccessMessage,
+  handleDailyDocketServerError,
+  onResetDailyDocketAfterError
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
@@ -58,11 +60,16 @@ export class DailyDocketContainer extends React.Component {
         _.isNil(this.props.displayLockSuccessMessage))) {
       this.props.onResetLockSuccessMessage();
     }
+    if (!((_.isNil(prevProps.dailyDocketServerError) && this.props.dailyDocketServerError) ||
+      _.isNil(this.props.dailyDocketServerError))) {
+      this.props.onResetDailyDocketAfterError();
+    }
   };
 
   componentWillUnmount = () => {
     this.props.onResetSaveSuccessful();
     this.props.onCancelRemoveHearingDay();
+    this.props.onResetDailyDocketAfterError();
   };
 
   loadHearingDay = () => {
@@ -182,6 +189,8 @@ export class DailyDocketContainer extends React.Component {
       then(() => {
         this.props.onSuccessfulHearingDayDelete(this.props.dailyDocket.hearingDate);
         this.props.history.push('/schedule');
+      }, (err) => {
+        this.props.handleDailyDocketServerError(err);
       });
   };
 
@@ -318,6 +327,8 @@ export class DailyDocketContainer extends React.Component {
         displayLockSuccessMessage={this.props.displayLockSuccessMessage}
         onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
         userRoleBuild={this.props.userRoleBuild}
+        dailyDocketServerError={this.props.dailyDocketServerError}
+        onResetDailyDocketAfterError={this.props.onResetDailyDocketAfterError}
       />
       {this.state.modalOpen &&
       <HearingDayEditModal
@@ -343,7 +354,8 @@ const mapStateToProps = (state) => ({
   activeCoordinators: state.hearingSchedule.activeCoordinators,
   displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal,
   displayLockModal: state.hearingSchedule.displayLockModal,
-  displayLockSuccessMessage: state.hearingSchedule.displayLockSuccessMessage
+  displayLockSuccessMessage: state.hearingSchedule.displayLockSuccessMessage,
+  dailyDocketServerError: state.hearingSchedule.dailyDocketServerError
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -368,7 +380,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onDisplayLockModal,
   onCancelDisplayLockModal,
   onUpdateLock,
-  onResetLockSuccessMessage
+  onResetLockSuccessMessage,
+  handleDailyDocketServerError,
+  onResetDailyDocketAfterError
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

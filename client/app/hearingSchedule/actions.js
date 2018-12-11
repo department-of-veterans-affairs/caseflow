@@ -337,3 +337,14 @@ export const onResetLockSuccessMessage = () => ({
   type: ACTIONS.RESET_LOCK_SUCCESS_MESSAGE
 });
 
+export const handleDailyDocketServerError = (err) => ({
+  type: ACTIONS.HANDLE_DAILY_DOCKET_SERVER_ERROR,
+  payload: {
+    err
+  }
+});
+
+export const onResetDailyDocketAfterError = () => ({
+  type: ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR
+});
+
