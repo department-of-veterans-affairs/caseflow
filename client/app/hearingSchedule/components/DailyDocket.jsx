@@ -77,6 +77,10 @@ const topMarginStyling = css({
   marginTop: '170px'
 });
 
+const notesTitleStyling = css({
+  marginTop: '15px'
+});
+
 export default class DailyDocket extends React.Component {
 
   onHearingNotesUpdate = (hearingId) => (notes) => this.props.onHearingNotesUpdate(hearingId, notes);
@@ -363,7 +367,6 @@ export default class DailyDocket extends React.Component {
           {this.getRemoveHearingDayMessage()}
         </Modal>
       </div>}
-
       {this.props.displayLockModal && <div>
         <Modal
           title={this.getDisplayLockModalTitle()}
@@ -373,7 +376,6 @@ export default class DailyDocket extends React.Component {
           {this.getDisplayLockModalMessage()}
         </Modal>
       </div>}
-
       { this.props.saveSuccessful && <Alert
         type="success"
         styling={alertStyling}
@@ -412,6 +414,12 @@ export default class DailyDocket extends React.Component {
             onClick={this.props.onClickRemoveHearingDay} >
             Remove Hearing Day
           </Button>
+          }
+          {this.props.notes &&
+          <span {...notesTitleStyling}>
+            <br /><strong>Notes: </strong>
+            <br />{this.props.notes}
+          </span>
           }
         </div>
       </div>
@@ -454,5 +462,6 @@ DailyDocket.propTypes = {
   onHearingDispositionUpdate: PropTypes.func,
   onHearingTimeUpdate: PropTypes.func,
   openModal: PropTypes.func,
-  deleteHearingDay: PropTypes.func
+  deleteHearingDay: PropTypes.func,
+  notes: PropTypes.string
 };
