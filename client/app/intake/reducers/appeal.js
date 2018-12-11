@@ -109,7 +109,11 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return state;
   }
 
-  const veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+  let veteranIsNotClaimant;
+
+  if (action.payload) {
+    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+  }
 
   switch (action.type) {
   case ACTIONS.CANCEL_INTAKE_SUCCEED:

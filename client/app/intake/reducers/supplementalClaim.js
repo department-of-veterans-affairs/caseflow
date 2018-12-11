@@ -115,7 +115,11 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
     return state;
   }
 
-  const veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+  let veteranIsNotClaimant;
+
+  if (action.payload) {
+    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+  }
 
   switch (action.type) {
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
