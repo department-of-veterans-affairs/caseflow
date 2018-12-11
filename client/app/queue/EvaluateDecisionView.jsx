@@ -156,7 +156,9 @@ class EvaluateDecisionView extends React.PureComponent {
       payload,
       { title: successMsg,
         detail: <DispatchSuccessDetail task={task} /> }).
-      then(() => this.props.deleteAppeal(appealId));
+      then(() => this.props.deleteAppeal(appealId), (response) => {
+        console.log(response);
+      });
   }
 
   getDisplayOptions = (opts) => _.map(JUDGE_CASE_REVIEW_OPTIONS[opts.toUpperCase()],
