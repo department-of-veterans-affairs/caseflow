@@ -69,8 +69,6 @@ class CaseTitle extends React.PureComponent {
 
 CaseTitle.propTypes = {
   appeal: PropTypes.object.isRequired,
-  redirectUrl: PropTypes.string.isRequired,
-  appealId: PropTypes.string.isRequired,
   taskType: PropTypes.string,
   analyticsSource: PropTypes.string
 };

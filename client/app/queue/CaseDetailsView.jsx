@@ -63,7 +63,7 @@ class CaseDetailsView extends React.PureComponent {
     } = this.props;
 
     return <AppSegment filledBackground>
-      <CaseTitle appeal={appeal} appealId={appealId} redirectUrl={window.location.pathname} />
+      <CaseTitle appeal={appeal} />
       {error && <Alert title={error.title} type="error">
         {error.detail}
       </Alert>}
