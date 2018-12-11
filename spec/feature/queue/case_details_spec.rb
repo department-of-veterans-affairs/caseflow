@@ -474,6 +474,15 @@ RSpec.feature "Case details" do
       end
     end
 
+    describe "Docket type badge shows up" do
+        let!(:appeal) { FactoryBot.create(:appeal, docket_type: "direct_review") }
+
+        it "should display docket type and number" do
+          visit "/queue/appeals/#{appeal.uuid}"
+          expect(page).to have_content("D #{appeal.docket_number}")
+        end
+    end
+
     describe "CaseTimeline shows judge & attorney tasks" do
       let!(:user) { FactoryBot.create(:user) }
       let!(:appeal) { FactoryBot.create(:appeal) }
