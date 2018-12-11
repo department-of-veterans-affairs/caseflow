@@ -660,9 +660,8 @@ RSpec.feature "Checkout flows" do
       expect(page).to_not have_content("One Touch Initiative")
 
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
-      find("label", text: "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}").click
-
-      # areas of improvement
+      text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
+      find("label", text: text_to_click).click
       find("#issues_are_not_addressed", visible: false).sibling("label").click
 
       dummy_note = generate_words 5
@@ -732,15 +731,10 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content("One Touch Initiative")
         find("label", text: COPY::JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD).click
 
-        click_on "Continue"
-        sleep 1
+        find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+        text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
+        find("label", text: text_to_click).click
 
-        expect(page).to have_content("Choose one")
-
-        find("label", text: "Easy").click
-        find("label", text: "1 - Does not meet expectations").click
-
-        # areas of improvement
         find("#issues_are_not_addressed", visible: false).sibling("label").click
 
         dummy_note = generate_words 5
