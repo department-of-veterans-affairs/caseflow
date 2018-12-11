@@ -168,14 +168,19 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       </div>
       {/* TODO: Put this text in COPY.json */}
       {total > 1 &&
-        <Button
-          willNeverBeLoading
-          linkStyling
-          name="Remove this action"
-          onClick={() => this.removeAdminActionField(index)} />
+        <React.Fragment>
+          <Button
+            willNeverBeLoading
+            linkStyling
+            styling={css({ paddingLeft: '0' })}
+            name="Remove this action"
+            onClick={() => this.removeAdminActionField(index)} />
+          <br />
+        </React.Fragment>
       }
       {index === total - 1 &&
         <Button
+          dangerStyling
           willNeverBeLoading
           name="+ Add another action"
           onClick={() => this.addAdminActionField()} />
