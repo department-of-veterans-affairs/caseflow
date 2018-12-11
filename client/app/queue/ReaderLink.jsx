@@ -37,15 +37,14 @@ export default class ReaderLink extends React.PureComponent {
     </React.Fragment>;
   };
 
-  getAppealDocumentCount = () => {
-    return <AppealDocumentCount appeal={this.props.appeal} />;
-  }
-
   render = () => {
     const {
       redirectUrl,
       taskType,
-      appealId
+      appealId,
+      appeal,
+      docCountWithinLink,
+      docCountBelowLink
     } = this.props;
     const linkProps = {};
 
@@ -66,8 +65,13 @@ export default class ReaderLink extends React.PureComponent {
 
     return <React.Fragment>
       <Link {...linkProps} onClick={this.readerLinkAnalytics}>
-        {this.getLinkText()}
-      </Link>
+          View { docCountWithinLink && <AppealDocumentCount appeal={appeal} /> } docs
+            <NewFile externalAppealId={appeal.externalId} /></Link>
+          { docCountBelowLink &&
+            <div {...documentCountSizeStyling}>
+              <AppealDocumentCount loadingText appeal={appeal} />
+            </div>
+          }
     </React.Fragment>;
   };
 }
