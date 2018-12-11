@@ -25,6 +25,7 @@ import Alert from '../../components/Alert';
 import COPY from '../../../COPY.json';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
+import { namePartToSortBy } from '../utils';
 import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
 import HearingDayAddModal from '../components/HearingDayAddModal';
@@ -32,10 +33,10 @@ import _ from 'lodash';
 
 const dateFormatString = 'YYYY-MM-DD';
 
-const emptyValueEntry = [{
+const emptyValueEntry = {
   label: '',
   value: ''
-}];
+};
 
 const actionButtonsStyling = css({
   marginRight: '25px'
@@ -79,22 +80,20 @@ export class ListScheduleContainer extends React.Component {
   };
 
   loadActiveJudges = () => {
-    let requestUrl = '/users?role=HearingJudge';
+    let requestUrl = '/users?role=Judge';
 
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      const sortedJudges = _.sortBy(resp.hearingJudges, (judge) => judge.lastName, 'asc');
+      const sortedJudges = _.sortBy(resp.judges, (judge) => namePartToSortBy(judge.fullName), 'asc');
 
       let activeJudges = [];
 
       _.forEach(sortedJudges, (value) => {
-        if (value.vacolsAttorneyId !== null) {
-          activeJudges.push({
-            label: `${value.firstName} ${value.middleName} ${value.lastName}`,
-            value: value.vacolsAttorneyId
-          });
-        }
+        activeJudges.push({
+          label: value.fullName,
+          value: value.id
+        });
       });
 
       activeJudges.unshift(emptyValueEntry);
@@ -165,18 +164,9 @@ export class ListScheduleContainer extends React.Component {
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-        const newHearing = resp.hearing;
-        const nameParts = this.props.vlj.label.split(' ');
+        const newHearings = Object.assign({}, this.props.hearingSchedule);
 
-        if (nameParts.length > 0) {
-          newHearing.judgeFirstName = nameParts[0];
-          newHearing.judgeMiddleName = nameParts[1];
-          newHearing.judgeLastName = nameParts[2];
-        }
-
-        let newHearings = Object.assign({}, this.props.hearingSchedule);
-
-        newHearings[newHearings.size] = newHearing;
+        newHearings[newHearings.size] = resp.hearing;
 
         this.props.onReceiveHearingSchedule(newHearings);
 
