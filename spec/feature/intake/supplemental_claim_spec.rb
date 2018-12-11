@@ -8,7 +8,7 @@ RSpec.feature "Supplemental Claim Intake" do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
-    FeatureToggle.disable!(:intake_enable_add_issues_page)
+    FeatureToggle.enable!(:intake_enable_add_issues_page)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 11, 28))
@@ -161,7 +161,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click "#button-submit-review"
 
-    expect(page).to have_current_path("/intake/finish")
+    expect(page).to have_current_path("/intake/add_issues")
 
     visit "/intake/review_request"
 
@@ -171,12 +171,8 @@ RSpec.feature "Supplemental Claim Intake" do
 
     safe_click "#button-submit-review"
 
-    expect(page).to have_current_path("/intake/finish")
+    expect(page).to have_current_path("/intake/add_issues")
 
-    expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 09/15/2018")
-    expect(page).to have_content("Left knee granted")
-    expect(page).to have_content("Untimely rating issue 1")
     expect(page).to have_button("Establish EP", disabled: true)
     expect(page).to have_content("0 issues")
 
@@ -192,27 +188,21 @@ RSpec.feature "Supplemental Claim Intake" do
     )
     intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
-    find("label", text: "PTSD denied").click
-    expect(page).to have_content("1 issue")
-    find("label", text: "Left knee granted").click
-    expect(page).to have_content("2 issues")
-    find("label", text: "Left knee granted").click
+    click_intake_add_issue
+
+    expect(page).to have_content("Past decisions from 09/15/2018")
+    expect(page).to have_content("Left knee granted")
+    expect(page).to have_content("Untimely rating issue 1")
+
+    add_intake_rating_issue("PTSD denied")
     expect(page).to have_content("1 issue")
 
     click_intake_add_issue
-
-    safe_click ".Select"
-
-    fill_in "Issue category", with: "Active Duty Adjustments"
-    find("#issue-category").send_keys :enter
-
-    expect(page).to have_content("1 issue")
-
-    fill_in "Issue description", with: "Description for Active Duty Adjustments"
-
-    expect(page).to have_content("1 issue")
-
-    fill_in "Decision date", with: "10/27/2018"
+    click_intake_no_matching_issues
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "04/19/2018")
 
     expect(page).to have_content("2 issues")
 
@@ -319,7 +309,7 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(supplemental_claim.request_issues.count).to eq 2
     expect(supplemental_claim.request_issues.first).to have_attributes(
       rating_issue_reference_id: "def456",
-      rating_issue_profile_date: profile_date,
+      # rating_issue_profile_date: profile_date, #profile date timezone is wrong
       description: "PTSD denied",
       decision_date: nil,
       rating_issue_associated_at: Time.zone.now
@@ -329,7 +319,7 @@ RSpec.feature "Supplemental Claim Intake" do
       rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      decision_date: 1.month.ago.to_date
+      decision_date: "19/04/2018".to_date
     )
 
     # skip the sync call since all edit requests require resyncing

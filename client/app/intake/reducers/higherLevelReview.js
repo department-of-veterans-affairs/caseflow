@@ -1,6 +1,7 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
 import { formatDateStr } from '../../util/DateUtil';
+import { convertStringToBoolean } from '../util';
 import { formatRatings, formatRequestIssues, formatContestableIssues } from '../util/issues';
 import { getReceiptDateError, getBlankOptionError, getPageError, formatRelationships } from '../util';
 import { update } from '../../util/ReducerUtil';
@@ -9,6 +10,7 @@ const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.HIGHER_LEVEL_REVIEW.key) {
     return state;
   }
+  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 
   return update(state, {
     isStarted: {
@@ -48,7 +50,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: formatRatings(serverIntake.ratings)
     },
     contestableIssues: {
-      $set: formatContestableIssues(serverIntake.contestableIssuesByDate)
+      $set: contestableIssues
     },
     requestIssues: {
       $set: formatRequestIssues(serverIntake.requestIssues)
@@ -147,12 +149,13 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
       }
     });
   case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:
+    const veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
     return update(state, {
       veteranIsNotClaimant: {
-        $set: action.payload.veteranIsNotClaimant
+        $set: veteranIsNotClaimant
       },
       claimant: {
-        $set: action.payload.veteranIsNotClaimant === 'true' ? state.claimant : null
+        $set: veteranIsNotClaimant === true ? state.claimant : null
       }
     });
   case ACTIONS.SET_CLAIMANT:
