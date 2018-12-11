@@ -35,6 +35,8 @@ export default function editModalBase(ComponentToWrap, { title, button, propsToT
 
     button = () => button || (propsToText && propsToText(this.props).button) || 'Submit';
 
+    setLoading = (loading) => this.setState({ loading });
+
     submit = () => {
       const {
         validateForm: validation = null
@@ -78,7 +80,7 @@ export default function editModalBase(ComponentToWrap, { title, button, propsToT
             <Alert type="error" title={error.title} message={error.detail} />
           </div>
         }
-        <ComponentToWrap ref={this.getWrappedComponentRef} {...this.props} />
+        <ComponentToWrap ref={this.getWrappedComponentRef} setLoading={this.setLoading} {...this.props} />
       </Modal>;
     }
   }
