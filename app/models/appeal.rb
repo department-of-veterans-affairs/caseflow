@@ -26,26 +26,20 @@ class Appeal < DecisionReview
       .where("people.date_of_birth <= ?", 75.years.ago)
   }
 
-  scope :no_aod_motions, lambda {
-    # find appeals that have no a
+  scope :all_priority, lambda {
+    # TODO: add cavc appeals
+    [aod_motions + aod_due_to_age].flatten.uniq(&:id)
+  }
+
+  # rubocop:disable Metrics/LineLength
+  scope :all_nonpriority, lambda {
     joins(claimants: :person)
       .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
       .where("people.date_of_birth > ?", 75.years.ago)
-      .where("advance_on_docket_motions.id IS NULL")
-
-      Person.left_outer_joins(:advance_on_docket_motions).select("advance_on_docket_motions.person_id, count(advance_on_docket_motions.id) as motions_count").group("advance_on_docket_motions.person_id").where("advance_on_docket_motions.granted IS true").having("count(advance_on_docket_motions.id) > 0").map(&:attributes)
-
+      .group("appeals.id")
+      .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
   }
-
-  scope :no_applicable_aod_motions, lambda {
-    joins(claimants: :person)
-      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
-      .select("appeals.id, count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) as motions_applicable_count")
-      .group("appeals.id, advance_on_docket_motions.created_at")
-      .select { |person| person.motions_applicable_count == 0 }
-  }
-
-
+  # rubocop:enable Metrics/LineLength
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
@@ -276,15 +270,4 @@ class Appeal < DecisionReview
   def bgs
     BGSService.new
   end
-
-  def self.all_priority
-    # TODO: add cavc appeals
-    [aod_motions + aod_due_to_age].flatten.uniq(&:id)
-  end
-
-  def self.all_nonpriority
-    # TODO: exclude cavc appeals
-    [no_aod_motions].flatten
-  end
-
 end

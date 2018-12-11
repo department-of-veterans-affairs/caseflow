@@ -1,10 +1,10 @@
 describe Appeal do
   context "priority and non-priority appeals", focus: true do
     let!(:appeal) { create(:appeal) }
-    let!(:aod_age_appeal) { create(:appeal, :advanced_on_docket_due_to_age) } 
-    let!(:aod_motion_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) } 
-    let!(:denied_aod_motion_appeal) { create(:appeal, :denied_advance_on_docket) } 
-    let!(:inapplicable_aod_motion_appeal) { create(:appeal, :inapplicable_aod_motion) } 
+    let!(:aod_age_appeal) { create(:appeal, :advanced_on_docket_due_to_age) }
+    let!(:aod_motion_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
+    let!(:denied_aod_motion_appeal) { create(:appeal, :denied_advance_on_docket) }
+    let!(:inapplicable_aod_motion_appeal) { create(:appeal, :inapplicable_aod_motion) }
 
     context "#all_priority" do
       subject { Appeal.all_priority }

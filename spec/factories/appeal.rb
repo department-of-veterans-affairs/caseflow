@@ -36,8 +36,8 @@ FactoryBot.define do
       claimants do
         # Create an appeal with two claimants, one with a denied AOD motion
         # and one with a granted motion. The appeal should still be counted as AOD.
-        claimant = create(:claimant) 
-        another_claimant = create(:claimant) 
+        claimant = create(:claimant)
+        another_claimant = create(:claimant)
         create(:advance_on_docket_motion, person: claimant.person, granted: true)
         create(:advance_on_docket_motion, person: another_claimant.person, granted: false)
         [claimant, another_claimant]
@@ -45,17 +45,18 @@ FactoryBot.define do
     end
 
     trait :denied_advance_on_docket do
-      established_at { Time.zone.now - 1 }
-      claimants do 
+      established_at { Time.zone.yesterday }
+      claimants do
         claimant = create(:claimant)
+
         create(:advance_on_docket_motion, person: claimant.person, granted: false)
         [claimant]
       end
     end
-    
+
     trait :inapplicable_aod_motion do
       established_at { Time.zone.tomorrow }
-      claimants do 
+      claimants do
         claimant = create(:claimant)
         create(:advance_on_docket_motion, person: claimant.person, granted: true)
         create(:advance_on_docket_motion, person: claimant.person, granted: false)
