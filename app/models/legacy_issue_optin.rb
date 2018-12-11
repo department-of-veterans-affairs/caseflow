@@ -51,7 +51,7 @@ class LegacyIssueOptin < ApplicationRecord
     transaction do
       if legacy_appeal_needs_reopened?
         reopen_legacy_appeal
-        if legacy_appeal.remand? # Can I ensure that legacy_appeal gets reloaded after reopen?
+        if legacy_appeal.remand?
           revert_open_remand_issues
         end
       end
@@ -112,7 +112,7 @@ class LegacyIssueOptin < ApplicationRecord
     legacy_appeal.case_record.bfmpro == "HIS" && legacy_appeal.case_record.bfcurloc == "99"
   end
 
-  def remanded_issues
+  def remand_issues
     # if the appeal is ready to be closed, all issues that used to
     # have a disposition of "3" should be closed with "O" now
 
@@ -127,7 +127,7 @@ class LegacyIssueOptin < ApplicationRecord
 
   def revert_closed_remand_issues
     # put all remand issues with "O" back to "3"
-    remanded_issues.each do |remand_issue|
+    remand_issues.each do |remand_issue|
       Issue.rollback_disposition_in_vacols!(
         vacols_id: vacols_id,
         vacols_sequence_id: remand_issue[0],
@@ -141,7 +141,7 @@ class LegacyIssueOptin < ApplicationRecord
   def revert_open_remand_issues
     # if this is happening, all remanded issues should have a disposition
     # of "3" on a "HIS" appeal. This is rolling back and putting them back at "O"
-    remanded_issues.each do |remand_issue|
+    remand_issues.each do |remand_issue|
       Issue.close_in_vacols!(
         vacols_id: vacols_id,
         vacols_sequence_id: remand_issue[0],
