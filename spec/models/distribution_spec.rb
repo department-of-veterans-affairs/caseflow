@@ -1,16 +1,29 @@
 describe Distribution do
+  let(:judge) { FactoryBot.create(:user) }
+  let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+  let(:member_count) { 3 }
+  let(:attorneys) { FactoryBot.create_list(:user, member_count) }
+  let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
+
   before do
     FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+    attorneys.each do |u|
+      OrganizationsUser.add_user_to_organization(u, judge_team)
+    end
+
+    # set up a couple of extra judge teams
+    2.times do
+      team = JudgeTeam.create_for_judge(FactoryBot.create(:user))
+      FactoryBot.create_list(:user, 3).each do |attorney|
+        OrganizationsUser.add_user_to_organization(attorney, team)
+      end
+    end
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
   end
-
-  let(:css_id) { "BVARZIEMANN1" }
-  let(:judge) { create(:user, css_id: css_id) }
-  let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: css_id) }
 
   # We use StartDistributionJob.perform_now in the test environment.
   #
