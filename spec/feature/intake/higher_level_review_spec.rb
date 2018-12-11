@@ -50,7 +50,7 @@ RSpec.feature "Higher-Level Review" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { Date.new(2018, 9, 15).to_time(:local) }
+  let(:profile_date) { Time.zone.local(2018, 9, 15) }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -76,7 +76,7 @@ RSpec.feature "Higher-Level Review" do
     )
   end
 
-  xit "Creates an end product and contentions for it" do
+  it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
       first_name: "BOB",
