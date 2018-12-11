@@ -140,7 +140,7 @@ class RequestIssue < ApplicationRecord
       vacols_sequence_id: vacols_sequence_id,
       vacols_issue: vacols_issue.try(:intake_attributes),
       ineligible_reason: ineligible_reason,
-      title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+      title_of_active_review: title_of_active_review
     }
   end
 
@@ -181,6 +181,10 @@ class RequestIssue < ApplicationRecord
   end
 
   private
+
+  def title_of_active_review
+    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+  end
 
   def vacols_issue
     return unless vacols_id && vacols_sequence_id

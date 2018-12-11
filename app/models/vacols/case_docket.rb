@@ -14,8 +14,9 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
     from BRIEFF
     #{VACOLS::Case::JOIN_AOD}
+    #{VACOLS::Case::JOIN_SPECIALTY_CASE_TEAM_ISSUES}
     inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
-    where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83')
+    where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83') and SCT.ISSUES is null
   ".freeze
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.

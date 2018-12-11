@@ -253,7 +253,7 @@ const getAttorney = (state: State, attorneyId: string) => {
 };
 
 export const getAssignedTasks = (state: State, attorneyId: string) => {
-  const tasks = tasksWithAppealSelector(state);
+  const tasks = incompleteTasksSelector(tasksWithAppealSelector(state));
   const attorney = getAttorney(state, attorneyId);
   const cssId = attorney ? attorney.css_id : null;
 
@@ -261,7 +261,7 @@ export const getAssignedTasks = (state: State, attorneyId: string) => {
 };
 
 export const getTasksByUserId = (state: State) => {
-  const tasks = tasksWithAppealSelector(state);
+  const tasks = incompleteTasksSelector(tasksWithAppealSelector(state));
   const attorneys = state.queue.attorneysOfJudge;
   const attorneysByCssId = _.keyBy(attorneys, 'css_id');
 

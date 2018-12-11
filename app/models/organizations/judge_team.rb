@@ -9,6 +9,14 @@ class JudgeTeam < Organization
     end
   end
 
+  def judge
+    admins.first
+  end
+
+  def attorneys
+    non_admins
+  end
+
   def can_receive_task?(_task)
     false
   end

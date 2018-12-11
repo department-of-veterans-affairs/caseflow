@@ -148,13 +148,18 @@ export const formatRequestIssues = (requestIssues) => {
   });
 };
 
-const ratingIssuesById = (ratings) => {
-  return _.reduce(ratings, (result, rating) => {
-    _.forEach(rating.issues, (issue, id) => {
-      result[id] = issue.decision_text;
-    });
+export const formatContestableIssues = (contestableIssues) => {
+  // order by date, otherwise all decision issues will always
+  // come after rating issues regardless of date
+  const orderedContestableIssues = _.orderBy(contestableIssues, ['date'], ['desc']);
 
-    return result;
+  return orderedContestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
+    contestableIssue.index = String(index);
+
+    contestableIssuesByDate[contestableIssue.date] = contestableIssuesByDate[contestableIssue.date] || {};
+    contestableIssuesByDate[contestableIssue.date][index] = contestableIssue;
+
+    return contestableIssuesByDate;
   }, {});
 };
 
@@ -165,6 +170,15 @@ export const issueById = (ratings, issueId) => {
   )[0];
 
   return currentRating.issues[issueId];
+};
+
+export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
+  const currentContestableIssueGroup = _.filter(
+    contestableIssuesByDate,
+    (contestableIssues) => _.some(contestableIssues, { index: issueIndex })
+  )[0];
+
+  return currentContestableIssueGroup[issueIndex];
 };
 
 const formatUnidentifiedIssues = (state) => {
@@ -185,17 +199,15 @@ const formatUnidentifiedIssues = (state) => {
 };
 
 const formatRatingRequestIssues = (state) => {
-  const ratingIssues = ratingIssuesById(state.ratings);
-
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.
       filter((issue) => issue.isRating && !issue.isUnidentified).
       map((issue) => {
         return {
-          reference_id: issue.id,
-          decision_text: ratingIssues[issue.id],
-          profile_date: issue.profileDate,
+          reference_id: issue.ratingIssueReferenceId,
+          decision_text: issue.description,
+          profile_date: issue.ratingIssueProfileDate,
           notes: issue.notes,
           untimely_exemption: issue.untimelyExemption,
           untimely_exemption_notes: issue.untimelyExemptionNotes,
@@ -298,8 +310,6 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 
 export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
-  let ratingIssues = ratingIssuesById(intakeData.ratings);
-
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue) => {
@@ -311,17 +321,20 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
-      const profileDate = new Date(issue.profileDate);
+      // todo: date works for contestable issue
+      // and profile_date works for request issue (for the edit page)
+      // fix this to use same keys
+      const profileDate = new Date(issue.date || issue.profileDate);
 
       return {
         referenceId: issue.id,
-        text: ratingIssues[issue.id],
-        date: formatDateStr(issue.profileDate),
+        text: issue.description,
+        date: formatDateStr(profileDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
-        profileDate: issue.profileDate,
+        profileDate,
         timely: issue.timely,
         beforeAma: profileDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
