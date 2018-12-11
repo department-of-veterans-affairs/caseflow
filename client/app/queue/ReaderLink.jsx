@@ -19,24 +19,6 @@ export default class ReaderLink extends React.PureComponent {
     window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER);
   }
 
-  getLinkText = () => {
-    const {
-      appeal,
-      docCountWithinLink,
-      docCountBelowLink
-    } = this.props;
-
-    return <React.Fragment>
-      <React.Fragment>View { docCountWithinLink && <AppealDocumentCount appeal={this.props.appeal} /> } docs
-        <NewFile externalAppealId={appeal.externalId} /></React.Fragment>
-      { docCountBelowLink &&
-        <div {...documentCountSizeStyling}>
-          <AppealDocumentCount loadingText appeal={this.props.appeal} />
-        </div>
-      }
-    </React.Fragment>;
-  };
-
   render = () => {
     const {
       redirectUrl,

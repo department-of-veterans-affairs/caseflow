@@ -62,7 +62,6 @@ class CaseTitle extends React.PureComponent {
           { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
         </Link>
       </span>
-
     </CaseTitleScaffolding>;
   }
 }
