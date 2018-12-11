@@ -30,23 +30,16 @@ class LegacyOptInModal extends React.Component {
     // legacy opt in are keyed off of a combo of both vacolsId & vacolsSequenceId
     // NO_MATCH_TEXT does not have a vacolsSequenceId
     const legacyValues = value.split('-');
-    const vacolsSequenceId = legacyValues.length > 1 ? legacyValues[1] : null;
+    const vacolsSequenceId = legacyValues.length > 1 ? legacyValues[1] : false;
     const legacyAppeal = this.props.intakeData.legacyAppeals.find((appeal) => appeal.vacols_id === legacyValues[0]);
 
-    let eligibleForSocOptIn, vacolsIssue;
-
     if (vacolsSequenceId) {
-      vacolsIssue = _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(vacolsSequenceId, 10) })[0];
-      eligibleForSocOptIn = vacolsIssue.eligible_for_soc_opt_in;
-    } else {
-      eligibleForSocOptIn = legacyAppeal && legacyAppeal.eligible_for_soc_opt_in;
-    }
+      let vacolsIssue = _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(vacolsSequenceId, 10) });
 
-    if (vacolsSequenceId) {
       this.setState({
         vacolsId: legacyValues[0],
-        vacolsSequenceId,
-        eligibleForSocOptIn
+        eligibleForSocOptIn: vacolsIssue.eligible_for_soc_opt_in,
+        vacolsSequenceId
       });
     }
 
