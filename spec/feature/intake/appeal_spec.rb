@@ -45,7 +45,7 @@ RSpec.feature "Appeal Intake" do
 
   let(:untimely_days) { 372.days }
 
-  let(:profile_date) { Date.new(2018, 9, 15).to_time(:local) }
+  let(:profile_date) { Time.zone.local(2018, 9, 15) }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -137,7 +137,7 @@ RSpec.feature "Appeal Intake" do
 
     click_intake_continue
 
-    expect(page).to have_current_path("/intake/finish")
+    expect(page).to have_current_path("/intake/add_issues")
 
     visit "/intake/review_request"
 
@@ -154,35 +154,24 @@ RSpec.feature "Appeal Intake" do
     expect(appeal.receipt_date).to eq(receipt_date)
     expect(appeal.docket_type).to eq("evidence_submission")
     expect(appeal.legacy_opt_in_approved).to eq(false)
-
-    expect(page).to have_content("Identify issues on")
-
     expect(appeal.claimant_participant_id).to eq(
       intake.veteran.participant_id
     )
-
     expect(appeal.payee_code).to eq(nil)
-    expect(page).to have_content("Decision date: 09/15/2018")
-    expect(page).to have_content("Left knee granted")
-    expect(page).to have_content("Untimely rating issue 1")
 
-    find("label", text: "PTSD denied").click
+    expect(page).to have_current_path("/intake/add_issues")
 
     click_intake_add_issue
-
-    safe_click ".Select"
+    add_intake_rating_issue("PTSD denied")
     expect(page).to have_content("1 issue")
 
-    fill_in "Issue category", with: "Active Duty Adjustments"
-    find("#issue-category").send_keys :enter
-
-    expect(page).to have_content("1 issue")
-
-    fill_in "Issue description", with: "Description for Active Duty Adjustments"
-
-    expect(page).to have_content("1 issue")
-
-    fill_in "Decision date", with: "10/27/2018"
+    click_intake_add_issue
+    click_intake_no_matching_issues
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "10/27/2018"
+    )
 
     expect(page).to have_content("2 issues")
 
@@ -278,17 +267,12 @@ RSpec.feature "Appeal Intake" do
     visit "/intake"
 
     click_intake_continue
-
-    expect(page).to have_content("This Veteran has no rated, disability issues")
-
     click_intake_add_issue
-
-    safe_click ".Select"
-
-    fill_in "Issue category", with: "Active Duty Adjustments"
-    find("#issue-category").send_keys :enter
-    fill_in "Issue description", with: "Description for Active Duty Adjustments"
-    fill_in "Decision date", with: "04/19/2018"
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "04/19/2018"
+    )
 
     expect(page).to have_content("1 issue")
 
@@ -322,7 +306,7 @@ RSpec.feature "Appeal Intake" do
     expect(row).to have_text(text)
   end
 
-  scenario "For new Add / Remove Issues page" do
+  scenario "Add / Remove Issues page" do
     duplicate_reference_id = "xyz789"
     old_reference_id = "old1234"
     Generators::Rating.build(
