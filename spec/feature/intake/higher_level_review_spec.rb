@@ -205,9 +205,6 @@ RSpec.feature "Higher-Level Review" do
 
     click_intake_continue
 
-    # TODO: JS error here due to claimant and/or payee code not being set in JS state
-    # when the intake is re-visited
-
     expect(page).to have_current_path("/intake/add_issues")
 
     higher_level_review = HigherLevelReview.find_by(veteran_file_number: veteran_file_number)
