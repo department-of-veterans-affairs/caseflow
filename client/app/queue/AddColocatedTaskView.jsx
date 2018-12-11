@@ -34,7 +34,8 @@ import type { UiStateMessage } from './types/state';
 
 type AdminActionType = {|
   actionLabel: ?string,
-  instructions: string
+  instructions: string,
+  key: string
 |};
 
 type ComponentState = {|
@@ -156,7 +157,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
             label,
             value
           }))}
-          onChange={(option) => this.updateAdminActionField(index, 'actionLabel', option.value)}
+          onChange={(option) => option && this.updateAdminActionField(index, 'actionLabel', option.value)}
           value={actionLabel} />
       </div>
       <div {...marginTop(4)}>
