@@ -130,9 +130,11 @@ export class DailyDocketContainer extends React.Component {
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
+      const sortedJudges = _.sortBy(resp.hearingJudges, (judge) => judge.lastName, 'asc');
+
       let activeJudges = [];
 
-      _.forEach(resp.hearingJudges, (value) => {
+      _.forEach(sortedJudges, (value) => {
         if (value.vacolsAttorneyId !== null) {
           activeJudges.push({
             label: `${value.firstName} ${value.middleName} ${value.lastName}`,
@@ -141,7 +143,6 @@ export class DailyDocketContainer extends React.Component {
         }
       });
 
-      activeJudges = _.orderBy(activeJudges, (judge) => judge.label, 'asc');
       activeJudges.unshift(emptyValueEntry);
       this.props.onReceiveJudges(activeJudges);
     });
