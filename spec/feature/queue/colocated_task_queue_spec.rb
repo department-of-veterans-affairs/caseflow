@@ -41,7 +41,7 @@ RSpec.feature "ColocatedTask" do
       find("button", text: "Assign Action").click
 
       # Redirected to personal queue page. Assignment succeeds.
-      expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, action))
+      expect(page).to have_content("You have assigned an administrative action (#{action})")
 
       # Visit case details page for VLJ support staff.
       User.authenticate!(user: vlj_support_staff)

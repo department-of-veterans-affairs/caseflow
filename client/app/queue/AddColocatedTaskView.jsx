@@ -126,8 +126,9 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     const msgTitle = COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE;
     const msgSubject = pluralize(COPY.ADD_COLOCATED_TASK_CONFIRMATION_SUBJECT, this.state.adminActions.length);
     const msgActions = this.state.adminActions.map((action) => CO_LOCATED_ADMIN_ACTIONS[action.actionLabel]).join(', ');
+    const msgDisplayCount = this.state.adminActions.length === 1 ? 'an' : this.state.adminActions.length;
     const successMsg = {
-      title: sprintf(msgTitle, this.state.adminActions.length, msgSubject, msgActions),
+      title: sprintf(msgTitle, msgDisplayCount, msgSubject, msgActions),
       detail: <DispatchSuccessDetail task={task} />
     };
 

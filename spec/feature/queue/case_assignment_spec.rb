@@ -67,7 +67,7 @@ RSpec.feature "Case Assignment flows" do
 
       click_on "Assign Action"
 
-      expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, selected_opt))
+      expect(page).to have_content("You have assigned an administrative action (#{selected_opt})")
       expect(page.current_path).to eq "/queue"
 
       visit "/queue"
