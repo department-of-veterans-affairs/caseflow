@@ -70,7 +70,7 @@ describe SupplementalClaimIntake do
     let(:benefit_type) { "compensation" }
     let(:claimant) { nil }
     let(:payee_code) { nil }
-    let(:veteran_is_not_claimant) { "false" }
+    let(:veteran_is_not_claimant) { false }
 
     let(:detail) do
       SupplementalClaim.create!(
@@ -104,7 +104,7 @@ describe SupplementalClaimIntake do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
-      let(:veteran_is_not_claimant) { "true" }
+      let(:veteran_is_not_claimant) { true }
 
       it "adds other relationship to claimants" do
         subject
