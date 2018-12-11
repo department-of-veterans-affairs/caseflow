@@ -10,7 +10,7 @@ const updateFromServerIntake = (state, serverIntake) => {
     return state;
   }
 
-  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate)
+  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 
   return update(state, {
     isStarted: {

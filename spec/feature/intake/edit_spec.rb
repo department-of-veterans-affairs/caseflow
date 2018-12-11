@@ -698,14 +698,13 @@ RSpec.feature "Edit issues" do
       let(:contention_ref_id) { "123" }
       let!(:request_issue) do
         create(:request_issue,
-          rating_issue_reference_id: "def456",
-          rating_issue_profile_date: rating.profile_date,
-          review_request: higher_level_review,
-          description: "PTSD denied"
-        )
+               rating_issue_reference_id: "def456",
+               rating_issue_profile_date: rating.profile_date,
+               review_request: higher_level_review,
+               description: "PTSD denied")
       end
 
-      let(:request_issues) {[request_issue]}
+      let(:request_issues) { [request_issue] }
 
       let(:rating_ep_claim_id) do
         EndProductEstablishment.find_by(
@@ -726,12 +725,12 @@ RSpec.feature "Edit issues" do
             :request_issue,
             review_request: higher_level_review,
             description: "currently contesting decision issue",
-            decision_date: Time.zone.now - 2.day,
+            decision_date: Time.zone.now - 2.days,
             contested_decision_issue_id: contested_decision_issue.id
           )
         end
 
-        let(:request_issues) {[request_issue, decision_request_issue]}
+        let(:request_issues) { [request_issue, decision_request_issue] }
 
         it "shows decision isssues and allows adding/removing issues" do
           visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
@@ -758,9 +757,8 @@ RSpec.feature "Edit issues" do
 
           # check that new request issue is created contesting the decision issue
           expect(RequestIssue.find_by(review_request: higher_level_review,
-            contested_decision_issue_id: contested_decision_issue.id,
-            description: contested_decision_issue.decision_text
-          )).to_not be_nil
+                                      contested_decision_issue_id: contested_decision_issue.id,
+                                      description: contested_decision_issue.decision_text)).to_not be_nil
         end
       end
 
@@ -1181,7 +1179,7 @@ RSpec.feature "Edit issues" do
         )
       end
 
-      let(:request_issues) {[request_issue]}
+      let(:request_issues) { [request_issue] }
 
       before do
         supplemental_claim.create_issues!(request_issues)
@@ -1275,12 +1273,12 @@ RSpec.feature "Edit issues" do
             :request_issue,
             review_request: supplemental_claim,
             description: "currently contesting decision issue",
-            decision_date: Time.zone.now - 2.day,
+            decision_date: Time.zone.now - 2.days,
             contested_decision_issue_id: contested_decision_issue.id
           )
         end
 
-        let(:request_issues) {[request_issue, decision_request_issue]}
+        let(:request_issues) { [request_issue, decision_request_issue] }
 
         it "shows decision isssues and allows adding/removing issues" do
           visit "supplemental_claims/#{rating_ep_claim_id}/edit"
@@ -1308,9 +1306,8 @@ RSpec.feature "Edit issues" do
 
           # check that new request issue is created contesting the decision issue
           expect(RequestIssue.find_by(review_request: supplemental_claim,
-            contested_decision_issue_id: contested_decision_issue.id,
-            description: contested_decision_issue.decision_text
-          )).to_not be_nil
+                                      contested_decision_issue_id: contested_decision_issue.id,
+                                      description: contested_decision_issue.decision_text)).to_not be_nil
         end
       end
 

@@ -80,7 +80,8 @@ class RequestIssue < ApplicationRecord
     end
 
     def find_active_by_rating_issue_reference_id(rating_issue_reference_id)
-      request_issue = unscoped.find_by(rating_issue_reference_id: rating_issue_reference_id, removed_at: nil, ineligible_reason: nil)
+      request_issue = unscoped.find_by(rating_issue_reference_id:
+                                       rating_issue_reference_id, removed_at: nil, ineligible_reason: nil)
       return unless request_issue&.status_active?
       request_issue
     end

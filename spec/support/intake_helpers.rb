@@ -167,18 +167,17 @@ module IntakeHelpers
   end
 
   def setup_prior_decision_issues(veteran, benefit_type: "compensation")
-    decision_issue_rating_reference_id = "decisionSC123"
     supplemental_claim_with_decision_issues = create(:supplemental_claim,
-      veteran_file_number: veteran.file_number,
-      benefit_type: benefit_type)
+                                                     veteran_file_number: veteran.file_number,
+                                                     benefit_type: benefit_type)
 
     contested_decision_issue = create(:decision_issue,
-     decision_review: supplemental_claim_with_decision_issues,
-     participant_id: veteran.participant_id,
-     decision_text: "contested supplemental claim decision issue",
-     profile_date: Time.zone.now - 2.day,
-     promulgation_date: Time.zone.now - 2.day,
-     benefit_type: supplemental_claim_with_decision_issues.benefit_type)
+                                      decision_review: supplemental_claim_with_decision_issues,
+                                      participant_id: veteran.participant_id,
+                                      decision_text: "contested supplemental claim decision issue",
+                                      profile_date: Time.zone.now - 2.days,
+                                      promulgation_date: Time.zone.now - 2.days,
+                                      benefit_type: supplemental_claim_with_decision_issues.benefit_type)
 
     contested_decision_issue
   end
