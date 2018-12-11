@@ -169,14 +169,13 @@ RSpec.feature "RAMP Election Intake" do
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
     click_intake_continue
 
-    binding.pry
-
     expect(page).to have_content("Finish processing Higher-Level Review election")
 
     click_label "confirm-finish"
 
     ## Validate error message when complete intake fails
     allow(LegacyAppeal).to receive(:close).and_raise("A random error. Oh no!")
+
     safe_click "button#button-submit-review"
     expect(page).to have_content("Something went wrong")
 

@@ -1,11 +1,28 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { FinishButtons as RampElectionButtons } from './rampElection/finish';
-import { FinishButtons as RampRefilingButtons } from './rampRefiling/finish';
+import { Redirect } from 'react-router-dom';
+import { PAGE_PATHS } from '../constants';
+import RampElectionPage, { FinishButtons as RampElectionButtons } from './rampElection/finish';
+import RampRefilingPage, { FinishButtons as RampRefilingButtons } from './rampRefiling/finish';
 import { FinishButtons as SupplementalClaimButtons } from './supplementalClaim/finish';
 import { FinishButtons as HigherLevelReviewButtons } from './higherLevelReview/finish';
 import { FinishButtons as AppealButtons } from './appeal/finish';
 import SwitchOnForm from '../components/SwitchOnForm';
+
+class Finish extends React.PureComponent {
+  render = () =>
+    <SwitchOnForm
+      formComponentMapping={{
+        ramp_election: <RampElectionPage />,
+        ramp_refiling: <RampRefilingPage />
+      }}
+      componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
+    />;
+}
+
+export default connect(
+  ({ intake }) => ({ formType: intake.formType })
+)(Finish);
 
 class FinishButtonsUnconnected extends React.PureComponent {
   render = () =>

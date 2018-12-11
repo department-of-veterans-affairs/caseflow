@@ -41,6 +41,7 @@ export const PAGE_PATHS = {
   BEGIN: '/',
   SEARCH: '/search',
   REVIEW: '/review_request',
+  FINISH: '/finish',
   ADD_ISSUES: '/add_issues',
   COMPLETED: '/completed',
   CANCEL_ISSUES: '/cancel',
