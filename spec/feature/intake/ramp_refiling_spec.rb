@@ -151,7 +151,7 @@ RSpec.feature "RAMP Refiling Intake" do
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       expect(page).to have_content("Ineligible for Higher-Level Review")
       expect(page).to have_button("Continue to next step", disabled: true)
@@ -202,7 +202,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       expect_any_instance_of(RampRefilingIntake).to receive(:review!).and_raise("A random error. Oh no!")
 
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       expect(page).to have_content("Something went wrong")
       expect(page).to have_current_path("/intake/review_request")
@@ -265,14 +265,14 @@ RSpec.feature "RAMP Refiling Intake" do
         find("label", text: "Appeal to Board").click
       end
 
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       expect(page).to have_content(
         "Receipt date cannot be earlier than the original RAMP election receipt date of 12/03/2017"
       )
 
       fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       expect(page).to have_content("Please select an option")
 
@@ -280,7 +280,7 @@ RSpec.feature "RAMP Refiling Intake" do
         find("label", text: "Evidence Submission").click
       end
 
-      safe_click "#button-submit-review"
+      click_intake_continue
       expect(page).to have_content("Finish processing RAMP Selection form")
 
       ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
@@ -363,7 +363,7 @@ RSpec.feature "RAMP Refiling Intake" do
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Supplemental Claim", match: :prefer_exact).click
       end
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "Left knee rating increase").click
@@ -457,7 +457,7 @@ RSpec.feature "RAMP Refiling Intake" do
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Supplemental Claim", match: :prefer_exact).click
       end
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "The Veteran's form lists at least one ineligible contention").click
@@ -511,7 +511,7 @@ RSpec.feature "RAMP Refiling Intake" do
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
-      safe_click "#button-submit-review"
+      click_intake_continue
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "Left knee rating increase").click
       find("label", text: "The Veteran's form lists at least one ineligible contention").click

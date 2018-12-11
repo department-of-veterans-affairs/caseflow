@@ -107,7 +107,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_current_path("/intake/review_request")
 
     fill_in "What is the Receipt Date of this form?", with: "12/15/2018"
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Receipt date cannot be in the future.")
     expect(page).to have_content("Please select an option.")
@@ -135,7 +135,7 @@ RSpec.feature "Appeal Intake" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_current_path("/intake/finish")
 
@@ -145,7 +145,7 @@ RSpec.feature "Appeal Intake" do
     expect(find("#different-claimant-option_false", visible: false)).to be_checked
     expect(find("#legacy-opt-in_false", visible: false)).to be_checked
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     appeal = Appeal.find_by(veteran_file_number: veteran_file_number)
     intake = Intake.find_by(veteran_file_number: veteran_file_number)
@@ -240,7 +240,7 @@ RSpec.feature "Appeal Intake" do
     ## Validate error message when complete intake fails
     expect_any_instance_of(AppealIntake).to receive(:review!).and_raise("A random error. Oh no!")
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Something went wrong")
     expect(page).to have_current_path("/intake/review_request")
@@ -277,7 +277,7 @@ RSpec.feature "Appeal Intake" do
 
     visit "/intake"
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("This Veteran has no rated, disability issues")
 
