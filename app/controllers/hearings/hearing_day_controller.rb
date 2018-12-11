@@ -118,7 +118,7 @@ class Hearings::HearingDayController < HearingScheduleController
                   :room_info,
                   :bva_poc,
                   :lock)
-      .merge(updated_by: current_user)
+      .merge(updated_by: current_user.css_id)
   end
 
   def create_params
