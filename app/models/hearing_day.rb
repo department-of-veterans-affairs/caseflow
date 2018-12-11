@@ -12,7 +12,9 @@ class HearingDay < ApplicationRecord
     central: "C"
   }.freeze
 
-  after_update(&:update_children_records)
+  # rubocop:disable Style/SymbolProc
+  after_update { |hearing_day| hearing_day.update_children_records }
+  # rubocop:enable Style/SymbolProc
 
   def update_children_records
     hearings = if hearing_type == HEARING_TYPES[:central]
@@ -22,7 +24,8 @@ class HearingDay < ApplicationRecord
                end
     hearings.each do |hearing|
       hearing.update_caseflow_and_vacols(
-        room: room
+        room: room,
+        bva_poc: bva_poc
       )
     end
   end
