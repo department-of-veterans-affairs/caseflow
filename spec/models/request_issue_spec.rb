@@ -11,6 +11,7 @@ describe RequestIssue do
   let(:ramp_claim_id) { nil }
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
+  let(:contested_decision_issue_id) { nil }
   let(:review) do
     create(
       :higher_level_review,
@@ -18,6 +19,17 @@ describe RequestIssue do
       legacy_opt_in_approved: legacy_opt_in_approved
     )
   end
+
+  let!(:ratings) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: (review.receipt_date - 40.days).in_time_zone,
+      profile_date: (review.receipt_date - 50.days).in_time_zone,
+      issues: issues,
+      associated_claims: associated_claims
+    )
+  end
+
   let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
   let!(:decision_sync_processed_at) { nil }
   let!(:end_product_establishment) { nil }
@@ -42,7 +54,8 @@ describe RequestIssue do
       ramp_claim_id: ramp_claim_id,
       decision_sync_processed_at: decision_sync_processed_at,
       end_product_establishment: end_product_establishment,
-      contention_reference_id: contention_reference_id
+      contention_reference_id: contention_reference_id,
+      contested_decision_issue_id: contested_decision_issue_id
     )
   end
 
@@ -70,16 +83,6 @@ describe RequestIssue do
 
   let(:associated_claims) { [] }
 
-  let!(:ratings) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: (review.receipt_date - 40.days).in_time_zone,
-      profile_date: (review.receipt_date - 50.days).in_time_zone,
-      issues: issues,
-      associated_claims: associated_claims
-    )
-  end
-
   context "finds issues" do
     it "filters by rating issues" do
       rating_request_issues = RequestIssue.rating
@@ -100,7 +103,7 @@ describe RequestIssue do
       expect(unidentified_issues.find_by(id: unidentified_issue.id)).to_not be_nil
     end
 
-    context ".find_active_by_reference_id" do
+    context ".find_active_by_rating_issue_reference_id" do
       let(:active_rating_request_issue) do
         rating_request_issue.tap do |ri|
           ri.update!(end_product_establishment: create(:end_product_establishment, :active))
@@ -111,7 +114,7 @@ describe RequestIssue do
         let(:rating_issue) { RatingIssue.new(reference_id: active_rating_request_issue.rating_issue_reference_id) }
 
         it "filters by reference_id" do
-          request_issue_in_review = RequestIssue.find_active_by_reference_id(rating_issue.reference_id)
+          request_issue_in_review = RequestIssue.find_active_by_rating_issue_reference_id(rating_issue.reference_id)
           expect(request_issue_in_review).to eq(rating_request_issue)
         end
 
@@ -122,7 +125,7 @@ describe RequestIssue do
             ineligible_reason: :duplicate_of_issue_in_active_review
           )
 
-          request_issue_in_review = RequestIssue.find_active_by_reference_id(rating_issue.reference_id)
+          request_issue_in_review = RequestIssue.find_active_by_rating_issue_reference_id(rating_issue.reference_id)
           expect(request_issue_in_review).to eq(rating_request_issue)
         end
       end
@@ -131,7 +134,7 @@ describe RequestIssue do
         let(:rating_issue) { RatingIssue.new(reference_id: rating_request_issue.rating_issue_reference_id) }
 
         it "ignores request issues" do
-          expect(RequestIssue.find_active_by_reference_id(rating_issue.reference_id)).to be_nil
+          expect(RequestIssue.find_active_by_rating_issue_reference_id(rating_issue.reference_id)).to be_nil
         end
       end
     end
@@ -224,9 +227,15 @@ describe RequestIssue do
       }]
     end
 
-    it "looks up the chain to the immediately previous request issue" do
-      previous_request_issue.sync_decision_issues!
-      expect(rating_request_issue.previous_request_issue).to eq(previous_request_issue)
+    context "when contesting the same decision review" do
+      let(:contested_decision_issue_id) {
+        previous_request_issue.sync_decision_issues!
+        previous_request_issue.decision_issues.first.id
+      }
+
+      it "looks up the chain to the immediately previous request issue", :focus => true do
+        expect(rating_request_issue.previous_request_issue).to eq(previous_request_issue)
+      end
     end
 
     it "returns nil if decision issues have not yet been synced" do
