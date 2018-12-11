@@ -19,14 +19,32 @@ export default class ReaderLink extends React.PureComponent {
     window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER);
   }
 
+  getLinkText = () => {
+    const {
+      appeal,
+      longMessage
+    } = this.props;
+
+    return longMessage ?
+      <React.Fragment>View Veteran's documents <NewFile externalAppealId={appeal.externalId} /></React.Fragment> :
+      <React.Fragment>View docs <NewFile externalAppealId={appeal.externalId} /></React.Fragment>;
+  };
+
+  getAppealDocumentCount = () => {
+    if (this.props.longMessage) {
+      return <span>&nbsp;<AppealDocumentCount appeal={this.props.appeal} /></span>;
+    }
+
+    return <div {...documentCountSizeStyling}>
+      <AppealDocumentCount loadingText appeal={this.props.appeal} />
+    </div>;
+  }
+
   render = () => {
     const {
       redirectUrl,
       taskType,
-      appealId,
-      appeal,
-      docCountWithinLink,
-      docCountBelowLink
+      appealId
     } = this.props;
     const linkProps = {};
 
@@ -47,13 +65,9 @@ export default class ReaderLink extends React.PureComponent {
 
     return <React.Fragment>
       <Link {...linkProps} onClick={this.readerLinkAnalytics}>
-          View { docCountWithinLink && <AppealDocumentCount appeal={appeal} /> } docs
-        <NewFile externalAppealId={appeal.externalId} /></Link>
-      { docCountBelowLink &&
-            <div {...documentCountSizeStyling}>
-              <AppealDocumentCount loadingText appeal={appeal} />
-            </div>
-      }
+        {this.getLinkText()}
+      </Link>
+      {this.getAppealDocumentCount()}
     </React.Fragment>;
   };
 }
@@ -61,14 +75,12 @@ export default class ReaderLink extends React.PureComponent {
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
   appeal: PropTypes.object.isRequired,
-  docCountWithinLink: PropTypes.bool,
-  docCountBelowLink: PropTypes.bool,
+  longMessage: PropTypes.bool,
   redirectUrl: PropTypes.string,
   taskType: PropTypes.string,
   appealId: PropTypes.string.isRequired
 };
 
 ReaderLink.defaultProps = {
-  docCountWithinLink: false,
-  docCountBelowLink: false
+  longMessage: false
 };

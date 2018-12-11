@@ -6,12 +6,14 @@ import { bindActionCreators } from 'redux';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
+import { CATEGORIES } from './constants';
 import { COLORS } from '../constants/AppConstants';
+import ReaderLink from './ReaderLink';
 import CopyTextButton from '../components/CopyTextButton';
 import { toggleVeteranCaseList } from './uiReducer/uiActions';
 
 const containingDivStyling = css({
-
+  borderBottom: `1px solid ${COLORS.GREY_LIGHT}`,
   display: 'block',
   // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
   margin: '-2rem -4rem 0 -4rem',
@@ -48,6 +50,10 @@ class CaseTitle extends React.PureComponent {
   render = () => {
     const {
       appeal,
+      appealId,
+      redirectUrl,
+      taskType,
+      analyticsSource,
       veteranCaseListIsVisible
     } = this.props;
 
@@ -56,6 +62,14 @@ class CaseTitle extends React.PureComponent {
         Veteran ID:&nbsp;
         <CopyTextButton text={appeal.veteranFileNumber} />
       </React.Fragment>
+
+      { !this.props.userIsVsoEmployee && <ReaderLink
+        appealId={appealId}
+        analyticsSource={CATEGORIES[analyticsSource.toUpperCase()]}
+        redirectUrl={redirectUrl}
+        appeal={appeal}
+        taskType={taskType}
+        longMessage /> }
 
       <span {...viewCasesStyling}>
         <Link onClick={this.props.toggleVeteranCaseList}>
@@ -68,6 +82,8 @@ class CaseTitle extends React.PureComponent {
 
 CaseTitle.propTypes = {
   appeal: PropTypes.object.isRequired,
+  redirectUrl: PropTypes.string.isRequired,
+  appealId: PropTypes.string.isRequired,
   taskType: PropTypes.string,
   analyticsSource: PropTypes.string
 };
