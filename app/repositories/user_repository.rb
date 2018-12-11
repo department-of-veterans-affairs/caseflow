@@ -68,7 +68,7 @@ class UserRepository
     #
 
     def find_all_hearing_coordinators
-      coordinator_records = VACOLS::Staff.where(stitle: "HRG", sactive: "A")
+      coordinator_records = VACOLS::Staff.where(sdept: "HRG", sactive: "A")
 
       coordinator_records.select(&:sdomainid).map do |record|
         User.find_or_create_by(css_id: record.sdomainid,
