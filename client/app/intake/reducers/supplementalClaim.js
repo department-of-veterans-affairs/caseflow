@@ -1,6 +1,7 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
 import { formatDateStr } from '../../util/DateUtil';
+import { convertStringToBoolean } from '../util';
 import { formatRatings, formatRequestIssues, formatContestableIssues } from '../util/issues';
 import { getReceiptDateError, getBlankOptionError, getPageError, formatRelationships } from '../util';
 import { update } from '../../util/ReducerUtil';
@@ -125,12 +126,13 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       }
     });
   case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:
+    const veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
     return update(state, {
       veteranIsNotClaimant: {
-        $set: action.payload.veteranIsNotClaimant
+        $set: veteranIsNotClaimant
       },
       claimant: {
-        $set: action.payload.veteranIsNotClaimant === 'true' ? state.claimant : null
+        $set: veteranIsNotClaimant === true ? state.claimant : null
       }
     });
   case ACTIONS.SET_CLAIMANT:
