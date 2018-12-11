@@ -214,10 +214,9 @@ class User < ApplicationRecord
   end
 
   def judge_css_id
-    Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].each_pair do |id, value|
-      return id if value[:attorneys].include?(css_id)
-    end
-    nil
+    organizations.find_by(type: JudgeTeam.name)
+      .try(:judge)
+      .try(:css_id)
   end
 
   def as_json(options)

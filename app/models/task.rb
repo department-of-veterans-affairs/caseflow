@@ -145,7 +145,7 @@ class Task < ApplicationRecord
     if assigned_to == user ||
        assigned_by == user ||
        (parent && parent.assigned_to == user) ||
-       Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].keys.include?(user.css_id)
+       user.administered_teams.select { |team| team.is_a?(JudgeTeam) }.any?
       return true
     end
     false
