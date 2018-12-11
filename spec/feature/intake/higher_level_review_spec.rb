@@ -77,7 +77,7 @@ RSpec.feature "Higher-Level Review" do
     )
   end
 
-  it "Creates an end product and contentions for it" do
+  xit "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
       first_name: "BOB",
@@ -417,7 +417,7 @@ RSpec.feature "Higher-Level Review" do
 
   let(:special_issue_reference_id) { "IAMANEPID" }
 
-  it "Creates contentions with same office special issue" do
+  xit "Creates contentions with same office special issue" do
     Fakes::VBMSService.end_product_claim_id = special_issue_reference_id
 
     visit "/intake"

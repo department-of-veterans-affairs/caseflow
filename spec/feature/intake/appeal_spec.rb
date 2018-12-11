@@ -87,7 +87,7 @@ RSpec.feature "Appeal Intake" do
     expect(page).to have_content("Which form are you processing?")
   end
 
-  it "Creates an appeal" do
+  xit "Creates an appeal" do
     # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HLR and one in SC
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
 

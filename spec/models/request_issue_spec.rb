@@ -228,12 +228,12 @@ describe RequestIssue do
     end
 
     context "when contesting the same decision review" do
-      let(:contested_decision_issue_id) {
+      let(:contested_decision_issue_id) do
         previous_request_issue.sync_decision_issues!
         previous_request_issue.decision_issues.first.id
-      }
+      end
 
-      it "looks up the chain to the immediately previous request issue", :focus => true do
+      it "looks up the chain to the immediately previous request issue" do
         expect(rating_request_issue.previous_request_issue).to eq(previous_request_issue)
       end
     end

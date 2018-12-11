@@ -187,8 +187,8 @@ describe HigherLevelReviewIntake do
 
     let(:issue_data) do
       {
-        profile_date: "2018-04-30T11:11:00.000-04:00",
-        reference_id: "reference-id",
+        rating_issue_profile_date: "2018-04-30T11:11:00.000-04:00",
+        rating_issue_reference_id: "reference-id",
         decision_text: "decision text"
       }
     end
