@@ -1,10 +1,10 @@
 require "rails_helper"
 
-def click_dropdown(opt_idx, container = page)
+def click_dropdown_text(opt_text, container = page)
   dropdown = container.find(".Select-control")
   dropdown.click
   yield if block_given?
-  dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
+  dropdown.sibling(".Select-menu-outer").find("div .Select-option", text: opt_text).click
 end
 
 RSpec.feature "Judge assignment to attorney" do
@@ -43,11 +43,12 @@ RSpec.feature "Judge assignment to attorney" do
       expect(case_rows.length).to eq(2)
 
       # step "checks both cases and assigns them to an attorney"
+      scroll_element_in_to_view(".usa-table-borderless")
       check "1", allow_label_click: true
       check "2", allow_label_click: true
 
       safe_click ".Select"
-      click_dropdown 0
+      click_dropdown_text attorney_one.full_name
 
       click_on "Assign 2 cases"
       expect(page).to have_content("Assigned 2 cases")
@@ -60,10 +61,11 @@ RSpec.feature "Judge assignment to attorney" do
       expect(case_rows.length).to eq(2)
 
       # step "checks one case and assigns it to another attorney"
+      scroll_element_in_to_view(".usa-table-borderless")
       check "3", allow_label_click: true
 
       safe_click ".Select"
-      click_dropdown 1
+      click_dropdown_text attorney_two.full_name
 
       click_on "Assign 1 case"
       expect(page).to have_content("Assigned 1 case")
