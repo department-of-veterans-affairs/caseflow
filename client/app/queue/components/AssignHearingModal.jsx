@@ -133,6 +133,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         const resp = JSON.parse(response.text);
 
         this.props.onReceiveAmaTasks(resp.tasks.data);
+        console.log(resp.tasks.data);
         setLoading(false);
       });
     }
@@ -294,6 +295,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       selectedHearingTime
     } = this.props;
 
+    console.log(this.props.scheduleHearingTask);
+
     const initVals = this.getInitialValues();
     const timeOptions = this.getTimeOptions();
 
@@ -330,7 +333,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 const mapStateToProps = (state: State, ownProps: Params) => ({
   scheduleHearingTask: _.find(
     actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
-    (task) => task.type === 'ScheduleHearingTask'
+    (task) => task.type === 'ScheduleHearingTask' && task.status !== 'completed'
   ),
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending,
