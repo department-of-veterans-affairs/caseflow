@@ -2,6 +2,5 @@
     "attorney": "Attorney",
     "judge": "Judge",
     "colocated": "Colocated",
-    "hearing_coordinator": "HearingCoordinator",
-    "hearing_judge": "HearingJudge"
+    "hearing_coordinator": "HearingCoordinator"
 }
