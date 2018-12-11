@@ -1,5 +1,5 @@
 describe Appeal do
-  context "priority and non-priority appeals", focus: true do
+  context "priority and non-priority appeals" do
     let!(:appeal) { create(:appeal) }
     let!(:aod_age_appeal) { create(:appeal, :advanced_on_docket_due_to_age) }
     let!(:aod_motion_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
