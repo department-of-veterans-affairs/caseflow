@@ -193,7 +193,7 @@ RSpec.feature "AmaQueue" do
       let(:other_user_name) { "Other User" }
       let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: user_name)) }
       let!(:other_user) { create(:user, roles: ["Reader"], full_name: other_user_name) }
-      let!(:translation_organization) { Organization.create!(name: "Translation", url: "translation") }
+      let!(:translation_organization) { Translation.singleton }
       let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
 
       let!(:translation_task) do
