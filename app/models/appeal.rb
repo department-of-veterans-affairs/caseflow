@@ -16,25 +16,22 @@ class Appeal < DecisionReview
     validates_associated :claimants
   end
 
-  scope :aod_motions, lambda {
-    joins(claimants: { person: :advance_on_docket_motions })
+  scope :all_priority, lambda {
+    join_aod_motions
       .where("advance_on_docket_motions.created_at > appeals.established_at")
       .where("advance_on_docket_motions.granted = ?", true)
-  }
-  scope :aod_due_to_age, lambda {
-    joins(claimants: :person)
-      .where("people.date_of_birth <= ?", 75.years.ago)
+      .or(join_aod_motions
+        .where("people.date_of_birth <= ?", 75.years.ago))
   }
 
-  scope :all_priority, lambda {
-    # TODO: add cavc appeals
-    [aod_motions + aod_due_to_age].flatten.uniq(&:id)
+  scope :join_aod_motions, lambda {
+    joins(claimants: :person)
+      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")    
   }
 
   # rubocop:disable Metrics/LineLength
   scope :all_nonpriority, lambda {
-    joins(claimants: :person)
-      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
+    join_aod_motions
       .where("people.date_of_birth > ?", 75.years.ago)
       .group("appeals.id")
       .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
