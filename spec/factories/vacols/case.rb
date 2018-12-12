@@ -234,7 +234,7 @@ FactoryBot.define do
     trait :central_office_hearing do
       bfhr "1"
       bfcurloc "57"
-      bfac "7"  
+      bfac "7"
     end
 
     trait :travel_board_hearing do

@@ -33,7 +33,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
   end
 
-  context "when video_hearing_requested", focus: true do
+  context "when video_hearing_requested" do
     let!(:hearing_day) do
       create(
         :hearing_day,
