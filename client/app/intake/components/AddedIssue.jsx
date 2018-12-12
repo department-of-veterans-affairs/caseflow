@@ -2,6 +2,9 @@ import _ from 'lodash';
 import React from 'react';
 
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
+import INTAKE_STRINGS from '../../../constants/INTAKE_STRINGS.json';
+
+import { legacyIssue } from '../util/issues';
 
 class AddedIssue extends React.PureComponent {
   needsEligibilityCheck() {
@@ -14,7 +17,7 @@ class AddedIssue extends React.PureComponent {
       return true;
     }
 
-    let existingRequestIssue = _.filter(requestIssues, { reference_id: issue.referenceId })[0];
+    let existingRequestIssue = _.filter(requestIssues, { rating_issue_reference_id: issue.ratingIssueReferenceId })[0];
 
     // leaving this here to make it easier to debug in future.
     // console.log('existingRequestIssue', existingRequestIssue);
@@ -29,7 +32,7 @@ class AddedIssue extends React.PureComponent {
   getEligibility() {
     let { issue, formType, legacyOptInApproved } = this.props;
 
-    // console.log('getEligibility', formType, issue);
+    // console.log('getEligibility', formType, issue, legacyOptInApproved);
 
     let errorMsg = '';
     const cssKlassesWithError = ['issue-desc', 'not-eligible'];
@@ -45,7 +48,11 @@ class AddedIssue extends React.PureComponent {
       );
     } else if (issue.ineligibleReason) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
-    } else if (issue.timely === false && formType !== 'supplemental_claim' && issue.untimelyExemption !== 'true') {
+    } else if (issue.timely === false &&
+               formType !== 'supplemental_claim' &&
+               issue.untimelyExemption !== 'true' &&
+               !issue.vacolsId
+    ) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.untimely;
     } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
@@ -89,6 +96,12 @@ class AddedIssue extends React.PureComponent {
       { issue.notes && <span className="issue-notes">Notes:&nbsp;{ issue.notes }</span> }
       { issue.untimelyExemptionNotes &&
         <span className="issue-notes">Untimely Exemption Notes:&nbsp;{issue.untimelyExemptionNotes}</span>
+      }
+      { issue.vacolsId && !eligibleState.errorMsg &&
+        <div className="issue-vacols">
+          <span className="msg">{ INTAKE_STRINGS.adding_this_issue_vacols_optin }:</span>
+          <span className="desc">{ legacyIssue(issue, this.props.legacyAppeals).description }</span>
+        </div>
       }
     </div>;
   }

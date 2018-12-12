@@ -1,5 +1,5 @@
 import { ACTIONS } from '../constants';
-import { issueById } from '../util/issues';
+import { issueByIndex } from '../util/issues';
 
 const analytics = true;
 
@@ -48,19 +48,23 @@ export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
 };
 
 export const addRatingRequestIssue = (args) => (dispatch) => {
-  const currentIssue = issueById(args.ratings, args.issueId);
+  const currentIssue = issueByIndex(args.contestableIssues, args.contestableIssueIndex);
 
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
-      id: args.issueId,
+      index: args.contestableIssueIndex,
       isRating: args.isRating,
-      titleOfActiveReview: currentIssue.title_of_active_review,
+      ratingIssueReferenceId: currentIssue.ratingIssueReferenceId,
+      ratingIssueProfileDate: currentIssue.ratingIssueProfileDate,
+      decisionIssueId: currentIssue.decisionIssueId,
+      titleOfActiveReview: currentIssue.titleOfActiveReview,
+      description: currentIssue.description,
       timely: currentIssue.timely,
-      sourceHigherLevelReview: currentIssue.source_higher_level_review,
-      rampClaimId: currentIssue.ramp_claim_id,
-      promulgationDate: currentIssue.promulgation_date,
-      profileDate: currentIssue.profile_date,
+      sourceHigherLevelReview: currentIssue.sourceHigherLevelReview,
+      rampClaimId: currentIssue.rampClaimId,
+      promulgationDate: currentIssue.date,
+      date: currentIssue.date,
       notes: args.notes,
       untimelyExemption: args.untimelyExemption,
       untimelyExemptionNotes: args.untimelyExemptionNotes,

@@ -109,16 +109,12 @@ class Test::UsersController < ApplicationController
   end
 
   def toggle_feature
-    if params[:enable]
-      params[:enable].each do |f|
-        FeatureToggle.enable!(f[:value])
-      end
+    params[:enable]&.each do |f|
+      FeatureToggle.enable!(f[:value])
     end
 
-    if params[:disable]
-      params[:disable].each do |f|
-        FeatureToggle.disable!(f[:value])
-      end
+    params[:disable]&.each do |f|
+      FeatureToggle.disable!(f[:value])
     end
   end
 

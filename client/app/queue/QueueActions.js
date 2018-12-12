@@ -86,7 +86,11 @@ export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
       appealId
     }
   });
-  ApiUtil.get(`/appeals/${appealId}/new_documents`).then((response) => {
+  const requestOptions = {
+    timeout: { response: 5 * 60 * 1000 }
+  };
+
+  ApiUtil.get(`/appeals/${appealId}/new_documents`, requestOptions).then((response) => {
     const resp = JSON.parse(response.text);
 
     dispatch(receiveNewDocuments({
@@ -277,6 +281,14 @@ const errorTasksAndAppealsOfAttorney = ({ attorneyId, error }) => ({
   type: ACTIONS.ERROR_TASKS_AND_APPEALS_OF_ATTORNEY,
   payload: {
     attorneyId,
+    error
+  }
+});
+
+export const errorFetchingDocumentCount = (appealId: string, error: Object) => ({
+  type: ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT,
+  payload: {
+    appealId,
     error
   }
 });
@@ -503,7 +515,7 @@ const errorAllAttorneys = (error) => ({
 export const fetchAllAttorneys = () => (dispatch: Dispatch) =>
   ApiUtil.get('/users?role=Attorney').
     then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
-    catch((error) => Promise.reject(dispatch(errorAllAttorneys(error))));
+    catch((error) => dispatch(errorAllAttorneys(error)));
 
 export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) =>
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
