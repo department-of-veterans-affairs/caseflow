@@ -37,6 +37,12 @@ class AppealIntake < DecisionReviewIntake
     super(request_params) do
       detail.update!(established_at: Time.zone.now)
       detail.create_tasks_on_intake_success!
+      detail.submit_for_processing!
+      if run_async?
+        DecisionReviewProcessJob.perform_later(detail)
+      else
+        DecisionReviewProcessJob.perform_now(detail)
+      end
     end
   end
 
