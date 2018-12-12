@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import BackToQueueLink from './BackToQueueLink';
+import DocumentRetrievalAlert from './DocumentRetrevalAlert';
 import LastRetrievalInfo from './LastRetrievalInfo';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import DocumentListHeader from './DocumentListHeader';
@@ -68,11 +69,7 @@ export class PdfListView extends React.Component {
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          { (!this.props.manifestVbmsFetchedAt || !this.props.manifestVvaFetchedAt) &&
-            <Alert title="Error" type="error" id="alert-no-fetch">
-              Some documents could not be loaded at this time
-            </Alert>
-          }
+          <DocumentRetrievalAlert />
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
