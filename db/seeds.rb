@@ -9,7 +9,7 @@
 DEVELOPMENT_JUDGE_TEAMS = {
   "BVAAABSHIRE" => { attorneys: %w[BVAEERDMAN BVARDUBUQUE BVALSHIELDS] },
   "BVAGSPORER" => { attorneys: %w[BVAOTRANTOW BVAGBOTSFORD BVAJWEHNER1] },
-  "BVAOFRANECKI" => { attorneys: %w[BVAKBLOCK BVACMERTZ BVAHLUETTGEN] },
+  "BVAEBECKER" => { attorneys: %w[BVAKBLOCK BVACMERTZ BVAHLUETTGEN] },
   "BVARERDMAN" => { attorneys: %w[BVASRITCHIE BVAJSCHIMMEL BVAKROHAN1] },
   "BVAOSCHOWALT" => { attorneys: %w[BVASCASPER1 BVAOWEHNER BVASFUNK1] }
 }.freeze
@@ -46,8 +46,8 @@ class SeedDB
     User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Attorney no cases")
     User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Judge with hearings and cases")
     User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Judge has attorneys with cases")
-    User.create(css_id: "BVAOFRANECKI", station_id: 101, full_name: "Judge has case to sign")
-    User.create(css_id: "BVAJWEHNER", station_id: 101, full_name: "Judge has case to assign no team")
+    User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Judge has case to sign")
+    User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Judge has case to assign no team")
     User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
     User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "BVA Dispatch user with cases")
 
@@ -94,10 +94,9 @@ class SeedDB
   end
 
   def create_org_queue_users
-    translation = Organization.create!(name: "Translation", url: "translation")
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{n}", full_name: "Translation team member #{n}")
-      OrganizationsUser.add_user_to_organization(u, translation)
+      OrganizationsUser.add_user_to_organization(u, Translation.singleton)
     end
   end
 
@@ -488,7 +487,6 @@ class SeedDB
     judge = User.find_by(css_id: "BVAAABSHIRE")
     colocated = User.find_by(css_id: "BVALSPORER")
     vso = Organization.find_by(name: "American Legion")
-    translation_org = Organization.find_by(name: "Translation")
 
     create_task_at_judge_assignment(@ama_appeals[0], judge)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
@@ -508,7 +506,7 @@ class SeedDB
       :generic_task,
       5,
       assigned_by: judge,
-      assigned_to: translation_org,
+      assigned_to: Translation.singleton,
       parent: FactoryBot.create(:root_task)
     )
   end

@@ -15,6 +15,7 @@ module HearingDayMapper
     mduser:       :updated_by,
     mdtime:       :updated_at,
     vdbvapoc:     :bva_poc,
+    notes:        :notes,
     judge_last_name: :judge_last_name,
     judge_middle_name: :judge_middle_name,
     judge_first_name: :judge_first_name
@@ -30,6 +31,8 @@ module HearingDayMapper
         regional_office: validate_regional_office(hearing_info[:regional_office]),
         judge_id: hearing_info[:judge_id],
         team: hearing_info[:team],
+        bva_poc: hearing_info[:bva_poc],
+        notes: hearing_info[:notes],
         judge_last_name: hearing_info[:judge_last_name],
         judge_middle_name: hearing_info[:judge_middle_name],
         judge_first_name: hearing_info[:judge_first_name]
