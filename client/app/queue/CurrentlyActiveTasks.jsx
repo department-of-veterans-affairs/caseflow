@@ -7,9 +7,11 @@ import { GrayDot, GreenCheckmark } from '../components/RenderFunctions';
 import moment from 'moment';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import {
   getTasksForAppeal,
-  actionableTasksForAppeal
+  actionableTasksForAppeal,
+  appealWithDetailSelector
 } from './selectors';
 import ActionsDropdown from './components/ActionsDropdown';
 
@@ -41,8 +43,9 @@ const tableCellTitle = css({
   textTransform: 'uppercase'
 });
 
-const getEventRow = ({ assignedOn, assignedTo, assignedBy, type }, lastRow) => {
+const getEventRow = ({ assignedOn, assignedTo, assignedBy, type, appealId }, lastRow, showActionsSection) => {
   const today = moment().startOf('day');
+  const task = { assignedOn, assignedTo, assignedBy, type };
   const formattedassignedOnDate = assignedOn ? moment(assignedOn).format('MM/DD/YYYY') : null;
   const dayCountSinceAssignment = today.diff(assignedOn, 'days');
 
@@ -53,6 +56,8 @@ const getEventRow = ({ assignedOn, assignedTo, assignedBy, type }, lastRow) => {
       <tr>
         <td {...tableCell}>
           <table>
+            <tr><td><ActionsDropdown task={task} appealId={appealId} /></td></tr>
+
             <tr><td {...tableCellTitle}>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL + ": "}</td><td {...tableCell}>{formattedassignedOnDate}</td></tr>
             <tr><td {...tableCellTitle}>{COPY.CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL + ": "}</td><td {...tableCell}>{dayCountSinceAssignment}</td></tr>
           </table>
@@ -82,7 +87,12 @@ const getEventRow = ({ assignedOn, assignedTo, assignedBy, type }, lastRow) => {
           <table>
             <tr>
               <td {...tableCellTitle}>
-                Actions <br/>
+                {showActionsSection &&
+                  <div className="usa-width-one-half">
+                    <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
+                    <ActionsDropdown task={task} appealId={appealId} />
+                  </div>
+                }
                 {/* TODO steal ActionsDropdown from CaseSnapshot */}
                 {/*<ActionsDropdown task={primaryTask} appealId={appeal.externalId} />*/}
               </td>
@@ -131,19 +141,35 @@ type Props = Params & {|
 |};
 
 export class CurrentlyActiveTasks extends React.PureComponent {
-  render = () => {
+  showActionsSection = (): boolean => {
+    if (this.props.hideDropdown) {
+      return false;
+    }
     const {
-      actionableTasks
+      userRole,
     } = this.props;
 
+     // users can end up at case details for appeals with no DAS
+    // record (!task.taskId). prevent starting attorney checkout flows
+    //return userRole === USER_ROLE_TYPES.judge ? Boolean(primaryTask) : Boolean(primaryTask.taskId);
+  }
+
+  render = () => {
+    const {
+      actionableTasks,
+      appeal
+    } = this.props;
+
+    var showActionsSection = this.showActionsSection();
     console.log('--CurrentlyActiveTasks--');
     console.log(actionableTasks);
+    console.log(showActionsSection);
 
     return <React.Fragment>
       <table>
         <tbody>
           {actionableTasks && actionableTasks.map((event, index) => {
-            return getEventRow(event, index === actionableTasks.length - 1);
+            return getEventRow(event, index === actionableTasks.length - 1, showActionsSection);
           })}
         </tbody>
       </table>
@@ -152,10 +178,14 @@ export class CurrentlyActiveTasks extends React.PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => {
+  const { userRole } = state.ui;
 
   return {
+    appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     incompleteTasks: getTasksForAppeal(state, { appealId: ownProps.appealId }),
-    actionableTasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId })
+    actionableTasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
+    userRole,
+    //primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0]
   };
 };
 
