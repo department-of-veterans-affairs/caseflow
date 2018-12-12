@@ -22,13 +22,27 @@ class DecisionIssue < ApplicationRecord
     profile_date ? profile_date.to_date : end_product_last_action_date
   end
 
-  def issue_category
-    # TODO: figure out how to calculate this
-    return unless request_issues.any?
-    request_issues.first.issue_category
+  def serialized_description
+    nonrating_description || rating_description
   end
 
   private
+
+  def associated_request_issue
+    return unless request_issues.any?
+    request_issues.first
+  end
+
+  def nonrating_description
+    return unless associated_request_issue&.nonrating?
+    "#{disposition}: #{associated_request_issue.issue_category} - #{associated_request_issue.description}"
+  end
+
+  def rating_description
+    return description if description
+    return "#{decision_text}" unless associated_request_issue&.notes
+    "#{decision_text}. Notes: #{associated_request_issue.notes}"
+  end
 
   def appeal?
     decision_review_type == Appeal.to_s

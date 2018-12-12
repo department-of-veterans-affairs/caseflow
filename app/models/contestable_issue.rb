@@ -25,7 +25,7 @@ class ContestableIssue
         rating_issue_profile_date: decision_issue.profile_date.try(:to_date),
         decision_issue_id: decision_issue.id,
         date: decision_issue.approx_decision_date,
-        description: decision_issue.decision_text, # TODO: also work with disposition
+        description: decision_issue.serialized_description,
         source_higher_level_review: decision_issue.source_higher_level_review,
         contesting_decision_review: contesting_decision_review
       )

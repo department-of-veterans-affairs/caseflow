@@ -171,20 +171,52 @@ module IntakeHelpers
     setup_inactive_ineligible_legacy_appeal(veteran_file_number)
   end
 
+  def setup_request_issue_with_nonrating_decision_issue(decision_review, issue_category: "Active Duty Adjustments")
+    create(:request_issue,
+           description: "Test nonrating decision issue",
+           decision_date: Time.zone.now - 4.days,
+           review_request: decision_review,
+           issue_category: "Incarceration Adjustments",
+           decision_issues: [
+            create(:decision_issue,
+              disposition: "test dispositon",
+              decision_review: decision_review,
+              participant_id: veteran.participant_id,
+              promulgation_date: Time.zone.now - 2.days,
+              benefit_type: decision_review.benefit_type,
+              end_product_last_action_date: Time.zone.now - 4.days)
+           ]
+      )
+  end
+
+  def setup_request_issue_with_rating_decision_issue(decision_review, rating_issue_reference_id: "rating123")
+    create(:request_issue,
+           rating_issue_reference_id: rating_issue_reference_id,
+           rating_issue_profile_date: Time.zone.now - 2.days,
+           description: "Test rating decision issue",
+           review_request: decision_review,
+           decision_issues: [
+            create(:decision_issue,
+              decision_review: decision_review,
+              participant_id: veteran.participant_id,
+              rating_issue_reference_id: rating_issue_reference_id,
+              decision_text: "contested supplemental claim decision rating issue",
+              profile_date: Time.zone.now - 2.days,
+              promulgation_date: Time.zone.now - 2.days,
+              benefit_type: decision_review.benefit_type)
+           ]
+      )
+  end
+
   def setup_prior_decision_issues(veteran, benefit_type: "compensation")
     supplemental_claim_with_decision_issues = create(:supplemental_claim,
                                                      veteran_file_number: veteran.file_number,
                                                      benefit_type: benefit_type)
 
-    contested_decision_issue = create(:decision_issue,
-                                      decision_review: supplemental_claim_with_decision_issues,
-                                      participant_id: veteran.participant_id,
-                                      decision_text: "contested supplemental claim decision issue",
-                                      profile_date: Time.zone.now - 2.days,
-                                      promulgation_date: Time.zone.now - 2.days,
-                                      benefit_type: supplemental_claim_with_decision_issues.benefit_type)
+    nonrating_request_issue = setup_request_issue_with_nonrating_decision_issue(supplemental_claim_with_decision_issues)
+    rating_request_issue = setup_request_issue_with_rating_decision_issue(supplemental_claim_with_decision_issues)
 
-    contested_decision_issue
+    rating_request_issue.decision_issues + nonrating_request_issue.decision_issues
   end
 end
 # rubocop:enable Metrics/ModuleLength
