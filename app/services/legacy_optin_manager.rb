@@ -17,7 +17,7 @@ class LegacyOptinManager
         # loop through each issue on the appeal, gut check on whether it can be closed,
         # and then close it.
         request_issues_with_legacy_issues do |request_issue|
-          vacols_id = request_issue.vacols_id # TODO get from legacy_issue_optin
+          vacols_id = request_issue.vacols_id # TODO: get from legacy_issue_optin
           vacols_sequence_id = request_issue.vacols_sequence_id
 
           # filter out any not on this appeal
@@ -28,13 +28,8 @@ class LegacyOptinManager
             fail "VACOLS issue #{vacols_id} sequence #{vacols_sequence_id} is already closed"
           end
 
-          # TODO how to handle multiples?
-          if request_issue.legacy_issue_optins.count > 1
-            fail "Can't yet handle multiple legacy_issue_optins for #{request_issue}"
-          end
-
           # close it
-          close_legacy_issue_in_vacols(request_issue.legacy_issue_optins.first)
+          close_legacy_issue_in_vacols(request_issue.legacy_issue_optin)
 
           # pop it from our queue
           open_legacy_issues.reject! { |issue| issue.vacols_sequence_id == vacols_sequence_id }
@@ -53,19 +48,19 @@ class LegacyOptinManager
   def affected_legacy_appeals
     legacy_appeals = []
     request_issues_with_legacy_issues.each do |request_issue|
-      legacy_appeals << legacy_appeal(request_issue.vacols_id) # TODO get from legacy_issue_optin
+      legacy_appeals << legacy_appeal(request_issue.vacols_id) # TODO: get from legacy_issue_optin
     end
     legacy_appeals.uniq
   end
 
   def request_issues_with_legacy_issues
-    decision_review.request_issues.select { |reqi| reqi.legacy_issue_optins.any? }
+    decision_review.request_issues.select(&:legacy_issue_optin)
   end
 
   def close_legacy_issue_in_vacols(legacy_issue_optin)
     Issue.close_in_vacols!(
-      vacols_id: legacy_issue_optin.request_issue.vacols_id, # TODO move column to legacy_issue_optin
-      vacols_sequence_id: legacy_issue_optin.request_issue.vacols_sequence_id, # TODO move column to legacy_issue_optin
+      vacols_id: legacy_issue_optin.request_issue.vacols_id, # TODO: move column to legacy_issue_optin
+      vacols_sequence_id: legacy_issue_optin.request_issue.vacols_sequence_id, # TODO: move column to legacy_issue_optin
       disposition_code: VACOLS_DISPOSITION_CODE
     )
   end
