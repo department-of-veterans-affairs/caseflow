@@ -7,6 +7,7 @@ class RequestIssue < ApplicationRecord
   has_many :decision_issues, through: :request_decision_issues
   has_many :remand_reasons
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
+  has_many :legacy_issue_optins
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue", foreign_key: "contested_decision_issue_id"
 
