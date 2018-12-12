@@ -221,7 +221,7 @@ export class DailyDocketContainer extends React.Component {
       let data = { id: this.props.dailyDocket.id };
 
       if (this.props.hearingRoom) {
-        data.room_info = this.props.hearingRoom.value;
+        data.room = this.props.hearingRoom.value;
       }
 
       if (this.props.vlj) {

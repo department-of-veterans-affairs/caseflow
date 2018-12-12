@@ -30,7 +30,7 @@ RSpec.describe HearingsController, type: :controller do
         HearingDay.create_hearing_day(
           hearing_type: "C",
           hearing_date: hearing_date,
-          room_info: "123",
+          room: "123",
           judge_id: "456",
           regional_office: "RO18"
         )

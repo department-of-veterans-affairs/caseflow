@@ -200,7 +200,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def valid_co_day?(day)
-    co_hearing_day?(day) && day.room_info == CO_ROOM_NUM
+    co_hearing_day?(day) && day.room == CO_ROOM_NUM
   end
 
   def valid_ro_hearing_day?(day)

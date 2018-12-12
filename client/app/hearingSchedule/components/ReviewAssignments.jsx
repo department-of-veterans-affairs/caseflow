@@ -171,7 +171,7 @@ export default class ReviewAssignments extends React.Component {
       date: formatDateStr(hearingDay.hearingDate),
       type: HEARING_TYPE_LABELS[hearingDay.hearingType],
       regionalOffice: hearingDay.regionalOffice,
-      room: hearingDay.roomInfo,
+      room: hearingDay.room,
       judge: hearingDay.judgeName
     }));
 
