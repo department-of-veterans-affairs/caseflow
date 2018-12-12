@@ -2,6 +2,7 @@ describe ScheduleHearingTask do
   before do
     FeatureToggle.enable!(:test_facols)
     Time.zone = "Eastern Time (US & Canada)"
+    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
     RequestStore[:current_user] = hearings_user
   end
 
