@@ -255,13 +255,21 @@ RSpec.describe TasksController, type: :controller do
 
     context "VSO user" do
       let(:user) { create(:default_user, roles: ["VSO"]) }
+      let(:vso) { FactoryBot.create(:vso) }
+      let(:appeal) { FactoryBot.create(:appeal) }
       let(:root_task) { create(:root_task, appeal: appeal) }
       let(:role) { nil }
+
+      before do
+        User.authenticate!(user: user)
+        OrganizationsUser.add_user_to_organization(user, vso)
+        allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+      end
 
       context "when creating a generic task" do
         let(:params) do
           [{
-            "external_id": appeal.vacols_id,
+            "external_id": appeal.external_id,
             "type": GenericTask.name,
             "assigned_to_id": user.id,
             "parent_id": root_task.id
@@ -275,12 +283,20 @@ RSpec.describe TasksController, type: :controller do
       end
 
       context "when creating a ihp task" do
+        let(:ihp_org_task) do
+          FactoryBot.create(
+            :informal_hearing_presentation_task,
+            appeal: appeal,
+            assigned_to: vso
+          )
+        end
+
         let(:params) do
           [{
-            "external_id": appeal.vacols_id,
+            "external_id": appeal.external_id,
             "type": InformalHearingPresentationTask.name,
             "assigned_to_id": user.id,
-            "parent_id": root_task.id
+            "parent_id": ihp_org_task.id
           }]
         end
 
@@ -479,9 +495,6 @@ RSpec.describe TasksController, type: :controller do
           let!(:hearings_user) do
             create(:hearings_coordinator)
           end
-          let!(:hearings_org) do
-            create(:hearings_management)
-          end
           let(:params) do
             [{
               "type": ScheduleHearingTask.name,
@@ -498,6 +511,11 @@ RSpec.describe TasksController, type: :controller do
                 }
               }
             }]
+          end
+
+          before do
+            OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
+            User.authenticate!(user: hearings_user)
           end
 
           it "should be successful" do
