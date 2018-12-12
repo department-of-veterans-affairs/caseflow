@@ -1,4 +1,7 @@
 class MailTask < GenericTask
+  # Skip unique verification for mail tasks since multiple mail tasks of each type can be created.
+  def verify_org_task_unique; end
+
   class << self
     def create_from_params(params, user)
       verify_user_can_assign!(user)
@@ -18,19 +21,6 @@ class MailTask < GenericTask
       create_child_task(mail_task, user, params)
     end
 
-    def create_child_task(parent, user, params)
-      parent.update!(status: Constants.TASK_STATUSES.on_hold)
-
-      Task.create!(
-        type: name,
-        appeal: parent.appeal,
-        assigned_by_id: child_assigned_by_id(parent, user),
-        parent_id: parent.id,
-        assigned_to: assignee,
-        instructions: params[:instructions]
-      )
-    end
-
     def verify_user_can_assign!(user)
       unless MailTeam.singleton.user_has_access?(user)
         fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot create a mail task"
@@ -43,17 +33,20 @@ class MailTask < GenericTask
   end
 end
 
+# TODO: Register these subclasses with the main mail task.
+#
 # TODO: Add more subclasses
 # TODO: Flesh out routing rules based on status of appeal.
-# TODO: Register these subclasses with the main mail task.
-# TODO: Ignore multiple tasks of same type error.
+# TODO: Move this text to COPY.json
+#
+# Should incoming mail tasks be automatically routed to members of the VLJ support staff?
 class AddressChangeMailTask < MailTask
   class << self
     def label
       "Change of address"
     end
 
-    def assignee
+    def get_child_task_assignee(_params)
       Colocated.singleton
     end
   end
@@ -65,7 +58,7 @@ class EvidenceOrArgumentMailTask < MailTask
       "Evidence or argument"
     end
 
-    def assignee
+    def get_child_task_assignee(_params)
       Colocated.singleton
     end
   end
@@ -77,7 +70,7 @@ class PowerOfAttorneyRelatedMailTask < MailTask
       "Power of attorney-related"
     end
 
-    def assignee
+    def get_child_task_assignee(_params)
       Colocated.singleton
     end
   end

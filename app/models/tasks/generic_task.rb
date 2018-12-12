@@ -98,9 +98,6 @@ class GenericTask < Task
     end
 
     def create_child_task(parent, current_user, params)
-      # Create an assignee from the input arguments so we throw an error if the assignee does not exist.
-      assignee = Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
-
       parent.update_status(Constants.TASK_STATUSES.on_hold)
 
       Task.create!(
@@ -108,9 +105,14 @@ class GenericTask < Task
         appeal: parent.appeal,
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
-        assigned_to: assignee,
+        assigned_to: get_child_task_assignee(params),
         instructions: params[:instructions]
       )
+    end
+
+    def get_child_task_assignee(params)
+      # Create an assignee from the input arguments so we throw an error if the assignee does not exist.
+      Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
     end
 
     def child_assigned_by_id(parent, current_user)
