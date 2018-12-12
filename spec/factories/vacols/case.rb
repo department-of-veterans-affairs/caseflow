@@ -227,8 +227,8 @@ FactoryBot.define do
     trait :video_hearing_requested do
       bfdocind "V"
       bfcurloc "57"
-      bfac "3"
-      bfmpro "ACT"
+      bfhr "2"
+      bfac "7"
     end
 
     trait :central_office_hearing do

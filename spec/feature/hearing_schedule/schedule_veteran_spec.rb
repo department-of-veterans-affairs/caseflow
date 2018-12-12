@@ -33,14 +33,16 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
   end
 
-  context "when video_hearing_requested" do
+  context "when video_hearing_requested", :focus=>true do
     let!(:hearing_day) do
       create(
         :hearing_day,
         hearing_type: "V",
-        hearing_date: 5.days.ago
+        hearing_date: Time.zone.today + 160,
+        regional_office: "RO39"
       )
     end
+    let!(:staff) { create(:staff, stafkey: "RO39", stc2: 2, stc3: 3, stc4: 4) }
     let!(:vacols_case) do
       create(
         :case, :video_hearing_requested,
@@ -50,7 +52,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       )
     end
 
-    scenario "Schedule Veteran for video" do
+    scenario "Schedule Veteran for video"  do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown 12
