@@ -51,6 +51,7 @@ class ClaimReview < DecisionReview
 
     def find_all_by_file_number(file_number)
       claim_reviews = HigherLevelReview.where(veteran_file_number: file_number) + SupplementalClaim.where(veteran_file_number: file_number)
+      # byebug
       claim_reviews.map(&:search_table_ui_hash)
     end
   end
@@ -69,6 +70,8 @@ class ClaimReview < DecisionReview
       # EP Status
       ep_status: end_product_establishments.map(&:synced_status),
       # Decision date
+        # wrong? this is the Intake completion date but should be the decision date of the requestissue
+        # decision_date: RequestIssue.where(review_request: self).map(&:decision_date)
       decision_date: establishment_processed_at
     }
   end

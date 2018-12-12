@@ -79,6 +79,7 @@ class CaseListView extends React.PureComponent {
 
     const claimReviewsCount = this.props.claimReviews && this.props.claimReviews.length;
 
+    // debugger;
     if (claimReviewsCount) {
       otherReviewsTable = <OtherReviewsTable reviews={this.props.claimReviews} />
     }

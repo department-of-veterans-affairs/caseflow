@@ -17,12 +17,6 @@ class CaseListTable extends React.PureComponent {
 
   getColumns = () => [
     {
-      header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
-      valueFunction: (review) => review.epCodes ?
-        review.epCodes.join(', ') :
-        ''
-    },
-    {
       header: COPY.OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE,
       valueFunction: (review) => review.claimantNames ?
         review.claimantNames.join(', ') :
@@ -31,6 +25,12 @@ class CaseListTable extends React.PureComponent {
     {
       header: COPY.OTHER_REVIEWS_TABLE_REVIEW_TYPE_COLUMN_TITLE,
       valueFunction: (review) => _.startCase(review.reviewType)
+    },
+    {
+      header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
+      valueFunction: (review) => review.epCodes ?
+        review.epCodes.join(', ') :
+        ''
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE,

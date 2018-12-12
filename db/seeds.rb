@@ -331,34 +331,90 @@ class SeedDB
   end
 
   def create_higher_level_reviews
-    veteran_file_number = "682007349";
-    ep_code = "170RMDAMC"
+    veteran_file_number = "682007349"
+    veteran = Veteran.find_by(file_number: veteran_file_number)
 
-    # steal code from a spec file?
-    # spec/models/higher_level_review_spec.rb:11
-    # line 121 shows us the payee_code function
+    ep_code = "170RMDAMC"
+    ep_rating_code = "030HLRR"
+    ep_rating_code_modifier = "030"
+    ep_nonrating_code = "030HLRNR"
+    ep_nonrating_code_modifier = "030"
+
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: veteran_file_number,
       receipt_date: Time.zone.now,
       informal_conference: false,
       same_office: false,
       benefit_type: "compensation",
-      # EP status?
-      # decision date?
-      # EP code?
-      # also need to add the fields to this HLR that new_end_product_establishment references
+    )
+    higher_level_review.create_claimants!(
+      participant_id: "5382910292",
+      payee_code: "10"
     )
 
-    higher_level_review.create_claimants!(participant_id: "5382910292", payee_code: "10")
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now,
+      code: ep_rating_code,
+      station: "397",
+      # modifier: "030",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "CAN",
+      claimant_participant_id: veteran.participant_id
+    )
 
-    intake = Intake.create!(
-      user_id: "5959",
-      detail: higher_level_review,
-      veteran_file_number: veteran_file_number,
-      started_at: Time.zone.now,
-      completed_at: Time.zone.now,
-      completion_status: "success",
-      type: "HigherLevelReviewIntake"
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now,
+      code: ep_rating_code,
+      station: "397",
+      # modifier: "031",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: nil,
+      claimant_participant_id: veteran.participant_id
+    )
+
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now,
+      code: ep_rating_code,
+      station: "397",
+      # modifier: "032",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "PEND",
+      claimant_participant_id: veteran.participant_id
+    )
+
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now,
+      code: ep_rating_code,
+      station: "397",
+      # modifier: "033",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "CLR",
+      claimant_participant_id: veteran.participant_id
+    )
+
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now,
+      code: ep_nonrating_code,
+      station: "397",
+      # modifier: "030",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "CLR",
+      claimant_participant_id: veteran.participant_id
     )
 
     eligible_request_issue = RequestIssue.create!(
@@ -375,8 +431,10 @@ class SeedDB
       issue_category: "Active Duty Adjustments",
       description: "nonrating description",
       contention_reference_id: "12345",
+      decision_date: Date.new(2018, 5, 1),
       ineligible_reason: :untimely
     )
+
     # NOTE: see models/higher_level_review.rb:111
     higher_level_review.create_issues!([
                                          eligible_request_issue,
@@ -384,10 +442,9 @@ class SeedDB
                                        ])
     higher_level_review.process_end_product_establishments!
 
-
-      # an HLR can have many EPs
-      # we want an EP code that tells you how to route this / who to send it to / info a/b what's being granted
-      # an appeal with also have an EP (eventually) but not in caseflow, only has an EP when it leaves the board to be dispatched
+    # an HLR can have many EPs
+    # we want an EP code that tells you how to route this / who to send it to / info a/b what's being granted
+    # an appeal with also have an EP (eventually) but not in caseflow, only has an EP when it leaves the board to be dispatched
   end
 
   def create_supplemental_claims
