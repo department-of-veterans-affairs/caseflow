@@ -243,6 +243,16 @@ RSpec.feature "Reader" do
         end
       end
 
+      context "When VVA manifest retrieval time is older than the eFolder cache limit" do
+        let(:vva_fetched_ts) { Time.zone.now - 4.hours }
+        scenario "Both times display on the page and a warning alert is shown" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+          expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
+          expect(find(".section--document-list .usa-alert-warning").text).to have_content("The document list may be stale")
+        end
+      end
+
       context "When VVA manifest retrieval time is nil" do
         let(:vva_fetched_ts) { nil }
         scenario "Only VBMS time displays on the page and error alert is shown" do
