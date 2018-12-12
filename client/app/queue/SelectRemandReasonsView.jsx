@@ -58,7 +58,15 @@ class SelectRemandReasonsView extends React.Component {
     }
 
     const updatedIssues = _.map(renderedChildren, (child) => child.updateStoreIssue());
-    const attributes = useDecisionIssues ? { decisionIssues: updatedIssues } : { issues: updatedIssues };
+    const mergedIssueUpdates = _.map(appeal.issues, (issue) => {
+      const updatedIssue = _.find(updatedIssues, {id: issue.id})
+      if (updatedIssue) {
+        return _.merge({}, issue, {remand_reasons: updatedIssue.remand_reasons});
+      }
+      return issue;
+    });
+    debugger;
+    const attributes = useDecisionIssues ? { decisionIssues: mergedIssueUpdates } : { issues: mergedIssueUpdates };
 
     this.props.editStagedAppeal(appealId, attributes);
 
