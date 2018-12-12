@@ -70,10 +70,18 @@ class UserRepository
     def find_all_hearing_coordinators
       coordinator_records = VACOLS::Staff.where(sdept: "HRG", sactive: "A")
 
-      coordinator_records.select(&:sdomainid).map do |record|
+      user_records = coordinator_records.select(&:sdomainid).map do |record|
         User.find_or_create_by(css_id: record.sdomainid,
-                               full_name: "#{record.snamef} #{record.snamemi} #{record.snamel}",
                                station_id: User::BOARD_STATION_ID)
+      end
+
+      user_records.map do |user|
+        if user.full_name.nil? || user.full_name == ""
+          coordinator = coordinator_records.find_by(sdomainid: user.css_id)
+          user.update(full_name: `#{coordinator.snamef} #{coordinator.snamemi} #{coordinator.snamel}`)
+        else
+          user
+        end
       end
     end
 
