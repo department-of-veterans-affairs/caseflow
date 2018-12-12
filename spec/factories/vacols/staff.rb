@@ -32,7 +32,7 @@ FactoryBot.define do
     end
 
     trait :hearing_coordinator do
-      stitle "HRG"
+      sdept "HRG"
       sactive "A"
       sequence(:snamel) { |n| "Smith#{n}" }
       sequence(:snamef) { |n| "John#{n}" }
