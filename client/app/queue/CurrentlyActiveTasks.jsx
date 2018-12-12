@@ -7,6 +7,7 @@ import { GrayDot, GreenCheckmark } from '../components/RenderFunctions';
 import moment from 'moment';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import {
   getTasksForAppeal,
   actionableTasksForAppeal
@@ -41,8 +42,9 @@ const tableCellTitle = css({
   textTransform: 'uppercase'
 });
 
-const getEventRow = ({ assignedOn, assignedTo, assignedBy, type }, lastRow) => {
+const getEventRow = (task, lastRow, showActionsSection) => {
   const today = moment().startOf('day');
+  const { assignedOn, assignedTo, assignedBy, type } = task
   const formattedassignedOnDate = assignedOn ? moment(assignedOn).format('MM/DD/YYYY') : null;
   const dayCountSinceAssignment = today.diff(assignedOn, 'days');
 
@@ -83,6 +85,12 @@ const getEventRow = ({ assignedOn, assignedTo, assignedBy, type }, lastRow) => {
             <tr>
               <td {...tableCellTitle}>
                 Actions <br/>
+                {showActionsSection &&
+                  <div className="usa-width-one-half">
+                    <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
+                    <ActionsDropdown task={task} appealId={appeal.externalId} />
+                  </div>
+                }
                 {/* TODO steal ActionsDropdown from CaseSnapshot */}
                 {/*<ActionsDropdown task={primaryTask} appealId={appeal.externalId} />*/}
               </td>
@@ -131,6 +139,26 @@ type Props = Params & {|
 |};
 
 export class CurrentlyActiveTasks extends React.PureComponent {
+
+  showActionsSection = (): boolean => {
+    if (this.props.hideDropdown) {
+      return false;
+    }
+
+    const {
+      userRole,
+      primaryTask
+    } = this.props;
+
+    if (!primaryTask) {
+      return false;
+    }
+
+    // users can end up at case details for appeals with no DAS
+    // record (!task.taskId). prevent starting attorney checkout flows
+    return userRole === USER_ROLE_TYPES.judge ? Boolean(primaryTask) : Boolean(primaryTask.taskId);
+  }
+
   render = () => {
     const {
       actionableTasks
@@ -138,13 +166,65 @@ export class CurrentlyActiveTasks extends React.PureComponent {
 
     console.log('--CurrentlyActiveTasks--');
     console.log(actionableTasks);
+    var showActionsSection = this.showActionsSection();
+    const today = moment().startOf('day');
+    const { assignedOn, assignedTo, assignedBy, type } = task
+    const formattedassignedOnDate = assignedOn ? moment(assignedOn).format('MM/DD/YYYY') : null;
+    const dayCountSinceAssignment = today.diff(assignedOn, 'days');
+    const eventImage = <GrayDot />;
 
     return <React.Fragment>
       <table>
         <tbody>
-          {actionableTasks && actionableTasks.map((event, index) => {
-            return getEventRow(event, index === actionableTasks.length - 1);
-          })}
+          //{actionableTasks && actionableTasks.map((event, index) => {
+            //return getEventRow(event, index === actionableTasks.length - 1, showActionsSection);
+            <tr key={assignedOn}>
+              <table>
+                <tr>
+                  <td {...tableCell}>
+                    <table>
+                      <tr><td {...tableCellTitle}>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL + ": "}</td><td {...tableCell}>{formattedassignedOnDate}</td></tr>
+                      <tr><td {...tableCellTitle}>{COPY.CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL + ": "}</td><td {...tableCell}>{dayCountSinceAssignment}</td></tr>
+                    </table>
+                  </td>
+                  <td {...tableCell}>
+                    <table>
+                      <tr><td {...tableCellWithIcon}>{eventImage}{!lastRow && <div {...grayLine} />}</td></tr>
+                    </table>
+                  </td>
+                  <td {...tableCell}>
+                    <table>
+                      <tr>
+                        <td {...tableCellTitle}>
+                          {COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL + ": "}  <span {...tableCell}>{assignedTo.cssId}</span><br/>
+                          {COPY.CASE_SNAPSHOT_TASK_ASSIGNOR_LABEL + ": "}  <span {...tableCell}>{assignedBy.firstName + ' ' + assignedBy.lastName}</span><br/>
+                          {COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL + ": "}  <span {...tableCell}>{type}</span><br/>
+                          <span {...tableCell}>{"View task instructions"}</span><br/>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td {...tableCell}>
+                    <table>
+                      <tr>
+                        <td {...tableCellTitle}>
+                          Actions <br/>
+                          {showActionsSection &&
+                            <div className="usa-width-one-half">
+                              <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
+                              <ActionsDropdown task={task} appealId={appeal.externalId} />
+                            </div>
+                          }
+                          {/* TODO steal ActionsDropdown from CaseSnapshot */}
+                          {/*<ActionsDropdown task={primaryTask} appealId={appeal.externalId} />*/}
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+          }
+          </tr>
         </tbody>
       </table>
     </React.Fragment>;
@@ -152,10 +232,13 @@ export class CurrentlyActiveTasks extends React.PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => {
+  const { userRole } = state.ui;
 
   return {
     incompleteTasks: getTasksForAppeal(state, { appealId: ownProps.appealId }),
-    actionableTasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId })
+    actionableTasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
+    userRole,
+    primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0]
   };
 };
 
