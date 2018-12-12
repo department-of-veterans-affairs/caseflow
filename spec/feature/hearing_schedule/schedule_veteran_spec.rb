@@ -50,11 +50,10 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       )
     end
 
-    scenario "Schedule Veteran for video", focus: true do
+    scenario "Schedule Veteran for video" do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown 12
-      binding.pry
       click_button("Schedule a Veteran")
       appeal_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       appeal_link.click
