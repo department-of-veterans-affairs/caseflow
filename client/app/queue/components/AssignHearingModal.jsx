@@ -30,7 +30,8 @@ import {
   appealWithDetailSelector,
   actionableTasksForAppeal
 } from '../selectors';
-import { onReceiveAmaTasks } from '../QueueActions';
+import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
+import { prepareAppealForStore } from '../utils';
 import _ from 'lodash';
 import type { Appeal, Task } from '../types/models';
 import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants/constants';
@@ -48,6 +49,7 @@ type Props = Params & {|
   savePending: boolean,
   selectedRegionalOffice: Object,
   scheduleHearingTask: Object,
+  openHearing: Object,
   history: Object,
   hearingDay: Object,
   selectedHearingDay: Object,
@@ -63,6 +65,7 @@ type Props = Params & {|
   onReceiveAmaTasks: typeof onReceiveAmaTasks,
   onHearingDayChange: typeof onHearingDayChange,
   onHearingTimeChange: typeof onHearingTimeChange,
+  onReceiveAppealDetails: typeof onReceiveAppealDetails,
   // Inherited from EditModalBase
   setLoading: Function,
 |};
@@ -79,7 +82,17 @@ const centralOfficeStaticEntry = [{
 class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   componentDidMount = () => {
-    const { hearingDay } = this.props;
+    const { hearingDay, openHearing } = this.props;
+
+    if (openHearing) {
+      this.props.showErrorMessage({
+        title: 'Open Hearing',
+        detail: `This appeal has an open hearing on ${formatDateStr(openHearing.date)}. ` +
+                'You cannot schedule another hearing.'
+      });
+
+      return;
+    }
 
     if (hearingDay.hearingTime) {
       this.props.onHearingTimeChange(hearingDay.hearingTime);
@@ -93,6 +106,11 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   validateForm = () => {
+
+    if (this.props.openHearing) {
+      return false;
+    }
+
     const hearingDate = this.formatHearingDate();
 
     if (hearingDate === null || this.props.selectedHearingTime === null) {
@@ -133,6 +151,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         const resp = JSON.parse(response.text);
 
         this.props.onReceiveAmaTasks(resp.tasks.data);
+
         setLoading(false);
       });
     }
@@ -164,8 +183,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     return this.props.requestPatch(`/tasks/${scheduleHearingTask.taskId}`, payload, this.getSuccessMsg()).
       then(() => {
-
         history.goBack();
+        this.resetAppealDetails();
+
       }, () => {
         this.props.showErrorMessage({
           title: 'No Available Slots',
@@ -173,6 +193,14 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
                   'Please select a different date.'
         });
       });
+  }
+
+  resetAppealDetails = () => {
+    const { appeal } = this.props;
+
+    ApiUtil.get(`/appeals/${appeal.externalId}`).then((response) => {
+      this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
+    });
   }
 
   getTimeOptions = () => {
@@ -291,11 +319,15 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   render = () => {
     const {
       selectedHearingDay, selectedRegionalOffice,
-      selectedHearingTime
+      selectedHearingTime, openHearing
     } = this.props;
 
     const initVals = this.getInitialValues();
     const timeOptions = this.getTimeOptions();
+
+    if (openHearing) {
+      return null;
+    }
 
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
@@ -330,7 +362,11 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 const mapStateToProps = (state: State, ownProps: Params) => ({
   scheduleHearingTask: _.find(
     actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
-    (task) => task.type === 'ScheduleHearingTask'
+    (task) => task.type === 'ScheduleHearingTask' && task.status !== 'completed'
+  ),
+  openHearing: _.find(
+    appealWithDetailSelector(state, ownProps).hearings,
+    (hearing) => hearing.disposition === null
   ),
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending,
@@ -350,7 +386,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks,
   onRegionalOfficeChange,
   onHearingDayChange,
-  onHearingTimeChange
+  onHearingTimeChange,
+  onReceiveAppealDetails
 }, dispatch);
 
 export default (withRouter(
