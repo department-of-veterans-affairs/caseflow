@@ -168,65 +168,13 @@ export class CurrentlyActiveTasks extends React.PureComponent {
     console.log(actionableTasks);
     var showActionsSection = this.showActionsSection();
     const today = moment().startOf('day');
-    const { assignedOn, assignedTo, assignedBy, type } = task
+    const { assignedOn, assignedTo, assignedBy, type } = task;
     const formattedassignedOnDate = assignedOn ? moment(assignedOn).format('MM/DD/YYYY') : null;
     const dayCountSinceAssignment = today.diff(assignedOn, 'days');
     const eventImage = <GrayDot />;
 
     return <React.Fragment>
-      <table>
-        <tbody>
-          //{actionableTasks && actionableTasks.map((event, index) => {
-            //return getEventRow(event, index === actionableTasks.length - 1, showActionsSection);
-            <tr key={assignedOn}>
-              <table>
-                <tr>
-                  <td {...tableCell}>
-                    <table>
-                      <tr><td {...tableCellTitle}>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL + ": "}</td><td {...tableCell}>{formattedassignedOnDate}</td></tr>
-                      <tr><td {...tableCellTitle}>{COPY.CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL + ": "}</td><td {...tableCell}>{dayCountSinceAssignment}</td></tr>
-                    </table>
-                  </td>
-                  <td {...tableCell}>
-                    <table>
-                      <tr><td {...tableCellWithIcon}>{eventImage}{!lastRow && <div {...grayLine} />}</td></tr>
-                    </table>
-                  </td>
-                  <td {...tableCell}>
-                    <table>
-                      <tr>
-                        <td {...tableCellTitle}>
-                          {COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL + ": "}  <span {...tableCell}>{assignedTo.cssId}</span><br/>
-                          {COPY.CASE_SNAPSHOT_TASK_ASSIGNOR_LABEL + ": "}  <span {...tableCell}>{assignedBy.firstName + ' ' + assignedBy.lastName}</span><br/>
-                          {COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL + ": "}  <span {...tableCell}>{type}</span><br/>
-                          <span {...tableCell}>{"View task instructions"}</span><br/>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td {...tableCell}>
-                    <table>
-                      <tr>
-                        <td {...tableCellTitle}>
-                          Actions <br/>
-                          {showActionsSection &&
-                            <div className="usa-width-one-half">
-                              <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-                              <ActionsDropdown task={task} appealId={appeal.externalId} />
-                            </div>
-                          }
-                          {/* TODO steal ActionsDropdown from CaseSnapshot */}
-                          {/*<ActionsDropdown task={primaryTask} appealId={appeal.externalId} />*/}
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-          }
-          </tr>
-        </tbody>
-      </table>
+      <p>Hi!</p>
     </React.Fragment>;
   }
 }
