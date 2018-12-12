@@ -142,13 +142,7 @@ class Task < ApplicationRecord
   end
 
   def can_be_updated_by_user?(user)
-    if assigned_to == user ||
-       assigned_by == user ||
-       (parent && parent.assigned_to == user) ||
-       user.administered_teams.select { |team| team.is_a?(JudgeTeam) }.any?
-      return true
-    end
-    false
+    available_actions(user).any?
   end
 
   def verify_user_can_update!(user)
