@@ -67,7 +67,7 @@ class SelectRemandReasonsView extends React.Component {
 
       return issue;
     });
-    const attributes = useDecisionIssues ? { decisionIssues: mergedIssueUpdates } : { issues: mergedIssueUpdates };
+    const attributes = useDecisionIssues ? { decisionIssues: updatedIssues } : { issues: mergedIssueUpdates };
 
     this.props.editStagedAppeal(appealId, attributes);
 
