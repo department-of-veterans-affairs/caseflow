@@ -61,7 +61,7 @@ class SelectRemandReasonsView extends React.Component {
     const mergedIssueUpdates = _.map(appeal.issues, (issue) => {
       const updatedIssue = _.find(updatedIssues, {id: issue.id})
       if (updatedIssue) {
-        return _.merge({}, issue, {remand_reasons: updatedIssue.remand_reasons});
+        issue.remand_reasons = updatedIssue.remand_reasons;
       }
       return issue;
     });
