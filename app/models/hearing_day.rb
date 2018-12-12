@@ -12,6 +12,25 @@ class HearingDay < ApplicationRecord
     central: "C"
   }.freeze
 
+  # rubocop:disable Style/SymbolProc
+  after_update { |hearing_day| hearing_day.update_children_records }
+  # rubocop:enable Style/SymbolProc
+
+  def update_children_records
+    hearings = if hearing_type == HEARING_TYPES[:central]
+                 HearingRepository.fetch_co_hearings_for_parent(hearing_date)
+               else
+                 HearingRepository.fetch_video_hearings_for_parent(id)
+               end
+    hearings.each do |hearing|
+      hearing.update_caseflow_and_vacols(
+        room: room,
+        bva_poc: bva_poc,
+        judge_id: judge ? judge.vacols_attorney_id : nil
+      )
+    end
+  end
+
   def to_hash
     as_json.each_with_object({}) do |(k, v), result|
       result[k.to_sym] = v
@@ -93,7 +112,7 @@ class HearingDay < ApplicationRecord
           .fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)
 
         next unless scheduled_hearings.length < total_slots && !hearing_day[:lock]
-        enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room_info)
+        enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room)
         enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] = total_slots
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = scheduled_hearings
       end
