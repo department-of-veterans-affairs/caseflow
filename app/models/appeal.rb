@@ -222,9 +222,10 @@ class Appeal < DecisionReview
     RootTask.create_root_and_sub_tasks!(self)
   end
 
+  # Hides duplicate cases from timeline that have assigned_to_type both "User" and "Organization"
   def tasks_for_timeline
     tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC")
-      .reject { |t| t.assigned_to_type == "Organization" && t.children.pluck(:assigned_to_type).include?("User") }
+      .reject { |t| t.assigned_to.is_a?(Organization) && t.children.pluck(:assigned_to_type).include?(User.name) }
   end
 
   def timeline
