@@ -38,7 +38,6 @@ const getEventRow = ({ title, date }, lastRow) => {
 };
 
 export const CaseTimeline = ({ appeal }) => {
-
   return <React.Fragment>
     {COPY.CASE_TIMELINE_HEADER}
     <table>

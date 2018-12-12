@@ -80,7 +80,6 @@ class CaseDetailsView extends React.PureComponent {
       }
       <CaseSnapshot appealId={appealId} />
       <hr {...horizontalRuleStyling} />
-
       <StickyNavContentArea>
         <CurrentlyActiveTasks title="Currently Active Tasks" appealId={appealId} />
         <CaseDetailsIssueList

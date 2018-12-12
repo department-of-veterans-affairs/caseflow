@@ -7,7 +7,6 @@ import { GrayDot, GreenCheckmark } from '../components/RenderFunctions';
 import moment from 'moment';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import {
   getTasksForAppeal,
   actionableTasksForAppeal
@@ -42,9 +41,8 @@ const tableCellTitle = css({
   textTransform: 'uppercase'
 });
 
-const getEventRow = (task, lastRow, showActionsSection) => {
+const getEventRow = ({ assignedOn, assignedTo, assignedBy, type }, lastRow) => {
   const today = moment().startOf('day');
-  const { assignedOn, assignedTo, assignedBy, type } = task
   const formattedassignedOnDate = assignedOn ? moment(assignedOn).format('MM/DD/YYYY') : null;
   const dayCountSinceAssignment = today.diff(assignedOn, 'days');
 
@@ -85,12 +83,6 @@ const getEventRow = (task, lastRow, showActionsSection) => {
             <tr>
               <td {...tableCellTitle}>
                 Actions <br/>
-                {showActionsSection &&
-                  <div className="usa-width-one-half">
-                    <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-                    <ActionsDropdown task={task} appealId={appeal.externalId} />
-                  </div>
-                }
                 {/* TODO steal ActionsDropdown from CaseSnapshot */}
                 {/*<ActionsDropdown task={primaryTask} appealId={appeal.externalId} />*/}
               </td>
@@ -139,26 +131,6 @@ type Props = Params & {|
 |};
 
 export class CurrentlyActiveTasks extends React.PureComponent {
-
-  showActionsSection = (): boolean => {
-    if (this.props.hideDropdown) {
-      return false;
-    }
-
-    const {
-      userRole,
-      primaryTask
-    } = this.props;
-
-    if (!primaryTask) {
-      return false;
-    }
-
-    // users can end up at case details for appeals with no DAS
-    // record (!task.taskId). prevent starting attorney checkout flows
-    return userRole === USER_ROLE_TYPES.judge ? Boolean(primaryTask) : Boolean(primaryTask.taskId);
-  }
-
   render = () => {
     const {
       actionableTasks
@@ -166,27 +138,24 @@ export class CurrentlyActiveTasks extends React.PureComponent {
 
     console.log('--CurrentlyActiveTasks--');
     console.log(actionableTasks);
-    var showActionsSection = this.showActionsSection();
-    const today = moment().startOf('day');
-    const { assignedOn, assignedTo, assignedBy, type } = task;
-    const formattedassignedOnDate = assignedOn ? moment(assignedOn).format('MM/DD/YYYY') : null;
-    const dayCountSinceAssignment = today.diff(assignedOn, 'days');
-    const eventImage = <GrayDot />;
 
     return <React.Fragment>
-      <p>Hi!</p>
+      <table>
+        <tbody>
+          {actionableTasks && actionableTasks.map((event, index) => {
+            return getEventRow(event, index === actionableTasks.length - 1);
+          })}
+        </tbody>
+      </table>
     </React.Fragment>;
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { userRole } = state.ui;
 
   return {
     incompleteTasks: getTasksForAppeal(state, { appealId: ownProps.appealId }),
-    actionableTasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
-    userRole,
-    primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0]
+    actionableTasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };
 
