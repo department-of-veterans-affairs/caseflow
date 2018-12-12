@@ -15,7 +15,7 @@ class DecisionReviewProcessJob < CaseflowJob
     begin
       return_value = decision_review.establish!
     rescue VBMS::ClientError => err
-      claim_review.update_error!(err.to_s)
+      decision_review.update_error!(err.to_s)
       Raven.capture_exception(err)
     end
 
