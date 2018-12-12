@@ -2,9 +2,6 @@
 # higher level review as defined in the Appeals Modernization Act of 2017
 
 class ClaimReview < DecisionReview
-  include Asyncable
-  include LegacyOptinable
-
   has_many :end_product_establishments, as: :source
   has_one :intake, as: :detail
 
@@ -26,29 +23,6 @@ class ClaimReview < DecisionReview
       payeeCode: payee_code,
       hasClearedEP: cleared_ep?
     )
-  end
-
-  # The Asyncable module requires we define these.
-  # establishment_submitted_at - when our db is ready to push to exernal services
-  # establishment_attempted_at - when our db attempted to push to external services
-  # establishment_processed_at - when our db successfully pushed to external services
-
-  class << self
-    def submitted_at_column
-      :establishment_submitted_at
-    end
-
-    def attempted_at_column
-      :establishment_attempted_at
-    end
-
-    def processed_at_column
-      :establishment_processed_at
-    end
-
-    def error_column
-      :establishment_error
-    end
   end
 
   def issue_code(*)
