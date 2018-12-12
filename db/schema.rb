@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181206130120) do
+ActiveRecord::Schema.define(version: 20181212150819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -87,6 +87,10 @@ ActiveRecord::Schema.define(version: 20181206130120) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
