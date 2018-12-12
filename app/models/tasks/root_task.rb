@@ -18,8 +18,8 @@ class RootTask < GenericTask
     []
   end
 
-  def no_actions_available?(_user)
-    completed?
+  def actions_available?(_user)
+    !completed?
   end
 
   class << self

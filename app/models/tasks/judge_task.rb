@@ -1,8 +1,8 @@
 class JudgeTask < Task
   include RoundRobinAssigner
 
-  def no_actions_available?(user)
-    assigned_to != user
+  def actions_available?(user)
+    assigned_to == user
   end
 
   def timeline_title
