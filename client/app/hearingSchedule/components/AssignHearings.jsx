@@ -29,17 +29,14 @@ export default class AssignHearings extends React.Component {
     this.props.onSelectedHearingDayChange(hearingDay);
   };
 
-  roomInfo = (hearingDay) => {
-    let room = hearingDay.roomInfo;
-
+  room = (hearingDay) => {
     if (this.props.selectedRegionalOffice.label === 'St. Petersburg, FL') {
-      return room;
+      return hearingDay.room;
     } else if (this.props.selectedRegionalOffice.label === 'Winston-Salem, NC') {
-      return room;
+      return hearingDay.room;
     }
 
-    return room = '';
-
+    return '';
   };
 
   formatAvailableHearingDays = () => {
@@ -52,7 +49,7 @@ export default class AssignHearings extends React.Component {
             const { selectedHearingDay } = this.props;
             const dateSelected = selectedHearingDay &&
             (selectedHearingDay.hearingDate === hearingDay.hearingDate &&
-               selectedHearingDay.roomInfo === hearingDay.roomInfo);
+               selectedHearingDay.room === hearingDay.room);
             const buttonColorSelected = css({
               backgroundColor: COLORS.GREY_DARK,
               color: COLORS.WHITE,
@@ -72,7 +69,7 @@ export default class AssignHearings extends React.Component {
                 linkStyling
               >
                 {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
-                ${this.roomInfo(hearingDay)}`}
+                ${this.room(hearingDay)}`}
               </Button>
             </li>;
           })}
@@ -218,7 +215,7 @@ export default class AssignHearings extends React.Component {
     return <div className="usa-width-three-fourths">
       <h1>
         {`${moment(selectedHearingDay.hearingDate).format('ddd M/DD/YYYY')}
-       ${this.roomInfo(selectedHearingDay)} (${availableSlots} slots remaining)`}
+       ${this.room(selectedHearingDay)} (${availableSlots} slots remaining)`}
       </h1>
       <TabWindow
         name="scheduledHearings-tabwindow"
