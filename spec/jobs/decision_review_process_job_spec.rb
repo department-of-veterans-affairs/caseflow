@@ -9,21 +9,21 @@ class AClaimReview
     @err
   end
 
-  def process_end_product_establishments!; end
+  def establish!; end
 end
 
-describe ClaimReviewProcessJob do
+describe DecisionReviewProcessJob do
   let(:claim_review) { AClaimReview.new }
 
   let(:vbms_error) do
     VBMS::HTTPError.new("500", "More EPs more problems")
   end
 
-  subject { ClaimReviewProcessJob.perform_now(claim_review) }
+  subject { DecisionReviewProcessJob.perform_now(claim_review) }
 
   it "saves Exception messages and logs error" do
     capture_raven_log
-    allow(claim_review).to receive(:process_end_product_establishments!).and_raise(vbms_error)
+    allow(claim_review).to receive(:establish!).and_raise(vbms_error)
 
     subject
 
@@ -32,7 +32,7 @@ describe ClaimReviewProcessJob do
   end
 
   it "ignores error on success" do
-    allow(claim_review).to receive(:process_end_product_establishments!).and_return(true)
+    allow(claim_review).to receive(:establish!).and_return(true)
 
     expect(subject).to eq(true)
     expect(claim_review.error).to be_nil

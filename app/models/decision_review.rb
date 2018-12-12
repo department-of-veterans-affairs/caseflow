@@ -131,6 +131,10 @@ class DecisionReview < ApplicationRecord
     # no-op, can be overwritten
   end
 
+  def establish!
+    # no-op
+  end
+
   def contestable_issues
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
   end

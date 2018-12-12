@@ -236,6 +236,62 @@ export const toggleVljFilterVisibility = () => ({
   type: ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN
 });
 
+export const selectHearingType = (hearingType) => ({
+  type: ACTIONS.SELECT_HEARING_TYPE,
+  payload: {
+    hearingType
+  }
+});
+
+export const selectVlj = (vlj) => ({
+  type: ACTIONS.SELECT_VLJ,
+  payload: {
+    vlj
+  }
+});
+
+export const selectHearingCoordinator = (coordinator) => ({
+  type: ACTIONS.SELECT_COORDINATOR,
+  payload: {
+    coordinator
+  }
+});
+
+export const selectHearingRoom = (hearingRoom) => ({
+  type: ACTIONS.SELECT_HEARING_ROOM,
+  payload: {
+    hearingRoom
+  }
+});
+
+export const setNotes = (notes) => ({
+  type: ACTIONS.SET_NOTES,
+  payload: {
+    notes
+  }
+});
+
+export const onHearingDayModified = (hearingDayModified) => ({
+  type: ACTIONS.HEARING_DAY_MODIFIED,
+  payload: {
+    hearingDayModified
+  }
+});
+
+export const onReceiveJudges = (activeJudges) => ({
+  type: ACTIONS.RECEIVE_JUDGES,
+  payload: {
+    activeJudges
+  }
+});
+
+export const onReceiveCoordinators = (activeCoordinators) => ({
+  type: ACTIONS.RECEIVE_COORDINATORS,
+  payload: {
+    activeCoordinators
+  }
+});
+
 export const onClickRemoveHearingDay = () => ({
   type: ACTIONS.ON_CLICK_REMOVE_HEARING_DAY
 });
@@ -253,6 +309,13 @@ export const onSuccessfulHearingDayDelete = (date) => ({
 
 export const onResetDeleteSuccessful = () => ({
   type: ACTIONS.RESET_DELETE_SUCCESSFUL
+});
+
+export const onAssignHearingRoom = (roomNotRequired) => ({
+  type: ACTIONS.ASSIGN_HEARING_ROOM,
+  payload: {
+    roomNotRequired
+  }
 });
 
 export const onDisplayLockModal = () => ({
@@ -284,3 +347,4 @@ export const handleDailyDocketServerError = (err) => ({
 export const onResetDailyDocketAfterError = () => ({
   type: ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR
 });
+
