@@ -61,6 +61,7 @@ class SeedDB
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
     create_judge_teams
+    create_hearings_team
   end
 
   def create_judge_teams
@@ -71,6 +72,11 @@ class SeedDB
         OrganizationsUser.add_user_to_organization(User.find_or_create_by(css_id: css_id, station_id: 101), judge_team)
       end
     end
+  end
+
+  def create_hearings_team
+    hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
+    OrganizationsUser.add_user_to_organization(hearings_member, HearingsManagement.singleton)
   end
 
   def create_colocated_users
