@@ -120,7 +120,7 @@ module StubbableUser
     end
 
     def authenticate!(css_id: nil, roles: nil, user: nil)
-      Functions.grant!("System Admin", users: ["DSUSER"]) if roles && roles.include?("System Admin")
+      Functions.grant!("System Admin", users: ["DSUSER"]) if roles&.include?("System Admin")
 
       if user.nil?
         user = User.from_session(
@@ -227,7 +227,8 @@ RSpec.configure do |config|
   # If it does, it will not execute ReactOnRails, since that slows down tests
   # Thus this will only run once (to initially compile assets) and not on
   # subsequent test runs
-  if !File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js")
+  if !File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js") &&
+     ENV["REACT_ON_RAILS_ENV"] != "HOT"
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
   config.before(:all) do
@@ -357,16 +358,14 @@ RSpec::Matchers.define :become_truthy do |wait: Capybara.default_max_wait_time|
   supports_block_expectations
 
   match do |block|
-    begin
-      Timeout.timeout(wait) do
-        # rubocop:disable AssignmentInCondition
-        sleep(0.1) until value = block.call
-        # rubocop:enable AssignmentInCondition
-        value
-      end
-    rescue TimeoutError
-      false
+    Timeout.timeout(wait) do
+      # rubocop:disable AssignmentInCondition
+      sleep(0.1) until value = block.call
+      # rubocop:enable AssignmentInCondition
+      value
     end
+  rescue TimeoutError
+    false
   end
 end
 

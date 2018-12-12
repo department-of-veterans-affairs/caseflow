@@ -13,7 +13,7 @@ import {
   toggleLegacyOptInModal
 } from '../actions/addIssues';
 import TextField from '../../components/TextField';
-import { issueById } from '../util/issues';
+import { issueByIndex } from '../util/issues';
 
 class AddIssuesModal extends React.Component {
   constructor(props) {
@@ -21,14 +21,14 @@ class AddIssuesModal extends React.Component {
 
     this.state = {
       profileDate: '',
-      referenceId: '',
+      selectedContestableIssueIndex: '',
       notes: ''
     };
   }
 
   radioOnChange = (value) => {
     this.setState({
-      referenceId: value
+      selectedContestableIssueIndex: value
     });
   }
 
@@ -46,13 +46,15 @@ class AddIssuesModal extends React.Component {
     if (this.props.formType === 'supplemental_claim') {
       return false;
     }
-    const currentIssue = issueById(this.props.intakeData.ratings, this.state.referenceId);
+    const currentIssue = issueByIndex(this.props.intakeData.contestableIssues,
+      this.state.selectedContestableIssueIndex);
 
     return !currentIssue.timely;
   }
 
   onAddIssue = () => {
-    const currentIssue = issueById(this.props.intakeData.ratings, this.state.referenceId);
+    const currentIssue = issueByIndex(this.props.intakeData.contestableIssues,
+      this.state.selectedContestableIssueIndex);
 
     if (this.hasLegacyAppeals()) {
       this.props.toggleLegacyOptInModal({ currentIssue,
@@ -62,8 +64,8 @@ class AddIssuesModal extends React.Component {
         notes: this.state.notes });
     } else {
       this.props.addRatingRequestIssue({
-        issueId: this.state.referenceId,
-        ratings: this.props.intakeData.ratings,
+        contestableIssueIndex: this.state.selectedContestableIssueIndex,
+        contestableIssues: this.props.intakeData.contestableIssues,
         isRating: true,
         notes: this.state.notes
       });
@@ -86,30 +88,33 @@ class AddIssuesModal extends React.Component {
     } = this.props;
 
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
-    const ratingRequestIssuesSections = _.map(intakeData.ratings, (rating) => {
-      const radioOptions = _.map(rating.issues, (issue) => {
-        const foundIndex = addedIssues.map((addedIssue) => addedIssue.id).indexOf(issue.reference_id);
-        const text = foundIndex === -1 ?
-          issue.decision_text :
-          `${issue.decision_text} (already selected for issue ${foundIndex + 1})`;
 
-        return {
-          displayText: text,
-          value: issue.reference_id,
-          disabled: foundIndex !== -1
-        };
+    const contestableIssuesSections = _.map(intakeData.contestableIssues,
+      (contestableIssuesByIndex, date) => {
+        const radioOptions = _.map(contestableIssuesByIndex, (issue) => {
+          const foundIndex = _.findIndex(addedIssues, { index: issue.index });
+          const text = foundIndex === -1 ?
+            issue.description :
+            `${issue.description} (already selected for issue ${foundIndex + 1})`;
+
+          return {
+            displayText: text,
+            value: issue.index,
+            disabled: foundIndex !== -1
+          };
+        }
+        );
+
+        return <RadioField
+          vertical
+          label={<h3>Past decisions from { formatDateStr(date) }</h3>}
+          name="rating-radio"
+          options={radioOptions}
+          key={date}
+          value={this.state.selectedContestableIssueIndex}
+          onChange={this.radioOnChange}
+        />;
       });
-
-      return <RadioField
-        vertical
-        label={<h3>Past decisions from { formatDateStr(rating.profile_date) }</h3>}
-        name="rating-radio"
-        options={radioOptions}
-        key={rating.profile_date}
-        value={this.state.referenceId}
-        onChange={this.radioOnChange}
-      />;
-    });
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -123,7 +128,7 @@ class AddIssuesModal extends React.Component {
           { classNames: ['usa-button', 'add-issue'],
             name: this.getNextButtonText(),
             onClick: this.onAddIssue,
-            disabled: !this.state.referenceId
+            disabled: !this.state.selectedContestableIssueIndex
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
             name: 'None of these match, see more options',
@@ -143,7 +148,7 @@ class AddIssuesModal extends React.Component {
              -- so select the best matching decision.
           </p>
           <br />
-          { ratingRequestIssuesSections }
+          { contestableIssuesSections }
           <TextField
             name="Notes"
             value={this.state.notes}

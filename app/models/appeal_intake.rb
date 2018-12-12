@@ -43,7 +43,7 @@ class AppealIntake < DecisionReviewIntake
   private
 
   def claimant_participant_id
-    (request_params[:veteran_is_not_claimant] == "true") ? request_params[:claimant] : veteran.participant_id
+    (request_params[:veteran_is_not_claimant] == true) ? request_params[:claimant] : veteran.participant_id
   end
 
   def review_params
