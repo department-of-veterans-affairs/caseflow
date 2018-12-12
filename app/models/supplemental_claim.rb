@@ -3,7 +3,9 @@ class SupplementalClaim < ClaimReview
     rating: "040SCR",
     nonrating: "040SCNR",
     dta_rating: "040HDER",
-    dta_nonrating: "040HDENR"
+    dta_nonrating: "040HDENR",
+    pension_dta_rating: "040HDERPMC",
+    pension_dta_nonrating: "040HDENRPMC"
   }.freeze
 
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze

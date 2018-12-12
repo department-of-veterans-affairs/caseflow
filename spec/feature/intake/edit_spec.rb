@@ -895,12 +895,12 @@ RSpec.feature "Edit issues" do
 
         rating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
-          code: HigherLevelReview::END_PRODUCT_RATING_CODE
+          code: HigherLevelReview::END_PRODUCT_CODES[:rating]
         )
 
         nonrating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
-          code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+          code: HigherLevelReview::END_PRODUCT_CODES[:nonrating]
         )
 
         # expect the remove/re-add to create a new RequestIssue for same RatingIssue

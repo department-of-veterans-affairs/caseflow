@@ -267,7 +267,7 @@ RSpec.feature "Higher-Level Review" do
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "033",
         end_product_label: "Higher-Level Review Rating",
-        end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+        end_product_code: HigherLevelReview::END_PRODUCT_CODES[:rating],
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910292"
@@ -278,7 +278,7 @@ RSpec.feature "Higher-Level Review" do
 
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: HigherLevelReview::END_PRODUCT_RATING_CODE
+      code: HigherLevelReview::END_PRODUCT_CODES[:rating]
     )
 
     expect(ratings_end_product_establishment).to have_attributes(
@@ -297,7 +297,7 @@ RSpec.feature "Higher-Level Review" do
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
         end_product_label: "Higher-Level Review Nonrating",
-        end_product_code: HigherLevelReview::END_PRODUCT_NONRATING_CODE,
+        end_product_code: HigherLevelReview::END_PRODUCT_CODES[:nonrating],
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       ),
@@ -307,7 +307,7 @@ RSpec.feature "Higher-Level Review" do
 
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+      code: HigherLevelReview::END_PRODUCT_CODES[:nonrating]
     )
 
     expect(nonratings_end_product_establishment).to have_attributes(
