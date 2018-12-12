@@ -243,7 +243,17 @@ RSpec.feature "Reader" do
         end
       end
 
-      context "When VVA manifest retrieval time is older than the eFolder cache limit" do
+      context "When VVA manifest retrieval time is older, but within the eFolder cache limit" do
+        let(:vva_fetched_ts) { Time.zone.now - 2.hours }
+        scenario "Both times display on the page and there are no document alerts" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+          expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
+          expect(page).to_not have_css(".section--document-list .usa-alert")
+        end
+      end
+
+      context "When VVA manifest retrieval time is olde and outside of the eFolder cache limit" do
         let(:vva_fetched_ts) { Time.zone.now - 4.hours }
         scenario "Both times display on the page and a warning alert is shown" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"

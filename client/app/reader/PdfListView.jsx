@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import BackToQueueLink from './BackToQueueLink';
-import DocumentRetrievalAlert from './DocumentRetrevalAlert';
+import LastRetrievalAlert from './LastRetrievalAlert';
 import LastRetrievalInfo from './LastRetrievalInfo';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import DocumentListHeader from './DocumentListHeader';
@@ -17,7 +17,6 @@ import NoSearchResults from './NoSearchResults';
 import { fetchAppealDetails, onReceiveAppealDetails } from '../reader/PdfViewer/PdfViewerActions';
 import { shouldFetchAppeal } from '../reader/utils';
 import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
-import Alert from '../components/Alert';
 
 export class PdfListView extends React.Component {
   componentDidMount() {
@@ -69,7 +68,7 @@ export class PdfListView extends React.Component {
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          <DocumentRetrievalAlert />
+          <LastRetrievalAlert />
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
