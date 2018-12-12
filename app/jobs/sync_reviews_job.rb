@@ -14,7 +14,7 @@ class SyncReviewsJob < CaseflowJob
 
     perform_end_product_syncs(limit)
     perform_ramp_refiling_reprocessing
-    perform_claim_review_processing(limit)
+    perform_decision_review_processing(limit)
     perform_decision_rating_issues_syncs(limit)
     perform_legacy_optin_syncs(limit)
   end
@@ -36,10 +36,10 @@ class SyncReviewsJob < CaseflowJob
     end
   end
 
-  def perform_claim_review_processing(limit)
+  def perform_decision_review_processing(limit)
     [HigherLevelReview, SupplementalClaim, RequestIssuesUpdate].each do |klass|
       klass.requires_processing.limit(limit).each do |claim_review|
-        ClaimReviewProcessJob.perform_later(claim_review)
+        DecisionReviewProcessJob.perform_later(claim_review)
       end
     end
   end

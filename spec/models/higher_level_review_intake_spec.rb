@@ -312,7 +312,7 @@ describe HigherLevelReviewIntake do
       end
 
       it "clears pending status" do
-        allow(detail).to receive(:process_end_product_establishments!).and_raise(unknown_error)
+        allow(detail).to receive(:establish!).and_raise(unknown_error)
 
         expect { subject }.to raise_exception(unknown_error)
         expect(intake.completion_status).to be_nil

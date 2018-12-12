@@ -236,6 +236,10 @@ class Appeal < DecisionReview
     ].flatten
   end
 
+  def establish!
+    # currently a no-op
+  end
+
   private
 
   def contestable_decision_issues
