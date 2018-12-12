@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181205201428) do
+ActiveRecord::Schema.define(version: 20181206130120) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -417,6 +417,7 @@ ActiveRecord::Schema.define(version: 20181205201428) do
     t.string "bva_poc"
     t.datetime "deleted_at"
     t.boolean "lock"
+    t.text "notes"
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
 
