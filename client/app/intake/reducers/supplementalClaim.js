@@ -1,7 +1,7 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
 import { formatDateStr } from '../../util/DateUtil';
-import { formatRatings, formatRequestIssues, formatContestableIssues } from '../util/issues';
+import { formatRequestIssues, formatContestableIssues } from '../util/issues';
 import {
   convertStringToBoolean,
   getReceiptDateError,
@@ -15,6 +15,8 @@ const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
     return state;
   }
+
+  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 
   return update(state, {
     isStarted: {
@@ -44,14 +46,11 @@ const updateFromServerIntake = (state, serverIntake) => {
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
-    ratings: {
-      $set: formatRatings(serverIntake.ratings)
-    },
     contestableIssues: {
-      $set: formatContestableIssues(serverIntake.contestableIssuesByDate)
+      $set: contestableIssues
     },
     requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues)
+      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
