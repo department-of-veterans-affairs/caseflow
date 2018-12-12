@@ -36,28 +36,12 @@ const listStyling = css({
 const listItemStyling = css({
   display: 'inline',
   padding: '0.5rem 1.5rem 0.5rem 0',
-  ':nth-child(1)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
+  ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
   ':not(:first-child)': { paddingLeft: '1.5rem' }
 });
 
 const viewCasesStyling = css({
   cursor: 'pointer'
-});
-
-const badgeStyle = css({
-  marginRight: '26px',
-  marginLeft: '-20px',
-  fontSize: '14px'
-});
-
-const displayNone = css({
-  display: 'none'
-});
-
-const editButton = css({
-  marginLeft: '35px',
-  position: 'inherit',
-  fontSize: '14px'
 });
 
 class CaseTitle extends React.PureComponent {
@@ -78,28 +62,12 @@ class CaseTitle extends React.PureComponent {
           { veteranCaseListIsVisible ? 'Hide' : 'View' } all cases
         </Link>
       </span>
-
-      <React.Fragment>
-        <span style={{ float: 'right' }}>
-          <span className={appeal.isAdvancedOnDocket ? null : displayNone} {...badgeStyle}
-            style={{ paddingLeft: '5px' }}>
-            {this.props.canEditAod && <span {...editButton}>
-              <Link
-                to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
-                Edit
-              </Link>
-            </span>}
-          </span>
-        </span>
-      </React.Fragment>
     </CaseTitleScaffolding>;
   }
 }
 
 CaseTitle.propTypes = {
   appeal: PropTypes.object.isRequired,
-  redirectUrl: PropTypes.string.isRequired,
-  appealId: PropTypes.string.isRequired,
   taskType: PropTypes.string,
   analyticsSource: PropTypes.string
 };

@@ -23,6 +23,10 @@ module IntakeHelpers
     safe_click "#button-finish-intake"
   end
 
+  def click_intake_continue
+    safe_click "#button-submit-review"
+  end
+
   def click_intake_no_matching_issues
     safe_click ".no-matching-issues"
   end
@@ -59,13 +63,18 @@ module IntakeHelpers
     issue_el.find(".remove-issue").click
   end
 
+  def click_remove_intake_issue_by_text(text)
+    issue_el = find_intake_issue_by_text(text)
+    issue_el.find(".remove-issue").click
+  end
+
   def click_remove_issue_confirmation
     safe_click ".remove-issue"
   end
 
   def find_intake_issue_by_number(number)
     find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
-      if node.find(".issue-num").text =~ /^#{number}\./
+      if node.find(".issue-num").text.match?(/^#{number}\./)
         return node
       end
     end
@@ -73,7 +82,7 @@ module IntakeHelpers
 
   def find_intake_issue_by_text(text)
     find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
-      if node.text =~ /#{text}/
+      if node.text.match?(/#{text}/)
         return node
       end
     end
@@ -99,66 +108,60 @@ module IntakeHelpers
         bfkey: "vacols1",
         bfcorlid: "#{veteran_file_number}S",
         bfdnod: 3.days.ago,
-        bfdsoc: 3.days.ago
+        bfdsoc: 3.days.ago,
+        case_issues: [
+          create(:case_issue, :ankylosis_of_hip),
+          create(:case_issue, :limitation_of_thigh_motion_extension)
+        ]
       ))
-
-    # ankylosis of hip, limitation of thigh motion (extension)
-    allow(AppealRepository).to receive(:issues).with("vacols1")
-      .and_return([
-                    Generators::Issue.build(id: "vacols1", vacols_sequence_id: 1, codes: %w[02 15 03 5250]),
-                    Generators::Issue.build(id: "vacols1", vacols_sequence_id: 2, codes: %w[02 15 03 5251])
-                  ])
   end
 
   def setup_active_ineligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
-      create(:case,
-             :status_active,
-             bfkey: "vacols2",
-             bfcorlid: "#{veteran_file_number}S",
-             bfdnod: 4.years.ago,
-             bfdsoc: 4.months.ago))
-
-    # intervertebral disc syndrome, degenerative arthritis of the spine
-    allow(AppealRepository).to receive(:issues).with("vacols2")
-      .and_return([
-                    Generators::Issue.build(id: "vacols2", vacols_sequence_id: 1, codes: %w[02 15 03 5243]),
-                    Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242])
-                  ])
+      create(
+        :case,
+        :status_active,
+        bfkey: "vacols2",
+        bfcorlid: "#{veteran_file_number}S",
+        bfdnod: 4.years.ago,
+        bfdsoc: 4.months.ago,
+        case_issues: [
+          create(:case_issue, :intervertebral_disc_syndrome),
+          create(:case_issue, :degenerative_arthritis_of_the_spine)
+        ]
+      ))
   end
 
   def setup_inactive_eligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
-      create(:case,
-             :status_complete,
-             bfkey: "vacols3",
-             bfcorlid: "#{veteran_file_number}S",
-             bfdnod: 4.days.ago,
-             bfdsoc: 4.days.ago))
-
-    # impairment of hip, impairment of femur
-    allow(AppealRepository).to receive(:issues).with("vacols3")
-      .and_return([
-                    Generators::Issue.build(id: "vacols3", vacols_sequence_id: 1, codes: %w[02 15 03 5254]),
-                    Generators::Issue.build(id: "vacols3", vacols_sequence_id: 2, codes: %w[02 15 03 5255])
-                  ])
+      create(
+        :case,
+        :status_complete,
+        bfkey: "vacols3",
+        bfcorlid: "#{veteran_file_number}S",
+        bfdnod: 4.days.ago,
+        bfdsoc: 4.days.ago,
+        case_issues: [
+          create(:case_issue, :impairment_of_hip),
+          create(:case_issue, :impairment_of_femur, :disposition_opted_in)
+        ]
+      ))
   end
 
   def setup_inactive_ineligible_legacy_appeal(veteran_file_number)
     create(:legacy_appeal, vacols_case:
-      create(:case,
-             :status_complete,
-             bfkey: "vacols4",
-             bfcorlid: "#{veteran_file_number}S",
-             bfdnod: 4.years.ago,
-             bfdsoc: 4.months.ago))
-
-    # typhoid arthritis, caisson disease of bones
-    allow(AppealRepository).to receive(:issues).with("vacols4")
-      .and_return([
-                    Generators::Issue.build(id: "vacols4", vacols_sequence_id: 1, codes: %w[02 15 03 5006]),
-                    Generators::Issue.build(id: "vacols4", vacols_sequence_id: 2, codes: %w[02 15 03 5011])
-                  ])
+      create(
+        :case,
+        :status_complete,
+        bfkey: "vacols4",
+        bfcorlid: "#{veteran_file_number}S",
+        bfdnod: 4.years.ago,
+        bfdsoc: 4.months.ago,
+        case_issues: [
+          create(:case_issue, :typhoid_arthritis),
+          create(:case_issue, :caisson_disease_of_bones)
+        ]
+      ))
   end
 
   def setup_legacy_opt_in_appeals(veteran_file_number)
@@ -166,6 +169,22 @@ module IntakeHelpers
     setup_active_ineligible_legacy_appeal(veteran_file_number)
     setup_inactive_eligible_legacy_appeal(veteran_file_number)
     setup_inactive_ineligible_legacy_appeal(veteran_file_number)
+  end
+
+  def setup_prior_decision_issues(veteran, benefit_type: "compensation")
+    supplemental_claim_with_decision_issues = create(:supplemental_claim,
+                                                     veteran_file_number: veteran.file_number,
+                                                     benefit_type: benefit_type)
+
+    contested_decision_issue = create(:decision_issue,
+                                      decision_review: supplemental_claim_with_decision_issues,
+                                      participant_id: veteran.participant_id,
+                                      decision_text: "contested supplemental claim decision issue",
+                                      profile_date: Time.zone.now - 2.days,
+                                      promulgation_date: Time.zone.now - 2.days,
+                                      benefit_type: supplemental_claim_with_decision_issues.benefit_type)
+
+    contested_decision_issue
   end
 end
 # rubocop:enable Metrics/ModuleLength

@@ -41,7 +41,6 @@ const listItemStyling = css({
   display: 'inline',
   float: 'left',
   padding: '0.5rem 1.5rem 0.5rem 0',
-  // ':not(:last-child)': { borderRight: `1px solid ${COLORS.GREY_LIGHT}` },
   ':not(:first-child)': {
     '& > div': {
       borderLeft: `1px solid ${COLORS.GREY_LIGHT}`
@@ -78,9 +77,6 @@ export class CaseTitleDetails extends React.PureComponent {
       userIsVsoEmployee
     } = this.props;
 
-    // TODO: Replace this with userIsVsoEmployee (see case title)
-    const taskAssignedToVso = userIsVsoEmployee;
-
     return <CaseDetailTitleScaffolding>
       <React.Fragment>
         <h4>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</h4>
@@ -89,7 +85,7 @@ export class CaseTitleDetails extends React.PureComponent {
         </span>
       </React.Fragment>
 
-      { !taskAssignedToVso &&
+      { !userIsVsoEmployee &&
         <React.Fragment>
           <h4>Veteran Documents</h4>
           <div>
@@ -120,7 +116,7 @@ export class CaseTitleDetails extends React.PureComponent {
         </div>
       </React.Fragment>
 
-      { !taskAssignedToVso && primaryTask && primaryTask.documentId &&
+      { !userIsVsoEmployee && primaryTask && primaryTask.documentId &&
         <React.Fragment>
           <h4>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
           <div><CopyTextButton text={primaryTask.documentId} /></div>

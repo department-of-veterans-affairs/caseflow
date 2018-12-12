@@ -66,7 +66,7 @@ describe Judge do
   end
 
   context "#docket?" do
-    let(:user) { Generators::User.create }
+    let(:user) { FactoryBot.create(:user) }
     let(:judge) { Judge.new(user) }
     let(:date) { Time.zone.now }
     let(:out_of_range_date) { date - 300.years }
@@ -82,6 +82,26 @@ describe Judge do
 
     it "returns false if docket does not exist" do
       expect(judge.docket?(out_of_range_date)).to be_falsey
+    end
+  end
+
+  context "#attorneys" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:judge) { Judge.new(user) }
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
+    let(:member_count) { 5 }
+    let(:attorneys) { FactoryBot.create_list(:user, member_count) }
+
+    before do
+      attorneys.each do |u|
+        OrganizationsUser.add_user_to_organization(u, judge_team)
+      end
+    end
+
+    subject { judge.attorneys }
+
+    it "returns a list of the judge's attorneys" do
+      expect(subject).to match_array attorneys
     end
   end
 end

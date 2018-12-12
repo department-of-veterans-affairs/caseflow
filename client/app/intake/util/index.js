@@ -10,6 +10,19 @@ export const getPageError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.other, 0) === 'unknown_error') && 'Unknown error.'
 );
 
+// use this conversion to change between rails model and react radio input
+// otherwise we send over a string true/false and reloading turns it into a boolean
+// which messes up logic on backend which expects a string
+export const convertStringToBoolean = (string) => {
+  if (string === 'true') {
+    return true;
+  } else if (string === 'false') {
+    return false;
+  }
+
+  return null;
+};
+
 export const getReceiptDateError = (responseErrorCodes, state) => (
   {
     blank:

@@ -49,7 +49,8 @@ class VACOLS::CaseHearing < VACOLS::Record
     judge_id: :board_member,
     folder_nr: :folder_nr,
     board_member: :board_member,
-    team: :team
+    team: :team,
+    bva_poc: :vdbvapoc
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -182,7 +183,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   end
 
   def master_record_type
-    return :video if folder_nr =~ /VIDEO/
+    return :video if folder_nr.match?(/VIDEO/)
   end
 
   def update_hearing!(hearing_info)

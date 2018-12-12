@@ -64,7 +64,7 @@ class CaseDetailsView extends React.PureComponent {
     } = this.props;
 
     return <AppSegment filledBackground>
-      <CaseTitle appeal={appeal} appealId={appealId} redirectUrl={window.location.pathname} />
+      <CaseTitle appeal={appeal} />
       {error && <Alert title={error.title} type="error">
         {error.detail}
       </Alert>}
@@ -84,7 +84,7 @@ class CaseDetailsView extends React.PureComponent {
       <StickyNavContentArea>
         <CurrentlyActiveTasks title="Currently Active Tasks" appealId={appealId} />
         <CaseDetailsIssueList
-          amaIssueType={featureToggles.ama_decision_issues}
+          amaIssueType={featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)}
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
           issues={appeal.issues}

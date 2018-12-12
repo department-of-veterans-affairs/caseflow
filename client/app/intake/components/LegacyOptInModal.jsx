@@ -11,6 +11,8 @@ import {
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 
+import _ from 'lodash';
+
 const NO_MATCH_TEXT = 'None of these match';
 
 class LegacyOptInModal extends React.Component {
@@ -28,15 +30,16 @@ class LegacyOptInModal extends React.Component {
     // legacy opt in are keyed off of a combo of both vacolsId & vacolsSequenceId
     // NO_MATCH_TEXT does not have a vacolsSequenceId
     const legacyValues = value.split('-');
-    const vacolsSequenceId = legacyValues.length > 1 ? legacyValues[1] : null;
+    const vacolsSequenceId = legacyValues.length > 1 ? legacyValues[1] : false;
     const legacyAppeal = this.props.intakeData.legacyAppeals.find((appeal) => appeal.vacols_id === legacyValues[0]);
-    const eligibleForSocOptIn = legacyAppeal && legacyAppeal.eligible_for_soc_opt_in;
 
     if (vacolsSequenceId) {
+      let vacolsIssue = _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(vacolsSequenceId, 10) });
+
       this.setState({
         vacolsId: legacyValues[0],
-        vacolsSequenceId,
-        eligibleForSocOptIn
+        eligibleForSocOptIn: vacolsIssue.eligible_for_soc_opt_in,
+        vacolsSequenceId
       });
     }
 
@@ -63,10 +66,10 @@ class LegacyOptInModal extends React.Component {
         vacolsId: this.state.vacolsId,
         vacolsSequenceId: this.state.vacolsSequenceId,
         eligibleForSocOptIn: this.state.eligibleForSocOptIn });
-    } else if (currentIssue.reference_id) {
+    } else if (currentIssue.ratingIssueReferenceId) {
       this.props.addRatingRequestIssue({
-        issueId: currentIssue.reference_id,
-        ratings: this.props.intakeData.ratings,
+        contestableIssueIndex: currentIssue.index,
+        contestableIssues: this.props.intakeData.contestableIssues,
         isRating: true,
         vacolsId: this.state.vacolsId,
         vacolsSequenceId: this.state.vacolsSequenceId,

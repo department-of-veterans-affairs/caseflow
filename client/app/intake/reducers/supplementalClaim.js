@@ -1,14 +1,22 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
 import { formatDateStr } from '../../util/DateUtil';
-import { formatRatings, formatRequestIssues } from '../util/issues';
-import { getReceiptDateError, getBlankOptionError, getPageError, formatRelationships } from '../util';
+import { formatRequestIssues, formatContestableIssues } from '../util/issues';
+import {
+  convertStringToBoolean,
+  getReceiptDateError,
+  getBlankOptionError,
+  getPageError,
+  formatRelationships
+} from '../util';
 import { update } from '../../util/ReducerUtil';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
     return state;
   }
+
+  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 
   return update(state, {
     isStarted: {
@@ -38,11 +46,11 @@ const updateFromServerIntake = (state, serverIntake) => {
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
-    ratings: {
-      $set: formatRatings(serverIntake.ratings)
+    contestableIssues: {
+      $set: contestableIssues
     },
     requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues)
+      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
@@ -82,6 +90,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     endProductDescription: null,
     issueCount: 0,
     nonRatingRequestIssues: { },
+    contestableIssues: { },
     reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
@@ -105,6 +114,12 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
     return state;
   }
 
+  let veteranIsNotClaimant;
+
+  if (action.payload) {
+    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+  }
+
   switch (action.type) {
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
     return mapDataToInitialSupplementalClaim();
@@ -123,10 +138,10 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
   case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:
     return update(state, {
       veteranIsNotClaimant: {
-        $set: action.payload.veteranIsNotClaimant
+        $set: veteranIsNotClaimant
       },
       claimant: {
-        $set: action.payload.veteranIsNotClaimant === 'true' ? state.claimant : null
+        $set: veteranIsNotClaimant === true ? state.claimant : null
       }
     });
   case ACTIONS.SET_CLAIMANT:

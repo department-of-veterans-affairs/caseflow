@@ -148,7 +148,7 @@ class EndProductEstablishment < ApplicationRecord
       issue = issues_without_contentions.find do |i|
         i.contention_text == contention.text && i.contention_reference_id.nil?
       end
-      issue && issue.update!(contention_reference_id: contention.id)
+      issue&.update!(contention_reference_id: contention.id)
     end
 
     fail ContentionCreationFailed if issues_without_contentions.any? { |issue| issue.contention_reference_id.nil? }
