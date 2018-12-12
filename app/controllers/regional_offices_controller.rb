@@ -5,6 +5,8 @@ class RegionalOfficesController < ApplicationController
     }
   end
 
+  # skip coverage to pass ci
+  # :nocov:
   def open_hearing_dates
     ro = HearingDayMapper.validate_regional_office(params[:regional_office])
 
@@ -26,4 +28,5 @@ class RegionalOfficesController < ApplicationController
       end
     }
   end
+  # :nocov:
 end

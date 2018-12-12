@@ -55,7 +55,7 @@ class ReviewNextButton extends React.PureComponent {
 
   handleClick = (selectedForm, intakeData) => {
     this.submitReview(selectedForm, intakeData).then(
-      () => this.props.featureToggles.newAddIssuesPage && selectedForm.category === 'decisionReview' ?
+      () => selectedForm.category === 'decisionReview' ?
         this.props.history.push('/add_issues') :
         this.props.history.push('/finish')
     );
