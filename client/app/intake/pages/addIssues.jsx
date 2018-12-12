@@ -113,7 +113,7 @@ export class AddIssuesPage extends React.Component {
             name="add-issue"
             legacyStyling={false}
             classNames={['usa-button-secondary']}
-            onClick={this.onClickAddIssue(_.size(intakeData.ratings))}
+            onClick={this.onClickAddIssue(_.size(intakeData.contestableIssues))}
           >
             + Add issue
           </Button>

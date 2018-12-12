@@ -35,7 +35,7 @@ describe ContestableIssue do
       expect(contestable_issue).to have_attributes(
         rating_issue_reference_id: rating_issue.reference_id,
         rating_issue_profile_date: profile_date,
-        decision_issue_reference_id: nil,
+        decision_issue_id: nil,
         date: profile_date,
         description: rating_issue.decision_text,
         contesting_decision_review: decision_review
@@ -44,7 +44,7 @@ describe ContestableIssue do
       expect(contestable_issue.serialize).to eq(
         ratingIssueReferenceId: rating_issue.reference_id,
         ratingIssueProfileDate: profile_date,
-        decisionIssueReferenceId: nil,
+        decisionIssueId: nil,
         date: profile_date,
         description: rating_issue.decision_text,
         rampClaimId: nil,
@@ -61,7 +61,7 @@ describe ContestableIssue do
         expect(subject.serialize).to eq(
           ratingIssueReferenceId: rating_issue.reference_id,
           ratingIssueProfileDate: profile_date,
-          decisionIssueReferenceId: nil,
+          decisionIssueId: nil,
           date: profile_date,
           description: rating_issue.decision_text,
           rampClaimId: nil,
@@ -81,7 +81,7 @@ describe ContestableIssue do
       expect(contestable_issue).to have_attributes(
         rating_issue_reference_id: "rating1",
         rating_issue_profile_date: profile_date,
-        decision_issue_reference_id: decision_issue.id,
+        decision_issue_id: decision_issue.id,
         date: profile_date,
         description: decision_issue.decision_text,
         contesting_decision_review: decision_review
@@ -90,7 +90,7 @@ describe ContestableIssue do
       expect(contestable_issue.serialize).to eq(
         ratingIssueReferenceId: "rating1",
         ratingIssueProfileDate: profile_date,
-        decisionIssueReferenceId: decision_issue.id,
+        decisionIssueId: decision_issue.id,
         date: profile_date,
         description: decision_issue.decision_text,
         rampClaimId: nil,
@@ -107,7 +107,7 @@ describe ContestableIssue do
         expect(subject.serialize).to eq(
           ratingIssueReferenceId: "rating1",
           ratingIssueProfileDate: profile_date,
-          decisionIssueReferenceId: decision_issue.id,
+          decisionIssueId: decision_issue.id,
           date: profile_date,
           description: decision_issue.decision_text,
           rampClaimId: nil,
