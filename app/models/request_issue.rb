@@ -8,6 +8,7 @@ class RequestIssue < ApplicationRecord
   has_many :remand_reasons
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
+  belongs_to :contested_decision_issue, class_name: "DecisionIssue", foreign_key: "contested_decision_issue_id"
 
   # enum is symbol, but validates requires a string
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
@@ -68,23 +69,19 @@ class RequestIssue < ApplicationRecord
     # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
     def from_intake_data(data)
       new(
-        rating_issue_reference_id: data[:reference_id],
-        rating_issue_profile_date: data[:profile_date],
-        description: data[:decision_text],
-        decision_date: data[:decision_date],
-        issue_category: data[:issue_category],
-        notes: data[:notes],
-        is_unidentified: data[:is_unidentified],
-        untimely_exemption: data[:untimely_exemption],
-        untimely_exemption_notes: data[:untimely_exemption_notes],
-        ramp_claim_id: data[:ramp_claim_id],
-        vacols_id: data[:vacols_id],
-        vacols_sequence_id: data[:vacols_sequence_id]
-      ).validate_eligibility!
+        attributes_from_intake_data(data)
+      ).tap(&:validate_eligibility!)
     end
 
-    def find_active_by_reference_id(reference_id)
-      request_issue = unscoped.find_by(rating_issue_reference_id: reference_id, removed_at: nil, ineligible_reason: nil)
+    def find_or_build_from_intake_data(data)
+      find_or_initialize_by(
+        attributes_from_intake_data(data)
+      ).tap(&:validate_eligibility!)
+    end
+
+    def find_active_by_rating_issue_reference_id(rating_issue_reference_id)
+      request_issue = unscoped.find_by(rating_issue_reference_id:
+                                       rating_issue_reference_id, removed_at: nil, ineligible_reason: nil)
       return unless request_issue&.status_active?
       request_issue
     end
@@ -94,6 +91,26 @@ class RequestIssue < ApplicationRecord
                                        removed_at: nil, ineligible_reason: nil)
       return unless request_issue&.status_active?
       request_issue
+    end
+
+    private
+
+    def attributes_from_intake_data(data)
+      {
+        rating_issue_reference_id: data[:rating_issue_reference_id],
+        rating_issue_profile_date: data[:rating_issue_profile_date],
+        description: data[:decision_text],
+        decision_date: data[:decision_date],
+        issue_category: data[:issue_category],
+        notes: data[:notes],
+        is_unidentified: data[:is_unidentified],
+        untimely_exemption: data[:untimely_exemption],
+        untimely_exemption_notes: data[:untimely_exemption_notes],
+        ramp_claim_id: data[:ramp_claim_id],
+        vacols_id: data[:vacols_id],
+        vacols_sequence_id: data[:vacols_sequence_id],
+        contested_decision_issue_id: data[:contested_decision_isssue_id]
+      }
     end
   end
 
@@ -127,11 +144,11 @@ class RequestIssue < ApplicationRecord
 
   def ui_hash
     {
-      reference_id: rating_issue_reference_id,
-      profile_date: rating_issue_profile_date,
+      rating_issue_reference_id: rating_issue_reference_id,
+      rating_issue_profile_date: rating_issue_profile_date,
       description: description,
       contention_text: contention_text,
-      decision_date: decision_date,
+      decision_date: contested_issue ? contested_issue.date : decision_date,
       category: issue_category,
       notes: notes,
       is_unidentified: is_unidentified,
@@ -140,7 +157,8 @@ class RequestIssue < ApplicationRecord
       vacols_sequence_id: vacols_sequence_id,
       vacols_issue: vacols_issue.try(:intake_attributes),
       ineligible_reason: ineligible_reason,
-      title_of_active_review: duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+      title_of_active_review: title_of_active_review,
+      contested_decision_issue_id: contested_decision_issue_id
     }
   end
 
@@ -162,10 +180,6 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  def contested_decision_issue
-    review_request.veteran.decision_issues.find_by(rating_issue_reference_id: contested_rating_issue.reference_id)
-  end
-
   def previous_request_issue
     contested_decision_issue&.request_issues&.first
   end
@@ -181,6 +195,23 @@ class RequestIssue < ApplicationRecord
   end
 
   private
+
+  def build_contested_issue
+    return unless review_request
+    if contested_decision_issue
+      ContestableIssue.from_decision_issue(contested_decision_issue, review_request)
+    elsif rating?
+      ContestableIssue.from_rating_issue(contested_rating_issue, review_request)
+    end
+  end
+
+  def contested_issue
+    @contested_issue ||= build_contested_issue
+  end
+
+  def title_of_active_review
+    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+  end
 
   def vacols_issue
     return unless vacols_id && vacols_sequence_id
@@ -307,7 +338,7 @@ class RequestIssue < ApplicationRecord
   def check_for_active_request_issue!
     return unless rating?
     return unless eligible?
-    existing_request_issue = self.class.find_active_by_reference_id(rating_issue_reference_id)
+    existing_request_issue = self.class.find_active_by_rating_issue_reference_id(rating_issue_reference_id)
     if existing_request_issue && existing_request_issue.review_request != review_request
       self.ineligible_reason = :duplicate_of_issue_in_active_review
       self.ineligible_due_to = existing_request_issue

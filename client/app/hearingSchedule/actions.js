@@ -254,3 +254,33 @@ export const onSuccessfulHearingDayDelete = (date) => ({
 export const onResetDeleteSuccessful = () => ({
   type: ACTIONS.RESET_DELETE_SUCCESSFUL
 });
+
+export const onDisplayLockModal = () => ({
+  type: ACTIONS.DISPLAY_LOCK_MODAL
+});
+
+export const onCancelDisplayLockModal = () => ({
+  type: ACTIONS.CANCEL_DISPLAY_LOCK_MODAL
+});
+
+export const onUpdateLock = (lock) => ({
+  type: ACTIONS.UPDATE_LOCK,
+  payload: {
+    lock
+  }
+});
+
+export const onResetLockSuccessMessage = () => ({
+  type: ACTIONS.RESET_LOCK_SUCCESS_MESSAGE
+});
+
+export const handleDailyDocketServerError = (err) => ({
+  type: ACTIONS.HANDLE_DAILY_DOCKET_SERVER_ERROR,
+  payload: {
+    err
+  }
+});
+
+export const onResetDailyDocketAfterError = () => ({
+  type: ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR
+});

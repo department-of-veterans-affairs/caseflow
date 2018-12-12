@@ -118,7 +118,7 @@ describe AppealIntake do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
-      let(:veteran_is_not_claimant) { "true" }
+      let(:veteran_is_not_claimant) { true }
 
       it "adds other relationship to claimants" do
         subject
@@ -153,7 +153,9 @@ describe AppealIntake do
 
     let(:issue_data) do
       [
-        { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" },
+        { rating_issue_profile_date: "2018-04-30",
+          rating_issue_reference_id: "reference-id",
+          decision_text: "decision text" },
         { decision_text: "nonrating request issue decision text",
           issue_category: "test issue category",
           decision_date: "2018-12-25" }

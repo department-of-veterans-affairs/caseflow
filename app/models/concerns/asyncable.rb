@@ -1,3 +1,5 @@
+# History of this class is in docs/asyncable-models.md
+#
 # Mixin module to apply to an ActiveRecord class, to make it easier to process via
 # an ActiveJob and retry it beyond the retry logic of ActiveJob.
 # This becomes necessary when a Job has multiple external service calls, each of

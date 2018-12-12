@@ -23,6 +23,10 @@ module IntakeHelpers
     safe_click "#button-finish-intake"
   end
 
+  def click_intake_continue
+    safe_click "#button-submit-review"
+  end
+
   def click_intake_no_matching_issues
     safe_click ".no-matching-issues"
   end
@@ -56,6 +60,11 @@ module IntakeHelpers
 
   def click_remove_intake_issue(number)
     issue_el = find_intake_issue_by_number(number)
+    issue_el.find(".remove-issue").click
+  end
+
+  def click_remove_intake_issue_by_text(text)
+    issue_el = find_intake_issue_by_text(text)
     issue_el.find(".remove-issue").click
   end
 
@@ -101,7 +110,8 @@ module IntakeHelpers
         bfdnod: 3.days.ago,
         bfdsoc: 3.days.ago,
         case_issues: [
-          create(:case_issue, :ankylosis_of_hip), create(:case_issue, :limitation_of_thigh_motion_extension)
+          create(:case_issue, :ankylosis_of_hip),
+          create(:case_issue, :limitation_of_thigh_motion_extension)
         ]
       ))
   end
@@ -133,7 +143,7 @@ module IntakeHelpers
         bfdsoc: 4.days.ago,
         case_issues: [
           create(:case_issue, :impairment_of_hip),
-          create(:case_issue, :impairment_of_femur)
+          create(:case_issue, :impairment_of_femur, :disposition_opted_in)
         ]
       ))
   end
@@ -159,6 +169,22 @@ module IntakeHelpers
     setup_active_ineligible_legacy_appeal(veteran_file_number)
     setup_inactive_eligible_legacy_appeal(veteran_file_number)
     setup_inactive_ineligible_legacy_appeal(veteran_file_number)
+  end
+
+  def setup_prior_decision_issues(veteran, benefit_type: "compensation")
+    supplemental_claim_with_decision_issues = create(:supplemental_claim,
+                                                     veteran_file_number: veteran.file_number,
+                                                     benefit_type: benefit_type)
+
+    contested_decision_issue = create(:decision_issue,
+                                      decision_review: supplemental_claim_with_decision_issues,
+                                      participant_id: veteran.participant_id,
+                                      decision_text: "contested supplemental claim decision issue",
+                                      profile_date: Time.zone.now - 2.days,
+                                      promulgation_date: Time.zone.now - 2.days,
+                                      benefit_type: supplemental_claim_with_decision_issues.benefit_type)
+
+    contested_decision_issue
   end
 end
 # rubocop:enable Metrics/ModuleLength

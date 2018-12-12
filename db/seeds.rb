@@ -6,6 +6,14 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
+DEVELOPMENT_JUDGE_TEAMS = {
+  "BVAAABSHIRE" => { attorneys: %w[BVAEERDMAN BVARDUBUQUE BVALSHIELDS] },
+  "BVAGSPORER" => { attorneys: %w[BVAOTRANTOW BVAGBOTSFORD BVAJWEHNER1] },
+  "BVAOFRANECKI" => { attorneys: %w[BVAKBLOCK BVACMERTZ BVAHLUETTGEN] },
+  "BVARERDMAN" => { attorneys: %w[BVASRITCHIE BVAJSCHIMMEL BVAKROHAN1] },
+  "BVAOSCHOWALT" => { attorneys: %w[BVASCASPER1 BVAOWEHNER BVASFUNK1] }
+}.freeze
+
 require "database_cleaner"
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
@@ -52,6 +60,17 @@ class SeedDB
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
+    create_judge_teams
+  end
+
+  def create_judge_teams
+    DEVELOPMENT_JUDGE_TEAMS.each_pair do |judge_css_id, h|
+      judge = User.find_or_create_by(css_id: judge_css_id, station_id: 101)
+      judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+      h[:attorneys].each do |css_id|
+        OrganizationsUser.add_user_to_organization(User.find_or_create_by(css_id: css_id, station_id: 101), judge_team)
+      end
+    end
   end
 
   def create_colocated_users
@@ -75,10 +94,9 @@ class SeedDB
   end
 
   def create_org_queue_users
-    translation = Organization.create!(name: "Translation", url: "translation")
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{n}", full_name: "Translation team member #{n}")
-      OrganizationsUser.add_user_to_organization(u, translation)
+      OrganizationsUser.add_user_to_organization(u, Translation.singleton)
     end
   end
 
@@ -469,7 +487,6 @@ class SeedDB
     judge = User.find_by(css_id: "BVAAABSHIRE")
     colocated = User.find_by(css_id: "BVALSPORER")
     vso = Organization.find_by(name: "American Legion")
-    translation_org = Organization.find_by(name: "Translation")
 
     create_task_at_judge_assignment(@ama_appeals[0], judge)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
@@ -489,7 +506,7 @@ class SeedDB
       :generic_task,
       5,
       assigned_by: judge,
-      assigned_to: translation_org,
+      assigned_to: Translation.singleton,
       parent: FactoryBot.create(:root_task)
     )
   end

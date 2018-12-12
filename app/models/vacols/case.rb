@@ -148,6 +148,71 @@ class VACOLS::Case < VACOLS::Record
     on AODKEY = BFKEY
   ".freeze
 
+  JOIN_SPECIALTY_CASE_TEAM_ISSUES = "
+    left join (
+      select ISSKEY, listagg(
+        case
+        when ISSPROG = '12' then
+          'fiduciary'
+        when ISSPROG = '02' and ISSCODE = '05' then
+          'clothing_allowance'
+        when ISSPROG = '04' then
+          'insurance'
+        when ISSPROG = '02' and ISSCODE = '22' then
+          'substitution'
+        when ISSPROG = '02' and ISSCODE = '21' then
+          'willful_misconduct_lod'
+        when ISSPROG = '02' and ISSCODE = '10' then
+          'forfeiture_of_benefits'
+        when ISSPROG = '05' then
+          'loan_guaranty'
+        when ISSPROG = '02' and ISSCODE = '20' then
+          'dea'
+        when ISSPROG = '11' then
+          'nca_burial_benefits'
+        when ISSPROG = '02' and ISSCODE = '06' then
+          'competency_of_payee'
+        when ISSPROG = '09' then
+          'other_programs'
+        when ISSPROG = '08' then
+          'vre'
+        when ISSPROG = '02' and ISSCODE = '02' then
+          'apportionment'
+        when ISSPROG = '10' then
+          'bva_original_jurisdiction'
+        when ISSPROG = '02' and ISSCODE = '03' then
+          'auto_adaptive'
+        when ISSPROG = '02' and ISSCODE = '16' then
+          'status_as_a_veteran'
+        when (ISSPROG = '09' and ISSCODE = '08') or (ISSPROG = '02' and ISSCODE = '13') then
+          'overpayment'
+        when ISSPROG = '01' then
+          'vba_burial_benefits'
+        when ISSPROG = '02' and ISSCODE = '19' then
+          'specially_adapted_housing'
+        when ISSPROG = '02' and ISSCODE = '11' then
+          'ir_dependents'
+        when ISSPROG = '02' and ISSCODE = '14' then
+          'severance_of_sc'
+        when ISSPROG = '02' and ISSCODE = '07' then
+          'ro_cue'
+        when ISSPROG = '03' then
+          'education'
+        when ISSPROG = '06' then
+          'medical'
+        when ISSPROG = '07' and ISSCODE in ('03', '07') then
+          'pension_count_elig'
+        when ISSPROG = '07' then
+          'pension_others'
+        when ISSPROG = '02' and ISSCODE = '12' and ISSLEV2 between '6000' and '6099' then
+          'ir_eye'
+        end, ','
+      ) within group (order by ISSSEQ) as ISSUES
+      from ISSUES
+      group by ISSKEY
+    ) SCT on SCT.ISSKEY = BRIEFF.BFKEY
+  ".freeze
+
   JOIN_REMAND_RETURN = "
     left join (
       select BRIEFF.BFKEY REM_RETURN_KEY, max(PRIORLOC.LOCDOUT) REM_RETURN

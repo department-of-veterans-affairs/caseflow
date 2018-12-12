@@ -11,7 +11,7 @@ class RootTask < GenericTask
     return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if MailTeam.singleton.user_has_access?(user)
 
     if HearingsManagement.singleton.user_has_access?(user) && legacy? &&
-       children.select { |t| t.is_a?(ScheduleHearingTask) && t.status == Constants.TASK_STATUSES.completed }.empty?
+       children.select { |t| t.is_a?(ScheduleHearingTask) && t.status != Constants.TASK_STATUSES.completed }.empty?
       return [Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h]
     end
 
