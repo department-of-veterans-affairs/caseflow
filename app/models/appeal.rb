@@ -224,7 +224,7 @@ class Appeal < DecisionReview
 
   def tasks_for_timeline
     tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC")
-         .reject { |t| t.assigned_to_type == "Organization" && t.children.pluck(:assigned_to_type).include?("User") }
+      .reject { |t| t.assigned_to_type == "Organization" && t.children.pluck(:assigned_to_type).include?("User") }
   end
 
   def timeline

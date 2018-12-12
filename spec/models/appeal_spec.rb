@@ -287,4 +287,21 @@ describe Appeal do
       it { is_expected.to eq judge }
     end
   end
+
+  context "case timeline returns unique tasks containing only child user task" do
+    context "#assigned_judge_has_duplicate_org_and_user_task" do
+      let(:judge) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
+      let!(:task2) do
+        create(:qr_task, appeal: appeal, status: Constants.TASK_STATUSES.completed,
+                                      assigned_to_type: "Organization") end
+      let!(:task3) do
+        create(:qr_task, assigned_to: judge, appeal: appeal, status: Constants.TASK_STATUSES.completed,
+                                      parent_id: task2.id) end
+
+      subject { appeal.tasks_for_timeline.first }
+      it { is_expected.to eq task3 }
+    end
+  end
 end
