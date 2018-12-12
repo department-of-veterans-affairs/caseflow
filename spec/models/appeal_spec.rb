@@ -69,7 +69,7 @@ describe Appeal do
   end
 
   context "#establish!" do
-    it { is_expected.to be_nil }
+    it { is_expected.to_not be_nil }
   end
 
   context "#special_issues" do
