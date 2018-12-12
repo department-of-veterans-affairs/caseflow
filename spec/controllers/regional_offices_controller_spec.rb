@@ -25,7 +25,7 @@ RSpec.describe RegionalOfficesController, type: :controller do
              folder_nr: create(:case).bfkey)
     end
 
-    it "returns hearing dates with open slots" do
+    xit "returns hearing dates with open slots" do
       get :open_hearing_dates, params: { regional_office: "C" }, as: :json
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
