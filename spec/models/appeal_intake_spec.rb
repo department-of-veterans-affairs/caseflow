@@ -187,6 +187,9 @@ describe AppealIntake do
         description: "nonrating request issue decision text"
       )
       expect(intake.detail.tasks.count).to eq 1
+      expect(intake.detail.submitted?).to eq true
+      expect(intake.detail.attempted?).to eq true
+      expect(intake.detail.processed?).to eq true
     end
 
     context "when a legacy VACOLS opt-in occurs" do
