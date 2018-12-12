@@ -1,6 +1,5 @@
 class Appeal < DecisionReview
   include Taskable
-  include LegacyOptinable
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -237,7 +236,9 @@ class Appeal < DecisionReview
   end
 
   def establish!
-    # currently a no-op
+    attempted!
+    # TODO: actual stuff
+    processed!
   end
 
   private
