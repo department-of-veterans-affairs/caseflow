@@ -157,6 +157,7 @@ class EvaluateDecisionView extends React.PureComponent {
       { title: successMsg,
         detail: <DispatchSuccessDetail task={task} /> }).
       then(() => this.props.deleteAppeal(appealId), (response) => {
+        // eslint-disable-next-line no-console
         console.log(response);
       });
   }
