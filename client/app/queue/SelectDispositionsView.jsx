@@ -270,14 +270,16 @@ class SelectDispositionsView extends React.PureComponent {
         <br />
         <h3>{COPY.DECISION_ISSUE_MODAL_BENEFIT_TYPE}</h3>
         <SearchableDropdown
-          name="Benefit type dropdown"
+          name="Benefit type"
+          placeholder={COPY.DECISION_ISSUE_MODAL_BENEFIT_TYPE}
+          hideLabel
           value={decisionIssue.benefit_type}
           options={_.map(BENEFIT_TYPES, (value, key) => ({ label: value,
             value: key }))}
           onChange={(benefitType) => this.setState({
             decisionIssue: {
               ...decisionIssue,
-              benefit_type: benefitType
+              benefit_type: benefitType.value
             }
           })}
         />

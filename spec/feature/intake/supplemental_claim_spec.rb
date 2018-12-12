@@ -57,7 +57,7 @@ RSpec.feature "Supplemental Claim Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { Date.new(2018, 9, 15).to_time(:local) }
+  let(:profile_date) { Time.zone.local(2018, 9, 15) }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -83,7 +83,7 @@ RSpec.feature "Supplemental Claim Intake" do
     )
   end
 
-  xit "Creates an end product" do
+  it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
       [
@@ -134,7 +134,7 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     fill_in "What is the Receipt Date of this form?", with: "12/15/2018"
-    safe_click "#button-submit-review"
+    click_intake_continue
     expect(page).to have_content(
       "Receipt date cannot be in the future."
     )
@@ -159,9 +159,9 @@ RSpec.feature "Supplemental Claim Intake" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
-    expect(page).to have_current_path("/intake/finish")
+    expect(page).to have_current_path("/intake/add_issues")
 
     visit "/intake/review_request"
 
@@ -169,16 +169,9 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
     expect(find("#legacy-opt-in_false", visible: false)).to be_checked
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
-    expect(page).to have_current_path("/intake/finish")
-
-    expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 09/15/2018")
-    expect(page).to have_content("Left knee granted")
-    expect(page).to have_content("Untimely rating issue 1")
-    expect(page).to have_button("Establish EP", disabled: true)
-    expect(page).to have_content("0 issues")
+    expect(page).to have_current_path("/intake/add_issues")
 
     supplemental_claim = SupplementalClaim.find_by(veteran_file_number: veteran_file_number)
 
@@ -192,27 +185,26 @@ RSpec.feature "Supplemental Claim Intake" do
     )
     intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
-    find("label", text: "PTSD denied").click
-    expect(page).to have_content("1 issue")
-    find("label", text: "Left knee granted").click
-    expect(page).to have_content("2 issues")
-    find("label", text: "Left knee granted").click
+    click_intake_add_issue
+    add_intake_rating_issue("PTSD denied")
     expect(page).to have_content("1 issue")
 
     click_intake_add_issue
+    add_intake_rating_issue("Left knee granted")
+    expect(page).to have_content("2 issues")
 
-    safe_click ".Select"
-
-    fill_in "Issue category", with: "Active Duty Adjustments"
-    find("#issue-category").send_keys :enter
-
+    click_remove_intake_issue(2)
     expect(page).to have_content("1 issue")
+    expect(page).to_not have_content("Left knee granted")
 
-    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+    click_intake_add_issue
+    click_intake_no_matching_issues
 
-    expect(page).to have_content("1 issue")
-
-    fill_in "Decision date", with: "10/27/2018"
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "10/27/2018"
+    )
 
     expect(page).to have_content("2 issues")
 
@@ -355,7 +347,7 @@ RSpec.feature "Supplemental Claim Intake" do
     ## Validate error message when complete intake fails
     expect_any_instance_of(SupplementalClaimIntake).to receive(:review!).and_raise("A random error. Oh no!")
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Something went wrong")
     expect(page).to have_current_path("/intake/review_request")
@@ -397,18 +389,13 @@ RSpec.feature "Supplemental Claim Intake" do
 
     visit "/intake"
 
-    safe_click "#button-submit-review"
-
-    expect(page).to have_content("This Veteran has no rated, disability issues")
-
+    click_intake_continue
     click_intake_add_issue
-
-    safe_click ".Select"
-
-    fill_in "Issue category", with: "Active Duty Adjustments"
-    find("#issue-category").send_keys :enter
-    fill_in "Issue description", with: "Description for Active Duty Adjustments"
-    fill_in "Decision date", with: "10/27/2018"
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "10/27/2018"
+    )
 
     expect(page).to have_content("1 issue")
 
@@ -440,7 +427,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content(
       "Receipt date cannot be in the future."
@@ -452,15 +439,15 @@ RSpec.feature "Supplemental Claim Intake" do
       find("label", text: "Pension", match: :prefer_exact).click
     end
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Please select an option.")
 
     fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
     find("#cf-payee-code").send_keys :enter
 
-    safe_click "#button-submit-review"
-    expect(page).to have_current_path("/intake/finish")
+    click_intake_continue
+    expect(page).to have_current_path("/intake/add_issues")
   end
 
   context "when veteran is deceased" do
@@ -485,7 +472,7 @@ RSpec.feature "Supplemental Claim Intake" do
     end
   end
 
-  context "For new Add / Remove Issues page" do
+  context "Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)
       expect(row).to have_text(text)
