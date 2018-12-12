@@ -65,6 +65,17 @@ class UserRepository
       staff.first.try(:sdomainid)
     end
     # :nocov:
+    #
+
+    def find_all_hearing_coordinators
+      coordinator_records = VACOLS::Staff.where(sdept: "HRG", sactive: "A")
+
+      coordinator_records.select(&:sdomainid).map do |record|
+        User.find_or_create_by(css_id: record.sdomainid,
+                               full_name: "#{record.snamef} #{record.snamemi} #{record.snamel}",
+                               station_id: User::BOARD_STATION_ID)
+      end
+    end
 
     private
 

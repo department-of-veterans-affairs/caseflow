@@ -70,7 +70,7 @@ class ClaimReview < DecisionReview
   # Idempotent method to create all the artifacts for this claim.
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
-  def process_end_product_establishments!
+  def establish!
     attempted!
 
     end_product_establishments.each do |end_product_establishment|
