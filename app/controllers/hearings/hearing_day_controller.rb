@@ -1,5 +1,5 @@
 class Hearings::HearingDayController < HearingScheduleController
-  # Controller to add and update hearing schedule days.
+  before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
 
   # show schedule days for date range provided
   def index

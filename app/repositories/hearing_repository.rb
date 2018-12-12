@@ -1,6 +1,7 @@
 # Hearing Prep repository.
 class HearingRepository
   class NoOpenSlots < StandardError; end
+  class LockedHearingDay < StandardError; end
 
   class << self
     # :nocov:
@@ -94,6 +95,7 @@ class HearingRepository
 
     def create_child_co_hearing(hearing_date_str, appeal)
       hearing_day = HearingDay.find_by(hearing_type: "C", hearing_date: hearing_date_str.to_date)
+      fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
       VACOLS::CaseHearing.create_child_hearing!(
         folder_nr: appeal.vacols_id,
@@ -123,6 +125,8 @@ class HearingRepository
 
     def create_caseflow_child_video_hearing(id, hearing_date, appeal)
       hearing_day = HearingDay.find(id)
+
+      fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
       VACOLS::CaseHearing.create_child_hearing!(
         folder_nr: appeal.vacols_id,
