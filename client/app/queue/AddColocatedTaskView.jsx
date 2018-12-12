@@ -148,7 +148,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     const { highlightFormItems } = this.props;
     const { instructions, actionLabel, key } = action;
 
-    return <React.Fragment key={key}>
+    return <div id={key} key={key}>
       <div {...marginTop(4)}>
         <SearchableDropdown
           errorMessage={highlightFormItems && !actionLabel ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
@@ -168,14 +168,13 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
           onChange={(value) => this.updateAdminActionField(index, 'instructions', value)}
           value={instructions} />
       </div>
-      {/* TODO: Put this text in COPY.json */}
       {total > 1 &&
         <React.Fragment>
           <Button
             willNeverBeLoading
             linkStyling
             styling={css({ paddingLeft: '0' })}
-            name="Remove this action"
+            name={COPY.ADD_COLOCATED_TASK_REMOVE_BUTTON_LABEL}
             onClick={() => this.removeAdminActionField(index)} />
           <br />
         </React.Fragment>
@@ -184,10 +183,10 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
         <Button
           dangerStyling
           willNeverBeLoading
-          name="+ Add another action"
+          name={COPY.ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL}
           onClick={() => this.addAdminActionField()} />
       }
-    </React.Fragment>;
+    </div>;
   };
 
   actionFormList = (actions) => {
@@ -233,7 +232,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 const WrappedComponent = decisionViewBase(AddColocatedTaskView, {
   hideCancelButton: true,
-  continueBtnText: 'Assign Action'
+  continueBtnText: COPY.ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
 });
 
 export default (connect(mapStateToProps, mapDispatchToProps)(WrappedComponent): React.ComponentType<Params>);

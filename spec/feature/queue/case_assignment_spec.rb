@@ -17,17 +17,7 @@ RSpec.feature "Case Assignment flows" do
 
   context "given a valid legacy appeal and an attorney user" do
     let!(:appeals) do
-      [
-        FactoryBot.create(
-          :legacy_appeal,
-          :with_veteran,
-          vacols_case: FactoryBot.create(
-            :case,
-            :assigned,
-            user: attorney_user,
-            case_issues: FactoryBot.create_list(:case_issue, 1)
-          )
-        ),
+      Array.new(3) do
         FactoryBot.create(
           :legacy_appeal,
           :with_veteran,
@@ -38,7 +28,7 @@ RSpec.feature "Case Assignment flows" do
             case_issues: FactoryBot.create_list(:case_issue, 1)
           )
         )
-      ]
+      end
     end
 
     before do
@@ -48,31 +38,99 @@ RSpec.feature "Case Assignment flows" do
       User.authenticate!(user: attorney_user)
     end
 
-    scenario "adds colocated task" do
+    scenario "adds colocated tasks" do
+      # step "navigates to the 'submit admin action' page"
       visit "/queue"
       click_on "#{appeals[0].veteran_full_name} (#{appeals[0].sanitized_vbms_id})"
-      click_dropdown(index: 2)
+      click_dropdown(text: COPY::ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL)
 
-      expect(page).to have_content("Submit admin action")
+      expect(page).to have_content(COPY::ADD_COLOCATED_TASK_SUBHEAD)
 
+      # step "fills in and submits the form for a new admin action"
       opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length)
-      selected_opt = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
+      selected_opt_0 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
 
-      click_dropdown(index: opt_idx) do
+      click_dropdown(text: selected_opt_0) do
         visible_options = page.find_all(".Select-option")
         expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
       end
 
       fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(5)
 
-      click_on "Assign Action"
+      click_on COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
 
-      expect(page).to have_content("You have assigned an administrative action (#{selected_opt})")
+      expect(page).to have_content("You have assigned an administrative action (#{selected_opt_0})")
+      expect(page.current_path).to eq "/queue"
+
+      visit "/queue"
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 2))
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
+
+      # step "navigates again to the 'submit admin action' page"
+      click_on "#{appeals[1].veteran_full_name} (#{appeals[1].sanitized_vbms_id})"
+      click_dropdown(text: COPY::ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL)
+
+      expect(page).to have_content(COPY::ADD_COLOCATED_TASK_SUBHEAD)
+
+      # step "fills in the form for a new admin action"
+      opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length)
+      selected_opt_1 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
+
+      click_dropdown(text: selected_opt_1)
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(20)
+
+      # step "adds another admin action"
+      click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
+
+      expect(all('div[id^="action_"]').count).to eq 2
+
+      opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length)
+      selected_opt_2 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
+
+      within all('div[id^="action_"]')[1] do
+        click_dropdown(text: selected_opt_2)
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(20)
+      end
+
+      # step "adds a third admin action with no instructions"
+      within all('div[id^="action_"]')[1] do
+        click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
+      end
+
+      expect(all('div[id^="action_"]').count).to eq 3
+
+      opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length)
+      selected_opt_3 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
+
+      within all('div[id^="action_"]')[2] do
+        click_dropdown(text: selected_opt_3)
+      end
+
+      # step "removes the second admin action"
+      within all('div[id^="action_"]')[1] do
+        click_on COPY::ADD_COLOCATED_TASK_REMOVE_BUTTON_LABEL
+      end
+
+      expect(all('div[id^="action_"]').count).to eq 2
+
+      # step "tries to submit incomplete actions, corrects error"
+      click_on COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
+
+      expect(page).to have_content COPY::FORM_ERROR_FIELD_REQUIRED
+
+      within all('div[id^="action_"]')[1] do
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(20)
+      end
+
+      # step "submits two admin actions"
+      click_on COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
+
+      expect(page).to have_content("You have assigned 2 administrative actions (#{selected_opt_1}, #{selected_opt_3})")
       expect(page.current_path).to eq "/queue"
 
       visit "/queue"
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 1))
-      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 3))
     end
   end
 end
