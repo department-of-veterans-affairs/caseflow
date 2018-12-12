@@ -245,7 +245,10 @@ class Appeal < DecisionReview
 
   def establish!
     attempted!
-    # TODO: actual stuff
+
+    process_legacy_issues!
+
+    clear_error!
     processed!
   end
 

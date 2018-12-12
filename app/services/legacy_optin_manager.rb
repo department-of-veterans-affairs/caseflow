@@ -8,7 +8,8 @@ class LegacyOptinManager
   end
 
   # we operate on LegacyIssueOptin rows, within a single VACOLS transaction
-  def close!
+  # for now, just close VACOLS records
+  def process!
     VACOLS::Case.transaction do
       affected_legacy_appeals.each do |legacy_appeal|
         # track which issues we close during this transaction
@@ -16,7 +17,7 @@ class LegacyOptinManager
 
         # loop through each issue on the appeal, gut check on whether it can be closed,
         # and then close it.
-        request_issues_with_legacy_issues do |request_issue|
+        request_issues_with_legacy_issues.each do |request_issue|
           vacols_id = request_issue.vacols_id # TODO: get from legacy_issue_optin
           vacols_sequence_id = request_issue.vacols_sequence_id
 
@@ -24,7 +25,7 @@ class LegacyOptinManager
           next unless vacols_id == legacy_appeal.vacols_id
 
           # gut checks
-          unless open_legacy_issues.map(&:vacols_sequence_id).include?(vacols_sequence_id)
+          unless open_legacy_issues.map(&:vacols_sequence_id).map(&:to_s).include?(vacols_sequence_id)
             fail "VACOLS issue #{vacols_id} sequence #{vacols_sequence_id} is already closed"
           end
 
@@ -32,7 +33,9 @@ class LegacyOptinManager
           close_legacy_issue_in_vacols(request_issue.legacy_issue_optin)
 
           # pop it from our queue
-          open_legacy_issues.reject! { |issue| issue.vacols_sequence_id == vacols_sequence_id }
+          open_legacy_issues.reject! { |issue| issue.vacols_sequence_id.to_s == vacols_sequence_id }
+
+          # TODO: flag legacy_issue_optin as complete?
         end
 
         # if open_legacy_issues is now empty, close the appeal
