@@ -111,7 +111,7 @@ describe HearingDay do
       it "updates children hearings" do
         HearingDay.find(hearing_day.id).update!(hearing_hash)
         updated_child_hearing = child_hearing.reload
-        expect(updated_child_hearing[:room]).to eql ("5")
+        expect(updated_child_hearing[:room]).to eql "5"
       end
     end
   end
