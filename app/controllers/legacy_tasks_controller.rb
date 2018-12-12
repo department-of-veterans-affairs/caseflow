@@ -30,7 +30,7 @@ class LegacyTasksController < ApplicationController
 
   def create
     assigned_to = legacy_task_params[:assigned_to]
-    if assigned_to && assigned_to.vacols_roles.length == 1 && assigned_to.judge_in_vacols?
+    if assigned_to&.vacols_roles&.length == 1 && assigned_to.judge_in_vacols?
       return assign_to_judge
     end
 

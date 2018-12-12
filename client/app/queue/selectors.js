@@ -148,8 +148,19 @@ export const tasksByAssigneeCssIdSelector = createSelector(
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
+export const tasksByAssignerCssIdSelector = createSelector(
+  [tasksWithAppealSelector, getUserCssId],
+  (tasks: Array<TaskWithAppeal>, cssId: string) =>
+    _.filter(tasks, (task) => task.assignedBy.cssId === cssId)
+);
+
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
+  (tasks: Tasks) => incompleteTasksSelector(tasks)
+);
+
+export const incompleteTasksByAssignerCssIdSelector = createSelector(
+  [tasksByAssignerCssIdSelector],
   (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
 
@@ -197,6 +208,15 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
   )
 );
 
+export const onHoldTasksForAttorney: (State) => Array<Task> = createSelector(
+  [onHoldTasksByAssigneeCssIdSelector, incompleteTasksByAssignerCssIdSelector],
+  (onHoldByAssignee: Array<Task>, incompleteByAssigner: Array<Task>) => {
+    const onHoldTasksWithDuplicates = onHoldByAssignee.concat(incompleteByAssigner);
+
+    return _.filter(onHoldTasksWithDuplicates, (task) => task.assignedTo.type === 'User');
+  }
+);
+
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
@@ -233,7 +253,7 @@ const getAttorney = (state: State, attorneyId: string) => {
 };
 
 export const getAssignedTasks = (state: State, attorneyId: string) => {
-  const tasks = tasksWithAppealSelector(state);
+  const tasks = incompleteTasksSelector(tasksWithAppealSelector(state));
   const attorney = getAttorney(state, attorneyId);
   const cssId = attorney ? attorney.css_id : null;
 
@@ -241,7 +261,7 @@ export const getAssignedTasks = (state: State, attorneyId: string) => {
 };
 
 export const getTasksByUserId = (state: State) => {
-  const tasks = tasksWithAppealSelector(state);
+  const tasks = incompleteTasksSelector(tasksWithAppealSelector(state));
   const attorneys = state.queue.attorneysOfJudge;
   const attorneysByCssId = _.keyBy(attorneys, 'css_id');
 

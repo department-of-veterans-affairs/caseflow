@@ -6,6 +6,14 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
+DEVELOPMENT_JUDGE_TEAMS = {
+  "BVAAABSHIRE" => { attorneys: %w[BVAEERDMAN BVARDUBUQUE BVALSHIELDS] },
+  "BVAGSPORER" => { attorneys: %w[BVAOTRANTOW BVAGBOTSFORD BVAJWEHNER1] },
+  "BVAEBECKER" => { attorneys: %w[BVAKBLOCK BVACMERTZ BVAHLUETTGEN] },
+  "BVARERDMAN" => { attorneys: %w[BVASRITCHIE BVAJSCHIMMEL BVAKROHAN1] },
+  "BVAOSCHOWALT" => { attorneys: %w[BVASCASPER1 BVAOWEHNER BVASFUNK1] }
+}.freeze
+
 require "database_cleaner"
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
@@ -38,8 +46,8 @@ class SeedDB
     User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Attorney no cases")
     User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Judge with hearings and cases")
     User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Judge has attorneys with cases")
-    User.create(css_id: "BVAOFRANECKI", station_id: 101, full_name: "Judge has case to sign")
-    User.create(css_id: "BVAJWEHNER", station_id: 101, full_name: "Judge has case to assign no team")
+    User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Judge has case to sign")
+    User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Judge has case to assign no team")
     User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
     User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "BVA Dispatch user with cases")
 
@@ -52,6 +60,17 @@ class SeedDB
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
+    create_judge_teams
+  end
+
+  def create_judge_teams
+    DEVELOPMENT_JUDGE_TEAMS.each_pair do |judge_css_id, h|
+      judge = User.find_or_create_by(css_id: judge_css_id, station_id: 101)
+      judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+      h[:attorneys].each do |css_id|
+        OrganizationsUser.add_user_to_organization(User.find_or_create_by(css_id: css_id, station_id: 101), judge_team)
+      end
+    end
   end
 
   def create_colocated_users
@@ -75,10 +94,9 @@ class SeedDB
   end
 
   def create_org_queue_users
-    translation = Organization.create!(name: "Translation", url: "translation")
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{n}", full_name: "Translation team member #{n}")
-      OrganizationsUser.add_user_to_organization(u, translation)
+      OrganizationsUser.add_user_to_organization(u, Translation.singleton)
     end
   end
 
@@ -469,7 +487,6 @@ class SeedDB
     judge = User.find_by(css_id: "BVAAABSHIRE")
     colocated = User.find_by(css_id: "BVALSPORER")
     vso = Organization.find_by(name: "American Legion")
-    translation_org = Organization.find_by(name: "Translation")
 
     create_task_at_judge_assignment(@ama_appeals[0], judge)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
@@ -489,7 +506,7 @@ class SeedDB
       :generic_task,
       5,
       assigned_by: judge,
-      assigned_to: translation_org,
+      assigned_to: Translation.singleton,
       parent: FactoryBot.create(:root_task)
     )
   end
@@ -546,6 +563,35 @@ class SeedDB
     FactoryBot.create(:case_hearing, :disposition_held, user: user, folder_nr: appeal.vacols_id)
   end
 
+  def create_legacy_issues_eligible_for_opt_in
+    # this vet number exists in local/vacols VBMS and BGS setup csv files.
+    veteran_file_number_legacy_opt_in = "872958715S"
+    legacy_vacols_id = "LEGACYID"
+
+    # always delete and start fresh
+    VACOLS::Case.where(bfkey: legacy_vacols_id).delete_all
+    VACOLS::CaseIssue.where(isskey: legacy_vacols_id).delete_all
+
+    case_issues = []
+    %w[5240 5241 5242 5243 5250].each do |lev2|
+      case_issues << FactoryBot.create(:case_issue,
+                                       issprog: "02",
+                                       isscode: "15",
+                                       isslev1: "04",
+                                       isslev2: lev2)
+    end
+    correspondent = VACOLS::Correspondent.find_or_create_by(stafkey: 100)
+    folder = VACOLS::Folder.find_or_create_by(ticknum: legacy_vacols_id, tinum: 1)
+    vacols_case = FactoryBot.create(:case_with_soc,
+                                    :status_advance,
+                                    case_issues: case_issues,
+                                    correspondent: correspondent,
+                                    folder: folder,
+                                    bfkey: legacy_vacols_id,
+                                    bfcorlid: veteran_file_number_legacy_opt_in)
+    FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
   def seed
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
@@ -559,6 +605,7 @@ class SeedDB
 
     setup_dispatch
     create_previously_held_hearing_data
+    create_legacy_issues_eligible_for_opt_in
 
     return if Rails.env.development?
 

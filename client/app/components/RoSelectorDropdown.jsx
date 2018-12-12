@@ -33,6 +33,24 @@ class RoSelectorDropdown extends React.Component {
     }
   }
 
+  componentDidUpdate() {
+    const { value, onChange } = this.props;
+
+    if (this.regionalOfficeOptions().length && typeof (value) === 'string') {
+      onChange(this.getValue());
+    }
+  }
+
+  getValue = () => {
+    const { value } = this.props;
+
+    if (typeof (value) === 'string') {
+      return _.find(this.regionalOfficeOptions(), (ro) => ro.value === value) || {};
+    }
+
+    return value || {};
+  }
+
   regionalOfficeOptions = () => {
 
     let regionalOfficeDropdowns = [];
@@ -51,21 +69,25 @@ class RoSelectorDropdown extends React.Component {
     return _.orderBy(regionalOfficeDropdowns, (ro) => ro.label, 'asc');
   };
 
+  labelMessage = this.props.label || 'Regional Office';
+
   render() {
-    const { readOnly, onChange, value, placeholder } = this.props;
+    const { readOnly, onChange, placeholder, strongLabel, hideLabel, errorMessage } = this.props;
     const regionalOfficeOptions = this.regionalOfficeOptions();
-    const selectedRegionalOffice = _.find(regionalOfficeOptions, (opt) => opt.value === value) || {};
 
     if (!this.props.changePrompt || this.state.editable) {
       return (
         <SearchableDropdown
           name="ro"
-          label="Regional Office"
+          label={this.labelMessage}
+          strongLabel={strongLabel}
+          hideLabel={hideLabel}
           options={regionalOfficeOptions || []}
           readOnly={readOnly || false}
           onChange={onChange}
-          value={value}
+          value={this.getValue()}
           placeholder={placeholder}
+          errorMessage={errorMessage}
         />
       );
     }
@@ -78,7 +100,7 @@ class RoSelectorDropdown extends React.Component {
         <InlineForm>
           <p style={{ marginRight: '30px',
             width: '150px' }}>
-            {selectedRegionalOffice.label}
+            {this.getValue().label}
           </p>
           <Button
             name="Change"
@@ -95,11 +117,19 @@ class RoSelectorDropdown extends React.Component {
 RoSelectorDropdown.propTypes = {
   regionalOffices: PropTypes.object,
   onChange: PropTypes.func,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   placeholder: PropTypes.string,
   staticOptions: PropTypes.array,
+  hideLabel: PropTypes.bool,
+  label: PropTypes.string,
+  strongLabel: PropTypes.bool,
   readOnly: PropTypes.bool,
-  changePrompt: PropTypes.bool
+  changePrompt: PropTypes.bool,
+  errorMessage: PropTypes.string,
+  initialValStr: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({

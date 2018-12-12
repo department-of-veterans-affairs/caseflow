@@ -10,30 +10,29 @@ describe JudgeTask do
   end
 
   context ".available_actions" do
-    let(:action) { nil }
     let(:user) { judge }
-    let(:task) { JudgeTask.create!(assigned_to: judge, appeal: FactoryBot.create(:appeal), action: action) }
-    subject { task.available_actions_unwrapper(user) }
+    let(:assign_task) { JudgeAssignTask.create!(assigned_to: judge, appeal: FactoryBot.create(:appeal)) }
+    let(:review_task) { JudgeReviewTask.create!(assigned_to: judge, appeal: FactoryBot.create(:appeal)) }
+
+    subject { assign_task.available_actions_unwrapper(user) }
 
     context "when the task is assigned to the current user" do
       context "and we are in the assign phase" do
-        let(:action) { "assign" }
         it "should return the assignment action" do
-          expect(subject).to eq([task.build_action_hash(Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h)])
+          expect(subject).to eq([assign_task.build_action_hash(Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h)])
         end
       end
 
       context "and we are in the review phase" do
-        let(:action) { "review" }
+        subject { review_task.available_actions_unwrapper(user) }
         it "should return the dispatch action" do
-          expect(subject).to eq([task.build_action_hash(Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h)])
+          expect(subject).to eq([review_task.build_action_hash(Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h)])
         end
       end
     end
 
     context "when the task is not assigned to the current user" do
       let(:user) { judge2 }
-      let(:action) { "review" }
       it "should return an empty array" do
         expect(subject).to eq([])
       end
@@ -42,17 +41,7 @@ describe JudgeTask do
 
   context ".create_from_params" do
     let(:params) { { assigned_to: judge, appeal: FactoryBot.create(:appeal) } }
-    subject { JudgeTask.create_from_params(params, attorney) }
-
-    it "should set the action" do
-      expect(subject.action).to eq(nil)
-      expect(subject.type).to eq JudgeAssignTask.name
-    end
-
-    it "should set the action" do
-      expect(subject.action).to eq nil
-      expect(subject.type).to eq JudgeAssignTask.name
-    end
+    subject { JudgeAssignTask.create_from_params(params, attorney) }
 
     context "when creating a JudgeTask from a QualityReviewTask" do
       let(:qr_task) { FactoryBot.create(:qr_task) }

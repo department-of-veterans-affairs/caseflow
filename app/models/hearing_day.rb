@@ -32,20 +32,12 @@ class HearingDay < ApplicationRecord
                      else
                        Time.zone.parse(hearing_date).to_datetime
                      end
-      if hearing_date > CASEFLOW_V_PARENT_DATE
+      comparison_date = (hearing_hash[:hearing_type] == "C") ? CASEFLOW_CO_PARENT_DATE : CASEFLOW_V_PARENT_DATE
+      if hearing_date > comparison_date
         hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
         create(hearing_hash).to_hash
       else
         HearingDayRepository.create_vacols_hearing!(hearing_hash)
-      end
-    end
-
-    def update_hearing_day(hearing, hearing_hash)
-      if hearing.is_a?(HearingDay)
-        hearing_hash = hearing_hash.merge(updated_by: current_user_css_id)
-        hearing.update(hearing_hash)
-      else
-        HearingDayRepository.update_vacols_hearing!(hearing, hearing_hash)
       end
     end
 
@@ -57,13 +49,8 @@ class HearingDay < ApplicationRecord
 
     def update_schedule(updated_hearings)
       updated_hearings.each do |hearing_hash|
-        hearing_to_update = HearingDay.find_hearing_day(hearing_hash[:hearing_type], hearing_hash[:id])
-        update_hash = if hearing_to_update.is_a?(HearingDay)
-                        { judge: User.find_by_css_id_or_create_with_default_station_id(hearing_hash[:css_id]) }
-                      else
-                        { judge_id: hearing_hash[:judge_id] }
-                      end
-        HearingDay.update_hearing_day(hearing_to_update, update_hash)
+        hearing_to_update = HearingDay.find(hearing_hash[:id])
+        hearing_to_update.update!(judge: User.find_by_css_id_or_create_with_default_station_id(hearing_hash[:css_id]))
       end
     end
 
@@ -105,7 +92,7 @@ class HearingDay < ApplicationRecord
         total_slots = HearingDayRepository
           .fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)
 
-        next unless scheduled_hearings.length < total_slots
+        next unless scheduled_hearings.length < total_slots && !hearing_day[:lock]
         enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room_info)
         enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] = total_slots
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = scheduled_hearings

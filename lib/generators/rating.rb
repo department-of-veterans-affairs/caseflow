@@ -100,16 +100,11 @@ class Generators::Rating
       end
     end
 
-    def get_prev_issues_count(participant_id)
-      Fakes::BGSService.rating_profile_records[participant_id].values.flatten(1).count
-    end
-
     def populate_issue_ids(attrs)
       return unless attrs[:issues]
       # gives a unique id to each issue that is tied to a specific participant_id
-      prev_count = get_prev_issues_count(attrs[:participant_id])
-      attrs[:issues].each_with_index.map do |issue, i|
-        issue[:reference_id] ||= "#{attrs[:participant_id]}#{prev_count + i}"
+      attrs[:issues].map do |issue|
+        issue[:reference_id] ||= "#{attrs[:participant_id]}#{generate_external_id}"
         issue
       end
     end

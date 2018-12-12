@@ -1,15 +1,6 @@
 class JudgeTask < Task
   include RoundRobinAssigner
 
-  def available_actions(_user)
-    actions = [{ label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL, value: "dispatch_decision/special_issues" }]
-    actions = [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h] if action.eql? "assign"
-
-    actions << Constants.TASK_ACTIONS.MARK_COMPLETE.to_h if parent && parent.is_a?(QualityReviewTask)
-
-    actions
-  end
-
   def no_actions_available?(user)
     assigned_to != user
   end
