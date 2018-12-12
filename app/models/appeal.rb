@@ -16,17 +16,17 @@ class Appeal < DecisionReview
     validates_associated :claimants
   end
 
+  scope :join_aod_motions, lambda {
+    joins(claimants: :person)
+      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")    
+  }
+
   scope :all_priority, lambda {
     join_aod_motions
       .where("advance_on_docket_motions.created_at > appeals.established_at")
       .where("advance_on_docket_motions.granted = ?", true)
       .or(join_aod_motions
         .where("people.date_of_birth <= ?", 75.years.ago))
-  }
-
-  scope :join_aod_motions, lambda {
-    joins(claimants: :person)
-      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")    
   }
 
   # rubocop:disable Metrics/LineLength
