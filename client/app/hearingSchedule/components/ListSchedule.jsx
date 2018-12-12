@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
@@ -255,6 +256,11 @@ class ListSchedule extends React.Component {
               <FilterRibbon
                 filteredByList={this.state.filteredByList}
                 clearAllFilters={this.clearFilteredByList} />
+              <Button
+                linkStyling
+                onClick={this.props.openModal} >
+                Add Hearing Date
+              </Button>
             </div>
             <Table
               columns={hearingScheduleColumns}
@@ -281,7 +287,8 @@ ListSchedule.propTypes = {
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
-  onApply: PropTypes.func
+  onApply: PropTypes.func,
+  openModal: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -302,4 +309,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveHearingSchedule
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListSchedule);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListSchedule));

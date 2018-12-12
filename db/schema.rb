@@ -417,6 +417,7 @@ ActiveRecord::Schema.define(version: 20181211201506) do
     t.string "bva_poc"
     t.datetime "deleted_at"
     t.boolean "lock"
+    t.text "notes"
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
 
