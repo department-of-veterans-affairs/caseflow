@@ -222,7 +222,9 @@ class Appeal < DecisionReview
     RootTask.create_root_and_sub_tasks!(self)
   end
 
-  # Hides duplicate cases from timeline that have assigned_to_type both "User" and "Organization"
+  # Only select completed tasks because incomplete tasks will appear elsewhere on case details page.
+  # Tasks are sometimes assigned to organizations for tracking, these will appear as duplicates if they have child
+  # tasks, so we do not return those organization tasks.
   def tasks_for_timeline
     tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC")
       .reject { |t| t.assigned_to.is_a?(Organization) && t.children.pluck(:assigned_to_type).include?(User.name) }
