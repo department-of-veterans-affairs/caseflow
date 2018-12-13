@@ -2,7 +2,12 @@ require "rails_helper"
 
 RSpec.feature "Schedule Veteran For A Hearing" do
   let!(:current_user) do
+    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
     User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
+  end
+
+  let!(:hearings_user) do
+    create(:hearings_management)
   end
 
   def click_dropdown(opt_idx, container = page)
