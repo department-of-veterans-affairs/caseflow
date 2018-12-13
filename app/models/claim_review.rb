@@ -58,6 +58,8 @@ class ClaimReview < DecisionReview
       end_product_establishment.commit!
     end
 
+    process_legacy_issues!
+
     clear_error!
     processed!
   end

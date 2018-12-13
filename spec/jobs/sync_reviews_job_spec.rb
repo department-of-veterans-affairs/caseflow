@@ -85,18 +85,6 @@ describe SyncReviewsJob do
       end
     end
 
-    context "when there are legacy optins awaiting processing" do
-      let!(:pending_legacy_optin) { create(:legacy_issue_optin).tap(&:submit_for_processing!) }
-      let!(:legacy_optin) { create(:legacy_issue_optin) }
-
-      it "ignores legacy optins that are not flagged" do
-        expect(LegacyOptinProcessJob).to_not receive(:perform_later).with(legacy_optin)
-        expect(LegacyOptinProcessJob).to receive(:perform_later).with(pending_legacy_optin)
-
-        SyncReviewsJob.perform_now("limit" => 2)
-      end
-    end
-
     it "prioritizes never synced ramp elections" do
       expect(EndProductSyncJob).to receive(:perform_later).once.with(end_product_establishment_never_synced.id)
       SyncReviewsJob.perform_now("limit" => 1)
