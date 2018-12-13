@@ -290,11 +290,7 @@ class EndProductEstablishment < ApplicationRecord
     request_issues.each do |request_issue|
       request_issue.submit_for_processing!
 
-      if run_async?
-        DecisionIssueSyncJob.perform_later(request_issue)
-      else
-        DecisionIssueSyncJob.perform_now(request_issue)
-      end
+      DecisionIssueSyncJob.perform_later(request_issue)
     end
   end
 
