@@ -742,9 +742,11 @@ RSpec.feature "Edit issues" do
           expect(page).to have_css("input[disabled]", visible: false)
           expect(page).to have_content("PTSD denied (already selected for")
 
+          nonrating_decision_issue_description = "nonrating decision issue dispositon: Active Duty Adjustments - Test nonrating decision issue"
+          rating_decision_issue_description = "rating decision issue"
           # check that nonrating and rating decision issues show up
-          expect(page).to have_content("test dispositon: Incarceration Adjustments - Test nonrating decision issue")
-          expect(page).to have_content("contested supplemental claim decision rating issue")
+          expect(page).to have_content(nonrating_decision_issue_description)
+          expect(page).to have_content(rating_decision_issue_description)
           safe_click ".close-modal"
 
           # remove original decision issue
@@ -753,20 +755,20 @@ RSpec.feature "Edit issues" do
 
           # add new decision issue
           click_intake_add_issue
-          add_intake_rating_issue("contested supplemental claim decision rating issue")
-          expect(page).to have_content("contested supplemental claim decision rating issue")
+          add_intake_rating_issue(rating_decision_issue_description)
+          expect(page).to have_content(rating_decision_issue_description)
 
           click_intake_add_issue
-          add_intake_rating_issue("test dispositon: Incarceration Adjustments - Test nonrating decision issue")
-          expect(page).to have_content("test dispositon: Incarceration Adjustments - Test nonrating decision issue")
+          add_intake_rating_issue(nonrating_decision_issue_description)
+          expect(page).to have_content(nonrating_decision_issue_description)
 
           safe_click("#button-submit-update")
           safe_click ".confirm"
           expect(page).to have_content("Edit Confirmed")
 
           visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-          expect(page).to have_content("test dispositon: Incarceration Adjustments - Test nonrating decision issue")
-          expect(page).to have_content("contested supplemental claim decision rating issue")
+          expect(page).to have_content(nonrating_decision_issue_description)
+          expect(page).to have_content(rating_decision_issue_description)
           expect(page).to have_content("PTSD denied")
 
           # check that decision_request_issue is closed
@@ -776,11 +778,13 @@ RSpec.feature "Edit issues" do
           # check that new request issue is created contesting the decision issue
           expect(RequestIssue.find_by(review_request: higher_level_review,
                                       contested_decision_issue_id: contested_decision_issues.first.id,
-                                      description: contested_decision_issues.first.serialized_description)).to_not be_nil
+                                      description: contested_decision_issues.first.serialized_description)
+                ).to_not be_nil
 
           expect(RequestIssue.find_by(review_request: higher_level_review,
                                       contested_decision_issue_id: contested_decision_issues.second.id,
-                                      description: contested_decision_issues.second.serialized_description)).to_not be_nil
+                                      description: contested_decision_issues.second.serialized_description)
+                ).to_not be_nil
         end
       end
 

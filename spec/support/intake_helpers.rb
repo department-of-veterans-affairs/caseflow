@@ -172,40 +172,26 @@ module IntakeHelpers
   end
 
   def setup_request_issue_with_nonrating_decision_issue(decision_review, issue_category: "Active Duty Adjustments")
+    random_date = Time.zone.now - 4.days
     create(:request_issue,
-           description: "Test nonrating decision issue",
-           decision_date: Time.zone.now - 4.days,
-           review_request: decision_review,
-           issue_category: "Incarceration Adjustments",
-           decision_issues: [
-            create(:decision_issue,
-              disposition: "test dispositon",
-              decision_review: decision_review,
-              participant_id: veteran.participant_id,
-              promulgation_date: Time.zone.now - 2.days,
-              benefit_type: decision_review.benefit_type,
-              end_product_last_action_date: Time.zone.now - 4.days)
-           ]
-      )
+      :with_nonrating_decision_issue,
+      description: "Test nonrating decision issue",
+      review_request: decision_review,
+      decision_date: random_date,
+      issue_category: issue_category,
+      veteran_participant_id: veteran.participant_id)
   end
 
   def setup_request_issue_with_rating_decision_issue(decision_review, rating_issue_reference_id: "rating123")
+    random_date = Time.zone.now - 2.days
     create(:request_issue,
-           rating_issue_reference_id: rating_issue_reference_id,
-           rating_issue_profile_date: Time.zone.now - 2.days,
-           description: "Test rating decision issue",
-           review_request: decision_review,
-           decision_issues: [
-            create(:decision_issue,
-              decision_review: decision_review,
-              participant_id: veteran.participant_id,
-              rating_issue_reference_id: rating_issue_reference_id,
-              decision_text: "contested supplemental claim decision rating issue",
-              profile_date: Time.zone.now - 2.days,
-              promulgation_date: Time.zone.now - 2.days,
-              benefit_type: decision_review.benefit_type)
-           ]
-      )
+      :with_rating_decision_issue,
+      rating_issue_reference_id: rating_issue_reference_id,
+      rating_issue_profile_date: random_date,
+      description: "Test rating decision issue",
+      review_request: decision_review,
+      veteran_participant_id: veteran.participant_id,
+    )
   end
 
   def setup_prior_decision_issues(veteran, benefit_type: "compensation")

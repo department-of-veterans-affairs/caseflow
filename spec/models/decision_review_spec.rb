@@ -58,8 +58,7 @@ describe DecisionReview do
              decision_text: "appeal decision issue",
              benefit_type: higher_level_review.benefit_type,
              profile_date: profile_date + 3.days,
-             decision_review: appeal
-        )
+             decision_review: appeal)
     ]
   end
 

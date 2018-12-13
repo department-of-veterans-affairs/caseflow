@@ -40,7 +40,7 @@ class DecisionIssue < ApplicationRecord
 
   def rating_description
     return description if description
-    return "#{decision_text}" unless associated_request_issue&.notes
+    return decision_text unless associated_request_issue&.notes
     "#{decision_text}. Notes: #{associated_request_issue.notes}"
   end
 
