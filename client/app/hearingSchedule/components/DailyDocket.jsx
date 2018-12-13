@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -63,12 +65,20 @@ const backLinkStyling = css({
   marginBottom: '25px'
 });
 
+const editLinkStyling = css({
+  marginLeft: '30px'
+});
+
 const alertStyling = css({
   marginBottom: '30px'
 });
 
 const topMarginStyling = css({
   marginTop: '170px'
+});
+
+const notesTitleStyling = css({
+  marginTop: '15px'
 });
 
 export default class DailyDocket extends React.Component {
@@ -214,16 +224,13 @@ export default class DailyDocket extends React.Component {
       options={this.getHearingDateOptions(hearing)}
       value={hearing.editedDate ? hearing.editedDate : hearing.id}
       onChange={this.onHearingDateUpdate(hearing.id)}
-      readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
-    />
+      readOnly={readOnly || hearing.editedDisposition !== 'postponed'} />
     <RadioField
       name={`hearingTime${hearing.id}`}
       options={this.getHearingTimeOptions(hearing, readOnly)}
       value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.date, timezone)}
       onChange={this.onHearingTimeUpdate(hearing.id)}
-      hideLabel
-    />
-    </div>;
+      hideLabel /></div>;
   };
 
   getNotesField = (hearing) => {
@@ -239,15 +246,13 @@ export default class DailyDocket extends React.Component {
     return hearing.edited ? <div>
       <Button
         linkStyling
-        onClick={this.cancelHearingUpdate(hearing)}
-      >
+        onClick={this.cancelHearingUpdate(hearing)}>
         Cancel
       </Button>
       <Button
         styling={buttonStyling}
         disabled={hearing.dateEdited && !hearing.dispositionEdited}
-        onClick={this.saveHearing(hearing)}
-      >
+        onClick={this.saveHearing(hearing)}>
         Save
       </Button>
     </div> : null;
@@ -266,8 +271,7 @@ export default class DailyDocket extends React.Component {
         disposition: this.getDispositionDropdown(hearing, readOnly),
         hearingLocation: this.getHearingLocationDropdown(hearing),
         hearingDay: this.getHearingDayDropdown(hearing, readOnly)
-      },
-      {
+      }, {
         number: null,
         appellantInformation: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
         hearingTime: <div>{hearing.currentIssueCount} issues</div>,
@@ -359,8 +363,7 @@ export default class DailyDocket extends React.Component {
           title="Remove Hearing Day"
           closeHandler={this.props.onCancelRemoveHearingDay}
           confirmButton={confirmButton}
-          cancelButton={cancelButton}
-        >
+          cancelButton={cancelButton} >
           {this.getRemoveHearingDayMessage()}
         </Modal>
       </div>}
@@ -369,8 +372,7 @@ export default class DailyDocket extends React.Component {
           title={this.getDisplayLockModalTitle()}
           closeHandler={this.props.onCancelDisplayLockModal}
           confirmButton={confirmLockModalButton}
-          cancelButton={cancelLockModalButton}
-        >
+          cancelButton={cancelLockModalButton} >
           {this.getDisplayLockModalMessage()}
         </Modal>
       </div>}
@@ -378,29 +380,47 @@ export default class DailyDocket extends React.Component {
         type="success"
         styling={alertStyling}
         title={`You have successfully updated ${this.props.saveSuccessful.appellantMiFormatted ||
-          this.props.saveSuccessful.veteranMiFormatted}'s hearing.`}
-      /> }
+          this.props.saveSuccessful.veteranMiFormatted}'s hearing.`} /> }
       { this.props.displayLockSuccessMessage && <Alert
         type="success"
         styling={alertStyling}
         title={lockSuccessMessageTitle}
-        message={lockSuccessMessage}
-      />}
+        message={lockSuccessMessage} /> }
+      { this.props.dailyDocketServerError && <Alert
+        type="error"
+        styling={alertStyling}
+        title={` Unable to delete Hearing Day 
+                ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')} in Caseflow.`}
+        message="Please delete the hearing day through VACOLS" />}
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
-        <div {...backLinkStyling}><Link to="/schedule">&lt; Back to schedule</Link></div>
-        <div>
+        <div {...backLinkStyling}>
+          <Link
+            linkStyling to="/schedule" >&lt; Back to schedule</Link>&nbsp;&nbsp;
+          <Button
+            {...editLinkStyling}
+            linkStyling
+            onClick={this.props.openModal} >
+            Edit Hearing Day
+          </Button>&nbsp;&nbsp;
           <Button
             linkStyling
-            onClick={this.props.onDisplayLockModal}
-          >
+            onClick={this.props.onDisplayLockModal} >
             {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
           </Button>&nbsp;&nbsp;
           { _.isEmpty(this.props.hearings) && this.props.userRoleBuild &&
           <Button
             linkStyling
-            onClick={this.props.onClickRemoveHearingDay}
-          >Remove Hearing Day</Button> }
+            onClick={this.props.onClickRemoveHearingDay} >
+            Remove Hearing Day
+          </Button>
+          }
+          {this.props.notes &&
+          <span {...notesTitleStyling}>
+            <br /><strong>Notes: </strong>
+            <br />{this.props.notes}
+          </span>
+          }
         </div>
       </div>
       <span className="cf-push-right">
@@ -414,14 +434,12 @@ export default class DailyDocket extends React.Component {
           rowObjects={dailyDocketRows}
           summary="dailyDocket"
           bodyStyling={tableRowStyling}
-          slowReRendersAreOk
-        />}
+          slowReRendersAreOk />}
       </div>
       { _.isEmpty(dailyDocketRows) && <div {...topMarginStyling}>
         <StatusMessage
           title= "No Veterans are scheduled for this hearing day."
-          type="status"
-        /></div>}
+          type="status" /></div>}
       { !_.isEmpty(this.previouslyScheduledHearings(this.props.hearings)) && <div>
         <h1>Previously Scheduled</h1>
         <div {...noMarginStyling}>
@@ -443,5 +461,7 @@ DailyDocket.propTypes = {
   onHearingNotesUpdate: PropTypes.func,
   onHearingDispositionUpdate: PropTypes.func,
   onHearingTimeUpdate: PropTypes.func,
-  deleteHearingDay: PropTypes.func
+  openModal: PropTypes.func,
+  deleteHearingDay: PropTypes.func,
+  notes: PropTypes.string
 };

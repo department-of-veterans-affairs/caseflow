@@ -211,7 +211,7 @@ describe ClaimReview do
     end
   end
 
-  context "#process_end_product_establishments!" do
+  context "#establish!" do
     let!(:user) do
       User.create(
         station_id: 1,
@@ -241,7 +241,7 @@ describe ClaimReview do
       allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     end
 
-    subject { claim_review.process_end_product_establishments! }
+    subject { claim_review.establish! }
 
     context "when there is just one end_product_establishment" do
       let(:issues) { [rating_request_issue, second_rating_request_issue] }

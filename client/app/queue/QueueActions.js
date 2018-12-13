@@ -515,7 +515,7 @@ const errorAllAttorneys = (error) => ({
 export const fetchAllAttorneys = () => (dispatch: Dispatch) =>
   ApiUtil.get('/users?role=Attorney').
     then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
-    catch((error) => Promise.reject(dispatch(errorAllAttorneys(error))));
+    catch((error) => dispatch(errorAllAttorneys(error)));
 
 export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) =>
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).

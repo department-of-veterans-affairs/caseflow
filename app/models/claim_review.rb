@@ -2,9 +2,6 @@
 # higher level review as defined in the Appeals Modernization Act of 2017
 
 class ClaimReview < DecisionReview
-  include Asyncable
-  include LegacyOptinable
-
   has_many :end_product_establishments, as: :source
   has_one :intake, as: :detail
 
@@ -28,29 +25,6 @@ class ClaimReview < DecisionReview
     )
   end
 
-  # The Asyncable module requires we define these.
-  # establishment_submitted_at - when our db is ready to push to exernal services
-  # establishment_attempted_at - when our db attempted to push to external services
-  # establishment_processed_at - when our db successfully pushed to external services
-
-  class << self
-    def submitted_at_column
-      :establishment_submitted_at
-    end
-
-    def attempted_at_column
-      :establishment_attempted_at
-    end
-
-    def processed_at_column
-      :establishment_processed_at
-    end
-
-    def error_column
-      :establishment_error
-    end
-  end
-
   def issue_code(*)
     fail Caseflow::Error::MustImplementInSubclass
   end
@@ -70,7 +44,7 @@ class ClaimReview < DecisionReview
   # Idempotent method to create all the artifacts for this claim.
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
-  def process_end_product_establishments!
+  def establish!
     attempted!
 
     end_product_establishments.each do |end_product_establishment|
@@ -83,6 +57,8 @@ class ClaimReview < DecisionReview
       end
       end_product_establishment.commit!
     end
+
+    process_legacy_issues!
 
     clear_error!
     processed!
