@@ -42,10 +42,4 @@ class RootTask < GenericTask
       end
     end
   end
-
-  def can_be_updated_by_user?(user)
-    return true if HearingsManagement.singleton.user_has_access?(user)
-
-    super(user)
-  end
 end
