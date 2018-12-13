@@ -335,7 +335,7 @@ class RegionalOffice
     state: "NE",
     timezone: "America/Chicago",
     hold_hearings: true,
-    alternate_locations: [nil] },
+    alternate_locations: ["vba_442"] },
     "RO35" =>
   { label: "St. Paul regional office",
     city: "St. Paul",
