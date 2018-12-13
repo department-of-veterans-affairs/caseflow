@@ -79,6 +79,7 @@ class RegionalOffice
       state: "MA",
       timezone: "America/New_York",
       hold_hearings: true,
+      facility_locator_id: "vba_301",
       alternate_locations: nil },
     "RO02" =>
   { label: "Togus regional office",
@@ -86,6 +87,7 @@ class RegionalOffice
     state: "ME",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_402",
     alternate_locations: %w[vha_402GA vha_402HB] },
     "RO03" =>
   { label: "White River regional office",
@@ -93,6 +95,7 @@ class RegionalOffice
     state: "VT",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: "vba_405",
     alternate_locations: nil },
     "RO04" =>
   { label: "Providence regional office",
@@ -100,6 +103,7 @@ class RegionalOffice
     state: "RI",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_304",
     alternate_locations: nil },
     "RO05" =>
   { label: "White River regional office",
@@ -107,6 +111,7 @@ class RegionalOffice
     state: "VT",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_405",
     alternate_locations: nil },
     "RO06" =>
   { label: "New York City regional office",
@@ -114,6 +119,7 @@ class RegionalOffice
     state: "NY",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_306",
     alternate_locations: ["vba_306b"] },
     "RO07" =>
   { label: "Buffalo regional office",
@@ -121,6 +127,7 @@ class RegionalOffice
     state: "NY",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_307",
     alternate_locations: nil },
     "RO08" =>
   { label: "Hartford regional office",
@@ -128,6 +135,7 @@ class RegionalOffice
     state: "CT",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_308",
     alternate_locations: nil },
     "RO09" =>
   { label: "Newark regional office",
@@ -135,6 +143,7 @@ class RegionalOffice
     state: "NJ",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_309",
     alternate_locations: nil },
     "RO10" =>
   { label: "Philadelphia regional office",
@@ -142,6 +151,7 @@ class RegionalOffice
     state: "PA",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_310",
     alternate_locations:     %w[vha_595 vba_460 vha_693 vha_542 vha_460HE] },
     "RO11" =>
   { label: "Pittsburgh regional office",
@@ -149,6 +159,7 @@ class RegionalOffice
     state: "PA",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_311",
     alternate_locations: nil },
     "RO13" =>
   { label: "Baltimore regional office",
@@ -156,6 +167,7 @@ class RegionalOffice
     state: "MD",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_313",
     alternate_locations: nil },
     "RO14" =>
   { label: "Roanoke regional office",
@@ -163,6 +175,7 @@ class RegionalOffice
     state: "VA",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_314",
     alternate_locations: nil },
     "RO15" =>
   { label: "Huntington regional office",
@@ -170,6 +183,7 @@ class RegionalOffice
     state: "WV",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_315",
     alternate_locations: nil },
     "RO16" =>
   { label: "Atlanta regional office",
@@ -177,6 +191,7 @@ class RegionalOffice
     state: "GA",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_316",
     alternate_locations: nil },
     "RO17" =>
   { label: "St. Petersburg regional office",
@@ -184,6 +199,7 @@ class RegionalOffice
     state: "FL",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_317",
     alternate_locations: ["vba_317a"] },
     "RO18" =>
   { label: "Winston-Salem regional office",
@@ -191,6 +207,7 @@ class RegionalOffice
     state: "NC",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_318",
     alternate_locations: nil },
     "RO19" =>
   { label: "Columbia regional office",
@@ -198,6 +215,7 @@ class RegionalOffice
     state: "SC",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_319",
     alternate_locations: nil },
     "RO20" =>
   { label: "Nashville regional office",
@@ -205,6 +223,7 @@ class RegionalOffice
     state: "TN",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_320",
     alternate_locations: %w[vc_0701V vc_0720V vc_0719V vha_626GF] },
     "RO21" =>
   { label: "New Orleans regional office",
@@ -212,6 +231,7 @@ class RegionalOffice
     state: "LA",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_321",
     alternate_locations: ["vba_321b"] },
     "RO22" =>
   { label: "Montgomery regional office",
@@ -219,6 +239,7 @@ class RegionalOffice
     state: "AL",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_322",
     alternate_locations: nil },
     "RO23" =>
   { label: "Jackson regional office",
@@ -226,6 +247,7 @@ class RegionalOffice
     state: "MS",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_323",
     alternate_locations: nil },
     "RO25" =>
   { label: "Cleveland regional office",
@@ -233,6 +255,7 @@ class RegionalOffice
     state: "OH",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_325",
     alternate_locations: %w[vha_539 vha_757 vha_539] },
     "RO26" =>
   { label: "Indianapolis regional office",
@@ -240,6 +263,7 @@ class RegionalOffice
     state: "IN",
     timezone: "America/Indiana/Indianapolis",
     hold_hearings: true,
+    facility_locator_id: "vba_326",
     alternate_locations: nil },
     "RO27" =>
   { label: "Louisville regional office",
@@ -247,6 +271,7 @@ class RegionalOffice
     state: "KY",
     timezone: "America/Kentucky/Louisville",
     hold_hearings: true,
+    facility_locator_id: "vba_327",
     alternate_locations:     %w[vba_315
                                 vba_320
                                 vha_596
@@ -275,6 +300,7 @@ class RegionalOffice
     state: "IL",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_328",
     alternate_locations: ["vha_636GF"] },
     "RO29" =>
   { label: "Detroit regional office",
@@ -282,6 +308,7 @@ class RegionalOffice
     state: "MI",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_329",
     alternate_locations: nil },
     "RO30" =>
   { label: "Milwaukee regional office",
@@ -289,6 +316,7 @@ class RegionalOffice
     state: "WI",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_330",
     alternate_locations:     %w[vba_335
                                 vha_607
                                 vha_676
@@ -315,6 +343,7 @@ class RegionalOffice
     state: "MO",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_331",
     alternate_locations: nil },
     "RO33" =>
   { label: "Des Moines regional office",
@@ -322,6 +351,7 @@ class RegionalOffice
     state: "IA",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_333",
     alternate_locations:     %w[vha_636GF
                                 vha_438GC
                                 vha_636GJ
@@ -335,13 +365,15 @@ class RegionalOffice
     state: "NE",
     timezone: "America/Chicago",
     hold_hearings: true,
-    alternate_locations: ["vba_442"] },
+    facility_locator_id: "vba_334",
+    alternate_locations: [nil] },
     "RO35" =>
   { label: "St. Paul regional office",
     city: "St. Paul",
     state: "MN",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_335",
     alternate_locations: nil },
     "RO36" =>
   { label: "Ft. Harrison regional office",
@@ -349,6 +381,7 @@ class RegionalOffice
     state: "MT",
     timezone: "America/Denver",
     hold_hearings: true,
+    facility_locator_id: "vba_436",
     alternate_locations: nil },
     "RO37" =>
   { label: "Fargo regional office",
@@ -356,6 +389,7 @@ class RegionalOffice
     state: "ND",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_437",
     alternate_locations: nil },
     "RO38" =>
   { label: "Sioux Falls regional office",
@@ -363,6 +397,7 @@ class RegionalOffice
     state: "SD",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_438",
     alternate_locations: %w[vha_568 vha_568A4] },
     "RO39" =>
   { label: "Denver regional office",
@@ -370,6 +405,7 @@ class RegionalOffice
     state: "CO",
     timezone: "America/Denver",
     hold_hearings: true,
+    facility_locator_id: "vba_339",
     alternate_locations: nil },
     "RO40" =>
   { label: "Albuquerque regional office",
@@ -377,6 +413,7 @@ class RegionalOffice
     state: "NM",
     timezone: "America/Denver",
     hold_hearings: true,
+    facility_locator_id: "vba_340",
     alternate_locations: nil },
     "RO41" =>
   { label: "Salt Lake City regional office",
@@ -384,6 +421,7 @@ class RegionalOffice
     state: "UT",
     timezone: "America/Denver",
     hold_hearings: true,
+    facility_locator_id: "vba_341",
     alternate_locations: nil },
     "RO42" =>
   { label: "Cheyenne regional office",
@@ -391,6 +429,7 @@ class RegionalOffice
     state: "WY",
     timezone: "America/Denver",
     hold_hearings: true,
+    facility_locator_id: "vba_442",
     alternate_locations: ["vha_666GB"] },
     "RO43" =>
   { label: "Oakland regional office",
@@ -398,6 +437,7 @@ class RegionalOffice
     state: "CA",
     timezone: "America/Los_Angeles",
     hold_hearings: true,
+    facility_locator_id: "vba_343",
     alternate_locations: ["vba_343an"] },
     "RO44" =>
   { label: "Los Angeles regional office",
@@ -405,6 +445,7 @@ class RegionalOffice
     state: "CA",
     timezone: "America/Los_Angeles",
     hold_hearings: true,
+    facility_locator_id: "vba_344",
     alternate_locations: nil },
     "RO45" =>
   { label: "Phoenix regional office",
@@ -412,6 +453,7 @@ class RegionalOffice
     state: "AZ",
     timezone: "America/Denver",
     hold_hearings: true,
+    facility_locator_id: "vba_345",
     alternate_locations: nil },
     "RO46" =>
   { label: "Seattle regional office",
@@ -419,6 +461,7 @@ class RegionalOffice
     state: "WA",
     timezone: "America/Los_Angeles",
     hold_hearings: true,
+    facility_locator_id: "vba_346",
     alternate_locations:     %w[vha_663GC
                                 vha_663GE
                                 vba_348
@@ -432,6 +475,7 @@ class RegionalOffice
     state: "ID",
     timezone: "America/Boise",
     hold_hearings: true,
+    facility_locator_id: "vba_347",
     alternate_locations: %w[vha_668 vha_660GA vha_668GB] },
     "RO48" =>
   { label: "Portland regional office",
@@ -439,6 +483,7 @@ class RegionalOffice
     state: "OR",
     timezone: "America/Los_Angeles",
     hold_hearings: true,
+    facility_locator_id: "vba_348",
     alternate_locations:     %w[vba_347
                                 vha_653GB
                                 vha_648GA
@@ -454,6 +499,7 @@ class RegionalOffice
     state: "TX",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_349",
     alternate_locations: ["vba_349i"] },
     "RO50" =>
   { label: "Little Rock regional office",
@@ -461,6 +507,7 @@ class RegionalOffice
     state: "AR",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_350",
     alternate_locations: nil },
     "RO51" =>
   { label: "Muskogee regional office",
@@ -468,6 +515,7 @@ class RegionalOffice
     state: "OK",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_351",
     alternate_locations: nil },
     "RO52" =>
   { label: "Wichita regional office",
@@ -475,6 +523,7 @@ class RegionalOffice
     state: "KS",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: "vba_452",
     alternate_locations: nil },
     "RO54" =>
   { label: "Reno regional office",
@@ -482,6 +531,7 @@ class RegionalOffice
     state: "NV",
     timezone: "America/Los_Angeles",
     hold_hearings: true,
+    facility_locator_id: "vba_354",
     alternate_locations: ["vba_354a"] },
     "RO55" =>
   { label: "San Juan regional office",
@@ -489,6 +539,7 @@ class RegionalOffice
     state: "PR",
     timezone: "America/Puerto_Rico",
     hold_hearings: true,
+    facility_locator_id: "vba_355",
     alternate_locations: nil },
     "RO58" =>
   { label: "Manila regional office",
@@ -496,6 +547,7 @@ class RegionalOffice
     state: "PI",
     timezone: "Asia/Manila",
     hold_hearings: true,
+    facility_locator_id: "vba_358",
     alternate_locations: nil },
     "RO59" =>
   { label: "Honolulu regional office",
@@ -503,6 +555,7 @@ class RegionalOffice
     state: "HI",
     timezone: "Pacific/Honolulu",
     hold_hearings: true,
+    facility_locator_id: "vba_459",
     alternate_locations:     %w[vc_0616V
                                 vba_459h
                                 vba_459i
@@ -516,6 +569,7 @@ class RegionalOffice
     state: "DE",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO61" =>
   { label: "Houston regional office",
@@ -523,6 +577,7 @@ class RegionalOffice
     state: "TX",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: "vba_362",
     alternate_locations: %w[vha_671BY vha_740GB] },
     "RO62" =>
   { label: "Houston regional office",
@@ -530,6 +585,7 @@ class RegionalOffice
     state: "TX",
     timezone: "America/Chicago",
     hold_hearings: true,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO63" =>
   { label: "Anchorage regional office",
@@ -537,6 +593,7 @@ class RegionalOffice
     state: "AK",
     timezone: "America/Anchorage",
     hold_hearings: true,
+    facility_locator_id: "vba_463",
     alternate_locations: nil },
     "RO64" =>
   { label: nil,
@@ -544,6 +601,7 @@ class RegionalOffice
     state: "SC",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO65" =>
   { label: nil,
@@ -551,6 +609,7 @@ class RegionalOffice
     state: "IN",
     timezone: "America/Indiana/Indianapolis",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO66" =>
   { label: nil,
@@ -558,6 +617,7 @@ class RegionalOffice
     state: "NE",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO67" =>
   { label: nil,
@@ -565,6 +625,7 @@ class RegionalOffice
     state: "KY",
     timezone: "America/Kentucky/Louisville",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO68" =>
   { label: nil,
@@ -572,6 +633,7 @@ class RegionalOffice
     state: "WI",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO69" =>
   { label: nil,
@@ -579,6 +641,7 @@ class RegionalOffice
     state: "UT",
     timezone: "America/Denver",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO70" =>
   { label: nil,
@@ -586,6 +649,7 @@ class RegionalOffice
     state: "KY",
     timezone: "America/Kentucky/Louisville",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO71" =>
   { label: nil,
@@ -593,6 +657,7 @@ class RegionalOffice
     state: "PA",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO72" =>
   { label: "Washington, DC regional office",
@@ -600,6 +665,7 @@ class RegionalOffice
     state: "DC",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO73" =>
   { label: "Manchester regional office",
@@ -607,6 +673,7 @@ class RegionalOffice
     state: "NH",
     timezone: "America/New_York",
     hold_hearings: true,
+    facility_locator_id: "vba_373",
     alternate_locations: ["vba_405"] },
     "RO74" =>
   { label: nil,
@@ -614,6 +681,7 @@ class RegionalOffice
     state: "PA",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO75" =>
   { label: nil,
@@ -621,6 +689,7 @@ class RegionalOffice
     state: "WI",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO76" =>
   { label: nil,
@@ -628,6 +697,7 @@ class RegionalOffice
     state: "MN",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO77" =>
   { label: "San Diego regional office",
@@ -635,6 +705,7 @@ class RegionalOffice
     state: "CA",
     timezone: "America/Los_Angeles",
     hold_hearings: true,
+    facility_locator_id: "vba_377",
     alternate_locations: nil },
     "RO78" =>
   { label: "Legacy RO (RO78)",
@@ -642,6 +713,7 @@ class RegionalOffice
     state: "??",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO79" =>
   { label: nil,
@@ -649,6 +721,7 @@ class RegionalOffice
     state: "MN",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO80" =>
   { label: nil,
@@ -656,6 +729,7 @@ class RegionalOffice
     state: "PA",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO81" =>
   { label: nil,
@@ -663,6 +737,7 @@ class RegionalOffice
     state: "PA",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO82" =>
   { label: nil,
@@ -670,6 +745,7 @@ class RegionalOffice
     state: "WI",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO83" =>
   { label: nil,
@@ -677,6 +753,7 @@ class RegionalOffice
     state: "MN",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO84" =>
   { label: nil,
@@ -684,6 +761,7 @@ class RegionalOffice
     state: "PA",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO85" =>
   { label: nil,
@@ -691,6 +769,7 @@ class RegionalOffice
     state: "WI",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO86" =>
   { label: nil,
@@ -698,6 +777,7 @@ class RegionalOffice
     state: "MN",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO87" =>
   { label: nil,
@@ -705,6 +785,7 @@ class RegionalOffice
     state: "GA",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO88" =>
   { label: nil,
@@ -712,6 +793,7 @@ class RegionalOffice
     state: "GA",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO89" =>
   { label: nil,
@@ -719,6 +801,7 @@ class RegionalOffice
     state: "DC",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO91" =>
   { label: nil,
@@ -726,6 +809,7 @@ class RegionalOffice
     state: "NY",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO92" =>
   { label: nil,
@@ -733,6 +817,7 @@ class RegionalOffice
     state: "GA",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO93" =>
   { label: nil,
@@ -740,6 +825,7 @@ class RegionalOffice
     state: "OK",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO94" =>
   { label: nil,
@@ -747,6 +833,7 @@ class RegionalOffice
     state: "MO",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO97" =>
   { label: nil,
@@ -754,6 +841,7 @@ class RegionalOffice
     state: "DC",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO98" =>
   { label: nil,
@@ -761,6 +849,7 @@ class RegionalOffice
     state: "MO",
     timezone: "America/Chicago",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "RO99" =>
   { label: nil,
@@ -768,6 +857,7 @@ class RegionalOffice
     state: "DC",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "DSUSER" =>
   { label: nil,
@@ -775,6 +865,7 @@ class RegionalOffice
     state: "DC",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "VACO" =>
   { label: nil,
@@ -782,6 +873,7 @@ class RegionalOffice
     state: "DC",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil },
     "NWQ" =>
   { label: nil,
@@ -789,41 +881,8 @@ class RegionalOffice
     state: "DC",
     timezone: "America/New_York",
     hold_hearings: false,
+    facility_locator_id: nil,
     alternate_locations: nil }
-  }.freeze
-  ROS = CITIES.keys.freeze
-
-  SATELLITE_OFFICES = {
-    "SO62" => {
-      label: "San Antonio satellite office",
-      city: "San Antonio", state: "TX",
-      timezone: "America/Chicago",
-      regional_office: "RO62"
-    },
-    "SO06" => {
-      label: "Albany satellite office",
-      city: "Albany", state: "NY",
-      timezone: "America/New_York",
-      regional_office: "RO06"
-    },
-    "SO54" => {
-      label: "Las Vegas satellite office",
-      city: "Las Vegas", state: "NV",
-      timezone: "America/Los_Angeles",
-      regional_office: "RO54"
-    },
-    "SO49" => {
-      label: "El Paso satellite office",
-      city: "El Paso", state: "TX",
-      timezone: "America/Chicago",
-      regional_office: "RO49"
-    },
-    "SO43" => {
-      label: "Sacremento satellite office",
-      city: "Sacremento", state: "CA",
-      timezone: "America/Los_Angeles",
-      regional_office: "RO43"
-    }
   }.freeze
 
   # The string key is a unique identifier for a regional office.
