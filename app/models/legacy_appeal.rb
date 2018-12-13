@@ -777,6 +777,24 @@ class LegacyAppeal < ApplicationRecord
     regional_office.to_h
   end
 
+  cache_attribute :alternate_hearing_locations, expires_in: 45.days do
+    latlng = Vets360Service.geocode(veteran.full_address)
+
+    ro = RegionalOffice::CITIES[regional_office_key]
+    # from pending PR
+    facility_ids = ro[:alternate_locations] ? [ro[:facility_locator_id]] + ro[:alternate_locations] : nil
+    hearing_locations = FacilitiesLocatorService.get_distance(latlng, facility_ids) if !facility_ids.nil?
+
+    {
+      veteran_location: {
+        latlng: latlng,
+        # TODO: invalidation when address changes
+        address: veteran.full_address
+      },
+      hearing_locations: hearing_locations
+    }
+  end
+
   def status_eligible_for_ramp?
     (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
