@@ -25,7 +25,7 @@ RSpec.describe TasksController, type: :controller do
     end
     let!(:task5) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.in_progress) }
     let!(:task_ama_colocated_aod) do
-      create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket))
+      create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket_due_to_age))
     end
     let!(:task6) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.completed) }
     let!(:task7) { create(:colocated_task) }
@@ -606,7 +606,7 @@ RSpec.describe TasksController, type: :controller do
       it "should return an error" do
         User.stub = colocated
         patch :update, params: { task: { status: Constants.TASK_STATUSES.in_progress }, id: admin_action.id }
-        expect(response.status).to eq(403)
+        expect(response.status).to eq 403
       end
     end
   end

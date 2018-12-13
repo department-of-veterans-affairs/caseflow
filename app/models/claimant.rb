@@ -2,7 +2,7 @@ class Claimant < ApplicationRecord
   include AssociatedBgsRecord
 
   belongs_to :review_request, polymorphic: true
-
+  belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
   validates_with ClaimantValidator
 
   bgs_attr_accessor :first_name, :last_name, :middle_name, :relationship

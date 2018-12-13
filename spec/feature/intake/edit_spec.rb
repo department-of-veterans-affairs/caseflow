@@ -506,7 +506,7 @@ RSpec.feature "Edit issues" do
                                              ri_legacy_issue_not_withdrawn,
                                              ri_legacy_issue_ineligible
                                            ])
-        higher_level_review.process_end_product_establishments!
+        higher_level_review.establish!
       end
 
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
@@ -666,7 +666,7 @@ RSpec.feature "Edit issues" do
 
       before do
         higher_level_review.create_issues!([nonrating_request_issue])
-        higher_level_review.process_end_product_establishments!
+        higher_level_review.establish!
       end
 
       it "shows the Higher-Level Review Edit page with a nonrating claim id" do
@@ -736,7 +736,7 @@ RSpec.feature "Edit issues" do
 
       before do
         higher_level_review.create_issues!([request_issue])
-        higher_level_review.process_end_product_establishments!
+        higher_level_review.establish!
       end
 
       scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
@@ -776,7 +776,7 @@ RSpec.feature "Edit issues" do
 
       before do
         higher_level_review.create_issues!(request_issues)
-        higher_level_review.process_end_product_establishments!
+        higher_level_review.establish!
       end
 
       context "has decision issues" do
@@ -945,7 +945,7 @@ RSpec.feature "Edit issues" do
         )
 
         # expect the remove/re-add to create a new RequestIssue for same RatingIssue
-        expect(higher_level_review.request_issues).to_not include(request_issue)
+        expect(higher_level_review.reload.request_issues).to_not include(request_issue)
         new_version_of_request_issue = higher_level_review.find_request_issue_by_description(request_issue.description)
         expect(new_version_of_request_issue.rating_issue_reference_id).to eq(request_issue.rating_issue_reference_id)
 
@@ -1164,7 +1164,7 @@ RSpec.feature "Edit issues" do
 
       before do
         supplemental_claim.create_issues!([nonrating_request_issue])
-        supplemental_claim.process_end_product_establishments!
+        supplemental_claim.establish!
       end
 
       context "when it is created due to a DTA error" do
@@ -1224,7 +1224,7 @@ RSpec.feature "Edit issues" do
 
       before do
         supplemental_claim.create_issues!(request_issues)
-        supplemental_claim.process_end_product_establishments!
+        supplemental_claim.establish!
       end
 
       context "when it is created due to a DTA error" do
