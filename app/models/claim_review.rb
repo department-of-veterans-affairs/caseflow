@@ -66,6 +66,22 @@ class ClaimReview < DecisionReview
     end_product_establishments.map(&:modifier).reject(&:nil?)
   end
 
+  def rating_end_product_establishment
+    @rating_end_product_establishment ||= end_product_establishments.find_by(code: END_PRODUCT_CODES[:rating])
+  end
+
+  def end_product_description
+    rating_end_product_establishment&.description
+  end
+
+  def end_product_base_modifier
+    valid_modifiers.first
+  end
+
+  def valid_modifiers
+    END_PRODUCT_MODIFIERS
+  end
+
   def on_sync(end_product_establishment)
     if end_product_establishment.status_cleared?
       end_product_establishment.sync_decision_issues!

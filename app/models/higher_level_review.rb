@@ -36,30 +36,16 @@ class HigherLevelReview < ClaimReview
     )
   end
 
-  def rating_end_product_establishment
-    @rating_end_product_establishment ||= end_product_establishments.find_by(code: END_PRODUCT_CODES[:rating])
-  end
-
-  def end_product_description
-    rating_end_product_establishment&.description
-  end
-
-  def end_product_base_modifier
-    valid_modifiers.first
-  end
-
   def special_issues
     specials = super
     specials << { code: "SSR", narrative: "Same Station Review" } if same_office
     specials
   end
 
-  def valid_modifiers
-    END_PRODUCT_MODIFIERS
-  end
-
   def issue_code(rating: true)
-    rating ? END_PRODUCT_CODES[:rating] : END_PRODUCT_CODES[:nonrating]
+    issue_code_type = rating ? :rating : :nonrating
+    issue_code_type = "pension_#{ep_code}".to_sym if benefit_type == "pension"
+    END_PRODUCT_CODES[issue_code_type]
   end
 
   def on_decision_issues_sync_processed(_end_product_establishment)
