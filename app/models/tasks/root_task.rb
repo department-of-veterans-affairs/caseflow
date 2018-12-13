@@ -19,7 +19,8 @@ class RootTask < GenericTask
   end
 
   def actions_available?(_user)
-    !completed?
+    return false if completed?
+    true
   end
 
   class << self

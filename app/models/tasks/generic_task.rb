@@ -68,7 +68,7 @@ class GenericTask < Task
   end
 
   def can_be_updated_by_user?(user)
-    available_actions(user).any?
+    available_actions_unwrapper(user).any?
   end
 
   private

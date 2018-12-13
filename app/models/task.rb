@@ -44,7 +44,8 @@ class Task < ApplicationRecord
     return false if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
-    !assigned_to.is_a?(Organization) || children.all? { |child| child.assigned_to != user }
+    return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
+    true
   end
 
   def assigned_by_display_name
@@ -142,7 +143,10 @@ class Task < ApplicationRecord
   end
 
   def can_be_updated_by_user?(user)
-    available_actions(user).any?
+    return true if [assigned_to, assigned_by].include?(user) ||
+                   parent&.assigned_to == user ||
+                   user.administered_teams.select { |team| team.is_a?(JudgeTeam) }.any?
+    false
   end
 
   def verify_user_can_update!(user)
