@@ -16,7 +16,6 @@ class SyncReviewsJob < CaseflowJob
     perform_ramp_refiling_reprocessing
     perform_decision_review_processing(limit)
     perform_decision_rating_issues_syncs(limit)
-    perform_legacy_optin_syncs(limit)
   end
 
   private
@@ -47,12 +46,6 @@ class SyncReviewsJob < CaseflowJob
   def perform_decision_rating_issues_syncs(limit)
     RequestIssue.requires_processing.limit(limit).each do |request_issue|
       DecisionIssueSyncJob.perform_later(request_issue)
-    end
-  end
-
-  def perform_legacy_optin_syncs(limit)
-    LegacyIssueOptin.requires_processing.limit(limit).each do |legacy_issue_optin|
-      LegacyOptinProcessJob.perform_later(legacy_issue_optin)
     end
   end
 end

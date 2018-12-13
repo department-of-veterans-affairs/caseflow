@@ -89,6 +89,9 @@ describe Appeal do
 
     context "VACOLS opt-in" do
       let(:vacols_id) { "something" }
+      let!(:legacy_opt_in) do
+        create(:legacy_issue_optin, request_issue: request_issue)
+      end
 
       it "includes VACOLS opt-in" do
         expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
