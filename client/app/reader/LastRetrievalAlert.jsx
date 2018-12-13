@@ -29,15 +29,19 @@ class LastRetrievalAlert extends React.PureComponent {
     }
 
     let staleCacheTime = new Date();
+
     staleCacheTime.setHours(staleCacheTime.getHours() - CACHE_TIMEOUT_HOURS);
 
-    let vvaManifestTimeString = this.props.manifestVvaFetchedAt,
+    let staleCacheTimestamp = staleCacheTime.getTime() / 1000,
       vbmsManifestTimeString = this.props.manifestVbmsFetchedAt,
-      parsableVvaManifestTimeString = vvaManifestTimeString.slice(0, -4) + TIMEZONES[vvaManifestTimeString.slice(-4)],
-      parsableVbmsManifestTimeString = vbmsManifestTimeString.slice(0, -4) + TIMEZONES[vbmsManifestTimeString.slice(-4)],
-      vvaManifestTimestamp = moment(parsableVvaManifestTimeString, 'MM/DD/YY HH:mma Z').unix(),
+      vvaManifestTimeString = this.props.manifestVvaFetchedAt;
+
+    let parsableVbmsManifestTimeString = vbmsManifestTimeString.slice(0, -4) +
+      TIMEZONES[vbmsManifestTimeString.slice(-4)],
+      parsableVvaManifestTimeString = vvaManifestTimeString.slice(0, -4) +
+        TIMEZONES[vvaManifestTimeString.slice(-4)],
       vbmsManifestTimestamp = moment(parsableVbmsManifestTimeString, 'MM/DD/YY HH:mma Z').unix(),
-      staleCacheTimestamp = staleCacheTime.getTime() / 1000;
+      vvaManifestTimestamp = moment(parsableVvaManifestTimeString, 'MM/DD/YY HH:mma Z').unix();
 
     // Check that manifest results are fresh
     if (vbmsManifestTimestamp < staleCacheTimestamp || vvaManifestTimestamp < staleCacheTimestamp) {

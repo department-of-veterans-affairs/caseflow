@@ -259,7 +259,7 @@ RSpec.feature "Reader" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
           expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
           expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
-          expect(find(".section--document-list .usa-alert-warning").text).to have_content("The document list may be stale")
+          expect(page).to have_css(".section--document-list .usa-alert-warning")
         end
       end
 
@@ -269,7 +269,7 @@ RSpec.feature "Reader" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
           expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
           expect(page).to_not have_css("#vva-manifest-retrieved-at")
-          expect(find(".section--document-list .usa-alert-error").text).to have_content("Some documents could not be loaded at this time")
+          expect(page).to have_css(".section--document-list .usa-alert-error")
         end
       end
 
