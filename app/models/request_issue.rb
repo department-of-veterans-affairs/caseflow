@@ -195,10 +195,6 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.on_decision_issue_sync_processed
   end
 
-  def legacy_issue_opted_in?
-    eligible? && vacols_id && vacols_sequence_id
-  end
-
   private
 
   def build_contested_issue
