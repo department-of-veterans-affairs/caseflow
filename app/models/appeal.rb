@@ -278,6 +278,7 @@ class Appeal < DecisionReview
 
   def contestable_decision_issues
     DecisionIssue.where(participant_id: veteran.participant_id)
+      .where.not(decision_review_type: "Appeal")
   end
 
   def bgs
