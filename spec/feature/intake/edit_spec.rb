@@ -258,6 +258,67 @@ RSpec.feature "Edit issues" do
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def verify_decision_issues_can_be_added_and_removed(page_url,
+                                                      original_request_issue,
+                                                      review_request,
+                                                      contested_decision_issues)
+    visit page_url
+    expect(page).to have_content("currently contesting decision issue")
+    expect(page).to have_content("PTSD denied")
+
+    # check that we cannot add the same issue again
+    click_intake_add_issue
+    expect(page).to have_css("input[disabled]", visible: false)
+    expect(page).to have_content("PTSD denied (already selected for")
+
+    nonrating_decision_issue_description = "nonrating decision issue dispositon: " \
+                                           "Active Duty Adjustments - Test nonrating decision issue"
+    rating_decision_issue_description = "rating decision issue"
+    # check that nonrating and rating decision issues show up
+    expect(page).to have_content(nonrating_decision_issue_description)
+    expect(page).to have_content(rating_decision_issue_description)
+    safe_click ".close-modal"
+
+    # remove original decision issue
+    click_remove_intake_issue_by_text("currently contesting decision issue")
+    click_remove_issue_confirmation
+
+    # add new decision issue
+    click_intake_add_issue
+    add_intake_rating_issue(rating_decision_issue_description)
+    expect(page).to have_content(rating_decision_issue_description)
+
+    click_intake_add_issue
+    add_intake_rating_issue(nonrating_decision_issue_description)
+    expect(page).to have_content(nonrating_decision_issue_description)
+
+    safe_click("#button-submit-update")
+    safe_click ".confirm"
+    expect(page).to have_content("Edit Confirmed")
+
+    visit page_url
+    expect(page).to have_content(nonrating_decision_issue_description)
+    expect(page).to have_content(rating_decision_issue_description)
+    expect(page).to have_content("PTSD denied")
+
+    # check that decision_request_issue is closed
+    updated_request_issue = RequestIssue.find_by(id: original_request_issue.id)
+    expect(updated_request_issue.review_request).to be_nil
+
+    # check that new request issue is created contesting the decision issue
+    expect(RequestIssue.find_by(review_request: review_request,
+                                contested_decision_issue_id: contested_decision_issues.first.id,
+                                description: contested_decision_issues.first.formatted_description)).to_not be_nil
+
+    expect(RequestIssue.find_by(review_request: review_request,
+                                contested_decision_issue_id: contested_decision_issues.second.id,
+                                description: contested_decision_issues.second.formatted_description)).to_not be_nil
+  end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
+
   context "Higher-Level Reviews" do
     let!(:higher_level_review) do
       HigherLevelReview.create!(
@@ -719,46 +780,26 @@ RSpec.feature "Edit issues" do
       end
 
       context "has decision issues" do
-        let(:contested_decision_issue) { setup_prior_decision_issues(veteran) }
+        let(:contested_decision_issues) { setup_prior_decision_issues(veteran) }
         let(:decision_request_issue) do
           create(
             :request_issue,
             review_request: higher_level_review,
             description: "currently contesting decision issue",
             decision_date: Time.zone.now - 2.days,
-            contested_decision_issue_id: contested_decision_issue.id
+            contested_decision_issue_id: contested_decision_issues.first.id
           )
         end
 
         let(:request_issues) { [request_issue, decision_request_issue] }
 
         it "shows decision isssues and allows adding/removing issues" do
-          visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-          expect(page).to have_content("currently contesting decision issue")
-          # check that we cannot add the same issue again
-          click_intake_add_issue
-          expect(page).to have_css("input[disabled]", visible: false)
-          safe_click ".close-modal"
-
-          # remove original decision issue
-          click_remove_intake_issue_by_text("currently contesting decision issue")
-          click_remove_issue_confirmation
-
-          # add new decision issue
-          click_intake_add_issue
-          add_intake_rating_issue("contested supplemental claim decision issue")
-          expect(page).to have_content("contested supplemental claim decision issue")
-          safe_click("#button-submit-update")
-          expect(page).to have_content("Edit Confirmed")
-
-          # check that decision_request_issue is closed
-          updated_request_issue = RequestIssue.find_by(id: decision_request_issue.id)
-          expect(updated_request_issue.review_request).to be_nil
-
-          # check that new request issue is created contesting the decision issue
-          expect(RequestIssue.find_by(review_request: higher_level_review,
-                                      contested_decision_issue_id: contested_decision_issue.id,
-                                      description: contested_decision_issue.decision_text)).to_not be_nil
+          verify_decision_issues_can_be_added_and_removed(
+            "higher_level_reviews/#{rating_ep_claim_id}/edit",
+            decision_request_issue,
+            higher_level_review,
+            contested_decision_issues
+          )
         end
       end
 
@@ -1267,47 +1308,26 @@ RSpec.feature "Edit issues" do
       end
 
       context "has decision issues" do
-        let(:contested_decision_issue) { setup_prior_decision_issues(veteran) }
+        let(:contested_decision_issues) { setup_prior_decision_issues(veteran) }
         let(:decision_request_issue) do
           create(
             :request_issue,
             review_request: supplemental_claim,
             description: "currently contesting decision issue",
             decision_date: Time.zone.now - 2.days,
-            contested_decision_issue_id: contested_decision_issue.id
+            contested_decision_issue_id: contested_decision_issues.first.id
           )
         end
 
         let(:request_issues) { [request_issue, decision_request_issue] }
 
         it "shows decision isssues and allows adding/removing issues" do
-          visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-          expect(page).to have_content("currently contesting decision issue")
-
-          # check that we cannot add the same issue again
-          click_intake_add_issue
-          expect(page).to have_css("input[disabled]", visible: false)
-          safe_click ".close-modal"
-
-          # remove original decision issue
-          click_remove_intake_issue_by_text("currently contesting decision issue")
-          click_remove_issue_confirmation
-
-          # add new decision issue
-          click_intake_add_issue
-          add_intake_rating_issue("contested supplemental claim decision issue")
-          expect(page).to have_content("contested supplemental claim decision issue")
-          safe_click("#button-submit-update")
-          expect(page).to have_content("Edit Confirmed")
-
-          # check that decision_request_issue is closed
-          updated_request_issue = RequestIssue.find_by(id: decision_request_issue.id)
-          expect(updated_request_issue.review_request).to be_nil
-
-          # check that new request issue is created contesting the decision issue
-          expect(RequestIssue.find_by(review_request: supplemental_claim,
-                                      contested_decision_issue_id: contested_decision_issue.id,
-                                      description: contested_decision_issue.decision_text)).to_not be_nil
+          verify_decision_issues_can_be_added_and_removed(
+            "supplemental_claims/#{rating_ep_claim_id}/edit",
+            decision_request_issue,
+            supplemental_claim,
+            contested_decision_issues
+          )
         end
       end
 
