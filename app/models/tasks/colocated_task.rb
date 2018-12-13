@@ -64,8 +64,9 @@ class ColocatedTask < Task
     actions
   end
 
-  def no_actions_available?(user)
-    completed? || assigned_to != user
+  def actions_available?(user)
+    return false if completed? || assigned_to != user
+    true
   end
 
   def update_if_hold_expired!

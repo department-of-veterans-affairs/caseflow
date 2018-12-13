@@ -605,7 +605,7 @@ RSpec.describe TasksController, type: :controller do
       it "should return an error" do
         User.stub = colocated
         patch :update, params: { task: { status: Constants.TASK_STATUSES.in_progress }, id: admin_action.id }
-        expect(response.status).to eq(403)
+        expect(response.status).to eq 403
       end
     end
   end

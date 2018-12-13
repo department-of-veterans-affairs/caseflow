@@ -42,14 +42,14 @@ class VACOLS::CaseHearing < VACOLS::Record
     add_on: :addon,
     representative_name: :repname,
     staff_id: :mduser,
-    room_info: :room,
     room: :room,
     hearing_date: :hearing_date,
     hearing_type: :hearing_type,
     judge_id: :board_member,
     folder_nr: :folder_nr,
     board_member: :board_member,
-    team: :team
+    team: :team,
+    bva_poc: :vdbvapoc
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -150,7 +150,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :holddays, :tranreq, :transent,
              :repname, :addon,  :board_member, :mduser,
              :mdtime, :sattyid, :bfregoff, :bfso,
-             :bfcorkey, :bfddec, :bfdc,
+             :bfcorkey, :bfddec, :bfdc, :room, :vdbvapoc,
              "staff.sdomainid as css_id", "brieff.bfac", "staff.slogid",
              "corres.saddrst1", "corres.saddrst2", "corres.saddrcty",
              "corres.saddrstt", "corres.saddrcnty", "corres.saddrzip",

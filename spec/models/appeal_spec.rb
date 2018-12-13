@@ -11,6 +11,67 @@ describe Appeal do
     end
   end
 
+  context "async logic scopes" do
+    let!(:appeal_requiring_processing) do
+      create(:appeal).tap(&:submit_for_processing!)
+    end
+
+    let!(:appeal_processed) do
+      create(:appeal).tap(&:processed!)
+    end
+
+    let!(:appeal_recently_attempted) do
+      create(
+        :appeal,
+        establishment_attempted_at: (Appeal::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+      )
+    end
+
+    let!(:appeal_attempts_ended) do
+      create(
+        :appeal,
+        establishment_submitted_at: (Appeal::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        establishment_attempted_at: (Appeal::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
+      )
+    end
+
+    context ".unexpired" do
+      it "matches appeals still inside the processing window" do
+        expect(Appeal.unexpired).to eq([appeal_requiring_processing])
+      end
+    end
+
+    context ".processable" do
+      it "matches appeals eligible for processing" do
+        expect(Appeal.processable).to match_array(
+          [appeal_requiring_processing, appeal_attempts_ended]
+        )
+      end
+    end
+
+    context ".attemptable" do
+      it "matches appeals that could be attempted" do
+        expect(Appeal.attemptable).not_to include(appeal_recently_attempted)
+      end
+    end
+
+    context ".requires_processing" do
+      it "matches appeals that must still be processed" do
+        expect(Appeal.requires_processing).to eq([appeal_requiring_processing])
+      end
+    end
+
+    context ".expired_without_processing" do
+      it "matches appeals unfinished but outside the retry window" do
+        expect(Appeal.expired_without_processing).to eq([appeal_attempts_ended])
+      end
+    end
+  end
+
+  context "#establish!" do
+    it { is_expected.to_not be_nil }
+  end
+
   context "#special_issues" do
     let(:appeal) { create(:appeal) }
     let(:vacols_id) { nil }
@@ -28,6 +89,9 @@ describe Appeal do
 
     context "VACOLS opt-in" do
       let(:vacols_id) { "something" }
+      let!(:legacy_opt_in) do
+        create(:legacy_issue_optin, request_issue: request_issue)
+      end
 
       it "includes VACOLS opt-in" do
         expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
@@ -285,6 +349,35 @@ describe Appeal do
       subject { appeal.assigned_judge }
 
       it { is_expected.to eq judge }
+    end
+  end
+
+  context ".tasks_for_timeline" do
+    context "when there are completed organization tasks with completed child tasks assigned to people" do
+      let(:judge) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
+      let!(:task2) do
+        create(:qr_task, appeal: appeal, status: Constants.TASK_STATUSES.completed, assigned_to_type: "Organization")
+      end
+      let!(:task3) do
+        create(:qr_task, assigned_to: judge, appeal: appeal, status: Constants.TASK_STATUSES.completed,
+                         parent_id: task2.id)
+      end
+
+      subject { appeal.tasks_for_timeline.first }
+      it { is_expected.to eq task3 }
+    end
+    context "when there are completed organization tasks without child tasks" do
+      let(:judge) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
+      let!(:task2) do
+        create(:qr_task, appeal: appeal, status: Constants.TASK_STATUSES.completed, assigned_to_type: "Organization")
+      end
+
+      subject { appeal.tasks_for_timeline.first }
+      it { is_expected.to eq task2 }
     end
   end
 end

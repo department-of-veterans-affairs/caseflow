@@ -1,6 +1,5 @@
 class Appeal < DecisionReview
   include Taskable
-  include LegacyOptinable
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -222,18 +221,35 @@ class Appeal < DecisionReview
     RootTask.create_root_and_sub_tasks!(self)
   end
 
+  # Only select completed tasks because incomplete tasks will appear elsewhere on case details page.
+  # Tasks are sometimes assigned to organizations for tracking, these will appear as duplicates if they have child
+  # tasks, so we do not return those organization tasks.
+  def tasks_for_timeline
+    tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC")
+      .reject { |t| t.assigned_to.is_a?(Organization) && t.children.pluck(:assigned_to_type).include?(User.name) }
+  end
+
   def timeline
     [
       {
         title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
         date: decision_date
       },
-      tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC").map(&:timeline_details),
+      tasks_for_timeline.map(&:timeline_details),
       {
         title: receipt_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
         date: receipt_date
       }
     ].flatten
+  end
+
+  def establish!
+    attempted!
+
+    process_legacy_issues!
+
+    clear_error!
+    processed!
   end
 
   private

@@ -42,9 +42,9 @@ class ClaimReviewIntake < DecisionReviewIntake
     super(request_params) do
       detail.submit_for_processing!
       if run_async?
-        ClaimReviewProcessJob.perform_later(detail)
+        DecisionReviewProcessJob.perform_later(detail)
       else
-        ClaimReviewProcessJob.perform_now(detail)
+        DecisionReviewProcessJob.perform_now(detail)
       end
     end
   end
@@ -52,7 +52,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   private
 
   def create_claimant!
-    if request_params[:veteran_is_not_claimant] == "true"
+    if request_params[:veteran_is_not_claimant] == true
       Claimant.create!(
         participant_id: request_params[:claimant],
         payee_code: need_payee_code? ? request_params[:payee_code] : nil,
@@ -71,7 +71,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   def need_payee_code?
     # payee_code is only required for claim reviews where the veteran is
     # not the claimant and the benefit_type is compensation or pension
-    return unless request_params[:veteran_is_not_claimant] == "true"
+    return unless request_params[:veteran_is_not_claimant] == true
     ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(request_params[:benefit_type])
   end
 

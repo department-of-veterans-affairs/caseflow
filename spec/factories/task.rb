@@ -79,7 +79,7 @@ FactoryBot.define do
       parent { create(:root_task) }
     end
 
-    factory :qr_task do
+    factory :qr_task, class: QualityReviewTask do
       type QualityReviewTask.name
       appeal { create(:appeal) }
       parent { create(:root_task) }
