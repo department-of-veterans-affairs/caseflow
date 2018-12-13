@@ -35,6 +35,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       radio_link.click
       click_button("Schedule")
       find_link("Back to Schedule Veterans").click
+      expect(page).to have_content("Schedule Veterans")
     end
   end
 
@@ -71,6 +72,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       radio_link.click
       click_button("Schedule")
       find_link("Back to Schedule Veterans").click
+      expect(page).to have_content("Schedule Veterans")
     end
   end
 end
