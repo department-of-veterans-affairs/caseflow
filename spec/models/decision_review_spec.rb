@@ -74,7 +74,7 @@ describe DecisionReview do
           description: "decision issue 1",
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: 1,
+          sourceHigherLevelReview: higher_level_review.id,
           timely: true
         },
         {
@@ -96,7 +96,7 @@ describe DecisionReview do
           description: "decision issue 2",
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: 1,
+          sourceHigherLevelReview: higher_level_review.id,
           timely: true
         },
         ratingIssueReferenceId: nil,
@@ -106,7 +106,7 @@ describe DecisionReview do
         description: "decision issue 3",
         rampClaimId: nil,
         titleOfActiveReview: nil,
-        sourceHigherLevelReview: 1,
+        sourceHigherLevelReview: higher_level_review.id,
         timely: true
       )
     end
