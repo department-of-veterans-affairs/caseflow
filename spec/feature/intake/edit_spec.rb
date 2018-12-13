@@ -904,7 +904,7 @@ RSpec.feature "Edit issues" do
         )
 
         # expect the remove/re-add to create a new RequestIssue for same RatingIssue
-        expect(higher_level_review.request_issues).to_not include(request_issue)
+        expect(higher_level_review.reload.request_issues).to_not include(request_issue)
         new_version_of_request_issue = higher_level_review.find_request_issue_by_description(request_issue.description)
         expect(new_version_of_request_issue.rating_issue_reference_id).to eq(request_issue.rating_issue_reference_id)
 
