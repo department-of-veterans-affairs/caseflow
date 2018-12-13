@@ -396,7 +396,7 @@ export default class DailyDocket extends React.Component {
       { this.props.onErrorHearingDayLock && <Alert
         type="error"
         styling={alertStyling}
-        title={` Unable to lock Hearing Day 
+        title={` Unable to delete Hearing Day 
                 ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')} in Caseflow.`}
         message="Please delete the hearing day through VACOLS"
       />}
