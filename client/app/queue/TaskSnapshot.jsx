@@ -67,12 +67,9 @@ type Params = {|
 |};
 
 type Props = Params & {|
-  featureToggles: Object,
   userRole: string,
   appeal: Appeal,
   primaryTask: Task,
-  taskAssignedToUser: Task,
-  canEditAod: Boolean
 |};
 
 export class TaskSnapshot extends React.PureComponent<Props> {
@@ -182,12 +179,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
     </React.Fragment>;
 
-    // TODO: Can we ever exucute this block? Doesn't the exact same condition above kick us out of this function
-    // before we ever reach this point?
-    if (!primaryTask) {
-      return assignedToListItem;
-    }
-
     if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
       const assignedByFirstName = primaryTask.assignedBy.firstName;
       const assignedByLastName = primaryTask.assignedBy.lastName;
@@ -261,8 +252,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         <a id="our-elemnt" {...anchorJumpLinkStyling}>Currently active tasks</a>
       </h2>
       <div {...sectionSegmentStyling}>
-        <table {...css({ width: '100%',
-          marginTop: 0 })}>
+        <table {...css({ width: '100%', marginTop: 0 })}>
           <tbody>
             <tr>
               <td {...leftTableCell} {...css({ width: '20%' })}>
@@ -305,14 +295,12 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
-  const { featureToggles, userRole, canEditAod } = state.ui;
+  const { userRole } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    featureToggles,
     userRole,
     primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
-    canEditAod
   };
 };
 
