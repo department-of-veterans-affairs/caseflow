@@ -51,6 +51,7 @@ class ClaimReview < DecisionReview
 
     def find_all_by_file_number(file_number)
       claim_reviews = HigherLevelReview.where(veteran_file_number: file_number) + SupplementalClaim.where(veteran_file_number: file_number)
+      # claim_reviews.map(&:search_table_ui_hash)
       # byebug
       claim_reviews.map(&:search_table_ui_hash)
     end

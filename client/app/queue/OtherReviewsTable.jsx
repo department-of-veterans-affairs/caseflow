@@ -3,6 +3,7 @@ import React from 'react';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { css } from 'glamor';
 
 import Table from '../components/Table';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
@@ -10,7 +11,49 @@ import { clearCaseListSearch } from './CaseList/CaseListActions';
 import { DateString } from '../util/DateUtil';
 import COPY from '../../COPY.json';
 
+class SubdividedTableRow extends React.PureComponent {
+  render = () => {
+    let styling;
+    const borderStyle = '1px solid #D6D7D9';
+
+    if (this.props.i > 0) {
+      styling = css({ borderTop: borderStyle });
+    }
+
+    return <div {...styling}>{this.props.content}</div>;
+  }
+}
+
 class CaseListTable extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = { styling: {} };
+  }
+
+  componentDidMount = () => {
+    if (!this.props.reviews) {
+      this.setState({ styling: this.props.styling });
+
+      return;
+    }
+
+    let styles = {};
+
+    this.props.reviews.forEach((review, i) => {
+      if (review.epCodes.length > 1) {
+        styles[`& > tbody > tr:nth-of-type(${i + 1}) > td:nth-of-type(3)`] = { padding: 0 };
+        styles[`& > tbody > tr:nth-of-type(${i + 1}) > td:nth-of-type(4)`] = { padding: 0 };
+      }
+    });
+
+    debugger;
+    const styling = css(styles);
+
+    this.setState({
+      styling
+    });
+  }
+
   componentWillUnmount = () => this.props.clearCaseListSearch();
 
   getKeyForRow = (rowNumber, object) => object.id;
@@ -29,14 +72,20 @@ class CaseListTable extends React.PureComponent {
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
       valueFunction: (review) => review.epCodes ?
-        review.epCodes.join(', ') :
+        review.epCodes.map((epCode, i) => <SubdividedTableRow content={epCode} i={i}/>) :
         ''
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE,
       valueFunction: (review) => review.epStatus ?
-        review.epStatus.join(', ') :
-        ''
+        review.epStatus.map((epStatus, i) => {
+          // let styling;
+          if (!epStatus) {
+            epStatus = 'PROCESSING';
+          }
+
+          return <SubdividedTableRow content={epStatus} i={i} />;
+        }) : ''
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_DECISION_DATE_COLUMN_TITLE,
@@ -46,12 +95,15 @@ class CaseListTable extends React.PureComponent {
     }
   ];
 
-  render = () => <Table
-    columns={this.getColumns}
-    rowObjects={this.props.reviews}
-    getKeyForRow={this.getKeyForRow}
-    styling={this.props.styling}
-  />
+  render = () => {
+    debugger;
+    return <Table
+      columns={this.getColumns}
+      rowObjects={this.props.reviews}
+      getKeyForRow={this.getKeyForRow}
+      styling={this.state.styling}
+    />;
+  }
 }
 
 CaseListTable.propTypes = {

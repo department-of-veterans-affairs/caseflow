@@ -81,7 +81,7 @@ class CaseListView extends React.PureComponent {
 
     // debugger;
     if (claimReviewsCount) {
-      otherReviewsTable = <OtherReviewsTable reviews={this.props.claimReviews} />
+      otherReviewsTable = <OtherReviewsTable reviews={this.props.claimReviews} />;
     }
 
     // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be

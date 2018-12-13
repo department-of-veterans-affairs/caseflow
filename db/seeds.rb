@@ -330,7 +330,7 @@ class SeedDB
     LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
   end
 
-  def create_higher_level_reviews
+  def create_higher_level_reviews_and_supplemental_claims
     veteran_file_number = "682007349"
     veteran = Veteran.find_by(file_number: veteran_file_number)
 
@@ -358,7 +358,6 @@ class SeedDB
       claim_date: Time.zone.now,
       code: ep_rating_code,
       station: "397",
-      # modifier: "030",
       benefit_type_code: "1",
       payee_code: "00",
       synced_status: "CAN",
@@ -371,7 +370,6 @@ class SeedDB
       claim_date: Time.zone.now,
       code: ep_rating_code,
       station: "397",
-      # modifier: "031",
       benefit_type_code: "1",
       payee_code: "00",
       synced_status: nil,
@@ -384,7 +382,6 @@ class SeedDB
       claim_date: Time.zone.now,
       code: ep_rating_code,
       station: "397",
-      # modifier: "032",
       benefit_type_code: "1",
       payee_code: "00",
       synced_status: "PEND",
@@ -397,7 +394,6 @@ class SeedDB
       claim_date: Time.zone.now,
       code: ep_rating_code,
       station: "397",
-      # modifier: "033",
       benefit_type_code: "1",
       payee_code: "00",
       synced_status: "CLR",
@@ -410,7 +406,6 @@ class SeedDB
       claim_date: Time.zone.now,
       code: ep_nonrating_code,
       station: "397",
-      # modifier: "030",
       benefit_type_code: "1",
       payee_code: "00",
       synced_status: "CLR",
@@ -442,12 +437,6 @@ class SeedDB
                                        ])
     higher_level_review.process_end_product_establishments!
 
-    # an HLR can have many EPs
-    # we want an EP code that tells you how to route this / who to send it to / info a/b what's being granted
-    # an appeal with also have an EP (eventually) but not in caseflow, only has an EP when it leaves the board to be dispatched
-  end
-
-  def create_supplemental_claims
     SupplementalClaim.create(
       veteran_file_number: "682007349",
       receipt_date: Time.zone.now,
@@ -456,6 +445,9 @@ class SeedDB
       # decision date?
       # EP code?
     )
+    # an HLR can have many EPs
+    # we want an EP code that tells you how to route this / who to send it to / info a/b what's being granted
+    # an appeal with also have an EP (eventually) but not in caseflow, only has an EP when it leaves the board to be dispatched
   end
 
   def create_root_task(appeal)
@@ -688,8 +680,7 @@ class SeedDB
     setup_dispatch
     create_previously_held_hearing_data
 
-    create_higher_level_reviews
-    create_supplemental_claims
+    create_higher_level_reviews_and_supplemental_claims
 
     return if Rails.env.development?
 
