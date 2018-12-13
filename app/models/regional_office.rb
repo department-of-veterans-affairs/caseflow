@@ -884,6 +884,41 @@ class RegionalOffice
     facility_locator_id: nil,
     alternate_locations: nil }
   }.freeze
+  
+  ROS = CITIES.keys.freeze
+
+  SATELLITE_OFFICES = {
+    "SO62" => {
+      label: "San Antonio satellite office",
+      city: "San Antonio", state: "TX",
+      timezone: "America/Chicago",
+      regional_office: "RO62"
+    },
+    "SO06" => {
+      label: "Albany satellite office",
+      city: "Albany", state: "NY",
+      timezone: "America/New_York",
+      regional_office: "RO06"
+    },
+    "SO54" => {
+      label: "Las Vegas satellite office",
+      city: "Las Vegas", state: "NV",
+      timezone: "America/Los_Angeles",
+      regional_office: "RO54"
+    },
+    "SO49" => {
+      label: "El Paso satellite office",
+      city: "El Paso", state: "TX",
+      timezone: "America/Chicago",
+      regional_office: "RO49"
+    },
+    "SO43" => {
+      label: "Sacremento satellite office",
+      city: "Sacremento", state: "CA",
+      timezone: "America/Los_Angeles",
+      regional_office: "RO43"
+    }
+  }.freeze
 
   # The string key is a unique identifier for a regional office.
   attr_reader :key
