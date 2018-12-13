@@ -312,7 +312,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
           expect(expected_day).to_not be_nil
           expect(hearing_day[:hearing_type]).to eq(type)
           expect(hearing_day[:hearing_date]).to eq(expected_day.hearing_date.to_date)
-          expect(hearing_day[:room_info]).to eq(expected_day.room)
+          expect(hearing_day[:room]).to eq(expected_day.room)
           expect(hearing_day[:regional_office]).to eq(ro)
           expect(hearing_day[:judge_id]).to_not be_nil
           expect(hearing_day[:judge_name]).to_not be_nil

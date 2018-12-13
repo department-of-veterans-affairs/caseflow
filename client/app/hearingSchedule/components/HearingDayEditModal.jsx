@@ -194,7 +194,7 @@ class HearingDayEditModal extends React.Component {
       <div className="cf-modal-scroll">
         <Modal
           title="Edit Hearing Day"
-          closeHandler={this.onCancelModal}
+          closeHandler={this.props.cancelModal}
           confirmButton={this.modalConfirmButton()}
           cancelButton={this.modalCancelButton()}
         >
