@@ -78,7 +78,6 @@ class CaseDetailsView extends React.PureComponent {
           veteranId={appeal.veteranFileNumber}
         />
       }
-      <CaseSnapshot appealId={appealId} />
       <TaskSnapshot appealId={appealId} />
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>

@@ -243,34 +243,6 @@ export class CaseSnapshot extends React.PureComponent<Props> {
     const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
-      <div className="usa-width-one-fourth">
-        <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
-        <CaseDetailsDescriptionList>
-          { !taskAssignedToVso && appeal.assignedJudge &&
-            <React.Fragment>
-              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
-              <dd>{appeal.assignedJudge.full_name}</dd>
-            </React.Fragment> }
-          { !taskAssignedToVso && appeal.assignedAttorney &&
-            <React.Fragment>
-              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
-              <dd>{appeal.assignedAttorney.full_name}</dd>
-            </React.Fragment> }
-          {this.daysSinceTaskAssignmentListItem()}
-        </CaseDetailsDescriptionList>
-      </div>
-      <div className="usa-width-one-fourth">
-        <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE}</h3>
-        <CaseDetailsDescriptionList>
-          {this.legacyTaskInformation()}
-        </CaseDetailsDescriptionList>
-      </div>
-      {this.showActionsSection() &&
-        <div className="usa-width-one-half">
-          <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          <ActionsDropdown task={primaryTask} appealId={appeal.externalId} />
-        </div>
-      }
     </div>;
   };
 }

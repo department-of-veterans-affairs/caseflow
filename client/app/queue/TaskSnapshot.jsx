@@ -36,7 +36,7 @@ export const grayLine = css({
   margin: 'auto',
   position: 'absolute',
   top: '35px',
-  left: '25px',
+  left: '45%',
   bottom: 0
 });
 
@@ -254,6 +254,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       appeal,
       primaryTask
     } = this.props;
+    const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
@@ -267,13 +268,23 @@ export class TaskSnapshot extends React.PureComponent<Props> {
               <td {...leftTableCell} {...css({ width: '20%' })}>
                 <CaseDetailsDescriptionList>
                   <dt>Assigned on</dt>
-                  <dd>{moment(primaryTask.assignedOn).format('MM/DD/YYYY')}</dd>
+                  <dd>{primaryTask && primaryTask.assignedOn && moment(primaryTask.assignedOn).format('MM/DD/YYYY')}</dd>
                   {this.daysSinceTaskAssignmentListItem()}
                 </CaseDetailsDescriptionList>
               </td>
               <td {...tableCellWithIcon}><GrayDot /><div {...grayLine} /></td>
               <td {...tableCell} {...css({ width: '25%' })}>
                 <CaseDetailsDescriptionList>
+                  { !taskAssignedToVso && appeal.assignedJudge &&
+                    <React.Fragment>
+                      <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
+                      <dd>{appeal.assignedJudge.full_name}</dd>
+                    </React.Fragment> }
+                  { !taskAssignedToVso && appeal.assignedAttorney &&
+                    <React.Fragment>
+                      <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
+                      <dd>{appeal.assignedAttorney.full_name}</dd>
+                    </React.Fragment> }
                   {this.legacyTaskInformation()}
                 </CaseDetailsDescriptionList>
               </td>
