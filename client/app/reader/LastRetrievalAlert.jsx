@@ -24,7 +24,12 @@ class LastRetrievalAlert extends React.PureComponent {
     // Check that document manifests have been recieved from VVA and VBMS
     if (!this.props.manifestVbmsFetchedAt || !this.props.manifestVvaFetchedAt) {
       return <Alert title="Error" type="error">
-        Some documents could not be loaded at this time...
+        Some of {this.props.appeal.veteran_full_name}'s documents are not available at the moment due to
+        a loading error from VBMS or VVA. As a result, you may be viewing a partial list of claims folder documents.
+        <br />
+        <br />
+        Please refresh your browser at a later point to view a complete list of documents in the claims
+        folder.
       </Alert>;
     }
 
@@ -46,7 +51,12 @@ class LastRetrievalAlert extends React.PureComponent {
     // Check that manifest results are fresh
     if (vbmsManifestTimestamp < staleCacheTimestamp || vvaManifestTimestamp < staleCacheTimestamp) {
       return <Alert title="Warning" type="warning">
-        The document list may be stale
+        Some of {this.props.appeal.veteran_full_name}'s documents may not be available at the moment due to
+        a loading error from VBMS or VVA. As a result, you may be viewing a partial list of claims folder documents.
+        <br />
+        <br />
+        Please refresh your browser at a later point to view a complete list of documents in the claims
+        folder.
       </Alert>;
     }
 
