@@ -84,10 +84,6 @@ class ClaimReview < DecisionReview
     request_issues.find { |reqi| reqi.description == description }
   end
 
-  def non_comp?
-    !ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
-  end
-
   private
 
   def contestable_decision_issues
