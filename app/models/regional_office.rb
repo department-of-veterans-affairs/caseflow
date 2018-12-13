@@ -366,7 +366,7 @@ class RegionalOffice
     timezone: "America/Chicago",
     hold_hearings: true,
     facility_locator_id: "vba_334",
-    alternate_locations: [nil] },
+    alternate_locations: ["vba_442"] },
     "RO35" =>
   { label: "St. Paul regional office",
     city: "St. Paul",
@@ -884,7 +884,7 @@ class RegionalOffice
     facility_locator_id: nil,
     alternate_locations: nil }
   }.freeze
-  
+
   ROS = CITIES.keys.freeze
 
   SATELLITE_OFFICES = {
