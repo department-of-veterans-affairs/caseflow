@@ -161,7 +161,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def process_legacy_issues!
-    LegacyOptinManager.new(self).process!
+    LegacyOptinManager.new(decision_review: self).process!
   end
 
   def contestable_issues

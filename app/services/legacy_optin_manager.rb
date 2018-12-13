@@ -14,6 +14,7 @@ class LegacyOptinManager
       affected_legacy_appeals.each do |legacy_appeal|
         # track which issues we close during this transaction
         open_legacy_issues = legacy_appeal.issues.reject(&:closed?)
+        next unless open_legacy_issues.any?
 
         # loop through each issue on the appeal, gut check on whether it can be closed,
         # and then close it.

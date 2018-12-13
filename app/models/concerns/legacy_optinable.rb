@@ -12,6 +12,6 @@ module LegacyOptinable
   end
 
   def needs_vacols_optin_special_issue?
-    !!request_issues.legacy_issue_optin
+    request_issues.any?(&:legacy_issue_optin)
   end
 end

@@ -25,6 +25,32 @@ describe SupplementalClaim do
     )
   end
 
+  context "#special_issues" do
+    let(:vacols_id) { nil }
+    let!(:request_issue) do
+      create(:request_issue, review_request: supplemental_claim, vacols_id: vacols_id)
+    end
+
+    subject { supplemental_claim.special_issues }
+
+    context "no special conditions" do
+      it "is empty" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "VACOLS opt-in" do
+      let(:vacols_id) { "something" }
+      let!(:legacy_opt_in) do
+        create(:legacy_issue_optin, request_issue: request_issue)
+      end
+
+      it "includes VACOLS opt-in" do
+        expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
+      end
+    end
+  end
+
   context "#valid?" do
     subject { supplemental_claim.valid? }
 
