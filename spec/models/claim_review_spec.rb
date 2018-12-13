@@ -185,6 +185,30 @@ describe ClaimReview do
     end
   end
 
+  context "#non_comp?" do
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
+
+    subject { claim_review.non_comp? }
+
+    context "when benefit_type is compensation" do
+      let(:benefit_type) { "compensation" }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when benefit_type is pension" do
+      let(:benefit_type) { "pension" }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when benefit_type is something else" do
+      let(:benefit_type) { "foobar" }
+
+      it { is_expected.to be_truthy }
+    end
+  end
+
   context "#create_issues!" do
     before { claim_review.save! }
     subject { claim_review.create_issues!(issues) }
