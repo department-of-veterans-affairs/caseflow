@@ -348,6 +348,17 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
       $unset: ['dailyDocketServerError']
     });
 
+  case ACTIONS.HANDLE_LOCK_HEARING_SERVER_ERROR:
+    return update(state, {
+      onErrorHearingDayLock: { $set: true },
+      displayLockModal: { $set: false }
+    });
+
+  case ACTIONS.RESET_LOCK_HEARING_SERVER_ERROR:
+    return update(state, {
+      $unset: ['onErrorHearingDayLock']
+    });
+
   case ACTIONS.RESET_DELETE_SUCCESSFUL:
     return update(state, {
       $unset: ['successfulHearingDayDelete']
