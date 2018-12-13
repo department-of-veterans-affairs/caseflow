@@ -18,7 +18,7 @@ class Appeal < DecisionReview
 
   scope :join_aod_motions, lambda {
     joins(claimants: :person)
-      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")    
+      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
   }
 
   scope :all_priority, lambda {

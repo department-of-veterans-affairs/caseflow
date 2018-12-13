@@ -167,7 +167,7 @@ describe Appeal do
     end
   end
 
-  context "when claimants have different poas", focus: true do
+  context "when claimants have different poas" do
     let(:participant_id_with_pva) { "1234" }
     let(:participant_id_with_aml) { "5678" }
 
@@ -208,7 +208,6 @@ describe Appeal do
 
     context "#power_of_attorney" do
       it "returns the first claimant's power of attorney" do
-        byebug
         expect(appeal.power_of_attorney.representative_name).to eq("PARALYZED VETERANS OF AMERICA, INC.")
       end
     end
