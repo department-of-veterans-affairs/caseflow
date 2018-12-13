@@ -118,7 +118,7 @@ describe AppealIntake do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
-      let(:veteran_is_not_claimant) { "true" }
+      let(:veteran_is_not_claimant) { true }
 
       it "adds other relationship to claimants" do
         subject
@@ -153,7 +153,9 @@ describe AppealIntake do
 
     let(:issue_data) do
       [
-        { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" },
+        { rating_issue_profile_date: "2018-04-30",
+          rating_issue_reference_id: "reference-id",
+          decision_text: "decision text" },
         { decision_text: "nonrating request issue decision text",
           issue_category: "test issue category",
           decision_date: "2018-12-25" }
@@ -185,17 +187,25 @@ describe AppealIntake do
         description: "nonrating request issue decision text"
       )
       expect(intake.detail.tasks.count).to eq 1
+      expect(intake.detail.submitted?).to eq true
+      expect(intake.detail.attempted?).to eq true
+      expect(intake.detail.processed?).to eq true
     end
 
     context "when a legacy VACOLS opt-in occurs" do
+      let(:vacols_case) { create(:case) }
+      let(:legacy_appeal) do
+        create(:legacy_appeal, vacols_case: vacols_case)
+      end
+
       let(:issue_data) do
         [
           {
             profile_date: "2018-04-30",
             reference_id: "reference-id",
             decision_text: "decision text",
-            vacols_id: "a-vacols-issue",
-            vacols_sequence_id: "vacols-seq"
+            vacols_id: legacy_appeal.vacols_id,
+            vacols_sequence_id: 1
           }
         ]
       end
@@ -215,12 +225,11 @@ describe AppealIntake do
 
         it "submits a LegacyIssueOptin" do
           expect(LegacyIssueOptin.count).to eq 0
-          expect(LegacyOptinProcessJob).to receive(:perform_now).once
+          expect_any_instance_of(LegacyOptinManager).to receive(:process!).once
 
           subject
 
           expect(LegacyIssueOptin.count).to eq 1
-          expect(LegacyIssueOptin.first).to be_submitted
         end
       end
     end

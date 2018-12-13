@@ -69,5 +69,9 @@ FactoryBot.define do
     trait :disposition_granted_by_aoj do
       issdc "B"
     end
+
+    trait :disposition_opted_in do
+      issdc "O"
+    end
   end
 end

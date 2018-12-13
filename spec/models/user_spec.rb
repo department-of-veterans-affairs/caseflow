@@ -398,9 +398,6 @@ describe User do
   end
 
   describe ".administered_teams" do
-  end
-
-  describe ".administered_teams" do
     let(:org) { create(:organization) }
     let(:user) { create(:user) }
 
@@ -429,6 +426,25 @@ describe User do
       it "should return a list of all teams user is an admin for" do
         expect(user.administered_teams).to eq(admin_orgs)
       end
+    end
+  end
+
+  describe ".judge_css_id" do
+    let(:css_id) { SecureRandom.uuid }
+    let(:judge) { FactoryBot.create :user, css_id: css_id }
+    let(:attorney) { FactoryBot.create :user }
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+
+    before do
+      OrganizationsUser.add_user_to_organization(attorney, judge_team)
+    end
+
+    it "returns the css_id of the judge adminstering a judge team the attorney is in" do
+      expect(attorney.judge_css_id).to eq css_id
+    end
+
+    it "returns the judge's own css_id" do
+      expect(judge.judge_css_id).to eq judge.css_id
     end
   end
 end

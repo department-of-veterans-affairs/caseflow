@@ -63,6 +63,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   # Create a hearing schedule day
   def create
+    return no_available_rooms unless rooms_are_available
     hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) if hearing.nil?
     render json: {
@@ -110,16 +111,25 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def update_params
-    params.permit(:judge_id, :regional_office, :hearing_key, :hearing_type, :lock)
-      .merge(updated_by: current_user)
+    params.permit(:judge_id,
+                  :regional_office,
+                  :hearing_key,
+                  :hearing_type,
+                  :room,
+                  :bva_poc,
+                  :notes,
+                  :lock)
+      .merge(updated_by: current_user.css_id)
   end
 
   def create_params
     params.permit(:hearing_type,
                   :hearing_date,
-                  :room_info,
+                  :room,
                   :judge_id,
-                  :regional_office)
+                  :regional_office,
+                  :notes,
+                  :bva_poc)
       .merge(created_by: current_user, updated_by: current_user)
   end
 
@@ -163,7 +173,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def json_hearing(hearing)
     hearing.as_json.each_with_object({}) do |(k, v), converted|
-      converted[k] = if k == "room_info"
+      converted[k] = if k == "room"
                        HearingDayMapper.label_for_room(v)
                      elsif k == "regional_office" && !v.nil?
                        HearingDayMapper.city_for_regional_office(v)
@@ -217,5 +227,54 @@ class Hearings::HearingDayController < HearingScheduleController
     else
       { id: json_hash[:data][:id] }.merge(json_hash[:data][:attributes])
     end
+  end
+
+  def rooms_are_available
+    # Coming from Add Hearing Day modal but no room required
+    if do_not_assign_room
+      params.delete(:assign_room)
+      params[:room] = ""
+      return true
+    end
+    # Return if coming from regular create from RO algorithm
+    # where no assign_room variable is included in params
+    return true unless params.key?(:assign_room)
+
+    # Coming from Add Hearing Day modal and room required
+    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date]).group(:room).count
+    available_room = select_available_room(hearing_count_by_room)
+
+    params.delete(:assign_room)
+    params[:room] = available_room if !available_room.nil?
+    !available_room.nil?
+  end
+
+  def do_not_assign_room
+    params.key?(:assign_room) && (!params[:assign_room] || params[:assign_room] == "false")
+  end
+
+  def select_available_room(hearing_count_by_room)
+    available_room = nil
+    (1..HearingRooms::ROOMS.size).each do |hearing_room|
+      room_count = hearing_count_by_room[hearing_room.to_s]
+      if room_count.nil?
+        available_room = hearing_room.to_s
+        break
+      end
+      if !room_count.nil? && room_count == 0
+        available_room = hearing_room.to_s
+        break
+      end
+    end
+    available_room
+  end
+
+  def no_available_rooms
+    render json: {
+      "errors": [
+        "title": "No rooms available",
+        "detail": "All rooms are taken for the date selected."
+      ]
+    }, status: 404
   end
 end

@@ -267,6 +267,60 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       $toggle: ['filterVljIsOpen']
     });
+  case ACTIONS.SELECT_HEARING_TYPE:
+    return update(state, {
+      hearingType: {
+        $set: action.payload.hearingType
+      }
+    });
+  case ACTIONS.SELECT_VLJ:
+    return update(state, {
+      vlj: {
+        $set: action.payload.vlj
+      }
+    });
+  case ACTIONS.SELECT_COORDINATOR:
+    return update(state, {
+      coordinator: {
+        $set: action.payload.coordinator
+      }
+    });
+  case ACTIONS.SELECT_HEARING_ROOM:
+    return update(state, {
+      hearingRoom: {
+        $set: action.payload.hearingRoom
+      }
+    });
+  case ACTIONS.SET_NOTES:
+    return update(state, {
+      notes: {
+        $set: action.payload.notes
+      }
+    });
+  case ACTIONS.ASSIGN_HEARING_ROOM:
+    return update(state, {
+      roomNotRequired: {
+        $set: action.payload.roomNotRequired
+      }
+    });
+  case ACTIONS.HEARING_DAY_MODIFIED:
+    return update(state, {
+      hearingDayModified: {
+        $set: action.payload.hearingDayModified
+      }
+    });
+  case ACTIONS.RECEIVE_JUDGES:
+    return update(state, {
+      activeJudges: {
+        $set: action.payload.activeJudges
+      }
+    });
+  case ACTIONS.RECEIVE_COORDINATORS:
+    return update(state, {
+      activeCoordinators: {
+        $set: action.payload.activeCoordinators
+      }
+    });
   case ACTIONS.ON_CLICK_REMOVE_HEARING_DAY:
     return update(state, {
       displayRemoveHearingDayModal: {
@@ -283,6 +337,17 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.date
       }
     });
+  case ACTIONS.HANDLE_DAILY_DOCKET_SERVER_ERROR:
+    return update(state, {
+      dailyDocketServerError: { $set: true },
+      displayRemoveHearingDayModal: { $set: false }
+    });
+
+  case ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR:
+    return update(state, {
+      $unset: ['dailyDocketServerError']
+    });
+
   case ACTIONS.RESET_DELETE_SUCCESSFUL:
     return update(state, {
       $unset: ['successfulHearingDayDelete']
