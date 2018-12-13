@@ -18,8 +18,9 @@ class RootTask < GenericTask
     []
   end
 
-  def no_actions_available?(_user)
-    completed?
+  def actions_available?(_user)
+    return false if completed?
+    true
   end
 
   class << self
@@ -42,7 +43,7 @@ class RootTask < GenericTask
     end
   end
 
-  def can_be_accessed_by_user?(user)
+  def can_be_updated_by_user?(user)
     return true if HearingsManagement.singleton.user_has_access?(user)
 
     super(user)
