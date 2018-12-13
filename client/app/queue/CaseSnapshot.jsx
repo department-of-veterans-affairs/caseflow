@@ -8,8 +8,6 @@ import {
   actionableTasksForAppeal,
   appealWithDetailSelector
 } from './selectors';
-import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
-import ActionsDropdown from './components/ActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 
 import COPY from '../../COPY.json';
@@ -35,10 +33,6 @@ const snapshotParentContainerStyling = css({
   '& > div:first-child': { paddingLeft: '3rem' },
 
   '& .Select': { maxWidth: '100%' }
-});
-
-const headingStyling = css({
-  marginBottom: '0.5rem'
 });
 
 const snapshotChildResponsiveWrapFixStyling = css({
@@ -236,12 +230,6 @@ export class CaseSnapshot extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const {
-      appeal,
-      primaryTask
-    } = this.props;
-    const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
-
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
     </div>;
   };

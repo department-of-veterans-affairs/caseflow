@@ -252,13 +252,15 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         <a id="our-elemnt" {...anchorJumpLinkStyling}>Currently active tasks</a>
       </h2>
       <div {...sectionSegmentStyling}>
-        <table {...css({ width: '100%', marginTop: 0 })}>
+        <table {...css({ width: '100%',
+          marginTop: 0 })}>
           <tbody>
             <tr>
               <td {...leftTableCell} {...css({ width: '20%' })}>
                 <CaseDetailsDescriptionList>
                   <dt>Assigned on</dt>
-                  <dd>{primaryTask && primaryTask.assignedOn && moment(primaryTask.assignedOn).format('MM/DD/YYYY')}</dd>
+                  <dd>{primaryTask && primaryTask.assignedOn &&
+                      moment(primaryTask.assignedOn).format('MM/DD/YYYY')}</dd>
                   {this.daysSinceTaskAssignmentListItem()}
                 </CaseDetailsDescriptionList>
               </td>
@@ -300,7 +302,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
-    primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
+    primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0]
   };
 };
 
