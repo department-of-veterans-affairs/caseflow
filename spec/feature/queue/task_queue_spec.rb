@@ -1,62 +1,35 @@
 require "rails_helper"
 
 RSpec.feature "Task queue" do
-  let(:attorney_user) { FactoryBot.create(:user) }
-  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+  context "attorney user with assigned tasks" do
+    let(:attorney_user) { FactoryBot.create(:user) }
 
-  let!(:simple_appeal) do
-    FactoryBot.create(
-      :legacy_appeal,
-      :with_veteran,
-      vacols_case: FactoryBot.create(:case, :assigned, user: attorney_user)
-    )
-  end
+    let!(:attorney_task) do
+      FactoryBot.create(
+        :ama_attorney_task,
+        :on_hold,
+        assigned_to: attorney_user
+      )
+    end
 
-  let!(:attorney_task) do
-    FactoryBot.create(
-      :ama_attorney_task,
-      :on_hold,
-      assigned_to: attorney_user
-    )
-  end
-
-  let!(:non_veteran_claimant_appeal) do
-    FactoryBot.create(
-      :legacy_appeal,
-      :with_veteran,
-      vacols_case: FactoryBot.create(
-        :case,
-        :assigned,
-        user: attorney_user,
-        correspondent: FactoryBot.create(
-          :correspondent,
-          appellant_first_name: "Not",
-          appellant_middle_initial: "D",
-          appellant_last_name: "Veteran"
+    let!(:paper_appeal) do
+      FactoryBot.create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          user: attorney_user,
+          folder: FactoryBot.build(:folder, :paper_case)
         )
       )
-    )
-  end
+    end
 
-  let!(:paper_appeal) do
-    FactoryBot.create(
-      :legacy_appeal,
-      :with_veteran,
-      vacols_case: FactoryBot.create(
-        :case,
-        :assigned,
-        user: attorney_user,
-        folder: FactoryBot.build(:folder, :paper_case)
-      )
-    )
-  end
+    let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
+    let(:attorney_on_hold_tasks) do
+      Task.where(status: :on_hold, assigned_to: attorney_user)
+    end
 
-  let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
-  let(:attorney_on_hold_tasks) do
-    Task.where(status: :on_hold, assigned_to: attorney_user)
-  end
-
-  context "attorney user with assigned tasks" do
     before do
       User.authenticate!(user: attorney_user)
       visit "/queue"
@@ -97,6 +70,8 @@ RSpec.feature "Task queue" do
       find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length)).click
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_tasks.length)
+      appeal = attorney_task.appeal
+      expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
     end
 
     it "does not show queue switcher dropdown" do
