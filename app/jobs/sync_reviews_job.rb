@@ -36,9 +36,11 @@ class SyncReviewsJob < CaseflowJob
   end
 
   def perform_decision_review_processing(limit)
-    [HigherLevelReview, SupplementalClaim, RequestIssuesUpdate].each do |klass|
-      klass.requires_processing.limit(limit).each do |claim_review|
-        DecisionReviewProcessJob.perform_later(claim_review)
+    # RequestIssuesUpdate is not a DecisionReview subclass but it acts like one
+    # for the purposes of DecisionReviewProcessJob
+    [Appeal, HigherLevelReview, SupplementalClaim, RequestIssuesUpdate].each do |klass|
+      klass.requires_processing.limit(limit).each do |review|
+        DecisionReviewProcessJob.perform_later(review)
       end
     end
   end
