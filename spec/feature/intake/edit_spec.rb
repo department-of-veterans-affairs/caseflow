@@ -796,7 +796,7 @@ RSpec.feature "Edit issues" do
           )
         end
 
-        let!(:already_active_request_issue) do
+        let!(:request_issue_that_causes_ineligiblity) do
           already_active_hlr = create(:higher_level_review, :with_end_product_establishment)
           create(
             :request_issue,
@@ -1338,7 +1338,7 @@ RSpec.feature "Edit issues" do
 
         let(:request_issues) { [request_issue, decision_request_issue] }
 
-        let!(:already_active_request_issue) do
+        let!(:request_issue_that_causes_ineligiblity) do
           already_active_hlr = create(:higher_level_review, :with_end_product_establishment)
           create(
             :request_issue,
