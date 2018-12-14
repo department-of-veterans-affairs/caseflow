@@ -1,4 +1,6 @@
 class CreateLegacyIssueOptins < ActiveRecord::Migration[5.1]
+  disable_ddl_transaction!
+  
   def change
     create_table :legacy_issue_optins do |t|
       t.belongs_to :request_issue, null: false

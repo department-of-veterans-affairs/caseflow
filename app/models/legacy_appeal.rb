@@ -696,7 +696,9 @@ class LegacyAppeal < ApplicationRecord
     return false unless nod_date
     return false unless soc_date
 
-    soc_date > soc_eligible_date || nod_date > nod_eligible_date
+    return true if soc_date > soc_eligible_date || nod_date > nod_eligible_date
+    return true if ssoc_dates&.any? { |ssoc_date| ssoc_date > soc_eligible_date }
+    false
   end
 
   def serializer_class
@@ -841,14 +843,15 @@ class LegacyAppeal < ApplicationRecord
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def reopen(appeals:, user:, disposition:, safeguards: true)
+    def reopen(appeals:, user:, disposition:, safeguards: true, reopen_issues: true)
       repository.transaction do
         appeals.each do |reopen_appeal|
           reopen_single(
             appeal: reopen_appeal,
             user: user,
             disposition: disposition,
-            safeguards: safeguards
+            safeguards: safeguards,
+            reopen_issues: reopen_issues
           )
         end
       end
@@ -939,7 +942,7 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
-    def reopen_single(appeal:, user:, disposition:, safeguards:)
+    def reopen_single(appeal:, user:, disposition:, safeguards:, reopen_issues: true)
       disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
@@ -961,7 +964,8 @@ class LegacyAppeal < ApplicationRecord
         repository.reopen_undecided_appeal!(
           appeal: appeal,
           user: user,
-          safeguards: safeguards
+          safeguards: safeguards,
+          reopen_issues: reopen_issues
         )
       end
     end

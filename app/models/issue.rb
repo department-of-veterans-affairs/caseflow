@@ -319,6 +319,18 @@ class Issue
       )
     end
 
+    def rollback_opt_in!(opt_in_issue)
+      fail "Disposition #{disposition_id} cannot be rolled back" if disposition_id != "O"
+      update_in_vacols!(
+        vacols_id: opt_in_issue.vacols_id,
+        vacols_sequence_id: opt_in_issue.vacols_sequence_id,
+        issue_attrs: {
+          disposition: opt_in_issue.original_disposition_code,
+          disposition_date: opt_in_issue.original_disposition_date
+        }
+      )
+    end
+
     def update_in_vacols!(vacols_id:, vacols_sequence_id:, issue_attrs:)
       repository.update_vacols_issue!(
         vacols_id: vacols_id,

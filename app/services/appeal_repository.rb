@@ -475,7 +475,7 @@ class AppealRepository
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
-  def self.reopen_undecided_appeal!(appeal:, user:, safeguards:)
+  def self.reopen_undecided_appeal!(appeal:, user:, safeguards:, reopen_issues: true)
     case_record = appeal.case_record
     folder_record = case_record.folder
     not_valid_to_reopen_err = AppealNotValidToReopen.new(appeal.id)
@@ -487,7 +487,7 @@ class AppealRepository
     close_disposition = case_record.bfdc
 
     if safeguards
-      fail not_valid_to_reopen_err unless %w[9 E F G P].include? close_disposition
+      fail not_valid_to_reopen_err unless %w[9 E F G P O].include? close_disposition
     end
 
     previous_active_location = case_record.previous_active_location
@@ -518,13 +518,16 @@ class AppealRepository
         timdtime: VacolsHelper.local_time_with_utc_timezone,
         timduser: user.regional_office
       )
-      # Reopen any issues that have the same close information as the appeal
-      case_record.case_issues
-        .where(issdc: close_disposition, issdcls: close_date)
-        .update_all(
-          issdc: nil,
-          issdcls: nil
-        )
+
+      if reopen_issues
+        # Reopen any issues that have the same close information as the appeal
+        case_record.case_issues
+          .where(issdc: close_disposition, issdcls: close_date)
+          .update_all(
+            issdc: nil,
+            issdcls: nil
+          )
+      end
     end
   end
   # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
@@ -535,7 +538,7 @@ class AppealRepository
     folder_record = case_record.folder
     not_valid_to_reopen_err = AppealNotValidToReopen.new(appeal.id)
 
-    fail not_valid_to_reopen_err unless %w[P W].include? disposition_code
+    fail not_valid_to_reopen_err unless %w[P W O].include? disposition_code
     fail not_valid_to_reopen_err unless case_record.bfmpro == "HIS"
     fail not_valid_to_reopen_err unless case_record.bfcurloc == "99"
 

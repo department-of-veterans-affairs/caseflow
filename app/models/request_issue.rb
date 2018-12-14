@@ -94,7 +94,21 @@ class RequestIssue < ApplicationRecord
       request_issue
     end
 
+    def legacy_issue_opted_in?
+      eligible? && vacols_id && vacols_sequence_id
+    end
+
+    # Instead of fully deleting removed issues, we instead strip them from the review so we can
+    # maintain a record of the other data that was on them incase we need to revert the update.
+    def strip_removed_issue!
+      update!(review_request: nil)
+      rollback_legacy_issue_optin(request_issue: self) if legacy_issue_opted_in?
+    end
+
     private
+
+    def create_legacy_issue_rollback()
+    end
 
     def attributes_from_intake_data(data)
       {
@@ -217,8 +231,7 @@ class RequestIssue < ApplicationRecord
   def vacols_issue
     return unless vacols_id && vacols_sequence_id
     @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
-      # coerce both into strings since VACOLS may store as int
-      issue.vacols_sequence_id.to_s == vacols_sequence_id.to_s
+      issue.vacols_sequence_id == vacols_sequence_id
     end
   end
 
