@@ -48,17 +48,36 @@ class ContestableIssue
 
   private
 
+  def decision_issue?
+    !!decision_issue_id
+  end
+
   def title_of_active_review
     conflicting_request_issue.try(:review_title)
   end
 
-  def conflicting_request_issue
+  def conflicting_request_issue_by_rating
     return unless rating_issue_reference_id
-    return unless contesting_decision_review
-    found_request_issue = RequestIssue.find_active_by_rating_issue_reference_id(rating_issue_reference_id)
+    RequestIssue.find_active_by_rating_issue_reference_id(rating_issue_reference_id)
+  end
 
-    return unless found_request_issue && found_request_issue.review_request_id != contesting_decision_review.id
+  def conflicting_request_issue_by_decision_issue
+    return unless decision_issue_id
+    RequestIssue.find_active_by_contested_decision_id(decision_issue_id)
+  end
+
+  def conflicting_request_issue
+    return unless contesting_decision_review
+    found_request_issue = conflicting_request_issue_by_decision_issue || conflicting_request_issue_by_rating
+
+    return unless different_decision_review(found_request_issue)
     found_request_issue
+  end
+
+  def different_decision_review(found_request_issue)
+    return unless found_request_issue
+    found_request_issue.review_request_id != contesting_decision_review.id ||
+      found_request_issue.review_request_type != contesting_decision_review.class.name
   end
 
   def timely?

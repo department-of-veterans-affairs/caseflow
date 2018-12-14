@@ -293,6 +293,10 @@ RSpec.feature "Edit issues" do
     click_intake_add_issue
     add_intake_rating_issue(nonrating_decision_issue_description)
     expect(page).to have_content(nonrating_decision_issue_description)
+    expect(page).to have_content(
+      Constants.INELIGIBLE_REQUEST_ISSUES
+        .duplicate_of_issue_in_active_review.gsub("{review_title}", "Higher-Level Review")
+    )
 
     safe_click("#button-submit-update")
     safe_click ".confirm"
@@ -314,6 +318,7 @@ RSpec.feature "Edit issues" do
 
     expect(RequestIssue.find_by(review_request: review_request,
                                 contested_decision_issue_id: contested_decision_issues.second.id,
+                                ineligible_reason: :duplicate_of_issue_in_active_review,
                                 description: contested_decision_issues.second.formatted_description)).to_not be_nil
   end
   # rubocop:enable Metrics/MethodLength
@@ -788,6 +793,18 @@ RSpec.feature "Edit issues" do
             description: "currently contesting decision issue",
             decision_date: Time.zone.now - 2.days,
             contested_decision_issue_id: contested_decision_issues.first.id
+          )
+        end
+
+        let!(:already_active_request_issue) do
+          already_active_hlr = create(:higher_level_review, :with_end_product_establishment)
+          create(
+            :request_issue,
+            review_request: already_active_hlr,
+            description: "currently active request issue",
+            decision_date: Time.zone.now - 2.days,
+            end_product_establishment_id: already_active_hlr.end_product_establishments.first.id,
+            contested_decision_issue_id: contested_decision_issues.second.id
           )
         end
 
@@ -1320,6 +1337,18 @@ RSpec.feature "Edit issues" do
         end
 
         let(:request_issues) { [request_issue, decision_request_issue] }
+
+        let!(:already_active_request_issue) do
+          already_active_hlr = create(:higher_level_review, :with_end_product_establishment)
+          create(
+            :request_issue,
+            review_request: already_active_hlr,
+            description: "currently active request issue",
+            decision_date: Time.zone.now - 2.days,
+            end_product_establishment_id: already_active_hlr.end_product_establishments.first.id,
+            contested_decision_issue_id: contested_decision_issues.second.id
+          )
+        end
 
         it "shows decision isssues and allows adding/removing issues" do
           verify_decision_issues_can_be_added_and_removed(
