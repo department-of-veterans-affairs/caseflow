@@ -97,8 +97,7 @@ describe Claimant do
   context "#advanced_on_docket" do
     context "when claimant is over 75 years old" do
       it "returns true" do
-        claimant = create(:claimant)
-        create(:person, participant_id: claimant.participant_id, date_of_birth: 80.years.ago)
+        claimant = create(:claimant, :advanced_on_docket_due_to_age)
         expect(claimant.advanced_on_docket(1.year.ago)).to eq(true)
       end
     end
@@ -106,8 +105,7 @@ describe Claimant do
     context "when claimant has motion granted" do
       it "returns true" do
         claimant = create(:claimant)
-        person = create(:person, participant_id: claimant.participant_id, date_of_birth: 20.years.ago)
-        create(:advance_on_docket_motion, person_id: person.id, granted: true)
+        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
 
         expect(claimant.advanced_on_docket(1.year.ago)).to eq(true)
       end
@@ -116,7 +114,6 @@ describe Claimant do
     context "when claimant is younger than 75 years old and has no motion granted" do
       it "returns false" do
         claimant = create(:claimant)
-        create(:person, participant_id: claimant.participant_id, date_of_birth: 20.years.ago)
         expect(claimant.advanced_on_docket(1.year.ago)).to eq(false)
       end
     end

@@ -1,4 +1,33 @@
 describe Appeal do
+  context "priority and non-priority appeals" do
+    let!(:appeal) { create(:appeal) }
+    let!(:aod_age_appeal) { create(:appeal, :advanced_on_docket_due_to_age) }
+    let!(:aod_motion_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
+    let!(:denied_aod_motion_appeal) { create(:appeal, :denied_advance_on_docket) }
+    let!(:inapplicable_aod_motion_appeal) { create(:appeal, :inapplicable_aod_motion) }
+
+    context "#all_priority" do
+      subject { Appeal.all_priority }
+      it "returns aod appeals due to age and motion" do
+        expect(subject.include?(aod_age_appeal)).to eq(true)
+        expect(subject.include?(aod_motion_appeal)).to eq(true)
+        expect(subject.include?(appeal)).to eq(false)
+        expect(subject.include?(denied_aod_motion_appeal)).to eq(false)
+        expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(false)
+      end
+    end
+
+    context "#all_nonpriority" do
+      subject { Appeal.all_nonpriority }
+      it "returns non aod appeals" do
+        expect(subject.include?(appeal)).to eq(true)
+        expect(subject.include?(aod_motion_appeal)).to eq(false)
+        expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
+        expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
+      end
+    end
+  end
+
   context "#document_fetcher" do
     let(:veteran_file_number) { "64205050" }
     let(:appeal) do
@@ -124,7 +153,7 @@ describe Appeal do
   context "#advanced_on_docket" do
     context "when a claimant is advanced_on_docket" do
       let(:appeal) do
-        create(:appeal, claimants: [create(:claimant, :advanced_on_docket)])
+        create(:appeal, claimants: [create(:claimant, :advanced_on_docket_due_to_age)])
       end
 
       it "returns true" do

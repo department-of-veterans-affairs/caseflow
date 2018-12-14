@@ -336,14 +336,29 @@ class RequestIssue < ApplicationRecord
     rationale.to_s.sub(/^source_/, "previous_").to_sym
   end
 
-  def check_for_active_request_issue!
+  def check_for_active_request_issue_by_rating!
     return unless rating?
-    return unless eligible?
-    existing_request_issue = self.class.find_active_by_rating_issue_reference_id(rating_issue_reference_id)
+
+    add_duplicate_issue_error(self.class.find_active_by_rating_issue_reference_id(rating_issue_reference_id))
+  end
+
+  def check_for_active_request_issue_by_decision_issue!
+    return unless contested_decision_issue_id
+
+    add_duplicate_issue_error(self.class.find_active_by_contested_decision_id(contested_decision_issue_id))
+  end
+
+  def add_duplicate_issue_error(existing_request_issue)
     if existing_request_issue && existing_request_issue.review_request != review_request
       self.ineligible_reason = :duplicate_of_issue_in_active_review
       self.ineligible_due_to = existing_request_issue
     end
+  end
+
+  def check_for_active_request_issue!
+    return unless eligible?
+    check_for_active_request_issue_by_rating!
+    check_for_active_request_issue_by_decision_issue!
   end
 
   def check_for_untimely!
