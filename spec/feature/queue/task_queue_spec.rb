@@ -128,12 +128,12 @@ RSpec.feature "Task queue" do
     context "when we are a member of the mail team" do
       let!(:org) { FactoryBot.create(:organization) }
       let(:appeal) { FactoryBot.create(:appeal) }
-      let!(:root_task) { RootTask.find(FactoryBot.create(:root_task, appeal: appeal).id) }
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal).becomes(RootTask) }
       let(:mail_user) { FactoryBot.create(:user) }
 
       before do
+        OrganizationsUser.add_user_to_organization(mail_user, MailTeam.singleton)
         User.authenticate!(user: mail_user)
-        allow_any_instance_of(MailTeam).to receive(:user_has_access?).with(mail_user).and_return(true)
       end
 
       it "should allow us to assign a mail task to a user" do
@@ -149,6 +149,7 @@ RSpec.feature "Task queue" do
         find("button", text: "Submit").click
 
         expect(page).to have_content("Task assigned to #{org.name}")
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
 
         mail_task = root_task.children[0]
         expect(mail_task.class).to eq(MailTask)
