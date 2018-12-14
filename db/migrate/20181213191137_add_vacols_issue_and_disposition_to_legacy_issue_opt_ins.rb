@@ -1,6 +1,4 @@
 class AddVacolsIssueAndDispositionToLegacyIssueOptIns < ActiveRecord::Migration[5.1]
-  disable_ddl_transaction!
-
   def change
     add_column :legacy_issue_optins, :vacols_id, :string
     add_column :legacy_issue_optins, :vacols_sequence_id, :integer
