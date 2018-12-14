@@ -4,19 +4,14 @@ module LegacyOptinable
   private
 
   def create_legacy_issue_optin(request_issue)
-    legacy_optin = LegacyIssueOptin.create!(request_issue: request_issue).tap(&:submit_for_processing!)
-    if LegacyIssueOptin.run_async?
-      LegacyOptinProcessJob.perform_later(legacy_optin)
-    else
-      LegacyOptinProcessJob.perform_now(legacy_optin)
-    end
+    LegacyIssueOptin.create!(request_issue: request_issue)
   end
 
   def vacols_optin_special_issue
-    { code: "VO", narrative: "VACOLS Opt-in" }
+    { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O }
   end
 
   def needs_vacols_optin_special_issue?
-    request_issues.any?(&:vacols_id)
+    request_issues.any?(&:legacy_issue_optin)
   end
 end

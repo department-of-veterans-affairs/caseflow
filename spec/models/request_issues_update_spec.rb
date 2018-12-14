@@ -72,8 +72,8 @@ describe RequestIssuesUpdate do
   let(:existing_request_issues_data) do
     existing_request_issues.map do |issue|
       {
-        reference_id: issue.rating_issue_reference_id,
-        profile_date: issue.rating_issue_profile_date,
+        rating_issue_reference_id: issue.rating_issue_reference_id,
+        rating_issue_profile_date: issue.rating_issue_profile_date,
         decision_text: issue.description
       }
     end
@@ -83,8 +83,8 @@ describe RequestIssuesUpdate do
 
   let(:request_issues_data_with_new_issue) do
     existing_request_issues_data + [{
-      reference_id: "issue3",
-      profile_date: after_ama_start_date,
+      rating_issue_reference_id: "issue3",
+      rating_issue_profile_date: after_ama_start_date,
       decision_text: "Service connection for cancer was denied"
     }]
   end
@@ -257,7 +257,7 @@ describe RequestIssuesUpdate do
       context "with nonrating request issue" do
         let(:request_issues_data) do
           existing_request_issues_data + [{
-            reference_id: "issue3",
+            rating_reference_id: "issue3",
             decision_text: "Nonrating issue",
             issue_category: "Apportionment",
             decision_date: 1.month.ago

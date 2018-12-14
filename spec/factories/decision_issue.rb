@@ -16,7 +16,7 @@ FactoryBot.define do
         decision_issue.save
       end
 
-      if evaluator.remand_reasons
+      if evaluator.remand_reasons.any?
         decision_issue.remand_reasons << evaluator.remand_reasons
         decision_issue.disposition = "remanded"
         decision_issue.save

@@ -13,7 +13,7 @@ class Hearing < ApplicationRecord
   vacols_attr_accessor :regional_office_key, :master_record
   vacols_attr_accessor :docket_number, :appeal_type, :appellant_address_line_1
   vacols_attr_accessor :appellant_address_line_2, :appellant_city, :appellant_state
-  vacols_attr_accessor :appellant_zip, :appellant_country
+  vacols_attr_accessor :appellant_zip, :appellant_country, :room, :bva_poc, :judge_id
 
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
@@ -133,6 +133,7 @@ class Hearing < ApplicationRecord
     :number_of_documents_after_certification, \
     :veteran,  \
     :sanitized_vbms_id, \
+    :docket_name,
     to: :appeal, allow_nil: true
 
   delegate :vacols_id, to: :appeal, prefix: true
@@ -163,6 +164,7 @@ class Hearing < ApplicationRecord
         :current_issue_count,
         :prepped,
         :docket_number,
+        :docket_name,
         :appeal_type,
         :appellant_address_line_1,
         :appellant_city,

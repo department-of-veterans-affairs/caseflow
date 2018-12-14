@@ -11,7 +11,6 @@ import moment from 'moment';
 import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import { renderAppealType } from '../../queue/utils';
-import ApiUtil from '../../util/ApiUtil';
 import StatusMessage from '../../components/StatusMessage';
 
 const sectionNavigationListStyling = css({
@@ -30,46 +29,14 @@ export default class AssignHearings extends React.Component {
     this.props.onSelectedHearingDayChange(hearingDay);
   };
 
-  onClick = (vacolsId) => {
-    const values = {
-      regional_office_value: this.props.selectedRegionalOffice.value,
-      regional_office_label: this.props.selectedRegionalOffice.label,
-      hearing_pkseq: this.props.selectedHearingDay.id,
-      hearing_type: this.props.selectedHearingDay.hearingType,
-      hearing_date: this.props.selectedHearingDay.hearingDate
-    };
-
-    const payload = {
-      data: {
-        tasks: [
-          {
-            type: 'ScheduleHearingTask',
-            external_id: vacolsId,
-            assigned_to_type: 'User',
-            assigned_to_id: this.props.userId,
-            business_payloads: {
-              description: 'Create Task',
-              values
-            }
-          }
-        ]
-      }
-    };
-
-    ApiUtil.post('/tasks', payload);
-  };
-
-  roomInfo = (hearingDay) => {
-    let room = hearingDay.roomInfo;
-
+  room = (hearingDay) => {
     if (this.props.selectedRegionalOffice.label === 'St. Petersburg, FL') {
-      return room;
+      return hearingDay.room;
     } else if (this.props.selectedRegionalOffice.label === 'Winston-Salem, NC') {
-      return room;
+      return hearingDay.room;
     }
 
-    return room = '';
-
+    return '';
   };
 
   formatAvailableHearingDays = () => {
@@ -82,7 +49,7 @@ export default class AssignHearings extends React.Component {
             const { selectedHearingDay } = this.props;
             const dateSelected = selectedHearingDay &&
             (selectedHearingDay.hearingDate === hearingDay.hearingDate &&
-               selectedHearingDay.roomInfo === hearingDay.roomInfo);
+               selectedHearingDay.room === hearingDay.room);
             const buttonColorSelected = css({
               backgroundColor: COLORS.GREY_DARK,
               color: COLORS.WHITE,
@@ -102,7 +69,7 @@ export default class AssignHearings extends React.Component {
                 linkStyling
               >
                 {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
-                ${this.roomInfo(hearingDay)}`}
+                ${this.room(hearingDay)}`}
               </Button>
             </li>;
           })}
@@ -188,10 +155,7 @@ export default class AssignHearings extends React.Component {
         valueName: 'caseDetails',
         valueFunction: (veteran) => <Link
           href={`/queue/appeals/${veteran.vacolsId}/${qry}`}
-          name={veteran.vacolsId}
-          onClick={() => {
-            this.onClick(veteran.vacolsId);
-          }}>
+          name={veteran.vacolsId}>
           {veteran.caseDetails}
         </Link>
       },
@@ -251,7 +215,7 @@ export default class AssignHearings extends React.Component {
     return <div className="usa-width-three-fourths">
       <h1>
         {`${moment(selectedHearingDay.hearingDate).format('ddd M/DD/YYYY')}
-       ${this.roomInfo(selectedHearingDay)} (${availableSlots} slots remaining)`}
+       ${this.room(selectedHearingDay)} (${availableSlots} slots remaining)`}
       </h1>
       <TabWindow
         name="scheduledHearings-tabwindow"

@@ -9,11 +9,8 @@ import {
   appealWithDetailSelector
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
-import DocketTypeBadge from './components/DocketTypeBadge';
 import ActionsDropdown from './components/ActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
-import CopyTextButton from '../components/CopyTextButton';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
@@ -21,10 +18,7 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.j
 import { COLORS } from '../constants/AppConstants';
 import StringUtil from '../util/StringUtil';
 
-import {
-  renderLegacyAppealType,
-  taskIsOnHold
-} from './utils';
+import { taskIsOnHold } from './utils';
 import { DateString } from '../util/DateUtil';
 import type { Appeal, Task } from './types/models';
 import type { State } from './types/state';
@@ -45,10 +39,6 @@ const snapshotParentContainerStyling = css({
 
 const headingStyling = css({
   marginBottom: '0.5rem'
-});
-
-const editButton = css({
-  float: 'right'
 });
 
 const snapshotChildResponsiveWrapFixStyling = css({
@@ -256,21 +246,6 @@ export class CaseSnapshot extends React.PureComponent<Props> {
       <div className="usa-width-one-fourth">
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
         <CaseDetailsDescriptionList>
-          <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
-          <dd>
-            {renderLegacyAppealType({
-              aod: appeal.isAdvancedOnDocket,
-              type: appeal.caseType
-            })}
-            {!appeal.isLegacyAppeal && this.props.canEditAod && <span {...editButton}>
-              <Link
-                to={`/queue/appeals/${appeal.externalId}/modal/advanced_on_docket_motion`}>
-                Edit
-              </Link>
-            </span>}
-          </dd>
-          <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
-          <dd><DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}</dd>
           { !taskAssignedToVso && appeal.assignedJudge &&
             <React.Fragment>
               <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
@@ -282,11 +257,6 @@ export class CaseSnapshot extends React.PureComponent<Props> {
               <dd>{appeal.assignedAttorney.full_name}</dd>
             </React.Fragment> }
           {this.daysSinceTaskAssignmentListItem()}
-          { !taskAssignedToVso && primaryTask && primaryTask.documentId &&
-            <React.Fragment>
-              <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt>
-              <dd><CopyTextButton text={primaryTask.documentId} /></dd>
-            </React.Fragment> }
         </CaseDetailsDescriptionList>
       </div>
       <div className="usa-width-one-fourth">

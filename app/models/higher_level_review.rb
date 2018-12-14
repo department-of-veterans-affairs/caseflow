@@ -32,7 +32,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def end_product_description
-    rating_end_product_establishment && rating_end_product_establishment.description
+    rating_end_product_establishment&.description
   end
 
   def end_product_base_modifier
@@ -53,7 +53,61 @@ class HigherLevelReview < ClaimReview
     rating ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
   end
 
+  def on_decision_issues_sync_processed(_end_product_establishment)
+    create_dta_supplemental_claim
+  end
+
   private
+
+  def create_dta_supplemental_claim
+    return if dta_issues_needing_follow_up.empty?
+
+    dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
+
+    if run_async?
+      DecisionReviewProcessJob.perform_later(dta_supplemental_claim)
+    else
+      DecisionReviewProcessJob.perform_now(dta_supplemental_claim)
+    end
+  end
+
+  def dta_issues_needing_follow_up
+    @dta_issues_needing_follow_up ||= decision_issues.where(disposition: DTA_ERRORS)
+  end
+
+  def dta_supplemental_claim
+    @dta_supplemental_claim ||= SupplementalClaim.create!(
+      veteran_file_number: veteran_file_number,
+      receipt_date: Time.zone.now.to_date,
+      is_dta_error: true,
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
+    ).tap do |sc|
+      sc.create_claimants!(
+        participant_id: claimant_participant_id,
+        payee_code: payee_code
+      )
+    end
+  end
+
+  def build_follow_up_dta_issues
+    dta_issues_needing_follow_up.map do |dta_decision_issue|
+      # do not copy over end product establishment id,
+      # review request, removed_at, disposition, and contentions
+      RequestIssue.new(
+        review_request: dta_supplemental_claim,
+        contested_decision_issue_id: dta_decision_issue.id,
+        # parent_request_issue_id: dta_issue.id, delete this from table
+        rating_issue_reference_id: dta_decision_issue.rating_issue_reference_id,
+        rating_issue_profile_date: dta_decision_issue.profile_date,
+        description: dta_decision_issue.description,
+        issue_category: dta_decision_issue.issue_category,
+        benefit_type: dta_decision_issue.benefit_type,
+        decision_date: dta_decision_issue.approx_decision_date
+      )
+    end
+  end
 
   def informal_conference?
     informal_conference

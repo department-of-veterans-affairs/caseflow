@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 
 import CaseDetailsLink from './CaseDetailsLink';
-import DocketTypeBadge from './components/DocketTypeBadge';
+import DocketTypeBadge from '../components/DocketTypeBadge';
 import HearingBadge from './components/HearingBadge';
 import Table from '../components/Table';
 import { COLORS } from '../constants/AppConstants';

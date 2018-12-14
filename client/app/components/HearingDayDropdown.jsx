@@ -5,12 +5,12 @@ import SearchableDropdown from './SearchableDropdown';
 import InlineForm from './InlineForm';
 import Button from './Button';
 import ApiUtil from '../util/ApiUtil';
-import { onReceiveHearingDates } from './common/actions';
+import { onReceiveHearingDays } from './common/actions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import { formatDateStr } from '../util/DateUtil';
 
-class HearingDateDropdown extends React.Component {
+class HearingDayDropdown extends React.Component {
   constructor(props) {
     super(props);
 
@@ -19,56 +19,74 @@ class HearingDateDropdown extends React.Component {
     };
   }
 
-  loadHearingDates = () => {
+  loadHearingDays = () => {
 
     const { regionalOffice } = this.props;
 
     return ApiUtil.get(`/regional_offices/${regionalOffice}/open_hearing_dates.json`).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      this.props.onReceiveHearingDates(resp.hearingDates);
+      this.props.onReceiveHearingDays(resp.hearingDays);
     });
 
   };
 
   componentWillMount() {
-    if (!this.props.hearingDates) {
-      this.loadHearingDates();
+    if (!this.props.hearingDays) {
+      this.loadHearingDays();
     }
   }
 
-  hearingDateOptions = () => {
+  componentDidUpdate() {
+    const { value, onChange } = this.props;
 
-    let hearingDateOptions = [];
+    if (this.hearingDayOptions().length && typeof (value) === 'string') {
+      onChange(this.getValue());
+    }
+  }
 
-    _.forEach(this.props.hearingDates, (date) => {
-      hearingDateOptions.push({
-        label: formatDateStr(date.hearingDate),
-        value: formatDateStr(date.hearingDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
+  getValue = () => {
+    const { value } = this.props;
+
+    if (typeof (value) === 'string') {
+      return _.find(this.hearingDayOptions(), (day) => day.value.hearingDate === value) || {};
+    }
+
+    return value || {};
+  }
+
+  hearingDayOptions = () => {
+
+    let hearingDayOptions = [];
+
+    _.forEach(this.props.hearingDays, (day) => {
+      hearingDayOptions.push({
+        label: formatDateStr(day.hearingDate),
+        value: { ...day,
+          hearingDate: formatDateStr(day.hearingDate, 'YYYY-MM-DD', 'YYYY-MM-DD') }
       });
     });
 
     if (this.props.staticOptions) {
-      hearingDateOptions.push(...this.props.staticOptions);
+      hearingDayOptions.push(...this.props.staticOptions);
     }
 
-    return hearingDateOptions.sort((d1, d2) => new Date(d1.value) - new Date(d2.value));
+    return hearingDayOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
   };
 
   render() {
-    const { readOnly, onChange, value, placeholder } = this.props;
-    const hearingDateOptions = this.hearingDateOptions();
-    const selectedHearingDate = _.find(hearingDateOptions, (opt) => opt.value === value) || {};
+    const { readOnly, onChange, placeholder } = this.props;
+    const hearingDayOptions = this.hearingDayOptions();
 
     if (!this.props.changePrompt || this.state.editable) {
       return (
         <SearchableDropdown
           name="hearing_date"
           label="Date of Hearing"
-          options={hearingDateOptions || []}
+          options={hearingDayOptions || []}
           readOnly={readOnly || false}
           onChange={onChange}
-          value={value}
+          value={this.getValue()}
           placeholder={placeholder}
         />
       );
@@ -82,7 +100,7 @@ class HearingDateDropdown extends React.Component {
         <InlineForm>
           <p style={{ marginRight: '30px',
             width: '150px' }}>
-            {selectedHearingDate.label}
+            {this.getValue().label}
           </p>
           <Button
             name="Change"
@@ -96,11 +114,14 @@ class HearingDateDropdown extends React.Component {
   }
 }
 
-HearingDateDropdown.propTypes = {
+HearingDayDropdown.propTypes = {
   regionalOffice: PropTypes.string.isRequired,
-  hearingDates: PropTypes.object,
+  hearingDays: PropTypes.object,
   onChange: PropTypes.func,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   placeholder: PropTypes.string,
   staticOptions: PropTypes.array,
   readOnly: PropTypes.bool,
@@ -108,11 +129,11 @@ HearingDateDropdown.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  hearingDates: state.components.hearingDates
+  hearingDays: state.components.hearingDays
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveHearingDates
+  onReceiveHearingDays
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(HearingDateDropdown);
+export default connect(mapStateToProps, mapDispatchToProps)(HearingDayDropdown);

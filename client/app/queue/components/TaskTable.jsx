@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
-import DocketTypeBadge from './DocketTypeBadge';
+import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
@@ -267,7 +267,8 @@ class TaskTable extends React.PureComponent<Props> {
         return <ReaderLink appealId={task.externalAppealId}
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
-          appeal={task.appeal} />;
+          appeal={task.appeal}
+          docCountBelowLink />;
       }
     } : null;
   }

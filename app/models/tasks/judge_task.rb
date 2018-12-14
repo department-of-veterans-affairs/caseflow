@@ -1,17 +1,8 @@
 class JudgeTask < Task
   include RoundRobinAssigner
 
-  def available_actions(_user)
-    actions = [{ label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL, value: "dispatch_decision/special_issues" }]
-    actions = [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h] if action.eql? "assign"
-
-    actions << Constants.TASK_ACTIONS.MARK_COMPLETE.to_h if parent && parent.is_a?(QualityReviewTask)
-
-    actions
-  end
-
-  def no_actions_available?(user)
-    assigned_to != user
+  def actions_available?(user)
+    assigned_to == user
   end
 
   def timeline_title
@@ -33,7 +24,7 @@ class JudgeTask < Task
     super(params.merge(type: JudgeAssignTask.name))
   end
 
-  def self.verify_user_can_assign!(user)
+  def self.verify_user_can_create!(user)
     QualityReview.singleton.user_has_access?(user) || super(user)
   end
 

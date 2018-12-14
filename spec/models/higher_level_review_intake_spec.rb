@@ -72,7 +72,7 @@ describe HigherLevelReviewIntake do
     let(:same_office) { false }
     let(:claimant) { nil }
     let(:payee_code) { nil }
-    let(:veteran_is_not_claimant) { "false" }
+    let(:veteran_is_not_claimant) { false }
 
     let(:detail) do
       HigherLevelReview.create!(
@@ -108,7 +108,7 @@ describe HigherLevelReviewIntake do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
-      let(:veteran_is_not_claimant) { "true" }
+      let(:veteran_is_not_claimant) { true }
 
       it "adds other relationship to claimants" do
         subject
@@ -187,18 +187,21 @@ describe HigherLevelReviewIntake do
 
     let(:issue_data) do
       {
-        profile_date: "2018-04-30T11:11:00.000-04:00",
-        reference_id: "reference-id",
+        rating_issue_profile_date: "2018-04-30T11:11:00.000-04:00",
+        rating_issue_reference_id: "reference-id",
         decision_text: "decision text"
       }
     end
 
     let(:params) { { request_issues: [issue_data] } }
 
+    let(:legacy_opt_in_approved) { false }
+
     let(:detail) do
       HigherLevelReview.create!(
         veteran_file_number: "64205555",
-        receipt_date: 3.days.ago
+        receipt_date: 3.days.ago,
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 
@@ -258,24 +261,41 @@ describe HigherLevelReviewIntake do
     end
 
     context "when a legacy VACOLS opt-in occurs" do
+      let(:vacols_case) { create(:case) }
+      let(:legacy_appeal) do
+        create(:legacy_appeal, vacols_case: vacols_case)
+      end
+
       let(:issue_data) do
         {
           profile_date: "2018-04-30T11:11:00.000-04:00",
           reference_id: "reference-id",
           decision_text: "decision text",
-          vacols_id: "a-vacols-issue",
-          vacols_sequence_id: "vacols-seq"
+          vacols_id: legacy_appeal.vacols_id,
+          vacols_sequence_id: 1
         }
       end
 
-      it "submits a LegacyIssueOptin" do
-        expect(LegacyIssueOptin.count).to eq 0
-        expect(LegacyOptinProcessJob).to receive(:perform_now).once
+      context "legacy_opt_in_approved is false" do
+        it "does not submit a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
 
-        subject
+          subject
 
-        expect(LegacyIssueOptin.count).to eq 1
-        expect(LegacyIssueOptin.first).to be_submitted
+          expect(LegacyIssueOptin.count).to eq 0
+        end
+      end
+
+      context "legacy_opt_approved is true" do
+        let(:legacy_opt_in_approved) { true }
+        it "submits a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
+          expect_any_instance_of(LegacyOptinManager).to receive(:process!).once
+
+          subject
+
+          expect(LegacyIssueOptin.count).to eq 1
+        end
       end
     end
 
@@ -309,7 +329,7 @@ describe HigherLevelReviewIntake do
       end
 
       it "clears pending status" do
-        allow(detail).to receive(:process_end_product_establishments!).and_raise(unknown_error)
+        allow(detail).to receive(:establish!).and_raise(unknown_error)
 
         expect { subject }.to raise_exception(unknown_error)
         expect(intake.completion_status).to be_nil

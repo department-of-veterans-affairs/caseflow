@@ -7,11 +7,6 @@ class HearingDayRepository
       to_canonical_hash(VACOLS::CaseHearing.create_hearing!(hearing_hash)) if hearing_hash.present?
     end
 
-    def update_vacols_hearing!(hearing, hearing_hash)
-      hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
-      hearing.update_hearing!(hearing_hash) if hearing_hash.present?
-    end
-
     # Query Operations
     def find_hearing_day(hearing_type, hearing_key)
       if hearing_type.nil? || hearing_type == "V" || hearing_type == "C"
@@ -33,7 +28,7 @@ class HearingDayRepository
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
       [removed_children_records.uniq do |hearing_day|
         [hearing_day[:hearing_date].to_date,
-         hearing_day[:room_info],
+         hearing_day[:room],
          hearing_day[:hearing_type]]
       end, travel_board]
     end
@@ -45,7 +40,7 @@ class HearingDayRepository
         result << to_canonical_hash(hearing)
       end
       travel_board = []
-      [video_and_co.uniq { |hearing_day| [hearing_day[:hearing_date].to_date, hearing_day[:room_info]] }, travel_board]
+      [video_and_co.uniq { |hearing_day| [hearing_day[:hearing_date].to_date, hearing_day[:room]] }, travel_board]
     end
 
     def load_days_for_regional_office(regional_office, start_date, end_date)
@@ -84,15 +79,15 @@ class HearingDayRepository
       ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
     end
 
-    def to_canonical_hash(hearing)
-      if hearing.is_a?(HearingDay)
-        return hearing.to_hash
+    def to_canonical_hash(hearing_day)
+      if hearing_day.is_a?(HearingDay)
+        return hearing_day.to_hash
       end
-      hearing_hash = hearing.as_json.each_with_object({}) do |(k, v), result|
+      hearing_day_hash = hearing_day.as_json.each_with_object({}) do |(k, v), result|
         result[HearingDayMapper::COLUMN_NAME_REVERSE_MAP[k.to_sym]] = v
       end
-      hearing_hash.delete(nil)
-      values_hash = hearing_hash.each_with_object({}) do |(k, v), result|
+      hearing_day_hash.delete(nil)
+      values_hash = hearing_day_hash.each_with_object({}) do |(k, v), result|
         result[k] = if k.to_s == "regional_office" && !v.nil?
                       v[6, v.length]
                     elsif k.to_s == "hearing_date"

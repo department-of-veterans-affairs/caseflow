@@ -8,73 +8,101 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Create a schedule slot - VACOLS" do
     it "Create one schedule day" do
       post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
-                                              hearing_date: "7-Jun-2018", room_info: "1",
+                                              hearing_date: "7-Jun-2018", room: "1",
                                               regional_office: "RO17" }
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"])
       expect(actual_date).to eq(Date.new(2018, 6, 7))
       expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Central")
-      expect(JSON.parse(response.body)["hearing"]["room_info"]).to eq("1 (1W200A)")
+      expect(JSON.parse(response.body)["hearing"]["room"]).to eq("1 (1W200A)")
     end
   end
 
   describe "Create a schedule slot - Caseflow" do
     it "Create one schedule day" do
       post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
-                                              hearing_date: "7-Jun-2019", room_info: "1",
+                                              hearing_date: "7-Jun-2019", room: "1",
                                               regional_office: "RO17" }
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"])
       expect(actual_date).to eq(Date.new(2019, 6, 7))
       expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Central")
-      expect(JSON.parse(response.body)["hearing"]["room_info"]).to eq("1 (1W200A)")
+      expect(JSON.parse(response.body)["hearing"]["room"]).to eq("1 (1W200A)")
     end
   end
 
-  describe "Assign judge to hearing - VACOLS" do
-    let!(:hearing) do
-      RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create
-      Generators::Vacols::CaseHearing.create(hearing_type: HearingDay::HEARING_TYPES[:video],
-                                             hearing_date: "11-Jun-2017", regional_office: "RO27", room: "3")
+  describe "Create a new hearing day (Add Hearing) - Caseflow" do
+    let(:jan_hearing_days) do
+      (1..6).each do |n|
+        create(:hearing_day, hearing_date: Date.new(2019, 1, 14), room: n.to_s)
+      end
     end
+
+    it "Create new adhoc hearing day and automatically assign a room" do
+      jan_hearing_days
+
+      post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
+                                              hearing_date: "14-Jan-2019", assign_room: true }
+      expect(response).to have_http_status(:success)
+      actual_date = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"])
+      expect(actual_date).to eq(Date.new(2019, 1, 14))
+      expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Central")
+      expect(JSON.parse(response.body)["hearing"]["room"]).to eq("7 (1W434)")
+    end
+
+    it "Create new adhoc hearing day and do not assign a room (room should be nil in DB" do
+      post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
+                                              hearing_date: "17-Jan-2019", assign_room: false }
+      expect(response).to have_http_status(:success)
+      actual_date = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"])
+      expect(actual_date).to eq(Date.new(2019, 1, 17))
+      expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Central")
+      expect(JSON.parse(response.body)["hearing"]["room"]).to eq(nil)
+    end
+
+    let(:feb_hearing_days) do
+      (1..13).each do |n|
+        create(:hearing_day, hearing_date: Date.new(2019, 2, 14), room: n.to_s)
+      end
+    end
+
+    it "Create new adhoc hearing day but no rooms available. Confirm error message received." do
+      feb_hearing_days
+
+      post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
+                                              hearing_date: "14-Feb-2019", assign_room: true }
+      expect(response).to have_http_status(404)
+      expect(JSON.parse(response.body)["errors"][0]["title"]).to eq("No rooms available")
+      expect(JSON.parse(response.body)["errors"][0]["detail"]).to eq("All rooms are taken for the date selected.")
+    end
+
+    let(:mar_hearing_days) do
+      (1..13).each do |n|
+        create(:hearing_day, hearing_date: Date.new(2019, 3, 14), room: n.to_s)
+      end
+    end
+
+    it "Create new adhoc hearing day on a full day. Room assignment not required, hence is empty string." do
+      mar_hearing_days
+
+      post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
+                                              hearing_date: "14-Mar-2019", assign_room: false }
+      expect(response).to have_http_status(:success)
+      actual_date = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"])
+      expect(actual_date).to eq(Date.new(2019, 3, 14))
+      expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Central")
+      expect(JSON.parse(response.body)["hearing"]["room"]).to eq(nil)
+    end
+  end
+
+  describe "Assign judge to hearing day" do
+    let!(:hearing_day) { create(:hearing_day) }
+    let!(:judge) { create(:user) }
 
     it "Assign a judge to a schedule day" do
-      put "/hearings/#{hearing.hearing_pkseq + 1}/hearing_day", params: { judge_id: "105" }
+      patch "/hearings/hearing_day/#{hearing_day.id}", params: { judge_id: judge.id }
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearing"]["judge_id"]).to eq("105")
-      expect(JSON.parse(response.body)["hearing"]["regional_office"]).to eq("Louisville, KY")
-    end
-  end
-
-  describe "Assign judge to hearing - Caseflow" do
-    let!(:hearing) do
-      RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create
-      HearingDay.create(hearing_type: HearingDay::HEARING_TYPES[:central],
-                        hearing_date: "11-Jun-2019", room_info: "3", created_by: "ramiro", updated_by: "ramiro")
-    end
-
-    it "Assign a judge to a schedule day", skip: "This is failing on jenkins" do
-      put "/hearings/#{hearing.id}/hearing_day", params: { judge_id: "105" }
-      expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearing"]["judge_id"]).to_s.to eq("105")
-    end
-  end
-
-  describe "Modify RO in Travel Board Hearing - VACOLS Only" do
-    let!(:hearing) do
-      RequestStore[:current_user] = user
-      Generators::Vacols::Staff.create
-      Generators::Vacols::TravelBoardSchedule.create({})
-    end
-
-    it "Update RO in master TB schedule" do
-      hearing
-      put "/hearings/#{hearing.tbyear}-#{hearing.tbtrip}-#{hearing.tbleg}/hearing_day",
-          params: { hearing_type: HearingDay::HEARING_TYPES[:travel], regional_office: "RO27" }
-      expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearing"]["tbro"]).to eq("RO27")
+      expect(JSON.parse(response.body)["judge_id"]).to eq(judge.id)
     end
   end
 
@@ -146,11 +174,11 @@ RSpec.describe "Hearing Schedule", type: :request do
       RequestStore[:current_user] = user
       HearingDay.create(
         [{ hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "7-Jun-2019 09:00:00.000-4:00",
-           room_info: "1", created_by: "ramiro", updated_by: "ramiro" },
+           room: "1", created_by: "ramiro", updated_by: "ramiro" },
          { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Jun-2019 13:00:00.000-4:00",
-           room_info: "3", judge_id: 105, created_by: "ramiro", updated_by: "ramiro" },
+           room: "3", judge_id: 105, created_by: "ramiro", updated_by: "ramiro" },
          { hearing_type: HearingDay::HEARING_TYPES[:video], hearing_date: "15-Jun-2019 08:30:00.000-4:00",
-           regional_office: "RO27", room_info: "4", created_by: "ramiro", updated_by: "ramiro" }]
+           regional_office: "RO27", room: "4", created_by: "ramiro", updated_by: "ramiro" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
                                                      tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
@@ -233,9 +261,9 @@ RSpec.describe "Hearing Schedule", type: :request do
       RequestStore[:current_user] = user
       HearingDay.create(
         [{ hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "7-Jun-2019 09:00:00.000-4:00",
-           room_info: "1", regional_office: "RO17", created_by: "ramiro", updated_by: "ramiro" },
+           room: "1", regional_office: "RO17", created_by: "ramiro", updated_by: "ramiro" },
          { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Jun-2019 09:00:00.000-4:00",
-           room_info: "3", regional_office: "RO27", created_by: "ramiro", updated_by: "ramiro" }]
+           room: "3", regional_office: "RO27", created_by: "ramiro", updated_by: "ramiro" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
                                                      tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
@@ -262,9 +290,9 @@ RSpec.describe "Hearing Schedule", type: :request do
       Generators::Vacols::Staff.create(sattyid: "111")
       HearingDay.create(
         [{ hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "7-Mar-2019 09:00:00.000-4:00",
-           room_info: "1", regional_office: "RO04", created_by: "ramiro", updated_by: "ramiro" },
+           room: "1", regional_office: "RO04", created_by: "ramiro", updated_by: "ramiro" },
          { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Mar-2019 09:00:00.000-4:00",
-           room_info: "3", regional_office: "RO04", created_by: "ramiro", updated_by: "ramiro" }]
+           room: "3", regional_office: "RO04", created_by: "ramiro", updated_by: "ramiro" }]
       )
     end
 
