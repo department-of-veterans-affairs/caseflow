@@ -254,7 +254,7 @@ class RequestIssue < ApplicationRecord
 
   def contention_disposition
     @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
-      disposition[:contention_id].to_i == contention_reference_id
+      disposition.contention_id.to_i == contention_reference_id
     end
   end
 
