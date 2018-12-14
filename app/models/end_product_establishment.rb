@@ -307,7 +307,9 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def potential_decision_ratings
-    Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
+    Rating.fetch_in_range(participant_id: veteran.participant_id,
+                          start_date: established_at.to_date,
+                          end_date: Time.zone.today)
   end
 
   def cancel!
