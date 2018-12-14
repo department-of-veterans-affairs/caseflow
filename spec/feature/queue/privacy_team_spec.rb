@@ -30,13 +30,6 @@ RSpec.feature "Privacy team tasks and queue" do
     context "when appeal is a legacy appeal" do
       let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
 
-      before do
-        # Disable this function as a temporary workaround until HearingsManagement.user_has_access? is fixed.
-        # https://github.com/department-of-veterans-affairs/caseflow/blob/d4b9da68c8e4e7a416c8e9dc1cfe3e590eda2392/app/
-        #   models/organizations/hearings_management.rb#L6
-        allow_any_instance_of(HearingsManagement).to receive(:user_has_access?).and_return(false)
-      end
-
       it "should be assigned and appear correctly" do
         # Log in as a member of the VLJ support staff and send the task to the Privacy team.
         User.authenticate!(user: vlj_support_staff)
@@ -58,10 +51,6 @@ RSpec.feature "Privacy team tasks and queue" do
 
         # Case appears in organizational queue.
         expect(page).to have_content(appeal.veteran_file_number)
-
-        # Task instructions do not appear on the case details page because we do not show instructions for legacy cases.
-        # click_on(appeal.veteran_file_number)
-        # expect(page).to have_content(instructions_text)
       end
     end
 
