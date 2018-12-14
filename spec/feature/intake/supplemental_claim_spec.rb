@@ -780,13 +780,33 @@ RSpec.feature "Supplemental Claim Intake" do
     end
 
     scenario "Non-compensation" do
-      start_supplemental_claim(veteran, is_comp: false)
+      sc, = start_supplemental_claim(veteran, is_comp: false)
       visit "/intake/add_issues"
 
       expect(page).to have_content("Add / Remove Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Education")
+
+      expect(page).to_not have_content("Left knee granted")
+
+      click_intake_add_issue
+      add_intake_nonrating_issue(
+        category: "Active Duty Adjustments",
+        description: "Description for Active Duty Adjustments",
+        date: "10/25/2017"
+      )
+      expect(page).to_not have_content("Establish EP")
+      expect(page).to have_content("Establish Supplemental Claim")
       expect(page).to_not have_content("Claimant")
+
+      click_intake_finish
+      expect(page).to have_content("Intake completed")
+      # request issue should have matching benefit type
+      expect(RequestIssue.find_by(
+               review_request: sc,
+               description: "Description for Active Duty Adjustments",
+               benefit_type: sc.benefit_type
+      )).to_not be_nil
     end
 
     scenario "canceling" do

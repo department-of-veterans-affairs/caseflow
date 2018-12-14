@@ -1084,14 +1084,23 @@ RSpec.feature "Higher-Level Review" do
       check_row("Benefit type", "Education")
       expect(page).to_not have_content("Claimant")
       click_intake_add_issue
-      add_intake_rating_issue(/^Left knee granted$/)
+      expect(page).to_not have_content("Left knee granted")
+
+      add_intake_nonrating_issue(
+        category: "Active Duty Adjustments",
+        description: "Description for Active Duty Adjustments",
+        date: "10/25/2017"
+      )
+      expect(page).to_not have_content("Establish EP")
+      expect(page).to have_content("Establish Higher-Level Review")
+
       click_intake_finish
       expect(page).to have_content("Intake completed")
       # request issue should have matching benefit type
       expect(RequestIssue.find_by(
                review_request: hlr,
-               description: "Left knee granted",
-               benefit_type: "education"
+               description: "Description for Active Duty Adjustments",
+               benefit_type: hlr.benefit_type
       )).to_not be_nil
     end
 
