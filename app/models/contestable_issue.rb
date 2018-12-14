@@ -66,6 +66,10 @@ class ContestableIssue
    potentially_conflicting_request_issues.find_active_by_rating_issue_reference_id(rating_issue_reference_id)
   end
 
+  def potentially_conflicting_request_issues
+    RequestIssue.where.not(review_request: contesting_decision_review)
+  end
+
   def conflicting_request_issue
     return unless contesting_decision_review
     found_request_issue = conflicting_request_issue_by_decision_issue || conflicting_request_issue_by_rating
