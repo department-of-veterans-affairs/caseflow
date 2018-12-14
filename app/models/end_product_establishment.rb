@@ -290,11 +290,7 @@ class EndProductEstablishment < ApplicationRecord
     request_issues.each do |request_issue|
       request_issue.submit_for_processing!
 
-      if run_async?
-        DecisionIssueSyncJob.perform_later(request_issue)
-      else
-        DecisionIssueSyncJob.perform_now(request_issue)
-      end
+      DecisionIssueSyncJob.perform_later(request_issue)
     end
   end
 
@@ -311,7 +307,9 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def potential_decision_ratings
-    Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
+    Rating.fetch_in_range(participant_id: veteran.participant_id,
+                          start_date: established_at.to_date,
+                          end_date: Time.zone.today)
   end
 
   def cancel!
