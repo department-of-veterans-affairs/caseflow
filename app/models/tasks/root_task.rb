@@ -8,8 +8,7 @@ class RootTask < GenericTask
   def when_child_task_completed; end
 
   def available_actions(user)
-    return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if
-      MailTeam.singleton.user_has_access?(user)
+    return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if MailTeam.singleton.user_has_access?(user) && ama?
 
     return [Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h] if
       HearingsManagement.singleton.user_has_access?(user) &&

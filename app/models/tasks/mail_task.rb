@@ -1,4 +1,3 @@
-# TODO: Only show MailTasks on AMA appeals
 class MailTask < GenericTask
   # Skip unique verification for mail tasks since multiple mail tasks of each type can be created.
   def verify_org_task_unique; end
@@ -32,6 +31,7 @@ class MailTask < GenericTask
         assigned_to: MailTeam.singleton
       )
 
+      params = modify_params(params)
       create_child_task(mail_task, user, params)
     end
 
@@ -50,6 +50,8 @@ end
 class ColocatedMailTask < MailTask
   include RoundRobinAssigner
 
+  after_update :create_grandchild_task, if: :should_create_grandchild_task?
+
   class << self
     def latest_task
       Task.where(assigned_to_type: User.name, assigned_to_id: [assignee_pool.pluck(:id)]).order("created_at").last
@@ -63,26 +65,17 @@ class ColocatedMailTask < MailTask
       assignee_pool.pluck(:css_id)
     end
 
-    # TODO: This seems a little inefficient. We're effectively replicating GenericTask.create_child_task.
-    # Can we do better?
-    def create_child_task(parent, user, params)
-      parent.update_status(Constants.TASK_STATUSES.on_hold)
-
-      vlj_support_org_task = Task.create!(
-        type: name,
-        appeal: parent.appeal,
-        assigned_by_id: child_assigned_by_id(parent, user),
-        parent_id: parent.id,
-        assigned_to: Colocated.singleton,
-        instructions: params[:instructions]
-      )
-
-      super(vlj_support_org_task, user, params)
+    def get_child_task_assignee(parent, _params)
+      (parent.is_a?(name.constantize) && parent.assigned_to == Colocated.singleton) ? next_assignee : Colocated.singleton
     end
+  end
 
-    def get_child_task_assignee(_params)
-      next_assignee
-    end
+  def create_grandchild_task
+    self.class.create_child_task(self, nil, instructions: instructions)
+  end
+
+  def should_create_grandchild_task?
+    assigned_to == Colocated.singleton
   end
 end
 
@@ -113,7 +106,7 @@ class AddressChangeMailTask < ColocatedMailTask
       ]
     end
 
-    def get_child_task_assignee(params)
+    def get_child_task_assignee(_parent, params)
       root_task = RootTask.find(params[:parent_id])
 
       # TODO: Don't do the Colocated round robin assignment stuff here.
