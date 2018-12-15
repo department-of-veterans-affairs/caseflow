@@ -43,7 +43,9 @@ class CreateMailTaskDialog extends React.Component {
       }
     };
 
-    const successMsg = { title: `Created ${this.state.selectedValue}` };
+    const label = this.taskActionData().options.find((option) => option.value === this.state.selectedValue).label;
+
+    const successMsg = { title: `Created ${label} mail task` };
 
     return this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
