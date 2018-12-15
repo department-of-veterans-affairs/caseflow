@@ -42,9 +42,9 @@ class AddedIssue extends React.PureComponent {
         cssKlasses: cssKlassesWithError.concat(['issue-unidentified']) };
     }
 
-    if (issue.titleOfActiveReview) {
+    if (issue.titleOfActiveReview || (issue.reviewRequestTitle && issue.ineligibleReason)) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.replace(
-        '{review_title}', issue.titleOfActiveReview
+        '{review_title}', issue.titleOfActiveReview || issue.reviewRequestTitle
       );
     } else if (issue.ineligibleReason) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];

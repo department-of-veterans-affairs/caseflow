@@ -94,6 +94,10 @@ class EndProductEstablishment < ApplicationRecord
       active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
     end
 
+    def by_veteran_file_number(veteran_file_number)
+      where(veteran_file_number: veteran_file_number)
+    end
+
     private
 
     def established

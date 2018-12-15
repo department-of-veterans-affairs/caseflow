@@ -15,6 +15,7 @@ class RequestIssue < ApplicationRecord
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
 
   enum ineligible_reason: {
+    duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
     duplicate_of_issue_in_active_review: "duplicate_of_issue_in_active_review",
     untimely: "untimely",
     previous_higher_level_review: "previous_higher_level_review",
@@ -110,7 +111,9 @@ class RequestIssue < ApplicationRecord
         ramp_claim_id: data[:ramp_claim_id],
         vacols_id: data[:vacols_id],
         vacols_sequence_id: data[:vacols_sequence_id],
-        contested_decision_issue_id: data[:contested_decision_isssue_id]
+        contested_decision_issue_id: data[:contested_decision_isssue_id],
+        ineligible_reason: data[:ineligible_reason],
+        ineligible_due_to_id: data[:ineligible_due_to_id]
       }
     end
   end
@@ -145,6 +148,7 @@ class RequestIssue < ApplicationRecord
 
   def ui_hash
     {
+      id: id,
       rating_issue_reference_id: rating_issue_reference_id,
       rating_issue_profile_date: rating_issue_profile_date,
       description: description,
@@ -158,6 +162,8 @@ class RequestIssue < ApplicationRecord
       vacols_sequence_id: vacols_sequence_id,
       vacols_issue: vacols_issue.try(:intake_attributes),
       ineligible_reason: ineligible_reason,
+      ineligible_due_to_id: ineligible_due_to_id,
+      review_request_title: review_title,
       title_of_active_review: title_of_active_review,
       contested_decision_issue_id: contested_decision_issue_id
     }
@@ -211,7 +217,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def title_of_active_review
-    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+    if duplicate_of_issue_in_active_review? || duplicate_of_nonrating_issue_in_active_review?
+      return ineligible_due_to.review_title
+    end
   end
 
   def vacols_issue
@@ -356,6 +364,8 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_active_request_issue!
+    # skip checking if nonrating ineligiblity is already set
+    return if self.ineligible_reason == :duplicate_of_nonrating_issue_in_active_review
     return unless eligible?
     check_for_active_request_issue_by_rating!
     check_for_active_request_issue_by_decision_issue!

@@ -82,6 +82,7 @@ class DecisionReview < ApplicationRecord
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash),
+      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize)
     }
   end
@@ -166,6 +167,11 @@ class DecisionReview < ApplicationRecord
 
   def contestable_issues
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
+  end
+
+  def active_nonrating_request_issues
+    @active_nonrating_request_issues ||= EndProductEstablishment.by_veteran_file_number(veteran.file_number)
+      .select(&:status_active?).map(&:request_issues).flatten.select(&:nonrating?)
   end
 
   private
