@@ -40,6 +40,23 @@ class MailTask < GenericTask
         fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot create a mail task"
       end
     end
+
+    def outstanding_cavc_tasks?(_parent)
+      # We don't yet create CAVC tasks so this will always return false for now.
+      false
+    end
+
+    def pending_hearing_task?(parent)
+      # TODO: Update this function once AMA appeals start to be held (sometime after 14 FEB 19). Right now this expects
+      # that every AMA appeal that is on the hearing docket has a pending hearing task.
+      parent.appeal.hearing_docket?
+    end
+
+    def case_active?(parent)
+      # TODO: I think this will always return true if we can create MailTasks since the creation of mail tasks relies
+      # on the presence of an incomplete RootTask.
+      parent.appeal.tasks.where(type: RootTask.name).where.not(status: Constants.TASK_STATUSES.completed).any?
+    end
   end
 
   def label
@@ -66,7 +83,11 @@ class ColocatedMailTask < MailTask
     end
 
     def get_child_task_assignee(parent, _params)
-      (parent.is_a?(name.constantize) && parent.assigned_to == Colocated.singleton) ? next_assignee : Colocated.singleton
+      parent_colocated_task_already_created?(parent) ? next_assignee : Colocated.singleton
+    end
+
+    def parent_colocated_task_already_created?(parent)
+      parent.is_a?(name.constantize) && parent.assigned_to == Colocated.singleton
     end
   end
 
@@ -79,65 +100,47 @@ class ColocatedMailTask < MailTask
   end
 end
 
-# Appeal statuses:
-# Inactive - No RootTask or RootTask is complete... Will we show MailTask dropdown in either of these cases?
-# Active - Incomplete RootTask
-# Pending hearing - Open hearing task
-# Pending CAVC response - Outstanding CAVC tasks
-
-# TODO: Flesh out routing rules based on status of appeal.
-# TODO: Which step of the assignment process do we hijack to apply the conditional routing stuff? Maybe we subclass
-# create_from_params and then call super() on the class we want this to be routed to?
-#
-# Can we have each mail task subclass define a routing rules hierarchy that loops over the rules until one returns
-# true and we route
 class AddressChangeMailTask < ColocatedMailTask
-  # Pending hearing -> Hearings branch
-  # Active -> VLJ support
-  # Inactive -> No task created. Throw error that explains what to do.
   class << self
     def label
       COPY::ADDRESS_CHANGE_MAIL_TASK_LABEL
     end
 
-    def routing_rules
-      [
-        route_to_hearings_branch_if_open_hearings
-      ]
-    end
+    def get_child_task_assignee(parent, params)
+      return HearingsManagement.singleton if pending_hearing_task?(parent)
+      return super if case_active?(parent)
 
-    def get_child_task_assignee(_parent, params)
-      root_task = RootTask.find(params[:parent_id])
-
-      # TODO: Don't do the Colocated round robin assignment stuff here.
-      return HearingsManagement.singleton if root_task.appeal.tasks.where(type: ScheduleHearingsTask.name).where.not(status: Constants.TASK_STATUSES.completed).any?
-
-      # TODO: Can I just call ColocatedMailTask.create_child_task() here? Or something like this?
-      return Colocated.singleton if root_task.status != Constants.TASK_STATUSES.completed
-
-      fail Caseflow::Error::MailRoutingError, "Appeal is not active at the Board. Send mail to appropriate Regional Office in mail portal"
+      fail Caseflow::Error::MailRoutingError
     end
   end
 end
 
 class EvidenceOrArgumentMailTask < ColocatedMailTask
-  # Pending CAVC response -> Lit Support
-  # Active -> VLJ support
-  # Inactive -> Lit Support
   class << self
     def label
       COPY::EVIDENCE_OR_ARGUMENT_MAIL_TASK_LABEL
+    end
+
+    def get_child_task_assignee(parent, params)
+      return LitigationSupport.singleton if outstanding_cavc_tasks?(parent)
+      return super if case_active?(parent)
+
+      LitigationSupport.singleton
     end
   end
 end
 
 class PowerOfAttorneyRelatedMailTask < ColocatedMailTask
-  # Pending hearing -> Hearings branch
-  # Active -> VLJ support
-  # Inactive -> No task created. Throw error that explains what to do.
   class << self
     def label
       COPY::POWER_OF_ATTORNEY_MAIL_TASK_LABEL
+    end
+
+    def get_child_task_assignee(parent, params)
+      return HearingsManagement.singleton if pending_hearing_task?(parent)
+      return super if case_active?(parent)
+
+      fail Caseflow::Error::MailRoutingError
     end
   end
 end
