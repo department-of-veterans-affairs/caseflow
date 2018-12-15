@@ -66,6 +66,14 @@ FactoryBot.define do
       issdc "1"
     end
 
+    trait :disposition_advance_failure_to_respond do
+      issdc "G"
+    end
+
+    trait :disposition_remand_failure_to_respond do
+      issdc "X"
+    end
+
     trait :disposition_granted_by_aoj do
       issdc "B"
     end

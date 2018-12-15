@@ -10,7 +10,7 @@ class LegacyOptinManager
   def process!
     VACOLS::Case.transaction do
       pending_opt_ins.each do |legacy_issue_opt_in|
-        legacy_issue_optin.opt_in!
+        legacy_issue_opt_in.opt_in!
       end
 
       pending_rollbacks.each do |legacy_issue_rollback|
