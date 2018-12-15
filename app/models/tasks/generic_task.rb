@@ -111,7 +111,6 @@ class GenericTask < Task
     end
 
     def get_child_task_assignee(_parent, params)
-      # Create an assignee from the input arguments so we throw an error if the assignee does not exist.
       Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
     end
 
