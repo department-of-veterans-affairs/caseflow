@@ -1,3 +1,4 @@
+# TODO: Only show MailTasks on AMA appeals
 class MailTask < GenericTask
   # Skip unique verification for mail tasks since multiple mail tasks of each type can be created.
   def verify_org_task_unique; end
@@ -85,16 +86,51 @@ class ColocatedMailTask < MailTask
   end
 end
 
+# Appeal statuses:
+# Inactive - No RootTask or RootTask is complete... Will we show MailTask dropdown in either of these cases?
+# Active - Incomplete RootTask
+# Pending hearing - Open hearing task
+# Pending CAVC response - Outstanding CAVC tasks
+
 # TODO: Flesh out routing rules based on status of appeal.
+# TODO: Which step of the assignment process do we hijack to apply the conditional routing stuff? Maybe we subclass
+# create_from_params and then call super() on the class we want this to be routed to?
+#
+# Can we have each mail task subclass define a routing rules hierarchy that loops over the rules until one returns
+# true and we route
 class AddressChangeMailTask < ColocatedMailTask
+  # Pending hearing -> Hearings branch
+  # Active -> VLJ support
+  # Inactive -> No task created. Throw error that explains what to do.
   class << self
     def label
       COPY::ADDRESS_CHANGE_MAIL_TASK_LABEL
+    end
+
+    def routing_rules
+      [
+        route_to_hearings_branch_if_open_hearings
+      ]
+    end
+
+    def get_child_task_assignee(params)
+      root_task = RootTask.find(params[:parent_id])
+
+      # TODO: Don't do the Colocated round robin assignment stuff here.
+      return HearingsManagement.singleton if root_task.appeal.tasks.where(type: ScheduleHearingsTask.name).where.not(status: Constants.TASK_STATUSES.completed).any?
+
+      # TODO: Can I just call ColocatedMailTask.create_child_task() here? Or something like this?
+      return Colocated.singleton if root_task.status != Constants.TASK_STATUSES.completed
+
+      fail Caseflow::Error::MailRoutingError, "Appeal is not active at the Board. Send mail to appropriate Regional Office in mail portal"
     end
   end
 end
 
 class EvidenceOrArgumentMailTask < ColocatedMailTask
+  # Pending CAVC response -> Lit Support
+  # Active -> VLJ support
+  # Inactive -> Lit Support
   class << self
     def label
       COPY::EVIDENCE_OR_ARGUMENT_MAIL_TASK_LABEL
@@ -103,6 +139,9 @@ class EvidenceOrArgumentMailTask < ColocatedMailTask
 end
 
 class PowerOfAttorneyRelatedMailTask < ColocatedMailTask
+  # Pending hearing -> Hearings branch
+  # Active -> VLJ support
+  # Inactive -> No task created. Throw error that explains what to do.
   class << self
     def label
       COPY::POWER_OF_ATTORNEY_MAIL_TASK_LABEL

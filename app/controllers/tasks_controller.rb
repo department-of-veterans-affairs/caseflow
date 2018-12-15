@@ -90,6 +90,9 @@ class TasksController < ApplicationController
 
   def for_appeal
     no_cache
+
+    # TODO: Does this work? What assumptions do we make about RootTasks and Legacy Appeals?
+    # How will this work when we have multiple RootTasks per appeal?
     RootTask.find_or_create_by!(appeal: appeal)
     # VSO users should only get tasks assigned to them or their organization.
     if current_user.vso_employee?
