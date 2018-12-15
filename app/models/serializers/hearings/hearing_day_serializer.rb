@@ -13,7 +13,7 @@ class Hearings::HearingDaySerializer < ActiveModel::Serializer
     hearing_hash =
       hash.each_with_object({}) { |(k, v), result| result[HearingDayMapper::COLUMN_NAME_REVERSE_MAP[k]] = v }
     values_hash = hearing_hash.each_with_object({}) do |(k, v), result|
-      if k.to_s == "room_info"
+      if k.to_s == "room"
         result[k] = HearingDayMapper.label_for_room(v)
       elsif k.to_s == "regional_office" && !v.nil?
         ro = v[6, v.length]

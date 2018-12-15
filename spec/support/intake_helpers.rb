@@ -23,6 +23,10 @@ module IntakeHelpers
     safe_click "#button-finish-intake"
   end
 
+  def click_intake_continue
+    safe_click "#button-submit-review"
+  end
+
   def click_intake_no_matching_issues
     safe_click ".no-matching-issues"
   end
@@ -56,6 +60,11 @@ module IntakeHelpers
 
   def click_remove_intake_issue(number)
     issue_el = find_intake_issue_by_number(number)
+    issue_el.find(".remove-issue").click
+  end
+
+  def click_remove_intake_issue_by_text(text)
+    issue_el = find_intake_issue_by_text(text)
     issue_el.find(".remove-issue").click
   end
 
@@ -160,6 +169,39 @@ module IntakeHelpers
     setup_active_ineligible_legacy_appeal(veteran_file_number)
     setup_inactive_eligible_legacy_appeal(veteran_file_number)
     setup_inactive_ineligible_legacy_appeal(veteran_file_number)
+  end
+
+  def setup_request_issue_with_nonrating_decision_issue(decision_review, issue_category: "Active Duty Adjustments")
+    random_date = Time.zone.now - 4.days
+    create(:request_issue,
+           :with_nonrating_decision_issue,
+           description: "Test nonrating decision issue",
+           review_request: decision_review,
+           decision_date: random_date,
+           issue_category: issue_category,
+           veteran_participant_id: veteran.participant_id)
+  end
+
+  def setup_request_issue_with_rating_decision_issue(decision_review, rating_issue_reference_id: "rating123")
+    random_date = Time.zone.now - 2.days
+    create(:request_issue,
+           :with_rating_decision_issue,
+           rating_issue_reference_id: rating_issue_reference_id,
+           rating_issue_profile_date: random_date,
+           description: "Test rating decision issue",
+           review_request: decision_review,
+           veteran_participant_id: veteran.participant_id)
+  end
+
+  def setup_prior_decision_issues(veteran, benefit_type: "compensation")
+    supplemental_claim_with_decision_issues = create(:supplemental_claim,
+                                                     veteran_file_number: veteran.file_number,
+                                                     benefit_type: benefit_type)
+
+    nonrating_request_issue = setup_request_issue_with_nonrating_decision_issue(supplemental_claim_with_decision_issues)
+    rating_request_issue = setup_request_issue_with_rating_decision_issue(supplemental_claim_with_decision_issues)
+
+    rating_request_issue.decision_issues + nonrating_request_issue.decision_issues
   end
 end
 # rubocop:enable Metrics/ModuleLength

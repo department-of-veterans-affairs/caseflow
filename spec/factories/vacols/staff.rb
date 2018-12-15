@@ -31,6 +31,14 @@ FactoryBot.define do
       sactive "A"
     end
 
+    trait :hearing_coordinator do
+      sdept "HRG"
+      sactive "A"
+      sequence(:snamel) { |n| "Smith#{n}" }
+      sequence(:snamef) { |n| "John#{n}" }
+      snamemi ""
+    end
+
     trait :attorney_judge_role do
       svlj "A"
       sactive "A"

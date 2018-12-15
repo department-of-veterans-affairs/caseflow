@@ -17,7 +17,7 @@ class AddedIssue extends React.PureComponent {
       return true;
     }
 
-    let existingRequestIssue = _.filter(requestIssues, { reference_id: issue.referenceId })[0];
+    let existingRequestIssue = _.filter(requestIssues, { rating_issue_reference_id: issue.ratingIssueReferenceId })[0];
 
     // leaving this here to make it easier to debug in future.
     // console.log('existingRequestIssue', existingRequestIssue);
