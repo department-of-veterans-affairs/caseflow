@@ -80,16 +80,7 @@ class CaseListView extends React.PureComponent {
     const claimReviewsCount = this.props.claimReviews && this.props.claimReviews.length;
 
     if (claimReviewsCount) {
-      // let claimReviews = this.props.claimReviews.map((claimReview) => {
-      //   return {
-      //     ...claimReview,
-      //     veteranName: this.props.appeals[0].veteranFullName
-      //   };
-      // });
-
-      otherReviewsTable = <OtherReviewsTable
-        reviews={this.props.claimReviews}
-      />;
+      otherReviewsTable = <OtherReviewsTable reviews={this.props.claimReviews} />;
     }
 
     // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be

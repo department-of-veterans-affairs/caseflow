@@ -60,21 +60,12 @@ class ClaimReview < DecisionReview
   def search_table_ui_hash
     {
       claim_id: id,
-      # File number
       veteran_file_number: veteran_file_number,
       veteran_full_name: Veteran.find_by(file_number: veteran_file_number).name.formatted(:readable_full),
-      # EP Code(s)
       ep_codes: ep_codes,
-      # Appellant name
       claimant_names: claimants.map(&:name),
-      # Review type
       review_type: type_of_claim_review(self.class),
-      # EP Status
       ep_status: end_product_establishments.map(&:synced_status),
-      # Decision date
-        # wrong? this is the Intake completion date but should be the decision date of the requestissue
-        # decision_date: RequestIssue.where(review_request: self).map(&:decision_date)
-        # decision_date: establishment_processed_at
       decision_date: end_product_establishments.map(&:last_synced_at)
     }
   end

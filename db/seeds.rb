@@ -436,7 +436,6 @@ class SeedDB
       ineligible_reason: :untimely
     )
 
-    # NOTE: see models/higher_level_review.rb:111
     higher_level_review.create_issues!([
                                          eligible_request_issue,
                                          untimely_request_issue
@@ -447,13 +446,7 @@ class SeedDB
       veteran_file_number: veteran.file_number,
       receipt_date: Time.zone.now,
       benefit_type: "compensation"
-      # EP status?
-      # decision date?
-      # EP code?
     )
-    # an HLR can have many EPs
-    # we want an EP code that tells you how to route this / who to send it to / info a/b what's being granted
-    # an appeal with also have an EP (eventually) but not in caseflow, only has an EP when it leaves the board to be dispatched
   end
 
   def create_root_task(appeal)

@@ -33,13 +33,6 @@ class CaseListTable extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = { styling: {} };
-    debugger;
-    // props.reviews.map((review) => {
-    //   return {
-    //     ...review,
-    //     veteranName: props.veteranName
-    //   };
-    // });
   }
 
   componentDidMount = () => {
@@ -115,7 +108,7 @@ class CaseListTable extends React.PureComponent {
 
           return <SubdividedTableRow rowNumber={i}>
             {decisionDateElem}
-          </SubdividedTableRow>
+          </SubdividedTableRow>;
         }) : ''
     }
   ];
