@@ -1,0 +1,7 @@
+{
+  "CLR": "Cleared",
+  "PEND": "Pending",
+  "CAN": "Cancelled",
+  "PROCESSING": "Processing",
+  "supplemental_claim": "Tracked in Caseflow"
+}

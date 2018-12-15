@@ -73,7 +73,8 @@ class ClaimReview < DecisionReview
       # Decision date
         # wrong? this is the Intake completion date but should be the decision date of the requestissue
         # decision_date: RequestIssue.where(review_request: self).map(&:decision_date)
-      decision_date: establishment_processed_at
+        # decision_date: establishment_processed_at
+      decision_date: end_product_establishments.map(&:last_synced_at)
     }
   end
 

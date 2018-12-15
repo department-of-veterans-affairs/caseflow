@@ -10,17 +10,22 @@ import { clearCaseListSearch } from './CaseList/CaseListActions';
 
 import { DateString } from '../util/DateUtil';
 import COPY from '../../COPY.json';
+import EP_STATUSES from '../../constants/EP_STATUSES.json'
 
 class SubdividedTableRow extends React.PureComponent {
   render = () => {
-    let styling;
     const borderStyle = '1px solid #D6D7D9';
+    let styling = {
+      boxSizing: 'content-box',
+      height: '22px',
+      padding: '10px 15px'
+    };
 
-    if (this.props.i > 0) {
-      styling = css({ borderTop: borderStyle });
+    if (this.props.rowNumber > 0) {
+      styling.borderTop = borderStyle;
     }
 
-    return <div {...styling}>{this.props.content}</div>;
+    return <div {...css(styling)}>{this.props.children}</div>;
   }
 }
 
@@ -28,6 +33,13 @@ class CaseListTable extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = { styling: {} };
+    debugger;
+    // props.reviews.map((review) => {
+    //   return {
+    //     ...review,
+    //     veteranName: props.veteranName
+    //   };
+    // });
   }
 
   componentDidMount = () => {
@@ -43,15 +55,12 @@ class CaseListTable extends React.PureComponent {
       if (review.epCodes.length > 1) {
         styles[`& > tbody > tr:nth-of-type(${i + 1}) > td:nth-of-type(3)`] = { padding: 0 };
         styles[`& > tbody > tr:nth-of-type(${i + 1}) > td:nth-of-type(4)`] = { padding: 0 };
+        styles[`& > tbody > tr:nth-of-type(${i + 1}) > td:nth-of-type(5)`] = { padding: 0 };
+        styles[`& > tbody > tr:nth-of-type(${i + 1})`] = { verticalAlign: 'top' };
       }
     });
 
-    debugger;
-    const styling = css(styles);
-
-    this.setState({
-      styling
-    });
+    this.setState({ styling: css(styles) });
   }
 
   componentWillUnmount = () => this.props.clearCaseListSearch();
@@ -61,9 +70,9 @@ class CaseListTable extends React.PureComponent {
   getColumns = () => [
     {
       header: COPY.OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE,
-      valueFunction: (review) => review.claimantNames ?
+      valueFunction: (review) => review.claimantNames.length > 0 ?
         review.claimantNames.join(', ') :
-        ''
+        review.veteranName
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_REVIEW_TYPE_COLUMN_TITLE,
@@ -71,32 +80,47 @@ class CaseListTable extends React.PureComponent {
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
-      valueFunction: (review) => review.epCodes ?
-        review.epCodes.map((epCode, i) => <SubdividedTableRow content={epCode} i={i}/>) :
-        ''
+      valueFunction: (review) => {
+        if (review.reviewType === 'higher_level_review' && review.epCodes) {
+          return review.epCodes.map((epCode, i) => {
+            return <SubdividedTableRow rowNumber={i}>{epCode}</SubdividedTableRow>;
+          });
+        } else if (review.reviewType === 'supplemental_claim') {
+          return <em>{COPY.OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE}</em>;
+        }
+      }
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE,
       valueFunction: (review) => review.epStatus ?
-        review.epStatus.map((epStatus, i) => {
-          // let styling;
-          if (!epStatus) {
-            epStatus = 'PROCESSING';
+        review.epStatus.map((epStatusCode, i) => {
+          if (!epStatusCode) {
+            epStatusCode = 'PROCESSING';
           }
 
-          return <SubdividedTableRow content={epStatus} i={i} />;
+          const epStatus = EP_STATUSES[epStatusCode];
+
+          return <SubdividedTableRow rowNumber={i}>{epStatus}</SubdividedTableRow>;
         }) : ''
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_DECISION_DATE_COLUMN_TITLE,
       valueFunction: (review) => review.decisionDate ?
-        <DateString date={review.decisionDate} /> :
-        ''
+        review.decisionDate.map((decisionDate, i) => {
+          let decisionDateElem;
+
+          if (decisionDate) {
+            decisionDateElem = <DateString date={decisionDate} />;
+          }
+
+          return <SubdividedTableRow rowNumber={i}>
+            {decisionDateElem}
+          </SubdividedTableRow>
+        }) : ''
     }
   ];
 
   render = () => {
-    debugger;
     return <Table
       columns={this.getColumns}
       rowObjects={this.props.reviews}
@@ -108,6 +132,7 @@ class CaseListTable extends React.PureComponent {
 
 CaseListTable.propTypes = {
   reviews: PropTypes.arrayOf(PropTypes.object).isRequired,
+  veteranName: PropTypes.string,
   styling: PropTypes.object
 };
 

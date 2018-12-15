@@ -340,9 +340,13 @@ class SeedDB
     ep_nonrating_code = "030HLRNR"
     ep_nonrating_code_modifier = "030"
 
+    one_day_in_seconds = 60 * 60 * 24
+    two_days_in_seconds = 2 * one_day_in_seconds
+    thirty_days_in_seconds = 30 * one_day_in_seconds
+
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: veteran_file_number,
-      receipt_date: Time.zone.now,
+      receipt_date: Time.zone.now - thirty_days_in_seconds,
       informal_conference: false,
       same_office: false,
       benefit_type: "compensation",
@@ -355,7 +359,7 @@ class SeedDB
     EndProductEstablishment.create!(
       source: higher_level_review,
       veteran_file_number: veteran.file_number,
-      claim_date: Time.zone.now,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
       code: ep_rating_code,
       station: "397",
       benefit_type_code: "1",
@@ -367,7 +371,7 @@ class SeedDB
     EndProductEstablishment.create!(
       source: higher_level_review,
       veteran_file_number: veteran.file_number,
-      claim_date: Time.zone.now,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
       code: ep_rating_code,
       station: "397",
       benefit_type_code: "1",
@@ -379,7 +383,7 @@ class SeedDB
     EndProductEstablishment.create!(
       source: higher_level_review,
       veteran_file_number: veteran.file_number,
-      claim_date: Time.zone.now,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
       code: ep_rating_code,
       station: "397",
       benefit_type_code: "1",
@@ -391,24 +395,26 @@ class SeedDB
     EndProductEstablishment.create!(
       source: higher_level_review,
       veteran_file_number: veteran.file_number,
-      claim_date: Time.zone.now,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
       code: ep_rating_code,
       station: "397",
       benefit_type_code: "1",
       payee_code: "00",
       synced_status: "CLR",
+      last_synced_at: Time.zone.now - one_day_in_seconds,
       claimant_participant_id: veteran.participant_id
     )
 
     EndProductEstablishment.create!(
       source: higher_level_review,
       veteran_file_number: veteran.file_number,
-      claim_date: Time.zone.now,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
       code: ep_nonrating_code,
       station: "397",
       benefit_type_code: "1",
       payee_code: "00",
       synced_status: "CLR",
+      last_synced_at: Time.zone.now - two_days_in_seconds,
       claimant_participant_id: veteran.participant_id
     )
 
@@ -438,7 +444,7 @@ class SeedDB
     higher_level_review.process_end_product_establishments!
 
     SupplementalClaim.create(
-      veteran_file_number: "682007349",
+      veteran_file_number: veteran.file_number,
       receipt_date: Time.zone.now,
       benefit_type: "compensation"
       # EP status?

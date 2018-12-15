@@ -40,6 +40,7 @@
   "OTHER_REVIEWS_TABLE_REVIEW_TYPE_COLUMN_TITLE": "Review Type",
   "OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE": "EP Status",
   "OTHER_REVIEWS_TABLE_DECISION_DATE_COLUMN_TITLE": "Decision Date",
+  "OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE": "Tracked in Caseflow",
 
   "CASE_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
@@ -265,7 +266,7 @@
   "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending",
   "CASE_TIMELINE_JUDGE_TASK": "Decision signed by judge",
   "CASE_TIMELINE_ATTORNEY_TASK": "Decision drafted by attorney",
-  
+
   "DECISION_ISSUE_MODAL_TITLE": "Describe what the Veteran is appealing and what you decided.",
   "DECISION_ISSUE_MODAL_SUB_TITLE": "You can also add additional decisions to better address the Veteran's concerns or situation.",
   "DECISION_ISSUE_MODAL_DESCRIPTION": "Description",
