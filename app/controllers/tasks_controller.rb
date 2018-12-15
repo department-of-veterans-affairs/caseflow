@@ -11,13 +11,7 @@ class TasksController < ApplicationController
     QualityReviewTask: QualityReviewTask,
     JudgeAssignTask: JudgeAssignTask,
     ScheduleHearingTask: ScheduleHearingTask,
-    MailTask: MailTask,
-    # TODO: Can I register these classes with the parent MailTask component somehow? And then call them here to
-    # loop over those registered classes?
-    AddressChangeMailTask: AddressChangeMailTask,
-    EvidenceOrArgumentMailTask: EvidenceOrArgumentMailTask,
-    PowerOfAttorneyRelatedMailTask: PowerOfAttorneyRelatedMailTask,
-    InformalHearingPresentationTask: InformalHearingPresentationTask
+    MailTask: MailTask
   }.freeze
 
   QUEUES = {
@@ -137,7 +131,9 @@ class TasksController < ApplicationController
   helper_method :user
 
   def task_class
-    TASK_CLASSES[create_params.first[:type].try(:to_sym)]
+    mail_task_classes = Hash[*MailTask.subclasses.map { |t| [t.to_s.to_sym, t] }.flatten]
+    classes = TASK_CLASSES.merge(mail_task_classes)
+    classes[create_params.first[:type].try(:to_sym)]
   end
 
   def appeal

@@ -3,6 +3,15 @@ class MailTask < GenericTask
   def verify_org_task_unique; end
 
   class << self
+    def subclasses
+      [
+        AddressChangeMailTask,
+        EvidenceOrArgumentMailTask,
+        PowerOfAttorneyRelatedMailTask,
+        InformalHearingPresentationTask
+      ]
+    end
+
     def create_from_params(params, user)
       verify_user_can_create!(user)
 
