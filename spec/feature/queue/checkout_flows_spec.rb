@@ -1,17 +1,5 @@
 require "rails_helper"
 
-def generate_text(length)
-  charset = ("A".."Z").to_a.concat(("a".."z").to_a)
-  Array.new(length) { charset.sample }.join
-end
-
-def generate_words(n_words)
-  Array.new(n_words).map do
-    word_length = [rand(12), 3].max
-    generate_text(word_length)
-  end.join(" ")
-end
-
 RSpec.feature "Checkout flows" do
   let(:attorney_user) { FactoryBot.create(:default_user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
