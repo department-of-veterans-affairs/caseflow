@@ -45,6 +45,7 @@ class EndProductEstablishment < ApplicationRecord
     # rubocop:disable Metrics/MethodLength
     def self.from_bgs_error(error, epe)
       error_message = if error.try(:body)
+                        # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3124/
                         error.body.encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
                       else
                         error.message
