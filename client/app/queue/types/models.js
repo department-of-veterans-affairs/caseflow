@@ -170,7 +170,8 @@ export type ClaimReview = {
   epCodes: ?Array<string>,
   epStatus: ?Array<string>,
   reviewType: string,
-  veteranFileNumber: string
+  veteranFileNumber: string,
+  veteranFullName: string
 };
 
 export type ClaimReviews = { [string]: ClaimReview };

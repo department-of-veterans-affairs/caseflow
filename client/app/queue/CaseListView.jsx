@@ -80,15 +80,15 @@ class CaseListView extends React.PureComponent {
     const claimReviewsCount = this.props.claimReviews && this.props.claimReviews.length;
 
     if (claimReviewsCount) {
-      let claimReviews = this.props.claimReviews.map((claimReview) => {
-        return {
-          ...claimReview,
-          veteranName: this.props.appeals[0].veteranFullName
-        };
-      });
+      // let claimReviews = this.props.claimReviews.map((claimReview) => {
+      //   return {
+      //     ...claimReview,
+      //     veteranName: this.props.appeals[0].veteranFullName
+      //   };
+      // });
 
       otherReviewsTable = <OtherReviewsTable
-        reviews={claimReviews}
+        reviews={this.props.claimReviews}
       />;
     }
 

@@ -62,6 +62,7 @@ class ClaimReview < DecisionReview
       claim_id: id,
       # File number
       veteran_file_number: veteran_file_number,
+      veteran_full_name: Veteran.find_by(file_number: veteran_file_number).name.formatted(:readable_full),
       # EP Code(s)
       ep_codes: ep_codes,
       # Appellant name

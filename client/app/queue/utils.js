@@ -292,7 +292,8 @@ export const prepareClaimReviewForStore = (claimReviews: Array<Object>) => {
       epCodes: claimReview.ep_codes,
       epStatus: claimReview.ep_status,
       reviewType: claimReview.review_type,
-      veteranFileNumber: claimReview.veteran_file_number
+      veteranFileNumber: claimReview.veteran_file_number,
+      veteranFullName: claimReview.veteran_full_name
     };
 
     return accumulator;

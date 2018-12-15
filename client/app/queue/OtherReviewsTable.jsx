@@ -72,7 +72,7 @@ class CaseListTable extends React.PureComponent {
       header: COPY.OTHER_REVIEWS_TABLE_APPELLANT_NAME_COLUMN_TITLE,
       valueFunction: (review) => review.claimantNames.length > 0 ?
         review.claimantNames.join(', ') :
-        review.veteranName
+        review.veteranFullName
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_REVIEW_TYPE_COLUMN_TITLE,
