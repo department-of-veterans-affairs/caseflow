@@ -45,17 +45,12 @@ class MailTask < GenericTask
   end
 end
 
-# TODO: Register these subclasses with the main mail task.
-#
-# TODO: Add more subclasses
 # TODO: Flesh out routing rules based on status of appeal.
-# TODO: Move this text to COPY.json
-#
 # Should incoming mail tasks be automatically routed to members of the VLJ support staff?
 class AddressChangeMailTask < MailTask
   class << self
     def label
-      "Change of address"
+      COPY::ADDRESS_CHANGE_MAIL_TASK_LABEL
     end
 
     def get_child_task_assignee(_params)
@@ -67,7 +62,7 @@ end
 class EvidenceOrArgumentMailTask < MailTask
   class << self
     def label
-      "Evidence or argument"
+      COPY::EVIDENCE_OR_ARGUMENT_MAIL_TASK_LABEL
     end
 
     def get_child_task_assignee(_params)
@@ -79,7 +74,7 @@ end
 class PowerOfAttorneyRelatedMailTask < MailTask
   class << self
     def label
-      "Power of attorney-related"
+      COPY::POWER_OF_ATTORNEY_MAIL_TASK_LABEL
     end
 
     def get_child_task_assignee(_params)

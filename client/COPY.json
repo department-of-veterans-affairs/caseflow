@@ -272,5 +272,9 @@
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
 
   "JUDGE_ASSIGN_TASK_LABEL": "assign",
-  "JUDGE_REVIEW_TASK_LABEL": "review"
+  "JUDGE_REVIEW_TASK_LABEL": "review",
+
+  "ADDRESS_CHANGE_MAIL_TASK_LABEL": "Change of address",
+  "POWER_OF_ATTORNEY_MAIL_TASK_LABEL": "Power of attorney-related",
+  "EVIDENCE_OR_ARGUMENT_MAIL_TASK_LABEL": "Evidence or argument"
 }
