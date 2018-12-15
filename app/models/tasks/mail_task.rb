@@ -7,9 +7,12 @@ class MailTask < GenericTask
       [
         AddressChangeMailTask,
         EvidenceOrArgumentMailTask,
-        PowerOfAttorneyRelatedMailTask,
-        InformalHearingPresentationTask
+        PowerOfAttorneyRelatedMailTask
       ]
+    end
+
+    def subclass_routing_options
+      MailTask.subclasses.map { |subclass| { value: subclass.name, label: subclass.label } }
     end
 
     def create_from_params(params, user)

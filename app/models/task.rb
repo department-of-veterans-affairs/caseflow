@@ -188,22 +188,7 @@ class Task < ApplicationRecord
   end
 
   def mail_assign_to_organization_data
-    {
-      options: [
-        {
-          value: AddressChangeMailTask.name,
-          label: AddressChangeMailTask.label
-        },
-        {
-          value: PowerOfAttorneyRelatedMailTask.name,
-          label: PowerOfAttorneyRelatedMailTask.label
-        },
-        {
-          value: EvidenceOrArgumentMailTask.name,
-          label: EvidenceOrArgumentMailTask.label
-        }
-      ]
-    }
+    { options: MailTask.subclass_routing_options }
   end
 
   def assign_to_user_data
