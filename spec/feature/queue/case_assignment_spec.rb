@@ -77,7 +77,7 @@ RSpec.feature "Case Assignment flows" do
       selected_opt_1 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
 
       click_dropdown(text: selected_opt_1)
-      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(20)
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(4)
 
       # step "adds another admin action"
       click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
@@ -89,7 +89,7 @@ RSpec.feature "Case Assignment flows" do
 
       within all('div[id^="action_"]')[1] do
         click_dropdown(text: selected_opt_2)
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(20)
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(5)
       end
 
       # step "adds a third admin action with no instructions"
@@ -119,7 +119,7 @@ RSpec.feature "Case Assignment flows" do
       expect(page).to have_content COPY::FORM_ERROR_FIELD_REQUIRED
 
       within all('div[id^="action_"]')[1] do
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(20)
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(4)
       end
 
       # step "submits two admin actions"
