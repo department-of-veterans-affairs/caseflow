@@ -3,7 +3,7 @@ import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 import Alert from '../components/Alert';
-import { css } from '../../node_modules/glamor';
+import { css } from 'glamor';
 
 const CACHE_TIMEOUT_HOURS = 3;
 const TIMEZONES = {
@@ -28,21 +28,19 @@ class LastRetrievalAlert extends React.PureComponent {
 
     // Check that document manifests have been recieved from VVA and VBMS
     if (!this.props.manifestVbmsFetchedAt || !this.props.manifestVvaFetchedAt) {
-      return <Alert title="Error" type="error" styling={alertStyling}>
-        Some of {this.props.appeal.veteran_full_name}'s documents are not available at the moment due to
-        a loading error from VBMS or VVA. As a result, you may be viewing a partial list of claims folder documents.
-        <br />
-        <br />
-        Please refresh your browser at a later point to view a complete list of documents in the claims
-        folder.
-      </Alert>;
+      return <div {...alertStyling}>
+        <Alert title="Error" type="error">
+          Some of {this.props.appeal.veteran_full_name}'s documents are not available at the moment due to
+          a loading error from VBMS or VVA. As a result, you may be viewing a partial list of claims folder documents.
+          <br />
+          <br />
+          Please refresh your browser at a later point to view a complete list of documents in the claims
+          folder.
+        </Alert>
+      </div>;
     }
 
-    let staleCacheTime = new Date();
-
-    staleCacheTime.setHours(staleCacheTime.getHours() - CACHE_TIMEOUT_HOURS);
-
-    const staleCacheTimestamp = staleCacheTime.getTime() / 1000,
+    const staleCacheTime = moment().subtract(CACHE_TIMEOUT_HOURS, 'h'),
       vbmsManifestTimeString = this.props.manifestVbmsFetchedAt,
       vvaManifestTimeString = this.props.manifestVvaFetchedAt;
 
@@ -50,15 +48,17 @@ class LastRetrievalAlert extends React.PureComponent {
       TIMEZONES[vbmsManifestTimeString.slice(-4)],
       parsableVvaManifestTimeString = vvaManifestTimeString.slice(0, -4) +
         TIMEZONES[vvaManifestTimeString.slice(-4)],
-      vbmsManifestTimestamp = moment(parsableVbmsManifestTimeString, 'MM/DD/YY HH:mma Z').unix(),
-      vvaManifestTimestamp = moment(parsableVvaManifestTimeString, 'MM/DD/YY HH:mma Z').unix();
+      vbmsManifestTimestamp = moment(parsableVbmsManifestTimeString, 'MM/DD/YY HH:mma Z'),
+      vvaManifestTimestamp = moment(parsableVvaManifestTimeString, 'MM/DD/YY HH:mma Z');
 
     // Check that manifest results are fresh
-    if (vbmsManifestTimestamp < staleCacheTimestamp || vvaManifestTimestamp < staleCacheTimestamp) {
-      return <Alert title="Warning" type="warning" styling={alertStyling}>
-        You may be viewing an outdated list of claims folder documents. Please refresh the page to load
-        the most up to date documents.
-      </Alert>;
+    if (vbmsManifestTimestamp.isBefore(staleCacheTime) || vvaManifestTimestamp.isBefore(staleCacheTime)) {
+      return <div {...alertStyling}>
+        <Alert title="Warning" type="warning">
+          You may be viewing an outdated list of claims folder documents. Please refresh the page to load
+          the most up to date documents.
+        </Alert>
+      </div>;
     }
 
     return null;
