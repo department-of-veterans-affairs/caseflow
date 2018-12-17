@@ -307,7 +307,7 @@ RSpec.describe "Hearing Schedule", type: :request do
     end
   end
 
-  describe "Get scheduled hearing" do
+  describe "Get CO scheduled hearing with correct time." do
     let!(:staff) { create(:staff, stafkey: "RO18", stc2: 2, stc3: 3, stc4: 4) }
     let(:vacols_case) do
       create(
@@ -321,7 +321,7 @@ RSpec.describe "Hearing Schedule", type: :request do
       create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
     let!(:hearing_day) do
-      create(:hearing_day, hearing_date: Date.new(2019, 1, 7))
+      create(:hearing_day, hearing_type: "C", hearing_date: Date.new(2019, 1, 7))
     end
     let!(:hearings) do
       RequestStore[:current_user] = user
