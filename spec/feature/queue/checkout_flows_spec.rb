@@ -77,10 +77,10 @@ RSpec.feature "Checkout flows" do
       expect(appeal.special_issue_list.radiation).to eq(true)
       click_on "Continue"
 
-      expect(page).to have_content "Select Dispositions"
+      expect(page).to have_content "Select dispositions"
       issue_dispositions = page.find_all(
         ".Select-control",
-        text: "Select Disposition",
+        text: "Select disposition",
         count: appeal.request_issues.length
       )
 
@@ -120,12 +120,13 @@ RSpec.feature "Checkout flows" do
       let(:updated_decision_issue_text) { "This is updated text" }
 
       let(:other_issue_tex) { "This is a second issue" }
+      let(:allowed_issue_tex) { "This is an allowed issue" }
 
       let(:decision_issue_disposition) { "Remanded" }
       let(:benefit_type) { "Education" }
       let(:old_benefit_type) { Constants::BENEFIT_TYPES[appeal.request_issues.first.benefit_type] }
 
-      scenario "veteran is the appellant" do
+      scenario "veteran is the appellant", focus: true do
         visit "/queue"
         click_on "(#{appeal.veteran_file_number})"
 
@@ -144,11 +145,10 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content COPY::DECISION_ISSUE_PAGE_TITLE
 
         click_on "Continue"
-
-        expect(page).to have_content "Each request issue must have at least one decision issue"
+        expect(page).to have_content "You must add a decision before you continue."
 
         # Add a first decision issue
-        click_on "+ Add Decision"
+        click_on "+ Add decision"
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
         click_on "Save"
@@ -156,7 +156,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content "This field is required"
         fill_in "Text Box", with: decision_issue_text
 
-        find(".Select-control", text: "Select Disposition").click
+        find(".Select-control", text: "Select disposition").click
         find("div", class: "Select-option", text: decision_issue_disposition).click
 
         find(".Select-control", text: old_benefit_type).click
@@ -165,13 +165,27 @@ RSpec.feature "Checkout flows" do
         click_on "Save"
 
         # Add a second decision issue
-        click_on "+ Add Decision"
+        click_on "+ Add decision"
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
         fill_in "Text Box", with: other_issue_tex
 
-        find(".Select-control", text: "Select Disposition").click
+        find(".Select-control", text: "Select disposition").click
         find("div", class: "Select-option", text: decision_issue_disposition).click
+
+        find(".Select-control", text: old_benefit_type).click
+        find("div", class: "Select-option", text: benefit_type).click
+
+        click_on "Save"
+
+        # Add a third decision issue that's allowed
+        click_on "+ Add decision"
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: allowed_issue_tex
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Allowed").click
 
         find(".Select-control", text: old_benefit_type).click
         find("div", class: "Select-option", text: benefit_type).click
@@ -215,11 +229,14 @@ RSpec.feature "Checkout flows" do
 
         expect(page.current_path).to eq("/queue")
 
-        expect(appeal.decision_issues.count).to eq(2)
+        expect(appeal.decision_issues.count).to eq(3)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
+        expect(appeal.decision_issues.first.disposition).to eq("remand")
         expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
         expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
         expect(appeal.decision_issues.second.remand_reasons.first.code).to eq("medical_examinations")
+        expect(appeal.decision_issues.second.disposition).to eq("remand")
+        expect(appeal.decision_issues.third.disposition).to eq("allowed")
 
         # Switch to the judge and ensure they can update decision issues
         User.authenticate!(user: judge_user)
@@ -263,6 +280,8 @@ RSpec.feature "Checkout flows" do
         expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
         expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
         expect(appeal.decision_issues.second.remand_reasons.first.code).to eq("medical_examinations")
+        expect(appeal.decision_issues.second.disposition).to eq("remand")
+        expect(appeal.decision_issues.third.disposition).to eq("allowed")
       end
     end
   end
@@ -291,7 +310,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content "Select Dispositions"
+        expect(page).to have_content "Select dispositions"
 
         cancel_button = page.find "#button-cancel-button"
         expect(cancel_button.text).to eql "Cancel"
@@ -335,7 +354,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content("Select Dispositions")
+        expect(page).to have_content("Select dispositions")
 
         table_rows = page.find_all("tr[id^='table-row-']")
         expect(table_rows.length).to eq(appeal.issues.length)
@@ -363,7 +382,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        issue_dispositions = page.find_all(".Select-control", text: "Select Disposition", count: appeal.issues.length)
+        issue_dispositions = page.find_all(".Select-control", text: "Select disposition", count: appeal.issues.length)
 
         # We want two issues to be a remand to make the remand reason screen show up.
         issue_dispositions.each_with_index do |row, index|
@@ -450,7 +469,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content("Select Dispositions")
+        expect(page).to have_content("Select dispositions")
 
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(appeal.issues.length)
@@ -506,7 +525,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content("Select Dispositions")
+        expect(page).to have_content("Select dispositions")
 
         first("a", text: "Edit Issue").click
         expect(page).to have_content("Edit Issue")
@@ -536,7 +555,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content "Select Dispositions"
+        expect(page).to have_content "Select dispositions"
 
         diag_code_no_l2 = %w[4 5 0 *]
         no_diag_code_no_l2 = %w[4 5 1]
@@ -557,7 +576,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content "Select Dispositions"
+        expect(page).to have_content "Select dispositions"
 
         click_on "Add Issue"
         expect(page).to have_content "Add Issue"
