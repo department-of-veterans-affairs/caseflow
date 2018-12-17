@@ -693,7 +693,8 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def eligible_for_soc_opt_in?(receipt_date)
-    return false unless nod_date || soc_date || ssoc_dates.any?
+    return false unless nod_date
+    return false unless soc_date
 
     soc_eligible_date = receipt_date - 60.days
     nod_eligible_date = receipt_date - 372.days
