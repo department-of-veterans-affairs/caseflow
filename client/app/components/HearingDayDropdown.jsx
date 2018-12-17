@@ -26,7 +26,7 @@ class HearingDayDropdown extends React.Component {
     const { regionalOffice } = this.props;
 
     this.setState({ loading: true });
-    
+
     return ApiUtil.get(`/regional_offices/${regionalOffice}/open_hearing_dates.json`).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 

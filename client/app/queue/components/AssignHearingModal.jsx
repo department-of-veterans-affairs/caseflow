@@ -113,10 +113,14 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     const hearingDate = this.formatHearingDate();
 
-    let invalid = [];
+    const invalid = [];
 
-    if (!hearingDate){ invalid.push('Date of Hearing'); }
-    if (!this.props.selectedHearingTime){ invalid.push('Hearing Time'); }
+    if (!hearingDate) {
+      invalid.push('Date of Hearing');
+    }
+    if (!this.props.selectedHearingTime) {
+      invalid.push('Hearing Time');
+    }
 
     if (invalid.length > 0) {
 
@@ -279,7 +283,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   formatHearingDate = () => {
     const { selectedHearingDay, selectedHearingTime } = this.props;
 
-    if (selectedHearingDay && !selectedHearingTime){
+    if (selectedHearingDay && !selectedHearingTime) {
       return new Date(selectedHearingDay.value.hearingDate);
     } else if (!selectedHearingTime || !selectedHearingDay) {
       return null;
