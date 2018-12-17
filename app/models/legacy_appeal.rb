@@ -699,6 +699,7 @@ class LegacyAppeal < ApplicationRecord
     soc_eligible_date = receipt_date - 60.days
     nod_eligible_date = receipt_date - 372.days
 
+    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
     soc_date > soc_eligible_date || nod_date > nod_eligible_date || ssoc_dates.any? { |d| d > soc_eligible_date }
   end
 
