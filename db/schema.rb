@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181203231527) do
+ActiveRecord::Schema.define(version: 20181212150819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -87,6 +87,10 @@ ActiveRecord::Schema.define(version: 20181203231527) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -409,13 +413,15 @@ ActiveRecord::Schema.define(version: 20181203231527) do
     t.string "hearing_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
-    t.string "room_info", null: false
+    t.string "room", null: false
     t.datetime "created_at", null: false
     t.string "created_by", null: false
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
     t.string "bva_poc"
     t.datetime "deleted_at"
+    t.boolean "lock"
+    t.text "notes"
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
 
@@ -683,12 +689,12 @@ ActiveRecord::Schema.define(version: 20181203231527) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
-    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
+    t.string "ineligible_reason"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.datetime "created_at"

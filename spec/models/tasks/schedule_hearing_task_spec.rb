@@ -2,6 +2,7 @@ describe ScheduleHearingTask do
   before do
     FeatureToggle.enable!(:test_facols)
     Time.zone = "Eastern Time (US & Canada)"
+    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
     RequestStore[:current_user] = hearings_user
   end
 
@@ -9,21 +10,11 @@ describe ScheduleHearingTask do
     FeatureToggle.disable!(:test_facols)
   end
 
-  let(:vacols_case) do
-    FactoryBot.create(:case)
-  end
-  let(:appeal) do
-    create(:legacy_appeal, vacols_case: vacols_case)
-  end
-  let!(:hearings_user) do
-    create(:hearings_coordinator)
-  end
-  let(:staff) do
-    create(:staff, sdomainid: "BVATWARNER", slogid: "TWARNER")
-  end
-  let!(:hearings_org) do
-    create(:hearings_management)
-  end
+  let(:vacols_case) { FactoryBot.create(:case) }
+  let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+  let!(:hearings_user) { create(:hearings_coordinator) }
+  let(:staff) { create(:staff, sdomainid: "BVATWARNER", slogid: "TWARNER") }
+  let!(:hearings_org) { create(:hearings_management) }
 
   let(:test_hearing_date_vacols) do
     Time.use_zone("Eastern Time (US & Canada)") do
@@ -32,7 +23,8 @@ describe ScheduleHearingTask do
   end
 
   describe "Add a schedule hearing task" do
-    let(:root_task) { FactoryBot.create(:root_task, appeal_type: LegacyAppeal.name, appeal: appeal) }
+    let(:root_task) { FactoryBot.create(:root_task, appeal_type: root_task_appeal_type, appeal: appeal) }
+    let(:root_task_appeal_type) { LegacyAppeal.name }
     let(:params) do
       {
         type: ScheduleHearingTask.name,
@@ -44,12 +36,29 @@ describe ScheduleHearingTask do
       }
     end
 
-    it "should create a taks of type ScheduleHearingTask" do
-      hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
+    subject { ScheduleHearingTask.create_from_params(params, hearings_user) }
 
-      expect(hearing_task.type).to eq(ScheduleHearingTask.name)
-      expect(hearing_task.appeal_type).to eq(LegacyAppeal.name)
-      expect(hearing_task.status).to eq("assigned")
+    it "should create a task of type ScheduleHearingTask" do
+      expect(subject.type).to eq(ScheduleHearingTask.name)
+      expect(subject.appeal_type).to eq(LegacyAppeal.name)
+      expect(subject.status).to eq("assigned")
+    end
+
+    context "the root task is not a legacy task" do
+      let(:appeal) { create :appeal }
+      let(:root_task_appeal_type) { Appeal.name }
+
+      it "raises an ActionForbiddenError" do
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+      end
+    end
+
+    context "the root task has an on hold ScheduleHearingTask child" do
+      let!(:on_hold_task) { create(:schedule_hearing_task, parent: root_task, status: Constants.TASK_STATUSES.on_hold) }
+
+      it "raises an ActionForbiddenError" do
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+      end
     end
   end
 
@@ -97,7 +106,7 @@ describe ScheduleHearingTask do
       }
     end
 
-    it "should create a taks of type ScheduleHearingTask" do
+    it "should create a task of type ScheduleHearingTask" do
       hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
 
       expect(hearing_task.type).to eq(ScheduleHearingTask.name)
@@ -147,7 +156,7 @@ describe ScheduleHearingTask do
       }
     end
 
-    it "should create a taks of type ScheduleHearingTask" do
+    it "should create a task of type ScheduleHearingTask" do
       hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
       updated_task = hearing_task.update_from_params(update_params, hearings_user)
 
@@ -196,7 +205,7 @@ describe ScheduleHearingTask do
       }
     end
 
-    it "should create a taks of type ScheduleHearingTask" do
+    it "should create a task of type ScheduleHearingTask" do
       hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
       hearing_task.update_from_params(update_params, hearings_user)
       updated_hearing = VACOLS::CaseHearing.find(hearing.hearing_pkseq)
@@ -243,7 +252,7 @@ describe ScheduleHearingTask do
       }
     end
 
-    it "should create a taks of type ScheduleHearingTask" do
+    it "should create a task of type ScheduleHearingTask" do
       hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
       hearing_task.update_from_params(update_params, hearings_user)
       created_hearing = VACOLS::CaseHearing.find_by(hearing_type: "V",

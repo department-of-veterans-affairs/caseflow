@@ -1,9 +1,10 @@
-# This job will call perform! on a LegacyIssueOptin
-class LegacyOptinProcessJob < CaseflowJob
+# This job will call establish! on a DecisionReview
+# or anything that acts like a DecisionReview
+class DecisionReviewProcessJob < CaseflowJob
   queue_as :low_priority
   application_attr :intake
 
-  def perform(legacy_optin)
+  def perform(decision_review)
     # restore whatever the user was when we finish, in case we are not running async (as during tests)
     current_user = RequestStore.store[:current_user]
     RequestStore.store[:application] = "intake"
@@ -12,9 +13,9 @@ class LegacyOptinProcessJob < CaseflowJob
     return_value = nil
 
     begin
-      return_value = legacy_optin.perform!
-    rescue StandardError => err # TODO: define exceptions
-      legacy_optin.update_error!(err.to_s)
+      return_value = decision_review.establish!
+    rescue VBMS::ClientError => err
+      decision_review.update_error!(err.to_s)
       Raven.capture_exception(err)
     end
 

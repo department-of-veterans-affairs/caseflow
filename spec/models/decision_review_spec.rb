@@ -28,23 +28,37 @@ describe DecisionReview do
       associated_claims: associated_claims
     )
   end
+  let(:appeal) { create(:appeal) }
   let!(:decision_issues) do
     [
       create(:decision_issue,
              participant_id: participant_id,
              rating_issue_reference_id: "123",
              decision_text: "decision issue 1",
-             profile_date: profile_date),
+             benefit_type: higher_level_review.benefit_type,
+             profile_date: profile_date,
+             decision_review: higher_level_review),
       create(:decision_issue,
              participant_id: participant_id,
              rating_issue_reference_id: "789",
              decision_text: "decision issue 2",
-             profile_date: profile_date + 1.day),
+             benefit_type: higher_level_review.benefit_type,
+             profile_date: profile_date + 1.day,
+             decision_review: higher_level_review),
       create(:decision_issue,
              participant_id: participant_id,
              rating_issue_reference_id: nil,
              decision_text: "decision issue 3",
-             profile_date: profile_date + 2.days)
+             benefit_type: higher_level_review.benefit_type,
+             profile_date: profile_date + 2.days,
+             decision_review: higher_level_review),
+      create(:decision_issue,
+             participant_id: participant_id,
+             rating_issue_reference_id: "appeal123",
+             decision_text: "appeal decision issue",
+             benefit_type: higher_level_review.benefit_type,
+             profile_date: profile_date + 3.days,
+             decision_review: appeal)
     ]
   end
 
@@ -55,18 +69,18 @@ describe DecisionReview do
         { # this rating issue got replaced with a decision issue
           ratingIssueReferenceId: "123",
           ratingIssueProfileDate: profile_date,
-          decisionIssueReferenceId: decision_issues.first.id,
+          decisionIssueId: decision_issues.first.id,
           date: profile_date,
           description: "decision issue 1",
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: nil,
+          sourceHigherLevelReview: higher_level_review.id,
           timely: true
         },
         {
           ratingIssueReferenceId: "456",
           ratingIssueProfileDate: profile_date,
-          decisionIssueReferenceId: nil,
+          decisionIssueId: nil,
           date: profile_date,
           description: "rating issue 2",
           rampClaimId: nil,
@@ -77,22 +91,22 @@ describe DecisionReview do
         {
           ratingIssueReferenceId: "789",
           ratingIssueProfileDate: profile_date + 1.day,
-          decisionIssueReferenceId: decision_issues.second.id,
+          decisionIssueId: decision_issues.second.id,
           date: profile_date + 1.day,
           description: "decision issue 2",
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: nil,
+          sourceHigherLevelReview: higher_level_review.id,
           timely: true
         },
         ratingIssueReferenceId: nil,
         ratingIssueProfileDate: profile_date + 2.days,
-        decisionIssueReferenceId: decision_issues.third.id,
+        decisionIssueId: decision_issues.third.id,
         date: profile_date + 2.days,
         description: "decision issue 3",
         rampClaimId: nil,
         titleOfActiveReview: nil,
-        sourceHigherLevelReview: nil,
+        sourceHigherLevelReview: higher_level_review.id,
         timely: true
       )
     end
