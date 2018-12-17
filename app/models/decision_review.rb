@@ -140,7 +140,7 @@ class DecisionReview < ApplicationRecord
       {
         vacols_id: legacy_appeal.vacols_id,
         date: legacy_appeal.nod_date,
-        eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?,
+        eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?(receipt_date),
         issues: legacy_appeal.issues.map(&:intake_attributes)
       }
     end
@@ -200,7 +200,7 @@ class DecisionReview < ApplicationRecord
   def matchable_legacy_appeals
     @matchable_legacy_appeals ||= LegacyAppeal
       .fetch_appeals_by_file_number(veteran_file_number)
-      .select(&:matchable_to_request_issue?)
+      .select { |appeal| appeal.matchable_to_request_issue?(receipt_date) }
   end
 
   def active_matchable_legacy_appeals
