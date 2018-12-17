@@ -55,8 +55,13 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def non_comp?
+    !ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
+  end
+
   def serialized_ratings
     return unless receipt_date
+    return if non_comp?
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
@@ -165,6 +170,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def contestable_issues
+    return contestable_issues_from_decision_issues if non_comp?
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
   end
 
