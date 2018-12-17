@@ -18,6 +18,7 @@ export const COLORS = {
   COLOR_COOL_BLUE_LIGHTER: '#8ba6ca',
   PRIMARY: '#0071bc',
   BASE: '#212121',
+  PURPLE: '#794595',
   RED_DARK: '#cd2026'
 };
 
