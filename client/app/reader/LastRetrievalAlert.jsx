@@ -37,11 +37,11 @@ class LastRetrievalAlert extends React.PureComponent {
 
     staleCacheTime.setHours(staleCacheTime.getHours() - CACHE_TIMEOUT_HOURS);
 
-    let staleCacheTimestamp = staleCacheTime.getTime() / 1000,
+    const staleCacheTimestamp = staleCacheTime.getTime() / 1000,
       vbmsManifestTimeString = this.props.manifestVbmsFetchedAt,
       vvaManifestTimeString = this.props.manifestVvaFetchedAt;
 
-    let parsableVbmsManifestTimeString = vbmsManifestTimeString.slice(0, -4) +
+    const parsableVbmsManifestTimeString = vbmsManifestTimeString.slice(0, -4) +
       TIMEZONES[vbmsManifestTimeString.slice(-4)],
       parsableVvaManifestTimeString = vvaManifestTimeString.slice(0, -4) +
         TIMEZONES[vvaManifestTimeString.slice(-4)],
