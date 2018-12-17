@@ -160,6 +160,10 @@ class DecisionReview < ApplicationRecord
     # no-op
   end
 
+  def process_legacy_issues!
+    LegacyOptinManager.new(decision_review: self).process!
+  end
+
   def contestable_issues
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
   end

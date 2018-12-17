@@ -58,6 +58,8 @@ class ClaimReview < DecisionReview
       end_product_establishment.commit!
     end
 
+    process_legacy_issues!
+
     clear_error!
     processed!
   end
@@ -86,6 +88,7 @@ class ClaimReview < DecisionReview
 
   def contestable_decision_issues
     DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+      .where.not(decision_review_type: "Appeal")
   end
 
   def informal_conference?
