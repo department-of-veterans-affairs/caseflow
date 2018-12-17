@@ -94,6 +94,13 @@ FactoryBot.define do
       assigned_by nil
     end
 
+    factory :schedule_hearing_task do
+      type ScheduleHearingTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
+
     factory :quality_review_task do
       type QualityReviewTask.name
       appeal_type Appeal.name
