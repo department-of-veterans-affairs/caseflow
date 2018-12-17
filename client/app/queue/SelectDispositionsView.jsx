@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { css } from 'glamor';
 
+import Button from '../components/Button';
 import decisionViewBase from './components/DecisionViewBase';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Modal from '../components/Modal';
@@ -26,6 +28,12 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
 import uuid from 'uuid';
+
+const connectedIssueDiv = css({
+  display: 'flex',
+  justifyContent: 'space-between',
+  marginBottom: '10px'
+});
 
 class SelectDispositionsView extends React.PureComponent {
   constructor(props) {
@@ -202,6 +210,10 @@ class SelectDispositionsView extends React.PureComponent {
       });
     }
 
+    const relevantIssues = appeal.issues.filter((issue) => {
+      return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
+    });
+
     return <React.Fragment>
       <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
       <p>{COPY.DECISION_ISSUE_PAGE_EXPLANATION}</p>
@@ -223,9 +235,7 @@ class SelectDispositionsView extends React.PureComponent {
           Contested Issue
           <ul>
             {
-              appeal.issues.filter((issue) => {
-                return decisionIssue.request_issue_ids.includes(issue.id);
-              }).map((issue) => <li key={issue.id}>{issue.description}</li>)
+              relevantIssues.map((issue) => <li key={issue.id}>{issue.description}</li>)
             }
           </ul>
         </div>
@@ -283,6 +293,47 @@ class SelectDispositionsView extends React.PureComponent {
             }
           })}
         />
+        <p>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</p>
+        <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE}</h3>
+        <SearchableDropdown
+          name="Issues"
+          placeholder="Select issues"
+          hideLabel
+          value={null}
+          options={appeal.issues.
+            filter((issue) => !decisionIssue.request_issue_ids.includes(issue.id)).
+            map((issue) => (
+              {
+                label: issue.description,
+                value: issue.id
+              }
+            ))
+          }
+          onChange={(issue) => this.setState({
+            decisionIssue: {
+              ...decisionIssue,
+              request_issue_ids: [...decisionIssue.request_issue_ids, issue.value]
+            }
+          })}
+        />
+        {
+          relevantIssues.slice(1).map((issue) =>
+            <div key={issue.id} {...connectedIssueDiv}>
+              <span>{issue.description}</span>
+              <Button
+                classNames={['cf-btn-link']}
+                onClick={() => this.setState({
+                  decisionIssue: {
+                    ...decisionIssue,
+                    request_issue_ids: decisionIssue.request_issue_ids.filter((id) => id !== issue.id)
+                  }
+                })}
+              >
+                Remove
+              </Button>
+            </div>
+          )
+        }
       </Modal>}
     </React.Fragment>;
   };
