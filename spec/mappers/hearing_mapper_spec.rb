@@ -84,7 +84,7 @@ describe HearingMapper do
     end
 
     context "when central_office" do
-      let(:type) { :central_office }
+      let(:type) { :central }
 
       it "does not use a regional office timezone" do
         expect(subject.day).to eq 6
