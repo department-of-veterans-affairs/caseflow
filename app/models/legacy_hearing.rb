@@ -1,0 +1,2 @@
+class LegacyHearing < ApplicationRecord
+end
