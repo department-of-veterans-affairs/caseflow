@@ -1131,13 +1131,15 @@ RSpec.feature "Higher-Level Review" do
       end
 
       context "with legacy_opt_in_approved" do
+        let(:receipt_date) { Time.zone.today }
+
         scenario "adding issues" do
           start_higher_level_review(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
 
           click_intake_add_issue
           expect(page).to have_content("Next")
-          add_intake_rating_issue("Left knee granted")
+          add_intake_rating_issue(/Left knee granted$/)
 
           # expect legacy opt in modal
           expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
