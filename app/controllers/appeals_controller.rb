@@ -19,7 +19,7 @@ class AppealsController < ApplicationController
 
         return render json: {
           appeals: get_appeals_for_file_number(veteran_file_number),
-          claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number)
+          claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
         }
       end
     end

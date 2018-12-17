@@ -50,10 +50,7 @@ class ClaimReview < DecisionReview
     end
 
     def find_all_by_file_number(file_number)
-      claim_reviews =
-        HigherLevelReview.where(veteran_file_number: file_number) +
-        SupplementalClaim.where(veteran_file_number: file_number)
-      claim_reviews.map(&:search_table_ui_hash)
+      HigherLevelReview.where(veteran_file_number: file_number) + SupplementalClaim.where(veteran_file_number: file_number)
     end
   end
 
@@ -116,11 +113,9 @@ class ClaimReview < DecisionReview
       claim_id: id,
       veteran_file_number: veteran_file_number,
       veteran_full_name: Veteran.find_by(file_number: veteran_file_number).name.formatted(:readable_full),
-      ep_codes: ep_codes,
+      end_products: end_product_establishments,
       claimant_names: claimants.map(&:name),
-      review_type: type_of_claim_review(self.class),
-      ep_status: end_product_establishments.map(&:synced_status),
-      decision_date: end_product_establishments.map(&:last_synced_at)
+      review_type: self.class.to_s.underscore
     }
   end
 
@@ -153,17 +148,5 @@ class ClaimReview < DecisionReview
 
   def matching_request_issue(contention_id)
     RequestIssue.find_by!(contention_reference_id: contention_id)
-  end
-
-  def ep_codes
-    end_product_establishments.map(&:modifier)
-  end
-
-  def type_of_claim_review(review_class)
-    if review_class == HigherLevelReview
-      "higher_level_review"
-    elsif review_class == SupplementalClaim
-      "supplemental_claim"
-    end
   end
 end

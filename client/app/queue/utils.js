@@ -288,9 +288,7 @@ export const prepareClaimReviewForStore = (claimReviews: Array<Object>) => {
       caseflowVeteranId: claimReview.caseflow_veteran_id,
       claimantNames: claimReview.claimant_names,
       claimId: claimReview.claim_id,
-      decisionDate: claimReview.decision_date,
-      epCodes: claimReview.ep_codes,
-      epStatus: claimReview.ep_status,
+      endProducts: claimReview.end_products,
       reviewType: claimReview.review_type,
       veteranFileNumber: claimReview.veteran_file_number,
       veteranFullName: claimReview.veteran_full_name

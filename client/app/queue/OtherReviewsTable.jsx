@@ -45,7 +45,7 @@ class CaseListTable extends React.PureComponent {
     const styles = {};
 
     this.props.reviews.forEach((review, i) => {
-      if (review.epCodes.length > 1) {
+      if (review.endProducts && review.endProducts.length > 1) {
         styles[`& > tbody > tr:nth-of-type(${i + 1}) > td:nth-of-type(3)`] = { padding: 0 };
         styles[`& > tbody > tr:nth-of-type(${i + 1}) > td:nth-of-type(4)`] = { padding: 0 };
         styles[`& > tbody > tr:nth-of-type(${i + 1}) > td:nth-of-type(5)`] = { padding: 0 };
@@ -74,9 +74,13 @@ class CaseListTable extends React.PureComponent {
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
       valueFunction: (review) => {
-        if (review.reviewType === 'higher_level_review' && review.epCodes) {
-          return review.epCodes.map((epCode, i) => {
-            return <SubdividedTableRow rowNumber={i}>{epCode}</SubdividedTableRow>;
+        const doesReviewHaveEndProducts =
+          review.reviewType === 'higher_level_review' &&
+          review.endProducts && review.endProducts.length > 0;
+
+        if (doesReviewHaveEndProducts) {
+          return review.endProducts.map((endProduct, i) => {
+            return <SubdividedTableRow rowNumber={i}>{`${endProduct.code} ${endProduct.modifier}`}</SubdividedTableRow>;
           });
         } else if (review.reviewType === 'supplemental_claim') {
           return <em>{COPY.OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE}</em>;
@@ -85,9 +89,9 @@ class CaseListTable extends React.PureComponent {
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE,
-      valueFunction: (review) => review.epStatus ?
-        review.epStatus.map((epStatusCode, i) => {
-          let statusCode = epStatusCode;
+      valueFunction: (review) => review.endProducts ?
+        review.endProducts.map((endProduct, i) => {
+          let statusCode = endProduct.synced_status;
 
           if (!statusCode) {
             statusCode = 'PROCESSING';
@@ -100,10 +104,10 @@ class CaseListTable extends React.PureComponent {
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_DECISION_DATE_COLUMN_TITLE,
-      valueFunction: (review) => review.decisionDate ?
-        review.decisionDate.map((decisionDate, i) => {
+      valueFunction: (review) => review.endProducts ?
+        review.endProducts.map((endProduct, i) => {
           return <SubdividedTableRow rowNumber={i}>
-            {decisionDate && <DateString date={decisionDate} />}
+            {endProduct.last_synced_at && <DateString date={endProduct.last_synced_at} />}
           </SubdividedTableRow>;
         }) : ''
     }
