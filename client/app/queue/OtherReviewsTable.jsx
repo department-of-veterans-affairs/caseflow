@@ -10,19 +10,19 @@ import { clearCaseListSearch } from './CaseList/CaseListActions';
 
 import { DateString } from '../util/DateUtil';
 import COPY from '../../COPY.json';
-import EP_STATUSES from '../../constants/EP_STATUSES.json'
+import EP_STATUSES from '../../constants/EP_STATUSES.json';
 
 class SubdividedTableRow extends React.PureComponent {
   render = () => {
-    const borderStyle = '1px solid #D6D7D9';
-    let styling = {
+    const styling = {
       boxSizing: 'content-box',
       height: '22px',
       padding: '10px 15px'
     };
+    const topBorderStyle = '1px solid #D6D7D9';
 
     if (this.props.rowNumber > 0) {
-      styling.borderTop = borderStyle;
+      styling.borderTop = topBorderStyle;
     }
 
     return <div {...css(styling)}>{this.props.children}</div>;
@@ -42,7 +42,7 @@ class CaseListTable extends React.PureComponent {
       return;
     }
 
-    let styles = {};
+    const styles = {};
 
     this.props.reviews.forEach((review, i) => {
       if (review.epCodes.length > 1) {
@@ -58,6 +58,7 @@ class CaseListTable extends React.PureComponent {
 
   componentWillUnmount = () => this.props.clearCaseListSearch();
 
+  // TODO(joey): give a unique identifier here
   getKeyForRow = (rowNumber, object) => object.id;
 
   getColumns = () => [
@@ -87,11 +88,13 @@ class CaseListTable extends React.PureComponent {
       header: COPY.OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE,
       valueFunction: (review) => review.epStatus ?
         review.epStatus.map((epStatusCode, i) => {
-          if (!epStatusCode) {
-            epStatusCode = 'PROCESSING';
+          let statusCode = epStatusCode;
+
+          if (!statusCode) {
+            statusCode = 'PROCESSING';
           }
 
-          const epStatus = EP_STATUSES[epStatusCode];
+          const epStatus = EP_STATUSES[statusCode];
 
           return <SubdividedTableRow rowNumber={i}>{epStatus}</SubdividedTableRow>;
         }) : ''
@@ -100,14 +103,8 @@ class CaseListTable extends React.PureComponent {
       header: COPY.OTHER_REVIEWS_TABLE_DECISION_DATE_COLUMN_TITLE,
       valueFunction: (review) => review.decisionDate ?
         review.decisionDate.map((decisionDate, i) => {
-          let decisionDateElem;
-
-          if (decisionDate) {
-            decisionDateElem = <DateString date={decisionDate} />;
-          }
-
           return <SubdividedTableRow rowNumber={i}>
-            {decisionDateElem}
+            {decisionDate && <DateString date={decisionDate} />}
           </SubdividedTableRow>;
         }) : ''
     }

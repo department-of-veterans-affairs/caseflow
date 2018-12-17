@@ -55,27 +55,6 @@ class ClaimReview < DecisionReview
     end
   end
 
-  def search_table_ui_hash
-    {
-      claim_id: id,
-      veteran_file_number: veteran_file_number,
-      veteran_full_name: Veteran.find_by(file_number: veteran_file_number).name.formatted(:readable_full),
-      ep_codes: ep_codes,
-      claimant_names: claimants.map(&:name),
-      review_type: type_of_claim_review(self.class),
-      ep_status: end_product_establishments.map(&:synced_status),
-      decision_date: end_product_establishments.map(&:last_synced_at)
-    }
-  end
-
-  def type_of_claim_review(review_class)
-    if review_class == HigherLevelReview
-      return "higher_level_review"
-    elsif review_class == SupplementalClaim
-      return "supplemental_claim"
-    end
-  end
-
   def issue_code(*)
     fail Caseflow::Error::MustImplementInSubclass
   end
@@ -132,10 +111,6 @@ class ClaimReview < DecisionReview
 
   private
 
-  def ep_codes
-    end_product_establishments.map(&:modifier)
-  end
-
   def informal_conference?
     false
   end
@@ -163,5 +138,30 @@ class ClaimReview < DecisionReview
 
   def matching_request_issue(contention_id)
     RequestIssue.find_by!(contention_reference_id: contention_id)
+  end
+
+  def ep_codes
+    end_product_establishments.map(&:modifier)
+  end
+
+  def search_table_ui_hash
+    {
+      claim_id: id,
+      veteran_file_number: veteran_file_number,
+      veteran_full_name: Veteran.find_by(file_number: veteran_file_number).name.formatted(:readable_full),
+      ep_codes: ep_codes,
+      claimant_names: claimants.map(&:name),
+      review_type: type_of_claim_review(self.class),
+      ep_status: end_product_establishments.map(&:synced_status),
+      decision_date: end_product_establishments.map(&:last_synced_at)
+    }
+  end
+
+  def type_of_claim_review(review_class)
+    if review_class == HigherLevelReview
+      return "higher_level_review"
+    elsif review_class == SupplementalClaim
+      return "supplemental_claim"
+    end
   end
 end

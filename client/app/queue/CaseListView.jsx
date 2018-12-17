@@ -51,7 +51,10 @@ class CaseListView extends React.PureComponent {
         const returnedObject = JSON.parse(response.text);
 
         const claimReviews = returnedObject.claim_reviews.map((review) => {
-          return _.assignIn(review, { caseflow_veteran_id: this.props.caseflowVeteranId });
+          return {
+            ...review,
+            caseflow_veteran_id: this.props.caseflowVeteranId
+          };
         });
 
         this.props.onReceiveAppealsUsingVeteranId(returnedObject.appeals);
