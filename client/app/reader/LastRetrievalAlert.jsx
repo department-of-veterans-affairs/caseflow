@@ -3,6 +3,7 @@ import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
 import Alert from '../components/Alert';
+import { css } from '../../node_modules/glamor';
 
 const CACHE_TIMEOUT_HOURS = 3;
 const TIMEZONES = {
@@ -17,13 +18,17 @@ const TIMEZONES = {
   ' PST': ' -0800'
 };
 
+const alertStyling = css({
+  marginBottom: '20px'
+});
+
 class LastRetrievalAlert extends React.PureComponent {
 
   render() {
 
     // Check that document manifests have been recieved from VVA and VBMS
     if (!this.props.manifestVbmsFetchedAt || !this.props.manifestVvaFetchedAt) {
-      return <Alert title="Error" type="error">
+      return <Alert title="Error" type="error" styling={alertStyling}>
         Some of {this.props.appeal.veteran_full_name}'s documents are not available at the moment due to
         a loading error from VBMS or VVA. As a result, you may be viewing a partial list of claims folder documents.
         <br />
@@ -50,7 +55,7 @@ class LastRetrievalAlert extends React.PureComponent {
 
     // Check that manifest results are fresh
     if (vbmsManifestTimestamp < staleCacheTimestamp || vvaManifestTimestamp < staleCacheTimestamp) {
-      return <Alert title="Warning" type="warning">
+      return <Alert title="Warning" type="warning" styling={alertStyling}>
         You may be viewing an outdated list of claims folder documents. Please refresh the page to load
         the most up to date documents.
       </Alert>;
