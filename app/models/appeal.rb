@@ -1,6 +1,5 @@
 class Appeal < DecisionReview
   include Taskable
-  include LegacyOptinable
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -15,6 +14,28 @@ class Appeal < DecisionReview
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, if: :legacy_opt_in_enabled?
     validates_associated :claimants
   end
+
+  scope :join_aod_motions, lambda {
+    joins(claimants: :person)
+      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
+  }
+
+  scope :all_priority, lambda {
+    join_aod_motions
+      .where("advance_on_docket_motions.created_at > appeals.established_at")
+      .where("advance_on_docket_motions.granted = ?", true)
+      .or(join_aod_motions
+        .where("people.date_of_birth <= ?", 75.years.ago))
+  }
+
+  # rubocop:disable Metrics/LineLength
+  scope :all_nonpriority, lambda {
+    join_aod_motions
+      .where("people.date_of_birth > ?", 75.years.ago)
+      .group("appeals.id")
+      .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
+  }
+  # rubocop:enable Metrics/LineLength
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
@@ -222,13 +243,21 @@ class Appeal < DecisionReview
     RootTask.create_root_and_sub_tasks!(self)
   end
 
+  # Only select completed tasks because incomplete tasks will appear elsewhere on case details page.
+  # Tasks are sometimes assigned to organizations for tracking, these will appear as duplicates if they have child
+  # tasks, so we do not return those organization tasks.
+  def tasks_for_timeline
+    tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC")
+      .reject { |t| t.assigned_to.is_a?(Organization) && t.children.pluck(:assigned_to_type).include?(User.name) }
+  end
+
   def timeline
     [
       {
         title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
         date: decision_date
       },
-      tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC").map(&:timeline_details),
+      tasks_for_timeline.map(&:timeline_details),
       {
         title: receipt_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
         date: receipt_date
@@ -237,13 +266,19 @@ class Appeal < DecisionReview
   end
 
   def establish!
-    # currently a no-op
+    attempted!
+
+    process_legacy_issues!
+
+    clear_error!
+    processed!
   end
 
   private
 
   def contestable_decision_issues
     DecisionIssue.where(participant_id: veteran.participant_id)
+      .where.not(decision_review_type: "Appeal")
   end
 
   def bgs

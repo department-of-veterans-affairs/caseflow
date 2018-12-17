@@ -117,7 +117,7 @@ class ListSchedule extends React.Component {
         hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDateStr(hearingDay.hearingDate)}</Link>,
         hearingType: hearingDay.hearingType,
         regionalOffice: hearingDay.regionalOffice,
-        room: hearingDay.roomInfo,
+        room: hearingDay.room,
         vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
       }));
   };
@@ -281,7 +281,7 @@ ListSchedule.propTypes = {
     hearingDate: PropTypes.string,
     hearingType: PropTypes.string,
     regionalOffice: PropTypes.string,
-    roomInfo: PropTypes.string,
+    room: PropTypes.string,
     judgeId: PropTypes.string,
     judgeName: PropTypes.string,
     updatedOn: PropTypes.string,

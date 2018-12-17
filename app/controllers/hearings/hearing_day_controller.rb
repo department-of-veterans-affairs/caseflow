@@ -115,7 +115,7 @@ class Hearings::HearingDayController < HearingScheduleController
                   :regional_office,
                   :hearing_key,
                   :hearing_type,
-                  :room_info,
+                  :room,
                   :bva_poc,
                   :notes,
                   :lock)
@@ -125,7 +125,7 @@ class Hearings::HearingDayController < HearingScheduleController
   def create_params
     params.permit(:hearing_type,
                   :hearing_date,
-                  :room_info,
+                  :room,
                   :judge_id,
                   :regional_office,
                   :notes,
@@ -173,7 +173,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def json_hearing(hearing)
     hearing.as_json.each_with_object({}) do |(k, v), converted|
-      converted[k] = if k == "room_info"
+      converted[k] = if k == "room"
                        HearingDayMapper.label_for_room(v)
                      elsif k == "regional_office" && !v.nil?
                        HearingDayMapper.city_for_regional_office(v)
@@ -233,7 +233,7 @@ class Hearings::HearingDayController < HearingScheduleController
     # Coming from Add Hearing Day modal but no room required
     if do_not_assign_room
       params.delete(:assign_room)
-      params[:room_info] = ""
+      params[:room] = ""
       return true
     end
     # Return if coming from regular create from RO algorithm
@@ -241,11 +241,11 @@ class Hearings::HearingDayController < HearingScheduleController
     return true unless params.key?(:assign_room)
 
     # Coming from Add Hearing Day modal and room required
-    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date]).group(:room_info).count
+    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date]).group(:room).count
     available_room = select_available_room(hearing_count_by_room)
 
     params.delete(:assign_room)
-    params[:room_info] = available_room if !available_room.nil?
+    params[:room] = available_room if !available_room.nil?
     !available_room.nil?
   end
 

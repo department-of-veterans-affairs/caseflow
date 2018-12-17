@@ -191,10 +191,13 @@ describe SupplementalClaimIntake do
 
     let(:params) { { request_issues: [issue_data] } }
 
+    let(:legacy_opt_in_approved) { false }
+
     let(:detail) do
       SupplementalClaim.create!(
         veteran_file_number: "64205555",
-        receipt_date: 3.days.ago
+        receipt_date: 3.days.ago,
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 
@@ -258,6 +261,46 @@ describe SupplementalClaimIntake do
         description: "decision text",
         rating_issue_associated_at: Time.zone.now
       )
+    end
+
+    context "when a legacy VACOLS opt-in occurs" do
+      let(:vacols_case) { create(:case) }
+      let(:legacy_appeal) do
+        create(:legacy_appeal, vacols_case: vacols_case)
+      end
+
+      let(:issue_data) do
+        {
+          profile_date: "2018-04-30T11:11:00.000-04:00",
+          reference_id: "reference-id",
+          decision_text: "decision text",
+          vacols_id: legacy_appeal.vacols_id,
+          vacols_sequence_id: 1
+        }
+      end
+
+      context "legacy_opt_in_approved is false" do
+        it "does not submit a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
+
+          subject
+
+          expect(LegacyIssueOptin.count).to eq 0
+        end
+      end
+
+      context "legacy_opt_approved is true" do
+        let(:legacy_opt_in_approved) { true }
+
+        it "submits a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
+          expect_any_instance_of(LegacyOptinManager).to receive(:process!).once
+
+          subject
+
+          expect(LegacyIssueOptin.count).to eq 1
+        end
+      end
     end
 
     context "when the intake was already complete" do

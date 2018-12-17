@@ -1,6 +1,7 @@
 class DecisionReview < ApplicationRecord
   include CachedAttributes
   include LegacyOptinable
+  include Asyncable
 
   validate :validate_receipt_date
 
@@ -18,16 +19,40 @@ class DecisionReview < ApplicationRecord
     ratings_with_issues.map(&:serialize)
   end
 
-  def self.ama_activation_date
-    if FeatureToggle.enabled?(:use_ama_activation_date)
-      Constants::DATES["AMA_ACTIVATION"].to_date
-    else
-      Constants::DATES["AMA_ACTIVATION_TEST"].to_date
-    end
-  end
+  # The Asyncable module requires we define these.
+  # establishment_submitted_at - when our db is ready to push to exernal services
+  # establishment_attempted_at - when our db attempted to push to external services
+  # establishment_processed_at - when our db successfully pushed to external services
+  # establishment_error        - capture exception messages on failures
 
-  def self.review_title
-    to_s.underscore.titleize
+  class << self
+    def submitted_at_column
+      :establishment_submitted_at
+    end
+
+    def attempted_at_column
+      :establishment_attempted_at
+    end
+
+    def processed_at_column
+      :establishment_processed_at
+    end
+
+    def error_column
+      :establishment_error
+    end
+
+    def ama_activation_date
+      if FeatureToggle.enabled?(:use_ama_activation_date)
+        Constants::DATES["AMA_ACTIVATION"].to_date
+      else
+        Constants::DATES["AMA_ACTIVATION_TEST"].to_date
+      end
+    end
+
+    def review_title
+      to_s.underscore.titleize
+    end
   end
 
   def serialized_ratings
@@ -133,6 +158,10 @@ class DecisionReview < ApplicationRecord
 
   def establish!
     # no-op
+  end
+
+  def process_legacy_issues!
+    LegacyOptinManager.new(decision_review: self).process!
   end
 
   def contestable_issues

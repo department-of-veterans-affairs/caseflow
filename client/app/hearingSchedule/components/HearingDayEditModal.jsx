@@ -17,43 +17,12 @@ import { selectHearingCoordinator,
   setNotes,
   onHearingDayModified
 } from '../actions';
+import HEARING_ROOMS_LIST from '../../../constants/HEARING_ROOMS_LIST.json';
 
 const notesFieldStyling = css({
   height: '100px',
   fontSize: '10pt'
 });
-
-// May explore building API to get from back-end at future point.
-const roomOptions = [
-  { label: '',
-    value: '' },
-  { label: '1W200A',
-    value: '1' },
-  { label: '1W200B',
-    value: '2' },
-  { label: '1W200C',
-    value: '3' },
-  { label: '1W424',
-    value: '4' },
-  { label: '1W428',
-    value: '5' },
-  { label: '1W432',
-    value: '6' },
-  { label: '1W434',
-    value: '7' },
-  { label: '1W435',
-    value: '8' },
-  { label: '1W436',
-    value: '9' },
-  { label: '1W437',
-    value: '10' },
-  { label: '1W438',
-    value: '11' },
-  { label: '1W439',
-    value: '12' },
-  { label: '1W440',
-    value: '13' }
-];
 
 class HearingDayEditModal extends React.Component {
   constructor(props) {
@@ -76,14 +45,20 @@ class HearingDayEditModal extends React.Component {
   };
 
   formatRoomOptions = () => {
-    return roomOptions.map((room) => {
-      if (room.value === '') {
-        return room;
-      }
+    const roomOptions = [
+      { label: '',
+        value: '' }
+    ];
+    const rooms = Object.keys(HEARING_ROOMS_LIST);
 
-      return { label: `${room.value} (${room.label})`,
-        value: room.value };
-    });
+    for (const roomKey of rooms) {
+      const room = HEARING_ROOMS_LIST[roomKey];
+
+      roomOptions.push({ label: room.label,
+        value: roomKey });
+    }
+
+    return roomOptions;
   };
 
   modalConfirmButton = () => {
@@ -194,7 +169,7 @@ class HearingDayEditModal extends React.Component {
       <div className="cf-modal-scroll">
         <Modal
           title="Edit Hearing Day"
-          closeHandler={this.onCancelModal}
+          closeHandler={this.props.cancelModal}
           confirmButton={this.modalConfirmButton()}
           cancelButton={this.modalCancelButton()}
         >

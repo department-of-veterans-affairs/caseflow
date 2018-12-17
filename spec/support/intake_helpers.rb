@@ -171,20 +171,37 @@ module IntakeHelpers
     setup_inactive_ineligible_legacy_appeal(veteran_file_number)
   end
 
+  def setup_request_issue_with_nonrating_decision_issue(decision_review, issue_category: "Active Duty Adjustments")
+    random_date = Time.zone.now - 4.days
+    create(:request_issue,
+           :with_nonrating_decision_issue,
+           description: "Test nonrating decision issue",
+           review_request: decision_review,
+           decision_date: random_date,
+           issue_category: issue_category,
+           veteran_participant_id: veteran.participant_id)
+  end
+
+  def setup_request_issue_with_rating_decision_issue(decision_review, rating_issue_reference_id: "rating123")
+    random_date = Time.zone.now - 2.days
+    create(:request_issue,
+           :with_rating_decision_issue,
+           rating_issue_reference_id: rating_issue_reference_id,
+           rating_issue_profile_date: random_date,
+           description: "Test rating decision issue",
+           review_request: decision_review,
+           veteran_participant_id: veteran.participant_id)
+  end
+
   def setup_prior_decision_issues(veteran, benefit_type: "compensation")
     supplemental_claim_with_decision_issues = create(:supplemental_claim,
                                                      veteran_file_number: veteran.file_number,
                                                      benefit_type: benefit_type)
 
-    contested_decision_issue = create(:decision_issue,
-                                      decision_review: supplemental_claim_with_decision_issues,
-                                      participant_id: veteran.participant_id,
-                                      decision_text: "contested supplemental claim decision issue",
-                                      profile_date: Time.zone.now - 2.days,
-                                      promulgation_date: Time.zone.now - 2.days,
-                                      benefit_type: supplemental_claim_with_decision_issues.benefit_type)
+    nonrating_request_issue = setup_request_issue_with_nonrating_decision_issue(supplemental_claim_with_decision_issues)
+    rating_request_issue = setup_request_issue_with_rating_decision_issue(supplemental_claim_with_decision_issues)
 
-    contested_decision_issue
+    rating_request_issue.decision_issues + nonrating_request_issue.decision_issues
   end
 end
 # rubocop:enable Metrics/ModuleLength
