@@ -688,15 +688,17 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def matchable_to_request_issue?
-    issues.any? && (active? || eligible_for_soc_opt_in?)
+  def matchable_to_request_issue?(receipt_date)
+    issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
   end
 
-  def eligible_for_soc_opt_in?
-    return false unless nod_date
-    return false unless soc_date
+  def eligible_for_soc_opt_in?(receipt_date)
+    return false unless nod_date || soc_date || ssoc_dates.any?
 
-    soc_date > soc_eligible_date || nod_date > nod_eligible_date
+    soc_eligible_date = receipt_date - 60.days
+    nod_eligible_date = receipt_date - 372.days
+
+    soc_date > soc_eligible_date || nod_date > nod_eligible_date || ssoc_dates.any? { |d| d > soc_eligible_date }
   end
 
   def serializer_class
@@ -725,14 +727,6 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
-
-  def soc_eligible_date
-    Time.zone.today - 60.days
-  end
-
-  def nod_eligible_date
-    Time.zone.today - 372.days
-  end
 
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
