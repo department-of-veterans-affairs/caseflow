@@ -32,9 +32,10 @@ class SideBarComments extends PureComponent {
           onClick={this.handleAddClick}>
           <span>{plusIcon()} &nbsp; Add a comment</span>
         </Button>
-        {this.props.error.annotation.visible && <CannotSaveAlert message={this.props.error.annotation.message} />}
       </span>
+      <div style={{ clear: 'both' }}></div>
       <div className="cf-comment-wrapper">
+        {this.props.error.annotation.visible && <CannotSaveAlert message={this.props.error.annotation.message} />}
         <div className="cf-pdf-comment-list">
           {this.props.placedButUnsavedAnnotation &&
             <EditComment
