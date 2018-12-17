@@ -58,8 +58,7 @@ class CaseListTable extends React.PureComponent {
 
   componentWillUnmount = () => this.props.clearCaseListSearch();
 
-  // TODO(joey): give a unique identifier here
-  getKeyForRow = (rowNumber, object) => object.id;
+  getKeyForRow = (rowNumber, object) => `${object.reviewType}-${object.claimId}`;
 
   getColumns = () => [
     {

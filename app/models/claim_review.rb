@@ -50,7 +50,9 @@ class ClaimReview < DecisionReview
     end
 
     def find_all_by_file_number(file_number)
-      claim_reviews = HigherLevelReview.where(veteran_file_number: file_number) + SupplementalClaim.where(veteran_file_number: file_number)
+      claim_reviews =
+        HigherLevelReview.where(veteran_file_number: file_number) +
+        SupplementalClaim.where(veteran_file_number: file_number)
       claim_reviews.map(&:search_table_ui_hash)
     end
   end
@@ -109,6 +111,19 @@ class ClaimReview < DecisionReview
     request_issues.find { |reqi| reqi.description == description }
   end
 
+  def search_table_ui_hash
+    {
+      claim_id: id,
+      veteran_file_number: veteran_file_number,
+      veteran_full_name: Veteran.find_by(file_number: veteran_file_number).name.formatted(:readable_full),
+      ep_codes: ep_codes,
+      claimant_names: claimants.map(&:name),
+      review_type: type_of_claim_review(self.class),
+      ep_status: end_product_establishments.map(&:synced_status),
+      decision_date: end_product_establishments.map(&:last_synced_at)
+    }
+  end
+
   private
 
   def informal_conference?
@@ -144,24 +159,11 @@ class ClaimReview < DecisionReview
     end_product_establishments.map(&:modifier)
   end
 
-  def search_table_ui_hash
-    {
-      claim_id: id,
-      veteran_file_number: veteran_file_number,
-      veteran_full_name: Veteran.find_by(file_number: veteran_file_number).name.formatted(:readable_full),
-      ep_codes: ep_codes,
-      claimant_names: claimants.map(&:name),
-      review_type: type_of_claim_review(self.class),
-      ep_status: end_product_establishments.map(&:synced_status),
-      decision_date: end_product_establishments.map(&:last_synced_at)
-    }
-  end
-
   def type_of_claim_review(review_class)
     if review_class == HigherLevelReview
-      return "higher_level_review"
+      "higher_level_review"
     elsif review_class == SupplementalClaim
-      return "supplemental_claim"
+      "supplemental_claim"
     end
   end
 end

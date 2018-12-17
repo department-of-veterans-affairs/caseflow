@@ -334,11 +334,8 @@ class SeedDB
     veteran_file_number = "682007349"
     veteran = Veteran.find_by(file_number: veteran_file_number)
 
-    ep_code = "170RMDAMC"
     ep_rating_code = "030HLRR"
-    ep_rating_code_modifier = "030"
     ep_nonrating_code = "030HLRNR"
-    ep_nonrating_code_modifier = "030"
 
     one_day_in_seconds = 60 * 60 * 24
     two_days_in_seconds = 2 * one_day_in_seconds
@@ -349,7 +346,7 @@ class SeedDB
       receipt_date: Time.zone.now - thirty_days_in_seconds,
       informal_conference: false,
       same_office: false,
-      benefit_type: "compensation",
+      benefit_type: "compensation"
     )
     higher_level_review.create_claimants!(
       participant_id: "5382910292",
