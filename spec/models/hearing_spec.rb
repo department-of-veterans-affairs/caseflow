@@ -235,6 +235,15 @@ describe Hearing do
         expect(hearing.user).to eq user
         expect(hearing.prepped).to be_falsey
       end
+
+      it "should create a legacy hearing record" do
+        subject
+        legacy_hearing = LegacyHearing.find_by(vacols_id: case_hearing.hearing_pkseq)
+        expect(legacy_hearing.present?).to be true
+        expect(legacy_hearing.appeal.vacols_id).to eq "5678"
+        expect(legacy_hearing.user).to eq user
+        expect(legacy_hearing.prepped).to be_falsey
+      end
     end
 
     context "assign vacols record" do
