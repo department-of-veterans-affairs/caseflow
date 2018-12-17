@@ -5,7 +5,7 @@ describe AttorneyCaseReview do
   let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID) }
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
 
-  context "#update_issue_dispositions!" do
+  context "#delete_and_create_decision_issues!" do
     let(:appeal) { create(:appeal) }
     let(:task) { create(:ama_attorney_task, appeal: appeal) }
     let!(:request_issue1) { create(:request_issue, review_request: appeal) }
@@ -28,7 +28,7 @@ describe AttorneyCaseReview do
       create(:request_issue, review_request: appeal, decision_issues: [decision_issue3, decision_issue4])
     end
 
-    subject { AttorneyCaseReview.new(issues: issues, task_id: task.id).update_issue_dispositions! }
+    subject { AttorneyCaseReview.new(issues: issues, task_id: task.id).delete_and_create_decision_issues! }
 
     context "when issue attributes are valid" do
       let(:issues) do

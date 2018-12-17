@@ -1,16 +1,19 @@
+# This module has too many lines temporary. There are a few deprecated methods that will be removed once
+# we turn on 'ama_decision_issues' flag
+# rubocop:disable Metrics/ModuleLength
 module IssueUpdater
   extend ActiveSupport::Concern
 
+  # Remove this method when feature flag 'ama_decision_issues' is enabled for all.
   def update_issue_dispositions_in_caseflow!
-    # Remove this check when feature flag 'ama_decision_issues' is enabled for all. Similarly,
-    use_ama_decision_issues? ? update_issue_dispositions! : update_issue_dispositions_deprecated!
+    use_ama_decision_issues? ? delete_and_create_decision_issues! : update_issue_dispositions_deprecated!
   end
 
-  def update_issue_dispositions!
+  def delete_and_create_decision_issues!
     return unless appeal
     # We will always delete and re-create decision issues on attorney/judge checkout
-    delete_decision_issues
-    create_decision_issues
+    DecisionIssue.where(id: appeal.decision_issues.map(&:id)).destroy_all
+    create_decision_issues!
     fail_if_not_all_request_issues_have_decision!
   end
 
@@ -34,12 +37,7 @@ module IssueUpdater
 
   private
 
-  def delete_decision_issues
-    decision_issue_ids_to_delete = appeal.decision_issues.map(&:id)
-    DecisionIssue.where(id: decision_issue_ids_to_delete).destroy_all
-  end
-
-  def create_decision_issues
+  def create_decision_issues!
     issues.each do |issue_attrs|
       request_issues = appeal.request_issues.where(id: issue_attrs[:request_issue_ids])
       next if request_issues.empty?
@@ -93,11 +91,6 @@ module IssueUpdater
     end
   end
 
-  def use_ama_decision_issues?
-    FeatureToggle.enabled?(:ama_decision_issues, user: RequestStore.store[:current_user]) ||
-      issues&.first && issues.first[:request_issue_ids]
-  end
-
   def create_remand_reasons(decision_issue, remand_reasons_attrs)
     fail_if_no_remand_reasons!(decision_issue, remand_reasons_attrs)
     remand_reasons_attrs.each do |attrs|
@@ -106,6 +99,12 @@ module IssueUpdater
         record.save!
       end
     end
+  end
+
+  # Delete this method when feature flag 'ama_decision_issues' is enabled for all
+  def use_ama_decision_issues?
+    FeatureToggle.enabled?(:ama_decision_issues, user: RequestStore.store[:current_user]) ||
+      issues&.first && issues.first[:request_issue_ids]
   end
 
   # Delete this method when feature flag 'ama_decision_issues' is enabled for all
@@ -139,3 +138,4 @@ module IssueUpdater
     request_issue.remand_reasons.where(code: codes_to_delete).delete_all
   end
 end
+# rubocop:enable Metrics/ModuleLength
