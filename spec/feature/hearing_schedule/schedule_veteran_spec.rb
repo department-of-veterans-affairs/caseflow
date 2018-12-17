@@ -19,7 +19,12 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
   context "When creating Caseflow Central hearings" do
     let!(:hearing_day) { create(:hearing_day) }
-    let!(:vacols_case) { create(:case, :central_office_hearing) }
+    let!(:vacols_case) do
+      create(
+        :case, :central_office_hearing,
+        bfcorlid: "123454787S"
+      )
+    end
 
     scenario "Schedule Veteran for central hearing" do
       visit "hearings/schedule/assign"
@@ -36,6 +41,11 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_button("Schedule")
       find_link("Back to Schedule Veterans").click
       expect(page).to have_content("Schedule Veterans")
+      click_button("Scheduled")
+      expect(VACOLS::Case.where(bfcorlid: "123454787S"))
+      click_button("Schedule a Veteran")
+      expect(page).not_to have_content("123454787S")
+      expect(page).to have_content("There are no schedulable veterans")
     end
   end
 
@@ -73,6 +83,11 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_button("Schedule")
       find_link("Back to Schedule Veterans").click
       expect(page).to have_content("Schedule Veterans")
+      click_button("Scheduled")
+      expect(VACOLS::Case.where(bfcorlid: "123456789S"))
+      click_button("Schedule a Veteran")
+      expect(page).not_to have_content("123456789S")
+      expect(page).to have_content("There are no schedulable veterans")
     end
   end
 end
