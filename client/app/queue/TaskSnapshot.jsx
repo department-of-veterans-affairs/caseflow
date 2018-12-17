@@ -31,7 +31,6 @@ import {
 
 export const grayLine = css({
   width: '5px',
-  minHeight: '50px',
   background: COLORS.GREY_LIGHT,
   margin: 'auto',
   position: 'absolute',
