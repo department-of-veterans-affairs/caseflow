@@ -1075,33 +1075,54 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_current_path("/intake/add_issues")
     end
 
-    scenario "Non-compensation" do
-      hlr, = start_higher_level_review(veteran, is_comp: false)
-      visit "/intake/add_issues"
+    context "Non-compensation" do
+      context "decision issues present" do
+        scenario "Add Issues button shows contestable issues" do
+          hlr, = start_higher_level_review(veteran, is_comp: false)
+          create(:decision_issue,
+                 decision_review: hlr,
+                 benefit_type: hlr.benefit_type,
+                 decision_text: "something was decided",
+                 participant_id: veteran.participant_id)
 
-      expect(page).to have_content("Add / Remove Issues")
-      check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
-      check_row("Benefit type", "Education")
-      expect(page).to_not have_content("Claimant")
-      click_intake_add_issue
-      expect(page).to_not have_content("Left knee granted")
+          visit "/intake/add_issues"
+          click_intake_add_issue
 
-      add_intake_nonrating_issue(
-        category: "Active Duty Adjustments",
-        description: "Description for Active Duty Adjustments",
-        date: "10/25/2017"
-      )
-      expect(page).to_not have_content("Establish EP")
-      expect(page).to have_content("Establish Higher-Level Review")
+          expect(page).to have_content("something was decided")
+          expect(page).to_not have_content("Left knee granted")
+        end
+      end
 
-      click_intake_finish
-      expect(page).to have_content("Intake completed")
-      # request issue should have matching benefit type
-      expect(RequestIssue.find_by(
-               review_request: hlr,
-               description: "Description for Active Duty Adjustments",
-               benefit_type: hlr.benefit_type
-      )).to_not be_nil
+      context "no contestable issues present" do
+        scenario "no rating issues show on first Add Issues modal" do
+          hlr, = start_higher_level_review(veteran, is_comp: false)
+          visit "/intake/add_issues"
+
+          expect(page).to have_content("Add / Remove Issues")
+          check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
+          check_row("Benefit type", "Education")
+          expect(page).to_not have_content("Claimant")
+          click_intake_add_issue
+          expect(page).to_not have_content("Left knee granted")
+
+          add_intake_nonrating_issue(
+            category: "Active Duty Adjustments",
+            description: "Description for Active Duty Adjustments",
+            date: "10/25/2017"
+          )
+          expect(page).to_not have_content("Establish EP")
+          expect(page).to have_content("Establish Higher-Level Review")
+
+          click_intake_finish
+          expect(page).to have_content("Intake completed")
+          # request issue should have matching benefit type
+          expect(RequestIssue.find_by(
+                   review_request: hlr,
+                   description: "Description for Active Duty Adjustments",
+                   benefit_type: hlr.benefit_type
+          )).to_not be_nil
+        end
+      end
     end
 
     scenario "canceling" do
