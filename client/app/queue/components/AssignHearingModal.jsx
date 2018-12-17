@@ -113,11 +113,20 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     const hearingDate = this.formatHearingDate();
 
-    if (hearingDate === null || this.props.selectedHearingTime === null) {
+    const invalid = [];
+
+    if (!hearingDate) {
+      invalid.push('Date of Hearing');
+    }
+    if (!this.props.selectedHearingTime) {
+      invalid.push('Hearing Time');
+    }
+
+    if (invalid.length > 0) {
 
       this.props.showErrorMessage({
         title: 'Required Fields',
-        detail: 'Please fill in Date of Hearing and Time fields'
+        detail: `Please fill in the following fields: ${invalid.join(', ')}.`
       });
 
       return false;
@@ -274,7 +283,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   formatHearingDate = () => {
     const { selectedHearingDay, selectedHearingTime } = this.props;
 
-    if (!selectedHearingTime || !selectedHearingDay) {
+    if (selectedHearingDay && !selectedHearingTime) {
+      return new Date(selectedHearingDay.value.hearingDate);
+    } else if (!selectedHearingTime || !selectedHearingDay) {
       return null;
     }
 
@@ -293,18 +304,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     return hearingDate;
   };
-
-  getSelectedTimeOption = () => {
-    const { selectedHearingTime } = this.props;
-    const timeOptions = this.getTimeOptions();
-
-    if (!selectedHearingTime) {
-
-      return {};
-    }
-
-    return _.find(timeOptions, (option) => option.value === selectedHearingTime);
-  }
 
   getInitialValues = () => {
     const { hearingDay } = this.props;
