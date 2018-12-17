@@ -135,6 +135,12 @@ class Issue
     disposition.nil? || in_remand?
   end
 
+  # For status (BFMPRO) of ADV or REM, for the most part, having a disposition means the issue is closed.
+  # On appeal where the status is REM (remanded) the issues with disposition "3" are still active.
+  def closed?
+    !active?
+  end
+
   def allowed?
     disposition == :allowed
   end
@@ -200,15 +206,6 @@ class Issue
   attr_writer :remand_reasons
   def remand_reasons
     @remand_reasons ||= self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
-  end
-
-  # For status (BFMPRO) of ADV or REM, for the most part, having a disposition means the issue is closed.
-  # On appeal where the status is REM (remanded) the issues with disposition "3" are still active.
-  def closed?
-    return false if disposition.nil?
-    return false if in_remand?
-    return true if legacy_appeal.remand? || legacy_appeal.advance? || !legacy_appeal.active?
-    false
   end
 
   def eligible_for_opt_in?
@@ -320,7 +317,6 @@ class Issue
     end
 
     def rollback_opt_in!(opt_in_issue)
-      fail "Disposition #{disposition_id} cannot be rolled back" if disposition_id != "O"
       update_in_vacols!(
         vacols_id: opt_in_issue.vacols_id,
         vacols_sequence_id: opt_in_issue.vacols_sequence_id,

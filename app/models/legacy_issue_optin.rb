@@ -21,6 +21,7 @@ class LegacyIssueOptin < ApplicationRecord
   end
 
   def rollback_issue_disposition
+    binding.pry
     Issue.rollback_opt_in!(self)
     update!(rollback_processed_at: Time.zone.now)
   end

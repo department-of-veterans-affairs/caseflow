@@ -9,16 +9,16 @@ class LegacyOptinManager
 
   def process!
     VACOLS::Case.transaction do
-      pending_opt_ins.each do |legacy_issue_opt_in|
-        legacy_issue_opt_in.opt_in!
-      end
-
       pending_rollbacks.each do |legacy_issue_rollback|
         legacy_issue_rollback.rollback!
       end
 
+      pending_opt_ins.each do |legacy_issue_opt_in|
+        legacy_issue_opt_in.opt_in!
+      end
+
       affected_legacy_appeals.each do |legacy_appeal|
-        if AppealRepository.issues(legacy_appeal.vacols_id).reject(&:closed?).empty?
+        if legacy_appeal.issues.reject(&:closed?).empty?
           revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
           close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
         end
@@ -30,7 +30,7 @@ class LegacyOptinManager
 
   def affected_legacy_appeals
     legacy_appeals = []
-    issues_to_be_processed.each do |issue|
+    legacy_issue_opt_ins.each do |issue|
       legacy_appeals << legacy_appeal(issue.vacols_id)
     end
     legacy_appeals.uniq
@@ -88,18 +88,13 @@ class LegacyOptinManager
      LegacyIssueOptin.where(
       vacols_id: vacols_id,
       original_disposition_code: "3"
-    ).pluck(:vacols_sequence_id, :original_disposition_date).uniq
+    )
   end
 
   def revert_opted_in_remand_issues(vacols_id)
     # put all remand issues with "O" back to "3" before closing the appeal
     remand_issues(vacols_id).each do |remand_issue|
-      Issue.rollback_opt_in!({
-        vacols_id: vacols_id,
-        vacols_sequence_id: remand_issue[0],
-        original_disposition_code: "3",
-        original_disposition_date: remand_issue[1]}
-      )
+      Issue.rollback_opt_in!(remand_issue)
     end
   end
 
