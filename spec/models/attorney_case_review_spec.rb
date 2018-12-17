@@ -32,25 +32,25 @@ describe AttorneyCaseReview do
 
     context "when issue attributes are valid" do
       let(:issues) do
-        [{ disposition: "allowed", description: "something1",
+        [{ disposition: "allowed", description: "something1", benefit_type: "compensation",
            request_issue_ids: [request_issue1.id, request_issue2.id] },
-         { disposition: "remanded", description: "something2",
+         { disposition: "remanded", description: "something2", benefit_type: "compensation",
            request_issue_ids: [request_issue1.id, request_issue2.id],
            remand_reasons: [
              { code: "va_records", post_aoj: false },
              { code: "incorrect_notice_sent", post_aoj: true }
            ] },
-         { disposition: "allowed", description: "something3",
+         { disposition: "allowed", description: "something3", benefit_type: "compensation",
            request_issue_ids: [request_issue3.id, request_issue4.id] },
-         { disposition: "allowed", description: "something4",
+         { disposition: "allowed", description: "something4", benefit_type: "compensation",
            request_issue_ids: [request_issue5.id] },
-         { disposition: "remanded", description: "something5",
+         { disposition: "remanded", description: "something5", benefit_type: "compensation",
            request_issue_ids: [request_issue5.id],
            remand_reasons: [
              { code: "va_records", post_aoj: false },
              { code: "incorrect_notice_sent", post_aoj: true }
            ] },
-         { disposition: "allowed", description: "something6",
+         { disposition: "allowed", description: "something6", benefit_type: "compensation",
            request_issue_ids: [request_issue6.id] }]
       end
 
@@ -88,21 +88,21 @@ describe AttorneyCaseReview do
 
     context "when missing remand reasons" do
       let(:issues) do
-        [{ disposition: "allowed", description: "something1",
+        [{ disposition: "allowed", description: "something1", benefit_type: "compensation",
            request_issue_ids: [request_issue1.id, request_issue2.id] },
-         { disposition: "remanded", description: "something2",
+         { disposition: "remanded", description: "something2", benefit_type: "compensation",
            request_issue_ids: [request_issue1.id, request_issue2.id] },
-         { disposition: "allowed", description: "something3",
+         { disposition: "allowed", description: "something3", benefit_type: "compensation",
            request_issue_ids: [request_issue3.id, request_issue4.id] },
-         { disposition: "allowed", description: "something4",
+         { disposition: "allowed", description: "something4", benefit_type: "compensation",
            request_issue_ids: [request_issue5.id] },
-         { disposition: "remanded", description: "something5",
+         { disposition: "remanded", description: "something5", benefit_type: "compensation",
            request_issue_ids: [request_issue5.id],
            remand_reasons: [
              { code: "va_records", post_aoj: false },
              { code: "incorrect_notice_sent", post_aoj: true }
            ] },
-         { disposition: "allowed", description: "something6",
+         { disposition: "allowed", description: "something6", benefit_type: "compensation",
            request_issue_ids: [request_issue6.id] }]
       end
 
@@ -114,19 +114,19 @@ describe AttorneyCaseReview do
 
     context "when not all issues are sent" do
       let(:issues) do
-        [{ disposition: "allowed", description: "something1",
+        [{ disposition: "allowed", description: "something1", benefit_type: "compensation",
            request_issue_ids: [request_issue1.id, request_issue2.id] },
-         { disposition: "remanded", description: "something2",
+         { disposition: "remanded", description: "something2", benefit_type: "compensation",
            request_issue_ids: [request_issue1.id, request_issue2.id],
            remand_reasons: [
              { code: "va_records", post_aoj: false },
              { code: "incorrect_notice_sent", post_aoj: true }
            ] },
-         { disposition: "allowed", description: "something3",
+         { disposition: "allowed", description: "something3", benefit_type: "compensation",
            request_issue_ids: [request_issue3.id, request_issue4.id] },
-         { disposition: "allowed", description: "something4",
+         { disposition: "allowed", description: "something4", benefit_type: "compensation",
            request_issue_ids: [request_issue5.id] },
-         { disposition: "remanded", description: "something5",
+         { disposition: "remanded", description: "something5", benefit_type: "compensation",
            request_issue_ids: [request_issue5.id],
            remand_reasons: [
              { code: "va_records", post_aoj: false },

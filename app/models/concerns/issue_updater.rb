@@ -3,34 +3,15 @@ module IssueUpdater
 
   def update_issue_dispositions_in_caseflow!
     # Remove this check when feature flag 'ama_decision_issues' is enabled for all. Similarly,
-    # if a request_issue_id is passed that means this case is already using the new issue
-    # editing flow and we need to continue to use it.
     use_ama_decision_issues? ? update_issue_dispositions! : update_issue_dispositions_deprecated!
   end
 
   def update_issue_dispositions!
     return unless appeal
     # We will always delete and re-create decision issues on attorney/judge checkout
-    decision_issue_ids_to_delete = appeal.decision_issues.map(&:id)
-    DecisionIssue.where(id: decision_issue_ids_to_delete).destroy_all
-
-    issues.each do |issue_attrs|
-      request_issues = appeal.request_issues.where(id: issue_attrs[:request_issue_ids])
-      next if request_issues.empty?
-      decision_issue = DecisionIssue.create!(
-        disposition: issue_attrs[:disposition],
-        description: issue_attrs[:description],
-        benefit_type: issue_attrs[:benefit_type],
-        participant_id: appeal.veteran.participant_id
-      )
-      request_issues.each do |request_issue|
-        RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
-      end
-      create_remand_reasons(decision_issue, issue_attrs[:remand_reasons] || [])
-    end
-    unless appeal.every_request_issue_has_decision?
-      fail Caseflow::Error::AttorneyJudgeCheckoutError, message: "Not every request issue has a decision issue"
-    end
+    delete_decision_issues
+    create_decision_issues
+    fail_if_not_all_request_issues_have_decision!
   end
 
   def update_issue_dispositions_in_vacols!
@@ -52,6 +33,37 @@ module IssueUpdater
   end
 
   private
+
+  def delete_decision_issues
+    decision_issue_ids_to_delete = appeal.decision_issues.map(&:id)
+    DecisionIssue.where(id: decision_issue_ids_to_delete).destroy_all
+  end
+
+  def create_decision_issues
+    issues.each do |issue_attrs|
+      request_issues = appeal.request_issues.where(id: issue_attrs[:request_issue_ids])
+      next if request_issues.empty?
+
+      decision_issue = DecisionIssue.create!(
+        disposition: issue_attrs[:disposition],
+        description: issue_attrs[:description],
+        benefit_type: issue_attrs[:benefit_type],
+        participant_id: appeal.veteran.participant_id,
+        decision_review: appeal
+      )
+
+      request_issues.each do |request_issue|
+        RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
+      end
+      create_remand_reasons(decision_issue, issue_attrs[:remand_reasons] || [])
+    end
+  end
+
+  def fail_if_not_all_request_issues_have_decision!
+    unless appeal.every_request_issue_has_decision?
+      fail Caseflow::Error::AttorneyJudgeCheckoutError, message: "Not every request issue has a decision issue"
+    end
+  end
 
   def fail_if_invalid_issues_attrs!
     return if is_a?(AttorneyCaseReview) && omo_request?

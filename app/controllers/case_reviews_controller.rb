@@ -8,9 +8,14 @@ class CaseReviewsController < ApplicationController
     handle_non_critical_error("case_reviews", e)
   end
 
-  rescue_from AttorneyJudgeCheckoutError do |e|
+  rescue_from Caseflow::Error::AttorneyJudgeCheckoutError do |e|
     Raven.capture_exception(e)
     render(e.serialize_response)
+  end
+
+  rescue_from ActiveRecord::RecordInvalid do |e|
+    Raven.capture_exception(e)
+    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
   end
 
   def set_application

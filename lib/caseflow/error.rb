@@ -64,7 +64,14 @@ module Caseflow::Error
     end
   end
 
-  class AttorneyJudgeCheckoutError < SerializableError; end
+  class AttorneyJudgeCheckoutError < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
 
   class BvaDispatchDoubleOutcode < SerializableError
     attr_accessor :task_id, :appeal_id
