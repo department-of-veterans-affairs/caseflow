@@ -64,6 +64,8 @@ module Caseflow::Error
     end
   end
 
+  class AttorneyJudgeCheckoutError < SerializableError; end
+
   class BvaDispatchDoubleOutcode < SerializableError
     attr_accessor :task_id, :appeal_id
 
@@ -165,6 +167,7 @@ module Caseflow::Error
     end
   end
   class IssueRepositoryError < VacolsRepositoryError; end
+  class RemandReasonRepositoryError < VacolsRepositoryError; end
   class QueueRepositoryError < VacolsRepositoryError; end
   class MissingRequiredFieldError < VacolsRepositoryError; end
 

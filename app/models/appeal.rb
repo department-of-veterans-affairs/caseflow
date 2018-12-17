@@ -100,6 +100,10 @@ class Appeal < DecisionReview
     tasks.map(&:attorney_case_reviews).flatten
   end
 
+  def every_request_issue_has_decision?
+    request_issues.map { |request_issue| request_issue.decision_issues.present? }.uniq == [true]
+  end
+
   def reviewing_judge_name
     task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
     task ? task.assigned_to.try(:full_name) : ""
