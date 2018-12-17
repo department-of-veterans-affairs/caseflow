@@ -31,6 +31,7 @@ type Params = {|
   task: Task,
   isReassignAction: boolean,
   isTeamAssign: boolean,
+  assigneeAlreadySelected: boolean,
   history: Object
 |};
 
@@ -47,6 +48,24 @@ type ViewState = {|
   instructions: ?string
 |};
 
+const taskActionData = (props) => {
+  const relevantAction = props.task.availableActions.
+    find((action) => props.history.location.pathname.endsWith(action.value));
+
+  if (relevantAction && relevantAction.data) {
+    return (relevantAction.data);
+  }
+
+  // We should never get here since any task action the creates this modal should provide data.
+  throw new Error('Task action requires data');
+};
+
+const selectedAction = (props) => {
+  const actionData = taskActionData(props);
+
+  return actionData.selected ? actionData.options.find((option) => option.value === actionData.selected.id) : null;
+};
+
 class AssignToView extends React.Component<Props, ViewState> {
   constructor(props) {
     super(props);
@@ -61,12 +80,10 @@ class AssignToView extends React.Component<Props, ViewState> {
       existingInstructions = instructions[instructionLength - 1];
     }
 
-    const actionData = this.taskActionData();
-    const selectedOption = actionData.selected ?
-      this.taskActionData().options.find((option) => option.value === actionData.selected.id) : null;
+    const action = selectedAction(this.props);
 
     this.state = {
-      selectedValue: selectedOption ? selectedOption.value : null,
+      selectedValue: action ? action.value : null,
       instructions: existingInstructions
     };
   }
@@ -86,7 +103,7 @@ class AssignToView extends React.Component<Props, ViewState> {
     const payload = {
       data: {
         tasks: [{
-          type: this.taskActionData().type ? this.taskActionData().type : 'GenericTask',
+          type: taskActionData(this.props).type ? taskActionData(this.props).type : 'GenericTask',
           external_id: appeal.externalId,
           parent_id: task.taskId,
           assigned_to_id: this.state.selectedValue,
@@ -110,22 +127,10 @@ class AssignToView extends React.Component<Props, ViewState> {
       });
   }
 
-  taskActionData = () => {
-    const relevantAction = this.props.task.availableActions.
-      find((action) => this.props.history.location.pathname.endsWith(action.value));
-
-    if (relevantAction && relevantAction.data) {
-      return (relevantAction.data);
-    }
-
-    // We should never get here since any task action the creates this modal should provide data.
-    throw new Error('Task action requires data');
-  }
-
   getAssignee = () => {
     let assignee = 'person';
 
-    this.taskActionData().options.forEach((opt) => {
+    taskActionData(this.props).options.forEach((opt) => {
       if (opt.value === this.state.selectedValue) {
         assignee = opt.label;
       }
@@ -160,6 +165,7 @@ class AssignToView extends React.Component<Props, ViewState> {
 
   render = () => {
     const {
+      assigneeAlreadySelected,
       highlightFormItems,
       task
     } = this.props;
@@ -169,16 +175,18 @@ class AssignToView extends React.Component<Props, ViewState> {
     }
 
     return <React.Fragment>
-      <SearchableDropdown
-        name="Assign to selector"
-        searchable
-        hideLabel
-        errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
-        placeholder={this.props.isTeamAssign ? COPY.ASSIGN_TO_TEAM_DROPDOWN : COPY.ASSIGN_TO_USER_DROPDOWN}
-        value={this.state.selectedValue}
-        onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
-        options={this.taskActionData().options} />
-      <br />
+      { !assigneeAlreadySelected && <React.Fragment>
+        <SearchableDropdown
+          name="Assign to selector"
+          searchable
+          hideLabel
+          errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
+          placeholder={this.props.isTeamAssign ? COPY.ASSIGN_TO_TEAM_DROPDOWN : COPY.ASSIGN_TO_USER_DROPDOWN}
+          value={this.state.selectedValue}
+          onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
+          options={taskActionData(this.props).options} />
+        <br />
+      </React.Fragment> }
       <TextareaField
         name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
         errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
@@ -207,6 +215,16 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks
 }, dispatch);
 
+const propsToText = (props) => {
+  // I think the editModalBase higher order component is still calling this after all of the actions have run and the
+  // task's available actions have been updated to reflect the updated status of the task.
+  const action = props.task && props.task.availableActions.length > 0 ? selectedAction(props) : null;
+
+  return {
+    title: props.assigneeAlreadySelected && action ? `Assign task to ${action.label}` : COPY.ASSIGN_TO_PAGE_TITLE
+  };
+};
+
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AssignToView, { title: COPY.ASSIGN_TO_PAGE_TITLE })
+  editModalBase(AssignToView, { propsToText })
 )): React.ComponentType<Params>);
