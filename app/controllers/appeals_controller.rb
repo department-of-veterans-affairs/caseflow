@@ -7,7 +7,12 @@ class AppealsController < ApplicationController
   skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
 
   def index
-    get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
+    veteran_file_number = request.headers["HTTP_VETERAN_ID"]
+
+    return render json: {
+      appeals: get_appeals_for_file_number(veteran_file_number),
+      claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
+    }
   end
 
   def show_case_list
