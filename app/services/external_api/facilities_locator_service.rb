@@ -4,12 +4,13 @@ class ExternalApi::FacilitiesLocatorService
   class << self
     # :nocov:
     def get_distance(point, ids)
-
       response = send_facility_request(query: { lat: point[0], long: point[1], ids: ids })
-      respBody = JSON.parse(response.body)
+      resp_body = JSON.parse(response.body)
 
-      facilities = respBody["data"]
-      distances = respBody["meta"]["distances"]
+      check_for_error(response_body: resp_body, code: response.code)
+
+      facilities = resp_body["data"]
+      distances = resp_body["meta"]["distances"]
 
       facilities.map do |facility|
         distance = distances.select { |dist| dist["id"] == facility["id"] }
@@ -62,7 +63,18 @@ class ExternalApi::FacilitiesLocatorService
       end
     end
 
-
+    def check_for_error(response_body:, code:)
+      case code
+      when 200
+      when 400
+        fail Caseflow::Error::VaDotGovRequestError, code: code, message: response_body
+      when 500
+        fail Caseflow::Error::VaDotGovServerError, code: 502, message: response_body
+      else
+        msg = "Error: #{response_body}, HTTP code: #{code}"
+        fail Caseflow::Error::VaDotGovServerError, code: 502, message: msg
+      end
+    end
     # :nocov:
   end
 end
