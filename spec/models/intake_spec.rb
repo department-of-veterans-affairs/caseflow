@@ -1,17 +1,24 @@
 describe Intake do
   before do
-    FeatureToggle.enable!(:test_facols)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
   after do
-    FeatureToggle.disable!(:test_facols)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
-  class TestIntake < Intake; end
+  class TestIntake < Intake
+    def find_or_build_initial_detail
+      # Just putting any ole database object here for testing
+      @detail ||= Generators::User.build
+    end
+  end
+
   class AnotherTestIntake < Intake; end
 
   let(:veteran_file_number) { "64205050" }
+  let(:country) { "USA" }
 
   let(:detail) do
     build(:ramp_election, veteran_file_number: veteran_file_number, notice_date: Time.zone.now)
@@ -31,7 +38,7 @@ describe Intake do
     )
   end
 
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205050") }
+  let!(:veteran) { Generators::Veteran.build(file_number: "64205050", country: country) }
 
   let(:completion_status) { nil }
   let(:completion_started_at) { nil }
@@ -67,6 +74,15 @@ describe Intake do
       )
     end
 
+    let!(:expired_intake) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: another_user,
+        started_at: 25.hours.ago
+      )
+    end
+
     let!(:completed_intake) do
       Intake.create!(
         veteran_file_number: veteran_file_number,
@@ -80,6 +96,46 @@ describe Intake do
 
     it "returns in progress intakes" do
       expect(subject).to include(started_intake)
+      expect(subject).to_not include(expired_intake)
+      expect(subject).to_not include(completed_intake)
+    end
+  end
+
+  context ".expired" do
+    subject { Intake.expired }
+
+    let!(:started_intake) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        started_at: 15.minutes.ago
+      )
+    end
+
+    let!(:expired_intake) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: another_user,
+        started_at: 25.hours.ago
+      )
+    end
+
+    let!(:completed_intake) do
+      Intake.create!(
+        veteran_file_number: veteran_file_number,
+        detail: detail,
+        user: user,
+        started_at: 10.minutes.ago,
+        completed_at: 5.minutes.ago,
+        completion_status: "success"
+      )
+    end
+
+    it "returns expired intakes" do
+      expect(subject).to_not include(started_intake)
+      expect(subject).to include(expired_intake)
       expect(subject).to_not include(completed_intake)
     end
   end
@@ -241,6 +297,15 @@ describe Intake do
       end
     end
 
+    context "country is null" do
+      let(:country) { nil }
+
+      it "adds veteran_not_valid and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq("veteran_not_valid")
+      end
+    end
+
     context "veteran_file_number has fewer than 8 digits" do
       let(:veteran_file_number) { "1234567" }
 
@@ -294,6 +359,21 @@ describe Intake do
       it "adds veteran_not_accessible and returns false" do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("veteran_not_accessible")
+      end
+    end
+
+    context "veteran address is too long" do
+      let!(:veteran) do
+        Generators::Veteran.build(
+          file_number: "64205050",
+          country: country,
+          address_line1: "this address is more than 20 characters long"
+        )
+      end
+
+      it "adds veteran_not_valid and returns false" do
+        expect(subject).to eq(false)
+        expect(intake.error_code).to eq("veteran_not_valid")
       end
     end
 
@@ -356,6 +436,91 @@ describe Intake do
     end
   end
 
+  context "#start!" do
+    subject { intake.start! }
+    let(:detail) { nil }
+
+    context "not valid to start" do
+      let(:veteran_file_number) { "NOTVALID" }
+
+      it "does not save intake and returns false" do
+        expect(subject).to be_falsey
+
+        expect(intake).to have_attributes(
+          started_at: Time.zone.now,
+          completed_at: Time.zone.now,
+          completion_status: "error",
+          error_code: "invalid_file_number",
+          detail: nil
+        )
+      end
+    end
+
+    context "valid to start" do
+      let(:ramp_election_detail) do
+        build(
+          :ramp_election,
+          veteran_file_number: veteran_file_number,
+          notice_date: Time.zone.now,
+          receipt_date: 5.days.ago,
+          option_selected: :supplemental_claim
+        )
+      end
+
+      let(:higher_level_review) do
+        build(:higher_level_review,
+              veteran_file_number: veteran_file_number,
+              receipt_date: 5.days.ago,
+              legacy_opt_in_approved: false)
+      end
+
+      let!(:expired_intake) do
+        RampElectionIntake.create!(
+          veteran_file_number: veteran_file_number,
+          detail: ramp_election_detail,
+          user: user,
+          started_at: 25.hours.ago
+        )
+      end
+
+      let!(:expired_other_intake) do
+        HigherLevelReviewIntake.create!(
+          veteran_file_number: veteran_file_number,
+          detail: higher_level_review,
+          user: another_user,
+          started_at: 25.hours.ago
+        )
+      end
+
+      before do
+        higher_level_review.create_claimants!(participant_id: "5382910292", payee_code: "10")
+      end
+
+      it "clears expired intakes and creates new intake" do
+        subject
+
+        expect(intake).to have_attributes(
+          veteran_file_number: veteran_file_number,
+          started_at: Time.zone.now,
+          detail: intake.find_or_build_initial_detail,
+          user: user
+        )
+
+        # Ramp Election intake details are not destroyed
+        expect(expired_intake.reload).to have_attributes(completion_status: "expired")
+        expect(expired_intake.detail).to have_attributes(
+          receipt_date: nil,
+          option_selected: nil
+        )
+
+        # Non-Ramp Election intake details are destroyed
+        expect(expired_other_intake.reload).to have_attributes(completion_status: "expired")
+        expect(expired_other_intake.detail).to be_nil
+        expect(Claimant.find_by(participant_id: "5382910292")).to be_nil
+      end
+    end
+  end
+
   context "#start_completion!" do
     subject { intake.start_completion! }
 
@@ -382,7 +547,6 @@ describe Intake do
 
   context "#pending?" do
     subject { intake.pending? }
-    let(:completion_status) { "pending" }
 
     context "when completion_started_at is nil" do
       it { is_expected.to be false }

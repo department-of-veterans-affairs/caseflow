@@ -17,14 +17,14 @@ import { selectDocketsPageTabIndex } from './actions/Dockets';
 const UPCOMING_TAB_INDEX = 0;
 const PAST_TAB_INDEX = 1;
 
-/* 
+/*
   Day Time for Travel Board
   Monday 12:30pm
   Tuesday 8:30am
   Wednesday 8:30am
   Thursday 8:30am
   Friday 8:30am
-*/ 
+*/
 const TRAVEL_BOARD_DEFAULT_MONDAY_START_TIME = {
   hour: 12,
   minutes: 30
@@ -62,7 +62,7 @@ export class Dockets extends React.Component {
   getType = (type) => {
     const capitalizeFirstChar = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 
-    return (type === 'central_office') ? 'CO' :
+    return (type === 'central') ? 'Central' :
       capitalizeFirstChar(type);
   }
 
@@ -118,7 +118,7 @@ export class Dockets extends React.Component {
   }
 
   getCombinedRONames = (docket) => docket.regional_office_names ? docket.regional_office_names.join(' / ') : '';
-  getRegionalOffice = (docket) => docket.type === 'central_office' ? '' : this.getCombinedRONames(docket);
+  getRegionalOffice = (docket) => docket.type === 'central' ? '' : this.getCombinedRONames(docket);
 
   getRowObjects = (hearings, reverseSort = false) => {
     let docketIndex = Object.keys(hearings).sort();

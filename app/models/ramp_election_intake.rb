@@ -134,7 +134,7 @@ class RampElectionIntake < Intake
   end
 
   def new_intake_ramp_election
-    @ramp_election_on_create ||= veteran_ramp_elections.build
+    @ramp_election_on_create ||= matching_ramp_election_with_notice_date || veteran_ramp_elections.build
   end
 
   def existing_ramp_election
@@ -145,7 +145,7 @@ class RampElectionIntake < Intake
   end
 
   def existing_ramp_election_active?
-    existing_ramp_election && existing_ramp_election.end_product_active?
+    existing_ramp_election&.end_product_active?
   end
 
   def use_existing_ramp_election
@@ -153,6 +153,10 @@ class RampElectionIntake < Intake
       detail.destroy!
       update!(detail: existing_ramp_election)
     end
+  end
+
+  def matching_ramp_election_with_notice_date
+    veteran_ramp_elections.where(established_at: nil).where.not(notice_date: nil).first
   end
 
   def veteran_ramp_elections

@@ -32,7 +32,7 @@ export default class StyleGuideSearchableDropdown extends React.PureComponent {
     { value: 'india',
       label: 'India' },
     { value: 'uae',
-      label: 'United Arab Emrites' }];
+      label: 'United Arab Emirates' }];
 
     return (
       <div>

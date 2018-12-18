@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
 import Table from '../components/Table';
 import { formatDate } from '../util/DateUtil';
+import { COLORS } from '../constants/AppConstants';
+import { css } from 'glamor';
 import moment from 'moment';
+
+const colorStyling = css({
+  color: COLORS.GREY_DARK
+});
 
 const UNASSIGNED_TASKS_COLUMNS = [
   {
     header: 'Veteran',
     valueFunction: (task) =>
       <span>{task.cached_veteran_name}
-        <span className="vbms-id"> ({task.vbms_id})</span>
+        <span {...colorStyling}> ({task.vbms_id})</span>
       </span>
   },
   {
@@ -30,7 +36,7 @@ export default class StuckTasks extends Component {
   getKeyForRow = (index, task) => task.id
 
   render() {
-    return <div className="cf-app-segment--alt">
+    return <div className="cf-app-segment--alt cf-app-segment">
       <h1 className="title">Oldest Unassigned Tasks with Uploaded Decisions</h1>
 
       <Table

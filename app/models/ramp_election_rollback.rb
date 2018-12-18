@@ -23,10 +23,14 @@ class RampElectionRollback < ApplicationRecord
   def reopen_vacols_appeals!
     LegacyAppeal.reopen(appeals: appeals_to_reopen, user: user, disposition: "RAMP Opt-in")
 
-    self.reopened_vacols_ids = ramp_election_vacols_ids
+    self.reopened_vacols_ids = appeals_to_reopen.map(&:vacols_id)
   end
 
   def appeals_to_reopen
+    ramp_election_closed_appeals.reject(&:active?)
+  end
+
+  def ramp_election_closed_appeals
     ramp_election_vacols_ids.map do |vacols_id|
       LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
     end
@@ -39,7 +43,8 @@ class RampElectionRollback < ApplicationRecord
   # We currently don't cancel the associated ramp election EP, we
   # require that it was canceled manually beforehand
   def validate_canceled_end_product
-    unless ramp_election && ramp_election.end_product_canceled?
+    establishment = EndProductEstablishment.find_by(source: ramp_election)
+    unless establishment&.status_canceled?
       errors.add(:ramp_election, "end_product_not_canceled")
     end
   end

@@ -1,28 +1,22 @@
 describe AppealRepository do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:correspondent_record) do
     OpenStruct.new(
       snamef: "Phil",
       snamemi: "J",
       snamel: "Johnston",
-      sspare1: "Chris",
-      sspare2: "M",
-      sspare3: "Johnston",
-      susrtyp: "Brother"
+      sspare1: "Johnston",
+      sspare2: "Chris",
+      sspare3: "M",
+      susrtyp: "Brother",
+      sfnod: 100.days.ago
     )
   end
 
   let(:folder_record) do
     OpenStruct.new(
       tivbms: "Y",
-      tinum: "13 11-265"
+      tinum: "13 11-265",
+      tiread2: "2012091234"
     )
   end
 
@@ -125,13 +119,15 @@ describe AppealRepository do
           AppealRepository.normalize_vacols_date(7.days.ago),
           AppealRepository.normalize_vacols_date(6.days.ago)
         ],
+        notice_of_death_date: AppealRepository.normalize_vacols_date(100.days.ago),
         hearing_request_type: :central_office,
         hearing_requested: true,
         hearing_held: true,
         regional_office_key: "DSUSER",
         disposition: "Withdrawn",
         decision_date: AppealRepository.normalize_vacols_date(1.day.ago),
-        docket_number: "13 11-265"
+        docket_number: "13 11-265",
+        citation_number: "2012091234"
       )
     end
 
@@ -212,8 +208,6 @@ describe AppealRepository do
   end
 
   context "#location_after_dispatch" do
-    before { LegacyAppeal.repository = Fakes::AppealRepository }
-
     let(:appeal) do
       create(:legacy_appeal, vacols_case: create(:case))
     end

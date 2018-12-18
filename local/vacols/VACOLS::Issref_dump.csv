@@ -1,5 +1,5 @@
 prog_code,prog_desc,iss_code,iss_desc,lev1_code,lev1_desc,lev2_code,lev2_desc,lev3_code,lev3_desc
-11,NCA Burial benefits (38 CFR Part 38),01,Entitlement,17,Unauthorized Applicant,,,,
+11,NCA Burial benefits (38 CFR Part 38),01,Entitlement,18,Other,,,,
 12,Fiduciary,01,Fiduciary Appointment,,,,,,
 10,BVA Original Jurisdiction,01,Attorney fees/expenses,02,Reasonableness,,,,
 10,BVA Original Jurisdiction,02,CUE under 38 U.S.C.  7111,01,Compensation,,,,
@@ -211,4 +211,4 @@ prog_code,prog_desc,iss_code,iss_desc,lev1_code,lev1_desc,lev2_code,lev2_desc,le
 02,Compensation,22,Eligibility for Substitution,,,,,,
 02,Compensation,15,Service connection,04,New and material,##,Diagnostic code,,
 11,NCA Burial benefits (38 CFR Part 38),01,Entitlement,16,Cremains not Interred/Scattered,,,,
-11,NCA Burial benefits (38 CFR Part 38),01,Entitlement,18,Other,,,,
+11,NCA Burial benefits (38 CFR Part 38),01,Entitlement,17,Unauthorized Applicant,,,,

@@ -2,7 +2,6 @@ class UserRepository
   class << self
     def user_info_from_vacols(css_id)
       staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
-
       {
         uniq_id: vacols_uniq_id(staff_record),
         roles: vacols_roles(staff_record),
@@ -12,15 +11,49 @@ class UserRepository
       }
     end
 
-    def can_access_task?(css_id, vacols_id)
+    def user_info_for_idt(css_id)
+      staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
+      return {} unless staff_record
+      {
+        first_name: staff_record.snamef,
+        middle_name: staff_record.snamemi,
+        last_name: staff_record.snamel,
+        attorney_id: vacols_attorney_id(staff_record),
+        judge_status: judge_status(staff_record),
+        roles: vacols_roles(staff_record),
+        css_id: css_id
+      }
+    end
+
+    def fail_if_no_access_to_task!(css_id, vacols_id)
       unless QueueRepository.tasks_for_user(css_id).map(&:vacols_id).include?(vacols_id)
-        msg = "User with css ID #{css_id} cannot access task with vacols ID: #{vacols_id}"
-        fail Caseflow::Error::UserRepositoryError, msg
+        msg = "User with css ID #{css_id} cannot modify appeal data with vacols ID: #{vacols_id}"
+        fail(Caseflow::Error::UserRepositoryError, message: msg)
       end
       true
     end
 
+    def css_ids_by_vlj_ids(vlj_ids)
+      users = VACOLS::Staff.where(sattyid: vlj_ids)
+
+      results = {}
+      users.each do |user|
+        results.merge!(user.sattyid => { css_id: user.sdomainid,
+                                         first_name: user.snamef,
+                                         last_name: user.snamel })
+      end
+      results
+    end
+
+    # This method is only used in dev/demo mode to test the judge spreadsheet functionality in hearing scheduling
     # :nocov:
+    def create_judge_in_vacols(first_name, last_name, vlj_id)
+      return unless Rails.env.development? || Rails.env.demo?
+
+      css_id = ["BVA", first_name.first, last_name].join
+      VACOLS::Staff.create(snamef: first_name, snamel: last_name, sdomainid: css_id, sattyid: vlj_id)
+    end
+
     def css_id_by_full_name(full_name)
       name = full_name.split(" ")
       first_name = name.first
@@ -32,6 +65,15 @@ class UserRepository
       staff.first.try(:sdomainid)
     end
     # :nocov:
+    #
+
+    def find_all_hearing_coordinators
+      coordinator_records = VACOLS::Staff.where(sdept: "HRG", sactive: "A")
+
+      coordinator_records.select(&:sdomainid).map do |record|
+        User.find_by_css_id_or_create_with_default_station_id(record.sdomainid)
+      end
+    end
 
     private
 
@@ -40,7 +82,7 @@ class UserRepository
       when "J"
         ["judge"]
       when "A"
-        staff_record.sattyid ? %w[attorney judge] : ["judge"]
+        staff_record.sattyid ? %w[attorney judge] : []
       when nil
         check_other_staff_fields(staff_record)
       else
@@ -48,10 +90,23 @@ class UserRepository
       end
     end
 
+    def judge_status(staff_record)
+      case staff_record.svlj
+      when "J"
+        "judge"
+      when "A"
+        "acting judge"
+      else
+        "none"
+      end
+    end
+
     def check_other_staff_fields(staff_record)
       return ["attorney"] if staff_record.sattyid
-      return ["colocated"] if staff_record.stitle == "A1" || staff_record.stitle == "A2"
-      []
+      roles = []
+      roles << "colocated" if staff_record.stitle == "A1" || staff_record.stitle == "A2"
+      roles << "dispatch" if staff_record.sdept == "DSP"
+      roles
     end
 
     def vacols_uniq_id(staff_record)

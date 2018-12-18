@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :hearing_views
   has_many :annotations
   has_many :tasks, as: :assigned_to
+  has_many :organizations_users, dependent: :destroy
+  has_many :organizations, through: :organizations_users
 
   BOARD_STATION_ID = "101".freeze
 
@@ -50,6 +52,10 @@ class User < ApplicationRecord
     vacols_roles.include?("colocated")
   end
 
+  def dispatch_user_in_vacols?
+    vacols_roles.include?("dispatch")
+  end
+
   def vacols_uniq_id
     @vacols_uniq_id ||= user_info[:uniq_id]
   end
@@ -72,8 +78,26 @@ class User < ApplicationRecord
     nil
   end
 
-  def access_to_task?(vacols_id)
-    self.class.user_repository.can_access_task?(css_id, vacols_id)
+  def participant_id
+    @participant_id ||= bgs.get_participant_id_for_user(self)
+  end
+
+  def vsos_user_represents
+    @vsos_user_represents ||= bgs.fetch_poas_by_participant_id(participant_id)
+  end
+
+  def fail_if_no_access_to_legacy_task!(vacols_id)
+    self.class.user_repository.fail_if_no_access_to_task!(css_id, vacols_id)
+  end
+
+  def appeal_has_task_assigned_to_user?(appeal)
+    if appeal.class.name == "LegacyAppeal"
+      fail_if_no_access_to_legacy_task!(appeal.vacols_id)
+    else
+      appeal.tasks.any? do |task|
+        task.assigned_to == self
+      end
+    end
   end
 
   def ro_is_ambiguous_from_station_office?
@@ -123,6 +147,14 @@ class User < ApplicationRecord
 
   def global_admin?
     Functions.granted?("Global Admin", css_id)
+  end
+
+  def vso_employee?
+    roles.include?("VSO")
+  end
+
+  def organization_queue_user?
+    FeatureToggle.enabled?(:organization_queue, user: self)
   end
 
   def granted?(thing)
@@ -177,18 +209,33 @@ class User < ApplicationRecord
     self.class.appeal_repository.load_user_case_assignments_from_vacols(css_id)
   end
 
+  def administered_teams
+    organizations_users.select(&:admin?).map(&:organization)
+  end
+
   def judge_css_id
-    Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].each_pair do |id, value|
-      return id if value[:attorneys].include?(css_id)
-    end
-    nil
+    organizations.find_by(type: JudgeTeam.name)
+      .try(:judge)
+      .try(:css_id)
   end
 
   def as_json(options)
     super(options).merge("judge_css_id" => judge_css_id)
   end
 
+  def user_info_for_idt
+    self.class.user_repository.user_info_for_idt(css_id)
+  end
+
+  def selectable_organizations
+    organizations.select(&:selectable_in_queue?)
+  end
+
   private
+
+  def bgs
+    @bgs ||= BGSService.new
+  end
 
   def user_info
     @user_info ||= self.class.user_repository.user_info_from_vacols(css_id)
@@ -212,17 +259,28 @@ class User < ApplicationRecord
   end
 
   class << self
-    attr_writer :appeal_repository
-    attr_writer :user_repository
     attr_writer :authentication_service
     delegate :authenticate_vacols, to: :authentication_service
 
     # Empty method used for testing purposes (required)
     def clear_current_user; end
 
+    def css_ids_by_vlj_ids(vlj_ids)
+      UserRepository.css_ids_by_vlj_ids(vlj_ids)
+    end
+
+    # This method is only used in dev/demo mode to test the judge spreadsheet functionality in hearing scheduling
+    # :nocov:
+    def create_judge_in_vacols(first_name, last_name, vlj_id)
+      return unless Rails.env.development? || Rails.env.demo?
+
+      UserRepository.create_judge_in_vacols(first_name, last_name, vlj_id)
+    end
+    # :nocov:
+
     def system_user
-      new(
-        station_id: "283",
+      @system_user ||= find_or_initialize_by(
+        station_id: Rails.deploy_env?(:prod) ? "283" : "317",
         css_id: Rails.deploy_env?(:prod) ? "CSFLOW" : "CASEFLOW1"
       )
     end
@@ -241,18 +299,26 @@ class User < ApplicationRecord
       end
     end
 
+    def find_by_css_id_or_create_with_default_station_id(css_id)
+      User.find_by(css_id: css_id) || User.create(css_id: css_id, station_id: BOARD_STATION_ID)
+    end
+
+    def list_hearing_coordinators
+      Rails.cache.fetch("#{Rails.env}_list_of_hearing_coordinators_from_vacols") do
+        user_repository.find_all_hearing_coordinators
+      end
+    end
+
     def authentication_service
       @authentication_service ||= AuthenticationService
     end
 
     def appeal_repository
-      return AppealRepository if FeatureToggle.enabled?(:test_facols)
-      @appeal_repository ||= AppealRepository
+      AppealRepository
     end
 
     def user_repository
-      return UserRepository if FeatureToggle.enabled?(:test_facols)
-      @user_repository ||= UserRepository
+      UserRepository
     end
   end
 end

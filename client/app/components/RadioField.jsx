@@ -41,10 +41,10 @@ export default class RadioField extends React.Component {
       errorMessage ? 'usa-input-error' : ''
     );
 
-    let labelClass = 'question-label';
+    let labelClass = '';
 
     if (hideLabel) {
-      labelClass += ' hidden-field';
+      labelClass += ' usa-sr-only';
     }
 
     // Since HTML5 IDs should not contain spaces...
@@ -75,8 +75,10 @@ export default class RadioField extends React.Component {
               id={`${idPart}_${option.value}`}
               value={option.value}
               checked={value === option.value}
+              disabled={Boolean(option.disabled)}
             />
-            <label htmlFor={`${idPart}_${option.value}`}>{option.displayText || option.displayElem}</label>
+            <label className={option.disabled ? 'disabled' : ''}
+              htmlFor={`${idPart}_${option.value}`}>{option.displayText || option.displayElem}</label>
           </div>
         )}
       </div>
@@ -85,7 +87,7 @@ export default class RadioField extends React.Component {
 }
 
 RadioField.defaultProps = {
-  className: ['cf-form-showhide-radio']
+  className: ['usa-fieldset-inputs']
 };
 
 RadioField.propTypes = {

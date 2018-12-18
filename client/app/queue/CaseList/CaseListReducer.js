@@ -6,11 +6,11 @@ export const initialState = {
     searchQuery: ''
   },
   isRequestingAppealsUsingVeteranId: false,
-  receivedAppeals: [],
   search: {
     errorType: null,
     queryResultingInError: null
-  }
+  },
+  fetchedAllCasesFor: {}
 };
 
 export const caseListReducer = (state = initialState, action = {}) => {
@@ -31,14 +31,16 @@ export const caseListReducer = (state = initialState, action = {}) => {
     });
   case Constants.CLEAR_CASE_LIST_SEARCH_RESULTS:
     return update(state, {
-      receivedAppeals: { $set: initialState.receivedAppeals },
       search: { $set: initialState.search }
     });
   case Constants.RECEIVED_APPEALS_USING_VETERAN_ID_SUCCESS:
     return update(state, {
       isRequestingAppealsUsingVeteranId: { $set: initialState.isRequestingAppealsUsingVeteranId },
-      receivedAppeals: { $set: action.payload.appeals },
       search: { $set: initialState.search }
+    });
+  case Constants.SET_FETCHED_ALL_CASES_FOR:
+    return update(state, {
+      fetchedAllCasesFor: { $merge: { [action.payload.caseflowVeteranId]: true } }
     });
   case Constants.REQUEST_APPEAL_USING_VETERAN_ID:
     return update(state, {

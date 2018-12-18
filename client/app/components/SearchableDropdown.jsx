@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+// @flow
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import _ from 'lodash';
@@ -9,20 +10,53 @@ const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
 
-class SearchableDropdown extends Component {
+export type OptionType = { value: string, label?: string };
 
-  constructor(props) {
+type Props = {|
+  value?: ?OptionType | string,
+  creatable?: boolean,
+  errorMessage?: ?string,
+  label?: string,
+  strongLabel?: boolean,
+  hideLabel?: boolean,
+  name: string,
+  onChange: (value: ?OptionType, deletedValue?: ?Array<any>) => mixed,
+  // eslint-disable-next-line no-undef
+  options: $ReadOnlyArray<OptionType>,
+  readOnly?: boolean,
+  required?: boolean,
+  placeholder: string | Object,
+  creatableOptions?: {
+    tagAlreadyExistsMsg: string,
+    promptTextCreator: Function
+  },
+  dropdownStyling?: Object,
+  styling?: Object,
+  multi?: boolean,
+  selfManageValueState?: boolean,
+  searchable?: boolean,
+  noResultsText?: string
+|};
+
+type ComponentState = {|
+  value: ?OptionType | string
+|};
+
+class SearchableDropdown extends React.Component<Props, ComponentState> {
+
+  constructor(props: Props) {
     super(props);
+
     this.state = {
       value: props.value
     };
   }
 
-  componentWillReceiveProps = (nextProps) => {
+  componentWillReceiveProps = (nextProps: Props) => {
     this.setState({ value: nextProps.value });
   };
 
-  onChange = (value) => {
+  onChange = (value: OptionType) => {
     let newValue = value;
     let deletedValue = null;
 
@@ -41,7 +75,11 @@ class SearchableDropdown extends Component {
       this.setState({ value: newValue });
     }
 
-    if ((this.state.value && value) && value.length < this.state.value.length) {
+    if (this.state.value &&
+        value &&
+        Array.isArray(value) &&
+        Array.isArray(this.state.value) &&
+        value.length < this.state.value.length) {
       deletedValue = _.differenceWith(this.state.value, value, _.isEqual);
     }
     if (this.props.onChange) {
@@ -55,6 +93,7 @@ class SearchableDropdown extends Component {
       placeholder,
       errorMessage,
       label,
+      strongLabel,
       hideLabel,
       multi,
       name,
@@ -114,25 +153,37 @@ class SearchableDropdown extends Component {
       addCreatableOptions.noResultsText = '';
     }
 
+    const labelContents =
+      <span>
+        {label || name}
+        {required && <span className="cf-required">Required</span>}
+      </span>;
+
     return <div className={dropdownClasses} {...dropdownStyling}>
       <label className={labelClasses} htmlFor={name}>
-        {label || name} {required && <span className="cf-required">Required</span>}
+        {
+          strongLabel ?
+            <strong>{labelContents}</strong> :
+            labelContents
+        }
       </label>
-      {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
-      <SelectComponent
-        inputProps={{ id: name }}
-        options={options}
-        onChange={this.onChange}
-        value={this.state.value}
-        placeholder={placeholder === null ? DEFAULT_PLACEHOLDER : placeholder}
-        clearable={false}
-        noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
-        searchable={searchable}
-        disabled={readOnly}
-        multi={multi}
-        onBlurResetsInput={false}
-        {...addCreatableOptions}
-      />
+      <div className={errorMessage ? 'usa-input-error' : ''}>
+        {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
+        <SelectComponent
+          inputProps={{ id: name }}
+          options={options}
+          onChange={this.onChange}
+          value={this.state.value}
+          placeholder={placeholder === null ? DEFAULT_PLACEHOLDER : placeholder}
+          clearable={false}
+          noResultsText={noResultsText ? noResultsText : NO_RESULTS_TEXT}
+          searchable={searchable}
+          disabled={readOnly}
+          multi={multi}
+          onBlurResetsInput={false}
+          {...addCreatableOptions}
+        />
+      </div>
     </div>;
   }
 }
@@ -141,6 +192,7 @@ SearchableDropdown.propTypes = {
   creatable: PropTypes.bool,
   errorMessage: PropTypes.string,
   label: PropTypes.string,
+  strongLabel: PropTypes.bool,
   hideLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func,

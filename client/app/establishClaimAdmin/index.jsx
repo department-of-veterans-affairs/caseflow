@@ -30,7 +30,8 @@ const EstablishClaimAdmin = ({
             }}
             defaultUrl="/dispatch/admin"
             userDisplayName={userDisplayName}
-            dropdownUrls={dropdownUrls}>
+            dropdownUrls={dropdownUrls}
+            wideApp>
             <div className="cf-wide-app">
               <div className="usa-grid">
                 <Route exact path="/"

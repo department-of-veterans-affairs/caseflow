@@ -1,80 +1,93 @@
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
-  attribute :is_legacy_appeal do
-    false
-  end
+  attribute :assigned_attorney
+  attribute :assigned_judge
+
+  attribute :timeline
 
   attribute :issues do
-    object.request_issues
+    object.eligible_request_issues.map do |issue|
+      # Hard code program for October 1st Pilot, we don't have all the info for how we'll
+      # break down request issues yet but all RAMP appeals will be 'compensation'
+      {
+        id: issue.id,
+        disposition: issue.disposition,
+        program: "compensation",
+        description: issue.description,
+        notes: issue.notes,
+        remand_reasons: issue.remand_reasons
+      }
+    end
+  end
+
+  attribute :decision_issues do
+    object.decision_issues.map do |issue|
+      {
+        id: issue.id,
+        disposition: issue.disposition,
+        description: issue.description,
+        benefit_type: "compensation",
+        remand_reasons: issue.remand_reasons,
+        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
+      }
+    end
   end
 
   attribute :hearings do
     []
   end
 
+  attribute :location_code do
+    object.location_code
+  end
+
+  attribute :completed_hearing_on_previous_appeal? do
+    false
+  end
+
   attribute :appellant_full_name do
-    object.claimants[0].name if object.claimants && object.claimants.any?
+    object.claimants[0].name if object.claimants&.any?
   end
 
   attribute :appellant_address do
-    if object.claimants && object.claimants.any?
-      primary_appellant = object.claimants[0]
-      {
-        address_line_1: primary_appellant.address_line_1,
-        address_line_2: primary_appellant.address_line_2,
-        city: primary_appellant.city,
-        state: primary_appellant.state,
-        zip: primary_appellant.zip,
-        country: primary_appellant.country
-      }
+    if object.claimants&.any?
+      object.claimants[0].address
     end
   end
 
   attribute :appellant_relationship do
-    object.claimants[0].relationship if object.claimants && object.claimants.any?
+    object.claimants[0].relationship if object.claimants&.any?
   end
 
-  attribute :location_code do
-    "Not supported for BEAAM appeals"
+  attribute :veteran_file_number do
+    object.veteran_file_number
   end
 
   attribute :veteran_full_name do
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
 
-  attribute :veteran_date_of_birth do
-    object.veteran ? object.veteran.date_of_birth : "Cannot locate"
-  end
-
-  attribute :veteran_gender do
-    object.veteran ? object.veteran.sex : "Cannot locate"
-  end
-
-  attribute :vbms_id do
-    object.veteran_file_number
-  end
-
-  attribute :vacols_id do
+  attribute :external_id do
     object.uuid
   end
 
   attribute :type do
-    "BEAAM"
+    "Original"
   end
 
   attribute :aod do
     object.advanced_on_docket
   end
 
+  attribute :docket_name do
+    object.docket_name
+  end
+
   attribute :docket_number do
     object.docket_number
   end
 
-  attribute :status do
-    nil
-  end
-
   attribute :decision_date do
-    nil
+    object.decision_date
   end
 
   attribute :certification_date do
@@ -83,17 +96,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :paper_case do
     false
-  end
-
-  attribute :power_of_attorney do
-    object.representative_name
-  end
-
-  attribute :power_of_attorney do
-    {
-      representative_type: object.representative_type,
-      representative_name: object.representative_name
-    }
   end
 
   attribute :regional_office do

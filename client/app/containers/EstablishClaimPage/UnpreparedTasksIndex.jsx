@@ -1,8 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import Table from '../../components/Table';
 import { formatDate } from '../../util/DateUtil';
+import { COLORS } from '../../constants/AppConstants';
+import { css } from 'glamor';
+
+const colorStyling = css({
+  color: COLORS.GREY_DARK
+});
 
 export default class UnpreparedTasksIndex extends React.Component {
   render() {
@@ -15,7 +20,7 @@ export default class UnpreparedTasksIndex extends React.Component {
         header: 'Veteran',
         valueFunction: (task) =>
           <span>{task.cached_veteran_name}
-            <span className="vbms-id"> ({task.vbms_id})</span>
+            <span {...colorStyling}> ({task.vbms_id})</span>
           </span>
       },
       {
@@ -44,7 +49,7 @@ export default class UnpreparedTasksIndex extends React.Component {
         </div>
       </div>
 
-      <div className="usa-grid-full">
+      <div className="usa-width-one-whole">
         <Table
           columns={tableColumns}
           rowObjects={unpreparedTasks}

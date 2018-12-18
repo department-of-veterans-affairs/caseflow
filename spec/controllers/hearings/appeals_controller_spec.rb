@@ -1,6 +1,12 @@
 RSpec.describe Hearings::AppealsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
-  let(:appeal) { Generators::LegacyAppeal.create(vacols_record: :ready_to_certify) }
+  let(:appeal) do
+    create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
+  let(:vacols_case) do
+    create(:case_with_form_9)
+  end
 
   describe "PATCH update" do
     it "add a new issue" do

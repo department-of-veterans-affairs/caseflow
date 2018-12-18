@@ -21,7 +21,7 @@ class FullGrantsReport < Report
       appeal.regional_office_name,
       appeal.decision_date,
       appeal.disposition,
-      appeal.representative
+      appeal.representative_name
     ]
   end
 

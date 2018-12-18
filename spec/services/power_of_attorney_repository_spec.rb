@@ -1,12 +1,4 @@
 describe PowerOfAttorneyRepository do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context ".first_last_name?" do
     subject { PowerOfAttorney.repository.first_last_name?(representative_name) }
 
@@ -101,13 +93,14 @@ describe PowerOfAttorneyRepository do
 
   context ".update_vacols_rep_table!" do
     context "when representative is not a person" do
-      let(:vacols_case) { create(:case, bfkey: "123C") }
+      let(:vacols_case) { create(:case_with_rep_table_record, bfkey: "123C") }
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:appellant_representative) { VACOLS::Representative.find_by(repkey: appeal.vacols_id) }
 
       before do
         PowerOfAttorney.repository.update_vacols_rep_table!(
           appeal: appeal,
-          representative_name: "This is not a name!",
+          rep_name: "This is not a name!",
           address: {
             address_line_1: "122 Mullberry St.",
             address_line_2: "PO BOX 123",
@@ -115,31 +108,34 @@ describe PowerOfAttorneyRepository do
             city: "Arlington",
             state: "VA",
             zip: "22202"
-          }
+          },
+          rep_type: :appellant_attorney
         )
       end
 
       it "sets the values in VACOLS" do
-        vacols_case.representative.reload
-        expect(vacols_case.representative.repfirst).to eq(nil)
-        expect(vacols_case.representative.repmi).to eq(nil)
-        expect(vacols_case.representative.replast).to eq(nil)
-        expect(vacols_case.representative.repaddr1).to eq("This is not a name!")
-        expect(vacols_case.representative.repaddr2).to eq("122 Mullberry St. PO BOX 123 Daisies")
-        expect(vacols_case.representative.repcity).to eq("Arlington")
-        expect(vacols_case.representative.repst).to eq("VA")
-        expect(vacols_case.representative.repzip).to eq("22202")
+        expect(appellant_representative.repfirst).to eq(nil)
+        expect(appellant_representative.repmi).to eq(nil)
+        expect(appellant_representative.replast).to eq(nil)
+        expect(appellant_representative.repaddr1).to eq("This is not a name!")
+        expect(appellant_representative.repaddr2).to eq("122 Mullberry St. PO BOX 123 Daisies")
+        expect(appellant_representative.repcity).to eq("Arlington")
+        expect(appellant_representative.repst).to eq("VA")
+        expect(appellant_representative.repzip).to eq("22202")
+        # TODO: set reptype
+        # expect(appellant_representative.reptype).to eq("A")
       end
     end
 
     context "when representative is a person" do
-      let(:vacols_case) { create(:case) }
+      let(:vacols_case) { create(:case_with_rep_table_record) }
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:appellant_representative) { VACOLS::Representative.find_by(repkey: appeal.vacols_id) }
 
       before do
         PowerOfAttorney.repository.update_vacols_rep_table!(
           appeal: appeal,
-          representative_name: "Jane M Smith",
+          rep_name: "Jane M Smith",
           address: {
             address_line_1: "122 Mullberry St.",
             address_line_2: "PO BOX 123",
@@ -147,20 +143,22 @@ describe PowerOfAttorneyRepository do
             city: "Arlington",
             state: "VA",
             zip: "22202"
-          }
+          },
+          rep_type: :appellant_agent
         )
       end
 
       it "sets the values in VACOLS" do
-        vacols_case.representative.reload
-        expect(vacols_case.representative.repfirst).to eq("Jane")
-        expect(vacols_case.representative.repmi).to eq("M")
-        expect(vacols_case.representative.replast).to eq("Smith")
-        expect(vacols_case.representative.repaddr1).to eq("122 Mullberry St.")
-        expect(vacols_case.representative.repaddr2).to eq("PO BOX 123 Daisies")
-        expect(vacols_case.representative.repcity).to eq("Arlington")
-        expect(vacols_case.representative.repst).to eq("VA")
-        expect(vacols_case.representative.repzip).to eq("22202")
+        expect(appellant_representative.repfirst).to eq("Jane")
+        expect(appellant_representative.repmi).to eq("M")
+        expect(appellant_representative.replast).to eq("Smith")
+        expect(appellant_representative.repaddr1).to eq("122 Mullberry St.")
+        expect(appellant_representative.repaddr2).to eq("PO BOX 123 Daisies")
+        expect(appellant_representative.repcity).to eq("Arlington")
+        expect(appellant_representative.repst).to eq("VA")
+        expect(appellant_representative.repzip).to eq("22202")
+        # TODO: set reptype
+        # expect(appellant_representative.reptype).to eq("G")
       end
     end
   end

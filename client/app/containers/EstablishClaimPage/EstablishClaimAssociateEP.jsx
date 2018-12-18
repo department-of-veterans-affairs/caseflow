@@ -60,7 +60,7 @@ export class AssociatePage extends React.Component {
   ];
 
   getClassAssignButtonClasses = (loadingFlag, claimId) => {
-    let classes = ['usa-button-outline'];
+    let classes = ['usa-button-secondary'];
 
     if (loadingFlag) {
       classes.push('usa-button-disabled');
@@ -159,7 +159,7 @@ export class AssociatePage extends React.Component {
           type="warning">
           {alert}
         </Alert>
-        <div className="usa-grid-full">
+        <div className="usa-width-one-whole">
           <Table
             columns={this.getEndProductColumns()}
             rowObjects={this.state.sortedEndProducts}
@@ -179,7 +179,7 @@ export class AssociatePage extends React.Component {
           <Button
             name="Cancel"
             onClick={handleToggleCancelTaskModal}
-            classNames={['cf-btn-link', 'cf-adjacent-buttons']}
+            classNames={['cf-btn-link']}
           />
           <Button
             app="dispatch"

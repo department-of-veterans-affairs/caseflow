@@ -1,12 +1,7 @@
 RSpec.describe LegacyTasksController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:test_facols)
     User.authenticate!(roles: ["System Admin"])
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   describe "GET legacy_tasks/xxx" do
@@ -34,12 +29,27 @@ RSpec.describe LegacyTasksController, type: :controller do
       end
     end
 
-    context "user is neither judge nor attorney" do
-      let(:role) { :colocated_role }
+    context "user is a dispatch user" do
+      let(:role) { :dispatch_role }
 
-      it "should redirect request to /unauthorized" do
+      it "should not process the request succesfully" do
         get :index, params: { user_id: user.id }
-        expect(response.status).to eq 302
+        expect(response.status).to eq 400
+      end
+    end
+
+    context "user does not have a role" do
+      let(:role) { nil }
+      let(:caseflow_only_user) { FactoryBot.create(:user) }
+
+      it "should return an invalid role error" do
+        get :index, params: { user_id: caseflow_only_user.id }
+        expect(response.status).to eq(400)
+      end
+
+      it "should return a valid response when we explicitly pass the role as a parameter" do
+        get :index, params: { user_id: caseflow_only_user.id, role: "attorney" }
+        expect(response.status).to eq(200)
       end
     end
   end
@@ -52,14 +62,6 @@ RSpec.describe LegacyTasksController, type: :controller do
       User.stub = user
       @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
-    end
-
-    before do
-      FeatureToggle.enable!(:judge_assignment_to_attorney)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_assignment_to_attorney)
     end
 
     context "when current user is an attorney" do
@@ -106,6 +108,20 @@ RSpec.describe LegacyTasksController, type: :controller do
         expect(body["task"]["data"]["attributes"]["appeal_id"]).to eq @appeal.id
       end
 
+      context "when judge does not have access to the appeal" do
+        it "should not be successful" do
+          params = {
+            "appeal_id": create(:legacy_appeal, vacols_case: FactoryBot.create(:case)).id,
+            "assigned_to_id": attorney.id
+          }
+
+          post :create, params: { tasks: params }
+          expect(response.status).to eq 400
+          body = JSON.parse(response.body)
+          expect(body["errors"].first["detail"]).to match(/Case already assigned/)
+        end
+      end
+
       context "when appeal is not found" do
         let(:params) do
           {
@@ -123,13 +139,13 @@ RSpec.describe LegacyTasksController, type: :controller do
       context "when attorney is not found" do
         let(:params) do
           {
-            "appeal_id": appeal.id,
+            "appeal_id": @appeal.id,
             "assigned_to_id": 7_777_777_777
           }
         end
 
         it "should not be successful" do
-          allow(Fakes::UserRepository).to receive(:user_info_from_vacols).and_return(roles: ["judge"])
+          allow(UserRepository).to receive(:user_info_from_vacols).and_return(roles: ["judge"])
           post :create, params: { tasks: params }
           expect(response.status).to eq 400
           response_body = JSON.parse(response.body)
@@ -146,12 +162,6 @@ RSpec.describe LegacyTasksController, type: :controller do
       User.stub = user
       @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
-
-      FeatureToggle.enable!(:judge_assignment_to_attorney)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_assignment_to_attorney)
     end
 
     context "when current user is an attorney" do
@@ -199,7 +209,7 @@ RSpec.describe LegacyTasksController, type: :controller do
         end
 
         it "should not be successful" do
-          patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
+          patch :update, params: { tasks: params, id: "#{@appeal.vacols_id}-2018-04-18" }
           expect(response.status).to eq 400
           response_body = JSON.parse(response.body)
           expect(response_body["errors"].first["detail"]).to eq "Assigned to can't be blank"

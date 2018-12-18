@@ -14,8 +14,91 @@ export const onReceiveSchedulePeriod = (schedulePeriod) => ({
   }
 });
 
-export const onSchedulePeriodError = () => ({
-  type: ACTIONS.SCHEDULE_PERIOD_ERROR
+export const onReceiveDailyDocket = (dailyDocket, hearings, hearingDayOptions) => ({
+  type: ACTIONS.RECEIVE_DAILY_DOCKET,
+  payload: {
+    dailyDocket,
+    hearings,
+    hearingDayOptions
+  }
+});
+
+export const onReceiveSavedHearing = (hearing) => ({
+  type: ACTIONS.RECEIVE_SAVED_HEARING,
+  payload: {
+    hearing
+  }
+});
+
+export const onResetSaveSuccessful = () => ({
+  type: ACTIONS.RESET_SAVE_SUCCESSFUL
+});
+
+export const onCancelHearingUpdate = (hearing) => ({
+  type: ACTIONS.CANCEL_HEARING_UPDATE,
+  payload: {
+    hearing
+  }
+});
+
+export const onReceiveUpcomingHearingDays = (upcomingHearingDays) => ({
+  type: ACTIONS.RECEIVE_UPCOMING_HEARING_DAYS,
+  payload: {
+    upcomingHearingDays
+  }
+});
+
+export const onReceiveVeteransReadyForHearing = (veterans) => ({
+  type: ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING,
+  payload: {
+    veterans
+  }
+});
+
+export const onHearingNotesUpdate = (hearingId, notes) => ({
+  type: ACTIONS.HEARING_NOTES_UPDATE,
+  payload: {
+    hearingId,
+    notes
+  }
+});
+
+export const onHearingDispositionUpdate = (hearingId, disposition) => ({
+  type: ACTIONS.HEARING_DISPOSITION_UPDATE,
+  payload: {
+    hearingId,
+    disposition
+  }
+});
+
+export const onHearingDateUpdate = (hearingId, date) => ({
+  type: ACTIONS.HEARING_DATE_UPDATE,
+  payload: {
+    hearingId,
+    date
+  }
+});
+
+export const onHearingTimeUpdate = (hearingId, time) => ({
+  type: ACTIONS.HEARING_TIME_UPDATE,
+  payload: {
+    hearingId,
+    time
+  }
+});
+
+export const onSelectedHearingDayChange = (selectedHearingDay) => ({
+  type: ACTIONS.SELECTED_HEARING_DAY_CHANGE,
+  payload: {
+    selectedHearingDay
+  }
+});
+
+export const onSchedulePeriodError = (error) => ({
+  type: ACTIONS.SCHEDULE_PERIOD_ERROR,
+  payload: {
+    error
+  }
 });
 
 export const removeSchedulePeriodError = () => ({
@@ -34,6 +117,10 @@ export const onReceiveHearingSchedule = (hearingSchedule) => ({
   payload: {
     hearingSchedule
   }
+});
+
+export const setVacolsUpload = () => ({
+  type: ACTIONS.SET_VACOLS_UPLOAD
 });
 
 export const onRoCoStartDateChange = (startDate) => ({
@@ -136,3 +223,128 @@ export const onConfirmAssignmentsUpload = () => ({
 export const unsetSuccessMessage = () => ({
   type: ACTIONS.UNSET_SUCCESS_MESSAGE
 });
+
+export const toggleTypeFilterVisibility = () => ({
+  type: ACTIONS.TOGGLE_TYPE_FILTER_DROPDOWN
+});
+
+export const toggleLocationFilterVisibility = () => ({
+  type: ACTIONS.TOGGLE_LOCATION_FILTER_DROPDOWN
+});
+
+export const toggleVljFilterVisibility = () => ({
+  type: ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN
+});
+
+export const selectHearingType = (hearingType) => ({
+  type: ACTIONS.SELECT_HEARING_TYPE,
+  payload: {
+    hearingType
+  }
+});
+
+export const selectVlj = (vlj) => ({
+  type: ACTIONS.SELECT_VLJ,
+  payload: {
+    vlj
+  }
+});
+
+export const selectHearingCoordinator = (coordinator) => ({
+  type: ACTIONS.SELECT_COORDINATOR,
+  payload: {
+    coordinator
+  }
+});
+
+export const selectHearingRoom = (hearingRoom) => ({
+  type: ACTIONS.SELECT_HEARING_ROOM,
+  payload: {
+    hearingRoom
+  }
+});
+
+export const setNotes = (notes) => ({
+  type: ACTIONS.SET_NOTES,
+  payload: {
+    notes
+  }
+});
+
+export const onHearingDayModified = (hearingDayModified) => ({
+  type: ACTIONS.HEARING_DAY_MODIFIED,
+  payload: {
+    hearingDayModified
+  }
+});
+
+export const onReceiveJudges = (activeJudges) => ({
+  type: ACTIONS.RECEIVE_JUDGES,
+  payload: {
+    activeJudges
+  }
+});
+
+export const onReceiveCoordinators = (activeCoordinators) => ({
+  type: ACTIONS.RECEIVE_COORDINATORS,
+  payload: {
+    activeCoordinators
+  }
+});
+
+export const onClickRemoveHearingDay = () => ({
+  type: ACTIONS.ON_CLICK_REMOVE_HEARING_DAY
+});
+
+export const onCancelRemoveHearingDay = () => ({
+  type: ACTIONS.CANCEL_REMOVE_HEARING_DAY
+});
+
+export const onSuccessfulHearingDayDelete = (date) => ({
+  type: ACTIONS.SUCCESSFUL_HEARING_DAY_DELETE,
+  payload: {
+    date
+  }
+});
+
+export const onResetDeleteSuccessful = () => ({
+  type: ACTIONS.RESET_DELETE_SUCCESSFUL
+});
+
+export const onAssignHearingRoom = (roomNotRequired) => ({
+  type: ACTIONS.ASSIGN_HEARING_ROOM,
+  payload: {
+    roomNotRequired
+  }
+});
+
+export const onDisplayLockModal = () => ({
+  type: ACTIONS.DISPLAY_LOCK_MODAL
+});
+
+export const onCancelDisplayLockModal = () => ({
+  type: ACTIONS.CANCEL_DISPLAY_LOCK_MODAL
+});
+
+export const onUpdateLock = (lock) => ({
+  type: ACTIONS.UPDATE_LOCK,
+  payload: {
+    lock
+  }
+});
+
+export const onResetLockSuccessMessage = () => ({
+  type: ACTIONS.RESET_LOCK_SUCCESS_MESSAGE
+});
+
+export const handleDailyDocketServerError = (err) => ({
+  type: ACTIONS.HANDLE_DAILY_DOCKET_SERVER_ERROR,
+  payload: {
+    err
+  }
+});
+
+export const onResetDailyDocketAfterError = () => ({
+  type: ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR
+});
+

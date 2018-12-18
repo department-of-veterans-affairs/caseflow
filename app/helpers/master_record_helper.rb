@@ -5,7 +5,7 @@ module MasterRecordHelper
     # and children records
     def remove_master_records_with_children(records)
       children_vdkeys = records.map(&:vdkey).compact
-      records.reject { |record| children?(record, children_vdkeys) }
+      records.reject { |record| record.folder_nr.nil? || children?(record, children_vdkeys) }
     end
 
     # Fields such as 'type', 'regional_office_key', 'date' are stored in different places

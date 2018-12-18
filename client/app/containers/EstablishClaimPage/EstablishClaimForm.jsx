@@ -101,7 +101,7 @@ export class EstablishClaimForm extends React.Component {
           <Button
             name="Cancel"
             onClick={handleToggleCancelTaskModal}
-            classNames={['cf-btn-link', 'cf-adjacent-buttons']}
+            classNames={['cf-btn-link']}
           />
           <Button
             app="dispatch"

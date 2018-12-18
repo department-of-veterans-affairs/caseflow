@@ -74,7 +74,11 @@ export default class BuildSchedule extends React.Component {
       }
     ];
 
-    const pastUploadsRows = _.map(pastUploads, (pastUpload) => ({
+    const pastFinalized = _.filter(pastUploads, (uploads) => uploads.finalized === true);
+
+    const sortPastUploads = _.orderBy(pastFinalized, (sortUploads) => sortUploads.createdAt, 'asc');
+
+    const pastUploadsRows = _.map(sortPastUploads, (pastUpload) => ({
       date: `${formatDateStr(pastUpload.startDate)} - ${formatDateStr(pastUpload.endDate)}`,
       type: SPREADSHEET_TYPES[pastUpload.type].shortDisplay,
       uploaded: formatDate(pastUpload.createdAt),
@@ -110,14 +114,14 @@ export default class BuildSchedule extends React.Component {
       {displayJudgeSuccessMessage && <Alert
         type="success"
         title={`You have successfully assigned judges to hearings between
-          ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
+          ${formatDateStr(schedulePeriod.startDate)} and ${formatDateStr(schedulePeriod.endDate)}`}
         message={successMessage}
         styling={alertStyling}
       />}
       {displayRoCoSuccessMessage && <Alert
         type="success"
         title={`You have successfully assigned hearings between
-          ${schedulePeriod.startDate} and ${schedulePeriod.endDate}`}
+          ${formatDateStr(schedulePeriod.startDate)} and ${formatDateStr(schedulePeriod.endDate)}`}
         message={successMessage}
         styling={alertStyling}
       />}
@@ -143,6 +147,7 @@ export default class BuildSchedule extends React.Component {
         columns={pastUploadsColumns}
         rowObjects={pastUploadsRows}
         summary="past-uploads"
+        slowReRendersAreOk
       />
     </AppSegment>;
   }

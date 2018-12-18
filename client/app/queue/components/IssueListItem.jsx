@@ -1,7 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
 import { css } from 'glamor';
-import LegacyIssueListItem from './LegacyIssueListItem';
 
 const minimalLeftPadding = css({ paddingLeft: '0.5rem' });
 const leftAlignTd = css({
@@ -9,36 +8,20 @@ const leftAlignTd = css({
   paddingRight: 0
 });
 
-export default class IssueListItem extends React.PureComponent {
-  formatIdx = () => <td {...leftAlignTd} width="10px">
-    {this.props.idx}.
-  </td>;
+import type { Issue } from '../types/models';
 
-  render = () => {
-    // Fall back on legacy issue list item if this is a legacy issue.
-    if (this.props.issue.program) {
-      return <LegacyIssueListItem {...this.props} />;
-    }
-
-    const description = this.props.issue.description;
-
-    return <React.Fragment>
-      {this.formatIdx()}
-      <td {...minimalLeftPadding}>
-        {description}
-      </td>
-    </React.Fragment>;
-  };
-}
-
-IssueListItem.propTypes = {
-  issue: PropTypes.object.isRequired,
-  issuesOnly: PropTypes.bool,
-  idx: PropTypes.number.isRequired,
-  showDisposition: PropTypes.bool
+type Props = {
+  issue: Issue,
+  idx: number
 };
 
-IssueListItem.defaultProps = {
-  issuesOnly: false,
-  showDisposition: true
-};
+const IssueListItem = (props: Props) => <React.Fragment>
+  <td {...leftAlignTd} width="10px">
+    {props.idx}
+  </td>
+  <td {...minimalLeftPadding}>
+    {props.issue.description}
+  </td>
+</React.Fragment>;
+
+export default IssueListItem;

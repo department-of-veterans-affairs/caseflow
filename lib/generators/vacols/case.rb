@@ -130,8 +130,8 @@ class Generators::Vacols::Case
       case_issue_attrs.each { |issue| issue[:isskey] = custom_case_attrs[:bfkey] }
       Generators::Vacols::CaseIssue.create(case_issue_attrs)
 
-      # Default to one hearing
-      case_hearing_attrs = attrs[:case_hearing_attrs].nil? ? [{}] : attrs[:case_hearing_attrs]
+      # Default to zero hearings
+      case_hearing_attrs = attrs[:case_hearing_attrs].nil? ? [] : attrs[:case_hearing_attrs]
       case_hearing_attrs.each { |hearing| hearing[:folder_nr] = custom_case_attrs[:bfkey] }
       Generators::Vacols::CaseHearing.create(case_hearing_attrs)
 

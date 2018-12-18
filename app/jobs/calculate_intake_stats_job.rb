@@ -1,5 +1,6 @@
 class CalculateIntakeStatsJob < ApplicationJob
   queue_as :low_priority
+  application_attr :intake
 
   # :nocov:
   def perform

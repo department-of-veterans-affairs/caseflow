@@ -3,6 +3,8 @@ class LegacyAppeal < ApplicationRecord
   include AppealConcern
   include AssociatedVacolsModel
   include CachedAttributes
+  include AddressMapper
+  include Taskable
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -19,27 +21,28 @@ class LegacyAppeal < ApplicationRecord
   # This allows us to easily call `appeal.veteran_first_name` and dynamically
   # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
-  vacols_attr_accessor :veteran_date_of_birth, :veteran_gender
-  vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
+  vacols_attr_accessor :veteran_name_suffix, :veteran_date_of_birth, :veteran_gender
+  vacols_attr_accessor :appellant_first_name, :appellant_middle_initial
+  vacols_attr_accessor :appellant_last_name, :appellant_name_suffix
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
   vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
   vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
-  vacols_attr_accessor :contested_claim
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
   vacols_attr_accessor :insurance_loan_number
   vacols_attr_accessor :notification_date, :nod_date, :soc_date, :form9_date, :ssoc_dates
-  vacols_attr_accessor :certification_date, :case_review_date
+  vacols_attr_accessor :certification_date, :case_review_date, :notice_of_death_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
   vacols_attr_accessor :location_code
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
+
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
-  vacols_attr_accessor :docket_number, :docket_date
+  vacols_attr_accessor :docket_number, :docket_date, :citation_number
 
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
@@ -51,10 +54,14 @@ class LegacyAppeal < ApplicationRecord
   # These attributes are needed for the Fakes::QueueRepository.tasks_for_user to work
   # because it is using an Appeal object
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by,
-                :created_at, :document_id, :assigned_by
+                :created_at, :document_id, :assigned_by, :updated_at, :attorney_id
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
+  end
+
+  def advanced_on_docket
+    aod
   end
 
   cache_attribute :dic do
@@ -100,6 +107,7 @@ class LegacyAppeal < ApplicationRecord
 
   # TODO: the type code should be the base value, and should be
   #       converted to be human readable, not vis-versa
+  # TODO: integrate with Constants::LEGACY_APPEAL_TYPES_BY_ID
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
@@ -112,7 +120,12 @@ class LegacyAppeal < ApplicationRecord
     remand_returned_to_bva: "96",
     bva_dispatch: "4E",
     omo_office: "20",
-    caseflow: "CASEFLOW"
+    caseflow: "CASEFLOW",
+    quality_review: "48",
+    translation: "14",
+    schedule_hearing: "57",
+    awaiting_video_hearing: "38",
+    awaiting_co_hearing: "36"
   }.freeze
 
   def document_fetcher
@@ -161,19 +174,43 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def cavc_due_date
-    return unless decision_date
+    return unless decided_by_bva?
     (decision_date + 120.days).to_date
+  end
+
+  def number_of_issues
+    issues.length
+  end
+
+  def appellant_is_not_veteran
+    !!appellant_first_name
   end
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  delegate :age, to: :veteran, prefix: true
-  delegate :sex, to: :veteran, prefix: true
+  def veteran_ssn
+    vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
+  end
+
+  delegate :address_line_1,
+           :address_line_2,
+           :address_line_3,
+           :city,
+           :state,
+           :zip,
+           :country,
+           :age,
+           :sex,
+           to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products, to: :veteran
+
+  def congressional_interest_addresses
+    case_record.mail.map(&:congressional_address)
+  end
 
   # If VACOLS has "Allowed" for the disposition, there may still be a remanded issue.
   # For the status API, we need to mark disposition as "Remanded" if there are any remanded issues
@@ -182,16 +219,33 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def power_of_attorney
+    # TODO: this will only return a single power of attorney. There are sometimes multiple values, eg.
+    # when a contesting claimant is present. Refactor so we surface all POA data.
     @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
       # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
-      poa.class.repository.set_vacols_values(poa: poa, case_record: case_record)
-      poa
+      poa.class.repository.set_vacols_values(
+        poa: poa,
+        case_record: case_record,
+        representative: VACOLS::Representative.appellant_representative(vacols_id)
+      )
     end
   end
 
   attr_writer :hearings
   def hearings
     @hearings ||= Hearing.repository.hearings_for_appeal(vacols_id)
+  end
+
+  def completed_hearing_on_previous_appeal?
+    vacols_ids = VACOLS::Case.where(bfcorlid: vbms_id).pluck(:bfkey)
+    hearings = HearingRepository.hearings_for_appeals(vacols_ids)
+    hearings_on_other_appeals = hearings.reject { |hearing_appeal_id, _| hearing_appeal_id.eql?(vacols_id) }
+
+    hearings_on_other_appeals.map do |hearing_appeal_id, case_hearings|
+      if case_hearings.any?(&:held?)
+        hearing_appeal_id
+      end
+    end.present?
   end
 
   def scheduled_hearings
@@ -210,6 +264,14 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
+  def veteran_is_deceased
+    veteran_death_date.present?
+  end
+
+  def veteran_death_date
+    veteran&.date_of_death
+  end
+
   attr_writer :cavc_decisions
   def cavc_decisions
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
@@ -221,12 +283,67 @@ class LegacyAppeal < ApplicationRecord
     [outcoder_last_name, outcoder_first_name, outcoder_middle_initial].select(&:present?).join(", ").titleize
   end
 
-  def representative_name
-    power_of_attorney.vacols_representative_name
+  # Delete this method when use_representative_info_from_bgs is enabled for all users
+  def representative_code
+    power_of_attorney.vacols_representative_code
   end
 
-  def representative_type
-    power_of_attorney.vacols_representative_type
+  def representative_participant_id
+    power_of_attorney.bgs_participant_id
+  end
+
+  REPRESENTATIVE_METHOD_NAMES = [
+    :representative_name,
+    :representative_type,
+    :representative_address
+  ].freeze
+
+  REPRESENTATIVE_METHOD_NAMES.each do |method_name|
+    define_method(method_name) do
+      if use_representative_info_from_bgs?
+        power_of_attorney.send("bgs_#{method_name}".to_sym)
+      else
+        power_of_attorney.send("vacols_#{method_name}".to_sym)
+      end
+    end
+  end
+
+  delegate :representatives, to: :case_record
+
+  def contested_claim
+    representatives.any? { |r| r.reptype == "C" }
+  end
+
+  def claimant
+    if appellant_is_not_veteran
+      {
+        first_name: appellant_first_name,
+        middle_name: appellant_middle_initial,
+        last_name: appellant_last_name,
+        name_suffix: appellant_name_suffix,
+        address: get_address_from_corres_entry(case_record.correspondent),
+        representative: representative_to_hash
+      }
+    else
+      {
+        first_name: veteran_first_name,
+        middle_name: veteran_middle_initial,
+        last_name: veteran_last_name,
+        name_suffix: veteran_name_suffix,
+        address: get_address_from_corres_entry(case_record.correspondent),
+        representative: representative_to_hash
+      }
+    end
+  end
+
+  # reptype C is a contested claimant
+  def contested_claimants
+    representatives.where(reptype: "C").map(&:as_claimant)
+  end
+
+  # reptype D is contested claimant attorney, reptype E is contested claimant agent
+  def contested_claimant_agents
+    representatives.where(reptype: %w[D E]).map(&:as_claimant)
   end
 
   def docket_name
@@ -258,7 +375,7 @@ class LegacyAppeal < ApplicationRecord
     return @ramp_ineligibility_reason if defined? @ramp_ineligibility_reason
 
     @ramp_ineligibility_reason = begin
-      if ineligibile_for_ramp_at_bva?
+      if !status_eligible_for_ramp?
         :activated_to_bva
       elsif appellant_first_name
         :claimant_not_veteran
@@ -403,6 +520,10 @@ class LegacyAppeal < ApplicationRecord
     status == "Remand"
   end
 
+  def advance?
+    status == "Advance"
+  end
+
   def decided_by_bva?
     !active? && LegacyAppeal.bva_dispositions.include?(disposition)
   end
@@ -436,9 +557,35 @@ class LegacyAppeal < ApplicationRecord
     @documents_by_type = {}
   end
 
+  def attorney_case_reviews
+    (das_assignments || []).reject { |t| t.document_id.nil? }
+  end
+
+  def das_assignments
+    @das_assignments ||= VACOLS::CaseAssignment.tasks_for_appeal(vacols_id)
+  end
+
+  def reviewing_judge_name
+    das_assignments.sort_by(&:created_at).last.try(:assigned_by_name)
+  end
+
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
+  end
+
+  def issue_count
+    issues.count
+  end
+
+  # a list of issues with undecided dispositions (see queue/utils.getUndecidedIssues)
+  def undecided_issues
+    issues.select do |issue|
+      issue.disposition_id.nil? || (
+        issue.disposition_id.to_i.between?(1, 9) &&
+        Constants::VACOLS_DISPOSITIONS_BY_ID.keys.include?(issue.disposition_id)
+      )
+    end
   end
 
   # A uniqued list of issue categories on appeal, that is the combination of ISSPROG and ISSCODE
@@ -456,6 +603,20 @@ class LegacyAppeal < ApplicationRecord
       end
     end
     super
+  end
+
+  def previously_selected_for_quality_review
+    !case_record.decision_quality_reviews.empty?
+  end
+
+  def outstanding_vacols_mail
+    case_record.mail.map do |row|
+      {
+        outstanding: row.outstanding?,
+        code: row.mltype,
+        description: VACOLS::Mail::TYPES[row.mltype]
+      }
+    end
   end
 
   # VACOLS stores the VBA veteran unique identifier a little
@@ -527,11 +688,64 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
+  def matchable_to_request_issue?(receipt_date)
+    issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
+  end
+
+  def eligible_for_soc_opt_in?(receipt_date)
+    return false unless nod_date
+    return false unless soc_date
+    return false unless receipt_date
+
+    soc_eligible_date = receipt_date - 60.days
+    nod_eligible_date = receipt_date - 372.days
+
+    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
+    soc_date > soc_eligible_date || nod_date > nod_eligible_date || ssoc_dates.any? { |d| d > soc_eligible_date }
+  end
+
   def serializer_class
     ::WorkQueue::LegacyAppealSerializer
   end
 
+  def external_id
+    vacols_id
+  end
+
+  def timeline
+    [
+      {
+        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
+        date: decision_date
+      },
+      {
+        title: form9_date ? COPY::CASE_TIMELINE_FORM_9_RECEIVED : COPY::CASE_TIMELINE_FORM_9_PENDING,
+        date: form9_date
+      },
+      {
+        title: nod_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
+        date: nod_date
+      }
+    ]
+  end
+
   private
+
+  def use_representative_info_from_bgs?
+    FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
+      (RequestStore.store[:application] = "queue" ||
+       RequestStore.store[:application] = "idt")
+  end
+
+  def representative_to_hash
+    {
+      name: representative_name,
+      type: representative_type,
+      code: representative_code,
+      participant_id: representative_participant_id,
+      address: representative_address
+    }
+  end
 
   def matched_document(type, vacols_datetime)
     return nil unless vacols_datetime
@@ -560,20 +774,11 @@ class LegacyAppeal < ApplicationRecord
     regional_office.to_h
   end
 
-  def ineligibile_for_ramp_at_bva?
-    !(((status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)) ||
-      eligible_for_ramp_despite_being_at_bva?)
-  end
-
-  # AMO has decided that appeals with docket dates 2016 and afterwards are eligble for RAMP even
-  # though they are at the board. Exceptions are appeals with hearings held, advance on docket or cavc.
-  def eligible_for_ramp_despite_being_at_bva?
-    (docket_date && docket_date.to_date > Date.new(2015, 12, 31)) && !hearing_held && !aod && !cavc
+  def status_eligible_for_ramp?
+    (status == "Advance" || status == "Remand") && !in_location?(:remand_returned_to_bva)
   end
 
   class << self
-    attr_writer :repository
-
     def find_or_create_by_vacols_id(vacols_id)
       appeal = find_or_initialize_by(vacols_id: vacols_id)
 
@@ -609,8 +814,7 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def repository
-      return AppealRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= AppealRepository
+      AppealRepository
     end
 
     # rubocop:disable Metrics/ParameterLists

@@ -10,16 +10,5 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require _stats.scss
- *= require _main.scss
- *= require _commons.scss
- *= require _tabs.scss
- *= require reader/_reader_styles_root.scss
- *= require _pdf_viewer.css
- *= require _style_guide.scss
- *= require react/_react_styles_root.scss
- *= require dispatch/_dispatch.scss
- *= require _hearings.scss
- *= require hearings/_hearings_styles_root.scss
- *= require _intake.scss
+ *
  */

@@ -1,20 +1,35 @@
 FactoryBot.define do
   factory :veteran do
+    first_name "Bob"
+    last_name "Smith"
+    name_suffix "II"
+
     transient do
       bgs_veteran_record do
         {
           first_name: "Bob",
-          last_name: "Smith"
+          last_name: "Smith",
+          date_of_birth: "01/10/1935",
+          date_of_death: "05/25/2016",
+          name_suffix: "II",
+          ssn: "987654321",
+          sex: "M",
+          address_line1: "1234 Main Street",
+          country: "USA",
+          zip_code: "12345",
+          state: "FL",
+          city: "Orlando"
         }
       end
     end
 
     sequence(:file_number, 100_000_000)
+    sequence(:participant_id, 500_000_000)
 
     after(:build) do |veteran, evaluator|
       Fakes::BGSService.veteran_records ||= {}
       Fakes::BGSService.veteran_records[veteran.file_number] =
-        evaluator.bgs_veteran_record.merge(file_number: veteran.file_number)
+        evaluator.bgs_veteran_record.merge(file_number: veteran.file_number, participant_id: veteran.participant_id)
     end
   end
 end

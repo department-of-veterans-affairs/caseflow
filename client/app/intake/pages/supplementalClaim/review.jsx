@@ -2,13 +2,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import DateSelector from '../../../components/DateSelector';
-import CancelButton from '../../components/CancelButton';
 import { Redirect } from 'react-router-dom';
-import Button from '../../../components/Button';
+import BenefitType from '../../components/BenefitType';
+import LegacyOptInApproved from '../../components/LegacyOptInApproved';
 import SelectClaimant from '../../components/SelectClaimant';
-import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/ama';
-import { setReceiptDate } from '../../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES } from '../../constants';
+import {
+  setBenefitType,
+  setVeteranIsNotClaimant,
+  setClaimant,
+  setPayeeCode,
+  setLegacyOptInApproved
+} from '../../actions/decisionReview';
+import { setReceiptDate } from '../../actions/intake';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -19,7 +25,12 @@ class Review extends React.PureComponent {
       veteranName,
       receiptDate,
       receiptDateError,
-      reviewIntakeError
+      benefitType,
+      benefitTypeError,
+      legacyOptInApproved,
+      legacyOptInApprovedError,
+      reviewIntakeError,
+      featureToggles
     } = this.props;
 
     switch (supplementalClaimStatus) {
@@ -30,10 +41,18 @@ class Review extends React.PureComponent {
     default:
     }
 
+    const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
+
     return <div>
-      <h1>Review { veteranName }'s Supplemental Claim (VA Form 21-526b)</h1>
+      <h1>Review { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
 
       { reviewIntakeError && <ErrorAlert /> }
+
+      <BenefitType
+        value={benefitType}
+        onChange={this.props.setBenefitType}
+        errorMessage={benefitTypeError}
+      />
 
       <DateSelector
         name="receipt-date"
@@ -46,58 +65,34 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
+      { legacyOptInEnabled && <LegacyOptInApproved
+        value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
+        onChange={this.props.setLegacyOptInApproved}
+        errorMessage={legacyOptInApprovedError}
+      /> }
     </div>;
   }
 }
 
 const SelectClaimantConnected = connect(
-  ({ supplementalClaim }) => ({
-    claimantNotVeteran: supplementalClaim.claimantNotVeteran,
+  ({ supplementalClaim, intake }) => ({
+    isVeteranDeceased: intake.veteran.isDeceased,
+    veteranIsNotClaimant: supplementalClaim.veteranIsNotClaimant,
+    veteranIsNotClaimantError: supplementalClaim.veteranIsNotClaimantError,
     claimant: supplementalClaim.claimant,
-    relationships: supplementalClaim.relationships
+    claimantError: supplementalClaim.claimantError,
+    payeeCode: supplementalClaim.payeeCode,
+    payeeCodeError: supplementalClaim.payeeCodeError,
+    relationships: supplementalClaim.relationships,
+    benefitType: supplementalClaim.benefitType,
+    formType: intake.formType
   }),
   (dispatch) => bindActionCreators({
-    setClaimantNotVeteran,
-    setClaimant
+    setVeteranIsNotClaimant,
+    setClaimant,
+    setPayeeCode
   }, dispatch)
 )(SelectClaimant);
-
-class ReviewNextButton extends React.PureComponent {
-  handleClick = () => {
-    this.props.submitReview(this.props.intakeId, this.props.supplementalClaim, 'supplementalClaim').then(
-      () => this.props.history.push('/finish')
-    );
-  };
-
-  render = () =>
-    <Button
-      name="submit-review"
-      onClick={this.handleClick}
-      loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
-    >
-      Continue to next step
-    </Button>;
-}
-
-const ReviewNextButtonConnected = connect(
-  ({ supplementalClaim, intake }) => ({
-    intakeId: intake.id,
-    requestState: supplementalClaim.requestStatus.submitReview,
-    supplementalClaim
-  }),
-  (dispatch) => bindActionCreators({
-    submitReview
-  }, dispatch)
-)(ReviewNextButton);
-
-export class ReviewButtons extends React.PureComponent {
-  render = () =>
-    <div>
-      <CancelButton />
-      <ReviewNextButtonConnected history={this.props.history} />
-    </div>
-}
 
 export default connect(
   (state) => ({
@@ -105,9 +100,15 @@ export default connect(
     supplementalClaimStatus: getIntakeStatus(state),
     receiptDate: state.supplementalClaim.receiptDate,
     receiptDateError: state.supplementalClaim.receiptDateError,
+    benefitType: state.supplementalClaim.benefitType,
+    benefitTypeError: state.supplementalClaim.benefitTypeError,
+    legacyOptInApproved: state.supplementalClaim.legacyOptInApproved,
+    legacyOptInApprovedError: state.supplementalClaim.legacyOptInApprovedError,
     reviewIntakeError: state.supplementalClaim.requestStatus.reviewIntakeError
   }),
   (dispatch) => bindActionCreators({
-    setReceiptDate
+    setReceiptDate,
+    setBenefitType,
+    setLegacyOptInApproved
   }, dispatch)
 )(Review);

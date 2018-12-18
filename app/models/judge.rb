@@ -27,15 +27,12 @@ class Judge
 
   def upcoming_hearings_on(date, is_fetching_issues = false)
     upcoming_hearings(is_fetching_issues).select do |hearing|
-      hearing.date.between?(date, date.end_of_day)
+      hearing.date.between?(date.beginning_of_day, date.end_of_day)
     end
   end
 
   def attorneys
-    return [] unless user
-    (Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env][user.css_id].try(:[], :attorneys) || []).map do |css_id|
-      User.find_or_create_by(css_id: css_id, station_id: User::BOARD_STATION_ID)
-    end
+    JudgeTeam.for_judge(user).try(:attorneys) || []
   end
 
   private
@@ -49,20 +46,35 @@ class Judge
   end
 
   def get_dockets_slots(dockets)
-    Hearing.repository.fetch_dockets_slots(dockets)
+    # fetching all the RO keys of the dockets
+    regional_office_keys = dockets.map { |_date, docket| docket.regional_office_key }
+
+    # fetching data of all dockets staff based on the regional office keys
+    ro_staff_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
+
+    # returns a hash of docket date (string) as key and number of slots for the docket
+    # as they key
+    dockets.map do |date, docket|
+      record = ro_staff_hash[docket.regional_office_key]
+      [date, (HearingDayRepository.slots_based_on_type(staff: record, type: docket.type, date: docket.date) if record)]
+    end.to_h
   end
 
   class << self
-    attr_writer :repository
-
     def repository
-      return JudgeRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= JudgeRepository
+      JudgeRepository
     end
 
     def list_all
       Rails.cache.fetch("#{Rails.env}_list_of_judges_from_vacols") do
         repository.find_all_judges
+      end
+    end
+
+    def list_all_with_name_and_id
+      # idt requires full name and sattyid
+      Rails.cache.fetch("#{Rails.env}_list_of_judges_from_vacols_with_name_and_id") do
+        repository.find_all_judges_with_name_and_id
       end
     end
   end

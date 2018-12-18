@@ -1,10 +1,14 @@
 class IssuesController < ApplicationController
   before_action :validate_access_to_task
 
-  rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
+  rescue_from ActiveRecord::RecordInvalid do |e|
     Rails.logger.error "IssuesController failed: #{e.message}"
     Raven.capture_exception(e)
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+  end
+
+  rescue_from Caseflow::Error::UserRepositoryError do |e|
+    handle_non_critical_error("issues", e)
   end
 
   def create
@@ -42,17 +46,17 @@ class IssuesController < ApplicationController
     appeal.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
         issue,
-        serializer: ::WorkQueue::IssueSerializer
+        serializer: ::WorkQueue::LegacyIssueSerializer
       ).as_json[:data][:attributes]
     end
   end
 
   def validate_access_to_task
-    current_user.access_to_task?(appeal.vacols_id)
+    current_user.fail_if_no_access_to_legacy_task!(appeal.vacols_id)
   end
 
   def appeal
-    @appeal ||= LegacyAppeal.find(params[:appeal_id])
+    @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
   end
 
   def issue_params

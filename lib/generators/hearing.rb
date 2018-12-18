@@ -28,9 +28,6 @@ class Generators::Hearing
       attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
       hearing = ::Hearing.new(default_attrs.merge(attrs))
 
-      Fakes::HearingRepository.hearing_records ||= []
-      Fakes::HearingRepository.hearing_records.push(hearing)
-
       hearing
     end
 
@@ -41,16 +38,6 @@ class Generators::Hearing
       attrs[:appeal_vacols_id] = LegacyAppeal.find(attrs[:appeal_id]).vacols_id
       attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
       hearing.update_attributes(attrs)
-
-      Fakes::HearingRepository.hearing_records ||= []
-
-      if Fakes::HearingRepository.find_by_id(hearing.id)
-        # If the hearing was already in our in-memory hearing_records store, replace it.
-        i = Fakes::HearingRepository.find_index_by_id(hearing.id)
-        Fakes::HearingRepository.hearing_records[i] = hearing
-      else
-        Fakes::HearingRepository.hearing_records.push(hearing)
-      end
 
       hearing
     end

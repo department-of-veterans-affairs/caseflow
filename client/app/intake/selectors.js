@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { INTAKE_STATES } from './constants';
+import { formatIssues } from './util/issues';
 import _ from 'lodash';
 
 const getIntakeDetailStatus = (intakeDetail) => {
@@ -34,3 +35,9 @@ export const getIntakeStatus = createSelector(
     return status || INTAKE_STATES.NONE;
   }
 );
+
+export const issueCountSelector = (state) => {
+  const selectedIssues = formatIssues(state).request_issues;
+
+  return selectedIssues ? selectedIssues.length : 0;
+};

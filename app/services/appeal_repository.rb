@@ -1,7 +1,11 @@
 # rubocop:disable Metrics/ClassLength
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
-  class AppealNotValidToReopen < StandardError; end
+  class AppealNotValidToReopen < StandardError
+    def initialize(appeal_id)
+      super("Appeal id #{appeal_id} is not valid to reopen")
+    end
+  end
 
   # :nocov:
 
@@ -16,7 +20,7 @@ class AppealRepository
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
                                         name: "load_vacols_data") do
-      VACOLS::Case.includes(:folder, :correspondent).find(appeal.vacols_id)
+      VACOLS::Case.includes(:folder, :correspondent, :representatives).find(appeal.vacols_id)
     end
 
     set_vacols_values(appeal: appeal, case_record: case_record)
@@ -30,10 +34,10 @@ class AppealRepository
     cases = MetricsService.record("VACOLS: appeals_by_vbms_id",
                                   service: :vacols,
                                   name: "appeals_by_vbms_id") do
-      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent)
+      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :representatives)
     end
 
-    cases.map { |case_record| build_appeal(case_record) }
+    cases.map { |case_record| build_appeal(case_record, true) }
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -83,7 +87,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id)
         .where.not(bfd19: nil)
         .where("bfddec is NULL or bfmpro = 'REM'")
-        .includes(:folder, :correspondent, :representative)
+        .includes(:folder, :correspondent, :representatives)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -133,18 +137,19 @@ class AppealRepository
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
       file_type: folder_type_from(folder_record),
-      contested_claim: case_record.representative.try(:reptype) == "C",
       veteran_first_name: correspondent_record.snamef,
       veteran_middle_initial: correspondent_record.snamemi,
       veteran_last_name: correspondent_record.snamel,
+      veteran_name_suffix: correspondent_record.ssalut,
       veteran_date_of_birth: correspondent_record.sdob,
       veteran_gender: correspondent_record.sgender,
       outcoder_first_name: outcoder_record.try(:snamef),
       outcoder_last_name: outcoder_record.try(:snamel),
       outcoder_middle_initial: outcoder_record.try(:snamemi),
-      appellant_first_name: correspondent_record.sspare1,
-      appellant_middle_initial: correspondent_record.sspare2,
-      appellant_last_name: correspondent_record.sspare3,
+      appellant_first_name: correspondent_record.sspare2,
+      appellant_middle_initial: correspondent_record.sspare3,
+      appellant_last_name: correspondent_record.sspare1,
+      appellant_name_suffix: correspondent_record.sspare4,
       appellant_relationship: correspondent_record.sspare1 ? correspondent_record.susrtyp : "",
       appellant_ssn: correspondent_record.ssn,
       appellant_address_line_1: correspondent_record.saddrst1,
@@ -158,6 +163,7 @@ class AppealRepository
       nod_date: normalize_vacols_date(case_record.bfdnod),
       soc_date: normalize_vacols_date(case_record.bfdsoc),
       form9_date: normalize_vacols_date(case_record.bfd19),
+      notice_of_death_date: normalize_vacols_date(correspondent_record.sfnod),
       ssoc_dates: ssoc_dates_from(case_record),
       hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
       video_hearing_requested: case_record.bfdocind == "V",
@@ -166,6 +172,7 @@ class AppealRepository
       regional_office_key: case_record.bfregoff,
       certification_date: case_record.bf41stat,
       case_review_date: folder_record.tidktime,
+      citation_number: folder_record.tiread2,
       case_record: case_record,
       disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[case_record.bfdc],
       location_code: case_record.bfcurloc,
@@ -175,7 +182,7 @@ class AppealRepository
       last_location_change_date: normalize_vacols_date(case_record.bfdloout),
       outcoding_date: normalize_vacols_date(folder_record.tioctime),
       private_attorney_or_agent: case_record.bfso == "T",
-      docket_number: folder_record.tinum,
+      docket_number: folder_record.tinum || "Missing Docket Number",
       docket_date: case_record.bfd19
     )
 
@@ -264,6 +271,43 @@ class AppealRepository
     end
   end
 
+  def self.appeals_ready_for_hearing_schedule(regional_office)
+    if regional_office == HearingDay::HEARING_TYPES[:central]
+      return appeals_ready_for_co_hearing_schedule
+    end
+
+    cavc_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57", bfac: "7", bfdocind: "V",
+                                                   bfhr: "2").order("folder.tinum").limit(30)
+    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).joins(:folder).where("aod = 1").where(
+      bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V"
+    ).order("folder.tinum").limit(30)
+    other_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfhr: "2", bfcurloc: "57",
+                                                    bfdocind: "V").order("folder.tinum").limit(30)
+
+    aod_vacols_ids = aod_cases.pluck(:bfkey)
+
+    (cavc_cases + aod_cases + other_cases).uniq.first(30).map do |case_record|
+      build_appeal(case_record, true).tap do |appeal|
+        appeal.aod = aod_vacols_ids.include?(appeal.vacols_id)
+      end
+    end
+  end
+
+  def self.appeals_ready_for_co_hearing_schedule
+    cavc_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57", bfac: "7").order("folder.tinum").limit(30)
+    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD)
+      .joins(:folder).where("aod = 1").where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
+    other_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
+
+    aod_vacols_ids = aod_cases.pluck(:bfkey)
+
+    (cavc_cases + aod_cases + other_cases).uniq.first(30).map do |case_record|
+      build_appeal(case_record, true).tap do |appeal|
+        appeal.aod = aod_vacols_ids.include?(appeal.vacols_id)
+      end
+    end
+  end
+
   def self.update_location_after_dispatch!(appeal:)
     location = location_after_dispatch(appeal: appeal)
 
@@ -308,7 +352,10 @@ class AppealRepository
 
     # App logic should prevent this, but because this is a destructive operation
     # add an additional failsafe
-    fail AppealNotValidToClose if case_record.bfdc
+    if case_record.bfdc
+      Raven.extra_context(undecided_appeal_id: appeal.id)
+      fail AppealNotValidToClose
+    end
 
     VACOLS::Case.transaction do
       case_record.update_attributes!(
@@ -431,26 +478,24 @@ class AppealRepository
   def self.reopen_undecided_appeal!(appeal:, user:, safeguards:)
     case_record = appeal.case_record
     folder_record = case_record.folder
+    not_valid_to_reopen_err = AppealNotValidToReopen.new(appeal.id)
 
-    fail AppealNotValidToReopen unless case_record.bfmpro == "HIS"
-    fail AppealNotValidToReopen unless case_record.bfcurloc == "99"
-    fail AppealNotValidToReopen unless case_record.bfboard == "00"
+    fail not_valid_to_reopen_err unless case_record.bfmpro == "HIS"
+    fail not_valid_to_reopen_err unless case_record.bfcurloc == "99"
 
     close_date = case_record.bfddec
     close_disposition = case_record.bfdc
 
     if safeguards
-      fail AppealNotValidToReopen unless %w[9 E F G P].include? close_disposition
+      fail not_valid_to_reopen_err unless %w[9 E F G P].include? close_disposition
     end
 
     previous_active_location = case_record.previous_active_location
-    fail AppealNotValidToReopen unless previous_active_location
-    fail AppealNotValidToReopen if %w[50 51 52 53 54 70 96 97 98 99].include? previous_active_location
+
+    fail not_valid_to_reopen_err unless previous_active_location
+    fail not_valid_to_reopen_err if %w[50 51 52 53 54 96 97 98 99].include? previous_active_location
 
     adv_status = previous_active_location == "77"
-    fail AppealNotValidToReopen if adv_status && (close_disposition == "9")
-    fail AppealNotValidToReopen if !adv_status && (close_disposition != "9")
-
     bfmpro = adv_status ? "ADV" : "ACT"
     tikeywrd = adv_status ? "ADVANCE" : "ACTIVE"
 
@@ -473,7 +518,6 @@ class AppealRepository
         timdtime: VacolsHelper.local_time_with_utc_timezone,
         timduser: user.regional_office
       )
-
       # Reopen any issues that have the same close information as the appeal
       case_record.case_issues
         .where(issdc: close_disposition, issdcls: close_date)
@@ -489,17 +533,19 @@ class AppealRepository
   def self.reopen_remand!(appeal:, user:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
+    not_valid_to_reopen_err = AppealNotValidToReopen.new(appeal.id)
 
-    fail AppealNotValidToReopen unless %w[P W].include? disposition_code
-    fail AppealNotValidToReopen unless case_record.bfmpro == "HIS"
-    fail AppealNotValidToReopen unless case_record.bfcurloc == "99"
+    fail not_valid_to_reopen_err unless %w[P W].include? disposition_code
+    fail not_valid_to_reopen_err unless case_record.bfmpro == "HIS"
+    fail not_valid_to_reopen_err unless case_record.bfcurloc == "99"
 
     previous_active_location = case_record.previous_active_location
-    fail AppealNotValidToReopen unless %w[50 53 54 96 97 98].include? previous_active_location
-    fail AppealNotValidToReopen if disposition_code == "P" && %w[53 43].include?(previous_active_location)
+
+    fail not_valid_to_reopen_err unless %w[50 53 54 70 96 97 98].include? previous_active_location
+    fail not_valid_to_reopen_err if disposition_code == "P" && %w[53 43].include?(previous_active_location)
 
     follow_up_appeal_key = "#{case_record.bfkey}#{disposition_code}"
-    fail AppealNotValidToReopen unless VACOLS::Case.where(bfkey: follow_up_appeal_key).count == 1
+    fail not_valid_to_reopen_err unless VACOLS::Case.where(bfkey: follow_up_appeal_key).count == 1
 
     VACOLS::Case.transaction do
       case_record.update_attributes!(bfmpro: "REM")
@@ -554,7 +600,7 @@ class AppealRepository
                           name: "active_cases_for_user") do
 
       active_cases_for_user = VACOLS::CaseAssignment.active_cases_for_user(css_id)
-      active_cases_for_user = QueueRepository.filter_duplicate_tasks(active_cases_for_user)
+      active_cases_for_user = QueueRepository.filter_duplicate_tasks(active_cases_for_user, css_id)
       active_cases_vacols_ids = active_cases_for_user.map(&:vacols_id)
       active_cases_aod_results = VACOLS::Case.aod(active_cases_vacols_ids)
       active_cases_issues = VACOLS::CaseIssue.descriptions(active_cases_vacols_ids)
@@ -581,6 +627,22 @@ class AppealRepository
     VACOLS::CaseAssignment.exists_for_appeals([vacols_id])[vacols_id]
   end
 
+  def self.docket_counts_by_priority_and_readiness
+    MetricsService.record("VACOLS: docket_counts_by_priority_and_readiness",
+                          name: "docket_counts_by_priority_and_readiness",
+                          service: :vacols) do
+      VACOLS::CaseDocket.counts_by_priority_and_readiness
+    end
+  end
+
+  def self.nod_count
+    MetricsService.record("VACOLS: nod_count",
+                          name: "nod_count",
+                          service: :vacols) do
+      VACOLS::CaseDocket.nod_count
+    end
+  end
+
   def self.regular_non_aod_docket_count
     MetricsService.record("VACOLS: regular_non_aod_docket_count",
                           name: "regular_non_aod_docket_count",
@@ -604,6 +666,22 @@ class AppealRepository
                           name: "docket_counts_by_month",
                           service: :vacols) do
       VACOLS::CaseDocket.docket_counts_by_month
+    end
+  end
+
+  def self.distribute_priority_appeals(judge, genpop, limit)
+    MetricsService.record("VACOLS: distribute_priority_appeals",
+                          name: "distribute_priority_appeals",
+                          service: :vacols) do
+      VACOLS::CaseDocket.distribute_priority_appeals(judge, genpop, limit)
+    end
+  end
+
+  def self.distribute_nonpriority_appeals(judge, genpop, range, limit)
+    MetricsService.record("VACOLS: distribute_nonpriority_appeals",
+                          name: "distribute_nonpriority_appeals",
+                          service: :vacols) do
+      VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit)
     end
   end
 

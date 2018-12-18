@@ -1,0 +1,464 @@
+.worksheet-header {
+
+  .cf-push-right {
+    padding-top: 25px;
+  }
+}
+
+
+.cf-hearings-column {
+  width: 45%;
+}
+
+.hearings {
+  thead > tr {
+    display: inline-table;
+    width: 100%;
+
+    th:nth-child(3) {
+      min-width: 75px;
+    }
+
+    th:nth-child(1) {
+      padding-left: 36px;
+      min-width: 180px;
+    }
+
+    th {
+      max-width: 165px;
+      min-width: 150px;
+    }
+  }
+
+  tbody > tr {
+    display: inline-table;
+    width: 100%;
+
+    td:nth-child(3) {
+      min-width: 75px;
+    }
+
+    td:nth-child(1) {
+      padding-left: 36px;
+      min-width: 180px;
+    }
+
+    td {
+      max-width: 165px;
+      min-width: 150px;
+      border-bottom: none;
+    }
+  }
+}
+
+.saving {
+  font-style: italic;
+  color: $color-gray;
+  text-align: right;
+  display: block;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.cf-hearings-daily-docket-container {
+  position: relative;
+}
+
+.cf-hearings-schedule {
+  .cf-tab {
+    span {
+      min-width: 150px;
+    }
+  }
+
+  h1 {
+    padding-bottom: 0;
+  }
+
+}
+
+.cf-hearings,
+.cf-hearings-schedule,
+.cf-hearings-worksheet {
+  padding: 40px;
+
+  .cf-hearings-title-and-judge {
+    h1 {
+      margin-bottom: 0;
+    }
+
+    span {
+      position: relative;
+      left: .25em;
+    }
+  }
+
+  .dockets {
+    td {
+      text-transform: capitalize;
+    }
+
+    td:nth-child(2) {
+      text-transform: none;
+    }
+  }
+
+  .cf-title-meta-right {
+    line-height: 2em;
+
+    .meta {
+      font-size: inherit;
+    }
+  }
+
+  .cf-hearings-docket {
+    margin-top: 0;
+    margin-bottom: -40px;
+    margin-right: -40px;
+    margin-left: -40px;
+
+    // TODO: see if this can become a part of the general style
+    .Select-arrow-zone {
+      background-position: center;
+      background-size: .75em;
+    }
+
+    // TODO: see if this can become a part of the general style
+    .Select-menu-outer {
+      border: 1px solid $color-gray-dark;
+      border-top: none;
+      min-height: auto;
+      box-shadow: 0 2px 4px 0 $color-dropdown-shadow;
+    }
+
+    // TODO: see if this can become a part of the general style
+    .is-searchable.is-open > .Select-control {
+      box-shadow: 0 0 8px $color-dropdown-shadow;
+    }
+
+    tbody {
+      border-bottom: 1px solid $color-gray-lighter;
+    }
+
+    td {
+      vertical-align: top;
+      margin: 0;
+      border: none;
+      padding: .25em 0.75em .75em .25em;
+
+      &:first-child {
+        font-weight: bold;
+        padding-right: 0;
+        padding-left: 20px;
+        float: right;
+      }
+    }
+
+    th {
+      vertical-align: middle;
+      background: none;
+      border: none;
+      border-bottom: 1px solid $color-gray-lighter;
+      margin: 0;
+      padding: .75em 0.75em .75em .25em;
+
+      &:last-child {
+        padding-right: 0;
+      }
+    }
+
+    .cf-hearings-docket-actions {
+      width: 45%;
+      text-align: center;
+      background-color: $color-gray-lightest;
+
+      .cf-form-dropdown {
+        min-width: 150px;
+        text-align: left;
+        display: inline-block;
+        width: 33%;
+        margin: 0;
+        padding: 0 .32em;
+      }
+    }
+  }
+
+  .transcriptRequested {
+    display: inline-block;
+    text-align: left;
+    padding: .4em;
+    width: 100%;
+
+    .cf-form-checkboxes {
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+  }
+}
+
+.loading-hearings {
+  margin: 100px auto 0;
+  text-align: center;
+}
+
+.cf-hearings-worksheet {
+  margin-bottom: 15px;
+
+  [type="text"] {
+    margin: .3em 0 0;
+  }
+
+  .cf-form-textarea {
+    max-width: 100%;
+
+    textarea {
+      margin: 0;
+      width: 100%;
+      resize: vertical;
+      min-height: 48px;
+    }
+  }
+
+  [type="text"],
+  textarea {
+    border: 1px solid $color-gray-dark;
+  }
+
+  .cf-copy-to-clipboard {
+    border: 1px solid $color-gray-dark;
+    box-shadow: inset 0 0 0 1px $color-gray-lightest;
+    color: $color-gray;
+    background-color: $color-white;
+
+    &:hover {
+      background: $color-gray-dark;
+      border: 1px solid $color-gray-dark;
+      box-shadow: none;
+      color: $color-white;
+
+      path {
+        fill: $color-white;
+      }
+    }
+
+    &:focus {
+      box-shadow: none;
+    }
+
+    svg {
+      margin: 0 0 -2px 7px;
+    }
+  }
+
+  .copy-paste-button {
+    font-size: 14px;
+    font-family: 'Source Sans Bold';
+  }
+
+  .cf-hearings-worksheet-witness-cell {
+
+    textarea {
+      height: 44px;
+      min-height: 44px;
+      min-width: 100%;
+    }
+  }
+}
+
+.cf-hearings-worksheet-data {
+  white-space: pre-line;
+  position: relative;
+  margin-bottom: 1.765em;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    font-size: 1.05em;
+    padding-bottom: .3em;
+  }
+
+  h4 {
+    font-weight: normal;
+    font-size: 17px;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+
+  .cf-hearings-worksheet-header {
+    margin-bottom: 1em;
+  }
+
+  .cf-modal {
+
+    h2 {
+      border-bottom: none;
+      font-size: 1.5em;
+    }
+
+  }
+
+  .cf-hearings-worksheet-data-cell {
+    display: inline-block;
+    width: 20%;
+    vertical-align: top;
+    padding-left: .2em;
+  }
+
+  .cf-appeal-stream-label {
+    margin-top: .5em;
+    margin-bottom: 0;
+  }
+
+  .cf-issue-delete {
+    cursor: pointer;
+    padding: 0;
+    background-color: $color-white;
+  }
+
+  h2 {
+    border-bottom: 1px solid $color-gray-lighter;
+    margin-bottom: .5em;
+  }
+}
+
+.cf-hearings-worksheet-issues {
+  white-space: pre-line;
+  margin: .5em 0 1.5em;
+
+  tr:last-child {
+    .cf-form-textarea {
+      margin-bottom: 0;
+    }
+  }
+
+  .cf-form-textarea {
+    min-height: 48px;
+
+    label {
+      position: absolute;
+      left: -99999px;
+    }
+  }
+
+  .cf-txt-l {
+    padding-left: .4em;
+
+    [id=trash-can] {
+      margin-top: 20px;
+    }
+  }
+
+  tr {
+    border: none;
+
+    th {
+      padding: 0;
+    }
+  }
+
+  td {
+    vertical-align: top;
+    padding: .5em;
+
+    &:nth-of-type(1) {
+      width: 5%;
+    }
+
+    &:nth-of-type(2) {
+      width: 26%;
+    }
+
+    &:nth-of-type(3) {
+      width: 26%;
+    }
+
+    &:nth-of-type(4) {
+      width: 13%;
+    }
+
+    &:nth-of-type(5) {
+      width: 26%;
+    }
+
+    &:nth-of-type(6) {
+      width: 4%;
+    }
+
+    textarea {
+      height: 4em;
+    }
+
+    .cf-form-checkboxes {
+      display: inline-block;
+      box-sizing: border-box;
+      margin: 0;
+      padding: .3em 0;
+
+      &:nth-of-type(1),
+      &:nth-of-type(4) {
+        width: 40%;
+      }
+
+      &:nth-of-type(2),
+      &:nth-of-type(5) {
+        width: 35%;
+      }
+
+      &:nth-of-type(3),
+      &:nth-of-type(6) {
+        width: 25%;
+      }
+
+      label {
+        margin: 0;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+.cf-hearings-worksheet-form {
+  label {
+    font-weight: bold;
+  }
+}
+
+
+.cf-hearings-print-appeal-stream {
+  line-height: .2em;
+  font-size: 11px;
+  margin-bottom: 0;
+}
+
+.cf_hearing_body {
+  font-size: 11px;
+  padding: $cf-30px;
+}
+
+.hearings-add-issue {
+  margin-bottom: 20px;
+}
+
+.cf-hearings-worksheet-desc-label {
+  position: absolute;
+  left: -99999px;
+}
+
+.cf-form-textinput {
+  label {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  p {
+    font-size: 11px;
+    margin-top: 0;
+  }
+}

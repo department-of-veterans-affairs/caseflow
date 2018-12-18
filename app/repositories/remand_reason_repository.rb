@@ -13,17 +13,17 @@ class RemandReasonRepository
   # {"465400"=>{},
   #  "1074694"=>
   #   {6=>
-  #     [{:code=>"1E", :after_certification=>false},
-  #      {:code=>"1B", :after_certification=>false}],
+  #     [{:code=>"1E", :post_aoj=>false},
+  #      {:code=>"1B", :post_aoj=>false}],
   #    8=>
-  #     [{:code=>"1B", :after_certification=>false},
-  #      {:code=>"1C", :after_certification=>false},
-  #      {:code=>"1E", :after_certification=>false}],
+  #     [{:code=>"1B", :post_aoj=>false},
+  #      {:code=>"1C", :post_aoj=>false},
+  #      {:code=>"1E", :post_aoj=>false}],
   #   },
   #  "1014716"=>
   #   {1=>
-  #     [{:code=>"1A", :after_certification=>true},
-  #      {:code=>"3D", :after_certification=>true}]}
+  #     [{:code=>"1A", :post_aoj=>true},
+  #      {:code=>"3D", :post_aoj=>true}]}
   #  }
   def self.load_remand_reasons_for_appeals(vacols_ids)
     # `rmdissseq` will be null for remand reasons on appeals before 1999.
@@ -52,7 +52,7 @@ class RemandReasonRepository
   def self.remand_reason_from_vacols_remand_reason(reason)
     {
       code: reason.rmdval,
-      after_certification: reason.rmddev.eql?("R2")
+      post_aoj: reason.rmddev.eql?("R2")
     }
   end
 

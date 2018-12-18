@@ -1,27 +1,80 @@
 describe LegacyAppeal do
   before do
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
   let(:twenty_days_ago) { 20.days.ago.to_formatted_s(:short_date) }
   let(:last_year) { 365.days.ago.to_formatted_s(:short_date) }
 
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:appeal) do
     create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
+  context "#eligible_for_soc_opt_in? and #matchable_to_request_issue?" do
+    let(:soc_eligible_date) { receipt_date - 60.days }
+    let(:nod_eligible_date) { receipt_date - 372.days }
+    let(:receipt_date) { Time.zone.today }
+
+    let(:vacols_case) do
+      create(:case, bfcorlid: "123456789S")
+    end
+
+    let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1, disposition: nil)] }
+
+    scenario "when is active but not eligible" do
+      allow(appeal).to receive(:active?).and_return(true)
+      allow(appeal).to receive(:issues).and_return(issues)
+      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
+      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+    end
+
+    scenario "when is not active but is eligible" do
+      allow(appeal).to receive(:active?).and_return(false)
+      allow(appeal).to receive(:issues).and_return(issues)
+      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
+      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+    end
+
+    scenario "when is not active or eligible" do
+      allow(appeal).to receive(:active?).and_return(false)
+      allow(appeal).to receive(:issues).and_return(issues)
+      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
+      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
+
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+    end
+
+    scenario "when is active or eligible but has no issues" do
+      allow(appeal).to receive(:active?).and_return(true)
+      allow(appeal).to receive(:issues).and_return([])
+      allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
+      allow(appeal).to receive(:nod_date).and_return(nod_eligible_date + 1.day)
+
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+    end
+
+    context "receipt_date is nil" do
+      let(:receipt_date) { nil }
+
+      scenario "always returns false" do
+        allow(appeal).to receive(:active?).and_return(false)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(Time.zone.today)
+        allow(appeal).to receive(:nod_date).and_return(Time.zone.today)
+
+        expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
+    end
   end
 
   context "#documents_with_type" do
@@ -54,6 +107,20 @@ describe LegacyAppeal do
         expect(subject.first.type).to eq(type.first)
         expect(subject.last.type).to eq(type.last)
       end
+    end
+  end
+
+  context "#attorney_case_reviews" do
+    subject { appeal.attorney_case_reviews }
+
+    let(:vacols_case) do
+      create(:case, :assigned, decass_count: 1, user: create(:user), document_id: "02255-00000002")
+    end
+    let!(:decass1) { create(:decass, defolder: vacols_case.bfkey, dedocid: nil) }
+    let!(:decass2) { create(:decass, defolder: vacols_case.bfkey, dedocid: "02255-00000002") }
+
+    it "returns all documents associated with the case" do
+      expect(subject.size).to eq 2
     end
   end
 
@@ -183,9 +250,17 @@ describe LegacyAppeal do
       it { is_expected.to eq(nil) }
     end
 
+    context "when the case has a non-Board disposition" do
+      let(:vacols_case) do
+        create(:case, :disposition_ramp)
+      end
+
+      it { is_expected.to eq(nil) }
+    end
+
     context "when there is a decision date" do
       let(:vacols_case) do
-        create(:case_with_decision, bfddec: 30.days.ago)
+        create(:case, :status_complete, :disposition_allowed, bfddec: 30.days.ago)
       end
 
       it { is_expected.to eq(90.days.from_now.to_date) }
@@ -205,6 +280,27 @@ describe LegacyAppeal do
       expect(subject.count { |event| event.type == :nod } > 0).to be_truthy
       expect(subject.count { |event| event.type == :soc } > 0).to be_truthy
       expect(subject.count { |event| event.type == :form9 } > 0).to be_truthy
+    end
+  end
+
+  context "#veteran_ssn" do
+    subject { appeal.veteran_ssn }
+
+    context "when claim number is also ssn" do
+      let(:vacols_case) do
+        create(:case, bfcorlid: "228081153S")
+      end
+
+      it { is_expected.to eq "228081153" }
+    end
+
+    context "when claim number is not ssn" do
+      let(:vacols_case) do
+        create(:case, bfcorlid: "228081153C")
+      end
+      let(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
+
+      it { is_expected.to eq appeal.veteran.ssn }
     end
   end
 
@@ -1043,14 +1139,8 @@ describe LegacyAppeal do
                case_issues: issues)
       end
 
-      context "when other qualifying criteria are met" do
-        it { is_expected.to be_nil }
-      end
-
-      context "when no compensation issues" do
-        let(:issues) { [create(:case_issue, :education)] }
-        it { is_expected.to eq(:no_compensation_issues) }
-      end
+      # As of October 2018, appeals are only eligible for RAMP if their status is advance or remand
+      it { is_expected.to eq(:activated_to_bva) }
 
       context "when docket date is before 2016" do
         let(:docket_date) { "2015-12-31" }
@@ -1071,6 +1161,11 @@ describe LegacyAppeal do
         let(:type_code) { "7" }
         it { is_expected.to eq(:activated_to_bva) }
       end
+
+      context "when status is Active (ACT)" do
+        let(:status) { "Active" }
+        it { is_expected.to eq(:activated_to_bva) }
+      end
     end
 
     context "status is remand" do
@@ -1089,6 +1184,11 @@ describe LegacyAppeal do
         end
 
         it { is_expected.to eq(:claimant_not_veteran) }
+      end
+
+      context "when no compensation issues" do
+        let(:issues) { [create(:case_issue, :education)] }
+        it { is_expected.to eq(:no_compensation_issues) }
       end
     end
 
@@ -1344,7 +1444,6 @@ describe LegacyAppeal do
     end
 
     it "returns correct eps" do
-      puts BGSService.end_product_records
       expect(result.length).to eq(2)
 
       expect(result.first.claim_type_code).to eq("172GRANT")
@@ -1532,6 +1631,25 @@ describe LegacyAppeal do
         create(:case, case_issues: [create(:case_issue), create(:case_issue)])
       end
       it { is_expected.to eq 2 }
+    end
+  end
+
+  context "#contested_claim" do
+    subject { appeal.contested_claim }
+    let(:vacols_case) { create(:case) }
+
+    context "when there is no contesting claimant" do
+      it { is_expected.to eq false }
+    end
+
+    context "when there is a contesting claimant" do
+      let(:vacols_case) do
+        vacols_c = create(:case)
+        create(:representative, reptype: "C", repkey: vacols_c.bfkey)
+        vacols_c
+      end
+
+      it { is_expected.to eq true }
     end
   end
 
@@ -1770,6 +1888,39 @@ describe LegacyAppeal do
     end
   end
 
+  context "#outstanding_vacols_mail" do
+    let(:vacols_case) { create(:case) }
+    subject { appeal.outstanding_vacols_mail }
+    let!(:outstanding_mail) do
+      [
+        create(:mail, mlfolder: vacols_case.bfkey, mltype: "02")
+      ]
+    end
+
+    context "when no mail is outstanding" do
+      it "returns mail with type 02" do
+        expect(subject).to eq [{ outstanding: false, code: "02", description: "Congressional Interest" }]
+      end
+    end
+
+    context "when mail is outstanding" do
+      let(:vacols_case) { create(:case) }
+      let!(:outstanding_mail) do
+        [
+          create(:mail, mlfolder: vacols_case.bfkey, mltype: "02"),
+          create(:mail, mlfolder: vacols_case.bfkey, mltype: "05")
+        ]
+      end
+
+      it "returns true" do
+        expect(subject).to eq [
+          { outstanding: false, code: "02", description: "Congressional Interest" },
+          { outstanding: true, code: "05", description: "Evidence or Argument" }
+        ]
+      end
+    end
+  end
+
   context "#destroy_legacy_appeal" do
     let :appeal do
       LegacyAppeal.create!(
@@ -1808,5 +1959,311 @@ describe LegacyAppeal do
     let!(:another_cavc_decision) { Generators::CAVCDecision.build(appeal: appeal) }
 
     it { is_expected.to eq([cavc_decision, another_cavc_decision]) }
+  end
+
+  context "#congressional_interest_addresses" do
+    context "when mail has congressional interest type" do
+      let(:congress_person) do
+        create(:correspondent,
+               snamef: "Henry",
+               snamemi: "J",
+               snamel: "Clay",
+               stitle: "Rep.",
+               saddrst1: "123 K St. NW",
+               saddrst2: "Suite 456",
+               saddrcty: "Washington",
+               saddrstt: "DC",
+               saddrcnty: nil,
+               saddrzip: "20001")
+      end
+      let!(:mail) { create(:mail, mltype: "02", mlfolder: vacols_case.bfkey, mlcorkey: congress_person.stafkey) }
+      let(:vacols_case) { create(:case) }
+
+      it "returns the congress persons' address" do
+        expect(appeal.congressional_interest_addresses).to eq(
+          [
+            {
+              full_name: "Rep. Henry Clay PhD",
+              address_line_1: "123 K St. NW",
+              address_line_2: "Suite 456",
+              city: "Washington",
+              state: "DC",
+              country: nil,
+              zip: "20001"
+            }
+          ]
+        )
+      end
+    end
+
+    context "when mail has congressional interest type but no correspondent record" do
+      let!(:mail) { create(:mail, mltype: "02", mlfolder: vacols_case.bfkey, mlcorkey: nil) }
+      let(:vacols_case) { create(:case) }
+
+      it "returns nil" do
+        expect(appeal.congressional_interest_addresses).to eq([nil])
+      end
+    end
+  end
+
+  context "#claimant" do
+    let(:correspondent) do
+      create(:correspondent,
+             snamef: "Bobby",
+             snamemi: "F",
+             snamel: "Veteran",
+             ssalut: "",
+             saddrst1: "123 K St. NW",
+             saddrst2: "Suite 456",
+             saddrcty: "Washington",
+             saddrstt: "DC",
+             saddrcnty: nil,
+             saddrzip: "20001")
+    end
+    let!(:representative) do
+      create(:representative,
+             repkey: vacols_case.bfkey,
+             reptype: "A",
+             repfirst: "Attorney",
+             repmi: "B",
+             replast: "Lawyer",
+             repaddr1: "111 Magnolia St.",
+             repaddr2: "Suite 222",
+             repcity: "New York",
+             repst: "NY",
+             repzip: "10000")
+    end
+    let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "T") }
+
+    context "when veteran is the appellant and addresses are included" do
+      it "the veteran is returned with addresses" do
+        expect(appeal.claimant).to eq(
+          first_name: "Bobby",
+          middle_name: "F",
+          last_name: "Veteran",
+          name_suffix: nil,
+          address: {
+            address_line_1: "123 K St. NW",
+            address_line_2: "Suite 456",
+            city: "Washington",
+            state: "DC",
+            country: nil,
+            zip: "20001"
+          },
+          representative: {
+            name: "Attorney B Lawyer",
+            type: "Attorney",
+            code: "T",
+            participant_id: "600153863",
+            address: {
+              address_line_1: "111 Magnolia St.",
+              address_line_2: "Suite 222",
+              city: "New York",
+              state: "NY",
+              zip: "10000"
+            }
+          }
+        )
+      end
+    end
+
+    context "when representative is returned from BGS" do
+      before do
+        FeatureToggle.enable!(:use_representative_info_from_bgs)
+        RequestStore.store[:application] = "queue"
+      end
+
+      after do
+        FeatureToggle.disable!(:use_representative_info_from_bgs)
+      end
+
+      it "the appellant is returned" do
+        expect(appeal.claimant).to eq(
+          first_name: "Bobby",
+          middle_name: "F",
+          last_name: "Veteran",
+          name_suffix: nil,
+          address: {
+            address_line_1: "123 K St. NW",
+            address_line_2: "Suite 456",
+            city: "Washington",
+            state: "DC",
+            country: nil,
+            zip: "20001"
+          },
+          representative: {
+            name: "Clarence Darrow",
+            type: "Attorney",
+            code: "T",
+            participant_id: "600153863",
+            address: {
+              address_line_1: "9999 MISSION ST",
+              address_line_2: "UBER",
+              address_line_3: "APT 2",
+              city: "SAN FRANCISCO",
+              state: "CA",
+              country: "USA",
+              zip: "94103"
+            }
+          }
+        )
+      end
+    end
+
+    context "when veteran is not the appellant" do
+      let(:correspondent) do
+        create(:correspondent,
+               snamef: "Bobby",
+               snamemi: "F",
+               snamel: "Veteran",
+               saddrst1: "123 K St. NW",
+               saddrst2: "Suite 456",
+               saddrcty: "Washington",
+               saddrstt: "DC",
+               saddrcnty: nil,
+               saddrzip: "20001",
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
+      end
+
+      it "the appellant is returned" do
+        expect(appeal.claimant).to eq(
+          first_name: "Tommy",
+          middle_name: "G",
+          last_name: "Claimant",
+          name_suffix: nil,
+          address: {
+            address_line_1: "123 K St. NW",
+            address_line_2: "Suite 456",
+            city: "Washington",
+            state: "DC",
+            country: nil,
+            zip: "20001"
+          },
+          representative: {
+            name: "Attorney B Lawyer",
+            type: "Attorney",
+            code: "T",
+            participant_id: "600153863",
+            address: {
+              address_line_1: "111 Magnolia St.",
+              address_line_2: "Suite 222",
+              city: "New York",
+              state: "NY",
+              zip: "10000"
+            }
+          }
+        )
+      end
+    end
+  end
+
+  context "#contested_claimants" do
+    context "when there are contested claimants" do
+      let(:correspondent) do
+        create(:correspondent,
+               snamef: "Bobby",
+               snamemi: "F",
+               snamel: "Veteran",
+               saddrst1: "123 K St. NW",
+               saddrst2: "Suite 456",
+               saddrcty: "Washington",
+               saddrstt: "DC",
+               saddrcnty: nil,
+               saddrzip: "20001",
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
+      end
+
+      let!(:representative) do
+        create(:representative,
+               repkey: vacols_case.bfkey,
+               reptype: "C",
+               repfirst: "Contested",
+               repmi: "H",
+               replast: "Claimant",
+               repaddr1: "123 Oak St.",
+               repaddr2: "Suite 222",
+               repcity: "New York",
+               repst: "NY",
+               repzip: "10000")
+      end
+      let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "L") }
+
+      it "the contested claimant is returned" do
+        expect(appeal.contested_claimants).to eq([
+                                                   {
+                                                     type: "Claimant",
+                                                     first_name: "Contested",
+                                                     middle_name: "H",
+                                                     last_name: "Claimant",
+                                                     name_suffix: nil,
+                                                     address: {
+                                                       address_line_1: "123 Oak St.",
+                                                       address_line_2: "Suite 222",
+                                                       city: "New York",
+                                                       state: "NY",
+                                                       zip: "10000"
+                                                     }
+                                                   }
+                                                 ])
+      end
+    end
+  end
+
+  context "#contested_claimant_agents" do
+    context "when there are contested claimant agents" do
+      let(:correspondent) do
+        create(:correspondent,
+               snamef: "Bobby",
+               snamemi: "F",
+               snamel: "Veteran",
+               saddrst1: "123 K St. NW",
+               saddrst2: "Suite 456",
+               saddrcty: "Washington",
+               saddrstt: "DC",
+               saddrcnty: nil,
+               saddrzip: "20001",
+               sspare1: "Claimant",
+               sspare2: "Tommy",
+               sspare3: "G")
+      end
+
+      let!(:representative) do
+        create(:representative,
+               repkey: vacols_case.bfkey,
+               reptype: "D",
+               repfirst: "Contested",
+               repmi: "H",
+               replast: "Claimant",
+               repaddr1: "123 Oak St.",
+               repaddr2: "Suite 222",
+               repcity: "New York",
+               repst: "NY",
+               repzip: "10000")
+      end
+      let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "L") }
+
+      it "the contested claimant is returned" do
+        expect(appeal.contested_claimant_agents).to eq([
+                                                         {
+                                                           type: "Attorney",
+                                                           first_name: "Contested",
+                                                           middle_name: "H",
+                                                           last_name: "Claimant",
+                                                           name_suffix: nil,
+                                                           address: {
+                                                             address_line_1: "123 Oak St.",
+                                                             address_line_2: "Suite 222",
+                                                             city: "New York",
+                                                             state: "NY",
+                                                             zip: "10000"
+                                                           }
+                                                         }
+                                                       ])
+      end
+    end
   end
 end

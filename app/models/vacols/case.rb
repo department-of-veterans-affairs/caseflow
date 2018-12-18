@@ -4,7 +4,7 @@ class VACOLS::Case < VACOLS::Record
   self.primary_key = "bfkey"
 
   has_one    :folder,          foreign_key: :ticknum
-  has_one    :representative,  foreign_key: :repkey
+  has_many   :representatives, foreign_key: :repkey
   belongs_to :correspondent,   foreign_key: :bfcorkey, primary_key: :stafkey
   has_many   :case_issues,     foreign_key: :isskey
   has_many   :notes,           foreign_key: :tsktknm
@@ -12,6 +12,8 @@ class VACOLS::Case < VACOLS::Record
   has_many   :decass,          foreign_key: :defolder
   has_one    :staff,           foreign_key: :slogid, primary_key: :bfcurloc
   has_many   :priorloc,        foreign_key: :lockey
+  has_many   :decision_quality_reviews, foreign_key: :qrfolder
+  has_many   :mail,            foreign_key: :mlfolder
 
   class InvalidLocationError < StandardError; end
 
@@ -38,7 +40,7 @@ class VACOLS::Case < VACOLS::Record
     "CAV" => "CAVC" # Case has been remanded from CAVC to BVA
   }.freeze
 
-  # corresponds to BRIEFF.bfso
+  # mapping of values in BRIEFF.BFSOs
   REPRESENTATIVES = {
     "A" => { full_name: "The American Legion", short: "American Legion" },
     "B" => { full_name: "AMVETS", short: "AmVets" },
@@ -146,6 +148,71 @@ class VACOLS::Case < VACOLS::Record
     on AODKEY = BFKEY
   ".freeze
 
+  JOIN_SPECIALTY_CASE_TEAM_ISSUES = "
+    left join (
+      select ISSKEY, listagg(
+        case
+        when ISSPROG = '12' then
+          'fiduciary'
+        when ISSPROG = '02' and ISSCODE = '05' then
+          'clothing_allowance'
+        when ISSPROG = '04' then
+          'insurance'
+        when ISSPROG = '02' and ISSCODE = '22' then
+          'substitution'
+        when ISSPROG = '02' and ISSCODE = '21' then
+          'willful_misconduct_lod'
+        when ISSPROG = '02' and ISSCODE = '10' then
+          'forfeiture_of_benefits'
+        when ISSPROG = '05' then
+          'loan_guaranty'
+        when ISSPROG = '02' and ISSCODE = '20' then
+          'dea'
+        when ISSPROG = '11' then
+          'nca_burial_benefits'
+        when ISSPROG = '02' and ISSCODE = '06' then
+          'competency_of_payee'
+        when ISSPROG = '09' then
+          'other_programs'
+        when ISSPROG = '08' then
+          'vre'
+        when ISSPROG = '02' and ISSCODE = '02' then
+          'apportionment'
+        when ISSPROG = '10' then
+          'bva_original_jurisdiction'
+        when ISSPROG = '02' and ISSCODE = '03' then
+          'auto_adaptive'
+        when ISSPROG = '02' and ISSCODE = '16' then
+          'status_as_a_veteran'
+        when (ISSPROG = '09' and ISSCODE = '08') or (ISSPROG = '02' and ISSCODE = '13') then
+          'overpayment'
+        when ISSPROG = '01' then
+          'vba_burial_benefits'
+        when ISSPROG = '02' and ISSCODE = '19' then
+          'specially_adapted_housing'
+        when ISSPROG = '02' and ISSCODE = '11' then
+          'ir_dependents'
+        when ISSPROG = '02' and ISSCODE = '14' then
+          'severance_of_sc'
+        when ISSPROG = '02' and ISSCODE = '07' then
+          'ro_cue'
+        when ISSPROG = '03' then
+          'education'
+        when ISSPROG = '06' then
+          'medical'
+        when ISSPROG = '07' and ISSCODE in ('03', '07') then
+          'pension_count_elig'
+        when ISSPROG = '07' then
+          'pension_others'
+        when ISSPROG = '02' and ISSCODE = '12' and ISSLEV2 between '6000' and '6099' then
+          'ir_eye'
+        end, ','
+      ) within group (order by ISSSEQ) as ISSUES
+      from ISSUES
+      group by ISSKEY
+    ) SCT on SCT.ISSKEY = BRIEFF.BFKEY
+  ".freeze
+
   JOIN_REMAND_RETURN = "
     left join (
       select BRIEFF.BFKEY REM_RETURN_KEY, max(PRIORLOC.LOCDOUT) REM_RETURN
@@ -208,51 +275,58 @@ class VACOLS::Case < VACOLS::Record
     )
   end
 
-  # rubocop:disable Metrics/MethodLength
   def update_vacols_location!(location)
+    self.class.batch_update_vacols_location(location, [bfkey])
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def self.batch_update_vacols_location(location, vacols_ids)
     unless location
-      Rails.logger.error "THERE IS A BUG IN YOUR CODE! It attempted to assign a case to a falsy location. " \
+      Rails.logger.error "THERE IS A BUG IN YOUR CODE! It attempted to assign a case to a falsey location. " \
                          "Unfortunately, I can't throw an exception here because code may depend on this method " \
                          "failing silently. Please validate before passing it to this method."
       return
     end
 
-    conn = self.class.connection
+    return if vacols_ids.empty?
 
-    # Note: we use conn.quote here from ActiveRecord to deter SQL injection
-    location = conn.quote(location)
+    user_id = (RequestStore.store[:current_user].try(:vacols_uniq_id) || "DSUSER").upcase
 
-    vacols_user_id = RequestStore.store[:current_user].vacols_uniq_id || ""
-    user_db_id = conn.quote(vacols_user_id.upcase)
-    case_id = conn.quote(bfkey)
+    conn = connection
 
-    MetricsService.record("VACOLS: update_vacols_location! #{bfkey}",
+    MetricsService.record("VACOLS: batch_update_vacols_location",
                           service: :vacols,
-                          name: "update_vacols_location") do
+                          name: "batch_update_vacols_location") do
       conn.transaction do
-        conn.execute(<<-SQL)
-          UPDATE BRIEFF
-          SET BFDLOCIN = SYSDATE,
-              BFCURLOC = #{location},
+        conn.execute(sanitize_sql_array([<<-SQL, location, vacols_ids]))
+          update BRIEFF
+          set BFDLOCIN = SYSDATE,
+              BFCURLOC = ?,
               BFDLOOUT = SYSDATE,
               BFORGTIC = NULL
-          WHERE BFKEY = #{case_id}
+          where BFKEY in (?)
         SQL
 
-        conn.execute(<<-SQL)
-          UPDATE PRIORLOC
-          SET LOCDIN = SYSDATE,
-              LOCSTRCV = #{user_db_id},
+        conn.execute(sanitize_sql_array([<<-SQL, user_id, vacols_ids]))
+          update PRIORLOC
+          set LOCDIN = SYSDATE,
+              LOCSTRCV = ?,
               LOCEXCEP = 'Y'
-          WHERE LOCKEY = #{case_id} and LOCDIN is NULL
+          where LOCKEY in (?) and LOCDIN is null
         SQL
 
-        conn.execute(<<-SQL)
-          INSERT into PRIORLOC
-            (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY)
-          VALUES
-           (SYSDATE, SYSDATE, #{location}, #{user_db_id}, #{case_id})
-        SQL
+        insert_strs = vacols_ids.map do |vacols_id|
+          sanitize_sql_array(
+            [
+              "into PRIORLOC (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY) values (SYSDATE, SYSDATE, ?, ?, ?)",
+              location,
+              user_id,
+              vacols_id
+            ]
+          )
+        end
+
+        conn.execute("insert all #{insert_strs.join(' ')} select 1 from dual")
       end
     end
   end
@@ -277,6 +351,18 @@ class VACOLS::Case < VACOLS::Record
     end
 
     result.first["locstto"]
+  end
+
+  def status_advanced_or_remanded_or_completed?
+    %w[ADV REM HIS].include?(bfmpro)
+  end
+
+  def remanded?
+    bfmpro == "REM"
+  end
+
+  def closed?
+    bfddec.present?
   end
 
   ##

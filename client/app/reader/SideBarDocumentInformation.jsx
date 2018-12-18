@@ -24,8 +24,8 @@ class SideBarDocumentInformation extends PureComponent {
 
     if (this.props.didLoadAppealFail) {
       renderComponent = <Alert
-        title="Unable to retrieve claim details"
         type="error">
+        Unable to retrieve claim details <br />
         Please <a href="#" onClick={reload}>
         refresh this page</a> or try again later.
       </Alert>;
@@ -42,12 +42,18 @@ class SideBarDocumentInformation extends PureComponent {
         <p className="cf-pdf-meta-title">
           <strong>Docket Number:</strong> {appeal.docket_number}
         </p>
-        <p className="cf-pdf-meta-title">
+        { appeal.regional_office && <p className="cf-pdf-meta-title">
           <strong>Regional Office:</strong> {`${appeal.regional_office.key} - ${appeal.regional_office.city}`}
         </p>
+        }
         <div className="cf-pdf-meta-title">
           <strong>Issues: </strong>
-          <IssueList appeal={appeal} className="cf-pdf-meta-doc-info-issues" issuesOnly />
+          <IssueList
+            appeal={{ ...appeal,
+              isLegacyAppeal: appeal.docket_name === 'legacy' }}
+            className="cf-pdf-meta-doc-info-issues"
+            issuesOnly
+          />
         </div>
       </div>;
     }

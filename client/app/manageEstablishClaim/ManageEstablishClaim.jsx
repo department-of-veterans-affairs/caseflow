@@ -76,7 +76,7 @@ class ManageEstablishClaim extends React.Component {
         valueFunction: (userQuota) => <AssignedTasks userQuota={userQuota} />,
         footer: <strong>{quotaTotals.taskCount}</strong>,
         align: 'center',
-        cellClass: 'cf-no-padding'
+        cellClass: 'cf-align'
       },
       {
         valueFunction: (userQuota) => <UserQuotaControls userQuota={userQuota} />,

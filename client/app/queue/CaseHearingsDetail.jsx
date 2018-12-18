@@ -1,14 +1,22 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import _ from 'lodash';
 
 import BareList from '../components/BareList';
-import { boldText } from './constants';
+import {
+  boldText,
+  LEGACY_APPEAL_TYPES
+} from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Tooltip from '../components/Tooltip';
 
+import COPY from '../../COPY.json';
 import StringUtil from '../util/StringUtil';
 import { DateString } from '../util/DateUtil';
+import { showVeteranCaseList } from './uiReducer/uiActions';
 
 const appealSummaryUlStyling = css({
   paddingLeft: 0,
@@ -21,10 +29,21 @@ const noTopBottomMargin = css({
   marginBottom: '1rem'
 });
 
-export default class CaseHearingsDetail extends React.PureComponent {
-  getAppealAttr = (attr) => _.get(this.props.appeal.attributes, attr);
+import type {
+  Appeal,
+  Hearing
+} from './types/models';
 
-  getHearingAttrs = (hearing) => {
+type Props = {|
+  appeal: Appeal,
+|};
+
+type Params = Props & {|
+  showVeteranCaseList: typeof showVeteranCaseList
+|}
+
+class CaseHearingsDetail extends React.PureComponent<Params> {
+  getHearingAttrs = (hearing: Hearing): Array<Object> => {
     const listElements = [{
       label: 'Type',
       value: StringUtil.snakeCaseToCapitalized(hearing.type)
@@ -38,10 +57,12 @@ export default class CaseHearingsDetail extends React.PureComponent {
       label: 'Disposition',
       value: <React.Fragment>
         {StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
-        {hearing.viewed_by_judge && <Link rel="noopener" target="_blank"
-          href={`/hearings/${hearing.id}/worksheet/print`}>
-          View Hearing Worksheet
-        </Link>}
+        {hearing.viewedByJudge &&
+        <Tooltip id="hearing-worksheet-tip" text={COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP}>
+          <Link rel="noopener" target="_blank" href={`/hearings/${hearing.id}/worksheet/print?keep_open=true`}>
+            {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
+          </Link>
+        </Tooltip>}
       </React.Fragment>
     });
 
@@ -54,12 +75,16 @@ export default class CaseHearingsDetail extends React.PureComponent {
       value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
     }, {
       label: 'Judge',
-      value: hearing.held_by
+      value: hearing.heldBy
     }]);
   }
 
   getHearingInfo = () => {
-    const orderedHearings = _.orderBy(this.getAppealAttr('hearings'), 'date', 'asc');
+    const {
+      appeal: { hearings }
+    } = this.props;
+    const orderedHearings = _.orderBy(hearings, 'date', 'asc');
+    const uniqueOrderedHearings = _.uniqWith(orderedHearings, _.isEqual);
     const hearingElementsStyle = css({
       '&:first-of-type': {
         marginTop: '1rem'
@@ -70,8 +95,9 @@ export default class CaseHearingsDetail extends React.PureComponent {
       _.extend(hearingElementsStyle, marginLeft);
     }
 
-    const hearingElements = _.map(orderedHearings, (hearing) => <div key={hearing.id} {...hearingElementsStyle}>
-      <span {...boldText}>Hearing{orderedHearings.length > 1 ? ` ${orderedHearings.indexOf(hearing) + 1}` : ''}:</span>
+    const hearingElements = _.map(uniqueOrderedHearings, (hearing) => <div key={hearing.id} {...hearingElementsStyle}>
+      <span {...boldText}>Hearing{uniqueOrderedHearings.length > 1 ?
+        ` ${uniqueOrderedHearings.indexOf(hearing) + 1}` : ''}:</span>
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
@@ -79,37 +105,65 @@ export default class CaseHearingsDetail extends React.PureComponent {
     </div>);
 
     return <React.Fragment>
-      {orderedHearings.length > 1 && <br />}
+      {uniqueOrderedHearings.length > 1 && <br />}
       {hearingElements}
     </React.Fragment>;
   }
 
-  getDetailField = ({ label, valueFunction, value }) => () => <React.Fragment>
-    {label && <span {...boldText}>{label}:</span>} {value || valueFunction()}
+  getDetailField = (
+    { label, valueFunction, value }: { label: string, valueFunction: Function, value?: string}
+  ) => () => <React.Fragment>
+    {label && <span {...boldText}>{label}:</span>} {typeof value === 'undefined' ? valueFunction() : value}
   </React.Fragment>;
 
+  scrollToCaseList = () => {
+    window.scroll({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+    this.props.showVeteranCaseList();
+  }
+
   render = () => {
+    const {
+      appeal: {
+        caseType,
+        hearings,
+        completedHearingOnPreviousAppeal
+      }
+    } = this.props;
+
     const listElements = [{
-      label: this.getAppealAttr('hearings').length > 1 ? 'Hearings (Oldest to Newest)' : '',
+      label: hearings.length > 1 ? COPY.CASE_DETAILS_HEARING_LIST_LABEL : '',
       valueFunction: this.getHearingInfo
     }];
 
-    return <BareList
-      ListElementComponent="ul"
-      items={listElements.map(this.getDetailField)}
-      listStyle={css(appealSummaryUlStyling, {
-        '> li': {
-          paddingBottom: '1.5rem',
-          paddingTop: '1rem',
-          borderBottom: '1px solid grey'
-        },
-        '> li:last-child': {
-          borderBottom: 0
-        }
-      })} />;
+    return <React.Fragment>
+      {caseType === LEGACY_APPEAL_TYPES.POST_REMAND && completedHearingOnPreviousAppeal && <React.Fragment>
+        {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL}&nbsp;
+        <a href="#" onClick={this.scrollToCaseList}>{COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK}</a>
+        {COPY.CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK}
+      </React.Fragment>}
+      {Boolean(hearings.length) && <BareList
+        ListElementComponent="ul"
+        items={listElements.map(this.getDetailField)}
+        listStyle={css(appealSummaryUlStyling, {
+          '> li': {
+            paddingBottom: '1.5rem',
+            paddingTop: '1rem',
+            borderBottom: '1px solid grey'
+          },
+          '> li:last-child': {
+            borderBottom: 0
+          }
+        })} />}
+    </React.Fragment>;
   };
 }
 
-CaseHearingsDetail.propTypes = {
-  appeal: PropTypes.object.isRequired
-};
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  showVeteranCaseList
+}, dispatch);
+
+export default (connect(null, mapDispatchToProps)(CaseHearingsDetail): React.ComponentType<Props>);

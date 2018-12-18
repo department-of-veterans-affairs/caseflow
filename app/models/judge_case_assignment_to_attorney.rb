@@ -1,10 +1,10 @@
 class JudgeCaseAssignmentToAttorney
   include ActiveModel::Model
-  include LegacyTaskConcern
 
   attr_accessor :appeal_id, :assigned_to, :task_id, :assigned_by
 
   validates :assigned_by, :assigned_to, presence: true
+  validates :task_id, format: { with: /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i }, allow_blank: true
   validate :assigned_by_role_is_valid
 
   def assign_to_attorney!
@@ -32,23 +32,29 @@ class JudgeCaseAssignmentToAttorney
     end
   end
 
+  def created_in_vacols_date
+    task_id&.split("-", 2)&.second&.to_date
+  end
+
   def vacols_id
-    super || LegacyAppeal.find(appeal_id).vacols_id
+    vacols_id_from_task_id || LegacyAppeal.find(appeal_id).vacols_id
   end
 
   def last_case_assignment
-    VACOLS::CaseAssignment.select_tasks.where("brieff.bfkey = ?", vacols_id).sort_by(&:created_at).last
+    VACOLS::CaseAssignment.latest_task_for_appeal(vacols_id)
   end
 
   private
+
+  def vacols_id_from_task_id
+    task_id&.split("-", 2)&.first
+  end
 
   def assigned_by_role_is_valid
     errors.add(:assigned_by, "has to be a judge") if assigned_by && !assigned_by.judge_in_vacols?
   end
 
   class << self
-    attr_writer :repository
-
     def create(task_attrs)
       task = new(task_attrs)
       task.assign_to_attorney! if task.valid?
@@ -62,8 +68,7 @@ class JudgeCaseAssignmentToAttorney
     end
 
     def repository
-      return QueueRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= QueueRepository
+      QueueRepository
     end
   end
 end

@@ -21,7 +21,8 @@ const headerSelectionStyling = css({
   display: 'block',
   padding: '8px 30px 10px 30px',
   height: '90px',
-  backgroundColor: '#E4E2E0'
+  backgroundColor: '#f1f1f1',
+  color: '#212121'
 });
 
 const hearingPreppedStyling = css({

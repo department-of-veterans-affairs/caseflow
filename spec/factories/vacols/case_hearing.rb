@@ -33,7 +33,7 @@ FactoryBot.define do
 
     after(:build) do |hearing, evaluator|
       # For video hearings we need to build the master record.
-      if hearing.hearing_type == "V"
+      if hearing.hearing_type == "V" && hearing.vdkey.nil?
         master_record = create(:case_hearing, hearing_type: "C", folder_nr: "VIDEO RO13")
         # For some reason the returned record's sequence is one less than what is actually saved.
         hearing.vdkey = master_record.hearing_pkseq

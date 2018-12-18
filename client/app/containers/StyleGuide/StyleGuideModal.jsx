@@ -42,7 +42,7 @@ export default class StyleGuideModal extends React.PureComponent {
       <p><Button
         name="Launch modal"
         onClick={this.handleModalOpen}
-        classNames={['usa-button', 'usa-button-outline']}
+        classNames={['usa-button', 'usa-button-secondary']}
       /></p>
       { styleGuideModal && <Modal
         buttons = {[

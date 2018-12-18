@@ -14,6 +14,7 @@ export default class TextField extends React.Component {
       name,
       readOnly,
       required,
+      optional,
       type,
       value,
       validationError,
@@ -22,7 +23,8 @@ export default class TextField extends React.Component {
       title,
       onKeyPress,
       strongLabel,
-      maxLength
+      maxLength,
+      max
     } = this.props;
 
     let textInputClass = className.concat(
@@ -40,11 +42,16 @@ export default class TextField extends React.Component {
     //
     value = (value === null || typeof value === 'undefined') ? '' : value;
 
-    const labelContents = <span>{label || name} {required && <span className="cf-required">Required</span>}</span>;
+    const labelContents =
+      <span>
+        {label || name}
+        {required && <span className="cf-required">Required</span>}
+        {optional && <span className="cf-optional">Optional</span>}
+      </span>;
 
     return <div className={textInputClass.join(' ')}>
       {label !== false &&
-        <label className="question-label" htmlFor={name}>
+        <label htmlFor={name}>
           {
             strongLabel ?
               <strong>{labelContents}</strong> :
@@ -67,6 +74,7 @@ export default class TextField extends React.Component {
           placeholder={placeholder}
           title={title}
           maxLength={maxLength}
+          max={max}
         />
       }
 
@@ -81,6 +89,7 @@ export default class TextField extends React.Component {
 
 TextField.defaultProps = {
   required: false,
+  optional: false,
   type: 'text',
   className: ['cf-form-textinput']
 };
@@ -105,6 +114,7 @@ TextField.propTypes = {
   readOnly: PropTypes.bool,
   fixedInput: PropTypes.bool,
   required: PropTypes.bool.isRequired,
+  optional: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
   value: PropTypes.oneOfType([

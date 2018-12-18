@@ -20,7 +20,7 @@ export default class TextStyles extends React.Component {
     ];
 
     let rowObjects = [
-      { textStyle: <div className="cf-display-1">Display 1</div>,
+      { textStyle: <h1 className="cf-display-1">Display 1</h1>,
         rules: <span>
           <span>font-family: ‘Source Sans Pro’</span>
           <span>font-weight: 700</span>
@@ -28,7 +28,7 @@ export default class TextStyles extends React.Component {
           <span>line-height: 1.3em/68px</span>
         </span>
       },
-      { textStyle: <div className="cf-display-2">Display 2</div>,
+      { textStyle: <h2 className="cf-display-2">Display 2</h2>,
         rules: <span>
           <span>font-family: ‘Source Sans Pro’</span>
           <span>font-weight: 300</span>

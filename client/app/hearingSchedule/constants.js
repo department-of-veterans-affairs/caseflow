@@ -1,10 +1,25 @@
 export const ACTIONS = {
   RECEIVE_PAST_UPLOADS: 'RECEIVE_PAST_UPLOADS',
   RECEIVE_SCHEDULE_PERIOD: 'RECEIVE_SCHEDULE_PERIOD',
+  RECEIVE_REGIONAL_OFFICES: 'RECEIVE_REGIONAL_OFFICES',
+  RECEIVE_DAILY_DOCKET: 'RECEIVE_DAILY_DOCKET',
+  RECEIVE_SAVED_HEARING: 'RECEIVE_SAVED_HEARING',
+  RESET_SAVE_SUCCESSFUL: 'RESET_SAVE_SUCCESSFUL',
+  CANCEL_HEARING_UPDATE: 'CANCEL_HEARING_UPDATE',
+  RECEIVE_HEARING_DAY_OPTIONS: 'RECEIVE_HEARING_DAY_OPTIONS',
+  RECEIVE_UPCOMING_HEARING_DAYS: 'RECEIVE_UPCOMING_HEARING_DAYS',
+  REGIONAL_OFFICE_CHANGE: 'REGIONAL_OFFICE_CHANGE',
+  RECEIVE_VETERANS_READY_FOR_HEARING: 'RECEIVE_VETERANS_READY_FOR_HEARING',
+  HEARING_NOTES_UPDATE: 'HEARING_NOTES_UPDATE',
+  HEARING_DISPOSITION_UPDATE: 'HEARING_DISPOSITION_UPDATE',
+  HEARING_DATE_UPDATE: 'HEARING_DATE_UPDATE',
+  HEARING_TIME_UPDATE: 'HEARING_TIME_UPDATE',
+  SELECTED_HEARING_DAY_CHANGE: 'SELECTED_HEARING_DAY_CHANGE',
   FILE_TYPE_CHANGE: 'FILE_TYPE_CHANGE',
   RECEIVE_HEARING_SCHEDULE: 'RECEIVE_HEARING_SCHEDULE',
   SCHEDULE_PERIOD_ERROR: 'SCHEDULE_PERIOD_ERROR',
   REMOVE_SCHEDULE_PERIOD_ERROR: 'REMOVE_SCHEDULE_PERIOD_ERROR',
+  SET_VACOLS_UPLOAD: 'SET_VACOLS_UPLOAD',
   RO_CO_START_DATE_CHANGE: 'RO_CO_START_DATE_CHANGE',
   RO_CO_END_DATE_CHANGE: 'RO_CO_END_DATE_CHANGE',
   RO_CO_FILE_UPLOAD: 'RO_CO_FILE_UPLOAD',
@@ -21,58 +36,72 @@ export const ACTIONS = {
   CLICK_CONFIRM_ASSIGNMENTS: 'CLICK_CONFIRM_ASSIGNMENTS',
   CLICK_CLOSE_MODAL: 'CLICK_CLOSE_MODAL',
   CONFIRM_ASSIGNMENTS_UPLOAD: 'CONFIRM_ASSIGNMENTS_UPLOAD',
-  UNSET_SUCCESS_MESSAGE: 'UNSET_SUCCESS_MESSAGE'
+  UNSET_SUCCESS_MESSAGE: 'UNSET_SUCCESS_MESSAGE',
+  TOGGLE_TYPE_FILTER_DROPDOWN: 'TOGGLE_TYPE_FILTER_DROPDOWN',
+  TOGGLE_LOCATION_FILTER_DROPDOWN: 'TOGGLE_LOCATION_FILTER_DROPDOWN',
+  TOGGLE_VLJ_FILTER_DROPDOWN: 'TOGGLE_VLJ_FILTER_DROPDOWN',
+  SELECT_HEARING_TYPE: 'SELECT_HEARING_TYPE',
+  SELECT_VLJ: 'SELECT_VLJ',
+  SELECT_COORDINATOR: 'SELECT_COORDINATOR',
+  SELECT_HEARING_ROOM: 'SELECT_HEARING_ROOM',
+  SET_NOTES: 'SET_NOTES',
+  RECEIVE_JUDGES: 'RECEIVE_JUDGES',
+  RECEIVE_COORDINATORS: 'RECEIVE_COORDINATORS',
+  HEARING_DAY_MODIFIED: 'HEARING_DAY_MODIFIED',
+  ON_CLICK_REMOVE_HEARING_DAY: 'ON_CLICK_REMOVE_HEARING_DAY',
+  CANCEL_REMOVE_HEARING_DAY: 'CANCEL_REMOVE_HEARING_DAY',
+  SUCCESSFUL_HEARING_DAY_DELETE: 'SUCCESSFUL_HEARING_DAY_DELETE',
+  RESET_DELETE_SUCCESSFUL: 'RESET_DELETE_SUCCESSFUL',
+  ASSIGN_HEARING_ROOM: 'ASSIGN_HEARING_ROOM',
+  DISPLAY_LOCK_MODAL: 'DISPLAY_LOCK_MODAL',
+  CANCEL_DISPLAY_LOCK_MODAL: 'CANCEL_DISPLAY_LOCK_MODAL',
+  UPDATE_LOCK: 'UPDATE_LOCK',
+  RESET_LOCK_SUCCESS_MESSAGE: 'RESET_LOCK_SUCCESS_MESSAGE',
+  HANDLE_DAILY_DOCKET_SERVER_ERROR: 'HANDLE_DAILY_DOCKET_SERVER_ERROR',
+  RESET_DAILY_DOCKET_AFTER_SERVER_ERROR: 'RESET_DAILY_DOCKET_AFTER_SERVER_ERROR'
 };
 
 export const ERROR_MAPPINGS = {
-  'ValidationError::MissingStartDateEndDateFile': 'Please upload a file and enter a start date and an end date.',
-  'ValidationError::EndDateTooEarly': 'Please enter an end date that is after the start date.',
-  'SchedulePeriod::OverlappingSchedulePeriods': 'You have already uploaded a file for these dates. Please check your ' +
-    'file to make sure you have entered the correct dates.',
-  'HearingSchedule::ValidateRoSpreadsheet::RoDatesNotUnique': 'You have listed duplicate non-availability dates for ' +
-    'an RO. Please update spreadsheet and try again.',
-  'HearingSchedule::ValidateRoSpreadsheet::RoDatesNotInRange': 'The ro non-availability spreadsheet contains dates ' +
-    'outside the range you selected. Please update these dates and try again.',
-  'HearingSchedule::ValidateRoSpreadsheet::RoDatesNotCorrectFormat': 'All dates must be in the following format : ' +
-    'mm/dd/yyyy. Please check the RO non-availability sheet to make sure all dates match this format.',
-  'HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed': 'We have found column names that vary from the ' +
-    'template. Please check the RO non-availability sheet for any additional or different columns and upload the ' +
-    'corrected file again.',
-  'HearingSchedule::ValidateRoSpreadsheet::RoListedIncorrectly': 'The ro non-availability spreadsheet lists ' +
-    'different ROs than we have in our system. Please ensure every Regional Office has a row and upload the ' +
-    'corrected file.',
+  'ValidationError::MissingStartDateEndDateFile': 'The start date, end date, or file are missing.',
+  'ValidationError::EndDateTooEarly': 'The end date is before the start date.',
+  'SchedulePeriod::OverlappingSchedulePeriods': 'You have already uploaded a file for these dates.',
+  'HearingSchedule::ValidateRoSpreadsheet::RoDatesNotUnique': 'The RO non-availability spreadsheet contains ' +
+    'duplicate dates for an RO.',
+  'HearingSchedule::ValidateRoSpreadsheet::RoDatesNotInRange': 'The RO non-availability spreadsheet contains dates ' +
+    'outside the range you selected.',
+  'HearingSchedule::ValidateRoSpreadsheet::RoDatesNotCorrectFormat': 'The RO non-availability spreadsheet contains ' +
+    'dates that are not in this format: mm/dd/yyyy.',
+  'HearingSchedule::ValidateRoSpreadsheet::RoTemplateNotFollowed': 'The RO non-availability spreadsheet does not ' +
+    'follow the template.',
+  'HearingSchedule::ValidateRoSpreadsheet::RoListedIncorrectly': 'The RO non-availability spreadsheet contains ' +
+    'different ROs than we have in our system.',
   'HearingSchedule::ValidateRoSpreadsheet::CoDatesNotUnique': 'The central office non-availability spreadsheet ' +
-    'contains dates outside the range you selected. Please update these dates and try again.',
+    'contains duplicate dates.',
   'HearingSchedule::ValidateRoSpreadsheet::CoDatesNotInRange': 'The central office non-availability spreadsheet ' +
-    'contains dates outside the range you selected. Please update these dates and try again.',
-  'HearingSchedule::ValidateRoSpreadsheet::CoDatesNotCorrectFormat': 'All dates must be in the following format : ' +
-    'mm/dd/yyyy. Please check the CO non-availability sheet to make sure all dates match this format.',
-  'HearingSchedule::ValidateRoSpreadsheet::CoTemplateNotFollowed': 'We have found column names that vary from the ' +
-    'template. Please check the CO non-availability sheet for any additional or different columns and upload the ' +
-    'corrected file again.',
-  'HearingSchedule::ValidateRoSpreadsheet::AllocationNotCorrectFormat': 'The central office non-availability ' +
-    'spreadsheet contains dates outside the range you selected. Please update these dates and try again.',
-  'HearingSchedule::ValidateRoSpreadsheet::AllocationRoListedIncorrectly': 'The allocation spreadsheet lists ' +
-    'different ROs than we have in our system. Please ensure every Regional Office has a row and upload the ' +
-    'corrected file.',
-  'HearingSchedule::ValidateRoSpreadsheet::AllocationDuplicateRo': 'The allocation spreadsheet lists the same RO ' +
-    'twice. Please update the spreadsheet and try again.',
-  'HearingSchedule::ValidateRoSpreadsheet::AllocationTemplateNotFollowed': 'We have found column names that vary ' +
-    'from the template. Please check the allocation sheet for any additional or different columns and upload the ' +
-    'corrected file again.',
-  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotCorrectFormat': 'All dates must be in the following ' +
-    'format: mm/dd/yyyy. Please check the judge non-availability sheet to make sure all dates match this format.',
-  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeTemplateNotFollowed': 'We have found column names that vary from ' +
-    'the template. Please check the spreadsheet for any additional or different columns and upload the corrected ' +
-    'file again.',
-  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique': 'You have listed duplicate non-availability ' +
-    'dates for a judge. Please update the spreadsheet and try again.',
+    'contains dates outside the range you selected.',
+  'HearingSchedule::ValidateRoSpreadsheet::CoDatesNotCorrectFormat': 'The central office non-availability ' +
+    'spreadsheet contains dates that are not in this format: mm/dd/yyyy.',
+  'HearingSchedule::ValidateRoSpreadsheet::CoTemplateNotFollowed': 'The central office non-availability spreadsheet ' +
+    'does not follow the template.',
+  'HearingSchedule::ValidateRoSpreadsheet::AllocationNotCorrectFormat': 'The allocation spreadsheet has the ' +
+    'incorrect data type for an allocation.',
+  'HearingSchedule::ValidateRoSpreadsheet::AllocationRoListedIncorrectly': 'The allocation spreadsheet contains ' +
+    'different ROs than we have in our system.',
+  'HearingSchedule::ValidateRoSpreadsheet::AllocationDuplicateRo': 'The allocation spreadsheet contains the same RO ' +
+    'twice.',
+  'HearingSchedule::ValidateRoSpreadsheet::AllocationTemplateNotFollowed': 'The allocation spreadsheet does not ' +
+    'follow the template.',
+  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotCorrectFormat': 'The judge non-availability ' +
+    'spreadsheet contains dates that are not in this format: mm/dd/yyyy.',
+  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeTemplateNotFollowed': 'The judge non-availability spreadsheet ' +
+    'does not follow the template.',
+  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotUnique': 'The judge non-availability spreadsheet contains ' +
+    'duplicate dates for a judge.',
   'HearingSchedule::ValidateJudgeSpreadsheet::JudgeDatesNotInRange': 'The judge non-availability spreadsheet ' +
-    'contains dates outside the range you selected. Please update these dates and try again.',
-  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase': 'A judge listed in the spreadsheet is not in our ' +
-    'database. Please check the CSS IDs and try again.',
-  'ValidationError::UnspecifiedError': 'Something went wrong while uploading the spreadsheet. Please check the data ' +
-    'and try again.'
+    'contains dates outside the range you selected.',
+  'HearingSchedule::ValidateJudgeSpreadsheet::JudgeNotInDatabase': 'The judge non-availability spreadsheet contains ' +
+    'a judge not in our database.',
+  'ValidationError::UnspecifiedError': 'The spreadsheet is invalid.'
 };
 
 export const SPREADSHEET_TYPES = {

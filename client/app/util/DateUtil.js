@@ -1,6 +1,7 @@
 import React from 'react';
 import StringUtil from './StringUtil';
 import moment from 'moment';
+import 'moment-timezone';
 import _ from 'lodash';
 
 const ZERO_INDEX_MONTH_OFFSET = 1;
@@ -36,8 +37,8 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
   return moment(dateString, dateFormat).format(expectedFormat);
 };
 
-export const DateString = ({ date, dateFormat = 'MM/DD/YY', style }) => <span {...style}>
-  {formatDateStr(date, 'YYYY-MM-DD', dateFormat)}
+export const DateString = ({ date, dateFormat = 'MM/DD/YY', inputFormat = 'YYYY-MM-DD', style }) => <span {...style}>
+  {formatDateStr(date, inputFormat, dateFormat)}
 </span>;
 
 export const formatDateStringForApi = (dateString) => (
@@ -107,4 +108,25 @@ export const doDatesMatch = (date, query) => {
   }
 
   return hasMatched;
+};
+
+export const getTimeWithoutTimeZone = (date, timeZone) => {
+  return moment(date).tz(timeZone).
+    format('H:mm');
+};
+
+export const getTime = (date) => {
+  return moment(date).tz('America/New_York').
+    format('h:mm a z').
+    replace(/(\w)(DT|ST)/g, '$1T');
+};
+
+export const getTimeInDifferentTimeZone = (date, timeZone) => {
+  return moment(date).tz(timeZone).
+    format('h:mm a z').
+    replace(/(\w)(DT|ST)/g, '$1T');
+};
+
+export const getDate = (date) => {
+  return moment(date).format('YYYY-MM-DD');
 };

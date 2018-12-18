@@ -3,7 +3,10 @@ class Generators::Veteran
 
   class << self
     # rubocop:disable Metrics/MethodLength
-    def default_attrs
+    def default_attrs(seed = nil)
+      # We need to convert to a string as some generators use
+      # a symbol :default for veteran file number
+      seed_int = Random.new(seed.to_s.to_i).rand(5_000_000_000)
       {
         address_line1: "1234 FAKE ST",
         address_line2: nil,
@@ -24,6 +27,7 @@ class Generators::Veteran
         cp_payment_state: "PA",
         cp_payment_zip_code: "15701",
         date_of_birth: "05/04/1955",
+        date_of_death: nil,
         debit_card_ind: "N",
         eft_account_number: nil,
         eft_account_type: nil,
@@ -32,9 +36,9 @@ class Generators::Veteran
         fiduciary_decision_category_type_code: nil,
         fiduciary_folder_location: nil,
         file_number: "111223334",
-        first_name: generate_first_name,
+        first_name: generate_first_name(seed_int),
         foreign_code: nil,
-        last_name: generate_last_name,
+        last_name: generate_last_name(seed_int),
         middle_name: "E",
         military_post_office_type_code: nil,
         military_postal_type_code: nil,
@@ -47,7 +51,7 @@ class Generators::Veteran
         phone_type_name_two: nil,
         prep_phrase_type: nil,
         province_name: nil,
-        ptcpnt_id: generate_external_id,
+        ptcpnt_id: generate_external_id(seed_int),
         ptcpnt_relationship: nil,
         return_code: "SHAR 9999",
         return_message: "Records found.",
@@ -55,7 +59,7 @@ class Generators::Veteran
         sensitive_level_of_record: "0",
         ssn: "111223334",
         state: "VA",
-        suffix_name: nil,
+        suffix_name: "II",
         temporary_custodian_indicator: nil,
         territory_name: nil,
         treasury_mailing_address_line1: "Kat Stevens",
@@ -88,8 +92,12 @@ class Generators::Veteran
 
     def build(attrs = {})
       Fakes::BGSService.veteran_records ||= {}
-      Fakes::BGSService.veteran_records[attrs[:file_number]] = default_attrs.merge(attrs)
-      Veteran.new(file_number: attrs[:file_number])
+      Fakes::BGSService.veteran_records[attrs[:file_number]] = default_attrs(attrs[:file_number]).merge(attrs)
+      Veteran.new(file_number: attrs[:file_number],
+                  first_name: attrs[:first_name],
+                  last_name: attrs[:last_name],
+                  middle_name: attrs[:middle_name],
+                  name_suffix: attrs[:suffix_name])
     end
   end
 end

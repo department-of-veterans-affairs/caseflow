@@ -1,6 +1,7 @@
 import { ACTIONS, REQUEST_STATE } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
+import _ from 'lodash';
 
 const updateFromServerIntake = (state, serverIntake) => {
   return update(state, {
@@ -19,6 +20,9 @@ const updateFromServerIntake = (state, serverIntake) => {
       },
       fileNumber: {
         $set: serverIntake.veteran_file_number
+      },
+      isDeceased: {
+        $set: serverIntake.veteran_is_deceased
       }
     }
   });
@@ -33,13 +37,15 @@ export const mapDataToInitialIntake = (data = { serverIntake: {} }) => (
     searchErrorData: {
       duplicateReceiptDate: null,
       duplicateProcessedBy: null,
-      veteranMissingFields: null
+      veteranMissingFields: null,
+      veteranAddressTooLong: null
     },
     cancelModalVisible: false,
     veteran: {
       name: '',
       formName: '',
-      fileNumber: ''
+      fileNumber: '',
+      isDeceased: null
     },
     requestStatus: {
       fileNumberSearch: REQUEST_STATE.NOT_STARTED,
@@ -95,8 +101,11 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
           $set: action.payload.errorData.processed_by
         },
         veteranMissingFields: {
-          $set: action.payload.errorData.veteran_missing_fields &&
+          $set: _.get(action.payload.errorData.veteran_missing_fields, 'length', 0) > 0 &&
             action.payload.errorData.veteran_missing_fields.join(', ')
+        },
+        veteranAddressTooLong: {
+          $set: action.payload.errorData.veteran_address_too_long
         }
       },
       requestStatus: {
@@ -118,6 +127,9 @@ export const intakeReducer = (state = mapDataToInitialIntake(), action) => {
           $set: null
         },
         veteranMissingFields: {
+          $set: null
+        },
+        veteranAddressTooLong: {
           $set: null
         }
       }

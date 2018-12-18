@@ -2,8 +2,10 @@ import React from 'react';
 import { css } from 'glamor';
 
 import { getIssueDiagnosticCodeLabel } from '../utils';
+import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 import CaseDetailsDescriptionList from './CaseDetailsDescriptionList';
+import ContestedIssues from './ContestedIssues';
 import { dispositionLabelForDescription } from './LegacyIssueListItem';
 
 const singleIssueContainerStyling = css({
@@ -23,6 +25,13 @@ const headingStyling = css({
 });
 
 export default function CaseDetailsIssueList(props) {
+  if (!props.isLegacyAppeal && props.amaIssueType) {
+    return <ContestedIssues
+      requestIssues={props.issues}
+      decisionIssues={props.decisionIssues}
+    />;
+  }
+
   return <React.Fragment>
     {props.issues.map((issue, i) =>
       <div key={i} {...singleIssueContainerStyling}>
@@ -38,6 +47,9 @@ export default function CaseDetailsIssueList(props) {
 
 const AmaIssueDetails = (props) => <CaseDetailsDescriptionList>
   <dt>Description</dt><dd>{props.children.description}</dd>
+  {props.children.disposition && <React.Fragment>
+    <dt>Disposition</dt><dd>{ISSUE_DISPOSITIONS_BY_ID[props.children.disposition]}</dd>
+  </React.Fragment>}
 </CaseDetailsDescriptionList>;
 
 const LegacyIssueDetails = (props) => {
@@ -74,7 +86,7 @@ const getDescriptionsFromCodes = (levels, codes, descriptions = []) => {
     }
 
     if (descriptions.length) {
-      descriptions.push(<br />);
+      descriptions.push(<br key={Object.keys(levels).indexOf(code)} />);
     }
     descriptions.push(innerLevel.description);
 

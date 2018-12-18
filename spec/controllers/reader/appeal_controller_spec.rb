@@ -1,12 +1,4 @@
 RSpec.describe Reader::AppealController, type: :controller do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let!(:user) { User.authenticate!(roles: ["Reader"]) }
   let(:case_issues) do
     [

@@ -1,19 +1,17 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "RAMP Election Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let!(:veteran) do
@@ -60,14 +58,12 @@ RSpec.feature "RAMP Election Intake" do
       "use a different EP code modifier. GUID: 13fcd</faultstring>")
   end
 
-  let(:long_address_error) do
-    VBMS::HTTPError.new("500", "<ns4:message>The maximum data length for AddressLine1  " \
-      "was not satisfied: The AddressLine1  must not be greater than 20 characters.</ns4:message>")
-  end
-
   let!(:current_user) do
     User.authenticate!(roles: ["Mail Intake"])
   end
+
+  let(:search_bar_title) { "Enter the Veteran's ID" }
+  let(:search_page_title) { "Search for Veteran ID" }
 
   scenario "Search for a veteran with an no active appeals" do
     create(:ramp_election, veteran_file_number: "77776666", notice_date: 5.days.ago)
@@ -79,7 +75,7 @@ RSpec.feature "RAMP Election Intake" do
     end
     safe_click ".cf-submit.usa-button"
 
-    fill_in "Search small", with: "77776666"
+    fill_in search_bar_title, with: "77776666"
     click_on "Search"
 
     expect(page).to have_current_path("/intake/search")
@@ -96,7 +92,7 @@ RSpec.feature "RAMP Election Intake" do
     end
     safe_click ".cf-submit.usa-button"
 
-    fill_in "Search small", with: "77778888"
+    fill_in search_bar_title, with: "77778888"
     click_on "Search"
 
     expect(page).to have_current_path("/intake/search")
@@ -116,10 +112,10 @@ RSpec.feature "RAMP Election Intake" do
       veteran_file_number: "43214321"
     ).start!
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
     click_on "Search"
 
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
     expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
   end
 
@@ -130,17 +126,17 @@ RSpec.feature "RAMP Election Intake" do
     visit "/intake/completed"
     expect(page).to have_content("Welcome to Caseflow Intake!")
 
-    visit "/intake/review-request"
+    visit "/intake/review_request"
 
     within_fieldset("Which form are you processing?") do
       find("label", text: "RAMP Opt-In Election Form").click
     end
     safe_click ".cf-submit.usa-button"
 
-    fill_in "Search small", with: "12341234"
+    fill_in search_bar_title, with: "12341234"
     click_on "Search"
 
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
     expect(page).to have_content("Review Ed Merica's Opt-In Election Form")
 
     intake = RampElectionIntake.find_by(veteran_file_number: "12341234")
@@ -160,7 +156,7 @@ RSpec.feature "RAMP Election Intake" do
 
     # Validate validation
     fill_in "What is the Receipt Date of this form?", with: "08/06/2017"
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Please select an option.")
     expect(page).to have_content(
@@ -171,7 +167,7 @@ RSpec.feature "RAMP Election Intake" do
       find("label", text: "Higher-Level Review", match: :prefer_exact).click
     end
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Finish processing Higher-Level Review election")
 
@@ -179,6 +175,7 @@ RSpec.feature "RAMP Election Intake" do
 
     ## Validate error message when complete intake fails
     allow(LegacyAppeal).to receive(:close).and_raise("A random error. Oh no!")
+
     safe_click "button#button-submit-review"
     expect(page).to have_content("Something went wrong")
 
@@ -189,7 +186,7 @@ RSpec.feature "RAMP Election Intake" do
     within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Supplemental Claim").click
     end
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(find("#confirm-finish", visible: false)).to_not be_checked
     expect(page).to_not have_content("Something went wrong")
@@ -217,10 +214,10 @@ RSpec.feature "RAMP Election Intake" do
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
     expect_any_instance_of(RampElectionIntake).to receive(:review!).and_raise("A random error. Oh no!")
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Something went wrong")
-    expect(page).to have_current_path("/intake/review-request")
+    expect(page).to have_current_path("/intake/review_request")
   end
 
   scenario "Complete intake for RAMP Election form" do
@@ -231,14 +228,14 @@ RSpec.feature "RAMP Election Intake" do
 
     # Validate that visiting the finish page takes you back to
     # the review request page if you haven't yet reviewed the intake
-    visit "/intake/finish"
+    visit "/intake/completed"
 
     within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Finish processing Higher-Level Review election")
 
@@ -248,7 +245,7 @@ RSpec.feature "RAMP Election Intake" do
 
     # Validate the app redirects you to the appropriate location
     visit "/intake"
-    safe_click "#button-submit-review"
+    click_intake_continue
     expect(page).to have_content("Finish processing Higher-Level Review election")
 
     expect(AppealRepository).to receive(:close_undecided_appeal!).with(
@@ -289,9 +286,11 @@ RSpec.feature "RAMP Election Intake" do
         end_product_label: "Higher-Level Review Rating",
         end_product_code: "682HLRRRAMP",
         gulf_war_registry: false,
-        suppress_acknowledgement_letter: false
+        suppress_acknowledgement_letter: false,
+        claimant_participant_id: veteran.participant_id
       },
-      veteran_hash: intake.veteran.to_vbms_hash
+      veteran_hash: intake.veteran.to_vbms_hash,
+      user: current_user
     )
 
     # Validate that you can not go back to previous steps
@@ -329,7 +328,7 @@ RSpec.feature "RAMP Election Intake" do
     end
 
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Finish processing Higher-Level Review election")
 
@@ -337,30 +336,5 @@ RSpec.feature "RAMP Election Intake" do
     safe_click "button#button-submit-review"
 
     expect(page).to have_content("An EP 682 for this Veteran's claim was created outside Caseflow.")
-  end
-
-  scenario "Complete intake for RAMP Election form fails due to long address" do
-    allow(VBMSService).to receive(:establish_claim!).and_raise(long_address_error)
-
-    create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 11, 7))
-
-    intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
-    intake.start!
-
-    visit "/intake"
-
-    within_fieldset("Which review lane did the Veteran select?") do
-      find("label", text: "Higher-Level Review with Informal Conference").click
-    end
-
-    fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
-    safe_click "#button-submit-review"
-
-    expect(page).to have_content("Finish processing Higher-Level Review election")
-
-    click_label("confirm-finish")
-    safe_click "button#button-submit-review"
-
-    expect(page).to have_content("The address is too long")
   end
 end

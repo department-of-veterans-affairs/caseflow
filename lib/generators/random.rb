@@ -26,5 +26,9 @@ class Generators::Random
       @unique_ssns[my_ssn] = 1
       my_ssn
     end
+
+    def external_id
+      Random.rand(1_000_000).to_s
+    end
   end
 end

@@ -1,55 +1,94 @@
-import React from 'react';
+// @flow
+import * as React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
 
-import { COLORS, ISSUE_DISPOSITIONS } from '../constants';
+import { COLORS, VACOLS_DISPOSITIONS } from '../constants';
 import COPY from '../../../COPY.json';
 import VACOLS_DISPOSITIONS_BY_ID from '../../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 
-const dropdownStyling = (highlight, issueDisposition) => {
-  if (highlight && !issueDisposition) {
-    return css({
-      borderLeft: `4px solid ${COLORS.ERROR}`,
-      paddingLeft: '1rem',
-      minHeight: '8rem'
-    });
+import type {
+  Appeal,
+  Issue
+} from '../types/models';
+
+type Params = {|
+  updateIssue: Function,
+  appeal: Appeal,
+  issue: Issue
+|};
+
+type Props = Params & {|
+  highlight: boolean,
+  noStyling: boolean
+|}
+
+class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
+  getStyling = () => {
+    const {
+      highlight,
+      noStyling,
+      issue: { disposition }
+    } = this.props;
+
+    if (noStyling) {
+      return;
+    }
+
+    if (highlight && !disposition) {
+      return css({
+        borderLeft: `4px solid ${COLORS.ERROR}`,
+        paddingLeft: '1rem',
+        minHeight: '8rem'
+      });
+    }
+
+    return css({ minHeight: '12rem' });
   }
 
-  return css({
-    minHeight: '12rem'
-  });
-};
+  getDispositions = (): Array<Object> => {
+    const { appeal } = this.props;
 
-class SelectIssueDispositionDropdown extends React.PureComponent {
+    if (appeal.isLegacyAppeal) {
+      return Object.entries(VACOLS_DISPOSITIONS_BY_ID).slice(0, 6).
+        map((opt) => ({
+          label: `${opt[0]} - ${String(opt[1])}`,
+          value: opt[0]
+        }));
+    }
+
+    return Object.entries(ISSUE_DISPOSITIONS_BY_ID).map((opt) => ({
+      label: opt[1],
+      value: opt[0]
+    }));
+  }
+
   render = () => {
     const {
+      appeal,
       highlight,
       issue
     } = this.props;
 
-    return <div className="issue-disposition-dropdown"{...dropdownStyling(highlight, issue.disposition)}>
+    return <div className="issue-disposition-dropdown"{...this.getStyling()}>
       <SearchableDropdown
         placeholder="Select Disposition"
         value={issue.disposition}
         hideLabel
         errorMessage={(highlight && !issue.disposition) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
-        options={Object.entries(VACOLS_DISPOSITIONS_BY_ID).slice(0, 7).
-          map((opt) => ({
-            label: `${opt[0]} - ${opt[1]}`,
-            value: opt[0]
-          }))}
-        onChange={({ value }) => this.props.updateIssue({
-          disposition: value,
-          readjudication: false,
-          remand_reasons: []
+        options={this.getDispositions()}
+        onChange={(option) => this.props.updateIssue({
+          disposition: option ? option.value : null,
+          readjudication: false
         })}
-        name={`dispositions_dropdown_${issue.vacols_sequence_id}`} />
-      {issue.disposition === ISSUE_DISPOSITIONS.VACATED && <Checkbox
-        name={`duplicate-vacated-issue-${issue.vacols_sequence_id}`}
+        name={`dispositions_dropdown_${String(issue.id)}`} />
+      {appeal.isLegacyAppeal && issue.disposition === VACOLS_DISPOSITIONS.VACATED && <Checkbox
+        name={`duplicate-vacated-issue-${String(issue.id)}`}
         styling={css({
           marginBottom: 0,
           marginTop: '1rem'
@@ -61,15 +100,8 @@ class SelectIssueDispositionDropdown extends React.PureComponent {
   };
 }
 
-SelectIssueDispositionDropdown.propTypes = {
-  issue: PropTypes.object.isRequired,
-  appealId: PropTypes.string.isRequired,
-  highlight: PropTypes.bool,
-  updateIssue: PropTypes.func.isRequired
-};
-
-const mapStateToProps = (state) => ({
-  highlight: state.ui.highlightFormItems
+const mapStateToProps = (state, ownProps) => ({
+  highlight: _.isUndefined(ownProps.highlight) ? state.ui.highlightFormItems : ownProps.highlight
 });
 
-export default connect(mapStateToProps)(SelectIssueDispositionDropdown);
+export default (connect(mapStateToProps)(SelectIssueDispositionDropdown): React.ComponentType<Params>);

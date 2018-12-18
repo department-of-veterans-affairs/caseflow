@@ -1,13 +1,8 @@
 class Generators::Vacols::CaseHearing
   class << self
-    def generate_pkseq
-      SecureRandom.random_number(99_999_999)
-    end
-
     # rubocop:disable Metrics/MethodLength
     def case_hearing_attrs
       {
-        hearing_pkseq: generate_pkseq,
         hearing_type: "C",
         folder_nr: "877483",
         hearing_date: "2017-08-08 13:00:00 UTC",

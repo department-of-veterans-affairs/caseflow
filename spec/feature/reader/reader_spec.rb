@@ -107,15 +107,10 @@ end
 RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:test_facols)
     Time.zone = "America/New_York"
 
-    RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+    RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
     Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:documents) { [] }
@@ -212,7 +207,7 @@ RSpec.feature "Reader" do
         # and focus goes back on the Document toggle.
         find("#clear-filters").click
         expect(page).not_to have_content("Filtering by:")
-        expect(find("#button-documents")["class"]).to have_content("cf-toggle-box-shadow")
+        expect(find("#button-documents")["class"]).to have_content("usa-button")
       end
     end
 
@@ -231,11 +226,6 @@ RSpec.feature "Reader" do
           manifest_vva_fetched_at: vva_fetched_ts,
           case_issue_attrs: []
         )
-      end
-
-      scenario "welcome gate issues column shows no issues message" do
-        visit "/reader/appeal"
-        expect(find("#table-row-#{appeal.vacols_id}").text).to have_content("No issues on appeal")
       end
 
       scenario "Claims folder details issues show no issues message" do
@@ -269,139 +259,9 @@ RSpec.feature "Reader" do
     end
 
     context "Welcome gate page" do
-      let!(:appeal2) do
-        Generators::LegacyAppealV2.build(documents: documents)
-      end
-
-      let!(:appeal3) do
-        Generators::LegacyAppealV2.build(
-          vbms_id: "123456789S",
-          documents: documents
-        )
-      end
-
-      let!(:appeal4) do
-        Generators::LegacyAppealV2.build(documents: documents, vbms_id: appeal3.vbms_id)
-      end
-
-      let!(:appeal5) do
-        Generators::LegacyAppealV2.build(vbms_id: "1234C", documents: documents)
-      end
-
-      let!(:hearing) do
-        Generators::Hearing.create(appeal: appeal)
-      end
-
-      scenario "View Hearing Worksheet", skip: "skipping this test since it doesn't work with FACOLS" do
+      scenario "redirects to /queue" do
         visit "/reader/appeal"
-        new_window = window_opened_by { click_on "Hearing Worksheet" }
-        within_window new_window do
-          expect(page).to have_content("Hearing Worksheet")
-          expect(page).to have_content("Periods and circumstances of service")
-          expect(page).to have_content("Contentions")
-          expect(page).to have_content("Evidence")
-          expect(page).to have_content("Comments and special instructions to attorneys")
-          page.driver.browser.close
-        end
-      end
-
-      scenario "Enter a case" do
-        visit "/reader/appeal"
-
-        expect(page).to have_content(appeal.veteran_full_name)
-        expect(page).to have_content(appeal.vbms_id)
-
-        expect(page).to have_content(appeal.issues[0].type)
-        expect(page).to have_content(appeal.issues[0].levels[0])
-        expect(page).to have_content(appeal.issues[0].levels[1])
-        expect(page).to have_content(appeal.issues[0].levels[2])
-
-        expect(page).to have_title("Assignments | Caseflow Reader")
-
-        find("a[href='/reader/appeal/#{appeal.vacols_id}/documents']").click
-
-        expect(page).to have_current_path("/reader/appeal/#{appeal.vacols_id}/documents")
-        expect(page).to have_content("Documents")
-
-        # Test that the title changed. Functionality in PageRoute.jsx
-        expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
-        expect(page).to have_title("#{appeal.veteran_first_name[0]}. #{appeal.veteran_last_name}'s Claims Folder")
-
-        # Test that the header has breadcrumbs.
-        expect(page).to have_link("Claims Folder", href: "/reader/appeal/#{appeal.vacols_id}/documents")
-
-        click_on "> Reader"
-        expect(page).to have_current_path("/reader/appeal/")
-        expect(page).to have_title("Assignments | Caseflow Reader")
-      end
-
-      context "search for appeals using veteran id" do
-        scenario "with one appeal" do
-          visit "/reader/appeal"
-          fill_in "searchBar", with: (appeal5.vbms_id + "\n")
-
-          expect(page).to have_content(appeal5.veteran_full_name + "\'s Claims Folder")
-        end
-      end
-
-      scenario "with multiple appeals" do
-        visit "/reader/appeal"
-        fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-
-        expect(page).to have_content("Select claims folder")
-        expect(page).to have_content("Not seeing what you expected? Please send us feedback.")
-        appeal_options = find_all(".cf-form-radio-option")
-        expect(appeal_options.count).to eq(2)
-
-        expect(appeal_options[0]).to have_content("Veteran " + appeal3.veteran_full_name)
-        expect(appeal_options[0]).to have_content("Veteran ID " + appeal3.vbms_id)
-        expect(appeal_options[0]).to have_content("Issues")
-        expect(appeal_options[0].find_all("li").count).to eq(appeal3.issues.size)
-
-        expect(appeal_options[1]).to have_content("Veteran " + appeal4.veteran_full_name)
-        expect(appeal_options[1]).to have_content("Veteran ID " + appeal4.vbms_id)
-        expect(appeal_options[1]).to have_content("Issues")
-        expect(appeal_options[1].find_all("li").count).to eq(appeal4.issues.count)
-        expect(find("button", text: "Open Claims Folder")).to be_disabled
-
-        appeal_options[0].click
-        click_on "Open Claims Folder"
-        expect(page).to have_content(appeal3.veteran_full_name + "\'s Claims Folder")
-      end
-
-      context "with multiple appeals but cancel search on modal" do
-        scenario "using cancel button" do
-          visit "/reader/appeal"
-          fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-
-          click_on "Cancel"
-          expect(find("#searchBar")).to have_content("")
-        end
-
-        scenario "using X button" do
-          visit "/reader/appeal"
-          fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-
-          click_button("Select-claims-folder-button-id-close")
-          expect(find("#searchBar")).to have_content("")
-        end
-
-        scenario "and search again" do
-          visit "/reader/appeal"
-          fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-
-          click_button("Select-claims-folder-button-id-close")
-          fill_in "searchBar", with: (appeal4.vbms_id + "\n")
-          expect(find("button", text: "Open Claims Folder")).to be_disabled
-        end
-      end
-
-      scenario "search for invalid veteran id" do
-        visit "/reader/appeal"
-        fill_in "searchBar", with: "does not exist"
-        click_button("submit-search-searchBar")
-
-        expect(page).to have_content("Veteran ID not found")
+        expect(page.current_path).to eq("/queue")
       end
     end
 

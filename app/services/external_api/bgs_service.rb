@@ -14,7 +14,9 @@ class ExternalApi::BGSService
     # respective requests
     @end_products = {}
     @veteran_info = {}
+    @person_info = {}
     @poas = {}
+    @poa_by_participant_ids = {}
     @poa_addresses = {}
     @people_by_ssn = {}
   end
@@ -27,8 +29,26 @@ class ExternalApi::BGSService
     @end_products[vbms_id] ||=
       MetricsService.record("BGS: get end products for vbms id: #{vbms_id}",
                             service: :bgs,
-                            name: "claim.find_by_vbms_file_number") do
+                            name: "claims.find_by_vbms_file_number") do
         client.claims.find_by_vbms_file_number(vbms_id.strip)
+      end
+  end
+
+  def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier)
+    DBService.release_db_connections
+
+    @end_products[veteran_file_number] ||=
+      MetricsService.record("BGS: cancel end product by: \
+                            file_number = #{veteran_file_number}, \
+                            end_product_code = #{end_product_code}, \
+                            modifier = #{end_product_modifier}",
+                            service: :bgs,
+                            name: "claims.cancel_end_product") do
+        client.claims.cancel_end_product(
+          file_number: veteran_file_number,
+          end_product_code: end_product_code,
+          modifier: end_product_modifier
+        )
       end
   end
 
@@ -41,6 +61,23 @@ class ExternalApi::BGSService
                             name: "veteran.find_by_file_number") do
         client.veteran.find_by_file_number(vbms_id)
       end
+  end
+
+  def fetch_person_info(participant_id)
+    DBService.release_db_connections
+
+    bgs_info = MetricsService.record("BGS: fetch person info by participant id: #{participant_id}",
+                                     service: :bgs,
+                                     name: "people.find_person_by_ptcpnt_id") do
+      client.people.find_person_by_ptcpnt_id(participant_id)
+    end
+
+    @person_info[participant_id] ||= {
+      first_name: bgs_info[:first_nm],
+      last_name: bgs_info[:last_nm],
+      middle_name: bgs_info[:middle_nm],
+      birth_date: bgs_info[:brthdy_dt]
+    }
   end
 
   def fetch_file_number_by_ssn(ssn)
@@ -74,16 +111,29 @@ class ExternalApi::BGSService
   def fetch_poas_by_participant_id(participant_id)
     DBService.release_db_connections
 
-    unless @poas[participant_id]
+    unless @poa_by_participant_ids[participant_id]
       bgs_poas = MetricsService.record("BGS: fetch poas for participant id: #{participant_id}",
                                        service: :bgs,
                                        name: "org.find_poas_by_participant_id") do
         client.org.find_poas_by_ptcpnt_id(participant_id)
       end
-      @poas[participant_id] = bgs_poas.map { |poa| get_poa_from_bgs_poa(poa) }
+      @poa_by_participant_ids[participant_id] = [bgs_poas].flatten.compact.map { |poa| get_poa_from_bgs_poa(poa) }
     end
 
-    @poas[participant_id]
+    @poa_by_participant_ids[participant_id]
+  end
+
+  def fetch_poas_by_participant_ids(participant_ids)
+    DBService.release_db_connections
+
+    bgs_poas = MetricsService.record("BGS: fetch poas for participant ids: #{participant_ids}",
+                                     service: :bgs,
+                                     name: "org.find_poas_by_participant_ids") do
+      client.org.find_poas_by_ptcpnt_ids(participant_ids)
+    end
+
+    # Avoid passing nil
+    get_hash_of_poa_from_bgs_poas(bgs_poas || [])
   end
 
   def find_address_by_participant_id(participant_id)
@@ -97,7 +147,8 @@ class ExternalApi::BGSService
       end
       if bgs_address
         # Count on addresses being sorted with most recent first if we return a list of addresses.
-        bgs_address = bgs_address[0] if bgs_address.is_a?(Array)
+        # The very first element of the array might not necessarily be an address
+        bgs_address = bgs_address.select { |a| a.key?(:addrs_one_txt) }[0] if bgs_address.is_a?(Array)
         @poa_addresses[participant_id] = get_address_from_bgs_address(bgs_address)
       end
     end
@@ -154,8 +205,8 @@ class ExternalApi::BGSService
                            participant_id = #{participant_id}",
                           service: :bgs,
                           name: "claimants.find_general_information_by_participant_id") do
-      basic_info = client.claimants.find_general_information_by_participant_id(participant_id)
-      get_name_and_address_from_bgs_info(basic_info)
+      bgs_info = client.claimants.find_general_information_by_participant_id(participant_id)
+      bgs_info ? { relationship: bgs_info[:payee_type_name] } : {}
     end
   end
 
@@ -180,6 +231,40 @@ class ExternalApi::BGSService
     end
   end
 
+  # This method is available to retrieve and validate a letter created with manage_claimant_letter_v2
+  def find_claimant_letters(document_id)
+    DBService.release_db_connections
+    MetricsService.record("BGS: find claimant letter for document #{document_id}",
+                          service: :bgs,
+                          name: "documents.find_claimant_letters") do
+      client.documents.find_claimant_letters(document_id)
+    end
+  end
+
+  def manage_claimant_letter_v2!(claim_id:, program_type_cd:, claimant_participant_id:)
+    DBService.release_db_connections
+    MetricsService.record("BGS: creates the claimant letter for \
+                           claim_id: #{claim_id}, program_type_cd: #{program_type_cd}, \
+                           claimant_participant_id: #{claimant_participant_id}",
+                          service: :bgs,
+                          name: "documents.manage_claimant_letter_v2") do
+      client.documents.manage_claimant_letter_v2(
+        claim_id: claim_id,
+        program_type_cd: program_type_cd,
+        claimant_participant_id: claimant_participant_id
+      )
+    end
+  end
+
+  def generate_tracked_items!(claim_id)
+    DBService.release_db_connections
+    MetricsService.record("BGS: generate tracked items for claim #{claim_id}",
+                          service: :bgs,
+                          name: "documents.generate_tracked_items") do
+      client.documents.generate_tracked_items(claim_id)
+    end
+  end
+
   private
 
   def init_client
@@ -191,13 +276,14 @@ class ExternalApi::BGSService
     BGS::Services.new(
       env: Rails.application.config.bgs_environment,
       application: "CASEFLOW",
-      client_ip: Rails.application.secrets.user_ip_address,
+      client_ip: ENV.fetch("USER_IP_ADDRESS", Rails.application.secrets.user_ip_address),
       client_station_id: current_user.station_id,
       client_username: current_user.css_id,
       ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],
       ssl_cert_file: ENV["BGS_CERT_LOCATION"],
       ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
       forward_proxy_url: forward_proxy_url,
+      jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
       log: true
     )
   end

@@ -3,7 +3,9 @@ require "rails_helper"
 RSpec.feature "Case details" do
   let(:attorney_first_name) { "Robby" }
   let(:attorney_last_name) { "McDobby" }
-  let!(:attorney_user) { FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}") }
+  let!(:attorney_user) do
+    FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}")
+  end
   let!(:vacols_atty) do
     FactoryBot.create(
       :staff,
@@ -27,26 +29,41 @@ RSpec.feature "Case details" do
     )
   end
 
-  before do
-    FeatureToggle.enable!(:test_facols)
+  let(:colocated_user) { FactoryBot.create(:user) }
+  let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
 
+  before do
     User.authenticate!(user: attorney_user)
   end
 
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context "hearings pane on attorney task detail view" do
+    let!(:veteran) do
+      FactoryBot.create(
+        :veteran,
+        file_number: 123_456_789
+      )
+    end
+    let!(:post_remanded_appeal) do
+      FactoryBot.create(
+        :legacy_appeal,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          :type_post_remand,
+          bfcorlid: veteran.file_number,
+          user: attorney_user
+        )
+      )
+    end
     let!(:appeal) do
       FactoryBot.create(
         :legacy_appeal,
-        :with_veteran,
         vacols_case: FactoryBot.create(
           :case,
           :assigned,
           user: attorney_user,
-          # Need a non-cancelled dispositon to show the full set of hearing attributes.
+          bfcorlid: veteran.file_number,
+          # Need a non-cancelled disposition to show the full set of hearing attributes.
           case_hearings: case_hearings
         )
       )
@@ -58,7 +75,7 @@ RSpec.feature "Case details" do
 
       scenario "Entire set of attributes for hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
         expect(page).to have_content("Select an action")
 
@@ -67,6 +84,15 @@ RSpec.feature "Case details" do
         expect(page).to have_content("Date: #{hearing.date.strftime('%-m/%-e/%y')}")
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
       end
+
+      scenario "Post remanded appeal shows indication of earlier appeal hearing" do
+        visit "/queue"
+
+        page.find(:xpath, "//tr[@id='table-row-#{post_remanded_appeal.vacols_id}']/td[1]/a").click
+
+        expect(page).to have_content("Select an action")
+        expect(page).to have_content(COPY::CASE_DETAILS_HEARING_ON_OTHER_APPEAL)
+      end
     end
 
     context "when appeal has a single hearing that was cancelled" do
@@ -74,7 +100,7 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
         hearing = appeal.hearings.first
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
@@ -93,9 +119,9 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
-        worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print']")
+        worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print?keep_open=true']")
         expect(worksheet_link.text).to eq("View Hearing Worksheet")
       end
     end
@@ -105,7 +131,7 @@ RSpec.feature "Case details" do
 
       scenario "Hearings info box is not displayed" do
         visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
         expect(page).not_to have_content("Hearing preference")
       end
     end
@@ -131,8 +157,41 @@ RSpec.feature "Case details" do
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
         expect(page).to have_content("About the Veteran")
-        expect(page).to have_content("She/Her")
-        expect(page).to have_content(appeal.veteran_date_of_birth.strftime("%-m/%e/%Y"))
+        expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
+        expect(page).to have_content("1/10/1935")
+        expect(page).to have_content("5/25/2016")
+        expect(page).to have_content(appeal.regional_office.city)
+        expect(page).to have_content(appeal.veteran_address_line_1)
+      end
+    end
+
+    context "when veteran is not in BGS" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: FactoryBot.create(
+            :case,
+            :assigned,
+            user: attorney_user,
+            correspondent: FactoryBot.create(:correspondent, sgender: "F")
+          )
+        )
+      end
+
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_return(nil)
+      end
+
+      scenario "details view informs us that the Veteran is the appellant" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+        expect(page).to have_content("About the Veteran")
+        expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
+        expect(page).to_not have_content("1/10/1935")
+        expect(page).to_not have_content("5/25/2016")
+        expect(page).to have_content(appeal.regional_office.city)
       end
     end
 
@@ -161,6 +220,7 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content("About the Appellant")
         expect(page).to have_content("About the Veteran")
+        expect(page).to have_content(appeal.veteran_address_line_1)
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
@@ -185,11 +245,11 @@ RSpec.feature "Case details" do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       # TODO: Why isn't the document count coming through here?
       # click_on "View #{appeal.documents.count} documents"
-      click_on "View Veteran's documents"
+      click_on "View"
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("Caseflow> Reader")
-      expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
+      expect(page).to have_content("Back to Your Queue #{appeal.veteran_full_name}")
     end
   end
 
@@ -211,7 +271,28 @@ RSpec.feature "Case details" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
+      # Call have_content() so we wait for the case details page to load
+      expect(page).to have_content(appeal.veteran_full_name)
       expect(page.document.text).to match(/Disposition 1 - Allowed/i)
+    end
+  end
+
+  context "when an appeal has an issue that is ineligible" do
+    let(:eligible_issue_cnt) { 5 }
+    let(:ineligible_issue_cnt) { 3 }
+    let(:issues) do
+      [
+        build_list(:request_issue, eligible_issue_cnt, description: "Knee pain"),
+        build_list(:request_issue, ineligible_issue_cnt, description: "Sunburn", ineligible_reason: :untimely)
+      ].flatten
+    end
+    let!(:appeal) { FactoryBot.create(:appeal, request_issues: issues) }
+
+    scenario "only eligible issues should appear in case details page" do
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      expect(page).to have_content("Issue #{eligible_issue_cnt}")
+      expect(page).to_not have_content("Issue #{eligible_issue_cnt + 1}")
     end
   end
 
@@ -240,8 +321,226 @@ RSpec.feature "Case details" do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
+
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
+    end
+  end
+
+  context "when events are present" do
+    let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let!(:vacols_case) do
+      FactoryBot.create(
+        :case,
+        bfdnod: 2.days.ago,
+        bfd19: 1.day.ago
+      )
+    end
+
+    before do
+      User.authenticate!(user: judge_user)
+    end
+
+    scenario "displays case timeline" do
+      visit "/queue/appeals/#{appeal.external_id}"
+
+      # Ensure we see a timeline where completed things are checked and incomplete are gray
+      expect(find("tr", text: COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING)).to have_selector(".gray-dot")
+      expect(find("tr", text: COPY::CASE_TIMELINE_FORM_9_RECEIVED)).to have_selector(".green-checkmark")
+    end
+  end
+
+  context "loads colocated task detail views" do
+    let!(:appeal) do
+      FactoryBot.create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          user: colocated_user,
+          case_issues: FactoryBot.create_list(:case_issue, 1)
+        )
+      )
+    end
+    let!(:on_hold_task) do
+      FactoryBot.create(
+        :colocated_task,
+        :on_hold,
+        assigned_to: colocated_user,
+        assigned_by: attorney_user
+      )
+    end
+
+    before do
+      FeatureToggle.enable!(:colocated_queue)
+      User.authenticate!(user: colocated_user)
+    end
+
+    after do
+      FeatureToggle.disable!(:colocated_queue)
+    end
+
+    scenario "displays task information" do
+      visit "/queue"
+
+      vet_name = on_hold_task.appeal.veteran_full_name
+      assigner_name = on_hold_task.assigned_by_display_name
+
+      click_on "On hold (1)"
+      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+
+      expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
+      expect(page).to have_content("TASK INSTRUCTIONS #{on_hold_task.instructions[0]}")
+      expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
+
+      expect(Task.find(on_hold_task.id).status).to eq("on_hold")
+    end
+  end
+
+  context "edit aod link appears/disappears as expected" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:user) { FactoryBot.create(:user) }
+    let(:user2) { FactoryBot.create(:user) }
+
+    context "when the current user is a member of the AOD team" do
+      before do
+        allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user).and_return(true)
+        User.authenticate!(user: user)
+        visit("/queue/appeals/#{appeal.uuid}")
+      end
+
+      it "should display the edit link" do
+        expect(page).to have_content("Edit")
+      end
+    end
+
+    context "when the current user is not a member of the AOD team" do
+      before do
+        allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user2).and_return(false)
+        User.authenticate!(user: user2)
+        visit("/queue/appeals/#{appeal.uuid}")
+      end
+      it "should not display the edit link" do
+        expect(page).to_not have_content("Edit")
+      end
+    end
+  end
+
+  describe "Marking organization task complete" do
+    context "when there is no assigner" do
+      let(:qr) { QualityReview.singleton }
+      let(:task) { FactoryBot.create(:qr_task) }
+      let(:user) { FactoryBot.create(:user) }
+
+      before do
+        # Marking this task complete creates a BvaDispatchTask. Make sure there are members of that organization so
+        # that the creation of that BvaDispatchTask succeeds.
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        OrganizationsUser.add_user_to_organization(user, qr)
+        User.authenticate!(user: user)
+      end
+
+      it "marking task as complete works" do
+        visit "/queue/appeals/#{task.appeal.uuid}"
+
+        find(".Select-control", text: "Select an action").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.label).click
+
+        find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
+
+        expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, ""))
+      end
+    end
+
+    describe "Issue order by created_at in Case Details page" do
+      context "when there are two issues" do
+        let!(:appeal) { FactoryBot.create(:appeal) }
+        issue_description = "Head trauma 1"
+        issue_description2 = "Head trauma 2"
+        let!(:request_issue) do
+          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description,
+                                            review_request_type: "Appeal")
+        end
+        let!(:request_issue2) do
+          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description2,
+                                            review_request_type: "Appeal")
+        end
+
+        it "should display sorted issues" do
+          visit "/queue/appeals/#{appeal.uuid}"
+          expect(page).to have_content(issue_description + " Issue 2 DESCRIPTION " + issue_description2)
+        end
+      end
+    end
+
+    describe "Docket type badge shows up" do
+      let!(:appeal) { FactoryBot.create(:appeal, docket_type: "direct_review") }
+
+      it "should display docket type and number" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("D #{appeal.docket_number}")
+      end
+    end
+
+    describe "CaseTimeline shows judge & attorney tasks" do
+      let!(:user) { FactoryBot.create(:user) }
+      let!(:appeal) { FactoryBot.create(:appeal) }
+      let!(:appeal2) { FactoryBot.create(:appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
+      let!(:attorney_task) do
+        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
+                                   completed_at: Time.zone.now - 4.days)
+      end
+      let!(:judge_task) do
+        create(:ama_judge_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
+                                       status: Constants.TASK_STATUSES.completed,
+                                       completed_at: Time.zone.now)
+      end
+
+      before do
+        # This attribute needs to be set here due to update_parent_status hook in the task model
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+
+      it "should display judge & attorney tasks" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
+        expect(page).to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+      end
+
+      it "should NOT display judge & attorney tasks" do
+        visit "/queue/appeals/#{appeal2.uuid}"
+        expect(page).not_to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+      end
+    end
+  end
+
+  describe "AMA decision issue notes" do
+    before { FeatureToggle.enable!(:ama_decision_issues) }
+    after { FeatureToggle.disable!(:ama_decision_issues) }
+
+    let(:request_issue) { create(:request_issue, description: "knee pain", notes: notes) }
+    let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
+
+    context "when notes are nil" do
+      let(:notes) { nil }
+
+      it "does not display the Notes div" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content("Note:")
+      end
+    end
+
+    context "when notes are empty" do
+      let(:notes) { "" }
+
+      it "does not display the Notes div" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content("Note:")
+      end
     end
   end
 end

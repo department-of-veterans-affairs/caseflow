@@ -14,6 +14,8 @@ import { placeAnnotation, showPlaceAnnotationIcon,
 } from '../reader/AnnotationLayer/AnnotationActions';
 
 import { CATEGORIES } from '../reader/analytics';
+import { css } from 'glamor';
+import { COLORS } from '../constants/AppConstants';
 
 const DIV_STYLING = {
   width: '100%',
@@ -21,6 +23,17 @@ const DIV_STYLING = {
   zIndex: 10,
   position: 'relative'
 };
+
+const SELECTION_STYLING = css({
+  '> div': {
+    '::selection': {
+      background: COLORS.COLOR_COOL_BLUE_LIGHTER
+    },
+    '::-moz-selection': {
+      background: COLORS.COLOR_COOL_BLUE_LIGHTER
+    }
+  }
+});
 
 // The comment layer is a div on top of a page that draws the comment
 // icons on the page. It is the div that receives the onClick
@@ -156,7 +169,8 @@ class CommentLayer extends PureComponent {
       width: `${this.props.dimensions.width}px`,
       height: `${this.props.dimensions.height}px`,
       transform: `scale(${this.props.scale})`,
-      transformOrigin: 'left top'
+      transformOrigin: 'left top',
+      opacity: 1
     };
 
     return <div
@@ -169,6 +183,7 @@ class CommentLayer extends PureComponent {
       ref={this.getCommentLayerDivRef}>
       {this.props.isVisible && this.getCommentIcons()}
       <div
+        {...SELECTION_STYLING}
         style={TEXT_LAYER_STYLING}
         ref={this.props.getTextLayerRef}
         className="textLayer" />

@@ -1,19 +1,27 @@
+// @flow
 import { css } from 'glamor';
 import moment from 'moment';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
-import { appealsByAssigneeCssIdSelector } from './selectors';
+import {
+  actionableTasksForAppeal,
+  appealWithDetailSelector
+} from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
-import SelectCheckoutFlowDropdown from './components/SelectCheckoutFlowDropdown';
-import JudgeActionsDropdown from './components/JudgeActionsDropdown';
+import ActionsDropdown from './components/ActionsDropdown';
+import OnHoldLabel from './components/OnHoldLabel';
+
 import COPY from '../../COPY.json';
-import { USER_ROLES } from './constants';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
-import { renderAppealType } from './utils';
+import StringUtil from '../util/StringUtil';
+
+import { taskIsOnHold } from './utils';
 import { DateString } from '../util/DateUtil';
+import type { Appeal, Task } from './types/models';
+import type { State } from './types/state';
 
 const snapshotParentContainerStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
@@ -46,11 +54,25 @@ const snapshotChildResponsiveWrapFixStyling = css({
   }
 });
 
-export class CaseSnapshot extends React.PureComponent {
+type Params = {|
+  appealId: string,
+  hideDropdown?: boolean
+|};
+
+type Props = Params & {|
+  featureToggles: Object,
+  userRole: string,
+  appeal: Appeal,
+  primaryTask: Task,
+  taskAssignedToUser: Task,
+  canEditAod: Boolean
+|};
+
+export class CaseSnapshot extends React.PureComponent<Props> {
   daysSinceTaskAssignmentListItem = () => {
-    if (this.props.task) {
-      const today = moment();
-      const dateAssigned = moment(this.props.task.attributes.assigned_on);
+    if (this.props.primaryTask) {
+      const today = moment().startOf('day');
+      const dateAssigned = moment(this.props.primaryTask.assignedOn);
       const dayCountSinceAssignment = today.diff(dateAssigned, 'days');
 
       return <React.Fragment>
@@ -61,112 +83,208 @@ export class CaseSnapshot extends React.PureComponent {
     return null;
   };
 
-  taskAssignmentListItems = () => {
+  getAbbrevName = ({ firstName, lastName } : { firstName: string, lastName: string }) => {
+    return `${firstName.substring(0, 1)}. ${lastName}`;
+  }
+
+  getActionName = () => {
+    const {
+      label
+    } = this.props.primaryTask;
+
+    // First see if there is a constant to convert the label, otherwise sentence-ify it
+    if (CO_LOCATED_ADMIN_ACTIONS[label]) {
+      return CO_LOCATED_ADMIN_ACTIONS[label];
+    }
+
+    return StringUtil.snakeCaseToSentence(label);
+  }
+
+  taskInstructionsWithLineBreaks = (instructions?: Array<string>) => <React.Fragment>
+    {instructions && instructions.map((text, i) => <React.Fragment><span key={i}>{text}</span><br /></React.Fragment>)}
+  </React.Fragment>;
+
+  taskInformation = () => {
+    const {
+      primaryTask
+    } = this.props;
+
+    if (!primaryTask) {
+      return null;
+    }
+
+    const assignedByAbbrev = primaryTask.assignedBy.firstName ?
+      this.getAbbrevName(primaryTask.assignedBy) : null;
+
+    const preparedByAbbrev = primaryTask.decisionPreparedBy ?
+      this.getAbbrevName(primaryTask.decisionPreparedBy) : null;
+
+    return <React.Fragment>
+      { primaryTask.label &&
+        <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{this.getActionName()}</dd>
+        </React.Fragment> }
+      { assignedByAbbrev &&
+        <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
+        </React.Fragment> }
+      { taskIsOnHold(primaryTask) &&
+        <React.Fragment>
+          <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
+          <dd><OnHoldLabel task={primaryTask} /></dd>
+        </React.Fragment>
+      }
+      { primaryTask.instructions &&
+        <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+          <dd>{this.taskInstructionsWithLineBreaks(primaryTask.instructions)}</dd>
+        </React.Fragment> }
+      { preparedByAbbrev &&
+        <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{preparedByAbbrev}</dd>
+        </React.Fragment> }
+    </React.Fragment>;
+  }
+
+  legacyTaskInformation = () => {
+    // If this is not a task attached to a legacy appeal, use taskInformation.
+    if (!this.props.appeal.isLegacyAppeal) {
+      return this.taskInformation();
+    }
+
+    const {
+      userRole,
+      primaryTask
+    } = this.props;
+
+    if (!primaryTask) {
+      return null;
+    }
+
+    const assignedByAbbrev = primaryTask.assignedBy.firstName ?
+      this.getAbbrevName(primaryTask.assignedBy) : null;
+
     const assignedToListItem = <React.Fragment>
-      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.attributes.location_code}</dd>
+      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
     </React.Fragment>;
 
-    if (!this.props.task) {
+    // TODO: Can we ever exucute this block? Doesn't the exact same condition above kick us out of this function
+    // before we ever reach this point?
+    if (!primaryTask) {
       return assignedToListItem;
     }
 
-    const task = this.props.task.attributes;
+    if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
+      const assignedByFirstName = primaryTask.assignedBy.firstName;
+      const assignedByLastName = primaryTask.assignedBy.lastName;
 
-    if (this.props.userRole === USER_ROLES.JUDGE) {
-      if (!task.assigned_by_first_name || !task.assigned_by_last_name || !task.document_id) {
+      if (!assignedByFirstName ||
+          !assignedByLastName ||
+          (userRole === USER_ROLE_TYPES.judge && !primaryTask.documentId)) {
         return assignedToListItem;
       }
 
-      const firstInitial = String.fromCodePoint(task.assigned_by_first_name.codePointAt(0));
-      const nameAbbrev = `${firstInitial}. ${task.assigned_by_last_name}`;
-
-      return <React.Fragment>
-        <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{nameAbbrev}</dd>
-        <dt>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</dt><dd>{task.document_id}</dd>
-      </React.Fragment>;
+      if (userRole === USER_ROLE_TYPES.judge) {
+        return <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{assignedByAbbrev}</dd>
+        </React.Fragment>;
+      } else if (userRole === USER_ROLE_TYPES.colocated) {
+        return <React.Fragment>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[primaryTask.label]}</dd>
+          <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
+          { taskIsOnHold(primaryTask) &&
+            <React.Fragment>
+              <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
+              <dd><OnHoldLabel task={primaryTask} /></dd>
+            </React.Fragment>
+          }
+          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+          <dd>{this.taskInstructionsWithLineBreaks(primaryTask.instructions)}</dd>
+        </React.Fragment>;
+      }
     }
 
     return <React.Fragment>
-      { task.added_by_name && <React.Fragment>
+      { primaryTask.addedByName && <React.Fragment>
         <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
-        <dd>{task.added_by_name}</dd>
+        <dd>{primaryTask.addedByName}</dd>
       </React.Fragment> }
       <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-      <dd><DateString date={task.assigned_on} dateFormat="MM/DD/YY" /></dd>
+      <dd><DateString date={primaryTask.assignedOn} dateFormat="MM/DD/YY" /></dd>
       <dt>{COPY.CASE_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
-      <dd><DateString date={task.due_on} dateFormat="MM/DD/YY" /></dd>
+      <dd><DateString date={primaryTask.dueOn} dateFormat="MM/DD/YY" /></dd>
     </React.Fragment>;
   };
 
-  showActionsSection = () => {
+  showActionsSection = (): boolean => {
     if (this.props.hideDropdown) {
       return false;
     }
-    if (this.props.appealsAssignedToCurrentUser.
-      some((appealIterator) => appealIterator.attributes.vacols_id === this.props.appeal.attributes.vacols_id)) {
-      return true;
-    }
-    if (!this.props.task) {
+
+    const {
+      userRole,
+      primaryTask
+    } = this.props;
+
+    if (!primaryTask) {
       return false;
     }
 
-    return _.some(
-      this.props.attorneysOfJudge, (attorney) => attorney.id === this.props.task.attributes.assigned_to_pg_id);
+    // users can end up at case details for appeals with no DAS
+    // record (!task.taskId). prevent starting attorney checkout flows
+    return userRole === USER_ROLE_TYPES.judge ? Boolean(primaryTask) : Boolean(primaryTask.taskId);
   }
 
   render = () => {
     const {
-      appeal: { attributes: appeal },
-      userRole
+      appeal,
+      primaryTask
     } = this.props;
-    let CheckoutDropdown = <React.Fragment />;
-
-    if (userRole === USER_ROLES.ATTORNEY) {
-      CheckoutDropdown = <SelectCheckoutFlowDropdown appealId={appeal.vacols_id} />;
-    } else if (userRole === USER_ROLES.JUDGE && this.props.featureToggles.judge_case_review_checkout) {
-      CheckoutDropdown = <JudgeActionsDropdown appealId={appeal.vacols_id} />;
-    }
+    const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
     return <div className="usa-grid" {...snapshotParentContainerStyling} {...snapshotChildResponsiveWrapFixStyling}>
       <div className="usa-width-one-fourth">
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TITLE}</h3>
         <CaseDetailsDescriptionList>
-          <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</dt>
-          <dd>{renderAppealType(this.props.appeal)}</dd>
-          <dt>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</dt>
-          <dd>{appeal.docket_number}</dd>
+          { !taskAssignedToVso && appeal.assignedJudge &&
+            <React.Fragment>
+              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
+              <dd>{appeal.assignedJudge.full_name}</dd>
+            </React.Fragment> }
+          { !taskAssignedToVso && appeal.assignedAttorney &&
+            <React.Fragment>
+              <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
+              <dd>{appeal.assignedAttorney.full_name}</dd>
+            </React.Fragment> }
           {this.daysSinceTaskAssignmentListItem()}
         </CaseDetailsDescriptionList>
       </div>
       <div className="usa-width-one-fourth">
         <h3 {...headingStyling}>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE}</h3>
         <CaseDetailsDescriptionList>
-          {this.taskAssignmentListItems()}
+          {this.legacyTaskInformation()}
         </CaseDetailsDescriptionList>
       </div>
       {this.showActionsSection() &&
         <div className="usa-width-one-half">
           <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-          {CheckoutDropdown}
+          <ActionsDropdown task={primaryTask} appealId={appeal.externalId} />
         </div>
       }
     </div>;
   };
 }
 
-CaseSnapshot.propTypes = {
-  appeal: PropTypes.object.isRequired,
-  featureToggles: PropTypes.object,
-  appealsAssignedToCurrentUser: PropTypes.array,
-  task: PropTypes.object,
-  userRole: PropTypes.string,
-  hideDropdown: PropTypes.bool
-};
+const mapStateToProps = (state: State, ownProps: Params) => {
+  const { featureToggles, userRole, canEditAod } = state.ui;
 
-const mapStateToProps = (state) => ({
-  ..._.pick(state.ui, 'featureToggles', 'userRole'),
-  appealsAssignedToCurrentUser: appealsByAssigneeCssIdSelector(state),
-  attorneysOfJudge: state.queue.attorneysOfJudge
-});
+  return {
+    appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
+    featureToggles,
+    userRole,
+    primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
+    canEditAod
+  };
+};
 
 export default connect(mapStateToProps)(CaseSnapshot);

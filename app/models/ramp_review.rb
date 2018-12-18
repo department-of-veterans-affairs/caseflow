@@ -1,5 +1,6 @@
 class RampReview < ApplicationRecord
   belongs_to :user
+  has_one :intake, as: :detail
 
   RAMP_BEGIN_DATE = Date.new(2017, 11, 1).freeze
 
@@ -26,61 +27,7 @@ class RampReview < ApplicationRecord
 
   validates :receipt_date, :option_selected, presence: { message: "blank" }, if: :saving_review
 
-  def established?
-    !!established_at
-  end
-
-  # Allows us to enable certain validations only when saving the review
-  def start_review!
-    @saving_review = true
-  end
-
-  def higher_level_review?
-    HIGHER_LEVEL_REVIEW_OPTIONS.include?(option_selected)
-  end
-
-  # If an EP with the exact same traits has already been created. Use that instead
-  # of creating a new EP. This prevents duplicate EP errors and allows this method
-  # to be idempotent
-  #
-  # Returns a symbol designating whether the end product was created or connected
-  def create_or_connect_end_product!
-    return connect_end_product! if end_product_establishment.preexisting_end_product
-
-    establish_end_product! && :created
-  end
-
-  def end_product_description
-    end_product_establishment.description
-  end
-
-  def end_product_base_modifier
-    end_product_establishment.valid_modifiers.first
-  end
-
-  def end_product_active?
-    sync_ep_status! && cached_status_active?
-  end
-
-  def end_product_canceled?
-    sync_ep_status! && end_product_establishment.status_canceled?
-  end
-
-  def sync_ep_status!
-    # There is no need to sync end_product_status if the status
-    # is already inactive since an EP can never leave that state
-    return true unless cached_status_active?
-
-    ## TODO: Remove this once all the data is backfilled
-    if (saved_end_product_establishment = EndProductEstablishment.find_by(source: self))
-      saved_end_product_establishment.sync!
-    end
-  end
-
-  def establish_end_product!
-    end_product_establishment.perform!
-    update! established_at: Time.zone.now
-  end
+  before_destroy :remove_issues!
 
   class << self
     def established
@@ -96,10 +43,71 @@ class RampReview < ApplicationRecord
     end
   end
 
+  def established?
+    !!established_at
+  end
+
+  # Allows us to enable certain validations only when saving the review
+  def start_review!
+    @saving_review = true
+  end
+
+  def higher_level_review?
+    HIGHER_LEVEL_REVIEW_OPTIONS.include?(option_selected)
+  end
+
+  def on_decision_issues_sync_processed(end_product_establishment)
+    # no-op, can be overwritten
+  end
+
+  # If an EP with the exact same traits has already been created. Use that instead
+  # of creating a new EP. This prevents duplicate EP errors and allows this method
+  # to be idempotent
+  #
+  # Returns a symbol designating whether the end product was created or connected
+  def create_or_connect_end_product!
+    return connect_end_product! if end_product_establishment.preexisting_end_product
+
+    establish_end_product!(commit: true) && :created
+  end
+
+  def end_product_description
+    end_product_establishment.description
+  end
+
+  def end_product_base_modifier
+    end_product_modifier
+  end
+
+  def end_product_active?
+    end_product_establishment.status_active?(sync: true)
+  end
+
+  def establish_end_product!(commit:)
+    end_product_establishment.perform!(commit: commit)
+    update! established_at: Time.zone.now
+  end
+
+  def end_product_establishment
+    find_end_product_establishment || new_end_product_establishment
+  end
+
+  def valid_modifiers
+    [end_product_modifier]
+  end
+
+  def remove_issues!
+    issues.destroy_all unless issues.empty?
+  end
+
   private
 
   def find_end_product_establishment
     @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self)
+  end
+
+  def intake_processed_by
+    intake ? intake.user : nil
   end
 
   def new_end_product_establishment
@@ -108,14 +116,14 @@ class RampReview < ApplicationRecord
       reference_id: end_product_reference_id,
       claim_date: receipt_date,
       code: end_product_code,
-      valid_modifiers: [end_product_modifier],
+      payee_code: payee_code,
+      claimant_participant_id: claimant_participant_id,
+      valid_modifiers: valid_modifiers,
       source: self,
-      station: "397" # AMC
+      station: "397", # AMC
+      benefit_type_code: veteran.benefit_type_code,
+      user: intake_processed_by
     )
-  end
-
-  def end_product_establishment
-    find_end_product_establishment || new_end_product_establishment
   end
 
   def veteran
@@ -129,16 +137,20 @@ class RampReview < ApplicationRecord
     ) && :connected
   end
 
-  def cached_status_active?
-    !EndProduct::INACTIVE_STATUSES.include?(end_product_establishment.synced_status)
-  end
-
   def end_product_code
     (END_PRODUCT_DATA_BY_OPTION[option_selected] || {})[:code]
   end
 
   def end_product_modifier
     (END_PRODUCT_DATA_BY_OPTION[option_selected] || {})[:modifier]
+  end
+
+  def payee_code
+    "00" # payee is Veteran for RAMP intakes
+  end
+
+  def claimant_participant_id
+    veteran.participant_id
   end
 
   def validate_receipt_date_not_before_ramp

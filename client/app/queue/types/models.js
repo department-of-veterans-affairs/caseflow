@@ -6,7 +6,7 @@ export type User = {
   css_id: string,
   full_name: string,
   email: ?string,
-  roles: Array<String>,
+  roles: Array<string>,
   selected_regional_office: ?string,
   display_name: string,
   judge_css_id: ?string
@@ -14,112 +14,167 @@ export type User = {
 
 export type Judges = { [string]: User };
 
-export type AppellantAddress = {
+export type Address = {
   address_line_1: string,
   address_line_2: string,
+  address_line_3: ?string,
   city: string,
   state: string,
   zip: string,
   country: string
 };
 
+export type VeteranInfo = {
+  full_name: ?string,
+  gender: ?string,
+  date_of_birth: Date,
+  regional_office: Object,
+  address: ?Address
+};
+
 export type Issue = {
   levels: Array<string>,
-  program: string,
+  program?: string,
   type: string,
   codes: Array<string>,
   disposition: string,
   close_date: Date,
   note: string,
-  vacols_sequence_id: Number,
+  id: Number,
+  vacols_sequence_id?: Number,
   labels: Array<string>,
   readjudication: Boolean,
-  remand_reasons: Array<Object>
+  remand_reasons: Array<Object>,
+  description?: string
 };
 
 export type Issues = Array<Issue>;
 
 export type Task = {
-  id: string,
-  appealId: string,
-  attributes: {
-    added_by_css_id: string,
-    added_by_name: string,
-    appeal_id: string,
-    assigned_by_first_name: string,
-    assigned_by_last_name: string,
-    assigned_on: string,
-    docket_date: string,
-    docket_name: string,
-    document_id: string,
-    due_on: string,
-    task_id: string,
-    task_type: string,
-    user_id: string,
-    assigned_to_pg_id: number,
-    work_product: string
-  }
+  uniqueId: string,
+  isLegacy: boolean,
+  type: ?string,
+  label: string,
+  appealId: number,
+  appealType: string,
+  externalAppealId: string,
+  assignedOn: string,
+  completedOn: ?string,
+  dueOn: ?string,
+  assignedTo: {
+    cssId: ?string,
+    type: string,
+    id: number
+  },
+  assignedBy: {
+    firstName: string,
+    lastName: string,
+    cssId: string,
+    pgId: number,
+  },
+  addedByName?: string,
+  addedByCssId: ?string,
+  taskId: string,
+  documentId: ?string,
+  workProduct: ?string,
+  status?: string,
+  placedOnHoldAt?: ?string,
+  onHoldDuration?: ?number,
+  previousTaskAssignedOn: ?string,
+  instructions?: Array<string>,
+  parentId?: number,
+  decisionPreparedBy: ?{
+    firstName: string,
+    lastName: string,
+  },
+  availableActions: Array<{ label?: string, value: string, data: ?Object }>,
+  taskBusinessPayloads: Array<{description: string, values: Object}>,
 };
 
 export type Tasks = { [string]: Task };
 
-export type LegacyAppeal = {
+export type PowerOfAttorney = {
+  representative_type: ?string,
+  representative_name: ?string,
+  representative_address: ?Address
+}
+
+export type Hearing = {
+  heldBy: string,
+  viewedByJudge: boolean,
+  date: string,
+  type: string,
   id: string,
-  attributes: {
-    is_legacy_appeal: Boolean,
-    issues: Array<Object>,
-    hearings: Array<Object>,
-    appellant_full_name: string,
-    appellant_address: AppellantAddress,
-    appellant_relationship: string,
-    location_code: string,
-    veteran_full_name: string,
-    veteran_date_of_birth: string,
-    veteran_gender: string,
-    vbms_id: string,
-    vacols_id: string,
-    type: string,
-    aod: Boolean,
-    docket_number: string,
-    status: string,
-    decision_date: string,
-    certification_date: string,
-    paper_case: Boolean,
-    power_of_attorney: string,
-    regional_office: Object,
-    caseflow_veteran_id: ?string
+  disposition: string
+};
+
+export type AppealDetail = {
+  issues: Array<Object>,
+  decisionIssues: Array<Object>,
+  hearings: Array<Hearing>,
+  completedHearingOnPreviousAppeal: boolean,
+  appellantFullName: string,
+  appellantAddress: Address,
+  appellantRelationship: string,
+  locationCode: ?string,
+  externalId: string,
+  status: string,
+  decisionDate: string,
+  events: {
+    nodReceiptDate: ?string,
+    form9Date: ?string,
   },
+  certificationDate: ?string,
+  powerOfAttorney: ?PowerOfAttorney,
+  caseflowVeteranId: ?string,
   tasks: ?Array<Task>
 };
 
-export type Appeal = {
-  id: string,
-  attributes: {
-    is_legacy_appeal: Boolean,
-    issues: Array<Object>,
-    hearings: Array<Object>,
-    appellant_full_name: string,
-    appellant_address: AppellantAddress,
-    appellant_relationship: string,
-    veteran_full_name: string,
-    veteran_date_of_birth: string,
-    veteran_gender: string,
-    vbms_id: string,
-    vacols_id: string,
-    type: string,
-    aod: Boolean,
-    docket_number: string,
-    status: string,
-    decision_date: string,
-    paper_case: Boolean,
-    power_of_attorney: string,
-    caseflow_veteran_id: ?string
+export type AppealDetails = { [string]: AppealDetail };
+
+export type BasicAppeal = {
+  id: number,
+  type: string,
+  externalId: string,
+  docketName: ?string,
+  isLegacyAppeal: boolean,
+  caseType: string,
+  isAdvancedOnDocket: boolean,
+  docketNumber: string,
+  assignedAttorney: ?User,
+  assignedJudge: ?User,
+  veteranFullName: string,
+  veteranFileNumber: string,
+  isPaperCase: ?boolean,
+  tasks?: Array<Task>,
+  issueCount: number,
+  sanitizedHearingRequestType?: string,
+  regionalOffice?: ?{
+    key: ?string,
+    city: ?string,
+    state: ?string
   }
 };
 
-export type LegacyAppeals = { [string]: LegacyAppeal };
+export type BasicAppeals = { [string]: BasicAppeal };
+
+export type Appeal = AppealDetail & BasicAppeal;
+
+export type Appeals = { [string]: Appeal };
 
 export type Attorneys = {
   data?: Array<User>,
   error?: Object
 };
+
+export type TaskWithAppeal = Task & {
+  appeal: Appeal
+};
+
+export type Distribution = {|
+  id: number,
+  status: string,
+  created_at: string,
+  updated_at: string,
+  distributed_cases_count: number
+|};

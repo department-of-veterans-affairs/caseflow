@@ -46,7 +46,7 @@ class DocumentFetcher
   end
 
   def save!
-    AddSeriesIdToDocumentsJob.perform_now(appeal)
+    AddSeriesIdToDocumentsService.add_series_ids(appeal)
 
     ids = documents.map(&:vbms_document_id)
     existing_documents = Document.where(vbms_document_id: ids)
@@ -55,16 +55,14 @@ class DocumentFetcher
     end
 
     documents.map do |document|
-      begin
-        if existing_documents[document.vbms_document_id]
-          document.merge_into(existing_documents[document.vbms_document_id]).save!
-          existing_documents[document.vbms_document_id]
-        else
-          create_new_document!(document, ids)
-        end
-      rescue ActiveRecord::RecordNotUnique
-        Document.find_by_vbms_document_id(document.vbms_document_id)
+      if existing_documents[document.vbms_document_id]
+        document.merge_into(existing_documents[document.vbms_document_id]).save!
+        existing_documents[document.vbms_document_id]
+      else
+        create_new_document!(document, ids)
       end
+    rescue ActiveRecord::RecordNotUnique
+      Document.find_by_vbms_document_id(document.vbms_document_id)
     end
   end
 

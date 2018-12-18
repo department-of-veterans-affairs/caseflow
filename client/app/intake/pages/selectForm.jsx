@@ -5,8 +5,8 @@ import Button from '../../components/Button';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setFormType, clearSearchErrors } from '../actions/common';
-import { FORM_TYPES, PAGE_PATHS } from '../constants';
+import { setFormType, clearSearchErrors } from '../actions/intake';
+import { PAGE_PATHS, FORM_TYPES } from '../constants';
 import _ from 'lodash';
 
 class SelectForm extends React.PureComponent {
@@ -33,7 +33,6 @@ class SelectForm extends React.PureComponent {
 
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
-      <p>To get started, choose the form you are processing for intake.</p>
 
       {!enableSearchableDropdown && <RadioField
         name="form-select"
@@ -76,7 +75,6 @@ class SelectFormButtonUnconnected extends React.PureComponent {
     <Button
       name="continue-to-search"
       onClick={this.handleClick}
-      legacyStyling={false}
       disabled={!this.props.formType}
     >
       Continue to search

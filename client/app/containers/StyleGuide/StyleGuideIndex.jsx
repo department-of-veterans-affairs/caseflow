@@ -61,7 +61,7 @@ export default class StyleGuideIndex extends React.PureComponent {
             href="https://github.com/department-of-veterans-affairs/caseflow-commons">
               View on Github
           </a>
-          <a className="usa-button usa-button-outline"
+          <a className="usa-button usa-button-secondary"
             href="https://github.com/department-of-veterans-affairs/appeals-design-research/issues/8">
             Download UI Kit</a>
         </p>

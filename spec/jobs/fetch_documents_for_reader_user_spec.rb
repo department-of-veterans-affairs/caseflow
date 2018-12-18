@@ -2,14 +2,6 @@ require "rails_helper"
 require "faker"
 
 describe FetchDocumentsForReaderUserJob do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   context ".perform" do
     let(:user) do
       Generators::User.create(roles: ["Reader"])
@@ -45,13 +37,12 @@ describe FetchDocumentsForReaderUserJob do
     end
 
     context "when eFolder exception is thrown" do
-      it "raises an error" do
+      it "does not raise an error" do
         msg = "<faultstring>Womp Womp.</faultstring>"
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
           .and_raise(Caseflow::Error::DocumentRetrievalError.new(code: 502, message: msg)).once
 
-        expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }
-          .to raise_error(Caseflow::Error::DocumentRetrievalError)
+        expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }.not_to raise_error
       end
     end
 

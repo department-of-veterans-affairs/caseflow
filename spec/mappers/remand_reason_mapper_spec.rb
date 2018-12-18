@@ -7,11 +7,11 @@ describe RemandReasonMapper do
     let(:remand_reasons) do
       [{
         code: "AB",
-        after_certification: true
+        post_aoj: true
       },
        {
          code: "ED",
-         after_certification: false
+         post_aoj: false
        }]
     end
 

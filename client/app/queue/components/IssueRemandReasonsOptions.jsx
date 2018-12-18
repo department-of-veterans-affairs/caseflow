@@ -1,12 +1,12 @@
-import React from 'react';
-import { bindActionCreators } from 'redux';
+// @flow
+import * as React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'glamor';
 import { formatDateStr } from '../../util/DateUtil';
 import scrollToComponent from 'react-scroll-to-component';
 
+import COPY from '../../../COPY.json';
 import Checkbox from '../../components/Checkbox';
 import CheckboxGroup from '../../components/CheckboxGroup';
 import RadioField from '../../components/RadioField';
@@ -17,16 +17,20 @@ import {
   getIssueDiagnosticCodeLabel
 } from '../utils';
 import {
-  startEditingAppealIssue,
-  saveEditedAppealIssue
-} from '../QueueActions';
-import {
   fullWidth,
   REMAND_REASONS,
+  LEGACY_REMAND_REASONS,
+  VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   redText,
   boldText
 } from '../constants';
+
+import type {
+  Appeal,
+  Issues,
+  Issue
+} from '../types/models';
 
 const smallLeftMargin = css({ marginLeft: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
@@ -43,40 +47,67 @@ const flexColumn = css({
   width: '50%'
 });
 
-class IssueRemandReasonsOptions extends React.PureComponent {
+type State = {};
+
+type Props = {|
+  appealId: string,
+  issueId: string,
+  idx: number
+|};
+
+type Params = Props & {|
+  issue: Issue,
+  issues: Issues,
+  appeal: Appeal,
+  highlight: boolean,
+  amaDecisionIssues: boolean
+|};
+
+type RemandReasonOption = {|
+  checked: boolean,
+  post_aoj: ?string
+|};
+
+class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
+  elTopOfWarning: ?HTMLElement
+
   constructor(props) {
     super(props);
 
-    const options = _.concat(..._.values(REMAND_REASONS));
+    const { appeal } = this.props;
+
+    const options = _.flatten(_.values(
+      appeal.isLegacyAppeal ? LEGACY_REMAND_REASONS : REMAND_REASONS
+    ));
     const pairs = _.zip(
       _.map(options, 'id'),
       _.map(options, () => ({
         checked: false,
-        after_certification: null
+        post_aoj: null
       }))
     );
 
     this.state = _.fromPairs(pairs);
   }
 
-  updateIssue = (attributes) => {
-    const { appealId, issueId } = this.props;
+  updateIssue = (remandReasons) => {
+    const { appeal, issueId, amaDecisionIssues } = this.props;
+    const useDecisionIssues = !appeal.isLegacyAppeal && amaDecisionIssues;
+    const issues = useDecisionIssues ? appeal.decisionIssues : appeal.issues;
 
-    this.props.startEditingAppealIssue(appealId, issueId, attributes);
-    this.props.saveEditedAppealIssue(appealId);
+    return {
+      ..._.find(issues, (issue) => issue.id === issueId),
+      remand_reasons: remandReasons
+    };
   };
 
-  getChosenOptions = () => _.filter(this.state, (val) => val.checked);
+  getChosenOptions = (): Array<RemandReasonOption> => _.filter(this.state, (val) => val.checked);
 
-  validateChosenOptionsHaveCertification = () => {
+  validate = () => {
     const chosenOptions = this.getChosenOptions();
-    const chosenOptionsWithCertification = _.filter(chosenOptions, (opt) => !_.isNull(opt.after_certification));
 
-    return chosenOptions.length === chosenOptionsWithCertification.length;
-  };
-
-  validate = () => this.getChosenOptions().length >= 1 &&
-    this.validateChosenOptionsHaveCertification();
+    return chosenOptions.length >= 1 && _.every(chosenOptions, (opt) => !_.isNull(opt.post_aoj));
+  }
 
   // todo: make scrollTo util function that also sets focus
   // element focus info https://goo.gl/jCkoxP
@@ -90,7 +121,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   componentDidMount = () => {
     const {
       issue: {
-        vacols_sequence_id: issueId,
+        id: issueId,
         remand_reasons: remandReasons
       },
       issues
@@ -99,11 +130,11 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     _.each(remandReasons, (reason) => this.setState({
       [reason.code]: {
         checked: true,
-        after_certification: reason.after_certification.toString()
+        post_aoj: reason.post_aoj.toString()
       }
     }));
 
-    if (_.map(issues, 'vacols_sequence_id').indexOf(issueId) > 0) {
+    if (_.map(issues, 'id').indexOf(issueId) > 0) {
       this.scrollTo();
     }
   };
@@ -111,8 +142,8 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   updateStoreIssue = () => {
     // on going to the next or previous page, update issue attrs from state
     // "remand_reasons": [
-    //   {"code": "AB", "after_certification": true},
-    //   {"code": "AC", "after_certification": false}
+    //   {"code": "AB", "post_aoj": true},
+    //   {"code": "AC", "post_aoj": false}
     // ]
     const remandReasons = _(this.state).
       map((val, key) => {
@@ -122,13 +153,13 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
         return {
           code: key,
-          after_certification: val.after_certification === 'true'
+          post_aoj: val.post_aoj === 'true'
         };
       }).
       compact().
       value();
 
-    this.updateIssue({ remand_reasons: remandReasons });
+    return this.updateIssue(remandReasons);
   };
 
   scrollToWarning = () => {
@@ -141,15 +172,21 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     });
   };
 
-  toggleRemandReason = (checked, event) => this.setState({
-    [event.target.id.split('-')[1]]: {
-      checked,
-      after_certification: null
-    }
-  });
+  toggleRemandReason = (checked, event) => {
+    const splitId = event.target.id.split('-');
+
+    this.setState({
+      [splitId[splitId.length - 1]]: {
+        checked,
+        post_aoj: null
+      }
+    });
+  }
 
   getCheckbox = (option, onChange, values) => {
-    const rowOptId = `${this.props.issue.vacols_sequence_id}-${option.id}`;
+    const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
+    const { appeal } = this.props;
+    const copyPrefix = appeal.isLegacyAppeal ? 'LEGACY' : 'AMA';
 
     return <React.Fragment key={option.id}>
       <Checkbox
@@ -159,28 +196,88 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         label={option.label}
         unpadded />
       {values[option.id].checked && <RadioField
-        errorMessage={this.props.highlight && _.isNull(this.state[option.id].after_certification) && 'Choose one'}
+        errorMessage={this.props.highlight && _.isNull(this.state[option.id].post_aoj) && 'Choose one'}
         styling={css(smallLeftMargin, smallBottomMargin, errorNoTopMargin)}
         name={rowOptId}
         vertical
         hideLabel
         options={[{
-          displayText: 'Before certification',
+          displayText: COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_BEFORE`],
           value: 'false'
         }, {
-          displayText: 'After certification',
+          displayText: COPY[`${copyPrefix}_REMAND_REASON_POST_AOJ_LABEL_AFTER`],
           value: 'true'
         }]}
-        value={this.state[option.id].after_certification}
-        onChange={(afterCertification) => this.setState({
+        value={this.state[option.id].post_aoj}
+        onChange={(postAoj) => this.setState({
           [option.id]: {
             checked: true,
-            after_certification: afterCertification
+            post_aoj: postAoj
           }
         })}
       />}
     </React.Fragment>;
   };
+
+  getCheckboxGroup = () => {
+    const { appeal } = this.props;
+    const checkboxGroupProps = {
+      onChange: this.toggleRemandReason,
+      getCheckbox: this.getCheckbox,
+      values: this.state
+    };
+
+    if (appeal.isLegacyAppeal) {
+      return <div {...flexContainer}>
+        <div {...flexColumn}>
+          <CheckboxGroup
+            label={<h3>Medical examination and opinion</h3>}
+            name="med-exam"
+            options={LEGACY_REMAND_REASONS.medicalExam}
+            {...checkboxGroupProps} />
+          <CheckboxGroup
+            label={<h3>Duty to assist records request</h3>}
+            name="duty-to-assist"
+            options={LEGACY_REMAND_REASONS.dutyToAssistRecordsRequest}
+            {...checkboxGroupProps} />
+        </div>
+        <div {...flexColumn}>
+          <CheckboxGroup
+            label={<h3>Duty to notify</h3>}
+            name="duty-to-notify"
+            options={LEGACY_REMAND_REASONS.dutyToNotify}
+            {...checkboxGroupProps} />
+          <CheckboxGroup
+            label={<h3>Due process</h3>}
+            name="due-process"
+            options={LEGACY_REMAND_REASONS.dueProcess}
+            {...checkboxGroupProps} />
+        </div>
+      </div>;
+    }
+
+    return <div {...flexContainer}>
+      <div {...flexColumn}>
+        <CheckboxGroup
+          label={<h3>Duty to notify</h3>}
+          name="duty-to-notify"
+          options={REMAND_REASONS.dutyToNotify}
+          {...checkboxGroupProps} />
+        <CheckboxGroup
+          label={<h3>Duty to assist</h3>}
+          name="duty-to-assist"
+          options={REMAND_REASONS.dutyToAssist}
+          {...checkboxGroupProps} />
+      </div>
+      <div {...flexColumn}>
+        <CheckboxGroup
+          label={<h3>Medical examination</h3>}
+          name="medical-exam"
+          options={REMAND_REASONS.medicalExam}
+          {...checkboxGroupProps} />
+      </div>
+    </div>;
+  }
 
   render = () => {
     const {
@@ -188,85 +285,60 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       issues,
       idx,
       highlight,
-      appeal: { attributes: appeal }
+      appeal
     } = this.props;
-    const checkboxGroupProps = {
-      onChange: this.toggleRemandReason,
-      getCheckbox: this.getCheckbox,
-      values: this.state
-    };
 
-    return <div key={`remand-reasons-${issue.vacols_sequence_id}`}>
+    return <div key={`remand-reasons-${String(issue.id)}`}>
       <h2 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
         Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
       </h2>
-      <div {...smallBottomMargin}>Program: {getIssueProgramDescription(issue)}</div>
-      <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
       <div {...smallBottomMargin}>
-        Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
+        Program: {appeal.isLegacyAppeal ? getIssueProgramDescription(issue) : issue.program}
       </div>
-      <div {...smallBottomMargin} ref={(node) => this.elTopOfWarning = node}>
-        Certified: {formatDateStr(appeal.certification_date)}
-      </div>
-      <div {...smallBottomMargin}>Note: {issue.note}</div>
+      {!appeal.isLegacyAppeal &&
+        <div {...smallBottomMargin}>
+          Issue description: {issue.description}
+        </div>
+      }
+      {appeal.isLegacyAppeal &&
+        <React.Fragment>
+          <div {...smallBottomMargin}>Issue: {getIssueTypeDescription(issue)}</div>
+          <div {...smallBottomMargin}>
+            Code: {getIssueDiagnosticCodeLabel(_.last(issue.codes))}
+          </div>
+          <div {...smallBottomMargin} ref={(node) => this.elTopOfWarning = node}>
+            Certified: {formatDateStr(appeal.certificationDate)}
+          </div>
+          <div {...smallBottomMargin}>Note: {issue.note}</div>
+        </React.Fragment>}
       {highlight && !this.getChosenOptions().length &&
         <div className="usa-input-error"
           {...css(redText, boldText, errorNoTopMargin)}>
           Choose at least one
         </div>
       }
-
-      <div {...flexContainer}>
-        <div {...flexColumn}>
-          <CheckboxGroup
-            label={<h3>Medical examination and opinion</h3>}
-            name="med-exam"
-            options={REMAND_REASONS.medicalExam}
-            {...checkboxGroupProps} />
-          <CheckboxGroup
-            label={<h3>Duty to assist records request</h3>}
-            name="duty-to-assist"
-            options={REMAND_REASONS.dutyToAssistRecordsRequest}
-            {...checkboxGroupProps} />
-        </div>
-        <div {...flexColumn}>
-          <CheckboxGroup
-            label={<h3>Duty to notify</h3>}
-            name="duty-to-notify"
-            options={REMAND_REASONS.dutyToNotify}
-            {...checkboxGroupProps} />
-          <CheckboxGroup
-            label={<h3>Due process</h3>}
-            name="due-process"
-            options={REMAND_REASONS.dueProcess}
-            {...checkboxGroupProps} />
-        </div>
-      </div>
+      {this.getCheckboxGroup()}
     </div>;
   };
 }
 
-IssueRemandReasonsOptions.propTypes = {
-  appealId: PropTypes.string.isRequired,
-  issueId: PropTypes.number.isRequired,
-  idx: PropTypes.number.isRequired
-};
-
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = appeal.attributes.issues;
+  const amaDecisionIssues = state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
+  const issues = (amaDecisionIssues && !appeal.isLegacyAppeal) ? appeal.decisionIssues : appeal.issues;
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
-    issue: _.find(issues, (issue) => issue.vacols_sequence_id === ownProps.issueId),
-    highlight: state.ui.highlightFormItems
+    issues: _.filter(issues, (issue) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
+    ].includes(issue.disposition)),
+    issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
+    highlight: state.ui.highlightFormItems,
+    amaDecisionIssues
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  startEditingAppealIssue,
-  saveEditedAppealIssue
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(IssueRemandReasonsOptions);
+export default (connect(
+  mapStateToProps, null, null, { withRef: true }
+)(IssueRemandReasonsOptions): React.ComponentType<Props, State>
+);

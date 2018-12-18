@@ -1,13 +1,15 @@
 class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
-  attribute :is_legacy_appeal do
-    true
-  end
+  attribute :assigned_attorney
+  attribute :assigned_judge
+  attribute :sanitized_hearing_request_type
+
+  attribute :timeline
 
   attribute :issues do
     object.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
         issue,
-        serializer: ::WorkQueue::IssueSerializer
+        serializer: ::WorkQueue::LegacyIssueSerializer
       ).as_json[:data][:attributes]
     end
   end
@@ -27,6 +29,8 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     end
   end
 
+  attribute :completed_hearing_on_previous_appeal?
+
   attribute :appellant_full_name do
     object.appellant_name
   end
@@ -44,13 +48,17 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
 
   attribute :appellant_relationship
   attribute :location_code
-  attribute :veteran_full_name
-  attribute :veteran_date_of_birth
-  attribute :veteran_gender
   attribute :vbms_id do
     object.sanitized_vbms_id
   end
-  attribute :vacols_id
+  attribute :veteran_full_name
+  # Aliasing the vbms_id to make it clear what we're returning.
+  attribute :veteran_file_number do
+    object.sanitized_vbms_id
+  end
+  attribute :external_id do
+    object.vacols_id
+  end
   attribute :type
   attribute :aod
   attribute :docket_number
@@ -61,11 +69,12 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     object.file_type.eql? "Paper"
   end
 
-  attribute :power_of_attorney do
-    {
-      representative_type: object.representative_type,
-      representative_name: object.representative_name
-    }
+  attribute :caseflow_veteran_id do
+    object.veteran ? object.veteran.id : nil
+  end
+
+  attribute :docket_name do
+    "legacy"
   end
 
   attribute :regional_office do
@@ -74,8 +83,5 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
       city: object.regional_office.city,
       state: object.regional_office.state
     }
-  end
-  attribute :caseflow_veteran_id do
-    object.veteran ? object.veteran.id : nil
   end
 end

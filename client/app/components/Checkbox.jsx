@@ -45,7 +45,7 @@ export default class Checkbox extends React.Component {
           disabled={disabled}
           aria-label={label}
         />
-        <label className="question-label" htmlFor={name}>
+        <label htmlFor={name}>
           <span className={classnames({ 'usa-sr-only': hideLabel })}>
             {(label || name)}
           </span> {required && <span className="cf-required">Required</span>}

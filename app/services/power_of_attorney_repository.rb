@@ -1,36 +1,31 @@
 class PowerOfAttorneyRepository
   include PowerOfAttorneyMapper
 
-  # :nocov:
-  def self.poa_query(poa)
-    VACOLS::Case.includes(:representative).find(poa.vacols_id)
-  end
-  # :nocov:
-
-  # returns either the data or false
   def self.load_vacols_data(poa)
-    case_record = MetricsService.record("VACOLS POA: load_vacols_data #{poa.vacols_id}",
-                                        service: :vacols,
-                                        name: "PowerOfAttorneyRepository.load_vacols_data") do
-      poa_query(poa)
+    case_record, representative = MetricsService.record("VACOLS POA: load_vacols_data #{poa.vacols_id}",
+                                                        service: :vacols,
+                                                        name: "PowerOfAttorneyRepository.load_vacols_data") do
+      [VACOLS::Case.find(poa.vacols_id), VACOLS::Representative.appellant_representative(poa.vacols_id)]
     end
 
-    set_vacols_values(poa: poa, case_record: case_record)
+    set_vacols_values(poa: poa, case_record: case_record, representative: representative)
 
     true
   rescue ActiveRecord::RecordNotFound
     return false
   end
 
-  def self.set_vacols_values(poa:, case_record:)
+  def self.set_vacols_values(poa:, case_record:, representative:)
     rep_info = get_poa_from_vacols_poa(
       vacols_code: case_record.bfso,
-      representative_record: case_record.representative
+      representative_record: representative
     )
 
     poa.assign_from_vacols(
+      vacols_representative_name: rep_info[:representative_name],
       vacols_representative_type: rep_info[:representative_type],
-      vacols_representative_name: rep_info[:representative_name]
+      vacols_representative_address: rep_info[:representative_address],
+      vacols_representative_code: case_record.bfso
     )
   end
 
@@ -39,51 +34,27 @@ class PowerOfAttorneyRepository
     VACOLS::Representative.update_vacols_rep_type!(bfkey: case_record.bfkey, rep_type: vacols_rep_type)
   end
 
-  def self.update_vacols_rep_name!(case_record:, first_name:, middle_initial:, last_name:)
-    VACOLS::Representative.update_vacols_rep_name!(
-      bfkey: case_record.bfkey,
-      first_name: first_name[0, 24],
-      middle_initial: middle_initial[0, 4],
-      last_name: last_name[0, 40]
-    )
-  end
-
-  def self.update_vacols_rep_address!(case_record:, address:)
-    VACOLS::Representative.update_vacols_rep_address!(
-      bfkey: case_record.bfkey,
-      address: {
-        address_one: address[:address_one][0, 50],
-        address_two: address[:address_two][0, 50],
-        city: address[:city][0, 20],
-        state: address[:state][0, 4],
-        zip: address[:zip][0, 10]
-      }
-    )
-  end
-  # :nocov:
-
-  # TODO: Consider changing this logic. Move the entire name into one field.
-  def self.update_vacols_rep_table!(appeal:, representative_name:, address:)
-    first, middle, last = split_representative_name(representative_name)
-    update_vacols_rep_name!(
-      case_record: appeal.case_record,
-      first_name: first,
-      middle_initial: middle,
-      last_name: last
-    )
-
-    address_one, address_two = get_address_one_and_two(representative_name, address)
-    update_vacols_rep_address!(
-      case_record: appeal.case_record,
+  def self.update_vacols_rep_table!(appeal:, rep_name:, address:, rep_type:)
+    first, middle, last = split_representative_name(rep_name)
+    address_one, address_two = get_address_one_and_two(rep_name, address)
+    VACOLS::Representative.update_vacols_rep_table!(
+      bfkey: appeal.vacols_id,
+      name: {
+        first_name: first,
+        middle_initial: middle,
+        last_name: last
+      },
       address: {
         address_one: address_one,
         address_two: address_two,
         city: address[:city] || "",
         state: address[:state] || "",
         zip: address[:zip] || ""
-      }
+      },
+      type: rep_type
     )
   end
+  # :nocov
 
   def self.get_address_one_and_two(representative_name, address)
     # for non-person representative name, put the name in REP.REPADDR1

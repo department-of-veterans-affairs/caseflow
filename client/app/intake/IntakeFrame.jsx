@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import NavigationBar from '../components/NavigationBar';
+import CaseSearchLink from '../components/CaseSearchLink';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { BrowserRouter, Route } from 'react-router-dom';
 import PageRoute from '../components/PageRoute';
@@ -14,9 +15,10 @@ import SelectFormPage, { SelectFormButton } from './pages/selectForm';
 import SearchPage from './pages/search';
 import ReviewPage, { ReviewButtons } from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
+import { IntakeAddIssuesPage } from './pages/addIssues';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS, REQUEST_STATE } from './constants';
-import { toggleCancelModal, submitCancel } from './actions/common';
+import { toggleCancelModal, submitCancel } from './actions/intake';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { css } from 'glamor';
 
@@ -46,6 +48,7 @@ class IntakeFrame extends React.PureComponent {
             accentColor: LOGO_COLORS.INTAKE.ACCENT,
             overlapColor: LOGO_COLORS.INTAKE.OVERLAP
           }}
+          rightNavElement={<CaseSearchLink newWindow />}
           userDisplayName={this.props.userDisplayName}
           dropdownUrls={this.props.dropdownUrls}
           topMessage={topMessage}
@@ -61,7 +64,6 @@ class IntakeFrame extends React.PureComponent {
                     'There was an error while canceling the current intake.' +
                     ' Please try again later.'
                   }
-                  lowerMargin
                 />
               }
               <div>
@@ -79,7 +81,12 @@ class IntakeFrame extends React.PureComponent {
                   exact
                   path={PAGE_PATHS.REVIEW}
                   title="Review Request | Caseflow Intake"
-                  component={ReviewPage} />
+                  render={() => <ReviewPage featureToggles={this.props.featureToggles} />} />
+                <PageRoute
+                  exact
+                  path={PAGE_PATHS.ADD_ISSUES}
+                  title="Add / Remove Issues | Caseflow Intake"
+                  component={IntakeAddIssuesPage} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.FINISH}
@@ -101,10 +108,12 @@ class IntakeFrame extends React.PureComponent {
                 exact
                 path={PAGE_PATHS.REVIEW}
                 component={ReviewButtons} />
-              <Route
-                exact
-                path={PAGE_PATHS.FINISH}
-                component={FinishButtons} />
+              {[PAGE_PATHS.FINISH, PAGE_PATHS.ADD_ISSUES].map((path) =>
+                <Route key={path}
+                  exact
+                  path={path}
+                  component={FinishButtons} />
+              )}
               <Route
                 exact
                 path={PAGE_PATHS.COMPLETED}

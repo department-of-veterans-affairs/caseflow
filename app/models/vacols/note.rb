@@ -10,7 +10,8 @@ class VACOLS::Note < VACOLS::Record
     other: "BVA30",
     A: "A",
     B: "B",
-    B1: "B1"
+    B1: "B1",
+    EXT: "EXT"
   }.freeze
 
   class << self

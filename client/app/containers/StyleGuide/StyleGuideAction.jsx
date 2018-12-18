@@ -47,7 +47,7 @@ export default class StyleGuideAction extends React.PureComponent {
         <div className="cf-push-right">
           <Button
             name="Cancel"
-            classNames={['cf-btn-link', 'cf-adjacent-buttons']}
+            classNames={['cf-btn-link']}
           />
           <Button
             name="Submit End Product"

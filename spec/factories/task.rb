@@ -4,57 +4,115 @@ FactoryBot.define do
     assigned_by { create(:user) }
     assigned_to { create(:user) }
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
-    appeal_type "LegacyAppeal"
+    action { nil }
 
     trait :in_progress do
-      status "in_progress"
+      status Constants.TASK_STATUSES.in_progress
       started_at { rand(1..10).days.ago }
     end
 
     trait :on_hold do
-      status "on_hold"
+      status Constants.TASK_STATUSES.on_hold
       started_at { rand(20..30).days.ago }
       placed_on_hold_at { rand(1..10).days.ago }
       on_hold_duration [30, 60, 90].sample
     end
 
     trait :completed do
-      status "completed"
+      status Constants.TASK_STATUSES.completed
       started_at { rand(20..30).days.ago }
       placed_on_hold_at { rand(1..10).days.ago }
       on_hold_duration [30, 60, 90].sample
       completed_at Time.zone.now
     end
 
-    factory :colocated_task do
-      type "ColocatedTask"
-      title { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
-      instructions "poa is missing"
-
-      after(:create) do |task, _evaluator|
-        create(:staff, :attorney_role, sdomainid: task.assigned_by.css_id)
-      end
+    factory :root_task do
+      type RootTask.name
+      appeal { create(:appeal) }
+      assigned_by { nil }
+      assigned_to { Bva.singleton }
     end
 
-    factory :ama_colocated_task do
-      type "ColocatedTask"
-      title { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
-      instructions "poa is missing"
-      appeal_type "Appeal"
+    factory :generic_task do
+      type GenericTask.name
+      appeal_type Appeal.name
       appeal { create(:appeal) }
     end
 
-    factory :ama_judge_task do
-      type "JudgeTask"
-      appeal_type "Appeal"
-      assigned_by nil
+    factory :colocated_task do
+      type ColocatedTask.name
+      action { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
+      instructions ["poa is missing"]
+    end
+
+    factory :ama_colocated_task do
+      type ColocatedTask.name
+      action { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
+      instructions ["poa is missing"]
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+    end
+
+    factory :ama_judge_task, class: JudgeAssignTask do
+      type JudgeAssignTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+    end
+
+    factory :ama_judge_review_task, class: JudgeReviewTask do
+      type JudgeReviewTask.name
+      appeal_type Appeal.name
       appeal { create(:appeal) }
     end
 
     factory :ama_attorney_task do
-      type "AttorneyTask"
-      appeal_type "Appeal"
+      type AttorneyTask.name
+      appeal_type Appeal.name
       appeal { create(:appeal) }
+      parent { create(:ama_judge_task) }
+    end
+
+    factory :ama_vso_task do
+      type GenericTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+    end
+
+    factory :qr_task, class: QualityReviewTask do
+      type QualityReviewTask.name
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_by { nil }
+      assigned_to { QualityReview.singleton }
+    end
+
+    factory :bva_dispatch_task do
+      type BvaDispatchTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
+
+    factory :schedule_hearing_task do
+      type ScheduleHearingTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
+
+    factory :quality_review_task do
+      type QualityReviewTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
+
+    factory :informal_hearing_presentation_task do
+      type InformalHearingPresentationTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+      assigned_by nil
     end
   end
 end

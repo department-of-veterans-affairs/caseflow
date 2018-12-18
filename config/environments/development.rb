@@ -7,7 +7,7 @@ Rails.application.configure do
   config.cache_classes = false
 
   # Do not eager load code on boot.
-  config.eager_load = false
+  config.eager_load = true
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
@@ -61,7 +61,8 @@ Rails.application.configure do
 
   # set to true to create queues and override the sqs endpiont
   config.sqs_create_queues = true
-  config.sqs_endpoint = "http://localhost:4576"
+
+  config.sqs_endpoint = ENV.has_key?('DOCKERIZED') ? 'http://localstack:4576' : 'http://localhost:4576'
 
   # since we mock aws using localstack, provide dummy creds to the aws gem
   ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"

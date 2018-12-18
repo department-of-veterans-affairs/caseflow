@@ -4,13 +4,19 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
-import CancelButton from '../../components/CancelButton';
-import Button from '../../../components/Button';
+import BenefitType from '../../components/BenefitType';
+import LegacyOptInApproved from '../../components/LegacyOptInApproved';
 import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
-import { submitReview, setClaimantNotVeteran, setClaimant } from '../../actions/ama';
-import { setReceiptDate } from '../../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS } from '../../constants';
+import {
+  setBenefitType,
+  setVeteranIsNotClaimant,
+  setClaimant,
+  setPayeeCode,
+  setLegacyOptInApproved
+} from '../../actions/decisionReview';
+import { setReceiptDate } from '../../actions/intake';
+import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -21,11 +27,16 @@ class Review extends React.PureComponent {
       veteranName,
       receiptDate,
       receiptDateError,
+      benefitType,
+      benefitTypeError,
       informalConference,
       informalConferenceError,
       sameOffice,
       sameOfficeError,
-      reviewIntakeError
+      legacyOptInApproved,
+      legacyOptInApprovedError,
+      reviewIntakeError,
+      featureToggles
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -36,10 +47,18 @@ class Review extends React.PureComponent {
     default:
     }
 
+    const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
+
     return <div>
-      <h1>Review { veteranName }'s Request for Higher-Level Review (VA Form 20-0988)</h1>
+      <h1>Review { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>
 
       { reviewIntakeError && <ErrorAlert /> }
+
+      <BenefitType
+        value={benefitType}
+        onChange={this.props.setBenefitType}
+        errorMessage={benefitTypeError}
+      />
 
       <DateSelector
         name="receipt-date"
@@ -52,7 +71,7 @@ class Review extends React.PureComponent {
 
       <RadioField
         name="informal-conference"
-        label="Did the Veteran request an informal conference?"
+        label="Was an informal conference requested?"
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
@@ -63,7 +82,7 @@ class Review extends React.PureComponent {
 
       <RadioField
         name="same-office"
-        label="Did the Veteran request review by the same office?"
+        label="Was an interview by the same office requested?"
         strongLabel
         vertical
         options={BOOLEAN_RADIO_OPTIONS}
@@ -73,58 +92,35 @@ class Review extends React.PureComponent {
       />
 
       <SelectClaimantConnected />
+
+      { legacyOptInEnabled && <LegacyOptInApproved
+        value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
+        onChange={this.props.setLegacyOptInApproved}
+        errorMessage={legacyOptInApprovedError}
+      /> }
     </div>;
   }
 }
 
 const SelectClaimantConnected = connect(
-  ({ higherLevelReview }) => ({
-    claimantNotVeteran: higherLevelReview.claimantNotVeteran,
+  ({ higherLevelReview, intake }) => ({
+    isVeteranDeceased: intake.veteran.isDeceased,
+    veteranIsNotClaimant: higherLevelReview.veteranIsNotClaimant,
+    veteranIsNotClaimantError: higherLevelReview.veteranIsNotClaimantError,
     claimant: higherLevelReview.claimant,
-    relationships: higherLevelReview.relationships
+    claimantError: higherLevelReview.claimantError,
+    payeeCode: higherLevelReview.payeeCode,
+    payeeCodeError: higherLevelReview.payeeCodeError,
+    relationships: higherLevelReview.relationships,
+    benefitType: higherLevelReview.benefitType,
+    formType: intake.formType
   }),
   (dispatch) => bindActionCreators({
-    setClaimantNotVeteran,
-    setClaimant
+    setVeteranIsNotClaimant,
+    setClaimant,
+    setPayeeCode
   }, dispatch)
 )(SelectClaimant);
-
-class ReviewNextButton extends React.PureComponent {
-  handleClick = () => {
-    this.props.submitReview(this.props.intakeId, this.props.higherLevelReview, 'higherLevelReview').then(
-      () => this.props.history.push('/finish')
-    );
-  }
-
-  render = () =>
-    <Button
-      name="submit-review"
-      onClick={this.handleClick}
-      loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
-    >
-      Continue to next step
-    </Button>;
-}
-
-const ReviewNextButtonConnected = connect(
-  ({ higherLevelReview, intake }) => ({
-    intakeId: intake.id,
-    requestState: higherLevelReview.requestStatus.submitReview,
-    higherLevelReview
-  }),
-  (dispatch) => bindActionCreators({
-    submitReview
-  }, dispatch)
-)(ReviewNextButton);
-
-export class ReviewButtons extends React.PureComponent {
-  render = () =>
-    <div>
-      <CancelButton />
-      <ReviewNextButtonConnected history={this.props.history} />
-    </div>
-}
 
 export default connect(
   (state) => ({
@@ -132,6 +128,10 @@ export default connect(
     higherLevelReviewStatus: getIntakeStatus(state),
     receiptDate: state.higherLevelReview.receiptDate,
     receiptDateError: state.higherLevelReview.receiptDateError,
+    benefitType: state.higherLevelReview.benefitType,
+    benefitTypeError: state.higherLevelReview.benefitTypeError,
+    legacyOptInApproved: state.higherLevelReview.legacyOptInApproved,
+    legacyOptInApprovedError: state.higherLevelReview.legacyOptInApprovedError,
     informalConference: state.higherLevelReview.informalConference,
     informalConferenceError: state.higherLevelReview.informalConferenceError,
     sameOffice: state.higherLevelReview.sameOffice,
@@ -141,6 +141,8 @@ export default connect(
   (dispatch) => bindActionCreators({
     setInformalConference,
     setSameOffice,
-    setReceiptDate
+    setReceiptDate,
+    setBenefitType,
+    setLegacyOptInApproved
   }, dispatch)
 )(Review);

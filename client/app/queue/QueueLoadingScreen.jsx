@@ -1,6 +1,5 @@
 // @flow
 import _ from 'lodash';
-import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,70 +9,78 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { associateTasksWithAppeals } from './utils';
 
-import { setActiveAppeal, setActiveTask } from './CaseDetail/CaseDetailActions';
-import { onReceiveQueue, onReceiveJudges, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
-import type { LegacyAppeal, LegacyAppeals, Tasks } from './types/models';
+import {
+  onReceiveQueue,
+  setAttorneysOfJudge,
+  fetchAllAttorneys,
+  fetchAmaTasksOfUser,
+  getNewDocuments
+} from './QueueActions';
+import { setUserId } from './uiReducer/uiActions';
+import type { BasicAppeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
-import { USER_ROLES } from './constants';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 type Params = {|
   userId: number,
   userCssId: string,
   userRole: string,
   appealId?: string,
-  children: React.ChildrenArray<React.Node>,
-  userCanAccessQueue: boolean,
+  children: React.Node,
   urlToLoad?: string
 |};
 
 type Props = Params & {|
   // From state
   tasks: Tasks,
-  appeals: LegacyAppeals,
+  appeals: BasicAppeals,
+  amaTasks: Tasks,
   loadedUserId: number,
-  activeAppeal: LegacyAppeal,
   judges: UsersById,
   // Action creators
   onReceiveQueue: typeof onReceiveQueue,
-  onReceiveJudges: typeof onReceiveJudges,
-  setActiveAppeal: typeof setActiveAppeal,
-  setActiveTask: typeof setActiveTask,
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
-  fetchAllAttorneys: typeof fetchAllAttorneys
+  fetchAllAttorneys: typeof fetchAllAttorneys,
+  fetchAmaTasksOfUser: (number, string) => Promise<{ payload: { amaTasks: Tasks, appeals: BasicAppeals } }>,
+  setUserId: typeof setUserId,
+  getNewDocuments: typeof getNewDocuments
 |};
 
 class QueueLoadingScreen extends React.PureComponent<Props> {
-  loadJudges = () => {
-    if (!_.isEmpty(this.props.judges)) {
+  maybeLoadAmaQueue = () => {
+    const {
+      userId,
+      appeals,
+      amaTasks,
+      userRole,
+      loadedUserId
+    } = this.props;
+
+    if (!_.isEmpty(amaTasks) && !_.isEmpty(appeals) && loadedUserId === userId) {
       return Promise.resolve();
     }
 
-    return ApiUtil.get('/users?role=Judge').then((response) => {
-      const resp = JSON.parse(response.text);
-      const judges = _.keyBy(resp.judges, 'id');
+    this.props.setUserId(userId);
 
-      this.props.onReceiveJudges(judges);
-    });
+    return this.props.fetchAmaTasksOfUser(userId, userRole).
+      then(
+        ({ payload: { appeals: appealsFromServer } }) =>
+          _.map(appealsFromServer, (appeal) => this.props.getNewDocuments(appeal.externalId)));
   }
 
-  loadRelevantCases = () => {
-    const promises = [];
-
-    if (this.props.appealId) {
-      promises.push(this.loadActiveAppealAndTask(this.props.appealId));
-    }
-    promises.push(this.loadQueue());
-
-    return Promise.all(promises);
-  }
-
-  loadQueue = () => {
+  maybeLoadLegacyQueue = () => {
     const {
       userId,
       loadedUserId,
       tasks,
-      appeals
+      appeals,
+      userRole
     } = this.props;
+
+    if (userRole !== USER_ROLE_TYPES.attorney && userRole !== USER_ROLE_TYPES.judge) {
+      return Promise.resolve();
+    }
+
     const userQueueLoaded = !_.isEmpty(tasks) && !_.isEmpty(appeals) && loadedUserId === userId;
     const urlToLoad = this.props.urlToLoad || `/queue/${userId}`;
 
@@ -81,77 +88,35 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then((response) =>
+    return ApiUtil.get(urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then((response) => {
       this.props.onReceiveQueue({
-        ...associateTasksWithAppeals(JSON.parse(response.text)),
-        userId
-      }));
+        amaTasks: {},
+        ...associateTasksWithAppeals(JSON.parse(response.text))
+      });
+      this.props.setUserId(userId);
+    });
   };
-
-  loadActiveAppealAndTask = (appealId) => {
-    const {
-      activeAppeal,
-      appeals,
-      tasks,
-      userRole
-    } = this.props;
-
-    if (activeAppeal) {
-      return Promise.resolve();
-    }
-
-    if (appealId in appeals) {
-      this.props.setActiveAppeal(appeals[appealId]);
-      this.props.setActiveTask(tasks[appealId]);
-
-      return Promise.resolve();
-    }
-
-    return Promise.all([
-      ApiUtil.get(`/appeals/${appealId}`).then((response) => {
-        this.props.setActiveAppeal(response.body.appeal);
-      }),
-      ApiUtil.get(`/appeals/${appealId}/tasks?role=${userRole}`).then((response) => {
-        const task = response.body.tasks[0];
-
-        task.appealId = task.id;
-        this.props.setActiveTask(task);
-      })
-    ]);
-  };
-
-  loadAttorneysOfJudge = () => {
-    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`).
-      then(
-        (resp) => {
-          this.props.setAttorneysOfJudge(resp.body.attorneys);
-        });
-  }
 
   maybeLoadJudgeData = () => {
-    if (this.props.userRole !== USER_ROLES.JUDGE) {
+    if (this.props.userRole !== USER_ROLE_TYPES.judge) {
       return Promise.resolve();
     }
+
     this.props.fetchAllAttorneys();
 
-    return this.loadAttorneysOfJudge();
+    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`).
+      then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys));
   }
 
   createLoadPromise = () => Promise.all([
-    this.loadRelevantCases(),
-    this.loadJudges(),
+    this.maybeLoadAmaQueue(),
+    this.maybeLoadLegacyQueue(),
     this.maybeLoadJudgeData()
   ]);
 
   reload = () => window.location.reload();
 
   render = () => {
-    // If the current user cannot access queue return early to avoid making the request for queues that would happen
-    // as a result of createLoadPromise().
-    if (!this.props.userCanAccessQueue) {
-      return this.props.children;
-    }
-
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load your cases.<br />
       Please <a onClick={this.reload}>refresh the page</a> and try again.
@@ -176,30 +141,24 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
   };
 }
 
-QueueLoadingScreen.propTypes = {
-  userId: PropTypes.number.isRequired,
-  appealId: PropTypes.string
-};
-
 const mapStateToProps = (state: State) => {
-  const { judges, tasks, appeals } = state.queue;
+  const { tasks, amaTasks, appeals } = state.queue;
 
   return {
-    judges,
     tasks,
     appeals,
-    activeAppeal: state.caseDetail.activeAppeal,
+    amaTasks,
     loadedUserId: state.ui.loadedUserId
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
-  onReceiveJudges,
-  setActiveAppeal,
-  setActiveTask,
   setAttorneysOfJudge,
-  fetchAllAttorneys
+  fetchAllAttorneys,
+  fetchAmaTasksOfUser,
+  setUserId,
+  getNewDocuments
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen): React.ComponentType<Params>);

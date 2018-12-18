@@ -1,11 +1,6 @@
 describe RampRefilingIntake do
   before do
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:user) { Generators::User.build }
@@ -21,23 +16,28 @@ describe RampRefilingIntake do
     )
   end
 
+  let(:completed_ramp_election_ep) do
+    Generators::EndProduct.build(
+      veteran_file_number: veteran_file_number,
+      bgs_attrs: { status_type_code: "CLR" }
+    )
+  end
+
   let(:completed_ramp_election) do
     re = create(:ramp_election,
                 veteran_file_number: veteran_file_number,
                 notice_date: 4.days.ago,
                 receipt_date: 3.days.ago,
                 established_at: Time.zone.now)
-    ep = Generators::EndProduct.build(
-      veteran_file_number: veteran_file_number,
-      bgs_attrs: { status_type_code: "CLR" }
-    )
+
     EndProductEstablishment.create(
       source: re,
       established_at: Time.zone.now,
       veteran_file_number: veteran_file_number,
-      reference_id: ep.claim_id,
+      reference_id: completed_ramp_election_ep.claim_id,
       synced_status: "CLR"
     )
+
     re
   end
 
@@ -65,6 +65,65 @@ describe RampRefilingIntake do
 
   let(:ramp_election_contentions) do
     [Generators::Contention.build(claim_id: claim_id, text: "Left knee")]
+  end
+
+  context "#ui_hash" do
+    subject { intake.ui_hash(true) }
+
+    let!(:ramp_election) do
+      completed_ramp_election
+    end
+
+    let!(:ramp_election_contentions) do
+      [Generators::Contention.build(claim_id: completed_ramp_election_ep.claim_id, text: "Left knee")]
+    end
+
+    let!(:pending_ramp_election) do
+      create(:ramp_election,
+             veteran_file_number: veteran_file_number,
+             notice_date: 4.days.ago,
+             established_at: Time.zone.now)
+    end
+
+    let!(:pending_ramp_election_contentions) do
+      [Generators::Contention.build(claim_id: pending_end_product.claim_id, text: "Not me!")]
+    end
+
+    let!(:pending_end_product) do
+      Generators::EndProduct.build(
+        veteran_file_number: veteran_file_number,
+        bgs_attrs: { status_type_code: "PEND" }
+      )
+    end
+
+    let!(:pending_end_product_establishment) do
+      create(
+        :end_product_establishment,
+        veteran_file_number: veteran_file_number,
+        source: pending_ramp_election,
+        reference_id: pending_end_product.claim_id,
+        established_at: Time.zone.now,
+        synced_status: "PEND"
+      )
+    end
+
+    let(:detail) do
+      RampRefiling.create!(
+        veteran_file_number: veteran_file_number,
+        receipt_date: 10.seconds.ago,
+        option_selected: "supplemental_claim"
+      )
+    end
+
+    before do
+      ramp_election.recreate_issues_from_contentions!
+      pending_ramp_election.recreate_issues_from_contentions!
+    end
+
+    it "only returns issues for RAMP elections with completed decisions" do
+      expect(subject[:issues].count).to eq(1)
+      expect(subject[:issues].first[:description]).to eq("Left knee")
+    end
   end
 
   context "#start!" do
@@ -153,14 +212,13 @@ describe RampRefilingIntake do
       end
 
       context "the EP associated with original RampElection is still pending" do
-        let(:end_product_status) { "PEND" }
-
         let!(:end_product_establishment) do
-          EndProductEstablishment.create(
-            source: ramp_election,
-            reference_id: end_product.claim_id,
+          create(
+            :end_product_establishment,
             veteran_file_number: veteran_file_number,
-            synced_status: end_product_status
+            source: ramp_election,
+            established_at: Time.zone.now,
+            synced_status: "PEND"
           )
         end
 
@@ -171,6 +229,16 @@ describe RampRefilingIntake do
       end
 
       context "the EP associated with original RampElection is closed" do
+        let!(:end_product_establishment) do
+          create(
+            :end_product_establishment,
+            :cleared,
+            veteran_file_number: veteran_file_number,
+            source: ramp_election,
+            established_at: Time.zone.now
+          )
+        end
+
         context "there are no contentions on the EP" do
           it "adds ramp_election_no_issues and returns false" do
             expect(subject).to eq(false)
@@ -189,6 +257,23 @@ describe RampRefilingIntake do
               reference_id: end_product.claim_id,
               veteran_file_number: veteran_file_number,
               synced_status: end_product_status
+            )
+          end
+
+          let!(:pending_ramp_election) do
+            create(:ramp_election,
+                   veteran_file_number: veteran_file_number,
+                   notice_date: 4.days.ago,
+                   established_at: Time.zone.now)
+          end
+
+          let!(:pending_end_product_establishment) do
+            create(
+              :end_product_establishment,
+              veteran_file_number: veteran_file_number,
+              source: pending_ramp_election,
+              established_at: Time.zone.now,
+              synced_status: "PEND"
             )
           end
 
@@ -235,15 +320,6 @@ describe RampRefilingIntake do
       let(:claim_id1) { EndProductEstablishment.find_by(source: ramp_election1).reference_id }
       let(:claim_id2) { EndProductEstablishment.find_by(source: ramp_election2).reference_id }
 
-      context "the EP associated with original RampElection is still pending" do
-        let(:end_product_status) { "PEND" }
-
-        it "adds ramp_election_is_active and returns false" do
-          expect(subject).to eq(false)
-          expect(intake.error_code).to eq("ramp_election_is_active")
-        end
-      end
-
       context "the EP associated with original RampElection is closed" do
         context "there are no contentions on the EP" do
           it "adds ramp_election_no_issues and returns false" do
@@ -279,7 +355,7 @@ describe RampRefilingIntake do
 
     let(:params) do
       {
-        issue_ids: source_issues && source_issues.map(&:id),
+        issue_ids: source_issues&.map(&:id),
         has_ineligible_issue: true
       }
     end
@@ -313,6 +389,8 @@ describe RampRefilingIntake do
         expect(intake.reload).to be_success
         expect(intake.detail.issues.count).to eq(2)
         expect(intake.detail.has_ineligible_issue).to eq(true)
+        expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
+        expect(intake.detail.establishment_processed_at).to eq(Time.zone.now)
       end
 
       context "when source_issues is nil" do
@@ -344,6 +422,8 @@ describe RampRefilingIntake do
         expect(intake.detail.established_at).to eq(Time.zone.now)
         expect(intake.detail.issues.count).to eq(2)
         expect(intake.detail.has_ineligible_issue).to eq(true)
+        expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
+        expect(intake.detail.establishment_processed_at).to eq(Time.zone.now)
       end
     end
 
@@ -357,8 +437,10 @@ describe RampRefilingIntake do
       it "clears pending status" do
         allow_any_instance_of(RampRefiling).to receive(:create_end_product_and_contentions!).and_raise(unknown_error)
 
-        expect { subject }.to raise_exception
+        expect { subject }.to raise_error(Caseflow::Error::EstablishClaimFailedInVBMS)
         expect(intake.completion_status).to be_nil
+        expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
+        expect(intake.detail.establishment_processed_at).to be_nil
       end
     end
 
@@ -389,6 +471,15 @@ describe RampRefilingIntake do
 
     let(:detail) { RampRefiling.create!(veteran_file_number: veteran_file_number) }
 
+    let!(:ramp_issue) do
+      RampIssue.new(
+        review_type: detail,
+        contention_reference_id: "1234",
+        description: "description",
+        source_issue_id: "12345"
+      )
+    end
+
     it "cancels and deletes the refiling record created" do
       subject
 
@@ -398,6 +489,7 @@ describe RampRefilingIntake do
         cancel_reason: "system_error",
         cancel_other: nil
       )
+      expect { ramp_issue.reload }.to raise_error ActiveRecord::RecordNotFound
     end
 
     context "when already complete" do

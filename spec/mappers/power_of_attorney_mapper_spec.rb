@@ -42,6 +42,45 @@ describe PowerOfAttorneyMapper do
       end
     end
 
+    context "#get_hash_of_poa_from_bgs_poas" do
+      let(:participant_id) { "123456" }
+      let(:second_participant_id) { "7890" }
+
+      it "returns representative information if there's a rep" do
+        poas = poa_mapper.new.get_hash_of_poa_from_bgs_poas(
+          [
+            {
+              ptcpnt_id: participant_id,
+              power_of_attorney: {
+                legacy_poa_cd: "071",
+                nm: "TEST ORG",
+                org_type_nm: "POA National Organization",
+                ptcpnt_id: "2452383"
+              }
+            },
+            {
+              ptcpnt_id: second_participant_id,
+              power_of_attorney: {
+                legacy_poa_cd: "072",
+                nm: "DIFFERENT ORG",
+                org_type_nm: "POA National Organization",
+                ptcpnt_id: "2452384"
+              }
+            }
+          ]
+        )
+        expect(poas[participant_id][:representative_name]).to eq("TEST ORG")
+        expect(poas[second_participant_id][:representative_name]).to eq("DIFFERENT ORG")
+      end
+
+      it "returns none if there's no rep" do
+        poas = poa_mapper.new.get_hash_of_poa_from_bgs_poas(
+          message: "No POA found for 2452383", ptcpnt_id: "2452383"
+        )
+        expect(poas["2452383"]).to be_empty
+      end
+    end
+
     context "#get_poa_from_bgs_poa" do
       let(:attorney_poa) { { power_of_attorney: { nm: "Steve Holtz", org_type_nm: "POA Attorney" } } }
       let(:unknown_type_poa) { { power_of_attorney: { nm: "Mrs. Featherbottom", org_type_nm: "unfamiliar_type" } } }

@@ -1,4 +1,6 @@
 {
     "attorney": "Attorney",
-    "judge": "Judge"
+    "judge": "Judge",
+    "colocated": "Colocated",
+    "hearing_coordinator": "HearingCoordinator"
 }

@@ -26,7 +26,6 @@ export default class Button extends React.Component {
       onClick,
       linkStyling,
       dangerStyling,
-      legacyStyling = true,
       willNeverBeLoading,
       type,
       styling
@@ -67,7 +66,7 @@ export default class Button extends React.Component {
       'hidden-field': loading,
       'cf-btn-link': linkStyling,
       'usa-button-secondary': dangerStyling,
-      'usa-button': !legacyStyling && !dangerStyling
+      'usa-button': !dangerStyling
     });
 
     const button = <button
@@ -129,7 +128,6 @@ Button.propTypes = {
       return new Error("'loading' and 'willNeverBeLoading' can't both be set to 'true'.");
     }
   },
-  legacyStyling: PropTypes.bool,
   willNeverBeLoading: PropTypes.bool,
   name: PropTypes.oneOfType([
     PropTypes.string,

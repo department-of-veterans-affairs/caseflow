@@ -126,41 +126,39 @@ export class DecisionReviewer extends React.PureComponent {
     `${appeal.veteran_first_name.charAt(0)}. \
       ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
 
-  render() {
-    const queueEnabled = this.props.featureToggles.queueWelcomeGate;
-
-    return <React.Fragment>
-      <NavigationBar
-        wideApp
-        logoProps={{
-          accentColor: LOGO_COLORS.READER.ACCENT,
-          overlapColor: LOGO_COLORS.READER.OVERLAP
-        }}
-        userDisplayName={this.props.userDisplayName}
-        dropdownUrls={this.props.dropdownUrls}
-        defaultUrl="/">
+  render = () => <React.Fragment>
+    <NavigationBar
+      wideApp
+      appName="Reader"
+      logoProps={{
+        accentColor: LOGO_COLORS.READER.ACCENT,
+        overlapColor: LOGO_COLORS.READER.OVERLAP
+      }}
+      userDisplayName={this.props.userDisplayName}
+      dropdownUrls={this.props.dropdownUrls}
+      defaultUrl="/queue"
+      outsideCurrentRouter>
+      <PageRoute
+        exact
+        title="Document Viewer | Caseflow Reader"
+        breadcrumb="Document Viewer"
+        path="/:vacolsId/documents/:docId"
+        render={this.routedPdfViewer} />
+      <AppFrame wideApp>
         <PageRoute
           exact
-          title="Document Viewer | Caseflow Reader"
-          breadcrumb="Document Viewer"
-          path="/:vacolsId/documents/:docId"
-          render={this.routedPdfViewer} />
-        <AppFrame wideApp>
-          <PageRoute
-            exact
-            title={this.getClaimsFolderPageTitle(this.props.appeal)}
-            breadcrumb="Reader"
-            path="/:vacolsId/documents"
-            render={this.routedPdfListView} />
-        </AppFrame>
-      </NavigationBar>
-      <Footer
-        wideApp
-        appName="Reader"
-        feedbackUrl={this.props.feedbackUrl}
-        buildDate={this.props.buildDate} />
-    </React.Fragment>;
-  }
+          title={this.getClaimsFolderPageTitle(this.props.appeal)}
+          breadcrumb=""
+          path="/:vacolsId/documents"
+          render={this.routedPdfListView} />
+      </AppFrame>
+    </NavigationBar>
+    <Footer
+      wideApp
+      appName="Reader"
+      feedbackUrl={this.props.feedbackUrl}
+      buildDate={this.props.buildDate} />
+  </React.Fragment>;
 }
 
 DecisionReviewer.propTypes = {

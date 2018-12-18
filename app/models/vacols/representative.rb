@@ -1,9 +1,41 @@
 class VACOLS::Representative < VACOLS::Record
+  include AddressMapper
+
   # :nocov:
   self.table_name = "vacols.rep"
   self.primary_key = "repkey"
 
-  class InvalidRepTypeError < StandardError; end
+  class RepError < StandardError; end
+  class InvalidRepTypeError < RepError; end
+
+  # mapping of values in REP.REPTYPE
+  ACTIVE_REPTYPES = {
+    appellant_attorney: { code: "A", name: "Attorney" },
+    appellant_agent: { code: "G", name: "Agent" },
+    # :fee_agreement: "F", # deprecated
+    contesting_claimant: { code: "C", name: "Contesting Claimant" },
+    contesting_claimant_attorney: { code: "D", name: "Contesting Claimant's Attorney" },
+    contesting_claimant_agent: { code: "E", name: "Contesting Claimant's Agent" }
+    # :fee_attorney_reference_list: "R", # deprecated
+  }.freeze
+
+  def self.reptype_name_from_code(reptype)
+    ACTIVE_REPTYPES.values.find { |obj| obj[:code] == reptype }.try(:[], :name)
+  end
+
+  def self.representatives(bfkey)
+    where(repkey: bfkey, reptype: ACTIVE_REPTYPES.values.map { |v| v[:code] })
+  end
+
+  def self.appellant_reptypes
+    [ACTIVE_REPTYPES[:appellant_attorney][:code], ACTIVE_REPTYPES[:appellant_agent][:code]]
+  end
+
+  def self.appellant_representative(bfkey)
+    # In rare cases, there may be more than one result for this query. If so, return the most recent one.
+    # TODO: for Queue use cases, we should return all appellant representatives
+    where(repkey: bfkey, reptype: appellant_reptypes).order("repaddtime DESC").first
+  end
 
   def self.update_vacols_rep_type!(bfkey:, rep_type:)
     fail(InvalidRepTypeError) unless VACOLS::Case::REPRESENTATIVES.include?(rep_type)
@@ -26,58 +58,112 @@ class VACOLS::Representative < VACOLS::Record
     end
   end
 
-  def self.update_vacols_rep_name!(bfkey:, first_name:, middle_initial:, last_name:)
-    conn = connection
-    first_name = conn.quote(first_name)
-    middle_initial = conn.quote(middle_initial)
-    last_name = conn.quote(last_name)
-    case_id = conn.quote(bfkey)
+  def self.update_vacols_rep_table!(bfkey:, name:, address:, type:)
+    fail(InvalidRepTypeError) if ACTIVE_REPTYPES[type].empty?
 
-    MetricsService.record("VACOLS: update_vacols_rep_first_name! #{case_id}",
+    MetricsService.record("VACOLS: update_vacols_rep_name! #{bfkey}",
                           service: :vacols,
-                          name: "update_vacols_rep_first_name") do
-      conn.transaction do
-        conn.execute(<<-SQL)
-          MERGE INTO REP USING dual ON ( REPKEY=#{case_id} )
-          WHEN MATCHED THEN
-            UPDATE SET REPFIRST=#{first_name}, REPMI=#{middle_initial}, REPLAST=#{last_name}
-          WHEN NOT MATCHED THEN INSERT (REPKEY, REPFIRST, REPMI, REPLAST)
-            VALUES ( #{case_id}, #{first_name}, #{middle_initial}, #{last_name} )
-        SQL
+                          name: "update_vacols_rep_name") do
+      rep = appellant_representative(bfkey)
+
+      # TODO: to be 100% safe, we should pass the repaddtime value
+      # down to the client. It's *possible* that if a user
+      # started a certification, then added a new POA row for that appeal,
+      # then completed the certification, we could be updating the wrong POA row.
+      # However, this is very unlikely given the way current business processes operate.
+      if rep
+        update_rep!(bfkey, rep.repaddtime, format_attrs(name, address, type))
+      else
+        create_rep!(bfkey, format_attrs(name, address, type))
       end
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def self.update_vacols_rep_address!(bfkey:, address:)
-    conn = connection
-
-    address_one = conn.quote(address[:address_one])
-    address_two = conn.quote(address[:address_two])
-    city = conn.quote(address[:city])
-    state = conn.quote(address[:state])
-    zip = conn.quote(address[:zip])
-    case_id = conn.quote(bfkey)
-
-    MetricsService.record("VACOLS: update_vacols_rep_address! #{case_id}",
-                          service: :vacols,
-                          name: "update_vacols_rep_address") do
-      conn.transaction do
-        conn.execute(<<-SQL)
-          MERGE INTO REP USING dual ON ( REPKEY=#{case_id} )
-          WHEN MATCHED THEN
-            UPDATE
-            SET REPADDR1 = #{address_one},
-                REPADDR2 = #{address_two},
-                REPCITY = #{city},
-                REPST = #{state},
-                REPZIP = #{zip}
-          WHEN NOT MATCHED THEN INSERT (REPKEY, REPADDR1, REPADDR2, REPCITY, REPST, REPZIP)
-            VALUES ( #{case_id}, #{address_one}, #{address_two}, #{city}, #{state}, #{zip} )
-        SQL
-      end
+  def self.format_attrs(name, address, reptype)
+    attrs = {
+      reptype: ACTIVE_REPTYPES[reptype][:code]
+    }
+    unless name.empty?
+      attrs = attrs.merge(
+        repfirst: name[:first_name][0, 24],
+        repmi: name[:middle_initial][0, 4],
+        replast: name[:last_name][0, 40]
+      )
     end
+    unless address.empty?
+      attrs = attrs.merge(
+        repaddr1: address[:address_one][0, 50],
+        repaddr2: address[:address_two][0, 50],
+        repcity: address[:city][0, 20],
+        repst: address[:state][0, 4],
+        repzip: address[:zip][0, 10]
+      )
+    end
+    attrs
   end
-  # rubocop:enable Metrics/MethodLength
-  # :nocov:
+
+  def self.update_rep!(repkey, repaddtime, rep_attrs)
+    # VACOLS has a unique constraint on repkey + repaddtime.
+    # Ruby's date equality rules prevent us from comparing the date object
+    # directly. VACOLS only stores dates, not datetimes, so
+    # comparing year/month/day should be no less accurate.
+    VACOLS::Representative
+      .where(repkey: repkey)
+      .where("extract(year  from repaddtime) = ?", repaddtime.year)
+      .where("extract(month from repaddtime) = ?", repaddtime.month)
+      .where("extract(day   from repaddtime) = ?", repaddtime.day)
+      .update_all(rep_attrs)
+  end
+
+  def self.create_rep!(bfkey, rep_attrs)
+    create!(rep_attrs.merge(repaddtime: VacolsHelper.local_date_with_utc_timezone, repkey: bfkey))
+  end
+
+  def update(*)
+    update_error_message
+  end
+
+  def update!(*)
+    update_error_message
+  end
+
+  def delete
+    delete_error_message
+  end
+
+  def destroy
+    delete_error_message
+  end
+
+  def as_claimant
+    type = if reptype == "C"
+             "Claimant"
+           elsif reptype == "D"
+             "Attorney"
+           elsif reptype == "E"
+             "Agent"
+           end
+
+    {
+      type: type,
+      first_name: repfirst,
+      middle_name: repmi,
+      last_name: replast,
+      name_suffix: repsuf,
+      address: get_address_from_rep_entry(self)
+    }
+  end
+
+  private
+
+  def update_error_message
+    fail RepError, "Since the primary key is not unique, `update` will update all results
+      with the same `repkey`. Instead use VACOLS::Representative.update_rep!
+      that uses `repkey` and `repaddtime` to safely update one record."
+  end
+
+  def delete_error_message
+    fail RepError, "Since the primary key is not unique, `delete` will delete all results
+      with the same `repkey`. Instead, use `repkey` and `repaddtime` to safely update one record."
+  end
 end

@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BrowserRouter } from 'react-router-dom';
 import NavigationBar from '../components/NavigationBar';
@@ -11,9 +10,38 @@ import BuildScheduleContainer from './containers/BuildScheduleContainer';
 import BuildScheduleUploadContainer from './containers/BuildScheduleUploadContainer';
 import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer';
 import ListScheduleContainer from './containers/ListScheduleContainer';
+import AssignHearingsContainer from './containers/AssignHearingsContainer';
+import DailyDocketContainer from './containers/DailyDocketContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
-class HearingScheduleApp extends React.PureComponent {
+export default class HearingScheduleApp extends React.PureComponent {
+  userPermissionProps = () => {
+    const {
+      userRoleAssign,
+      userRoleBuild
+    } = this.props;
+
+    return {
+      userRoleAssign,
+      userRoleBuild
+    };
+  };
+
+  propsForAssignHearingsContainer = () => {
+    const {
+      userId,
+      userCssId
+    } = this.props;
+
+    return {
+      userId,
+      userCssId
+    };
+  };
+
+  routeForListScheduleContainer = () => <ListScheduleContainer {...this.userPermissionProps()} />;
+  routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
+  routeForDailyDocket = () => <DailyDocketContainer {...this.userPermissionProps()} />;
 
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
@@ -33,7 +61,13 @@ class HearingScheduleApp extends React.PureComponent {
             exact
             path="/schedule"
             title="Scheduled Hearings"
-            component={ListScheduleContainer}
+            render={this.routeForListScheduleContainer}
+          />
+          <PageRoute
+            exact
+            path="/schedule/docket/:hearingDayId"
+            title="Daily Docket"
+            render={this.routeForDailyDocket}
           />
           <PageRoute
             exact
@@ -56,6 +90,13 @@ class HearingScheduleApp extends React.PureComponent {
             breadcrumb="Review"
             component={ReviewAssignmentsContainer}
           />
+          <PageRoute
+            exact
+            path="/schedule/assign"
+            title="Assign Hearings"
+            breadcrumb="Assign"
+            component={this.routeForAssignHearingsContainer}
+          />
         </div>
       </AppFrame>
       <Footer
@@ -70,9 +111,12 @@ class HearingScheduleApp extends React.PureComponent {
 
 HearingScheduleApp.propTypes = {
   userDisplayName: PropTypes.string,
+  userRoleAssign: PropTypes.bool,
+  userRoleBuild: PropTypes.bool,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
-  dropdownUrls: PropTypes.array
+  dropdownUrls: PropTypes.array,
+  userRole: PropTypes.string,
+  userId: PropTypes.number,
+  userCssId: PropTypes.string
 };
-
-export default connect()(HearingScheduleApp);

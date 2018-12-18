@@ -1,5 +1,6 @@
 require "rails_helper"
 # rubocop:disable Style/FormatString
+# rubocop:disable Style/FormatStringToken
 
 RSpec.feature "Search" do
   let(:attorney_user) { FactoryBot.create(:user) }
@@ -10,20 +11,14 @@ RSpec.feature "Search" do
   let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
 
   before do
-    FeatureToggle.enable!(:test_facols)
-
     User.authenticate!(user: attorney_user)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   context "queue case search for appeals using veteran id" do
     context "when invalid Veteran ID input" do
       before do
-        visit "/queue"
-        fill_in "searchBar", with: invalid_veteran_id
+        visit "/search"
+        fill_in "searchBarEmptyList", with: invalid_veteran_id
         click_on "Search"
       end
 
@@ -32,7 +27,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -45,10 +40,66 @@ RSpec.feature "Search" do
       end
     end
 
+    context "queue case search for appeals that have hearings" do
+      context "a case in the search view has a hearing" do
+        let!(:today) { Time.zone.today }
+        let!(:hearings) do
+          [
+            create(:case_hearing, :disposition_held, hearing_date: today - 4.days),
+            create(:case_hearing, :disposition_no_show, hearing_date: today - 3.days),
+            create(:case_hearing, :disposition_postponed, hearing_date: today - 2.days)
+          ]
+        end
+
+        let!(:appeal_with_hearing) do
+          FactoryBot.create(
+            :legacy_appeal,
+            :with_veteran,
+            vacols_case: FactoryBot.create(
+              :case,
+              case_hearings: hearings
+            )
+          )
+        end
+
+        before do
+          visit "/search"
+          fill_in "searchBarEmptyList", with: appeal_with_hearing.sanitized_vbms_id
+          click_on "Search"
+        end
+
+        it "table row displays a badge if a case has a hearing" do
+          expect(page).to have_selector(".cf-hearing-badge")
+          expect(find(".cf-hearing-badge")).to have_content("H")
+        end
+
+        it "shows information for the correct hearing when there are multiple hearings" do
+          expect(page).to have_css(
+            ".__react_component_tooltip div ul li:nth-child(3) strong span",
+            visible: :hidden,
+            text: 2.days.ago.strftime("%m/%d/%y")
+          )
+        end
+      end
+
+      context "no cases in the search view have hearings" do
+        before do
+          visit "/search"
+          fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+          click_on "Search"
+        end
+
+        it "table does not display a column for a badge if no cases have hearings" do
+          docket_column_header = page.find(:xpath, "//thead/tr/th[1]/span")
+          expect(docket_column_header).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
+        end
+      end
+    end
+
     context "when no appeals found" do
       before do
-        visit "/queue"
-        fill_in "searchBar", with: veteran_with_no_appeals.file_number
+        visit "/search"
+        fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
         click_on "Search"
       end
 
@@ -59,7 +110,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -75,8 +126,8 @@ RSpec.feature "Search" do
     context "when backend encounters an error" do
       before do
         allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
-        visit "/queue"
-        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
       end
 
@@ -85,7 +136,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar produces another error" do
-        fill_in "searchBar", with: veteran_with_no_appeals.file_number
+        fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
         click_on "Search"
 
         expect(page).to have_content(
@@ -98,6 +149,7 @@ RSpec.feature "Search" do
       let!(:paper_appeal) do
         FactoryBot.create(
           :legacy_appeal,
+          :with_veteran,
           vacols_case: FactoryBot.create(
             :case,
             folder: FactoryBot.build(:folder, :paper_case)
@@ -106,8 +158,8 @@ RSpec.feature "Search" do
       end
 
       before do
-        visit "/queue"
-        fill_in "searchBar", with: appeal.sanitized_vbms_id
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
       end
 
@@ -117,12 +169,12 @@ RSpec.feature "Search" do
       end
 
       it "search bar stays in top right" do
-        expect(page).to have_selector("#searchBar")
+        expect(page).to have_selector("#searchBarEmptyList")
       end
 
       it "clicking on the x in the search bar clears the search bar" do
         click_on "button-clear-search"
-        expect(find("#searchBar")).to have_content("")
+        expect(find("#searchBarEmptyList")).to have_content("")
       end
 
       it "clicking on docket number sends us to the case details page" do
@@ -132,8 +184,8 @@ RSpec.feature "Search" do
       end
 
       scenario "found appeal is paper case" do
-        visit "/queue"
-        fill_in "searchBar", with: paper_appeal.sanitized_vbms_id
+        visit "/search"
+        fill_in "searchBarEmptyList", with: paper_appeal.sanitized_vbms_id
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -164,18 +216,13 @@ RSpec.feature "Search" do
 
     context "when invalid Veteran ID input" do
       before do
-        visit "/"
+        visit "/search"
         fill_in "searchBarEmptyList", with: invalid_veteran_id
         click_on "Search"
       end
 
       it "page displays invalid Veteran ID message" do
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
-      end
-
-      it "search bar does not appear in top right of page" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
       end
 
       it "searching in search bar works" do
@@ -195,7 +242,7 @@ RSpec.feature "Search" do
 
     context "when no appeals found" do
       before do
-        visit "/"
+        visit "/search"
         fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
         click_on "Search"
       end
@@ -206,8 +253,7 @@ RSpec.feature "Search" do
         )
       end
 
-      it "search bar does not appear in top right of page" do
-        expect(page).to_not have_selector("#searchBar")
+      it "search bar appears at top of page" do
         expect(page).to have_selector("#searchBarEmptyList")
       end
 
@@ -229,18 +275,13 @@ RSpec.feature "Search" do
     context "when backend encounters an error" do
       before do
         allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
-        visit "/"
+        visit "/search"
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
       end
 
       it "displays error message" do
         expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
-      end
-
-      it "search bar does not appear in top right of page" do
-        expect(page).to_not have_selector("#searchBar")
-        expect(page).to have_selector("#searchBarEmptyList")
       end
 
       it "searching in search bar works" do
@@ -260,7 +301,7 @@ RSpec.feature "Search" do
 
     context "when one appeal found" do
       before do
-        visit "/"
+        visit "/search"
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
       end
@@ -270,9 +311,8 @@ RSpec.feature "Search" do
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
-      it "search bar displayed in top right of page" do
-        expect(page).to have_selector("#searchBar")
-        expect(page).to_not have_selector("#searchBarEmptyList")
+      it "search bar displayed at top of page" do
+        expect(page).to have_selector("#searchBarEmptyList")
       end
 
       it "clicking on docket number sends us to the case details page" do
@@ -284,3 +324,4 @@ RSpec.feature "Search" do
 end
 
 # rubocop:enable Style/FormatString
+# rubocop:enable Style/FormatStringToken

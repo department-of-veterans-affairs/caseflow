@@ -7,6 +7,28 @@ import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import BuildSchedule from '../components/BuildSchedule';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+
+const vacolsLoadingMessage = 'We are uploading to VACOLS. Please don\'t click the back or refresh buttons until ' +
+  'the upload is finished.';
+const pastScheduleLoadingMessage = 'Loading past schedule uploads...';
+
+const vacolsLoadingErrorTitle = { title: 'We could not complete your VACOLS upload' };
+const pastScheduleLoadingErrorTitle = { title: 'We could not load past schedule uploads' };
+
+const vacolsLoadingErrorMsg = <div>
+  We encountered an error uploading to VACOLS. Please use the 'Go Back' link to try again.
+  if the problem persists you can check the status of our applications or submit a help
+  request using the links in the footer.<br></br><br></br>
+  <span><Link to="/schedule/build/upload"> Go Back</Link></span>
+</div>;
+
+const pastScheduleLoadingErrorMsg = <div>
+  We encountered an error uploading past schedule uploads. Please use the 'Go Back' link to try again.
+  if the problem persists you can check the status of our applications or submit a help
+  request using the links in the footer.<br></br><br></br>
+  <span><Link to="/schedule"> Go Back</Link></span>
+</div>;
 
 class BuildScheduleContainer extends React.PureComponent {
 
@@ -15,10 +37,6 @@ class BuildScheduleContainer extends React.PureComponent {
   }
 
   loadPastUploads = () => {
-    if (!_.isEmpty(this.props.pastUploads)) {
-      return Promise.resolve();
-    }
-
     return ApiUtil.get('/hearings/schedule_periods.json').then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
       const schedulePeriods = _.keyBy(resp.schedulePeriods, 'id');
@@ -27,7 +45,10 @@ class BuildScheduleContainer extends React.PureComponent {
     });
   };
 
-  shouldNotSendAssignments = () => _.isEmpty(this.props.schedulePeriod) || this.props.schedulePeriod.finalized === true;
+  shouldNotSendAssignments = () =>
+    _.isEmpty(this.props.schedulePeriod) ||
+      this.props.schedulePeriod.finalized === true ||
+      !this.props.vacolsUpload;
 
   sendAssignments = () => {
     if (this.shouldNotSendAssignments()) {
@@ -45,10 +66,9 @@ class BuildScheduleContainer extends React.PureComponent {
   ]);
 
   render = () => {
-
-    const vacolsLoadingMessage = 'We are uploading your assignments to VACOLS';
-    const pastScheduleLoadingMessage = 'Loading past schedule uploads...';
     const loadingMessage = this.shouldNotSendAssignments() ? pastScheduleLoadingMessage : vacolsLoadingMessage;
+    const errorTitle = this.shouldNotSendAssignments() ? pastScheduleLoadingErrorTitle : vacolsLoadingErrorTitle;
+    const errorMsg = this.shouldNotSendAssignments() ? pastScheduleLoadingErrorMsg : vacolsLoadingErrorMsg;
 
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
@@ -56,9 +76,8 @@ class BuildScheduleContainer extends React.PureComponent {
         spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
         message: loadingMessage
       }}
-      failStatusMessageProps={{
-        title: 'Unable to load past schedule uploads.'
-      }}>
+      failStatusMessageProps={errorTitle}
+      failStatusMessageChildren={errorMsg}>
       <BuildSchedule
         pastUploads={this.props.pastUploads}
         schedulePeriod={this.props.schedulePeriod}
@@ -71,9 +90,10 @@ class BuildScheduleContainer extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  pastUploads: state.pastUploads,
-  schedulePeriod: state.schedulePeriod,
-  displaySuccessMessage: state.displaySuccessMessage
+  pastUploads: state.hearingSchedule.pastUploads,
+  schedulePeriod: state.hearingSchedule.schedulePeriod,
+  vacolsUpload: state.hearingSchedule.vacolsUpload,
+  displaySuccessMessage: state.hearingSchedule.displaySuccessMessage
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

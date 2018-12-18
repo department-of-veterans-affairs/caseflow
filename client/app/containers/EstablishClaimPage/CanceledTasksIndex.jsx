@@ -50,7 +50,7 @@ export default class CanceledTasksIndex extends React.Component {
         <div className="meta">{ dateRange() }</div>
       </div>
 
-      <div className="usa-grid-full">
+      <div className="usa-width-one-whole">
         <Table
           columns={tableColumns}
           rowObjects={canceledTasks}

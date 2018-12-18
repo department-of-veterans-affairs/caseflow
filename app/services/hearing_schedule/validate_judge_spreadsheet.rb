@@ -1,6 +1,6 @@
 class HearingSchedule::ValidateJudgeSpreadsheet
   SPREADSHEET_TITLE = "Judge Non-Availability Dates".freeze
-  SPREADSHEET_EXAMPLE_ROW = [nil, "Jones, Bernard", "BVAJONESB", Date.parse("02/04/2019")].freeze
+  SPREADSHEET_HEADERS = [nil, "Judge Name", "VLJ #", "Date"].freeze
   SPREADSHEET_EMPTY_COLUMN = [nil].freeze
 
   class JudgeDatesNotCorrectFormat < StandardError; end
@@ -20,15 +20,33 @@ class HearingSchedule::ValidateJudgeSpreadsheet
 
   def validate_judge_non_availability_template
     unless @spreadsheet_template[:title] == SPREADSHEET_TITLE &&
-           @spreadsheet_template[:example_row] == SPREADSHEET_EXAMPLE_ROW &&
+           @spreadsheet_template[:headers] == SPREADSHEET_HEADERS &&
            @spreadsheet_template[:empty_column] == SPREADSHEET_EMPTY_COLUMN
       @errors << JudgeTemplateNotFollowed
     end
   end
 
-  def find_user(css_id, name)
-    User.where(css_id: css_id,
-               full_name: name.split(", ").reverse.join(" ")).count > 0
+  # This method is only used in dev/demo mode to test the judge spreadsheet functionality
+  # :nocov:
+  def find_or_create_judges_in_vacols(vacols_judges, name, vlj_id)
+    return unless Rails.env.development? || Rails.env.demo?
+
+    if vacols_judges[vlj_id] &&
+       vacols_judges[vlj_id][:first_name] == name.split(", ")[1].strip &&
+       vacols_judges[vlj_id][:last_name] == name.split(", ")[0].strip
+      true
+    else
+      User.create_judge_in_vacols(name.split(", ")[1].strip, name.split(", ")[0].strip, vlj_id)
+    end
+  end
+  # :nocov:
+
+  def judge_in_vacols?(vacols_judges, name, vlj_id)
+    return find_or_create_judges_in_vacols(vacols_judges, name, vlj_id) if Rails.env.development? || Rails.env.demo?
+
+    vacols_judges[vlj_id] &&
+      vacols_judges[vlj_id][:first_name].casecmp(name.split(", ")[1].strip.downcase).zero? &&
+      vacols_judges[vlj_id][:last_name].casecmp(name.split(", ")[0].strip.downcase).zero?
   end
 
   def check_range_of_dates(date)
@@ -36,7 +54,8 @@ class HearingSchedule::ValidateJudgeSpreadsheet
   end
 
   def validate_judge_non_availability_dates
-    unless @spreadsheet_data.all? { |row| row["date"].instance_of?(Date) }
+    vacols_judges = User.css_ids_by_vlj_ids(@spreadsheet_data.pluck("vlj_id").uniq)
+    unless @spreadsheet_data.all? { |row| row["date"].instance_of?(Date) || row["date"] == "N/A" }
       @errors << JudgeDatesNotCorrectFormat
     end
     unless @spreadsheet_data.uniq == @spreadsheet_data
@@ -45,7 +64,7 @@ class HearingSchedule::ValidateJudgeSpreadsheet
     unless @spreadsheet_data.all? { |row| check_range_of_dates(row["date"]) }
       @errors << JudgeDatesNotInRange
     end
-    unless @spreadsheet_data.all? { |row| find_user(row["css_id"], row["name"]) }
+    unless @spreadsheet_data.all? { |row| judge_in_vacols?(vacols_judges, row["name"], row["vlj_id"]) }
       @errors << JudgeNotInDatabase
     end
   end

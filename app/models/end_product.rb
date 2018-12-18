@@ -16,10 +16,16 @@ class EndProduct
     "683SCRRRAMP" => "Supplemental Claim Review Rating"
   }.freeze
 
-  # TODO: Put real codes in here when we know them
-  AMA_CODES = {
+  DTA_CODES = {
+    "040HDENR" => "Supplemental Claim Nonrating DTA",
+    "040HDER" => "Supplemental Claim Rating DTA"
+  }.freeze
+
+  DECISION_REVIEW_CODES = {
     "030HLRR" => "Higher-Level Review Rating",
-    "040SCR" => "Supplemental Claim Rating"
+    "030HLRNR" => "Higher-Level Review Nonrating",
+    "040SCR" => "Supplemental Claim Rating",
+    "040SCNR" => "Supplemental Claim Nonrating"
   }.freeze
 
   DISPATCH_CODES = {
@@ -53,17 +59,31 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(AMA_CODES)
+  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
-  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code,
+  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :last_action_date,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter
+
+  attr_writer :payee_code, :claimant_participant_id, :benefit_type_code
 
   # Validators are used for validating the EP before we create it in VBMS
   validates :modifier, :claim_type_code, :station_of_jurisdiction, :claim_date, presence: true
   validates :claim_type_code, inclusion: { in: CODES.keys }
   validates :gulf_war_registry, :suppress_acknowledgement_letter, inclusion: { in: [true, false] }
+
+  def benefit_type_code
+    @benefit_type_code ||= Veteran::BENEFIT_TYPE_CODE_LIVE
+  end
+
+  def payee_code
+    @payee_code ||= "00"
+  end
+
+  def claimant_participant_id
+    @claimant_participant_id ||= nil
+  end
 
   def claim_type
     label || claim_type_code
@@ -101,10 +121,18 @@ class EndProduct
     }
   end
 
+  # this is used for intake
+  def serialize
+    {
+      claim_id: claim_id,
+      claim_type_code: claim_type_code
+    }
+  end
+
   def to_vbms_hash
     {
-      benefit_type_code: "1",
-      payee_code: "00",
+      benefit_type_code: benefit_type_code,
+      payee_code: payee_code,
       predischarge: false,
       claim_type: "Claim",
       end_product_modifier: modifier,
@@ -113,7 +141,8 @@ class EndProduct
       station_of_jurisdiction: station_of_jurisdiction,
       date: claim_date.to_date,
       suppress_acknowledgement_letter: suppress_acknowledgement_letter,
-      gulf_war_registry: gulf_war_registry
+      gulf_war_registry: gulf_war_registry,
+      claimant_participant_id: claimant_participant_id
     }
   end
 
@@ -135,6 +164,10 @@ class EndProduct
 
   def contentions
     @contentions ||= claim_id ? VBMSService.fetch_contentions(claim_id: claim_id) : nil
+  end
+
+  def ramp?
+    RAMP_CODES.key?(claim_type_code)
   end
 
   private
@@ -164,13 +197,23 @@ class EndProduct
   end
 
   class << self
+    # If you change this method, you will need to clear cache in prod for your changes to
+    # take effect immediately. See DecisionReview#cached_serialized_ratings
+    def deserialize(end_product_hash)
+      new(
+        claim_id: end_product_hash[:claim_id],
+        claim_type_code: end_product_hash[:claim_type_code]
+      )
+    end
+
     def from_bgs_hash(hash)
       new(
         claim_id: hash[:benefit_claim_id],
         claim_date: parse_claim_date(hash[:claim_receive_date]),
         claim_type_code: hash[:claim_type_code],
         modifier: hash[:end_product_type_code],
-        status_type_code: hash[:status_type_code]
+        status_type_code: hash[:status_type_code],
+        last_action_date: hash[:last_action_date]
       )
     end
 

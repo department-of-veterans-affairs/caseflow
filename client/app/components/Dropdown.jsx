@@ -28,7 +28,7 @@ export default class Dropdown extends React.Component {
     value = (value === null || typeof value === 'undefined') ? '' : value;
 
     return <div className="cf-form-dropdown">
-      <label className="question-label" htmlFor={name}>
+      <label htmlFor={name}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}

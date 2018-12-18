@@ -14,9 +14,6 @@ describe JudgeLegacyTask do
     context "when there is information about the case assignment" do
       let(:case_assignment) do
         vacols_id = "1111"
-        Fakes::AppealRepository.records[vacols_id] = OpenStruct.new(
-          vacols_id: vacols_id
-        )
         OpenStruct.new(vacols_id: vacols_id,
                        date_due: 1.day.ago,
                        reassigned_to_judge_date: reassigned_to_judge_date,
@@ -36,13 +33,13 @@ describe JudgeLegacyTask do
           expect(subject.user_id).to eq("USER_ID")
           expect(subject.id).to eq("1111")
           expect(subject.due_on).to eq 1.day.ago
-          expect(subject.assigned_on).to eq 3.days.ago
-          expect(subject.task_type).to eq "Review"
+          expect(subject.assigned_on).to eq 3.days.ago.to_date
+          expect(subject.action).to eq "review"
           expect(subject.task_id).to eq "1111-2015-01-25"
           expect(subject.document_id).to eq "173341517.524"
           expect(subject.assigned_by_first_name).to eq "Joe"
           expect(subject.assigned_by_last_name).to eq "Snuffy"
-          expect(subject.previous_task.assigned_at).to eq 10.days.ago
+          expect(subject.previous_task.assigned_at).to eq 10.days.ago.to_date
         end
       end
 
@@ -54,8 +51,8 @@ describe JudgeLegacyTask do
           expect(subject.user_id).to eq("USER_ID")
           expect(subject.id).to eq("1111")
           expect(subject.due_on).to eq 1.day.ago
-          expect(subject.assigned_on).to eq 3.days.ago
-          expect(subject.task_type).to eq "Assign"
+          expect(subject.assigned_on).to eq 3.days.ago.to_date
+          expect(subject.action).to eq "assign"
           expect(subject.task_id).to eq "1111-2015-01-25"
           expect(subject.previous_task).to eq nil
         end

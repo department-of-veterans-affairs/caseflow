@@ -31,12 +31,16 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :idt do    
+  namespace :idt do
     get 'auth', to: 'authentications#index'
     namespace :api do
       namespace :v1 do
         get 'token', to: 'tokens#generate_token'
-        get 'appeals', to: 'appeals#index'
+        get 'appeals', to: 'appeals#list'
+        get 'appeals/:appeal_id', to: 'appeals#details'
+        post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
+        get 'judges', to: 'judges#index'
+        get 'user', to: 'users#index'
       end
     end
   end
@@ -92,33 +96,48 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :appeals, only: [:index, :show] do
-    get :document_count
-    get :new_documents
-    resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
-    get :tasks
+  resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
+    member do
+      get :document_count
+      get :new_documents
+      get :veteran
+      get :power_of_attorney
+      resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
+      resources :special_issues, only: [:create, :index]
+      resources :advance_on_docket_motions, only: [:create]
+      get 'tasks', to: "tasks#for_appeal"
+      patch 'update'
+    end
   end
+  match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
 
   resources :beaam_appeals, only: [:index]
+
+  resources :regional_offices, only: [:index]
+  get '/regional_offices/:regional_office/open_hearing_dates', to: "regional_offices#open_hearing_dates"
 
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
-    resources :hearing_day, only: [:index]
+    resources :hearing_day, only: [:index, :show, :destroy, :update]
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule', to: "hearings/hearing_day#index"
-  get 'hearings/schedule/build', to: "hearing_schedule#index"
-  get 'hearings/schedule/build/upload', to: "hearing_schedule#index"
-  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#index"
+  get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
+  get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
+  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#build_schedule_index"
+  get 'hearings/schedule/assign', to: "hearing_schedule#index"
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
-  put 'hearings/:hearing_key/hearing_day', to: "hearings/hearing_day#update"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
+  get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
+  get 'hearings/schedule/assign/veterans', to: "hearings/hearing_day#appeals_ready_for_hearing_schedule"
+  get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
 
   resources :hearings, only: [:update]
 
@@ -147,9 +166,15 @@ Rails.application.routes.draw do
     patch 'error', on: :member
   end
 
-  resources :higher_level_reviews, param: :claim_id, only: [:edit]
+  resources :higher_level_reviews, param: :claim_id, only: [:edit] do
+    patch 'update', on: :member
+  end
+  match '/higher_level_reviews/:claim_id/edit/:any' => 'higher_level_reviews#edit', via: [:get]
 
-  resources :supplemental_claims, param: :claim_id, only: [:edit]
+  resources :supplemental_claims, param: :claim_id, only: [:edit] do
+    patch 'update', on: :member
+  end
+  match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
   resources :users, only: [:index]
 
@@ -163,11 +188,16 @@ Rails.application.routes.draw do
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 
+  get '/search', to: 'queue#index'
+
   resources :legacy_tasks, only: [:create, :update]
   resources :tasks, only: [:index, :create, :update]
 
+  resources :distributions, only: [:new, :show]
+
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
+    resources :users, only: [:index, :create, :destroy], controller: 'organizations/users'
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
@@ -206,6 +236,7 @@ Rails.application.routes.draw do
       post "/reseed", to: "users#reseed", as: "reseed"
     end
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
+    post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
 
   # :nocov:

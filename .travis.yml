@@ -2,7 +2,7 @@ language: ruby
 dist: trusty
 sudo: required
 rvm:
-  - 2.2.4
+  - 2.5.1
 
 branches:
     only:
@@ -15,6 +15,7 @@ env:
 
 before_install:
   - export TZ=America/New_York
+  - export NLS_LANG=American_America.US7ASCII
   - ./ci-bin/ensure-env-vars-exist.bash
   - pip install --user awscli
   - mkdir ./coverage

@@ -3,8 +3,8 @@
 require "pdf_forms"
 
 class Form8PdfService
-  PDF_PAGE_1 = "form1[0].#subform[0].#area[0].".freeze
-  PDF_PAGE_2 = "form1[0].#subform[1].".freeze
+  PDF_PAGE_1 = "form1[0].#subform[0].#area[0]."
+  PDF_PAGE_2 = "form1[0].#subform[1]."
 
   # Currently, the only thing on Page 2 of the VA Form 8 is the continued
   # remarks. As a result, we'll just say anything except for that is actually
@@ -42,7 +42,7 @@ class Form8PdfService
     certification_date: "TextField1[10]"
   }.freeze
 
-  PDF_CHECKBOX_SYMBOL = "1".freeze
+  PDF_CHECKBOX_SYMBOL = "1"
 
   # Rubocop complains about the number of conditions here,
   # but IMO it's pretty clear and I don't want to break it up
@@ -104,7 +104,7 @@ class Form8PdfService
       final_location
     )
 
-    S3Service.store_file(form8.pdf_filename, final_location, :filepath)
+    S3Service.store_file(Form8::FORM8_S3_SUB_BUCKET + "/" + form8.pdf_filename, final_location, :filepath)
 
     # Remove it from the tmp_location, leaving it only in final_location
     File.delete(tmp_location)

@@ -1,5 +1,5 @@
 class IntakesController < ApplicationController
-  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
+  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application, :check_intake_out_of_service
 
   def index
     no_cache
@@ -41,10 +41,7 @@ class IntakesController < ApplicationController
   def complete
     intake.complete!(params)
     render json: intake.ui_hash(ama_enabled?)
-
-    # TODO: This should probably be pushed into the model, since it is very
-    # end product specific
-  rescue Caseflow::Error::DuplicateEp, Caseflow::Error::LongAddress => error
+  rescue Caseflow::Error::DuplicateEp => error
     render json: {
       error_code: error.error_code,
       error_data: intake.detail.end_product_base_modifier
@@ -74,12 +71,11 @@ class IntakesController < ApplicationController
     redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
   end
 
-  def no_cache
-    response.headers["Cache-Control"] = "no-cache, no-store"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+  def check_intake_out_of_service
+    render "out_of_service", layout: "application" if Rails.cache.read("intake_out_of_service")
   end
 
+  # TODO: This could be moved to the model.
   def intake_in_progress
     return @intake_in_progress unless @intake_in_progress.nil?
     @intake_in_progress = Intake.in_progress.find_by(user: current_user) || false
@@ -89,12 +85,18 @@ class IntakesController < ApplicationController
   def new_intake
     @new_intake ||= Intake.build(
       user: current_user,
-      veteran_file_number: params[:file_number],
+      veteran_file_number: veteran_file_number,
       form_type: params[:form_type]
     )
   end
 
   def intake
     @intake ||= Intake.where(user: current_user).find(params[:id])
+  end
+
+  def veteran_file_number
+    # param could be file number or SSN. Make sure we return file number.
+    veteran = Veteran.find_by_file_number_or_ssn(params[:file_number])
+    veteran ? veteran.file_number : params[:file_number]
   end
 end

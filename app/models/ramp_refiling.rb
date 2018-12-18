@@ -12,25 +12,29 @@ class RampRefiling < RampReview
     hearing: "hearing"
   }
 
+  def self.need_to_reprocess
+    where(
+      establishment_submitted_at: (5.years.ago...1.minute.ago),
+      establishment_processed_at: nil
+    )
+  end
+
   def create_issues!(source_issue_ids:)
     issues.destroy_all unless issues.empty?
 
     source_issue_ids.map { |issue_id| issues.create!(source_issue_id: issue_id) }
   end
 
-  # We have no solution to make the combination of these operations atomic, or guarantee
-  # eventual consistency. So for now, if the create contentions request fails, we will be in an
-  # inconsistent state and must recover manually
   def create_end_product_and_contentions!
     # If there are no contentions to create, don't create the end product either
     return nil if contention_descriptions_to_create.empty?
 
-    # TODO: consider using create_or_connect_end_product! instead to make this atomic
-    # however this has further implications here if there are already contentions on
-    # the end product being connected.
-    establish_end_product!
+    establish_end_product!(commit: false)
 
-    create_contentions_on_new_end_product!
+    if create_contentions_on_new_end_product!
+      end_product_establishment.commit!
+      update!(establishment_processed_at: Time.zone.now)
+    end
   end
 
   def election_receipt_date
@@ -66,19 +70,30 @@ class RampRefiling < RampReview
       # Currently not making any assumptions about the order in which VBMS returns
       # the created contentions. Instead find the issue by matching text.
       create_contentions_in_vbms.each do |contention|
-        matching_issue = issues.find { |issue| issue.description == contention.text }
-        matching_issue && matching_issue.update!(contention_reference_id: contention.id)
+        matching_issue = issues.find do |issue|
+          issue.description == contention.text && issue.contention_reference_id.nil?
+        end
+        matching_issue&.update!(contention_reference_id: contention.id)
       end
 
       fail ContentionCreationFailed if issues.any? { |issue| !issue.contention_reference_id }
     end
+
+    true
+
+    # If an error occurs with creating the contentions in VBMS, swallow the error and don't save
+    # the ramp refiling as being processed, we'll retry later.
+  rescue StandardError => e
+    Raven.capture_exception(e)
+    false
   end
 
   def create_contentions_in_vbms
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
       claim_id: end_product_establishment.reference_id,
-      contention_descriptions: contention_descriptions_to_create
+      contention_descriptions: contention_descriptions_to_create,
+      user: intake_processed_by
     )
   end
 

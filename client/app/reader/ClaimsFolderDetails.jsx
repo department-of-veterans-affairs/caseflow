@@ -65,7 +65,10 @@ class ClaimsFolderDetails extends React.PureComponent {
             </div>
             <div id="claims-folder-issues" {...issueStyling}>
               <b>Issues</b><br />
-              <IssueList appeal={appeal} issuesOnly />
+              <IssueList appeal={{
+                ...appeal,
+                isLegacyAppeal: appeal.docket_name === 'legacy'
+              }} issuesOnly />
             </div>
           </div>}
         </AccordionSection>

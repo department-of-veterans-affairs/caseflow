@@ -1,13 +1,57 @@
 # Caseflow
 [![CircleCI](https://circleci.com/gh/department-of-veterans-affairs/caseflow.svg?style=svg)](https://circleci.com/gh/department-of-veterans-affairs/caseflow)
 
-Clerical errors have the potential to delay the resolution of a veteran's appeal by **months**. Caseflow Certification uses automated error checking, and user-centered design to greatly reduce the number of clerical errors made when certifying appeals from offices around the nation to the Board of Veteran's Appeals in Washington DC.
+Caseflow is a suite of web-based tools to manage VA appeals. It's currently in development by the Appeals Modernization team (est. 2016). It will replace the current system of record for appeals, the Veterans Appeals Control and Location System (VACOLS), which was created in 1979 on now-outdated infrastructure. Additionally, Caseflow will allow the Board of Veterans' Appeals to process appeals under the new guidelines created by the Veterans Appeals Improvement and Modernization Act of 2017, which goes into effect February 14th, 2019.
 
-[You can read more about the project here](https://medium.com/the-u-s-digital-service/new-tool-launches-to-improve-the-benefits-claim-appeals-process-at-the-va-59c2557a4a1c#.t1qhhz7h8).
+The Appeals Modernization team's mission is to empower employees with technology to increase timely, accurate appeals decisions and improve the Veteran experience. Most of the team's products live here, in the main Caseflow repository.
 
-![Screenshot of Caseflow Certification (Fake data, No PII here)](certification-screenshot.png "Caseflow Certification")
+## Caseflow products in heavy development
 
-## Setup
+### Intake
+
+Tracking Appeals Modernization Act reviews in a single system.
+
+### Queue
+
+Workflow management at the Board of Veterans' Appeals.
+
+### Reader
+
+Increases the speed with which attorneys and Veterans Law Judges (VLJs)
+review and annotate electronic case files.
+
+### Hearing Schedule
+
+Scheduling and supporting Board of Veterans' Appeals hearings.
+
+## Caseflow products in a mature state
+
+### Dispatch
+
+Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ) to
+the Board of Veterans' Appeals (the Board).
+
+### Hearing Prep
+
+Improving the timeliness and Veteran experience of Board hearings.
+
+### API
+
+Providing Veterans transparent information about the status of their appeal
+
+### Certification
+
+Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ) to the Board of Veterans' Appeals (the Board).
+
+## Other Caseflow Products
+| Product | GitHub Repository | CI |
+| --- | --- | ---|
+| Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [CircleCI - Caseflow](https://circleci.com/gh/department-of-veterans-affairs/caseflow) |
+| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
+| Caseflow Feedback | [caseflow-feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) | [Travis CI - Caseflow Feedback](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback) |
+| Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
+
+## Developer Setup
 
 ### Install the Xcode commandline tools
 
@@ -52,14 +96,20 @@ Unfortunately, the link on the website points to a version for older macOS that 
 
 ### Install Docker
 
-Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Once it's installed, go into the Docker's advanced preferences and limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
+Install Docker on your machine via Homebrew:
 
-After installation is complete, run:
+```
+    brew cask install docker
+```
+
+Once Docker's installed, run the application and go into advanced preferences to limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
+
+Back in the terminal, run:
 ```
 docker login -u dsvaappeals
 ```
 
-The password is in the DSVA 1Password account. Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition).
+The password is in the DSVA 1Password account. Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
 
 ### Install the Oracle client libraries
 
@@ -67,19 +117,30 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 #### macOS
 
-1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit. You'll need to make an Oracle account.
-
-2) Copy both zip files into `~/Library/Caches/Homebrew` and leave them zipped.
-
-3) Install via Homebrew:
+1) Run the Homebrew install command for the "Instant Client Package - Basic" library:
 
 ```
     brew tap InstantClientTap/instantclient
-    brew install instantclient-basic instantclient-sdk
+    brew install instantclient-basic
 ```
 
+2) Homebrew will error and give you instructions to complete a successful installation:
+
+    - Follow the link to the download page
+    - Log in or create an Oracle account
+    - Accept the license agreement
+    - Download the linked zip file
+    - Move and rename the file
+    - rerun the `brew install instantclient-basic` command
+
+3) Do the same thing for the "Instant Client Package - SDK" library; run the install command:
+
+    `brew install instantclient-sdk`
+
+    ...and follow the corresponding steps in Homebrew's error message.
+
 #### Windows
-1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
+1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html) for Windows 32 or 64bit.
 
 2) Unzip both packages into `[DIR]`
 
@@ -89,7 +150,7 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 Note: This has only been tested on Debian based OS. However, it should also work
 for Fedora based OS.
 
- 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
+ 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
 
  1. Unzip both packages into `/opt/oracle/instantclient_11_2`
 
@@ -100,6 +161,11 @@ export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2 <-- Not sure if this is st
 cd /opt/oracle/instantclient_11_2
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 ```
+
+### Clone this repo
+Navigate to the directory you'd like to clone this repo into and run:
+
+    git clone https://github.com/department-of-veterans-affairs/caseflow.git
 
 ### Install Ruby dependencies
 
@@ -132,7 +198,10 @@ Add these to your `.bash_profile`:
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
+export NLS_LANG=AMERICAN_AMERICA.US7ASCII
 ```
+
+The last env var silences one of the Oracle warnings on startup.
 
 (Reload the file `source ~/.bash_profile`)
 
@@ -159,8 +228,20 @@ bundle exec rake local:build
 
 The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
 
+### Connecting to databases locally
+
+There are two databases you'll use: the postgres db aka Caseflow's db, and the Oracle db representing VACOLS (FACOLS).
+
+Rails provides a useful way to connect to the default database called `dbconsole`:
+
+```sh
+bundle exec rails dbconsole # password is `postgres`
+```
+
+To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
+
 ### Debugging FACOLS setup
-Sometimes the above setup fails, or the app cannot connect to the DB. Here are some frequently encountered scenarios.
+FACOLS (short for fake-VACOLS) is our name for the Oracle DB with mock VACOLS data that we run locally. Sometimes the above setup fails at FACOLS steps, or the app cannot connect to the FACOLS DB. Here are some frequently encountered scenarios.
 
 1) Running `rake local:vacols:setup` logs out:
 ```
@@ -177,6 +258,8 @@ If all else fails you can rebuild your local development environment by running 
 bundle exec rake local:destroy
 bundle exec rake local:build
 ```
+
+More detailed errors and resolutions are located in the [Oracle Debugging readme](docs/oracle-debugging.md).
 
 ### Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
@@ -231,15 +314,6 @@ When a VA employee logs in through the VA's unified login system (CSS) a session
 Within this session the user gets a set of roles. These roles determine what pages a user has access to.
 In dev mode, we don't log in with CSS and instead take on the [identity of a user in the database](#changing-between-test-users).
 
-## Dispatch (Dev Mode)
-To view the dispatch pages head to [http://localhost:3000/dispatch](http://localhost:3000/dispatch).
-
-To see the manager view, you need the following roles: [Establish Claim, Manage Claim Establishment].
-The database is seeded with a number of tasks, users, and appeals.
-
-To see the worker view, you need the following role: [Establish Claim].
-From this view you can start a new task and go through the flow of establishing a claim.
-
 ## Running Caseflow connected to external depedencies
 To test the app connected to external dependencies, you'll need to set up Oracle, decrypt the environment variables, install staging gems, and run the app.
 
@@ -291,6 +365,11 @@ what roles they have and therefore what pages they can access. To add new users 
 roles, you should seed them in the database via the seeds.rb file. The css_id of the user
 should be a comma separated list of roles you want that user to have.
 
+In order to impersonate other user, the user will need to have Global Admin role.
+(To grant a role refer to https://github.com/department-of-veterans-affairs/caseflow-commons#functions)
+On test/users page, switch to a user that has Global Admin role. `Log in as user` interface
+will show up where you will have to specify User ID and Station ID.
+
 To use intake features as the users, you'll need to toggle two features in a
 rails console `rails c`:
 
@@ -309,6 +388,25 @@ add more links and users as needed.
 To run the test suite:
 
     bundle exec rake
+
+### focus
+
+During development, it can be helpful to narrow the scope of tests being run. You can do this by
+adding [`focus: true`](https://relishapp.com/rspec/rspec-core/v/2-6/docs/filtering/inclusion-filters) to a `context` or `it` like so:
+
+```diff
+-context "test my new feature" do
++context "test my new feature", focus: true do
+```
+
+Make sure to remove the `focus: true` before marking your pr ready to merge! Otherwise CI may only run the tests you've focused.
+
+### Guard
+
+In addition, if you are iterating on a subset of tests, [`guard`](https://github.com/guard/guard-rspec) is a useful tool that will
+automatically rerun some command when a watched set of files change - you can do this by
+running `bundle exec guard`, then editing a file (see Guardfile for details). In conjunction with
+the `focus` flag, you can get a short development loop.
 
 ## Feature Toggle and Functions
 
@@ -362,15 +460,11 @@ When Caseflow Monitor starts working again, switch the banner back to automatic 
 Rails.cache.write(:degraded_service_banner, :auto)
 ```
 
-# Other Caseflow Products
-| Product | GitHub Repository | CI |
-| --- | --- | ---|
-| Caseflow | [caseflow](https://github.com/department-of-veterans-affairs/caseflow) | [CircleCI - Caseflow](https://circleci.com/gh/department-of-veterans-affairs/caseflow) |
-| eFolder Express | [caseflow-efolder](https://github.com/department-of-veterans-affairs/caseflow-efolder) | [Travis CI - eFolder](https://travis-ci.org/department-of-veterans-affairs/caseflow-efolder) |
-| Caseflow Feedback | [caseflow-feedback](https://github.com/department-of-veterans-affairs/caseflow-feedback) | [Travis CI - Caseflow Feedback](https://travis-ci.org/department-of-veterans-affairs/caseflow-feedback) |
-| Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
+## Documentation
+We have a lot of technical documentation spread over a lot of different repositories. Here is a non-exhaustive mapping of where to find documentation:
 
-# Support
-![BrowserStack logo](./browserstack-logo.png)
-
-Thanks to [BrowserStack](https://www.browserstack.com/) for providing free support to this open-source project.
+- [Local Caseflow Setup](https://github.com/department-of-veterans-affairs/caseflow/tree/master/docs)
+- [Test data setup in lower environments](https://github.com/department-of-veterans-affairs/appeals-qa/tree/master/docs)
+- [Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/appeals-deployment/tree/master/docs) This folder also contains our [first responder manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md), which is super in understanding our production systems.
+- [Non-Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/devops/tree/master/docs). This documentation is shared with the vets.gov team, so not all of it is relevant.
+- [Project documentation](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/master/Projects)

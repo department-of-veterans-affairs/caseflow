@@ -16,7 +16,9 @@ class PowerOfAttorney
   include AssociatedVacolsModel
 
   vacols_attr_accessor  :vacols_representative_type,
-                        :vacols_representative_name
+                        :vacols_representative_name,
+                        :vacols_representative_address,
+                        :vacols_representative_code
 
   attr_accessor :vacols_id,
                 :file_number
@@ -37,12 +39,15 @@ class PowerOfAttorney
       vacols_rep_type: vacols_code
     )
 
-    # If the POA should be stored in the REP table, update that too.
-    if repo.rep_name_found_in_rep_table?(vacols_code)
+    # Update VACOLS with an attorney or agent we found from BGS.
+    if representative_type == "Attorney" || representative_type == "Agent"
+      rep_type = (representative_type == "Attorney") ? :appellant_attorney : :appellant_agent
+
       repo.update_vacols_rep_table!(
         appeal: appeal,
-        representative_name: representative_name,
-        address: address
+        rep_name: representative_name,
+        address: address,
+        rep_type: rep_type
       )
     end
   end
@@ -54,11 +59,8 @@ class PowerOfAttorney
   end
 
   class << self
-    attr_writer :repository
-
     def repository
-      return PowerOfAttorneyRepository if FeatureToggle.enabled?(:test_facols)
-      @repository ||= PowerOfAttorneyRepository
+      PowerOfAttorneyRepository
     end
   end
 end

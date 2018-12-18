@@ -4,8 +4,9 @@ Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mo
 CaseflowCertification::Application.load_tasks
 
 class Test::UsersController < ApplicationController
-  before_action :require_demo, only: [:set_user, :set_end_products, :reseed]
+  before_action :require_demo, only: [:set_user, :set_end_products, :reseed, :toggle_feature]
   before_action :require_global_admin, only: :log_in_as_user
+  skip_before_action :deny_vso_access, only: [:index, :set_user]
 
   APPS = [
     {
@@ -70,6 +71,7 @@ class Test::UsersController < ApplicationController
   # :nocov:
   def index
     @test_users = User.all
+    @features_list = FeatureToggle.features
     @ep_types = %w[full partial none all]
     render "index"
   end
@@ -96,11 +98,23 @@ class Test::UsersController < ApplicationController
   def reseed
     # Adding this check a second time out of paranoia
     if Rails.deploy_env?(:demo)
-      Rake::Task["db:seed"].reenable
-      Rake::Task["db:seed"].invoke
-
       Rake::Task["local:vacols:seed"].reenable
       Rake::Task["local:vacols:seed"].invoke
+
+      # The db:seed task creates rows in FACOLS so it must run after the FACOLS seed job above since it clears out
+      # all database tables before it seeds those tables.
+      Rake::Task["db:seed"].reenable
+      Rake::Task["db:seed"].invoke
+    end
+  end
+
+  def toggle_feature
+    params[:enable]&.each do |f|
+      FeatureToggle.enable!(f[:value])
+    end
+
+    params[:disable]&.each do |f|
+      FeatureToggle.disable!(f[:value])
     end
   end
 

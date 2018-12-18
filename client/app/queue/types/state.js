@@ -1,16 +1,20 @@
 // @flow
+import * as React from 'react';
 import type {
   Task,
   Tasks,
-  LegacyAppeals,
+  Appeals,
+  BasicAppeals,
+  AppealDetails,
   User,
-  Attorneys
+  Attorneys,
+  Distribution
 } from './models';
 
 export type AttorneyAppealsLoadingState = {
   [string]: {
     state: string,
-    data: {tasks: Tasks, appeals: LegacyAppeals},
+    data: {tasks: Tasks, appeals: Appeals},
     error: {status: number, response: Object}
   }
 };
@@ -22,39 +26,58 @@ export type CaseDetailState = {|
   activeTask: ?Task
 |};
 
-export type UiStateError = {title: string, detail: string}
+export type UiStateModals = {|
+  deleteIssue?: boolean,
+  cancelCheckout?: boolean,
+  sendToAttorney?: boolean,
+  sendToTeam?: boolean
+|};
+
+export type UiStateMessage = { title: string, detail?: React.Node };
 
 export type UiState = {
+  activeOrganizationId: ?number,
   selectingJudge: boolean,
   highlightFormItems: boolean,
   messages: {
-    success: ?string,
-    error: ?UiStateError
+    success: ?UiStateMessage,
+    error: ?UiStateMessage
   },
   saveState: {
     savePending: boolean,
     saveSuccessful: ?boolean
   },
-  modal: {
-    cancelCheckout: boolean,
-    deleteIssue: boolean
-  },
+  modals: UiStateModals,
   featureToggles: Object,
   selectedAssignee: ?string,
   selectedAssigneeSecondary: ?string,
   loadedUserId: ?number,
   userRole: string,
-  userCssId: string
+  userCssId: string,
+  userIsVsoEmployee: boolean,
+  feedbackUrl: string,
+  veteranCaseListIsVisible: boolean,
+  organizations: Array<Object>,
+  canEditAod: boolean,
+  hearingDay: {
+    hearingDate: ?string,
+    hearingTime: ?string,
+    regionalOffice: ?string
+  }
 };
 
 export type UsersById = { [number]: ?User };
 
 export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
-export type QueueState = {
+export type NewDocsForAppeal = {[string]: {docs?: Array<Object>, error?: Object, loading: boolean}}
+
+export type QueueState = {|
   judges: UsersById,
   tasks: Tasks,
-  appeals: LegacyAppeals,
+  appeals: BasicAppeals,
+  appealDetails: AppealDetails,
+  amaTasks: Tasks,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
   stagedChanges: {
@@ -67,18 +90,33 @@ export type QueueState = {
   attorneysOfJudge: AttorneysOfJudge,
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
-  attorneys: Attorneys
-};
+  pendingDistribution: ?Distribution,
+  attorneys: Attorneys,
+  newDocsForAppeal: NewDocsForAppeal,
+  organizationId: ?number,
+  organizations: Array<Object>,
+  specialIssues: Object,
+  loadingAppealDetail: Object
+|};
+
+export type CommonComponentState = {|
+  regionalOffices: Array<Object>,
+  selectedRegionalOffice: { label: string, value: string },
+  selectedHearingDate: string,
+  selectedHearingTime: string,
+  selectedHearingDay: Object
+|};
 
 export type State = {
   caseDetail: CaseDetailState,
   caseList: Object,
   caseSelect: Object,
   queue: QueueState,
-  ui: UiState
+  ui: UiState,
+  components: CommonComponentState
 };
 
-type Action = { type: string, payload: Object };
+type Action = { type: string, payload?: Object };
 
 /* eslint-disable no-use-before-define */
 

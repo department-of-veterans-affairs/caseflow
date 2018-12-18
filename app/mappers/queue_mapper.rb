@@ -1,24 +1,31 @@
 module QueueMapper
   COLUMN_NAMES = {
+    case_id: :defolder,
     work_product: :deprod,
     note: :deatcom,
     document_id: :dedocid,
+    adding_user: :deadusr,
     modifying_user: :demdusr,
+    added_at_date: :deadtim,
     reassigned_to_judge_date: :dereceive,
     assigned_to_attorney_date: :deassign,
     deadline_date: :dedeadline,
     attorney_id: :deatty,
     group_name: :deteam,
+    board_member_id: :dememid,
+    complexity_rating: :deicr,
     complexity: :defdiff,
     quality: :deoq,
-    comment: :debmcom
+    comment: :debmcom,
+    completion_date: :decomp,
+    timeliness: :detrem
   }.freeze
 
   DEFICIENCIES = {
     issues_are_not_addressed: :deqr1,
     theory_contention: :deqr2,
     caselaw: :deqr3,
-    statue_regulation: :deqr4,
+    statute_regulation: :deqr4,
     admin_procedure: :deqr5,
     relevant_records: :deqr6,
     lay_evidence: :deqr7,
@@ -73,6 +80,7 @@ module QueueMapper
 
     update_attrs.merge(rename_deficiencies(decass_attrs[:deficiencies]))
       .merge(demdtim: VacolsHelper.local_date_with_utc_timezone)
+      .merge(rename_one_touch_initiative(decass_attrs[:one_touch_initiative]))
   end
 
   def self.rename_deficiencies(deficiencies)
@@ -80,6 +88,10 @@ module QueueMapper
       result[DEFICIENCIES[d.to_sym]] = "Y"
       result
     end
+  end
+
+  def self.rename_one_touch_initiative(one_touch_initiative)
+    { de1touch: one_touch_initiative ? "Y" : "N" }
   end
 
   def self.complexity_to_vacols_code(complexity)

@@ -11,6 +11,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   attr_reader :available_days, :ros
 
+  MAX_NUMBER_OF_DAYS_PER_DATE = 12
+  BVA_VIDEO_ROOMS = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].freeze
+
   def initialize(schedule_period)
     @amortized = 0
     @co_non_availability_days = []
@@ -22,6 +25,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @available_days = filter_non_availability_days(schedule_period.start_date, schedule_period.end_date)
 
     assign_and_filter_ro_days(schedule_period)
+    @date_allocated = {}
   end
 
   def extract_non_available_days
@@ -76,9 +80,17 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def allocate_hearing_days_to_ros
     @amortized = 0
 
-    @ros.each_key do |ro_key|
+    @ros = sort_ros_by_rooms_and_allocated_days
+    ros = @ros.each_key do |ro_key|
       allocate_all_ro_monthly_hearing_days(ro_key)
     end
+    ros
+  end
+
+  def sort_ros_by_rooms_and_allocated_days
+    @ros.sort_by do |_k, v|
+      [v[:num_of_rooms], v[:allocated_days]]
+    end.reverse.to_h
   end
 
   private
@@ -86,7 +98,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
   def allocate_all_ro_monthly_hearing_days(ro_key)
     grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
     @ros[ro_key][:allocated_dates] = self.class.shuffle_grouped_monthly_dates(grouped_monthly_avail_dates)
-
     assign_hearing_days(ro_key)
     add_allocated_days_and_format(ro_key)
   end
@@ -107,12 +118,34 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
   end
 
+  def allocated_days_for_ro(ro_key)
+    @ros[ro_key][:allocated_days].ceil
+  end
+
   def allocations_by_month(ro_key)
+    # raise error if there are not enough available days
+    verify_total_available_days(ro_key)
+
     self.class.validate_and_evenly_distribute_monthly_allocations(
       @ros[ro_key][:allocated_dates],
-      monthly_distributed_days(@ros[ro_key][:allocated_days].ceil),
+      monthly_distributed_days(allocated_days_for_ro(ro_key)),
       @ros[ro_key][:num_of_rooms]
     )
+  end
+
+  def get_max_hearing_days_assignments(ro_key)
+    @ros[ro_key][:available_days].count * @ros[ro_key][:num_of_rooms]
+  end
+
+  def verify_total_available_days(ro_key)
+    max_allocation = get_max_hearing_days_assignments(ro_key)
+
+    unless allocated_days_for_ro(ro_key).to_i <= max_allocation
+      fail HearingSchedule::Errors::NotEnoughAvailableDays.new(
+        "#{ro_key} can only hold #{max_allocation} hearing days.",
+        ro_key: ro_key, max_allocation: max_allocation
+      )
+    end
   end
 
   def add_allocated_days_and_format(ro_key)
@@ -152,12 +185,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
       if allocated_days > 0 &&
          grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]]
 
-        rooms_to_allocate = (num_of_rooms <= allocated_days) ? num_of_rooms : allocated_days
-
+        @date_allocated[monthly_date_keys[date_index]] ||= 0
+        rooms_to_allocate = get_num_of_rooms_to_allocate(monthly_date_keys[date_index],
+                                                         num_of_rooms, allocated_days,
+                                                         grouped_shuffled_monthly_dates[month])
         grouped_shuffled_monthly_dates[month][monthly_date_keys[date_index]] =
-          get_room_numbers(rooms_to_allocate)
-
+          get_room_numbers(monthly_date_keys[date_index], rooms_to_allocate)
         allocated_days -= rooms_to_allocate
+        remove_available_day_from_ros(monthly_date_keys[date_index])
       end
 
       monthly_allocations[month] = allocated_days
@@ -165,12 +200,44 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @ros[ro_key][:allocated_dates] = grouped_shuffled_monthly_dates
   end
 
+  def remove_available_day_from_ros(date)
+    if @date_allocated[date] >= MAX_NUMBER_OF_DAYS_PER_DATE
+      @ros.each do |k, v|
+        @ros[k][:available_days] -= [date] if !v[:assigned]
+      end
+    end
+  end
+
   def allocation_not_possible?(grouped_shuffled_monthly_dates, monthly_allocations, month)
     grouped_shuffled_monthly_dates[month].nil? || monthly_allocations[month] == 0
   end
 
-  def get_room_numbers(num_of_rooms)
-    Array.new(num_of_rooms) { |room_num| { room_num: room_num + 1 } }
+  def any_other_days_a_better_fit?(monthly_grouped_days, num_of_rooms)
+    monthly_grouped_days.any? do |_k, v|
+      (v.length + num_of_rooms) <= MAX_NUMBER_OF_DAYS_PER_DATE
+    end
+  end
+
+  def get_num_of_rooms_to_allocate(date, num_of_rooms, allocated_days, monthly_grouped_days)
+    num_left_to_max = MAX_NUMBER_OF_DAYS_PER_DATE - @date_allocated[date]
+
+    if num_of_rooms > num_left_to_max
+      if any_other_days_a_better_fit?(monthly_grouped_days, num_of_rooms)
+        return 0
+      end
+      return num_left_to_max
+    else
+      (num_of_rooms <= allocated_days) ? num_of_rooms : allocated_days
+    end
+  end
+
+  def get_room_numbers(date, num_of_rooms)
+    Array.new(num_of_rooms) do |_room_num|
+      @date_allocated[date] ||= 0
+      value = { room_num: BVA_VIDEO_ROOMS[@date_allocated[date]] }
+      @date_allocated[date] += 1
+      value
+    end
   end
 
   def distribute(percentage, total)

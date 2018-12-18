@@ -1,8 +1,8 @@
 class OrganizationsController < ApplicationController
   before_action :verify_organization_access
   before_action :verify_role_access
-  before_action :verify_feature_access
   before_action :set_application
+  skip_before_action :deny_vso_access
 
   def show
     render "queue/index"
@@ -11,17 +11,11 @@ class OrganizationsController < ApplicationController
   private
 
   def verify_organization_access
-    redirect_to "/unauthorized" unless organization.user_has_access?(current_user)
+    redirect_to "/unauthorized" unless organization&.user_has_access?(current_user)
   end
 
   def verify_role_access
-    verify_authorized_roles(organization.role)
-  end
-
-  def verify_feature_access
-    return unless organization.feature
-
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(organization.feature.to_sym, user: current_user)
+    verify_authorized_roles(organization.role) if organization.role
   end
 
   def set_application
@@ -33,6 +27,9 @@ class OrganizationsController < ApplicationController
   end
 
   def organization
-    Organization.find_by(url: organization_url)
+    # Allow the url to be the ID of the row in the table since this will be what is associated with
+    # tasks assigned to the organization in the tasks table.
+    Organization.find_by(url: organization_url) || Organization.find(organization_url)
   end
+  helper_method :organization
 end

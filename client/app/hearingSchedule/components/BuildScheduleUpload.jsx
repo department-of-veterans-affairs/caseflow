@@ -13,15 +13,38 @@ import InlineForm from '../../components/InlineForm';
 import { SPREADSHEET_TYPES, ERROR_MAPPINGS } from '../constants';
 
 const fileUploadStyling = css({
-  marginTop: '70px'
+  marginTop: '40px'
+});
+
+const inlineFormStyling = css({
+  '> div': {
+    ' & .cf-inline-form': {
+      lineHeight: '2em',
+      marginTop: '20px'
+    },
+    '& label': {
+      paddingLeft: 0
+    },
+    '& .cf-form-textinput': {
+      marginTop: 0
+    },
+    '& input': {
+      marginRight: 0
+    }
+  }
 });
 
 export default class BuildScheduleUpload extends React.Component {
 
   getErrorMessage = (errors) => {
-    return _.map(errors.replace('Validation failed: ', '').split(', '), (error, i) => {
-      return <div key={i}>{ERROR_MAPPINGS[error]}</div>;
-    });
+    return <div className="usa-input-error">We have found the following errors with your upload. Please
+      check the file and dates and try again.
+      <ul>
+        {_.map(errors.replace('Validation failed: ', '').split(', '), (error, i) => {
+          return ERROR_MAPPINGS[error] ? <li key={i}>{ERROR_MAPPINGS[error]}</li> : null;
+        })}
+      </ul>
+    </div>;
   };
 
   getRoCoDisplay = () => {
@@ -31,17 +54,18 @@ export default class BuildScheduleUpload extends React.Component {
         {this.props.uploadRoCoFormErrors &&
           <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadRoCoFormErrors)}</span>}
         <InlineForm>
-          <BasicDateRangeSelector
-            messageLabel
-            startDateName="startDate"
-            startDateValue={this.props.roCoStartDate}
-            startDateLabel={false}
-            endDateName="endDate"
-            endDateValue={this.props.roCoEndDate}
-            endDateLabel={false}
-            onStartDateChange={this.props.onRoCoStartDateChange}
-            onEndDateChange={this.props.onRoCoEndDateChange}
-          />
+          <div {...inlineFormStyling} >
+            <BasicDateRangeSelector
+              startDateName="startDate"
+              startDateValue={this.props.roCoStartDate}
+              startDateLabel= {COPY.HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL}
+              endDateName="endDate"
+              endDateValue={this.props.roCoEndDate}
+              endDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL}
+              onStartDateChange={this.props.onRoCoStartDateChange}
+              onEndDateChange={this.props.onRoCoEndDateChange}
+            />
+          </div>
           <div {...fileUploadStyling} >
             <FileUpload {...fileUploadStyling}
               preUploadText="Select a file for upload"
@@ -64,17 +88,18 @@ export default class BuildScheduleUpload extends React.Component {
         {this.props.uploadJudgeFormErrors &&
           <span className="usa-input-error-message">{this.getErrorMessage(this.props.uploadJudgeFormErrors)}</span>}
         <InlineForm>
-          <BasicDateRangeSelector
-            messageLabel
-            startDateName="startDate"
-            startDateValue={this.props.judgeStartDate}
-            startDateLabel={false}
-            endDateName="endDate"
-            endDateValue={this.props.judgeEndDate}
-            endDateLabel={false}
-            onStartDateChange={this.props.onJudgeStartDateChange}
-            onEndDateChange={this.props.onJudgeEndDateChange}
-          />
+          <div {...inlineFormStyling}>
+            <BasicDateRangeSelector
+              startDateName="startDate"
+              startDateValue={this.props.judgeStartDate}
+              startDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_START_DATE_LABEL}
+              endDateName="endDate"
+              endDateValue={this.props.judgeEndDate}
+              endDateLabel={COPY.HEARING_SCHEDULE_UPLOAD_END_DATE_LABEL}
+              onStartDateChange={this.props.onJudgeStartDateChange}
+              onEndDateChange={this.props.onJudgeEndDateChange}
+            />
+          </div>
           <div {...fileUploadStyling} >
             <FileUpload
               preUploadText="Select a file for upload"

@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { doFileNumberSearch, setFileNumberSearch } from '../actions/common';
-import { REQUEST_STATE, PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
+import { doFileNumberSearch, setFileNumberSearch } from '../actions/intake';
+import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 
@@ -37,6 +37,32 @@ const rampIneligibleInstructions = <div>
   <BareList items={stepFns} />
 </div>;
 
+const missingFieldsMessage = (fields) => <p>
+  Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database,
+  then retry establishing the EP in Caseflow: {fields}.
+</p>;
+
+const addressTips = [
+  () => <Fragment>Do: move the last word(s) of the street address down to an another street address field</Fragment>,
+  () => <Fragment>Do: abbreviate to St. Ave. Rd. Blvd. Dr. Ter. Pl. Ct.</Fragment>,
+  () => <Fragment>Don't: edit street names or numbers</Fragment>
+];
+
+const addressTooLongMessage = <Fragment>
+  <p>
+    This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than
+    20 characters (including spaces) then try again.
+  </p>
+  <p>Tips:</p>
+  <BareList items={addressTips} ListElementComponent="ul" />
+</Fragment>;
+
+const invalidVeteranInstructions = (searchErrorData) => <Fragment>
+  { (_.get(searchErrorData.veteranMissingFields, 'length', 0) > 0) &&
+    missingFieldsMessage(searchErrorData.veteranMissingFields) }
+  { searchErrorData.veteranAddressTooLong && addressTooLongMessage }
+</Fragment>;
+
 class Search extends React.PureComponent {
   handleSearchSubmit = () => (
     this.props.doFileNumberSearch(this.props.formType, this.props.fileNumberSearchInput)
@@ -62,9 +88,8 @@ class Search extends React.PureComponent {
           ' Please alert your manager so they can assign the form to someone else.'
       },
       veteran_not_valid: {
-        title: 'The Veteran\'s profile is missing information required to create an EP.',
-        body: 'Please fill in the following field(s) in the Veteran\'s profile in VBMS or the corporate database,' +
-          ` then retry establishing the EP in Caseflow: ${searchErrorData.veteranMissingFields}.`
+        title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
+        body: invalidVeteranInstructions(searchErrorData)
       },
       did_not_receive_ramp_election: {
         title: 'A RAMP Opt-in Notice Letter was not sent to this Veteran.',
@@ -91,12 +116,12 @@ class Search extends React.PureComponent {
         title: 'No RAMP Opt-In Election',
         body: 'A RAMP Opt-In Election Form was not yet processed in Caseflow, so this Veteran' +
           ' is not eligible to request a RAMP re-filing. Notify the Veteran using the' +
-          ' “RAMP Ineligible Letter”.'
+          ' “RAMP Ineligible Letter.”'
       },
       ramp_election_is_active: {
         title: 'This Veteran has a pending RAMP EP in VBMS',
-        body: 'If this Veteran has not yet received a RAMP decision on their RAMP Opt-In' +
-          ' Election Form, notify them using the “RAMP Ineligible Letter” (premature election).'
+        body: 'If this Veteran has not yet received a decision for their RAMP Opt-In Election,' +
+          ' notify them using the “RAMP Ineligible Letter” (premature election).'
       },
       ramp_election_no_issues: {
         title: 'This Veteran has a pending RAMP EP with no contentions',
@@ -110,7 +135,7 @@ class Search extends React.PureComponent {
       },
       ramp_refiling_already_processed: {
         title: 'Selection Form already processed in Caseflow',
-        body: 'Caseflow does not currently support more than one Selection Form for a Veteran.' +
+        body: 'Caseflow does not currently support more than one Selection Form for a Veteran. ' +
          'Please contact Caseflow Support if you need additional assistance.'
       },
       default: {
@@ -121,7 +146,7 @@ class Search extends React.PureComponent {
 
     const error = searchErrors[searchErrorCode] || searchErrors.default;
 
-    return <Alert title={error.title} type="error" lowerMargin>
+    return <Alert title={error.title} type="error">
       { error.body }
     </Alert>;
   }
@@ -133,8 +158,6 @@ class Search extends React.PureComponent {
       intakeStatus,
       formType
     } = this.props;
-
-    const selectedForm = _.find(FORM_TYPES, { key: formType });
 
     if (!formType) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
@@ -154,12 +177,10 @@ class Search extends React.PureComponent {
       { searchErrorCode && this.getSearchErrorAlert(searchErrorCode, searchErrorData) }
 
       <h1>Search for Veteran by ID</h1>
-      <p>
-        Enter the Veteran's ID below to process this {selectedForm.name}.
-      </p>
 
       <SearchBar
         size="small"
+        title="Enter the Veteran's ID or SSN"
         onSubmit={this.handleSearchSubmit}
         onChange={this.props.setFileNumberSearch}
         onClearSearch={this.clearSearch}

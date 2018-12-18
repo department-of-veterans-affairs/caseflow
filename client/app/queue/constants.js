@@ -2,12 +2,14 @@
 import { css } from 'glamor';
 import _ from 'lodash';
 import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
-import REMAND_REASONS_BY_ID from '../../constants/ACTIVE_REMAND_REASONS_BY_ID.json';
-import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
+import ISSUE_DISPOSITIONS_BY_ID from '../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
+import LEGACY_REMAND_REASONS_BY_ID from '../../constants/LEGACY_ACTIVE_REMAND_REASONS_BY_ID.json';
+import REMAND_REASONS_BY_ID from '../../constants/AMA_REMAND_REASONS_BY_ID.json';
 import StringUtil from '../util/StringUtil';
 import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import VACOLS_COLUMN_MAX_LENGTHS from '../../constants/VACOLS_COLUMN_MAX_LENGTHS.json';
+import LEGACY_APPEAL_TYPES_BY_ID from '../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -22,6 +24,8 @@ export const ACTIONS = {
   RECEIVE_JUDGE_DETAILS: 'RECEIVE_JUDGE_DETAILS',
   RECEIVE_NEW_FILES: 'RECEIVE_NEW_FILES',
   ERROR_ON_RECEIVE_NEW_FILES: 'ERROR_ON_RECEIVE_NEW_FILES',
+  ERROR_ON_RECEIVE_DOCUMENT_COUNT: 'ERROR_ON_RECEIVE_DOCUMENT_COUNT',
+  STARTED_LOADING_DOCUMENTS: 'STARTED_LOADING_DOCUMENTS',
   SET_LOADED_QUEUE_ID: 'SET_LOADED_QUEUE_ID',
   SET_APPEAL_DOC_COUNT: 'SET_APPEAL_DOC_COUNT',
   SET_REVIEW_ACTION_TYPE: 'SET_REVIEW_ACTION_TYPE',
@@ -44,10 +48,19 @@ export const ACTIONS = {
   SET_SELECTION_OF_TASK_OF_USER: 'SET_SELECTION_OF_TASK_OF_USER',
   SET_SELECTED_ASSIGNEE_OF_USER: 'SET_SELECTED_ASSIGNEE_OF_USER',
   START_ASSIGN_TASKS_TO_USER: 'START_ASSIGN_TASKS_TO_USER',
-  TASK_INITIAL_ASSIGNED: 'TASK_INITIAL_ASSIGNED',
-  TASK_REASSIGNED: 'TASK_REASSIGNED',
+  SET_PENDING_DISTRIBUTION: 'SET_PENDING_DISTRIBUTION',
   RECEIVE_ALL_ATTORNEYS: 'RECEIVE_ALL_ATTORNEYS',
-  ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS'
+  ERROR_LOADING_ATTORNEYS: 'ERROR_LOADING_ATTORNEYS',
+  RECEIVE_TASKS: 'RECEIVE_TASKS',
+  RECEIVE_APPEAL_DETAILS: 'RECEIVE_APPEAL_DETAILS',
+  SET_TASK_ATTRS: 'SET_TASK_ATTRS',
+  SET_SPECIAL_ISSUE: 'SET_SPECIAL_ISSUE',
+  SET_APPEAL_AOD: 'SET_APPEAL_AOD',
+  STARTED_LOADING_APPEAL_VALUE: 'STARTED_LOADING_APPEAL_VALUE',
+  RECEIVE_APPEAL_VALUE: 'RECEIVE_APPEAL_VALUE',
+  ERROR_ON_RECEIVE_APPEAL_VALUE: 'ERROR_ON_RECEIVE_APPEAL_VALUE',
+  SET_APPEAL_ATTRS: 'SET_APPEAL_ATTRS',
+  RECEIVE_AMA_TASKS: 'RECEIVE_AMA_TASKS'
 };
 
 // 'red' isn't contrasty enough w/white; it raises Sniffybara::PageNotAccessibleError when testing
@@ -79,25 +92,6 @@ export const TASK_ACTIONS = {
   QUEUE_TO_READER: 'queue-to-reader'
 };
 
-export const JUDGE_DECISION_OPTIONS = {
-  DRAFT_DECISION: {
-    label: COPY.JUDGE_CHECKOUT_DISPATCH_LABEL,
-    value: DECISION_TYPES.DISPATCH
-  },
-  OMO_REQUEST: {
-    label: COPY.JUDGE_CHECKOUT_OMO_LABEL,
-    value: DECISION_TYPES.OMO_REQUEST
-  }
-};
-
-export const DRAFT_DECISION_OPTIONS = [{
-  label: COPY.ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
-  value: DECISION_TYPES.DRAFT_DECISION
-}, {
-  label: COPY.ATTORNEY_CHECKOUT_OMO_LABEL,
-  value: DECISION_TYPES.OMO_REQUEST
-}];
-
 export const OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES = [{
   displayText: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA,
   value: COPY.ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA
@@ -113,34 +107,40 @@ export const SEARCH_ERROR_FOR = {
   UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR'
 };
 
-export const REMAND_REASONS = Object.assign({},
-  ...Object.keys(REMAND_REASONS_BY_ID).map((reasonType) => ({
-    [reasonType]: _.map(REMAND_REASONS_BY_ID[reasonType], (label, reasonId) => ({
-      id: reasonId,
+const formatRemandReasons = (reasons) => Object.assign({},
+  ...Object.keys(reasons).map((reasonType) => ({
+    [reasonType]: _.map(reasons[reasonType], (label, id) => ({
+      id,
       label
     }))
   }))
 );
 
+export const LEGACY_REMAND_REASONS = formatRemandReasons(LEGACY_REMAND_REASONS_BY_ID);
+export const REMAND_REASONS = formatRemandReasons(REMAND_REASONS_BY_ID);
+
 const parameterizedDispositions = Object.values(VACOLS_DISPOSITIONS_BY_ID).
   map(StringUtil.parameterize);
 
-export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
+export const VACOLS_DISPOSITIONS = _.fromPairs(_.zip(
   _.invokeMap(parameterizedDispositions, 'toUpperCase'),
   Object.keys(VACOLS_DISPOSITIONS_BY_ID)
 ));
 
-// max length of VACOLS issue description field `ISSUES.ISSDESC`
-export const ISSUE_DESCRIPTION_MAX_LENGTH = 100;
-// max length for Attorney comments `DECASS.DEATCOM`
-export const ATTORNEY_COMMENTS_MAX_LENGTH = 350;
-// max length for document id `DECASS.DEDOCID`
-export const DOCUMENT_ID_MAX_LENGTH = 30;
+export const ISSUE_DISPOSITIONS = _.fromPairs(_.zip(
+  _.invokeMap(_.keys(ISSUE_DISPOSITIONS_BY_ID), 'toUpperCase'),
+  _.keys(ISSUE_DISPOSITIONS_BY_ID)
+));
 
-export const USER_ROLES = {
-  ATTORNEY: USER_ROLE_TYPES.attorney,
-  JUDGE: USER_ROLE_TYPES.judge
-};
+export const LEGACY_APPEAL_TYPES = _.fromPairs(_.zip(
+  _.invokeMap(_.keys(LEGACY_APPEAL_TYPES_BY_ID), 'toUpperCase'),
+  _.values(LEGACY_APPEAL_TYPES_BY_ID)
+));
+
+export const ISSUE_DESCRIPTION_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.ISSUES.ISSDESC;
+export const ATTORNEY_COMMENTS_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEATCOM;
+export const DOCUMENT_ID_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEDOCID;
+export const JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEBMCOM;
 
 export const PAGE_TITLES = {
   DISPOSITIONS: {
@@ -153,3 +153,5 @@ export const PAGE_TITLES = {
   },
   EVALUATE: 'Evaluate Decision'
 };
+
+export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, 'Custom'];

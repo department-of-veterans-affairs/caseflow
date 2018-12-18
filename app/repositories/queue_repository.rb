@@ -24,12 +24,10 @@ class QueueRepository
     end
 
     # rubocop:disable Metrics/MethodLength
-    def appeals_from_tasks(tasks)
-      vacols_ids = tasks.map(&:vacols_id)
-
+    def appeals_by_vacols_ids(vacols_ids)
       appeals = MetricsService.record("VACOLS: fetch appeals and associated info for tasks",
                                       service: :vacols,
-                                      name: "appeals_from_tasks") do
+                                      name: "appeals_by_vacols_ids") do
 
         # Run queries to fetch different types of data so the # of queries doesn't increase with
         # the # of appeals. Combine that data manually.
@@ -76,25 +74,31 @@ class QueueRepository
     end
 
     def sign_decision_or_create_omo!(vacols_id:, created_in_vacols_date:, location:, decass_attrs:)
-      transaction do
-        decass_record = find_decass_record(vacols_id, created_in_vacols_date)
-        case location
-        when :bva_dispatch
-          unless decass_record.draft_decision?
-            msg = "The work product is not decision"
-            fail Caseflow::Error::QueueRepositoryError, msg
-          end
-          update_decass_record(decass_record, decass_attrs)
-        when :omo_office
-          fail Caseflow::Error::QueueRepositoryError, "The work product is not OMO" unless decass_record.omo_request?
-        end
-        decass_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[location])
+      decass_record = find_decass_record(vacols_id, created_in_vacols_date)
+      if ![:bva_dispatch, :quality_review, :omo_office].include? location
+        fail Caseflow::Error::QueueRepositoryError, "Invalid location"
       end
+
+      if decass_record.dereceive && decass_record.dedeadline
+        timeliness = (decass_record.dereceive > decass_record.dedeadline) ? "N" : "Y"
+      end
+
+      update_decass_record(decass_record, decass_attrs.merge(timeliness: timeliness))
+      # When the DAS final review is done by the VLJ and the case is charged to 4E the VLJ,
+      # Attorney and Team get updated in the BRIEFF table
+      decass_record.reload.case.update(
+        bfmemid: decass_record.dememid,
+        bfattid: decass_record.deatty,
+        bfboard: decass_record.deteam
+      )
+      assign_case_for_quality_review(decass_record.case) if location == :quality_review
+
+      decass_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[location])
     end
 
     def tasks_query(css_id)
       records = VACOLS::CaseAssignment.tasks_for_user(css_id)
-      filter_duplicate_tasks(records)
+      filter_duplicate_tasks(records, css_id)
     end
 
     def tasks_for_appeal_query(appeal_id)
@@ -103,7 +107,7 @@ class QueueRepository
     end
 
     def appeal_info_query(vacols_ids)
-      VACOLS::Case.includes(:folder, :correspondent, :representative)
+      VACOLS::Case.includes(:folder, :correspondent, :representatives)
         .find(vacols_ids)
     end
 
@@ -114,19 +118,36 @@ class QueueRepository
 
     def assign_case_to_attorney!(judge:, attorney:, vacols_id:)
       transaction do
+        fail Caseflow::Error::QueueRepositoryError, "Case already assigned" unless
+          VACOLS::Case.find(vacols_id).bfcurloc == judge.vacols_uniq_id
+
         update_location_to_attorney(vacols_id, attorney)
 
-        VACOLS::Decass.create!(
-          defolder: vacols_id,
-          deatty: attorney.vacols_attorney_id,
-          deteam: attorney.vacols_group_id[0..2],
-          deadusr: judge.vacols_uniq_id,
-          deadtim: VacolsHelper.local_date_with_utc_timezone,
-          dedeadline: VacolsHelper.local_date_with_utc_timezone + 30.days,
-          deassign: VacolsHelper.local_date_with_utc_timezone,
-          deicr: decass_complexity_rating(vacols_id)
-        )
+        attrs = {
+          case_id: vacols_id,
+          attorney_id: attorney.vacols_attorney_id,
+          group_name: attorney.vacols_group_id[0..2],
+          assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+          deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
+          complexity_rating: decass_complexity_rating(vacols_id)
+        }
+
+        incomplete_record = incomplete_decass_record(vacols_id)
+        if incomplete_record.present?
+          return update_decass_record(incomplete_record,
+                                      attrs.merge(modifying_user: judge.vacols_uniq_id, work_product: nil))
+        end
+
+        create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
       end
+    end
+
+    def incomplete_decass_record(vacols_id)
+      VACOLS::Decass
+        .where(defolder: vacols_id)
+        .where.not(deprod: %w[REA REU DEV VHA IME AFI OTV OTI]).or(
+          VACOLS::Decass.where(defolder: vacols_id).where("DEOQ IS NULL")
+        ).first
     end
 
     def reassign_case_to_attorney!(judge:, attorney:, vacols_id:, created_in_vacols_date:)
@@ -143,14 +164,33 @@ class QueueRepository
       end
     end
 
-    def filter_duplicate_tasks(records)
-      # Keep the latest assignment if there are duplicate records
+    def filter_duplicate_tasks(records, css_id = nil)
+      # Keep the latest updated assignment if there are duplicate records
       records.group_by(&:vacols_id).each_with_object([]) do |(_k, v), result|
-        result << v.sort_by(&:created_at).last
+        next result << v.first if v.size == 1
+
+        user = User.find_by(css_id: css_id, station_id: User::BOARD_STATION_ID) if css_id
+        # If user is an attorney, find all associated with the user's attorney_id
+        if user && attorney_id_match_found?(v, user)
+          v.select! { |task| task.attorney_id == user.vacols_attorney_id }
+        end
+        # If DAS record doesn't have updated_at date, put it at the beginning of the list
+        result << (v.reject(&:updated_at) + v.select(&:updated_at).sort_by(&:updated_at)).last
       end
     end
 
+    def update_location_to_judge(vacols_id, judge)
+      vacols_case = VACOLS::Case.find(vacols_id)
+      fail VACOLS::Case::InvalidLocationError, "Invalid location \"#{judge.vacols_uniq_id}\"" unless
+        judge.vacols_uniq_id
+      vacols_case.update_vacols_location!(judge.vacols_uniq_id)
+    end
+
     private
+
+    def attorney_id_match_found?(records, user)
+      user.attorney_in_vacols? && records.map(&:attorney_id).include?(user.vacols_attorney_id)
+    end
 
     def find_decass_record(vacols_id, created_in_vacols_date)
       decass_record = VACOLS::Decass.find_by(defolder: vacols_id, deadtim: created_in_vacols_date)
@@ -165,6 +205,13 @@ class QueueRepository
       decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
       VACOLS::Decass.where(defolder: decass_record.defolder, deadtim: decass_record.deadtim)
         .update_all(decass_attrs)
+      decass_record.reload
+    end
+
+    def create_decass_record(decass_attrs)
+      decass_attrs = decass_attrs.merge(added_at_date: VacolsHelper.local_date_with_utc_timezone)
+      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+      VACOLS::Decass.create!(decass_attrs)
     end
 
     def update_location_to_attorney(vacols_id, attorney)
@@ -173,6 +220,16 @@ class QueueRepository
         attorney.vacols_uniq_id
       vacols_case.update_vacols_location!(attorney.vacols_uniq_id)
       vacols_case.update(bfattid: attorney.vacols_attorney_id)
+    end
+
+    def assign_case_for_quality_review(vacols_case)
+      VACOLS::DecisionQualityReview.create(
+        qryymm: Time.zone.now.strftime("%y") + Time.zone.now.strftime("%m"),
+        qrsmem: vacols_case.bfmemid,
+        qrfolder: vacols_case.bfkey,
+        qrseldate: VacolsHelper.local_date_with_utc_timezone,
+        qrteam: vacols_case.bfboard[0..1]
+      )
     end
 
     def decass_complexity_rating(vacols_id)

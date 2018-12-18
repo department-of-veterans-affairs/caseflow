@@ -15,7 +15,26 @@ class VACOLS::CaseAssignment < VACOLS::Record
   end
 
   def assigned_by
-    OpenStruct.new(first_name: assigned_by_first_name, last_name: assigned_by_last_name)
+    assigned_by_user_id = if assigned_by_css_id
+                            User.find_or_create_by(
+                              css_id: assigned_by_css_id,
+                              station_id: User::BOARD_STATION_ID
+                            ).id
+                          end
+
+    OpenStruct.new(
+      first_name: assigned_by_first_name,
+      last_name: assigned_by_last_name,
+      pg_id: assigned_by_user_id
+    )
+  end
+
+  def assigned_by_name
+    [assigned_by_first_name, assigned_by_last_name].join(" ")
+  end
+
+  def written_by_name
+    [written_by_first_name, written_by_last_name].join(" ")
   end
 
   class << self
@@ -38,6 +57,8 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "decass.decomp as date_completed",
              "decass.dedeadline as date_due",
              "decass.deadtim as created_at",
+             "decass.demdtim as updated_at",
+             "decass.deatty as attorney_id",
              "brieff.bfddec as signed_date",
              "brieff.bfcorlid as vbms_id",
              "brieff.bfd19 as docket_date",
@@ -71,6 +92,11 @@ class VACOLS::CaseAssignment < VACOLS::Record
       select_tasks.where("brieff.bfkey = #{id}")
     end
 
+    def latest_task_for_appeal(appeal_id)
+      tasks_for_appeal(appeal_id).sort_by(&:created_at).last
+    end
+
+    # rubocop:disable Metrics/MethodLength
     def select_tasks
       select("brieff.bfkey as vacols_id",
              "brieff.bfcorlid as vbms_id",
@@ -81,16 +107,21 @@ class VACOLS::CaseAssignment < VACOLS::Record
              "decass.decomp as date_completed",
              "decass.dedocid as document_id",
              "decass.deprod as work_product",
+             "decass.deatty as attorney_id",
              "s1.snamef as added_by_first_name",
              "s1.snamemi as added_by_middle_name",
              "s1.snamel as added_by_last_name",
              "s1.sdomainid as added_by_css_id",
              "decass.dedeadline as date_due",
              "decass.deadtim as created_at",
+             "decass.demdtim as updated_at",
              "folder.tinum as docket_number",
              "s3.snamef as assigned_by_first_name",
              "s3.snamel as assigned_by_last_name",
-             "s2.sdomainid as assigned_to_css_id")
+             "s3.sdomainid as assigned_by_css_id",
+             "s2.sdomainid as assigned_to_css_id",
+             "s4.snamef as written_by_first_name",
+             "s4.snamel as written_by_last_name")
         .joins(<<-SQL)
           LEFT JOIN decass
             ON brieff.bfkey = decass.defolder
@@ -102,8 +133,11 @@ class VACOLS::CaseAssignment < VACOLS::Record
             ON brieff.bfkey = folder.ticknum
           LEFT JOIN staff s3
             ON decass.demdusr = s3.slogid
+          LEFT JOIN staff s4
+            ON decass.deatty = s4.sattyid
         SQL
     end
+    # rubocop:enable Metrics/MethodLength
 
     def exists_for_appeals(vacols_ids)
       conn = connection

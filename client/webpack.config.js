@@ -40,6 +40,47 @@ const config = {
         test: /\.jsx?$/,
         loader: 'babel-loader',
         exclude: new RegExp('node_modules/(?!@department-of-veterans-affairs/caseflow-frontend-toolkit)')
+      },
+      {
+        test: /\.(ttf|eot|woff|woff2)$/,
+        loader: 'url-loader?limit=1024&name=fonts/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
+      },
+      {
+        test: /\.scss?$/,
+        use: [{
+          loader: 'style-loader'
+        },
+        {
+          loader: 'css-loader',
+          options: {
+            sourceMap: true
+          }
+        },
+        {
+          loader: 'sass-loader',
+          options: {
+            sourceMap: true
+          }
+        }]
+      },
+      {
+        test: /\.css?$/,
+        use: [{
+          loader: 'style-loader'
+        },
+        {
+          loader: 'css-loader',
+          options: {
+            sourceMap: true,
+            url: false
+          }
+        }]
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [
+          'url-loader?limit=1024&name=images/[name]-[hash].[ext]&outputPath=../../../public/&publicPath=/'
+        ]
       }
     ]
   }

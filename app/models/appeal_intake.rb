@@ -1,39 +1,63 @@
-class AppealIntake < Intake
+class AppealIntake < DecisionReviewIntake
+  attr_reader :request_params
+
   def find_or_build_initial_detail
     Appeal.new(veteran_file_number: veteran_file_number)
   end
 
   def ui_hash(ama_enabled)
-    super.merge(
-      receipt_date: detail.receipt_date,
-      claimant: detail.claimant_participant_id,
-      claimant_not_veteran: detail.claimant_not_veteran,
-      docket_type: detail.docket_type,
-      ratings: detail.cached_serialized_timely_ratings
-    )
-  end
-
-  def cancel_detail!
-    detail.remove_claimants!
-    super
+    super.merge(docket_type: detail.docket_type)
   end
 
   def review!(request_params)
-    detail.create_claimants!(claimant_data: request_params[:claimant] || veteran.participant_id)
-    detail.assign_attributes(request_params.permit(:receipt_date, :docket_type))
-    detail.save(context: :intake_review)
-  end
+    @request_params = request_params
 
-  def review_errors
-    detail.errors.messages
+    transaction do
+      detail.assign_attributes(review_params)
+      Claimant.create!(
+        participant_id: claimant_participant_id,
+        payee_code: nil,
+        review_request: detail
+      )
+      update_person!
+      detail.save(context: :intake_review)
+    end
+  rescue ActiveRecord::RecordInvalid => _err
+    # propagate the error from invalid column to the user-visible reason
+    if detail.errors.messages[:veteran_is_not_claimant].include?(ClaimantValidator::CLAIMANT_REQUIRED)
+      claimant_error = ClaimantValidator::BLANK
+    end
+
+    detail.validate
+    detail.errors[:claimant] << claimant_error if claimant_error
+    return false
   end
 
   def complete!(request_params)
-    return if complete? || pending?
-    start_completion!
+    super(request_params) do
+      detail.update!(established_at: Time.zone.now)
+      detail.create_tasks_on_intake_success!
+      detail.submit_for_processing!
+      if run_async?
+        DecisionReviewProcessJob.perform_later(detail)
+      else
+        DecisionReviewProcessJob.perform_now(detail)
+      end
+    end
+  end
 
-    detail.create_issues!(request_issues_data: request_params[:request_issues] || [])
-    detail.update!(established_at: Time.zone.now)
-    complete_with_status!(:success)
+  private
+
+  def claimant_participant_id
+    (request_params[:veteran_is_not_claimant] == true) ? request_params[:claimant] : veteran.participant_id
+  end
+
+  def review_params
+    request_params.permit(
+      :receipt_date,
+      :docket_type,
+      :veteran_is_not_claimant,
+      :legacy_opt_in_approved
+    )
   end
 end

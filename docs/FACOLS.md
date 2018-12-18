@@ -6,7 +6,7 @@ Running Caseflow connected to FACOLS is [well documented in the README](https://
 # Adding new cases to FACOLS
 We check FACOLS data directly into GitHub since the data has been scrubbed of any PII. The test data comes from the RDS instance named: `dsva-appeals-vacols-uat-datasource-2017-12-13-11-20`. This is a copy of UAT from December 2017 which means that it contains PII. We pull a subset of the data from this RDS instance, sanitize it, and dump it to CSV files that we check into `local/vacols`. The master list of cases in FACOLS is maintained in `local/vacols/cases.csv`. Here is an example excerpt from the file:
 
-|vacols_id|vbms_id|bgs_id|used_in_app|comments|
+|vacols_id|vbms_key|bgs_key|used_in_app|comments|
 |---|---|---|---|---|
 |3575931|static_documents||reader queue|Case assigned to attorney|
 |3619838|no_categories||reader queue|Case assigned to attorney|
@@ -15,11 +15,11 @@ We check FACOLS data directly into GitHub since the data has been scrubbed of an
 - `vacols_id`
    - This column represents the `bfkey` from the `brieff` table.
    - This is just a DB primary key and so is not considered PII.
-- `vbms_id`
+- `vbms_key`
    - Currently used to specify which documents we want to associate with this case. The choices are `static_documents`, `no_categories`, `random_documents`, `redacted_documents`.
    - In the future this field will be used to coordinate how this case associates with fake VBMS data.
-- `bgs_id`
-   - Currently not used, but this field will have an analogous purpose to `vbms_id`.
+- `bgs_key`
+   - Similar to `vbms_key`, but for setting up bgs, like `has_many_ratings`. See lib/fakes/bgs_service.rb
 - `used_in_app`
    - A list of which apps rely on this case.
    - If you no longer need a case, remove the app from this list.

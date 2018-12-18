@@ -1,6 +1,7 @@
 describe Issue do
   let(:vacols_id) { "12345678" }
   let(:disposition) { :allowed }
+  let(:disposition_date) { Time.zone.today }
   let(:readable_disposition) { "Allowed" }
   let(:codes) { %w[02 15 03 5252] }
   let(:close_date) { 4.days.ago }
@@ -9,6 +10,7 @@ describe Issue do
   let(:issue) do
     Generators::Issue.build(id: vacols_id,
                             disposition: disposition,
+                            disposition_date: disposition_date,
                             readable_disposition: readable_disposition,
                             codes: codes,
                             close_date: close_date,
@@ -341,6 +343,86 @@ describe Issue do
         expect(issue.allowed?).to be_falsey
         expect(subject).to be_falsey
       end
+    end
+  end
+
+  context "#closed?" do
+    subject { issue.closed? }
+    let(:disposition) { nil }
+    let(:vacols_case) { create(:case, :status_advance, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+    let(:vacols_case_issue) { create(:case_issue) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+    it { is_expected.to be_falsey }
+
+    context "disposition is present" do
+      let(:disposition) { :remanded }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context "case is REM, disposition is remanded" do
+      let(:disposition) { :remanded }
+      let(:vacols_case) { create(:case, :status_remand, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "case is neither REM nor ADV" do
+      let(:vacols_case) { create(:case, :status_complete, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  context "#eligible_for_opt_in?" do
+    let(:disposition) { nil }
+    let(:soc_date) { Time.zone.today }
+    let(:vacols_case) do
+      create(:case_with_soc, :status_advance, case_issues: [vacols_case_issue], bfkey: vacols_id, bfdsoc: soc_date)
+    end
+    let(:vacols_case_issue) do
+      create(
+        :case_issue,
+        isskey: vacols_id,
+        issdc: Issue.disposition_code_for_sym(disposition),
+        issdcls: disposition_date
+      )
+    end
+    let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:issue) { Issue.load_from_vacols(vacols_case_issue.attributes) }
+
+    subject { issue.eligible_for_opt_in? }
+
+    it { is_expected.to be_truthy }
+
+    context "disposition is present" do
+      let(:disposition) { :remanded }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "disposition is failure to respond" do
+      let(:disposition) { :remand_failure_to_respond }
+
+      context "parent appeal SOC is later than disposition_date" do
+        let(:disposition_date) { Time.zone.today - 1.day }
+
+        it { is_expected.to be_falsey }
+      end
+
+      context "parent appeal SOC is earlier than disposition_date" do
+        let(:soc_date) { Time.zone.today - 1.day }
+
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    context "case is REM, disposition is remanded" do
+      let(:disposition) { :remanded }
+      let(:vacols_case) { create(:case_with_soc, :status_remand, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+
+      it { is_expected.to be_truthy }
     end
   end
 end

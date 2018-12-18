@@ -64,3 +64,6 @@ export const DISPOSITION_OPTIONS = [{ value: 'held',
 export const SERVER_ERROR_CODES = {
   VACOLS_RECORD_DOES_NOT_EXIST: 1001
 };
+
+export const VIDEO_HEARING = 'Video';
+export const CENTRAL_OFFICE_HEARING = 'Central';

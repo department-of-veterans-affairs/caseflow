@@ -101,7 +101,7 @@ export class EstablishClaimEmail extends BaseForm {
                   <CopyToClipboard text={this.state.emailForm.emailField.value}>
                     <Button
                       name="copyNote"
-                      classNames={['usa-button-outline usa-button-hover']}>
+                      classNames={['usa-button-secondary usa-button-hover']}>
                       <i className="fa fa-files-o" aria-hidden="true"></i>
                    Copy note
                     </Button>
@@ -134,7 +134,7 @@ export class EstablishClaimEmail extends BaseForm {
               <Button
                 name="Cancel"
                 onClick={this.props.handleToggleCancelTaskModal}
-                classNames={['cf-btn-link', 'cf-adjacent-buttons']}
+                classNames={['cf-btn-link']}
               />
               <Button
                 app="dispatch"

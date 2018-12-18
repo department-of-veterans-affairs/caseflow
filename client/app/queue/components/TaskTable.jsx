@@ -8,116 +8,108 @@ import { bindActionCreators } from 'redux';
 
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
+import DocketTypeBadge from '../../components/DocketTypeBadge';
+import HearingBadge from './HearingBadge';
+import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
-import AppealDocumentCount from '../AppealDocumentCount';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
-import { CATEGORIES, redText } from '../constants';
+import {
+  CATEGORIES,
+  redText,
+  LEGACY_APPEAL_TYPES
+} from '../constants';
 import COPY from '../../../COPY.json';
+import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
-import type {
-  LegacyAppeals
-} from '../types/models';
+import type { TaskWithAppeal } from '../types/models';
 
 type Params = {|
+  includeHearingBadge?: boolean,
   includeSelect?: boolean,
   includeDetailsLink?: boolean,
+  includeTask?: boolean,
   includeDocumentId?: boolean,
   includeType?: boolean,
   includeDocketNumber?: boolean,
+  includeCompletedDate?: boolean,
+  includeCompletedToName?: boolean,
   includeIssueCount?: boolean,
   includeDueDate?: boolean,
   includeDaysWaiting?: boolean,
+  includeDaysOnHold?: boolean,
   includeReaderLink?: boolean,
   includeDocumentCount?: boolean,
   requireDasRecord?: boolean,
-  appeals: LegacyAppeals,
-  userId: ?string,
+  tasks: Array<TaskWithAppeal>,
+  userId?: string,
 |};
 
 type Props = Params & {|
   setSelectionOfTaskOfUser: Function,
-  isTaskAssignedToUserSelected?: Object
+  isTaskAssignedToUserSelected?: Object,
+  userIsVsoEmployee: boolean,
+  userRole: string
 |};
 
 class TaskTable extends React.PureComponent<Props> {
-  getKeyForRow = (rowNumber, object) => object.id
+  getKeyForRow = (rowNumber, object: TaskWithAppeal) => object.uniqueId
 
-  isTaskSelected = (taskId) => {
+  isTaskSelected = (uniqueId) => {
     if (!this.props.isTaskAssignedToUserSelected) {
       return false;
     }
 
     const isTaskSelected = this.props.isTaskAssignedToUserSelected[this.props.userId] || {};
 
-    return isTaskSelected[taskId] || false;
+    return isTaskSelected[uniqueId] || false;
   }
 
-  appealHasDASRecord = (appeal) => {
-    if (this.props.requireDasRecord) {
-      return appeal.tasks.some((task) => task.attributes.task_id);
+  taskHasDASRecord = (task: TaskWithAppeal) => {
+    if (task.appeal.isLegacyAppeal && this.props.requireDasRecord) {
+      return task.taskId;
     }
 
     return true;
   }
 
-  oldestTask = (appeal) => {
-    if (!appeal.tasks) {
-      return null;
-    }
+  collapseColumnIfNoDASRecord = (task) => this.taskHasDASRecord(task) ? 1 : 0
 
-    return appeal.tasks.reduce((oldestTask, task) => {
-      if (oldestTask === null) {
-        return task;
-      }
-      if (moment(task.attributes.assigned_on).isBefore(moment(oldestTask.attributes.assigned_on))) {
-        return task;
-      }
-
-      return oldestTask;
-
-    }, null);
+  caseHearingColumn = () => {
+    return this.props.includeHearingBadge ? {
+      header: '',
+      valueFunction: (task) => <HearingBadge hearing={task.appeal.hearings[0]} />
+    } : null;
   }
-
-  collapseColumnIfNoDASRecord = (appeal) => this.appealHasDASRecord(appeal) ? 1 : 0
 
   caseSelectColumn = () => {
     return this.props.includeSelect ? {
       header: COPY.CASE_LIST_TABLE_SELECT_COLUMN_TITLE,
-      valueFunction:
-        (appeal) => {
-          const task = this.oldestTask(appeal);
-
-          if (!task) {
-            return null;
-          }
-
-          return <Checkbox
-            name={task.id}
-            hideLabel
-            value={this.isTaskSelected(task.id)}
-            onChange={
-              (checked) =>
-                this.props.setSelectionOfTaskOfUser(
-                  { userId: this.props.userId,
-                    taskId: task.id,
-                    selected: checked })} />;
-        }
+      valueFunction: (task) => <Checkbox
+        name={task.uniqueId}
+        hideLabel
+        value={this.isTaskSelected(task.uniqueId)}
+        onChange={(selected) => this.props.setSelectionOfTaskOfUser({
+          userId: this.props.userId,
+          taskId: task.uniqueId,
+          selected
+        })} />
     } : null;
   }
 
   caseDetailsColumn = () => {
     return this.props.includeDetailsLink ? {
       header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
-      valueFunction: (appeal) => <CaseDetailsLink
-        task={this.oldestTask(appeal)}
-        appeal={appeal}
-        disabled={!this.appealHasDASRecord(appeal)} />,
-      getSortValue: (appeal) => {
-        const vetName = appeal.attributes.veteran_full_name.split(' ');
+      valueFunction: (task: TaskWithAppeal) => <CaseDetailsLink
+        task={task}
+        appeal={task.appeal}
+        userRole={this.props.userRole}
+        disabled={!this.taskHasDASRecord(task)} />,
+      getSortValue: (task) => {
+        const vetName = task.appeal.veteranFullName.split(' ');
         // only take last, first names. ignore middle names/initials
 
         return `${_.last(vetName)} ${vetName[0]}`;
@@ -125,24 +117,31 @@ class TaskTable extends React.PureComponent<Props> {
     } : null;
   }
 
+  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.label]
+
+  caseTaskColumn = () => {
+    return this.props.includeTask ? {
+      header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+      valueFunction: (task) => this.actionNameOfTask(task),
+      getSortValue: (task) => this.actionNameOfTask(task)
+    } : null;
+  }
+
   caseDocumentIdColumn = () => {
     return this.props.includeDocumentId ? {
       header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
-      valueFunction: (appeal) => {
-        const task = this.oldestTask(appeal);
+      valueFunction: (task) => {
+        const firstName = task.decisionPreparedBy ? task.decisionPreparedBy.firstName : task.assignedBy.firstName;
+        const lastName = task.decisionPreparedBy ? task.decisionPreparedBy.lastName : task.assignedBy.lastName;
 
-        if (!task) {
-          return null;
+        if (!firstName) {
+          return task.documentId;
         }
 
-        if (!task.attributes.assigned_by_first_name) {
-          return task.attributes.document_id;
-        }
-        const firstInitial = String.fromCodePoint(task.attributes.assigned_by_first_name.codePointAt(0));
-        const nameAbbrev = `${firstInitial}. ${task.attributes.assigned_by_last_name}`;
+        const nameAbbrev = `${firstName.substring(0, 1)}. ${lastName}`;
 
         return <React.Fragment>
-          {task.attributes.document_id}<br />from {nameAbbrev}
+          {task.documentId}<br />from {nameAbbrev}
         </React.Fragment>;
       }
     } : null;
@@ -151,18 +150,18 @@ class TaskTable extends React.PureComponent<Props> {
   caseTypeColumn = () => {
     return this.props.includeType ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-      valueFunction: (appeal) => this.appealHasDASRecord(appeal) ?
-        renderAppealType(appeal) :
+      valueFunction: (task) => this.taskHasDASRecord(task) ?
+        renderAppealType(task.appeal) :
         <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
-      span: (appeal) => this.appealHasDASRecord(appeal) ? 1 : 5,
-      getSortValue: (appeal) => {
+      span: (task) => this.taskHasDASRecord(task) ? 1 : 5,
+      getSortValue: (task) => {
         // We append a * before the docket number if it's a priority case since * comes before
         // numbers in sort order, this forces these cases to the top of the sort.
-        if (appeal.attributes.aod || appeal.attributes.type === 'Court Remand') {
-          return `*${appeal.docket_number}`;
+        if (task.appeal.isAdvancedOnDocket || task.appeal.caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND) {
+          return `*${task.appeal.docketNumber}`;
         }
 
-        return appeal.docket_number;
+        return task.appeal.docketNumber;
       }
     } : null;
   }
@@ -170,18 +169,33 @@ class TaskTable extends React.PureComponent<Props> {
   caseDocketNumberColumn = () => {
     return this.props.includeDocketNumber ? {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-      valueFunction: (appeal) => this.appealHasDASRecord(appeal) ? appeal.attributes.docket_number : null,
+      valueFunction: (task) => {
+        if (!this.taskHasDASRecord(task)) {
+          return null;
+        }
+
+        return <React.Fragment>
+          <DocketTypeBadge name={task.appeal.docketName} number={task.appeal.docketNumber} />
+          <span>{task.appeal.docketNumber}</span>
+        </React.Fragment>;
+      },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (appeal) => this.appealHasDASRecord(appeal) ? appeal.attributes.docket_number : null
+      getSortValue: (task) => {
+        if (!this.taskHasDASRecord(task)) {
+          return null;
+        }
+
+        return `${task.appeal.docketName} ${task.appeal.docketNumber}`;
+      }
     } : null;
   }
 
   caseIssueCountColumn = () => {
     return this.props.includeIssueCount ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
-      valueFunction: (appeal) => this.appealHasDASRecord(appeal) ? appeal.attributes.issues.length : null,
+      valueFunction: (task) => this.taskHasDASRecord(task) ? task.appeal.issueCount : null,
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (appeal) => this.appealHasDASRecord(appeal) ? appeal.attributes.issues.length : null
+      getSortValue: (task) => this.taskHasDASRecord(task) ? task.appeal.issueCount : null
     } : null;
   }
 
@@ -189,99 +203,91 @@ class TaskTable extends React.PureComponent<Props> {
     return this.props.includeDueDate ? {
       header: COPY.CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE,
       tooltip: <React.Fragment>Calendar days this case <br /> has been assigned to you</React.Fragment>,
-      valueFunction: (appeal) => {
-        if (!this.appealHasDASRecord(appeal)) {
+      valueFunction: (task) => {
+        if (!this.taskHasDASRecord(task)) {
           return null;
         }
 
-        const task = this.oldestTask(appeal);
-
-        if (!task) {
-          return null;
-        }
-
-        const daysWaiting = moment().
-          diff(moment(task.attributes.assigned_on), 'days');
+        const daysWaiting = moment().startOf('day').
+          diff(moment(task.assignedOn), 'days');
 
         return <React.Fragment>
-          {daysWaiting} {pluralize('day', daysWaiting)} - <DateString date={task.attributes.due_on} />
+          {daysWaiting} {pluralize('day', daysWaiting)} | <DateString date={task.dueOn} />
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (appeal) => {
-        const task = this.oldestTask(appeal);
-
-        if (!task) {
-          return 0;
-        }
-
-        return moment().diff(moment(task.attributes.assigned_on), 'days');
-      }
+      getSortValue: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days')
     } : null;
   }
 
   caseDaysWaitingColumn = () => {
     return this.props.includeDaysWaiting ? {
       header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-      valueFunction: (appeal) => {
-        const task = this.oldestTask(appeal);
-
-        if (!task) {
-          return null;
-        }
-
-        return moment().startOf('day').
-          diff(moment(task.attributes.assigned_on), 'days');
-      },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (appeal) => {
-        const task = this.oldestTask(appeal);
+      tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
+      valueFunction: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days'),
+      getSortValue: (task) => moment().startOf('day').
+        diff(moment(task.assignedOn), 'days')
+    } : null;
+  }
 
-        if (!task) {
-          return null;
-        }
+  caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
+    header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
+    valueFunction: (task: TaskWithAppeal) => <OnHoldLabel task={task} />,
+    getSortValue: (task: TaskWithAppeal) => numDaysOnHold(task)
+  } : null)
 
-        return moment().startOf('day').
-          diff(moment(task.attributes.assigned_on), 'days');
-      }
+  completedDateColumn = () => {
+    return this.props.includeCompletedDate ? {
+      header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
+      valueFunction: (task) => task.completedOn ? <DateString date={task.completedOn} /> : null,
+      getSortValue: (task) => task.completedOn ? <DateString date={task.completedOn} /> : null
+    } : null;
+  }
+
+  completedToNameColumn = () => {
+    return this.props.includeCompletedToName ? {
+      header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,
+      valueFunction: (task) => task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
+      getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
     } : null;
   }
 
   caseReaderLinkColumn = () => {
-    return this.props.includeReaderLink ? {
+    return !this.props.userIsVsoEmployee && this.props.includeReaderLink ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
       span: this.collapseColumnIfNoDASRecord,
-      valueFunction: (appeal) => {
-        if (!this.appealHasDASRecord(appeal)) {
+      valueFunction: (task) => {
+        if (!this.taskHasDASRecord(task)) {
           return null;
         }
 
-        return <ReaderLink appealId={appeal.attributes.vacols_id}
+        return <ReaderLink appealId={task.externalAppealId}
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
-          appeal={appeal} />;
+          appeal={task.appeal}
+          docCountBelowLink />;
       }
-    } : null;
-  }
-
-  caseDocumentCount = () => {
-    return this.props.includeDocumentCount ? {
-      header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
-      valueFunction: (appeal) => <AppealDocumentCount appeal={appeal} />
     } : null;
   }
 
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
     _.compact([
+      this.caseHearingColumn(),
       this.caseSelectColumn(),
       this.caseDetailsColumn(),
+      this.caseTaskColumn(),
       this.caseDocumentIdColumn(),
       this.caseTypeColumn(),
       this.caseDocketNumberColumn(),
       this.caseIssueCountColumn(),
-      this.caseDocumentCount(),
       this.caseDueDateColumn(),
       this.caseDaysWaitingColumn(),
+      this.caseDaysOnHoldColumn(),
+      this.completedDateColumn(),
+      this.completedToNameColumn(),
       this.caseReaderLinkColumn()
     ]);
 
@@ -297,19 +303,23 @@ class TaskTable extends React.PureComponent<Props> {
   }
 
   render = () => {
-    const { appeals } = this.props;
+    const { tasks } = this.props;
 
     return <Table
       columns={this.getQueueColumns}
-      rowObjects={appeals}
+      rowObjects={tasks}
       getKeyForRow={this.getKeyForRow}
       defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
-      rowClassNames={(appeal) =>
-        this.appealHasDASRecord(appeal) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
+      rowClassNames={(task) =>
+        this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
   }
 }
 
-const mapStateToProps = (state) => _.pick(state.queue, 'isTaskAssignedToUserSelected');
+const mapStateToProps = (state) => ({
+  isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
+  userIsVsoEmployee: state.ui.userIsVsoEmployee,
+  userRole: state.ui.userRole
+});
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

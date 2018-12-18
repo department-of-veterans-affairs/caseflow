@@ -5,10 +5,10 @@
 class Veteran < ApplicationRecord
   include AssociatedBgsRecord
 
-  bgs_attr_accessor :ptcpnt_id, :sex, :first_name, :last_name, :ssn,
-                    :address_line1, :address_line2, :address_line3, :city,
-                    :state, :country, :zip_code, :military_postal_type_code,
-                    :military_post_office_type_code, :service, :date_of_birth
+  bgs_attr_accessor :ptcpnt_id, :sex, :ssn, :address_line1, :address_line2,
+                    :address_line3, :city, :state, :country, :zip_code,
+                    :military_postal_type_code, :military_post_office_type_code,
+                    :service, :date_of_birth, :date_of_death
 
   CHARACTER_OF_SERVICE_CODES = {
     "HON" => "Honorable",
@@ -21,24 +21,39 @@ class Veteran < ApplicationRecord
     "DIS" => "Discharge"
   }.freeze
 
+  # Germany and Australia should be temporary additions until VBMS bug is fixed
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
-  validates :ssn, :sex, :first_name, :last_name, :city,
+  # C&P Live = '1', C&P Death = '2'
+  BENEFIT_TYPE_CODE_LIVE = "1".freeze
+  BENEFIT_TYPE_CODE_DEATH = "2".freeze
+
+  validates :ssn, :sex, :first_name, :last_name,
             :address_line1, :country, presence: true, on: :bgs
   validates :zip_code, presence: true, if: :country_requires_zip?, on: :bgs
-  validates :state, presence: true, if: :country_requires_state?, on: :bgs
+  validates :state, presence: true, if: :state_is_required?, on: :bgs
+  validates :city, presence: true, unless: :military_address?, on: :bgs
+  validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
 
   # TODO: get middle initial from BGS
   def name
     FullName.new(first_name, "", last_name)
   end
 
+  def full_address
+    "#{address_line1}#{address_line2 ? " #{address_line2}" : ''}, #{city} #{state} #{zip_code}"
+  end
+
   def country_requires_zip?
-    COUNTRIES_REQUIRING_ZIP.include?(country)
+    COUNTRIES_REQUIRING_ZIP.include?(country&.upcase)
+  end
+
+  def state_is_required?
+    !military_address? && country_requires_state?
   end
 
   def country_requires_state?
-    country == "USA"
+    country && country.casecmp("USA") == 0
   end
 
   # Convert to hash used in AppealRepository.establish_claim!
@@ -66,12 +81,16 @@ class Veteran < ApplicationRecord
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
-  def self.bgs
+  def benefit_type_code
+    @benefit_type_code ||= deceased? ? BENEFIT_TYPE_CODE_DEATH : BENEFIT_TYPE_CODE_LIVE
+  end
+
+  def bgs
     BGSService.new
   end
 
   def fetch_bgs_record
-    result = self.class.bgs.fetch_veteran_info(file_number)
+    result = bgs.fetch_veteran_info(file_number)
 
     # If the result is nil, the veteran wasn't found.
     # If the file number is nil, that's another way of saying the veteran wasn't found.
@@ -82,13 +101,13 @@ class Veteran < ApplicationRecord
     Raven.capture_exception(error)
 
     # Set the veteran as inaccessible if a sensitivity error is thrown
-    raise error unless error.message =~ /Sensitive File/
+    raise error unless error.message.match?(/Sensitive File/)
 
     @accessible = false
   end
 
   def accessible?
-    self.class.bgs.can_access?(file_number)
+    bgs.can_access?(file_number)
   end
 
   def relationships
@@ -97,11 +116,38 @@ class Veteran < ApplicationRecord
 
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
-    @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
+    @zip_code || (@address_line3 if (@address_line3 || "").match?(/(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/))
   end
+  alias zip zip_code
+  alias address_line_1 address_line1
+  alias address_line_2 address_line2
+  alias address_line_3 address_line3
+  alias gender sex
 
   def timely_ratings(from_date:)
     @timely_ratings ||= Rating.fetch_timely(participant_id: participant_id, from_date: from_date)
+  end
+
+  def ratings
+    @ratings ||= Rating.fetch_all(participant_id)
+  end
+
+  def decision_issues
+    DecisionIssue.where(participant_id: participant_id)
+  end
+
+  def accessible_appeals_for_poa(poa_participant_ids)
+    appeals = Appeal.where(veteran_file_number: file_number).includes(:claimants)
+
+    claimants_participant_ids = appeals.map { |appeal| appeal.claimants.pluck(:participant_id) }.flatten
+
+    poas = bgs.fetch_poas_by_participant_ids(claimants_participant_ids)
+
+    appeals.select do |appeal|
+      appeal.claimants.any? do |claimant|
+        poa_participant_ids.include?(poas[claimant[:participant_id]][:participant_id])
+      end
+    end
   end
 
   def participant_id
@@ -110,10 +156,41 @@ class Veteran < ApplicationRecord
 
   class << self
     def find_or_create_by_file_number(file_number)
-      find_by(file_number: file_number) || create_by_file_number(file_number)
+      find_and_maybe_backfill_name(file_number) || create_by_file_number(file_number)
+    end
+
+    def find_by_file_number_or_ssn(file_number_or_ssn)
+      if file_number_or_ssn.to_s.length == 9
+        find_by(file_number: file_number_or_ssn) || find_by_ssn(file_number_or_ssn)
+      else
+        find_by(file_number: file_number_or_ssn)
+      end
     end
 
     private
+
+    def find_by_ssn(ssn)
+      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      return unless file_number
+      find_by(file_number: file_number)
+    end
+
+    def find_and_maybe_backfill_name(file_number)
+      veteran = find_by(file_number: file_number)
+      return nil unless veteran
+      # Check to see if veteran is accessible to make sure bgs_record is
+      # a hash and not :not_found. Also if it's not found, bgs_record returns
+      # a symbol that will blow up, so check if bgs_record is a hash first.
+      if veteran.first_name.nil? && veteran.accessible? && veteran.bgs_record.is_a?(Hash)
+        veteran.update!(
+          first_name: veteran.bgs_record[:first_name],
+          last_name: veteran.bgs_record[:last_name],
+          middle_name: veteran.bgs_record[:middle_name],
+          name_suffix: veteran.bgs_record[:name_suffix]
+        )
+      end
+      veteran
+    end
 
     def create_by_file_number(file_number)
       veteran = Veteran.new(file_number: file_number)
@@ -121,7 +198,19 @@ class Veteran < ApplicationRecord
       return nil unless veteran.found?
 
       before_create_veteran_by_file_number # Used to simulate race conditions
-      veteran.tap { |v| v.update!(participant_id: v.ptcpnt_id) }
+      veteran.tap do |v|
+        v.update!(participant_id: v.ptcpnt_id)
+        # Check to see if veteran is accessible to make sure
+        # bgs_record is a hash and not :not_found
+        if v.accessible?
+          v.update!(
+            first_name: v.bgs_record[:first_name],
+            last_name: v.bgs_record[:last_name],
+            middle_name: v.bgs_record[:middle_name],
+            name_suffix: v.bgs_record[:name_suffix]
+          )
+        end
+      end
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
     end
@@ -131,14 +220,24 @@ class Veteran < ApplicationRecord
     end
   end
 
+  def deceased?
+    !date_of_death.nil?
+  end
+
   private
 
   def fetch_end_products
-    self.class.bgs.get_end_products(file_number).map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
+    bgs_end_products = bgs.get_end_products(file_number)
+
+    # Check that we are not getting this back from BGS:
+    # [{:number_of_records=>"0", :return_code=>"SHAR 9999", :return_message=>"Records found"}]
+    return [] if bgs_end_products.first && bgs_end_products.first[:number_of_records] == "0"
+
+    bgs_end_products.map { |ep_hash| EndProduct.from_bgs_hash(ep_hash) }
   end
 
   def fetch_relationships
-    relationships = self.class.bgs.find_all_relationships(
+    relationships = bgs.find_all_relationships(
       participant_id: participant_id
     )
     relationships_array = Array.wrap(relationships)
@@ -173,7 +272,7 @@ class Veteran < ApplicationRecord
   def vbms_attributes
     self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
-      + [:file_number, :address_type]
+      + [:file_number, :address_type, :first_name, :last_name, :name_suffix]
   end
 
   def military_address?

@@ -1,4 +1,5 @@
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -8,13 +9,16 @@ import COPY from '../../COPY.json';
 
 import decisionViewBase from './components/DecisionViewBase';
 import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
-
+import {
+  editStagedAppeal
+} from './QueueActions';
 import {
   fullWidth,
+  VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
-  PAGE_TITLES,
-  USER_ROLES
+  PAGE_TITLES
 } from './constants';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 
@@ -31,20 +35,21 @@ class SelectRemandReasonsView extends React.Component {
   getPageName = () => PAGE_TITLES.REMANDS[this.props.userRole.toUpperCase()];
 
   getNextStepUrl = () => {
-    const { appealId, userRole } = this.props;
-    const baseUrl = `/queue/appeals/${appealId}`;
+    const { appealId, userRole, checkoutFlow, taskId } = this.props;
+    const baseUrl = `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}`;
 
-    return `${baseUrl}/${userRole === USER_ROLES.JUDGE ? 'evaluate' : 'submit'}`;
+    return `${baseUrl}/${userRole === USER_ROLE_TYPES.judge ? 'evaluate' : 'submit'}`;
   }
 
   goToPrevStep = () => _.each(this.state.renderedChildren, (child) => child.updateStoreIssue());
 
   goToNextStep = () => {
-    const { issues } = this.props;
+    const { issues, appealId, appeal, amaDecisionIssues } = this.props;
     const {
       issuesRendered,
       renderedChildren
     } = this.state;
+    const useDecisionIssues = !appeal.isLegacyAppeal && (amaDecisionIssues || !_.isEmpty(appeal.decisionIssues));
 
     if (issuesRendered < issues.length) {
       this.setState({ issuesRendered: Math.min(issuesRendered + 1, issues.length) });
@@ -52,7 +57,19 @@ class SelectRemandReasonsView extends React.Component {
       return false;
     }
 
-    _.each(renderedChildren, (child) => child.updateStoreIssue());
+    const updatedIssues = _.map(renderedChildren, (child) => child.updateStoreIssue());
+    const mergedIssueUpdates = _.map(appeal.issues, (issue) => {
+      const updatedIssue = _.find(updatedIssues, { id: issue.id });
+
+      if (updatedIssue) {
+        issue.remand_reasons = updatedIssue.remand_reasons;
+      }
+
+      return issue;
+    });
+    const attributes = useDecisionIssues ? { decisionIssues: updatedIssues } : { issues: mergedIssueUpdates };
+
+    this.props.editStagedAppeal(appealId, attributes);
 
     return true;
   }
@@ -73,7 +90,7 @@ class SelectRemandReasonsView extends React.Component {
     }
 
     this.setState({
-      renderedChildren: this.state.renderedChildren.concat(ref.getWrappedInstance())
+      renderedChildren: [...this.state.renderedChildren, ref.getWrappedInstance()]
     });
   }
 
@@ -84,14 +101,14 @@ class SelectRemandReasonsView extends React.Component {
     <p className="cf-lead-paragraph" {...subHeadStyling}>
       {sprintf(
         COPY.REMAND_REASONS_SCREEN_SUBHEAD_LABEL,
-        this.props.userRole === USER_ROLES.ATTORNEY ? 'select' : 'review'
+        this.props.userRole === USER_ROLE_TYPES.attorney ? 'select' : 'review'
       )}
     </p>
     <hr />
     {_.map(_.range(this.state.issuesRendered), (idx) =>
       <IssueRemandReasonsOptions
         appealId={this.props.appealId}
-        issueId={this.props.issues[idx].vacols_sequence_id}
+        issueId={this.props.issues[idx].id}
         key={`remand-reasons-options-${idx}`}
         ref={this.getChildRef}
         idx={idx} />
@@ -101,18 +118,27 @@ class SelectRemandReasonsView extends React.Component {
 
 SelectRemandReasonsView.propTypes = {
   appealId: PropTypes.string.isRequired,
+  checkoutFlow: PropTypes.string.isRequired,
   userRole: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = appeal.attributes.issues;
+  const issues = ((state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)) &&
+    !appeal.isLegacyAppeal) ? appeal.decisionIssues : appeal.issues;
 
   return {
     appeal,
-    issues: _.filter(issues, (issue) => issue.disposition === ISSUE_DISPOSITIONS.REMANDED),
-    ..._.pick(state.ui, 'userRole')
+    issues: _.filter(issues, (issue) => [
+      VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
+    ].includes(issue.disposition)),
+    ..._.pick(state.ui, 'userRole'),
+    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues
   };
 };
 
-export default connect(mapStateToProps)(decisionViewBase(SelectRemandReasonsView));
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  editStagedAppeal
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectRemandReasonsView));

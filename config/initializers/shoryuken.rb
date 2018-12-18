@@ -1,6 +1,5 @@
 require "#{Rails.root}/app/jobs/middleware/job_monitoring_middleware.rb"
 require "#{Rails.root}/app/jobs/middleware/job_prometheus_metric_middleware"
-require "#{Rails.root}/app/jobs/middleware/job_raven_reporter_middleware"
 require "#{Rails.root}/app/jobs/middleware/job_request_store_middleware"
 
 # set up default exponential backoff parameters
@@ -24,7 +23,6 @@ Shoryuken.configure_server do |config|
   config.server_middleware do |chain|
     chain.add JobMonitoringMiddleware
     chain.add JobPrometheusMetricMiddleware
-    chain.add JobRavenReporterMiddleware
     chain.add JobRequestStoreMiddleware
   end
 end

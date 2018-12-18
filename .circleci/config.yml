@@ -1,19 +1,16 @@
-version: 2
+version: 2.1
 jobs:
-  build:
+  rspec:
     docker:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:latest
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
           - NODE_ENV: test
-          - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
           - BUNDLE_PATH: vendor/bundle
-          - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
-          - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
           - COVERAGE_DIR: /home/circleci/coverage
           - POSTGRES_HOST: localhost
           - POSTGRES_USER: root
@@ -25,11 +22,12 @@ jobs:
             POSTGRES_DB: caseflow_certification_test
 
       # This is our homespun VACOLS container. An oracle db with some special sauce.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_2
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_4
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
     parallelism: 5
+    resource_class: large
     steps:
       - checkout
 
@@ -37,29 +35,45 @@ jobs:
           name: Setup testfiles directory
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
 
+      - run:
+          name: Ruby version
+          command: ruby -v
+
       - restore_cache:
           keys:
-            - gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
-      - run: bundle install --path vendor/bundle
+      - run:
+          name: Bundle install
+          command: bundle install --path vendor/bundle
 
       - save_cache:
-          key: gem-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
           paths:
-            - vendor/bundle
+            - ~/project/vendor/bundle
 
       - restore_cache:
           name: Restore yarn cache
-          key: dot-cache-yarn-v1-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
 
       - run:
           name: yarn install
           command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
 
       - save_cache:
-          key: dot-cache-yarn-v1-{{ checksum "client/yarn.lock" }}
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
           paths:
             - ~/.cache/yarn
+
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+
+      - run:
+          name: Wait for database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run:
           name: Database setup
@@ -68,33 +82,9 @@ jobs:
             ~/project/ci-bin/capture-log "bundle exec rake db:schema:load"
 
       - run:
-          name: Danger
-          command: |
-            ~/project/ci-bin/capture-log "bundle exec danger"
-
-      - run:
-          name: Lint
-          command: |
-            ~/project/ci-bin/capture-log "bundle exec rake lint"
-
-      - run:
-          name: Security
-          command: |
-            ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
-
-      - run:
           name: Wait for FACOLS to be ready
           command: |
             ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
-
-      - run:
-          name: Mocha
-          command: |
-            mkdir -p ~/test-results/mocha
-            pushd client
-            testfiles=$(circleci tests glob "test/node/**/*.js" | circleci tests split --split-by timings)
-            echo $testfiles > ~/project/tmp/testfiles/mocha_testfiles.txt
-            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js ${testfiles}"
 
       - run:
           name: RSpec
@@ -121,27 +111,16 @@ jobs:
           path: ~/project/tmp/capybara
 
       - store_artifacts:
+          name: Store rails test log
+          path: ~/project/log/test.log
+
+      - store_artifacts:
           name: Store testfile ordering
           path: ~/project/tmp/testfiles
 
       - store_artifacts:
           name: Store run logs
           path: ~/logs
-
-      # Karma JavaScript tests are a deploy step because currently they are not
-      # able to be run in parallel.
-      - deploy:
-          name: Karma
-          command: |
-            mkdir -p ~/karma-test-results/karma
-            pushd client
-            ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit"
-
-      # Karma gets its own test results directory because otherwise
-      # we would upload the test results directory twice, doubling
-      # the perceived test count.
-      - store_test_results:
-          path: ~/karma-test-results
 
       - deploy:
           name: Verify code coverage
@@ -157,3 +136,139 @@ jobs:
       - store_artifacts:
           name: Store concatenated logs
           path: ~/all_logs.log
+
+      - store_artifacts:
+          name: Store final coverage
+          path: ~/coverage/combined
+
+  lint:
+    docker:
+      # The first image listed is the image that all steps run inside of.
+      # This can be modified by steps, or can be built as a separate
+      # customized container.
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
+        environment:
+          - DBUS_SESSION_BUS_ADDRESS: /dev/null
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: Bundle install
+          command: bundle install --path vendor/bundle
+
+      - save_cache:
+          key: vendor-bundle-v2-{{ arch }}-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/project/vendor/bundle
+
+      - restore_cache:
+          name: Restore yarn cache
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+
+      - run:
+          name: yarn install
+          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
+      - save_cache:
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+
+      - run:
+          name: Danger
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec danger"
+
+      - run:
+          name: Lint
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake lint"
+
+      - run:
+          name: Security
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
+
+      - deploy:
+          name: Concatenate all logs
+          command: |
+            ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
+          when: always
+
+      - store_artifacts:
+          name: Store concatenated logs
+          path: ~/all_logs.log
+
+  js_tests:
+    docker:
+      # The first image listed is the image that all steps run inside of.
+      # This can be modified by steps, or can be built as a separate
+      # customized container.
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
+        environment:
+          - DBUS_SESSION_BUS_ADDRESS: /dev/null
+          - NODE_ENV: test
+          - MOCHA_FILE: /home/circleci/test-results/mocha/mocha.xml
+          - KARMA_JUNIT_OUTPUT_DIR: /home/circleci/karma-test-results/karma
+          - KARMA_JUNIT_OUTPUT_FILE: /home/circleci/karma-test-results/karma/karma.xml
+          - COVERAGE_DIR: /home/circleci/coverage
+    resource_class: large
+    steps:
+      - checkout
+
+      - restore_cache:
+          name: Restore yarn cache
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+
+      - run:
+          name: yarn install
+          command: ~/project/ci-bin/capture-log "cd client && yarn install --frozen-lockfile"
+
+      - save_cache:
+          key: dot-cache-yarn-v2-{{ arch }}-{{ checksum "client/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+
+      - run:
+          name: Mocha
+          command: |
+            mkdir -p ~/test-results/mocha
+            pushd client
+            ~/project/ci-bin/capture-log "node_modules/.bin/mocha --reporter mocha-junit-reporter --recursive --compilers jsx:babel-core/register test/node/setup.js test/node"
+
+      - run:
+          name: Karma
+          command: |
+            mkdir -p ~/test-results/karma
+            pushd client
+            ~/project/ci-bin/capture-log "node_modules/.bin/karma start --reporters junit"
+
+      - store_test_results:
+          name: Store test results as summary
+          path: ~/test-results
+
+      - store_artifacts:
+          name: Store test results as artifact
+          path: ~/test-results
+
+      - deploy:
+          name: Concatenate all logs
+          command: |
+            ~/project/ci-bin/concatenate-log.rb >> ~/all_logs.log
+          when: always
+
+      - store_artifacts:
+          name: Store concatenated logs
+          path: ~/all_logs.log
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - rspec
+      - js_tests
+      - lint

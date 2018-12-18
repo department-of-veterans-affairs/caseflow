@@ -1,8 +1,7 @@
 describe HearingSchedule::ValidateJudgeSpreadsheet do
-  let(:user) { create(:default_user) }
-
   before do
-    user.save!
+    create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")
+    create(:staff, sattyid: "861", snamef: "Doris", snamel: "Lamphere")
   end
 
   context "when judge non-availaility dates are duplicated" do

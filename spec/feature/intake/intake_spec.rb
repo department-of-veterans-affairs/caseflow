@@ -1,19 +1,19 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:test_facols)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 8))
 
+    Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let!(:veteran) do
@@ -72,6 +72,15 @@ RSpec.feature "Intake" do
       expect(page).to have_content("Welcome to the Intake Help page!")
     end
 
+    scenario "User clicks on Search Cases" do
+      visit "/intake"
+      expect(page).to have_content("Search cases")
+      new_window = window_opened_by { click_link("Search cases") }
+      within_window new_window do
+        expect(page).to have_current_path("/search")
+      end
+    end
+
     scenario "Search for a veteran that does not exist in BGS" do
       visit "/intake"
 
@@ -80,7 +89,7 @@ RSpec.feature "Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
-      fill_in "Search small", with: "5678"
+      fill_in search_bar_title, with: "5678"
       click_on "Search"
 
       expect(page).to have_current_path("/intake/search")
@@ -102,9 +111,9 @@ RSpec.feature "Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
-      expect(page).to have_content("Enter the Veteran's ID below to process this RAMP Opt-In Election Form.")
+      expect(page).to have_content(search_page_title)
 
-      fill_in "Search small", with: "5678"
+      fill_in search_bar_title, with: "5678"
       click_on "Search"
 
       expect(page).to have_current_path("/intake/search")
@@ -124,7 +133,7 @@ RSpec.feature "Intake" do
         end
         safe_click ".cf-submit.usa-button"
 
-        fill_in "Search small", with: "12341234"
+        fill_in search_bar_title, with: "12341234"
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
@@ -132,9 +141,15 @@ RSpec.feature "Intake" do
       end
     end
 
-    context "Veteran has missing information" do
+    context "Veteran has invalid information" do
       let(:veteran) do
-        Generators::Veteran.build(file_number: "12341234", sex: nil, ssn: nil)
+        Generators::Veteran.build(
+          file_number: "12341234",
+          sex: nil,
+          ssn: nil,
+          country: nil,
+          address_line1: "this address is more than 20 chars"
+        )
       end
 
       scenario "Search for a veteran with a validation error" do
@@ -145,16 +160,19 @@ RSpec.feature "Intake" do
         end
         safe_click ".cf-submit.usa-button"
 
-        fill_in "Search small", with: "12341234"
+        fill_in search_bar_title, with: "12341234"
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
-        expect(page).to have_content("the corporate database, then retry establishing the EP in Caseflow: ssn, sex.")
+        expect(page).to have_content(
+          "the corporate database, then retry establishing the EP in Caseflow: ssn, sex, country."
+        )
+        expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       end
     end
 
-    scenario "Search for a veteran who's form is already being processed" do
+    scenario "Search for a veteran whose form is already being processed" do
       create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
 
       RampElectionIntake.new(
@@ -169,7 +187,7 @@ RSpec.feature "Intake" do
       end
       safe_click ".cf-submit.usa-button"
 
-      fill_in "Search small", with: "12341234"
+      fill_in search_bar_title, with: "12341234"
       click_on "Search"
 
       expect(page).to have_current_path("/intake/search")
@@ -184,9 +202,9 @@ RSpec.feature "Intake" do
 
       visit "/intake"
       safe_click "#cancel-intake"
-      expect(find(".cf-modal-title")).to have_content("Cancel Intake?")
+      expect(find("#modal_id-title")).to have_content("Cancel Intake?")
       safe_click ".close-modal"
-      expect(page).to_not have_css(".cf-modal-title")
+      expect(page).to_not have_css("#modal_id-title")
       safe_click "#cancel-intake"
 
       safe_click ".confirm-cancel"

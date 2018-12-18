@@ -28,15 +28,22 @@ class RampRefilingIntake < Intake
 
   def complete!(request_params)
     return if complete? || pending?
+
     start_completion!
 
+    detail.update!(
+      establishment_submitted_at: Time.zone.now,
+      has_ineligible_issue: request_params[:has_ineligible_issue]
+    )
     detail.create_issues!(source_issue_ids: request_params[:issue_ids] || [])
-    detail.update!(has_ineligible_issue: request_params[:has_ineligible_issue])
 
     create_end_product_and_contentions
-
     complete_with_status!(:success)
+
     detail.update!(established_at: Time.zone.now) unless detail.established_at
+  rescue StandardError => e
+    abort_completion!
+    raise e
   end
 
   def review_errors
@@ -49,7 +56,7 @@ class RampRefilingIntake < Intake
       receipt_date: detail.receipt_date,
       election_receipt_date: detail.election_receipt_date,
       appeal_docket: detail.appeal_docket,
-      issues: ramp_elections.map(&:issues).flatten.map(&:ui_hash),
+      issues: ramp_elections_with_decisions.map(&:issues).flatten.map(&:ui_hash),
       end_product_description: detail.end_product_description
     )
   end
@@ -57,16 +64,17 @@ class RampRefilingIntake < Intake
   private
 
   def create_end_product_and_contentions
-    detail.create_end_product_and_contentions! if detail.needs_end_product?
-  rescue StandardError => e
-    abort_completion!
-    raise e
+    if detail.needs_end_product?
+      detail.create_end_product_and_contentions!
+    else
+      detail.update!(establishment_processed_at: Time.zone.now)
+    end
   end
 
   def validate_detail_on_start
     if ramp_elections.empty?
       self.error_code = :no_complete_ramp_election
-    elsif ramp_elections.any?(&:end_product_active?)
+    elsif ramp_elections.all?(&:end_product_active?)
       self.error_code = :ramp_election_is_active
     elsif ramp_elections.all? { |election| election.issues.empty? }
       self.error_code = :ramp_election_no_issues
@@ -93,5 +101,9 @@ class RampRefilingIntake < Intake
 
   def ramp_elections
     RampElection.established.where(veteran_file_number: veteran_file_number).all
+  end
+
+  def ramp_elections_with_decisions
+    ramp_elections.reject(&:end_product_active?)
   end
 end

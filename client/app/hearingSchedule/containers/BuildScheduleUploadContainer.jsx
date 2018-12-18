@@ -88,8 +88,12 @@ export class BuildScheduleUploadContainer extends React.Component {
     return ApiUtil.convertToSnakeCase(schedulePeriod);
   };
 
-  async createSchedulePeriod() {
+  createSchedulePeriod = () => {
+    this.props.toggleUploadContinueLoading();
+
     if (!this.validateData()) {
+      this.props.toggleUploadContinueLoading();
+
       return;
     }
 
@@ -104,9 +108,11 @@ export class BuildScheduleUploadContainer extends React.Component {
           if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
             this.props.updateJudgeUploadFormErrors(response.body.error);
           }
+          this.props.toggleUploadContinueLoading();
 
           return;
         }
+        this.props.toggleUploadContinueLoading();
         this.props.history.push(`/schedule/build/upload/${response.body.id}`);
       }, () => {
         if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {
@@ -115,13 +121,8 @@ export class BuildScheduleUploadContainer extends React.Component {
         if (this.props.fileType === SPREADSHEET_TYPES.JudgeSchedulePeriod.value) {
           this.props.updateJudgeUploadFormErrors('ValidationError::UnspecifiedError');
         }
+        this.props.toggleUploadContinueLoading();
       });
-  }
-
-  onUploadContinue = () => {
-    this.props.toggleUploadContinueLoading();
-    Promise.resolve(this.createSchedulePeriod()).
-      then(this.props.toggleUploadContinueLoading());
   };
 
   render() {
@@ -144,23 +145,23 @@ export class BuildScheduleUploadContainer extends React.Component {
       uploadRoCoFormErrors={this.props.uploadRoCoFormErrors}
       uploadJudgeFormErrors={this.props.uploadJudgeFormErrors}
       uploadContinueLoading={this.props.uploadContinueLoading}
-      onUploadContinue={this.onUploadContinue}
+      onUploadContinue={this.createSchedulePeriod}
     />;
   }
 }
 
 const mapStateToProps = (state) => ({
-  fileType: state.fileType,
-  roCoStartDate: state.roCoStartDate,
-  roCoEndDate: state.roCoEndDate,
-  roCoFileUpload: state.roCoFileUpload,
-  judgeStartDate: state.judgeStartDate,
-  judgeEndDate: state.judgeEndDate,
-  judgeFileUpload: state.judgeFileUpload,
-  uploadFormErrors: state.uploadFormErrors,
-  uploadRoCoFormErrors: state.uploadRoCoFormErrors,
-  uploadJudgeFormErrors: state.uploadJudgeFormErrors,
-  uploadContinueLoading: state.uploadContinueLoading
+  fileType: state.hearingSchedule.fileType,
+  roCoStartDate: state.hearingSchedule.roCoStartDate,
+  roCoEndDate: state.hearingSchedule.roCoEndDate,
+  roCoFileUpload: state.hearingSchedule.roCoFileUpload,
+  judgeStartDate: state.hearingSchedule.judgeStartDate,
+  judgeEndDate: state.hearingSchedule.judgeEndDate,
+  judgeFileUpload: state.hearingSchedule.judgeFileUpload,
+  uploadFormErrors: state.hearingSchedule.uploadFormErrors,
+  uploadRoCoFormErrors: state.hearingSchedule.uploadRoCoFormErrors,
+  uploadJudgeFormErrors: state.hearingSchedule.uploadJudgeFormErrors,
+  uploadContinueLoading: state.hearingSchedule.uploadContinueLoading
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

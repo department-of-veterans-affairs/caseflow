@@ -1,11 +1,6 @@
 describe RampElectionRollback do
   before do
-    FeatureToggle.enable!(:test_facols)
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:established_end_product) do
@@ -30,6 +25,15 @@ describe RampElectionRollback do
            veteran_file_number: "44444444",
            option_selected: "higher_level_review",
            receipt_date: 5.days.ago)
+  end
+
+  let!(:ramp_issue) do
+    RampIssue.new(
+      review_type: ramp_election,
+      contention_reference_id: "1234",
+      description: "description",
+      source_issue_id: "12345"
+    )
   end
 
   let(:rollback) do
@@ -98,6 +102,20 @@ describe RampElectionRollback do
       end
     end
 
+    let!(:appeal_already_open) do
+      ramp_election.ramp_closed_appeals.create!(vacols_id: "34567")
+
+      create(
+        :legacy_appeal,
+        vacols_case: create(
+          :case_with_soc,
+          :type_original,
+          bfboard: "00",
+          bfkey: "34567"
+        )
+      )
+    end
+
     it "reopens appeals and rolls back ramp election" do
       expect(LegacyAppeal).to receive(:reopen).with(
         appeals: appeals_to_reopen,
@@ -110,6 +128,7 @@ describe RampElectionRollback do
       resultant_end_product_establishment = EndProductEstablishment.find_by(source: ramp_election)
       expect(resultant_end_product_establishment).to eq(nil)
       expect(rollback.reload.reopened_vacols_ids).to eq(%w[12345 23456])
+      expect { ramp_issue.reload }.to raise_error ActiveRecord::RecordNotFound
     end
   end
 end

@@ -10,7 +10,8 @@ namespace :local do
       # rubocop:disable Lint/HandleExceptions
       300.times do
         begin
-          if VACOLS::Case.count == 0
+          if VACOLS::Case.count == 0 &&
+             VACOLS::CaseHearing.select("VACOLS.HEARING_VENUE(vdkey)").where(folder_nr: "1").count == 0
             puts "FACOLS is ready."
             break
           end
@@ -43,8 +44,9 @@ namespace :local do
 
       if setup_complete
         puts "Updating schema"
+        oracle_wait_time = 180
         schema_complete = false
-        120.times do
+        oracle_wait_time.times do
           output = `docker exec --tty -i VACOLS_DB-#{suffix} bash -c \
           "source /home/oracle/.bashrc; sqlplus /nolog @/ORCL/setup_vacols.sql"`
           if !output.include?("SP2-0640: Not connected")
@@ -57,7 +59,7 @@ namespace :local do
         if schema_complete
           puts "Schema loaded"
         else
-          puts "Schema load failed"
+          puts "Schema load failed -- you may need to increase Oracle wait time from #{oracle_wait_time} seconds"
         end
       else
         puts "Failed to setup database"
@@ -89,7 +91,7 @@ namespace :local do
       read_csv(VACOLS::Issref, date_shift)
       read_csv(VACOLS::TravelBoardSchedule, date_shift)
 
-      setup_dispatch
+      create_issrefs
     end
 
     # Do not check in the result of running this without talking with Chris. We need to certify that there
@@ -109,7 +111,7 @@ namespace :local do
 
       cases = VACOLS::Case.includes(
         :folder,
-        :representative,
+        :representatives,
         :correspondent,
         :case_issues,
         :notes,
@@ -129,7 +131,7 @@ namespace :local do
       # to the Helpers::Sanitizers class.
       write_csv(VACOLS::Case, cases, sanitizer)
       write_csv(VACOLS::Folder, cases.map(&:folder), sanitizer)
-      write_csv(VACOLS::Representative, cases.map(&:representative), sanitizer)
+      write_csv(VACOLS::Representative, cases.map(&:representatives), sanitizer)
       write_csv(VACOLS::Correspondent, cases.map(&:correspondent), sanitizer)
       write_csv(VACOLS::CaseIssue, cases.map(&:case_issues), sanitizer)
       write_csv(VACOLS::Note, cases.map(&:notes), sanitizer)
@@ -163,22 +165,49 @@ namespace :local do
 
     private
 
-    def setup_dispatch
-      CreateEstablishClaimTasksJob.perform_now
-      Timecop.freeze(Date.yesterday) do
-        # Tasks prepared on today's date will not be picked up
-        Dispatch::Task.all.each(&:prepare!)
-        # Appeal decisions (decision dates) for partial grants have to be within 3 days
-        CSV.foreach(Rails.root.join("local/vacols", "cases.csv"), headers: true) do |row|
-          row_hash = row.to_h
-          if %w[amc_full_grants remands_ready_for_claims_establishment].include?(row_hash["vbms_key"])
-            VACOLS::Case.where(bfkey: row_hash["vacols_id"]).first.update(bfddec: Time.zone.today)
-          end
-        end
-      end
-    rescue AASM::InvalidTransition
-      Rails.logger.info("Taks prepare job skipped - tasks were already prepared...")
+    # rubocop:disable Metrics/MethodLength
+    def create_issrefs
+      # creates VACOLS::Issrefs added later than our sanitized UAT copy
+      fiduciary_issue = {
+        prog_code: "12",
+        prog_desc: "Fiduciary"
+      }
+
+      # Issref_dump.csv has 1 Fiduciary issue
+      return if VACOLS::Issref.where(**fiduciary_issue).count > 1
+
+      FactoryBot.create(
+        :issref,
+        **fiduciary_issue,
+        iss_code: "01",
+        iss_desc: "Fiduciary Appointment"
+      )
+      FactoryBot.create(
+        :issref,
+        **fiduciary_issue,
+        iss_code: "02",
+        iss_desc: "Hub Manager removal of a fiduciary under 13.500"
+      )
+      FactoryBot.create(
+        :issref,
+        **fiduciary_issue,
+        iss_code: "03",
+        iss_desc: "Hub Manager misuse determination under 13.400"
+      )
+      FactoryBot.create(
+        :issref,
+        **fiduciary_issue,
+        iss_code: "04",
+        iss_desc: "RO Director decision upon recon of a misuse determ"
+      )
+      FactoryBot.create(
+        :issref,
+        **fiduciary_issue,
+        iss_code: "05",
+        iss_desc: "Dir of PFS negligence determination for reissuance"
+      )
     end
+    # rubocop:enable Metrics/MethodLength
 
     def bgs_record_from_case(cases, case_descriptors)
       CSV.open(Rails.root.join("local/vacols", "bgs_setup.csv"), "wb") do |csv|

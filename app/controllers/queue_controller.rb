@@ -1,6 +1,6 @@
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service
-  before_action :verify_queue_access
+  skip_before_action :deny_vso_access
 
   def set_application
     RequestStore.store[:application] = "queue"

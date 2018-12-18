@@ -1,7 +1,7 @@
-import { ACTIONS, REQUEST_STATE, FORM_TYPES } from '../constants';
+import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { update } from '../../util/ReducerUtil';
 import { formatDateStr } from '../../util/DateUtil';
-import { getOptionSelectedError, getPageError, getReceiptDateError, getAppealDocketError } from '../util/index';
+import { getBlankOptionError, getPageError, getReceiptDateError } from '../util/index';
 import _ from 'lodash';
 
 const updateFromServerIntake = (state, serverIntake) => {
@@ -159,13 +159,13 @@ export const rampRefilingReducer = (state = mapDataToInitialRampRefiling(), acti
         $set: getHasInvalidOption(action.payload.responseErrorCodes)
       },
       optionSelectedError: {
-        $set: getOptionSelectedError(action.payload.responseErrorCodes)
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'option_selected')
       },
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
       },
       appealDocketError: {
-        $set: getAppealDocketError(action.payload.responseErrorCodes)
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'appeal_docket')
       },
       requestStatus: {
         submitReview: {

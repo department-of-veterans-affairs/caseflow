@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
-import ReactTooltip from 'react-tooltip';
 
-import {
-  SortArrowDown,
-  SortArrowUp,
-  DoubleArrow
-} from './RenderFunctions';
-import { hover } from 'glamor';
+import Tooltip from './Tooltip';
+import { DoubleArrow } from './RenderFunctions';
+import { COLORS } from '../constants/AppConstants';
+import { css, hover } from 'glamor';
+import FilterIcon from './FilterIcon';
+import DropdownFilter from './DropdownFilter';
+import ListItemPicker from './ListItemPicker';
 
 /**
  * This component can be used to easily build tables.
@@ -42,33 +42,61 @@ const getColumns = (props) => {
 };
 
 const HeaderRow = (props) => {
-  const sortableHeaderStyle = hover({ cursor: 'pointer' });
+  const sortableHeaderStyle = css({ display: 'table-row' }, hover({ cursor: 'pointer' }));
+  const sortArrowsStyle = css({
+    display: 'table-cell',
+    paddingLeft: '1rem',
+    paddingTop: '0.3rem',
+    verticalAlign: 'middle'
+  });
 
   return <thead className={props.headerClassName}>
     <tr>
       {getColumns(props).map((column, columnNumber) => {
-        const tooltipProps = {
-          'data-tip': true,
-          'data-for': `${columnNumber}-tooltip`
-        };
-        let columnContent = <span {...tooltipProps}>{column.header || ''}</span>;
+        let columnContent = <span>{column.header || ''}</span>;
 
         if (column.getSortValue) {
-          const sortIndicator = props.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
-          const notSortedIndicator = <DoubleArrow />;
+          const topColor = props.sortColIdx === columnNumber && !props.sortAscending ?
+            COLORS.PRIMARY :
+            COLORS.GREY_LIGHT;
+          const botColor = props.sortColIdx === columnNumber && props.sortAscending ?
+            COLORS.PRIMARY :
+            COLORS.GREY_LIGHT;
 
-          columnContent = <span
-            {...sortableHeaderStyle} {...tooltipProps}
-            onClick={() => props.setSortOrder(columnNumber)}>
-            {column.header || ''} {props.sortColIdx === columnNumber ? sortIndicator : notSortedIndicator}
+          columnContent = <span {...sortableHeaderStyle} onClick={() => props.setSortOrder(columnNumber)}>
+            <span>{column.header || ''}</span>
+            <span {...sortArrowsStyle}><DoubleArrow topColor={topColor} bottomColor={botColor} /></span>
+          </span>;
+        }
+
+        if (column.getFilterValues) {
+          columnContent = <span><span>{column.header || ''}</span>
+            <span><FilterIcon
+              label={column.label}
+              idPrefix={column.valueName}
+              getRef={column.getFilterIconRef}
+              selected={column.isDropdownFilterOpen || column.anyFiltersAreSet}
+              handleActivate={column.toggleDropdownFilterVisiblity} />
+
+            {column.isDropdownFilterOpen &&
+              <DropdownFilter
+                name={column.valueName}
+                isClearEnabled={column.anyFiltersAreSet}
+                handleClose={column.toggleDropdownFilterVisiblity}>
+                <ListItemPicker
+                  options={column.getFilterValues}
+                  setSelectedValue={column.setSelectedValue} />
+              </DropdownFilter>
+            }
+            </span>
           </span>;
         }
 
         return <th scope="col" key={columnNumber} className={cellClasses(column)}>
-          {column.tooltip && <ReactTooltip id={`${columnNumber}-tooltip`} effect="solid" multiline>
-            {column.tooltip}
-          </ReactTooltip>}
-          {columnContent}
+          { column.tooltip ?
+            <Tooltip id={`tooltip-${columnNumber}`} text={column.tooltip}>{columnContent}</Tooltip> :
+            <React.Fragment>{columnContent}</React.Fragment>
+          }
         </th>;
       })}
     </tr>
@@ -217,7 +245,7 @@ export default class Table extends React.PureComponent {
 
     return <table
       id={id}
-      className={`usa-table-borderless cf-table-borderless ${this.props.className}`}
+      className={`usa-table-borderless ${this.props.className}`}
       summary={summary}
       {...styling} >
 

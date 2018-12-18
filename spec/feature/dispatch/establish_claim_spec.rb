@@ -6,24 +6,61 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 1, 1))
 
+    Fakes::BGSService.inaccessible_appeal_vbms_ids ||= []
+    Fakes::BGSService.inaccessible_appeal_vbms_ids << inaccessible_appeal.veteran_file_number
+
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-    allow(Fakes::AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
+    allow(AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
   end
 
   let(:case_worker) do
-    User.create(station_id: "123", css_id: "JANESMITH", full_name: "Jane Smith")
+    create(:user, station_id: "123", css_id: "JANESMITH", full_name: "Jane Smith")
   end
 
-  let(:appeal) do
-    Generators::LegacyAppeal.create(vacols_record: vacols_record, documents: documents)
+  let(:case_full_grant) do
+    create(:case_with_decision, :status_complete, bfregoff: "RO21", case_issues:
+      [create(:case_issue, :education, :disposition_allowed)])
   end
 
   let(:appeal_full_grant) do
-    Generators::LegacyAppeal.create(vacols_record: :full_grant_decided, documents: documents)
+    create(:legacy_appeal, :with_veteran, vacols_case: case_full_grant)
+  end
+
+  let(:folder) { build(:folder, tioctime: 23.days.ago.midnight) }
+
+  let(:case_remand) do
+    create(:case_with_decision, :status_remand, folder: folder)
+  end
+
+  let(:appeal_remand) do
+    create(:legacy_appeal, :with_veteran, vacols_case: case_remand)
+  end
+
+  let(:case_partial_grant) do
+    create(:case_with_decision, :status_remand, bfregoff: "RO21", case_issues:
+        [create(:case_issue, :education, :disposition_allowed), create(:case_issue, :education, :disposition_remanded)])
   end
 
   let(:appeal_partial_grant) do
-    Generators::LegacyAppeal.create(vacols_record: :partial_grant_decided, documents: documents)
+    create(:legacy_appeal, :with_veteran, vacols_case: case_partial_grant)
+  end
+
+  let(:invalid_case) do
+    create(:case_with_decision, :status_complete, bfddec: nil, case_issues:
+        [create(:case_issue, :education, :disposition_allowed)])
+  end
+
+  let(:invalid_appeal) do
+    create(:legacy_appeal, vacols_case: invalid_case)
+  end
+
+  let(:inaccessible_case) do
+    create(:case_with_decision, :status_complete, case_issues:
+        [create(:case_issue, :education, :disposition_allowed)])
+  end
+
+  let(:inaccessible_appeal) do
+    create(:legacy_appeal, vacols_case: inaccessible_case)
   end
 
   let(:documents) do
@@ -39,9 +76,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
     scenario "View quotas and update employee count" do
       # Create 4 incomplete tasks and one completed today
-      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: Date.yesterday) }
+      4.times { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
-      Generators::EstablishClaim.create(appeal_id: appeal.id, user: case_worker, aasm_state: :assigned).tap do |task|
+      create(:establish_claim, appeal: appeal_remand, user: case_worker, aasm_state: :assigned).tap do |task|
         task.start!
         task.complete!(status: :routed_to_arc)
       end
@@ -66,11 +103,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # Two more users starting tasks should force the number of people to bump up to 3
       %w[June Jeffers].each do |name|
-        Generators::EstablishClaim.create(
-          user: Generators::User.create(full_name: "#{name} Smith"),
-          aasm_state: :assigned,
-          appeal_id: ((name == "June") ? appeal_full_grant.id : appeal_partial_grant.id)
-        ).tap do |task|
+        create(:establish_claim,
+               appeal: ((name == "June") ? appeal_full_grant : appeal_partial_grant),
+               user: create(:user, full_name: "#{name} Smith"),
+               aasm_state: :assigned).tap do |task|
           task.start!
           task.complete!(status: :routed_to_arc)
         end
@@ -88,20 +124,19 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Edit individual user quotas" do
-      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: Date.yesterday) }
+      4.times { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
-      appeal_id = {
-        "Janet" => appeal.id,
-        "June" => appeal_full_grant.id,
-        "Jeffers" => appeal_partial_grant.id
+      appeals_by_name = {
+        "Janet" => appeal_remand,
+        "June" => appeal_full_grant,
+        "Jeffers" => appeal_partial_grant
       }
 
       %w[Janet June Jeffers].each do |name|
-        Generators::EstablishClaim.create(
-          user: Generators::User.create(full_name: "#{name} Smith"),
-          aasm_state: :assigned,
-          appeal_id: appeal_id[name]
-        ).tap do |task|
+        create(:establish_claim,
+               appeal: appeals_by_name[name],
+               user: create(:user, full_name: "#{name} Smith"),
+               aasm_state: :assigned).tap do |task|
           task.start!
           task.complete!(status: :routed_to_arc)
         end
@@ -135,18 +170,17 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "Editing won't work if there's only one user" do
-      4.times { Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: Date.yesterday) }
+      4.times { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
-      appeal_id = {
-        "Janet" => appeal.id
+      appeals_by_name = {
+        "Janet" => appeal_remand
       }
 
       %w[Janet].each do |name|
-        Generators::EstablishClaim.create(
-          user: Generators::User.create(full_name: "#{name} Smith"),
-          aasm_state: :assigned,
-          appeal_id: appeal_id[name]
-        ).tap do |task|
+        create(:establish_claim,
+               appeal: appeals_by_name[name],
+               user: create(:user, full_name: "#{name} Smith"),
+               aasm_state: :assigned).tap do |task|
           task.start!
           task.complete!(status: :routed_to_arc)
         end
@@ -176,7 +210,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "View unprepared tasks page" do
-      unprepared_task = Generators::EstablishClaim.create(aasm_state: :unprepared)
+      unprepared_task = create(:establish_claim, aasm_state: :unprepared)
 
       visit "/dispatch/work-assignments"
       click_on "View claims missing decisions"
@@ -205,10 +239,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     scenario "View canceled EPs page" do
       reason = "Cuz it's canceled"
 
-      Generators::EstablishClaim.create(
-        user: Generators::User.create(full_name: "Cance L. Smith"),
-        aasm_state: :assigned
-      ).tap do |task|
+      create(:establish_claim,
+             user: create(:user, full_name: "Cance L. Smith"),
+             aasm_state: :assigned).tap do |task|
         task.start!
         task.cancel!(reason)
       end
@@ -226,9 +259,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     scenario "View oldest unassigned tasks page" do
-      2.times do
-        Generators::EstablishClaim.create(aasm_state: :unassigned, prepared_at: 1.day.ago)
-      end
+      2.times { create(:establish_claim, aasm_state: :unassigned, prepared_at: Date.yesterday) }
 
       visit "/dispatch/admin"
       expect(page).to have_content("Oldest Unassigned Tasks")
@@ -241,23 +272,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     let!(:current_user) { User.authenticate!(roles: ["Establish Claim"]) }
 
     let!(:task) do
-      Generators::EstablishClaim.create(
-        created_at: 3.days.ago,
-        prepared_at: Date.yesterday,
-        appeal_id: appeal.id,
-        aasm_state: "unassigned"
-      )
-    end
-
-    let(:invalid_appeal) do
-      Generators::LegacyAppeal.create(
-        vacols_record: { template: :remand_decided, decision_date: nil },
-        documents: documents
-      )
-    end
-
-    let(:inaccessible_appeal) do
-      Generators::LegacyAppeal.create(vacols_record: vacols_record, inaccessible: true)
+      create(:establish_claim,
+             created_at: 3.days.ago,
+             prepared_at: Date.yesterday,
+             appeal: appeal_remand,
+             aasm_state: "unassigned")
     end
 
     let(:ep_already_exists_error) do
@@ -329,7 +348,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(task).to be_started
 
       # Validate that a Claim Establishment object was created
-      expect(task.claim_establishment.outcoding_date).to eq(appeal.outcoding_date)
+      expect(task.claim_establishment.outcoding_date).to eq(appeal_remand.outcoding_date)
       expect(task.claim_establishment).to be_remand
 
       # Validate the invalid task was invalidated
@@ -504,9 +523,12 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     context "For a full grant" do
-      let(:vacols_record) do
-        # Specify RO to test ROJ routing
-        { template: :full_grant_decided, regional_office_key: "RO21" }
+      let!(:task) do
+        create(:establish_claim,
+               created_at: 3.days.ago,
+               prepared_at: Date.yesterday,
+               appeal: appeal_full_grant,
+               aasm_state: "unassigned")
       end
 
       scenario "Establish a new claim with special issue routed to national office" do
@@ -623,7 +645,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
     end
 
     context "For a partial grant" do
-      let(:vacols_record) { :partial_grant_decided }
+      let!(:task) do
+        create(:establish_claim,
+               created_at: 3.days.ago,
+               prepared_at: Date.yesterday,
+               appeal: appeal_partial_grant,
+               aasm_state: "unassigned")
+      end
 
       scenario "Establish a new claim routed to ARC",
                skip: "This test is failing because of a stale element reference" do
@@ -670,12 +698,13 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             end_product_label: "ARC Remand with BVA Grant",
             end_product_code: "070RMBVAGARC",
             gulf_war_registry: true,
-            suppress_acknowledgement_letter: true
+            suppress_acknowledgement_letter: true,
+            claimant_participant_id: nil
           },
           veteran_hash: task.appeal.veteran.to_vbms_hash
         )
 
-        expect(Fakes::AppealRepository).to have_received(:update_vacols_after_dispatch!)
+        expect(AppealRepository).to have_received(:update_vacols_after_dispatch!)
 
         expect(task.reload.completed?).to be_truthy
         expect(task.completion_status).to eq("routed_to_arc")
@@ -699,7 +728,6 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         # Select special issues
         click_label("riceCompliance")
-        click_label("privateAttorneyOrAgent")
 
         # Move on to note page
         safe_click "#button-Route-claim"
@@ -718,10 +746,10 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         expect(page).to have_content("Cannot edit end product")
 
         # Make sure note page contains the special issues
-        expect(find_field("VBMS Note").value).to have_content("Private Attorney or Agent, and Rice Compliance")
+        expect(find_field("VBMS Note").value).to have_content("Rice Compliance")
 
         # Validate special issue text within vacols note
-        expect(page).to have_content("Private Attorney or Agent, Rice Compliance")
+        expect(page).to have_content("Rice Compliance")
 
         # Validate note page shows correct decision type for claim in vbms note
         expect(find_field("VBMS Note").value).to have_content("The BVA Partial Grant decision")
@@ -742,8 +770,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
         expect(page).to have_content("Success!")
         expect(page).to have_content("VACOLS Updated: Changed Location to 50")
-        expect(page).to have_content("Added VBMS Note on Private Attorney or Agent; Rice Compliance")
-        expect(page).to have_content("VACOLS Updated: Added Diary Note on Private Attorney or Agent; Rice Compliance")
+        expect(page).to have_content("Added VBMS Note on Rice Compliance")
+        expect(page).to have_content("VACOLS Updated: Added Diary Note on Rice Compliance")
 
         expect(task.appeal.reload.rice_compliance).to be_truthy
         expect(task.reload.completion_status).to eq("routed_to_ro")
@@ -754,15 +782,17 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             payee_code: "00",
             predischarge: false,
             claim_type: "Claim",
-            station_of_jurisdiction: "313",
+            station_of_jurisdiction: "321",
             date: task.appeal.decision_date.to_date,
             end_product_modifier: "070",
             end_product_label: "Remand with BVA Grant (070)",
             end_product_code: "070RMNDBVAG",
             gulf_war_registry: false,
-            suppress_acknowledgement_letter: true
+            suppress_acknowledgement_letter: true,
+            claimant_participant_id: nil
           },
-          veteran_hash: task.appeal.veteran.to_vbms_hash
+          veteran_hash: task.appeal.veteran.to_vbms_hash,
+          user: RequestStore[:current_user]
         )
       end
 
@@ -837,9 +867,11 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
               end_product_code: "070RMBVAGARC",
               station_of_jurisdiction: "397",
               gulf_war_registry: false,
-              suppress_acknowledgement_letter: true
+              suppress_acknowledgement_letter: true,
+              claimant_participant_id: nil
             },
-            veteran_hash: task.appeal.veteran.to_vbms_hash
+            veteran_hash: task.appeal.veteran.to_vbms_hash,
+            user: RequestStore[:current_user]
           )
         end
       end

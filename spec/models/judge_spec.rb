@@ -1,18 +1,17 @@
 describe Judge do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))
-    Time.zone = "America/Chicago"
-    Judge.repository = Fakes::JudgeRepository
+    Time.zone = "UTC"
   end
 
   context ".upcoming_dockets" do
     subject { Judge.new(user).upcoming_dockets }
 
     let(:user) { Generators::User.create }
-    let!(:hearing)            { Generators::Hearing.create(user: user, date: 1.day.from_now) }
-    let!(:hearing_same_date)  { Generators::Hearing.create(user: user, date: 1.day.from_now + 2.hours) }
-    let!(:hearing_later_date) { Generators::Hearing.create(user: user, date: 3.days.from_now) }
-    let!(:hearing_another_judge) { Generators::Hearing.create(user: Generators::User.create, date: 2.days.from_now) }
+    let!(:hearing)            { create(:hearing, user: user, date: 1.day.from_now) }
+    let!(:hearing_same_date)  { create(:hearing, user: user, date: 1.day.from_now + 2.hours) }
+    let!(:hearing_later_date) { create(:hearing, user: user, date: 3.days.from_now) }
+    let!(:hearing_another_judge) { create(:hearing, user: Generators::User.create, date: 2.days.from_now) }
 
     it "returns a hash of hearing dockets indexed by date" do
       keys = subject.keys.sort
@@ -50,21 +49,30 @@ describe Judge do
 
   context ".list_all" do
     it "should cache the values" do
-      expect(Fakes::JudgeRepository).to receive(:find_all_judges).once
+      expect(JudgeRepository).to receive(:find_all_judges).once
       Judge.list_all
       # call a second time, should get from the cache
       Judge.list_all
     end
   end
 
+  context ".list_all_with_name_and_id" do
+    it "should cache the values" do
+      expect(JudgeRepository).to receive(:find_all_judges_with_name_and_id).once
+      Judge.list_all_with_name_and_id
+      # call a second time, should get from the cache
+      Judge.list_all_with_name_and_id
+    end
+  end
+
   context "#docket?" do
-    let(:user) { Generators::User.create }
+    let(:user) { FactoryBot.create(:user) }
     let(:judge) { Judge.new(user) }
     let(:date) { Time.zone.now }
     let(:out_of_range_date) { date - 300.years }
     let!(:hearings) do
       [
-        Generators::Hearing.create(user: user, date: 1.hour.from_now)
+        create(:hearing, user: user, date: 1.hour.from_now)
       ]
     end
 
@@ -74,6 +82,26 @@ describe Judge do
 
     it "returns false if docket does not exist" do
       expect(judge.docket?(out_of_range_date)).to be_falsey
+    end
+  end
+
+  context "#attorneys" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:judge) { Judge.new(user) }
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
+    let(:member_count) { 5 }
+    let(:attorneys) { FactoryBot.create_list(:user, member_count) }
+
+    before do
+      attorneys.each do |u|
+        OrganizationsUser.add_user_to_organization(u, judge_team)
+      end
+    end
+
+    subject { judge.attorneys }
+
+    it "returns a list of the judge's attorneys" do
+      expect(subject).to match_array attorneys
     end
   end
 end

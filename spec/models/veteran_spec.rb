@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe Veteran do
-  let(:veteran) { Veteran.new(file_number: "44556677") }
+  let(:veteran) { Veteran.new(file_number: "44556677", first_name: "June", last_name: "Juniper") }
 
   before do
     Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
@@ -15,13 +15,15 @@ describe Veteran do
       ptcpnt_id: "123123",
       sex: "M",
       first_name: "June",
+      middle_name: "Janice",
       last_name: "Juniper",
+      name_suffix: "II",
       ssn: "123456789",
       address_line1: "122 Mullberry St.",
       address_line2: "PO BOX 123",
       address_line3: address_line3,
-      city: "San Francisco",
-      state: "CA",
+      city: city,
+      state: state,
       country: country,
       date_of_birth: date_of_birth,
       zip_code: zip_code,
@@ -31,6 +33,8 @@ describe Veteran do
     }
   end
 
+  let(:city) { "San Francisco" }
+  let(:state) { "CA" }
   let(:military_post_office_type_code) { nil }
   let(:military_postal_type_code) { nil }
   let(:country) { "USA" }
@@ -50,6 +54,14 @@ describe Veteran do
       end
 
       it { is_expected.to eq(saved_veteran) }
+
+      context "when veteran isn't found in BGS" do
+        it "does not attempt to backfill name attributes" do
+          expect(subject.bgs_record).to eq(:not_found)
+          expect(subject.accessible?).to eq(true)
+          expect(subject.first_name).to be_nil
+        end
+      end
     end
 
     context "when veteran doesn't exist in the DB" do
@@ -57,11 +69,13 @@ describe Veteran do
 
       context "when veteran is found in BGS" do
         it "saves and returns veteran" do
-          expect(subject.participant_id).to eq("123123")
-
           expect(subject.reload).to have_attributes(
             file_number: "44556677",
-            participant_id: "123123"
+            participant_id: "123123",
+            first_name: "June",
+            middle_name: "Janice",
+            last_name: "Juniper",
+            name_suffix: "II"
           )
         end
 
@@ -170,11 +184,13 @@ describe Veteran do
         sex: "M",
         first_name: "June",
         last_name: "Juniper",
+        name_suffix: nil,
         service: [{ branch_of_service: "army" }],
         ssn: "123456789",
         address_line1: "122 Mullberry St.",
         address_line2: "PO BOX 123",
         address_line3: "Daisies",
+        date_of_death: nil,
         city: "San Francisco",
         state: "CA",
         country: "USA",
@@ -193,6 +209,12 @@ describe Veteran do
 
     context "when a zip code is nil" do
       let(:zip_code) { nil }
+
+      context "when address line 3 is nil" do
+        let(:address_line3) { nil }
+
+        it { is_expected.to include(zip_code: nil) }
+      end
 
       context "when address line 3 contains a zip code" do
         let(:address_line3) { "055411-177" }
@@ -313,6 +335,56 @@ describe Veteran do
     end
   end
 
+  context "#accessible_appeals_for_poa" do
+    let!(:appeals) do
+      [
+        create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id)]),
+        create(:appeal, veteran: veteran, claimants: [build(:claimant, participant_id: participant_id_without_vso)])
+      ]
+    end
+
+    let(:participant_id) { "1234" }
+    let(:participant_id_without_vso) { "5678" }
+    let(:vso_participant_id) { "2452383" }
+    let(:participant_ids) { [participant_id, participant_id_without_vso] }
+
+    let(:poas) do
+      [
+        {
+          ptcpnt_id: participant_id,
+          power_of_attorney: {
+            legacy_poa_cd: "071",
+            nm: "PARALYZED VETERANS OF AMERICA, INC.",
+            org_type_nm: "POA National Organization",
+            ptcpnt_id: vso_participant_id
+          }
+        },
+        {
+          ptcpnt_id: participant_id_without_vso,
+          power_of_attorney: {}
+        }
+      ]
+    end
+
+    before do
+      BGSService = ExternalApi::BGSService
+      RequestStore[:current_user] = create(:user)
+
+      allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_ids)
+        .with(array_including(participant_ids)).and_return(poas)
+    end
+
+    after do
+      BGSService = Fakes::BGSService
+    end
+
+    it "returns only the case with vso assigned to it" do
+      returned_appeals = veteran.accessible_appeals_for_poa([vso_participant_id, "other vso participant id"])
+      expect(returned_appeals.count).to eq 1
+      expect(returned_appeals.first).to eq appeals.first
+    end
+  end
+
   context "#age" do
     subject { veteran.age }
 
@@ -329,6 +401,42 @@ describe Veteran do
     context "when the date has already passed this year" do
       let(:date_of_birth) { "1/1/1987" }
       it { is_expected.to eq(35) }
+    end
+  end
+
+  context "given a military address and nil city & state" do
+    let(:military_postal_type_code) { "AA" }
+    let(:city) { nil }
+    let(:state) { nil }
+
+    it "is considered a valid veteran from bgs" do
+      expect(veteran.valid?(:bgs)).to be true
+    end
+  end
+
+  context "given a long address" do
+    let(:address_line3) { "this address is longer than 20 chars" }
+
+    it "is considered an invalid veteran from bgs" do
+      expect(veteran.valid?(:bgs)).to be false
+    end
+  end
+
+  describe ".find_by_file_number_or_ssn" do
+    let(:file_number) { "123456789" }
+    let(:ssn) { file_number.to_s.reverse } # our fakes do this
+    let!(:veteran) { create(:veteran, file_number: file_number) }
+
+    it "fetches based on file_number" do
+      expect(described_class.find_by_file_number_or_ssn(file_number)).to eq(veteran)
+    end
+
+    it "fetches based on SSN" do
+      expect(described_class.find_by_file_number_or_ssn(ssn)).to eq(veteran)
+    end
+
+    it "returns nil if a Veteran does not exist in BGS or Caseflow" do
+      expect(described_class.find_by_file_number_or_ssn("000000000")).to be_nil
     end
   end
 end

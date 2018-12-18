@@ -1,31 +1,87 @@
 describe SupplementalClaim do
   before do
-    FeatureToggle.enable!(:test_facols)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
 
   after do
-    FeatureToggle.disable!(:test_facols)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let(:veteran_file_number) { "64205555" }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:receipt_date) { nil }
-  let(:established_at) { nil }
-  let(:end_product_status) { nil }
+  let(:benefit_type) { nil }
+  let(:legacy_opt_in_approved) { nil }
+  let(:veteran_is_not_claimant) { false }
 
   let(:supplemental_claim) do
     SupplementalClaim.new(
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
-      established_at: established_at
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
     )
+  end
+
+  context "#special_issues" do
+    let(:vacols_id) { nil }
+    let!(:request_issue) do
+      create(:request_issue, review_request: supplemental_claim, vacols_id: vacols_id)
+    end
+
+    subject { supplemental_claim.special_issues }
+
+    context "no special conditions" do
+      it "is empty" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "VACOLS opt-in" do
+      let(:vacols_id) { "something" }
+      let!(:legacy_opt_in) do
+        create(:legacy_issue_optin, request_issue: request_issue)
+      end
+
+      it "includes VACOLS opt-in" do
+        expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
+      end
+    end
   end
 
   context "#valid?" do
     subject { supplemental_claim.valid? }
 
+    context "when saving review" do
+      before { supplemental_claim.start_review! }
+
+      context "review fields when they are set" do
+        let(:benefit_type) { "compensation" }
+        let(:legacy_opt_in_approved) { false }
+        let(:receipt_date) { 1.day.ago }
+
+        it "is valid" do
+          is_expected.to be true
+        end
+      end
+
+      context "when they are nil" do
+        let(:veteran_is_not_claimant) { nil }
+        it "adds errors" do
+          is_expected.to be false
+          expect(supplemental_claim.errors[:benefit_type]).to include("blank")
+          expect(supplemental_claim.errors[:legacy_opt_in_approved]).to include("blank")
+          expect(supplemental_claim.errors[:receipt_date]).to include("blank")
+          expect(supplemental_claim.errors[:veteran_is_not_claimant]).to include("blank")
+        end
+      end
+    end
+
     context "receipt_date" do
+      let(:benefit_type) { "compensation" }
+      let(:legacy_opt_in_approved) { false }
       context "when it is nil" do
         it { is_expected.to be true }
       end
@@ -40,7 +96,7 @@ describe SupplementalClaim do
       end
 
       context "when it is before AMA begin date" do
-        let(:receipt_date) { SupplementalClaim::AMA_BEGIN_DATE - 1 }
+        let(:receipt_date) { DecisionReview.ama_activation_date - 1 }
 
         it "adds an error to receipt_date" do
           is_expected.to be false
@@ -58,119 +114,6 @@ describe SupplementalClaim do
             is_expected.to be false
             expect(supplemental_claim.errors[:receipt_date]).to include("blank")
           end
-        end
-      end
-    end
-  end
-
-  context "#create_issues!" do
-    before { supplemental_claim.save! }
-    subject { supplemental_claim.create_issues!(request_issues_data: request_issues_data) }
-
-    let!(:request_issues_data) do
-      [
-        { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
-        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" },
-        {
-          decision_text: "non-rated issue decision text",
-          issue_category: "test issue category",
-          decision_date: "2018-12-25"
-        }
-      ]
-    end
-
-    let!(:outdated_issue) do
-      supplemental_claim.request_issues.create!(
-        rating_issue_reference_id: "000",
-        rating_issue_profile_date: Date.new,
-        description: "i will be destroyed"
-      )
-    end
-
-    it "creates issues from request_issues_data" do
-      subject
-      expect(supplemental_claim.request_issues.count).to eq(3)
-      expect(supplemental_claim.request_issues.find_by(rating_issue_reference_id: "abc")).to have_attributes(
-        rating_issue_profile_date: Date.new(2018, 4, 4),
-        description: "hello"
-      )
-      expect(supplemental_claim.request_issues.find_by(
-               description: "non-rated issue decision text"
-      )).to have_attributes(
-        issue_category: "test issue category",
-        decision_date: Date.new(2018, 12, 25)
-      )
-    end
-  end
-
-  context "#create_end_product_and_contentions!" do
-    subject { supplemental_claim.create_end_product_and_contentions! }
-    let(:veteran) { Veteran.create(file_number: veteran_file_number) }
-    let(:receipt_date) { 2.days.ago }
-    let!(:request_issues_data) do
-      [
-        { reference_id: "abc", profile_date: "2018-04-04", decision_text: "hello" },
-        { reference_id: "def", profile_date: "2018-04-08", decision_text: "goodbye" }
-      ]
-    end
-    before do
-      supplemental_claim.save!
-      supplemental_claim.create_issues!(request_issues_data: request_issues_data)
-    end
-
-    # Stub the id of the end product being created
-    before do
-      Fakes::VBMSService.end_product_claim_id = "454545"
-    end
-
-    context "when option receipt_date is nil" do
-      let(:receipt_date) { nil }
-
-      it "raises error" do
-        expect { subject }.to raise_error(EndProductEstablishment::InvalidEndProductError)
-      end
-    end
-
-    it "creates end product and saves end_product_establishment" do
-      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-
-      subject
-
-      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-        claim_hash: {
-          benefit_type_code: "1",
-          payee_code: "00",
-          predischarge: false,
-          claim_type: "Claim",
-          station_of_jurisdiction: "397",
-          date: receipt_date.to_date,
-          end_product_modifier: "040",
-          end_product_label: "Supplemental Claim Rating",
-          end_product_code: "040SCR",
-          gulf_war_registry: false,
-          suppress_acknowledgement_letter: false
-        },
-        veteran_hash: veteran.to_vbms_hash
-      )
-
-      expect(EndProductEstablishment.find_by(source: supplemental_claim.reload).reference_id).to eq("454545")
-    end
-
-    context "when VBMS throws an error" do
-      before do
-        allow(VBMSService).to receive(:establish_claim!).and_raise(vbms_error)
-      end
-
-      let(:vbms_error) do
-        VBMS::HTTPError.new("500", "<faultstring>Claim not established. " \
-          "A duplicate claim for this EP code already exists in CorpDB. Please " \
-          "use a different EP code modifier. GUID: 13fcd</faultstring>")
-      end
-
-      it "raises a parsed EstablishClaimFailedInVBMS error" do
-        expect { subject }.to raise_error do |error|
-          expect(error).to be_a(Caseflow::Error::EstablishClaimFailedInVBMS)
-          expect(error.error_code).to eq("duplicate_ep")
         end
       end
     end

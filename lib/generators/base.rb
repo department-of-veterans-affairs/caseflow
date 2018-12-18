@@ -13,16 +13,21 @@
 # which must return an unsaved ActiveRecord object. Generators will
 # get the `create(attrs)` method for free by extending Generators::Base
 module Generators::Base
-  def generate_external_id
-    SecureRandom.random_number(1_000_000).to_s
+  def generate_external_id(seed = nil)
+    return (seed % 1_000_000).to_s if seed
+    RANDOM.rand(1_000_000).to_s
   end
 
-  def generate_first_name
-    %w[George John Thomas James Andrew Martin Susan Barack Grace Anne].sample
+  def generate_first_name(seed = nil)
+    fnames = %w[George John Thomas James Andrew Martin Susan Barack Grace Anne]
+    return fnames[seed % fnames.length] if seed
+    fnames[RANDOM.rand(fnames.length)]
   end
 
-  def generate_last_name
-    %w[Washington King Jefferson Anthony Madison Jackson VanBuren Merica].sample
+  def generate_last_name(seed = nil)
+    lnames = %w[Washington King Jefferson Anthony Madison Jackson VanBuren Merica]
+    return lnames[seed % lnames.length] if seed
+    lnames[RANDOM.rand(lnames.length)]
   end
 
   def build(*)
@@ -32,4 +37,6 @@ module Generators::Base
   def create(attrs = {})
     build(attrs).tap(&:save!)
   end
+
+  RANDOM = Random.new(0)
 end

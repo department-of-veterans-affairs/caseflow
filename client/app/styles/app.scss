@@ -1,0 +1,19 @@
+//Local variables
+@import '_variables.scss';
+//USWDS
+@import '~uswds/src/stylesheets/uswds.scss';
+@import '~uswds/dist/scss/lib/_bourbon.scss';
+@import '~uswds/src/stylesheets/core/_variables.scss';
+@import '~font-awesome/css/font-awesome.css';
+
+@import '_stats.scss';
+@import '_intake.scss';
+@import 'dispatch/_dispatch.scss';
+@import 'reader/_reader_styles_root.scss';
+@import 'hearings/_hearings_styles_root.scss';
+@import '_style_guide.scss';
+@import '_main.scss';
+@import '_commons.scss';
+@import 'react/_react_styles_root.scss';
+
+@import '~react-draft-wysiwyg/dist/react-draft-wysiwyg.css';

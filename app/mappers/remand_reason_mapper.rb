@@ -4,7 +4,7 @@ module RemandReasonMapper
       (remand_reasons || []).map do |remand_reason|
         {
           rmdval:  remand_reason[:code],
-          rmddev: remand_reason[:after_certification] ? "R2" : "R1",
+          rmddev: remand_reason[:post_aoj] ? "R2" : "R1",
           rmdmdusr: vacols_user_id,
           rmdmdtim: VacolsHelper.local_time_with_utc_timezone
         }

@@ -5,7 +5,7 @@ import TextareaField from '../../components/TextareaField';
 import RadioField from '../../components/RadioField';
 import FormField from '../../util/FormField';
 import requiredValidator from '../../util/validators/RequiredValidator';
-import { submitCancel } from '../actions/common';
+import { submitCancel } from '../actions/intake';
 import { CANCELLATION_REASONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { Redirect } from 'react-router-dom';
@@ -115,7 +115,7 @@ class CancelIntakeModal extends BaseForm {
       return <Redirect to="/intake_cancellations/" />;
     }
 
-    return <div>
+    return <div className="intake-cancel">
       <Modal
         buttons={[
           { classNames: ['cf-modal-link', 'cf-btn-link', 'close-modal'],
@@ -132,24 +132,24 @@ class CancelIntakeModal extends BaseForm {
         title="Cancel Intake?">
         <RadioField
           name="Please select the reason you are canceling this intake."
+          strongLabel
           options={cancelReasonOptions}
           value={this.state.cancelReasonValue}
-          required
           onChange={this.onCancellationReasonChange}
           errorMessage={this.state.
             intakeCancellationForm.cancelReason.errorMessage} />
         {this.state.shouldShowOtherReason &&
-              <TextareaField
-                name="Tell us more about your situation."
-                required
-                maxlength={150}
-                onChange={this.onOtherReasonChange}
-                errorMessage={this.state.
-                  intakeCancellationForm.cancelOther.errorMessage}
-                value={this.state.cancelOtherValue}
-              />
+                <TextareaField
+                  name="Tell us more about your situation."
+                  strongLabel
+                  maxlength={150}
+                  onChange={this.onOtherReasonChange}
+                  errorMessage={this.state.
+                    intakeCancellationForm.cancelOther.errorMessage}
+                  value={this.state.cancelOtherValue}
+                />
         }
-      </Modal>
+      </Modal>;
     </div>;
   }
 }

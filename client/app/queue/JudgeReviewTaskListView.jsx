@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
+import { css } from 'glamor';
 
-import StatusMessage from '../components/StatusMessage';
 import TaskTable from './components/TaskTable';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -16,7 +16,7 @@ import {
   resetSaveState
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
-import { judgeReviewAppealsSelector } from './selectors';
+import { judgeReviewTasksSelector } from './selectors';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
@@ -37,15 +37,16 @@ class JudgeReviewTaskListView extends React.PureComponent {
     const {
       userId,
       messages,
-      appeals
+      tasks
     } = this.props;
-    const reviewableCount = appeals.length;
+    const reviewableCount = tasks.length;
     let tableContent;
 
     if (reviewableCount === 0) {
-      tableContent = <StatusMessage title={COPY.NO_CASES_FOR_JUDGE_REVIEW_TITLE}>
-        {COPY.NO_CASES_FOR_JUDGE_REVIEW_MESSAGE}
-      </StatusMessage>;
+      tableContent = <p {...css({ textAlign: 'center',
+        marginTop: '3rem' })}>
+        {COPY.NO_CASES_IN_QUEUE_MESSAGE}<b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
+      </p>;
     } else {
       tableContent = <TaskTable
         includeDetailsLink
@@ -54,7 +55,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
         includeDocketNumber
         includeIssueCount
         includeDaysWaiting
-        appeals={this.props.appeals}
+        tasks={this.props.tasks}
       />;
     }
 
@@ -64,8 +65,8 @@ class JudgeReviewTaskListView extends React.PureComponent {
       {messages.error && <Alert type="error" title={messages.error.title}>
         {messages.error.detail}
       </Alert>}
-      {messages.success && <Alert type="success" title={messages.success}>
-        {COPY.JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
+      {messages.success && <Alert type="success" title={messages.success.title}>
+        {messages.success.detail || COPY.JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL}
       </Alert>}
       {tableContent}
     </AppSegment>;
@@ -73,7 +74,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
 }
 
 JudgeReviewTaskListView.propTypes = {
-  appeals: PropTypes.array.isRequired
+  tasks: PropTypes.array.isRequired
 };
 
 const mapStateToProps = (state) => {
@@ -84,7 +85,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    appeals: judgeReviewAppealsSelector(state),
+    tasks: judgeReviewTasksSelector(state),
     messages
   };
 };

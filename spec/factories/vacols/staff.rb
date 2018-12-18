@@ -15,13 +15,28 @@ FactoryBot.define do
       end
     end
 
+    sactive "A"
+
     trait :attorney_role do
       sactive "A"
+    end
+
+    trait :hearing_judge do
+      stitle "D#{Random.rand(1..5)}"
+      svlj "A"
     end
 
     trait :judge_role do
       svlj "J"
       sactive "A"
+    end
+
+    trait :hearing_coordinator do
+      sdept "HRG"
+      sactive "A"
+      sequence(:snamel) { |n| "Smith#{n}" }
+      sequence(:snamef) { |n| "John#{n}" }
+      snamemi ""
     end
 
     trait :attorney_judge_role do
@@ -35,12 +50,18 @@ FactoryBot.define do
       sattyid nil
     end
 
+    trait :dispatch_role do
+      sdept "DSP"
+      sactive "A"
+      sattyid nil
+    end
+
     trait :has_location_code do
       slogid "55"
     end
 
     after(:build) do |staff, evaluator|
-      if evaluator.user && evaluator.user.full_name
+      if evaluator.user&.full_name
         staff.snamef, staff.snamel = evaluator.user.full_name.split(" ")
       end
     end

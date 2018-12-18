@@ -1,115 +1,98 @@
 import { expect } from 'chai';
-import { associateTasksWithAppeals, sortTasks } from '../../../app/queue/utils';
+import { associateTasksWithAppeals } from '../../../app/queue/utils';
 
 const serverData = {
-  appeals: {
-    data: [{
-      id: '123',
-      attributes: {
-        vacols_id: '1',
-        aod: true
-      }
-    }, {
-      id: '234',
-      attributes: {
-        vacols_id: '2',
-        type: 'Court Remand'
-      }
-    }, {
-      id: '345',
-      attributes: { vacols_id: '3' }
-    }]
-  },
   tasks: {
-    data: [{
-      id: '1',
-      attributes: {
-        appeal_id: '111',
-        docket_date: '2017-12-28T17:18:20.412Z'
+    data: [
+      {
+        attributes: {
+          is_legacy: true,
+          type: 'LegacyJudgeTask',
+          appeal_type: 'LegacyAppeal',
+          added_by_css_id: 'BVANKUVALIS',
+          added_by_name: 'Nash X Kuvalis',
+          aod: false,
+          appeal_id: 3,
+          assigned_by: {
+            first_name: 'Stephen',
+            last_name: 'Casper',
+            css_id: 'BVASCASPER1',
+            pg_id: 10
+          },
+          assigned_on: '2018-08-02T17:37:03.000Z',
+          completed_at: null,
+          assigned_to: {
+            css_id: 'BVANKUVALIS',
+            id: 130,
+            type: 'User'
+          },
+          case_type: 'Post Remand',
+          docket_date: '2008-08-31T00:00:00.000Z',
+          docket_name: 'Legacy',
+          docket_number: '6182238',
+          document_id: '12345-12345678',
+          due_on: '2018-08-11T00:00:00.000Z',
+          external_appeal_id: '3625593',
+          issue_count: 6,
+          paper_case: false,
+          previous_task: {
+            assigned_on: '2018-08-02T17:37:03.000Z'
+          },
+          task_id: '3625593-2018-07-11',
+          label: 'review',
+          user_id: 'BVANKUVALIS',
+          veteran_file_number: '767574947',
+          veteran_name: 'Mills, Beulah, J',
+          work_product: 'OTD',
+          status: 'Assigned'
+        },
+        id: '3625593',
+        type: 'judge_legacy_tasks'
       }
-    }, {
-      id: '1',
-      attributes: {
-        appeal_id: '222',
-        docket_date: '2016-10-07T03:15:27.580Z'
-      }
-    }, {
-      id: '2',
-      attributes: {
-        appeal_id: '333',
-        docket_date: '2015-10-13T06:47:34.155Z'
-      }
-    }, {
-      id: '3',
-      attributes: {
-        appeal_id: '444',
-        docket_date: '2016-03-01T04:15:51.123Z'
-      }
-    }]
+    ]
   }
 };
 
 describe('QueueLoadingScreen', () => {
   it('associates queue decisions/appeals and tasks', () => {
-    const { tasks: tasksWithAppeals } = associateTasksWithAppeals(serverData);
+    const { tasks } = associateTasksWithAppeals(serverData);
 
-    expect(tasksWithAppeals).to.deep.equal({
-      1: {
-        id: '1',
-        appealId: '1',
-        attributes: {
-          appeal_id: '222',
-          docket_date: '2016-10-07T03:15:27.580Z'
-        }
-      },
-      2: {
-        id: '2',
-        appealId: '2',
-        attributes: {
-          appeal_id: '333',
-          docket_date: '2015-10-13T06:47:34.155Z'
-        }
-      },
-      3: {
-        id: '3',
-        appealId: '3',
-        attributes: {
-          appeal_id: '444',
-          docket_date: '2016-03-01T04:15:51.123Z'
-        }
+    expect(tasks).to.deep.equal({
+      3625593: {
+        uniqueId: '3625593',
+        isLegacy: true,
+        appealId: 3,
+        appealType: 'LegacyAppeal',
+        externalAppealId: '3625593',
+        assignedOn: '2018-08-02T17:37:03.000Z',
+        completedOn: null,
+        dueOn: '2018-08-11T00:00:00.000Z',
+        assignedTo: {
+          cssId: 'BVANKUVALIS',
+          id: 130,
+          type: 'User'
+        },
+        // eslint-disable-next-line no-undefined
+        availableActions: undefined,
+        // eslint-disable-next-line no-undefined
+        taskBusinessPayloads: undefined,
+        addedByName: 'Nash X Kuvalis',
+        addedByCssId: 'BVANKUVALIS',
+        taskId: '3625593-2018-07-11',
+        label: 'review',
+        documentId: '12345-12345678',
+        assignedBy: {
+          firstName: 'Stephen',
+          lastName: 'Casper',
+          cssId: 'BVASCASPER1',
+          pgId: 10
+        },
+        workProduct: 'OTD',
+        previousTaskAssignedOn: '2018-08-02T17:37:03.000Z',
+        status: 'Assigned',
+        decisionPreparedBy: null,
+        type: 'LegacyJudgeTask'
       }
     });
-  });
-
-  it('groups tasks by AOD/CAVC and sorts by docket date', () => {
-    const { tasks, appeals } = associateTasksWithAppeals(serverData);
-
-    const sortedTasks = sortTasks({
-      tasks,
-      appeals
-    });
-
-    expect(sortedTasks).to.deep.equal([{
-      id: '2',
-      appealId: '2',
-      attributes: {
-        appeal_id: '333',
-        docket_date: '2015-10-13T06:47:34.155Z'
-      }
-    }, {
-      id: '1',
-      appealId: '1',
-      attributes: {
-        appeal_id: '222',
-        docket_date: '2016-10-07T03:15:27.580Z'
-      }
-    }, {
-      id: '3',
-      appealId: '3',
-      attributes: {
-        appeal_id: '444',
-        docket_date: '2016-03-01T04:15:51.123Z'
-      }
-    }]);
   });
 });

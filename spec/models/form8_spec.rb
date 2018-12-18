@@ -1,12 +1,4 @@
 describe Form8 do
-  before do
-    FeatureToggle.enable!(:test_facols)
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   initial_fields = [:_initial_appellant_name,
                     :_initial_appellant_relationship,
                     :_initial_veteran_name,
@@ -292,9 +284,9 @@ describe Form8 do
 
     let(:correspondent) do
       create(:correspondent,
-             appellant_first_name: "Micah",
+             appellant_first_name: "Bobby",
              appellant_middle_initial: "A",
-             appellant_last_name: "Bobby",
+             appellant_last_name: "Micah",
              appellant_relationship: "Brother",
              snamef: "Shane",
              snamemi: "A",
@@ -306,7 +298,7 @@ describe Form8 do
 
       expect(form8).to have_attributes(
         vacols_id: "VACOLS-ID",
-        appellant_name: "Micah A Bobby",
+        appellant_name: "Bobby A Micah",
         appellant_relationship: "Brother",
         file_number: "VBMS-ID",
         veteran_name: "Bobby, Shane, A",

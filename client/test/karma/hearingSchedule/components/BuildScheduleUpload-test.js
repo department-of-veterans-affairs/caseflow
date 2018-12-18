@@ -19,7 +19,7 @@ describe('BuildScheduleUpload', () => {
       fileType={SPREADSHEET_TYPES.JudgeSchedulePeriod.value}
     /></MemoryRouter>);
 
-    expect(wrapper.text()).to.include('Please input a date range');
+    expect(wrapper.text()).to.include('What are you uploading?');
   });
 
   it('displays errors when set', () => {
@@ -28,6 +28,6 @@ describe('BuildScheduleUpload', () => {
       uploadJudgeFormErrors="Validation failed: HearingSchedule::ValidateJudgeSpreadsheet::JudgeTemplateNotFollowed"
     /></MemoryRouter>);
 
-    expect(wrapper.text()).to.include('We have found column names that vary from');
+    expect(wrapper.text()).to.include('The judge non-availability spreadsheet ');
   });
 });

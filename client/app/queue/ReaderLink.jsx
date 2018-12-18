@@ -7,29 +7,26 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import { TASK_ACTIONS } from './constants';
 
 import NewFile from './components/NewFile';
+import AppealDocumentCount from './AppealDocumentCount';
+import { css } from 'glamor';
+
+const documentCountSizeStyling = css({
+  fontSize: '.9em'
+});
 
 export default class ReaderLink extends React.PureComponent {
-
   readerLinkAnalytics = () => {
     window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER);
   }
-
-  getLinkText = () => {
-    const {
-      appeal,
-      longMessage
-    } = this.props;
-
-    return longMessage ?
-      <React.Fragment>View Veteran's documents <NewFile appeal={appeal} /></React.Fragment> :
-      <React.Fragment>View docs <NewFile appeal={appeal} /></React.Fragment>;
-  };
 
   render = () => {
     const {
       redirectUrl,
       taskType,
-      appealId
+      appealId,
+      appeal,
+      docCountWithinLink,
+      docCountBelowLink
     } = this.props;
     const linkProps = {};
 
@@ -48,21 +45,30 @@ export default class ReaderLink extends React.PureComponent {
       linkProps.disabled = true;
     }
 
-    return <Link {...linkProps} onClick={this.readerLinkAnalytics}>
-      {this.getLinkText()}
-    </Link>;
+    return <React.Fragment>
+      <Link {...linkProps} onClick={this.readerLinkAnalytics}>
+          View { docCountWithinLink && <AppealDocumentCount appeal={appeal} /> } docs
+        <NewFile externalAppealId={appeal.externalId} /></Link>
+      { docCountBelowLink &&
+            <div {...documentCountSizeStyling}>
+              <AppealDocumentCount loadingText appeal={appeal} />
+            </div>
+      }
+    </React.Fragment>;
   };
 }
 
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
   appeal: PropTypes.object.isRequired,
-  longMessage: PropTypes.bool,
+  docCountWithinLink: PropTypes.bool,
+  docCountBelowLink: PropTypes.bool,
   redirectUrl: PropTypes.string,
   taskType: PropTypes.string,
   appealId: PropTypes.string.isRequired
 };
 
 ReaderLink.defaultProps = {
-  longMessage: false
+  docCountWithinLink: false,
+  docCountBelowLink: false
 };

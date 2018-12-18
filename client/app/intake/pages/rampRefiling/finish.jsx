@@ -12,7 +12,7 @@ import { setIssueSelected, setHasIneligibleIssue, setOutsideCaseflowStepsConfirm
   processFinishError } from '../../actions/rampRefiling';
 import _ from 'lodash';
 import classNames from 'classnames';
-import CompleteIntakeErrorAlert from '../../components/CompleteIntakeErrorAlert';
+import ErrorAlert from '../../components/ErrorAlert';
 
 class Finish extends React.PureComponent {
   onCheckIssue = (issueId) => (checked) => this.props.setIssueSelected(issueId, checked)
@@ -94,9 +94,9 @@ class Finish extends React.PureComponent {
       <h1>Finish processing RAMP Selection form</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
-        <CompleteIntakeErrorAlert
-          completeIntakeErrorCode={completeIntakeErrorCode}
-          completeIntakeErrorData={completeIntakeErrorData} />
+        <ErrorAlert
+          errorCode={completeIntakeErrorCode}
+          errorData={completeIntakeErrorData} />
       }
 
       <ol className="cf-bare-list" ref={this.setOutsideCaseflowStepsNode}>
@@ -212,7 +212,6 @@ class FinishNextButton extends React.PureComponent {
       id="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      legacyStyling={false}
     >
       Finish Intake
     </Button>;

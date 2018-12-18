@@ -5,6 +5,13 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
+  before_action :deny_vso_access, except: [:unauthorized]
+
+  rescue_from StandardError do |e|
+    fail e unless e.class.method_defined?(:serialize_response)
+    Raven.capture_exception(e)
+    render(e.serialize_response)
+  end
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
@@ -12,10 +19,32 @@ class ApplicationController < ApplicationBaseController
   rescue_from Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.error "Vacols error occured: #{e.message}"
     Raven.capture_exception(e)
-    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+    if e.class.method_defined?(:serialize_response)
+      render(e.serialize_response)
+    else
+      render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+    end
   end
 
   private
+
+  def handle_non_critical_error(endpoint, err)
+    if !err.class.method_defined? :serialize_response
+      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
+      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
+    end
+
+    DataDogService.increment_counter(
+      metric_group: "errors",
+      metric_name: "non_critical",
+      app_name: RequestStore[:application],
+      attrs: {
+        endpoint: endpoint
+      }
+    )
+
+    render err.serialize_response
+  end
 
   def current_user
     @current_user ||= begin
@@ -93,24 +122,50 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :certification_header
 
-  def can_access_queue?
-    verify_authorized_roles("Reader")
+  # https://stackoverflow.com/a/748646
+  def no_cache
+    # :nocov:
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+    # :nocov:
   end
-  helper_method :can_access_queue?
 
-  def verify_queue_access
-    redirect_to "/unauthorized" unless can_access_queue?
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
+  def case_search_home_page
+    if feature_enabled?(:case_search_home_page)
+      return false if current_user.admin?
+      return false if current_user.organization_queue_user? || current_user.vso_employee?
+      return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
+      return false if current_user.colocated_in_vacols?
+      return true
+    end
+    false
+  end
+  helper_method :case_search_home_page
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
+
+  def deny_vso_access
+    redirect_to "/unauthorized" if current_user&.vso_employee?
+  end
+
+  # :nocov:
+  def can_assign_task?
+    if current_user.attorney_in_vacols?
+      # This feature toggle control access of attorneys to create admin actions for co-located users
+      feature_enabled?(:attorney_assignment_to_colocated) ||
+        current_user.organizations.pluck(:name).include?(QualityReview.singleton.name)
+    else
+      true
+    end
   end
 
   def verify_task_assignment_access
-    # :nocov:
-    # This feature toggle control access of attorneys to create admin actions for co-located users
-    return true if current_user.attorney_in_vacols? && feature_enabled?(:attorney_assignment_to_colocated)
-    # This feature toggle control access of judges to assign cases to attorneys
-    return true if current_user.judge_in_vacols? && feature_enabled?(:judge_assignment_to_attorney)
-    redirect_to "/unauthorized"
-    # :nocov:
+    redirect_to("/unauthorized") unless can_assign_task?
   end
+  # :nocov:
 
   def invalid_record_error(record)
     render json:  {
@@ -146,7 +201,7 @@ class ApplicationController < ApplicationBaseController
   # - Ensure the fakes are loaded (reset in dev mode on file save & class reload)
   # - Setup the default authenticated user
   def setup_fakes
-    Fakes::Initializer.setup!(Rails.env, app_name: application)
+    Fakes::Initializer.setup!(Rails.env)
   end
 
   def set_application
@@ -159,7 +214,7 @@ class ApplicationController < ApplicationBaseController
   helper_method :test_user?
 
   def verify_authentication
-    return true if current_user && current_user.authenticated?
+    return true if current_user&.authenticated?
 
     session["return_to"] = request.original_url
     redirect_to login_path
@@ -246,8 +301,7 @@ class ApplicationController < ApplicationBaseController
 
   class << self
     def dependencies_faked?
-      Rails.env.stubbed? ||
-        Rails.env.test? ||
+      Rails.env.test? ||
         Rails.env.demo? ||
         Rails.env.ssh_forwarding? ||
         Rails.env.development?

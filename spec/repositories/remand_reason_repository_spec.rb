@@ -1,10 +1,10 @@
 describe RemandReasonRepository do
   before do
-    FeatureToggle.enable!(:test_facols)
+    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
   after do
-    FeatureToggle.disable!(:test_facols)
+    Timecop.return
   end
 
   context ".load_remand_reasons_for_appeals" do
@@ -45,12 +45,12 @@ describe RemandReasonRepository do
     let(:vacols_ids) { [vacols_case1.bfkey, vacols_case2.bfkey, vacols_case3.bfkey] }
 
     let(:result) do
-      { vacols_case1.bfkey => { issues1.second.issseq => [{ code: "BA", after_certification: false }] },
+      { vacols_case1.bfkey => { issues1.second.issseq => [{ code: "BA", post_aoj: false }] },
         vacols_case2.bfkey => {},
         vacols_case3.bfkey =>
           { issues3.first.issseq =>
-             [{ code: "AA", after_certification: true }, { code: "AB", after_certification: false }],
-            issues3.third.issseq => [{ code: "AC", after_certification: true }] } }
+             [{ code: "AA", post_aoj: true }, { code: "AB", post_aoj: false }],
+            issues3.third.issseq => [{ code: "AC", post_aoj: true }] } }
     end
 
     it "should load remand reasons per appeal" do
@@ -71,7 +71,7 @@ describe RemandReasonRepository do
         readjudication: nil,
         vacols_sequence_id: "3",
         vacols_id: "123456",
-        remand_reasons: [{ code: "AB", after_certification: true }]
+        remand_reasons: [{ code: "AB", post_aoj: true }]
       }
     end
 

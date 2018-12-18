@@ -10,14 +10,22 @@ module HearingMapper
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
       {
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_info[:date]),
         notes: notes_to_vacols_format(hearing_info[:notes]),
         disposition: disposition_to_vacols_format(hearing_info[:disposition], hearing_info.keys),
         hold_open: hold_open_to_vacols_format(hearing_info[:hold_open]),
         aod: aod_to_vacols_format(hearing_info[:aod]),
         add_on: add_on_to_vacols_format(hearing_info[:add_on]),
         transcript_requested: transcript_requested_to_vacols_format(hearing_info[:transcript_requested]),
-        representative_name: representative_name_to_vacols_format(hearing_info[:representative_name])
-      }.select { |k, _v| hearing_info.keys.map(&:to_sym).include? k } # only send updates to key/values that are passed
+        representative_name: representative_name_to_vacols_format(hearing_info[:representative_name]),
+        folder_nr: hearing_info[:folder_nr],
+        room: hearing_info[:room],
+        bva_poc: hearing_info[:bva_poc],
+        judge_id: hearing_info[:judge_id]
+      }.select do |k, _v|
+        hearing_info.keys.map(&:to_sym).include?(k) || (k.to_sym == :hearing_date && hearing_info[:date])
+        # only send updates to key/values that are passed
+      end
     end
 
     def bfha_vacols_code(hearing_record)
@@ -39,7 +47,7 @@ module HearingMapper
     # asctime - returns a canonical string representation of time
     def datetime_based_on_type(datetime:, regional_office_key:, type:)
       datetime = VacolsHelper.normalize_vacols_datetime(datetime)
-      return datetime if type == :central_office
+      return datetime if type == :central
 
       datetime.asctime.in_time_zone(timezone(regional_office_key)).in_time_zone("Eastern Time (US & Canada)")
     end

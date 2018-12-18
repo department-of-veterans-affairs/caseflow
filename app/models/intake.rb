@@ -1,17 +1,19 @@
 class Intake < ApplicationRecord
+  include Asyncable
+
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user
   belongs_to :detail, polymorphic: true
 
   COMPLETION_TIMEOUT = 5.minutes
+  IN_PROGRESS_EXPIRES_AFTER = 1.day
 
   enum completion_status: {
     success: "success",
     canceled: "canceled",
     error: "error",
-    # TODO: This status is now unused. Remove after we verify no intakes have it.
-    pending: "pending"
+    expired: "expired"
   }
 
   ERROR_CODES = {
@@ -33,7 +35,11 @@ class Intake < ApplicationRecord
   attr_reader :error_data
 
   def self.in_progress
-    where(completed_at: nil).where.not(started_at: nil)
+    where(completed_at: nil).where(started_at: IN_PROGRESS_EXPIRES_AFTER.ago..Time.zone.now)
+  end
+
+  def self.expired
+    where(completed_at: nil).where(started_at: Time.zone.at(0)...IN_PROGRESS_EXPIRES_AFTER.ago)
   end
 
   def self.build(form_type:, veteran_file_number:, user:)
@@ -45,6 +51,13 @@ class Intake < ApplicationRecord
       veteran_file_number: veteran_file_number,
       user: user
     )
+  end
+
+  def self.close_expired_intakes!
+    Intake.expired.each do |intake|
+      intake.complete_with_status!(:expired)
+      intake.cancel_detail!
+    end
   end
 
   def self.flagged_for_manager_review
@@ -83,6 +96,8 @@ class Intake < ApplicationRecord
     preload_intake_data!
 
     if validate_start
+      self.class.close_expired_intakes!
+
       update_attributes(
         started_at: Time.zone.now,
         detail: find_or_build_initial_detail
@@ -164,8 +179,7 @@ class Intake < ApplicationRecord
 
     elsif !veteran.valid?(:bgs)
       self.error_code = :veteran_not_valid
-      errors = veteran.errors.messages.map { |(key, _value)| key }
-      @error_data = { veteran_missing_fields: errors }
+      @error_data = veteran_invalid_fields
 
     elsif duplicate_intake_in_progress
       self.error_code = :duplicate_intake_in_progress
@@ -193,8 +207,9 @@ class Intake < ApplicationRecord
       id: id,
       form_type: form_type,
       veteran_file_number: veteran_file_number,
-      veteran_name: veteran && veteran.name.formatted(:readable_short),
-      veteran_form_name: veteran && veteran.name.formatted(:form),
+      veteran_name: veteran&.name&.formatted(:readable_short),
+      veteran_form_name: veteran&.name&.formatted(:form),
+      veteran_is_deceased: veteran&.deceased?,
       completed_at: completed_at,
       relationships: ama_enabled && veteran && veteran.relationships
     }
@@ -205,13 +220,20 @@ class Intake < ApplicationRecord
   end
 
   def create_end_product_and_contentions
-    detail.create_end_product_and_contentions!
+    detail.create_end_products_and_contentions!
   rescue StandardError => e
     abort_completion!
     raise e
   end
 
   private
+
+  def update_person!
+    # Update the person when a claimant is created
+    Person.find_or_create_by(participant_id: detail.claimant_participant_id).tap do |person|
+      person.update!(date_of_birth: BGSService.new.fetch_person_info(detail.claimant_participant_id)[:birth_date])
+    end
+  end
 
   def file_number_valid?
     return false unless veteran_file_number
@@ -227,5 +249,21 @@ class Intake < ApplicationRecord
 
   def find_or_build_initial_detail
     fail Caseflow::Error::MustImplementInSubclass
+  end
+
+  def veteran_invalid_fields
+    missing_fields = veteran.errors.details
+      .select { |_, errors| errors.any? { |e| e[:error] == :blank } }
+      .keys
+
+    address_too_long = veteran.errors.details.any? do |field_name, errors|
+      [:address_line1, :address_line2, :address_line3].include?(field_name) &&
+        errors.any? { |e| e[:error] == :too_long }
+    end
+
+    {
+      veteran_missing_fields: missing_fields,
+      veteran_address_too_long: address_too_long
+    }
   end
 end

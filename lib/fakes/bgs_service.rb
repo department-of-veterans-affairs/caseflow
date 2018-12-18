@@ -1,5 +1,6 @@
 # rubocop:disable Metrics/ClassLength
 require "bgs"
+require "fakes/end_product_store"
 
 class Fakes::BGSService
   include PowerOfAttorneyMapper
@@ -12,11 +13,20 @@ class Fakes::BGSService
   cattr_accessor :address_records
   cattr_accessor :ssn_not_found
   cattr_accessor :rating_records
-  cattr_accessor :rating_issue_records
+  cattr_accessor :rating_profile_records
+  cattr_accessor :manage_claimant_letter_v2_requests
+  cattr_accessor :generate_tracked_items_requests
   attr_accessor :client
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/LineLength
   def self.create_veteran_records
+    return if @veteran_records_created
+
+    @veteran_records_created = true
+
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
 
     CSV.foreach(file_path, headers: true) do |row|
@@ -28,7 +38,7 @@ class Fakes::BGSService
         Generators::Rating.build(
           participant_id: veteran.participant_id
         )
-      when "has_many_ratings"
+      when "has_two_ratings"
         Generators::Rating.build(
           participant_id: veteran.participant_id
         )
@@ -38,6 +48,97 @@ class Fakes::BGSService
           issues: [
             { decision_text: "Left knee" },
             { decision_text: "PTSD" }
+          ]
+        )
+      when "has_many_ratings"
+        in_active_review_reference_id = "in-active-review-ref-id"
+        in_active_review_receipt_date = Time.zone.parse("2018-04-01")
+        Generators::Rating.build(
+          participant_id: veteran.participant_id
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          profile_date: Time.zone.today - 100,
+          promulgation_date: Time.zone.today - 90,
+          issues: [
+            { decision_text: "Left knee" },
+            { decision_text: "Right knee" },
+            { decision_text: "PTSD" },
+            { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id }
+          ]
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          # 2019/2/14 is AMA activation date
+          profile_date: Date.new(2019, 2, 14) - 10.days,
+          promulgation_date: Date.new(2019, 2, 14) - 5.days,
+          issues: [
+            { decision_text: "Issue before AMA not from a RAMP Review", reference_id: "before_ama_ref_id" },
+            { decision_text: "Issue before AMA from a RAMP Review",
+              associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" },
+              reference_id: "ramp_reference_id" }
+          ]
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          # 2017/11/1 is RAMP begin date
+          profile_date: Date.new(2017, 11, 1) - 20.days,
+          promulgation_date: Date.new(2017, 11, 1) - 15.days,
+          issues: [
+            { decision_text: "Issue before test AMA not from a RAMP Review", reference_id: "before_test_ama_ref_id" },
+            { decision_text: "Issue before test AMA from a RAMP Review",
+              associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_test_claim_id" },
+              reference_id: "ramp_reference_id" }
+          ]
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 395,
+          profile_date: Time.zone.today - 400,
+          issues: [
+            { decision_text: "Old injury" }
+          ]
+        )
+        hlr = HigherLevelReview.find_or_create_by!(
+          veteran_file_number: veteran.file_number,
+          receipt_date: in_active_review_receipt_date
+        )
+        epe = EndProductEstablishment.find_or_create_by!(
+          reference_id: in_active_review_reference_id,
+          veteran_file_number: veteran.file_number,
+          source: hlr
+        )
+        RequestIssue.find_or_create_by!(
+          review_request: hlr,
+          end_product_establishment: epe,
+          rating_issue_reference_id: in_active_review_reference_id
+        ) do |reqi|
+          reqi.rating_issue_profile_date = Time.zone.today - 100
+        end
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { benefit_claim_id: in_active_review_reference_id }
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 60,
+          issues: [
+            { decision_text: "Lorem ipsum dolor sit amet, paulo scaevola abhorreant mei te, ex est mazim ornatus, at pro causae maiestatis." },
+            { decision_text: "Inani movet maiestatis nec no, verear periculis signiferumque in sit." },
+            { decision_text: "Et nibh euismod recusabo duo. Ne zril labitur eum, ei sit augue impedit detraxit." },
+            { decision_text: "Usu et praesent suscipiantur, mea mazim timeam liberavisse et." },
+            { decision_text: "At dicit omnes per, vim tale tota no." }
+          ]
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 60,
+          issues: [
+            { decision_text: "In mei labore oportere mediocritatem, vel ex dicta quidam corpora, fierent explicari liberavisse ei quo." },
+            { decision_text: "Vel malis impetus ne, vim cibo appareat scripserit ne, qui lucilius consectetuer ex." },
+            { decision_text: "Cu unum partiendo sadipscing has, eius explicari ius no." },
+            { decision_text: "Cu unum partiendo sadipscing has, eius explicari ius no." },
+            { decision_text: "Cibo pertinax hendrerit vis et, legendos euripidis no ius, ad sea unum harum." }
           ]
         )
       when "has_supplemental_claim_with_vbms_claim_id"
@@ -50,21 +151,65 @@ class Fakes::BGSService
           veteran_file_number: veteran.file_number,
           source: sc
         )
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { benefit_claim_id: claim_id }
+        )
         sc
       when "has_higher_level_review_with_vbms_claim_id"
         claim_id = "600118951"
+        contention_reference_id = 1234
         hlr = HigherLevelReview.find_or_create_by!(
           veteran_file_number: veteran.file_number
         )
-        EndProductEstablishment.find_or_create_by!(
+        epe = EndProductEstablishment.find_or_create_by!(
           reference_id: claim_id,
           veteran_file_number: veteran.file_number,
           source: hlr
         )
+        RequestIssue.find_or_create_by!(
+          review_request: hlr,
+          end_product_establishment: epe,
+          contention_reference_id: contention_reference_id
+        )
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: Time.zone.today - 40,
+          profile_date: Time.zone.today - 30,
+          issues: [
+            {
+              decision_text: "Higher Level Review was denied",
+              contention_reference_id: contention_reference_id
+            }
+          ]
+        )
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { benefit_claim_id: claim_id }
+        )
         hlr
+      when "has_ramp_election_with_contentions"
+        claim_id = "123456"
+        ramp_election = RampElection.find_or_create_by!(
+          veteran_file_number: veteran.file_number
+        )
+        EndProductEstablishment.find_or_create_by!(reference_id: claim_id, source: ramp_election) do |e|
+          e.veteran_file_number = veteran.file_number
+          e.last_synced_at = 10.minutes.ago
+          e.synced_status = "CLR"
+        end
+        Generators::Contention.build(text: "A contention!", claim_id: claim_id)
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { benefit_claim_id: claim_id }
+        )
+        ramp_election
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/LineLength
 
   def self.all_grants
     default_date = 10.days.ago.to_formatted_s(:short_date)
@@ -256,15 +401,29 @@ class Fakes::BGSService
   def self.clean!
     self.ssn_not_found = false
     self.inaccessible_appeal_vbms_ids = []
-    self.end_product_records = {}
     self.rating_records = {}
-    self.rating_issue_records = {}
+    self.rating_profile_records = {}
+    end_product_store.clear!
+    self.manage_claimant_letter_v2_requests = nil
+    self.generate_tracked_items_requests = nil
+  end
+
+  def self.end_product_store
+    @end_product_store ||= Fakes::EndProductStore.new
+  end
+
+  def self.store_end_product_record(veteran_id, end_product)
+    end_product_store.store_end_product_record(veteran_id, end_product)
   end
 
   def get_end_products(veteran_id)
-    records = self.class.end_product_records || {}
+    store = self.class.end_product_store
+    records = store.fetch_and_inflate(veteran_id) || store.fetch_and_inflate(:default) || {}
+    records.values
+  end
 
-    records[veteran_id] || records[:default] || []
+  def cancel_end_product(veteran_id, end_product_code, end_product_modifier)
+    # noop
   end
 
   def fetch_veteran_info(vbms_id)
@@ -273,6 +432,35 @@ class Fakes::BGSService
 
     (self.class.veteran_records || {})[vbms_id]
   end
+
+  # rubocop:disable Metrics/MethodLength
+  def fetch_person_info(participant_id)
+    # This is a limited set of test data, more fields are available.
+    if participant_id == "5382910292"
+      # This claimant is over 75 years old so they get automatic AOD
+      {
+        birth_date: "Sun, 05 Sep 1943 00:00:00 -0500",
+        first_name: "Bob",
+        middle_name: "Billy",
+        last_name: "Vance"
+      }
+    elsif participant_id == "1129318238"
+      {
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_name: "Cathy",
+        middle_name: "",
+        last_name: "Smith"
+      }
+    else
+      {
+        birth_date: "Sat, 05 Sep 1998 00:00:00 -0500",
+        first_name: "Tom",
+        middle_name: "Edward",
+        last_name: "Brady"
+      }
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
 
   def can_access?(vbms_id)
     !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
@@ -294,6 +482,35 @@ class Fakes::BGSService
     []
   end
 
+  # rubocop:disable Metrics/MethodLength
+  def fetch_poas_by_participant_ids(participant_ids)
+    get_hash_of_poa_from_bgs_poas(
+      participant_ids.map do |participant_id|
+        vso = if participant_id == "CLAIMANT_WITH_PVA_AS_VSO"
+                {
+                  legacy_poa_cd: "071",
+                  nm: "PARALYZED VETERANS OF AMERICA, INC.",
+                  org_type_nm: "POA National Organization",
+                  ptcpnt_id: "2452383"
+                }
+              else
+                {
+                  legacy_poa_cd: "100",
+                  nm: "Attorney McAttorneyFace",
+                  org_type_nm: "POA Attorney",
+                  ptcpnt_id: "1234567"
+                }
+              end
+
+        {
+          ptcpnt_id: participant_id,
+          power_of_attorney: vso
+        }
+      end
+    )
+  end
+  # rubocop:enable Metrics/MethodLength
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
@@ -307,7 +524,8 @@ class Fakes::BGSService
   end
 
   def fetch_file_number_by_ssn(ssn)
-    ssn_not_found ? nil : ssn
+    # reverse is a hack to return something different than what is passed.
+    ssn_not_found ? nil : ssn.to_s.reverse
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
@@ -329,21 +547,18 @@ class Fakes::BGSService
   end
 
   def fetch_rating_profile(participant_id:, profile_date:)
-    self.class.rating_issue_records ||= {}
-    self.class.rating_issue_records[participant_id] ||= {}
+    self.class.rating_profile_records ||= {}
+    self.class.rating_profile_records[participant_id] ||= {}
 
-    rating_issues = self.class.rating_issue_records[participant_id][profile_date]
+    rating_profile = self.class.rating_profile_records[participant_id][profile_date]
 
     # Simulate the error bgs throws if rating profile doesn't exist
-    unless rating_issues
+    unless rating_profile
       fail Savon::Error, "a record does not exist for PTCPNT_VET_ID = '#{participant_id}'"\
         " and PRFL_DT = '#{profile_date}'"
     end
 
-    # BGS returns the data not as an array if there is only one issue
-    rating_issues = rating_issues.first if rating_issues.count == 1
-
-    { rating_issues: rating_issues }
+    rating_profile
   end
 
   def get_participant_id_for_user(user)
@@ -374,7 +589,7 @@ class Fakes::BGSService
         middle_name: "D",
         poa: "DISABLED AMERICAN VETERANS",
         proof_of_dependecy_ind: nil,
-        ptcpnt_id: "5382910292",
+        ptcpnt_id: "CLAIMANT_WITH_PVA_AS_VSO",
         relationship_begin_date: nil,
         relationship_end_date: nil,
         relationship_type: "Spouse",
@@ -414,6 +629,26 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 
+  # We're currently only using the doc_reference_id and development_item_reference_id to track
+  # that the call succeeded, so I am just having the fakes return these dummy values
+  def manage_claimant_letter_v2!(claim_id:, program_type_cd:, claimant_participant_id:)
+    self.class.manage_claimant_letter_v2_requests ||= {}
+
+    self.class.manage_claimant_letter_v2_requests[claim_id] = {
+      program_type_cd: program_type_cd,
+      claimant_participant_id: claimant_participant_id
+    }
+
+    "doc_reference_id_result"
+  end
+
+  def generate_tracked_items!(claim_id)
+    self.class.generate_tracked_items_requests ||= {}
+    self.class.generate_tracked_items_requests[claim_id] = true
+
+    "development_item_reference_id_result"
+  end
+
   private
 
   VSO_PARTICIPANT_ID = "4623321".freeze
@@ -421,7 +656,6 @@ class Fakes::BGSService
 
   def default_claimant_info
     {
-      name: "Harry Carey",
       relationship: "Spouse"
     }
   end
