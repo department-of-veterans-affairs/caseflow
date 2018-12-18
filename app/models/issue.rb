@@ -212,16 +212,15 @@ class Issue
   end
 
   def eligible_for_opt_in?
-    return false unless legacy_appeal.eligible_for_soc_opt_in?
     return disposition_date_after_legacy_appeal_soc? if disposition_is_failure_to_respond?
     active?
   end
 
-  private
-
   def legacy_appeal
     @legacy_appeal ||= LegacyAppeal.find_by(vacols_id: id)
   end
+
+  private
 
   def disposition_is_failure_to_respond?
     [:remand_failure_to_respond, :advance_failure_to_respond].include?(disposition)
