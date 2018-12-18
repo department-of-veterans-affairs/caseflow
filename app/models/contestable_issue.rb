@@ -25,7 +25,7 @@ class ContestableIssue
         rating_issue_profile_date: decision_issue.profile_date.try(:to_date),
         decision_issue_id: decision_issue.id,
         date: decision_issue.approx_decision_date,
-        description: decision_issue.decision_text, # TODO: also work with disposition
+        description: decision_issue.formatted_description,
         source_higher_level_review: decision_issue.source_higher_level_review,
         contesting_decision_review: contesting_decision_review
       )
@@ -48,17 +48,40 @@ class ContestableIssue
 
   private
 
+  def decision_issue?
+    !!decision_issue_id
+  end
+
   def title_of_active_review
     conflicting_request_issue.try(:review_title)
   end
 
-  def conflicting_request_issue
+  def conflicting_request_issue_by_rating
     return unless rating_issue_reference_id
-    return unless contesting_decision_review
-    found_request_issue = RequestIssue.find_active_by_rating_issue_reference_id(rating_issue_reference_id)
+    potentially_conflicting_request_issues.find_active_by_rating_issue_reference_id(rating_issue_reference_id)
+  end
 
-    return unless found_request_issue && found_request_issue.review_request_id != contesting_decision_review.id
+  def conflicting_request_issue_by_decision_issue
+    return unless decision_issue_id
+    potentially_conflicting_request_issues.find_active_by_contested_decision_id(decision_issue_id)
+  end
+
+  def potentially_conflicting_request_issues
+    RequestIssue.where.not(review_request: contesting_decision_review)
+  end
+
+  def conflicting_request_issue
+    return unless contesting_decision_review
+    found_request_issue = conflicting_request_issue_by_decision_issue || conflicting_request_issue_by_rating
+
+    return unless different_decision_review(found_request_issue)
     found_request_issue
+  end
+
+  def different_decision_review(found_request_issue)
+    return unless found_request_issue
+    found_request_issue.review_request_id != contesting_decision_review.id ||
+      found_request_issue.review_request_type != contesting_decision_review.class.name
   end
 
   def timely?

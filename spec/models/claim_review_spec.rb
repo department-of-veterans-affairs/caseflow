@@ -26,7 +26,8 @@ describe ClaimReview do
   let(:same_office) { nil }
 
   let(:rating_request_issue) do
-    RequestIssue.new(
+    build(
+      :request_issue,
       review_request: claim_review,
       rating_issue_reference_id: "reference-id",
       rating_issue_profile_date: Date.new(2018, 4, 30),
@@ -35,7 +36,8 @@ describe ClaimReview do
   end
 
   let(:second_rating_request_issue) do
-    RequestIssue.new(
+    build(
+      :request_issue,
       review_request: claim_review,
       rating_issue_reference_id: "reference-id2",
       rating_issue_profile_date: Date.new(2018, 4, 30),
@@ -44,7 +46,8 @@ describe ClaimReview do
   end
 
   let(:non_rating_request_issue) do
-    RequestIssue.new(
+    build(
+      :request_issue,
       review_request: claim_review,
       description: "Issue text",
       issue_category: "surgery",
@@ -53,7 +56,8 @@ describe ClaimReview do
   end
 
   let(:second_non_rating_request_issue) do
-    RequestIssue.new(
+    build(
+      :request_issue,
       review_request: claim_review,
       description: "some other issue",
       issue_category: "something",
@@ -62,7 +66,8 @@ describe ClaimReview do
   end
 
   let(:claim_review) do
-    HigherLevelReview.new(
+    build(
+      :higher_level_review,
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
       informal_conference: informal_conference,
@@ -71,7 +76,8 @@ describe ClaimReview do
   end
 
   let!(:claimant) do
-    Claimant.create!(
+    create(
+      :claimant,
       review_request: claim_review,
       participant_id: veteran_participant_id,
       payee_code: "00"
@@ -185,6 +191,30 @@ describe ClaimReview do
     end
   end
 
+  context "#non_comp?" do
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
+
+    subject { claim_review.non_comp? }
+
+    context "when benefit_type is compensation" do
+      let(:benefit_type) { "compensation" }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when benefit_type is pension" do
+      let(:benefit_type) { "pension" }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when benefit_type is something else" do
+      let(:benefit_type) { "foobar" }
+
+      it { is_expected.to be_truthy }
+    end
+  end
+
   context "#create_issues!" do
     before { claim_review.save! }
     subject { claim_review.create_issues!(issues) }
@@ -271,7 +301,7 @@ describe ClaimReview do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.last.reference_id,
-          contention_descriptions: ["another decision text", "decision text"],
+          contention_descriptions: array_including("another decision text", "decision text"),
           special_issues: [],
           user: user
         )

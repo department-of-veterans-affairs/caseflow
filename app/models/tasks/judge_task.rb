@@ -1,8 +1,8 @@
 class JudgeTask < Task
   include RoundRobinAssigner
 
-  def no_actions_available?(user)
-    assigned_to != user
+  def actions_available?(user)
+    assigned_to == user
   end
 
   def timeline_title
@@ -24,7 +24,7 @@ class JudgeTask < Task
     super(params.merge(type: JudgeAssignTask.name))
   end
 
-  def self.verify_user_can_assign!(user)
+  def self.verify_user_can_create!(user)
     QualityReview.singleton.user_has_access?(user) || super(user)
   end
 
