@@ -251,7 +251,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         <a id="our-elemnt" {...anchorJumpLinkStyling}>Currently active tasks</a>
       </h2>
       <div {...sectionSegmentStyling}>
-        { this.props.primaryTask ? "" : "No active tasks"}
+        { this.props.primaryTask ? '' : 'No active tasks'}
         { this.props.primaryTask && <table {...css({ width: '100%',
           marginTop: 0 })}>
           <tbody>
