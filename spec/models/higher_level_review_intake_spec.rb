@@ -198,7 +198,8 @@ describe HigherLevelReviewIntake do
     let(:legacy_opt_in_approved) { false }
 
     let(:detail) do
-      HigherLevelReview.create!(
+      create(
+        :higher_level_review,
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago,
         legacy_opt_in_approved: legacy_opt_in_approved

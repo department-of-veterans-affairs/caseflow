@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181214003212) do
+ActiveRecord::Schema.define(version: 20181217195658) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -526,6 +526,16 @@ ActiveRecord::Schema.define(version: 20181214003212) do
     t.bigint "appeal_series_id"
     t.index ["appeal_series_id"], name: "index_legacy_appeals_on_appeal_series_id"
     t.index ["vacols_id"], name: "index_legacy_appeals_on_vacols_id", unique: true
+  end
+
+  create_table "legacy_hearings", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "appeal_id"
+    t.string "vacols_id", null: false
+    t.string "witness"
+    t.string "military_service"
+    t.boolean "prepped"
+    t.text "summary"
   end
 
   create_table "legacy_issue_optins", force: :cascade do |t|

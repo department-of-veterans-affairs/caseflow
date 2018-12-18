@@ -54,8 +54,13 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def non_comp?
+    !ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
+  end
+
   def serialized_ratings
     return unless receipt_date
+    return if non_comp?
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
@@ -143,7 +148,7 @@ class DecisionReview < ApplicationRecord
       {
         vacols_id: legacy_appeal.vacols_id,
         date: legacy_appeal.nod_date,
-        eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?,
+        eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?(receipt_date),
         issues: legacy_appeal.issues.map(&:intake_attributes)
       }
     end
@@ -180,6 +185,11 @@ class DecisionReview < ApplicationRecord
   def establish!
     # no-op
   end
+  
+  def contestable_issues
+    return contestable_issues_from_decision_issues if non_comp?
+    contestable_issues_from_ratings + contestable_issues_from_decision_issues
+  end
 
   private
 
@@ -213,7 +223,7 @@ class DecisionReview < ApplicationRecord
   def matchable_legacy_appeals
     @matchable_legacy_appeals ||= LegacyAppeal
       .fetch_appeals_by_file_number(veteran_file_number)
-      .select(&:matchable_to_request_issue?)
+      .select { |appeal| appeal.matchable_to_request_issue?(receipt_date) }
   end
 
   def active_matchable_legacy_appeals

@@ -15,6 +15,28 @@ class Appeal < DecisionReview
     validates_associated :claimants
   end
 
+  scope :join_aod_motions, lambda {
+    joins(claimants: :person)
+      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
+  }
+
+  scope :all_priority, lambda {
+    join_aod_motions
+      .where("advance_on_docket_motions.created_at > appeals.established_at")
+      .where("advance_on_docket_motions.granted = ?", true)
+      .or(join_aod_motions
+        .where("people.date_of_birth <= ?", 75.years.ago))
+  }
+
+  # rubocop:disable Metrics/LineLength
+  scope :all_nonpriority, lambda {
+    join_aod_motions
+      .where("people.date_of_birth > ?", 75.years.ago)
+      .group("appeals.id")
+      .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
+  }
+  # rubocop:enable Metrics/LineLength
+
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
   def document_fetcher
@@ -180,11 +202,17 @@ class Appeal < DecisionReview
     "not implemented for AMA"
   end
 
+  def benefit_type
+    # temporary until ticket for appeals benefit type by issue is implemented
+    # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
+    "compensation"
+  end
+
   def create_issues!(new_issues)
     new_issues.each do |issue|
       # temporary until ticket for appeals benefit type by issue is implemented
       # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
-      issue.update!(benefit_type: "compensation")
+      issue.update!(benefit_type: benefit_type)
       create_legacy_issue_optin(issue) if issue.legacy_issue_opted_in?
     end
   end
@@ -256,6 +284,7 @@ class Appeal < DecisionReview
 
   def contestable_decision_issues
     DecisionIssue.where(participant_id: veteran.participant_id)
+      .where.not(decision_review_type: "Appeal")
   end
 
   def bgs

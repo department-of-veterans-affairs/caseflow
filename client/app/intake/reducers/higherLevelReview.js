@@ -43,6 +43,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     payeeCode: {
       $set: serverIntake.payeeCode
     },
+    nonComp: {
+      $set: serverIntake.nonComp
+    },
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
     },
