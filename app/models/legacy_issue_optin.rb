@@ -21,7 +21,6 @@ class LegacyIssueOptin < ApplicationRecord
   end
 
   def rollback_issue_disposition
-    binding.pry
     Issue.rollback_opt_in!(self)
     update!(rollback_processed_at: Time.zone.now)
   end
@@ -40,16 +39,16 @@ class LegacyIssueOptin < ApplicationRecord
     LegacyIssueOptin.where(
      vacols_id: vacols_id,
      original_disposition_code: "3"
-   ).pluck(:vacols_sequence_id, :original_disposition_date).uniq
+   )
   end
 
-  def revert_open_remand_issues(vacols_id)
+  def revert_open_remand_issues
     # if this is happening, all remanded issues should have a disposition
     # of "3" on a "HIS" appeal. This is rolling back and putting them back at "O"
     related_remand_issues.each do |remand_issue|
       Issue.close_in_vacols!(
         vacols_id: vacols_id,
-        vacols_sequence_id: remand_issue[0],
+        vacols_sequence_id: remand_issue.vacols_sequence_id,
         disposition_code: LegacyOptinManager::VACOLS_DISPOSITION_CODE
       )
     end

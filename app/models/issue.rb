@@ -135,8 +135,6 @@ class Issue
     disposition.nil? || in_remand?
   end
 
-  # For status (BFMPRO) of ADV or REM, for the most part, having a disposition means the issue is closed.
-  # On appeal where the status is REM (remanded) the issues with disposition "3" are still active.
   def closed?
     !active?
   end

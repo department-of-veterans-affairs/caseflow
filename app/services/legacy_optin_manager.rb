@@ -81,7 +81,7 @@ class LegacyOptinManager
   def remand_issues(vacols_id)
     # if the appeal is ready to be closed, all issues that used to
     # have a disposition of "3" should be closed with "O" now
-     # if the appeal has been closed, and is being reopened, the same
+    # if the appeal has been closed, and is being reopened, the same
     # issues would have a disposition of "3" again
 
     # remand issues do not all have to be connected to the current decision review
@@ -104,7 +104,7 @@ class LegacyOptinManager
     remand_issues(vacols_id).each do |remand_issue|
       Issue.close_in_vacols!(
         vacols_id: vacols_id,
-        vacols_sequence_id: remand_issue[0],
+        vacols_sequence_id: remand_issue.vacols_sequence_id,
         disposition_code: VACOLS_DISPOSITION_CODE
       )
     end
