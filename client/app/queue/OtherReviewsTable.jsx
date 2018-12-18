@@ -10,14 +10,15 @@ import { clearCaseListSearch } from './CaseList/CaseListActions';
 
 import { DateString } from '../util/DateUtil';
 import COPY from '../../COPY.json';
+import CLAIM_REVIEW_TEXT from '../../constants/CLAIM_REVIEW_TEXT.json';
 import EP_STATUSES from '../../constants/EP_STATUSES.json';
 
 class SubdividedTableRow extends React.PureComponent {
   render = () => {
     const styling = {
       boxSizing: 'content-box',
-      height: '22px',
-      padding: '10px 15px'
+      height: '2.2rem',
+      padding: '1rem 1.5rem'
     };
     const topBorderStyle = '1px solid #D6D7D9';
 
@@ -74,30 +75,22 @@ class CaseListTable extends React.PureComponent {
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
       valueFunction: (review) => {
-        const doesReviewHaveEndProducts =
-          review.reviewType === 'higher_level_review' &&
-          review.endProducts && review.endProducts.length > 0;
-
-        if (doesReviewHaveEndProducts) {
+        if (review.endProducts && review.endProducts.length > 0) {
           return review.endProducts.map((endProduct, i) => {
             return <SubdividedTableRow rowNumber={i}>{`${endProduct.code} ${endProduct.modifier}`}</SubdividedTableRow>;
           });
-        } else if (review.reviewType === 'supplemental_claim') {
-          return <em>{COPY.OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE}</em>;
         }
+
+        return <em>{CLAIM_REVIEW_TEXT[review.reviewType]}</em>;
       }
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE,
       valueFunction: (review) => review.endProducts ?
         review.endProducts.map((endProduct, i) => {
-          let statusCode = endProduct.synced_status;
-
-          if (!statusCode) {
-            statusCode = 'PROCESSING';
-          }
-
-          const epStatus = EP_STATUSES[statusCode];
+          const epStatus = endProduct.synced_status ?
+            EP_STATUSES[endProduct.synced_status] :
+            EP_STATUSES['PROCESSING'];
 
           return <SubdividedTableRow rowNumber={i}>{epStatus}</SubdividedTableRow>;
         }) : ''
@@ -114,7 +107,7 @@ class CaseListTable extends React.PureComponent {
   ];
 
   render = () => {
-    if (!this.props.reviews) {
+    if (this.props.reviews.length === 0) {
       return <p>{COPY.OTHER_REVIEWS_TABLE_EMPTY_TEXT}</p>;
     }
 
