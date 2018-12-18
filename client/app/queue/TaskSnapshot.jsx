@@ -248,10 +248,10 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
-        <a id="our-elemnt" {...anchorJumpLinkStyling}>
-          {this.props.primaryTask ? 'Currently active tasks' : 'No active tasks'}</a>
+        <a id="our-elemnt" {...anchorJumpLinkStyling}>Currently active tasks</a>
       </h2>
       <div {...sectionSegmentStyling}>
+        { this.props.primaryTask ? "" : "No active tasks"}
         { this.props.primaryTask && <table {...css({ width: '100%',
           marginTop: 0 })}>
           <tbody>
