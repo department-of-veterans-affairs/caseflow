@@ -307,6 +307,46 @@ RSpec.describe "Hearing Schedule", type: :request do
     end
   end
 
+  describe "Get CO scheduled hearing with correct time." do
+    let!(:staff) { create(:staff, stafkey: "RO18", stc2: 2, stc3: 3, stc4: 4) }
+    let(:vacols_case) do
+      create(
+        :case,
+        folder: create(:folder, tinum: "docket-number"),
+        bfregoff: "RO18",
+        bfcurloc: "57"
+      )
+    end
+    let(:appeal) do
+      create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
+    end
+    let!(:hearing_day) do
+      create(:hearing_day, hearing_type: "C", hearing_date: Date.new(2019, 1, 7))
+    end
+    let!(:hearings) do
+      RequestStore[:current_user] = user
+      Generators::Vacols::Staff.create(sattyid: "111")
+      create(:case_hearing,
+             hearing_type: "C",
+             hearing_date: VacolsHelper.format_datetime_with_utc_timezone(Time.zone.local(2019, 0o1, 0o7, 9, 0, 0)),
+             folder_nr: appeal.vacols_id,
+             vdkey: hearing_day.id)
+    end
+
+    it "Get scheduled hearing for veteran. Check hearing time is in EST" do
+      hearings
+      headers = {
+        "ACCEPT" => "application/json"
+      }
+      get "/hearings/schedule/assign/hearing_days", params: {}, headers: headers
+      expect(response).to have_http_status(:success)
+      hearing_days = JSON.parse(response.body)["hearing_days"]
+      expect(hearing_days.size).to be(1)
+      expected_hearing_date = VacolsHelper.normalize_vacols_datetime(hearing_days[0]["hearings"][0]["date"])
+      expect(expected_hearing_date).to eq(Time.zone.local(2019, 0o1, 0o7, 9, 0, 0))
+    end
+  end
+
   describe "Get veterans for hearings" do
     let!(:vacols_case) do
       create(

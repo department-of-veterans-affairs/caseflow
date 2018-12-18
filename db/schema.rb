@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181212150819) do
+ActiveRecord::Schema.define(version: 20181217195658) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -528,6 +528,16 @@ ActiveRecord::Schema.define(version: 20181212150819) do
     t.index ["vacols_id"], name: "index_legacy_appeals_on_vacols_id", unique: true
   end
 
+  create_table "legacy_hearings", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "appeal_id"
+    t.string "vacols_id", null: false
+    t.string "witness"
+    t.string "military_service"
+    t.boolean "prepped"
+    t.text "summary"
+  end
+
   create_table "legacy_issue_optins", force: :cascade do |t|
     t.bigint "request_issue_id", null: false
     t.datetime "created_at", null: false
@@ -689,12 +699,12 @@ ActiveRecord::Schema.define(version: 20181212150819) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
+    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
-    t.string "ineligible_reason"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.datetime "created_at"
