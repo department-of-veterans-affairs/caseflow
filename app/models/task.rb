@@ -19,7 +19,7 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
     Constants.TASK_STATUSES.on_hold.to_sym     => Constants.TASK_STATUSES.on_hold,
     Constants.TASK_STATUSES.completed.to_sym   => Constants.TASK_STATUSES.completed,
-    Constants.TASK_STATUSES.canceled.to_sym   => Constants.TASK_STATUSES.canceled
+    Constants.TASK_STATUSES.canceled.to_sym => Constants.TASK_STATUSES.canceled
   }
 
   def available_actions(_user)
@@ -68,12 +68,28 @@ class Task < ApplicationRecord
     children.where(type: AttorneyTask.name)
   end
 
+  def complete?
+    status == Constants.TASK_STATUSES.completed
+  end
+
+  def in_progress?
+    status == Constants.TASK_STATUSES.in_progress
+  end
+
+  def all_children_complete
+    children.all?(&:complete?)
+  end
+
   def self.recently_completed
     where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
 
   def self.incomplete
     where.not(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def self.complete
+    where(status: Constants.TASK_STATUSES.completed)
   end
 
   def self.incomplete_or_recently_completed

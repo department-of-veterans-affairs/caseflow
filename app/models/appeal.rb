@@ -176,6 +176,7 @@ class Appeal < DecisionReview
 
   def needs_ihp?
     # TODO: filter to only ihp-writing vsos
+    # e.g. for hearing appeals it should only be PVA.
     appeal.vsos.length
   end
 
