@@ -1030,7 +1030,7 @@ RSpec.feature "Higher-Level Review" do
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
       expect(duplicate_request_issues).to include(request_issue_in_progress)
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
@@ -1057,6 +1057,42 @@ RSpec.feature "Higher-Level Review" do
           contention_descriptions: array_including("Left knee granted 2")
         )
       )
+    end
+
+    context "when veteran has active nonrating request issues" do
+      let(:another_higher_level_review) { create(:higher_level_review) }
+      let!(:active_nonrating_request_issue) do
+        create(:request_issue_with_epe,
+               :nonrating,
+               veteran_file_number: veteran_file_number,
+               review_request: another_higher_level_review)
+      end
+
+      scenario "shows ineligibility message and saves conflicting request issue id" do
+        hlr, = start_higher_level_review(veteran)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        click_intake_no_matching_issues
+
+        fill_in "Issue category", with: active_nonrating_request_issue.issue_category
+        find("#issue-category").send_keys :enter
+        expect(page).to have_content("Does issue 1 match any of the issues actively being reviewed?")
+        expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+                                     "#{active_nonrating_request_issue.description}")
+        add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
+        expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+                                     " #{active_nonrating_request_issue.description}" \
+                                     " is ineligible because it's already under review as a Higher-Level Review")
+
+        click_intake_finish
+        expect(page).to have_content("Intake completed")
+        expect(RequestIssue.find_by(review_request: hlr,
+                                    issue_category: active_nonrating_request_issue.issue_category,
+                                    ineligible_due_to: active_nonrating_request_issue.id,
+                                    ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
+                                    description: active_nonrating_request_issue.description,
+                                    decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
+      end
     end
 
     it "Shows a review error when something goes wrong" do

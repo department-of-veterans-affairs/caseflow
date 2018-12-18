@@ -168,7 +168,7 @@ RSpec.feature "Edit issues" do
       add_intake_rating_issue(issue_description, "a new comment")
       expect(page).to have_content(issue_description)
       expect(page).to_not have_content(
-        Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.gsub("{review_title}", "Appeal")
+        Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
       )
 
       # issue note was added
@@ -295,7 +295,7 @@ RSpec.feature "Edit issues" do
     expect(page).to have_content(nonrating_decision_issue_description)
     expect(page).to have_content(
       Constants.INELIGIBLE_REQUEST_ISSUES
-        .duplicate_of_issue_in_active_review.gsub("{review_title}", "Higher-Level Review")
+        .duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Higher-Level Review")
     )
 
     safe_click("#button-submit-update")
@@ -318,7 +318,7 @@ RSpec.feature "Edit issues" do
 
     expect(RequestIssue.find_by(review_request: review_request,
                                 contested_decision_issue_id: contested_decision_issues.second.id,
-                                ineligible_reason: :duplicate_of_issue_in_active_review,
+                                ineligible_reason: :duplicate_of_rating_issue_in_active_review,
                                 description: contested_decision_issues.second.formatted_description)).to_not be_nil
   end
   # rubocop:enable Metrics/MethodLength
@@ -416,7 +416,7 @@ RSpec.feature "Edit issues" do
           review_request: higher_level_review,
           description: "PTSD denied",
           contention_reference_id: "111",
-          ineligible_reason: :duplicate_of_issue_in_active_review,
+          ineligible_reason: :duplicate_of_rating_issue_in_active_review,
           ineligible_due_to: ri_in_review
         )
       end

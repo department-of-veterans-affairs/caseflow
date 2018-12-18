@@ -16,7 +16,7 @@ class RequestIssue < ApplicationRecord
 
   enum ineligible_reason: {
     duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
-    duplicate_of_issue_in_active_review: "duplicate_of_issue_in_active_review",
+    duplicate_of_rating_issue_in_active_review: "duplicate_of_rating_issue_in_active_review",
     untimely: "untimely",
     previous_higher_level_review: "previous_higher_level_review",
     before_ama: "before_ama",
@@ -217,9 +217,11 @@ class RequestIssue < ApplicationRecord
   end
 
   def title_of_active_review
-    if duplicate_of_issue_in_active_review? || duplicate_of_nonrating_issue_in_active_review?
-      ineligible_due_to.review_title
-    end
+    duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+  end
+
+  def duplicate_of_issue_in_active_review?
+    duplicate_of_rating_issue_in_active_review? || duplicate_of_nonrating_issue_in_active_review?
   end
 
   def vacols_issue
@@ -362,7 +364,7 @@ class RequestIssue < ApplicationRecord
 
   def add_duplicate_issue_error(existing_request_issue)
     if existing_request_issue && existing_request_issue.review_request != review_request
-      self.ineligible_reason = :duplicate_of_issue_in_active_review
+      self.ineligible_reason = :duplicate_of_rating_issue_in_active_review
       self.ineligible_due_to = existing_request_issue
     end
   end
