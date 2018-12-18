@@ -58,7 +58,10 @@ class SelectRemandReasonsView extends React.Component {
     }
 
     const updatedIssues = _.map(renderedChildren, (child) => child.updateStoreIssue());
-    const mergedIssueUpdates = _.map(appeal.issues, (issue) => {
+
+    const appealIssues = useDecisionIssues ? appeal.decisionIssues : appeal.issues;
+
+    const mergedIssueUpdates = _.map(appealIssues, (issue) => {
       const updatedIssue = _.find(updatedIssues, { id: issue.id });
 
       if (updatedIssue) {
@@ -67,7 +70,8 @@ class SelectRemandReasonsView extends React.Component {
 
       return issue;
     });
-    const attributes = useDecisionIssues ? { decisionIssues: updatedIssues } : { issues: mergedIssueUpdates };
+
+    const attributes = useDecisionIssues ? { decisionIssues: mergedIssueUpdates } : { issues: mergedIssueUpdates };
 
     this.props.editStagedAppeal(appealId, attributes);
 
