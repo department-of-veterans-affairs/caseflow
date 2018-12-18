@@ -27,7 +27,9 @@ describe RootTask do
             representative_type: "POA National Organization",
             participant_id: "2452415"
           }
-        )
+        )      
+      allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+        .with([participant_id_with_no_vso]).and_return({})
     end
 
     let!(:pva) do
@@ -48,7 +50,9 @@ describe RootTask do
       end
       context "when it has no vso representation" do
         let(:appeal) do
-          create(:appeal, docket_type: "direct_docket")
+          create(:appeal, docket_type: "direct_docket", claimants: [
+            create(:claimant, participant_id: participant_id_with_no_vso)
+          ])
         end
         it "is ready for distribution immediately" do
           RootTask.create_root_and_sub_tasks!(appeal)
@@ -87,12 +91,14 @@ describe RootTask do
 
       context "when it has no vso representation" do
         let(:appeal) do
-          create(:appeal, docket_type: "evidence_submission")
+          create(:appeal, docket_type: "evidence_submission", claimants: [
+            create(:claimant, participant_id: participant_id_with_no_vso)
+          ])
         end
         it "blocks distribution" do
           RootTask.create_root_and_sub_tasks!(appeal)
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
-          expect(InformalHearingPresentationTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+          expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
         end     
       end 
 

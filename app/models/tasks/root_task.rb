@@ -31,7 +31,7 @@ class RootTask < GenericTask
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
       if FeatureToggle.enabled?(:ama_auto_case_distribution)
-        create_subtasks!(appeal)
+        create_subtasks!(appeal, root_task)
       else
         create_vso_subtask!(appeal, root_task)
       end
@@ -40,8 +40,8 @@ class RootTask < GenericTask
     private
 
     def create_vso_subtask!(appeal, parent, status = Constants.TASK_STATUSES.in_progress)
-      appeal.vsos.each do |vso_organization|
-        InformalHearingPresentationTask.create(
+      appeal.vsos.map do |vso_organization|
+        InformalHearingPresentationTask.create!(
           appeal: appeal,
           parent: parent,
           status: status,
@@ -51,18 +51,20 @@ class RootTask < GenericTask
     end
 
     def create_evidence_submission_task!(appeal, parent)
-      EvidenceSubmissionWindowTask.create(
+      EvidenceSubmissionWindowTask.create!(
         appeal: appeal,
         parent: parent,
-        status: Constants.TASK_STATUSES.in_progress
+        status: Constants.TASK_STATUSES.in_progress,
+        assigned_to: MailTeam.singleton
       )
     end
 
     def create_distribution_task!(appeal, parent, status = Constants.TASK_STATUSES.in_progress)
-      DistributionTask.create(
+      DistributionTask.create!(
         appeal: appeal,
         parent: parent,
-        status: status
+        status: status,
+        assigned_to: AutoCaseDistributor.singleton
       )
     end
 
@@ -75,15 +77,11 @@ class RootTask < GenericTask
       ihp_status = appeal.evidence_submission_docket? ? Constants.TASK_STATUSES.on_hold : Constants.TASK_STATUSES.in_progress
 
       transaction do
-        distribution_task = DistributionTask.create(
-          appeal: appeal,
-          parent: parent,
-          status: distribution_status
-        )
+        distribution_task = create_distribution_task!(appeal, parent, distribution_status)
         current_parent = distribution_task
 
         if appeal.needs_ihp?
-          vso_tasks = create_vso_subtask!(appeal, distribution_task, ihp_status)
+          vso_tasks = create_vso_subtask!(appeal, current_parent, ihp_status)
           # TODO: when or if there are more than one vso, vso tasks
           # should expire at the same time. which one should be the
           # blocking parent of evidence submission tasks?
