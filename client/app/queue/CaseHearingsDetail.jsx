@@ -49,14 +49,10 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
       value: StringUtil.snakeCaseToCapitalized(hearing.type)
     }];
 
-    if (_.isNull(hearing.disposition)) {
-      return listElements;
-    }
-
     listElements.push({
       label: 'Disposition',
       value: <React.Fragment>
-        {StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
+        {hearing.disposition && StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
         {hearing.viewedByJudge &&
         <Tooltip id="hearing-worksheet-tip" text={COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP}>
           <Link rel="noopener" target="_blank" href={`/hearings/${hearing.id}/worksheet/print?keep_open=true`}>
@@ -65,10 +61,6 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
         </Tooltip>}
       </React.Fragment>
     });
-
-    if (hearing.disposition === 'cancelled') {
-      return listElements;
-    }
 
     return listElements.concat([{
       label: 'Date',
