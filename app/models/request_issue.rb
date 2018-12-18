@@ -327,9 +327,13 @@ class RequestIssue < ApplicationRecord
     return unless vacols_id
     return unless review_request.serialized_legacy_appeals.any?
 
-    if !vacols_issue.eligible_for_opt_in?
+    unless vacols_issue.eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
+  end
+
+  def legacy_appeal_eligible_for_opt_in?
+    vacols_issue.legacy_appeal.eligible_for_soc_opt_in?(review_request.receipt_date)
   end
 
   def rating_issue_rationale_to_request_issue_reason(rationale)
