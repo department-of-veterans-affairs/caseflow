@@ -1,0 +1,2 @@
+class NonComp < Organization
+end

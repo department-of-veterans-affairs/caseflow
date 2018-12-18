@@ -82,7 +82,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def external_id
-    id
+    id.to_s
   end
 
   def ui_hash
@@ -193,6 +193,11 @@ class DecisionReview < ApplicationRecord
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
       .select(&:status_active?)
+  end
+
+  # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
+  def serializer_class
+    ::WorkQueue::DecisionReviewSerializer
   end
 
   private
