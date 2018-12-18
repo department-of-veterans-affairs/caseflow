@@ -27,7 +27,7 @@ describe RootTask do
             representative_type: "POA National Organization",
             participant_id: "2452415"
           }
-        )      
+        )
       allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
         .with([participant_id_with_no_vso]).and_return({})
     end
@@ -44,34 +44,34 @@ describe RootTask do
     context "when a direct docket appeal is created" do
       before do
         FeatureToggle.enable!(:ama_auto_case_distribution)
-      end      
+      end
       after do
         FeatureToggle.disable!(:ama_auto_case_distribution)
       end
       context "when it has no vso representation" do
         let(:appeal) do
           create(:appeal, docket_type: "direct_docket", claimants: [
-            create(:claimant, participant_id: participant_id_with_no_vso)
-          ])
+                   create(:claimant, participant_id: participant_id_with_no_vso)
+                 ])
         end
         it "is ready for distribution immediately" do
           RootTask.create_root_and_sub_tasks!(appeal)
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("in_progress")
-        end     
-      end 
+        end
+      end
 
       context "when it has an ihp-writing vso" do
         let(:appeal) do
           create(:appeal, docket_type: "direct_docket", claimants: [
-               create(:claimant, participant_id: participant_id_with_pva),
-               create(:claimant, participant_id: participant_id_with_aml)
-             ])
+                   create(:claimant, participant_id: participant_id_with_pva),
+                   create(:claimant, participant_id: participant_id_with_aml)
+                 ])
         end
 
         it "blocks distribution" do
           RootTask.create_root_and_sub_tasks!(appeal)
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
-        end        
+        end
 
         it "requires an informal hearing presentation" do
           RootTask.create_root_and_sub_tasks!(appeal)
@@ -84,7 +84,7 @@ describe RootTask do
     context "when an evidence submission docket appeal is created" do
       before do
         FeatureToggle.enable!(:ama_auto_case_distribution)
-      end      
+      end
       after do
         FeatureToggle.disable!(:ama_auto_case_distribution)
       end
@@ -92,39 +92,40 @@ describe RootTask do
       context "when it has no vso representation" do
         let(:appeal) do
           create(:appeal, docket_type: "evidence_submission", claimants: [
-            create(:claimant, participant_id: participant_id_with_no_vso)
-          ])
+                   create(:claimant, participant_id: participant_id_with_no_vso)
+                 ])
         end
         it "blocks distribution" do
           RootTask.create_root_and_sub_tasks!(appeal)
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
           expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
-        end     
-      end 
+        end
+      end
 
       context "when it has an ihp-writing vso" do
         let(:appeal) do
           create(:appeal, docket_type: "evidence_submission", claimants: [
-               create(:claimant, participant_id: participant_id_with_pva),
-               create(:claimant, participant_id: participant_id_with_aml)
-             ])
+                   create(:claimant, participant_id: participant_id_with_pva),
+                   create(:claimant, participant_id: participant_id_with_aml)
+                 ])
         end
 
         it "blocks distribution" do
           RootTask.create_root_and_sub_tasks!(appeal)
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
-        end        
+        end
 
         it "requires a hearing presentation before distribution" do
           RootTask.create_root_and_sub_tasks!(appeal)
           expect(InformalHearingPresentationTask.find_by(appeal: appeal).status).to eq("on_hold")
           expect(InformalHearingPresentationTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
         end
-        
+
         it "requires an evidence submission window before the informal hearing presentation" do
           RootTask.create_root_and_sub_tasks!(appeal)
           expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).status).to eq("in_progress")
-          expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).parent.class.name).to eq("InformalHearingPresentationTask")
+          expect(EvidenceSubmissionWindowTask.find_by(
+            appeal: appeal).parent.class.name).to eq("InformalHearingPresentationTask")
         end
       end
     end
