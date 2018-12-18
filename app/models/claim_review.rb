@@ -35,7 +35,8 @@ class ClaimReview < DecisionReview
     new_issues.each do |issue|
       issue.update!(
         end_product_establishment: end_product_establishment_for_issue(issue),
-        benefit_type: benefit_type
+        benefit_type: benefit_type,
+        veteran_file_number: veteran_file_number
       )
       create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
     end

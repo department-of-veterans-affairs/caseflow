@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181212150819) do
+ActiveRecord::Schema.define(version: 20181217215930) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -700,6 +700,7 @@ ActiveRecord::Schema.define(version: 20181212150819) do
     t.datetime "created_at"
     t.string "benefit_type"
     t.integer "contested_decision_issue_id"
+    t.string "veteran_file_number"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"

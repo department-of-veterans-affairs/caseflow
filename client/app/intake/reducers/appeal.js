@@ -49,6 +49,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     contestableIssues: {
       $set: contestableIssues
     },
+    activeNonratingRequestIssues: {
+      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
+    },
     requestIssues: {
       $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
     },

@@ -157,7 +157,7 @@ class NonratingRequestIssueModal extends React.Component {
       return category && issue.category === category.value;
     }).map((issue) => {
       return {
-        displayText: `${issue.category}: ${issue.description}, decided ${formatDateStr(issue.decisionDate)}`,
+        displayText: `${issue.category}: ${issue.description}, decided ${issue.decisionDate}`,
         value: issue.id,
         disabled: false
       };
