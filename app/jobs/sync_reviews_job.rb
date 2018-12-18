@@ -31,14 +31,16 @@ class SyncReviewsJob < CaseflowJob
       ramp_refiling.create_end_product_and_contentions!
     rescue StandardError => e
       # Rescue and capture errors so they don't cause the job to stop
-      Raven.capture_exception(e)
+      Raven.capture_exception(e, extra: { ramp_refiling_id: ramp_refiling.id })
     end
   end
 
   def perform_decision_review_processing(limit)
-    [HigherLevelReview, SupplementalClaim, RequestIssuesUpdate].each do |klass|
-      klass.requires_processing.limit(limit).each do |claim_review|
-        DecisionReviewProcessJob.perform_later(claim_review)
+    # RequestIssuesUpdate is not a DecisionReview subclass but it acts like one
+    # for the purposes of DecisionReviewProcessJob
+    [Appeal, HigherLevelReview, SupplementalClaim, RequestIssuesUpdate].each do |klass|
+      klass.requires_processing.limit(limit).each do |review|
+        DecisionReviewProcessJob.perform_later(review)
       end
     end
   end
