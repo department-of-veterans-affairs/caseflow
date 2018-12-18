@@ -5,7 +5,7 @@ class Appeal < DecisionReview
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_many :decision_issues, through: :request_issues
-  has_many :decisions
+  has_many :decision_documents
   has_one :special_issue_list
 
   with_options on: :intake_review do
@@ -120,7 +120,7 @@ class Appeal < DecisionReview
   end
 
   def decision_date
-    decisions.last.try(:decision_date)
+    decision_documents.last.try(:decision_date)
   end
 
   def hearing_docket?
