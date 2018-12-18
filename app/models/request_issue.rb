@@ -218,7 +218,7 @@ class RequestIssue < ApplicationRecord
 
   def title_of_active_review
     if duplicate_of_issue_in_active_review? || duplicate_of_nonrating_issue_in_active_review?
-      return ineligible_due_to.review_title
+      ineligible_due_to.review_title
     end
   end
 
@@ -365,7 +365,7 @@ class RequestIssue < ApplicationRecord
 
   def check_for_active_request_issue!
     # skip checking if nonrating ineligiblity is already set
-    return if self.ineligible_reason == :duplicate_of_nonrating_issue_in_active_review
+    return if ineligible_reason == :duplicate_of_nonrating_issue_in_active_review
     return unless eligible?
     check_for_active_request_issue_by_rating!
     check_for_active_request_issue_by_decision_issue!

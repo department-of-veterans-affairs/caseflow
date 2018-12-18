@@ -716,7 +716,11 @@ RSpec.feature "Edit issues" do
       end
 
       context "when veteran has active nonrating request issues" do
-        let!(:active_nonrating_request_issue) { create(:request_issue, :nonrating, review_request: another_higher_level_review) }
+        let!(:active_nonrating_request_issue) do
+          create(:request_issue,
+            :nonrating,
+            review_request: another_higher_level_review)
+        end
 
         before do
           another_higher_level_review.create_issues!([active_nonrating_request_issue])
@@ -730,9 +734,11 @@ RSpec.feature "Edit issues" do
           fill_in "Issue category", with: active_nonrating_request_issue.issue_category
           find("#issue-category").send_keys :enter
           expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
-          expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: #{active_nonrating_request_issue.description}")
+          expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+                                       "#{active_nonrating_request_issue.description}")
           add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
-          expect(page).to have_content("#{active_nonrating_request_issue.issue_category} - #{active_nonrating_request_issue.description}" \
+          expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+                                       " #{active_nonrating_request_issue.description}" \
                                        " is ineligible because it's already under review as a Higher-Level Review")
 
           safe_click("#button-submit-update")
@@ -740,11 +746,11 @@ RSpec.feature "Edit issues" do
           expect(page).to have_content("Edit Confirmed")
 
           expect(RequestIssue.find_by(review_request: higher_level_review,
-            issue_category: active_nonrating_request_issue.issue_category,
-            ineligible_due_to: active_nonrating_request_issue.id,
-            ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
-            description: active_nonrating_request_issue.description,
-            decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
+                                      issue_category: active_nonrating_request_issue.issue_category,
+                                      ineligible_due_to: active_nonrating_request_issue.id,
+                                      ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
+                                      description: active_nonrating_request_issue.description,
+                                      decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
         end
       end
     end
@@ -1362,8 +1368,8 @@ RSpec.feature "Edit issues" do
       context "when veteran has active nonrating request issues" do
         let(:another_higher_level_review) do
           create(:higher_level_review,
-            veteran_file_number: veteran.file_number,
-            benefit_type: "compensation")
+                 veteran_file_number: veteran.file_number,
+                 benefit_type: "compensation")
         end
 
         let!(:active_nonrating_request_issue) { create(:request_issue, :nonrating, review_request: another_higher_level_review) }
@@ -1380,9 +1386,11 @@ RSpec.feature "Edit issues" do
           fill_in "Issue category", with: active_nonrating_request_issue.issue_category
           find("#issue-category").send_keys :enter
           expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
-          expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: #{active_nonrating_request_issue.description}")
+          expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+                                       "#{active_nonrating_request_issue.description}")
           add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
-          expect(page).to have_content("#{active_nonrating_request_issue.issue_category} - #{active_nonrating_request_issue.description}" \
+          expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+                                       " #{active_nonrating_request_issue.description}" \
                                        " is ineligible because it's already under review as a Higher-Level Review")
 
           safe_click("#button-submit-update")
@@ -1390,11 +1398,11 @@ RSpec.feature "Edit issues" do
           expect(page).to have_content("Edit Confirmed")
 
           expect(RequestIssue.find_by(review_request: supplemental_claim,
-            issue_category: active_nonrating_request_issue.issue_category,
-            ineligible_due_to: active_nonrating_request_issue.id,
-            ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
-            description: active_nonrating_request_issue.description,
-            decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
+                                      issue_category: active_nonrating_request_issue.issue_category,
+                                      ineligible_due_to: active_nonrating_request_issue.id,
+                                      ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
+                                      description: active_nonrating_request_issue.description,
+                                      decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
         end
       end
 

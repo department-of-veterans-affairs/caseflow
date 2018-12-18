@@ -10,7 +10,7 @@ FactoryBot.define do
 
     trait :nonrating do
       issue_category "Apportionment"
-      decision_date { 2.month.ago }
+      decision_date { 2.months.ago }
       description "nonrating issue description"
     end
 

@@ -14,7 +14,6 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import { NONRATING_REQUEST_ISSUE_CATEGORIES } from '../constants';
-import { formatDateStr } from '../../util/DateUtil';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -41,7 +40,7 @@ class NonratingRequestIssueModal extends React.Component {
       selectedNonratingIssueId: '',
       ineligibleDueToId: null,
       ineligibleReason: null,
-      reviewRequestTitle: null,
+      reviewRequestTitle: null
     });
   }
 
@@ -58,7 +57,7 @@ class NonratingRequestIssueModal extends React.Component {
   }
 
   selectedNonratingIssueIdOnChange = (value) => {
-    if (value == NO_MATCH_TEXT) {
+    if (value === NO_MATCH_TEXT) {
       this.setState({
         selectedNonratingIssueId: value,
         description: '',
@@ -66,8 +65,8 @@ class NonratingRequestIssueModal extends React.Component {
         ineligibleReason: null
       });
     } else {
-      const activeNonratingRequestIssue = this.props.intakeData.activeNonratingRequestIssues
-        .find((issue) => issue.id === String(value));
+      const activeNonratingRequestIssue = this.props.intakeData.activeNonratingRequestIssues.
+        find((issue) => issue.id === String(value));
 
       this.setState({
         selectedNonratingIssueId: activeNonratingRequestIssue.id,
@@ -75,7 +74,7 @@ class NonratingRequestIssueModal extends React.Component {
         decisionDate: activeNonratingRequestIssue.decisionDate,
         ineligibleDueToId: activeNonratingRequestIssue.id,
         reviewRequestTitle: activeNonratingRequestIssue.reviewRequestTitle,
-        ineligibleReason: "duplicate_of_nonrating_issue_in_active_review"
+        ineligibleReason: 'duplicate_of_nonrating_issue_in_active_review'
       });
     }
   }
@@ -180,7 +179,7 @@ class NonratingRequestIssueModal extends React.Component {
         onChange={this.selectedNonratingIssueIdOnChange}
       /> : null;
 
-    const additionalDetails = selectedNonratingIssueId == NO_MATCH_TEXT || !nonratingRequestIssueSelection ?
+    const additionalDetails = selectedNonratingIssueId === NO_MATCH_TEXT || !nonratingRequestIssueSelection ?
       <React.Fragment>
         <div className="decision-date">
           <DateSelector
