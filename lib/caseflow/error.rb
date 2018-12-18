@@ -37,6 +37,19 @@ module Caseflow::Error
     end
   end
 
+  class DuplicateTaskActionPaths < SerializableError
+    attr_accessor :task_id, :user_id, :labels
+
+    def initialize(args)
+      @task_id = args[:task_id]
+      @user_id = args[:user_id]
+      @labels = args[:labels]
+      @code = args[:code] || 500
+      @message = args[:message] || "Task #{@task_id} for user #{user_id} has more than one available action"\
+                                   " with same path. Labels: #{labels.join(', ')}"
+    end
+  end
+
   class BvaDispatchTaskCountMismatch < SerializableError
     # Add attr_accessors for testing
     attr_accessor :user_id, :appeal_id, :tasks
