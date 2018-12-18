@@ -12,6 +12,7 @@ class DecisionReview < ApplicationRecord
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
   has_many :decision_issues, as: :decision_review
+  has_many :tasks, as: :appeal
 
   before_destroy :remove_issues!
 
@@ -70,6 +71,18 @@ class DecisionReview < ApplicationRecord
         rating_issue_hash.merge!(RatingIssue.deserialize(rating_issue_hash).serialize)
       end
     end
+  end
+
+  def veteran_full_name
+    veteran&.name&.formatted(:readable_full)
+  end
+
+  def number_of_issues
+    request_issues.count
+  end
+
+  def external_id
+    id
   end
 
   def ui_hash
