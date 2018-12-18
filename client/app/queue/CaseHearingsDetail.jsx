@@ -62,6 +62,10 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
       </React.Fragment>
     });
 
+    if (hearing.disposition === 'cancelled') {
+      return listElements;
+    }
+
     return listElements.concat([{
       label: 'Date',
       value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
