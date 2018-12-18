@@ -8,10 +8,10 @@ describe Judge do
     subject { Judge.new(user).upcoming_dockets }
 
     let(:user) { Generators::User.create }
-    let!(:hearing)            { create(:hearing, user: user, date: 1.day.from_now) }
-    let!(:hearing_same_date)  { create(:hearing, user: user, date: 1.day.from_now + 2.hours) }
-    let!(:hearing_later_date) { create(:hearing, user: user, date: 3.days.from_now) }
-    let!(:hearing_another_judge) { create(:hearing, user: Generators::User.create, date: 2.days.from_now) }
+    let!(:hearing)            { create(:legacy_hearing, user: user, date: 1.day.from_now) }
+    let!(:hearing_same_date)  { create(:legacy_hearing, user: user, date: 1.day.from_now + 2.hours) }
+    let!(:hearing_later_date) { create(:legacy_hearing, user: user, date: 3.days.from_now) }
+    let!(:hearing_another_judge) { create(:legacy_hearing, user: Generators::User.create, date: 2.days.from_now) }
 
     it "returns a hash of hearing dockets indexed by date" do
       keys = subject.keys.sort
@@ -72,7 +72,7 @@ describe Judge do
     let(:out_of_range_date) { date - 300.years }
     let!(:hearings) do
       [
-        create(:hearing, user: user, date: 1.hour.from_now)
+        create(:legacy_hearing, user: user, date: 1.hour.from_now)
       ]
     end
 
