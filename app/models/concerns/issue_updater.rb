@@ -80,7 +80,8 @@ module IssueUpdater
   end
 
   def fail_if_count_mismatch!
-    if (issues || []).count != (legacy? ? appeal.undecided_issues.count : appeal.request_issues.count)
+    existing_issues_count = legacy? ? appeal.undecided_issues.count : appeal.eligible_request_issues.count
+    if (issues || []).count != existing_issues_count
       msg = "Number of issues in the request does not match the number in the database"
       fail Caseflow::Error::AttorneyJudgeCheckoutError, message: msg
     end
