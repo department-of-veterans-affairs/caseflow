@@ -1,4 +1,4 @@
-describe Hearing do
+describe LegacyHearing do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     RequestStore[:current_user] = OpenStruct.new(css_id: "Test user", station_id: "101", uniq_id: "1234")
@@ -6,7 +6,7 @@ describe Hearing do
 
   let(:hearing) do
     build(
-      :hearing,
+      :legacy_hearing,
       date: date,
       disposition: disposition,
       hold_open: hold_open,
@@ -16,7 +16,7 @@ describe Hearing do
 
   let(:hearing2) do
     build(
-      :hearing,
+      :legacy_hearing,
       date: date,
       disposition: disposition,
       hold_open: hold_open,
@@ -110,7 +110,7 @@ describe Hearing do
       create(:legacy_appeal, vacols_case: create(:case_with_notification_date, bfcorlid: "123C"))
     end
 
-    let(:hearing) { create(:hearing, appeal: appeal1) }
+    let(:hearing) { create(:legacy_hearing, appeal: appeal1) }
 
     it "returns active appeals with no decision date and with form9 date" do
       expect(subject.size).to eq 3
@@ -141,7 +141,7 @@ describe Hearing do
         create(:case_with_form_9, bfkey: "other id", bfcorlid: "12345678", case_issues: [create(:case_issue)]))
     end
     let!(:hearing) do
-      create(:hearing, appeal: appeal, case_hearing: create(:case_hearing, folder_nr: appeal.vacols_id))
+      create(:legacy_hearing, appeal: appeal, case_hearing: create(:case_hearing, folder_nr: appeal.vacols_id))
     end
 
     context "when hearing has appeals ready for hearing" do
@@ -169,7 +169,7 @@ describe Hearing do
   context "#military_service" do
     subject { hearing.military_service }
     let(:case_hearing) { create(:case_hearing) }
-    let(:hearing) { Hearing.create(vacols_id: case_hearing.hearing_pkseq, military_service: military_service) }
+    let(:hearing) { LegacyHearing.create(vacols_id: case_hearing.hearing_pkseq, military_service: military_service) }
 
     context "when military service is not set" do
       let(:military_service) { nil }
@@ -206,7 +206,7 @@ describe Hearing do
         create(:case_with_form_9, bfcorlid: "123C", case_issues: create_list(:case_issue, 2)))
     end
     let(:appeal2) { create(:legacy_appeal, vacols_case: create(:case_with_form_9, bfcorlid: "123C")) }
-    let(:hearing) { create(:hearing, appeal: appeal1) }
+    let(:hearing) { create(:legacy_hearing, appeal: appeal1) }
     it "should return the current hearing count from all active appeals" do
       expect(subject).to eq 2
     end
@@ -225,11 +225,11 @@ describe Hearing do
     let!(:appeal) { build(:legacy_appeal, vacols_case: create(:case, bfkey: "5678")) }
 
     context "create vacols record" do
-      subject { Hearing.assign_or_create_from_vacols_record(vacols_record) }
+      subject { LegacyHearing.assign_or_create_from_vacols_record(vacols_record) }
 
       it "should create a hearing record" do
         subject
-        hearing = Hearing.find_by(vacols_id: case_hearing.hearing_pkseq)
+        hearing = LegacyHearing.find_by(vacols_id: case_hearing.hearing_pkseq)
         expect(hearing.present?).to be true
         expect(hearing.appeal.vacols_id).to eq "5678"
         expect(hearing.user).to eq user
@@ -257,8 +257,8 @@ describe Hearing do
 
       let!(:existing_user) { User.create(css_id: vacols_record[:css_id], station_id: "123") }
       let!(:user) { User.create(css_id: "1112", station_id: "123") }
-      let!(:hearing) { Hearing.create(vacols_id: case_hearing.hearing_pkseq, user: user) }
-      subject { Hearing.assign_or_create_from_vacols_record(vacols_record, hearing) }
+      let!(:hearing) { LegacyHearing.create(vacols_id: case_hearing.hearing_pkseq, user: user) }
+      subject { LegacyHearing.assign_or_create_from_vacols_record(vacols_record, hearing) }
 
       it "should create a hearing record and reassign user" do
         expect(subject.present?).to be true
@@ -271,7 +271,7 @@ describe Hearing do
 
   context "#update" do
     subject { hearing.update(hearing_hash) }
-    let(:hearing) { create(:hearing) }
+    let(:hearing) { create(:legacy_hearing) }
 
     context "when Vacols does not need an update" do
       let(:hearing_hash) do

@@ -172,12 +172,12 @@ class HearingRepository
     def hearings_for(case_hearings)
       vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact
 
-      fetched_hearings = Hearing.where(vacols_id: vacols_ids)
+      fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids)
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
       case_hearings.map do |vacols_record|
         next empty_dockets(vacols_record) if master_record?(vacols_record)
-        hearing = Hearing.assign_or_create_from_vacols_record(vacols_record,
+        hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record,
                                                               fetched_hearings_hash[vacols_record.hearing_pkseq])
         set_vacols_values(hearing, vacols_record)
       end.flatten
