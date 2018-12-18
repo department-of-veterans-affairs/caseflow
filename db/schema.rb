@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181217195658) do
+ActiveRecord::Schema.define(version: 20181218173534) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -187,6 +187,17 @@ ActiveRecord::Schema.define(version: 20181217195658) do
     t.string "appeal_type", null: false
   end
 
+  create_table "decision_documents", force: :cascade do |t|
+    t.bigint "appeal_id", null: false
+    t.string "citation_number", null: false
+    t.date "decision_date", null: false
+    t.string "redacted_document_location", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["appeal_id"], name: "index_decision_documents_on_appeal_id"
+    t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
+  end
+
   create_table "decision_issues", force: :cascade do |t|
     t.string "disposition"
     t.string "description"
@@ -200,17 +211,6 @@ ActiveRecord::Schema.define(version: 20181217195658) do
     t.string "benefit_type"
     t.date "end_product_last_action_date"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
-  end
-
-  create_table "decisions", force: :cascade do |t|
-    t.bigint "appeal_id", null: false
-    t.string "citation_number", null: false
-    t.date "decision_date", null: false
-    t.string "redacted_document_location", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
-    t.index ["citation_number"], name: "index_decisions_on_citation_number", unique: true
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
