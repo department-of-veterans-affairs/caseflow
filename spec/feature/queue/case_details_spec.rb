@@ -245,11 +245,11 @@ RSpec.feature "Case details" do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       # TODO: Why isn't the document count coming through here?
       # click_on "View #{appeal.documents.count} documents"
-      click_on "View Veteran's documents"
+      click_on "View"
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("Caseflow> Reader")
-      expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
+      expect(page).to have_content("Back to Your Queue #{appeal.veteran_full_name}")
     end
   end
 
@@ -474,19 +474,28 @@ RSpec.feature "Case details" do
       end
     end
 
+    describe "Docket type badge shows up" do
+      let!(:appeal) { FactoryBot.create(:appeal, docket_type: "direct_review") }
+
+      it "should display docket type and number" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("D #{appeal.docket_number}")
+      end
+    end
+
     describe "CaseTimeline shows judge & attorney tasks" do
       let!(:user) { FactoryBot.create(:user) }
       let!(:appeal) { FactoryBot.create(:appeal) }
       let!(:appeal2) { FactoryBot.create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
       let!(:attorney_task) do
-        FactoryBot.create(:task, appeal: appeal, type: AttorneyTask.name, parent: root_task,
-                                 assigned_to: user, completed_at: Time.zone.now - 4.days)
+        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
+                                   completed_at: Time.zone.now - 4.days)
       end
       let!(:judge_task) do
-        FactoryBot.create(:task, appeal: appeal, type: JudgeTask.name, parent: attorney_task,
-                                 assigned_to: user, status: Constants.TASK_STATUSES.completed,
-                                 completed_at: Time.zone.now)
+        create(:ama_judge_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
+                                       status: Constants.TASK_STATUSES.completed,
+                                       completed_at: Time.zone.now)
       end
 
       before do
@@ -503,6 +512,34 @@ RSpec.feature "Case details" do
       it "should NOT display judge & attorney tasks" do
         visit "/queue/appeals/#{appeal2.uuid}"
         expect(page).not_to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+      end
+    end
+  end
+
+  describe "AMA decision issue notes" do
+    before { FeatureToggle.enable!(:ama_decision_issues) }
+    after { FeatureToggle.disable!(:ama_decision_issues) }
+
+    let(:request_issue) { create(:request_issue, description: "knee pain", notes: notes) }
+    let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
+
+    context "when notes are nil" do
+      let(:notes) { nil }
+
+      it "does not display the Notes div" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content("Note:")
+      end
+    end
+
+    context "when notes are empty" do
+      let(:notes) { "" }
+
+      it "does not display the Notes div" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content("Note:")
       end
     end
   end

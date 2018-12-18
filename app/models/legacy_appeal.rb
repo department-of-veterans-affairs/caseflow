@@ -191,7 +191,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran_ssn
-    vbms_id.ends_with?("C") ? (veteran && veteran.ssn) : sanitized_vbms_id
+    vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
   end
 
   delegate :address_line_1,
@@ -269,7 +269,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran_death_date
-    veteran && veteran.date_of_death
+    veteran&.date_of_death
   end
 
   attr_writer :cavc_decisions
@@ -520,6 +520,10 @@ class LegacyAppeal < ApplicationRecord
     status == "Remand"
   end
 
+  def advance?
+    status == "Advance"
+  end
+
   def decided_by_bva?
     !active? && LegacyAppeal.bva_dispositions.include?(disposition)
   end
@@ -684,15 +688,19 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def matchable_to_request_issue?
-    issues.any? && (active? || eligible_for_soc_opt_in?)
+  def matchable_to_request_issue?(receipt_date)
+    issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
   end
 
-  def eligible_for_soc_opt_in?
+  def eligible_for_soc_opt_in?(receipt_date)
     return false unless nod_date
     return false unless soc_date
 
-    soc_date > soc_eligible_date || nod_date > nod_eligible_date
+    soc_eligible_date = receipt_date - 60.days
+    nod_eligible_date = receipt_date - 372.days
+
+    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
+    soc_date > soc_eligible_date || nod_date > nod_eligible_date || ssoc_dates.any? { |d| d > soc_eligible_date }
   end
 
   def serializer_class
@@ -721,14 +729,6 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
-
-  def soc_eligible_date
-    Time.zone.today - 60.days
-  end
-
-  def nod_eligible_date
-    Time.zone.today - 372.days
-  end
 
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&

@@ -15,6 +15,7 @@ require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
 require_relative "support/download_helper"
+require_relative "support/clear_cache"
 require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -52,8 +53,6 @@ if File.directory?(cache_directory)
 else
   Dir.mkdir cache_directory
 end
-
-FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
 ENV["TZ"] ||= "America/New York"
 
@@ -120,7 +119,7 @@ module StubbableUser
     end
 
     def authenticate!(css_id: nil, roles: nil, user: nil)
-      Functions.grant!("System Admin", users: ["DSUSER"]) if roles && roles.include?("System Admin")
+      Functions.grant!("System Admin", users: ["DSUSER"]) if roles&.include?("System Admin")
 
       if user.nil?
         user = User.from_session(
@@ -227,7 +226,8 @@ RSpec.configure do |config|
   # If it does, it will not execute ReactOnRails, since that slows down tests
   # Thus this will only run once (to initially compile assets) and not on
   # subsequent test runs
-  if !File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js")
+  if !File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js") &&
+     ENV["REACT_ON_RAILS_ENV"] != "HOT"
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
   config.before(:all) do
@@ -240,8 +240,6 @@ RSpec.configure do |config|
     read_csv(VACOLS::Vftypes, date_shift)
     read_csv(VACOLS::Issref, date_shift)
     read_csv(VACOLS::Actcode, date_shift)
-
-    Rails.cache.clear
   end
 
   config.before(:each) do
@@ -250,7 +248,6 @@ RSpec.configure do |config|
 
   config.after(:each) do
     Timecop.return
-    Rails.cache.clear
     Fakes::BGSService.clean!
     Time.zone = @spec_time_zone
   end
@@ -357,16 +354,14 @@ RSpec::Matchers.define :become_truthy do |wait: Capybara.default_max_wait_time|
   supports_block_expectations
 
   match do |block|
-    begin
-      Timeout.timeout(wait) do
-        # rubocop:disable AssignmentInCondition
-        sleep(0.1) until value = block.call
-        # rubocop:enable AssignmentInCondition
-        value
-      end
-    rescue TimeoutError
-      false
+    Timeout.timeout(wait) do
+      # rubocop:disable AssignmentInCondition
+      sleep(0.1) until value = block.call
+      # rubocop:enable AssignmentInCondition
+      value
     end
+  rescue TimeoutError
+    false
   end
 end
 

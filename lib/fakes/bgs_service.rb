@@ -111,9 +111,10 @@ class Fakes::BGSService
         RequestIssue.find_or_create_by!(
           review_request: hlr,
           end_product_establishment: epe,
-          rating_issue_reference_id: in_active_review_reference_id,
-          rating_issue_profile_date: in_active_review_receipt_date - 1
-        )
+          rating_issue_reference_id: in_active_review_reference_id
+        ) do |reqi|
+          reqi.rating_issue_profile_date = Time.zone.today - 100
+        end
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
           bgs_attrs: { benefit_claim_id: in_active_review_reference_id }
@@ -403,6 +404,8 @@ class Fakes::BGSService
     self.rating_records = {}
     self.rating_profile_records = {}
     end_product_store.clear!
+    self.manage_claimant_letter_v2_requests = nil
+    self.generate_tracked_items_requests = nil
   end
 
   def self.end_product_store

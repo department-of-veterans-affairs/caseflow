@@ -96,7 +96,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       appealId
     } = this.props;
     const dispositions = _.map(appeal.issues, (issue) => issue.disposition);
-    const prevUrl = `/queue/appeals/${appealId}/tasks/${taskId}`;
+    const prevUrl = `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}`;
 
     if (checkoutFlow === DECISION_TYPES.DRAFT_DECISION) {
       return dispositions.includes(VACOLS_DISPOSITIONS.REMANDED) ?
@@ -238,7 +238,7 @@ const mapStateToProps = (state, ownProps) => {
     error,
     userRole,
     highlightFormItems,
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues
+    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)
   };
 };
 

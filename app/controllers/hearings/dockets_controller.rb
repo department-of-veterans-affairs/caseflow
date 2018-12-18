@@ -27,7 +27,7 @@ class Hearings::DocketsController < HearingsController
 
   def date_from_string(date_string)
     # date should be YYYY-MM-DD
-    return nil unless /^\d{4}-\d{1,2}-\d{1,2}$/ =~ date_string
+    return nil unless /^\d{4}-\d{1,2}-\d{1,2}$/.match?(date_string)
 
     begin
       date_string.to_date

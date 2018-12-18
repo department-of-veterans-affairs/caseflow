@@ -30,9 +30,7 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def verify_organization_access
-    return if current_user.admin?
-
-    super
+    redirect_to "/unauthorized" unless current_user.admin? || current_user.administered_teams.include?(organization)
   end
 
   def verify_role_access

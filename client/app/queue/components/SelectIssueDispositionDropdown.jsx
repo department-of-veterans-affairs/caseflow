@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
@@ -99,8 +100,8 @@ class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
   };
 }
 
-const mapStateToProps = (state) => ({
-  highlight: state.ui.highlightFormItems
+const mapStateToProps = (state, ownProps) => ({
+  highlight: _.isUndefined(ownProps.highlight) ? state.ui.highlightFormItems : ownProps.highlight
 });
 
 export default (connect(mapStateToProps)(SelectIssueDispositionDropdown): React.ComponentType<Params>);

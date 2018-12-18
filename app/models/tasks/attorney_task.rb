@@ -7,7 +7,7 @@ class AttorneyTask < Task
   validate :parent_attorney_child_count, on: :create
 
   def available_actions(user)
-    if parent.type == JudgeTask.name && parent.assigned_to == user
+    if parent.is_a?(JudgeTask) && parent.assigned_to == user
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
       ]
@@ -34,7 +34,7 @@ class AttorneyTask < Task
   private
 
   def parent_attorney_child_count
-    errors.add(:parent, "has too many children") if parent && parent.children_attorney_tasks.length >= 1
+    errors.add(:parent, "has too many children") if parent&.children_attorney_tasks&.length &.>= 1
   end
 
   def assigned_to_role_is_valid

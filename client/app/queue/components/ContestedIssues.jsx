@@ -3,10 +3,11 @@ import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
 
 const TEXT_INDENTATION = '10px';
 
-const contestedIssueStyling = css({
+export const contestedIssueStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
   padding: `5px ${TEXT_INDENTATION}`,
   margin: '10px 0'
@@ -58,6 +59,10 @@ const noteDiv = css({
   color: COLORS.GREY
 });
 
+const errorTextSpacing = css({
+  margin: TEXT_INDENTATION
+});
+
 export default class ContestedIssues extends React.PureComponent {
   decisionIssues = (requestIssue) => {
     const {
@@ -68,7 +73,7 @@ export default class ContestedIssues extends React.PureComponent {
     return decisionIssues.filter((decisionIssue) => {
       return decisionIssue.request_issue_ids.includes(requestIssue.id);
     }).map((decisionIssue) => {
-      return <div {...outerDiv}>
+      return <div {...outerDiv} key={decisionIssue.id}>
         <div {...grayLine} />
         <div {...decisionIssueDiv}>
           <div {...flexContainer}>
@@ -76,6 +81,7 @@ export default class ContestedIssues extends React.PureComponent {
             {openDecisionHandler && <span>
               <Button
                 name="Edit"
+                id={`edit-issue-${decisionIssue.id}`}
                 onClick={openDecisionHandler([requestIssue.id], decisionIssue)}
                 classNames={['cf-btn-link']}
               />
@@ -97,6 +103,8 @@ export default class ContestedIssues extends React.PureComponent {
   render = () => {
     const {
       requestIssues,
+      decisionIssues,
+      highlight,
       openDecisionHandler,
       numbered
     } = this.props;
@@ -111,25 +119,39 @@ export default class ContestedIssues extends React.PureComponent {
     });
 
     return <ol {...listStyle}>{requestIssues.map((issue) => {
-      return <li {...listPadding} key={issue.description}>
+      const hasDecisionIssue = decisionIssues.some(
+        (decisionIssue) => decisionIssue.request_issue_ids.includes(issue.id)
+      );
+      const shouldShowError = highlight && !hasDecisionIssue;
+
+      return <li {...listPadding} key={issue.id}>
         <div {...contestedIssueStyling}>
           Contested Issue
         </div>
-        <div {...indentedIssueStyling}>
-          {issue.description}
-          <div {...verticalSpaceDiv}>Benefit type: {issue.program}</div>
-          <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>
-        </div>
-        {this.decisionIssues(issue)}
-        { openDecisionHandler &&
-            <div {...buttonDiv}>
-              <Button
-                name="+ Add Decision"
-                onClick={openDecisionHandler([issue.id])}
-                classNames={['usa-button-secondary']}
-              />
-            </div>
+        { shouldShowError &&
+          <span {...errorTextSpacing} className="usa-input-error-message">
+            Each request issue must have at least one decision issue
+          </span>
         }
+        <div {...indentedIssueStyling} className={shouldShowError ? 'usa-input-error' : ''}>
+          {issue.description}
+          <div {...verticalSpaceDiv}>Benefit type: {BENEFIT_TYPES[issue.program]}</div>
+          { issue.notes &&
+            <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>
+          }
+          {this.decisionIssues(issue)}
+          { openDecisionHandler &&
+            <React.Fragment>
+              <div {...buttonDiv}>
+                <Button
+                  name="+ Add Decision"
+                  onClick={openDecisionHandler([issue.id])}
+                  classNames={['usa-button-secondary']}
+                />
+              </div>
+            </React.Fragment>
+          }
+        </div>
       </li>;
     })}
     </ol>;

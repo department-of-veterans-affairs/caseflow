@@ -98,7 +98,7 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
 const TaskTableTab = ({ description, tasks }) => <React.Fragment>
-  <p>{description}</p>
+  <p className="cf-margin-top-0">{description}</p>
   <TaskTable
     includeDetailsLink
     includeTask

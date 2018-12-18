@@ -53,10 +53,15 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :ama_judge_task, class: JudgeTask do
-      type JudgeTask.name
+    factory :ama_judge_task, class: JudgeAssignTask do
+      type JudgeAssignTask.name
       appeal_type Appeal.name
-      action :assign
+      appeal { create(:appeal) }
+    end
+
+    factory :ama_judge_review_task, class: JudgeReviewTask do
+      type JudgeReviewTask.name
+      appeal_type Appeal.name
       appeal { create(:appeal) }
     end
 
@@ -74,7 +79,7 @@ FactoryBot.define do
       parent { create(:root_task) }
     end
 
-    factory :qr_task do
+    factory :qr_task, class: QualityReviewTask do
       type QualityReviewTask.name
       appeal { create(:appeal) }
       parent { create(:root_task) }
@@ -84,6 +89,13 @@ FactoryBot.define do
 
     factory :bva_dispatch_task do
       type BvaDispatchTask.name
+      appeal_type Appeal.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
+
+    factory :schedule_hearing_task do
+      type ScheduleHearingTask.name
       appeal_type Appeal.name
       appeal { create(:appeal) }
       assigned_by nil

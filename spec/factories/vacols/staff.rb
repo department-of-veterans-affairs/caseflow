@@ -31,6 +31,14 @@ FactoryBot.define do
       sactive "A"
     end
 
+    trait :hearing_coordinator do
+      sdept "HRG"
+      sactive "A"
+      sequence(:snamel) { |n| "Smith#{n}" }
+      sequence(:snamef) { |n| "John#{n}" }
+      snamemi ""
+    end
+
     trait :attorney_judge_role do
       svlj "A"
       sactive "A"
@@ -53,7 +61,7 @@ FactoryBot.define do
     end
 
     after(:build) do |staff, evaluator|
-      if evaluator.user && evaluator.user.full_name
+      if evaluator.user&.full_name
         staff.snamef, staff.snamel = evaluator.user.full_name.split(" ")
       end
     end

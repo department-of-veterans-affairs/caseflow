@@ -18,7 +18,10 @@ module HearingMapper
         add_on: add_on_to_vacols_format(hearing_info[:add_on]),
         transcript_requested: transcript_requested_to_vacols_format(hearing_info[:transcript_requested]),
         representative_name: representative_name_to_vacols_format(hearing_info[:representative_name]),
-        folder_nr: hearing_info[:folder_nr]
+        folder_nr: hearing_info[:folder_nr],
+        room: hearing_info[:room],
+        bva_poc: hearing_info[:bva_poc],
+        judge_id: hearing_info[:judge_id]
       }.select do |k, _v|
         hearing_info.keys.map(&:to_sym).include?(k) || (k.to_sym == :hearing_date && hearing_info[:date])
         # only send updates to key/values that are passed
@@ -44,7 +47,7 @@ module HearingMapper
     # asctime - returns a canonical string representation of time
     def datetime_based_on_type(datetime:, regional_office_key:, type:)
       datetime = VacolsHelper.normalize_vacols_datetime(datetime)
-      return datetime if type == :central_office
+      return datetime if type == :central
 
       datetime.asctime.in_time_zone(timezone(regional_office_key)).in_time_zone("Eastern Time (US & Canada)")
     end

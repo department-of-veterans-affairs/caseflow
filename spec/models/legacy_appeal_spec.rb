@@ -12,14 +12,15 @@ describe LegacyAppeal do
   end
 
   context "#eligible_for_soc_opt_in? and #matchable_to_request_issue?" do
-    let(:soc_eligible_date) { Time.zone.today - 60.days }
-    let(:nod_eligible_date) { Time.zone.today - 372.days }
+    let(:soc_eligible_date) { receipt_date - 60.days }
+    let(:nod_eligible_date) { receipt_date - 372.days }
+    let(:receipt_date) { Time.zone.today }
 
     let(:vacols_case) do
       create(:case, bfcorlid: "123456789S")
     end
 
-    let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1)] }
+    let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1, disposition: nil)] }
 
     scenario "when is active but not eligible" do
       allow(appeal).to receive(:active?).and_return(true)
@@ -27,8 +28,8 @@ describe LegacyAppeal do
       allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
 
-      expect(appeal.eligible_for_soc_opt_in?).to eq(false)
-      expect(appeal.matchable_to_request_issue?).to eq(true)
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
     scenario "when is not active but is eligible" do
@@ -37,8 +38,8 @@ describe LegacyAppeal do
       allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
 
-      expect(appeal.eligible_for_soc_opt_in?).to eq(true)
-      expect(appeal.matchable_to_request_issue?).to eq(true)
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
     scenario "when is not active or eligible" do
@@ -47,8 +48,8 @@ describe LegacyAppeal do
       allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
 
-      expect(appeal.eligible_for_soc_opt_in?).to eq(false)
-      expect(appeal.matchable_to_request_issue?).to eq(false)
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
     end
 
     scenario "when is active or eligible but has no issues" do
@@ -57,8 +58,8 @@ describe LegacyAppeal do
       allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date + 1.day)
 
-      expect(appeal.eligible_for_soc_opt_in?).to eq(true)
-      expect(appeal.matchable_to_request_issue?).to eq(false)
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
     end
   end
 

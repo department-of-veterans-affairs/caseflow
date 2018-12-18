@@ -1,5 +1,7 @@
 class DecisionReview < ApplicationRecord
   include CachedAttributes
+  include LegacyOptinable
+  include Asyncable
 
   validate :validate_receipt_date
 
@@ -9,6 +11,7 @@ class DecisionReview < ApplicationRecord
 
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
+  has_many :decision_issues, as: :decision_review
 
   before_destroy :remove_issues!
 
@@ -16,20 +19,49 @@ class DecisionReview < ApplicationRecord
     ratings_with_issues.map(&:serialize)
   end
 
-  def self.ama_activation_date
-    if FeatureToggle.enabled?(:use_ama_activation_date)
-      Constants::DATES["AMA_ACTIVATION"].to_date
-    else
-      Constants::DATES["AMA_ACTIVATION_TEST"].to_date
+  # The Asyncable module requires we define these.
+  # establishment_submitted_at - when our db is ready to push to exernal services
+  # establishment_attempted_at - when our db attempted to push to external services
+  # establishment_processed_at - when our db successfully pushed to external services
+  # establishment_error        - capture exception messages on failures
+
+  class << self
+    def submitted_at_column
+      :establishment_submitted_at
+    end
+
+    def attempted_at_column
+      :establishment_attempted_at
+    end
+
+    def processed_at_column
+      :establishment_processed_at
+    end
+
+    def error_column
+      :establishment_error
+    end
+
+    def ama_activation_date
+      if FeatureToggle.enabled?(:use_ama_activation_date)
+        Constants::DATES["AMA_ACTIVATION"].to_date
+      else
+        Constants::DATES["AMA_ACTIVATION_TEST"].to_date
+      end
+    end
+
+    def review_title
+      to_s.underscore.titleize
     end
   end
 
-  def self.review_title
-    to_s.underscore.titleize
+  def non_comp?
+    !ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
   end
 
   def serialized_ratings
     return unless receipt_date
+    return if non_comp?
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
@@ -43,18 +75,19 @@ class DecisionReview < ApplicationRecord
   def ui_hash
     {
       veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
+        name: veteran&.name&.formatted(:readable_short),
         fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
+        formName: veteran&.name&.formatted(:form)
       },
-      relationships: veteran && veteran.relationships,
+      relationships: veteran&.relationships,
       claimant: claimant_participant_id,
       veteranIsNotClaimant: veteran_is_not_claimant,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
+      requestIssues: request_issues.map(&:ui_hash),
+      contestableIssuesByDate: contestable_issues.map(&:serialize)
     }
   end
 
@@ -105,32 +138,78 @@ class DecisionReview < ApplicationRecord
   end
 
   def serialized_legacy_appeals
-    return [] unless FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
-    return [] unless available_legacy_appeals
+    return [] unless legacy_opt_in_enabled?
+    return [] unless available_legacy_appeals.any?
 
     available_legacy_appeals.map do |legacy_appeal|
       {
+        vacols_id: legacy_appeal.vacols_id,
         date: legacy_appeal.nod_date,
-        eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?,
+        eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?(receipt_date),
         issues: legacy_appeal.issues.map(&:intake_attributes)
       }
     end
   end
 
+  def special_issues
+    [].tap do |specials|
+      specials << vacols_optin_special_issue if needs_vacols_optin_special_issue?
+    end
+  end
+
+  def on_decision_issues_sync_processed(end_product_establishment)
+    # no-op, can be overwritten
+  end
+
+  def establish!
+    # no-op
+  end
+
+  def process_legacy_issues!
+    LegacyOptinManager.new(decision_review: self).process!
+  end
+
+  def contestable_issues
+    return contestable_issues_from_decision_issues if non_comp?
+    contestable_issues_from_ratings + contestable_issues_from_decision_issues
+  end
+
   private
+
+  def cached_rating_issues
+    cached_serialized_ratings.inject([]) do |result, rating_hash|
+      result + rating_hash[:issues].map { |rating_issue_hash| RatingIssue.deserialize(rating_issue_hash) }
+    end
+  end
+
+  def unfiltered_contestable_issues_from_ratings
+    cached_rating_issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
+  end
+
+  def contestable_issues_from_ratings
+    unfiltered_contestable_issues_from_ratings.reject do |contestable_issue|
+      contestable_issues_from_decision_issues.any? do |potential_duplicate|
+        contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
+      end
+    end
+  end
+
+  def contestable_issues_from_decision_issues
+    contestable_decision_issues.map { |decision_issue| ContestableIssue.from_decision_issue(decision_issue, self) }
+  end
 
   def available_legacy_appeals
     # If a Veteran does not opt-in to withdraw legacy appeals, do not show inactive appeals
-    legacy_opt_in_approved ? matchable_legacy_appeals : active_legacy_appeals
+    legacy_opt_in_approved ? matchable_legacy_appeals : active_matchable_legacy_appeals
   end
 
   def matchable_legacy_appeals
     @matchable_legacy_appeals ||= LegacyAppeal
       .fetch_appeals_by_file_number(veteran_file_number)
-      .select(&:matchable_to_request_issue?)
+      .select { |appeal| appeal.matchable_to_request_issue?(receipt_date) }
   end
 
-  def active_legacy_appeals
+  def active_matchable_legacy_appeals
     @active_matchable_legacy_appeals ||= matchable_legacy_appeals.select(&:active?)
   end
 
@@ -166,6 +245,6 @@ class DecisionReview < ApplicationRecord
   end
 
   def legacy_opt_in_enabled?
-    FeatureToggle.enabled?(:intake_legacy_opt_in)
+    FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
   end
 end

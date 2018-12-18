@@ -54,12 +54,12 @@ RSpec.configure do |config|
   #   # get run.
   #   config.filter_run :focus
   #   config.run_all_when_everything_filtered = true
-  #
-  #   # Allows RSpec to persist some state between runs in order to support
-  #   # the `--only-failures` and `--next-failure` CLI options. We recommend
-  #   # you configure your source control system to ignore this file.
-  #   config.example_status_persistence_file_path = "spec/examples.txt"
-  #
+
+  # Allows RSpec to persist some state between runs in order to support
+  # the `--only-failures` and `--next-failure` CLI options. We recommend
+  # you configure your source control system to ignore this file.
+  config.example_status_persistence_file_path = "tmp/examples.txt"
+
   #   # Limits the available syntax to the non-monkey patched syntax that is
   #   # recommended. For more details, see:
   #   #   - http://rspec.info/blog/2012/06/rspecs-new-expectation-syntax/

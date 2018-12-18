@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181128225613) do
+ActiveRecord::Schema.define(version: 20181217195658) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -87,6 +87,10 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -185,14 +189,16 @@ ActiveRecord::Schema.define(version: 20181128225613) do
 
   create_table "decision_issues", force: :cascade do |t|
     t.string "disposition"
-    t.string "disposition_date"
     t.string "description"
-    t.bigint "source_request_issue_id"
     t.datetime "promulgation_date"
     t.datetime "profile_date"
-    t.integer "participant_id", null: false
+    t.string "participant_id", null: false
     t.string "rating_issue_reference_id"
     t.string "decision_text"
+    t.string "decision_review_type"
+    t.integer "decision_review_id"
+    t.string "benefit_type"
+    t.date "end_product_last_action_date"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
   end
 
@@ -407,12 +413,16 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.string "hearing_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
-    t.string "room_info", null: false
+    t.string "room", null: false
     t.datetime "created_at", null: false
     t.string "created_by", null: false
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
     t.string "bva_poc"
+    t.datetime "deleted_at"
+    t.boolean "lock"
+    t.text "notes"
+    t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
@@ -518,6 +528,16 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.index ["vacols_id"], name: "index_legacy_appeals_on_vacols_id", unique: true
   end
 
+  create_table "legacy_hearings", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "appeal_id"
+    t.string "vacols_id", null: false
+    t.string "witness"
+    t.string "military_service"
+    t.boolean "prepped"
+    t.text "summary"
+  end
+
   create_table "legacy_issue_optins", force: :cascade do |t|
     t.bigint "request_issue_id", null: false
     t.datetime "created_at", null: false
@@ -551,6 +571,8 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.integer "organization_id"
     t.integer "user_id"
     t.boolean "admin", default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
@@ -686,7 +708,10 @@ ActiveRecord::Schema.define(version: 20181128225613) do
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.datetime "created_at"
+    t.string "benefit_type"
+    t.integer "contested_decision_issue_id"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
+    t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"

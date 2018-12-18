@@ -25,7 +25,7 @@ RSpec.describe TasksController, type: :controller do
     end
     let!(:task5) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.in_progress) }
     let!(:task_ama_colocated_aod) do
-      create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket))
+      create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket_due_to_age))
     end
     let!(:task6) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.completed) }
     let!(:task7) { create(:colocated_task) }
@@ -180,23 +180,22 @@ RSpec.describe TasksController, type: :controller do
       end
 
       context "when the task belongs to the user" do
-        let(:user) { FactoryBot.create(:user) }
-        let!(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
-        before { User.authenticate!(user: user) }
+        let(:no_role_user) { FactoryBot.create(:user) }
+        let!(:task) { FactoryBot.create(:generic_task, assigned_to: no_role_user) }
+        before { User.authenticate!(user: no_role_user) }
 
         context "when there are Organizations in the table" do
           let(:org_count) { 8 }
           before { FactoryBot.create_list(:organization, org_count) }
 
           it "should return a list of all Organizations" do
-            get :index, params: { user_id: user.id }
+            get :index, params: { user_id: no_role_user.id }
             expect(response.status).to eq(200)
             response_body = JSON.parse(response.body)
             task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
 
             expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
 
-            # org count minus one since we can't assign to ourselves.
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
               action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
             end
@@ -255,13 +254,21 @@ RSpec.describe TasksController, type: :controller do
 
     context "VSO user" do
       let(:user) { create(:default_user, roles: ["VSO"]) }
+      let(:vso) { FactoryBot.create(:vso) }
+      let(:appeal) { FactoryBot.create(:appeal) }
       let(:root_task) { create(:root_task, appeal: appeal) }
       let(:role) { nil }
+
+      before do
+        User.authenticate!(user: user)
+        OrganizationsUser.add_user_to_organization(user, vso)
+        allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+      end
 
       context "when creating a generic task" do
         let(:params) do
           [{
-            "external_id": appeal.vacols_id,
+            "external_id": appeal.external_id,
             "type": GenericTask.name,
             "assigned_to_id": user.id,
             "parent_id": root_task.id
@@ -275,12 +282,20 @@ RSpec.describe TasksController, type: :controller do
       end
 
       context "when creating a ihp task" do
+        let(:ihp_org_task) do
+          FactoryBot.create(
+            :informal_hearing_presentation_task,
+            appeal: appeal,
+            assigned_to: vso
+          )
+        end
+
         let(:params) do
           [{
-            "external_id": appeal.vacols_id,
+            "external_id": appeal.external_id,
             "type": InformalHearingPresentationTask.name,
             "assigned_to_id": user.id,
-            "parent_id": root_task.id
+            "parent_id": ihp_org_task.id
           }]
         end
 
@@ -479,9 +494,6 @@ RSpec.describe TasksController, type: :controller do
           let!(:hearings_user) do
             create(:hearings_coordinator)
           end
-          let!(:hearings_org) do
-            create(:hearings_management)
-          end
           let(:params) do
             [{
               "type": ScheduleHearingTask.name,
@@ -498,6 +510,11 @@ RSpec.describe TasksController, type: :controller do
                 }
               }
             }]
+          end
+
+          before do
+            OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
+            User.authenticate!(user: hearings_user)
           end
 
           it "should be successful" do
@@ -585,10 +602,10 @@ RSpec.describe TasksController, type: :controller do
     context "when some other user updates another user's task" do
       let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: create(:user)) }
 
-      it "should return not be successful" do
+      it "should return an error" do
         User.stub = colocated
         patch :update, params: { task: { status: Constants.TASK_STATUSES.in_progress }, id: admin_action.id }
-        expect(response.status).to eq 302
+        expect(response.status).to eq 403
       end
     end
   end
@@ -637,7 +654,7 @@ RSpec.describe TasksController, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 1
+        expect(response_body["tasks"].length).to eq 2
 
         task = response_body["tasks"][0]
         expect(task["type"]).to eq "colocated_tasks"
@@ -664,7 +681,7 @@ RSpec.describe TasksController, type: :controller do
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 
-        expect(appeal.tasks.count).to eq 2
+        expect(appeal.tasks.count).to eq 3
       end
     end
   end

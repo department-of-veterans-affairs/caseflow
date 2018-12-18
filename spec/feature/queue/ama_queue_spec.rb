@@ -55,7 +55,7 @@ RSpec.feature "AmaQueue" do
       [
         create(
           :appeal,
-          :advanced_on_docket,
+          :advanced_on_docket_due_to_age,
           veteran: create(
             :veteran,
             participant_id: veteran_participant_id,
@@ -140,11 +140,11 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content(poa_name)
         expect(page).to have_content(poa_address)
 
-        expect(page).to have_content("View Veteran's documents")
+        expect(page.text).to match(/View (\d+) docs/)
         expect(page).to have_selector("text", id: "NEW")
         expect(page).to have_content("5 docs")
 
-        click_on "View Veteran's documents"
+        find("a", text: /View (\d+) docs/).click
         expect(page).to have_content("Claims Folder")
 
         visit "/queue"
@@ -193,7 +193,7 @@ RSpec.feature "AmaQueue" do
       let(:other_user_name) { "Other User" }
       let!(:user) { User.authenticate!(user: create(:user, roles: ["Reader"], full_name: user_name)) }
       let!(:other_user) { create(:user, roles: ["Reader"], full_name: other_user_name) }
-      let!(:translation_organization) { Organization.create!(name: "Translation", url: "translation") }
+      let!(:translation_organization) { Translation.singleton }
       let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
 
       let!(:translation_task) do
@@ -404,7 +404,7 @@ RSpec.feature "AmaQueue" do
       fill_in "taskInstructions", with: quality_review_instructions
 
       click_on "Submit"
-      expect(page).to have_content("On hold (1)")
+      expect(page).to have_content("On hold (3)")
 
       User.authenticate!(user: judge_user)
 

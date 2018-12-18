@@ -1,21 +1,33 @@
 require "rails_helper"
 
-RSpec.feature "Judge assignment to attorney" do
-  # Note: these tests rely on the mapping in attorney_judge_teams.rb, the CSS IDs come from there.
+def click_dropdown_text(opt_text, container = page)
+  dropdown = container.find(".Select-control")
+  dropdown.click
+  yield if block_given?
+  dropdown.sibling(".Select-menu-outer").find("div .Select-option", text: opt_text).click
+end
 
-  let(:judge) { create(:user, css_id: "BVABDANIEL", full_name: "Billie Daniel") }
-  let(:attorney_one) { create(:user, css_id: "BVAMZEMLAK", full_name: "Moe Syzlak") }
-  let(:attorney_two) { create(:user, css_id: "BVAAMACGYVER2", full_name: "Alice Macgyvertwo") }
+RSpec.feature "Judge assignment to attorney" do
+  let(:judge) { Judge.new(FactoryBot.create(:user, full_name: "Billie Daniel")) }
+  let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
+  let(:attorney_one) { FactoryBot.create(:user, full_name: "Moe Syzlak") }
+  let(:attorney_two) { FactoryBot.create(:user, full_name: "Alice Macgyvertwo") }
+  let(:team_attorneys) { [attorney_one, attorney_two] }
   let(:appeal_one) { FactoryBot.create(:appeal) }
   let(:appeal_two) { FactoryBot.create(:appeal) }
 
   before do
-    create(:staff, :judge_role, slogid: "TEST0", sdomainid: judge.css_id)
-    create(:staff, :attorney_role, slogid: "TEST1", sdomainid: attorney_one.css_id)
-    create(:staff, :attorney_role, slogid: "TEST2", sdomainid: attorney_two.css_id)
-    create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: appeal_one)
-    create(:ama_judge_task, :in_progress, assigned_to: judge, appeal: appeal_two)
-    User.authenticate!(user: judge)
+    create(:staff, :judge_role, user: judge.user)
+    team_attorneys.each do |attorney|
+      create(:staff, :attorney_role, user: attorney)
+      OrganizationsUser.add_user_to_organization(attorney, judge_team)
+    end
+  end
+
+  before do
+    create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_one)
+    create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_two)
+    User.authenticate!(user: judge.user)
   end
 
   context "Can move appeals between attorneys" do
@@ -30,22 +42,46 @@ RSpec.feature "Judge assignment to attorney" do
       case_rows = page.find_all("tr[id^='table-row-']")
       expect(case_rows.length).to eq(2)
 
-      case_rows.each do |row|
-        # TODO: how do we check these checkboxes?
+      # step "checks both cases and assigns them to an attorney"
+      scroll_element_in_to_view(".usa-table-borderless")
+      check "1", allow_label_click: true
+      check "2", allow_label_click: true
 
-        # Approaches I tried:
-        # row.find(".cf-form-checkbox").click -> does not seem to change the checkbox state.
-        # row.find("input", visible: false).click -> fails since you're not allowed to click hidden elements
-        # page.find("label[for=\"#{appeal_one.uuid}\"]").click -> fails with message:
-        # Element is not clickable. Other element would receive the click:
-        # <div class="cf-form-checkbox">...</div>
-      end
+      safe_click ".Select"
+      click_dropdown_text attorney_one.full_name
+
+      click_on "Assign 2 cases"
+      expect(page).to have_content("Assigned 2 cases")
+
+      # step "navigates to the attorney's case list"
+      click_on "#{attorney_one.full_name} (2)"
+      expect(page).to have_content("#{attorney_one.full_name}'s Cases")
+
+      case_rows = page.find_all("tr[id^='table-row-']")
+      expect(case_rows.length).to eq(2)
+
+      # step "checks one case and assigns it to another attorney"
+      scroll_element_in_to_view(".usa-table-borderless")
+      check "3", allow_label_click: true
+
+      safe_click ".Select"
+      click_dropdown_text attorney_two.full_name
+
+      click_on "Assign 1 case"
+      expect(page).to have_content("Assigned 1 case")
+
+      # step "navigates to the other attorney's case list"
+      click_on "#{attorney_two.full_name} (1)"
+      expect(page).to have_content("#{attorney_two.full_name}'s Cases")
+
+      case_rows = page.find_all("tr[id^='table-row-']")
+      expect(case_rows.length).to eq(1)
     end
   end
 
   context "Can view their queue" do
     scenario "when viewing the review task queue" do
-      judge_review_task = create(:ama_judge_task, :in_progress, assigned_to: judge, action: :review)
+      judge_review_task = create(:ama_judge_review_task, :in_progress, assigned_to: judge.user)
       expect(judge_review_task.status).to eq("in_progress")
       appeal_review = judge_review_task.appeal
       vet = appeal_review.veteran
@@ -64,7 +100,7 @@ RSpec.feature "Judge assignment to attorney" do
     end
 
     scenario "when viewing the assign task queue" do
-      judge_assign_task = create(:ama_judge_task, :in_progress, assigned_to: judge)
+      judge_assign_task = create(:ama_judge_task, :in_progress, assigned_to: judge.user)
       appeal_assign = judge_assign_task.appeal
       vet = appeal_assign.veteran
 

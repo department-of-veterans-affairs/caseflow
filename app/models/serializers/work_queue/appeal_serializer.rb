@@ -11,7 +11,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       {
         id: issue.id,
         disposition: issue.disposition,
-        program: "Compensation",
+        program: "compensation",
         description: issue.description,
         notes: issue.notes,
         remand_reasons: issue.remand_reasons
@@ -25,17 +25,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         id: issue.id,
         disposition: issue.disposition,
         description: issue.description,
-        remand_reasons: issue.remand_reasons
-      }
-    end
-  end
-
-  attribute :decision_issues do
-    object.decision_issues.map do |issue|
-      {
-        id: issue.id,
-        disposition: issue.disposition,
-        description: issue.description,
+        benefit_type: "compensation",
+        remand_reasons: issue.remand_reasons,
         request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
       }
     end
@@ -54,17 +45,17 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :appellant_full_name do
-    object.claimants[0].name if object.claimants && object.claimants.any?
+    object.claimants[0].name if object.claimants&.any?
   end
 
   attribute :appellant_address do
-    if object.claimants && object.claimants.any?
+    if object.claimants&.any?
       object.claimants[0].address
     end
   end
 
   attribute :appellant_relationship do
-    object.claimants[0].relationship if object.claimants && object.claimants.any?
+    object.claimants[0].relationship if object.claimants&.any?
   end
 
   attribute :veteran_file_number do

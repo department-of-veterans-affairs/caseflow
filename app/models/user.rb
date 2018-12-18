@@ -214,10 +214,9 @@ class User < ApplicationRecord
   end
 
   def judge_css_id
-    Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].each_pair do |id, value|
-      return id if value[:attorneys].include?(css_id)
-    end
-    nil
+    organizations.find_by(type: JudgeTeam.name)
+      .try(:judge)
+      .try(:css_id)
   end
 
   def as_json(options)
@@ -226,6 +225,10 @@ class User < ApplicationRecord
 
   def user_info_for_idt
     self.class.user_repository.user_info_for_idt(css_id)
+  end
+
+  def selectable_organizations
+    organizations.select(&:selectable_in_queue?)
   end
 
   private
@@ -298,6 +301,12 @@ class User < ApplicationRecord
 
     def find_by_css_id_or_create_with_default_station_id(css_id)
       User.find_by(css_id: css_id) || User.create(css_id: css_id, station_id: BOARD_STATION_ID)
+    end
+
+    def list_hearing_coordinators
+      Rails.cache.fetch("#{Rails.env}_list_of_hearing_coordinators_from_vacols") do
+        user_repository.find_all_hearing_coordinators
+      end
     end
 
     def authentication_service

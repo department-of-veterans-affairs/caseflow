@@ -11,7 +11,7 @@ RSpec.feature "Supplemental Claim Intake" do
     FeatureToggle.disable!(:intake_enable_add_issues_page)
 
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(Time.utc(2018, 11, 28))
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
@@ -22,6 +22,9 @@ RSpec.feature "Supplemental Claim Intake" do
     FeatureToggle.disable!(:intakeAma)
     FeatureToggle.disable!(:intake_legacy_opt_in)
   end
+
+  let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
+  let(:intake_constants) { Constants.INTAKE_STRINGS }
 
   let(:veteran_file_number) { "123412345" }
 
@@ -44,7 +47,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
   let(:inaccessible) { false }
 
-  let(:receipt_date) { Date.new(2018, 4, 20) }
+  let(:receipt_date) { Date.new(2018, 9, 20) }
 
   let(:benefit_type) { "compensation" }
 
@@ -54,14 +57,12 @@ RSpec.feature "Supplemental Claim Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { Date.new(2017, 11, 20).to_time(:local) }
-
-  let(:timely_promulgation_date) { Date.new(2017, 11, 30) }
+  let(:profile_date) { Time.zone.local(2018, 9, 15) }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: timely_promulgation_date,
+      promulgation_date: receipt_date - 5.days,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -70,11 +71,11 @@ RSpec.feature "Supplemental Claim Intake" do
     )
   end
 
-  let!(:untimely_rating) do
+  let!(:untimely_ratings) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - untimely_days,
-      profile_date: profile_date - 1.day,
+      promulgation_date: receipt_date - untimely_days - 1.day,
+      profile_date: receipt_date - untimely_days - 3.days,
       issues: [
         { reference_id: "old123", decision_text: "Untimely rating issue 1" },
         { reference_id: "old456", decision_text: "Untimely rating issue 2" }
@@ -132,13 +133,13 @@ RSpec.feature "Supplemental Claim Intake" do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "05/28/2018"
-    safe_click "#button-submit-review"
+    fill_in "What is the Receipt Date of this form?", with: "12/15/2018"
+    click_intake_continue
     expect(page).to have_content(
       "Receipt date cannot be in the future."
     )
 
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: "09/20/2018"
 
     expect(page).to_not have_content("Please select the claimant listed on the form.")
     within_fieldset("Is the claimant someone other than the Veteran?") do
@@ -158,9 +159,9 @@ RSpec.feature "Supplemental Claim Intake" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
-    expect(page).to have_current_path("/intake/finish")
+    expect(page).to have_current_path("/intake/add_issues")
 
     visit "/intake/review_request"
 
@@ -168,16 +169,9 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
     expect(find("#legacy-opt-in_false", visible: false)).to be_checked
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
-    expect(page).to have_current_path("/intake/finish")
-
-    expect(page).to have_content("Identify issues on")
-    expect(page).to have_content("Decision date: 11/20/2017")
-    expect(page).to have_content("Left knee granted")
-    expect(page).to have_content("Untimely rating issue 1")
-    expect(page).to have_button("Establish EP", disabled: true)
-    expect(page).to have_content("0 issues")
+    expect(page).to have_current_path("/intake/add_issues")
 
     supplemental_claim = SupplementalClaim.find_by(veteran_file_number: veteran_file_number)
 
@@ -191,27 +185,26 @@ RSpec.feature "Supplemental Claim Intake" do
     )
     intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
-    find("label", text: "PTSD denied").click
-    expect(page).to have_content("1 issue")
-    find("label", text: "Left knee granted").click
-    expect(page).to have_content("2 issues")
-    find("label", text: "Left knee granted").click
+    click_intake_add_issue
+    add_intake_rating_issue("PTSD denied")
     expect(page).to have_content("1 issue")
 
     click_intake_add_issue
+    add_intake_rating_issue("Left knee granted")
+    expect(page).to have_content("2 issues")
 
-    safe_click ".Select"
-
-    fill_in "Issue category", with: "Active Duty Adjustments"
-    find("#issue-category").send_keys :enter
-
+    click_remove_intake_issue(2)
     expect(page).to have_content("1 issue")
+    expect(page).to_not have_content("Left knee granted")
 
-    fill_in "Issue description", with: "Description for Active Duty Adjustments"
+    click_intake_add_issue
+    click_intake_no_matching_issues
 
-    expect(page).to have_content("1 issue")
-
-    fill_in "Decision date", with: "04/25/2018"
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "10/27/2018"
+    )
 
     expect(page).to have_content("2 issues")
 
@@ -338,7 +331,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
     expect(page).to have_content("Ed Merica (#{veteran_file_number})")
-    expect(page).to have_content("04/20/2018")
+    expect(page).to have_content("09/20/2018")
     expect(page).to_not have_content("Informal conference request")
     expect(page).to_not have_content("Same office request")
     expect(page).to have_content("PTSD denied")
@@ -354,18 +347,24 @@ RSpec.feature "Supplemental Claim Intake" do
     ## Validate error message when complete intake fails
     expect_any_instance_of(SupplementalClaimIntake).to receive(:review!).and_raise("A random error. Oh no!")
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Something went wrong")
     expect(page).to have_current_path("/intake/review_request")
   end
 
-  def start_supplemental_claim(test_veteran, is_comp: true, veteran_is_not_claimant: false)
+  def start_supplemental_claim(
+    test_veteran,
+    is_comp: true,
+    legacy_opt_in_approved: false,
+    veteran_is_not_claimant: false
+  )
+
     supplemental_claim = SupplementalClaim.create!(
       veteran_file_number: test_veteran.file_number,
-      receipt_date: 2.days.ago,
+      receipt_date: receipt_date,
       benefit_type: is_comp ? "compensation" : "education",
-      legacy_opt_in_approved: false,
+      legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
     )
 
@@ -390,18 +389,13 @@ RSpec.feature "Supplemental Claim Intake" do
 
     visit "/intake"
 
-    safe_click "#button-submit-review"
-
-    expect(page).to have_content("This Veteran has no rated, disability issues")
-
+    click_intake_continue
     click_intake_add_issue
-
-    safe_click ".Select"
-
-    fill_in "Issue category", with: "Active Duty Adjustments"
-    find("#issue-category").send_keys :enter
-    fill_in "Issue description", with: "Description for Active Duty Adjustments"
-    fill_in "Decision date", with: "04/19/2018"
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "10/27/2018"
+    )
 
     expect(page).to have_content("1 issue")
 
@@ -433,7 +427,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content(
       "Receipt date cannot be in the future."
@@ -445,15 +439,15 @@ RSpec.feature "Supplemental Claim Intake" do
       find("label", text: "Pension", match: :prefer_exact).click
     end
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Please select an option.")
 
     fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
     find("#cf-payee-code").send_keys :enter
 
-    safe_click "#button-submit-review"
-    expect(page).to have_current_path("/intake/finish")
+    click_intake_continue
+    expect(page).to have_current_path("/intake/add_issues")
   end
 
   context "when veteran is deceased" do
@@ -478,7 +472,7 @@ RSpec.feature "Supplemental Claim Intake" do
     end
   end
 
-  context "For new Add / Remove Issues page" do
+  context "Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)
       expect(row).to have_text(text)
@@ -494,8 +488,8 @@ RSpec.feature "Supplemental Claim Intake" do
         promulgation_date: receipt_date - 40.days,
         profile_date: receipt_date - 50.days,
         issues: [
-          { reference_id: "xyz123", decision_text: "Left knee granted" },
-          { reference_id: "xyz456", decision_text: "PTSD denied" },
+          { reference_id: "xyz123", decision_text: "Left knee granted 2" },
+          { reference_id: "xyz456", decision_text: "PTSD denied 2" },
           { reference_id: duplicate_reference_id, decision_text: "Old injury" }
         ]
       )
@@ -577,42 +571,42 @@ RSpec.feature "Supplemental Claim Intake" do
       click_intake_add_issue
       expect(page).to have_content("Add issue 1")
       expect(page).to have_content("Does issue 1 match any of these issues")
-      expect(page).to have_content("Left knee granted")
-      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Left knee granted 2")
+      expect(page).to have_content("PTSD denied 2")
       expect(page).to have_content("Old injury")
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
-      expect(page).to_not have_content("Left knee granted")
+      expect(page).to_not have_content("Left knee granted 2")
 
       # adding an issue should show the issue
       click_intake_add_issue
-      add_intake_rating_issue("Left knee granted")
-      expect(page).to have_content("1. Left knee granted")
+      add_intake_rating_issue("Left knee granted 2")
+      expect(page).to have_content("1. Left knee granted 2")
       expect(page).to_not have_content("Notes:")
 
       click_remove_intake_issue("1")
-      expect(page).not_to have_content("Left knee granted")
+      expect(page).not_to have_content("Left knee granted 2")
 
       # re-add to proceed
       click_intake_add_issue
-      add_intake_rating_issue("Left knee granted", "I am an issue note")
-      expect(page).to have_content("1. Left knee granted")
+      add_intake_rating_issue("Left knee granted 2", "I am an issue note")
+      expect(page).to have_content("1. Left knee granted 2")
       expect(page).to have_content("I am an issue note")
 
       # clicking add issue again should show a disabled radio button for that same rating
       click_intake_add_issue
       expect(page).to have_content("Add issue 2")
       expect(page).to have_content("Does issue 2 match any of these issues")
-      expect(page).to have_content("Left knee granted (already selected for issue 1)")
-      expect(page).to have_css("input[disabled][id='rating-radio_xyz123']", visible: false)
+      expect(page).to have_content("Left knee granted 2 (already selected for issue 1)")
+      expect(page).to have_css("input[disabled]", visible: false)
 
       # Add nonrating issue
       click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/25/2018"
+        date: "10/27/2018"
       )
       expect(page).to have_content("2 issues")
       # SC is always timely
@@ -635,13 +629,13 @@ RSpec.feature "Supplemental Claim Intake" do
       add_intake_rating_issue("Really old injury")
       expect(page).to have_content("5 issues")
       expect(page).to have_content("5. Really old injury")
-      expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+      expect(page).to_not have_content("5. Really old injury #{ineligible_constants.untimely}")
 
       # add before_ama ratings
       click_intake_add_issue
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
       expect(page).to have_content(
-        "6. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        "6. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
       )
 
       # Eligible because it comes from a RAMP decision
@@ -659,7 +653,7 @@ RSpec.feature "Supplemental Claim Intake" do
         date: "10/19/2017"
       )
       expect(page).to have_content(
-        "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        "A nonrating issue before AMA #{ineligible_constants.before_ama}"
       )
 
       click_intake_finish
@@ -705,7 +699,7 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
                rating_issue_reference_id: "xyz123",
-               description: "Left knee granted",
+               description: "Left knee granted 2",
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note"
       )).to_not be_nil
@@ -764,7 +758,7 @@ RSpec.feature "Supplemental Claim Intake" do
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
-          contention_descriptions: array_including("Left knee granted", "Really old injury")
+          contention_descriptions: array_including("Left knee granted 2", "Really old injury")
         )
       )
     end
@@ -785,14 +779,58 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_current_path("/intake/add_issues")
     end
 
-    scenario "Non-compensation" do
-      start_supplemental_claim(veteran, is_comp: false)
-      visit "/intake/add_issues"
+    context "Non-compensation" do
+      context "decision issues are present" do
+        scenario "Add Issues button shows contestable issues" do
+          sc, = start_supplemental_claim(veteran, is_comp: false)
+          create(:decision_issue,
+                 decision_review: sc,
+                 benefit_type: sc.benefit_type,
+                 decision_text: "something was decided",
+                 participant_id: veteran.participant_id)
 
-      expect(page).to have_content("Add / Remove Issues")
-      check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
-      check_row("Benefit type", "Education")
-      expect(page).to_not have_content("Claimant")
+          visit "/intake/add_issues"
+          click_intake_add_issue
+
+          expect(page).to have_content("something was decided")
+          expect(page).to_not have_content("Left knee granted")
+        end
+      end
+
+      context "no contestable issues present" do
+        scenario "no rating issues show on first Add Issues modal" do
+          sc, = start_supplemental_claim(veteran, is_comp: false)
+
+          visit "/intake/add_issues"
+
+          expect(page).to have_content("Add / Remove Issues")
+          check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
+          check_row("Benefit type", "Education")
+
+          expect(page).to_not have_content("Left knee granted")
+
+          click_intake_add_issue
+          add_intake_nonrating_issue(
+            category: "Active Duty Adjustments",
+            description: "Description for Active Duty Adjustments",
+            date: "10/25/2017"
+          )
+          expect(page).to_not have_content("Establish EP")
+          expect(page).to have_content("Establish Supplemental Claim")
+          expect(page).to_not have_content("Claimant")
+
+          click_intake_finish
+
+          expect(page).to have_content("Intake completed")
+
+          # request issue should have matching benefit type
+          expect(RequestIssue.find_by(
+                   review_request: sc,
+                   description: "Description for Active Duty Adjustments",
+                   benefit_type: sc.benefit_type
+          )).to_not be_nil
+        end
+      end
     end
 
     scenario "canceling" do
@@ -830,36 +868,113 @@ RSpec.feature "Supplemental Claim Intake" do
         setup_legacy_opt_in_appeals(veteran.file_number)
       end
 
-      scenario "adding issues" do
-        # feature is not yet fully implemented
-        start_supplemental_claim(veteran)
-        visit "/intake/add_issues"
-        click_intake_add_issue
+      context "with legacy_opt_in_approved" do
+        let(:receipt_date) { Time.zone.today }
 
-        expect(page).to have_content("Next")
-        add_intake_rating_issue("Left knee granted")
+        scenario "adding issues" do
+          start_supplemental_claim(veteran, legacy_opt_in_approved: true)
+          visit "/intake/add_issues"
 
-        # expect legacy opt in modal
-        expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+          click_intake_add_issue
+          expect(page).to have_content("Next")
+          add_intake_rating_issue(/Left knee granted$/)
 
-        add_intake_rating_issue("None of these match")
+          # expect legacy opt in modal
+          expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+          # do not show "inactive and ineligible" issues when legacy opt in is true
+          expect(page).to_not have_content("typhoid arthritis")
 
-        expect(page).to have_content("Left knee granted")
+          add_intake_rating_issue("intervertebral disc syndrome") # ineligible issue
 
-        click_intake_add_issue
-        click_intake_no_matching_issues
-        add_intake_nonrating_issue(
-          category: "Active Duty Adjustments",
-          description: "Description for Active Duty Adjustments",
-          date: "04/25/2018",
-          legacy_issues: true
-        )
+          expect(page).to have_content(
+            "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
+          )
 
-        expect(page).to have_content("Does issue 2 match any of these VACOLS issues?")
+          # Expect untimely exemption modal for untimely issue
+          click_intake_add_issue
+          add_intake_rating_issue("Untimely rating issue 1")
+          add_intake_rating_issue("None of these match")
+          add_untimely_exemption_response("Yes")
 
-        add_intake_rating_issue("None of these match")
+          expect(page).to have_content("Untimely rating issue 1")
 
-        expect(page).to have_content("Description for Active Duty Adjustments")
+          click_intake_add_issue
+          click_intake_no_matching_issues
+          add_intake_nonrating_issue(
+            category: "Active Duty Adjustments",
+            description: "Description for Active Duty Adjustments",
+            date: "10/25/2017",
+            legacy_issues: true
+          )
+
+          expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
+
+          add_intake_rating_issue("None of these match")
+          add_untimely_exemption_response("Yes")
+
+          expect(page).to have_content("Description for Active Duty Adjustments")
+
+          # add eligible legacy issue
+          click_intake_add_issue
+          add_intake_rating_issue("PTSD denied")
+          add_intake_rating_issue("ankylosis of hip")
+
+          expect(page).to have_content(
+            "#{intake_constants.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+          )
+
+          click_intake_finish
+
+          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          expect(ineligible_checklist).to have_content(
+            "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
+          )
+
+          expect(RequestIssue.find_by(
+                   description: "Left knee granted",
+                   ineligible_reason: :legacy_appeal_not_eligible,
+                   vacols_id: "vacols2",
+                   vacols_sequence_id: "1"
+          )).to_not be_nil
+
+          expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
+        end
+      end
+
+      context "with legacy opt in not approved" do
+        scenario "adding issues" do
+          start_supplemental_claim(veteran, legacy_opt_in_approved: false)
+          visit "/intake/add_issues"
+          click_intake_add_issue
+          add_intake_rating_issue("Left knee granted")
+
+          expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+          # do not show inactive appeals when legacy opt in is false
+          expect(page).to_not have_content("impairment of hip")
+          expect(page).to_not have_content("typhoid arthritis")
+
+          add_intake_rating_issue("ankylosis of hip")
+
+          expect(page).to have_content(
+            "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
+          )
+
+          click_intake_finish
+
+          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          expect(ineligible_checklist).to have_content(
+            "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
+          )
+
+          expect(RequestIssue.find_by(
+                   description: "Left knee granted",
+                   ineligible_reason: :legacy_issue_not_withdrawn,
+                   vacols_id: "vacols1",
+                   vacols_sequence_id: "1"
+          )).to_not be_nil
+
+          expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
+        end
       end
 
       scenario "adding issue with legacy opt in disabled" do

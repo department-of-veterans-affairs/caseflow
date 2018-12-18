@@ -13,7 +13,7 @@ class ScheduleHearingTask < GenericTask
   end
 
   def update_from_params(params, current_user)
-    verify_user_access!(current_user)
+    verify_user_can_update!(current_user)
 
     task_payloads = params.delete(:business_payloads)
     hearing_date = task_payloads[:values][:hearing_date]
@@ -21,12 +21,17 @@ class ScheduleHearingTask < GenericTask
       Time.zone.parse(hearing_date)
     end
     task_payloads[:values][:hearing_date] = new_date
-    task_business_payloads.update(task_payloads)
+
+    if !task_business_payloads.empty?
+      task_business_payloads.update(task_payloads)
+    else
+      task_business_payloads.create(task_payloads)
+    end
 
     super(params, current_user)
   end
 
-  def mark_as_complete!
+  def update_parent_status
     hearing_pkseq = task_business_payloads[0].values["hearing_pkseq"]
     hearing_type = task_business_payloads[0].values["hearing_type"]
     hearing_date = Time.zone.parse(task_business_payloads[0].values["hearing_date"])

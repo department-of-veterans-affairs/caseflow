@@ -35,7 +35,7 @@ describe Hearing do
     it { is_expected.to eq("Baltimore regional office") }
 
     context "when it's a central office hearing" do
-      let(:type) { :central_office }
+      let(:type) { :central }
 
       it { is_expected.to eq("Board of Veterans' Appeals in Washington, DC") }
     end

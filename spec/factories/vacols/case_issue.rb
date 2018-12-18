@@ -30,6 +30,16 @@ FactoryBot.define do
       isslev2 "5252"
     end
 
+    Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.each_key do |diag_code|
+      trait_name = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diag_code]["status_description"]
+      trait trait_name.parameterize.underscore.to_sym do
+        issprog "02"
+        isscode "15"
+        isslev1 "03"
+        isslev2 diag_code
+      end
+    end
+
     trait :education do
       issprog "03"
       isscode "02"
@@ -58,6 +68,10 @@ FactoryBot.define do
 
     trait :disposition_granted_by_aoj do
       issdc "B"
+    end
+
+    trait :disposition_opted_in do
+      issdc "O"
     end
   end
 end

@@ -94,6 +94,8 @@ export class AddIssuesPage extends React.Component {
                 issue={issue}
                 issueIdx={index}
                 requestIssues={intakeData.requestIssues}
+                legacyOptInApproved={intakeData.legacyOptInApproved}
+                legacyAppeals={intakeData.legacyAppeals}
                 formType={formType} />
               <div className="issue-action">
                 <Button
@@ -111,7 +113,7 @@ export class AddIssuesPage extends React.Component {
             name="add-issue"
             legacyStyling={false}
             classNames={['usa-button-secondary']}
-            onClick={this.onClickAddIssue(_.size(intakeData.ratings))}
+            onClick={this.onClickAddIssue(_.size(intakeData.contestableIssues))}
           >
             + Add issue
           </Button>

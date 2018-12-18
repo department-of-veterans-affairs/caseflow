@@ -11,32 +11,45 @@ import {
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 
+import _ from 'lodash';
+
 const NO_MATCH_TEXT = 'None of these match';
 
 class LegacyOptInModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: '',
-      vacolsSequenceId: '',
-      radioKey: ''
+      vacolsId: null,
+      vacolsSequenceId: null,
+      radioKey: '',
+      eligibleForSocOptIn: null
     };
   }
 
   radioOnChange = (value) => {
-    // legacy opt in are keyed off of a combo of both id & vacolsSequenceId
+    // legacy opt in are keyed off of a combo of both vacolsId & vacolsSequenceId
     // NO_MATCH_TEXT does not have a vacolsSequenceId
     const legacyValues = value.split('-');
+    const vacolsSequenceId = legacyValues.length > 1 ? legacyValues[1] : false;
+    const legacyAppeal = this.props.intakeData.legacyAppeals.find((appeal) => appeal.vacols_id === legacyValues[0]);
+
+    if (vacolsSequenceId) {
+      let vacolsIssue = _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(vacolsSequenceId, 10) });
+
+      this.setState({
+        vacolsId: legacyValues[0],
+        eligibleForSocOptIn: (legacyAppeal.eligible_for_soc_opt_in && vacolsIssue.eligible_for_soc_opt_in),
+        vacolsSequenceId
+      });
+    }
 
     this.setState({
-      id: legacyValues[0],
-      vacolsSequenceId: legacyValues.length > 1 ? legacyValues[1] : '',
       radioKey: value
     });
   }
 
   requiresUntimelyExemption = () => {
-    if (this.state.id !== NO_MATCH_TEXT) {
+    if (this.props.formType === 'supplemental_claim') {
       return false;
     }
 
@@ -44,19 +57,23 @@ class LegacyOptInModal extends React.Component {
   }
 
   onAddIssue = () => {
-    // currently just adds the issue & checks for untimeliness
-    // if vacols issue is selected, logic to be implemented by 7336 & 7337
     const currentIssue = this.props.intakeData.currentIssueAndNotes.currentIssue;
     const notes = this.props.intakeData.currentIssueAndNotes.notes;
 
     if (this.requiresUntimelyExemption()) {
       return this.props.toggleUntimelyExemptionModal({ currentIssue,
-        notes });
-    } else if (currentIssue.reference_id) {
+        notes,
+        vacolsId: this.state.vacolsId,
+        vacolsSequenceId: this.state.vacolsSequenceId,
+        eligibleForSocOptIn: this.state.eligibleForSocOptIn });
+    } else if (currentIssue.ratingIssueReferenceId) {
       this.props.addRatingRequestIssue({
-        issueId: currentIssue.reference_id,
-        ratings: this.props.intakeData.ratings,
+        contestableIssueIndex: currentIssue.index,
+        contestableIssues: this.props.intakeData.contestableIssues,
         isRating: true,
+        vacolsId: this.state.vacolsId,
+        vacolsSequenceId: this.state.vacolsSequenceId,
+        eligibleForSocOptIn: this.state.eligibleForSocOptIn,
         notes
       });
     } else {
@@ -64,7 +81,10 @@ class LegacyOptInModal extends React.Component {
         category: currentIssue.category,
         description: currentIssue.description,
         decisionDate: currentIssue.decisionDate,
-        timely: true
+        timely: true,
+        vacolsId: this.state.vacolsId,
+        vacolsSequenceId: this.state.vacolsSequenceId,
+        eligibleForSocOptIn: this.state.eligibleForSocOptIn
       });
     }
     this.props.toggleLegacyOptInModal();
@@ -81,7 +101,7 @@ class LegacyOptInModal extends React.Component {
       const radioOptions = legacyAppeal.issues.map((issue) => {
         return {
           displayText: issue.description,
-          value: `${issue.id}-${issue.vacols_sequence_id}`
+          value: `${issue.vacols_id}-${issue.vacols_sequence_id}`
         };
       });
 
@@ -114,7 +134,7 @@ class LegacyOptInModal extends React.Component {
           { classNames: ['usa-button', 'add-issue'],
             name: 'Add this issue',
             onClick: this.onAddIssue,
-            disabled: !this.state.id
+            disabled: !this.state.radioKey
           }
         ]}
         visible
