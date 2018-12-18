@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import { sprintf } from 'sprintf-js';
 
 import COPY from '../../COPY.json';
 
@@ -219,9 +220,13 @@ const propsToText = (props) => {
   // I think the editModalBase higher order component is still calling this after all of the actions have run and the
   // task's available actions have been updated to reflect the updated status of the task.
   const action = props.task && props.task.availableActions.length > 0 ? selectedAction(props) : null;
+  const alreadySelectedAndAction = (props.assigneeAlreadySelected && action);
+  const title = alreadySelectedAndAction ? sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label) : COPY.ASSIGN_TASK_TITLE;
+  const pathAfterSubmit = `/queue/appeals/${props.appealId}`;
 
   return {
-    title: props.assigneeAlreadySelected && action ? `Assign task to ${action.label}` : COPY.ASSIGN_TO_PAGE_TITLE
+    title,
+    pathAfterSubmit
   };
 };
 
