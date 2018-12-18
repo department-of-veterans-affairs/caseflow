@@ -1,0 +1,40 @@
+describe DecisionReviewsController, type: :controller do
+  before do
+    FeatureToggle.enable!(:decision_reviews)
+  end
+
+  after do
+    FeatureToggle.disable!(:decision_reviews)
+  end
+
+  describe "#index" do
+    let!(:non_comp_org) { create(:noncomp, name: "Non-Comp Org", url: "nco") }
+    let(:user) { create(:default_user) }
+
+    before do
+      User.stub = user
+    end
+
+    context "user is not in NonComp org" do
+      it "returns unauthorized" do
+        get :index, params: { business_line_slug: "nco" }
+
+        expect(response.status).to eq 302
+        expect(response.body).to match(/unauthorized/)
+      end
+    end
+
+    context "user is in NonComp org" do
+      before do
+        OrganizationsUser.add_user_to_organization(user, non_comp_org)
+      end
+
+      it "returns all tasks" do
+        get :index, params: { business_line_slug: "nco" }
+
+        expect(response.status).to eq 200
+        expect(response.body).to eq({ tasks: [] }.to_json)
+      end
+    end
+  end
+end
