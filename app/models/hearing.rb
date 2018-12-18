@@ -4,6 +4,9 @@ class Hearing < ApplicationRecord
   include HearingConcern
   include AppealConcern
 
+  after_save :save_legacy_hearing
+  before_destroy :destroy_legacy_hearing
+
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition
@@ -235,6 +238,17 @@ class Hearing < ApplicationRecord
       update_attributes(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
       super
     end
+  end
+
+  def save_legacy_hearing
+    legacy_hearing = LegacyHearing.find(attributes["id"])
+    legacy_hearing.update!(attributes)
+  rescue ActiveRecord::RecordNotFound
+    LegacyHearing.create!(attributes)
+  end
+
+  def destroy_legacy_hearing
+    LegacyHearing.find(attributes["id"]).destroy!
   end
 
   class << self
