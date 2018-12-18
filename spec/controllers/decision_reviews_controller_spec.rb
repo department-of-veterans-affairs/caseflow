@@ -17,7 +17,7 @@ describe DecisionReviewsController, type: :controller do
 
     context "user is not in NonComp org" do
       it "returns unauthorized" do
-        get :index, params: { business_line_slug: "nco" }
+        get :index, params: { business_line_slug: non_comp_org.url }
 
         expect(response.status).to eq 302
         expect(response.body).to match(/unauthorized/)
@@ -30,10 +30,18 @@ describe DecisionReviewsController, type: :controller do
       end
 
       it "returns all tasks" do
-        get :index, params: { business_line_slug: "nco" }
+        get :index, params: { business_line_slug: non_comp_org.url }
 
         expect(response.status).to eq 200
         expect(response.body).to eq({ tasks: [] }.to_json)
+      end
+    end
+
+    context "business-line-slug is not found" do
+      it "returns 404" do
+        get :index, params: { business_line_slug: "foobar" }
+
+        expect(response.status).to eq 404
       end
     end
   end
