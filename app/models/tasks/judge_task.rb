@@ -1,4 +1,10 @@
 class JudgeTask < Task
+  include Timer
+
+  def when_expired
+
+  end
+
   def actions_available?(user)
     assigned_to == user
   end
@@ -11,7 +17,7 @@ class JudgeTask < Task
     new_task = super(params, user)
 
     parent = Task.find(params[:parent_id]) if params[:parent_id]
-    if parent && parent.is_a?(QualityR(teviewTask))
+    if parent && parent.is_a?(QualityReviewTask)
       parent.update!(status: :on_hold)
     end
 
