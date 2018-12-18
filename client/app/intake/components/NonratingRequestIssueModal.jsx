@@ -168,8 +168,9 @@ class NonratingRequestIssueModal extends React.Component {
       disabled: false
     });
 
-    const nonratingRequestIssueSelection = nonratingRequestIssueOptions.length >= 2 ?
-      <RadioField
+    let nonratingRequestIssueSelection = null;
+    if (nonratingRequestIssueOptions.length >= 2) {
+      nonratingRequestIssueSelection = <RadioField
         vertical
         label={<h3>Does issue {issueNumber} match any of the issues actively being reviewed?</h3>}
         name="rating-radio"
@@ -177,10 +178,12 @@ class NonratingRequestIssueModal extends React.Component {
         key={category}
         value={selectedNonratingIssueId}
         onChange={this.selectedNonratingIssueIdOnChange}
-      /> : null;
+      />
+    }
 
-    const additionalDetails = selectedNonratingIssueId === NO_MATCH_TEXT || !nonratingRequestIssueSelection ?
-      <React.Fragment>
+    let additionalDetails = null;
+    if (selectedNonratingIssueId === NO_MATCH_TEXT || !nonratingRequestIssueSelection) {
+      additionalDetails = <React.Fragment>
         <div className="decision-date">
           <DateSelector
             name="decision-date"
@@ -195,7 +198,8 @@ class NonratingRequestIssueModal extends React.Component {
           strongLabel
           value={description}
           onChange={this.descriptionOnChange} />
-      </React.Fragment> : null;
+      </React.Fragment>
+    }
 
     return <div className="intake-add-issues">
       <Modal
