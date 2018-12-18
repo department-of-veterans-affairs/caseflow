@@ -174,6 +174,11 @@ class Appeal < DecisionReview
     nil
   end
 
+  def needs_ihp?
+    # TODO: filter to only ihp-writing vsos
+    appeal.vsos.length
+  end
+
   def advanced_on_docket
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end

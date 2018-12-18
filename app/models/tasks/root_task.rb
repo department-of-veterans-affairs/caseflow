@@ -30,20 +30,46 @@ class RootTask < GenericTask
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
-      create_vso_subtask!(appeal, root_task)
+      if FeatureToggle.enabled?(:ama_auto_case_distribution)
+        create_distribution_subtask(appeal)
+      else
+        create_vso_subtask!(appeal, root_task)
     end
 
     private
 
-    def create_vso_subtask!(appeal, parent)
+    def create_vso_subtask!(appeal, parent, status = Constants.TASK_STATUSES.in_progress)
       appeal.vsos.each do |vso_organization|
         InformalHearingPresentationTask.create(
           appeal: appeal,
           parent: parent,
-          status: Constants.TASK_STATUSES.in_progress,
+          status: status,
           assigned_to: vso_organization
         )
       end
+    end
+
+    def create_distribution_subtask(appeal, parent)
+      needs_subtask = appeal.hearing_docket? || appeal.needs_ihp? || appeal.evidence_submission_docket?
+      status = needs_subtask ? Constants.TASK_STATUSES.on_hold : Constants.TASK_STATUSES.in_progress,
+
+      distribution_task = DistributionTask.create(
+        appeal: appeal,
+        parent: parent,
+        status: status
+      )
+
+      if appeal.needs_ihp?
+        appeal.evidence_submission_docket? ||
+
+        vso_tasks = create_vso_subtask(appeal, distribution_task)
+        if appeal.evidence_submission_docket?
+        end
+      end
+      
+      if appeal.evidence_submission_docket?
+        # TODO: determine which vso task to place on hold if 
+      end 
     end
   end
 end
