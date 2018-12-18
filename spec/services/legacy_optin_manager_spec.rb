@@ -53,7 +53,7 @@ describe LegacyOptinManager do
       let(:issue) { Issue.load_from_vacols(vacols_issue("undecided", 1).attributes) }
 
       context "when there are still open issues on the appeal" do
-        it "updates the disposition and disposition date" do
+        it "updates the disposition and disposition date, does not change appeals" do
           subject
 
           expect(undecided_optin1.optin_processed_at).to eq(Time.zone.now)
@@ -65,9 +65,7 @@ describe LegacyOptinManager do
           expect(vacols_issue("closed", 1).issdcls).to eq(Time.zone.today)
           expect(issue.disposition).to eq(:ama_soc_ssoc_opt_in)
           expect(issue).to be_closed
-        end
 
-        it "does not close the appeal (or change already closed appeal)" do
           expect(undecided_case.reload).to_not be_closed
           expect(remand_case.reload).to_not be_closed
           expect(already_closed_case.reload).to be_closed
@@ -77,22 +75,22 @@ describe LegacyOptinManager do
         context "when the issues are rolled back on an open appeal" do
           before do
             LegacyOptinManager.new(decision_review: appeal).process!
+          end
+
+          it "rollsback the disposition and date and does not change appeals" do
             undecided_optin1.create_rollback!
             remand_optin1.create_rollback!
             closed_optin1.create_rollback!
-            subject
-          end
 
-          it "rollsback the disposition and date" do
+            subject
+
             expect(vacols_issue("undecided", 1).issdc).to be_nil
             expect(vacols_issue("undecided", 1).issdcls).to be_nil
             expect(vacols_issue("remand", 1).issdc).to eq('3')
             expect(vacols_issue("remand", 1).issdcls).to eq(remand_optin1.original_disposition_date)
             expect(vacols_issue("closed", 1).issdc).to eq('G')
             expect(vacols_issue("closed", 1).issdcls).to eq(1.year.ago.to_date)
-          end
 
-          it "does not change the appeals" do
             expect(undecided_case.reload).to_not be_closed
             expect(remand_case.reload).to_not be_closed
             expect(already_closed_case.reload).to be_closed
@@ -174,6 +172,7 @@ describe LegacyOptinManager do
             closed_optin2.create_rollback!
 
             subject
+
             expect(vacols_issue("closed", 2).issdc).to eq('X')
             expect(vacols_issue("closed", 2).issdcls).to eq(1.year.ago.to_date)
 
