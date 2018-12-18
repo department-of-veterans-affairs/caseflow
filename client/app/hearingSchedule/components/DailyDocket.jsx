@@ -398,7 +398,7 @@ export default class DailyDocket extends React.Component {
         styling={alertStyling}
         title={`VACOLS Hearing Day ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')}
            cannot be locked in Caseflow.`}
-        message="VACOLS hearing days cannot be locked"
+        message="VACOLS Hearing Day cannot be locked"
       />}
 
       <div className="cf-push-left">
