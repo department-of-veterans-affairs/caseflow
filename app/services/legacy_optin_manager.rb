@@ -1,7 +1,7 @@
+# LegacyOptInManager processes opt-ins and rollbacks in a batch per DecisionReview
+# because whether a legacy_appeal needs closed depends on the state of all issues after processing
 class LegacyOptinManager
   attr_reader :decision_review
-
-  VACOLS_DISPOSITION_CODE = "O".freeze # oh not zero
 
   def initialize(decision_review:)
     @decision_review = decision_review
@@ -19,8 +19,8 @@ class LegacyOptinManager
 
       affected_legacy_appeals.each do |legacy_appeal|
         if legacy_appeal.issues.reject(&:closed?).empty?
-          revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
-          close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
+          LegacyIssueOptin.revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
+          LegacyIssueOptin.close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
         end
       end
     end
@@ -30,14 +30,10 @@ class LegacyOptinManager
 
   def affected_legacy_appeals
     legacy_appeals = []
-    legacy_issue_opt_ins.each do |issue|
-      legacy_appeals << legacy_appeal(issue.vacols_id)
+    legacy_issue_opt_ins.each do |legacy_issue_opt_in|
+      legacy_appeals << legacy_issue_opt_in.legacy_appeal
     end
     legacy_appeals.uniq
-  end
-
-  def issues_to_be_processed
-    pending_opt_ins + pending_rollbacks
   end
 
   def pending_opt_ins
@@ -54,64 +50,5 @@ class LegacyOptinManager
 
   def request_issues_with_legacy_opt_ins
     decision_review.request_issues.select(&:legacy_issue_optin)
-  end
-
-  def close_legacy_appeal_in_vacols(legacy_appeal)
-    LegacyAppeal.close(
-      appeals: [legacy_appeal],
-      user: RequestStore.store[:current_user],
-      closed_on: Time.zone.today,
-      disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE]
-    )
-  end
-
-  def reopen_legacy_appeal(legacy_appeal)
-    LegacyAppeal.reopen(
-      appeals: [legacy_appeal],
-      user: RequestStore.store[:current_user],
-      disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE],
-      reopen_issues: false
-    )
-  end
-
-  def legacy_appeal_needs_reopened?
-    legacy_appeal.case_record.bfmpro == "HIS" && legacy_appeal.case_record.bfcurloc == "99"
-  end
-
-  def remand_issues(vacols_id)
-    # if the appeal is ready to be closed, all issues that used to
-    # have a disposition of "3" should be closed with "O" now
-    # if the appeal has been closed, and is being reopened, the same
-    # issues would have a disposition of "3" again
-
-    # remand issues do not all have to be connected to the current decision review
-     LegacyIssueOptin.where(
-      vacols_id: vacols_id,
-      original_disposition_code: "3"
-    )
-  end
-
-  def revert_opted_in_remand_issues(vacols_id)
-    # put all remand issues with "O" back to "3" before closing the appeal
-    remand_issues(vacols_id).each do |remand_issue|
-      Issue.rollback_opt_in!(remand_issue)
-    end
-  end
-
-  def revert_open_remand_issues(vacols_id)
-    # if this is happening, all remanded issues should have a disposition
-    # of "3" on a "HIS" appeal. This is rolling back and putting them back at "O"
-    remand_issues(vacols_id).each do |remand_issue|
-      Issue.close_in_vacols!(
-        vacols_id: vacols_id,
-        vacols_sequence_id: remand_issue.vacols_sequence_id,
-        disposition_code: VACOLS_DISPOSITION_CODE
-      )
-    end
-  end
-
-  def legacy_appeal(vacols_id)
-    @legacy_appeals ||= {}
-    @legacy_appeals[vacols_id] ||= LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
 end

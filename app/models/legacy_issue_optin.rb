@@ -1,11 +1,35 @@
 class LegacyIssueOptin < ApplicationRecord
   belongs_to :request_issue
 
+  VACOLS_DISPOSITION_CODE = "O".freeze # oh not zero
+
+  class << self
+    def related_remand_issues(vacols_id)
+      where(vacols_id: vacols_id, original_disposition_code: "3")
+    end
+
+    def revert_opted_in_remand_issues(vacols_id)
+      # put all remand issues with "O" back to "3" before closing the appeal
+      related_remand_issues(vacols_id).each do |remand_issue|
+        Issue.rollback_opt_in!(remand_issue)
+      end
+    end
+
+    def close_legacy_appeal_in_vacols(legacy_appeal)
+      LegacyAppeal.close(
+        appeals: [legacy_appeal],
+        user: RequestStore.store[:current_user],
+        closed_on: Time.zone.today,
+        disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE]
+      )
+    end
+  end
+
   def opt_in!
     Issue.close_in_vacols!(
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id,
-      disposition_code: LegacyOptinManager::VACOLS_DISPOSITION_CODE
+      disposition_code: VACOLS_DISPOSITION_CODE
     )
     update!(optin_processed_at: Time.zone.now)
   end
@@ -33,23 +57,20 @@ class LegacyIssueOptin < ApplicationRecord
     rollback_created_at && !rollback_processed_at
   end
 
-  private
-
-  def related_remand_issues
-    LegacyIssueOptin.where(
-     vacols_id: vacols_id,
-     original_disposition_code: "3"
-   )
+  def legacy_appeal
+    LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
+
+  private
 
   def revert_open_remand_issues
     # if this is happening, all remanded issues should have a disposition
     # of "3" on a "HIS" appeal. This is rolling back and putting them back at "O"
-    related_remand_issues.each do |remand_issue|
+    self.class.related_remand_issues(vacols_id).each do |remand_issue|
       Issue.close_in_vacols!(
         vacols_id: vacols_id,
         vacols_sequence_id: remand_issue.vacols_sequence_id,
-        disposition_code: LegacyOptinManager::VACOLS_DISPOSITION_CODE
+        disposition_code: VACOLS_DISPOSITION_CODE
       )
     end
   end
@@ -63,12 +84,8 @@ class LegacyIssueOptin < ApplicationRecord
     LegacyAppeal.reopen(
       appeals: [legacy_appeal],
       user: RequestStore.store[:current_user],
-      disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[LegacyOptinManager::VACOLS_DISPOSITION_CODE],
+      disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE],
       reopen_issues: false
     )
-  end
-
-  def legacy_appeal
-    LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
 end

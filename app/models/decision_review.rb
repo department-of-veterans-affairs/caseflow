@@ -136,10 +136,6 @@ class DecisionReview < ApplicationRecord
     request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
-  def contestable_issues
-    contestable_issues_from_ratings + contestable_issues_from_decision_issues
-  end
-
   def serialized_legacy_appeals
     return [] unless legacy_opt_in_enabled?
     return [] unless available_legacy_appeals.any?
@@ -185,7 +181,7 @@ class DecisionReview < ApplicationRecord
   def establish!
     # no-op
   end
-  
+
   def contestable_issues
     return contestable_issues_from_decision_issues if non_comp?
     contestable_issues_from_ratings + contestable_issues_from_decision_issues

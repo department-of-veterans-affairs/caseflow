@@ -57,11 +57,11 @@ describe LegacyOptinManager do
           subject
 
           expect(undecided_optin1.optin_processed_at).to eq(Time.zone.now)
-          expect(vacols_issue("undecided", 1).issdc).to eq(LegacyOptinManager::VACOLS_DISPOSITION_CODE)
+          expect(vacols_issue("undecided", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("undecided", 1).issdcls).to eq(Time.zone.today)
-          expect(vacols_issue("remand", 1).issdc).to eq(LegacyOptinManager::VACOLS_DISPOSITION_CODE)
+          expect(vacols_issue("remand", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("remand", 1).issdcls).to eq(Time.zone.today)
-          expect(vacols_issue("closed", 1).issdc).to eq(LegacyOptinManager::VACOLS_DISPOSITION_CODE)
+          expect(vacols_issue("closed", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("closed", 1).issdcls).to eq(Time.zone.today)
           expect(issue.disposition).to eq(:ama_soc_ssoc_opt_in)
           expect(issue).to be_closed
@@ -114,10 +114,10 @@ describe LegacyOptinManager do
         it "closes the undecided issues and closes the undecided appeal" do
           subject
           expect(undecided_optin1.reload.optin_processed_at).to eq(Time.zone.now)
-          expect(vacols_issue("undecided", 1).issdc).to eq(LegacyOptinManager::VACOLS_DISPOSITION_CODE)
+          expect(vacols_issue("undecided", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("undecided", 1).issdcls).to eq(Time.zone.today)
           expect(undecided_optin2.reload.optin_processed_at).to eq(Time.zone.now)
-          expect(vacols_issue("undecided", 2).issdc).to eq(LegacyOptinManager::VACOLS_DISPOSITION_CODE)
+          expect(vacols_issue("undecided", 2).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("undecided", 2).issdcls).to eq(Time.zone.today)
 
           expect(undecided_case.reload).to be_closed
@@ -135,16 +135,16 @@ describe LegacyOptinManager do
 
           expect(remand_case.reload.bfmpro).to eq("HIS")
           follow_up_appeal = VACOLS::Case.find_by(bfkey: "remandP")
-          expect(follow_up_appeal.bfdc).to eq(LegacyOptinManager::VACOLS_DISPOSITION_CODE)
+          expect(follow_up_appeal.bfdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           follow_up_appeal_issues = VACOLS::CaseIssue.where(isskey: "remandP")
           expect(follow_up_appeal_issues.count).to eq(3)
         end
 
         it "closes the closed issues and does not re-close the already closed appeal" do
           subject
-          expect(vacols_issue("closed", 1).issdc).to eq(LegacyOptinManager::VACOLS_DISPOSITION_CODE)
+          expect(vacols_issue("closed", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("closed", 1).issdcls).to eq(Time.zone.today)
-          expect(vacols_issue("closed", 2).issdc).to eq(LegacyOptinManager::VACOLS_DISPOSITION_CODE)
+          expect(vacols_issue("closed", 2).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("closed", 2).issdcls).to eq(Time.zone.today)
 
           expect(already_closed_case.reload).to be_closed
@@ -187,7 +187,7 @@ describe LegacyOptinManager do
 
             expect(vacols_issue("remand", 2).issdc).to eq('3')
             expect(remand_case.reload.bfmpro).to eq("HIS")
-            expect(follow_up_appeal.bfdc).to eq(LegacyOptinManager::VACOLS_DISPOSITION_CODE)
+            expect(follow_up_appeal.bfdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
             expect(follow_up_appeal_issues.count).to eq(3)
             remand_optin2.create_rollback!
 
@@ -206,7 +206,9 @@ describe LegacyOptinManager do
             expect(vacols_issue("remand", 3).issdcls).to eq(Time.zone.today)
 
             expect(remand_case.reload.bfmpro).to eq("REM")
-            expect{ follow_up_appeal.reload }.to raise_error
+            expect{ follow_up_appeal.reload }.to raise_error do |error|
+              expect(error).to be_a(ActiveRecord::RecordNotFound)
+            end
             expect(follow_up_appeal_issues.reload.count).to eq(0)
           end
         end
