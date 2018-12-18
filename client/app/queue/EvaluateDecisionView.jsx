@@ -211,7 +211,7 @@ class EvaluateDecisionView extends React.PureComponent {
       {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
         {error.detail}
       </Alert>}
-      {<TaskSnapshot appealId={appealId} hideDropdown/>}
+      <TaskSnapshot appealId={appealId} hideDropdown/>
       <hr {...hrStyling} />
 
       {appeal.isLegacyAppeal && <React.Fragment>
