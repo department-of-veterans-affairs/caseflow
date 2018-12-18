@@ -1,3 +1,2 @@
 class EvidenceSubmissionWindowTask < Task
 end
-

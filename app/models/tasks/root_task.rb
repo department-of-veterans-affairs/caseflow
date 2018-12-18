@@ -65,7 +65,7 @@ class RootTask < GenericTask
         status: status
       )
     end
-    
+
     def needs_subtask(appeal)
       appeal.needs_ihp? || appeal.hearing_docket? || appeal.evidence_submission_docket?
     end
@@ -78,12 +78,12 @@ class RootTask < GenericTask
         distribution_task = DistributionTask.create(
           appeal: appeal,
           parent: parent,
-          status: distribution_task_status
+          status: distribution_status
         )
         current_parent = distribution_task
 
         if appeal.needs_ihp?
-          vso_tasks = create_vso_subtask!(appeal, distribution_task, ihp_task_status)
+          vso_tasks = create_vso_subtask!(appeal, distribution_task, ihp_status)
           # TODO: when or if there are more than one vso, vso tasks
           # should expire at the same time. which one should be the
           # blocking parent of evidence submission tasks?
