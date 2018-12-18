@@ -73,7 +73,7 @@ module IssueUpdater
   end
 
   def fail_if_no_dispositions!
-    if (issues || []).map { |issue| issue[:disposition].present? }.uniq != [true]
+    unless (issues || []).all? { |issue| issue[:disposition].present? }
       msg = "Issues in the request are missing dispositions"
       fail Caseflow::Error::AttorneyJudgeCheckoutError, message: msg
     end

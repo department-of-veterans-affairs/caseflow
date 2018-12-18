@@ -8,11 +8,6 @@ class CaseReviewsController < ApplicationController
     handle_non_critical_error("case_reviews", e)
   end
 
-  rescue_from Caseflow::Error::AttorneyJudgeCheckoutError do |e|
-    Raven.capture_exception(e)
-    render(e.serialize_response)
-  end
-
   def set_application
     RequestStore.store[:application] = "queue"
   end

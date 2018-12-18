@@ -101,7 +101,7 @@ class Appeal < DecisionReview
   end
 
   def every_request_issue_has_decision?
-    request_issues.map { |request_issue| request_issue.decision_issues.present? }.uniq == [true]
+    request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end
 
   def reviewing_judge_name
