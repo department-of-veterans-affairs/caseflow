@@ -101,18 +101,34 @@ export default class AssignHearings extends React.Component {
 
   };
 
-  tableAssignHearingsRows = (veterans) => {
-    return _.map(veterans, (veteran) => ({
-      caseDetails: this.appellantName(veteran),
+  getAppealLocation = (appeal) => {
+    if (this.props.selectedRegionalOffice.value === 'C') {
+      return 'Washington DC';
+    }
+
+    return `${appeal.attributes.regionalOffice.city}, ${appeal.attributes.regionalOffice.state}`;
+  };
+
+  getCaseDetailsInformation = (appeal) => {
+    if (appeal.attributes.appellantFullName) {
+      return `${appeal.attributes.appellantFullName} | ${appeal.attributes.vbmsId}`;
+    }
+
+    return `${appeal.attributes.veteranFullName} | ${appeal.attributes.vbmsId}`;
+  };
+
+  tableAssignHearingsRows = (appeals) => {
+    return _.map(appeals, (appeal) => ({
+      caseDetails: this.getCaseDetailsInformation(appeal),
       type: renderAppealType({
-        caseType: veteran.type,
-        isAdvancedOnDocket: veteran.aod
+        caseType: appeal.attributes.type,
+        isAdvancedOnDocket: appeal.attributes.aod
       }),
-      docketNumber: veteran.docketNumber,
-      location: this.props.selectedRegionalOffice.value === 'C' ? 'Washington DC' : veteran.location,
-      time: veteran.time,
-      vacolsId: veteran.vacolsId,
-      appealId: veteran.appealId
+      docketNumber: appeal.attributes.docketNumber,
+      location: this.getAppealLocation(appeal),
+      time: null,
+      vacolsId: appeal.attributes.externalId,
+      appealId: appeal.appealId
     }));
   };
 
@@ -130,7 +146,7 @@ export default class AssignHearings extends React.Component {
     }));
   };
 
-  veteransReadyForHearing = () => {
+  appealsReadyForHearing = () => {
 
     const { selectedHearingDay, selectedRegionalOffice } = this.props;
     const date = moment(selectedHearingDay.hearingDate).format('YYYY-MM-DD');
@@ -153,10 +169,10 @@ export default class AssignHearings extends React.Component {
         header: 'Case details',
         align: 'left',
         valueName: 'caseDetails',
-        valueFunction: (veteran) => <Link
-          href={`/queue/appeals/${veteran.vacolsId}/${qry}`}
-          name={veteran.vacolsId}>
-          {veteran.caseDetails}
+        valueFunction: (appeal) => <Link
+          href={`/queue/appeals/${appeal.vacolsId}/${qry}`}
+          name={appeal.vacolsId}>
+          {appeal.caseDetails}
         </Link>
       },
       {
@@ -188,7 +204,7 @@ export default class AssignHearings extends React.Component {
     const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no schedulable veterans</span>;
 
     const scheduleableVeterans = () => {
-      if (_.isEmpty(this.props.veteransReadyForHearing)) {
+      if (_.isEmpty(this.props.appealsReadyForHearing)) {
         return <div>
           <StatusMessage
             title= {veteranNotAssignedTitle}
@@ -201,7 +217,7 @@ export default class AssignHearings extends React.Component {
 
       return <Table
         columns={tabWindowColumns}
-        rowObjects={this.tableAssignHearingsRows(this.props.veteransReadyForHearing)}
+        rowObjects={this.tableAssignHearingsRows(this.props.appealsReadyForHearing)}
         summary="scheduled-hearings-table"
         slowReRendersAreOk
       />;
@@ -245,9 +261,9 @@ export default class AssignHearings extends React.Component {
       <React.Fragment>
         {hasUpcomingHearingDays && this.formatAvailableHearingDays()}
         {hasUpcomingHearingDays &&
-          this.props.veteransReadyForHearing &&
+          this.props.appealsReadyForHearing &&
           this.props.selectedHearingDay &&
-          this.veteransReadyForHearing()}
+          this.appealsReadyForHearing()}
       </React.Fragment>
     );
   }
@@ -259,7 +275,7 @@ AssignHearings.propTypes = {
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
   selectedHearingDay: PropTypes.object,
-  veteransReadyForHearing: PropTypes.object,
+  appealsReadyForHearing: PropTypes.object,
   userId: PropTypes.number,
   onReceiveTasks: PropTypes.func
 };
