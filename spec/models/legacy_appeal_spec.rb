@@ -61,6 +61,20 @@ describe LegacyAppeal do
       expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
     end
+
+    context "receipt_date is nil" do
+      let(:receipt_date) { nil }
+
+      scenario "always returns false" do
+        allow(appeal).to receive(:active?).and_return(false)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(Time.zone.today)
+        allow(appeal).to receive(:nod_date).and_return(Time.zone.today)
+
+        expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
+    end
   end
 
   context "#documents_with_type" do
