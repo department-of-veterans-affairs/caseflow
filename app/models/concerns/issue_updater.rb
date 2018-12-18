@@ -8,7 +8,7 @@ module IssueUpdater
   def update_issue_dispositions_in_caseflow!
     use_ama_decision_issues? ? delete_and_create_decision_issues! : update_issue_dispositions_deprecated!
   rescue ActiveRecord::RecordInvalid => e
-    fail Caseflow::Error::AttorneyJudgeCheckoutError, message: e.message
+    raise Caseflow::Error::AttorneyJudgeCheckoutError, message: e.message
   end
 
   def delete_and_create_decision_issues!
