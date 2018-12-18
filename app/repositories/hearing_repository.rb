@@ -178,7 +178,7 @@ class HearingRepository
       case_hearings.map do |vacols_record|
         next empty_dockets(vacols_record) if master_record?(vacols_record)
         hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record,
-                                                              fetched_hearings_hash[vacols_record.hearing_pkseq])
+                                                                    fetched_hearings_hash[vacols_record.hearing_pkseq])
         set_vacols_values(hearing, vacols_record)
       end.flatten
     end
