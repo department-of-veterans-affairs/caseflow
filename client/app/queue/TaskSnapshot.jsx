@@ -34,9 +34,13 @@ export const grayLine = css({
   background: COLORS.GREY_LIGHT,
   margin: 'auto',
   position: 'absolute',
-  top: '35px',
+  top: '24px',
   left: '45%',
   bottom: 0
+});
+
+const paddingBottom = css({
+  bottom: '-35px'
 });
 
 const leftTableCell = css({
@@ -49,6 +53,7 @@ const tableCellWithIcon = css({
   textAlign: 'center',
   border: 'none',
   padding: '10px',
+  padding: '0',
   position: 'relative',
   verticalAlign: 'top',
   width: '45px'
@@ -260,7 +265,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
                        { this.daysSinceTaskAssignmentListItem(task) }
                      </CaseDetailsDescriptionList>
                    </td>
-                   <td {...tableCellWithIcon}><GrayDot /><div {...grayLine} /></td>
+                   <td {...tableCellWithIcon}><GrayDot /><div {...grayLine} className={this.props.tasks.length-1 !== index ? paddingBottom : ''}/></td>
                    <td {...tableCell} {...css({ width: '25%' })}>
                      <CaseDetailsDescriptionList>
                        { !taskAssignedToVso && appeal.assignedJudge &&
