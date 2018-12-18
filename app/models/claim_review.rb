@@ -100,6 +100,7 @@ class ClaimReview < DecisionReview
 
   def search_table_ui_hash
     {
+      caseflow_veteran_id: Veteran.find_by(file_number: veteran_file_number).id,
       claim_id: id,
       veteran_file_number: veteran_file_number,
       veteran_full_name: Veteran.find_by(file_number: veteran_file_number).name.formatted(:readable_full),
