@@ -2,5 +2,6 @@
   "assigned": "assigned",
   "in_progress": "in_progress",
   "on_hold": "on_hold",
-  "completed": "completed"
+  "completed": "completed",
+  "canceled": "canceled"
 }
