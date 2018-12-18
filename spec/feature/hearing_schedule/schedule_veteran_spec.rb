@@ -46,6 +46,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_button("Schedule a Veteran")
       expect(page).not_to have_content("123454787S")
       expect(page).to have_content("There are no schedulable veterans")
+      expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
     end
   end
 
@@ -88,6 +89,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_button("Schedule a Veteran")
       expect(page).not_to have_content("123456789S")
       expect(page).to have_content("There are no schedulable veterans")
+      expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
     end
   end
 end
