@@ -13,11 +13,6 @@ class CaseReviewsController < ApplicationController
     render(e.serialize_response)
   end
 
-  rescue_from ActiveRecord::RecordInvalid do |e|
-    Raven.capture_exception(e)
-    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
-  end
-
   def set_application
     RequestStore.store[:application] = "queue"
   end
