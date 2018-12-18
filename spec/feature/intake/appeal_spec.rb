@@ -636,6 +636,8 @@ RSpec.feature "Appeal Intake" do
     end
 
     context "with legacy_opt_in_approved" do
+      let(:receipt_date) { Time.zone.today }
+
       scenario "adding issues" do
         start_appeal(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"

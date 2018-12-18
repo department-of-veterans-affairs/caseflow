@@ -5,7 +5,7 @@ import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
 import IssueCounter from '../../components/IssueCounter';
 import { completeIntake } from '../../actions/decisionReview';
-import { REQUEST_STATE } from '../../constants';
+import { REQUEST_STATE, FORM_TYPES } from '../../constants';
 import { issueCountSelector } from '../../selectors';
 
 class FinishNextButton extends React.PureComponent {
@@ -19,6 +19,14 @@ class FinishNextButton extends React.PureComponent {
     );
   }
 
+  buttonText = () => {
+    if (this.props.supplementalClaim.nonComp) {
+      return `Establish ${FORM_TYPES.SUPPLEMENTAL_CLAIM.shortName}`;
+    }
+
+    return 'Establish EP';
+  }
+
   render = () =>
     <Button
       name="finish-intake"
@@ -26,7 +34,7 @@ class FinishNextButton extends React.PureComponent {
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
       disabled={!this.props.issueCount && !this.props.addedIssues}
     >
-      Establish EP
+      {this.buttonText()}
     </Button>;
 }
 
