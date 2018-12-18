@@ -252,7 +252,7 @@ class RequestIssue < ApplicationRecord
     if contention_disposition
       decision_issues.create!(
         participant_id: review_request.veteran.participant_id,
-        disposition: contention_disposition[:disposition],
+        disposition: contention_disposition.disposition,
         decision_review: review_request,
         benefit_type: benefit_type,
         end_product_last_action_date: end_product_establishment.result.last_action_date
@@ -262,7 +262,7 @@ class RequestIssue < ApplicationRecord
 
   def contention_disposition
     @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
-      disposition[:contention_id].to_i == contention_reference_id
+      disposition.contention_id.to_i == contention_reference_id
     end
   end
 
@@ -335,9 +335,13 @@ class RequestIssue < ApplicationRecord
     return unless vacols_id
     return unless review_request.serialized_legacy_appeals.any?
 
-    if !vacols_issue.eligible_for_opt_in?
+    unless vacols_issue.eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
+  end
+
+  def legacy_appeal_eligible_for_opt_in?
+    vacols_issue.legacy_appeal.eligible_for_soc_opt_in?(review_request.receipt_date)
   end
 
   def rating_issue_rationale_to_request_issue_reason(rationale)

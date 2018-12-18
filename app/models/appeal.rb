@@ -202,11 +202,15 @@ class Appeal < DecisionReview
     "not implemented for AMA"
   end
 
+  def benefit_type
+    # temporary until ticket for appeals benefit type by issue is implemented
+    # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
+    "compensation"
+  end
+
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      # temporary until ticket for appeals benefit type by issue is implemented
-      # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
-      issue.update!(benefit_type: "compensation", veteran_file_number: veteran_file_number)
+      issue.update!(benefit_type: benefit_type, veteran_file_number: veteran_file_number)
       create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
     end
   end

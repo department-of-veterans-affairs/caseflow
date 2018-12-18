@@ -17,6 +17,8 @@ class ClaimReview < DecisionReview
 
   self.abstract_class = true
 
+  class NoEndProductsRequired < StandardError; end
+
   def ui_hash
     super.merge(
       benefitType: benefit_type,
@@ -33,11 +35,15 @@ class ClaimReview < DecisionReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      issue.update!(
-        end_product_establishment: end_product_establishment_for_issue(issue),
-        benefit_type: benefit_type,
-        veteran_file_number: veteran_file_number
-      )
+      if non_comp?
+        issue.update!(benefit_type: benefit_type, veteran_file_number: veteran_file_number)
+      else
+        issue.update!(
+          end_product_establishment: end_product_establishment_for_issue(issue),
+          benefit_type: benefit_type,
+          veteran_file_number: veteran_file_number
+        )
+      end
       create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
     end
   end
@@ -47,6 +53,10 @@ class ClaimReview < DecisionReview
   # establishment_processed_at is successfully set.
   def establish!
     attempted!
+
+    if non_comp? && end_product_establishments.any?
+      fail NoEndProductsRequired, message: "Non-comp decision reviews should not have End Products"
+    end
 
     end_product_establishments.each do |end_product_establishment|
       end_product_establishment.perform!

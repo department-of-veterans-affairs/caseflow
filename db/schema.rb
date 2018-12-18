@@ -528,6 +528,16 @@ ActiveRecord::Schema.define(version: 20181217215930) do
     t.index ["vacols_id"], name: "index_legacy_appeals_on_vacols_id", unique: true
   end
 
+  create_table "legacy_hearings", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "appeal_id"
+    t.string "vacols_id", null: false
+    t.string "witness"
+    t.string "military_service"
+    t.boolean "prepped"
+    t.text "summary"
+  end
+
   create_table "legacy_issue_optins", force: :cascade do |t|
     t.bigint "request_issue_id", null: false
     t.datetime "created_at", null: false
