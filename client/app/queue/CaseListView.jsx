@@ -73,11 +73,11 @@ class CaseListView extends React.PureComponent {
       </div>;
     }
 
-    const claimReviewsCount = this.props.claimReviews && this.props.claimReviews.length;
+    // const claimReviewsCount = this.props.claimReviews && this.props.claimReviews.length;
 
-    if (claimReviewsCount) {
-      otherReviewsTable = <OtherReviewsTable reviews={this.props.claimReviews} />;
-    }
+    // if (claimReviewsCount) {
+    //   otherReviewsTable = <OtherReviewsTable reviews={this.props.claimReviews} />;
+    // }
 
     // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
     // the same for all appeals in the list.
@@ -90,11 +90,11 @@ class CaseListView extends React.PureComponent {
       <br /><br />
       <h2 className="cf-push-left" {...fullWidth}>{heading}</h2>
 
-      <h3 className="cf-push-left" {...fullWidth}>Appeals</h3>
+      <h3 className="cf-push-left" {...fullWidth}>{COPY.CASE_LIST_TABLE_TITLE}</h3>
       <CaseListTable appeals={this.props.appeals} />
 
-      <h3 className="cf-push-left" {...fullWidth}>Other Decision Reviews</h3>
-      {otherReviewsTable}
+      <h3 className="cf-push-left" {...fullWidth}>{COPY.OTHER_REVIEWS_TABLE_TITLE}</h3>
+      <OtherReviewsTable reviews={this.props.claimReviews} />
     </div>;
   }
 

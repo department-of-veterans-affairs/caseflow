@@ -114,6 +114,10 @@ class CaseListTable extends React.PureComponent {
   ];
 
   render = () => {
+    if (!this.props.reviews) {
+      return <p>{COPY.OTHER_REVIEWS_TABLE_EMPTY_TEXT}</p>;
+    }
+
     return <Table
       columns={this.getColumns}
       rowObjects={this.props.reviews}
