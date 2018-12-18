@@ -718,8 +718,8 @@ RSpec.feature "Edit issues" do
       context "when veteran has active nonrating request issues" do
         let!(:active_nonrating_request_issue) do
           create(:request_issue,
-            :nonrating,
-            review_request: another_higher_level_review)
+                 :nonrating,
+                 review_request: another_higher_level_review)
         end
 
         before do
@@ -1372,7 +1372,11 @@ RSpec.feature "Edit issues" do
                  benefit_type: "compensation")
         end
 
-        let!(:active_nonrating_request_issue) { create(:request_issue, :nonrating, review_request: another_higher_level_review) }
+        let!(:active_nonrating_request_issue) do
+          create(:request_issue,
+                 :nonrating,
+                 review_request: another_higher_level_review)
+        end
 
         before do
           another_higher_level_review.create_issues!([active_nonrating_request_issue])

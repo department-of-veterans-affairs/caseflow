@@ -176,7 +176,10 @@ class DecisionReview < ApplicationRecord
   end
 
   def active_nonrating_request_issues
-    @active_nonrating_request_issues ||= RequestIssue.nonrating.where(veteran_file_number: veteran_file_number).where.not(id: request_issues.map(&:id)).select(&:status_active?)
+    @active_nonrating_request_issues ||= RequestIssue.nonrating
+      .where(veteran_file_number: veteran_file_number)
+      .where.not(id: request_issues.map(&:id))
+      .select(&:status_active?)
   end
 
   private
