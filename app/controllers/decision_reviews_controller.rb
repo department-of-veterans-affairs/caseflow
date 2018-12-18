@@ -16,7 +16,7 @@ class DecisionReviewsController < ApplicationController
   end
 
   def business_line
-    @business_line ||= NonComp.find_by(url: business_line_slug)
+    @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
 
   def set_application

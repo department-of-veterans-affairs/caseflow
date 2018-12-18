@@ -1,0 +1,2 @@
+class BusinessLine < Organization
+end

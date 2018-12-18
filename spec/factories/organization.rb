@@ -11,8 +11,8 @@ FactoryBot.define do
       type "Bva"
     end
 
-    factory :noncomp do
-      type "NonComp"
+    factory :business_line do
+      type "BusinessLine"
     end
 
     factory :hearings_management do

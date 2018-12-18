@@ -15,7 +15,7 @@ describe DecisionReviewsController, type: :controller do
       User.stub = user
     end
 
-    context "user is not in NonComp org" do
+    context "user is not in org" do
       it "returns unauthorized" do
         get :index, params: { business_line_slug: non_comp_org.url }
 
@@ -24,7 +24,7 @@ describe DecisionReviewsController, type: :controller do
       end
     end
 
-    context "user is in NonComp org" do
+    context "user is in org" do
       before do
         OrganizationsUser.add_user_to_organization(user, non_comp_org)
       end
