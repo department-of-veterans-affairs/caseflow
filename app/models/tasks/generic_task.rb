@@ -1,5 +1,6 @@
 class GenericTask < Task
   before_create :verify_org_task_unique
+  after_create -> (task) { task.parent.when_child_task_created if task.parent }
 
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
   # task active at a time for a single appeal.
@@ -100,8 +101,6 @@ class GenericTask < Task
     def create_child_task(parent, current_user, params)
       # Create an assignee from the input arguments so we throw an error if the assignee does not exist.
       assignee = Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
-
-      parent.update_status(Constants.TASK_STATUSES.on_hold)
 
       Task.create!(
         type: name,

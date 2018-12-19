@@ -1,2 +1,2 @@
-class DistributionTask < Task
+class DistributionTask < GenericTask
 end

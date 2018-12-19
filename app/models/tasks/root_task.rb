@@ -64,7 +64,7 @@ class RootTask < GenericTask
         appeal: appeal,
         parent: parent,
         status: status,
-        assigned_to: AutoCaseDistributor.singleton
+        assigned_to: Bva.singleton
       )
     end
 

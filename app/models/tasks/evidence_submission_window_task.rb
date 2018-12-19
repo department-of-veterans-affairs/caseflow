@@ -1,2 +1,2 @@
-class EvidenceSubmissionWindowTask < Task
+class EvidenceSubmissionWindowTask < GenericTask
 end
