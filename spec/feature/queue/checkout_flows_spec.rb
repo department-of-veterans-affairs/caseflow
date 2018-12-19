@@ -126,7 +126,15 @@ RSpec.feature "Checkout flows" do
       let(:benefit_type) { "Education" }
       let(:old_benefit_type) { Constants::BENEFIT_TYPES[appeal.request_issues.first.benefit_type] }
 
-      scenario "veteran is the appellant", focus: true do
+      let!(:appeal) do
+        FactoryBot.create(
+          :appeal,
+          number_of_claimants: 1,
+          request_issues: FactoryBot.build_list(:request_issue, 2, description: issue_description, notes: issue_note)
+        )
+      end
+
+      scenario "veteran is the appellant" do
         visit "/queue"
         click_on "(#{appeal.veteran_file_number})"
 
@@ -148,7 +156,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content "You must add a decision before you continue."
 
         # Add a first decision issue
-        click_on "+ Add decision"
+        all("button", text: "+ Add decision", count: 2)[0].click
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
         click_on "Save"
@@ -165,7 +173,7 @@ RSpec.feature "Checkout flows" do
         click_on "Save"
 
         # Add a second decision issue
-        click_on "+ Add decision"
+        all("button", text: "+ Add decision", count: 2)[0].click
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
         fill_in "Text Box", with: other_issue_tex
@@ -179,7 +187,7 @@ RSpec.feature "Checkout flows" do
         click_on "Save"
 
         # Add a third decision issue that's allowed
-        click_on "+ Add decision"
+        all("button", text: "+ Add decision", count: 2)[0].click
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
         fill_in "Text Box", with: allowed_issue_tex
@@ -190,7 +198,31 @@ RSpec.feature "Checkout flows" do
         find(".Select-control", text: old_benefit_type).click
         find("div", class: "Select-option", text: benefit_type).click
 
+        find(".Select-control", text: "Select issues").click
+        find("div", class: "Select-option", text: "Tinnitus").click
+
         click_on "Save"
+
+        expect(page).to have_content("Added to 2 decisions")
+
+        # Test removing linked issue
+        all("button", text: "Edit", count: 4)[2].click
+
+        click_on "Remove"
+
+        click_on "Save"
+
+        expect(page).to_not have_content("Added to 2 decisions")
+
+        # Re-add linked issue
+        all("button", text: "Edit", count: 3)[2].click
+
+        find(".Select-control", text: "Select issues").click
+        find("div", class: "Select-option", text: "Tinnitus").click
+
+        click_on "Save"
+
+        expect(page).to have_content("Added to 2 decisions", count: 2)
 
         # Ensure the decision issue is on the select disposition screen
         expect(page).to have_content(decision_issue_text)
@@ -229,19 +261,28 @@ RSpec.feature "Checkout flows" do
 
         expect(page.current_path).to eq("/queue")
 
-        expect(appeal.decision_issues.count).to eq(3)
+        expect(appeal.decision_issues.count).to eq(4)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
-        expect(appeal.decision_issues.first.disposition).to eq("remand")
+        expect(appeal.decision_issues.first.disposition).to eq("remanded")
         expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
-        expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
-        expect(appeal.decision_issues.second.remand_reasons.first.code).to eq("medical_examinations")
-        expect(appeal.decision_issues.second.disposition).to eq("remand")
+
+        remand_reasons = appeal.decision_issues.where(disposition: "remanded").map do |decision|
+          decision.remand_reasons.first.code
+        end
+
+        expect(remand_reasons).to match_array(["service_treatment_records", "medical_examinations"])
+        expect(appeal.decision_issues.second.disposition).to eq("remanded")
         expect(appeal.decision_issues.third.disposition).to eq("allowed")
+        expect(appeal.decision_issues.last.request_issues.count).to eq(2)
 
         # Switch to the judge and ensure they can update decision issues
         User.authenticate!(user: judge_user)
         visit "/queue"
+
         click_on "(#{appeal.veteran_file_number})"
+
+        expect(page).to have_content("Added to 2 decisions", count: 2)
+
         click_dropdown 0
 
         # Skip the special issues page
@@ -250,7 +291,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(decision_issue_text)
 
         # Update the decision issue
-        all("button", text: "Edit", count: 2)[0].click
+        all("button", text: "Edit", count: 4)[0].click
         fill_in "Text Box", with: updated_decision_issue_text
         click_on "Save"
         click_on "Continue"
@@ -276,12 +317,17 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
         # The decision issue should have the new content the judge added
-        expect(appeal.decision_issues.count).to eq(2)
+        expect(appeal.decision_issues.count).to eq(4)
         expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
-        expect(appeal.decision_issues.first.remand_reasons.first.code).to eq("service_treatment_records")
-        expect(appeal.decision_issues.second.remand_reasons.first.code).to eq("medical_examinations")
-        expect(appeal.decision_issues.second.disposition).to eq("remand")
-        expect(appeal.decision_issues.third.disposition).to eq("allowed")
+
+        remand_reasons = appeal.decision_issues.where(disposition: "remanded").map do |decision|
+          decision.remand_reasons.first.code
+        end
+
+        expect(remand_reasons).to match_array(["service_treatment_records", "medical_examinations"])
+        expect(appeal.decision_issues.where(disposition: "remanded").count).to eq(2)
+        expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(2)
+        expect(appeal.request_issues.map { |issue| issue.decision_issues.count }).to match_array([3, 1])
       end
     end
   end

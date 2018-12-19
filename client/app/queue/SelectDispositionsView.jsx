@@ -40,7 +40,7 @@ class SelectDispositionsView extends React.PureComponent {
     super(props);
 
     this.state = {
-      openRequestIssueIds: null,
+      openRequestIssueId: null,
       decisionIssue: null,
       editingExistingIssue: false,
       highlightModal: false
@@ -98,19 +98,19 @@ class SelectDispositionsView extends React.PureComponent {
     });
   }
 
-  openDecisionHandler = (requestIssueIds, decisionIssue) => () => {
-    const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueIds.includes(issue.id)).program;
+  openDecisionHandler = (requestIssueId, decisionIssue) => () => {
+    const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
       description: '',
       disposition: null,
       benefit_type: benefitType,
-      request_issue_ids: requestIssueIds
+      request_issue_ids: [requestIssueId]
     };
 
     this.setState({
-      openRequestIssueIds: requestIssueIds,
+      openRequestIssueId: requestIssueId,
       decisionIssue: decisionIssue || newDecisionIssue,
       editingExistingIssue: Boolean(decisionIssue)
     });
@@ -118,7 +118,7 @@ class SelectDispositionsView extends React.PureComponent {
 
   handleModalClose = () => {
     this.setState({
-      openRequestIssueIds: null,
+      openRequestIssueId: null,
       decisionIssue: null,
       editingExistingIssue: false,
       highlightModal: false
@@ -174,12 +174,12 @@ class SelectDispositionsView extends React.PureComponent {
   }
 
   selectedIssues = () => {
-    if (!this.state.openRequestIssueIds) {
+    if (!this.state.openRequestIssueId) {
       return [];
     }
 
     return this.props.appeal.issues.filter((issue) => {
-      return this.state.openRequestIssueIds.includes(issue.id);
+      return this.state.openRequestIssueId === issue.id;
     });
   }
 
@@ -188,7 +188,7 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       highlightModal,
       decisionIssue,
-      openRequestIssueIds,
+      openRequestIssueId,
       editingExistingIssue
     } = this.state;
 
@@ -210,7 +210,7 @@ class SelectDispositionsView extends React.PureComponent {
       });
     }
 
-    const relevantIssues = appeal.issues.filter((issue) => {
+    const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
     });
 
@@ -226,7 +226,7 @@ class SelectDispositionsView extends React.PureComponent {
         numbered
         highlight={highlight}
       />
-      { openRequestIssueIds && <Modal
+      { openRequestIssueId && <Modal
         buttons = {modalButtons}
         closeHandler={this.handleModalClose}
         title = {`${editingExistingIssue ? 'Edit' : 'Add'} decision`}>
@@ -235,7 +235,7 @@ class SelectDispositionsView extends React.PureComponent {
           Contested Issue
           <ul>
             {
-              relevantIssues.map((issue) => <li key={issue.id}>{issue.description}</li>)
+              connectedRequestIssues.map((issue) => <li key={issue.id}>{issue.description}</li>)
             }
           </ul>
         </div>
@@ -317,7 +317,9 @@ class SelectDispositionsView extends React.PureComponent {
           })}
         />
         {
-          relevantIssues.slice(1).map((issue) =>
+          connectedRequestIssues.filter((issue) => {
+            return issue.id !== openRequestIssueId
+          }).map((issue) =>
             <div key={issue.id} {...connectedIssueDiv}>
               <span>{issue.description}</span>
               <Button

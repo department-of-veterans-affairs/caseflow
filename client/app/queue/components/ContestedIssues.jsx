@@ -73,6 +73,8 @@ export default class ContestedIssues extends React.PureComponent {
     return decisionIssues.filter((decisionIssue) => {
       return decisionIssue.request_issue_ids.includes(requestIssue.id);
     }).map((decisionIssue) => {
+      const linkedDecisionIssue = decisionIssue.request_issue_ids.length > 1;
+
       return <div {...outerDiv} key={decisionIssue.id}>
         <div {...grayLine} />
         <div {...decisionIssueDiv}>
@@ -81,8 +83,8 @@ export default class ContestedIssues extends React.PureComponent {
             {openDecisionHandler && <span>
               <Button
                 name="Edit"
-                id={`edit-issue-${decisionIssue.id}`}
-                onClick={openDecisionHandler([requestIssue.id], decisionIssue)}
+                id={`edit-issue-${requestIssue.id}-${decisionIssue.id}`}
+                onClick={openDecisionHandler(requestIssue.id, decisionIssue)}
                 classNames={['cf-btn-link']}
               />
             </span>}
@@ -95,6 +97,9 @@ export default class ContestedIssues extends React.PureComponent {
               {ISSUE_DISPOSITIONS_BY_ID[decisionIssue.disposition]}
             </span>
           </div>
+          {linkedDecisionIssue && <div {...noteDiv} {...verticalSpaceDiv}>
+            Added to {decisionIssue.request_issue_ids.length} decisions
+          </div>}
         </div>
       </div>;
     });
@@ -145,7 +150,8 @@ export default class ContestedIssues extends React.PureComponent {
               <div {...buttonDiv}>
                 <Button
                   name="+ Add decision"
-                  onClick={openDecisionHandler([issue.id])}
+                  id={`add-decision-${issue.id}`}
+                  onClick={openDecisionHandler(issue.id)}
                   classNames={['usa-button-secondary']}
                 />
               </div>
