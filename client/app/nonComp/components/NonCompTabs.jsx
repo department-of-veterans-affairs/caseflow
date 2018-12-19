@@ -1,7 +1,10 @@
+import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import TabWindow from '../../components/TabWindow';
 import TaskTable from '../../queue/components/TaskTable';
 
-class NonCompTabs extends React.PureComponent {
+class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
     const tabs = [{
       label: 'In progress tasks',
@@ -14,17 +17,24 @@ class NonCompTabs extends React.PureComponent {
         description="Completed"
         tasks={this.props.completedTasks}/>
     }]
+
+    return <TabWindow
+       name="tasks-organization-queue"
+       tabs={tabs}
+     />;
   }
 }
 
 const TaskTableTab = ({ description, tasks }) => <React.Fragment>
    <p className="cf-margin-top-0">{description}</p>
-   <TaskTable
-     // includeClaimantLink
-     // includeClaimantSsn
-     includeTask
-     includeIssueCount
-     includeDaysWaiting
-     tasks={tasks}
-   />
  </React.Fragment>;
+
+
+const NonCompTabs = connect(
+  (state) => ({
+    unassignedTasks: state.unassignedTasks,
+    completedTasks: state.completedTasks
+  })
+)(NonCompTabsUnconnected);
+
+export default NonCompTabs;

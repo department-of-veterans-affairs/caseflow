@@ -1,16 +1,6 @@
 class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
 
-  def index
-    if business_line
-      render json: { tasks: business_line.tasks }
-    else
-      render json: { error: "#{business_line_slug} not found" }, status: 404
-    end
-  end
-
-  private
-
   def business_line_slug
     params.permit(:business_line_slug)[:business_line_slug]
   end
@@ -18,6 +8,9 @@ class DecisionReviewsController < ApplicationController
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
+
+  helper_method :business_line, :business_line_slug
+  private
 
   def set_application
     RequestStore.store[:application] = "decision_reviews"

@@ -10,5 +10,5 @@ export const mapDataToInitialState = function(props = {}) {
 };
 
 export const nonCompReducer = (state = mapDataToInitialState(), action) => {
-  // no-op for now
+  return state;
 };
