@@ -31,6 +31,7 @@ module Asyncable
       :processed_at
     end
 
+    # TODO: can we make this column optional?
     def ready_for_processing_at_column
       :ready_for_processing_at
     end
