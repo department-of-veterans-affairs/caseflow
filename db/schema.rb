@@ -644,17 +644,6 @@ ActiveRecord::Schema.define(version: 20181219005124) do
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
-  create_table "rating_issues", force: :cascade do |t|
-    t.bigint "source_request_issue_id", null: false
-    t.string "reference_id", null: false
-    t.datetime "profile_date", null: false
-    t.string "decision_text"
-    t.datetime "promulgation_date", null: false
-    t.integer "participant_id", null: false
-    t.index ["reference_id", "participant_id"], name: "index_rating_issues_on_reference_id_and_participant_id", unique: true
-    t.index ["source_request_issue_id"], name: "index_rating_issues_on_source_request_issue_id"
-  end
-
   create_table "reader_users", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "documents_fetched_at"
