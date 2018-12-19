@@ -4,6 +4,7 @@ describe LegacyOptinManager do
   end
 
   let(:user) { Generators::User.build }
+  let(:closed_disposition_date) { 1.year.ago }
   let!(:appeal) { create(:appeal, request_issues: request_issues) }
   let(:request_issues) { [undecided_ri1, undecided_ri2, remand_ri1, remand_ri2, closed_ri1, closed_ri2] }
   let(:legacy_opt_in_manager) { LegacyOptinManager.new(decision_review: appeal) }
@@ -43,10 +44,14 @@ describe LegacyOptinManager do
            bfkey: "closed",
            case_issues: [closed_issue1, closed_issue2],
            bfdsoc: 1.day.ago,
-           bfddec: 1.year.ago)
+           bfddec: closed_disposition_date)
   end
-  let(:closed_issue1) { create(:case_issue, :disposition_advance_failure_to_respond, issseq: 1, issdcls: 1.year.ago) }
-  let(:closed_issue2) { create(:case_issue, :disposition_remand_failure_to_respond, issseq: 2, issdcls: 1.year.ago) }
+  let(:closed_issue1) {
+    create(:case_issue, :disposition_advance_failure_to_respond, issseq: 1, issdcls: closed_disposition_date)
+  }
+  let(:closed_issue2) {
+    create(:case_issue, :disposition_remand_failure_to_respond, issseq: 2, issdcls: closed_disposition_date)
+  }
   let(:closed_ri1) do
     create(:request_issue, vacols_id: already_closed_case.bfkey, vacols_sequence_id: closed_issue1.issseq)
   end
@@ -105,7 +110,7 @@ describe LegacyOptinManager do
           expect(undecided_case.reload).to_not be_closed
           expect(remand_case.reload).to_not be_closed
           expect(already_closed_case.reload).to be_closed
-          expect(already_closed_case.bfddec).to eq(1.year.ago.to_date)
+          expect(already_closed_case.bfddec).to eq(closed_disposition_date.to_date)
         end
 
         context "when the issues are rolled back on an open appeal" do
@@ -122,15 +127,15 @@ describe LegacyOptinManager do
 
             expect(vacols_issue("undecided", 1).issdc).to be_nil
             expect(vacols_issue("undecided", 1).issdcls).to be_nil
-            expect(vacols_issue("remand", 1).issdc).to eq("3")
+            expect(vacols_issue("remand", 1).issdc).to eq(remand_optin1.original_disposition_code)
             expect(vacols_issue("remand", 1).issdcls).to eq(remand_optin1.original_disposition_date)
-            expect(vacols_issue("closed", 1).issdc).to eq("G")
-            expect(vacols_issue("closed", 1).issdcls).to eq(1.year.ago.to_date)
+            expect(vacols_issue("closed", 1).issdc).to eq(closed_optin1.original_disposition_code)
+            expect(vacols_issue("closed", 1).issdcls).to eq(closed_disposition_date.to_date)
 
             expect(undecided_case.reload).to_not be_closed
             expect(remand_case.reload).to_not be_closed
             expect(already_closed_case.reload).to be_closed
-            expect(already_closed_case.bfddec).to eq(1.year.ago.to_date)
+            expect(already_closed_case.bfddec).to eq(closed_disposition_date.to_date)
           end
         end
       end
@@ -159,13 +164,13 @@ describe LegacyOptinManager do
 
         it "rolls back remand issues, closes the remand, and creates a follow up appeal" do
           subject
-          expect(vacols_issue("remand", 1).reload.issdc).to eq("3")
+          expect(vacols_issue("remand", 1).issdc).to eq(remand_optin1.original_disposition_code)
           expect(vacols_issue("remand", 1).issdcls).to eq(remand_optin1.original_disposition_date)
-          expect(vacols_issue("remand", 2).issdc).to eq("3")
+          expect(vacols_issue("remand", 2).issdc).to eq(remand_optin2.original_disposition_code)
           expect(vacols_issue("remand", 2).issdcls).to eq(remand_optin2.original_disposition_date)
 
           # check that remand opted in from another decision review is also rolled back
-          expect(hlr_remand_issue.reload.issdc).to eq("3")
+          expect(vacols_issue("remand", 3).issdc).to eq(hlr_remand_optin.original_disposition_code)
 
           expect(remand_case.reload.bfmpro).to eq("HIS")
           follow_up_appeal = VACOLS::Case.find_by(bfkey: "remandP")
@@ -182,7 +187,7 @@ describe LegacyOptinManager do
           expect(vacols_issue("closed", 2).issdcls).to eq(Time.zone.today)
 
           expect(already_closed_case.reload).to be_closed
-          expect(already_closed_case.bfddec).to eq(1.year.ago.to_date)
+          expect(already_closed_case.bfddec).to eq(closed_disposition_date.to_date)
         end
 
         context "when issues are rolled back on a closed appeal" do
@@ -191,7 +196,7 @@ describe LegacyOptinManager do
           end
 
           it "reopens an undecided appeal and rollsback the dispositions" do
-            expect(vacols_issue("undecided", 2).issdc).to eq("O")
+            expect(vacols_issue("undecided", 2).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
             expect(undecided_case.reload).to be_closed
             undecided_optin2.create_rollback!
 
@@ -203,24 +208,24 @@ describe LegacyOptinManager do
           end
 
           it "does not reopen the previously closed appeal but rollsback dispositions" do
-            expect(vacols_issue("closed", 2).issdc).to eq("O")
+            expect(vacols_issue("closed", 2).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
             expect(already_closed_case.reload).to be_closed
             closed_optin2.create_rollback!
 
             subject
 
             expect(vacols_issue("closed", 2).issdc).to eq("X")
-            expect(vacols_issue("closed", 2).issdcls).to eq(1.year.ago.to_date)
+            expect(vacols_issue("closed", 2).issdcls).to eq(closed_disposition_date.to_date)
 
             expect(already_closed_case.reload).to be_closed
-            expect(already_closed_case.bfddec).to eq(1.year.ago.to_date)
+            expect(already_closed_case.bfddec).to eq(closed_disposition_date.to_date)
           end
 
           it "reopens the remand, deletes the post remand, re-opts in remanded issues and rollsback the disposition" do
             follow_up_appeal = VACOLS::Case.find_by(bfkey: "remandP")
             follow_up_appeal_issues = VACOLS::CaseIssue.where(isskey: "remandP")
 
-            expect(vacols_issue("remand", 2).issdc).to eq("3")
+            expect(vacols_issue("remand", 2).issdc).to eq(remand_optin2.original_disposition_code)
             expect(remand_case.reload.bfmpro).to eq("HIS")
             expect(follow_up_appeal.bfdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
             expect(follow_up_appeal_issues.count).to eq(3)
@@ -229,15 +234,15 @@ describe LegacyOptinManager do
             subject
 
             # issue being rolled back is set to original state
-            expect(vacols_issue("remand", 2).issdc).to eq("3")
+            expect(vacols_issue("remand", 2).issdc).to eq(remand_optin2.original_disposition_code)
             expect(vacols_issue("remand", 2).issdcls).to eq(remand_optin2.original_disposition_date)
 
             # other remand issue is re-opted in
-            expect(vacols_issue("remand", 1).issdc).to eq("O")
+            expect(vacols_issue("remand", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
             expect(vacols_issue("remand", 1).issdcls).to eq(Time.zone.today)
 
             # remand issue opted in on another decision review is also re-opted in
-            expect(vacols_issue("remand", 3).issdc).to eq("O")
+            expect(vacols_issue("remand", 3).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
             expect(vacols_issue("remand", 3).issdcls).to eq(Time.zone.today)
 
             expect(remand_case.reload.bfmpro).to eq("REM")

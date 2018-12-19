@@ -2,10 +2,11 @@ class LegacyIssueOptin < ApplicationRecord
   belongs_to :request_issue
 
   VACOLS_DISPOSITION_CODE = "O".freeze # oh not zero
+  REMAND_DISPOSITION_CODE = "3".freeze
 
   class << self
     def related_remand_issues(vacols_id)
-      where(vacols_id: vacols_id, original_disposition_code: "3")
+      where(vacols_id: vacols_id, original_disposition_code: REMAND_DISPOSITION_CODE)
     end
 
     def revert_opted_in_remand_issues(vacols_id)
@@ -64,8 +65,8 @@ class LegacyIssueOptin < ApplicationRecord
   private
 
   def revert_open_remand_issues
-    # if this is happening, all remanded issues should have a disposition
-    # of "3" on a "HIS" appeal. This is rolling back and putting them back at "O"
+    # Before a remand is closed, it's "O" dispositions are changed to a "3", so when it's re-opened
+    # the "3"s should be reverted back to "O"s
     self.class.related_remand_issues(vacols_id).each do |remand_issue|
       Issue.close_in_vacols!(
         vacols_id: vacols_id,
@@ -76,8 +77,8 @@ class LegacyIssueOptin < ApplicationRecord
   end
 
   def legacy_appeal_needs_reopened?
-    return false unless [nil, "3"].include? original_disposition_code
-    legacy_appeal.case_record.bfmpro == "HIS" && legacy_appeal.case_record.bfcurloc == "99"
+    return false unless [nil, REMAND_DISPOSITION_CODE].include? original_disposition_code
+    !legacy_appeal.active?
   end
 
   def reopen_legacy_appeal

@@ -132,6 +132,7 @@ class Issue
   end
 
   def active?
+    return false if !legacy_appeal.active?
     disposition.nil? || in_remand?
   end
 

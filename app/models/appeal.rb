@@ -210,8 +210,6 @@ class Appeal < DecisionReview
 
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      # temporary until ticket for appeals benefit type by issue is implemented
-      # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
       issue.update!(benefit_type: benefit_type)
       create_legacy_issue_optin(issue) if issue.legacy_issue_opted_in?
     end
