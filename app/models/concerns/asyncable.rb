@@ -74,6 +74,13 @@ module Asyncable
     end
   end
 
+  def process_after(at_when)
+    transaction do
+      submit_for_processing!
+      update!(self.class.attempted_at_column => (at_when - REQUIRES_PROCESSING_RETRY_WINDOW_HOURS.hours))
+    end
+  end
+
   def submit_for_processing!
     update!(self.class.submitted_at_column => Time.zone.now, self.class.processed_at_column => nil)
   end
