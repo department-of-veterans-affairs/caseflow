@@ -196,12 +196,14 @@ describe HigherLevelReviewIntake do
     let(:params) { { request_issues: [issue_data] } }
 
     let(:legacy_opt_in_approved) { false }
+    let(:benefit_type) { "compensation" }
 
     let(:detail) do
       HigherLevelReview.create!(
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago,
-        legacy_opt_in_approved: legacy_opt_in_approved
+        legacy_opt_in_approved: legacy_opt_in_approved,
+        benefit_type: benefit_type
       )
     end
 
@@ -258,6 +260,24 @@ describe HigherLevelReviewIntake do
         description: "decision text",
         rating_issue_associated_at: Time.zone.now
       )
+    end
+
+    context "when benefit type is pension" do
+      let(:benefit_type) { "pension" }
+      let(:pension_rating_ep_establishment) do
+        EndProductEstablishment.find_by(source: intake.reload.detail, code: "030HLRRPMC")
+      end
+
+      it "completes the intake with pension ep code" do
+        subject
+
+        expect(pension_rating_ep_establishment).to_not be_nil
+        expect(pension_rating_ep_establishment.established_at).to eq(Time.zone.now)
+
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          hash_including(claim_hash: hash_including(end_product_code: "030HLRRPMC"))
+        )
+      end
     end
 
     context "when a legacy VACOLS opt-in occurs" do

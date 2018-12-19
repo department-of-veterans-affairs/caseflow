@@ -680,7 +680,7 @@ describe EndProductEstablishment do
                  rating_issue_reference_id: "rating1")
         end
 
-        it "creats a supplemental claim if dta errors exist" do
+        it "creates a supplemental claim if dta errors exist" do
           subject
 
           expect(SupplementalClaim.find_by(

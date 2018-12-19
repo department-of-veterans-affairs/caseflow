@@ -40,7 +40,7 @@ class HigherLevelReview < ClaimReview
 
   def issue_code(rating: true)
     issue_code_type = rating ? :rating : :nonrating
-    issue_code_type = "pension_#{ep_code}".to_sym if benefit_type == "pension"
+    issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
     END_PRODUCT_CODES[issue_code_type]
   end
 

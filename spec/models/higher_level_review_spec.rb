@@ -16,6 +16,7 @@ describe HigherLevelReview do
   let(:same_office) { nil }
   let(:legacy_opt_in_approved) { false }
   let(:veteran_is_not_claimant) { false }
+  let(:profile_date) { receipt_date - 1 }
 
   let(:higher_level_review) do
     HigherLevelReview.new(
@@ -213,11 +214,14 @@ describe HigherLevelReview do
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_PMR,
-                 rating_issue_reference_id: "rating1"),
+                 rating_issue_reference_id: "rating1",
+                 profile_date: profile_date),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
-                 rating_issue_reference_id: "rating2"),
+                 rating_issue_reference_id: "rating2",
+                 profile_date: profile_date
+               ),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: "not a dta error")
@@ -257,6 +261,7 @@ describe HigherLevelReview do
         )
 
         expect(first_dta_request_issue).to_not be_nil
+        expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDER")
 
         second_dta_request_issue = RequestIssue.find_by(
           review_request: supplemental_claim,
@@ -269,6 +274,21 @@ describe HigherLevelReview do
         )
 
         expect(second_dta_request_issue).to_not be_nil
+        expect(second_dta_request_issue.end_product_establishment.code).to eq("040HDER")
+      end
+
+      context "when benefit type is pension" do
+        let(:benefit_type) { "pension" }
+
+        it "creates end product establishment with pension ep code" do
+          subject
+
+          first_dta_request_issue = RequestIssue.find_by(rating_issue_reference_id: "rating1")
+          second_dta_request_issue = RequestIssue.find_by(rating_issue_reference_id: "rating2")
+
+          expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDERPMC")
+          expect(second_dta_request_issue.end_product_establishment.code).to eq("040HDERPMC")
+        end
       end
     end
 
