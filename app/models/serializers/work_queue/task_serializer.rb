@@ -32,15 +32,15 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :docket_name do
-    object.appeal.docket_name
+    object.appeal.try(:docket_name)
   end
 
   attribute :case_type do
-    object.appeal.type
+    object.appeal.try(:type)
   end
 
   attribute :docket_number do
-    object.appeal.docket_number
+    object.appeal.try(:docket_number)
   end
 
   attribute :veteran_full_name do
@@ -56,7 +56,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :aod do
-    object.appeal.advanced_on_docket
+    object.appeal.try(:advanced_on_docket)
   end
 
   attribute :issue_count do

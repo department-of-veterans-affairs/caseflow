@@ -176,6 +176,10 @@ Rails.application.routes.draw do
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
+  resources :decision_reviews, param: :business_line_slug, only: [:index] do
+  end
+  match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
+
   resources :users, only: [:index]
 
   get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'

@@ -12,6 +12,7 @@ class DecisionReview < ApplicationRecord
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
   has_many :decision_issues, as: :decision_review
+  has_many :tasks, as: :appeal
 
   before_destroy :remove_issues!
 
@@ -72,6 +73,18 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def veteran_full_name
+    veteran&.name&.formatted(:readable_full)
+  end
+
+  def number_of_issues
+    request_issues.count
+  end
+
+  def external_id
+    id.to_s
+  end
+
   def ui_hash
     {
       veteran: {
@@ -87,6 +100,7 @@ class DecisionReview < ApplicationRecord
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash),
+      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize)
     }
   end
@@ -172,6 +186,18 @@ class DecisionReview < ApplicationRecord
   def contestable_issues
     return contestable_issues_from_decision_issues if non_comp?
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
+  end
+
+  def active_nonrating_request_issues
+    @active_nonrating_request_issues ||= RequestIssue.nonrating
+      .where(veteran_participant_id: veteran.participant_id)
+      .where.not(id: request_issues.map(&:id))
+      .select(&:status_active?)
+  end
+
+  # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
+  def serializer_class
+    ::WorkQueue::DecisionReviewSerializer
   end
 
   private

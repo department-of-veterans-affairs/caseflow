@@ -428,7 +428,8 @@ export default class DailyDocket extends React.Component {
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
         Coordinator: {this.props.dailyDocket.bvaPoc} <br />
-        Hearing type: {this.props.dailyDocket.hearingType}
+        Hearing type: {this.props.dailyDocket.hearingType} <br />
+        Room number: {this.props.dailyDocket.room}
       </span>
       <div {...noMarginStyling}>
         { !_.isEmpty(dailyDocketRows) && <Table

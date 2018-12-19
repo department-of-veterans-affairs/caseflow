@@ -16,6 +16,7 @@ require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
 require_relative "support/download_helper"
 require_relative "support/clear_cache"
+require_relative "support/feature_helper"
 require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -375,4 +376,5 @@ end
 RSpec.configure do |config|
   config.include ActionView::Helpers::NumberHelper
   config.include FakeDateHelper
+  config.include FeatureHelper, type: :feature
 end
