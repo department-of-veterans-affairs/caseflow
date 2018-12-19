@@ -68,14 +68,6 @@ class Task < ApplicationRecord
     children.where(type: AttorneyTask.name)
   end
 
-  def complete?
-    status == Constants.TASK_STATUSES.completed
-  end
-
-  def in_progress?
-    status == Constants.TASK_STATUSES.in_progress
-  end
-
   def all_children_complete
     children.all?(&:complete?)
   end
