@@ -290,7 +290,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
         this.completedDateColumn(),
         this.completedToNameColumn(),
         this.caseReaderLinkColumn()
-      ])), ['order'], ['desc']);
+      ])), ['order'], ['asc']);
 
   getDefaultSortableColumn = () => {
     const index = _.findIndex(this.getQueueColumns(),

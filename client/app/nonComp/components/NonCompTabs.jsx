@@ -44,14 +44,14 @@ const veteranSsnColumn = () => {
   };
 };
 
-const appealTypeColumn = () => {
+const decisionReviewTypeColumn = () => {
   return {
     header: 'Type',
     valueFunction: (task) => task.type,
     getSortValue: (task) => task.type,
     // order determines where this column displays
-    // make it 100 so this column is always last
-    order: 100
+    // make it -1 so this column is always last
+    order: -1
   };
 };
 
@@ -59,7 +59,7 @@ const TaskTableTab = ({ description, tasks }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
   <TaskTableUnconnected
     getKeyForRow={(row, object) => object.appeal.id}
-    customColumns={[claimantColumn(), veteranSsnColumn(), appealTypeColumn()]}
+    customColumns={[claimantColumn(), veteranSsnColumn(), decisionReviewTypeColumn()]}
     includeIssueCount
     includeDaysWaiting
     tasks={tasks}
