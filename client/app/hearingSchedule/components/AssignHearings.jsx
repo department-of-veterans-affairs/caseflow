@@ -127,8 +127,7 @@ export default class AssignHearings extends React.Component {
       docketNumber: appeal.attributes.docketNumber,
       location: this.getAppealLocation(appeal),
       time: null,
-      vacolsId: appeal.attributes.externalId,
-      appealId: appeal.appealId
+      vacolsId: appeal.attributes.externalId
     }));
   };
 
