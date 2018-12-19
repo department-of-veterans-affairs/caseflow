@@ -247,8 +247,10 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
+
     if (this.props.primaryTask) {
-      sectionBody = <table {...css({ width: '100%', marginTop: 0 })}>
+      sectionBody = <table {...css({ width: '100%',
+        marginTop: 0 })}>
         <tbody>
           <tr>
             <td {...leftTableCell} {...css({ width: '20%' })}>
@@ -285,7 +287,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
             </td>
           </tr>
         </tbody>
-      </table> }
+      </table>;
+    }
 
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
