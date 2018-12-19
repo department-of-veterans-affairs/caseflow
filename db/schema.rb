@@ -710,7 +710,6 @@ ActiveRecord::Schema.define(version: 20181219005124) do
     t.datetime "created_at"
     t.string "benefit_type"
     t.integer "contested_decision_issue_id"
-    t.string "veteran_file_number"
     t.string "veteran_participant_id"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
