@@ -111,7 +111,7 @@ RSpec.feature "Task queue" do
 
       case_details_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       case_details_link.click
-      expect(page).to have_content(COPY::CASE_SNAPSHOT_ACTION_BOX_TITLE)
+      expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
 
       # Marking the task as complete correctly changes the task's status in the database.
       find(".Select-control", text: "Select an action…").click
