@@ -10,13 +10,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     create(:hearings_management)
   end
 
-  def click_dropdown(opt_idx, container = page)
-    dropdown = container.find(".Select-control")
-    dropdown.click
-    yield if block_given?
-    dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
-  end
-
   context "When creating Caseflow Central hearings" do
     let!(:hearing_day) { create(:hearing_day) }
     let!(:vacols_case) do
@@ -29,12 +22,12 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     scenario "Schedule Veteran for central hearing" do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
-      click_dropdown 7
+      click_dropdown(index: 7)
       click_button("Schedule a Veteran")
       appeal_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       appeal_link.click
       expect(page).to have_content("Actions")
-      click_dropdown 0
+      click_dropdown(index: 0)
       expect(page).to have_content("Time")
       radio_link = find(".cf-form-radio-option", match: :first)
       radio_link.click
@@ -72,12 +65,12 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     scenario "Schedule Veteran for video" do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
-      click_dropdown 12
+      click_dropdown(index: 12)
       click_button("Schedule a Veteran")
       appeal_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       appeal_link.click
       expect(page).to have_content("Actions")
-      click_dropdown 0
+      click_dropdown(index: 0)
       expect(page).to have_content("Time")
       radio_link = find(".cf-form-radio-option", match: :first)
       radio_link.click
