@@ -10,7 +10,7 @@ import PdfUIPageNumInput from '../reader/PdfUIPageNumInput';
 import Pdf from './Pdf';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import { connect } from 'react-redux';
-import { resetJumpToPage, togglePdfSidebar, toggleSearchBar, setZoomLevel
+import { resetJumpToPage, togglePdfSidebar, toggleSearchBar, setZoomLevel, jumpToPage
 } from '../reader/PdfViewer/PdfViewerActions';
 import { selectCurrentPdf, rotateDocument } from '../reader/Documents/DocumentsActions';
 import { stopPlacingAnnotation } from '../reader/AnnotationLayer/AnnotationActions';
@@ -83,6 +83,10 @@ export class PdfUI extends React.Component {
         this.props.stopPlacingAnnotation('from-document-change');
       }
       this.props.resetJumpToPage();
+    }
+
+    if (prevProps.rotation !== this.props.rotation) {
+      this.props.jumpToPage(this.state.currentPage, this.props.doc.id);
     }
   }
 
@@ -337,7 +341,8 @@ const mapStateToProps = (state, props) => {
     loadError: state.pdf.documentErrors[props.doc.content_url],
     isPlacingAnnotation: state.annotationLayer.isPlacingAnnotation,
     ..._.pick(state.pdfViewer, 'hidePdfSidebar', 'scale'),
-    numPages
+    numPages,
+    rotation: _.get(state.documents, [props.doc.id, 'rotation'])
   };
 };
 const mapDispatchToProps = (dispatch) => (
@@ -348,7 +353,8 @@ const mapDispatchToProps = (dispatch) => (
     rotateDocument,
     selectCurrentPdf,
     toggleSearchBar,
-    setZoomLevel
+    setZoomLevel,
+    jumpToPage
   }, dispatch)
 );
 
