@@ -1,24 +1,5 @@
 require "rails_helper"
 
-def click_dropdown(opt_idx, container = page)
-  dropdown = container.find(".Select-control")
-  dropdown.click
-  yield if block_given?
-  dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{opt_idx}']").click
-end
-
-def generate_text(length)
-  charset = ("A".."Z").to_a.concat(("a".."z").to_a)
-  Array.new(length) { charset.sample }.join
-end
-
-def generate_words(n_words)
-  Array.new(n_words).map do
-    word_length = [rand(12), 3].max
-    generate_text(word_length)
-  end.join(" ")
-end
-
 RSpec.feature "Checkout flows" do
   let(:attorney_user) { FactoryBot.create(:default_user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
@@ -59,7 +40,7 @@ RSpec.feature "Checkout flows" do
     scenario "submits draft decision" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
-      click_dropdown 0
+      click_dropdown(index: 0)
       click_label "radiation"
 
       click_on "Continue"
@@ -68,7 +49,7 @@ RSpec.feature "Checkout flows" do
       click_on "Cancel"
       click_on "Yes, cancel"
 
-      click_dropdown 0
+      click_dropdown(index: 0)
 
       # Radiation should still be checked
       expect(page).to have_field("radiation", checked: true, visible: false)
@@ -99,7 +80,7 @@ RSpec.feature "Checkout flows" do
       fill_in "notes", with: "note"
 
       safe_click "#select-judge"
-      click_dropdown 0
+      click_dropdown(index: 0)
 
       click_on "Continue"
       expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
@@ -133,7 +114,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(issue_description)
         expect(page).to have_content(issue_note)
 
-        click_dropdown 0
+        click_dropdown(index: 0)
 
         click_on "Continue"
 
@@ -208,7 +189,7 @@ RSpec.feature "Checkout flows" do
         fill_in "notes", with: "note"
 
         safe_click "#select-judge"
-        click_dropdown 0
+        click_dropdown(index: 0)
 
         click_on "Continue"
         expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
@@ -225,7 +206,7 @@ RSpec.feature "Checkout flows" do
         User.authenticate!(user: judge_user)
         visit "/queue"
         click_on "(#{appeal.veteran_file_number})"
-        click_dropdown 0
+        click_dropdown(index: 0)
 
         # Skip the special issues page
         click_on "Continue"
@@ -289,7 +270,7 @@ RSpec.feature "Checkout flows" do
       scenario "attorney checkout flow from case detail view loads" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown 0
+        click_dropdown(index: 0)
 
         expect(page).to have_content "Select Dispositions"
 
@@ -301,7 +282,7 @@ RSpec.feature "Checkout flows" do
         expect(cancel_modal.matches_css?(".active")).to eq true
         cancel_modal.find(".usa-button-warning").click
 
-        click_dropdown 1
+        click_dropdown(index: 1)
 
         expect(page).to have_content "Submit OMO for Review"
 
@@ -316,7 +297,7 @@ RSpec.feature "Checkout flows" do
         visit "/queue"
 
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown 1
+        click_dropdown(index: 1)
 
         expect(page).to have_content "Back"
 
@@ -333,7 +314,7 @@ RSpec.feature "Checkout flows" do
       scenario "selects issue dispositions" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown 0
+        click_dropdown(index: 0)
 
         expect(page).to have_content("Select Dispositions")
 
@@ -341,7 +322,7 @@ RSpec.feature "Checkout flows" do
         expect(table_rows.length).to eq(appeal.issues.length)
 
         # do not select all dispositions
-        table_rows[0..0].each { |row| click_dropdown 1, row }
+        table_rows[0..0].each { |row| click_dropdown({ index: 1 }, row) }
 
         click_on "Continue"
 
@@ -351,7 +332,7 @@ RSpec.feature "Checkout flows" do
         end
 
         # select all dispositions
-        table_rows.each { |row| click_dropdown 2, row }
+        table_rows.each { |row| click_dropdown({ index: 2 }, row) }
 
         click_on "Continue"
 
@@ -361,7 +342,7 @@ RSpec.feature "Checkout flows" do
       scenario "submits draft decision" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown 0
+        click_dropdown(index: 0)
 
         issue_dispositions = page.find_all(".Select-control", text: "Select Disposition", count: appeal.issues.length)
 
@@ -400,7 +381,7 @@ RSpec.feature "Checkout flows" do
         # Expect this to be populated with all judge_staff we've created
         # by way of FactoryBot.create(:staff, :judge_role...
         safe_click "#select-judge"
-        click_dropdown 0
+        click_dropdown(index: 0)
         expect(page).to have_content(judge_user.full_name)
 
         click_on "Continue"
@@ -415,7 +396,7 @@ RSpec.feature "Checkout flows" do
       scenario "submits omo request" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown 1
+        click_dropdown(index: 1)
 
         expect(page).to have_content("Submit OMO for Review")
 
@@ -434,7 +415,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(dummy_note[0..349])
 
         safe_click("#select-judge")
-        click_dropdown 0
+        click_dropdown(index: 0)
         expect(page).to have_content(judge_user.full_name)
 
         click_on "Continue"
@@ -448,7 +429,7 @@ RSpec.feature "Checkout flows" do
       scenario "deletes issue" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown 0
+        click_dropdown(index: 0)
 
         expect(page).to have_content("Select Dispositions")
 
@@ -504,7 +485,7 @@ RSpec.feature "Checkout flows" do
       scenario "edits issue information" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown 0
+        click_dropdown(index: 0)
 
         expect(page).to have_content("Select Dispositions")
 
@@ -517,7 +498,7 @@ RSpec.feature "Checkout flows" do
           # changing options at the top of the form affects what options are enabled further down
           next if row.matches_css? ".is-disabled"
 
-          click_dropdown 1, row
+          click_dropdown({ index: 1 }, row)
           row.find(".Select-value-label").text
         end
         fill_in "Notes:", with: "this is the note"
@@ -534,7 +515,7 @@ RSpec.feature "Checkout flows" do
       scenario "shows/hides diagnostic code option" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown 0
+        click_dropdown(index: 0)
 
         expect(page).to have_content "Select Dispositions"
 
@@ -555,7 +536,7 @@ RSpec.feature "Checkout flows" do
       scenario "adds issue" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-        click_dropdown 0
+        click_dropdown(index: 0)
 
         expect(page).to have_content "Select Dispositions"
 
@@ -645,7 +626,7 @@ RSpec.feature "Checkout flows" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
 
-      click_dropdown 0 do
+      click_dropdown(index: 0) do
         visible_options = page.find_all(".Select-option")
         expect(visible_options.length).to eq 1
         expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
@@ -715,7 +696,7 @@ RSpec.feature "Checkout flows" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
-        click_dropdown 0 do
+        click_dropdown(index: 0) do
           visible_options = page.find_all(".Select-option")
           expect(visible_options.length).to eq 1
           expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
@@ -755,7 +736,7 @@ RSpec.feature "Checkout flows" do
       scenario "completes assign to omo checkout flow" do
         visit "/queue/appeals/#{appeal.vacols_id}"
 
-        click_dropdown 0 do
+        click_dropdown(index: 0) do
           visible_options = page.find_all(".Select-option")
           expect(visible_options.length).to eq 1
           expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_OMO_LABEL
@@ -857,7 +838,7 @@ RSpec.feature "Checkout flows" do
       vet_name = appeal.veteran_full_name
 
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
-      click_dropdown 0
+      click_dropdown(index: 0)
 
       expect(page).to have_content(COPY::MARK_TASK_COMPLETE_BUTTON)
       click_on COPY::MARK_TASK_COMPLETE_BUTTON
@@ -880,13 +861,13 @@ RSpec.feature "Checkout flows" do
 
       expect(page).to have_content("Actions")
 
-      click_dropdown 1
+      click_dropdown(index: 1)
 
       expect(page).to have_content(
         format(COPY::COLOCATED_ACTION_PLACE_HOLD_HEAD, vet_name, appeal.sanitized_vbms_id)
       )
 
-      click_dropdown 6
+      click_dropdown(index: 6)
       expect(page).to have_content(COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)
 
       hold_duration = [rand(100), 1].max
@@ -914,7 +895,7 @@ RSpec.feature "Checkout flows" do
       vet_name = appeal.veteran_full_name
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
 
-      click_dropdown 0
+      click_dropdown(index: 0)
 
       expect(page).to have_content(
         format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, team_name)
