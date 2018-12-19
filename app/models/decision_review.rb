@@ -87,6 +87,7 @@ class DecisionReview < ApplicationRecord
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash),
+      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize)
     }
   end
@@ -172,6 +173,13 @@ class DecisionReview < ApplicationRecord
   def contestable_issues
     return contestable_issues_from_decision_issues if non_comp?
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
+  end
+
+  def active_nonrating_request_issues
+    @active_nonrating_request_issues ||= RequestIssue.nonrating
+      .where(veteran_participant_id: veteran.participant_id)
+      .where.not(id: request_issues.map(&:id))
+      .select(&:status_active?)
   end
 
   private
