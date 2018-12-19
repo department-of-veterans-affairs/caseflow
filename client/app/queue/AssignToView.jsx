@@ -32,6 +32,7 @@ type Params = {|
   task: Task,
   isReassignAction: boolean,
   isTeamAssign: boolean,
+  returnToCaseDetails: boolean,
   assigneeAlreadySelected: boolean,
   history: Object
 |};
@@ -220,9 +221,10 @@ const propsToText = (props) => {
   // I think the editModalBase higher order component is still calling this after all of the actions have run and the
   // task's available actions have been updated to reflect the updated status of the task.
   const action = props.task && props.task.availableActions.length > 0 ? selectedAction(props) : null;
-  const alreadySelectedAndAction = (props.assigneeAlreadySelected && action);
-  const title = alreadySelectedAndAction ? sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label) : COPY.ASSIGN_TASK_TITLE;
-  const pathAfterSubmit = `/queue/appeals/${props.appealId}`;
+  const title = (props.assigneeAlreadySelected && action) ?
+    sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label) :
+    COPY.ASSIGN_TASK_TITLE;
+  const pathAfterSubmit = props.returnToCaseDetails ? `/queue/appeals/${props.appealId}` : '/queue';
 
   return {
     title,
