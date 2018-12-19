@@ -79,7 +79,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       const dayCountSinceAssignment = today.diff(dateAssigned, 'days');
 
       return <React.Fragment>
-        <dt>{COPY.CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL}</dt><dd>{dayCountSinceAssignment}</dd>
+        <dt>{COPY.TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL}</dt><dd>{dayCountSinceAssignment}</dd>
       </React.Fragment>;
     }
 
@@ -129,18 +129,18 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       this.getAbbrevName(primaryTask.decisionPreparedBy) : null;
 
     return <React.Fragment>
-      <dt>Assigned to</dt><dd>{primaryTask.assignedTo.cssId}</dd>
+      <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{primaryTask.assignedTo.cssId}</dd>
       { assignedByAbbrev &&
         <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
+          <dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
         </React.Fragment> }
       { preparedByAbbrev &&
         <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{preparedByAbbrev}</dd>
+          <dt>{COPY.TASK_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{preparedByAbbrev}</dd>
         </React.Fragment> }
       { primaryTask.label &&
         <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{this.getActionName()}</dd>
+          <dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{this.getActionName()}</dd>
         </React.Fragment> }
       { taskIsOnHold(primaryTask) &&
         <React.Fragment>
@@ -150,7 +150,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       }
       { primaryTask.instructions &&
         <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+          <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
           <dd>{this.taskInstructionsWithLineBreaks(primaryTask.instructions)}</dd>
         </React.Fragment> }
     </React.Fragment>;
@@ -175,7 +175,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       this.getAbbrevName(primaryTask.assignedBy) : null;
 
     const assignedToListItem = <React.Fragment>
-      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
+      <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
     </React.Fragment>;
 
     if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
@@ -190,19 +190,19 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
       if (userRole === USER_ROLE_TYPES.judge) {
         return <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{assignedByAbbrev}</dd>
+          <dt>{COPY.TASK_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{assignedByAbbrev}</dd>
         </React.Fragment>;
       } else if (userRole === USER_ROLE_TYPES.colocated) {
         return <React.Fragment>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[primaryTask.label]}</dd>
-          <dt>{COPY.CASE_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
+          <dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[primaryTask.label]}</dd>
+          <dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
           { taskIsOnHold(primaryTask) &&
             <React.Fragment>
               <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
               <dd><OnHoldLabel task={primaryTask} /></dd>
             </React.Fragment>
           }
-          <dt>{COPY.CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+          <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
           <dd>{this.taskInstructionsWithLineBreaks(primaryTask.instructions)}</dd>
         </React.Fragment>;
       }
@@ -210,12 +210,12 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
     return <React.Fragment>
       { primaryTask.addedByName && <React.Fragment>
-        <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
+        <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
         <dd>{primaryTask.addedByName}</dd>
       </React.Fragment> }
-      <dt>{COPY.CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
+      <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
       <dd><DateString date={primaryTask.assignedOn} dateFormat="MM/DD/YY" /></dd>
-      <dt>{COPY.CASE_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
+      <dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
       <dd><DateString date={primaryTask.dueOn} dateFormat="MM/DD/YY" /></dd>
     </React.Fragment>;
   };
@@ -246,51 +246,53 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     } = this.props;
     const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
+    let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
+    if (this.props.primaryTask) {
+      sectionBody = <table {...css({ width: '100%', marginTop: 0 })}>
+        <tbody>
+          <tr>
+            <td {...leftTableCell} {...css({ width: '20%' })}>
+              <CaseDetailsDescriptionList>
+                <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
+                <dd>{primaryTask && primaryTask.assignedOn &&
+                    moment(primaryTask.assignedOn).format('MM/DD/YYYY')}</dd>
+                {this.daysSinceTaskAssignmentListItem()}
+              </CaseDetailsDescriptionList>
+            </td>
+            <td {...tableCellWithIcon}><GrayDot /><div {...grayLine} /></td>
+            <td {...tableCell} {...css({ width: '25%' })}>
+              <CaseDetailsDescriptionList>
+                { !taskAssignedToVso && appeal.assignedJudge &&
+                  <React.Fragment>
+                    <dt>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
+                    <dd>{appeal.assignedJudge.full_name}</dd>
+                  </React.Fragment> }
+                { !taskAssignedToVso && appeal.assignedAttorney &&
+                  <React.Fragment>
+                    <dt>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
+                    <dd>{appeal.assignedAttorney.full_name}</dd>
+                  </React.Fragment> }
+                {this.legacyTaskInformation()}
+              </CaseDetailsDescriptionList>
+            </td>
+            <td {...tableCell} {...css({ width: '50%' })}>
+              {this.showActionsSection() &&
+                <React.Fragment>
+                  <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
+                  <ActionsDropdown task={primaryTask} appealId={appeal.externalId} />
+                </React.Fragment>
+              }
+            </td>
+          </tr>
+        </tbody>
+      </table> }
+
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
-        <a id="our-elemnt" {...anchorJumpLinkStyling}>Currently active tasks</a>
+        <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}</a>
       </h2>
       <div {...sectionSegmentStyling}>
-        { this.props.primaryTask ? '' : 'No active tasks'}
-        { this.props.primaryTask && <table {...css({ width: '100%',
-          marginTop: 0 })}>
-          <tbody>
-            <tr>
-              <td {...leftTableCell} {...css({ width: '20%' })}>
-                <CaseDetailsDescriptionList>
-                  <dt>Assigned on</dt>
-                  <dd>{primaryTask && primaryTask.assignedOn &&
-                      moment(primaryTask.assignedOn).format('MM/DD/YYYY')}</dd>
-                  {this.daysSinceTaskAssignmentListItem()}
-                </CaseDetailsDescriptionList>
-              </td>
-              <td {...tableCellWithIcon}><GrayDot /><div {...grayLine} /></td>
-              <td {...tableCell} {...css({ width: '25%' })}>
-                <CaseDetailsDescriptionList>
-                  { !taskAssignedToVso && appeal.assignedJudge &&
-                    <React.Fragment>
-                      <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
-                      <dd>{appeal.assignedJudge.full_name}</dd>
-                    </React.Fragment> }
-                  { !taskAssignedToVso && appeal.assignedAttorney &&
-                    <React.Fragment>
-                      <dt>{COPY.CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
-                      <dd>{appeal.assignedAttorney.full_name}</dd>
-                    </React.Fragment> }
-                  {this.legacyTaskInformation()}
-                </CaseDetailsDescriptionList>
-              </td>
-              <td {...tableCell} {...css({ width: '50%' })}>
-                {this.showActionsSection() &&
-                  <React.Fragment>
-                    <h3>{COPY.CASE_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-                    <ActionsDropdown task={primaryTask} appealId={appeal.externalId} />
-                  </React.Fragment>
-                }
-              </td>
-            </tr>
-          </tbody>
-        </table> }
+        { sectionBody }
       </div>
     </div>;
   };
