@@ -67,9 +67,6 @@ gem "rainbow"
 # Used to speed up reporting
 gem "parallel"
 
-# execjs runtime
-gem "therubyracer", platforms: :ruby
-
 gem "pg", platforms: :ruby
 
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "70a297053cfba50731a41e8bd31ab079bc1ac460"
