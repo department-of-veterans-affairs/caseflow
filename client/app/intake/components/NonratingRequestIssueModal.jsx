@@ -169,6 +169,7 @@ class NonratingRequestIssueModal extends React.Component {
     });
 
     let nonratingRequestIssueSelection = null;
+
     if (nonratingRequestIssueOptions.length >= 2) {
       nonratingRequestIssueSelection = <RadioField
         vertical
@@ -178,10 +179,11 @@ class NonratingRequestIssueModal extends React.Component {
         key={category}
         value={selectedNonratingIssueId}
         onChange={this.selectedNonratingIssueIdOnChange}
-      />
+      />;
     }
 
     let additionalDetails = null;
+
     if (selectedNonratingIssueId === NO_MATCH_TEXT || !nonratingRequestIssueSelection) {
       additionalDetails = <React.Fragment>
         <div className="decision-date">
@@ -198,7 +200,7 @@ class NonratingRequestIssueModal extends React.Component {
           strongLabel
           value={description}
           onChange={this.descriptionOnChange} />
-      </React.Fragment>
+      </React.Fragment>;
     }
 
     return <div className="intake-add-issues">
