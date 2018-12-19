@@ -45,8 +45,7 @@ module Asyncable
     end
 
     def processable
-      where.not(submitted_at_column => nil)
-      .where(processed_at_column => nil)
+      where.not(submitted_at_column => nil).where(processed_at_column => nil)
     end
 
     def ready_for_processing
