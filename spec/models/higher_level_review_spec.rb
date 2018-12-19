@@ -220,8 +220,7 @@ describe HigherLevelReview do
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
                  rating_issue_reference_id: "rating2",
-                 profile_date: profile_date
-               ),
+                 profile_date: profile_date),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: "not a dta error")
