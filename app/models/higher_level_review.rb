@@ -10,10 +10,6 @@ class HigherLevelReview < ClaimReview
     pension_nonrating: "030HLRNRPMC"
   }.freeze
 
-  END_PRODUCT_RATING_CODE = "030HLRR".freeze
-  END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
-  PENSION_END_PRODUCT_RATING_CODE = "030HLRNRPMC".freeze
-  PENSION_END_PRODUCT_NONRATING_CODE = "030HLRRPMC".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
 
   # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
