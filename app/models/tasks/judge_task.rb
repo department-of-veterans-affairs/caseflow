@@ -1,7 +1,5 @@
 class JudgeTask < Task
-  include Timer
-
-  def when_expired; end
+  include RoundRobinAssigner
 
   def actions_available?(user)
     assigned_to == user
