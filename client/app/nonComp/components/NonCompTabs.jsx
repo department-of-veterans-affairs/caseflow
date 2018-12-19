@@ -28,32 +28,32 @@ class NonCompTabsUnconnected extends React.PureComponent {
 
 const claimantColumn = () => {
   return {
-    header: "Claimant",
+    header: 'Claimant',
     valueFunction: (task) => {
       return <Link to={`/queue/${task.type}/${task.id}`}>{task.claimant}</Link>;
     },
     getSortValue: (task) => task.claimant
-  }
-}
+  };
+};
 
 const veteranSsnColumn = () => {
   return {
-    header: "Veteran SSN",
+    header: 'Veteran SSN',
     valueFunction: (task) => task.veteranSSN,
     getSortValue: (task) => task.veteranSSN
-  }
-}
+  };
+};
 
 const appealTypeColumn = () => {
   return {
-    header: "Type",
+    header: 'Type',
     valueFunction: (task) => task.type,
     getSortValue: (task) => task.type,
     // order determines where this column displays
     // make it 100 so this column is always last
     order: 100
-  }
-}
+  };
+};
 
 const TaskTableTab = ({ description, tasks }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
@@ -63,7 +63,7 @@ const TaskTableTab = ({ description, tasks }) => <React.Fragment>
     includeIssueCount
     includeDaysWaiting
     tasks={tasks}
-   />
+  />
 </React.Fragment>;
 
 const NonCompTabs = connect(
