@@ -1,9 +1,7 @@
 class JudgeTask < Task
   include Timer
 
-  def when_expired
-
-  end
+  def when_expired; end
 
   def actions_available?(user)
     assigned_to == user

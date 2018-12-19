@@ -125,7 +125,8 @@ describe RootTask do
           RootTask.create_root_and_sub_tasks!(appeal)
           expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).status).to eq("in_progress")
           expect(EvidenceSubmissionWindowTask.find_by(
-            appeal: appeal).parent.class.name).to eq("InformalHearingPresentationTask")
+            appeal: appeal
+          ).parent.class.name).to eq("InformalHearingPresentationTask")
         end
       end
     end

@@ -8,7 +8,7 @@ class Task < ApplicationRecord
   has_many :task_business_payloads
 
   validates :assigned_to, :appeal, :type, :status, presence: true
- 
+
   before_create :set_assigned_at_and_update_parent_status
   before_update :set_timestamps
 

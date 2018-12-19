@@ -73,17 +73,17 @@ class RootTask < GenericTask
     end
 
     def create_subtasks!(appeal, parent)
-      if needs_subtask(appeal) 
-       distribution_status = Constants.TASK_STATUSES.on_hold
-      else
-       distribution_status = Constants.TASK_STATUSES.in_progress
-      end
+      distribution_status = if needs_subtask(appeal)
+                              Constants.TASK_STATUSES.on_hold
+                            else
+                              Constants.TASK_STATUSES.in_progress
+                            end
 
-      if appeal.evidence_submission_docket?
-        ihp_status = Constants.TASK_STATUSES.on_hold
-      else
-        ihp_status = Constants.TASK_STATUSES.in_progress
-      end
+      ihp_status = if appeal.evidence_submission_docket?
+                     Constants.TASK_STATUSES.on_hold
+                   else
+                     Constants.TASK_STATUSES.in_progress
+                   end
 
       transaction do
         distribution_task = create_distribution_task!(appeal, parent, distribution_status)
