@@ -90,6 +90,8 @@ class RemandReasonRepository
       return
     end
 
+    fail_if_no_remand_reasons!(new_disposition, issue_attrs[:remand_reasons])
+
     remand_reasons = RemandReasonMapper.convert_to_vacols_format(
       issue_attrs[:vacols_user_id],
       issue_attrs[:remand_reasons]
@@ -100,6 +102,13 @@ class RemandReasonRepository
       update_remand_reasons!(*args)
     elsif new_disposition.eql?("Remanded")
       create_remand_reasons!(*args)
+    end
+  end
+
+  def self.fail_if_no_remand_reasons!(new_disposition, remand_reasons)
+    if new_disposition == "Remanded" && remand_reasons.blank?
+      msg = "Remand reasons must be present when issue disposition is remanded"
+      fail Caseflow::Error::RemandReasonRepositoryError, msg
     end
   end
 end

@@ -132,6 +132,25 @@ describe Appeal do
     end
   end
 
+  context "#every_request_issue_has_decision" do
+    let(:appeal) { create(:appeal, request_issues: [request_issue]) }
+    let(:request_issue) { create(:request_issue, decision_issues: decision_issues) }
+
+    subject { appeal.every_request_issue_has_decision? }
+
+    context "when no decision issues" do
+      let(:decision_issues) { [] }
+
+      it { is_expected.to eq false }
+    end
+
+    context "when decision issues" do
+      let(:decision_issues) { [create(:decision_issue)] }
+
+      it { is_expected.to eq true }
+    end
+  end
+
   context "#docket_number" do
     context "when receipt_date is defined" do
       let(:appeal) do
