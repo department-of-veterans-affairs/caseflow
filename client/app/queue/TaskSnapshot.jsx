@@ -264,7 +264,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         marginTop: 0 })}>
         <tbody>
           <tr>
-            <td {...leftTableCell}>
+            <td {...taskTimeContainerStyling}>
               <CaseDetailsDescriptionList>
                 <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
                 <dd>{primaryTask && primaryTask.assignedOn &&
@@ -272,8 +272,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
                 {this.daysSinceTaskAssignmentListItem()}
               </CaseDetailsDescriptionList>
             </td>
-            <td {...tableCellWithIcon}><GrayDot /><div {...grayLineStyling} /></td>
-            <td {...tableCell}>
+            <td {...taskInfoWithIconContainer}><GrayDot /><div {...grayLineStyling} /></td>
+            <td {...taskInformationContainerStyling}>
               <CaseDetailsDescriptionList>
                 { !taskAssignedToVso && appeal.assignedJudge &&
                   <React.Fragment>
@@ -288,7 +288,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
                 {this.legacyTaskInformation()}
               </CaseDetailsDescriptionList>
             </td>
-            <td {...tableCell} {...css({ width: '50%' })}>
+            <td {...taskInformationContainerStyling} {...css({ width: '50%' })}>
               {this.showActionsSection() &&
                 <React.Fragment>
                   <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
