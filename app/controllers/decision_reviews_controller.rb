@@ -5,7 +5,7 @@ class DecisionReviewsController < ApplicationController
     if business_line
       render "index"
     else
-      # todo: make index show error message
+      # TODO: make index show error message
       render json: { error: "#{business_line_slug} not found" }, status: 404
     end
   end
