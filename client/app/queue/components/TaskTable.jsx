@@ -55,7 +55,7 @@ type Props = Params & {|
   userRole: string
 |};
 
-class TaskTable extends React.PureComponent<Props> {
+export class TaskTableUnconnected extends React.PureComponent<Props> {
   getKeyForRow = (rowNumber, object: TaskWithAppeal) => object.uniqueId
 
   isTaskSelected = (uniqueId) => {
@@ -274,22 +274,23 @@ class TaskTable extends React.PureComponent<Props> {
   }
 
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
-    _.compact([
-      this.caseHearingColumn(),
-      this.caseSelectColumn(),
-      this.caseDetailsColumn(),
-      this.caseTaskColumn(),
-      this.caseDocumentIdColumn(),
-      this.caseTypeColumn(),
-      this.caseDocketNumberColumn(),
-      this.caseIssueCountColumn(),
-      this.caseDueDateColumn(),
-      this.caseDaysWaitingColumn(),
-      this.caseDaysOnHoldColumn(),
-      this.completedDateColumn(),
-      this.completedToNameColumn(),
-      this.caseReaderLinkColumn()
-    ]);
+    _.orderBy((this.props.customColumns || []).concat(
+      _.compact([
+        this.caseHearingColumn(),
+        this.caseSelectColumn(),
+        this.caseDetailsColumn(),
+        this.caseTaskColumn(),
+        this.caseDocumentIdColumn(),
+        this.caseTypeColumn(),
+        this.caseDocketNumberColumn(),
+        this.caseIssueCountColumn(),
+        this.caseDueDateColumn(),
+        this.caseDaysWaitingColumn(),
+        this.caseDaysOnHoldColumn(),
+        this.completedDateColumn(),
+        this.completedToNameColumn(),
+        this.caseReaderLinkColumn()
+      ])), ['order'], ['desc']);
 
   getDefaultSortableColumn = () => {
     const index = _.findIndex(this.getQueueColumns(),
@@ -308,7 +309,7 @@ class TaskTable extends React.PureComponent<Props> {
     return <Table
       columns={this.getQueueColumns}
       rowObjects={tasks}
-      getKeyForRow={this.getKeyForRow}
+      getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
       defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
       rowClassNames={(task) =>
         this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
@@ -327,4 +328,4 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
-export default (connect(mapStateToProps, mapDispatchToProps)(TaskTable): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(TaskTableUnconnected): React.ComponentType<Params>);
