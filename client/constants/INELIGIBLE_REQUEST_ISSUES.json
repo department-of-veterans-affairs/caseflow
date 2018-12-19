@@ -1,5 +1,5 @@
 {
-  "duplicate_of_issue_in_active_review": "is ineligible because it's already under review as a {review_title}",
+  "duplicate_of_rating_issue_in_active_review": "is ineligible because it's already under review as a {review_title}",
   "untimely": "is ineligible because it has a prior decision date that’s older than 1 year",
   "before_ama": "is ineligible because it has a prior decision date before February 14, 2019",
   "previous_higher_level_review": "is ineligible because it was last processed as a Higher-Level Review and this can't be done twice in a row",

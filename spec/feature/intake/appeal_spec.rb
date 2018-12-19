@@ -575,7 +575,7 @@ RSpec.feature "Appeal Intake" do
     )).to_not be_nil
 
     duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
-    ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+    ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
 
     expect(duplicate_request_issues.count).to eq(2)
     expect(duplicate_request_issues).to include(request_issue_in_progress)
