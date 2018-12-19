@@ -318,7 +318,7 @@ class SelectDispositionsView extends React.PureComponent {
         />
         {
           connectedRequestIssues.filter((issue) => {
-            return issue.id !== openRequestIssueId
+            return issue.id !== openRequestIssueId;
           }).map((issue) =>
             <div key={issue.id} {...connectedIssueDiv}>
               <span>{issue.description}</span>

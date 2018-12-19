@@ -270,7 +270,7 @@ RSpec.feature "Checkout flows" do
           decision.remand_reasons.first.code
         end
 
-        expect(remand_reasons).to match_array(["service_treatment_records", "medical_examinations"])
+        expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
         expect(appeal.decision_issues.second.disposition).to eq("remanded")
         expect(appeal.decision_issues.third.disposition).to eq("allowed")
         expect(appeal.decision_issues.last.request_issues.count).to eq(2)
@@ -324,7 +324,7 @@ RSpec.feature "Checkout flows" do
           decision.remand_reasons.first.code
         end
 
-        expect(remand_reasons).to match_array(["service_treatment_records", "medical_examinations"])
+        expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
         expect(appeal.decision_issues.where(disposition: "remanded").count).to eq(2)
         expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(2)
         expect(appeal.request_issues.map { |issue| issue.decision_issues.count }).to match_array([3, 1])
