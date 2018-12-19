@@ -8,7 +8,7 @@ describe DecisionReviewsController, type: :controller do
   end
 
   describe "#index" do
-    let!(:non_comp_org) { create(:noncomp, name: "Non-Comp Org", url: "nco") }
+    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
     let(:user) { create(:default_user) }
 
     before do
