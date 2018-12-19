@@ -1,6 +1,15 @@
 class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
 
+  def index
+    if business_line
+      render "index"
+    else
+      # todo: make index show error message
+      render json: { error: "#{business_line_slug} not found" }, status: 404
+    end
+  end
+
   def business_line_slug
     params.permit(:business_line_slug)[:business_line_slug]
   end

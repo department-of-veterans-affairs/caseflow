@@ -36,8 +36,7 @@ describe DecisionReviewsController, type: :controller do
       end
     end
 
-    # todo, swap out this test with a feature test
-    context "business-line-slug is not found", skip: true do
+    context "business-line-slug is not found" do
       it "returns 404" do
         get :index, params: { business_line_slug: "foobar" }
 
