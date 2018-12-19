@@ -127,13 +127,13 @@ export default class AssignHearings extends React.Component {
       docketNumber: appeal.attributes.docketNumber,
       location: this.getAppealLocation(appeal),
       time: null,
-      vacolsId: appeal.attributes.externalId
+      externalId: appeal.attributes.externalId
     }));
   };
 
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
-      vacolsId: hearing.appealVacolsId,
+      externalId: hearing.appealVacolsId,
       caseDetails: `${hearing.appellantMiFormatted || hearing.veteranMiFormatted} | ${hearing.vbmsId}`,
       type: renderAppealType({
         caseType: hearing.appealType,
@@ -169,8 +169,8 @@ export default class AssignHearings extends React.Component {
         align: 'left',
         valueName: 'caseDetails',
         valueFunction: (appeal) => <Link
-          href={`/queue/appeals/${appeal.vacolsId}/${qry}`}
-          name={appeal.vacolsId}>
+          href={`/queue/appeals/${appeal.externalId}/${qry}`}
+          name={appeal.externalId}>
           {appeal.caseDetails}
         </Link>
       },
