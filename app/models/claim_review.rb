@@ -69,7 +69,9 @@ class ClaimReview < DecisionReview
   end
 
   def rating_end_product_establishment
-    @rating_end_product_establishment ||= end_product_establishments.find_by(code: self.class::END_PRODUCT_CODES[:rating])
+    @rating_end_product_establishment ||= end_product_establishments.find_by(
+      code: self.class::END_PRODUCT_CODES[:rating]
+    )
   end
 
   def end_product_description
@@ -81,7 +83,6 @@ class ClaimReview < DecisionReview
   end
 
   def valid_modifiers
-    binding.pry
     self.class::END_PRODUCT_MODIFIERS
   end
 
