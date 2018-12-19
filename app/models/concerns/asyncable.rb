@@ -31,6 +31,10 @@ module Asyncable
       :processed_at
     end
 
+    def ready_for_processing_at_column
+      :ready_for_processing_at
+    end
+
     def error_column
       :error
     end
@@ -40,7 +44,14 @@ module Asyncable
     end
 
     def processable
-      where.not(submitted_at_column => nil).where(processed_at_column => nil)
+      where.not(submitted_at_column => nil)
+      .where(processed_at_column => nil)
+    end
+
+    def ready_for_processing
+      # TODO: timezone
+      where(ready_for_processing_at_column => nil)
+        .or(arel_table[ready_for_processing_at_column]).lt(Time.zone.now)
     end
 
     def never_attempted
@@ -60,7 +71,7 @@ module Asyncable
     end
 
     def requires_processing
-      processable.attemptable.unexpired.order_by_oldest_submitted
+      processable.ready_for_processing.attemptable.unexpired.order_by_oldest_submitted
     end
 
     def expired_without_processing
