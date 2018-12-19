@@ -1064,7 +1064,7 @@ RSpec.feature "Higher-Level Review" do
       let!(:active_nonrating_request_issue) do
         create(:request_issue_with_epe,
                :nonrating,
-               veteran_file_number: veteran_file_number,
+               veteran_participant_id: veteran.participant_id,
                review_request: another_higher_level_review)
       end
 
