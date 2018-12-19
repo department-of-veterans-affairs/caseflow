@@ -124,7 +124,7 @@ class RequestIssuesUpdate < ApplicationRecord
   def strip_removed_issues!
     removed_issues.each do |issue|
       issue.update!(review_request: nil)
-      issue.legacy_issue_optin.create_rollback! if issue.legacy_issue_optin
+      issue.legacy_issue_optin&.create_rollback!
     end
   end
 end

@@ -94,13 +94,6 @@ class RequestIssue < ApplicationRecord
       request_issue
     end
 
-    # Instead of fully deleting removed issues, we instead strip them from the review so we can
-    # maintain a record of the other data that was on them incase we need to revert the update.
-    def strip_removed_issue!
-      update!(review_request: nil)
-      rollback_legacy_issue_optin(request_issue: self) if legacy_issue_opted_in?
-    end
-
     private
 
     def attributes_from_intake_data(data)

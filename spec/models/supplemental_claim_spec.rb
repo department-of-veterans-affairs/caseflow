@@ -29,7 +29,10 @@ describe SupplementalClaim do
     let(:vacols_id) { nil }
     let(:vacols_sequence_id) { nil }
     let!(:request_issue) do
-      create(:request_issue, review_request: supplemental_claim, vacols_id: vacols_id, vacols_sequence_id: vacols_sequence_id)
+      create(:request_issue,
+             review_request: supplemental_claim,
+             vacols_id: vacols_id,
+             vacols_sequence_id: vacols_sequence_id)
     end
 
     subject { supplemental_claim.special_issues }

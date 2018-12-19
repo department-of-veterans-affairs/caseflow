@@ -548,7 +548,7 @@ class AppealRepository
     fail not_valid_to_reopen_err if disposition_code == "P" && %w[53 43].include?(previous_active_location)
 
     follow_up_appeal_key = "#{case_record.bfkey}P"
-    
+
     fail not_valid_to_reopen_err unless VACOLS::Case.where(bfkey: follow_up_appeal_key).count == 1
 
     VACOLS::Case.transaction do

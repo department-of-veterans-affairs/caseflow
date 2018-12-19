@@ -252,7 +252,7 @@ describe RequestIssuesUpdate do
           hash_including(
             veteran_file_number: review.veteran_file_number,
             contention_descriptions: ["Service connection for cancer was denied"],
-            special_issues: [{:code=>"VO", :narrative=>"AMA SOC/SSOC Opt-in"}]
+            special_issues: [{ code: "VO", narrative: "AMA SOC/SSOC Opt-in" }]
           )
         )
 

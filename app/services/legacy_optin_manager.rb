@@ -9,13 +9,9 @@ class LegacyOptinManager
 
   def process!
     VACOLS::Case.transaction do
-      pending_rollbacks.each do |legacy_issue_rollback|
-        legacy_issue_rollback.rollback!
-      end
+      pending_rollbacks.each(&:rollback!)
 
-      pending_opt_ins.each do |legacy_issue_opt_in|
-        legacy_issue_opt_in.opt_in!
-      end
+      pending_opt_ins.each(&:opt_in!)
 
       affected_legacy_appeals.each do |legacy_appeal|
         if legacy_appeal.issues.reject(&:closed?).empty?

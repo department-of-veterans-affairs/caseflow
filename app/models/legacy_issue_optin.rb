@@ -76,7 +76,7 @@ class LegacyIssueOptin < ApplicationRecord
   end
 
   def legacy_appeal_needs_reopened?
-    return false unless [nil, '3'].include? original_disposition_code
+    return false unless [nil, "3"].include? original_disposition_code
     legacy_appeal.case_record.bfmpro == "HIS" && legacy_appeal.case_record.bfcurloc == "99"
   end
 

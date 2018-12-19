@@ -33,7 +33,10 @@ describe HigherLevelReview do
     let(:vacols_id) { nil }
     let(:vacols_sequence_id) { nil }
     let!(:request_issue) do
-      create(:request_issue, review_request: higher_level_review, vacols_id: vacols_id, vacols_sequence_id: vacols_sequence_id)
+      create(:request_issue,
+             review_request: higher_level_review,
+             vacols_id: vacols_id,
+             vacols_sequence_id: vacols_sequence_id)
     end
 
     subject { higher_level_review.special_issues }
