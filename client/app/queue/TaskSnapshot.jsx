@@ -39,14 +39,19 @@ export const grayLineStyling = css({
   bottom: 0
 });
 
-const leftTableCell = css({
+const lastTask = css({
+  bottom: '150px',
+  marginBottom: '150px'
+});
+
+const taskTimeContainerStyling = css({
   border: 'none',
   verticalAlign: 'top',
   padding: '3px',
   width: '20%'
 });
 
-const tableCellWithIcon = css({
+const taskInfoWithIconContainer = css({
   textAlign: 'center',
   border: 'none',
   padding: '10px',
@@ -55,11 +60,15 @@ const tableCellWithIcon = css({
   width: '45px'
 });
 
-const tableCell = css({
+const taskInformationContainerStyling = css({
   border: 'none',
   verticalAlign: 'top',
   padding: '3px',
   width: '25%'
+});
+
+const titleLabel = css({
+  fontWeight: 'bold'
 });
 
 type Params = {|
