@@ -33,7 +33,7 @@ class BvaDispatchTask < GenericTask
       task.mark_as_complete!
       task.root_task.mark_as_complete!
     rescue ActiveRecord::RecordInvalid => e
-      raise(Caseflow::Error::OutcodeValidationFailure, mark_as_completessage: e.message) if e.message.match?(/^Validation failed:/)
+      raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message.match?(/^Validation failed:/)
       raise e
     end
 
@@ -46,8 +46,12 @@ class BvaDispatchTask < GenericTask
     def create_decision_document!(params)
       DecisionDocument.create!(params).tap do |decision_document|
         decision_document.submit_for_processing!
-        ProcessDecisionDocumentJob.set(wait: DecisionDocument::DECISION_OUTCODING_DELAY).perform_later(decision_document)
+        delayed_process_decision_document_job.perform_later(decision_document)
       end
+    end
+
+    def delayed_process_decision_document_job
+      ProcessDecisionDocumentJob.set(wait: DecisionDocument::DECISION_OUTCODING_DELAY)
     end
   end
 end

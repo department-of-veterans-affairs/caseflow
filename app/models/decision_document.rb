@@ -1,7 +1,7 @@
 class DecisionDocument < ApplicationRecord
   include Asyncable
   include UploadableDocument
-  
+
   class NoFileError < StandardError; end
 
   belongs_to :appeal
@@ -36,7 +36,6 @@ class DecisionDocument < ApplicationRecord
     attempted!
     VBMSService.upload_document_to_vbms(appeal, self)
     processed!
-
   rescue StandardError => err
     update_error!(err.to_s)
     raise err

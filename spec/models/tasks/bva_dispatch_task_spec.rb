@@ -59,9 +59,11 @@ describe BvaDispatchTask do
       before { BvaDispatchTask.create_and_assign(root_task) }
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
-        expect {
+        delayed_decision_time = Time.zone.now + DecisionDocument::DECISION_OUTCODING_DELAY
+
+        expect do
           BvaDispatchTask.outcode(root_task.appeal, params, user)
-        }.to have_enqueued_job(ProcessDecisionDocumentJob).at(Time.zone.now + DecisionDocument::DECISION_OUTCODING_DELAY)
+        end.to have_enqueued_job(ProcessDecisionDocumentJob).at(delayed_decision_time)
 
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
         expect(tasks.length).to eq(1)
