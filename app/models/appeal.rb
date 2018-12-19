@@ -100,6 +100,10 @@ class Appeal < DecisionReview
     tasks.map(&:attorney_case_reviews).flatten
   end
 
+  def every_request_issue_has_decision?
+    request_issues.all? { |request_issue| request_issue.decision_issues.present? }
+  end
+
   def reviewing_judge_name
     task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
     task ? task.assigned_to.try(:full_name) : ""
@@ -210,7 +214,7 @@ class Appeal < DecisionReview
 
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      issue.update!(benefit_type: benefit_type)
+      issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
     end
   end
