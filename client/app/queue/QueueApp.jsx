@@ -192,6 +192,8 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
 
+  routedAssignMailTaskToTeam = (props) => <AssignToView isTeamAssign returnToCaseDetails {...props.match.params} />;
+
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
@@ -288,7 +290,7 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedAssignToSingleTeam} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
-            render={this.routedAssignToTeam} />
+            render={this.routedAssignMailTaskToTeam} />
           <Route
             path={'/queue/appeals/:appealId/tasks/:taskId/' +
               `(${TASK_ACTIONS.ASSIGN_TO_PERSON.value}|${TASK_ACTIONS.RETURN_TO_JUDGE.value})`}
