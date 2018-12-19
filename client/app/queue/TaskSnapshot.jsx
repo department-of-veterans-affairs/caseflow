@@ -44,13 +44,14 @@ const lastTask = css({
   marginBottom: '150px'
 });
 
-const taskTimeContainerStyling = css({
+const taskContainerStyling = css({
   border: 'none',
   verticalAlign: 'top',
-  padding: '3px',
-  padding: '0',
-  width: '20%'
+  padding: '3px'
 });
+
+const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
+const taskInformationContainerStyling = css(taskContainerStyling, { width: '25%' });
 
 const taskInfoWithIconContainer = css({
   textAlign: 'center',
@@ -59,13 +60,6 @@ const taskInfoWithIconContainer = css({
   position: 'relative',
   verticalAlign: 'top',
   width: '45px'
-});
-
-const taskInformationContainerStyling = css({
-  border: 'none',
-  verticalAlign: 'top',
-  padding: '3px',
-  width: '25%'
 });
 
 const titleLabel = css({
