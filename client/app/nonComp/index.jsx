@@ -1,14 +1,13 @@
 import React from 'react';
 import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
 import NavigationBar from '../components/NavigationBar';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 
-import PageRoute from '../components/PageRoute';
 import NonCompPage from './pages/NonCompPage';
 import { nonCompReducer, mapDataToInitialState } from './reducers';
 
@@ -34,7 +33,7 @@ class NonComp extends React.PureComponent {
             <AppFrame>
               <AppSegment filledBackground>
                 <div>
-                  <NonCompPage/>
+                  <NonCompPage />
                 </div>
               </AppSegment>
             </AppFrame>

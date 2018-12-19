@@ -5,11 +5,20 @@ class DecisionReviewsController < ApplicationController
     params.permit(:business_line_slug)[:business_line_slug]
   end
 
+  def in_progress_tasks
+    business_line.tasks.reject(&:completed?)
+  end
+
+  def completed_tasks
+    business_line.tasks.select(&:completed?)
+  end
+
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
 
-  helper_method :business_line, :business_line_slug
+  helper_method :in_progress_tasks, :completed_tasks, :business_line
+
   private
 
   def set_application

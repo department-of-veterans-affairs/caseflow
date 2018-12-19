@@ -3,12 +3,12 @@ export const mapDataToInitialState = function(props = {}) {
 
   return {
     businessLine: serverNonComp.businessLine,
-    unassignedTasks: serverNonComp.unassignedTasks,
+    inProgressTasks: serverNonComp.inProgressTasks,
     completedTasks: serverNonComp.completedTasks,
     selectedTask: null
   };
 };
 
-export const nonCompReducer = (state = mapDataToInitialState(), action) => {
+export const nonCompReducer = (state = mapDataToInitialState()) => {
   return state;
 };
