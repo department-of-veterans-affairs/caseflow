@@ -745,7 +745,7 @@ RSpec.feature "Supplemental Claim Intake" do
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
       expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
