@@ -39,11 +39,6 @@ export const grayLineStyling = css({
   bottom: 0
 });
 
-const lastTask = css({
-  bottom: '150px',
-  marginBottom: '150px'
-});
-
 const taskTimeContainerStyling = css({
   border: 'none',
   verticalAlign: 'top',
@@ -65,10 +60,6 @@ const taskInformationContainerStyling = css({
   verticalAlign: 'top',
   padding: '3px',
   width: '25%'
-});
-
-const titleLabel = css({
-  fontWeight: 'bold'
 });
 
 type Params = {|
