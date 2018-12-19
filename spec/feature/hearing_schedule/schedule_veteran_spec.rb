@@ -26,7 +26,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_button("Schedule a Veteran")
       appeal_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       appeal_link.click
-      expect(page).to have_content("Actions")
+      expect(page).to have_content("Select an action")
       click_dropdown(index: 0)
       expect(page).to have_content("Time")
       radio_link = find(".cf-form-radio-option", match: :first)
@@ -69,7 +69,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_button("Schedule a Veteran")
       appeal_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       appeal_link.click
-      expect(page).to have_content("Actions")
+      expect(page).to have_content("Select an action")
       click_dropdown(index: 0)
       expect(page).to have_content("Time")
       radio_link = find(".cf-form-radio-option", match: :first)
