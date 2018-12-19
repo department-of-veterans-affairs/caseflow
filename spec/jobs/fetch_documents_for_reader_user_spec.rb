@@ -36,19 +36,18 @@ describe FetchDocumentsForReaderUserJob do
       end
     end
 
-    let(:ama_appeal) do
-      create(
-        :appeal,
-        documents: [document]
-      )
-    end
-
     context "when a reader user with 1 ama appeal is provided" do
+      let(:ama_appeal) do
+        create(
+          :appeal,
+          documents: [document]
+        )
+      end
       let!(:task) do
         create(
           :ama_attorney_task,
           :in_progress,
-          assigned_to: reader_user,
+          assigned_to: user,
           appeal: ama_appeal
         )
       end
