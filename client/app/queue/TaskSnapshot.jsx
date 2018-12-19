@@ -29,7 +29,7 @@ import {
   anchorJumpLinkStyling
 } from './StickyNavContentArea';
 
-export const grayLine = css({
+export const grayLineStyling = css({
   width: '5px',
   background: COLORS.GREY_LIGHT,
   margin: 'auto',
@@ -42,7 +42,8 @@ export const grayLine = css({
 const leftTableCell = css({
   border: 'none',
   verticalAlign: 'top',
-  padding: '3px'
+  padding: '3px',
+  width: '20%'
 });
 
 const tableCellWithIcon = css({
@@ -57,7 +58,8 @@ const tableCellWithIcon = css({
 const tableCell = css({
   border: 'none',
   verticalAlign: 'top',
-  padding: '3px'
+  padding: '3px',
+  width: '25%'
 });
 
 type Params = {|
@@ -253,7 +255,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         marginTop: 0 })}>
         <tbody>
           <tr>
-            <td {...leftTableCell} {...css({ width: '20%' })}>
+            <td {...leftTableCell}>
               <CaseDetailsDescriptionList>
                 <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
                 <dd>{primaryTask && primaryTask.assignedOn &&
@@ -261,8 +263,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
                 {this.daysSinceTaskAssignmentListItem()}
               </CaseDetailsDescriptionList>
             </td>
-            <td {...tableCellWithIcon}><GrayDot /><div {...grayLine} /></td>
-            <td {...tableCell} {...css({ width: '25%' })}>
+            <td {...tableCellWithIcon}><GrayDot /><div {...grayLineStyling} /></td>
+            <td {...tableCell}>
               <CaseDetailsDescriptionList>
                 { !taskAssignedToVso && appeal.assignedJudge &&
                   <React.Fragment>
