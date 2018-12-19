@@ -83,7 +83,7 @@ const getChecklistItems = (formType, requestIssues, isInformalConferenceRequeste
 
 const ineligibilityCopy = (issue) => {
   if (issue.titleOfActiveReview) {
-    return INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.replace(
+    return INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.replace(
       '{review_title}', issue.titleOfActiveReview
     );
   } else if (issue.ineligibleReason) {
