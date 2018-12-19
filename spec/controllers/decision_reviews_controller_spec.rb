@@ -29,11 +29,10 @@ describe DecisionReviewsController, type: :controller do
         OrganizationsUser.add_user_to_organization(user, non_comp_org)
       end
 
-      it "returns all tasks" do
+      it "displays org queue page" do
         get :index, params: { business_line_slug: non_comp_org.url }
 
         expect(response.status).to eq 200
-        expect(response.body).to eq({ tasks: [] }.to_json)
       end
     end
 
