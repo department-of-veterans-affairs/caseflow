@@ -1,5 +1,6 @@
 class JudgeCaseReview < ApplicationRecord
   include CaseReviewConcern
+  include IssueUpdater
 
   belongs_to :judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
@@ -31,6 +32,11 @@ class JudgeCaseReview < ApplicationRecord
       sign_decision_or_create_omo!
       update_issue_dispositions_in_vacols! if bva_dispatch? || quality_review?
     end
+  end
+
+  def update_in_caseflow!
+    task.mark_as_complete!
+    update_issue_dispositions_in_caseflow!
   end
 
   private
@@ -71,7 +77,7 @@ class JudgeCaseReview < ApplicationRecord
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         if record.valid?
-          record.legacy? ? record.update_in_vacols! : record.update_task_and_issue_dispositions
+          record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
         end
         record
       end

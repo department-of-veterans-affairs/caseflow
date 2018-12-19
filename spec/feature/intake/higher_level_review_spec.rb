@@ -1030,7 +1030,7 @@ RSpec.feature "Higher-Level Review" do
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
       expect(duplicate_request_issues).to include(request_issue_in_progress)
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
@@ -1059,6 +1059,42 @@ RSpec.feature "Higher-Level Review" do
       )
     end
 
+    context "when veteran has active nonrating request issues" do
+      let(:another_higher_level_review) { create(:higher_level_review) }
+      let!(:active_nonrating_request_issue) do
+        create(:request_issue_with_epe,
+               :nonrating,
+               veteran_participant_id: veteran.participant_id,
+               review_request: another_higher_level_review)
+      end
+
+      scenario "shows ineligibility message and saves conflicting request issue id" do
+        hlr, = start_higher_level_review(veteran)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        click_intake_no_matching_issues
+
+        fill_in "Issue category", with: active_nonrating_request_issue.issue_category
+        find("#issue-category").send_keys :enter
+        expect(page).to have_content("Does issue 1 match any of the issues actively being reviewed?")
+        expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+                                     "#{active_nonrating_request_issue.description}")
+        add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
+        expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+                                     " #{active_nonrating_request_issue.description}" \
+                                     " is ineligible because it's already under review as a Higher-Level Review")
+
+        click_intake_finish
+        expect(page).to have_content("Intake completed")
+        expect(RequestIssue.find_by(review_request: hlr,
+                                    issue_category: active_nonrating_request_issue.issue_category,
+                                    ineligible_due_to: active_nonrating_request_issue.id,
+                                    ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
+                                    description: active_nonrating_request_issue.description,
+                                    decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
+      end
+    end
+
     it "Shows a review error when something goes wrong" do
       start_higher_level_review(veteran)
       visit "/intake/add_issues"
@@ -1075,24 +1111,54 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_current_path("/intake/add_issues")
     end
 
-    scenario "Non-compensation" do
-      hlr, = start_higher_level_review(veteran, is_comp: false)
-      visit "/intake/add_issues"
+    context "Non-compensation" do
+      context "decision issues present" do
+        scenario "Add Issues button shows contestable issues" do
+          hlr, = start_higher_level_review(veteran, is_comp: false)
+          create(:decision_issue,
+                 decision_review: hlr,
+                 benefit_type: hlr.benefit_type,
+                 decision_text: "something was decided",
+                 participant_id: veteran.participant_id)
 
-      expect(page).to have_content("Add / Remove Issues")
-      check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
-      check_row("Benefit type", "Education")
-      expect(page).to_not have_content("Claimant")
-      click_intake_add_issue
-      add_intake_rating_issue(/^Left knee granted$/)
-      click_intake_finish
-      expect(page).to have_content("Intake completed")
-      # request issue should have matching benefit type
-      expect(RequestIssue.find_by(
-               review_request: hlr,
-               description: "Left knee granted",
-               benefit_type: "education"
-      )).to_not be_nil
+          visit "/intake/add_issues"
+          click_intake_add_issue
+
+          expect(page).to have_content("something was decided")
+          expect(page).to_not have_content("Left knee granted")
+        end
+      end
+
+      context "no contestable issues present" do
+        scenario "no rating issues show on first Add Issues modal" do
+          hlr, = start_higher_level_review(veteran, is_comp: false)
+          visit "/intake/add_issues"
+
+          expect(page).to have_content("Add / Remove Issues")
+          check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
+          check_row("Benefit type", "Education")
+          expect(page).to_not have_content("Claimant")
+          click_intake_add_issue
+          expect(page).to_not have_content("Left knee granted")
+
+          add_intake_nonrating_issue(
+            category: "Active Duty Adjustments",
+            description: "Description for Active Duty Adjustments",
+            date: "10/25/2017"
+          )
+          expect(page).to_not have_content("Establish EP")
+          expect(page).to have_content("Establish Higher-Level Review")
+
+          click_intake_finish
+          expect(page).to have_content("Intake completed")
+          # request issue should have matching benefit type
+          expect(RequestIssue.find_by(
+                   review_request: hlr,
+                   description: "Description for Active Duty Adjustments",
+                   benefit_type: hlr.benefit_type
+          )).to_not be_nil
+        end
+      end
     end
 
     scenario "canceling" do
@@ -1131,13 +1197,15 @@ RSpec.feature "Higher-Level Review" do
       end
 
       context "with legacy_opt_in_approved" do
+        let(:receipt_date) { Time.zone.today }
+
         scenario "adding issues" do
           start_higher_level_review(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
 
           click_intake_add_issue
           expect(page).to have_content("Next")
-          add_intake_rating_issue("Left knee granted")
+          add_intake_rating_issue(/Left knee granted$/)
 
           # expect legacy opt in modal
           expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")

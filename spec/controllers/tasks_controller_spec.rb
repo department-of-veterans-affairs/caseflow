@@ -180,23 +180,22 @@ RSpec.describe TasksController, type: :controller do
       end
 
       context "when the task belongs to the user" do
-        let(:user) { FactoryBot.create(:user) }
-        let!(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
-        before { User.authenticate!(user: user) }
+        let(:no_role_user) { FactoryBot.create(:user) }
+        let!(:task) { FactoryBot.create(:generic_task, assigned_to: no_role_user) }
+        before { User.authenticate!(user: no_role_user) }
 
         context "when there are Organizations in the table" do
           let(:org_count) { 8 }
           before { FactoryBot.create_list(:organization, org_count) }
 
           it "should return a list of all Organizations" do
-            get :index, params: { user_id: user.id }
+            get :index, params: { user_id: no_role_user.id }
             expect(response.status).to eq(200)
             response_body = JSON.parse(response.body)
             task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
 
             expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
 
-            # org count minus one since we can't assign to ourselves.
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
               action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
             end

@@ -15,7 +15,8 @@ class RequestIssue < ApplicationRecord
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
 
   enum ineligible_reason: {
-    duplicate_of_issue_in_active_review: "duplicate_of_issue_in_active_review",
+    duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
+    duplicate_of_rating_issue_in_active_review: "duplicate_of_rating_issue_in_active_review",
     untimely: "untimely",
     previous_higher_level_review: "previous_higher_level_review",
     before_ama: "before_ama",
@@ -110,7 +111,9 @@ class RequestIssue < ApplicationRecord
         ramp_claim_id: data[:ramp_claim_id],
         vacols_id: data[:vacols_id],
         vacols_sequence_id: data[:vacols_sequence_id],
-        contested_decision_issue_id: data[:contested_decision_isssue_id]
+        contested_decision_issue_id: data[:contested_decision_isssue_id],
+        ineligible_reason: data[:ineligible_reason],
+        ineligible_due_to_id: data[:ineligible_due_to_id]
       }
     end
   end
@@ -145,6 +148,7 @@ class RequestIssue < ApplicationRecord
 
   def ui_hash
     {
+      id: id,
       rating_issue_reference_id: rating_issue_reference_id,
       rating_issue_profile_date: rating_issue_profile_date,
       description: description,
@@ -158,6 +162,8 @@ class RequestIssue < ApplicationRecord
       vacols_sequence_id: vacols_sequence_id,
       vacols_issue: vacols_issue.try(:intake_attributes),
       ineligible_reason: ineligible_reason,
+      ineligible_due_to_id: ineligible_due_to_id,
+      review_request_title: review_title,
       title_of_active_review: title_of_active_review,
       contested_decision_issue_id: contested_decision_issue_id
     }
@@ -212,6 +218,10 @@ class RequestIssue < ApplicationRecord
 
   def title_of_active_review
     duplicate_of_issue_in_active_review? ? ineligible_due_to.review_title : nil
+  end
+
+  def duplicate_of_issue_in_active_review?
+    duplicate_of_rating_issue_in_active_review? || duplicate_of_nonrating_issue_in_active_review?
   end
 
   def vacols_issue
@@ -327,9 +337,13 @@ class RequestIssue < ApplicationRecord
     return unless vacols_id
     return unless review_request.serialized_legacy_appeals.any?
 
-    if !vacols_issue.eligible_for_opt_in?
+    unless vacols_issue.eligible_for_opt_in? && legacy_appeal_eligible_for_opt_in?
       self.ineligible_reason = :legacy_appeal_not_eligible
     end
+  end
+
+  def legacy_appeal_eligible_for_opt_in?
+    vacols_issue.legacy_appeal.eligible_for_soc_opt_in?(review_request.receipt_date)
   end
 
   def rating_issue_rationale_to_request_issue_reason(rationale)
@@ -350,12 +364,14 @@ class RequestIssue < ApplicationRecord
 
   def add_duplicate_issue_error(existing_request_issue)
     if existing_request_issue && existing_request_issue.review_request != review_request
-      self.ineligible_reason = :duplicate_of_issue_in_active_review
+      self.ineligible_reason = :duplicate_of_rating_issue_in_active_review
       self.ineligible_due_to = existing_request_issue
     end
   end
 
   def check_for_active_request_issue!
+    # skip checking if nonrating ineligiblity is already set
+    return if ineligible_reason == :duplicate_of_nonrating_issue_in_active_review
     return unless eligible?
     check_for_active_request_issue_by_rating!
     check_for_active_request_issue_by_decision_issue!

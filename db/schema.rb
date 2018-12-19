@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181212150819) do
+ActiveRecord::Schema.define(version: 20181219005124) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -528,6 +528,16 @@ ActiveRecord::Schema.define(version: 20181212150819) do
     t.index ["vacols_id"], name: "index_legacy_appeals_on_vacols_id", unique: true
   end
 
+  create_table "legacy_hearings", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "appeal_id"
+    t.string "vacols_id", null: false
+    t.string "witness"
+    t.string "military_service"
+    t.boolean "prepped"
+    t.text "summary"
+  end
+
   create_table "legacy_issue_optins", force: :cascade do |t|
     t.bigint "request_issue_id", null: false
     t.datetime "created_at", null: false
@@ -700,6 +710,7 @@ ActiveRecord::Schema.define(version: 20181212150819) do
     t.datetime "created_at"
     t.string "benefit_type"
     t.integer "contested_decision_issue_id"
+    t.string "veteran_participant_id"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
