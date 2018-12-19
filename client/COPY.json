@@ -250,7 +250,8 @@
 
   "ASSIGN_TO_USER_DROPDOWN": "Select a user",
   "ASSIGN_TO_TEAM_DROPDOWN": "Select a team",
-  "ASSIGN_TO_PAGE_TITLE": "Assign task",
+  "ASSIGN_TASK_TITLE": "Assign task",
+  "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
 
   "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",

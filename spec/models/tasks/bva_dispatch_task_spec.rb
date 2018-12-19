@@ -65,11 +65,11 @@ describe BvaDispatchTask do
         expect(task.status).to eq("completed")
         expect(task.parent.status).to eq("completed")
         expect(task.root_task.status).to eq("completed")
-        decision = Decision.find_by(appeal_id: root_task.appeal.id)
-        expect(decision).to_not eq nil
-        expect(VBMSService).to have_received(:upload_document_to_vbms).with(root_task.appeal, decision)
-        expect(decision.document_type).to eq "BVA Decision"
-        expect(decision.source).to eq "BVA"
+        decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
+        expect(decision_document).to_not eq nil
+        expect(VBMSService).to have_received(:upload_document_to_vbms).with(root_task.appeal, decision_document)
+        expect(decision_document.document_type).to eq "BVA Decision"
+        expect(decision_document.source).to eq "BVA"
       end
     end
 

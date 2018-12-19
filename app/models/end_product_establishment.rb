@@ -42,8 +42,15 @@ class EndProductEstablishment < ApplicationRecord
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/MethodLength
     def self.from_bgs_error(error, epe)
-      case error.try(:body) || error.message
+      error_message = if error.try(:body)
+                        # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3124/
+                        error.body.encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
+                      else
+                        error.message
+                      end
+      case error_message
       when /WssVerification Exception - Security Verification Exception/
         # This occasionally happens when client/server timestamps get out of sync. Uncertain why this
         # happens or how to fix it - it only happens occasionally.
@@ -65,9 +72,25 @@ class EndProductEstablishment < ApplicationRecord
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2910/
         TransientBGSSyncError.new(error, epe)
       when /Connection timed out - connect\(2\) for "bepprod.vba.va.gov" port 443/
-        # Transient timeouts to BGS because of connectivity issues
-        #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
+        TransientBGSSyncError.new(error, epe)
+      when /Connection refused - connect\(2\) for "bepprod.vba.va.gov" port 443/
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3128/
+        TransientBGSSyncError.new(error, epe)
+      when /HTTP error \(504\): upstream request timeout/
+        # BGS timeout
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
+        TransientBGSSyncError.new(error, epe)
+      when /HTTPClient::KeepAliveDisconnected: Connection reset by peer/
+        # BGS kills connection
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3129/
+        TransientBGSSyncError.new(error, epe)
+      when /execution expired/
+        # Connection timeout
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2935/
         TransientBGSSyncError.new(error, epe)
       when /Unable to find SOAP operation: :find_benefit_claim/
         # Transient failure because a VBMS service is unavailable
@@ -87,6 +110,7 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength
   class TransientBGSSyncError < BGSSyncError; end
 
   class << self
@@ -290,11 +314,7 @@ class EndProductEstablishment < ApplicationRecord
     request_issues.each do |request_issue|
       request_issue.submit_for_processing!
 
-      if run_async?
-        DecisionIssueSyncJob.perform_later(request_issue)
-      else
-        DecisionIssueSyncJob.perform_now(request_issue)
-      end
+      DecisionIssueSyncJob.perform_later(request_issue)
     end
   end
 
@@ -311,7 +331,9 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def potential_decision_ratings
-    Rating.fetch_in_range(participant_id: veteran.participant_id, start_date: established_at, end_date: Time.zone.today)
+    Rating.fetch_in_range(participant_id: veteran.participant_id,
+                          start_date: established_at.to_date,
+                          end_date: Time.zone.today)
   end
 
   def cancel!

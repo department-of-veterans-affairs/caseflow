@@ -1,7 +1,7 @@
-describe Decision do
+describe DecisionDocument do
   context "#pdf_location" do
     let(:appeal) { create(:appeal) }
-    subject { Decision.new(appeal: appeal).pdf_location }
+    subject { DecisionDocument.new(appeal: appeal).pdf_location }
 
     it "should fetch file from s3 and return temporary location" do
       expect(Caseflow::Fakes::S3Service).to receive(:fetch_file)

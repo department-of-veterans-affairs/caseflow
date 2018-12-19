@@ -515,4 +515,32 @@ RSpec.feature "Case details" do
       end
     end
   end
+
+  describe "AMA decision issue notes" do
+    before { FeatureToggle.enable!(:ama_decision_issues) }
+    after { FeatureToggle.disable!(:ama_decision_issues) }
+
+    let(:request_issue) { create(:request_issue, description: "knee pain", notes: notes) }
+    let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
+
+    context "when notes are nil" do
+      let(:notes) { nil }
+
+      it "does not display the Notes div" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content("Note:")
+      end
+    end
+
+    context "when notes are empty" do
+      let(:notes) { "" }
+
+      it "does not display the Notes div" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content("Note:")
+      end
+    end
+  end
 end

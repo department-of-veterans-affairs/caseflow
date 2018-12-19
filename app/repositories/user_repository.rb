@@ -71,9 +71,7 @@ class UserRepository
       coordinator_records = VACOLS::Staff.where(sdept: "HRG", sactive: "A")
 
       coordinator_records.select(&:sdomainid).map do |record|
-        User.find_or_create_by(css_id: record.sdomainid,
-                               full_name: "#{record.snamef} #{record.snamemi} #{record.snamel}",
-                               station_id: User::BOARD_STATION_ID)
+        User.find_by_css_id_or_create_with_default_station_id(record.sdomainid)
       end
     end
 
