@@ -46,12 +46,12 @@ describe LegacyOptinManager do
            bfdsoc: 1.day.ago,
            bfddec: closed_disposition_date)
   end
-  let(:closed_issue1) {
+  let(:closed_issue1) do
     create(:case_issue, :disposition_advance_failure_to_respond, issseq: 1, issdcls: closed_disposition_date)
-  }
-  let(:closed_issue2) {
+  end
+  let(:closed_issue2) do
     create(:case_issue, :disposition_remand_failure_to_respond, issseq: 2, issdcls: closed_disposition_date)
-  }
+  end
   let(:closed_ri1) do
     create(:request_issue, vacols_id: already_closed_case.bfkey, vacols_sequence_id: closed_issue1.issseq)
   end
