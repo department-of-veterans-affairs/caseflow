@@ -174,4 +174,8 @@ gem "roo", "~> 2.7"
 gem "rubyzip", "~> 1.2.2"
 
 gem "business_time", "~> 0.9.3"
+
+# Bootsnap speeds up app boot (and started to be a default gem in 5.2).
+gem "bootsnap", require: false
+
 # rubocop:enable Metrics/LineLength
