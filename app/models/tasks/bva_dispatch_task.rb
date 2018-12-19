@@ -27,25 +27,27 @@ class BvaDispatchTask < GenericTask
       fail(Caseflow::Error::BvaDispatchDoubleOutcode, appeal_id: appeal.id, task_id: task.id) if task.completed?
 
       params[:appeal_id] = appeal.id
-      decision_document = DecisionDocument.create!(params)
+
+      create_decision_document!(params)
 
       task.mark_as_complete!
       task.root_task.mark_as_complete!
-
-      decision_document.upload!
     rescue ActiveRecord::RecordInvalid => e
-      raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message.match?(/^Validation failed:/)
+      raise(Caseflow::Error::OutcodeValidationFailure, mark_as_completessage: e.message) if e.message.match?(/^Validation failed:/)
       raise e
-    rescue VBMS::HTTPError => e
-      Raven.capture_exception(e)
-      msg = "Document upload failed due to VBMS experiencing issues."
-      raise(Caseflow::Error::DocumentUploadFailedInVBMS, message: msg)
     end
 
     private
 
     def list_of_assignees
       BvaDispatch.singleton.users.order(:id).pluck(:css_id)
+    end
+
+    def create_decision_document!(params)
+      DecisionDocument.create!(params).tap do |decision_document|
+        decision_document.submit_for_processing!
+        ProcessDecisionDocumentJob.set(wait: DecisionDocument::DECISION_OUTCODING_DELAY).perform_later(decision_document)
+      end
     end
   end
 end
