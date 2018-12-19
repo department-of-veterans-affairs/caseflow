@@ -391,7 +391,7 @@ export default class DailyDocket extends React.Component {
       { this.props.dailyDocketServerError && <Alert
         type="error"
         styling={alertStyling}
-        title={` Unable to delete Hearing Day 
+        title={` Unable to delete Hearing Day
                 ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')} in Caseflow.`}
         message="Please delete the hearing day through VACOLS" />}
       <div className="cf-push-left">
@@ -428,7 +428,8 @@ export default class DailyDocket extends React.Component {
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
         Coordinator: {this.props.dailyDocket.bvaPoc} <br />
-        Hearing type: {this.props.dailyDocket.hearingType}
+        Hearing type: {this.props.dailyDocket.hearingType} <br />
+        Room number: {this.props.dailyDocket.room}
       </span>
       <div {...noMarginStyling}>
         { !_.isEmpty(dailyDocketRows) && <Table
