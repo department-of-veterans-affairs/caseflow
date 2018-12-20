@@ -58,9 +58,12 @@ class CaseDetailsView extends React.PureComponent {
       appealId,
       appeal,
       error,
+      canEditRequestIssues,
       success,
       featureToggles
     } = this.props;
+
+    const amaIssueType = featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
 
     return <AppSegment filledBackground>
       <CaseTitle appeal={appeal} />
@@ -81,9 +84,10 @@ class CaseDetailsView extends React.PureComponent {
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
         <CaseDetailsIssueList
-          amaIssueType={featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)}
+          amaIssueType={amaIssueType}
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
+          editLink={amaIssueType && canEditRequestIssues && `/appeals/${appealId}/edit`}
           issues={appeal.issues}
           decisionIssues={appeal.decisionIssues}
         />
@@ -105,12 +109,13 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
-  const { veteranCaseListIsVisible, featureToggles } = state.ui;
+  const { veteranCaseListIsVisible, featureToggles, canEditRequestIssues } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
     featureToggles,
+    canEditRequestIssues,
     error,
     veteranCaseListIsVisible
   };

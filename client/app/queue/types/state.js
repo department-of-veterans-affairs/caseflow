@@ -59,6 +59,7 @@ export type UiState = {
   veteranCaseListIsVisible: boolean,
   organizations: Array<Object>,
   canEditAod: boolean,
+  canEditRequestIssues: boolean,
   hearingDay: {
     hearingDate: ?string,
     hearingTime: ?string,

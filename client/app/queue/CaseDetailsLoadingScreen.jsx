@@ -10,6 +10,7 @@ import ApiUtil from '../util/ApiUtil';
 import { prepareAppealForStore, prepareLegacyTasksForStore, prepareTasksForStore } from './utils';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
+import { setCanEditRequestIssues } from './uiReducer/uiActions';
 import type { Appeal, Appeals, Tasks } from './types/models';
 import type { State, UsersById } from './types/state';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
@@ -35,6 +36,8 @@ type Props = Params & {|
   fetchAllAttorneys: typeof fetchAllAttorneys,
   onReceiveTasks: typeof onReceiveTasks,
   onReceiveAppealDetails: typeof onReceiveAppealDetails
+  onReceiveAppealDetails: typeof onReceiveAppealDetails,
+  setCanEditRequestIssues: typeof setCanEditRequestIssues
 |};
 
 class CaseDetailLoadingScreen extends React.PureComponent<Props> {
@@ -50,6 +53,7 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
     if (!appealDetails || !(appealId in appealDetails)) {
       promises.push(
         ApiUtil.get(`/appeals/${appealId}`).then((response) => {
+          this.props.setCanEditRequestIssues(response.body.can_edit_request_issues);
           this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
         })
       );
@@ -134,6 +138,7 @@ const mapStateToProps = (state: State) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveTasks,
+  setCanEditRequestIssues,
   onReceiveAppealDetails,
   setAttorneysOfJudge,
   fetchAllAttorneys

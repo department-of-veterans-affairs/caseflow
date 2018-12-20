@@ -3,6 +3,7 @@ import React from 'react';
 
 import StringUtil from '../util/StringUtil';
 import { COLORS } from '../constants/AppConstants';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 const sectionNavigationContainerStyling = css({
   float: 'left',
@@ -123,6 +124,7 @@ export const anchorJumpLinkStyling = css({
 const ContentSection = ({ element }) => <React.Fragment>
   <h2 {...sectionHeadingStyling}>
     <a id={`${getIdForElement(element)}`} {...anchorJumpLinkStyling}>{element.props.title}</a>
+    {element.props.editLink && <Link href={element.props.editLink}>Correct issues</Link>}
   </h2>
   <div {...sectionSegmentStyling}>{element}</div>
 </React.Fragment>;

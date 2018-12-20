@@ -29,6 +29,7 @@ export const initialState = {
   selectedAssigneeSecondary: null,
   veteranCaseListIsVisible: false,
   canEditAod: false,
+  canEditRequestIssues: false,
   hearingDay: {
     hearingDate: null,
     hearingTime: null,
@@ -72,6 +73,10 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
   case ACTIONS.SET_CAN_EDIT_AOD:
     return update(state, {
       canEditAod: { $set: action.payload.canEditAod }
+    });
+  case ACTIONS.SET_CAN_EDIT_REQUEST_ISSUES:
+    return update(state, {
+      canEditRequestIssues: { $set: action.payload.canEditRequestIssues }
     });
   case ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS:
     return update(state, {
