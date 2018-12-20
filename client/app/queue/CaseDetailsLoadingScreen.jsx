@@ -35,7 +35,6 @@ type Props = Params & {|
   setAttorneysOfJudge: typeof setAttorneysOfJudge,
   fetchAllAttorneys: typeof fetchAllAttorneys,
   onReceiveTasks: typeof onReceiveTasks,
-  onReceiveAppealDetails: typeof onReceiveAppealDetails
   onReceiveAppealDetails: typeof onReceiveAppealDetails,
   setCanEditRequestIssues: typeof setCanEditRequestIssues
 |};
