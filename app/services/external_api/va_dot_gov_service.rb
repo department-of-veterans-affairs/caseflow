@@ -1,58 +1,33 @@
 require "json"
 
-class ExternalApi::VADotGov
+class ExternalApi::VADotGovService
   class << self
     # :nocov:
     def get_distance(point, ids)
-
       page = 1
       facility_results = []
 
-      while ids.length > 0
-
-        response = send_va_dot_gov_request(
+      until ids.empty?
+        results = fetch_facilities_with_ids(
           query: { lat: point[0], long: point[1], page: page },
-          endpoint: facilities_endpoint
+          ids: ids
         )
 
-        resp_body = JSON.parse(response.body)
+        ids -= results[:facilities].pluck("id")
+        facility_results += results[:facilities]
 
-        check_for_error(response_body: resp_body, code: response.code)
-        facilities, distance, total_pages = facility_response_data(resp_body)
-
-        selected_facilities = facilities.select { |facility| ids.include? facility["id"] }
-
-        if !selected_facilities.empty?
-          ids -= selected_facilites.pluck("id")
-          facility_results += selected_facilities.map do |selected|
-              distance = distances.find { |dist| dist["id"] == selected["id"] }
-              facility_json(selected, distance)
-          end
-        end
-
+        break if !results[:has_next]
         page += 1
-        break if page > total_pages
         sleep 0.25
       end
 
-      Rails.logger.info("Unable to find api.va.gov facility data for: #{ids.join(', ')}.") if ids.length > 0
-
+      Rails.logger.info("Unable to find api.va.gov facility data for: #{ids.join(', ')}.") if !ids.empty?
       facility_results
     end
 
-    def geocode(address:, city:, state:, country: "USA", zip_code: )
-      return [0.0, 0.0]
+    def geocode(**args)
       response = send_va_dot_gov_request(
-        body: {
-          requestAddress: {
-            addressLine1: address,
-            city: city,
-            stateProvince: {
-              code: state,
-            },
-            zipCode5: zip_code
-          }
-        },
+        body: geocode_body(**args),
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json"
@@ -62,9 +37,9 @@ class ExternalApi::VADotGov
       )
 
       resp_body = JSON.parse(response.body)
-
       check_for_error(response_body: resp_body, code: response.code)
 
+      [resp_body["geocode"]["latitude"], resp_body["geocode"]["longitude"]]
     end
 
     private
@@ -78,10 +53,26 @@ class ExternalApi::VADotGov
     end
 
     def address_validation_endpoint
-      "address-validation/v0/validate"
+      "address_validation/v0/validate"
     end
 
-    def facility_resp_data(resp_body)
+    def geocode_body(address:, city:, state:, zip_code:, country: "USA")
+      {
+        requestAddress: {
+          addressLine1: address,
+          city: city,
+          stateProvince: {
+            code: state
+          },
+          requestCountry: {
+            country_code: country
+          },
+          zipCode5: zip_code
+        }
+      }
+    end
+
+    def facility_response_data(resp_body)
       [
         resp_body["data"],
         resp_body["meta"]["distances"],
@@ -89,9 +80,9 @@ class ExternalApi::VADotGov
       ]
     end
 
-    def facility_json(facility, _distance)
+    def facility_json(facility, distance)
       attrs = facility["attributes"]
-      distance = _distance["distance"] if _distance
+      dist = distance["distance"] if distance
 
       {
         id: facility["id"],
@@ -102,12 +93,30 @@ class ExternalApi::VADotGov
         address: attrs["address"]["physical"],
         lat: attrs["lat"],
         long: attrs["long"],
-        distance: distance
+        distance: dist
       }
     end
 
-    def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body:)
+    def fetch_facilities_with_ids(query:, ids:)
+      response = send_va_dot_gov_request(
+        query: query,
+        endpoint: facilities_endpoint
+      )
+      resp_body = JSON.parse(response.body)
+      check_for_error(response_body: resp_body, code: response.code)
 
+      facilities, distances, total_pages = facility_response_data(resp_body)
+      selected_facilities = facilities.select { |facility| ids.include? facility["id"] }
+
+      facilities = selected_facilities.map do |selected|
+        distance = distances.find { |dist| dist["id"] == selected["id"] }
+        facility_json(selected, distance)
+      end
+
+      { facilities: facilities, has_next: query[:page] + 1 <= total_pages }
+    end
+
+    def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
       url = URI.escape(base_url + endpoint)
       request = HTTPI::Request.new(url)
       request.query = query
@@ -115,13 +124,11 @@ class ExternalApi::VADotGov
       request.read_timeout = 600 # seconds
       request.auth.ssl.ssl_version  = :TLSv1_2
       request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
-
-      request.body = body.to_json if body
-
-      request.headers = headers.merge({ apikey: ENV["VA_DOT_GOV_API_KEY"] })
+      request.body = body.to_json unless body.nil?
+      request.headers = headers.merge(apikey: ENV["VA_DOT_GOV_API_KEY"])
 
       MetricsService.record("api.va.gov GET request to #{url}",
-                            service: :facilities_locator,
+                            service: :va_dot_gov,
                             name: endpoint) do
         case method
         when :get
@@ -134,7 +141,7 @@ class ExternalApi::VADotGov
 
     def check_for_error(response_body:, code:)
       case code
-      when 200
+      when 200 # rubocop:disable Lint/EmptyWhen
       when 400
         fail Caseflow::Error::VaDotGovRequestError, code: code, message: response_body
       when 500

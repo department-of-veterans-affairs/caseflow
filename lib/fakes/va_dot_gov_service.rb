@@ -1,5 +1,5 @@
 class Fakes::VADotGovService < ExternalApi::VADotGovService
-  def self.get_distance(_point, _ids) # rubocop:disable Metrics/MethodLength
+  def self.get_distance(_point, _ids)
     [
       {
         "id": "vha_688",
@@ -11,18 +11,18 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
         "long": -77.0109110499999,
         "distance": 500,
         "address": {
-            "address_1": "50 Irving Street, Northwest",
-            "address_2": "string",
-            "address_3": "string",
-            "city": "Washington",
-            "state": "DC",
-            "zip": "20422-0001"
+          "address_1": "50 Irving Street, Northwest",
+          "address_2": "string",
+          "address_3": "string",
+          "city": "Washington",
+          "state": "DC",
+          "zip": "20422-0001"
         }
       }
     ]
   end
 
-  def self.geocode(address:, city:, state:, zip_code:, country_code:)
-    []
+  def self.geocode(*)
+    [0.0, 0.0]
   end
 end
