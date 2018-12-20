@@ -266,15 +266,14 @@ RSpec.feature "Checkout flows" do
 
         click_on "(#{appeal.veteran_file_number})"
 
+        expect(page).to have_content "Correct issues"
         expect(page).to have_content("Added to 2 issues", count: 2)
-
         click_dropdown(index: 0)
 
         # Skip the special issues page
         click_on "Continue"
 
         expect(page).to have_content(decision_issue_text)
-        expect(page).to have_content "Correct issues"
 
         # Update the decision issue
         all("button", text: "Edit", count: 4)[0].click
