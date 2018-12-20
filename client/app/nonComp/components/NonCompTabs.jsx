@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import TabWindow from '../../components/TabWindow';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
+import { claimantColumn, veteranSsnColumn, decisionReviewTypeColumn } from './TaskTableColumns';
 
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
@@ -25,35 +25,6 @@ class NonCompTabsUnconnected extends React.PureComponent {
     />;
   }
 }
-
-const claimantColumn = () => {
-  return {
-    header: 'Claimant',
-    valueFunction: (task) => {
-      return <Link to={`/queue/${task.type}/${task.id}`}>{task.claimant}</Link>;
-    },
-    getSortValue: (task) => task.claimant
-  };
-};
-
-const veteranSsnColumn = () => {
-  return {
-    header: 'Veteran SSN',
-    valueFunction: (task) => task.veteranSSN,
-    getSortValue: (task) => task.veteranSSN
-  };
-};
-
-const decisionReviewTypeColumn = () => {
-  return {
-    header: 'Type',
-    valueFunction: (task) => task.type,
-    getSortValue: (task) => task.type,
-    // order determines where this column displays
-    // make it -1 so this column is always last
-    order: -1
-  };
-};
 
 const TaskTableTab = ({ description, tasks }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
