@@ -12,6 +12,7 @@ class DecisionReview < ApplicationRecord
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
   has_many :decision_issues, as: :decision_review
+  has_many :tasks, as: :appeal
 
   before_destroy :remove_issues!
 
@@ -70,6 +71,18 @@ class DecisionReview < ApplicationRecord
         rating_issue_hash.merge!(RatingIssue.deserialize(rating_issue_hash).serialize)
       end
     end
+  end
+
+  def veteran_full_name
+    veteran&.name&.formatted(:readable_full)
+  end
+
+  def number_of_issues
+    request_issues.count
+  end
+
+  def external_id
+    id.to_s
   end
 
   def ui_hash
@@ -180,6 +193,11 @@ class DecisionReview < ApplicationRecord
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
       .select(&:status_active?)
+  end
+
+  # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
+  def serializer_class
+    ::WorkQueue::DecisionReviewSerializer
   end
 
   private
