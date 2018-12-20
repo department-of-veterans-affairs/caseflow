@@ -391,9 +391,18 @@ export default class DailyDocket extends React.Component {
       { this.props.dailyDocketServerError && <Alert
         type="error"
         styling={alertStyling}
-        title={` Unable to delete Hearing Day 
+        title={` Unable to delete Hearing Day
                 ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')} in Caseflow.`}
         message="Please delete the hearing day through VACOLS" />}
+
+      { this.props.onErrorHearingDayLock && <Alert
+        type="error"
+        styling={alertStyling}
+        title={`VACOLS Hearing Day ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')}
+           cannot be locked in Caseflow.`}
+        message="VACOLS Hearing Day cannot be locked"
+      />}
+
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
         <div {...backLinkStyling}>
@@ -428,7 +437,8 @@ export default class DailyDocket extends React.Component {
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
         Coordinator: {this.props.dailyDocket.bvaPoc} <br />
-        Hearing type: {this.props.dailyDocket.hearingType}
+        Hearing type: {this.props.dailyDocket.hearingType} <br />
+        Room number: {this.props.dailyDocket.room}
       </span>
       <div {...noMarginStyling}>
         { !_.isEmpty(dailyDocketRows) && <Table

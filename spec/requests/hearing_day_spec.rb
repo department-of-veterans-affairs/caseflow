@@ -347,29 +347,6 @@ RSpec.describe "Hearing Schedule", type: :request do
     end
   end
 
-  describe "Get veterans for hearings" do
-    let!(:vacols_case) do
-      create(
-        :case,
-        folder: create(:folder, tinum: "docket-number"),
-        bfregoff: "RO04",
-        bfcurloc: "57",
-        bfhr: "2",
-        bfdocind: "V"
-      )
-    end
-
-    it "Get hearings with veterans" do
-      vacols_case
-      headers = {
-        "ACCEPT" => "application/json"
-      }
-      get "/hearings/schedule/assign/veterans", params: { regional_office: "RO04" }, headers: headers
-      expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["veterans"].size).to be(1)
-    end
-  end
-
   describe "Delete a hearing day" do
     let!(:hearing_day) { create(:hearing_day) }
 
