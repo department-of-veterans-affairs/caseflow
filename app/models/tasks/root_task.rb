@@ -65,10 +65,6 @@ class RootTask < GenericTask
       )
     end
 
-    def needs_subtask(appeal)
-      appeal.needs_ihp? || appeal.hearing_docket? || appeal.evidence_submission_docket?
-    end
-
     def create_subtasks!(appeal, parent)
       transaction do
         distribution_task = create_distribution_task!(appeal, parent)
