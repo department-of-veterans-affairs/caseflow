@@ -497,7 +497,7 @@ describe RequestIssue do
     end
 
     context "when it hasn't been processed" do
-      let(:ep_code) { HigherLevelReview::END_PRODUCT_RATING_CODE }
+      let(:ep_code) { HigherLevelReview::END_PRODUCT_CODES[:rating] }
       let(:end_product_establishment) do
         create(:end_product_establishment,
                :cleared,
@@ -571,7 +571,7 @@ describe RequestIssue do
       context "with nonrating ep" do
         let(:request_issue) { nonrating_request_issue }
 
-        let(:ep_code) { HigherLevelReview::END_PRODUCT_NONRATING_CODE }
+        let(:ep_code) { HigherLevelReview::END_PRODUCT_CODES[:nonrating] }
 
         let!(:contention) do
           Generators::Contention.build(
