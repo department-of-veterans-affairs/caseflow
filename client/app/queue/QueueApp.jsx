@@ -7,6 +7,7 @@ import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
 
 import {
+  setCanEditAod,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
@@ -35,7 +36,6 @@ import AssignHearingModal from './components/AssignHearingModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
-
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -68,9 +68,11 @@ type Props = {|
   reviewActionType: string,
   userIsVsoEmployee?: boolean,
   caseSearchHomePage?: boolean,
+  canEditAod: Boolean,
   featureToggles: Object,
   organizations: Array<Object>,
   // Action creators
+  setCanEditAod: typeof setCanEditAod,
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,
   setUserCssId: typeof setUserCssId,
@@ -81,6 +83,7 @@ type Props = {|
 
 class QueueApp extends React.PureComponent<Props> {
   componentDidMount = () => {
+    this.props.setCanEditAod(this.props.canEditAod);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
@@ -421,6 +424,7 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setCanEditAod,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
