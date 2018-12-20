@@ -181,7 +181,7 @@ module IntakeHelpers
   def add_intake_nonrating_issue(
     category: "Active Duty Adjustments",
     description: "Some description",
-    date: "01/01/2016",
+    date: 3.months.ago,
     legacy_issues: false
   )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
@@ -190,7 +190,7 @@ module IntakeHelpers
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: description
-    fill_in "Decision date", with: date
+    fill_in "Decision date", with: date.strftime("%m/%d/%Y")
     expect(page).to have_button(add_button_text, disabled: false)
     safe_click ".add-issue"
   end
@@ -200,7 +200,7 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
-  def add_intake_unidentified_issue(description)
+  def add_intake_unidentified_issue(description = "unidentified issue description")
     safe_click ".no-matching-issues"
     safe_click ".no-matching-issues"
     expect(page).to have_content("Describe the issue to mark it as needing further review.")
@@ -220,6 +220,14 @@ module IntakeHelpers
 
   def click_remove_issue_confirmation
     safe_click ".remove-issue"
+  end
+
+  def click_number_of_issues_changed_confirmation
+    safe_click "#Number-of-issues-has-changed-button-id-1"
+  end
+
+  def click_still_have_unidentified_issue_confirmation
+    safe_click "#Unidentified-issue-button-id-1"
   end
 
   def find_intake_issue_by_number(number)
