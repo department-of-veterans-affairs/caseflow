@@ -90,7 +90,7 @@ class JudgeTask < Task
     RootTask.includes(:appeal).all.select { |task| eligible_for_assigment?(task) }
   end
 
-  #rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def self.eligible_for_assigment?(task)
     return false if task.appeal.nil?
     return false if task.appeal.class == LegacyAppeal
@@ -108,7 +108,7 @@ class JudgeTask < Task
     # assign tasks that have not been assigned yet.
     task.children.empty?
   end
-  #rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.list_of_assignees
     Constants::RampJudges::USERS[Rails.current_env]
