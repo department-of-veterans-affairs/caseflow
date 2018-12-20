@@ -13,12 +13,12 @@ class ExternalApi::VADotGovService
           ids: ids
         )
 
-        ids -= results[:facilities].pluck("id")
+        ids -= results[:facilities].pluck(:id)
         facility_results += results[:facilities]
 
         break if !results[:has_next]
         page += 1
-        sleep 0.25
+        sleep 1
       end
 
       Rails.logger.info("Unable to find api.va.gov facility data for: #{ids.join(', ')}.") if !ids.empty?
