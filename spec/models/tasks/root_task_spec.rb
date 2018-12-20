@@ -56,7 +56,7 @@ describe RootTask do
         end
         it "is ready for distribution immediately" do
           RootTask.create_root_and_sub_tasks!(appeal)
-          expect(DistributionTask.find_by(appeal: appeal).status).to eq("in_progress")
+          expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
         end
       end
 
@@ -75,7 +75,7 @@ describe RootTask do
 
         it "requires an informal hearing presentation" do
           RootTask.create_root_and_sub_tasks!(appeal)
-          expect(InformalHearingPresentationTask.find_by(appeal: appeal).status).to eq("in_progress")
+          expect(InformalHearingPresentationTask.find_by(appeal: appeal).status).to eq("assigned")
           expect(InformalHearingPresentationTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
         end
       end
@@ -123,7 +123,7 @@ describe RootTask do
 
         it "requires an evidence submission window before the informal hearing presentation" do
           RootTask.create_root_and_sub_tasks!(appeal)
-          expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).status).to eq("in_progress")
+          expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).status).to eq("assigned")
           expect(EvidenceSubmissionWindowTask.find_by(
             appeal: appeal
           ).parent.class.name).to eq("InformalHearingPresentationTask")

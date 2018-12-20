@@ -39,12 +39,11 @@ class RootTask < GenericTask
 
     private
 
-    def create_vso_subtask!(appeal, parent, status = Constants.TASK_STATUSES.in_progress)
+    def create_vso_subtask!(appeal, parent)
       appeal.vsos.map do |vso_organization|
         InformalHearingPresentationTask.create!(
           appeal: appeal,
           parent: parent,
-          status: status,
           assigned_to: vso_organization
         )
       end
@@ -54,16 +53,14 @@ class RootTask < GenericTask
       EvidenceSubmissionWindowTask.create!(
         appeal: appeal,
         parent: parent,
-        status: Constants.TASK_STATUSES.in_progress,
         assigned_to: MailTeam.singleton
       )
     end
 
-    def create_distribution_task!(appeal, parent, status = Constants.TASK_STATUSES.in_progress)
+    def create_distribution_task!(appeal, parent)
       DistributionTask.create!(
         appeal: appeal,
         parent: parent,
-        status: status,
         assigned_to: Bva.singleton
       )
     end
@@ -73,24 +70,12 @@ class RootTask < GenericTask
     end
 
     def create_subtasks!(appeal, parent)
-      distribution_status = if needs_subtask(appeal)
-                              Constants.TASK_STATUSES.on_hold
-                            else
-                              Constants.TASK_STATUSES.in_progress
-                            end
-
-      ihp_status = if appeal.evidence_submission_docket?
-                     Constants.TASK_STATUSES.on_hold
-                   else
-                     Constants.TASK_STATUSES.in_progress
-                   end
-
       transaction do
-        distribution_task = create_distribution_task!(appeal, parent, distribution_status)
+        distribution_task = create_distribution_task!(appeal, parent)
         current_parent = distribution_task
 
         if appeal.needs_ihp?
-          vso_tasks = create_vso_subtask!(appeal, current_parent, ihp_status)
+          vso_tasks = create_vso_subtask!(appeal, current_parent)
           # TODO: when or if there are more than one vso, vso tasks
           # should expire at the same time. which one should be the
           # blocking parent of evidence submission tasks?

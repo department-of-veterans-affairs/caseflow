@@ -17,6 +17,10 @@ class GenericTask < Task
     end
   end
 
+  def when_child_task_created
+    update!(status: Constants.TASK_STATUSES.on_hold) unless on_hold?
+  end
+
   # rubocop:disable Metrics/MethodLength
   def available_actions(user)
     return [] unless user
