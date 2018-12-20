@@ -113,12 +113,14 @@ export default class DailyDocket extends React.Component {
     const appellantName = hearing.appellantMiFormatted || hearing.veteranMiFormatted;
 
     return <div><b>{appellantName}</b><br />
-      <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
       <b><Link
         href={`/queue/appeals/${hearing.appealVacolsId}`}
         name={hearing.vbmsId} >
         {hearing.vbmsId}
-      </Link></b> <br />
+      </Link></b><br />
+      <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
+      {hearing.docketNumber}
+      <br />
       {hearing.appellantAddressLine1}<br />
       {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
     </div>;
@@ -435,7 +437,8 @@ export default class DailyDocket extends React.Component {
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
         Coordinator: {this.props.dailyDocket.bvaPoc} <br />
-        Hearing type: {this.props.dailyDocket.hearingType}
+        Hearing type: {this.props.dailyDocket.hearingType} <br />
+        Room number: {this.props.dailyDocket.room}
       </span>
       <div {...noMarginStyling}>
         { !_.isEmpty(dailyDocketRows) && <Table

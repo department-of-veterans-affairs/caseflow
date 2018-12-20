@@ -68,10 +68,10 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.upcomingHearingDays
       }
     });
-  case ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING:
+  case ACTIONS.RECEIVE_APPEALS_READY_FOR_HEARING:
     return update(state, {
-      veteransReadyForHearing: {
-        $set: action.payload.veterans
+      appealsReadyForHearing: {
+        $set: action.payload.appeals
       }
     });
   case ACTIONS.HEARING_NOTES_UPDATE:

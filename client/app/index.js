@@ -30,6 +30,7 @@ import EstablishClaimAdmin from './establishClaimAdmin';
 import Queue from './queue/index';
 import IntakeManager from './intakeManager';
 import IntakeEdit from './intakeEdit';
+import NonComp from './nonComp';
 
 const COMPONENTS = {
   BaseContainer,
@@ -54,7 +55,8 @@ const COMPONENTS = {
   Help,
   Queue,
   IntakeManager,
-  IntakeEdit
+  IntakeEdit,
+  NonComp
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
@@ -83,7 +85,8 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       './establishClaimAdmin/index',
       './queue/index',
       './intakeManager/index',
-      './intakeEdit/index'
+      './intakeEdit/index',
+      './nonComp/index'
     ], () => renderApp(component));
   }
 };

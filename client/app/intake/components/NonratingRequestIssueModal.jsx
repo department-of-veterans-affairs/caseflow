@@ -9,10 +9,13 @@ import {
   toggleLegacyOptInModal
 } from '../actions/addIssues';
 import Modal from '../../components/Modal';
+import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import { NONRATING_REQUEST_ISSUE_CATEGORIES } from '../constants';
+
+const NO_MATCH_TEXT = 'None of these match';
 
 class NonratingRequestIssueModal extends React.Component {
   constructor(props) {
@@ -21,13 +24,23 @@ class NonratingRequestIssueModal extends React.Component {
     this.state = {
       category: '',
       description: '',
-      decisionDate: ''
+      decisionDate: '',
+      selectedNonratingIssueId: '',
+      ineligibleDueToId: null,
+      ineligibleReason: null,
+      reviewRequestTitle: null
     };
   }
 
   categoryOnChange = (value) => {
     this.setState({
-      category: value
+      category: value,
+      description: '',
+      decisionDate: '',
+      selectedNonratingIssueId: '',
+      ineligibleDueToId: null,
+      ineligibleReason: null,
+      reviewRequestTitle: null
     });
   }
 
@@ -41,6 +54,29 @@ class NonratingRequestIssueModal extends React.Component {
     this.setState({
       decisionDate: value
     });
+  }
+
+  selectedNonratingIssueIdOnChange = (value) => {
+    if (value === NO_MATCH_TEXT) {
+      this.setState({
+        selectedNonratingIssueId: value,
+        description: '',
+        decisionDate: '',
+        ineligibleReason: null
+      });
+    } else {
+      const activeNonratingRequestIssue = this.props.intakeData.activeNonratingRequestIssues.
+        find((issue) => issue.id === String(value));
+
+      this.setState({
+        selectedNonratingIssueId: activeNonratingRequestIssue.id,
+        description: activeNonratingRequestIssue.description,
+        decisionDate: activeNonratingRequestIssue.decisionDate,
+        ineligibleDueToId: activeNonratingRequestIssue.id,
+        reviewRequestTitle: activeNonratingRequestIssue.reviewRequestTitle,
+        ineligibleReason: 'duplicate_of_nonrating_issue_in_active_review'
+      });
+    }
   }
 
   hasLegacyAppeals = () => {
@@ -76,6 +112,9 @@ class NonratingRequestIssueModal extends React.Component {
       category: this.state.category.value,
       description: this.state.description,
       decisionDate: this.state.decisionDate,
+      ineligibleDueToId: this.state.ineligibleDueToId,
+      ineligibleReason: this.state.ineligibleReason,
+      reviewRequestTitle: this.state.reviewRequestTitle,
       isRating: false
     };
 
@@ -94,6 +133,9 @@ class NonratingRequestIssueModal extends React.Component {
         category: this.state.category.value,
         description: this.state.description,
         decisionDate: this.state.decisionDate,
+        ineligibleDueToId: this.state.ineligibleDueToId,
+        ineligibleReason: this.state.ineligibleReason,
+        reviewRequestTitle: this.state.reviewRequestTitle,
         timely: true
       });
       this.props.closeHandler();
@@ -106,9 +148,60 @@ class NonratingRequestIssueModal extends React.Component {
       closeHandler
     } = this.props;
 
-    const { category, description, decisionDate } = this.state;
+    const { category, description, decisionDate, selectedNonratingIssueId } = this.state;
     const issueNumber = (intakeData.addedIssues || []).length + 1;
     const requiredFieldsMissing = !description || !category || !decisionDate;
+
+    let nonratingRequestIssueOptions = intakeData.activeNonratingRequestIssues.filter((issue) => {
+      return category && issue.category === category.value;
+    }).map((issue) => {
+      return {
+        displayText: `${issue.category}: ${issue.description}, decided ${issue.decisionDate}`,
+        value: issue.id,
+        disabled: false
+      };
+    });
+
+    nonratingRequestIssueOptions.push({
+      displayText: NO_MATCH_TEXT,
+      value: NO_MATCH_TEXT,
+      disabled: false
+    });
+
+    let nonratingRequestIssueSelection = null;
+
+    if (nonratingRequestIssueOptions.length >= 2) {
+      nonratingRequestIssueSelection = <RadioField
+        vertical
+        label={<h3>Does issue {issueNumber} match any of the issues actively being reviewed?</h3>}
+        name="rating-radio"
+        options={nonratingRequestIssueOptions}
+        key={category}
+        value={selectedNonratingIssueId}
+        onChange={this.selectedNonratingIssueIdOnChange}
+      />;
+    }
+
+    let additionalDetails = null;
+
+    if (selectedNonratingIssueId === NO_MATCH_TEXT || !nonratingRequestIssueSelection) {
+      additionalDetails = <React.Fragment>
+        <div className="decision-date">
+          <DateSelector
+            name="decision-date"
+            label="Decision date"
+            strongLabel
+            value={decisionDate}
+            onChange={this.decisionDateOnChange} />
+        </div>
+
+        <TextField
+          name="Issue description"
+          strongLabel
+          value={description}
+          onChange={this.descriptionOnChange} />
+      </React.Fragment>;
+    }
 
     return <div className="intake-add-issues">
       <Modal
@@ -144,21 +237,10 @@ class NonratingRequestIssueModal extends React.Component {
               options={NONRATING_REQUEST_ISSUE_CATEGORIES}
               value={category}
               onChange={this.categoryOnChange} />
-
-            <div className="decision-date">
-              <DateSelector
-                name="decision-date"
-                label="Decision date"
-                strongLabel
-                value={decisionDate}
-                onChange={this.decisionDateOnChange} />
-            </div>
-
-            <TextField
-              name="Issue description"
-              strongLabel
-              value={description}
-              onChange={this.descriptionOnChange} />
+          </div>
+          <div className="add-nonrating-request-issue-description">
+            { nonratingRequestIssueSelection }
+            { additionalDetails }
           </div>
         </div>
       </Modal>

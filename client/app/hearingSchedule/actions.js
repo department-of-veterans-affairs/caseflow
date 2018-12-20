@@ -48,10 +48,10 @@ export const onReceiveUpcomingHearingDays = (upcomingHearingDays) => ({
   }
 });
 
-export const onReceiveVeteransReadyForHearing = (veterans) => ({
-  type: ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING,
+export const onReceiveAppealsReadyForHearing = (appeals) => ({
+  type: ACTIONS.RECEIVE_APPEALS_READY_FOR_HEARING,
   payload: {
-    veterans
+    appeals
   }
 });
 

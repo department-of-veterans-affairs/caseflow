@@ -1,4 +1,4 @@
-class Decision < ApplicationRecord
+class DecisionDocument < ApplicationRecord
   include UploadableDocument
   belongs_to :appeal
   validates :citation_number, format: { with: /\AA\d{8}\Z/i }
@@ -29,7 +29,7 @@ class Decision < ApplicationRecord
   end
 
   def s3_location
-    Decision::S3_SUB_BUCKET + "/" + pdf_name
+    DecisionDocument::S3_SUB_BUCKET + "/" + pdf_name
   end
 
   private
