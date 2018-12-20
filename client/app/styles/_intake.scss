@@ -141,10 +141,16 @@
 
 .add-nonrating-request-issue {
   max-width: 350px;
+}
 
+.add-nonrating-request-issue-description {
   .decision-date {
     margin-top: 20px;
     width: 8em;
+  }
+
+  .cf-form-radio {
+    margin-top: 20px;
   }
 }
 
