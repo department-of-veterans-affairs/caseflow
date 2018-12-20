@@ -3,7 +3,7 @@ class ProcessDecisionDocumentJob < CaseflowJob
   application_attr :intake
 
   def perform(decision_document)
-    RequestStore.store[:application] = "intake"
+    RequestStore.store[:application] = "idt"
     RequestStore.store[:current_user] = User.system_user
 
     decision_document.process!
