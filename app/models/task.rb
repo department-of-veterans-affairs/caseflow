@@ -18,8 +18,7 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.assigned.to_sym    => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
     Constants.TASK_STATUSES.on_hold.to_sym     => Constants.TASK_STATUSES.on_hold,
-    Constants.TASK_STATUSES.completed.to_sym   => Constants.TASK_STATUSES.completed,
-    Constants.TASK_STATUSES.canceled.to_sym => Constants.TASK_STATUSES.canceled
+    Constants.TASK_STATUSES.completed.to_sym   => Constants.TASK_STATUSES.completed
   }
 
   def available_actions(_user)
