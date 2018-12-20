@@ -458,7 +458,7 @@ class AppealRepository
 
       # Create follow up issues that will be listed as closed with the
       # proper disposition
-      case_record.case_issues.where(issdc: "3").each_with_index do |case_issue, i|
+      case_record.case_issues.where(issdc: %w[3 L]).each_with_index do |case_issue, i|
         VACOLS::CaseIssue.create!(
           case_issue.remand_clone_attributes.merge(
             isskey: follow_up_appeal_key,

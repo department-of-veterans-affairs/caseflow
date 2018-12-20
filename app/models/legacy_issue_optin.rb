@@ -2,11 +2,11 @@ class LegacyIssueOptin < ApplicationRecord
   belongs_to :request_issue
 
   VACOLS_DISPOSITION_CODE = "O".freeze # oh not zero
-  REMAND_DISPOSITION_CODE = "3".freeze
+  REMAND_DISPOSITION_CODES = %w[3 L].freeze
 
   class << self
     def related_remand_issues(vacols_id)
-      where(vacols_id: vacols_id, original_disposition_code: REMAND_DISPOSITION_CODE)
+      where(vacols_id: vacols_id, original_disposition_code: REMAND_DISPOSITION_CODES)
     end
 
     def revert_opted_in_remand_issues(vacols_id)
@@ -77,7 +77,7 @@ class LegacyIssueOptin < ApplicationRecord
   end
 
   def legacy_appeal_needs_reopened?
-    return false unless [nil, REMAND_DISPOSITION_CODE].include? original_disposition_code
+    return false unless (REMAND_DISPOSITION_CODES.include? original_disposition_code) || original_disposition_code.nil?
     !legacy_appeal.active?
   end
 

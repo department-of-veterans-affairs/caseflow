@@ -145,7 +145,7 @@ class Issue
   end
 
   def remanded?
-    disposition == :remanded
+    disposition == :remanded || disposition == :manlincon_remand
   end
 
   def merged?
