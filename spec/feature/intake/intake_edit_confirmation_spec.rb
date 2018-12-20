@@ -33,7 +33,7 @@ RSpec.feature "Intake Edit Confirmation", focus: true do
   end
 
   let(:receipt_date) { Time.zone.today - 20 }
-  let(:some_timely_date_before_receipt_date) { receipt_date - 3.months }
+  let(:some_timely_date_before_receipt_date) { (receipt_date - 3.months).strftime("%m/%d/%Y") }
   let(:profile_date) { "2017-11-02T07:00:00.000Z" }
 
   let!(:rating) do

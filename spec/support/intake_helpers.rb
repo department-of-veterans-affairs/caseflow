@@ -181,7 +181,7 @@ module IntakeHelpers
   def add_intake_nonrating_issue(
     category: "Active Duty Adjustments",
     description: "Some description",
-    date: 3.months.ago,
+    date: "01/01/2016",
     legacy_issues: false
   )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
@@ -190,7 +190,7 @@ module IntakeHelpers
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: description
-    fill_in "Decision date", with: date.strftime("%m/%d/%Y")
+    fill_in "Decision date", with: date
     expect(page).to have_button(add_button_text, disabled: false)
     safe_click ".add-issue"
   end
