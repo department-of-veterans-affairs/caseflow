@@ -69,7 +69,7 @@ type Props = {|
   reviewActionType: string,
   userIsVsoEmployee?: boolean,
   caseSearchHomePage?: boolean,
-  canEditAod: boolean,
+  canEditAod: Boolean,
   featureToggles: Object,
   organizations: Array<Object>,
   // Action creators
