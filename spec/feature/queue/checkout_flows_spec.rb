@@ -77,7 +77,7 @@ RSpec.feature "Checkout flows" do
       expect(appeal.special_issue_list.radiation).to eq(true)
       click_on "Continue"
 
-      expect(page).to have_content "Select dispositions"
+      expect(page).to have_content "Select disposition"
       issue_dispositions = page.find_all(
         ".Select-control",
         text: "Select disposition",
@@ -356,7 +356,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content "Select dispositions"
+        expect(page).to have_content "Select disposition"
 
         cancel_button = page.find "#button-cancel-button"
         expect(cancel_button.text).to eql "Cancel"
@@ -400,7 +400,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content("Select dispositions")
+        expect(page).to have_content("Select disposition")
 
         table_rows = page.find_all("tr[id^='table-row-']")
         expect(table_rows.length).to eq(appeal.issues.length)
@@ -515,7 +515,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content("Select dispositions")
+        expect(page).to have_content("Select disposition")
 
         issue_rows = page.find_all("tr[id^='table-row-']")
         expect(issue_rows.length).to eq(appeal.issues.length)
@@ -571,7 +571,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content("Select dispositions")
+        expect(page).to have_content("Select disposition")
 
         first("a", text: "Edit Issue").click
         expect(page).to have_content("Edit Issue")
@@ -601,7 +601,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content "Select dispositions"
+        expect(page).to have_content "Select disposition"
 
         diag_code_no_l2 = %w[4 5 0 *]
         no_diag_code_no_l2 = %w[4 5 1]
@@ -622,7 +622,7 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown 0
 
-        expect(page).to have_content "Select dispositions"
+        expect(page).to have_content "Select disposition"
 
         click_on "Add Issue"
         expect(page).to have_content "Add Issue"
