@@ -20,5 +20,5 @@ module TimeableTask
       task = super
       TaskTimer.create(task: task, submitted_at: Time.zone.now + timer_delay)
     end
-   end
+  end
 end
