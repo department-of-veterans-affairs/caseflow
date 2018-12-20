@@ -64,8 +64,7 @@ class AppealsController < ApplicationController
         MetricsService.record("Get appeal information for ID #{id}",
                               service: :queue,
                               name: "AppealsController.show") do
-          render json: { appeal: json_appeals([appeal])[:data][0],
-                         can_edit_aod: AodTeam.singleton.user_has_access?(current_user) }
+          render json: { appeal: json_appeals([appeal])[:data][0] }
         end
       end
     end
