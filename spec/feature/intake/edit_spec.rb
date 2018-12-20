@@ -372,7 +372,6 @@ feature "Edit issues" do
 
     safe_click("#button-submit-update")
     safe_click ".confirm"
-    expect(page).to have_content("Edit Confirmed")
 
     visit page_url
     expect(page).to have_content(nonrating_decision_issue_description)
@@ -828,7 +827,6 @@ feature "Edit issues" do
         expect(page).to have_current_path(
           "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Edit Confirmed")
       end
 
       context "when veteran has active nonrating request issues" do
@@ -1100,7 +1098,9 @@ feature "Edit issues" do
         expect(page).to have_content("The review originally had 1 issue but now has 7.")
 
         safe_click "#Number-of-issues-has-changed-button-id-1"
-        expect(page).to have_content("Edit Confirmed")
+        expect(page).to have_current_path(
+          "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
+        )
 
         # assert server has updated data for nonrating and unidentified issues
         active_duty_adjustments_request_issue = RequestIssue.find_by!(
@@ -1420,7 +1420,6 @@ feature "Edit issues" do
         expect(page).to have_current_path(
           "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Edit Confirmed")
       end
     end
 
