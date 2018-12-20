@@ -405,13 +405,26 @@ RSpec.feature "Case details" do
 
     context "when the current user is a member of the AOD team" do
       before do
-        allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user).and_return(true)
+        OrganizationsUser.add_user_to_organization(user, AodTeam.singleton)
         User.authenticate!(user: user)
-        visit("/queue/appeals/#{appeal.uuid}")
       end
 
-      it "should display the edit link" do
-        expect(page).to have_content("Edit")
+      context "when requesting the case details page directly" do
+        it "should display the edit link" do
+          visit("/queue/appeals/#{appeal.external_id}")
+          expect(page).to have_content("Edit")
+        end
+      end
+
+      context "when reaching the case details page by way of the search page" do
+        it "should display the edit link" do
+          visit("/search")
+          fill_in("searchBarEmptyList", with: appeal.veteran.file_number)
+          click_on("Search")
+
+          click_on(appeal.docket_number)
+          expect(page).to have_content("Edit")
+        end
       end
     end
 
