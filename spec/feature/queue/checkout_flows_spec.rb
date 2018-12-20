@@ -184,7 +184,7 @@ RSpec.feature "Checkout flows" do
 
         click_on "Save"
 
-        expect(page).to have_content("Added to 2 decisions")
+        expect(page).to have_content("Added to 2 issues")
 
         # Test removing linked issue
         all("button", text: "Edit", count: 4)[2].click
@@ -193,7 +193,7 @@ RSpec.feature "Checkout flows" do
 
         click_on "Save"
 
-        expect(page).to_not have_content("Added to 2 decisions")
+        expect(page).to_not have_content("Added to 2 issues")
 
         # Re-add linked issue
         all("button", text: "Edit", count: 3)[2].click
@@ -203,7 +203,7 @@ RSpec.feature "Checkout flows" do
 
         click_on "Save"
 
-        expect(page).to have_content("Added to 2 decisions", count: 2)
+        expect(page).to have_content("Added to 2 issues", count: 2)
 
         # Ensure the decision issue is on the select disposition screen
         expect(page).to have_content(decision_issue_text)
@@ -262,7 +262,7 @@ RSpec.feature "Checkout flows" do
 
         click_on "(#{appeal.veteran_file_number})"
 
-        expect(page).to have_content("Added to 2 decisions", count: 2)
+        expect(page).to have_content("Added to 2 issues", count: 2)
 
         click_dropdown(index: 0)
 
