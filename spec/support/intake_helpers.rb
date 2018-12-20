@@ -50,6 +50,11 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
+  def add_active_intake_nonrating_issue(description)
+    find_all("label", text: description, minimum: 1).first.click
+    safe_click ".add-issue"
+  end
+
   def add_intake_unidentified_issue(description)
     safe_click ".no-matching-issues"
     safe_click ".no-matching-issues"

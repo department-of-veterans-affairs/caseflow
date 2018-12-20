@@ -745,7 +745,7 @@ RSpec.feature "Supplemental Claim Intake" do
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
       expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
@@ -779,14 +779,58 @@ RSpec.feature "Supplemental Claim Intake" do
       expect(page).to have_current_path("/intake/add_issues")
     end
 
-    scenario "Non-compensation" do
-      start_supplemental_claim(veteran, is_comp: false)
-      visit "/intake/add_issues"
+    context "Non-compensation" do
+      context "decision issues are present" do
+        scenario "Add Issues button shows contestable issues" do
+          sc, = start_supplemental_claim(veteran, is_comp: false)
+          create(:decision_issue,
+                 decision_review: sc,
+                 benefit_type: sc.benefit_type,
+                 decision_text: "something was decided",
+                 participant_id: veteran.participant_id)
 
-      expect(page).to have_content("Add / Remove Issues")
-      check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
-      check_row("Benefit type", "Education")
-      expect(page).to_not have_content("Claimant")
+          visit "/intake/add_issues"
+          click_intake_add_issue
+
+          expect(page).to have_content("something was decided")
+          expect(page).to_not have_content("Left knee granted")
+        end
+      end
+
+      context "no contestable issues present" do
+        scenario "no rating issues show on first Add Issues modal" do
+          sc, = start_supplemental_claim(veteran, is_comp: false)
+
+          visit "/intake/add_issues"
+
+          expect(page).to have_content("Add / Remove Issues")
+          check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
+          check_row("Benefit type", "Education")
+
+          expect(page).to_not have_content("Left knee granted")
+
+          click_intake_add_issue
+          add_intake_nonrating_issue(
+            category: "Active Duty Adjustments",
+            description: "Description for Active Duty Adjustments",
+            date: "10/25/2017"
+          )
+          expect(page).to_not have_content("Establish EP")
+          expect(page).to have_content("Establish Supplemental Claim")
+          expect(page).to_not have_content("Claimant")
+
+          click_intake_finish
+
+          expect(page).to have_content("Intake completed")
+
+          # request issue should have matching benefit type
+          expect(RequestIssue.find_by(
+                   review_request: sc,
+                   description: "Description for Active Duty Adjustments",
+                   benefit_type: sc.benefit_type
+          )).to_not be_nil
+        end
+      end
     end
 
     scenario "canceling" do
@@ -825,13 +869,15 @@ RSpec.feature "Supplemental Claim Intake" do
       end
 
       context "with legacy_opt_in_approved" do
+        let(:receipt_date) { Time.zone.today }
+
         scenario "adding issues" do
           start_supplemental_claim(veteran, legacy_opt_in_approved: true)
           visit "/intake/add_issues"
 
           click_intake_add_issue
           expect(page).to have_content("Next")
-          add_intake_rating_issue("Left knee granted")
+          add_intake_rating_issue(/Left knee granted$/)
 
           # expect legacy opt in modal
           expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")

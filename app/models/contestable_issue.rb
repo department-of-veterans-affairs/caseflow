@@ -63,7 +63,7 @@ class ContestableIssue
 
   def conflicting_request_issue_by_decision_issue
     return unless decision_issue_id
-    potentially_conflicting_request_issues.find_active_by_rating_issue_reference_id(rating_issue_reference_id)
+    potentially_conflicting_request_issues.find_active_by_contested_decision_id(decision_issue_id)
   end
 
   def potentially_conflicting_request_issues

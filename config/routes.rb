@@ -136,7 +136,6 @@ Rails.application.routes.draw do
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
-  get 'hearings/schedule/assign/veterans', to: "hearings/hearing_day#appeals_ready_for_hearing_schedule"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
 
   resources :hearings, only: [:update]
@@ -176,9 +175,14 @@ Rails.application.routes.draw do
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
+  resources :decision_reviews, param: :business_line_slug, only: [:index] do
+  end
+  match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
+
   resources :users, only: [:index]
 
   get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
+  get 'cases_to_schedule/:ro', to: 'appeals#ready_for_hearing_schedule'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'

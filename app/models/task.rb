@@ -33,7 +33,14 @@ class Task < ApplicationRecord
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
-    actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action) } : []
+    actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action) } : []
+
+    # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
+    if actions.length > actions.pluck(:value).uniq.length
+      fail Caseflow::Error::DuplicateTaskActionPaths, task_id: id, user_id: user.id, labels: actions.pluck(:label)
+    end
+
+    actions
   end
 
   def build_action_hash(action)

@@ -1,5 +1,5 @@
 class Hearings::HearingDayController < HearingScheduleController
-  # Controller to add and update hearing schedule days.
+  before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
 
   # show schedule days for date range provided
   def index
@@ -53,12 +53,6 @@ class Hearings::HearingDayController < HearingScheduleController
     end
 
     render json: { hearing_days: json_hearings(enriched_hearings) }
-  end
-
-  def appeals_ready_for_hearing_schedule
-    ro = HearingDayMapper.validate_regional_office(params[:regional_office])
-
-    render json: { veterans: json_appeals(AppealRepository.appeals_ready_for_hearing_schedule(ro)) }
   end
 
   # Create a hearing schedule day
@@ -183,29 +177,6 @@ class Hearings::HearingDayController < HearingScheduleController
                        v
                      end
     end
-  end
-
-  def json_appeals(appeals)
-    appeals.each_with_object([]) do |appeal, result|
-      result << json_appeal(appeal)
-    end
-  end
-
-  def json_appeal(appeal)
-    {
-      appeal_id: appeal.id,
-      appellantFirstName: appeal.appellant_first_name,
-      appellantLastName: appeal.appellant_last_name,
-      veteranFirstName: appeal.veteran_first_name,
-      veteranLastName: appeal.veteran_last_name,
-      type: appeal.type,
-      docket_number: appeal.docket_number,
-      location: HearingDayMapper.city_for_regional_office(appeal.regional_office_key),
-      time: nil,
-      vacols_id: appeal.case_record.bfkey,
-      vbms_id: appeal.vbms_id,
-      aod: appeal.aod
-    }
   end
 
   def json_tb_hearings(tbhearings)

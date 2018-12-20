@@ -7,6 +7,7 @@ import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
 
 import {
+  setCanEditAod,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
@@ -69,9 +70,11 @@ type Props = {|
   reviewActionType: string,
   userIsVsoEmployee?: boolean,
   caseSearchHomePage?: boolean,
+  canEditAod: Boolean,
   featureToggles: Object,
   organizations: Array<Object>,
   // Action creators
+  setCanEditAod: typeof setCanEditAod,
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,
   setUserCssId: typeof setUserCssId,
@@ -82,6 +85,7 @@ type Props = {|
 
 class QueueApp extends React.PureComponent<Props> {
   componentDidMount = () => {
+    this.props.setCanEditAod(this.props.canEditAod);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
@@ -189,6 +193,8 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} {...props.match.params} />;
 
+  routedAssignToSingleTeam = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
+
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
 
   routedCreateMailTask = (props) => <CreateMailTaskDialog {...props.match.params} />;
@@ -285,10 +291,14 @@ class QueueApp extends React.PureComponent<Props> {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_TEAM.value}`}
             render={this.routedAssignToTeam} />
           <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value}`}
+            render={this.routedAssignToSingleTeam} />
+          <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
             render={this.routedCreateMailTask} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PERSON.value}`}
+            path={'/queue/appeals/:appealId/tasks/:taskId/' +
+              `(${TASK_ACTIONS.ASSIGN_TO_PERSON.value}|${TASK_ACTIONS.RETURN_TO_JUDGE.value})`}
             render={this.routedAssignToUser} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
@@ -416,6 +426,7 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setCanEditAod,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
