@@ -40,7 +40,7 @@ module Asyncable
     end
 
     def processable
-      where(arel_table[submitted_at_column].lt(Time.zone.now)).where(processed_at_column => nil)
+      where(arel_table[submitted_at_column].lteq(Time.zone.now)).where(processed_at_column => nil)
     end
 
     def never_attempted
