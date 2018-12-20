@@ -42,7 +42,7 @@ class DocumentFetcher
   end
 
   def fetched_at_format
-    "%D %l:%M%P %z"
+    "%D %l:%M%P %Z %z"
   end
 
   def save!
