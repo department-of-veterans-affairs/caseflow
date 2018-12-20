@@ -16,6 +16,7 @@ describe VACOLS::CaseDocket do
   let(:another_judge) { create(:user) }
   let!(:another_vacols_judge) { create(:staff, :judge_role, sdomainid: another_judge.css_id) }
 
+  let(:nonpriority_ready_case_bfbox)
   let(:nonpriority_ready_case_docket_number) { "1801001" }
   let!(:nonpriority_ready_case) do
     create(:case,
@@ -24,6 +25,7 @@ describe VACOLS::CaseDocket do
            bfmpro: "ACT",
            bfcurloc: "81",
            bfdloout: 1.day.ago,
+           bfbox: nonpriority_ready_case_bfbox,
            folder: build(:folder, tinum: nonpriority_ready_case_docket_number, titrnum: "123456789S"))
   end
 
@@ -60,6 +62,7 @@ describe VACOLS::CaseDocket do
            bfdloout: 1.day.ago)
   end
 
+  let(:aod_ready_case_bfbox)
   let(:aod_ready_case_docket_number) { "1801003" }
   let(:aod_ready_case_ready_time) { 3.days.ago }
   let!(:aod_ready_case) do
@@ -70,6 +73,7 @@ describe VACOLS::CaseDocket do
            bfmpro: "ACT",
            bfcurloc: "81",
            bfdloout: aod_ready_case_ready_time,
+           bfbox: aod_ready_case_bfbox,
            folder: build(:folder, tinum: aod_ready_case_docket_number, titrnum: "123456789S"))
   end
 
@@ -219,11 +223,28 @@ describe VACOLS::CaseDocket do
       end
     end
 
-    context "when the case contains a specialty case team issue" do
-      let!(:sct_issue) { create(:case_issue, :education, isskey: nonpriority_ready_case.bfkey) }
+    context "when the case is set aside for a specialty case team" do
+      let(:nonpriority_ready_case_bfbox) { "01" }
 
       it "does not distribute the case" do
         expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+      end
+    end
+
+    context "when the case has pending mail" do
+      let(:mltype) { "01" }
+      let!(:mail) { create(:mail, mlfolder: nonpriority_ready_case.bfkey, mltype: mltype) }
+
+      it "does not distribute the case" do
+        expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+      end
+
+      context "when the mail should not block distribution" do
+        let(:mltype) { "02" }
+
+        it "distributes the case" do
+          expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        end
       end
     end
   end
@@ -365,11 +386,28 @@ describe VACOLS::CaseDocket do
       end
     end
 
-    context "when the case contains a specialty case team issue" do
-      let!(:sct_issue) { create(:case_issue, :education, isskey: aod_ready_case.bfkey) }
+    context "when the case is set aside for a specialty case team" do
+      let(:aod_ready_case_bfbox) { "01" }
 
       it "does not distribute the case" do
         expect(aod_ready_case.reload.bfcurloc).to eq("81")
+      end
+    end
+
+    context "when the case has pending mail" do
+      let(:mltype) { "01" }
+      let!(:mail) { create(:mail, mlfolder: aod_ready_case.bfkey, mltype: mltype) }
+
+      it "does not distribute the case" do
+        expect(aod_ready_case.reload.bfcurloc).to eq("81")
+      end
+
+      context "when the mail should not block distribution" do
+        let(:mltype) { "02" }
+
+        it "distributes the case" do
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        end
       end
     end
   end
