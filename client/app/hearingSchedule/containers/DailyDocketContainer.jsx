@@ -149,7 +149,7 @@ export class DailyDocketContainer extends React.Component {
         });
       });
 
-      activeJudges.unshift(emptyValueEntry);
+      // activeJudges.unshift(emptyValueEntry);
       this.props.onReceiveJudges(activeJudges);
     });
 
@@ -171,7 +171,7 @@ export class DailyDocketContainer extends React.Component {
       });
 
       activeCoordinators = _.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc');
-      activeCoordinators.unshift(emptyValueEntry);
+      // activeCoordinators.unshift(emptyValueEntry);
       this.props.onReceiveCoordinators(activeCoordinators);
     });
   };
