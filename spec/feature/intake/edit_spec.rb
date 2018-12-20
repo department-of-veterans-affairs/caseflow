@@ -1026,12 +1026,12 @@ RSpec.feature "Edit issues" do
 
         rating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
-          code: HigherLevelReview::END_PRODUCT_RATING_CODE
+          code: HigherLevelReview::END_PRODUCT_CODES[:rating]
         )
 
         nonrating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
-          code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+          code: HigherLevelReview::END_PRODUCT_CODES[:nonrating]
         )
 
         # expect the remove/re-add to create a new RequestIssue for same RatingIssue
@@ -1197,12 +1197,13 @@ RSpec.feature "Edit issues" do
 
   context "Supplemental claims" do
     let(:is_dta_error) { false }
+    let(:benefit_type) { "compensation" }
 
     let!(:supplemental_claim) do
       SupplementalClaim.create!(
         veteran_file_number: veteran.file_number,
         receipt_date: receipt_date,
-        benefit_type: "compensation",
+        benefit_type: benefit_type,
         is_dta_error: is_dta_error,
         veteran_is_not_claimant: true
       )
@@ -1269,6 +1270,19 @@ RSpec.feature "Edit issues" do
           visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
           expect(page).to have_content("Issues Not Editable")
         end
+
+        context "when benefit type is pension" do
+          let(:benefit_type) { "pension" }
+          it "cannot be edited" do
+            nonrating_dta_claim_id = EndProductEstablishment.find_by(
+              source: supplemental_claim,
+              code: "040HDENRPMC"
+            ).reference_id
+
+            visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
+            expect(page).to have_content("Issues Not Editable")
+          end
+        end
       end
 
       it "shows the Supplemental Claim Edit page with a nonrating claim id" do
@@ -1328,6 +1342,19 @@ RSpec.feature "Edit issues" do
 
           visit "supplemental_claims/#{rating_dta_claim_id}/edit"
           expect(page).to have_content("Issues Not Editable")
+        end
+
+        context "when benefit type is pension" do
+          let(:benefit_type) { "pension" }
+          it "cannot be edited" do
+            rating_dta_claim_id = EndProductEstablishment.find_by(
+              source: supplemental_claim,
+              code: "040HDERPMC"
+            ).reference_id
+
+            visit "supplemental_claims/#{rating_dta_claim_id}/edit"
+            expect(page).to have_content("Issues Not Editable")
+          end
         end
       end
 

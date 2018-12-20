@@ -48,10 +48,10 @@ export const onReceiveUpcomingHearingDays = (upcomingHearingDays) => ({
   }
 });
 
-export const onReceiveVeteransReadyForHearing = (veterans) => ({
-  type: ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING,
+export const onReceiveAppealsReadyForHearing = (appeals) => ({
+  type: ACTIONS.RECEIVE_APPEALS_READY_FOR_HEARING,
   payload: {
-    veterans
+    appeals
   }
 });
 
@@ -348,3 +348,13 @@ export const onResetDailyDocketAfterError = () => ({
   type: ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR
 });
 
+export const handleLockHearingServerError = (err) => ({
+  type: ACTIONS.HANDLE_LOCK_HEARING_SERVER_ERROR,
+  payload: {
+    err
+  }
+});
+
+export const onResetLockHearingAfterError = () => ({
+  type: ACTIONS.RESET_LOCK_HEARING_SERVER_ERROR
+});

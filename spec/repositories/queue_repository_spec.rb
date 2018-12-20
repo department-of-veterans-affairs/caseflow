@@ -147,6 +147,18 @@ describe QueueRepository do
         expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
       end
     end
+
+    context "when note with multi-byte characters causes it to be greater than 350 characters" do
+      let(:decass_attrs) { { note: ("a" * 341) + "Veteran’s" } }
+      let(:date_added) { "2018-04-18".to_date }
+      let!(:decass) { create(:decass, defolder: vacols_case.bfkey, deadtim: date_added) }
+
+      it "converts multi-byte characters to ASCII (VACOLS Oracle DB is in ASCII format)" do
+        subject
+
+        expect(decass.reload.deatcom).to eq(("a" * 341) + "Veteran's")
+      end
+    end
   end
 
   context ".reassign_case_to_attorney!" do
