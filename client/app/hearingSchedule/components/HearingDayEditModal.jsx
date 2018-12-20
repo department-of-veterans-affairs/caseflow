@@ -31,8 +31,7 @@ class HearingDayEditModal extends React.Component {
     this.state = {
       modifyRoom: false,
       modifyVlj: false,
-      modifyCoordinator: false,
-      noVljSelected: false
+      modifyCoordinator: false
     };
   }
 
