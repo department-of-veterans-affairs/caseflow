@@ -40,6 +40,9 @@ RSpec.feature "Checkout flows" do
     scenario "submits draft decision" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
+
+      expect(page).not_to have_content "Correct issues"
+
       click_dropdown(index: 0)
       click_label "radiation"
 
@@ -122,6 +125,7 @@ RSpec.feature "Checkout flows" do
         # Ensure the issue is on the case details screen
         expect(page).to have_content(issue_description)
         expect(page).to have_content(issue_note)
+        expect(page).to have_content "Correct issues"
 
         click_dropdown(index: 0)
 
@@ -270,6 +274,7 @@ RSpec.feature "Checkout flows" do
         click_on "Continue"
 
         expect(page).to have_content(decision_issue_text)
+        expect(page).to have_content "Correct issues"
 
         # Update the decision issue
         all("button", text: "Edit", count: 4)[0].click
