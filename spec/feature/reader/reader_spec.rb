@@ -212,7 +212,7 @@ RSpec.feature "Reader" do
     end
 
     context "Appeals without any issues" do
-      let(:fetched_at_format) { "%D %l:%M%P %Z" }
+      let(:fetched_at_format) { "%D %l:%M%P %z" }
       let(:vbms_fetched_ts) { Time.zone.now }
       let(:vva_fetched_ts) { Time.zone.now }
 

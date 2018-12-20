@@ -36,8 +36,9 @@ describe ExternalApi::EfolderService do
     let(:user) { Generators::User.create }
     let(:appeal) { Generators::LegacyAppeal.build }
     let(:vbms_id) { appeal.sanitized_vbms_id.to_s }
-    let(:manifest_vbms_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
-    let(:manifest_vva_fetched_at) { Time.zone.now.strftime("%D %l:%M%P %Z") }
+    let(:fetched_at_format) { "%D %l:%M%P %z" }
+    let(:manifest_vbms_fetched_at) { Time.zone.now.strftime(fetched_at_format) }
+    let(:manifest_vva_fetched_at) { Time.zone.now.strftime(fetched_at_format) }
     let(:expected_response) { construct_response(records, sources) }
 
     subject { ExternalApi::EfolderService.generate_efolder_request(vbms_id, user) }

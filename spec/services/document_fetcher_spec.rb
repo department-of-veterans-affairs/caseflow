@@ -13,7 +13,7 @@ describe DocumentFetcher do
   let(:service_manifest_vbms_fetched_at) { Time.zone.local(1989, "nov", 23, 8, 2, 55) }
   let(:service_manifest_vva_fetched_at) { Time.zone.local(1989, "dec", 13, 20, 15, 1) }
 
-  let(:fetched_at_format) { "%D %l:%M%P %Z" }
+  let(:fetched_at_format) { "%D %l:%M%P %z" }
   let!(:efolder_fetched_at_format) { "%FT%T.%LZ" }
   let(:doc_struct) do
     {

@@ -6,17 +6,6 @@ import Alert from '../components/Alert';
 import { css } from 'glamor';
 
 const CACHE_TIMEOUT_HOURS = 3;
-const TIMEZONES = {
-  ' GMT': ' +0000',
-  ' EDT': ' -0400',
-  ' EST': ' -0500',
-  ' CDT': ' -0500',
-  ' CST': ' -0600',
-  ' MDT': ' -0600',
-  ' MST': ' -0700',
-  ' PDT': ' -0700',
-  ' PST': ' -0800'
-};
 
 const alertStyling = css({
   marginBottom: '20px'
@@ -41,15 +30,8 @@ class LastRetrievalAlert extends React.PureComponent {
     }
 
     const staleCacheTime = moment().subtract(CACHE_TIMEOUT_HOURS, 'h'),
-      vbmsManifestTimeString = this.props.manifestVbmsFetchedAt,
-      vvaManifestTimeString = this.props.manifestVvaFetchedAt;
-
-    const parsableVbmsManifestTimeString = vbmsManifestTimeString.slice(0, -4) +
-      TIMEZONES[vbmsManifestTimeString.slice(-4)],
-      parsableVvaManifestTimeString = vvaManifestTimeString.slice(0, -4) +
-        TIMEZONES[vvaManifestTimeString.slice(-4)],
-      vbmsManifestTimestamp = moment(parsableVbmsManifestTimeString, 'MM/DD/YY HH:mma Z'),
-      vvaManifestTimestamp = moment(parsableVvaManifestTimeString, 'MM/DD/YY HH:mma Z');
+      vbmsManifestTimestamp = moment(this.props.manifestVbmsFetchedAt, 'MM/DD/YY HH:mma Z'),
+      vvaManifestTimestamp = moment(this.props.manifestVvaFetchedAt, 'MM/DD/YY HH:mma Z');
 
     // Check that manifest results are fresh
     if (vbmsManifestTimestamp.isBefore(staleCacheTime) || vvaManifestTimestamp.isBefore(staleCacheTime)) {
