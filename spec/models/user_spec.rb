@@ -262,6 +262,34 @@ describe User do
     end
   end
 
+  context "#can_edit_request_issues?" do
+    let(:appeal) { create(:appeal) }
+
+    subject { user.can_edit_request_issues?(appeal) }
+
+    context "when appeal has in-progress task assigned to user" do
+      let!(:task) do 
+        create(:task, 
+          type: "AttorneyTask", 
+          appeal: appeal, 
+          assigned_to: user, 
+          status: Constants.TASK_STATUSES.assigned)
+      end
+      it { is_expected.to be true }
+    end
+
+    context "when appeal has completed task assigned to user" do
+      let!(:task) do 
+        create(:task, 
+          type: "AttorneyTask", 
+          appeal: appeal, 
+          assigned_to: user, 
+          status: Constants.TASK_STATUSES.completed)
+      end
+      it { is_expected.to be false }
+    end
+  end
+
   context "#appeal_has_task_assigned_to_user?" do
     context "when legacy appeal" do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }

@@ -121,10 +121,17 @@ export const anchorJumpLinkStyling = css({
   cursor: 'default'
 });
 
+const anchorEditLinkStyling = css({
+  fontSize: '1.5rem',
+  fontWeight: 'normal',
+  margin: '5px'
+});
+
 const ContentSection = ({ element }) => <React.Fragment>
   <h2 {...sectionHeadingStyling}>
     <a id={`${getIdForElement(element)}`} {...anchorJumpLinkStyling}>{element.props.title}</a>
-    {element.props.editLink && <Link href={element.props.editLink}>{element.props.editLinkTitle}</Link>}
+    {element.props.editLink && <span className="cf-push-right" {...anchorEditLinkStyling}>
+      <Link href={element.props.editLink}>{element.props.editLinkTitle}</Link></span>}
   </h2>
   <div {...sectionSegmentStyling}>{element}</div>
 </React.Fragment>;
