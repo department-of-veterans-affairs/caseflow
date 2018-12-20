@@ -1,6 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+
 import TabWindow from '../../components/TabWindow';
+import { TaskTableUnconnected } from '../../queue/components/TaskTable';
+import { claimantColumn, veteranSsnColumn, decisionReviewTypeColumn } from './TaskTableColumns';
 
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
@@ -8,7 +11,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'In progress tasks',
       page: <TaskTableTab
         description="In progress"
-        tasks={this.props.unassignedTasks} />
+        tasks={this.props.inProgressTasks} />
     }, {
       label: 'Completed tasks',
       page: <TaskTableTab
@@ -23,8 +26,15 @@ class NonCompTabsUnconnected extends React.PureComponent {
   }
 }
 
-const TaskTableTab = ({ description }) => <React.Fragment>
+const TaskTableTab = ({ description, tasks }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
+  <TaskTableUnconnected
+    getKeyForRow={(row, object) => object.appeal.id}
+    customColumns={[claimantColumn(), veteranSsnColumn(), decisionReviewTypeColumn()]}
+    includeIssueCount
+    includeDaysWaiting
+    tasks={tasks}
+  />
 </React.Fragment>;
 
 const NonCompTabs = connect(
