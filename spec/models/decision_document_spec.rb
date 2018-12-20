@@ -18,12 +18,15 @@ describe DecisionDocument do
   context "#submit_for_processing!" do
     subject { decision_document.submit_for_processing! }
     before { FeatureToggle.enable!(:decision_document_upload) }
+    after { FeatureToggle.disable!(:decision_document_upload) }
+
+    let(:expected_path) { "decisions/#{decision_document.appeal.external_id}.pdf" }
 
     context "when there is a file" do
       let(:file) { "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW" }
 
       it "caches the file" do
-        expect(S3Service).to receive(:store_file).with("decisions/#{decision_document.appeal.external_id}.pdf", /PDF/)
+        expect(S3Service).to receive(:store_file).with(expected_path, /PDF/)
         subject
         expect(decision_document.submitted_at).to eq(Time.zone.now + DecisionDocument::DECISION_OUTCODING_DELAY)
       end
@@ -41,7 +44,7 @@ describe DecisionDocument do
         before { FeatureToggle.disable!(:decision_document_upload) }
 
         it "marks document as having been processed immediately without uploading anything" do
-          expect(S3Service).to_not receive(:store_file).with("decisions/#{decision_document.appeal.external_id}.pdf", /PDF/)
+          expect(S3Service).to_not receive(:store_file).with(expected_path, /PDF/)
           subject
           expect(decision_document.submitted_at).to eq(Time.zone.now)
           expect(decision_document.attempted_at).to eq(Time.zone.now)
