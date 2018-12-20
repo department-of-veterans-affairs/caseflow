@@ -24,7 +24,7 @@ describe ClaimReview do
   let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
-  let(:benefit_type) { nil }
+  let(:benefit_type) { "compensation" }
 
   let(:rating_request_issue) do
     build(
