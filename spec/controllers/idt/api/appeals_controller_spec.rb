@@ -520,23 +520,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
     end
 
-    context "when VBMS failure" do
-      before { BvaDispatchTask.create_and_assign(root_task) }
-
-      it "should throw an error" do
-        allow(VBMSService).to receive(:upload_document_to_vbms).and_raise(VBMS::HTTPError.new(503, "VBMS is down"))
-        post :outcode, params: params
-        expect(response.status).to eq(502)
-        response_detail = JSON.parse(response.body)["errors"][0]["detail"]
-        expect(response_detail).to eq "Document upload failed due to VBMS experiencing issues."
-      end
-    end
-
     context "when single BvaDispatchTask exists for user and appeal combination" do
       before { BvaDispatchTask.create_and_assign(root_task) }
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
-        expect(VBMSService).to receive(:upload_document_to_vbms)
         post :outcode, params: params
         expect(response.status).to eq(200)
         tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
@@ -545,6 +532,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         expect(task.status).to eq("completed")
         expect(task.parent.status).to eq("completed")
         expect(S3Service.files["decisions/" + root_task.appeal.external_id + ".pdf"]).to_not eq nil
+        expect(DecisionDocument.find_by(appeal_id: root_task.appeal.id)&.submitted_at).to_not be_nil
       end
     end
 
