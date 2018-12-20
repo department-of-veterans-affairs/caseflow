@@ -1,6 +1,6 @@
 class GenericTask < Task
   before_create :verify_org_task_unique
-  after_create -> (task) { task.parent.when_child_task_created if task.parent }
+  after_create ->(task) { task.parent&.when_child_task_created }
 
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
   # task active at a time for a single appeal.
