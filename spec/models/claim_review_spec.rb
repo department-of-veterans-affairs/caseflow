@@ -220,23 +220,6 @@ describe ClaimReview do
           expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRRPMC")
           expect(non_rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRNRPMC")
         end
-
-        context "for a supplemental claim" do
-          let(:claim_review) do
-            SupplementalClaim.new(
-              veteran_file_number: veteran_file_number,
-              receipt_date: receipt_date,
-              benefit_type: benefit_type
-            )
-
-            it "creates issues and assigns pension end product codes to them" do
-              subject
-
-              expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "040SCRPMC")
-              expect(non_rating_request_issue.reload.end_product_establishment).to have_attributes(code: "040SCNRPMC")
-            end
-          end
-        end
       end
     end
   end

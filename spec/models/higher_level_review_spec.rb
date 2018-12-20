@@ -30,6 +30,39 @@ describe HigherLevelReview do
     )
   end
 
+  context "#issue_code" do
+    let(:rating) { nil }
+    subject { higher_level_review.issue_code(rating: rating) }
+
+    context "for a rating issue" do
+      let(:rating) { true }
+      it "returns the rating end product code" do
+        expect(subject).to eq("030HLRR")
+      end
+
+      context "when benefit type is pension" do
+        let(:benefit_type) { "pension" }
+        it "returns the rating pension end product code" do
+          expect(subject).to eq("030HLRRPMC")
+        end
+      end
+    end
+
+    context "for a nonrating issue" do
+      let(:rating) { false }
+      it "returns the nonrating end product code" do
+        expect(subject).to eq("030HLRNR")
+      end
+
+      context "when benefit type is pension" do
+        let(:benefit_type) { "pension" }
+        it "returns the nonrating pension end product code" do
+          expect(subject).to eq("030HLRNRPMC")
+        end
+      end
+    end
+  end
+
   context "#special_issues" do
     let(:vacols_id) { nil }
     let!(:request_issue) do
@@ -283,10 +316,8 @@ describe HigherLevelReview do
           subject
 
           first_dta_request_issue = RequestIssue.find_by(rating_issue_reference_id: "rating1")
-          second_dta_request_issue = RequestIssue.find_by(rating_issue_reference_id: "rating2")
 
           expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDERPMC")
-          expect(second_dta_request_issue.end_product_establishment.code).to eq("040HDERPMC")
         end
       end
     end
