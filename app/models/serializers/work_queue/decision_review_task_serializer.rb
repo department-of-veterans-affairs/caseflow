@@ -8,8 +8,12 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
   end
 
   attribute :claimant do
-    # TODO: support multiple?
-    decision_review.claimants.first.try(:name)
+    if decision_review.claimants.any?
+      # TODO: support multiple?
+      decision_review.claimants.first.try(:name)
+    else
+      decision_review.veteran_full_name
+    end
   end
 
   attribute :appeal do
