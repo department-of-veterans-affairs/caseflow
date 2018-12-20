@@ -40,11 +40,6 @@ import {
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
 
-const emptyValueEntry = {
-  label: '',
-  value: ''
-};
-
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -156,7 +151,6 @@ export class DailyDocketContainer extends React.Component {
         });
       });
 
-      // activeJudges.unshift(emptyValueEntry);
       this.props.onReceiveJudges(activeJudges);
     });
 
@@ -178,7 +172,6 @@ export class DailyDocketContainer extends React.Component {
       });
 
       activeCoordinators = _.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc');
-      // activeCoordinators.unshift(emptyValueEntry);
       this.props.onReceiveCoordinators(activeCoordinators);
     });
   };

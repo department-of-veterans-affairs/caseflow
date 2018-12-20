@@ -59,19 +59,6 @@ class HearingDayEditModal extends React.Component {
     return roomOptions;
   };
 
-
-  onChangingState = () => {
-    let message = []
-     if (!this.props.activeJudges) {
-      // this.setState({ noVljSelected: true });
-      message.push('Please Select...');
-     }
-     else {
-      return this.props.activeJudges
-     }
-  }
-
-
   modalConfirmButton = () => {
     return <Button
       classNames={['usa-button-secondary']}
@@ -102,8 +89,8 @@ class HearingDayEditModal extends React.Component {
   };
 
   onVljChange = (value) => {
-      this.props.selectVlj(value);
-      this.props.onHearingDayModified(true);
+    this.props.selectVlj(value);
+    this.props.onHearingDayModified(true);
   };
 
   onCoordinatorChange = (value) => {
@@ -145,7 +132,7 @@ class HearingDayEditModal extends React.Component {
           value={this.props.hearingRoom}
           onChange={this.onRoomChange}
           options={this.formatRoomOptions()}
-          placeholder="Please select..." />
+          placeholder="Please Select..." />
         <SearchableDropdown
           name="vlj"
           label="Select VLJ"
@@ -154,7 +141,7 @@ class HearingDayEditModal extends React.Component {
           value={this.props.vlj}
           onChange={this.onVljChange}
           options={this.props.activeJudges}
-          placeholder="Please select..." />
+          placeholder="Please Select..." />
         <SearchableDropdown
           name="coordinator"
           label="Select Hearing Coordinator"
@@ -163,7 +150,7 @@ class HearingDayEditModal extends React.Component {
           value={this.props.coordinator}
           onChange={this.onCoordinatorChange}
           options={this.props.activeCoordinators}
-          placeholder="Please select..." />
+          placeholder="Please Select..." />
         <TextareaField
           name="Notes"
           strongLabel
