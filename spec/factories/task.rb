@@ -35,7 +35,6 @@ FactoryBot.define do
 
     factory :generic_task do
       type GenericTask.name
-      appeal_type Appeal.name
       appeal { create(:appeal) }
     end
 
@@ -49,32 +48,27 @@ FactoryBot.define do
       type ColocatedTask.name
       action { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
       instructions ["poa is missing"]
-      appeal_type Appeal.name
       appeal { create(:appeal) }
     end
 
     factory :ama_judge_task, class: JudgeAssignTask do
       type JudgeAssignTask.name
-      appeal_type Appeal.name
       appeal { create(:appeal) }
     end
 
     factory :ama_judge_review_task, class: JudgeReviewTask do
       type JudgeReviewTask.name
-      appeal_type Appeal.name
       appeal { create(:appeal) }
     end
 
     factory :ama_attorney_task do
       type AttorneyTask.name
-      appeal_type Appeal.name
       appeal { create(:appeal) }
       parent { create(:ama_judge_task) }
     end
 
     factory :ama_vso_task do
       type GenericTask.name
-      appeal_type Appeal.name
       appeal { create(:appeal) }
       parent { create(:root_task) }
     end
@@ -89,29 +83,31 @@ FactoryBot.define do
 
     factory :bva_dispatch_task do
       type BvaDispatchTask.name
-      appeal_type Appeal.name
       appeal { create(:appeal) }
       assigned_by nil
     end
 
     factory :schedule_hearing_task do
       type ScheduleHearingTask.name
-      appeal_type Appeal.name
       appeal { create(:appeal) }
       assigned_by nil
     end
 
     factory :quality_review_task do
       type QualityReviewTask.name
-      appeal_type Appeal.name
       appeal { create(:appeal) }
       assigned_by nil
     end
 
     factory :informal_hearing_presentation_task do
       type InformalHearingPresentationTask.name
-      appeal_type Appeal.name
       appeal { create(:appeal) }
+      assigned_by nil
+    end
+
+    factory :higher_level_review_task do
+      type DecisionReviewTask.name
+      appeal { create(:higher_level_review) }
       assigned_by nil
     end
   end

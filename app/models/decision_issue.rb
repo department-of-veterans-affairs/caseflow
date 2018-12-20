@@ -1,8 +1,9 @@
 class DecisionIssue < ApplicationRecord
   validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) },
-                          allow_nil: true, if: :appeal?
+                          if: :appeal?
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) },
-                           allow_nil: true, if: :appeal?
+                           if: :appeal?
+  validates :description, presence: true, if: :appeal?
   has_many :request_decision_issues, dependent: :destroy
   has_many :request_issues, through: :request_decision_issues
   has_many :remand_reasons, dependent: :destroy
