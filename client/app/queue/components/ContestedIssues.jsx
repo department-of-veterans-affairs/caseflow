@@ -4,6 +4,7 @@ import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
+import { LinkSymbol } from '../../components/RenderFunctions';
 
 const TEXT_INDENTATION = '10px';
 
@@ -98,7 +99,7 @@ export default class ContestedIssues extends React.PureComponent {
             </span>
           </div>
           {linkedDecisionIssue && <div {...noteDiv} {...verticalSpaceDiv}>
-            Added to {decisionIssue.request_issue_ids.length} decisions
+            <LinkSymbol /> Added to {decisionIssue.request_issue_ids.length} issues
           </div>}
         </div>
       </div>;
@@ -131,7 +132,7 @@ export default class ContestedIssues extends React.PureComponent {
 
       return <li {...listPadding} key={issue.id}>
         <div {...contestedIssueStyling}>
-          Contested Issue
+          Issue
         </div>
         { shouldShowError &&
           <span {...errorTextSpacing} className="usa-input-error-message">
