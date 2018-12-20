@@ -3,9 +3,8 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
-  has_many :tasks, as: :appeal
   has_many :decision_issues, through: :request_issues
-  has_many :decisions
+  has_many :decision_documents
   has_one :special_issue_list
 
   with_options on: :intake_review do
@@ -14,6 +13,28 @@ class Appeal < DecisionReview
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, if: :legacy_opt_in_enabled?
     validates_associated :claimants
   end
+
+  scope :join_aod_motions, lambda {
+    joins(claimants: :person)
+      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
+  }
+
+  scope :all_priority, lambda {
+    join_aod_motions
+      .where("advance_on_docket_motions.created_at > appeals.established_at")
+      .where("advance_on_docket_motions.granted = ?", true)
+      .or(join_aod_motions
+        .where("people.date_of_birth <= ?", 75.years.ago))
+  }
+
+  # rubocop:disable Metrics/LineLength
+  scope :all_nonpriority, lambda {
+    join_aod_motions
+      .where("people.date_of_birth > ?", 75.years.ago)
+      .group("appeals.id")
+      .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
+  }
+  # rubocop:enable Metrics/LineLength
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
 
@@ -78,6 +99,10 @@ class Appeal < DecisionReview
     tasks.map(&:attorney_case_reviews).flatten
   end
 
+  def every_request_issue_has_decision?
+    request_issues.all? { |request_issue| request_issue.decision_issues.present? }
+  end
+
   def reviewing_judge_name
     task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
     task ? task.assigned_to.try(:full_name) : ""
@@ -98,7 +123,7 @@ class Appeal < DecisionReview
   end
 
   def decision_date
-    decisions.last.try(:decision_date)
+    decision_documents.last.try(:decision_date)
   end
 
   def hearing_docket?
@@ -113,17 +138,9 @@ class Appeal < DecisionReview
     docket_type == "direct_review"
   end
 
-  def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
-  end
-
   def veteran_name
     # For consistency with LegacyAppeal.veteran_name
     veteran&.name&.formatted(:form)
-  end
-
-  def veteran_full_name
-    veteran&.name&.formatted(:readable_full)
   end
 
   def veteran_middle_initial
@@ -158,10 +175,6 @@ class Appeal < DecisionReview
 
   delegate :first_name, :last_name, :name_suffix, :ssn, to: :veteran, prefix: true, allow_nil: true
 
-  def number_of_issues
-    issues[:request_issues].size
-  end
-
   def appellant
     claimants.first
   end
@@ -180,11 +193,15 @@ class Appeal < DecisionReview
     "not implemented for AMA"
   end
 
+  def benefit_type
+    # temporary until ticket for appeals benefit type by issue is implemented
+    # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
+    "compensation"
+  end
+
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      # temporary until ticket for appeals benefit type by issue is implemented
-      # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
-      issue.update!(benefit_type: "compensation")
+      issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
     end
   end
@@ -256,6 +273,7 @@ class Appeal < DecisionReview
 
   def contestable_decision_issues
     DecisionIssue.where(participant_id: veteran.participant_id)
+      .where.not(decision_review_type: "Appeal")
   end
 
   def bgs

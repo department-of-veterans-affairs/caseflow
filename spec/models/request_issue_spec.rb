@@ -122,7 +122,7 @@ describe RequestIssue do
           create(
             :request_issue,
             rating_issue_reference_id: rating_request_issue.rating_issue_reference_id,
-            ineligible_reason: :duplicate_of_issue_in_active_review
+            ineligible_reason: :duplicate_of_rating_issue_in_active_review
           )
 
           request_issue_in_review = RequestIssue.find_active_by_rating_issue_reference_id(rating_issue.reference_id)
@@ -164,7 +164,7 @@ describe RequestIssue do
           review_request: new_higher_level_review,
           rating_issue_reference_id: higher_level_review_reference_id,
           contention_reference_id: contention_reference_id,
-          ineligible_reason: :duplicate_of_issue_in_active_review,
+          ineligible_reason: :duplicate_of_rating_issue_in_active_review,
           ineligible_due_to: request_issue_in_active_review
         )
       end
@@ -351,7 +351,7 @@ describe RequestIssue do
       rating_request_issue.rating_issue_reference_id = duplicate_reference_id
       rating_request_issue.validate_eligibility!
 
-      expect(rating_request_issue.duplicate_of_issue_in_active_review?).to eq(true)
+      expect(rating_request_issue.duplicate_of_rating_issue_in_active_review?).to eq(true)
       expect(rating_request_issue.ineligible_due_to).to eq(request_issue_in_progress)
 
       rating_request_issue.save!
@@ -362,7 +362,7 @@ describe RequestIssue do
       rating_request_issue.rating_issue_reference_id = appeal_request_issue_in_progress.rating_issue_reference_id
       rating_request_issue.validate_eligibility!
 
-      expect(rating_request_issue.duplicate_of_issue_in_active_review?).to eq(true)
+      expect(rating_request_issue.duplicate_of_rating_issue_in_active_review?).to eq(true)
     end
 
     it "flags previous HLR" do

@@ -1,6 +1,6 @@
 class AdvanceOnDocketMotion < ApplicationRecord
-  belongs_to :people
-  belongs_to :users
+  belongs_to :person
+  belongs_to :user
 
   enum status: {
     granted: "granted",

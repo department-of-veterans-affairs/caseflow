@@ -188,7 +188,11 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} {...props.match.params} />;
 
+  routedAssignToSingleTeam = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
+
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
+
+  routedAssignMailTaskToTeam = (props) => <AssignToView isTeamAssign returnToCaseDetails {...props.match.params} />;
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
@@ -282,10 +286,14 @@ class QueueApp extends React.PureComponent<Props> {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_TEAM.value}`}
             render={this.routedAssignToTeam} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
-            render={this.routedAssignToTeam} />
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value}`}
+            render={this.routedAssignToSingleTeam} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PERSON.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
+            render={this.routedAssignMailTaskToTeam} />
+          <Route
+            path={'/queue/appeals/:appealId/tasks/:taskId/' +
+              `(${TASK_ACTIONS.ASSIGN_TO_PERSON.value}|${TASK_ACTIONS.RETURN_TO_JUDGE.value})`}
             render={this.routedAssignToUser} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
