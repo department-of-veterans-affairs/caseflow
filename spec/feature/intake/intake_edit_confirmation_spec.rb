@@ -1,7 +1,7 @@
 require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "Intake Edit Confirmation", focus: true do
+RSpec.feature "Intake Edit Confirmation" do
   include IntakeHelpers
 
   before do
@@ -42,44 +42,8 @@ RSpec.feature "Intake Edit Confirmation", focus: true do
       promulgation_date: receipt_date,
       profile_date: profile_date,
       issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: "000" },
+        { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 10.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
-    )
-  end
-
-  let!(:rating_before_ama_from_ramp) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 11.days,
-      issues: [
-        { decision_text: "Issue before AMA Activation from RAMP",
-          reference_id: "ramp_ref_id" }
-      ],
-      associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-    )
-  end
-
-  let!(:ratings_with_legacy_issues) do
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 4.days,
-      profile_date: receipt_date - 4.days,
-      issues: [
-        { reference_id: "has_legacy_issue", decision_text: "Issue with legacy issue not withdrawn" },
-        { reference_id: "has_ineligible_legacy_appeal", decision_text: "Issue connected to ineligible legacy appeal" }
       ]
     )
   end
@@ -97,16 +61,6 @@ RSpec.feature "Intake Edit Confirmation", focus: true do
       )
     end
 
-    let!(:another_higher_level_review) do
-      HigherLevelReview.create!(
-        veteran_file_number: veteran.file_number,
-        receipt_date: receipt_date,
-        informal_conference: false,
-        same_office: false,
-        benefit_type: "compensation"
-      )
-    end
-
     # create associated intake
     let!(:intake) do
       Intake.create!(
@@ -120,7 +74,6 @@ RSpec.feature "Intake Edit Confirmation", focus: true do
       )
     end
 
-    let(:contention_ref_id) { "123" }
     let!(:request_issue) do
       create(:request_issue,
              rating_issue_reference_id: "def456",
@@ -140,10 +93,6 @@ RSpec.feature "Intake Edit Confirmation", focus: true do
 
     before do
       higher_level_review.create_claimants!(participant_id: "5382910292", payee_code: "10")
-
-      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-      allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
-
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
         first_name: "BOB",
         last_name: "VANCE",
