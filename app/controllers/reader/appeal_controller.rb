@@ -1,6 +1,6 @@
 class Reader::AppealController < Reader::ApplicationController
   def index
-    return redirect_to "/queue"
+    redirect_to "/queue"
   end
 
   def show
