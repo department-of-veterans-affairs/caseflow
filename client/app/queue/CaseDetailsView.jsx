@@ -24,6 +24,7 @@ import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
+import COPY from '../../COPY.json';
 
 import {
   appealWithDetailSelector
@@ -88,7 +89,7 @@ class CaseDetailsView extends React.PureComponent {
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
           editLink={amaIssueType && canEditRequestIssues && `/appeals/${appealId}/edit`}
-          editLinkTitle="Correct issues"
+          editLinkTitle={COPY.CORRECT_REQUEST_ISSUES_LINK}
           issues={appeal.issues}
           decisionIssues={appeal.decisionIssues}
         />
