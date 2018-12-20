@@ -88,6 +88,7 @@ class CaseDetailsView extends React.PureComponent {
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
           editLink={amaIssueType && canEditRequestIssues && `/appeals/${appealId}/edit`}
+          editLinkTitle="Correct issues"
           issues={appeal.issues}
           decisionIssues={appeal.decisionIssues}
         />
