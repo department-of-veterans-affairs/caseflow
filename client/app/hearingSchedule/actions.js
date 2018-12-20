@@ -348,3 +348,13 @@ export const onResetDailyDocketAfterError = () => ({
   type: ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR
 });
 
+export const handleLockHearingServerError = (err) => ({
+  type: ACTIONS.HANDLE_LOCK_HEARING_SERVER_ERROR,
+  payload: {
+    err
+  }
+});
+
+export const onResetLockHearingAfterError = () => ({
+  type: ACTIONS.RESET_LOCK_HEARING_SERVER_ERROR
+});
