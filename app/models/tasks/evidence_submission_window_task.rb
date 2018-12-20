@@ -1,5 +1,5 @@
 class EvidenceSubmissionWindowTask < GenericTask
-  include Timeability
+  include TimeableTask
 
   TIMER_DELAY = 90.days
 
