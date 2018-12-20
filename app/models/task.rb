@@ -68,10 +68,6 @@ class Task < ApplicationRecord
     children.where(type: AttorneyTask.name)
   end
 
-  def all_children_complete
-    children.all?(&:complete?)
-  end
-
   def self.recently_completed
     where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
