@@ -1,6 +1,10 @@
 class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
+  def task
+    object
+  end
+
   def decision_review
-    object.appeal
+    task.appeal
   end
 
   attribute :claimant do
@@ -25,7 +29,7 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
   end
 
   attribute :assigned_on do
-    decision_review.assigned_at
+    task.assigned_at
   end
 
   attribute :type do
