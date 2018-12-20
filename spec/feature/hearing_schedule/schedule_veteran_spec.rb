@@ -19,7 +19,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       )
     end
 
-    scenario "Schedule Veteran for central hearing", focus: true do
+    scenario "Schedule Veteran for central hearing" do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(index: 7)
