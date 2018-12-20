@@ -29,7 +29,7 @@ export default class AssignHearings extends React.Component {
     return appeal.type === 'appeals';
   };
 
-  getAmaAppeals =  _.filter(this.props.appealsReadyForHearing, (appeal) => this.amaAppeal(appeal));
+  getAmaAppeals = _.filter(this.props.appealsReadyForHearing, (appeal) => this.amaAppeal(appeal));
 
   getLegacyAppeals = _.filter(this.props.appealsReadyForHearing, (appeal) => !this.amaAppeal(appeal));
 
@@ -280,10 +280,10 @@ export default class AssignHearings extends React.Component {
             label: 'Legacy Veterans Waiting',
             page: scheduleableLegacyVeterans()
           },
-            {
-              label: 'AMA Veterans Waiting',
-              page: scheduleableAmaVeterans()
-            }
+          {
+            label: 'AMA Veterans Waiting',
+            page: scheduleableAmaVeterans()
+          }
         ]}
       />
     </div>;
