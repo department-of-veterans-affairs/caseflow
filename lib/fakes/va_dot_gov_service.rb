@@ -1,4 +1,4 @@
-class Fakes::FacilitiesLocatorService < ExternalApi::FacilitiesLocatorService
+class Fakes::VADotGovService < ExternalApi::VADotGovService
   def self.get_distance(_point, _ids) # rubocop:disable Metrics/MethodLength
     [
       {
@@ -20,5 +20,9 @@ class Fakes::FacilitiesLocatorService < ExternalApi::FacilitiesLocatorService
         }
       }
     ]
+  end
+
+  def self.geocode(address:, city:, state:, zip_code:, country_code:)
+    []
   end
 end
