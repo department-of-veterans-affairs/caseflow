@@ -46,7 +46,11 @@ class BvaDispatchTask < GenericTask
     def create_decision_document!(params)
       DecisionDocument.create!(params).tap do |decision_document|
         decision_document.submit_for_processing!
-        delayed_process_decision_document_job.perform_later(decision_document)
+
+        # TODO: remove this unless statement when all decision documents require async processing
+        unless decision_document.processed?
+          delayed_process_decision_document_job.perform_later(decision_document)
+        end
       end
     end
 

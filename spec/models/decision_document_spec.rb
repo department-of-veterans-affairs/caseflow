@@ -17,6 +17,7 @@ describe DecisionDocument do
 
   context "#submit_for_processing!" do
     subject { decision_document.submit_for_processing! }
+    before { FeatureToggle.enable!(:decision_document_upload) }
 
     context "when there is a file" do
       let(:file) { "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW" }
@@ -29,9 +30,23 @@ describe DecisionDocument do
     end
 
     context "when no file" do
-      it "raises NoFileError" do
-        expect { subject }.to raise_error(DecisionDocument::NoFileError)
-        expect(decision_document.submitted_at).to be_nil
+      context "when :decision_document_upload feature is turned on" do
+        it "raises NoFileError" do
+          expect { subject }.to raise_error(DecisionDocument::NoFileError)
+          expect(decision_document.submitted_at).to be_nil
+        end
+      end
+
+      context "when :decision_document_upload feature is turned off" do
+        before { FeatureToggle.disable!(:decision_document_upload) }
+
+        it "marks document as having been processed immediately without uploading anything" do
+          expect(S3Service).to_not receive(:store_file).with("decisions/#{decision_document.appeal.external_id}.pdf", /PDF/)
+          subject
+          expect(decision_document.submitted_at).to eq(Time.zone.now)
+          expect(decision_document.attempted_at).to eq(Time.zone.now)
+          expect(decision_document.processed_at).to eq(Time.zone.now)
+        end
       end
     end
   end

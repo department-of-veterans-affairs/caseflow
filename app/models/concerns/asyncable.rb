@@ -86,6 +86,17 @@ module Asyncable
     update!(self.class.attempted_at_column => Time.zone.now)
   end
 
+  # There are sometimes cases where no processing required, and we can mark submitted and processed all in one
+  def no_processing_required!
+    now = Time.zone.now
+
+    update!(
+      self.class.submitted_at_column => now,
+      self.class.attempted_at_column => now,
+      self.class.processed_at_column => now
+    )
+  end
+
   def processed?
     !!self[self.class.processed_at_column]
   end

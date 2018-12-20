@@ -28,6 +28,8 @@ class DecisionDocument < ApplicationRecord
   end
 
   def submit_for_processing!
+    return no_processing_required! unless upload_enabled?
+
     cache_file!
     super(delay: DECISION_OUTCODING_DELAY)
   end
@@ -42,6 +44,10 @@ class DecisionDocument < ApplicationRecord
   end
 
   private
+
+  def upload_enabled?
+    FeatureToggle.enabled?(:decision_document_upload, user: RequestStore.store[:current_user])
+  end
 
   def pdf_name
     appeal.external_id + ".pdf"

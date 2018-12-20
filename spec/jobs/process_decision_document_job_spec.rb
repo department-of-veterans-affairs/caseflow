@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe ProcessDecisionDocumentJob, focus: true do
+describe ProcessDecisionDocumentJob do
   context ".perform" do
     subject { ProcessDecisionDocumentJob.perform_now(decision_document) }
 
