@@ -437,16 +437,6 @@ ActiveRecord::Schema.define(version: 20181221164327) do
     t.index ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true
   end
 
-  create_table "hearings", id: :serial, force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "appeal_id"
-    t.string "vacols_id", null: false
-    t.string "witness"
-    t.string "military_service"
-    t.boolean "prepped"
-    t.text "summary"
-  end
-
   create_table "higher_level_reviews", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
