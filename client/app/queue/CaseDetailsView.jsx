@@ -15,7 +15,7 @@ import CaseHearingsDetail from './CaseHearingsDetail';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
-import CaseSnapshot from './CaseSnapshot';
+import TaskSnapshot from './TaskSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
@@ -77,7 +77,7 @@ class CaseDetailsView extends React.PureComponent {
           veteranId={appeal.veteranFileNumber}
         />
       }
-      <CaseSnapshot appealId={appealId} />
+      <TaskSnapshot appealId={appealId} />
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
         <CaseDetailsIssueList

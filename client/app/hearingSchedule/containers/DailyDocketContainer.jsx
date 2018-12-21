@@ -210,8 +210,8 @@ export class DailyDocketContainer extends React.Component {
   ]);
 
   openModal = () => {
-    this.setState({ showModalAlert: false });
-    this.setState({ modalOpen: true });
+    this.setState({ showModalAlert: false,
+      modalOpen: true });
 
     // find labels in options before passing values to modal
     const room = _.findKey(HEARING_ROOMS_LIST, { label: this.props.dailyDocket.room });
