@@ -30,6 +30,7 @@ import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
 import HearingDayAddModal from '../components/HearingDayAddModal';
 import _ from 'lodash';
+import moment from 'moment';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -195,10 +196,15 @@ export class ListScheduleContainer extends React.Component {
     }
 
     if (this.props.successfulHearingDayDelete) {
-      return `You have successfully removed Hearing Day ${formatDateStr(this.props.successfulHearingDayDelete)}`;
+      return `You have successfully removed Hearing Day ${formatDateStr(this.props.successfulHearingDayDelete)} `;
+    }
+
+    if (['Saturday', 'Sunday'].includes(moment(this.props.selectedHearingDay).format('dddd'))) {
+      return `The Hearing day you created for ${formatDateStr(this.props.selectedHearingDay)} is a Saturday or Sunday.`;
     }
 
     return `You have successfully added Hearing Day ${formatDateStr(this.props.selectedHearingDay)}`;
+
   };
 
   getAlertMessage = () => {
@@ -214,6 +220,10 @@ export class ListScheduleContainer extends React.Component {
       return '';
     }
 
+    if (['Saturday', 'Sunday'].includes(moment(this.props.selectedHearingDay).format('dddd'))) {
+      return 'If this was done in error, please remove hearing day from Hearing Schedule.';
+    }
+
     return <p>To add Veterans to this date, click Schedule Veterans</p>;
   };
 
@@ -224,6 +234,10 @@ export class ListScheduleContainer extends React.Component {
 
     if (this.state.noRoomsAvailable) {
       return 'error';
+    }
+
+    if (['Saturday', 'Sunday'].includes(moment(this.props.selectedHearingDay).format('dddd'))) {
+      return 'warning';
     }
 
     return 'success';
