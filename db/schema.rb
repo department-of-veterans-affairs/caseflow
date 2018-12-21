@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181219153145) do
+ActiveRecord::Schema.define(version: 20181221151935) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -435,16 +435,6 @@ ActiveRecord::Schema.define(version: 20181219153145) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true
-  end
-
-  create_table "hearings", id: :serial, force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "appeal_id"
-    t.string "vacols_id", null: false
-    t.string "witness"
-    t.string "military_service"
-    t.boolean "prepped"
-    t.text "summary"
   end
 
   create_table "higher_level_reviews", force: :cascade do |t|
