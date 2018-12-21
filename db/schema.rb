@@ -546,16 +546,11 @@ ActiveRecord::Schema.define(version: 20181219153145) do
     t.bigint "request_issue_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "submitted_at"
+    t.datetime "attempted_at"
+    t.datetime "processed_at"
     t.string "error"
-    t.string "vacols_id"
-    t.integer "vacols_sequence_id"
-    t.string "original_disposition_code"
-    t.date "original_disposition_date"
-    t.datetime "optin_processed_at"
-    t.datetime "rollback_created_at"
-    t.datetime "rollback_processed_at"
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
-    t.index ["vacols_id", "vacols_sequence_id"], name: "unique_index_to_avoid_duplicate_opt_ins", unique: true, where: "(rollback_processed_at IS NULL)"
   end
 
   create_table "non_availabilities", force: :cascade do |t|
@@ -704,7 +699,7 @@ ActiveRecord::Schema.define(version: 20181219153145) do
     t.string "decision_sync_error"
     t.string "ineligible_reason"
     t.string "vacols_id"
-    t.integer "vacols_sequence_id"
+    t.string "vacols_sequence_id"
     t.datetime "created_at"
     t.string "benefit_type"
     t.integer "contested_decision_issue_id"

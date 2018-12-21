@@ -26,7 +26,7 @@ class LegacyOptinManager
           next unless vacols_id == legacy_appeal.vacols_id
 
           # gut checks
-          unless open_legacy_issues.map(&:vacols_sequence_id).map(&:to_s).include?(vacols_sequence_id.to_s)
+          unless open_legacy_issues.map(&:vacols_sequence_id).map(&:to_s).include?(vacols_sequence_id)
             fail "VACOLS issue #{vacols_id} sequence #{vacols_sequence_id} is already closed"
           end
 
