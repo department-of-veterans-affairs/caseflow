@@ -59,14 +59,12 @@ gem "sdoc", "~> 0.4.0", group: :doc
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
-gem "stringex", require: false
 gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
+gem "stringex", require: false
 # execjs runtime
 gem "therubyracer", platforms: :ruby
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
-# use to_b method to convert string to boolean
-gem "wannabe_bool"
 # catch problematic migrations at development/test time
 gem "zero_downtime_migrations"
 
