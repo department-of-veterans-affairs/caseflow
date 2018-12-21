@@ -1,5 +1,5 @@
 class JudgeReviewTask < JudgeTask
-  def available_actions(_user)
+  def baseline_actions
     [
       {
         label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,

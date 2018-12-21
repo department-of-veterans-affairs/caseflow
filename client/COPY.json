@@ -112,7 +112,7 @@
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA": "OMO - VHA",
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME": "OMO - IME",
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
-  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
+  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision ready for review",
   "ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL": "Add admin action",
 
   "REMAND_REASONS_SCREEN_SUBHEAD_LABEL": "Please %s the appropriate remand reason(s) for all the remand dispositions.",
@@ -269,6 +269,8 @@
   "DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE": "Ex: Increased rating for arthritis is granted with an evaluation of 90%",
   "DECISION_ISSUE_MODAL_DISPOSITION": "Disposition",
   "DECISION_ISSUE_MODAL_BENEFIT_TYPE": "Benefit type",
+  "DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION": "Do you want to add this decision to other issues on appeal? This could occur when you determine that two or more issues should receive a single decision.",
+  "DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE": "Issues",
   "DECISION_ISSUE_PAGE_TITLE": "Add decisions",
   "DECISION_ISSUE_PAGE_EXPLANATION": "Add decisions to each issue the Veteran is appealing. Any decisions you add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",
 
