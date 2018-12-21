@@ -35,10 +35,14 @@ class LastRetrievalAlert extends React.PureComponent {
 
     // Check that manifest results are fresh
     if (vbmsManifestTimestamp.isBefore(staleCacheTime) || vvaManifestTimestamp.isBefore(staleCacheTime)) {
+      const now = moment(),
+        vbmsDiff = now.diff(vbmsManifestTimestamp, 'hours'),
+        vvaDiff = now.diff(vvaManifestTimestamp, 'hours');
+
       return <div {...alertStyling}>
         <Alert title="Warning" type="warning">
-          You may be viewing an outdated list of claims folder documents. Please refresh the page to load
-          the most up to date documents.
+          We last synced with VBMS and VVA {Math.max(vbmsDiff, vvaDiff)} hours ago. If you'd like to check for new
+          documents, refresh the page.
         </Alert>
       </div>;
     }

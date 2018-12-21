@@ -259,7 +259,7 @@ RSpec.feature "Reader" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
           expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
           expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
-          expect(page).to have_css(".section--document-list .usa-alert-warning")
+          expect(find(".section--document-list .usa-alert-warning").text).to have_content("4 hours ago")
         end
       end
 
