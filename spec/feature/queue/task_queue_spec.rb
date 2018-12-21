@@ -35,6 +35,18 @@ RSpec.feature "Task queue" do
       visit "/queue"
     end
 
+    context "the on-hold task is attached to an appeal with documents" do
+      let!(:documents) { ["NOD", "BVA Decision", "SSOC"].map { |t| FactoryBot.build(:document, type: t) } }
+
+      before do
+        allow_any_instance_of(Appeal).to receive(:new_documents_for_user) { documents }
+      end
+
+      it "shows the correct number of tasks on hold" do
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
+      end
+    end
+
     it "displays a table with a row for each case assigned to the attorney" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
@@ -111,7 +123,7 @@ RSpec.feature "Task queue" do
 
       case_details_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       case_details_link.click
-      expect(page).to have_content(COPY::CASE_SNAPSHOT_ACTION_BOX_TITLE)
+      expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
 
       # Marking the task as complete correctly changes the task's status in the database.
       find(".Select-control", text: "Select an action…").click

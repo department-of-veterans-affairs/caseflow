@@ -30,7 +30,9 @@ import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
 import HearingDayAddModal from '../components/HearingDayAddModal';
 import _ from 'lodash';
+import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
+
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -132,21 +134,24 @@ export class ListScheduleContainer extends React.Component {
   ]);
 
   openModal = () => {
-    this.setState({ showModalAlert: false });
-    this.setState({ modalOpen: true });
-    this.setState({ serverError: false });
-    this.setState({ noRoomsAvailable: false });
+    this.setState({ showModalAlert: false,
+      modalOpen: true,
+      serverError: false,
+      noRoomsAvailable: false });
     this.props.onSelectedHearingDayChange('');
     this.props.selectHearingType('');
-    this.props.selectVlj('');
-    this.props.selectHearingCoordinator('');
+    this.props.onRegionalOfficeChange('');
+    this.props.selectVlj({ label: '',
+      value: '' });
+    this.props.selectHearingCoordinator({ label: '',
+      value: '' });
     this.props.setNotes('');
     this.props.onAssignHearingRoom(false);
   }
 
   closeModal = () => {
-    this.setState({ modalOpen: false });
-    this.setState({ showModalAlert: true });
+    this.setState({ modalOpen: false,
+      showModalAlert: true });
 
     let data = {
       hearing_type: this.props.hearingType.value,
@@ -166,8 +171,9 @@ export class ListScheduleContainer extends React.Component {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
         const newHearings = Object.assign({}, this.props.hearingSchedule);
+        const hearingsLength = Object.keys(newHearings).length;
 
-        newHearings[newHearings.size] = resp.hearing;
+        newHearings[hearingsLength] = resp.hearing;
 
         this.props.onReceiveHearingSchedule(newHearings);
 
@@ -306,6 +312,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   selectHearingCoordinator,
   setNotes,
   onAssignHearingRoom,
+  onRegionalOfficeChange,
   onReceiveJudges,
   onReceiveCoordinators,
   onResetDeleteSuccessful

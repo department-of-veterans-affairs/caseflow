@@ -255,7 +255,7 @@ class User < ApplicationRecord
   end
 
   def appeal_hearings(appeal_ids)
-    Hearing.where(appeal_id: appeal_ids)
+    LegacyHearing.where(appeal_id: appeal_ids)
   end
 
   class << self
