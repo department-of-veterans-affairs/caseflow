@@ -92,6 +92,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         id: String(issue.id),
         isRating: false,
         category: issue.category,
+        decisionIssueId: issue.contested_decision_issue_id,
         description: issue.description,
         decisionDate: formatDateStr(issue.decision_date),
         ineligibleReason: issue.ineligible_reason,
@@ -132,6 +133,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       notes: issue.notes,
       description: issue.description,
       ineligibleReason: issue.ineligible_reason,
+      ineligibleDueToId: issue.ineligible_due_to_id,
       titleOfActiveReview: issue.title_of_active_review,
       contentionText: issue.contention_text,
       rampClaimId: issue.ramp_claim_id,
@@ -201,7 +203,9 @@ const formatRatingRequestIssues = (state) => {
           ramp_claim_id: issue.rampClaimId,
           vacols_id: issue.vacolsId,
           vacols_sequence_id: issue.vacolsSequenceId,
-          contested_decision_isssue_id: issue.decisionIssueId
+          contested_decision_isssue_id: issue.decisionIssueId,
+          ineligible_reason: issue.ineligibleReason,
+          ineligible_due_to_id: issue.ineligibleDueToId
         };
       });
   }
@@ -223,6 +227,7 @@ const formatNonratingRequestIssues = (state) => {
     // we're using the new add issues page
     return state.addedIssues.filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
       return {
+        contested_decision_isssue_id: issue.decisionIssueId,
         issue_category: issue.category,
         decision_text: issue.description,
         decision_date: formatDateStringForApi(issue.decisionDate),

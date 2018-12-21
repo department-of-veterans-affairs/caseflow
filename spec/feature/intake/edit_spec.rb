@@ -324,6 +324,55 @@ RSpec.feature "Edit issues" do
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def verify_request_issue_contending_decision_issue_not_readded(
+      page_url,
+      decision_review,
+      contested_decision_issues
+  )
+    # verify that not modifying a request issue contenting a decision issue
+    # does not result in readding
+
+    visit page_url
+    expect(page).to have_content(contested_decision_issues.first.description)
+    expect(page).to have_content(contested_decision_issues.second.description)
+    expect(page).to have_content("PTSD denied")
+
+    click_remove_intake_issue_by_text("PTSD denied")
+    click_remove_issue_confirmation
+
+    click_intake_add_issue
+    add_intake_rating_issue("Issue with legacy issue not withdrawn")
+
+    safe_click("#button-submit-update")
+    expect(page).to have_content("Edit Confirmed")
+
+    first_not_modified_request_issue = RequestIssue.find_by(
+      review_request: decision_review,
+      contested_decision_issue_id: contested_decision_issues.first.id
+    )
+
+    second_not_modified_request_issue = RequestIssue.find_by(
+      review_request: decision_review,
+      contested_decision_issue_id: contested_decision_issues.second.id
+    )
+
+    expect(first_not_modified_request_issue).to_not be_nil
+    expect(second_not_modified_request_issue).to_not be_nil
+
+    non_modified_ids = [first_not_modified_request_issue.id, second_not_modified_request_issue.id]
+    request_issue_update = RequestIssuesUpdate.find_by(review: decision_review)
+
+    # existing issues should not be added or removed
+    expect(request_issue_update.created_issues
+      .select { |created| non_modified_ids.include? created.id }.empty?).to eq(true)
+    expect(request_issue_update.removed_issues
+      .select { |created| non_modified_ids.include? created.id }.empty?).to eq(true)
+  end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
+
   context "Higher-Level Reviews" do
     let!(:higher_level_review) do
       HigherLevelReview.create!(
@@ -827,6 +876,7 @@ RSpec.feature "Edit issues" do
 
       context "has decision issues" do
         let(:contested_decision_issues) { setup_prior_decision_issues(veteran) }
+
         let(:decision_request_issue) do
           create(
             :request_issue,
@@ -857,6 +907,26 @@ RSpec.feature "Edit issues" do
             decision_request_issue,
             higher_level_review,
             contested_decision_issues
+          )
+        end
+      end
+
+      context "with existing request issues contesting decision issues" do
+        let(:decision_request_issue) do
+          setup_request_issue_with_nonrating_decision_issue(higher_level_review)
+        end
+
+        let(:nonrating_decision_request_issue) do
+          setup_request_issue_with_rating_decision_issue(higher_level_review, rating_issue_reference_id: "abc123")
+        end
+
+        let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
+
+        it "does not remove & readd unedited issues" do
+          verify_request_issue_contending_decision_issue_not_readded(
+            "higher_level_reviews/#{rating_ep_claim_id}/edit",
+            higher_level_review,
+            decision_request_issue.decision_issues + nonrating_decision_request_issue.decision_issues
           )
         end
       end
@@ -1442,6 +1512,26 @@ RSpec.feature "Edit issues" do
             decision_request_issue,
             supplemental_claim,
             contested_decision_issues
+          )
+        end
+      end
+
+      context "with existing request issues contesting decision issues" do
+        let(:decision_request_issue) do
+          setup_request_issue_with_nonrating_decision_issue(supplemental_claim)
+        end
+
+        let(:nonrating_decision_request_issue) do
+          setup_request_issue_with_rating_decision_issue(supplemental_claim, rating_issue_reference_id: "abc123")
+        end
+
+        let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
+
+        it "does not remove & readd unedited issues" do
+          verify_request_issue_contending_decision_issue_not_readded(
+            "supplemental_claims/#{rating_ep_claim_id}/edit",
+            supplemental_claim,
+            decision_request_issue.decision_issues + nonrating_decision_request_issue.decision_issues
           )
         end
       end
