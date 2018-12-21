@@ -16,8 +16,6 @@ gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "70a297053cfba50731a41e8bd31ab079bc1ac460"
 gem "dogstatsd-ruby"
 gem "holidays", "~> 6.4"
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem "jbuilder", "~> 2.0"
 # Use jquery as the JavaScript library
 gem "jquery-rails"
 # active_model_serializers has a default dependency on loofah 2.2.2 which has a security vuln (CVE-2018-16468)
