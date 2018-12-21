@@ -30,6 +30,7 @@ import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
 import HearingDayAddModal from '../components/HearingDayAddModal';
 import _ from 'lodash';
+import { onRegionalOfficeChange } from '../../components/common/actions';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -137,8 +138,11 @@ export class ListScheduleContainer extends React.Component {
     this.setState({ noRoomsAvailable: false });
     this.props.onSelectedHearingDayChange('');
     this.props.selectHearingType('');
-    this.props.selectVlj('');
-    this.props.selectHearingCoordinator('');
+    this.props.onRegionalOfficeChange('');
+    this.props.selectVlj({ label: '',
+      value: '' });
+    this.props.selectHearingCoordinator({ label: '',
+      value: '' });
     this.props.setNotes('');
     this.props.onAssignHearingRoom(false);
   }
@@ -165,8 +169,9 @@ export class ListScheduleContainer extends React.Component {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
         const newHearings = Object.assign({}, this.props.hearingSchedule);
+        const hearingsLength = Object.keys(newHearings).length;
 
-        newHearings[newHearings.size] = resp.hearing;
+        newHearings[hearingsLength] = resp.hearing;
 
         this.props.onReceiveHearingSchedule(newHearings);
 
@@ -292,6 +297,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   selectHearingCoordinator,
   setNotes,
   onAssignHearingRoom,
+  onRegionalOfficeChange,
   onReceiveJudges,
   onReceiveCoordinators,
   onResetDeleteSuccessful
