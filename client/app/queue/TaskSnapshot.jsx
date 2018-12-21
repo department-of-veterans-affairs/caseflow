@@ -160,45 +160,30 @@ export class TaskSnapshot extends React.PureComponent<Props> {
   }
 
   legacyTaskInformation = (task) => {
-    console.log('-----------**-----------')
-
     // If this is not a task attached to a legacy appeal, use taskInformation.
     if (!this.props.appeal.isLegacyAppeal) {
       return this.taskInformation(task);
     }
-    console.log('----------- -1-----------')
-
 
     const {
       userRole
     } = this.props;
 
     if (!task) {
-      console.log('-----------0-----------')
       return null;
     }
-    console.log('-----------1-----------')
 
     const assignedByAbbrev = task.assignedBy.firstName ?
       this.getAbbrevName(task.assignedBy) : null;
-    console.log(assignedByAbbrev)
-    console.log(userRole)
-    console.log(this.props.appeal.locationCode)
 
     const assignedToListItem = <React.Fragment>
       <dt {...titleLabel}>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
     </React.Fragment>;
 
-    console.log('-----------2-----------')
-
     if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
+
       const assignedByFirstName = task.assignedBy.firstName;
       const assignedByLastName = task.assignedBy.lastName;
-      console.log(assignedByFirstName)
-      console.log(assignedByLastName)
-      console.log(assignedToListItem)
-
-      console.log('-----------3-----------')
 
       if (!assignedByFirstName ||
           !assignedByLastName ||
@@ -206,17 +191,12 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         return assignedToListItem;
       }
 
-      console.log('-----------4-----------')
-
-
       if (userRole === USER_ROLE_TYPES.judge) {
         return <React.Fragment>
           <dt>{COPY.TASK_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{assignedByAbbrev}</dd>
         </React.Fragment>;
-        console.log('-----------5-----------')
 
       } else if (userRole === USER_ROLE_TYPES.colocated) {
-        console.log('-----------6-----------')
 
         return <React.Fragment>
           <dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[task.label]}</dd>
@@ -231,7 +211,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
           <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
         </React.Fragment>;
       }
-      console.log('-----------7-----------')
 
     }
 
@@ -278,7 +257,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     if (this.props.primaryTask) {
       sectionBody = []
       { this.props.tasks.map((task, index) => (
-        console.log(task),
         sectionBody.push(<table {...css({ width: '100%',
           marginTop: '0px', marginBottom: '5px'})}>
           <tbody>
@@ -289,7 +267,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
                   <dd>{task && task.assignedOn &&
                       moment(task.assignedOn).format('MM/DD/YYYY')}</dd>
                   {this.daysSinceTaskAssignmentListItem(task)}
-                  {task.uniqueId}
                 </CaseDetailsDescriptionList>
               </td>
               <td {...taskInfoWithIconContainer}><GrayDot /><div {...grayLineStyling} className={tsk_length-1 === index ? lastTask : ''} /></td>
