@@ -144,7 +144,7 @@ export class ListScheduleContainer extends React.Component {
     this.props.selectHearingCoordinator({ label: '',
       value: '' });
     this.props.setNotes('');
-    this.props.onAssignHearingRoom(false);
+    this.props.onAssignHearingRoom(true);
   }
 
   closeModal = () => {
@@ -157,7 +157,7 @@ export class ListScheduleContainer extends React.Component {
       judge_id: this.props.vlj.value,
       bva_poc: this.props.coordinator.label,
       notes: this.props.notes,
-      assign_room: !this.props.roomNotRequired
+      assign_room: this.props.roomRequired
     };
 
     if (this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.value !== '') {
@@ -283,7 +283,7 @@ const mapStateToProps = (state) => ({
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   notes: state.hearingSchedule.notes,
-  roomNotRequired: state.hearingSchedule.roomNotRequired,
+  roomRequired: state.hearingSchedule.roomRequired,
   successfulHearingDayDelete: state.hearingSchedule.successfulHearingDayDelete
 });
 
