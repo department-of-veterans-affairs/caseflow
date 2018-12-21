@@ -77,7 +77,7 @@ class SelectIssueDispositionDropdown extends React.PureComponent<Props> {
 
     return <div className="issue-disposition-dropdown"{...this.getStyling()}>
       <SearchableDropdown
-        placeholder="Select Disposition"
+        placeholder="Select disposition"
         value={issue.disposition}
         hideLabel
         errorMessage={(highlight && !issue.disposition) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
