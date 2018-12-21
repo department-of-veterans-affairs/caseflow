@@ -20,7 +20,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :decision_issues do
-    object.decision_issues.map do |issue|
+    object.decision_issues.uniq.map do |issue|
       {
         id: issue.id,
         disposition: issue.disposition,

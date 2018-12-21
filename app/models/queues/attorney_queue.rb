@@ -8,7 +8,7 @@ class AttorneyQueue
   # using assigned by user. We set status to being on_hold and placed_on_hold_at to assigned_at timestamp
   def tasks
     colocated_tasks_grouped = ColocatedTask.where(assigned_by: user).group_by(&:appeal_id)
-    on_hold_legacy_tasks = colocated_tasks_grouped.each_with_object([]) do |(_k, value), result|
+    colocated_tasks_for_attorney_tasks = colocated_tasks_grouped.each_with_object([]) do |(_k, value), result|
       # Attorneys can assign multiple admin actions per appeal, we assume a case is still on hold
       # if not all admin actions are completed
       next if value.map(&:status).uniq == [Constants.TASK_STATUSES.completed]
@@ -18,9 +18,9 @@ class AttorneyQueue
       end
       result
     end
-    ama_tasks = Task.incomplete_or_recently_completed
+    caseflow_tasks = Task.incomplete_or_recently_completed
       .where(assigned_to: user, type: [AttorneyTask.name, QualityReviewTask.name])
-    (on_hold_legacy_tasks + ama_tasks).flatten
+    (colocated_tasks_for_attorney_tasks + caseflow_tasks).flatten
   end
 
   def tasks_by_appeal_id(appeal_id, appeal_type)

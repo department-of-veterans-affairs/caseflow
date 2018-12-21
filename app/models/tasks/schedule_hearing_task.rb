@@ -38,7 +38,7 @@ class ScheduleHearingTask < GenericTask
     hearing_date_str = "#{hearing_date.year}-#{hearing_date.month}-#{hearing_date.day} " \
                        "#{format('%##d', hearing_date.hour)}:#{format('%##d', hearing_date.min)}:00"
 
-    if hearing_type == Hearing::CO_HEARING
+    if hearing_type == LegacyHearing::CO_HEARING
       HearingRepository.update_co_hearing(hearing_date_str, appeal)
     else
       HearingRepository.create_child_video_hearing(hearing_pkseq, hearing_date, appeal)
@@ -50,7 +50,7 @@ class ScheduleHearingTask < GenericTask
   end
 
   def location_based_on_hearing_type(hearing_type)
-    if hearing_type == Hearing::CO_HEARING
+    if hearing_type == LegacyHearing::CO_HEARING
       LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing]
     else
       LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing]
