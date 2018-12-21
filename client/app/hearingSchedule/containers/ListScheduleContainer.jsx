@@ -132,7 +132,10 @@ export class ListScheduleContainer extends React.Component {
   ]);
 
   openModal = () => {
-    this.setState({ showModalAlert: false, modalOpen: true, serverError: false, noRoomsAvailable: false });
+    this.setState({ showModalAlert: false,
+      modalOpen: true,
+      serverError: false,
+      noRoomsAvailable: false });
     this.props.onSelectedHearingDayChange('');
     this.props.selectHearingType('');
     this.props.onRegionalOfficeChange('');
@@ -145,7 +148,8 @@ export class ListScheduleContainer extends React.Component {
   }
 
   closeModal = () => {
-    this.setState({ modalOpen: false, showModalAlert: true });
+    this.setState({ modalOpen: false,
+      showModalAlert: true });
 
     let data = {
       hearing_type: this.props.hearingType.value,
