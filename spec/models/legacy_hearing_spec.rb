@@ -227,22 +227,13 @@ describe LegacyHearing do
     context "create vacols record" do
       subject { LegacyHearing.assign_or_create_from_vacols_record(vacols_record) }
 
-      it "should create a hearing record" do
+      it "should create a legacy hearing record" do
         subject
         hearing = LegacyHearing.find_by(vacols_id: case_hearing.hearing_pkseq)
         expect(hearing.present?).to be true
         expect(hearing.appeal.vacols_id).to eq "5678"
         expect(hearing.user).to eq user
         expect(hearing.prepped).to be_falsey
-      end
-
-      it "should create a legacy hearing record" do
-        subject
-        legacy_hearing = LegacyHearing.find_by(vacols_id: case_hearing.hearing_pkseq)
-        expect(legacy_hearing.present?).to be true
-        expect(legacy_hearing.appeal.vacols_id).to eq "5678"
-        expect(legacy_hearing.user).to eq user
-        expect(legacy_hearing.prepped).to be_falsey
       end
     end
 
