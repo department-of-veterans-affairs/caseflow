@@ -1,5 +1,8 @@
-RSpec.describe "Reader Appeal Requests", type: :request, focus: true do
+RSpec.describe "Reader Appeal Requests", type: :request do
   let!(:user) { User.authenticate!(roles: ["Reader"]) }
+  let(:appeal) do
+    create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "123456789S", case_issues: [create(:case_issue)]))
+  end
 
   describe "Appeals controller #show in html" do
     it "redirects the page to Case page" do
