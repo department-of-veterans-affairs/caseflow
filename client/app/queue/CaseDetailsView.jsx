@@ -110,7 +110,7 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
-  const { veteranCaseListIsVisible, featureToggles, canEditRequestIssues } = state.ui;
+  const { veteranCaseListIsVisible, featureToggles } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
