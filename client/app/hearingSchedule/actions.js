@@ -311,10 +311,10 @@ export const onResetDeleteSuccessful = () => ({
   type: ACTIONS.RESET_DELETE_SUCCESSFUL
 });
 
-export const onAssignHearingRoom = (roomNotRequired) => ({
+export const onAssignHearingRoom = (roomRequired) => ({
   type: ACTIONS.ASSIGN_HEARING_ROOM,
   payload: {
-    roomNotRequired
+    roomRequired
   }
 });
 
