@@ -28,8 +28,8 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
     "TODO"
   end
 
-  attribute :veteran_ssn do
-    decision_review.veteran.ssn
+  attribute :veteran_participant_id do
+    decision_review.veteran.participant_id
   end
 
   attribute :assigned_on do
