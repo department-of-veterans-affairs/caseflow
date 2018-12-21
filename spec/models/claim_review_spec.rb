@@ -24,6 +24,7 @@ describe ClaimReview do
   let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
+  let(:benefit_type) { "compensation" }
 
   let(:rating_request_issue) do
     build(
@@ -71,7 +72,8 @@ describe ClaimReview do
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
       informal_conference: informal_conference,
-      same_office: same_office
+      same_office: same_office,
+      benefit_type: benefit_type
     )
   end
 
@@ -237,6 +239,17 @@ describe ClaimReview do
 
         expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRR")
         expect(non_rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRNR")
+      end
+
+      context "when the benefit type is pension" do
+        let(:benefit_type) { "pension" }
+
+        it "creates issues and assigns pension end product codes to them" do
+          subject
+
+          expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRRPMC")
+          expect(non_rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRNRPMC")
+        end
       end
     end
   end
