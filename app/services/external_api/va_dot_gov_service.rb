@@ -6,14 +6,15 @@ class ExternalApi::VADotGovService
     def get_distance(point, ids)
       page = 1
       facility_results = []
+      remaining_ids = ids
 
-      until ids.empty?
+      until remaining_ids.empty?
         results = fetch_facilities_with_ids(
           query: { lat: point[0], long: point[1], page: page },
-          ids: ids
+          ids: remaining_ids
         )
 
-        ids -= results[:facilities].pluck(:id)
+        remaining_ids -= results[:facilities].pluck(:id)
         facility_results += results[:facilities]
 
         break if !results[:has_next]
@@ -21,7 +22,11 @@ class ExternalApi::VADotGovService
         sleep 1
       end
 
-      Rails.logger.info("Unable to find api.va.gov facility data for: #{ids.join(', ')}.") if !ids.empty?
+      unless remaining_ids.empty?
+        msg = "Unable to find api.va.gov facility data for: #{remaining_ids.join(', ')}."
+        fail Caseflow::Error::VaDotGovAPIError, code: 500, message: msg
+      end
+
       facility_results
     end
 
@@ -72,14 +77,6 @@ class ExternalApi::VADotGovService
       }
     end
 
-    def facility_response_data(resp_body)
-      [
-        resp_body["data"],
-        resp_body["meta"]["distances"],
-        resp_body["meta"]["pagination"]["total_pages"]
-      ]
-    end
-
     def facility_json(facility, distance)
       attrs = facility["attributes"]
       dist = distance["distance"] if distance
@@ -105,25 +102,25 @@ class ExternalApi::VADotGovService
       resp_body = JSON.parse(response.body)
       check_for_error(response_body: resp_body, code: response.code)
 
-      facilities, distances, total_pages = facility_response_data(resp_body)
+      facilities = resp_body["data"]
+      distances = resp_body["meta"]["distances"]
+      total_pages = resp_body["meta"]["pagination"]["total_pages"]
       selected_facilities = facilities.select { |facility| ids.include? facility["id"] }
 
-      facilities = selected_facilities.map do |selected|
+      facilities_result = selected_facilities.map do |selected|
         distance = distances.find { |dist| dist["id"] == selected["id"] }
         facility_json(selected, distance)
       end
 
-      { facilities: facilities, has_next: query[:page] + 1 <= total_pages }
+      { facilities: facilities_result, has_next: query[:page] + 1 <= total_pages }
     end
 
     def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
       url = URI.escape(base_url + endpoint)
       request = HTTPI::Request.new(url)
       request.query = query
-      request.open_timeout = 600 # seconds
-      request.read_timeout = 600 # seconds
-      request.auth.ssl.ssl_version  = :TLSv1_2
-      request.auth.ssl.ca_cert_file = ENV["SSL_CERT_FILE"]
+      request.open_timeout = 30
+      request.read_timeout = 30
       request.body = body.to_json unless body.nil?
       request.headers = headers.merge(apikey: ENV["VA_DOT_GOV_API_KEY"])
 
@@ -145,10 +142,10 @@ class ExternalApi::VADotGovService
       when 400
         fail Caseflow::Error::VaDotGovRequestError, code: code, message: response_body
       when 500
-        fail Caseflow::Error::VaDotGovServerError, code: 502, message: response_body
+        fail Caseflow::Error::VaDotGovServerError, code: code, message: response_body
       else
         msg = "Error: #{response_body}, HTTP code: #{code}"
-        fail Caseflow::Error::VaDotGovServerError, code: 502, message: msg
+        fail Caseflow::Error::VaDotGovServerError, code: code, message: msg
       end
     end
     # :nocov:
