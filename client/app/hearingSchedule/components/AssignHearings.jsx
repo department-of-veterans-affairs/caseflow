@@ -12,6 +12,8 @@ import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import { renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
+import DocketTypeBadge from '../../components/DocketTypeBadge';
+
 
 const sectionNavigationListStyling = css({
   '& > li': {
@@ -128,6 +130,16 @@ export default class AssignHearings extends React.Component {
 
     return `${appeal.attributes.veteranFullName} | ${appeal.attributes.veteranFileNumber}`;
   };
+    
+  getAppealTag = (hearing) => {
+     if (hearing.docketNumber) {
+       return <div>
+       <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
+          {hearing.docketNumber}
+       </div>;
+     }
+    
+  }
 
   tableAssignHearingsRows = (appeals) => {
     return _.map(appeals, (appeal) => ({
@@ -151,7 +163,7 @@ export default class AssignHearings extends React.Component {
         caseType: hearing.appealType,
         isAdvancedOnDocket: hearing.aod
       }),
-      docketNumber: hearing.docketNumber,
+      docketNumber: this.getAppealTag(hearing),
       location: hearing.readableLocation,
       time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
