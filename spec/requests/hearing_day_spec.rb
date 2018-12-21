@@ -34,23 +34,24 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Create a new hearing day (Add Hearing) - Caseflow" do
     let(:jan_hearing_days) do
       (1..6).each do |n|
-        create(:hearing_day, hearing_date: Date.new(2019, 1, 14), room: n.to_s)
+        create(:hearing_day, hearing_type: HearingDay::HEARING_TYPES[:video],
+                             hearing_date: Date.new(2019, 4, 14), room: n.to_s)
       end
     end
 
     it "Create new adhoc hearing day and automatically assign a room" do
       jan_hearing_days
 
-      post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
-                                              hearing_date: "14-Jan-2019", assign_room: true }
+      post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:video],
+                                              hearing_date: "14-Apr-2019", assign_room: true }
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"])
-      expect(actual_date).to eq(Date.new(2019, 1, 14))
-      expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Central")
+      expect(actual_date).to eq(Date.new(2019, 4, 14))
+      expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Video")
       expect(JSON.parse(response.body)["hearing"]["room"]).to eq("7 (1W434)")
     end
 
-    it "Create new adhoc hearing day and do not assign a room (room should be nil in DB" do
+    it "Create new adhoc hearing day and do not assign a room (room should be nil in DB)" do
       post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
                                               hearing_date: "17-Jan-2019", assign_room: false }
       expect(response).to have_http_status(:success)
@@ -60,17 +61,28 @@ RSpec.describe "Hearing Schedule", type: :request do
       expect(JSON.parse(response.body)["hearing"]["room"]).to eq(nil)
     end
 
-    let(:feb_hearing_days) do
+    it "Create new adhoc Central Office hearing day and assign room 2" do
+      post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
+                                              hearing_date: "17-Jan-2019", assign_room: true }
+      expect(response).to have_http_status(:success)
+      actual_date = Date.parse(JSON.parse(response.body)["hearing"]["hearing_date"])
+      expect(actual_date).to eq(Date.new(2019, 1, 17))
+      expect(JSON.parse(response.body)["hearing"]["hearing_type"]).to eq("Central")
+      expect(JSON.parse(response.body)["hearing"]["room"]).to eq("2 (1W200B)")
+    end
+
+    let(:may_hearing_days) do
       (1..13).each do |n|
-        create(:hearing_day, hearing_date: Date.new(2019, 2, 14), room: n.to_s)
+        create(:hearing_day, hearing_type: HearingDay::HEARING_TYPES[:video],
+                             hearing_date: Date.new(2019, 5, 14), room: n.to_s)
       end
     end
 
     it "Create new adhoc hearing day but no rooms available. Confirm error message received." do
-      feb_hearing_days
+      may_hearing_days
 
-      post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
-                                              hearing_date: "14-Feb-2019", assign_room: true }
+      post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:video],
+                                              hearing_date: "14-May-2019", assign_room: true }
       expect(response).to have_http_status(404)
       expect(JSON.parse(response.body)["errors"][0]["title"]).to eq("No rooms available")
       expect(JSON.parse(response.body)["errors"][0]["detail"]).to eq("All rooms are taken for the date selected.")
