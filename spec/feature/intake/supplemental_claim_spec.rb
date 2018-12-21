@@ -811,8 +811,8 @@ RSpec.feature "Supplemental Claim Intake" do
 
           click_intake_add_issue
           add_intake_nonrating_issue(
-            category: "Active Duty Adjustments",
-            description: "Description for Active Duty Adjustments",
+            category: "Accrued",
+            description: "I am a description",
             date: "10/25/2017"
           )
           expect(page).to_not have_content("Establish EP")
@@ -826,7 +826,7 @@ RSpec.feature "Supplemental Claim Intake" do
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
                    review_request: sc,
-                   description: "Description for Active Duty Adjustments",
+                   issue_category: "Accrued",
                    benefit_type: sc.benefit_type
           )).to_not be_nil
         end
