@@ -2,12 +2,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
 
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
-import { prepareAppealForStore, prepareLegacyTasksForStore, prepareTasksForStore, prepareAllTasksForStore } from './utils';
+import { prepareAppealForStore, prepareAllTasksForStore } from './utils';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
 import type { Appeal, Appeals, Tasks } from './types/models';
