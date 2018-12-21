@@ -25,11 +25,7 @@ class LegacyOptinManager
   private
 
   def affected_legacy_appeals
-    legacy_appeals = []
-    legacy_issue_opt_ins.each do |legacy_issue_opt_in|
-      legacy_appeals << legacy_issue_opt_in.legacy_appeal
-    end
-    legacy_appeals.uniq
+    legacy_issue_opt_ins.map(&:legacy_appeal).uniq
   end
 
   def pending_opt_ins

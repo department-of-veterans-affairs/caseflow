@@ -36,7 +36,7 @@ class LegacyIssueOptin < ApplicationRecord
   end
 
   def create_rollback!
-    update(rollback_created_at: Time.zone.now)
+    update!(rollback_created_at: Time.zone.now)
   end
 
   def rollback!

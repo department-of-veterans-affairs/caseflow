@@ -201,6 +201,16 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.on_decision_issue_sync_processed
   end
 
+  def create_legacy_issue_optin
+    LegacyIssueOptin.create!(
+      request_issue: self,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id,
+      original_disposition_code: vacols_issue.disposition_id,
+      original_disposition_date: vacols_issue.disposition_date
+    )
+  end
+
   def vacols_issue
     return unless vacols_id && vacols_sequence_id
     @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|

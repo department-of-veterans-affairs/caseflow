@@ -174,16 +174,6 @@ class DecisionReview < ApplicationRecord
     end
   end
 
-  def create_legacy_issue_optin(request_issue)
-    LegacyIssueOptin.create!(
-      request_issue: request_issue,
-      vacols_id: request_issue.vacols_id,
-      vacols_sequence_id: request_issue.vacols_sequence_id,
-      original_disposition_code: request_issue.vacols_issue.disposition_id,
-      original_disposition_date: request_issue.vacols_issue.disposition_date
-    )
-  end
-
   def process_legacy_issues!
     LegacyOptinManager.new(decision_review: self).process!
   end
