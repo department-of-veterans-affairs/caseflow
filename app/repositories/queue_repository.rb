@@ -202,7 +202,7 @@ class QueueRepository
     end
 
     def update_decass_record(decass_record, decass_attrs)
-      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+      decass_attrs = QueueMapper.new(decass_attrs).rename_and_validate_decass_attrs
       VACOLS::Decass.where(defolder: decass_record.defolder, deadtim: decass_record.deadtim)
         .update_all(decass_attrs)
       decass_record.reload
@@ -210,7 +210,7 @@ class QueueRepository
 
     def create_decass_record(decass_attrs)
       decass_attrs = decass_attrs.merge(added_at_date: VacolsHelper.local_date_with_utc_timezone)
-      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+      decass_attrs = QueueMapper.new(decass_attrs).rename_and_validate_decass_attrs
       VACOLS::Decass.create!(decass_attrs)
     end
 

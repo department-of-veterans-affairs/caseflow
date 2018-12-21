@@ -191,7 +191,7 @@ export const workableTasksByAssigneeCssIdSelector = createSelector(
 
 const incompleteTasksWithHold: (State) => Array<Task> = createSelector(
   [incompleteTasksByAssigneeCssIdSelector],
-  (tasks: Array<Task>) => tasks.filter((task) => task.placedOnHoldAt)
+  (tasks: Array<Task>) => tasks.filter((task) => taskIsOnHold(task))
 );
 
 export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
@@ -209,9 +209,9 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
 );
 
 export const onHoldTasksForAttorney: (State) => Array<Task> = createSelector(
-  [onHoldTasksByAssigneeCssIdSelector, incompleteTasksByAssignerCssIdSelector],
-  (onHoldByAssignee: Array<Task>, incompleteByAssigner: Array<Task>) => {
-    const onHoldTasksWithDuplicates = onHoldByAssignee.concat(incompleteByAssigner);
+  [incompleteTasksWithHold, incompleteTasksByAssignerCssIdSelector],
+  (incompleteWithHold: Array<Task>, incompleteByAssigner: Array<Task>) => {
+    const onHoldTasksWithDuplicates = incompleteWithHold.concat(incompleteByAssigner);
 
     return _.filter(onHoldTasksWithDuplicates, (task) => task.assignedTo.type === 'User');
   }
