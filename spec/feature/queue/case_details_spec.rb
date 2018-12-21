@@ -581,7 +581,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
       end
     end
-    context "mutliple tasks" do
+    context "multiple tasks" do
       let!(:task2) do
         create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
                       assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
