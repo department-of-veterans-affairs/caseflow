@@ -212,8 +212,11 @@ class Hearings::HearingDayController < HearingScheduleController
     return true unless params.key?(:assign_room)
 
     # Coming from Add Hearing Day modal and room required
-    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date]).group(:room).count
-    available_room = select_available_room(hearing_count_by_room)
+    available_room = if params[:hearing_type] == HearingDay::HEARING_TYPES[:central]
+                       select_co_available_room
+                     else
+                       select_video_available_room
+                     end
 
     params.delete(:assign_room)
     params[:room] = available_room if !available_room.nil?
@@ -224,15 +227,20 @@ class Hearings::HearingDayController < HearingScheduleController
     params.key?(:assign_room) && (!params[:assign_room] || params[:assign_room] == "false")
   end
 
-  def select_available_room(hearing_count_by_room)
+  def select_co_available_room
+    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date], hearing_type: params[:hearing_type])
+      .group(:room).count
+    room_count = hearing_count_by_room["2"]
+    "2" unless !(room_count.nil? || room_count == 0)
+  end
+
+  def select_video_available_room
+    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date], hearing_type: params[:hearing_type])
+      .group(:room).count
     available_room = nil
     (1..HearingRooms::ROOMS.size).each do |hearing_room|
       room_count = hearing_count_by_room[hearing_room.to_s]
-      if room_count.nil?
-        available_room = hearing_room.to_s
-        break
-      end
-      if !room_count.nil? && room_count == 0
+      if hearing_room != 2 && (room_count.nil? || room_count == 0)
         available_room = hearing_room.to_s
         break
       end
