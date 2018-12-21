@@ -15,6 +15,8 @@ require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
 require_relative "support/download_helper"
+require_relative "support/clear_cache"
+require_relative "support/feature_helper"
 require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -52,8 +54,6 @@ if File.directory?(cache_directory)
 else
   Dir.mkdir cache_directory
 end
-
-FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
 ENV["TZ"] ||= "America/New York"
 
@@ -106,6 +106,9 @@ end
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 5
+
+# This allows for active job expectations
+ActiveJob::Base.queue_adapter = :test
 
 # Convenience methods for stubbing current user
 module StubbableUser
@@ -241,8 +244,6 @@ RSpec.configure do |config|
     read_csv(VACOLS::Vftypes, date_shift)
     read_csv(VACOLS::Issref, date_shift)
     read_csv(VACOLS::Actcode, date_shift)
-
-    Rails.cache.clear
   end
 
   config.before(:each) do
@@ -251,7 +252,6 @@ RSpec.configure do |config|
 
   config.after(:each) do
     Timecop.return
-    Rails.cache.clear
     Fakes::BGSService.clean!
     Time.zone = @spec_time_zone
   end
@@ -379,4 +379,5 @@ end
 RSpec.configure do |config|
   config.include ActionView::Helpers::NumberHelper
   config.include FakeDateHelper
+  config.include FeatureHelper, type: :feature
 end

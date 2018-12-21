@@ -6,6 +6,7 @@ import { css } from 'glamor';
 import { formatDateStr } from '../../util/DateUtil';
 import scrollToComponent from 'react-scroll-to-component';
 
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
 import COPY from '../../../COPY.json';
 import Checkbox from '../../components/Checkbox';
 import CheckboxGroup from '../../components/CheckboxGroup';
@@ -293,7 +294,9 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
         Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
       </h2>
       <div {...smallBottomMargin}>
-        Program: {appeal.isLegacyAppeal ? getIssueProgramDescription(issue) : issue.program}
+        {appeal.isLegacyAppeal ?
+          `Program: ${getIssueProgramDescription(issue)}` :
+          `Benefit type: ${BENEFIT_TYPES[issue.benefit_type]}` }
       </div>
       {!appeal.isLegacyAppeal &&
         <div {...smallBottomMargin}>

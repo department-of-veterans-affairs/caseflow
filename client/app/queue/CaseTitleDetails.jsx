@@ -79,7 +79,7 @@ export class CaseTitleDetails extends React.PureComponent {
 
     return <CaseDetailTitleScaffolding>
       <React.Fragment>
-        <h4>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</h4>
+        <h4>{COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</h4>
         <span {...docketBadgeContainerStyle}>
           <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
         </span>
@@ -100,7 +100,7 @@ export class CaseTitleDetails extends React.PureComponent {
         </React.Fragment> }
 
       <React.Fragment>
-        <h4>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</h4>
+        <h4>{COPY.TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</h4>
         <div>
           {renderLegacyAppealType({
             aod: appeal.isAdvancedOnDocket,
@@ -118,7 +118,7 @@ export class CaseTitleDetails extends React.PureComponent {
 
       { !userIsVsoEmployee && primaryTask && primaryTask.documentId &&
         <React.Fragment>
-          <h4>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
+          <h4>{COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
           <div><CopyTextButton text={primaryTask.documentId} /></div>
         </React.Fragment> }
     </CaseDetailTitleScaffolding>;

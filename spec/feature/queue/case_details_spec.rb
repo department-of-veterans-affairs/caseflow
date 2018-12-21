@@ -322,8 +322,8 @@ RSpec.feature "Case details" do
 
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
 
-      expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
-      expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
+      expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
+      expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
     end
   end
 
@@ -405,13 +405,26 @@ RSpec.feature "Case details" do
 
     context "when the current user is a member of the AOD team" do
       before do
-        allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user).and_return(true)
+        OrganizationsUser.add_user_to_organization(user, AodTeam.singleton)
         User.authenticate!(user: user)
-        visit("/queue/appeals/#{appeal.uuid}")
       end
 
-      it "should display the edit link" do
-        expect(page).to have_content("Edit")
+      context "when requesting the case details page directly" do
+        it "should display the edit link" do
+          visit("/queue/appeals/#{appeal.external_id}")
+          expect(page).to have_content("Edit")
+        end
+      end
+
+      context "when reaching the case details page by way of the search page" do
+        it "should display the edit link" do
+          visit("/search")
+          fill_in("searchBarEmptyList", with: appeal.veteran.file_number)
+          click_on("Search")
+
+          click_on(appeal.docket_number)
+          expect(page).to have_content("Edit")
+        end
       end
     end
 
@@ -512,6 +525,34 @@ RSpec.feature "Case details" do
       it "should NOT display judge & attorney tasks" do
         visit "/queue/appeals/#{appeal2.uuid}"
         expect(page).not_to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+      end
+    end
+  end
+
+  describe "AMA decision issue notes" do
+    before { FeatureToggle.enable!(:ama_decision_issues) }
+    after { FeatureToggle.disable!(:ama_decision_issues) }
+
+    let(:request_issue) { create(:request_issue, description: "knee pain", notes: notes) }
+    let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
+
+    context "when notes are nil" do
+      let(:notes) { nil }
+
+      it "does not display the Notes div" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content("Note:")
+      end
+    end
+
+    context "when notes are empty" do
+      let(:notes) { "" }
+
+      it "does not display the Notes div" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content("Note:")
       end
     end
   end

@@ -1,6 +1,13 @@
 class JudgeTask < Task
   include RoundRobinAssigner
 
+  def available_actions(_user)
+    actions = baseline_actions
+    actions << Constants.TASK_ACTIONS.MARK_COMPLETE.to_h if parent && parent.is_a?(QualityReviewTask)
+
+    actions
+  end
+
   def actions_available?(user)
     assigned_to == user
   end

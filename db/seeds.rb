@@ -57,6 +57,7 @@ class SeedDB
     create_vso_user
     create_org_queue_users
     create_qr_user
+    create_aod_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
@@ -100,6 +101,12 @@ class SeedDB
   end
 
   def create_org_queue_users
+    nca = BusinessLine.create!(name: "National Cemetery Association", url: "nca")
+    (0..5).each do |n|
+      u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{n}", full_name: "NCA team member #{n}")
+      OrganizationsUser.add_user_to_organization(u, nca)
+    end
+
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "ORG_QUEUE_USER_#{n}", full_name: "Translation team member #{n}")
       OrganizationsUser.add_user_to_organization(u, Translation.singleton)
@@ -115,8 +122,13 @@ class SeedDB
     create_task_at_quality_review(qr_user)
   end
 
+  def create_aod_user
+    u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "AOD team member")
+    OrganizationsUser.add_user_to_organization(u, AodTeam.singleton)
+  end
+
   def create_mail_team_user
-    u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Jolly D. Postman")
+    u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Mail team member")
     OrganizationsUser.add_user_to_organization(u, MailTeam.singleton)
   end
 
@@ -270,6 +282,19 @@ class SeedDB
 
   def create_api_key
     ApiKey.new(consumer_name: "PUBLIC", key_string: "PUBLICDEMO123").save!
+  end
+
+  def create_higher_level_review_tasks
+    6.times do
+      higher_level_review = FactoryBot.create(
+        :higher_level_review,
+        request_issues: FactoryBot.create_list(:request_issue, 3),
+        veteran_file_number: FactoryBot.create(:veteran).file_number
+      )
+      FactoryBot.create(:higher_level_review_task,
+                        assigned_to: Organization.find_by(name: "National Cemetery Association"),
+                        appeal: higher_level_review)
+    end
   end
 
   def create_ama_appeals
@@ -608,6 +633,7 @@ class SeedDB
     create_ama_appeals
     create_users
     create_tasks
+    create_higher_level_review_tasks
 
     setup_dispatch
     create_previously_held_hearing_data

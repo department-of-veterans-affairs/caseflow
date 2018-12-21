@@ -103,11 +103,6 @@ group :production, :staging, :ssh_forwarding, :development, :test do
   gem "ruby-oci8", require: "oci8"
 end
 
-# Development was ommited due to double logging issue (https://github.com/heroku/rails_stdout_logging/issues/1)
-group :production, :staging do
-  gem "rails_stdout_logging"
-end
-
 group :test, :development, :demo do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
@@ -177,5 +172,6 @@ gem "business_time", "~> 0.9.3"
 
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
+gem "stringex", require: false
 
 # rubocop:enable Metrics/LineLength

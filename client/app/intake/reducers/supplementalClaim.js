@@ -28,6 +28,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     benefitType: {
       $set: serverIntake.benefit_type
     },
+    nonComp: {
+      $set: serverIntake.nonComp
+    },
     veteranIsNotClaimant: {
       $set: serverIntake.veteran_is_not_claimant
     },
@@ -48,6 +51,9 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     contestableIssues: {
       $set: contestableIssues
+    },
+    activeNonratingRequestIssues: {
+      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
     },
     requestIssues: {
       $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
