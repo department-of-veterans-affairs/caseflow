@@ -267,13 +267,24 @@ describe User do
 
     subject { user.can_edit_request_issues?(appeal) }
 
-    context "when appeal has in-progress task assigned to user" do
+    context "when appeal has in-progress attorney task assigned to user" do
       let!(:task) do
         create(:task,
                type: "AttorneyTask",
                appeal: appeal,
                assigned_to: user,
                status: Constants.TASK_STATUSES.assigned)
+      end
+      it { is_expected.to be true }
+    end
+
+    context "when appeal has in-progress judge task assigned to user" do
+      let!(:task) do
+        create(:task,
+               type: "JudgeReviewTask",
+               appeal: appeal,
+               assigned_to: user,
+               status: Constants.TASK_STATUSES.in_progress)
       end
       it { is_expected.to be true }
     end

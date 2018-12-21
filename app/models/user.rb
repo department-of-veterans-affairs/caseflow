@@ -80,11 +80,10 @@ class User < ApplicationRecord
 
   def can_edit_request_issues?(appeal)
     Task.where(
-      type: [JudgeReviewTask, AttorneyTask],
       appeal: appeal,
       assigned_to: self,
       status: [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
-    ).any?
+    ).select { |t| t.is_a?(JudgeTask) || t.is_a?(AttorneyTask) }.any?
   end
 
   def participant_id
