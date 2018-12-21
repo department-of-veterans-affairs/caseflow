@@ -25,6 +25,16 @@ class CaseReviewsController < ApplicationController
     render json: response
   end
 
+  def update
+    result = UpdateAttorneyCaseReview.new(
+      id: params[:task_id],
+      user_id: current_user.id,
+      document_id: params[:case_review][:document_id]
+    ).call
+
+    render json: result.to_h, status: result.success? ? :ok : :bad_request
+  end
+
   private
 
   def create_quality_review_task(record)

@@ -108,4 +108,12 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :caseflow_veteran_id do
     object.veteran ? object.veteran.id : nil
   end
+
+  attribute :document_id do
+    object.attorney_case_reviews.map(&:document_id).last
+  end
+
+  attribute :attorney_case_review_id do
+    object.attorney_case_reviews.last&.id
+  end
 end
