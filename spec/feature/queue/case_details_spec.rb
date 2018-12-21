@@ -556,4 +556,56 @@ RSpec.feature "Case details" do
       end
     end
   end
+
+  describe "Show multiple tasks" do
+    let(:appeal) { create(:appeal) }
+    let!(:root_task) do
+      create(:root_task, appeal: appeal, assigned_to: judge_user,
+                         status: Constants.TASK_STATUSES.assigned)
+    end
+    let!(:task) do
+      create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
+                    assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
+                    parent_id: root_task.id, started_at: rand(1..10).days.ago)
+    end
+
+    context "one task" do
+      it "is displayed in the TaskSnapshot" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+        expect(page).to have_content(task.assigned_at.strftime("%-m/%-e/%Y"))
+        expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} #{task.assigned_to.css_id}")
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase)
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL.upcase)
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
+      end
+    end
+    context "two tasks" do
+      let!(:task2) do
+        create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
+                      assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
+                      parent_id: task.id, started_at: rand(1..20).days.ago)
+      end
+      let!(:task3) do
+        create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
+                      assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
+                      parent_id: task.id, started_at: rand(1..20).days.ago, assigned_at: 15.days.ago)
+      end
+      it "are displayed in the TaskSnapshot" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to have_content(task2.assigned_at.strftime("%-m/%-e/%Y"))
+        expect(page).to have_content(task2.assigned_to.css_id)
+        expect(page).to have_content(task3.assigned_at.strftime("%-m/%-e/%Y"))
+        expect(page).to have_content(task3.assigned_to.css_id)
+        expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL.upcase} \
+                                      #{task2.assigned_at.strftime('%-m/%-e/%Y')} \
+                                      #{COPY::TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL.upcase}")
+        expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} \
+                                      #{task3.assigned_to.css_id} \
+                                      #{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase}")
+      end
+    end
+  end
 end
