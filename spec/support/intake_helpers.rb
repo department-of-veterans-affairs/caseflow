@@ -1,5 +1,45 @@
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
+  # rubocop: disable Metrics/MethodLength
+  # rubocop: disable Metrics/ParameterLists
+  def start_higher_level_review(
+    test_veteran,
+    receipt_date: 1.day.ago,
+    claim_participant_id: nil,
+    legacy_opt_in_approved: false,
+    veteran_is_not_claimant: false,
+    benefit_type: "compensation"
+  )
+
+    higher_level_review = HigherLevelReview.create!(
+      veteran_file_number: test_veteran.file_number,
+      receipt_date: receipt_date,
+      informal_conference: false, same_office: false,
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
+    )
+
+    intake = HigherLevelReviewIntake.create!(
+      veteran_file_number: test_veteran.file_number,
+      user: User.authenticate!(roles: ["Mail Intake"]),
+      started_at: 5.minutes.ago,
+      detail: higher_level_review
+    )
+
+    Claimant.create!(
+      review_request: higher_level_review,
+      participant_id: claim_participant_id ? claim_participant_id : test_veteran.participant_id,
+      payee_code: claim_participant_id ? "02" : "00"
+    )
+
+    higher_level_review.start_review!
+
+    [higher_level_review, intake]
+  end
+  # rubocop: enable Metrics/MethodLength
+  # rubocop: enable Metrics/ParameterLists
+
   def search_page_title
     "Search for Veteran by ID"
   end

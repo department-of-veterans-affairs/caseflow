@@ -23,7 +23,7 @@ const nonratingRequestIssueCategories = (benefitType) => {
       value: category,
       label: category
     };
-  })
+  });
 };
 
 class NonratingRequestIssueModal extends React.Component {
