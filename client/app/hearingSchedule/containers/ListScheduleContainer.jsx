@@ -33,7 +33,6 @@ import _ from 'lodash';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
 
-
 const dateFormatString = 'YYYY-MM-DD';
 
 const emptyValueEntry = {
