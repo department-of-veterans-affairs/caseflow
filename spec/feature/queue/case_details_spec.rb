@@ -569,8 +569,8 @@ RSpec.feature "Case details" do
                     parent_id: root_task.id, started_at: rand(1..10).days.ago)
     end
 
-    context "one task" do
-      it "is displayed in the TaskSnapshot" do
+    context "single task" do
+      it "one task is displayed in the TaskSnapshot" do
         visit "/queue/appeals/#{appeal.uuid}"
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
@@ -581,7 +581,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
       end
     end
-    context "two tasks" do
+    context "mutliple tasks" do
       let!(:task2) do
         create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
                       assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
@@ -592,7 +592,7 @@ RSpec.feature "Case details" do
                       assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
                       parent_id: task.id, started_at: rand(1..20).days.ago, assigned_at: 15.days.ago)
       end
-      it "are displayed in the TaskSnapshot" do
+      it "two tasks are displayed in the TaskSnapshot" do
         visit "/queue/appeals/#{appeal.uuid}"
 
         expect(page).to have_content(task2.assigned_at.strftime("%-m/%-e/%Y"))
