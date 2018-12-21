@@ -40,7 +40,7 @@ module Asyncable
     end
 
     def processable
-      where.not(submitted_at_column => nil).where(processed_at_column => nil)
+      where(arel_table[submitted_at_column].lteq(Time.zone.now)).where(processed_at_column => nil)
     end
 
     def never_attempted
@@ -74,8 +74,8 @@ module Asyncable
     end
   end
 
-  def submit_for_processing!
-    update!(self.class.submitted_at_column => Time.zone.now, self.class.processed_at_column => nil)
+  def submit_for_processing!(delay: 0)
+    update!(self.class.submitted_at_column => (Time.zone.now + delay), self.class.processed_at_column => nil)
   end
 
   def processed!
@@ -84,6 +84,17 @@ module Asyncable
 
   def attempted!
     update!(self.class.attempted_at_column => Time.zone.now)
+  end
+
+  # There are sometimes cases where no processing required, and we can mark submitted and processed all in one
+  def no_processing_required!
+    now = Time.zone.now
+
+    update!(
+      self.class.submitted_at_column => now,
+      self.class.attempted_at_column => now,
+      self.class.processed_at_column => now
+    )
   end
 
   def processed?

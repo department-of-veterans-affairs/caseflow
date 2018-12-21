@@ -17,15 +17,22 @@ class EndProduct
   }.freeze
 
   DTA_CODES = {
+    "040HDER" => "Supplemental Claim Rating DTA",
     "040HDENR" => "Supplemental Claim Nonrating DTA",
-    "040HDER" => "Supplemental Claim Rating DTA"
+    "040HDERPMC" => "PMC HLR DTA Error - Rating",
+    "040HDENRPMC" => "PMC HLR DTA Error - Non-Rating",
+    "040BDEIMOPMC" => "PMC Board DTA Error - w/IMO"
   }.freeze
 
   DECISION_REVIEW_CODES = {
     "030HLRR" => "Higher-Level Review Rating",
     "030HLRNR" => "Higher-Level Review Nonrating",
+    "030HLRRPMC" => "PMC Higher-Level Review Rating",
+    "030HLRNRPMC" => "PMC Higher-Level Review Non-Rating",
     "040SCR" => "Supplemental Claim Rating",
-    "040SCNR" => "Supplemental Claim Nonrating"
+    "040SCNR" => "Supplemental Claim Nonrating",
+    "040SCRPMC" => "PMC Supplemental Claim Rating",
+    "040SCNRPMC" => "PMC Supplemental Claim Non-Rating"
   }.freeze
 
   DISPATCH_CODES = {
