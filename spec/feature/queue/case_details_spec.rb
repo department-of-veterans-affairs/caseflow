@@ -556,4 +556,18 @@ RSpec.feature "Case details" do
       end
     end
   end
+
+  describe "Persist legacy tasks from backend" do
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+    context "one task" do
+      it "displayed in the TaskSnapshot" do
+        puts legacy_appeal.inspect
+
+        visit "/queue/appeals/#{legacy_appeal.vacols_id}"
+
+        # expect(page).to_not have_content("Task is displayed")
+      end
+    end
+  end
 end
