@@ -96,14 +96,14 @@ export default class StickyNavContentArea extends React.PureComponent {
   };
 }
 
-const sectionSegmentStyling = css({
+export const sectionSegmentStyling = css({
   border: `1px solid ${COLORS.GREY_LIGHT}`,
   borderTop: '0px',
   marginBottom: '3rem',
   padding: '1rem 2rem'
 });
 
-const sectionHeadingStyling = css({
+export const sectionHeadingStyling = css({
   backgroundColor: COLORS.GREY_BACKGROUND,
   border: `1px solid ${COLORS.GREY_LIGHT}`,
   borderBottom: 0,
@@ -112,7 +112,7 @@ const sectionHeadingStyling = css({
   padding: '1rem 2rem'
 });
 
-const anchorJumpLinkStyling = css({
+export const anchorJumpLinkStyling = css({
   color: COLORS.GREY_DARK,
   paddingTop: '7rem',
   textDecoration: 'none',

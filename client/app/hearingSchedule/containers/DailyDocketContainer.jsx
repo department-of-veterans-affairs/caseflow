@@ -39,6 +39,7 @@ import {
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
+import HEARING_ROOMS_LIST from '../../../constants/HEARING_ROOMS_LIST.json';
 
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
@@ -202,13 +203,18 @@ export class DailyDocketContainer extends React.Component {
   ]);
 
   openModal = () => {
-    this.setState({ showModalAlert: false });
-    this.setState({ modalOpen: true });
+    this.setState({ showModalAlert: false,
+      modalOpen: true });
 
     // find labels in options before passing values to modal
+    const room = _.findKey(HEARING_ROOMS_LIST, { label: this.props.dailyDocket.room });
+    const roomOption = { label: HEARING_ROOMS_LIST[room].label,
+      value: room };
+    const judge = _.find(this.props.activeJudges, { value: parseInt(this.props.dailyDocket.judgeId, 10) });
     const coordinator = _.find(this.props.activeCoordinators, { label: this.props.dailyDocket.bvaPoc });
 
-    this.props.selectVlj(this.props.dailyDocket.judgeId);
+    this.props.selectHearingRoom(roomOption);
+    this.props.selectVlj(judge);
     this.props.selectHearingCoordinator(coordinator);
     this.props.setNotes(this.props.dailyDocket.notes);
     this.props.onHearingDayModified(false);
@@ -347,6 +353,7 @@ const mapStateToProps = (state) => ({
   hearingRoom: state.hearingSchedule.hearingRoom,
   notes: state.hearingSchedule.notes,
   hearingDayModified: state.hearingSchedule.hearingDayModified,
+  activeJudges: state.hearingSchedule.activeJudges,
   activeCoordinators: state.hearingSchedule.activeCoordinators,
   displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal,
   displayLockModal: state.hearingSchedule.displayLockModal,
