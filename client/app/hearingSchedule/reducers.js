@@ -68,10 +68,10 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.upcomingHearingDays
       }
     });
-  case ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING:
+  case ACTIONS.RECEIVE_APPEALS_READY_FOR_HEARING:
     return update(state, {
-      veteransReadyForHearing: {
-        $set: action.payload.veterans
+      appealsReadyForHearing: {
+        $set: action.payload.appeals
       }
     });
   case ACTIONS.HEARING_NOTES_UPDATE:
@@ -346,6 +346,17 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
   case ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR:
     return update(state, {
       $unset: ['dailyDocketServerError']
+    });
+
+  case ACTIONS.HANDLE_LOCK_HEARING_SERVER_ERROR:
+    return update(state, {
+      onErrorHearingDayLock: { $set: true },
+      displayLockModal: { $set: false }
+    });
+
+  case ACTIONS.RESET_LOCK_HEARING_SERVER_ERROR:
+    return update(state, {
+      $unset: ['onErrorHearingDayLock']
     });
 
   case ACTIONS.RESET_DELETE_SUCCESSFUL:

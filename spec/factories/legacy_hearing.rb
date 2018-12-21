@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :hearing do
+  factory :legacy_hearing do
     date { Time.zone.today }
 
     transient do

@@ -3,8 +3,13 @@ class HigherLevelReview < ClaimReview
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
-  END_PRODUCT_RATING_CODE = "030HLRR".freeze
-  END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
+  END_PRODUCT_CODES = {
+    rating: "030HLRR",
+    nonrating: "030HLRNR",
+    pension_rating: "030HLRRPMC",
+    pension_nonrating: "030HLRNRPMC"
+  }.freeze
+
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
 
   # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
@@ -27,30 +32,16 @@ class HigherLevelReview < ClaimReview
     )
   end
 
-  def rating_end_product_establishment
-    @rating_end_product_establishment ||= end_product_establishments.find_by(code: END_PRODUCT_RATING_CODE)
-  end
-
-  def end_product_description
-    rating_end_product_establishment&.description
-  end
-
-  def end_product_base_modifier
-    valid_modifiers.first
-  end
-
   def special_issues
     specials = super
     specials << { code: "SSR", narrative: "Same Station Review" } if same_office
     specials
   end
 
-  def valid_modifiers
-    END_PRODUCT_MODIFIERS
-  end
-
   def issue_code(rating: true)
-    rating ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
+    issue_code_type = rating ? :rating : :nonrating
+    issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
+    END_PRODUCT_CODES[issue_code_type]
   end
 
   def on_decision_issues_sync_processed(_end_product_establishment)

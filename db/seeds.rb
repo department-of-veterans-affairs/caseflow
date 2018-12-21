@@ -57,6 +57,7 @@ class SeedDB
     create_vso_user
     create_org_queue_users
     create_qr_user
+    create_aod_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
@@ -119,6 +120,11 @@ class SeedDB
     # Create two QR tasks. One assigned to the organization and one assigned to both the organization and a QR user.
     create_task_at_quality_review
     create_task_at_quality_review(qr_user)
+  end
+
+  def create_aod_user
+    u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "AOD team member")
+    OrganizationsUser.add_user_to_organization(u, AodTeam.singleton)
   end
 
   def create_mail_team_user

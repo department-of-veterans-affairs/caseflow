@@ -405,9 +405,7 @@ describe AttorneyCaseReview do
           end
 
           it "should create draft decision record" do
-            expect(decass_record.deprod).to eq QueueMapper.work_product_to_vacols_code(
-              work_product, params[:overtime]
-            )
+            expect(decass_record.deprod).to eq "OTD"
             expect(decass_record.deatcom).to eq note
             expect(decass_record.dedocid).to eq document_id
           end

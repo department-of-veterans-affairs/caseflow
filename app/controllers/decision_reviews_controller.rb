@@ -3,20 +3,35 @@ class DecisionReviewsController < ApplicationController
 
   def index
     if business_line
-      render json: { tasks: business_line.tasks }
+      render "index"
     else
+      # TODO: make index show error message
       render json: { error: "#{business_line_slug} not found" }, status: 404
     end
   end
-
-  private
 
   def business_line_slug
     params.permit(:business_line_slug)[:business_line_slug]
   end
 
+  def in_progress_tasks
+    apply_task_serializer(business_line.tasks.reject(&:completed?))
+  end
+
+  def completed_tasks
+    apply_task_serializer(business_line.tasks.select(&:completed?))
+  end
+
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
+  end
+
+  helper_method :in_progress_tasks, :completed_tasks, :business_line
+
+  private
+
+  def apply_task_serializer(tasks)
+    tasks.map { |task| task.serializer_class.new(task) }
   end
 
   def set_application
