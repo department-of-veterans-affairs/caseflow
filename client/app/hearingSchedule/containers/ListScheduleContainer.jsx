@@ -201,7 +201,7 @@ export class ListScheduleContainer extends React.Component {
     }
 
     if (this.props.successfulHearingDayDelete) {
-      return `You have successfully removed Hearing Day ${formatDateStr(this.props.successfulHearingDayDelete)} `;
+      return `You have successfully removed Hearing Day ${formatDateStr(this.props.successfulHearingDayDelete)}`;
     }
 
     if (['Saturday', 'Sunday'].includes(moment(this.props.selectedHearingDay).format('dddd'))) {
