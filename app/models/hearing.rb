@@ -1,2 +1,0 @@
-class Hearing < ApplicationRecord
-end
