@@ -563,11 +563,13 @@ RSpec.feature "Case details" do
     context "one task" do
       let!(:root_task) do
         create(:root_task, appeal: legacy_appeal, assigned_to: judge_user,
-                           status: Constants.TASK_STATUSES.assigned) end
+                           status: Constants.TASK_STATUSES.assigned)
+      end
       let!(:legacy_task) do
         create(:task, appeal: legacy_appeal, status: Constants.TASK_STATUSES.in_progress,
                       assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
-                      parent_id: root_task.id, started_at: rand(1..10).days.ago) end
+                      parent_id: root_task.id, started_at: rand(1..10).days.ago)
+      end
 
       it "is displayed in the TaskSnapshot" do
         visit "/queue/appeals/#{legacy_appeal.vacols_id}"
