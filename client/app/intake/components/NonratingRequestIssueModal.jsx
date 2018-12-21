@@ -17,7 +17,7 @@ import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
 
 const NO_MATCH_TEXT = 'None of these match';
 
-const nonratingRequestIssueCategories = (benefitType = "compensation") => {
+const nonratingRequestIssueCategories = (benefitType = 'compensation') => {
   return ISSUE_CATEGORIES[benefitType].map((category) => {
     return {
       value: category,

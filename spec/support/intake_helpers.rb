@@ -37,6 +37,69 @@ module IntakeHelpers
 
     [higher_level_review, intake]
   end
+
+  def start_supplemental_claim(
+    test_veteran,
+    receipt_date: 1.day.ago,
+    legacy_opt_in_approved: false,
+    veteran_is_not_claimant: false,
+    benefit_type: "compensation"
+  )
+
+    supplemental_claim = SupplementalClaim.create!(
+      veteran_file_number: test_veteran.file_number,
+      receipt_date: receipt_date,
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
+    )
+
+    intake = SupplementalClaimIntake.create!(
+      veteran_file_number: test_veteran.file_number,
+      user: User.authenticate!(roles: ["Mail Intake"]),
+      started_at: 5.minutes.ago,
+      detail: supplemental_claim
+    )
+
+    Claimant.create!(
+      review_request: supplemental_claim,
+      participant_id: test_veteran.participant_id
+    )
+
+    supplemental_claim.start_review!
+    [supplemental_claim, intake]
+  end
+
+  def start_appeal(
+    test_veteran,
+    receipt_date: 1.day.ago,
+    veteran_is_not_claimant: false,
+    legacy_opt_in_approved: false
+  )
+    appeal = Appeal.create!(
+      veteran_file_number: test_veteran.file_number,
+      receipt_date: receipt_date,
+      docket_type: "evidence_submission",
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
+    )
+
+    intake = AppealIntake.create!(
+      veteran_file_number: test_veteran.file_number,
+      user: User.authenticate!(roles: ["Mail Intake"]),
+      started_at: 5.minutes.ago,
+      detail: appeal
+    )
+
+    Claimant.create!(
+      review_request: appeal,
+      participant_id: test_veteran.participant_id
+    )
+
+    appeal.start_review!
+
+    [appeal, intake]
+  end
   # rubocop: enable Metrics/MethodLength
   # rubocop: enable Metrics/ParameterLists
 
