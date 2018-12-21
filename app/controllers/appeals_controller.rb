@@ -64,8 +64,7 @@ class AppealsController < ApplicationController
         MetricsService.record("Get appeal information for ID #{id}",
                               service: :queue,
                               name: "AppealsController.show") do
-          render json: { appeal: json_appeals([appeal])[:data][0],
-                         can_edit_request_issues: current_user.can_edit_request_issues?(appeal) }
+          render json: { appeal: json_appeals([appeal])[:data][0] }
         end
       end
     end

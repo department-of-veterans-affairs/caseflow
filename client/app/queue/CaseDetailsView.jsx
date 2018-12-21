@@ -59,7 +59,6 @@ class CaseDetailsView extends React.PureComponent {
       appealId,
       appeal,
       error,
-      canEditRequestIssues,
       success,
       featureToggles
     } = this.props;
@@ -88,7 +87,7 @@ class CaseDetailsView extends React.PureComponent {
           amaIssueType={amaIssueType}
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
-          editLink={amaIssueType && canEditRequestIssues && `/appeals/${appealId}/edit`}
+          editLink={amaIssueType && appeal.canEditRequestIssues && `/appeals/${appealId}/edit`}
           editLinkTitle={COPY.CORRECT_REQUEST_ISSUES_LINK}
           issues={appeal.issues}
           decisionIssues={appeal.decisionIssues}
@@ -117,7 +116,6 @@ const mapStateToProps = (state, ownProps) => {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
     featureToggles,
-    canEditRequestIssues,
     error,
     veteranCaseListIsVisible
   };
