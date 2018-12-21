@@ -18,7 +18,7 @@ RSpec.feature "Nonrating Request Issue Modal" do
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
   end
-
+  # rubocop: disable Metrics/MethodLength
   def test_issue_categories(decision_review_type:, benefit_type:, included_category:, excluded_category:)
     case decision_review_type
     when "higher_level_review"
@@ -52,6 +52,7 @@ RSpec.feature "Nonrating Request Issue Modal" do
              issue_category: included_category
     )).to_not be_nil
   end
+  # rubocop: enable Metrics/MethodLength
 
   context "when it is a claim review" do
     it "Shows the correct issue categories by benefit type" do
