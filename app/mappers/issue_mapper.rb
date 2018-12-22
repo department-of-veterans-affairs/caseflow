@@ -11,6 +11,7 @@ module IssueMapper
     vacols_id: :isskey
   }.freeze
 
+  # For disposition descriptions, please see the VACOLS_DISPOSITIONS_BY_ID file
   ALLOWED_DISPOSITION_CODES = %w[1 3 4 5 6 8 O P G X L].freeze
 
   class << self

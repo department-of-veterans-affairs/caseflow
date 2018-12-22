@@ -9,14 +9,16 @@ class LegacyOptinManager
 
   def process!
     VACOLS::Case.transaction do
-      pending_rollbacks.each(&:rollback!)
+      ApplicationRecord.transaction do
+        pending_rollbacks.each(&:rollback!)
 
-      pending_opt_ins.each(&:opt_in!)
+        pending_opt_ins.each(&:opt_in!)
 
-      affected_legacy_appeals.each do |legacy_appeal|
-        if legacy_appeal.issues.reject(&:closed?).empty?
-          LegacyIssueOptin.revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
-          LegacyIssueOptin.close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
+        affected_legacy_appeals.each do |legacy_appeal|
+          if legacy_appeal.issues.reject(&:closed?).empty?
+            LegacyIssueOptin.revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
+            LegacyIssueOptin.close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
+          end
         end
       end
     end

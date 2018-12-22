@@ -119,9 +119,9 @@ describe LegacyOptinManager do
           end
 
           it "rollsback the disposition and date and does not change appeals" do
-            undecided_optin1.create_rollback!
-            remand_optin1.create_rollback!
-            closed_optin1.create_rollback!
+            undecided_optin1.flag_for_rollback!
+            remand_optin1.flag_for_rollback!
+            closed_optin1.flag_for_rollback!
 
             subject
 
@@ -152,7 +152,7 @@ describe LegacyOptinManager do
 
         it "closes the undecided issues and closes the undecided appeal" do
           subject
-          expect(undecided_optin1.reload.optin_processed_at).to eq(Time.zone.now)
+          expect(undecided_optin1.reload.optin_processed_at).to be_within(1.second).of Time.zone.now
           expect(vacols_issue("undecided", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("undecided", 1).issdcls).to eq(Time.zone.today)
           expect(undecided_optin2.reload.optin_processed_at).to eq(Time.zone.now)
@@ -198,7 +198,7 @@ describe LegacyOptinManager do
           it "reopens an undecided appeal and rollsback the dispositions" do
             expect(vacols_issue("undecided", 2).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
             expect(undecided_case.reload).to be_closed
-            undecided_optin2.create_rollback!
+            undecided_optin2.flag_for_rollback!
 
             subject
 
@@ -210,7 +210,7 @@ describe LegacyOptinManager do
           it "does not reopen the previously closed appeal but rollsback dispositions" do
             expect(vacols_issue("closed", 2).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
             expect(already_closed_case.reload).to be_closed
-            closed_optin2.create_rollback!
+            closed_optin2.flag_for_rollback!
 
             subject
 
@@ -229,7 +229,7 @@ describe LegacyOptinManager do
             expect(remand_case.reload.bfmpro).to eq("HIS")
             expect(follow_up_appeal.bfdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
             expect(follow_up_appeal_issues.count).to eq(3)
-            remand_optin2.create_rollback!
+            remand_optin2.flag_for_rollback!
 
             subject
 

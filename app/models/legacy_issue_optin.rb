@@ -35,12 +35,12 @@ class LegacyIssueOptin < ApplicationRecord
     update!(optin_processed_at: Time.zone.now)
   end
 
-  def create_rollback!
+  def flag_for_rollback!
     update!(rollback_created_at: Time.zone.now)
   end
 
   def rollback!
-    reopen_legacy_appeal if legacy_appeal_needs_reopened?
+    reopen_legacy_appeal if legacy_appeal_needs_to_be_reopened?
     revert_open_remand_issues if legacy_appeal.remand?
     rollback_issue_disposition
   end
@@ -76,7 +76,7 @@ class LegacyIssueOptin < ApplicationRecord
     end
   end
 
-  def legacy_appeal_needs_reopened?
+  def legacy_appeal_needs_to_be_reopened?
     return false unless (REMAND_DISPOSITION_CODES.include? original_disposition_code) || original_disposition_code.nil?
     !legacy_appeal.active?
   end
