@@ -51,7 +51,6 @@ gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
-gem "rubyzip", "~> 1.2.2"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # bundle exec rake doc:rails generates the API under doc/api.
