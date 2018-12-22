@@ -16,7 +16,6 @@ class AppealRepository
   end
 
   def self.find_case_record(id)
-    byebug
     VACOLS::Case.includes(:folder, :correspondent, :representatives).find(id)
   end
 

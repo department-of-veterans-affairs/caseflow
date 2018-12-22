@@ -26,15 +26,13 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    render json: { document_count: 10 }
-    # render json: { document_count: appeal.number_of_documents }
+    render json: { document_count: appeal.number_of_documents }
   rescue StandardError => e
     return handle_non_critical_error("document_count", e)
   end
 
   def new_documents
-    render json: { new_documents: [] }
-    # render json: { new_documents: appeal.new_documents_for_user(current_user) }
+    render json: { new_documents: appeal.new_documents_for_user(current_user) }
   rescue StandardError => e
     return handle_non_critical_error("new_documents", e)
   end

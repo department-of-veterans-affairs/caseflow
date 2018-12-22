@@ -213,7 +213,7 @@ class TasksController < ApplicationController
     ).as_json
   end
 
-  def eager_load_legacy_appeals_batch(tasks)
+  def eager_load_legacy_appeals_for_tasks(tasks)
     # Make a single request to VACOLS to grab all of the rows we want here?
     legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
 
@@ -230,10 +230,10 @@ class TasksController < ApplicationController
   end
 
   def json_tasks(tasks)
-    {
-      data: eager_load_legacy_appeals_batch(tasks).map do |t|
-        WorkQueue::BespokeTaskSerializer.serialize(t, user: current_user)
-      end
-    }
+    ActiveModelSerializers::SerializableResource.new(
+      eager_load_legacy_appeals_for_tasks(tasks),
+      each_serializer: ::WorkQueue::TaskSerializer,
+      user: current_user
+    ).as_json
   end
 end
