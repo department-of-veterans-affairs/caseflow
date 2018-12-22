@@ -53,8 +53,6 @@ gem "request_store"
 gem "roo", "~> 2.7"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
-# bundle exec rake doc:rails generates the API under doc/api.
-gem "sdoc", "~> 0.4.0", group: :doc
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
