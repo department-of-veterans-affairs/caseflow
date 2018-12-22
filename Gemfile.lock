@@ -524,7 +524,6 @@ DEPENDENCIES
   holidays (~> 6.4)
   jquery-rails
   jshint
-  launchy
   loofah (>= 2.2.3)
   moment_timezone-rails
   newrelic_rpm

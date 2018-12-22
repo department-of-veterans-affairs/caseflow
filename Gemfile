@@ -89,8 +89,6 @@ group :test, :development, :demo do
   gem "guard-rspec"
   # Linters
   gem "jshint", platforms: :ruby
-  # to save and open specific page in capybara tests
-  gem "launchy"
   gem "pry"
   gem "pry-byebug"
   gem "rb-readline"
