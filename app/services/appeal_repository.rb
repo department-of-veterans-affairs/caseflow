@@ -16,7 +16,7 @@ class AppealRepository
   end
 
   def self.find_case_record(id)
-    # byebug
+    byebug
     VACOLS::Case.includes(:folder, :correspondent, :representatives).find(id)
   end
 
@@ -30,7 +30,6 @@ class AppealRepository
 
   # Returns a boolean saying whether the load succeeded
   def self.load_vacols_data(appeal)
-    # byebug
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
                                         name: "load_vacols_data") do
