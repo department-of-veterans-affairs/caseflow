@@ -557,7 +557,6 @@ DEPENDENCIES
   rspec_junit_formatter
   rubocop (~> 0.52.1)
   ruby-oci8
-  rubyzip (~> 1.2.2)
   sass-rails (~> 5.0)
   scss_lint
   sdoc (~> 0.4.0)
