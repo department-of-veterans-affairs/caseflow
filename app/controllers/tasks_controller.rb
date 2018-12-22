@@ -63,8 +63,12 @@ class TasksController < ApplicationController
 
     tasks.each { |task| return invalid_record_error(task) unless task.valid? }
 
-    # tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
-    tasks_to_return = tasks
+    # temporary patch to limit size of response for scheduling hearing tasks
+    tasks_to_return = if params[:return_related_tasks] == false
+                        tasks
+                      else
+                        (queue_class.new(user: current_user).tasks + tasks).uniq
+                      end
 
     render json: { tasks: json_tasks(tasks_to_return) }, status: :created
   end
@@ -84,8 +88,12 @@ class TasksController < ApplicationController
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
-    # tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
-    tasks_to_return = tasks
+    # temporary patch to limit size of response for scheduling hearing tasks
+    tasks_to_return = if params[:return_related_tasks] == false
+                        tasks
+                      else
+                        (queue_class.new(user: current_user).tasks + tasks).uniq
+                      end
 
     render json: { tasks: json_tasks(tasks_to_return) }
   end

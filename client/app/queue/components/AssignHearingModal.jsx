@@ -150,7 +150,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
               assigned_to_type: 'User',
               assigned_to_id: userId
             }
-          ]
+          ],
+          return_related_tasks: false
         }
       };
 
@@ -186,7 +187,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
               hearing_date: this.formatHearingDate()
             }
           }
-        }
+        },
+        return_related_tasks: false
       }
     };
 
