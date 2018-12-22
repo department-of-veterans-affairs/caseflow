@@ -372,7 +372,7 @@ feature "Edit issues" do
 
     safe_click("#button-submit-update")
     safe_click ".confirm"
-    expect(page).to have_current_path(page_url << "/confirmation")
+    expect(page).to have_current_path("/#{page_url}/confirmation")
 
     visit page_url
     expect(page).to have_content(nonrating_decision_issue_description)
