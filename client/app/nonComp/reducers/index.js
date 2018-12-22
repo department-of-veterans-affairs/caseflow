@@ -1,10 +1,12 @@
+import { formatTasks } from '../util';
+
 export const mapDataToInitialState = function(props = {}) {
   const { serverNonComp } = props;
 
   return {
     businessLine: serverNonComp.businessLine,
-    inProgressTasks: serverNonComp.inProgressTasks,
-    completedTasks: serverNonComp.completedTasks,
+    inProgressTasks: formatTasks(serverNonComp.inProgressTasks),
+    completedTasks: formatTasks(serverNonComp.completedTasks),
     selectedTask: null
   };
 };

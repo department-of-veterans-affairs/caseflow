@@ -10,7 +10,7 @@ describe WorkQueue::DecisionReviewTaskSerializer do
       expect(subject.as_json).to eq(claimant: hlr.veteran_full_name,
                                     appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0 },
                                     url: "TODO",
-                                    veteran_ssn: veteran.ssn,
+                                    veteran_participant_id: veteran.participant_id,
                                     assigned_on: task.assigned_at,
                                     type: "Higher-Level Review")
     end
