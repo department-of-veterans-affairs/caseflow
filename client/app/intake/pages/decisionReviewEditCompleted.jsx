@@ -3,9 +3,9 @@ import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, FORM_TYPES } from '../constants';
-import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
 import _ from 'lodash';
 import Alert from '../../components/Alert';
+import IneligibleIssuesList from '../components/IneligibleIssuesList';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -19,18 +19,16 @@ const leadMessageList = ({ veteran, formName, requestIssues }) => {
     ];
   }
 
-  const unidentifiedIssuesAlert = <Alert type="warning">
-    <h2>Unidentified issue</h2>
-    <p>There is still an unidentified issue that needs to be resolved before sending the notice
-    letter. Go to VBMS claim details and reload to view updates.</p>
-    {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
-      Unidentified issue: no issue matched for requested "{ri.description}"
-    </p>)}
-  </Alert>;
-
   return [
     `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`,
-    unidentifiedIssuesAlert,
+    <Alert type="warning">
+      <h2>Unidentified issue</h2>
+      <p>There is still an unidentified issue that needs to be resolved before sending the notice
+      letter. Go to VBMS claim details and reload to view updates.</p>
+      {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
+        Unidentified issue: no issue matched for requested "{ri.description}"
+      </p>)}
+    </Alert>,
     <strong>Edit the notice letter to reflect the status of requested issues.</strong>
   ];
 };
@@ -46,11 +44,11 @@ const getEndProductUpdate = ({
   const issueFilter = isRating ?
     (i) => !i.ineligibleReason && (i.isRating || i.isUnidentified) :
     (i) => !i.ineligibleReason && i.isRating === false;
-  const filteredIssuesBefore = issuesBefore.filter(issueFilter);
-  const filteredIssuesAfter = issuesAfter.filter(issueFilter);
-  const epBefore = filteredIssuesBefore.length > 0;
-  const epAfter = filteredIssuesAfter.length > 0;
-  const epChanged = !_.isEqual(filteredIssuesBefore, filteredIssuesAfter);
+  const epIssuesBefore = issuesBefore.filter(issueFilter);
+  const epIssuesAfter = issuesAfter.filter(issueFilter);
+  const epBefore = epIssuesBefore.length > 0;
+  const epAfter = epIssuesAfter.length > 0;
+  const epChanged = !_.isEqual(epIssuesBefore, epIssuesAfter);
 
   if (epBefore && !epAfter) {
     return <Fragment>
@@ -60,12 +58,20 @@ const getEndProductUpdate = ({
   } else if (epBefore && epAfter && epChanged) {
     return <Fragment>
       <strong>Contentions on {claimReviewName} {epType} EP are being updated:</strong>
-      {filteredIssuesAfter.map((ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>)}
+      {
+        epIssuesAfter.map(
+          (ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>
+        )
+      }
     </Fragment>;
   } else if (!epBefore && epAfter) {
     return <Fragment>
       <strong>A {claimReviewName} {epType} EP is being established:</strong>
-      {filteredIssuesAfter.map((ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>)}
+      {
+        epIssuesAfter.map(
+          (ri, i) => <p key={`${epType}-issue-${i}`}>Contention: {ri.contentionText}</p>
+        )
+      }
     </Fragment>;
   }
 };
@@ -86,31 +92,6 @@ const getChecklistItems = (formType, issuesBefore, issuesAfter, isInformalConfer
   isInformalConferenceRequested ? 'Informal Conference Tracked Item' : null
 ]);
 
-const ineligibilityCopy = (issue) => {
-  if (issue.titleOfActiveReview) {
-    return INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.replace(
-      '{review_title}', issue.titleOfActiveReview
-    );
-  } else if (issue.ineligibleReason) {
-    return INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
-  }
-};
-
-class IneligibleIssuesList extends React.PureComponent {
-  render = () =>
-    <Fragment>
-      <ul className="cf-ineligible-checklist cf-left-padding">
-        <li>
-          <strong>Ineligible</strong>
-          {this.props.issues.map((ri, i) =>
-            <p key={`ineligible-issue-${i}`} className="cf-red-text">
-              {ri.contentionText} {ineligibilityCopy(ri)}
-            </p>)}
-        </li>
-      </ul>
-    </Fragment>;
-}
-
 class DecisionReviewEditCompletedPage extends React.PureComponent {
   render() {
     const {
@@ -128,16 +109,28 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const ineligibleRequestIssues = issuesAfter.filter((ri) => ri.ineligibleReason);
 
-    return <div><StatusMessage
-      title="Claim Issues Saved"
-      type="success"
-      leadMessageList={leadMessageList({ veteran,
-        formName: selectedForm.name,
-        requestIssues: issuesAfter })}
-      checklist={getChecklistItems(formType, issuesBefore, issuesAfter, informalConference)}
-      wrapInAppSegment={false}
-    />
-    { ineligibleRequestIssues.length > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
+    return <div>
+      <StatusMessage
+        title="Claim Issues Saved"
+        type="success"
+        leadMessageList={
+          leadMessageList({
+            veteran,
+            formName: selectedForm.name,
+            requestIssues: issuesAfter
+          })
+        }
+        checklist={
+          getChecklistItems(
+            formType,
+            issuesBefore,
+            issuesAfter,
+            informalConference
+          )
+        }
+        wrapInAppSegment={false}
+      />
+      { ineligibleRequestIssues.length > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
     </div>
     ;
   }
