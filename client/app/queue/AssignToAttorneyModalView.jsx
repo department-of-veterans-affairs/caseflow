@@ -38,7 +38,7 @@ class AssignToAttorneyModalView extends React.PureComponent<Props> {
   ) => {
     const previousAssigneeId = tasks[0].assignedTo.id.toString();
 
-    if (tasks[0].label === 'assign') {
+    if (tasks[0].label === 'assign' || tasks[0].label === 'quality review') {
       return this.props.initialAssignTasksToUser({
         tasks,
         assigneeId,

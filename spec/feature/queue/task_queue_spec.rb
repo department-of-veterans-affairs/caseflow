@@ -277,7 +277,7 @@ RSpec.feature "Task queue" do
     let!(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
 
     let!(:root_task) { FactoryBot.create(:root_task) }
-    let!(:appeal) { root_task.appeal }
+    let(:appeal) { root_task.appeal }
 
     before do
       User.authenticate!(user: judge_user)
@@ -308,7 +308,7 @@ RSpec.feature "Task queue" do
           assigned_by: qr_user
         }]
       end
-      let!(:judge_task) { JudgeAssignTask.create_many_from_params(judge_task_params, qr_user).first }
+      let!(:judge_task) { JudgeQualityReviewTask.create_many_from_params(judge_task_params, qr_user).first }
 
       before do
         visit("/queue/appeals/#{appeal.external_id}")

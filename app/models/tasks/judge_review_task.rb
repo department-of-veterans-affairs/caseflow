@@ -1,11 +1,6 @@
 class JudgeReviewTask < JudgeTask
   def baseline_actions
-    [
-      {
-        label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL,
-        value: "dispatch_decision/special_issues"
-      }
-    ]
+    [Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h]
   end
 
   def label

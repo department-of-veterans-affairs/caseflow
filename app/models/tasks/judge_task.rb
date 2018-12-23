@@ -2,10 +2,7 @@ class JudgeTask < Task
   include RoundRobinAssigner
 
   def available_actions(_user)
-    actions = baseline_actions
-    actions << Constants.TASK_ACTIONS.MARK_COMPLETE.to_h if parent && parent.is_a?(QualityReviewTask)
-
-    actions
+    baseline_actions
   end
 
   def actions_available?(user)
@@ -16,17 +13,6 @@ class JudgeTask < Task
     COPY::CASE_TIMELINE_JUDGE_TASK
   end
 
-  def self.create_from_params(params, user)
-    new_task = super(params, user)
-
-    parent = Task.find(params[:parent_id]) if params[:parent_id]
-    if parent && parent.is_a?(QualityReviewTask)
-      parent.update!(status: :on_hold)
-    end
-
-    new_task
-  end
-
   def self.modify_params(params)
     super(params.merge(type: JudgeAssignTask.name))
   end
@@ -35,19 +21,8 @@ class JudgeTask < Task
     QualityReview.singleton.user_has_access?(user) || super(user)
   end
 
-  def update_from_params(params, _current_user)
-    return super unless parent && parent.is_a?(QualityReviewTask)
-
-    params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
-
-    update_status(params.delete("status")) if params.key?("status")
-    update(params)
-
-    [self]
-  end
-
   def when_child_task_completed
-    update!(type: JudgeReviewTask.name)
+    update!(type: JudgeReviewTask.name) if type == JudgeAssignTask.name
     super
   end
 

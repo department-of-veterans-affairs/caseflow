@@ -347,14 +347,17 @@ RSpec.feature "AmaQueue" do
 
   context "QR flow" do
     let(:user_name) { "QR User" }
-    let!(:user) { FactoryBot.create(:user, roles: ["Reader"], full_name: user_name) }
+    let!(:qr_user) { FactoryBot.create(:user, roles: ["Reader"], full_name: user_name) }
 
     let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
     let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
 
+    let(:attorney_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Anna Attorney") }
+    let!(:attorney_staff) { FactoryBot.create(:staff, :attorney_role, user: attorney_user) }
+
     let!(:quality_review_organization) { QualityReview.singleton }
     let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
-    let!(:appeal) { create(:appeal) }
+    let!(:appeal) { FactoryBot.create(:appeal) }
 
     let!(:quality_review_task) do
       create(
@@ -373,14 +376,15 @@ RSpec.feature "AmaQueue" do
     let!(:judge_task) { create(:ama_judge_task, parent: root_task, assigned_to: judge_user, status: :completed) }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, quality_review_organization)
+      OrganizationsUser.add_user_to_organization(qr_user, quality_review_organization)
       # We expect all QR users to be attorneys. This matters because we serve different queue views on the frontend
       # to attorneys.
-      FactoryBot.create(:staff, user: user)
-      User.authenticate!(user: user)
+      FactoryBot.create(:staff, user: qr_user)
+      User.authenticate!(user: qr_user)
     end
 
     scenario "return case to judge" do
+      # step "QR user visits the quality review organization page and assigns the task to themself"
       visit quality_review_organization.path
       click_on "Bob Smith"
 
@@ -388,13 +392,14 @@ RSpec.feature "AmaQueue" do
       find("div", class: "Select-option", text: "Assign to person").click
 
       find(".Select-control", text: "Select a user").click
-      find("div", class: "Select-option", text: user.full_name).click
+      find("div", class: "Select-option", text: qr_user.full_name).click
 
       fill_in "taskInstructions", with: "Review the quality"
       click_on "Submit"
 
       expect(page).to have_content("Task assigned to #{user_name}")
 
+      # step "QR user returns the case to a judge"
       click_on "Caseflow"
 
       click_on "Bob Smith"
@@ -407,15 +412,86 @@ RSpec.feature "AmaQueue" do
       click_on "Submit"
       expect(page).to have_content("On hold (3)")
 
+      # step "judge reviews task and assigns a task to an attorney"
       User.authenticate!(user: judge_user)
 
       visit "/queue"
 
-      click_on "Switch to Assign Cases"
+      click_on "Bob Smith"
+
+      expect(page).to have_content(quality_review_instructions)
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: "Assign to attorney").click
+
+      find(".Select-control", text: "Select a user").click
+      find("div", class: "Select-option", text: "Other").click
+
+      find(".Select-control", text: "Select a user").click
+      first("div", class: "Select-option", text: attorney_user.full_name).click
+      click_on "Submit"
+
+      expect(page).to have_content("Assigned 1 case")
+
+      # step "attorney completes task and returns the case to the judge"
+      User.authenticate!(user: attorney_user)
+
+      visit "/queue"
+
+      click_on "Bob Smith"
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: "Decision ready for review").click
+
+      expect(page).to have_content("Select special issue(s)")
+
+      click_on "Continue"
+
+      expect(page).to have_content("Select Dispositions")
+
+      click_on "Continue"
+
+      expect(page).to have_content("Submit Draft Decision for Review")
+
+      fill_in "Document ID:", with: "1234"
+      click_on "Select a judge"
+      find(".Select-control", text: "Select a judge…").click
+      first("div", class: "Select-option", text: judge_user.full_name).click
+      fill_in "notes", with: "all done"
+
+      click_on "Continue"
+
+      expect(page).to have_content(
+        "Thank you for drafting Bob Smith's decision. It's been sent to #{judge_user.full_name} for review."
+      )
+
+      # step "judge completes task"
+      User.authenticate!(user: judge_user)
+
+      visit "/queue"
+
       click_on "Bob Smith"
 
       find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
       expect(page).to have_content(quality_review_instructions)
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: "Mark task complete").click
+
+      expect(page).to have_content("Mark this task \"complete\" and send the case back to")
+
+      click_on "Mark complete"
+
+      expect(page).to have_content("Bob Smith's case has been marked complete")
+
+      # step "QR reviews case"
+      User.authenticate!(user: qr_user)
+
+      visit "/queue"
+
+      click_on "Bob Smith"
+
+      expect(page).to have_content("Decision signed by judge")
     end
   end
 end
