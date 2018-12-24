@@ -28,6 +28,7 @@ import {
   sectionHeadingStyling,
   anchorJumpLinkStyling
 } from './StickyNavContentArea';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -151,6 +152,12 @@ export class TaskSnapshot extends React.PureComponent<Props> {
           <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
           <dd>{this.taskInstructionsWithLineBreaks(primaryTask.instructions)}</dd>
         </React.Fragment> }
+
+      { <span>
+          <Link onClick={this.props.toggleVeteranCaseList}>
+            { primaryTask.instructions ? 'Hide' : 'View' } task instructions
+          </Link>
+        </span>}
     </React.Fragment>;
   }
 
@@ -301,6 +308,12 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { userRole } = state.ui;
+  //taskInstructionsIsVisible: state.ui.taskInstructionsIsVisible,
+  /*
+  Look at how I added CanEditAod to state and mimic with
+
+  taskInstructionsIsVisible
+  */
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),

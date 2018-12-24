@@ -57,6 +57,7 @@ export type UiState = {
   userIsVsoEmployee: boolean,
   feedbackUrl: string,
   veteranCaseListIsVisible: boolean,
+  taskInstructionsIsVisible: boolean,
   organizations: Array<Object>,
   canEditAod: boolean,
   hearingDay: {

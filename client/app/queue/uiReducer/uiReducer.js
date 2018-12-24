@@ -28,6 +28,7 @@ export const initialState = {
   selectedAssignee: null,
   selectedAssigneeSecondary: null,
   veteranCaseListIsVisible: false,
+  taskInstructionsIsVisible: false,
   canEditAod: false,
   hearingDay: {
     hearingDate: null,
@@ -146,6 +147,18 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
     return update(state, {
       veteranCaseListIsVisible: { $set: false }
     });
+    case ACTIONS.TOGGLE_TASK_INSTRUCTIONS_LIST:
+      return update(state, {
+        taskInstructionsIsVisible: { $set: !state.taskInstructionsIsVisible }
+      });
+    case ACTIONS.SHOW_TASK_INSTRUCTIONS_LIST:
+      return update(state, {
+        taskInstructionsIsVisible: { $set: true }
+      });
+    case ACTIONS.HIDE_TASK_INSTRUCTIONS_LIST:
+      return update(state, {
+        taskInstructionsIsVisible: { $set: false }
+      });
   case ACTIONS.SET_USER_ID:
     return update(state, {
       loadedUserId: { $set: action.payload.userId }
