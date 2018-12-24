@@ -114,7 +114,7 @@ RSpec.feature "Intake Edit Confirmation" do
       let(:decision_review) { create(:appeal, veteran_file_number: create(:veteran).file_number) }
       let(:appeal_path) { "appeals/#{decision_review.external_id}" }
 
-      it "redirects back to the appeal after edit", focus: true do
+      it "redirects back to the appeal after edit" do
         visit "#{appeal_path}/edit"
         expect(page).to have_current_path("/#{appeal_path}/edit")
         click_intake_add_issue
