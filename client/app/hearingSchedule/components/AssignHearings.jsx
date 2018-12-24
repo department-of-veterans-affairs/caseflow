@@ -14,7 +14,6 @@ import { renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 
-
 const sectionNavigationListStyling = css({
   '& > li': {
     backgroundColor: COLORS.GREY_BACKGROUND,
@@ -130,15 +129,25 @@ export default class AssignHearings extends React.Component {
 
     return `${appeal.attributes.veteranFullName} | ${appeal.attributes.veteranFileNumber}`;
   };
-    
-  getAppealTag = (hearing) => {
-     if (hearing.docketNumber) {
-       return <div>
-       <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
-          {hearing.docketNumber}
-       </div>;
-     }
-    
+
+  getHearingDocketTag = (hearing) => {
+    if (hearing.docketNumber) {
+      return <div>
+        <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
+        {hearing.docketNumber}
+      </div>;
+    }
+
+  }
+
+  getAppealDocketTag = (appeal) => {
+    if (appeal.attributes.docketNumber) {
+      return <div>
+        <DocketTypeBadge name={appeal.attributes.docketName} number={appeal.attributes.docketNumber} />
+        {appeal.attributes.docketNumber}
+      </div>;
+    }
+
   }
 
   tableAssignHearingsRows = (appeals) => {
@@ -148,7 +157,7 @@ export default class AssignHearings extends React.Component {
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod
       }),
-      docketNumber: appeal.attributes.docketNumber,
+      docketNumber: this.getAppealDocketTag(appeal),
       location: this.getAppealLocation(appeal),
       time: null,
       externalId: appeal.attributes.externalId
@@ -163,7 +172,7 @@ export default class AssignHearings extends React.Component {
         caseType: hearing.appealType,
         isAdvancedOnDocket: hearing.aod
       }),
-      docketNumber: this.getAppealTag(hearing),
+      docketNumber: this.getHearingDocketTag(hearing),
       location: hearing.readableLocation,
       time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
