@@ -1,5 +1,5 @@
 class Fakes::VADotGovService < ExternalApi::VADotGovService
-  def self.get_distance(_point, _ids)
+  def self.get_distance(*)
     [
       {
         "id": "vha_688",
