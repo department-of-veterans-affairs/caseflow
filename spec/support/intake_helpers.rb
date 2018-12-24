@@ -169,13 +169,7 @@ module IntakeHelpers
   end
 
   def get_claim_id(claim_review)
-    issue = claim_review.request_issues.first
-    ep_code = claim_review.issue_code(rating: (issue.rating? || issue.is_unidentified?))
-
-    EndProductEstablishment.find_by(
-      source: claim_review,
-      code: ep_code
-    ).reference_id
+    EndProductEstablishment.find_by(source: claim_review).reference_id
   end
 
   def add_intake_nonrating_issue(
