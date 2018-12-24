@@ -3,14 +3,14 @@ require "json"
 class ExternalApi::VADotGovService
   class << self
     # :nocov:
-    def get_distance(point, ids)
+    def get_distance(lat:, long:, ids:)
       page = 1
       facility_results = []
       remaining_ids = ids
 
       until remaining_ids.empty?
         results = fetch_facilities_with_ids(
-          query: { lat: point[0], long: point[1], page: page },
+          query: { lat: lat, long: long, page: page },
           ids: remaining_ids
         )
 
@@ -61,10 +61,17 @@ class ExternalApi::VADotGovService
       "address_validation/v0/validate"
     end
 
-    def geocode_body(address:, city:, state:, zip_code:, country: "USA")
+    # rubocop/disable Metrics/ParameterLists
+    def geocode_body(
+        address_line1:, address_line2: nil,
+        address_line3: nil, city:, state:, zip_code:, country:
+    )
+      # rubocop/enable Metrics/ParameterLists
       {
         requestAddress: {
-          addressLine1: address,
+          addressLine1: address_line1,
+          addressLine2: address_line2,
+          addressLine3: address_line3,
           city: city,
           stateProvince: {
             code: state
