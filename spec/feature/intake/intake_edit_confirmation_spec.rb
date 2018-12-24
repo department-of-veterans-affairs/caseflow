@@ -10,15 +10,11 @@ RSpec.feature "Intake Edit Confirmation" do
   let!(:current_user) { User.authenticate!(roles: ["Mail Intake"]) }
   let!(:intake) { create(:intake, :completed, detail: decision_review, user_id: current_user.id) }
 
-  describe "given a claim review with a rating request issue" do
+  describe "when editing a decision review" do
     let(:rating) do
       Generators::Rating.build(
         participant_id: decision_review.veteran.participant_id,
-        promulgation_date: decision_review.receipt_date,
-        issues: [
-          { reference_id: "abc123", decision_text: "Left knee granted" },
-          { reference_id: "def456", decision_text: "PTSD denied" }
-        ]
+        issues: [{ decision_text: "Left knee granted" }, { reference_id: "def456", decision_text: "PTSD denied" }]
       )
     end
 
@@ -35,71 +31,96 @@ RSpec.feature "Intake Edit Confirmation" do
       decision_review.establish!
     end
 
-    [:higher_level_review, :supplemental_claim].each do |claim_review_type|
-      describe "given the claim review is a #{claim_review_type}" do
-        let(:decision_review) do
-          create(claim_review_type, veteran_file_number: create(:veteran).file_number)
+    describe "given common behavior for claim reviews" do
+      let(:edit_path) { "#{claim_review_type.to_s.pluralize}/#{get_claim_id(decision_review)}/edit" }
+
+      [:higher_level_review, :supplemental_claim].each do |claim_review_type|
+        describe "given a #{claim_review_type}" do
+          let(:decision_review) { create(claim_review_type, veteran_file_number: create(:veteran).file_number) }
+
+          it "confirms that an EP is being established" do
+            visit edit_path
+            click_intake_add_issue
+            click_intake_no_matching_issues
+            add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%m/%d/%Y"))
+            click_edit_submit
+            click_number_of_issues_changed_confirmation
+
+            expect(page).to have_current_path("/#{edit_url}/confirmation")
+            expect(page).to have_content("A #{decision_review.class.review_title} Nonrating EP is being established")
+          end
+
+          it "shows when an EP is being canceled" do
+            visit edit_path
+            # first add a nonrating issue so we can remove the rating issue & EP
+            click_intake_add_issue
+            click_intake_no_matching_issues
+            add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%m/%d/%Y"))
+            click_remove_intake_issue(1)
+            click_remove_issue_confirmation
+            click_edit_submit
+
+            expect(page).to have_current_path("/#{edit_url}/confirmation")
+            expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being canceled")
+          end
+
+          it "shows when an EP is being updated" do
+            visit edit_path
+            click_intake_add_issue
+            add_intake_rating_issue("Left knee granted")
+            click_edit_submit
+            click_number_of_issues_changed_confirmation
+
+            expect(page).to have_current_path("/#{edit_url}/confirmation")
+            expect(page).to have_content(
+              "Contentions on #{decision_review.class.review_title} Rating EP are being updated"
+            )
+          end
+
+          it "includes warnings about unidentified issues" do
+            visit edit_path
+            click_intake_add_issue
+            add_intake_unidentified_issue
+            click_edit_submit
+            click_still_have_unidentified_issue_confirmation
+            click_number_of_issues_changed_confirmation
+
+            expect(page).to have_current_path("/#{edit_url}/confirmation")
+            expect(page).to have_content("There is still an unidentified issue")
+          end
         end
-        let(:edit_path_base) { claim_review_type.to_s.pluralize }
+      end
+    end
 
-        it "confirms that an EP is being established" do
-          visit "#{edit_path_base}/#{get_claim_id(decision_review)}/edit"
-          click_intake_add_issue
-          click_intake_no_matching_issues
-          add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%m/%d/%Y"))
-          click_edit_submit
-          click_number_of_issues_changed_confirmation
+    describe "given behavior specific to Higher-Level Reviews" do
+      let(:decision_review) { create(:higher_level_review, veteran_file_number: create(:veteran).file_number) }
 
-          expect(page).to have_current_path(
-            "/#{edit_path_base}/#{get_claim_id(decision_review)}/edit/confirmation"
-          )
-          expect(page).to have_content("A #{decision_review.class.review_title} Nonrating EP is being established")
-        end
+      it "shows if an informal conference was requested" do
+        decision_review.update!(informal_conference: true)
 
-        it "shows when an EP is being canceled" do
-          visit "#{edit_path_base}/#{get_claim_id(decision_review)}/edit"
-          # first add a nonrating issue so we can remove the rating issue & EP
-          click_intake_add_issue
-          click_intake_no_matching_issues
-          add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%m/%d/%Y"))
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
-          click_edit_submit
+        visit edit_path
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
+        click_edit_submit
+        click_number_of_issues_changed_confirmation
 
-          expect(page).to have_current_path(
-            "/#{edit_path_base}/#{get_claim_id(decision_review)}/edit/confirmation"
-          )
-          expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being canceled")
-        end
+        expect(page).to have_current_path("/#{edit_url}/confirmation")
+        expect(page).to have_content("Informal Conference Tracked Item")
+      end
+    end
 
-        it "shows when an EP is being updated" do
-          visit "#{edit_path_base}/#{get_claim_id(decision_review)}/edit"
-          click_intake_add_issue
-          add_intake_rating_issue("Left knee granted")
-          click_edit_submit
-          click_number_of_issues_changed_confirmation
+    describe "given an Appeal" do
+      let(:decision_review) { create(:appeal, veteran_file_number: create(:veteran).file_number) }
+      let(:appeal_path) { "appeals/#{decision_review.external_id}" }
 
-          expect(page).to have_current_path(
-            "/#{edit_path_base}/#{get_claim_id(decision_review)}/edit/confirmation"
-          )
-          expect(page).to have_content(
-            "Contentions on #{decision_review.class.review_title} Rating EP are being updated"
-          )
-        end
+      it "redirects back to the appeal after edit" do
+        visit "#{appeal_path}/edit"
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
+        click_edit_submit
+        click_number_of_issues_changed_confirmation
 
-        it "includes warnings about unidentified issues" do
-          visit "#{edit_path_base}/#{get_claim_id(decision_review)}/edit"
-          click_intake_add_issue
-          add_intake_unidentified_issue
-          click_edit_submit
-          click_still_have_unidentified_issue_confirmation
-          click_number_of_issues_changed_confirmation
-
-          expect(page).to have_current_path(
-            "/#{edit_path_base}/#{get_claim_id(decision_review)}/edit/confirmation"
-          )
-          expect(page).to have_content("There is still an unidentified issue")
-        end
+        expect(page).to have_current_path(appeal_path)
       end
     end
   end
