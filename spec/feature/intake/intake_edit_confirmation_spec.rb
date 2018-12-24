@@ -46,7 +46,7 @@ RSpec.feature "Intake Edit Confirmation" do
             click_edit_submit
             click_number_of_issues_changed_confirmation
 
-            expect(page).to have_current_path("/#{edit_url}/confirmation")
+            expect(page).to have_current_path("/#{edit_path}/confirmation")
             expect(page).to have_content("A #{decision_review.class.review_title} Nonrating EP is being established")
           end
 
@@ -60,7 +60,7 @@ RSpec.feature "Intake Edit Confirmation" do
             click_remove_issue_confirmation
             click_edit_submit
 
-            expect(page).to have_current_path("/#{edit_url}/confirmation")
+            expect(page).to have_current_path("/#{edit_path}/confirmation")
             expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being canceled")
           end
 
@@ -71,7 +71,7 @@ RSpec.feature "Intake Edit Confirmation" do
             click_edit_submit
             click_number_of_issues_changed_confirmation
 
-            expect(page).to have_current_path("/#{edit_url}/confirmation")
+            expect(page).to have_current_path("/#{edit_path}/confirmation")
             expect(page).to have_content(
               "Contentions on #{decision_review.class.review_title} Rating EP are being updated"
             )
@@ -85,7 +85,7 @@ RSpec.feature "Intake Edit Confirmation" do
             click_still_have_unidentified_issue_confirmation
             click_number_of_issues_changed_confirmation
 
-            expect(page).to have_current_path("/#{edit_url}/confirmation")
+            expect(page).to have_current_path("/#{edit_path}/confirmation")
             expect(page).to have_content("There is still an unidentified issue")
           end
         end
@@ -94,6 +94,7 @@ RSpec.feature "Intake Edit Confirmation" do
 
     describe "given behavior specific to Higher-Level Reviews" do
       let(:decision_review) { create(:higher_level_review, veteran_file_number: create(:veteran).file_number) }
+      let(:edit_path) { "higher_level_reviews/#{get_claim_id(decision_review)}/edit" }
 
       it "shows if an informal conference was requested" do
         decision_review.update!(informal_conference: true)
@@ -104,7 +105,7 @@ RSpec.feature "Intake Edit Confirmation" do
         click_edit_submit
         click_number_of_issues_changed_confirmation
 
-        expect(page).to have_current_path("/#{edit_url}/confirmation")
+        expect(page).to have_current_path("/#{edit_path}/confirmation")
         expect(page).to have_content("Informal Conference Tracked Item")
       end
     end
@@ -113,14 +114,15 @@ RSpec.feature "Intake Edit Confirmation" do
       let(:decision_review) { create(:appeal, veteran_file_number: create(:veteran).file_number) }
       let(:appeal_path) { "appeals/#{decision_review.external_id}" }
 
-      it "redirects back to the appeal after edit" do
+      it "redirects back to the appeal after edit", focus: true do
         visit "#{appeal_path}/edit"
+        expect(page).to have_current_path("/#{appeal_path}/edit")
         click_intake_add_issue
         add_intake_rating_issue("Left knee granted")
         click_edit_submit
         click_number_of_issues_changed_confirmation
 
-        expect(page).to have_current_path(appeal_path)
+        expect(page).to have_current_path("/queue/#{appeal_path}")
       end
     end
   end
