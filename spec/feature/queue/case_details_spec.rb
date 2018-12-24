@@ -572,7 +572,7 @@ RSpec.feature "Case details" do
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content(attorney_user.full_name)
         expect(page).to have_content(COPY::IS_PAPER_CASE)
-        # TODO: could not get VLJ assignee to show up 
+        # TODO: could not get VLJ assignee to show up
       end
     end
   end
