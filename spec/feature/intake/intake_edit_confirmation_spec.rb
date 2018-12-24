@@ -1,5 +1,6 @@
 require "rails_helper"
 require "support/intake_helpers"
+require "byebug"
 
 RSpec.feature "Intake Edit Confirmation" do
   include IntakeHelpers
@@ -32,11 +33,10 @@ RSpec.feature "Intake Edit Confirmation" do
     end
 
     describe "given common behavior for claim reviews" do
-      let(:edit_path) { "#{claim_review_type.to_s.pluralize}/#{get_claim_id(decision_review)}/edit" }
-
       [:higher_level_review, :supplemental_claim].each do |claim_review_type|
         describe "given a #{claim_review_type}" do
           let(:decision_review) { create(claim_review_type, veteran_file_number: create(:veteran).file_number) }
+          let(:edit_path) { "#{claim_review_type.to_s.pluralize}/#{get_claim_id(decision_review)}/edit" }
 
           it "confirms that an EP is being established" do
             visit edit_path
