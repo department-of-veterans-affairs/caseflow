@@ -6,19 +6,9 @@ import {
   actionableTasksForAppeal,
   appealWithDetailSelector
 } from './selectors';
-import DocketTypeBadge from './../components/DocketTypeBadge';
-import CopyTextButton from '../components/CopyTextButton';
-import ReaderLink from './ReaderLink';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import COPY from '../../COPY.json';
 import { COLORS } from '../constants/AppConstants';
-import { renderLegacyAppealType } from './utils';
-
-const editButton = css({
-  float: 'right',
-  marginLeft: '0.5rem'
-});
 
 const containingDivStyling = css({
   backgroundColor: COLORS.WHITE,
@@ -52,12 +42,9 @@ const listItemStyling = css({
   '& > h4': { textTransform: 'uppercase' }
 });
 
-const docketBadgeContainerStyle = css({
-  border: '1px',
-  borderStyle: 'solid',
-  borderColor: COLORS.GREY_LIGHT,
-  padding: '0.5rem 1rem 0.5rem 0.5rem',
-  backgroundColor: COLORS.WHITE
+const preStyling = css({
+  backgroundColor: COLORS.WHITE,
+  marginTop: '0'
 });
 
 const CaseSupportingDetailTitleScaffolding = (props) => <div {...containingDivStyling}>
@@ -69,37 +56,30 @@ const CaseSupportingDetailTitleScaffolding = (props) => <div {...containingDivSt
 export class CaseTitleSupportingDetails extends React.PureComponent {
   render = () => {
     const {
-      appeal,
-      appealId,
-      redirectUrl,
-      taskType,
-      primaryTask,
-      userIsVsoEmployee
+      appeal
     } = this.props;
-    console.log(appeal)
-    console.log(this.props)
 
     return <CaseSupportingDetailTitleScaffolding>
       <React.Fragment>
         <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</h4>
         <div>
-          {appeal.assignedJudge ? appeal.assignedJudge.full_name : ' '}
+          {appeal.assignedJudge ? appeal.assignedJudge.full_name : <pre {...preStyling}></pre>}
         </div>
       </React.Fragment>
 
       <React.Fragment>
         <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
         <div>
-           {appeal.assignedAttorney ? appeal.assignedAttorney.full_name : ' '}
+          {appeal.assignedAttorney ? appeal.assignedAttorney.full_name : <pre {...preStyling}></pre>}
         </div>
       </React.Fragment>
 
       { appeal.veteranFullName !== appeal.appellantFullName && <React.Fragment>
         <h4>{COPY.CASE_DETAILS_VET_NOT_APELLANT}</h4>
-          <div>
-            {COPY.CASE_DETAILS_PAPER_CASE}
-          </div>
-        </React.Fragment> }
+        <div>
+          {COPY.CASE_DETAILS_PAPER_CASE}
+        </div>
+      </React.Fragment> }
 
     </CaseSupportingDetailTitleScaffolding>;
   };
