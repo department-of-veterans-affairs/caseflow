@@ -842,7 +842,7 @@ class RegionalOffice
     timezone: "America/New_York",
     hold_hearings: false,
     facility_locator_id: nil,
-    alternate_locations: nil },
+    alternate_locations: %w[vha_688] },
     "RO98" =>
   { label: nil,
     city: "National Cemetery Administration - St. Louis",

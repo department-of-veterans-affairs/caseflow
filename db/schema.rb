@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181221164327) do
+ActiveRecord::Schema.define(version: 20181224142346) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,6 +105,17 @@ ActiveRecord::Schema.define(version: 20181221164327) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "task_id"
+  end
+
+  create_table "available_hearing_locations", force: :cascade do |t|
+    t.bigint "veteran_file_number", null: false
+    t.float "distance"
+    t.string "facility_id"
+    t.string "name"
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
@@ -682,12 +693,12 @@ ActiveRecord::Schema.define(version: 20181221164327) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
+    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
-    t.string "ineligible_reason"
     t.string "vacols_id"
     t.string "vacols_sequence_id"
     t.datetime "created_at"
