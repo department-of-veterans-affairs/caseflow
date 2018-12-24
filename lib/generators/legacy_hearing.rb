@@ -1,4 +1,4 @@
-class Generators::Hearing
+class Generators::LegacyHearing
   extend Generators::Base
 
   class << self
@@ -26,14 +26,14 @@ class Generators::Hearing
     def build(attrs = {})
       attrs[:appeal_id] ||= attrs[:appeal].try(:id) || default_appeal.id
       attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
-      hearing = ::Hearing.new(default_attrs.merge(attrs))
+      hearing = ::LegacyHearing.new(default_attrs.merge(attrs))
 
       hearing
     end
 
     def create(attrs = {})
       attrs = default_attrs.merge(attrs)
-      hearing = ::Hearing.find_or_create_by(vacols_id: attrs[:vacols_id])
+      hearing = ::LegacyHearing.find_or_create_by(vacols_id: attrs[:vacols_id])
       attrs[:appeal_id] ||= attrs[:appeal].try(:id) || default_appeal_id(hearing)
       attrs[:appeal_vacols_id] = LegacyAppeal.find(attrs[:appeal_id]).vacols_id
       attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id

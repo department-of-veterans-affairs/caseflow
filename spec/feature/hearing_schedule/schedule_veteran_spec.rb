@@ -23,7 +23,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(index: 7)
-      click_button("Schedule a Veteran")
+      click_button("Legacy Veterans Waiting")
       appeal_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       appeal_link.click
       expect(page).not_to have_content("loading to VACOLS.", wait: 30)
@@ -37,7 +37,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Schedule Veterans")
       click_button("Scheduled")
       expect(VACOLS::Case.where(bfcorlid: "123454787S"))
-      click_button("Schedule a Veteran")
+      click_button("Legacy Veterans Waiting")
       expect(page).not_to have_content("123454787S")
       expect(page).to have_content("There are no schedulable veterans")
       expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
@@ -67,7 +67,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(index: 12)
-      click_button("Schedule a Veteran")
+      click_button("Legacy Veterans Waiting")
       appeal_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       appeal_link.click
       expect(page).not_to have_content("loading to VACOLS.", wait: 30)
@@ -81,7 +81,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Schedule Veterans")
       click_button("Scheduled")
       expect(VACOLS::Case.where(bfcorlid: "123456789S"))
-      click_button("Schedule a Veteran")
+      click_button("Legacy Veterans Waiting")
       expect(page).not_to have_content("123456789S")
       expect(page).to have_content("There are no schedulable veterans")
       expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey

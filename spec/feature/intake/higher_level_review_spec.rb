@@ -1142,8 +1142,8 @@ RSpec.feature "Higher-Level Review" do
           expect(page).to_not have_content("Left knee granted")
 
           add_intake_nonrating_issue(
-            category: "Active Duty Adjustments",
-            description: "Description for Active Duty Adjustments",
+            category: "Accrued",
+            description: "I am a description",
             date: "10/25/2017"
           )
           expect(page).to_not have_content("Establish EP")
@@ -1154,7 +1154,7 @@ RSpec.feature "Higher-Level Review" do
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
                    review_request: hlr,
-                   description: "Description for Active Duty Adjustments",
+                   issue_category: "Accrued",
                    benefit_type: hlr.benefit_type
           )).to_not be_nil
         end

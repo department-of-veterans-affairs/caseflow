@@ -233,7 +233,7 @@ class LegacyAppeal < ApplicationRecord
 
   attr_writer :hearings
   def hearings
-    @hearings ||= Hearing.repository.hearings_for_appeal(vacols_id)
+    @hearings ||= HearingRepository.hearings_for_appeal(vacols_id)
   end
 
   def completed_hearing_on_previous_appeal?

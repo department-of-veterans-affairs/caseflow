@@ -13,9 +13,10 @@ class SyncReviewsJob < CaseflowJob
     limit = args["limit"] || DEFAULT_EP_LIMIT
 
     perform_end_product_syncs(limit)
-    perform_ramp_refiling_reprocessing
     perform_decision_review_processing(limit)
     perform_decision_rating_issues_syncs(limit)
+    reprocess_decision_documents(limit)
+    perform_ramp_refiling_reprocessing
   end
 
   private
@@ -48,6 +49,12 @@ class SyncReviewsJob < CaseflowJob
   def perform_decision_rating_issues_syncs(limit)
     RequestIssue.requires_processing.limit(limit).each do |request_issue|
       DecisionIssueSyncJob.perform_later(request_issue)
+    end
+  end
+
+  def reprocess_decision_documents(limit)
+    DecisionDocument.requires_processing.limit(limit).each do |decision_document|
+      ProcessDecisionDocumentJob.perform_later(decision_document)
     end
   end
 end

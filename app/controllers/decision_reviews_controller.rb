@@ -15,11 +15,11 @@ class DecisionReviewsController < ApplicationController
   end
 
   def in_progress_tasks
-    business_line.tasks.reject(&:completed?)
+    apply_task_serializer(business_line.tasks.reject(&:completed?))
   end
 
   def completed_tasks
-    business_line.tasks.select(&:completed?)
+    apply_task_serializer(business_line.tasks.select(&:completed?))
   end
 
   def business_line
@@ -29,6 +29,10 @@ class DecisionReviewsController < ApplicationController
   helper_method :in_progress_tasks, :completed_tasks, :business_line
 
   private
+
+  def apply_task_serializer(tasks)
+    tasks.map { |task| task.serializer_class.new(task) }
+  end
 
   def set_application
     RequestStore.store[:application] = "decision_reviews"

@@ -42,7 +42,7 @@ class Judge
   end
 
   def upcoming_hearings(is_fetching_issues = false)
-    Hearing.repository.fetch_hearings_for_judge(user.css_id, is_fetching_issues).sort_by(&:date)
+    HearingRepository.fetch_hearings_for_judge(user.css_id, is_fetching_issues).sort_by(&:date)
   end
 
   def get_dockets_slots(dockets)

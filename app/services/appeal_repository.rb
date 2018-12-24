@@ -53,7 +53,7 @@ class AppealRepository
       vacols_ids = cases.map(&:bfkey)
       # Load issues, but note that we do so without including descriptions
       issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
-      hearings = Hearing.repository.hearings_for_appeals(vacols_ids)
+      hearings = HearingRepository.hearings_for_appeals(vacols_ids)
       cavc_decisions = CAVCDecision.repository.cavc_decisions_by_appeals(vacols_ids)
 
       aod_and_rem_return = VACOLS::Case.where(bfkey: vacols_ids)
