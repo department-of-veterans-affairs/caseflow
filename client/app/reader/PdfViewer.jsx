@@ -9,10 +9,12 @@ import Modal from '../components/Modal';
 import { fetchAppealDetails, showSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
 import { selectCurrentPdf, closeDocumentUpdatedModal } from '../reader/Documents/DocumentsActions';
-import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation, closeAnnotationDeleteModal
+import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation,
+  closeAnnotationDeleteModal, closeAnnotationShareModal
 } from '../reader/AnnotationLayer/AnnotationActions';
 
 import { isUserEditingText, shouldFetchAppeal } from './utils';
+import CopyTextButton from '../components/CopyTextButton';
 import { update } from '../util/ReducerUtil';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
@@ -249,6 +251,17 @@ export class PdfViewer extends React.Component {
           title="Delete Comment">
           Are you sure you want to delete this comment?
         </Modal>}
+        {this.props.shareAnnotationModalIsOpenFor && <Modal
+          buttons={[
+            { classNames: ['usa-button', 'usa-button-secondary'],
+              name: 'Close',
+              onClick: this.props.closeAnnotationShareModal
+            }
+          ]}
+          closeHandler={this.props.closeAnnotationShareModal}
+          title="Share Comment">
+          <CopyTextButton text={`${window.location.origin}/annotation/${this.props.shareAnnotationModalIsOpenFor}`} />
+        </Modal>}
       </div>
     );
   }
@@ -259,13 +272,15 @@ const mapStateToProps = (state) => ({
   appeal: state.pdfViewer.loadedAppeal,
   ..._.pick(state.pdfViewer, 'hidePdfSidebar'),
   ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords',
-    'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation', 'isPlacingAnnotation'),
+    'deleteAnnotationModalIsOpenFor', 'shareAnnotationModalIsOpenFor',
+    'placedButUnsavedAnnotation', 'isPlacingAnnotation'),
   ..._.pick(state.pdf, 'scrollToComment', 'pageDimensions')
 });
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     showPlaceAnnotationIcon,
+    closeAnnotationShareModal,
     closeAnnotationDeleteModal,
     deleteAnnotation,
     stopPlacingAnnotation,
@@ -288,6 +303,7 @@ PdfViewer.propTypes = {
     id: PropTypes.number
   }),
   deleteAnnotationModalIsOpenFor: PropTypes.number,
+  shareAnnotationModalIsOpenFor: PropTypes.number,
   documents: PropTypes.array.isRequired,
   allDocuments: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,
