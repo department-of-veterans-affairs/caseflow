@@ -108,7 +108,7 @@ ActiveRecord::Schema.define(version: 20181224142346) do
   end
 
   create_table "available_hearing_locations", force: :cascade do |t|
-    t.bigint "veteran_file_number", null: false
+    t.string "veteran_file_number", null: false
     t.float "distance"
     t.string "facility_id"
     t.string "name"
