@@ -202,7 +202,7 @@ class Appeal < DecisionReview
   def create_issues!(new_issues)
     new_issues.each do |issue|
       issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
-      create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
+      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
   end
 
