@@ -97,7 +97,7 @@ describe LegacyOptinManager do
         it "updates the disposition and disposition date, does not change appeals" do
           subject
 
-          expect(undecided_optin1.optin_processed_at).to eq(Time.zone.now)
+          expect(undecided_optin1.optin_processed_at).to be_within(1.second).of Time.zone.now
           expect(vacols_issue("undecided", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("undecided", 1).issdcls).to eq(Time.zone.today)
           expect(vacols_issue("remand", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
@@ -155,7 +155,7 @@ describe LegacyOptinManager do
           expect(undecided_optin1.reload.optin_processed_at).to be_within(1.second).of Time.zone.now
           expect(vacols_issue("undecided", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("undecided", 1).issdcls).to eq(Time.zone.today)
-          expect(undecided_optin2.reload.optin_processed_at).to eq(Time.zone.now)
+          expect(undecided_optin2.reload.optin_processed_at).to be_within(1.second).of Time.zone.now
           expect(vacols_issue("undecided", 2).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
           expect(vacols_issue("undecided", 2).issdcls).to eq(Time.zone.today)
 
