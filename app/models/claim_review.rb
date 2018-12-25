@@ -116,9 +116,10 @@ class ClaimReview < DecisionReview
   private
 
   def contestable_decision_issues
+    return unless receipt_date
     DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
-      .where('promulgation_date < ?', receipt_date)
       .where.not(decision_review_type: "Appeal")
+      .select { |issue| issue.approx_decision_date ? issue.approx_decision_date < receipt_date : false }
   end
 
   def informal_conference?

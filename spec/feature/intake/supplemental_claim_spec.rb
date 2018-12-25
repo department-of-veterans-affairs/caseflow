@@ -785,6 +785,7 @@ RSpec.feature "Supplemental Claim Intake" do
           sc, = start_supplemental_claim(veteran, is_comp: false)
           create(:decision_issue,
                  decision_review: sc,
+                 profile_date: receipt_date - 1.day,
                  benefit_type: sc.benefit_type,
                  decision_text: "something was decided",
                  participant_id: veteran.participant_id)
