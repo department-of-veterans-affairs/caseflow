@@ -28,6 +28,9 @@ class Error500 extends React.PureComponent {
         <AppFrame>
           <StatusMessage title="Something went wrong." type="alert">
              If you continue to see this page, please contact the help desk.
+
+             <p>Error:</p>
+             <p>{this.props.flashError}</p>
           </StatusMessage>
         </AppFrame>
         <Footer
