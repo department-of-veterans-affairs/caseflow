@@ -1117,6 +1117,7 @@ RSpec.feature "Higher-Level Review" do
           hlr, = start_higher_level_review(veteran, is_comp: false)
           create(:decision_issue,
                  decision_review: hlr,
+                 promulgation_date: receipt_date - 1.day,
                  benefit_type: hlr.benefit_type,
                  decision_text: "something was decided",
                  participant_id: veteran.participant_id)

@@ -117,6 +117,7 @@ class ClaimReview < DecisionReview
 
   def contestable_decision_issues
     DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+      .where('promulgation_date < ?', receipt_date)
       .where.not(decision_review_type: "Appeal")
   end
 
