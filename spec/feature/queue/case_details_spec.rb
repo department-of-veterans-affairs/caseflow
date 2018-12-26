@@ -598,6 +598,9 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page).to have_content(legacy_task.assigned_at.strftime("%-m/%-e/%y"))
+      end
+    end
+  end
 
   describe "VLJ and Attorney working case in Universal Case Title" do
     let(:attorney_user) { FactoryBot.create(:user) }
