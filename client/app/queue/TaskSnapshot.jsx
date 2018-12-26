@@ -242,7 +242,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       appeal,
       primaryTask
     } = this.props;
-    const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
     const tskLength = this.props.tasks.length;

@@ -49,13 +49,9 @@ class BvaDispatchTask < GenericTask
 
         # TODO: remove this unless statement when all decision documents require async processing
         unless decision_document.processed?
-          delayed_process_decision_document_job.perform_later(decision_document)
+          ProcessDecisionDocumentJob.perform_later(decision_document)
         end
       end
-    end
-
-    def delayed_process_decision_document_job
-      ProcessDecisionDocumentJob.set(wait: DecisionDocument::DECISION_OUTCODING_DELAY)
     end
   end
 end

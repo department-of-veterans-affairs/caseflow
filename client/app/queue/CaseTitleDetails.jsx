@@ -41,12 +41,12 @@ const listItemStyling = css({
   display: 'inline',
   float: 'left',
   padding: '0.5rem 1.5rem 0.5rem 0',
-  ':not(:first-child)': {
+  ':not(:last-child)': {
     '& > div': {
-      borderLeft: `1px solid ${COLORS.GREY_LIGHT}`
+      borderRight: `1px solid ${COLORS.GREY_LIGHT}`
     },
     '& > *': {
-      paddingLeft: '1.5rem'
+      paddingRight: '1.5rem'
     }
   },
   '& > h4': { textTransform: 'uppercase' }
@@ -57,6 +57,7 @@ const docketBadgeContainerStyle = css({
   borderStyle: 'solid',
   borderColor: COLORS.GREY_LIGHT,
   padding: '0.5rem 1rem 0.5rem 0.5rem',
+  margin: '-0.75rem 0',
   backgroundColor: COLORS.WHITE
 });
 
@@ -80,9 +81,11 @@ export class CaseTitleDetails extends React.PureComponent {
     return <CaseDetailTitleScaffolding>
       <React.Fragment>
         <h4>{COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</h4>
-        <span {...docketBadgeContainerStyle}>
-          <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
-        </span>
+        <div>
+          <span {...docketBadgeContainerStyle}>
+            <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
+          </span>
+        </div>
       </React.Fragment>
 
       { !userIsVsoEmployee &&
@@ -121,6 +124,16 @@ export class CaseTitleDetails extends React.PureComponent {
           <h4>{COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
           <div><CopyTextButton text={primaryTask.documentId} /></div>
         </React.Fragment> }
+
+      { !userIsVsoEmployee && appeal.assignedJudge && <React.Fragment>
+        <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</h4>
+        <div>{appeal.assignedJudge.full_name}</div>
+      </React.Fragment> }
+
+      { !userIsVsoEmployee && appeal.assignedAttorney && <React.Fragment>
+        <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
+        <div>{appeal.assignedAttorney.full_name}</div>
+      </React.Fragment> }
     </CaseDetailTitleScaffolding>;
   };
 }

@@ -226,6 +226,28 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.appellant_address_line_1)
       end
     end
+
+    context "when attorney has a case assigned in VACOLS without a DECASS record" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :legacy_appeal,
+          vacols_case: FactoryBot.create(
+            :case,
+            :assigned,
+            decass_count: 0,
+            user: attorney_user
+          )
+        )
+      end
+
+      it "should not display a tasks action dropdown" do
+        visit("/queue/appeals/#{appeal.external_id}")
+
+        # Expect to find content we know to be on the page so that we wait for the page to load.
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+        expect(page).not_to have_content("Select an action")
+      end
+    end
   end
 
   context "when an appeal has some number of documents" do
@@ -605,6 +627,31 @@ RSpec.feature "Case details" do
         expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} \
                                       #{task3.assigned_to.css_id} \
                                       #{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase}")
+      end
+    end
+  end
+
+  describe "VLJ and Attorney working case in Universal Case Title" do
+    let(:attorney_user) { FactoryBot.create(:user) }
+    let(:judge_user) { FactoryBot.create(:user) }
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:appeal) { root_task.appeal }
+    let!(:atty_task) do
+      FactoryBot.create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_by: judge_user,
+                                            assigned_to: attorney_user)
+    end
+    let!(:judge_task) do
+      FactoryBot.create(:ama_judge_task, appeal: appeal, parent: atty_task, assigned_by: judge_user,
+                                         assigned_to: judge_user)
+    end
+
+    context "Attorney has been assigned" do
+      it "is displayed in the Universal Case Title" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL)
+        expect(page).to have_content(judge_user.full_name)
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL)
+        expect(page).to have_content(attorney_user.full_name)
       end
     end
   end
