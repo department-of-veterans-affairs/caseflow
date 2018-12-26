@@ -19,7 +19,7 @@ import StringUtil from '../util/StringUtil';
 
 import { taskIsOnHold } from './utils';
 import { DateString } from '../util/DateUtil';
-import type { Appeal, Task } from './types/models';
+import type { Appeal } from './types/models';
 import type { State } from './types/state';
 
 import { GrayDot } from '../components/RenderFunctions';
@@ -73,8 +73,7 @@ type Params = {|
 
 type Props = Params & {|
   userRole: string,
-  appeal: Appeal,
-  primaryTask: Task,
+  appeal: Appeal
 |};
 
 export class TaskSnapshot extends React.PureComponent<Props> {
@@ -120,9 +119,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     </React.Fragment>;
   }
   taskInformation = (task) => {
-    if (!task) {
-      return null;
-    }
     const assignedByAbbrev = task.assignedBy.firstName ?
       this.getAbbrevName(task.assignedBy) : null;
     const preparedByAbbrev = task.decisionPreparedBy ?
@@ -164,9 +160,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       userRole
     } = this.props;
 
-    if (!task) {
-      return null;
-    }
     const assignedByAbbrev = task.assignedBy.firstName ?
       this.getAbbrevName(task.assignedBy) : null;
     const assignedToListItem = <React.Fragment>
@@ -228,10 +221,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       userRole
     } = this.props;
 
-    if (!task) {
-      return false;
-    }
-
     // users can end up at case details for appeals with no DAS
     // record (!task.taskId). prevent starting attorney checkout flows
     return userRole === USER_ROLE_TYPES.judge ? Boolean(task) : Boolean(task.taskId);
@@ -239,8 +228,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
   render = () => {
     const {
-      appeal,
-      primaryTask
+      appeal
     } = this.props;
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
@@ -308,7 +296,6 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
-    primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
     tasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };
