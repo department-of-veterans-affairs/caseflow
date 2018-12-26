@@ -218,24 +218,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     </React.Fragment>;
   };
 
-  showActionsSection = (): boolean => {
-    if (this.props.hideDropdown) {
-      return false;
-    }
-
-    const {
-      userRole,
-      primaryTask
-    } = this.props;
-
-    if (!primaryTask) {
-      return false;
-    }
-
-    // users can end up at case details for appeals with no DAS
-    // record (!task.taskId). prevent starting attorney checkout flows
-    return userRole === USER_ROLE_TYPES.judge ? Boolean(primaryTask) : Boolean(primaryTask.taskId);
-  }
+  showActionsSection = (): boolean => (this.props.primaryTask && !this.props.hideDropdown);
 
   render = () => {
     const {
