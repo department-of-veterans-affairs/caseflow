@@ -25,6 +25,7 @@ import { getQueryParams } from '../util/QueryParamsUtil';
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY.json';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
   appealWithDetailSelector
@@ -36,6 +37,12 @@ const horizontalRuleStyling = css({
   borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
   marginTop: '3rem',
   marginBottom: '3rem'
+});
+
+const anchorEditLinkStyling = css({
+  fontSize: '1.5rem',
+  fontWeight: 'normal',
+  margin: '5px'
 });
 
 class CaseDetailsView extends React.PureComponent {
@@ -87,8 +94,10 @@ class CaseDetailsView extends React.PureComponent {
           amaIssueType={amaIssueType}
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
-          editLink={amaIssueType && appeal.canEditRequestIssues && `/appeals/${appealId}/edit`}
-          editLinkTitle={COPY.CORRECT_REQUEST_ISSUES_LINK}
+          additionalHeaderContent={amaIssueType && appeal.canEditRequestIssues &&
+            <span className="cf-push-right" {...anchorEditLinkStyling}>
+              <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_REQUEST_ISSUES_LINK}</Link>
+            </span>}
           issues={appeal.issues}
           decisionIssues={appeal.decisionIssues}
         />
