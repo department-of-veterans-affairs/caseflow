@@ -96,6 +96,10 @@ class TasksController < ApplicationController
       return json_vso_tasks
     end
 
+    if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
+      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
+    end
+
     all_json_tasks
   end
 
