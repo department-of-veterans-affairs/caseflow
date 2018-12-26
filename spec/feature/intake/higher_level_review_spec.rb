@@ -1275,6 +1275,19 @@ RSpec.feature "Higher-Level Review" do
           )).to_not be_nil
 
           expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
+
+          expect(LegacyIssueOptin.all.count).to eq(1)
+
+          li_optin = LegacyIssueOptin.first
+
+          expect(li_optin.optin_processed_at).to_not be_nil
+          expect(li_optin).to have_attributes(
+            vacols_id: "vacols1",
+            vacols_sequence_id: 1
+          )
+          expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
+            LegacyIssueOptin::VACOLS_DISPOSITION_CODE
+          )
         end
       end
 
