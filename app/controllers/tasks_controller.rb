@@ -203,9 +203,25 @@ class TasksController < ApplicationController
     ).as_json
   end
 
+  def eager_load_legacy_appeals_for_tasks(tasks)
+    # Make a single request to VACOLS to grab all of the rows we want here?
+    legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
+
+    # Load the VACOLS case records associated with legacy tasks into memory in a single batch.
+    cases = AppealRepository.vacols_records_for_appeals(legacy_appeal_ids) || []
+
+    # Associate the cases we pulled from VACOLS to the appeals of the tasks.
+    tasks.each do |t|
+      if t.appeal.is_a?(LegacyAppeal)
+        case_record = cases.select { |cr| cr.id == t.appeal.vacols_id }.first
+        AppealRepository.set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
+      end
+    end
+  end
+
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
-      tasks,
+      eager_load_legacy_appeals_for_tasks(tasks),
       user: current_user,
       role: user_role
     ).as_json

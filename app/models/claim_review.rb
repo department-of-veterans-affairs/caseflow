@@ -44,7 +44,7 @@ class ClaimReview < DecisionReview
           veteran_participant_id: veteran.participant_id
         )
       end
-      create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
+      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
   end
 
