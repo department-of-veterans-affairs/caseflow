@@ -33,7 +33,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :can_edit_request_issues do
-    RequestStore[:current_user]&.can_edit_request_issues?(object)
+    @instance_options[:user]&.can_edit_request_issues?(object)
   end
 
   attribute :hearings do
