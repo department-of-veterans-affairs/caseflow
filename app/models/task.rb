@@ -233,6 +233,10 @@ class Task < ApplicationRecord
     }
   end
 
+  def serializer_class
+    ::WorkQueue::TaskSerializer
+  end
+
   private
 
   def update_parent_status
