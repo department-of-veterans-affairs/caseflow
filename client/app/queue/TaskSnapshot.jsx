@@ -225,7 +225,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       appeal,
       primaryTask
     } = this.props;
-    const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
 
@@ -245,16 +244,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
             <td {...taskInfoWithIconContainer}><GrayDot /><div {...grayLineStyling} /></td>
             <td {...taskInformationContainerStyling}>
               <CaseDetailsDescriptionList>
-                { !taskAssignedToVso && appeal.assignedJudge &&
-                  <React.Fragment>
-                    <dt>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
-                    <dd>{appeal.assignedJudge.full_name}</dd>
-                  </React.Fragment> }
-                { !taskAssignedToVso && appeal.assignedAttorney &&
-                  <React.Fragment>
-                    <dt>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
-                    <dd>{appeal.assignedAttorney.full_name}</dd>
-                  </React.Fragment> }
                 {this.legacyTaskInformation()}
               </CaseDetailsDescriptionList>
             </td>

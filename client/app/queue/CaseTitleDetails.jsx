@@ -125,12 +125,12 @@ export class CaseTitleDetails extends React.PureComponent {
           <div><CopyTextButton text={primaryTask.documentId} /></div>
         </React.Fragment> }
 
-      { appeal.assignedJudge && <React.Fragment>
+      { !userIsVsoEmployee && appeal.assignedJudge && <React.Fragment>
         <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</h4>
         <div>{appeal.assignedJudge.full_name}</div>
       </React.Fragment> }
 
-      { appeal.assignedAttorney && <React.Fragment>
+      { !userIsVsoEmployee && appeal.assignedAttorney && <React.Fragment>
         <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
         <div>{appeal.assignedAttorney.full_name}</div>
       </React.Fragment> }
