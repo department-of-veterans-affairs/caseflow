@@ -226,6 +226,28 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.appellant_address_line_1)
       end
     end
+
+    context "when attorney has a case assigned in VACOLS without a DECASS record" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :legacy_appeal,
+          vacols_case: FactoryBot.create(
+            :case,
+            :assigned,
+            decass_count: 0,
+            user: attorney_user
+          )
+        )
+      end
+
+      it "should not display a tasks action dropdown" do
+        visit("/queue/appeals/#{appeal.external_id}")
+
+        # Expect to find content we know to be on the page so that we wait for the page to load.
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+        expect(page).not_to have_content("Select an action")
+      end
+    end
   end
 
   context "when an appeal has some number of documents" do
