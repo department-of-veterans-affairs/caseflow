@@ -34,10 +34,9 @@ class LegacyWorkQueue
     def tasks_with_appeals_of_vacols_tasks(user, role, vacols_tasks)
       vacols_appeals = repository.appeals_by_vacols_ids(vacols_tasks.map(&:vacols_id))
 
-      tasks = vacols_tasks.zip(vacols_appeals).map do |task, appeal|
+      vacols_tasks.zip(vacols_appeals).map do |task, appeal|
         MODEL_CLASS_OF_ROLE[role.capitalize].from_vacols(task, appeal, user)
       end
-      [tasks, vacols_appeals]
     end
   end
 end
