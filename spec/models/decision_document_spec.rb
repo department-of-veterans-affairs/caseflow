@@ -28,7 +28,7 @@ describe DecisionDocument do
       it "caches the file" do
         expect(S3Service).to receive(:store_file).with(expected_path, /PDF/)
         subject
-        expect(decision_document.submitted_at).to eq(Time.zone.now + DecisionDocument::DECISION_OUTCODING_DELAY)
+        expect(decision_document.submitted_at).to eq(Time.zone.now)
       end
     end
 
