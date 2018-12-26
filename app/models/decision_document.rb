@@ -10,7 +10,6 @@ class DecisionDocument < ApplicationRecord
   attr_writer :file
 
   S3_SUB_BUCKET = "decisions".freeze
-  DECISION_OUTCODING_DELAY = 3.hours
 
   def document_type
     "BVA Decision"
@@ -31,7 +30,7 @@ class DecisionDocument < ApplicationRecord
     return no_processing_required! unless upload_enabled?
 
     cache_file!
-    super(delay: DECISION_OUTCODING_DELAY)
+    super
   end
 
   def process!
