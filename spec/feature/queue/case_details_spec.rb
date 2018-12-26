@@ -598,6 +598,28 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page).to have_content(legacy_task.assigned_at.strftime("%-m/%-e/%y"))
+
+  describe "VLJ and Attorney working case in Universal Case Title" do
+    let(:attorney_user) { FactoryBot.create(:user) }
+    let(:judge_user) { FactoryBot.create(:user) }
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:appeal) { root_task.appeal }
+    let!(:atty_task) do
+      FactoryBot.create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_by: judge_user,
+                                            assigned_to: attorney_user)
+    end
+    let!(:judge_task) do
+      FactoryBot.create(:ama_judge_task, appeal: appeal, parent: atty_task, assigned_by: judge_user,
+                                         assigned_to: judge_user)
+    end
+
+    context "Attorney has been assigned" do
+      it "is displayed in the Universal Case Title" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL)
+        expect(page).to have_content(judge_user.full_name)
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL)
+        expect(page).to have_content(attorney_user.full_name)
       end
     end
   end
