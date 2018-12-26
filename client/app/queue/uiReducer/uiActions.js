@@ -18,13 +18,6 @@ export const setCanEditAod = (canEditAod: Boolean) => ({
   }
 });
 
-export const setCanEditRequestIssues = (canEditRequestIssues: Boolean) => ({
-  type: ACTIONS.SET_CAN_EDIT_REQUEST_ISSUES,
-  payload: {
-    canEditRequestIssues
-  }
-});
-
 export const showErrorMessage = (errorMessage: UiStateMessage) => ({
   type: ACTIONS.SHOW_ERROR_MESSAGE,
   payload: {
