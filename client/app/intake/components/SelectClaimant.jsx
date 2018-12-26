@@ -29,11 +29,12 @@ export default class SelectClaimant extends React.PureComponent {
       payeeCodeError
     } = this.props;
 
+    const hasRelationships = relationships.length > 0;
     let showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
     const claimantLabel = 'Please select the claimant listed on the form. ' +
     'If you do not see the claimant in the options below, add them in VBMS, ' +
-    'then refresh this page.';
+    'then refresh this page.'
 
     const claimantOptions = () => {
       return <div className="cf-claimant-options">
@@ -75,7 +76,12 @@ export default class SelectClaimant extends React.PureComponent {
         value={veteranIsNotClaimant === null ? null : veteranIsNotClaimant.toString()}
       />
 
-      { showClaimants && claimantOptions() }
+      { showClaimants && hasRelationships && claimantOptions() }
+      { showClaimants && !hasRelationships && <p className="cf-red-text">
+        The Veteran has no relationships in our records. You can add the relationship
+        in VBMS and refresh this page.
+        </p> }
+
     </div>;
   }
 }
