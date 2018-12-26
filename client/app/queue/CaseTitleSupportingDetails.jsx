@@ -75,7 +75,7 @@ export class CaseTitleSupportingDetails extends React.PureComponent {
       </React.Fragment>
 
       { appeal.veteranFullName !== appeal.appellantFullName && <React.Fragment>
-        <h4>{COPY.CASE_DETAILS_VET_NOT_APELLANT}</h4>
+        <h4>{COPY.CASE_DETAILS_VETERAN_NOT_APPELLANT}</h4>
         <div>
           {COPY.IS_PAPER_CASE}
         </div>

@@ -67,7 +67,7 @@
   "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
   "CASE_DETAILS_POA_AGENT": "Private Agent",
   "CASE_DETAILS_POA_ATTORNEY": "Private Attorney",
-  "CASE_DETAILS_VET_NOT_APELLANT": "The veteran is not the apellant",
+  "CASE_DETAILS_VETERAN_NOT_APPELLANT": "The Veteran is not the apellant",
 
   "CASE_DETAILS_GENDER_FIELD_LABEL": "Gender",
   "CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE": "Female",
