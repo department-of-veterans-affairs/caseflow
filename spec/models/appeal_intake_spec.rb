@@ -193,7 +193,8 @@ describe AppealIntake do
     end
 
     context "when a legacy VACOLS opt-in occurs" do
-      let(:vacols_case) { create(:case) }
+      let(:vacols_issue) { create(:case_issue) }
+      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
       let(:legacy_appeal) do
         create(:legacy_appeal, vacols_case: vacols_case)
       end
@@ -205,7 +206,7 @@ describe AppealIntake do
             reference_id: "reference-id",
             decision_text: "decision text",
             vacols_id: legacy_appeal.vacols_id,
-            vacols_sequence_id: 1
+            vacols_sequence_id: vacols_issue.issseq
           }
         ]
       end

@@ -186,6 +186,7 @@ FactoryBot.define do
 
     trait :status_remand do
       bfmpro "REM"
+      bfdc "3"
     end
 
     trait :status_complete do

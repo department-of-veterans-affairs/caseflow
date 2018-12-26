@@ -17,6 +17,7 @@ class RequestIssuesUpdate < ApplicationRecord
     transaction do
       review.create_issues!(new_issues)
       strip_removed_issues!
+      process_legacy_issues!
       review.mark_rating_request_issues_to_reassociate!
 
       update!(
@@ -114,9 +115,16 @@ class RequestIssuesUpdate < ApplicationRecord
     RequestIssue.where(id: after_request_issue_ids)
   end
 
+  def process_legacy_issues!
+    LegacyOptinManager.new(decision_review: review).process!
+  end
+
   # Instead of fully deleting removed issues, we instead strip them from the review so we can
   # maintain a record of the other data that was on them incase we need to revert the update.
   def strip_removed_issues!
-    removed_issues.each { |issue| issue.update!(review_request: nil) }
+    removed_issues.each do |issue|
+      issue.update!(review_request: nil)
+      issue.legacy_issue_optin&.flag_for_rollback!
+    end
   end
 end

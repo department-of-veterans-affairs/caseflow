@@ -1,47 +1,24 @@
+# LegacyOptInManager processes opt-ins and rollbacks in a batch per DecisionReview
+# because whether a legacy_appeal needs closed depends on the state of all issues after processing
 class LegacyOptinManager
   attr_reader :decision_review
-
-  VACOLS_DISPOSITION_CODE = "O".freeze # oh not zero
 
   def initialize(decision_review:)
     @decision_review = decision_review
   end
 
-  # we operate on LegacyIssueOptin rows, within a single VACOLS transaction
-  # for now, just close VACOLS records
   def process!
     VACOLS::Case.transaction do
-      affected_legacy_appeals.each do |legacy_appeal|
-        # track which issues we close during this transaction
-        open_legacy_issues = legacy_appeal.issues.reject(&:closed?)
-        next unless open_legacy_issues.any?
+      ApplicationRecord.transaction do
+        pending_rollbacks.each(&:rollback!)
 
-        # loop through each issue on the appeal, gut check on whether it can be closed,
-        # and then close it.
-        request_issues_with_legacy_issues.each do |request_issue|
-          vacols_id = request_issue.vacols_id # TODO: get from legacy_issue_optin
-          vacols_sequence_id = request_issue.vacols_sequence_id
+        pending_opt_ins.each(&:opt_in!)
 
-          # filter out any not on this appeal
-          next unless vacols_id == legacy_appeal.vacols_id
-
-          # gut checks
-          unless open_legacy_issues.map(&:vacols_sequence_id).map(&:to_s).include?(vacols_sequence_id)
-            fail "VACOLS issue #{vacols_id} sequence #{vacols_sequence_id} is already closed"
+        affected_legacy_appeals.each do |legacy_appeal|
+          if legacy_appeal.issues.reject(&:closed?).empty?
+            LegacyIssueOptin.revert_opted_in_remand_issues(legacy_appeal.vacols_id) if legacy_appeal.remand?
+            LegacyIssueOptin.close_legacy_appeal_in_vacols(legacy_appeal) if legacy_appeal.active?
           end
-
-          # close it
-          close_legacy_issue_in_vacols(request_issue.legacy_issue_optin)
-
-          # pop it from our queue
-          open_legacy_issues.reject! { |issue| issue.vacols_sequence_id.to_s == vacols_sequence_id }
-
-          # TODO: flag legacy_issue_optin as complete?
-        end
-
-        # if open_legacy_issues is now empty, close the appeal
-        if open_legacy_issues.empty?
-          close_legacy_appeal_in_vacols(legacy_appeal)
         end
       end
     end
@@ -50,36 +27,22 @@ class LegacyOptinManager
   private
 
   def affected_legacy_appeals
-    legacy_appeals = []
-    request_issues_with_legacy_issues.each do |request_issue|
-      legacy_appeals << legacy_appeal(request_issue.vacols_id) # TODO: get from legacy_issue_optin
-    end
-    legacy_appeals.uniq
+    legacy_issue_opt_ins.map(&:legacy_appeal).uniq
   end
 
-  def request_issues_with_legacy_issues
+  def pending_opt_ins
+    legacy_issue_opt_ins.select(&:opt_in_pending?)
+  end
+
+  def pending_rollbacks
+    legacy_issue_opt_ins.select(&:rollback_pending?)
+  end
+
+  def legacy_issue_opt_ins
+    request_issues_with_legacy_opt_ins.map(&:legacy_issue_optin)
+  end
+
+  def request_issues_with_legacy_opt_ins
     decision_review.request_issues.select(&:legacy_issue_optin)
-  end
-
-  def close_legacy_issue_in_vacols(legacy_issue_optin)
-    Issue.close_in_vacols!(
-      vacols_id: legacy_issue_optin.request_issue.vacols_id, # TODO: move column to legacy_issue_optin
-      vacols_sequence_id: legacy_issue_optin.request_issue.vacols_sequence_id, # TODO: move column to legacy_issue_optin
-      disposition_code: VACOLS_DISPOSITION_CODE
-    )
-  end
-
-  def close_legacy_appeal_in_vacols(legacy_appeal)
-    LegacyAppeal.close(
-      appeals: [legacy_appeal],
-      user: RequestStore.store[:current_user],
-      closed_on: Time.zone.today,
-      disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[VACOLS_DISPOSITION_CODE]
-    )
-  end
-
-  def legacy_appeal(vacols_id)
-    @legacy_appeals ||= {}
-    @legacy_appeals[vacols_id] ||= LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
 end
