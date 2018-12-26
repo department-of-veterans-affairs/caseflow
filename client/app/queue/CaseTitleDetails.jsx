@@ -121,6 +121,20 @@ export class CaseTitleDetails extends React.PureComponent {
           <h4>{COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
           <div><CopyTextButton text={primaryTask.documentId} /></div>
         </React.Fragment> }
+
+      { appeal.assignedJudge && <React.Fragment>
+        <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</h4>
+        <div>
+          {appeal.assignedJudge ? appeal.assignedJudge.full_name : ''}
+        </div>
+      </React.Fragment> }
+
+      { appeal.assignedAttorney && <React.Fragment>
+        <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
+        <div>
+          {appeal.assignedAttorney ? appeal.assignedAttorney.full_name : ''}
+        </div>
+      </React.Fragment> }
     </CaseDetailTitleScaffolding>;
   };
 }
