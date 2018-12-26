@@ -36,14 +36,15 @@ class ClaimReview < DecisionReview
   def create_issues!(new_issues)
     new_issues.each do |issue|
       if non_comp?
-        issue.update!(benefit_type: benefit_type)
+        issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       else
         issue.update!(
           end_product_establishment: end_product_establishment_for_issue(issue),
-          benefit_type: benefit_type
+          benefit_type: benefit_type,
+          veteran_participant_id: veteran.participant_id
         )
       end
-      create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
+      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
   end
 
@@ -76,6 +77,24 @@ class ClaimReview < DecisionReview
 
   def invalid_modifiers
     end_product_establishments.map(&:modifier).reject(&:nil?)
+  end
+
+  def rating_end_product_establishment
+    @rating_end_product_establishment ||= end_product_establishments.find_by(
+      code: self.class::END_PRODUCT_CODES[:rating]
+    )
+  end
+
+  def end_product_description
+    rating_end_product_establishment&.description
+  end
+
+  def end_product_base_modifier
+    valid_modifiers.first
+  end
+
+  def valid_modifiers
+    self.class::END_PRODUCT_MODIFIERS
   end
 
   def on_sync(end_product_establishment)

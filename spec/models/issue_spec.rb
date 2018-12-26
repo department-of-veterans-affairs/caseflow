@@ -220,6 +220,11 @@ describe Issue do
   end
 
   context "#active?" do
+    let(:disposition) { nil }
+    let(:vacols_case) { create(:case, :status_advance, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+    let(:vacols_case_issue) { create(:case_issue) }
+    let!(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
     subject { issue.active? }
 
     context "when it has a disposition" do
@@ -232,6 +237,11 @@ describe Issue do
       let(:disposition) { nil }
 
       it { is_expected.to be_truthy }
+
+      context "when the appeal status is complete" do
+        let(:vacols_case) { create(:case, :status_complete, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+        it { is_expected.to be_falsey }
+      end
     end
   end
 
@@ -368,8 +378,8 @@ describe Issue do
       it { is_expected.to be_falsey }
     end
 
-    context "case is neither REM nor ADV" do
-      let(:vacols_case) { create(:case, :status_complete, case_issues: [vacols_case_issue], bfkey: vacols_id) }
+    context "case is neither REM nor ADV nor HIS" do
+      let(:vacols_case) { create(:case, :status_active, case_issues: [vacols_case_issue], bfkey: vacols_id) }
 
       it { is_expected.to be_falsey }
     end

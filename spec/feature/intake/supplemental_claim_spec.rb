@@ -745,7 +745,7 @@ RSpec.feature "Supplemental Claim Intake" do
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
       expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
@@ -811,8 +811,8 @@ RSpec.feature "Supplemental Claim Intake" do
 
           click_intake_add_issue
           add_intake_nonrating_issue(
-            category: "Active Duty Adjustments",
-            description: "Description for Active Duty Adjustments",
+            category: "Accrued",
+            description: "I am a description",
             date: "10/25/2017"
           )
           expect(page).to_not have_content("Establish EP")
@@ -826,7 +826,7 @@ RSpec.feature "Supplemental Claim Intake" do
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
                    review_request: sc,
-                   description: "Description for Active Duty Adjustments",
+                   issue_category: "Accrued",
                    benefit_type: sc.benefit_type
           )).to_not be_nil
         end

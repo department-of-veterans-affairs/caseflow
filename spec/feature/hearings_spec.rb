@@ -12,7 +12,7 @@ RSpec.feature "Hearings" do
 
     let!(:vacols_staff) { create(:staff, user: current_user) }
 
-    let!(:hearing) { create(:hearing, user: current_user) }
+    let!(:hearing) { create(:legacy_hearing, user: current_user) }
 
     before do
       2.times do
@@ -165,7 +165,7 @@ RSpec.feature "Hearings" do
 
     context "worksheet header" do
       before do
-        create(:hearing, user: current_user)
+        create(:legacy_hearing, user: current_user)
       end
 
       scenario "Hearing worksheet switch veterans" do
@@ -174,12 +174,12 @@ RSpec.feature "Hearings" do
         find(".Select-control").click
         find("#react-select-2--option-0").click
         expect(page).to have_current_path("/hearings/1/worksheet")
-        expect(page).to have_content(Hearing.find(1).veteran_first_name)
+        expect(page).to have_content(LegacyHearing.find(1).veteran_first_name)
 
         find(".Select-control").click
         find("#react-select-2--option-1").click
         expect(page).to have_current_path("/hearings/2/worksheet")
-        expect(page).to have_content(Hearing.find(2).veteran_first_name)
+        expect(page).to have_content(LegacyHearing.find(2).veteran_first_name)
       end
     end
 

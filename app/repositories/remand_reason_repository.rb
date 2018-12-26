@@ -85,10 +85,15 @@ class RemandReasonRepository
     disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[record.issdc]
     new_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[issue_attrs[:disposition]]
 
+    # leave remand reasons in tact if an issue is opted into AMA, or the opt-in is rolled back
+    return if [disposition, new_disposition].include? "AMA SOC/SSOC Opt-in"
+
     if disposition.eql?("Remanded") && !new_disposition.eql?("Remanded")
       delete_remand_reasons!(*args)
       return
     end
+
+    fail_if_no_remand_reasons!(new_disposition, issue_attrs[:remand_reasons])
 
     remand_reasons = RemandReasonMapper.convert_to_vacols_format(
       issue_attrs[:vacols_user_id],
@@ -100,6 +105,13 @@ class RemandReasonRepository
       update_remand_reasons!(*args)
     elsif new_disposition.eql?("Remanded")
       create_remand_reasons!(*args)
+    end
+  end
+
+  def self.fail_if_no_remand_reasons!(new_disposition, remand_reasons)
+    if new_disposition == "Remanded" && remand_reasons.blank?
+      msg = "Remand reasons must be present when issue disposition is remanded"
+      fail Caseflow::Error::RemandReasonRepositoryError, msg
     end
   end
 end
