@@ -590,7 +590,7 @@ RSpec.feature "Checkout flows" do
         no_diag_code_w_l2 = %w[4 8 0 2]
 
         [diag_code_no_l2, no_diag_code_no_l2, diag_code_w_l2, no_diag_code_w_l2].each do |opt_set|
-          first("a", text: "Edit Issue").click
+          click_link("Edit Issue", match: :first)
           expect(page).to have_content "Edit Issue"
           selected_vals = select_issue_level_options(opt_set)
           click_on "Continue"
