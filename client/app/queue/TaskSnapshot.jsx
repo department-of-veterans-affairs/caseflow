@@ -230,47 +230,47 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
     const tskLength = this.props.tasks.length;
 
-    sectionBody = [];
-    this.props.tasks.map((task, index) => (
-      sectionBody.push(<table {...css({ width: '100%',
-        marginTop: '0px',
-        marginBottom: '5px' })}>
-        <tbody>
-          <tr>
-            <td {...taskTimeContainerStyling}>
-              <CaseDetailsDescriptionList>
-                <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-                <dd>{task && task.assignedOn &&
-                    moment(task.assignedOn).format('MM/DD/YYYY')}</dd>
-                {this.daysSinceTaskAssignmentListItem(task)}
-              </CaseDetailsDescriptionList>
-            </td>
-            <td {...taskInfoWithIconContainer}><GrayDot />
-              <div {...grayLineStyling} className={tskLength - 1 === index ? lastTask : ''} /></td>
-            <td {...taskInformationContainerStyling}>
-              <CaseDetailsDescriptionList>
-                {this.legacyTaskInformation(task)}
-              </CaseDetailsDescriptionList>
-            </td>
-            <td {...taskInformationContainerStyling} {...css({ width: '50%' })}>
-              {this.showActionsSection(task) &&
-                <React.Fragment>
-                  <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-                  <ActionsDropdown task={task} appealId={appeal.externalId} />
-                </React.Fragment>
-              }
-            </td>
-          </tr>
-        </tbody>
-      </table>)
-    ));
+    if (tskLength) {
+      sectionBody = this.props.tasks.map((task, index) =>
+        <tr>
+          <td {...taskTimeContainerStyling}>
+            <CaseDetailsDescriptionList>
+              <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
+              <dd>{task && task.assignedOn &&
+                moment(task.assignedOn).format('MM/DD/YYYY')}</dd>
+              {this.daysSinceTaskAssignmentListItem(task)}
+            </CaseDetailsDescriptionList>
+          </td>
+          <td {...taskInfoWithIconContainer}><GrayDot />
+            <div {...grayLineStyling} className={tskLength - 1 === index ? lastTask : ''} /></td>
+          <td {...taskInformationContainerStyling}>
+            <CaseDetailsDescriptionList>
+              {this.legacyTaskInformation(task)}
+            </CaseDetailsDescriptionList>
+          </td>
+          <td {...taskInformationContainerStyling} {...css({ width: '50%' })}>
+            {this.showActionsSection(task) &&
+            <React.Fragment>
+              <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
+              <ActionsDropdown task={task} appealId={appeal.externalId} />
+            </React.Fragment>
+            }
+          </td>
+        </tr>);
+    }
 
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
         <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}</a>
       </h2>
       <div {...sectionSegmentStyling}>
-        { sectionBody }
+        <table {...css({ width: '100%',
+          marginTop: '0px',
+          marginBottom: '5px' })}>
+          <tbody>
+            { sectionBody }
+          </tbody>
+        </table>
       </div>
     </div>;
   };
