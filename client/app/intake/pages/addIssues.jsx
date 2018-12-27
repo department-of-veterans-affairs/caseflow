@@ -69,7 +69,6 @@ export class AddIssuesPage extends React.Component {
     }
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
     const { useAmaActivationDate } = featureToggles;
     const intakeData = intakeForms[selectedForm.key];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
@@ -126,17 +125,8 @@ export class AddIssuesPage extends React.Component {
       { valueName: 'content' }
     ];
 
-    let sharedFields = [
-      { field: 'Form',
-        content: selectedForm.name },
-      { field: 'Veteran',
-        content: veteranInfo },
-      { field: 'Receipt date of this form',
-        content: formatDate(intakeData.receiptDate) }
-    ];
-
-    let additionalFields = getAddIssuesFields(selectedForm.key, veteran, intakeData);
-    let rowObjects = sharedFields.concat(additionalFields).concat(
+    let fieldsForFormType = getAddIssuesFields(selectedForm.key, veteran, intakeData);
+    let rowObjects = fieldsForFormType.concat(
       { field: 'Requested issues',
         content: issuesComponent() }
     );
