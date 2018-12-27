@@ -88,7 +88,6 @@ RSpec.feature "Appeal Intake" do
   end
 
   it "Creates an appeal" do
-    # Testing no relationships in Appeal and Veteran is claimant, tests two relationships in HLR and one in SC
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
 
     visit "/intake"
@@ -117,15 +116,6 @@ RSpec.feature "Appeal Intake" do
     within_fieldset("Which review option did the Veteran request?") do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
     end
-
-    expect(page).to_not have_content("Please select the claimant listed on the form.")
-    within_fieldset("Is the claimant someone other than the Veteran?") do
-      find("label", text: "Yes", match: :prefer_exact).click
-    end
-
-    expect(page).to have_content("Please select the claimant listed on the form.")
-    expect(page).to_not have_content("Bob Vance, Spouse")
-    expect(page).to_not have_content("Cathy Smith, Child")
 
     within_fieldset("Is the claimant someone other than the Veteran?") do
       find("label", text: "No", match: :prefer_exact).click

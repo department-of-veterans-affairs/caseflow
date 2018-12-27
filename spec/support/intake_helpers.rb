@@ -27,11 +27,13 @@ module IntakeHelpers
       detail: higher_level_review
     )
 
-    Claimant.create!(
-      review_request: higher_level_review,
-      participant_id: claim_participant_id ? claim_participant_id : test_veteran.participant_id,
-      payee_code: claim_participant_id ? "02" : "00"
-    )
+    if claim_participant_id
+      Claimant.create!(
+        review_request: higher_level_review,
+        participant_id: claim_participant_id ? claim_participant_id : test_veteran.participant_id,
+        payee_code: claim_participant_id ? "02" : "00"
+      )
+    end
 
     higher_level_review.start_review!
 
@@ -43,6 +45,7 @@ module IntakeHelpers
     receipt_date: 1.day.ago,
     legacy_opt_in_approved: false,
     veteran_is_not_claimant: false,
+    claim_participant_id: nil,
     benefit_type: "compensation"
   )
 
@@ -61,10 +64,12 @@ module IntakeHelpers
       detail: supplemental_claim
     )
 
-    Claimant.create!(
-      review_request: supplemental_claim,
-      participant_id: test_veteran.participant_id
-    )
+    if claim_participant_id
+      Claimant.create!(
+        review_request: supplemental_claim,
+        participant_id: claim_participant_id
+      )
+    end
 
     supplemental_claim.start_review!
     [supplemental_claim, intake]
@@ -111,14 +116,14 @@ module IntakeHelpers
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 26))
 
-     # skip the sync call since all edit requests require resyncing
+    # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
   end
 
   def teardown_intake_flags
-     FeatureToggle.disable!(:intakeAma)
-     FeatureToggle.disable!(:intake_legacy_opt_in)
+    FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   def search_page_title

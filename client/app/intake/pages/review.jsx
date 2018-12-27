@@ -71,7 +71,7 @@ class ReviewNextButton extends React.PureComponent {
     // in that case, just use null as data types since page will be redirected
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const intakeData = selectedForm ? intakeForms[selectedForm.key] : null;
-    const needsRelationships = intakeData.veteranIsNotClaimant && intakeData.relationships.length === 0;
+    const needsRelationships = intakeData && intakeData.veteranIsNotClaimant && intakeData.relationships.length === 0;
 
     return <Button
       name="submit-review"
