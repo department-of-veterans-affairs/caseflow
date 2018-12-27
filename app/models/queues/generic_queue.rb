@@ -3,11 +3,9 @@ class GenericQueue
 
   attr_accessor :user
 
-  # rubocop:disable Style/SymbolProc
   def tasks
-    (relevant_tasks + relevant_attorney_tasks).each { |t| t.update_if_hold_expired! }
+    (relevant_tasks + relevant_attorney_tasks).each(&:update_if_hold_expired!)
   end
-  # rubocop:enable Style/SymbolProc
 
   private
 
