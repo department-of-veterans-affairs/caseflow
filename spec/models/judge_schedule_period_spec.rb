@@ -16,14 +16,14 @@ describe JudgeSchedulePeriod do
 
   context "assign judges to hearing days" do
     let!(:hearing_days) do
-      get_unique_dates_between(judge_schedule_period.start_date, judge_schedule_period.end_date, 3).map do |date|
-        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
-      end
+         create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 8, 14), folder_nr: "VIDEO RO13")
+         create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 9, 12), folder_nr: "VIDEO RO13")
+         create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 6, 2), folder_nr: "VIDEO RO13")
     end
 
     subject { judge_schedule_period.algorithm_assignments }
     it "verifying the algorithm output" do
-      expect(subject.count).to eq(hearing_days.count)
+      expect(subject.count).to eq(3)
       expect(subject[0].key?(:id)).to be_truthy
       expect(subject[0].key?(:hearing_type)).to be_truthy
       expect(subject[0].key?(:hearing_date)).to be_truthy
