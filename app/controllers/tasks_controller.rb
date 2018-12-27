@@ -65,7 +65,7 @@ class TasksController < ApplicationController
 
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
 
-    render json: { tasks: json_tasks(tasks_to_return) }, status: :created
+    render json: { tasks: json_tasks(tasks_to_return) }
   end
 
   # To update attorney task
@@ -96,11 +96,15 @@ class TasksController < ApplicationController
       return json_vso_tasks
     end
 
+    tasks = appeal.tasks
     if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
-      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
+      legacy_appeal_tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], user_role)
+      tasks = (legacy_appeal_tasks + tasks).uniq
     end
 
-    all_json_tasks
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
   end
 
   private
@@ -191,20 +195,6 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
-    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
-
-    render json: {
-      tasks: json_legacy_tasks(tasks, role)[:data]
-    }
-  end
-
-  def all_json_tasks
-    render json: {
-      tasks: json_tasks(appeal.tasks)[:data]
-    }
-  end
-
   def json_legacy_tasks(tasks, role)
     ActiveModelSerializers::SerializableResource.new(
       tasks,
@@ -232,8 +222,8 @@ class TasksController < ApplicationController
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
       eager_load_legacy_appeals_for_tasks(tasks),
-      each_serializer: ::WorkQueue::TaskSerializer,
-      user: current_user
+      user: current_user,
+      role: user_role
     ).as_json
   end
 end

@@ -235,7 +235,7 @@ RSpec.describe TasksController, type: :controller do
 
         it "should be successful" do
           post :create, params: { tasks: params }
-          expect(response.status).to eq 201
+          expect(response.status).to eq 200
 
           response_body = JSON.parse(response.body)["tasks"]["data"]
           expect(response_body.second["attributes"]["type"]).to eq AttorneyTask.name
@@ -301,7 +301,7 @@ RSpec.describe TasksController, type: :controller do
 
         it "should be successful" do
           post :create, params: { tasks: params }
-          expect(response.status).to eq 201
+          expect(response.status).to eq 200
         end
       end
     end
@@ -361,7 +361,7 @@ RSpec.describe TasksController, type: :controller do
           it "should be successful" do
             expect(AppealRepository).to receive(:update_location!).exactly(1).times
             post :create, params: { tasks: params }
-            expect(response.status).to eq 201
+            expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(4)
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
@@ -408,7 +408,7 @@ RSpec.describe TasksController, type: :controller do
           it "should be successful" do
             expect(AppealRepository).to receive(:update_location!).exactly(1).times
             post :create, params: { tasks: params }
-            expect(response.status).to eq 201
+            expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(4)
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
@@ -443,7 +443,7 @@ RSpec.describe TasksController, type: :controller do
 
           it "should be successful" do
             post :create, params: { tasks: params }
-            expect(response.status).to eq 201
+            expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(2)
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
@@ -465,7 +465,7 @@ RSpec.describe TasksController, type: :controller do
 
           it "should be successful" do
             post :create, params: { tasks: params }
-            expect(response.status).to eq 201
+            expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(2)
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
@@ -519,7 +519,7 @@ RSpec.describe TasksController, type: :controller do
 
           it "should be successful" do
             post :create, params: { tasks: params }
-            expect(response.status).to eq 201
+            expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq 1
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
@@ -637,7 +637,7 @@ RSpec.describe TasksController, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 1
+        expect(response_body["tasks"].length).to eq 3
         task = response_body["tasks"][0]
         expect(task["id"]).to eq(legacy_appeal.vacols_id)
         expect(task["type"]).to eq("attorney_legacy_tasks")
