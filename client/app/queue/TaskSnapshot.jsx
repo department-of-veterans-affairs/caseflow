@@ -34,14 +34,9 @@ export const grayLineStyling = css({
   background: COLORS.GREY_LIGHT,
   margin: 'auto',
   position: 'absolute',
-  top: '20px',
+  top: '25px',
   left: '45%',
   bottom: 0
-});
-
-const lastTask = css({
-  bottom: '150px',
-  marginBottom: '150px'
 });
 
 const taskContainerStyling = css({
@@ -52,11 +47,18 @@ const taskContainerStyling = css({
 
 const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
 const taskInformationContainerStyling = css(taskContainerStyling, { width: '25%' });
+const taskActionsContainerStyling = css(taskContainerStyling, { width: '50%' });
+
+const tableStyling = css({
+  width: '100%',
+  marginTop: '0px'
+});
 
 const taskInfoWithIconContainer = css({
   textAlign: 'center',
   border: 'none',
-  padding: '0px',
+  padding: '10px',
+  paddingTop: '0',
   position: 'relative',
   verticalAlign: 'top',
   width: '45px'
@@ -140,7 +142,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
           <dd><OnHoldLabel task={task} /></dd>
         </React.Fragment>
       }
-      { task.instructions &&
+      { task.instructions && task.instructions.length > 0 &&
         <React.Fragment>
           <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
           <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
@@ -189,8 +191,11 @@ export class TaskSnapshot extends React.PureComponent<Props> {
               <dd><OnHoldLabel task={task} /></dd>
             </React.Fragment>
           }
-          <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
-          <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
+          { task.instructions && task.instructions.length > 0 &&
+            <React.Fragment>
+              <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+              <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
+            </React.Fragment> }
         </React.Fragment>;
       }
 
@@ -208,19 +213,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     </React.Fragment>;
   };
 
-  showActionsSection = (task): boolean => {
-    if (this.props.hideDropdown) {
-      return false;
-    }
-
-    const {
-      userRole
-    } = this.props;
-
-    // users can end up at case details for appeals with no DAS
-    // record (!task.taskId). prevent starting attorney checkout flows
-    return userRole === USER_ROLE_TYPES.judge ? Boolean(task) : Boolean(task.taskId);
-  }
+  showActionsSection = (task) => (task && !this.props.hideDropdown);
 
   render = () => {
     const {
@@ -228,9 +221,9 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     } = this.props;
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
-    const tskLength = this.props.tasks.length;
+    const taskLength = this.props.tasks.length;
 
-    if (tskLength) {
+    if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>
         <tr>
           <td {...taskTimeContainerStyling}>
@@ -242,13 +235,13 @@ export class TaskSnapshot extends React.PureComponent<Props> {
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskInfoWithIconContainer}><GrayDot />
-            <div {...grayLineStyling} className={tskLength - 1 === index ? lastTask : ''} /></td>
+            { (index + 1 < taskLength) && <div {...grayLineStyling} /> }</td>
           <td {...taskInformationContainerStyling}>
             <CaseDetailsDescriptionList>
               {this.legacyTaskInformation(task)}
             </CaseDetailsDescriptionList>
           </td>
-          <td {...taskInformationContainerStyling} {...css({ width: '50%' })}>
+          <td {...taskActionsContainerStyling}>
             {this.showActionsSection(task) &&
             <React.Fragment>
               <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
@@ -264,9 +257,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}</a>
       </h2>
       <div {...sectionSegmentStyling}>
-        <table {...css({ width: '100%',
-          marginTop: '0px',
-          marginBottom: '5px' })}>
+        <table {...tableStyling}>
           <tbody>
             { sectionBody }
           </tbody>
