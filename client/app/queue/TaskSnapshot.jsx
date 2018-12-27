@@ -62,10 +62,6 @@ const taskInfoWithIconContainer = css({
   width: '45px'
 });
 
-const titleLabel = css({
-  fontWeight: 'bold'
-});
-
 type Params = {|
   appealId: string,
   hideDropdown?: boolean
@@ -84,7 +80,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       const dayCountSinceAssignment = today.diff(dateAssigned, 'days');
 
       return <React.Fragment>
-        <dt {...titleLabel}>{COPY.TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL}</dt>
+        <dt>{COPY.TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL}</dt>
         <dd>{dayCountSinceAssignment}</dd>
       </React.Fragment>;
     }
@@ -96,10 +92,10 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     return `${firstName.substring(0, 1)}. ${lastName}`;
   }
 
-  getActionName = () => {
+  getActionName = (task) => {
     const {
       label
-    } = this.props.primaryTask;
+    } = task;
 
     // First see if there is a constant to convert the label, otherwise sentence-ify it
     if (CO_LOCATED_ADMIN_ACTIONS[label]) {
@@ -125,28 +121,28 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       this.getAbbrevName(task.decisionPreparedBy) : null;
 
     return <React.Fragment>
-      <dt {...titleLabel}>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{task.assignedTo.cssId}</dd>
+      <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{task.assignedTo.cssId}</dd>
       { assignedByAbbrev &&
         <React.Fragment>
-          <dt {...titleLabel}>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
+          <dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
         </React.Fragment> }
       { preparedByAbbrev &&
         <React.Fragment>
-          <dt {...titleLabel}>{COPY.TASK_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{preparedByAbbrev}</dd>
+          <dt>{COPY.TASK_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{preparedByAbbrev}</dd>
         </React.Fragment> }
       { task.label &&
         <React.Fragment>
-          <dt {...titleLabel}>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{this.getActionName()}</dd>
+          <dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{this.getActionName(task)}</dd>
         </React.Fragment> }
       { taskIsOnHold(task) &&
         <React.Fragment>
-          <dt {...titleLabel}>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
+          <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
           <dd><OnHoldLabel task={task} /></dd>
         </React.Fragment>
       }
       { task.instructions &&
         <React.Fragment>
-          <dt {...titleLabel}>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+          <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
           <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
         </React.Fragment> }
     </React.Fragment>;
@@ -163,7 +159,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     const assignedByAbbrev = task.assignedBy.firstName ?
       this.getAbbrevName(task.assignedBy) : null;
     const assignedToListItem = <React.Fragment>
-      <dt {...titleLabel}>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
+      <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
     </React.Fragment>;
 
     if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
@@ -243,7 +239,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
           <tr>
             <td {...taskTimeContainerStyling}>
               <CaseDetailsDescriptionList>
-                <dt {...titleLabel}>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
+                <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
                 <dd>{task && task.assignedOn &&
                     moment(task.assignedOn).format('MM/DD/YYYY')}</dd>
                 {this.daysSinceTaskAssignmentListItem(task)}
@@ -253,16 +249,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
               <div {...grayLineStyling} className={tskLength - 1 === index ? lastTask : ''} /></td>
             <td {...taskInformationContainerStyling}>
               <CaseDetailsDescriptionList>
-                { !taskAssignedToVso && appeal.assignedJudge &&
-                  <React.Fragment>
-                    <dt {...titleLabel}>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
-                    <dd>{appeal.assignedJudge.full_name}</dd>
-                  </React.Fragment> }
-                { !taskAssignedToVso && appeal.assignedAttorney &&
-                  <React.Fragment>
-                    <dt {...titleLabel}>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
-                    <dd>{appeal.assignedAttorney.full_name}</dd>
-                  </React.Fragment> }
                 {this.legacyTaskInformation(task)}
               </CaseDetailsDescriptionList>
             </td>
