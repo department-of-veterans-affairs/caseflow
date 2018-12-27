@@ -10,10 +10,8 @@ class LegacyWorkQueue
 
     def tasks_with_appeals_by_appeal_id(appeal_id, role)
       vacols_tasks = repository.tasks_for_appeal(appeal_id)
-      if vacols_tasks.empty?
-        appeal = repository.appeals_by_vacols_ids([appeal_id])
-        return [[], [appeal]]
-      end
+      return [] if vacols_tasks.empty?
+
       assigned_to_css_id = vacols_tasks[0].assigned_to_css_id
       user = assigned_to_css_id &&
              User.find_or_create_by(css_id: assigned_to_css_id, station_id: User::BOARD_STATION_ID)
