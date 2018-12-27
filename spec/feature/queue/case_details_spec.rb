@@ -599,7 +599,6 @@ RSpec.feature "Case details" do
         expect(page).to have_content(task.assigned_at.strftime("%-m/%-e/%Y"))
         expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} #{task.assigned_to.css_id}")
         expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase)
-        expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL.upcase)
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
       end
     end
