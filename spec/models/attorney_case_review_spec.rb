@@ -144,7 +144,8 @@ describe AttorneyCaseReview do
   context ".complete" do
     let(:document_type) { Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"] }
     let(:work_product) { "OMO - IME" }
-    let(:document_id) { "     123456789.1234    " }
+    let(:document_id) { "123456789.1234" }
+    let(:padded_document_id) { "     #{document_id}    " }
     let(:note) { "something" }
     let(:task_id) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney).id }
     let(:params) do
@@ -152,7 +153,7 @@ describe AttorneyCaseReview do
         document_type: document_type,
         reviewing_judge: judge,
         work_product: work_product,
-        document_id: document_id,
+        document_id: padded_document_id,
         overtime: true,
         note: note,
         task_id: task_id,
@@ -194,7 +195,7 @@ describe AttorneyCaseReview do
           expect(subject.document_type).to eq Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"]
           expect(subject.valid?).to eq true
           expect(subject.work_product).to eq work_product
-          expect(subject.document_id).to eq "123456789.1234"
+          expect(subject.document_id).to eq document_id
           expect(subject.note).to eq note
           expect(subject.reviewing_judge).to eq judge
           expect(subject.attorney).to eq attorney
@@ -238,7 +239,7 @@ describe AttorneyCaseReview do
           document_type: document_type,
           reviewing_judge: judge,
           work_product: work_product,
-          document_id: document_id,
+          document_id: padded_document_id,
           overtime: true,
           note: note,
           task_id: task_id,
@@ -295,7 +296,7 @@ describe AttorneyCaseReview do
             expect(subject.document_type).to eq Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
             expect(subject.valid?).to eq true
             expect(subject.work_product).to eq "Decision"
-            expect(subject.document_id).to eq "123456789.1234"
+            expect(subject.document_id).to eq document_id
             expect(subject.note).to eq note
             expect(subject.reviewing_judge).to eq judge
             expect(subject.attorney).to eq attorney
@@ -407,7 +408,7 @@ describe AttorneyCaseReview do
           it "should create draft decision record" do
             expect(decass_record.deprod).to eq "OTD"
             expect(decass_record.deatcom).to eq note
-            expect(decass_record.dedocid).to eq "123456789.1234"
+            expect(decass_record.dedocid).to eq document_id
           end
 
           it "should update the location for the associated VACOLS::Case with the Judge's VACOLS ID" do

@@ -65,7 +65,7 @@ class AttorneyCaseReview < ApplicationRecord
   end
 
   def strip_document_id
-    self.document_id = document_id && document_id.strip
+    self.document_id = document_id&.strip
   end
 
   class << self
