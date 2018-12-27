@@ -103,6 +103,24 @@ module IntakeHelpers
   # rubocop: enable Metrics/MethodLength
   # rubocop: enable Metrics/ParameterLists
 
+  def setup_intake_flags
+    FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:intakeAma)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
+
+    Time.zone = "America/New_York"
+    Timecop.freeze(Time.utc(2018, 5, 26))
+
+     # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
+  end
+
+  def teardown_intake_flags
+     FeatureToggle.disable!(:intakeAma)
+     FeatureToggle.disable!(:intake_legacy_opt_in)
+  end
+
   def search_page_title
     "Search for Veteran by ID"
   end
