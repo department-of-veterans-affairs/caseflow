@@ -335,14 +335,17 @@ RSpec.feature "Case details" do
     end
 
     scenario "displays who prepared task" do
-      tasks, appeals = LegacyWorkQueue.tasks_with_appeals(judge_user, "judge")
+      tasks = LegacyWorkQueue.tasks_with_appeals(judge_user, "judge")
       task = tasks.first
-      appeal = appeals.first
+      appeal = task.appeal
 
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
+
+      # Wait for page to load some known content before testing for expected content.
+      expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
 
       expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
