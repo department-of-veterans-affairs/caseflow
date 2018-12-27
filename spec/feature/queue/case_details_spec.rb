@@ -579,6 +579,29 @@ RSpec.feature "Case details" do
     end
   end
 
+  describe "Persist legacy tasks from backend" do
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+    context "one task" do
+      let!(:root_task) do
+        create(:root_task, appeal: legacy_appeal, assigned_to: judge_user,
+                           status: Constants.TASK_STATUSES.assigned)
+      end
+      let!(:legacy_task) do
+        create(:task, appeal: legacy_appeal, status: Constants.TASK_STATUSES.in_progress,
+                      assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
+                      parent_id: root_task.id, started_at: rand(1..10).days.ago)
+      end
+
+      it "is displayed in the TaskSnapshot" do
+        visit "/queue/appeals/#{legacy_appeal.vacols_id}"
+
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+        expect(page).to have_content(legacy_task.assigned_at.strftime("%-m/%-e/%y"))
+      end
+    end
+  end
+
   describe "VLJ and Attorney working case in Universal Case Title" do
     let(:attorney_user) { FactoryBot.create(:user) }
     let(:judge_user) { FactoryBot.create(:user) }

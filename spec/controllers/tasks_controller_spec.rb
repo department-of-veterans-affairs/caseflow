@@ -637,7 +637,7 @@ RSpec.describe TasksController, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 1
+        expect(response_body["tasks"].length).to eq 3
         task = response_body["tasks"][0]
         expect(task["id"]).to eq(legacy_appeal.vacols_id)
         expect(task["type"]).to eq("attorney_legacy_tasks")
