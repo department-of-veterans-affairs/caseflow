@@ -218,31 +218,13 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     </React.Fragment>;
   };
 
-  showActionsSection = (): boolean => {
-    if (this.props.hideDropdown) {
-      return false;
-    }
-
-    const {
-      userRole,
-      primaryTask
-    } = this.props;
-
-    if (!primaryTask) {
-      return false;
-    }
-
-    // users can end up at case details for appeals with no DAS
-    // record (!task.taskId). prevent starting attorney checkout flows
-    return userRole === USER_ROLE_TYPES.judge ? Boolean(primaryTask) : Boolean(primaryTask.taskId);
-  }
+  showActionsSection = (): boolean => (this.props.primaryTask && !this.props.hideDropdown);
 
   render = () => {
     const {
       appeal,
       primaryTask
     } = this.props;
-    const taskAssignedToVso = primaryTask && primaryTask.assignedTo.type === 'Vso';
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
 
@@ -262,16 +244,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
             <td {...taskInfoWithIconContainer}><GrayDot /><div {...grayLineStyling} /></td>
             <td {...taskInformationContainerStyling}>
               <CaseDetailsDescriptionList>
-                { !taskAssignedToVso && appeal.assignedJudge &&
-                  <React.Fragment>
-                    <dt>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</dt>
-                    <dd>{appeal.assignedJudge.full_name}</dd>
-                  </React.Fragment> }
-                { !taskAssignedToVso && appeal.assignedAttorney &&
-                  <React.Fragment>
-                    <dt>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</dt>
-                    <dd>{appeal.assignedAttorney.full_name}</dd>
-                  </React.Fragment> }
                 {this.legacyTaskInformation()}
               </CaseDetailsDescriptionList>
             </td>

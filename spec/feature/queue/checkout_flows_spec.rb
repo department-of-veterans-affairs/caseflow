@@ -40,6 +40,9 @@ RSpec.feature "Checkout flows" do
     scenario "submits draft decision" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
+
+      expect(page).not_to have_content "Correct issues"
+
       click_dropdown(index: 0)
       click_label "radiation"
 
@@ -122,6 +125,7 @@ RSpec.feature "Checkout flows" do
         # Ensure the issue is on the case details screen
         expect(page).to have_content(issue_description)
         expect(page).to have_content(issue_note)
+        expect(page).to have_content "Correct issues"
 
         click_dropdown(index: 0)
 
@@ -262,8 +266,8 @@ RSpec.feature "Checkout flows" do
 
         click_on "(#{appeal.veteran_file_number})"
 
+        expect(page).to have_content "Correct issues"
         expect(page).to have_content("Added to 2 issues", count: 2)
-
         click_dropdown(index: 0)
 
         # Skip the special issues page
@@ -590,8 +594,9 @@ RSpec.feature "Checkout flows" do
         no_diag_code_w_l2 = %w[4 8 0 2]
 
         [diag_code_no_l2, no_diag_code_no_l2, diag_code_w_l2, no_diag_code_w_l2].each do |opt_set|
-          first("a", text: "Edit Issue").click
           expect(page).to have_content "Edit Issue"
+          click_link("Edit Issue", match: :first)
+          expect(page).to have_content "Program"
           selected_vals = select_issue_level_options(opt_set)
           click_on "Continue"
           selected_vals.each { |v| expect(page).to have_content v }
