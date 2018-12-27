@@ -15,13 +15,6 @@ class TasksController < ApplicationController
     InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
 
-  QUEUES = {
-    attorney: AttorneyQueue,
-    colocated: GenericQueue,
-    judge: GenericQueue,
-    generic: GenericQueue
-  }.freeze
-
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -123,7 +116,7 @@ class TasksController < ApplicationController
   end
 
   def queue_class
-    QUEUES[user_role.try(:to_sym)] || QUEUES[:generic]
+    (user_role == "attorney") ? AttorneyQueue : GenericQueue
   end
 
   def user_role
