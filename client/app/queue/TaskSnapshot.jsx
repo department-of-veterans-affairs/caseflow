@@ -57,8 +57,7 @@ const tableStyling = css({
 const taskInfoWithIconContainer = css({
   textAlign: 'center',
   border: 'none',
-  padding: '10px',
-  paddingTop: '0',
+  padding: '0 10px 10px',
   position: 'relative',
   verticalAlign: 'top',
   width: '45px'
