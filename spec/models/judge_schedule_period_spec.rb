@@ -16,9 +16,9 @@ describe JudgeSchedulePeriod do
 
   context "assign judges to hearing days" do
     let!(:hearing_days) do
-         create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 8, 14), folder_nr: "VIDEO RO13")
-         create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 9, 12), folder_nr: "VIDEO RO13")
-         create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 6, 2), folder_nr: "VIDEO RO13")
+      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 8, 14), folder_nr: "VIDEO RO13")
+      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 9, 12), folder_nr: "VIDEO RO13")
+      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 6, 2), folder_nr: "VIDEO RO13")
     end
 
     subject { judge_schedule_period.algorithm_assignments }
