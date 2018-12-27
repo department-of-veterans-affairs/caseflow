@@ -1,15 +1,6 @@
 class JudgeQualityReviewTask < JudgeTask
-  def baseline_actions
+  def available_actions(_user)
     [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h, Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
-  end
-
-  def self.create_from_params(params, user)
-    Task.find(params[:parent_id])&.update!(status: :on_hold)
-    super(params, user)
-  end
-
-  def self.modify_params(params)
-    super(params).merge(type: JudgeQualityReviewTask.name)
   end
 
   def update_from_params(params, _current_user)
@@ -19,6 +10,10 @@ class JudgeQualityReviewTask < JudgeTask
     update(params)
 
     [self]
+  end
+
+  def self.verify_user_can_create!(user)
+    QualityReview.singleton.user_has_access?(user) || super(user)
   end
 
   def label

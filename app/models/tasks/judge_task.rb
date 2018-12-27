@@ -2,7 +2,7 @@ class JudgeTask < Task
   include RoundRobinAssigner
 
   def available_actions(_user)
-    baseline_actions
+    []
   end
 
   def actions_available?(user)
@@ -11,19 +11,6 @@ class JudgeTask < Task
 
   def timeline_title
     COPY::CASE_TIMELINE_JUDGE_TASK
-  end
-
-  def self.modify_params(params)
-    super(params.merge(type: JudgeAssignTask.name))
-  end
-
-  def self.verify_user_can_create!(user)
-    QualityReview.singleton.user_has_access?(user) || super(user)
-  end
-
-  def when_child_task_completed
-    update!(type: JudgeReviewTask.name) if type == JudgeAssignTask.name
-    super
   end
 
   def previous_task

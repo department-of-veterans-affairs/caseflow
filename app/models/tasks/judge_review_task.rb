@@ -1,5 +1,5 @@
 class JudgeReviewTask < JudgeTask
-  def baseline_actions
+  def available_actions(_user)
     [Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h]
   end
 
