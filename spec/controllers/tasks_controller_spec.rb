@@ -16,35 +16,18 @@ RSpec.describe TasksController, type: :controller do
       create(:staff, role, sdomainid: user.css_id)
     end
 
-    let!(:task1) { create(:colocated_task, assigned_by: user) }
-    let!(:task2) { create(:colocated_task, assigned_by: user) }
-    let!(:task3) { create(:colocated_task, assigned_by: user, status: Constants.TASK_STATUSES.completed) }
-
-    let!(:task4) do
-      create(:colocated_task, assigned_to: user, appeal: create(:legacy_appeal, vacols_case: create(:case, :aod)))
-    end
-    let!(:task5) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.in_progress) }
-    let!(:task_ama_colocated_aod) do
-      create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket_due_to_age))
-    end
-    let!(:task6) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.completed) }
-    let!(:task7) { create(:colocated_task) }
-
-    let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
-    let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
-    let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
-    let!(:task15) do
-      create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user, completed_at: 3.weeks.ago)
-    end
-
-    let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
-    let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
-    let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
-    let!(:task16) { create(:ama_attorney_task, :completed, assigned_to: user, completed_at: 3.weeks.ago) }
-    let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
-
     context "when user is an attorney" do
       let(:role) { :attorney_role }
+
+      let!(:task1) { create(:colocated_task, assigned_by: user) }
+      let!(:task2) { create(:colocated_task, assigned_by: user) }
+      let!(:task3) { create(:colocated_task, assigned_by: user, status: Constants.TASK_STATUSES.completed) }
+
+      let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
+      let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
+      let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
+      let!(:task16) { create(:ama_attorney_task, :completed, assigned_to: user, completed_at: 3.weeks.ago) }
+      let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
 
       it "should process the request successfully" do
         get :index, params: { user_id: user.id, role: "attorney" }
@@ -89,6 +72,16 @@ RSpec.describe TasksController, type: :controller do
     context "when user is a colocated admin" do
       let(:role) { :colocated_role }
 
+      let!(:task4) do
+        create(:colocated_task, assigned_to: user, appeal: create(:legacy_appeal, vacols_case: create(:case, :aod)))
+      end
+      let!(:task5) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.in_progress) }
+      let!(:task_ama_colocated_aod) do
+        create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket_due_to_age))
+      end
+      let!(:task6) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.completed) }
+      let!(:task7) { create(:colocated_task) }
+
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "colocated" }
         response_body = JSON.parse(response.body)["tasks"]["data"]
@@ -114,6 +107,13 @@ RSpec.describe TasksController, type: :controller do
 
     context "when getting tasks for a judge" do
       let(:role) { :judge_role }
+
+      let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
+      let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
+      let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
+      let!(:task15) do
+        create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user, completed_at: 3.weeks.ago)
+      end
 
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "judge" }

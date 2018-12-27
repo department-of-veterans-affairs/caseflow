@@ -17,8 +17,8 @@ class TasksController < ApplicationController
 
   QUEUES = {
     attorney: AttorneyQueue,
-    colocated: ColocatedQueue,
-    judge: JudgeQueue,
+    colocated: GenericQueue,
+    judge: GenericQueue,
     generic: GenericQueue
   }.freeze
 
