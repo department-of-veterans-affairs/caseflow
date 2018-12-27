@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES.json';
+import { FORM_TYPES } from '../constants';
 
 const getNonVeteranClaimant = (intakeData) => {
   const claimant = intakeData.relationships.filter((relationship) => {
@@ -266,6 +267,7 @@ export const formatIssues = (state) => {
 export const getAddIssuesFields = (formType, veteran, intakeData) => {
   let fields;
   const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
+  const selectedForm = _.find(FORM_TYPES, { key: formType });
 
   switch (formType) {
   case 'higher_level_review':

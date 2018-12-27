@@ -6,15 +6,16 @@ import { removeIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 
 const removeIssueMessage = (formType) => {
-  if(formType === 'appeal') {
+  if (formType === 'appeal') {
     return <div>
       <p>The issue you selected will be removed from the list of issues on appeal.</p>
-      <p>Are you sure that this issue is not listed on the veteran's NOD and that you want to remove it?</p> </div>
-  } else {
-    return <div>
-      <p>The contention you selected will be removed from the EP in VBMS.</p>
-      <p>Are you sure you want to remove this issue?</p> </div>
+      <p>Are you sure that this issue is not listed on the veteran's NOD and that you want to remove it?</p> </div>;
   }
+
+  return <div>
+    <p>The contention you selected will be removed from the EP in VBMS.</p>
+    <p>Are you sure you want to remove this issue?</p> </div>;
+
 };
 
 class RemoveIssueModal extends React.PureComponent {
@@ -44,7 +45,7 @@ class RemoveIssueModal extends React.PureComponent {
         title="Remove issue"
       >
 
-      { removeIssueMessage(intakeData.formType) }
+        { removeIssueMessage(intakeData.formType) }
 
       </Modal>
     </div>;
