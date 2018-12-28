@@ -49,12 +49,7 @@ RSpec.feature "Colocated checkout flows" do
     end
 
     before do
-      FeatureToggle.enable!(:colocated_queue)
       User.authenticate!(user: colocated_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:colocated_queue)
     end
 
     scenario "reassigns task to assigning attorney" do
