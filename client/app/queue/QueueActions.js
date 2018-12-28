@@ -293,14 +293,17 @@ export const errorFetchingDocumentCount = (appealId: string, error: Object) => (
   }
 });
 
-export const fetchTasksAndAppealsOfAttorney = (attorneyId: string) => (dispatch: Dispatch) => {
+export const fetchTasksAndAppealsOfAttorney = (attorneyId: string, params: Object) => (dispatch: Dispatch) => {
   const requestOptions = {
     timeout: true
   };
 
   dispatch(requestTasksAndAppealsOfAttorney(attorneyId));
 
-  return ApiUtil.get(`/queue/${attorneyId}`, requestOptions).then(
+  const pairs = Object.keys(params).map((key) => [key, params[key]].join('='));
+  const queryString = `?${pairs.join('&')}`;
+
+  return ApiUtil.get(`/queue/${attorneyId}${queryString}`, requestOptions).then(
     (resp) => dispatch(
       receiveTasksAndAppealsOfAttorney(
         { attorneyId,
