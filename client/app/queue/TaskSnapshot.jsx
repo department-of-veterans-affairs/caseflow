@@ -28,7 +28,7 @@ import {
   sectionHeadingStyling,
   anchorJumpLinkStyling
 } from './StickyNavContentArea';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Button from '../components/Button';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -75,6 +75,19 @@ type Props = Params & {|
 |};
 
 export class TaskSnapshot extends React.PureComponent<Props> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      taskInstructionsIsVisible: false
+    };
+  }
+
+  toggleTaskInstructionsVisibility = () => {
+    const prevState = this.state.taskInstructionsIsVisible;
+
+    this.setState({ taskInstructionsIsVisible: !prevState });
+  }
+
   daysSinceTaskAssignmentListItem = (task) => {
     if (task) {
       const today = moment().startOf('day');
@@ -143,16 +156,20 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         </React.Fragment>
       }
       { task.instructions && task.instructions.length > 0 &&
+        <div>
+          <Button
+            linkStyling
+            styling={css({ padding: '0' })}
+            name={(this.state.taskInstructionsIsVisible ? 'Hide ' : 'View ') +
+            COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
+            onClick={this.toggleTaskInstructionsVisibility} />
+          { this.state.taskInstructionsIsVisible &&
         <React.Fragment>
           <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
           <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
         </React.Fragment> }
-
-      { <span>
-        <Link onClick={this.props.toggleVeteranCaseList}>
-          { task.instructions ? 'Hide' : 'View' } task instructions
-        </Link>
-      </span>}
+        </div>
+      }
     </React.Fragment>;
   }
   legacyTaskInformation = (task) => {
@@ -275,12 +292,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { userRole } = state.ui;
-  // taskInstructionsIsVisible: state.ui.taskInstructionsIsVisible,
-  /*
-  Look at how I added CanEditAod to state and mimic with
-
-  taskInstructionsIsVisible
-  */
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
