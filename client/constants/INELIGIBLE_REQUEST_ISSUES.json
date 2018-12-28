@@ -3,6 +3,8 @@
   "untimely": "is ineligible because it has a prior decision date that’s older than 1 year",
   "before_ama": "is ineligible because it has a prior decision date before February 14, 2019",
   "previous_higher_level_review": "is ineligible because it was last processed as a Higher-Level Review and this can't be done twice in a row",
+  "appeal_to_appeal": "is ineligible because it was last processed as a Board Appeal and this can't be done twice in a row.",
+  "appeal_to_higher_level_review": "is ineligible because it was last processed as a Board Appeal which can't be followed by a Higher-Level Review.",
   "legacy_issue_not_withdrawn": "is ineligible because the same issue is under review as a Legacy Appeal but the claimant didn’t choose to withdraw their issue from the legacy system.",
   "legacy_appeal_not_eligible": "is ineligible because the same issue is under review as a Legacy Appeal and that appeal is outside the window of eligibility."
 }

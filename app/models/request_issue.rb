@@ -19,6 +19,8 @@ class RequestIssue < ApplicationRecord
     duplicate_of_rating_issue_in_active_review: "duplicate_of_rating_issue_in_active_review",
     untimely: "untimely",
     previous_higher_level_review: "previous_higher_level_review",
+    appeal_to_appeal: "appeal_to_appeal",
+    appeal_to_higher_level_review: "appeal_to_higher_level_review",
     before_ama: "before_ama",
     legacy_issue_not_withdrawn: "legacy_issue_not_withdrawn",
     legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
@@ -309,6 +311,10 @@ class RequestIssue < ApplicationRecord
     return unless rating?
     return unless eligible?
     check_for_previous_review!(:source_higher_level_review)
+  end
+
+  def check_for_previous_appeal
+    return unless eligible?
   end
 
   def check_for_previous_review!(review_type)
