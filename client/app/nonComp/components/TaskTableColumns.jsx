@@ -11,11 +11,11 @@ export const claimantColumn = () => {
   };
 };
 
-export const veteranSsnColumn = () => {
+export const veteranParticipantIdColumn = () => {
   return {
-    header: 'Veteran SSN',
-    valueFunction: (task) => task.veteranSSN,
-    getSortValue: (task) => task.veteranSSN
+    header: 'Veteran Participant Id',
+    valueFunction: (task) => task.veteranParticipantId,
+    getSortValue: (task) => task.veteranParticipantId
   };
 };
 

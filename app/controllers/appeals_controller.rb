@@ -168,7 +168,8 @@ class AppealsController < ApplicationController
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
-      appeals
+      appeals,
+      user: current_user
     ).as_json
   end
 end

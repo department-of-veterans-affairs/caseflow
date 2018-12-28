@@ -1142,8 +1142,8 @@ RSpec.feature "Higher-Level Review" do
           expect(page).to_not have_content("Left knee granted")
 
           add_intake_nonrating_issue(
-            category: "Active Duty Adjustments",
-            description: "Description for Active Duty Adjustments",
+            category: "Accrued",
+            description: "I am a description",
             date: "10/25/2017"
           )
           expect(page).to_not have_content("Establish EP")
@@ -1154,7 +1154,7 @@ RSpec.feature "Higher-Level Review" do
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
                    review_request: hlr,
-                   description: "Description for Active Duty Adjustments",
+                   issue_category: "Accrued",
                    benefit_type: hlr.benefit_type
           )).to_not be_nil
         end
@@ -1275,6 +1275,19 @@ RSpec.feature "Higher-Level Review" do
           )).to_not be_nil
 
           expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
+
+          expect(LegacyIssueOptin.all.count).to eq(1)
+
+          li_optin = LegacyIssueOptin.first
+
+          expect(li_optin.optin_processed_at).to_not be_nil
+          expect(li_optin).to have_attributes(
+            vacols_id: "vacols1",
+            vacols_sequence_id: 1
+          )
+          expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
+            LegacyIssueOptin::VACOLS_DISPOSITION_CODE
+          )
         end
       end
 
