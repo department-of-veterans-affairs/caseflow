@@ -82,7 +82,7 @@ describe JudgeTask do
 
       context "update includes instruction text" do
         let(:new_instructions) { "new instructions" }
-        let(:params) { { instructions: [new_instructions] } }
+        let(:params) { { instructions: [new_instructions] }.with_indifferent_access }
 
         it "merges instruction text" do
           subject
