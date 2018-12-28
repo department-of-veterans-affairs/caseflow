@@ -157,17 +157,17 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       }
       { task.instructions && task.instructions.length > 0 &&
         <div>
+          { this.state.taskInstructionsIsVisible &&
+          <React.Fragment>
+            <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+            <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
+          </React.Fragment> }
           <Button
             linkStyling
             styling={css({ padding: '0' })}
             name={(this.state.taskInstructionsIsVisible ? 'Hide ' : 'View ') +
             COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
             onClick={this.toggleTaskInstructionsVisibility} />
-          { this.state.taskInstructionsIsVisible &&
-        <React.Fragment>
-          <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
-          <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
-        </React.Fragment> }
         </div>
       }
     </React.Fragment>;
