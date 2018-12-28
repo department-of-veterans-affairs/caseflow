@@ -398,12 +398,7 @@ RSpec.feature "Case details" do
     end
 
     before do
-      FeatureToggle.enable!(:colocated_queue)
       User.authenticate!(user: colocated_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:colocated_queue)
     end
 
     scenario "displays task information" do
