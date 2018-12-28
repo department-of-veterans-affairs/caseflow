@@ -114,7 +114,7 @@ module IntakeHelpers
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(Date.today)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs

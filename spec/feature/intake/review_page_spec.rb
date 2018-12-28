@@ -1,7 +1,6 @@
-require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "Intake Review Page" do
+feature "Intake Review Page" do
   include IntakeHelpers
 
   before do
