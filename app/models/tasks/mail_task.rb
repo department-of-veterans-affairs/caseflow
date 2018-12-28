@@ -55,7 +55,7 @@ class MailTask < GenericTask
     def case_active?(parent)
       # TODO: I think this will always return true if we can create MailTasks since the creation of mail tasks relies
       # on the presence of an incomplete RootTask.
-      parent.appeal.tasks.where(type: RootTask.name).where.not(status: Constants.TASK_STATUSES.completed).any?
+      parent.appeal.active?
     end
   end
 

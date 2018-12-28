@@ -138,6 +138,10 @@ class Appeal < DecisionReview
     docket_type == "direct_review"
   end
 
+  def active?
+    tasks.where(type: RootTask.name).where.not(status: Constants.TASK_STATUSES.completed).any?
+  end
+
   def veteran_name
     # For consistency with LegacyAppeal.veteran_name
     veteran&.name&.formatted(:form)
