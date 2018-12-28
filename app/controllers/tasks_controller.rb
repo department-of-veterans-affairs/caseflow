@@ -89,8 +89,11 @@ class TasksController < ApplicationController
       return json_vso_tasks
     end
 
-    legacy_appeal_tasks = appeal.is_a?(LegacyAppeal) ? LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id) : []
-    tasks = (legacy_appeal_tasks + appeal.tasks).uniq
+    tasks = appeal.tasks
+    if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
+      legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
+      tasks = (legacy_appeal_tasks + tasks).uniq
+    end
 
     render json: {
       tasks: json_tasks(tasks)[:data]
