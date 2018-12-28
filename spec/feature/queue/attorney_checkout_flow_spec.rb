@@ -14,7 +14,7 @@ RSpec.feature "Attorney checkout flow" do
       FactoryBot.create(
         :appeal,
         number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(:request_issue, 1, description: issue_description, notes: issue_note)
+        request_issues: FactoryBot.build_list(:request_issue, 4, description: issue_description, notes: issue_note)
       )
     end
 
@@ -65,12 +65,30 @@ RSpec.feature "Attorney checkout flow" do
         count: appeal.request_issues.length
       )
 
-      issue_dispositions.each do |row|
+      issue_dispositions.each_with_index do |row, index|
+        disposition = (index == 0 || index == 1) ? "Remanded" : "Allowed"
         row.click
-        page.find("div", class: "Select-option", text: "Allowed").click
+        page.find("div", class: "Select-option", text: disposition).click
       end
 
       click_on "Continue"
+
+      find_field("Service treatment records", visible: false).sibling("label").click
+      find_field("Post AOJ", visible: false).sibling("label").click
+
+      click_on "Continue"
+      # For some reason clicking too quickly on the next remand reason breaks the test.
+      # Adding sleeps is bad... but I'm not sure how else to get this to work.
+      sleep 1
+
+      all("label", text: "Medical examinations", visible: false, count: 2)[1].click
+      all("label", text: "Pre AOJ", visible: false, count: 2)[1].click
+
+      all("label", text: "VA records", visible: false, count: 2)[1].click
+      all("label", text: "Post AOJ", visible: false, count: 3)[1].click
+
+      click_on "Continue"
+
       expect(page).to have_content("Submit Draft Decision for Review")
 
       document_id = Array.new(35).map { rand(10) }.join
@@ -86,6 +104,10 @@ RSpec.feature "Attorney checkout flow" do
       expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
       expect(page.current_path).to eq("/queue")
+
+      expect(appeal.reload.request_issues.where(disposition: "remanded").count).to eq(2)
+      expect(appeal.request_issues.where(disposition: "allowed").count).to eq(2)
+      expect(appeal.request_issues.map(&:remand_reasons).flatten.size).to eq 3
     end
 
     context "when ama issue feature toggle is turned on" do
@@ -457,6 +479,12 @@ RSpec.feature "Attorney checkout flow" do
         expect(appeal.reload.issues.first.remand_reasons.size).to eq 1
         expect(appeal.issues.second.remand_reasons.size).to eq 2
         expect(appeal.issues.third.remand_reasons.size).to eq 0
+
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[0].issdc).to eq "3"
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[1].issdc).to eq "3"
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[2].issdc).to eq "1"
+
+        expect(VACOLS::RemandReason.where(rmdkey: appeal.vacols_id).size).to eq 3
       end
 
       scenario "submits omo request" do
