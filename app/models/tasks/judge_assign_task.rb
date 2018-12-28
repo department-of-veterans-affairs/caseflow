@@ -4,7 +4,7 @@ class JudgeAssignTask < JudgeTask
   end
 
   def when_child_task_completed
-    update!(type: JudgeReviewTask.name)
+    update!(type: JudgeDecisionReviewTask.name)
     super
   end
 

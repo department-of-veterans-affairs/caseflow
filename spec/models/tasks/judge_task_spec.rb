@@ -43,7 +43,7 @@ describe JudgeTask do
       end
 
       context "in the review phase" do
-        let(:subject_task) { FactoryBot.create(:ama_judge_review_task, assigned_to: judge) }
+        let(:subject_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
 
         it "should return the dispatch action" do
           expect(subject).to eq([subject_task.build_action_hash(Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h)])
@@ -125,7 +125,7 @@ describe JudgeTask do
       parent = attorney_task.parent
       expect(parent.type).to eq JudgeAssignTask.name
       parent.when_child_task_completed
-      expect(parent.type).to eq JudgeReviewTask.name
+      expect(parent.type).to eq JudgeDecisionReviewTask.name
     end
   end
 end

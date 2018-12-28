@@ -217,7 +217,7 @@ export const onHoldTasksForAttorney: (State) => Array<Task> = createSelector(
   }
 );
 
-export const judgeReviewTasksSelector = createSelector(
+export const judgeDecisionReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
     if (task.appealType === 'Appeal') {

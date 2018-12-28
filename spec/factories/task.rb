@@ -56,8 +56,8 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :ama_judge_review_task, class: JudgeReviewTask do
-      type JudgeReviewTask.name
+    factory :ama_judge_decision_review_task, class: JudgeDecisionReviewTask do
+      type JudgeDecisionReviewTask.name
       appeal { create(:appeal) }
     end
 
