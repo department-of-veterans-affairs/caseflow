@@ -159,9 +159,9 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
     const assignedByAbbrev = task.assignedBy.firstName ?
       this.getAbbrevName(task.assignedBy) : null;
-    const assignedToListItem = <React.Fragment>
+    const assignedToListItem = this.props.appeal.locationCode ? <React.Fragment>
       <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
-    </React.Fragment>;
+    </React.Fragment> : null;
 
     if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
 
@@ -223,8 +223,18 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         <tr>
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
-              <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-              <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd>
+              { task.assignedOn &&
+                <React.Fragment>
+                  <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
+                  <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd>
+                </React.Fragment>
+              }
+              { task.dueOn &&
+                <React.Fragment>
+                  <dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
+                  <dd><DateString date={task.dueOn} dateFormat="MM/DD/YYYY" /></dd>
+                </React.Fragment>
+              }
               {this.daysSinceTaskAssignmentListItem(task)}
             </CaseDetailsDescriptionList>
           </td>
