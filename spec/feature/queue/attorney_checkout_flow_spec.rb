@@ -480,7 +480,6 @@ RSpec.feature "Attorney checkout flow" do
         expect(appeal.issues.second.remand_reasons.size).to eq 2
         expect(appeal.issues.third.remand_reasons.size).to eq 0
 
-
         expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[0].issdc).to eq "3"
         expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[1].issdc).to eq "3"
         expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[2].issdc).to eq "1"
