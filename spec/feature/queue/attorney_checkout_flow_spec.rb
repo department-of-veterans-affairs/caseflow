@@ -105,13 +105,9 @@ RSpec.feature "Attorney checkout flow" do
 
       expect(page.current_path).to eq("/queue")
 
-      expect(appeal.reload.request_issues[0].disposition).to eq "remanded"
-      expect(appeal.request_issues[1].disposition).to eq "remanded"
-      expect(appeal.request_issues[2].disposition).to eq "allowed"
-      expect(appeal.request_issues[3].disposition).to eq "allowed"
-
-      expect(appeal.request_issues[0].remand_reasons.size).to eq 1
-      expect(appeal.request_issues[1].remand_reasons.size).to eq 2
+      expect(appeal.reload.request_issues.where(disposition: "remanded").count).to eq(2)
+      expect(appeal.request_issues.where(disposition: "allowed").count).to eq(2)
+      expect(appeal.request_issues.map(&:remand_reasons).flatten.size).to eq 3
     end
 
     context "when ama issue feature toggle is turned on" do
