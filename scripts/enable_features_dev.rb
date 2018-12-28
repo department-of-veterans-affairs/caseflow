@@ -23,19 +23,11 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "intake_enable_add_issues_page",
-          enable_all: true
-        },
-        {
           feature: "reader",
           enable_all: true
         },
         {
           feature: "search",
-          enable_all: true
-        },
-        {
-          feature: "colocated_queue",
           enable_all: true
         },
         {
