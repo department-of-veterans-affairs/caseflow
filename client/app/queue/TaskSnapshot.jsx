@@ -28,6 +28,7 @@ import {
   sectionHeadingStyling,
   anchorJumpLinkStyling
 } from './StickyNavContentArea';
+import Button from '../components/Button';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -42,7 +43,8 @@ export const grayLineStyling = css({
 const taskContainerStyling = css({
   border: 'none',
   verticalAlign: 'top',
-  padding: '3px'
+  padding: '3px',
+  paddingBottom: '3rem'
 });
 
 const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
@@ -74,6 +76,19 @@ type Props = Params & {|
 |};
 
 export class TaskSnapshot extends React.PureComponent<Props> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      taskInstructionsIsVisible: false
+    };
+  }
+
+  toggleTaskInstructionsVisibility = () => {
+    const prevState = this.state.taskInstructionsIsVisible;
+
+    this.setState({ taskInstructionsIsVisible: !prevState });
+  }
+
   daysSinceTaskAssignmentListItem = (task) => {
     if (task) {
       const today = moment().startOf('day');
@@ -142,10 +157,20 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         </React.Fragment>
       }
       { task.instructions && task.instructions.length > 0 &&
-        <React.Fragment>
-          <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
-          <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
-        </React.Fragment> }
+        <div>
+          { this.state.taskInstructionsIsVisible &&
+          <React.Fragment>
+            <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+            <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
+          </React.Fragment> }
+          <Button
+            linkStyling
+            styling={css({ padding: '0' })}
+            name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
+              COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
+            onClick={this.toggleTaskInstructionsVisibility} />
+        </div>
+      }
     </React.Fragment>;
   }
   legacyTaskInformation = (task) => {
