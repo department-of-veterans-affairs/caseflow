@@ -603,9 +603,9 @@ RSpec.feature "Case details" do
       it "Show/hide task instructions" do
         visit "/queue/appeals/#{appeal.uuid}"
 
-        find("button", text: "View " + COPY::TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL).click
+        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content(instructions_text)
-        find("button", text: "Hide " + COPY::TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL).click
+        find("button", text: COPY::TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to_not have_content(instructions_text)
       end
     end
