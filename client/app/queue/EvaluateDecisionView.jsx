@@ -14,8 +14,8 @@ import CheckboxGroup from '../components/CheckboxGroup';
 import Checkbox from '../components/Checkbox';
 import TextareaField from '../components/TextareaField';
 import CaseTitle from './CaseTitle';
-import CaseSnapshot from './CaseSnapshot';
 import Alert from '../components/Alert';
+import TaskSnapshot from './TaskSnapshot';
 
 import { deleteAppeal } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
@@ -211,7 +211,7 @@ class EvaluateDecisionView extends React.PureComponent {
       {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
         {error.detail}
       </Alert>}
-      <CaseSnapshot appealId={appealId} hideDropdown />
+      <TaskSnapshot appealId={appealId} hideDropdown />
       <hr {...hrStyling} />
 
       {appeal.isLegacyAppeal && <React.Fragment>

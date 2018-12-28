@@ -15,7 +15,7 @@ import CaseHearingsDetail from './CaseHearingsDetail';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
-import CaseSnapshot from './CaseSnapshot';
+import TaskSnapshot from './TaskSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
@@ -24,6 +24,8 @@ import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
+import COPY from '../../COPY.json';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
   appealWithDetailSelector
@@ -35,6 +37,12 @@ const horizontalRuleStyling = css({
   borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
   marginTop: '3rem',
   marginBottom: '3rem'
+});
+
+const anchorEditLinkStyling = css({
+  fontSize: '1.5rem',
+  fontWeight: 'normal',
+  margin: '5px'
 });
 
 class CaseDetailsView extends React.PureComponent {
@@ -62,6 +70,8 @@ class CaseDetailsView extends React.PureComponent {
       featureToggles
     } = this.props;
 
+    const amaIssueType = featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
+
     return <AppSegment filledBackground>
       <CaseTitle appeal={appeal} />
       {error && <Alert title={error.title} type="error">
@@ -77,13 +87,17 @@ class CaseDetailsView extends React.PureComponent {
           veteranId={appeal.veteranFileNumber}
         />
       }
-      <CaseSnapshot appealId={appealId} />
+      <TaskSnapshot appealId={appealId} />
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
         <CaseDetailsIssueList
-          amaIssueType={featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)}
+          amaIssueType={amaIssueType}
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
+          additionalHeaderContent={amaIssueType && appeal.canEditRequestIssues &&
+            <span className="cf-push-right" {...anchorEditLinkStyling}>
+              <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_REQUEST_ISSUES_LINK}</Link>
+            </span>}
           issues={appeal.issues}
           decisionIssues={appeal.decisionIssues}
         />

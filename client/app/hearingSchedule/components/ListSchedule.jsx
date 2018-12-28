@@ -4,7 +4,6 @@ import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
 import Table from '../../components/Table';
-import { formatDateStr } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
 import FilterRibbon from '../../components/FilterRibbon';
@@ -19,6 +18,7 @@ import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
+import moment from 'moment';
 
 const downloadButtonStyling = css({
   marginTop: '60px'
@@ -114,7 +114,8 @@ class ListSchedule extends React.Component {
 
     return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.hearingDate, 'asc').
       map((hearingDay) => ({
-        hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDateStr(hearingDay.hearingDate)}</Link>,
+        hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>
+          {moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}</Link>,
         hearingType: hearingDay.hearingType,
         regionalOffice: hearingDay.regionalOffice,
         room: hearingDay.room,

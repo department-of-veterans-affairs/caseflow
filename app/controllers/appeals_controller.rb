@@ -19,6 +19,12 @@ class AppealsController < ApplicationController
     end
   end
 
+  def ready_for_hearing_schedule
+    ro = HearingDayMapper.validate_regional_office(params[:ro])
+
+    render json: json_appeals(AppealRepository.appeals_ready_for_hearing_schedule(ro))
+  end
+
   def document_count
     render json: { document_count: appeal.number_of_documents }
   rescue StandardError => e
@@ -58,8 +64,7 @@ class AppealsController < ApplicationController
         MetricsService.record("Get appeal information for ID #{id}",
                               service: :queue,
                               name: "AppealsController.show") do
-          render json: { appeal: json_appeals([appeal])[:data][0],
-                         can_edit_aod: AodTeam.singleton.user_has_access?(current_user) }
+          render json: { appeal: json_appeals([appeal])[:data][0] }
         end
       end
     end
@@ -163,7 +168,8 @@ class AppealsController < ApplicationController
 
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
-      appeals
+      appeals,
+      user: current_user
     ).as_json
   end
 end

@@ -15,12 +15,24 @@ class AppealRepository
     end
   end
 
+  def self.find_case_record(id)
+    VACOLS::Case.includes(:folder, :correspondent, :representatives).find(id)
+  end
+
+  def self.vacols_records_for_appeals(ids)
+    MetricsService.record("VACOLS: eager_load_legacy_appeals_batch",
+                          service: :vacols,
+                          name: "eager_load_legacy_appeals_batch") do
+      find_case_record(ids)
+    end
+  end
+
   # Returns a boolean saying whether the load succeeded
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
                                         name: "load_vacols_data") do
-      VACOLS::Case.includes(:folder, :correspondent, :representatives).find(appeal.vacols_id)
+      find_case_record(appeal.vacols_id)
     end
 
     set_vacols_values(appeal: appeal, case_record: case_record)
@@ -53,7 +65,7 @@ class AppealRepository
       vacols_ids = cases.map(&:bfkey)
       # Load issues, but note that we do so without including descriptions
       issues = VACOLS::CaseIssue.where(isskey: vacols_ids).group_by(&:isskey)
-      hearings = Hearing.repository.hearings_for_appeals(vacols_ids)
+      hearings = HearingRepository.hearings_for_appeals(vacols_ids)
       cavc_decisions = CAVCDecision.repository.cavc_decisions_by_appeals(vacols_ids)
 
       aod_and_rem_return = VACOLS::Case.where(bfkey: vacols_ids)
@@ -458,7 +470,7 @@ class AppealRepository
 
       # Create follow up issues that will be listed as closed with the
       # proper disposition
-      case_record.case_issues.where(issdc: "3").each_with_index do |case_issue, i|
+      case_record.case_issues.where(issdc: %w[3 L]).each_with_index do |case_issue, i|
         VACOLS::CaseIssue.create!(
           case_issue.remand_clone_attributes.merge(
             isskey: follow_up_appeal_key,
@@ -475,7 +487,7 @@ class AppealRepository
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
-  def self.reopen_undecided_appeal!(appeal:, user:, safeguards:)
+  def self.reopen_undecided_appeal!(appeal:, user:, safeguards:, reopen_issues: true)
     case_record = appeal.case_record
     folder_record = case_record.folder
     not_valid_to_reopen_err = AppealNotValidToReopen.new(appeal.id)
@@ -487,7 +499,7 @@ class AppealRepository
     close_disposition = case_record.bfdc
 
     if safeguards
-      fail not_valid_to_reopen_err unless %w[9 E F G P].include? close_disposition
+      fail not_valid_to_reopen_err unless %w[9 E F G P O].include? close_disposition
     end
 
     previous_active_location = case_record.previous_active_location
@@ -518,13 +530,16 @@ class AppealRepository
         timdtime: VacolsHelper.local_time_with_utc_timezone,
         timduser: user.regional_office
       )
-      # Reopen any issues that have the same close information as the appeal
-      case_record.case_issues
-        .where(issdc: close_disposition, issdcls: close_date)
-        .update_all(
-          issdc: nil,
-          issdcls: nil
-        )
+
+      if reopen_issues
+        # Reopen any issues that have the same close information as the appeal
+        case_record.case_issues
+          .where(issdc: close_disposition, issdcls: close_date)
+          .update_all(
+            issdc: nil,
+            issdcls: nil
+          )
+      end
     end
   end
   # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
@@ -535,7 +550,7 @@ class AppealRepository
     folder_record = case_record.folder
     not_valid_to_reopen_err = AppealNotValidToReopen.new(appeal.id)
 
-    fail not_valid_to_reopen_err unless %w[P W].include? disposition_code
+    fail not_valid_to_reopen_err unless %w[P W O].include? disposition_code
     fail not_valid_to_reopen_err unless case_record.bfmpro == "HIS"
     fail not_valid_to_reopen_err unless case_record.bfcurloc == "99"
 
@@ -544,7 +559,8 @@ class AppealRepository
     fail not_valid_to_reopen_err unless %w[50 53 54 70 96 97 98].include? previous_active_location
     fail not_valid_to_reopen_err if disposition_code == "P" && %w[53 43].include?(previous_active_location)
 
-    follow_up_appeal_key = "#{case_record.bfkey}#{disposition_code}"
+    follow_up_appeal_key = "#{case_record.bfkey}P"
+
     fail not_valid_to_reopen_err unless VACOLS::Case.where(bfkey: follow_up_appeal_key).count == 1
 
     VACOLS::Case.transaction do

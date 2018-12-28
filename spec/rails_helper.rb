@@ -16,6 +16,7 @@ require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
 require_relative "support/download_helper"
 require_relative "support/clear_cache"
+require_relative "support/feature_helper"
 require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -105,6 +106,9 @@ end
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 5
+
+# This allows for active job expectations
+ActiveJob::Base.queue_adapter = :test
 
 # Convenience methods for stubbing current user
 module StubbableUser
@@ -375,4 +379,5 @@ end
 RSpec.configure do |config|
   config.include ActionView::Helpers::NumberHelper
   config.include FakeDateHelper
+  config.include FeatureHelper, type: :feature
 end

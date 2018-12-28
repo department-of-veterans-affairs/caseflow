@@ -8,6 +8,12 @@ FactoryBot.define do
       end_product_establishment { create(:end_product_establishment) }
     end
 
+    trait :nonrating do
+      issue_category "Apportionment"
+      decision_date { 2.months.ago }
+      description "nonrating issue description"
+    end
+
     trait :with_rating_decision_issue do
       transient do
         veteran_participant_id nil

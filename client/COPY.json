@@ -35,23 +35,25 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
 
-  "CASE_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
-  "CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
-  "CASE_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL": "Days waiting",
-  "CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL": "Docket",
-  "CASE_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE": "Task information",
-  "CASE_SNAPSHOT_TASK_ASSIGNEE_LABEL": "Assigned to",
-  "CASE_SNAPSHOT_TASK_ASSIGNOR_LABEL": "Assigned by",
-  "CASE_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL": "Assigned on",
-  "CASE_SNAPSHOT_TASK_DUE_DATE_LABEL": "Due",
-  "CASE_SNAPSHOT_DECISION_PREPARER_LABEL": "Prepared by",
-  "CASE_SNAPSHOT_ASSIGNED_JUDGE_LABEL": "VLJ",
-  "CASE_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL": "Attorney",
-  "CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
-  "CASE_SNAPSHOT_TASK_TYPE_LABEL": "Task",
-  "CASE_SNAPSHOT_TASK_FROM_LABEL": "From",
-  "CASE_SNAPSHOT_TASK_INSTRUCTIONS_LABEL": "Task instructions",
-  "CASE_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
+  "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
+  "TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
+  "TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL": "Days waiting",
+  "TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL": "Docket",
+  "TASK_SNAPSHOT_TASK_ASSIGNMENT_BOX_TITLE": "Task information",
+  "TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL": "Assigned to",
+  "TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL": "Assigned by",
+  "TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL": "Assigned on",
+  "TASK_SNAPSHOT_TASK_DUE_DATE_LABEL": "Due",
+  "TASK_SNAPSHOT_DECISION_PREPARER_LABEL": "Prepared by",
+  "TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL": "VLJ",
+  "TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL": "Attorney",
+  "TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
+  "TASK_SNAPSHOT_TASK_TYPE_LABEL": "Task",
+  "TASK_SNAPSHOT_TASK_FROM_LABEL": "Assigned by",
+  "TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL": "Task instructions",
+  "TASK_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
+  "TASK_SNAPSHOT_NO_ACTIVE_LABEL": "No active tasks",
+  "TASK_SNAPSHOT_ACTIVE_TASKS_LABEL": "Currently active tasks",
 
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View Hearing Worksheet",
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
@@ -110,7 +112,7 @@
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA": "OMO - VHA",
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME": "OMO - IME",
   "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
-  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision Ready for Review",
+  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision ready for review",
   "ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL": "Add admin action",
 
   "REMAND_REASONS_SCREEN_SUBHEAD_LABEL": "Please %s the appropriate remand reason(s) for all the remand dispositions.",
@@ -248,7 +250,8 @@
 
   "ASSIGN_TO_USER_DROPDOWN": "Select a user",
   "ASSIGN_TO_TEAM_DROPDOWN": "Select a team",
-  "ASSIGN_TO_PAGE_TITLE": "Assign task",
+  "ASSIGN_TASK_TITLE": "Assign task",
+  "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
 
   "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
@@ -266,11 +269,15 @@
   "DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE": "Ex: Increased rating for arthritis is granted with an evaluation of 90%",
   "DECISION_ISSUE_MODAL_DISPOSITION": "Disposition",
   "DECISION_ISSUE_MODAL_BENEFIT_TYPE": "Benefit type",
+  "DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION": "Do you want to add this decision to other issues on appeal? This could occur when you determine that two or more issues should receive a single decision.",
+  "DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE": "Issues",
   "DECISION_ISSUE_PAGE_TITLE": "Add decisions",
   "DECISION_ISSUE_PAGE_EXPLANATION": "Add decisions to each issue the Veteran is appealing. Any decisions you add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",
 
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
 
   "JUDGE_ASSIGN_TASK_LABEL": "assign",
-  "JUDGE_REVIEW_TASK_LABEL": "review"
+  "JUDGE_REVIEW_TASK_LABEL": "review",
+
+  "CORRECT_REQUEST_ISSUES_LINK": "Correct issues"
 }
