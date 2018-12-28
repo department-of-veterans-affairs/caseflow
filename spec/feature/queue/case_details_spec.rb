@@ -397,12 +397,7 @@ RSpec.feature "Case details" do
     end
 
     before do
-      FeatureToggle.enable!(:colocated_queue)
       User.authenticate!(user: colocated_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:colocated_queue)
     end
 
     scenario "displays task information" do
@@ -650,7 +645,7 @@ RSpec.feature "Case details" do
         visit "/queue/appeals/#{legacy_appeal.vacols_id}"
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-        expect(page).to have_content(legacy_task.assigned_at.strftime("%-m/%-e/%y"))
+        expect(page).to have_content(legacy_task.assigned_at.strftime("%-m/%-e/%Y"))
       end
     end
   end
