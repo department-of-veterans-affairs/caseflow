@@ -84,7 +84,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
   toggleTaskInstructionsVisibility = () => {
     const prevState = this.state.taskInstructionsIsVisible;
-
     this.setState({ taskInstructionsIsVisible: !prevState });
   }
 
