@@ -205,10 +205,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
         <dd>{task.addedByName}</dd>
       </React.Fragment> }
-      <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-      <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YY" /></dd>
-      <dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
-      <dd><DateString date={task.dueOn} dateFormat="MM/DD/YY" /></dd>
     </React.Fragment>;
   };
 
@@ -228,8 +224,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
               <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-              <dd>{task && task.assignedOn &&
-                moment(task.assignedOn).format('MM/DD/YYYY')}</dd>
+              <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd>
               {this.daysSinceTaskAssignmentListItem(task)}
             </CaseDetailsDescriptionList>
           </td>
