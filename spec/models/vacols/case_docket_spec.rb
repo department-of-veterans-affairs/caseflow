@@ -97,12 +97,12 @@ describe VACOLS::CaseDocket do
   context ".counts_by_priority_and_readiness" do
     subject { VACOLS::CaseDocket.counts_by_priority_and_readiness }
     it "creates counts grouped by priority and readiness" do
-      expect(subject).to eq([
-                              { "n" => 1, "priority" => 1, "ready" => 0 },
-                              { "n" => 2, "priority" => 1, "ready" => 1 },
-                              { "n" => 1, "priority" => 0, "ready" => 0 },
-                              { "n" => 2, "priority" => 0, "ready" => 1 }
-                            ])
+      expect(subject).to match_array([
+                                       { "n" => 1, "priority" => 1, "ready" => 0 },
+                                       { "n" => 2, "priority" => 1, "ready" => 1 },
+                                       { "n" => 1, "priority" => 0, "ready" => 0 },
+                                       { "n" => 2, "priority" => 0, "ready" => 1 }
+                                     ])
     end
   end
 
@@ -216,6 +216,14 @@ describe VACOLS::CaseDocket do
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         end
+      end
+    end
+
+    context "when the case contains a specialty case team issue" do
+      let!(:sct_issue) { create(:case_issue, :education, isskey: nonpriority_ready_case.bfkey) }
+
+      it "does not distribute the case" do
+        expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
       end
     end
   end
@@ -354,6 +362,14 @@ describe VACOLS::CaseDocket do
             expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           end
         end
+      end
+    end
+
+    context "when the case contains a specialty case team issue" do
+      let!(:sct_issue) { create(:case_issue, :education, isskey: aod_ready_case.bfkey) }
+
+      it "does not distribute the case" do
+        expect(aod_ready_case.reload.bfcurloc).to eq("81")
       end
     end
   end

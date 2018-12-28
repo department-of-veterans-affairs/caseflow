@@ -25,7 +25,8 @@ describe SupplementalClaimIntake do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
     let(:detail) do
-      SupplementalClaim.create!(
+      create(
+        :supplemental_claim,
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago
       )
@@ -70,9 +71,12 @@ describe SupplementalClaimIntake do
     let(:benefit_type) { "compensation" }
     let(:claimant) { nil }
     let(:payee_code) { nil }
+    let(:veteran_is_not_claimant) { false }
 
     let(:detail) do
-      SupplementalClaim.create!(
+      create(
+        :supplemental_claim,
+        benefit_type: nil,
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago
       )
@@ -83,7 +87,8 @@ describe SupplementalClaimIntake do
         receipt_date: receipt_date,
         benefit_type: benefit_type,
         claimant: claimant,
-        payee_code: payee_code
+        payee_code: payee_code,
+        veteran_is_not_claimant: veteran_is_not_claimant
       )
     end
 
@@ -102,6 +107,7 @@ describe SupplementalClaimIntake do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
+      let(:veteran_is_not_claimant) { true }
 
       it "adds other relationship to claimants" do
         subject
@@ -111,6 +117,18 @@ describe SupplementalClaimIntake do
           participant_id: "1234",
           payee_code: "10"
         )
+      end
+
+      context "claimant is nil" do
+        let(:claimant) { nil }
+        let(:receipt_date) { 3.days.from_now }
+
+        it "is expected to add an error that claimant cannot be blank" do
+          expect(subject).to be_falsey
+          expect(detail.errors[:claimant]).to include("blank")
+          expect(detail.errors[:receipt_date]).to include("in_future")
+          expect(detail.claimants).to be_empty
+        end
       end
 
       context "And payee code is nil" do
@@ -168,24 +186,30 @@ describe SupplementalClaimIntake do
 
     let(:issue_data) do
       {
-        profile_date: "2018-04-30T11:11:00.000-04:00",
-        reference_id: "reference-id",
+        rating_issue_profile_date: "2018-04-30T11:11:00.000-04:00",
+        rating_issue_reference_id: "reference-id",
         decision_text: "decision text"
       }
     end
 
     let(:params) { { request_issues: [issue_data] } }
 
+    let(:legacy_opt_in_approved) { false }
+
     let(:detail) do
-      SupplementalClaim.create!(
+      create(
+        :supplemental_claim,
         veteran_file_number: "64205555",
-        receipt_date: 3.days.ago
+        receipt_date: 3.days.ago,
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 
     let!(:claimant) do
-      Claimant.create!(
+      create(
+        :claimant,
         review_request: detail,
+        payee_code: "00",
         participant_id: "1234"
       )
     end
@@ -245,6 +269,47 @@ describe SupplementalClaimIntake do
       )
     end
 
+    context "when a legacy VACOLS opt-in occurs" do
+      let(:vacols_issue) { create(:case_issue) }
+      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
+      let(:legacy_appeal) do
+        create(:legacy_appeal, vacols_case: vacols_case)
+      end
+
+      let(:issue_data) do
+        {
+          profile_date: "2018-04-30T11:11:00.000-04:00",
+          reference_id: "reference-id",
+          decision_text: "decision text",
+          vacols_id: legacy_appeal.vacols_id,
+          vacols_sequence_id: vacols_issue.issseq
+        }
+      end
+
+      context "legacy_opt_in_approved is false" do
+        it "does not submit a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
+
+          subject
+
+          expect(LegacyIssueOptin.count).to eq 0
+        end
+      end
+
+      context "legacy_opt_approved is true" do
+        let(:legacy_opt_in_approved) { true }
+
+        it "submits a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
+          expect_any_instance_of(LegacyOptinManager).to receive(:process!).once
+
+          subject
+
+          expect(LegacyIssueOptin.count).to eq 1
+        end
+      end
+    end
+
     context "when the intake was already complete" do
       let(:completed_at) { Time.zone.now }
 
@@ -275,7 +340,7 @@ describe SupplementalClaimIntake do
       end
 
       it "clears pending status" do
-        allow(detail).to receive(:process_end_product_establishments!).and_raise(unknown_error)
+        allow(detail).to receive(:establish!).and_raise(unknown_error)
 
         expect { subject }.to raise_exception(unknown_error)
         expect(intake.completion_status).to be_nil

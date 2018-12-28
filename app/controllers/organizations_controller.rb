@@ -5,13 +5,13 @@ class OrganizationsController < ApplicationController
   skip_before_action :deny_vso_access
 
   def show
-    render "organizations/show"
+    render "queue/index"
   end
 
   private
 
   def verify_organization_access
-    redirect_to "/unauthorized" unless organization && organization.user_has_access?(current_user)
+    redirect_to "/unauthorized" unless organization&.user_has_access?(current_user)
   end
 
   def verify_role_access

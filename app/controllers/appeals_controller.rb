@@ -4,7 +4,7 @@ class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count, :new_documents]
   # Only whitelist endpoints VSOs should have access to.
-  skip_before_action :deny_vso_access, only: [:index, :show_case_list, :show]
+  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
 
   def index
     get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
@@ -17,6 +17,12 @@ class AppealsController < ApplicationController
         return get_appeals_for_file_number(Veteran.find(params[:caseflow_veteran_id]).file_number)
       end
     end
+  end
+
+  def ready_for_hearing_schedule
+    ro = HearingDayMapper.validate_regional_office(params[:ro])
+
+    render json: json_appeals(AppealRepository.appeals_ready_for_hearing_schedule(ro))
   end
 
   def document_count
@@ -58,8 +64,7 @@ class AppealsController < ApplicationController
         MetricsService.record("Get appeal information for ID #{id}",
                               service: :queue,
                               name: "AppealsController.show") do
-          render json: { appeal: json_appeals([appeal])[:data][0],
-                         can_edit_aod: AodTeam.singleton.user_has_access?(current_user) }
+          render json: { appeal: json_appeals([appeal])[:data][0] }
         end
       end
     end
@@ -161,27 +166,10 @@ class AppealsController < ApplicationController
     }, status: 400
   end
 
-  def handle_non_critical_error(endpoint, err)
-    if !err.class.method_defined? :serialize_response
-      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
-      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
-    end
-
-    DataDogService.increment_counter(
-      metric_group: "errors",
-      metric_name: "non_critical",
-      app_name: RequestStore[:application],
-      attrs: {
-        endpoint: endpoint
-      }
-    )
-
-    render err.serialize_response
-  end
-
   def json_appeals(appeals)
     ActiveModelSerializers::SerializableResource.new(
-      appeals
+      appeals,
+      user: current_user
     ).as_json
   end
 end

@@ -14,14 +14,18 @@ import VeteranCasesView from './VeteranCasesView';
 import CaseHearingsDetail from './CaseHearingsDetail';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import CaseTitle from './CaseTitle';
-import CaseSnapshot from './CaseSnapshot';
+import CaseTitleDetails from './CaseTitleDetails';
+import TaskSnapshot from './TaskSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
-import { resetErrorMessages, resetSuccessMessages } from './uiReducer/uiActions';
-import CaseTimeline from './CaseTimeline';
+import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
+import { CaseTimeline } from './CaseTimeline';
+import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
+import COPY from '../../COPY.json';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
   appealWithDetailSelector
@@ -35,10 +39,26 @@ const horizontalRuleStyling = css({
   marginBottom: '3rem'
 });
 
+const anchorEditLinkStyling = css({
+  fontSize: '1.5rem',
+  fontWeight: 'normal',
+  margin: '5px'
+});
+
 class CaseDetailsView extends React.PureComponent {
   componentDidMount = () => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
     this.props.resetErrorMessages();
+
+    const { hearingDate, regionalOffice, hearingTime } = getQueryParams(window.location.search);
+
+    if (hearingDate && regionalOffice) {
+      this.props.setHearingDay({
+        hearingDate,
+        hearingTime: decodeURIComponent(hearingTime),
+        regionalOffice
+      });
+    }
   }
 
   render = () => {
@@ -46,30 +66,40 @@ class CaseDetailsView extends React.PureComponent {
       appealId,
       appeal,
       error,
-      success
+      success,
+      featureToggles
     } = this.props;
 
+    const amaIssueType = featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
+
     return <AppSegment filledBackground>
-      <CaseTitle appeal={appeal} appealId={appealId} redirectUrl={window.location.pathname} />
+      <CaseTitle appeal={appeal} />
       {error && <Alert title={error.title} type="error">
         {error.detail}
       </Alert>}
       {success && <Alert type="success" title={success.title} scrollOnAlert={false}>
         {success.detail}
       </Alert>}
+      <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname} />
       { this.props.veteranCaseListIsVisible &&
         <VeteranCasesView
           caseflowVeteranId={appeal.caseflowVeteranId}
           veteranId={appeal.veteranFileNumber}
         />
       }
-      <CaseSnapshot appealId={appealId} />
+      <TaskSnapshot appealId={appealId} />
       <hr {...horizontalRuleStyling} />
       <StickyNavContentArea>
         <CaseDetailsIssueList
+          amaIssueType={amaIssueType}
           title="Issues"
           isLegacyAppeal={appeal.isLegacyAppeal}
+          additionalHeaderContent={amaIssueType && appeal.canEditRequestIssues &&
+            <span className="cf-push-right" {...anchorEditLinkStyling}>
+              <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_REQUEST_ISSUES_LINK}</Link>
+            </span>}
           issues={appeal.issues}
+          decisionIssues={appeal.decisionIssues}
         />
         <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
         {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&
@@ -89,11 +119,12 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
-  const { veteranCaseListIsVisible } = state.ui;
+  const { veteranCaseListIsVisible, featureToggles } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
+    featureToggles,
     error,
     veteranCaseListIsVisible
   };
@@ -102,7 +133,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     resetErrorMessages,
-    resetSuccessMessages
+    resetSuccessMessages,
+    setHearingDay
   }, dispatch)
 );
 

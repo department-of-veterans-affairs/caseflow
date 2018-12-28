@@ -15,8 +15,13 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
 
     setup_debug_context(reader_user)
     update_fetched_at(reader_user)
-    appeals = reader_user.user.current_case_assignments
-    fetch_documents_for_appeals(appeals)
+    legacy_appeals = reader_user.user.current_case_assignments
+
+    ama_user_tasks = Task.where(assigned_to: reader_user.user)
+      .where.not(status: Constants.TASK_STATUSES.completed)
+    ama_appeals = ama_user_tasks.map(&:appeal).uniq
+
+    fetch_documents_for_appeals(legacy_appeals + ama_appeals)
     log_info
   rescue StandardError => e
     log_error
@@ -45,20 +50,18 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
   def fetch_documents_for_appeals(appeals)
     @counts[:appeals_total] = appeals.count
     appeals.each do |appeal|
-      begin
-        Raven.extra_context(appeal_id: appeal.id)
-        Rails.logger.debug("Fetching docs for appeal #{appeal.id}")
+      Raven.extra_context(appeal_id: appeal.id)
+      Rails.logger.debug("Fetching docs for appeal #{appeal.id}")
 
-        # signal to efolder X to fetch and save all documents
-        appeal.document_fetcher.find_or_create_documents!
-        @counts[:appeals_successful] += 1
-      rescue Caseflow::Error::EfolderAccessForbidden
-        Rails.logger.error "Encountered access forbidden error when fetching documents for appeal #{appeal.id}"
-        next
-      rescue Caseflow::Error::ClientRequestError, Caseflow::Error::DocumentRetrievalError
-        Rails.logger.error "Encountered client request error when fetching documents for appeal #{appeal.id}"
-        next
-      end
+      # signal to efolder X to fetch and save all documents
+      appeal.document_fetcher.find_or_create_documents!
+      @counts[:appeals_successful] += 1
+    rescue Caseflow::Error::EfolderAccessForbidden
+      Rails.logger.error "Encountered access forbidden error when fetching documents for appeal #{appeal.id}"
+      next
+    rescue Caseflow::Error::ClientRequestError, Caseflow::Error::DocumentRetrievalError
+      Rails.logger.error "Encountered client request error when fetching documents for appeal #{appeal.id}"
+      next
     end
   end
 

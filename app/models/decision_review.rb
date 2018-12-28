@@ -1,5 +1,6 @@
 class DecisionReview < ApplicationRecord
   include CachedAttributes
+  include Asyncable
 
   validate :validate_receipt_date
 
@@ -9,52 +10,97 @@ class DecisionReview < ApplicationRecord
 
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
+  has_many :decision_issues, as: :decision_review
+  has_many :tasks, as: :appeal
 
   before_destroy :remove_issues!
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
-    ratings_with_issues.map(&:ui_hash)
+    ratings_with_issues.map(&:serialize)
   end
 
-  def self.ama_activation_date
-    if FeatureToggle.enabled?(:use_ama_activation_date)
-      Constants::DATES["AMA_ACTIVATION"].to_date
-    else
-      Constants::DATES["AMA_ACTIVATION_TEST"].to_date
+  # The Asyncable module requires we define these.
+  # establishment_submitted_at - when our db is ready to push to exernal services
+  # establishment_attempted_at - when our db attempted to push to external services
+  # establishment_processed_at - when our db successfully pushed to external services
+  # establishment_error        - capture exception messages on failures
+
+  class << self
+    def submitted_at_column
+      :establishment_submitted_at
+    end
+
+    def attempted_at_column
+      :establishment_attempted_at
+    end
+
+    def processed_at_column
+      :establishment_processed_at
+    end
+
+    def error_column
+      :establishment_error
+    end
+
+    def ama_activation_date
+      if FeatureToggle.enabled?(:use_ama_activation_date)
+        Constants::DATES["AMA_ACTIVATION"].to_date
+      else
+        Constants::DATES["AMA_ACTIVATION_TEST"].to_date
+      end
+    end
+
+    def review_title
+      to_s.underscore.titleize
     end
   end
 
-  def self.review_title
-    to_s.underscore.titleize
+  def non_comp?
+    !ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
   end
 
   def serialized_ratings
     return unless receipt_date
+    return if non_comp?
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
         rating_issue_hash[:timely] = timely_issue?(Date.parse(rating_issue_hash[:promulgation_date].to_s))
         # always re-compute flags that depend on data in our db
-        rating_issue_hash.merge!(RatingIssue.from_ui_hash(rating_issue_hash).ui_hash)
+        rating_issue_hash.merge!(RatingIssue.deserialize(rating_issue_hash).serialize)
       end
     end
+  end
+
+  def veteran_full_name
+    veteran&.name&.formatted(:readable_full)
+  end
+
+  def number_of_issues
+    request_issues.count
+  end
+
+  def external_id
+    id.to_s
   end
 
   def ui_hash
     {
       veteran: {
-        name: veteran && veteran.name.formatted(:readable_short),
+        name: veteran&.name&.formatted(:readable_short),
         fileNumber: veteran_file_number,
-        formName: veteran && veteran.name.formatted(:form)
+        formName: veteran&.name&.formatted(:form)
       },
-      relationships: veteran && veteran.relationships,
+      relationships: veteran&.relationships,
       claimant: claimant_participant_id,
-      claimantNotVeteran: claimant_not_veteran,
+      veteranIsNotClaimant: veteran_is_not_claimant,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       legacyOptInApproved: legacy_opt_in_approved,
-      legacyIssues: serialized_legacy_issues,
+      legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash)
+      requestIssues: request_issues.map(&:ui_hash),
+      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
+      contestableIssuesByDate: contestable_issues.map(&:serialize)
     }
   end
 
@@ -82,6 +128,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def claimant_not_veteran
+    # This is being replaced by veteran_is_not_claimant, but keeping it temporarily
+    # until data is backfilled
     claimant_participant_id && claimant_participant_id != veteran.participant_id
   end
 
@@ -102,22 +150,96 @@ class DecisionReview < ApplicationRecord
     request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
 
-  def serialized_legacy_issues
-    return [] unless FeatureToggle.enabled?(:intake_legacy_opt_in, user: current_user)
-    active_or_eligible_legacy_appeals.map do |legacy_appeal|
+  def serialized_legacy_appeals
+    return [] unless legacy_opt_in_enabled?
+    return [] unless available_legacy_appeals.any?
+
+    available_legacy_appeals.map do |legacy_appeal|
       {
+        vacols_id: legacy_appeal.vacols_id,
         date: legacy_appeal.nod_date,
+        eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?(receipt_date),
         issues: legacy_appeal.issues.map(&:intake_attributes)
       }
     end
   end
 
+  def vacols_optin_special_issue
+    { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O }
+  end
+
+  def special_issues
+    [].tap do |specials|
+      specials << vacols_optin_special_issue if request_issues.any?(&:legacy_issue_optin)
+    end
+  end
+
+  def process_legacy_issues!
+    LegacyOptinManager.new(decision_review: self).process!
+  end
+
+  def on_decision_issues_sync_processed(end_product_establishment)
+    # no-op, can be overwritten
+  end
+
+  def establish!
+    # no-op
+  end
+
+  def contestable_issues
+    return contestable_issues_from_decision_issues if non_comp?
+    contestable_issues_from_ratings + contestable_issues_from_decision_issues
+  end
+
+  def active_nonrating_request_issues
+    @active_nonrating_request_issues ||= RequestIssue.nonrating
+      .where(veteran_participant_id: veteran.participant_id)
+      .where.not(id: request_issues.map(&:id))
+      .select(&:status_active?)
+  end
+
+  # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
+  def serializer_class
+    ::WorkQueue::DecisionReviewSerializer
+  end
+
   private
 
-  def active_or_eligible_legacy_appeals
-    @active_or_eligible_legacy_appeals ||= LegacyAppeal
+  def cached_rating_issues
+    cached_serialized_ratings.inject([]) do |result, rating_hash|
+      result + rating_hash[:issues].map { |rating_issue_hash| RatingIssue.deserialize(rating_issue_hash) }
+    end
+  end
+
+  def unfiltered_contestable_issues_from_ratings
+    cached_rating_issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
+  end
+
+  def contestable_issues_from_ratings
+    unfiltered_contestable_issues_from_ratings.reject do |contestable_issue|
+      contestable_issues_from_decision_issues.any? do |potential_duplicate|
+        contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
+      end
+    end
+  end
+
+  def contestable_issues_from_decision_issues
+    contestable_decision_issues.map { |decision_issue| ContestableIssue.from_decision_issue(decision_issue, self) }
+  end
+
+  def available_legacy_appeals
+    # If a Veteran does not opt-in to withdraw legacy appeals, do not show inactive appeals
+    legacy_opt_in_approved ? matchable_legacy_appeals : active_matchable_legacy_appeals
+  end
+
+  def matchable_legacy_appeals
+    @matchable_legacy_appeals ||= LegacyAppeal
       .fetch_appeals_by_file_number(veteran_file_number)
-      .select(&:eligible_for_soc_opt_in?)
+      .select { |appeal| appeal.matchable_to_request_issue?(receipt_date) }
+  end
+
+  def active_matchable_legacy_appeals
+    @active_matchable_legacy_appeals ||= matchable_legacy_appeals.select(&:active?)
   end
 
   def ratings_with_issues
@@ -125,7 +247,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def ratings_cache_key
-    "#{veteran_file_number}-ratings"
+    # change timestamp in order to clear old cache
+    "#{veteran_file_number}-ratings-11282018"
   end
 
   def formatted_receipt_date
@@ -151,6 +274,6 @@ class DecisionReview < ApplicationRecord
   end
 
   def legacy_opt_in_enabled?
-    FeatureToggle.enabled?(:intake_legacy_opt_in)
+    FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
   end
 end

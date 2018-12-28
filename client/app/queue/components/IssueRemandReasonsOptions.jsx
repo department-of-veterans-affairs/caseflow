@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { css } from 'glamor';
 import { formatDateStr } from '../../util/DateUtil';
 import scrollToComponent from 'react-scroll-to-component';
 
+import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
 import COPY from '../../../COPY.json';
 import Checkbox from '../../components/Checkbox';
 import CheckboxGroup from '../../components/CheckboxGroup';
@@ -17,10 +17,6 @@ import {
   getIssueTypeDescription,
   getIssueDiagnosticCodeLabel
 } from '../utils';
-import {
-  startEditingAppealIssue,
-  saveEditedAppealIssue
-} from '../QueueActions';
 import {
   fullWidth,
   REMAND_REASONS,
@@ -65,8 +61,7 @@ type Params = Props & {|
   issues: Issues,
   appeal: Appeal,
   highlight: boolean,
-  startEditingAppealIssue: typeof startEditingAppealIssue,
-  saveEditedAppealIssue: Function
+  amaDecisionIssues: boolean
 |};
 
 type RemandReasonOption = {|
@@ -96,11 +91,15 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
     this.state = _.fromPairs(pairs);
   }
 
-  updateIssue = (attributes) => {
-    const { appealId, issueId } = this.props;
+  updateIssue = (remandReasons) => {
+    const { appeal, issueId, amaDecisionIssues } = this.props;
+    const useDecisionIssues = !appeal.isLegacyAppeal && amaDecisionIssues;
+    const issues = useDecisionIssues ? appeal.decisionIssues : appeal.issues;
 
-    this.props.startEditingAppealIssue(appealId, issueId, attributes);
-    this.props.saveEditedAppealIssue(appealId);
+    return {
+      ..._.find(issues, (issue) => issue.id === issueId),
+      remand_reasons: remandReasons
+    };
   };
 
   getChosenOptions = (): Array<RemandReasonOption> => _.filter(this.state, (val) => val.checked);
@@ -161,7 +160,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
       compact().
       value();
 
-    this.updateIssue({ remand_reasons: remandReasons });
+    return this.updateIssue(remandReasons);
   };
 
   scrollToWarning = () => {
@@ -174,12 +173,16 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
     });
   };
 
-  toggleRemandReason = (checked, event) => this.setState({
-    [event.target.id.split('-')[1]]: {
-      checked,
-      post_aoj: null
-    }
-  });
+  toggleRemandReason = (checked, event) => {
+    const splitId = event.target.id.split('-');
+
+    this.setState({
+      [splitId[splitId.length - 1]]: {
+        checked,
+        post_aoj: null
+      }
+    });
+  }
 
   getCheckbox = (option, onChange, values) => {
     const rowOptId = `${String(this.props.issue.id)}-${option.id}`;
@@ -291,7 +294,9 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
         Issue {idx + 1} {issues.length > 1 ? ` of ${issues.length}` : ''}
       </h2>
       <div {...smallBottomMargin}>
-        Program: {appeal.isLegacyAppeal ? getIssueProgramDescription(issue) : issue.program}
+        {appeal.isLegacyAppeal ?
+          `Program: ${getIssueProgramDescription(issue)}` :
+          `Benefit type: ${BENEFIT_TYPES[issue.benefit_type]}` }
       </div>
       {!appeal.isLegacyAppeal &&
         <div {...smallBottomMargin}>
@@ -322,7 +327,8 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = appeal.issues;
+  const amaDecisionIssues = state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
+  const issues = (amaDecisionIssues && !appeal.isLegacyAppeal) ? appeal.decisionIssues : appeal.issues;
 
   return {
     appeal,
@@ -330,16 +336,12 @@ const mapStateToProps = (state, ownProps) => {
       VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
     ].includes(issue.disposition)),
     issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
-    highlight: state.ui.highlightFormItems
+    highlight: state.ui.highlightFormItems,
+    amaDecisionIssues
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  startEditingAppealIssue,
-  saveEditedAppealIssue
-}, dispatch);
-
 export default (connect(
-  mapStateToProps, mapDispatchToProps, null, { withRef: true }
+  mapStateToProps, null, null, { withRef: true }
 )(IssueRemandReasonsOptions): React.ComponentType<Props, State>
 );

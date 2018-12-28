@@ -8,11 +8,11 @@ import LegacyOptInApproved from '../../components/LegacyOptInApproved';
 import SelectClaimant from '../../components/SelectClaimant';
 import {
   setBenefitType,
-  setClaimantNotVeteran,
+  setVeteranIsNotClaimant,
   setClaimant,
   setPayeeCode,
   setLegacyOptInApproved
-} from '../../actions/ama';
+} from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -77,8 +77,10 @@ class Review extends React.PureComponent {
 const SelectClaimantConnected = connect(
   ({ supplementalClaim, intake }) => ({
     isVeteranDeceased: intake.veteran.isDeceased,
-    claimantNotVeteran: supplementalClaim.claimantNotVeteran,
+    veteranIsNotClaimant: supplementalClaim.veteranIsNotClaimant,
+    veteranIsNotClaimantError: supplementalClaim.veteranIsNotClaimantError,
     claimant: supplementalClaim.claimant,
+    claimantError: supplementalClaim.claimantError,
     payeeCode: supplementalClaim.payeeCode,
     payeeCodeError: supplementalClaim.payeeCodeError,
     relationships: supplementalClaim.relationships,
@@ -86,7 +88,7 @@ const SelectClaimantConnected = connect(
     formType: intake.formType
   }),
   (dispatch) => bindActionCreators({
-    setClaimantNotVeteran,
+    setVeteranIsNotClaimant,
     setClaimant,
     setPayeeCode
   }, dispatch)

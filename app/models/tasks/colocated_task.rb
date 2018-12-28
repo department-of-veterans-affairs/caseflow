@@ -36,18 +36,17 @@ class ColocatedTask < Task
     private
 
     def list_of_assignees
-      Colocated.singleton.users.order(:id).pluck(:css_id)
+      Colocated.singleton.non_admins.sort_by(&:id).pluck(:css_id)
     end
   end
 
-  def available_actions(user)
-    return [] unless user.colocated_in_vacols?
-
+  def available_actions(_user)
     actions = [
       {
         label: COPY::COLOCATED_ACTION_PLACE_HOLD,
         value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
-      }
+      },
+      Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h
     ]
 
     if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
@@ -65,17 +64,19 @@ class ColocatedTask < Task
     actions
   end
 
-  def no_actions_available?(_user)
-    completed?
+  def actions_available?(user)
+    return false if completed? || assigned_to != user
+    true
   end
 
-  def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
-  end
+  def assign_to_privacy_team_data
+    org = PrivacyTeam.singleton
 
-  def on_hold_expired?
-    return true if placed_on_hold_at && on_hold_duration && placed_on_hold_at + on_hold_duration.days < Time.zone.now
-    false
+    {
+      selected: org,
+      options: [{ label: org.name, value: org.id }],
+      type: GenericTask.name
+    }
   end
 
   private

@@ -6,7 +6,7 @@ gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow
 gem "moment_timezone-rails"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "5.1.6"
+gem "rails", "5.1.6.1"
 # Use sqlite3 as the database for Active Record
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
@@ -72,7 +72,7 @@ gem "therubyracer", platforms: :ruby
 
 gem "pg", platforms: :ruby
 
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "c9568319e5982f239b918bb4c3b07527d2c35cec"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "70a297053cfba50731a41e8bd31ab079bc1ac460"
 
 gem "redis-rails", "~> 5.0.2"
 
@@ -101,11 +101,6 @@ group :production, :staging, :ssh_forwarding, :development, :test do
   gem "activerecord-oracle_enhanced-adapter"
   # set require: 'oci8' here because bootsnap creates a warning: https://github.com/rails/rails/issues/32811#issuecomment-386541855
   gem "ruby-oci8", require: "oci8"
-end
-
-# Development was ommited due to double logging issue (https://github.com/heroku/rails_stdout_logging/issues/1)
-group :production, :staging do
-  gem "rails_stdout_logging"
 end
 
 group :test, :development, :demo do
@@ -177,5 +172,6 @@ gem "business_time", "~> 0.9.3"
 
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
+gem "stringex", require: false
 
 # rubocop:enable Metrics/LineLength

@@ -60,7 +60,7 @@
   </script>
 
   <% if ENV["PUBLIC_SENTRY_DSN"] %>
-    <script src="https://cdn.ravenjs.com/3.6.0/raven.min.js"></script>
+    <script src="https://cdn.ravenjs.com/3.27.0/raven.min.js"></script>
     <script>
       Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>", {
         release: "<%= Rails.application.config.build_version[:commit][0..6] %>"

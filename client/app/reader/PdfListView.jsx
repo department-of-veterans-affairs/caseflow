@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import BackToQueueLink from './BackToQueueLink';
+import LastRetrievalAlert from './LastRetrievalAlert';
 import LastRetrievalInfo from './LastRetrievalInfo';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import DocumentListHeader from './DocumentListHeader';
@@ -59,14 +60,15 @@ export class PdfListView extends React.Component {
     }
 
     return <div>
-      { this.props.queueRedirectUrl && <BackToQueueLink
+      {this.props.queueRedirectUrl && <BackToQueueLink
         queueRedirectUrl={this.props.queueRedirectUrl}
         queueTaskType={this.props.queueTaskType}
         veteranFullName={this.props.appeal.veteran_full_name}
-        vbmsId={this.props.appeal.vbms_id} /> }
+        vbmsId={this.props.appeal.vbms_id} />}
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
+          <LastRetrievalAlert appeal={this.props.appeal} />
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
@@ -80,7 +82,8 @@ export class PdfListView extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  return { documents: getFilteredDocuments(state),
+  return {
+    documents: getFilteredDocuments(state),
     ..._.pick(state.documentList, 'docFilterCriteria', 'viewingDocumentsOrComments'),
     appeal: _.find(state.caseSelect.assignments, { vacols_id: props.match.params.vacolsId }) ||
       state.pdfViewer.loadedAppeal,

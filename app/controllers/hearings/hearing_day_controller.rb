@@ -1,5 +1,5 @@
 class Hearings::HearingDayController < HearingScheduleController
-  # Controller to add and update hearing schedule days.
+  before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
 
   # show schedule days for date range provided
   def index
@@ -55,14 +55,9 @@ class Hearings::HearingDayController < HearingScheduleController
     render json: { hearing_days: json_hearings(enriched_hearings) }
   end
 
-  def veterans_ready_for_hearing
-    ro = HearingDayMapper.validate_regional_office(params[:regional_office])
-
-    render json: { veterans: json_veterans(AppealRepository.appeals_ready_for_hearing_schedule(ro)) }
-  end
-
   # Create a hearing schedule day
   def create
+    return no_available_rooms unless rooms_are_available
     hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) if hearing.nil?
     render json: {
@@ -71,29 +66,23 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def update
-    return record_not_found unless hearing
-    params.delete(:hearing_key)
-    updated_hearing = HearingDay.update_hearing_day(hearing, update_params)
+    hearing_day.update!(update_params)
+    render json: hearing_day.to_hash
+  end
 
-    json_hearing = if updated_hearing.class.equal?(TrueClass)
-                     if hearing.is_a?(HearingDay)
-                       json_hearing(hearing)
-                     else
-                       json_created_hearings(hearing)
-                     end
-                   else
-                     json_tb_hearings(updated_hearing)
-                   end
-
-    render json: {
-      hearing: json_hearing
-    }, status: :ok
+  def destroy
+    hearing_day.destroy!
+    render json: {}
   end
 
   private
 
-  def hearing
-    @hearing ||= HearingDay.find_hearing_day(update_params[:hearing_type], update_params[:hearing_key])
+  def hearing_day
+    @hearing_day ||= HearingDay.find(hearing_day_id)
+  end
+
+  def hearing_day_id
+    params[:id]
   end
 
   def fetch_hearings(hearing_day, id)
@@ -116,16 +105,25 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def update_params
-    params.permit(:judge_id, :regional_office, :hearing_key, :hearing_type)
-      .merge(updated_by: current_user)
+    params.permit(:judge_id,
+                  :regional_office,
+                  :hearing_key,
+                  :hearing_type,
+                  :room,
+                  :bva_poc,
+                  :notes,
+                  :lock)
+      .merge(updated_by: current_user.css_id)
   end
 
   def create_params
     params.permit(:hearing_type,
                   :hearing_date,
-                  :room_info,
+                  :room,
                   :judge_id,
-                  :regional_office)
+                  :regional_office,
+                  :notes,
+                  :bva_poc)
       .merge(created_by: current_user, updated_by: current_user)
   end
 
@@ -169,7 +167,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def json_hearing(hearing)
     hearing.as_json.each_with_object({}) do |(k, v), converted|
-      converted[k] = if k == "room_info"
+      converted[k] = if k == "room"
                        HearingDayMapper.label_for_room(v)
                      elsif k == "regional_office" && !v.nil?
                        HearingDayMapper.city_for_regional_office(v)
@@ -179,29 +177,6 @@ class Hearings::HearingDayController < HearingScheduleController
                        v
                      end
     end
-  end
-
-  def json_veterans(veterans)
-    veterans.each_with_object([]) do |veteran, result|
-      result << json_veteran(veteran)
-    end
-  end
-
-  def json_veteran(veteran)
-    {
-      appeal_id: veteran.id,
-      appellantFirstName: veteran.appellant_first_name,
-      appellantLastName: veteran.appellant_last_name,
-      veteranFirstName: veteran.veteran_first_name,
-      veteranLastName: veteran.veteran_last_name,
-      type: veteran.type,
-      docket_number: veteran.docket_number,
-      location: HearingDayMapper.city_for_regional_office(veteran.regional_office_key),
-      time: nil,
-      vacols_id: veteran.case_record.bfkey,
-      vbms_id: veteran.vbms_id,
-      aod: veteran.aod
-    }
   end
 
   def json_tb_hearings(tbhearings)
@@ -223,5 +198,62 @@ class Hearings::HearingDayController < HearingScheduleController
     else
       { id: json_hash[:data][:id] }.merge(json_hash[:data][:attributes])
     end
+  end
+
+  def rooms_are_available
+    # Coming from Add Hearing Day modal but no room required
+    if do_not_assign_room
+      params.delete(:assign_room)
+      params[:room] = ""
+      return true
+    end
+    # Return if coming from regular create from RO algorithm
+    # where no assign_room variable is included in params
+    return true unless params.key?(:assign_room)
+
+    # Coming from Add Hearing Day modal and room required
+    available_room = if params[:hearing_type] == HearingDay::HEARING_TYPES[:central]
+                       select_co_available_room
+                     else
+                       select_video_available_room
+                     end
+
+    params.delete(:assign_room)
+    params[:room] = available_room if !available_room.nil?
+    !available_room.nil?
+  end
+
+  def do_not_assign_room
+    params.key?(:assign_room) && (!params[:assign_room] || params[:assign_room] == "false")
+  end
+
+  def select_co_available_room
+    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date], hearing_type: params[:hearing_type])
+      .group(:room).count
+    room_count = hearing_count_by_room["2"]
+    "2" unless !(room_count.nil? || room_count == 0)
+  end
+
+  def select_video_available_room
+    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date], hearing_type: params[:hearing_type])
+      .group(:room).count
+    available_room = nil
+    (1..HearingRooms::ROOMS.size).each do |hearing_room|
+      room_count = hearing_count_by_room[hearing_room.to_s]
+      if hearing_room != 2 && (room_count.nil? || room_count == 0)
+        available_room = hearing_room.to_s
+        break
+      end
+    end
+    available_room
+  end
+
+  def no_available_rooms
+    render json: {
+      "errors": [
+        "title": "No rooms available",
+        "detail": "All rooms are taken for the date selected."
+      ]
+    }, status: 404
   end
 end

@@ -96,9 +96,15 @@ Unfortunately, the link on the website points to a version for older macOS that 
 
 ### Install Docker
 
-Install [Docker](https://docs.docker.com/docker-for-mac/install/) on your machine. Once it's installed, go into the Docker's advanced preferences and limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
+Install Docker on your machine via Homebrew:
 
-After installation is complete, run:
+```
+    brew cask install docker
+```
+
+Once Docker's installed, run the application and go into advanced preferences to limit Docker's resources in order to keep FACOLS from consuming your Macbook.  Recommended settings are 4 CPUs, 8 GiB of internal memory, and 512 MiB of swap.
+
+Back in the terminal, run:
 ```
 docker login -u dsvaappeals
 ```
@@ -111,19 +117,30 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 #### macOS
 
-1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit. You'll need to make an Oracle account.
-
-2) Copy both zip files into `~/Library/Caches/Homebrew` and leave them zipped.
-
-3) Install via Homebrew:
+1) Run the Homebrew install command for the "Instant Client Package - Basic" library:
 
 ```
     brew tap InstantClientTap/instantclient
-    brew install instantclient-basic instantclient-sdk
+    brew install instantclient-basic
 ```
 
+2) Homebrew will error and give you instructions to complete a successful installation:
+
+    - Follow the link to the download page
+    - Log in or create an Oracle account
+    - Accept the license agreement
+    - Download the linked zip file
+    - Move and rename the file
+    - rerun the `brew install instantclient-basic` command
+
+3) Do the same thing for the "Instant Client Package - SDK" library; run the install command:
+
+    `brew install instantclient-sdk`
+
+    ...and follow the corresponding steps in Homebrew's error message.
+
 #### Windows
-1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Mac 32 or 64bit.
+1) Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html) for Windows 32 or 64bit.
 
 2) Unzip both packages into `[DIR]`
 
@@ -133,7 +150,7 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 Note: This has only been tested on Debian based OS. However, it should also work
 for Fedora based OS.
 
- 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](http://www.oracle.com/technetwork/database/features/instant-client/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
+ 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
 
  1. Unzip both packages into `/opt/oracle/instantclient_11_2`
 
@@ -210,6 +227,18 @@ bundle exec rake local:build
 ```
 
 The above shortcut runs a set of commands in sequence that should build your local environment. If you need to troubleshoot the process, you can copy each individual step out of the task and run them independently.
+
+### Connecting to databases locally
+
+There are two databases you'll use: the postgres db aka Caseflow's db, and the Oracle db representing VACOLS (FACOLS).
+
+Rails provides a useful way to connect to the default database called `dbconsole`:
+
+```sh
+bundle exec rails dbconsole # password is `postgres`
+```
+
+To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
 
 ### Debugging FACOLS setup
 FACOLS (short for fake-VACOLS) is our name for the Oracle DB with mock VACOLS data that we run locally. Sometimes the above setup fails at FACOLS steps, or the app cannot connect to the FACOLS DB. Here are some frequently encountered scenarios.
@@ -430,3 +459,12 @@ When Caseflow Monitor starts working again, switch the banner back to automatic 
 ```
 Rails.cache.write(:degraded_service_banner, :auto)
 ```
+
+## Documentation
+We have a lot of technical documentation spread over a lot of different repositories. Here is a non-exhaustive mapping of where to find documentation:
+
+- [Local Caseflow Setup](https://github.com/department-of-veterans-affairs/caseflow/tree/master/docs)
+- [Test data setup in lower environments](https://github.com/department-of-veterans-affairs/appeals-qa/tree/master/docs)
+- [Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/appeals-deployment/tree/master/docs) This folder also contains our [first responder manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md), which is super in understanding our production systems.
+- [Non-Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/devops/tree/master/docs). This documentation is shared with the vets.gov team, so not all of it is relevant.
+- [Project documentation](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/master/Projects)

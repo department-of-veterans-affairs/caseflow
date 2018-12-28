@@ -55,7 +55,7 @@ describe AppealEvent do
     subject { appeal_event.hearing = hearing }
 
     context "when disposition is supported" do
-      let(:hearing) { Hearing.new(date: 4.days.ago, disposition: :no_show) }
+      let(:hearing) { LegacyHearing.new(date: 4.days.ago, disposition: :no_show) }
 
       it "sets type and date based off of hearing" do
         subject
@@ -66,7 +66,7 @@ describe AppealEvent do
     end
 
     context "when disposition is not supported" do
-      let(:hearing) { Hearing.new(date: 4.days.ago, disposition: :postponed) }
+      let(:hearing) { LegacyHearing.new(date: 4.days.ago, disposition: :postponed) }
 
       it "sets type to falsey" do
         subject
@@ -105,8 +105,8 @@ describe AppealEvent do
     let(:event_dispositions) { AppealEvent::EVENT_TYPE_FOR_DISPOSITIONS.values.flatten }
 
     it "accounts for all active VACOLS dispositions" do
-      expect(vacols_dispositions - event_dispositions).to eq(
-        ["Designation of Record", "Stay",
+      expect(vacols_dispositions - event_dispositions).to match_array(
+        ["Designation of Record", "Stay", "AMA SOC/SSOC Opt-in",
          "Motion to Vacate Denied"]
       )
     end

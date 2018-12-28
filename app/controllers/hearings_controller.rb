@@ -6,7 +6,11 @@ class HearingsController < ApplicationController
 
   def update
     if params["hearing"]["master_record_updated"]
-      HearingRepository.slot_new_hearing(params["hearing"]["master_record_updated"], hearing.appeal)
+      HearingRepository.slot_new_hearing(
+        params["hearing"]["master_record_updated"]["id"],
+        params["hearing"]["master_record_updated"]["time"],
+        hearing.appeal
+      )
     end
 
     hearing.update_caseflow_and_vacols(update_params)
@@ -30,7 +34,7 @@ class HearingsController < ApplicationController
   end
 
   def hearing
-    @hearing ||= Hearing.find(hearing_id)
+    @hearing ||= LegacyHearing.find(hearing_id)
   end
 
   def hearing_id

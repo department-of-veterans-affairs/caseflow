@@ -14,8 +14,9 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
     from BRIEFF
     #{VACOLS::Case::JOIN_AOD}
+    #{VACOLS::Case::JOIN_SPECIALTY_CASE_TEAM_ISSUES}
     inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
-    where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83')
+    where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83') and SCT.ISSUES is null
   ".freeze
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
@@ -96,7 +97,8 @@ class VACOLS::CaseDocket < VACOLS::Record
         where BFCURLOC in ('81', '83')
           and BFAC <> '9'
       )
-      where ROWNUMBER = ?
+      cross join (select count(*) as MAX_ROWNUMBER from BRIEFF where BFCURLOC in ('81', '83') and BFAC <> '9')
+      where ROWNUMBER = least(?, MAX_ROWNUMBER)
     SQL
 
     connection.exec_query(sanitize_sql_array([query, n])).first["bfd19"].to_date

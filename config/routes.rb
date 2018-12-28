@@ -114,12 +114,13 @@ Rails.application.routes.draw do
   resources :beaam_appeals, only: [:index]
 
   resources :regional_offices, only: [:index]
+  get '/regional_offices/:regional_office/open_hearing_dates', to: "regional_offices#open_hearing_dates"
 
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :hearing_id
     resources :appeals, only: [:update], param: :appeal_id
-    resources :hearing_day, only: [:index, :show]
+    resources :hearing_day, only: [:index, :show, :destroy, :update]
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
@@ -133,10 +134,8 @@ Rails.application.routes.draw do
   get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
-  put 'hearings/:hearing_key/hearing_day', to: "hearings/hearing_day#update"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
-  get 'hearings/schedule/assign/veterans', to: "hearings/hearing_day#veterans_ready_for_hearing"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
 
   resources :hearings, only: [:update]
@@ -176,9 +175,14 @@ Rails.application.routes.draw do
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
+  resources :decision_reviews, param: :business_line_slug, only: [:index] do
+  end
+  match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
+
   resources :users, only: [:index]
 
   get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
+  get 'cases_to_schedule/:ro', to: 'appeals#ready_for_hearing_schedule'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'

@@ -148,8 +148,19 @@ export const tasksByAssigneeCssIdSelector = createSelector(
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
+export const tasksByAssignerCssIdSelector = createSelector(
+  [tasksWithAppealSelector, getUserCssId],
+  (tasks: Array<TaskWithAppeal>, cssId: string) =>
+    _.filter(tasks, (task) => task.assignedBy.cssId === cssId)
+);
+
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
+  (tasks: Tasks) => incompleteTasksSelector(tasks)
+);
+
+export const incompleteTasksByAssignerCssIdSelector = createSelector(
+  [tasksByAssignerCssIdSelector],
   (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
 
@@ -180,7 +191,7 @@ export const workableTasksByAssigneeCssIdSelector = createSelector(
 
 const incompleteTasksWithHold: (State) => Array<Task> = createSelector(
   [incompleteTasksByAssigneeCssIdSelector],
-  (tasks: Array<Task>) => tasks.filter((task) => task.placedOnHoldAt)
+  (tasks: Array<Task>) => tasks.filter((task) => taskIsOnHold(task))
 );
 
 export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
@@ -197,16 +208,25 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
   )
 );
 
+export const onHoldTasksForAttorney: (State) => Array<Task> = createSelector(
+  [incompleteTasksWithHold, incompleteTasksByAssignerCssIdSelector],
+  (incompleteWithHold: Array<Task>, incompleteByAssigner: Array<Task>) => {
+    const onHoldTasksWithDuplicates = incompleteWithHold.concat(incompleteByAssigner);
+
+    return _.filter(onHoldTasksWithDuplicates, (task) => task.assignedTo.type === 'User');
+  }
+);
+
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
     if (task.appealType === 'Appeal') {
-      return task.action === 'review' &&
+      return task.label === 'review' &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
     // eslint-disable-next-line no-undefined
-    return [null, undefined, 'review'].includes(task.action);
+    return [null, undefined, 'review'].includes(task.label);
   })
 );
 
@@ -214,11 +234,11 @@ export const judgeAssignTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
     if (task.appealType === 'Appeal') {
-      return task.action === 'assign' &&
+      return task.label === 'assign' &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
-    return task.action === 'assign';
+    return task.label === 'assign';
   })
 );
 
@@ -233,7 +253,7 @@ const getAttorney = (state: State, attorneyId: string) => {
 };
 
 export const getAssignedTasks = (state: State, attorneyId: string) => {
-  const tasks = tasksWithAppealSelector(state);
+  const tasks = incompleteTasksSelector(tasksWithAppealSelector(state));
   const attorney = getAttorney(state, attorneyId);
   const cssId = attorney ? attorney.css_id : null;
 
@@ -241,7 +261,7 @@ export const getAssignedTasks = (state: State, attorneyId: string) => {
 };
 
 export const getTasksByUserId = (state: State) => {
-  const tasks = tasksWithAppealSelector(state);
+  const tasks = incompleteTasksSelector(tasksWithAppealSelector(state));
   const attorneys = state.queue.attorneysOfJudge;
   const attorneysByCssId = _.keyBy(attorneys, 'css_id');
 

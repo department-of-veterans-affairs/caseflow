@@ -18,21 +18,21 @@ export const FORM_TYPES = {
     key: 'higher_level_review',
     name: INTAKE_FORM_NAMES.higher_level_review,
     shortName: INTAKE_FORM_NAMES_SHORT.higher_level_review,
-    category: 'ama',
+    category: 'decisionReview',
     formName: 'higherLevelReview'
   },
   SUPPLEMENTAL_CLAIM: {
     key: 'supplemental_claim',
     name: INTAKE_FORM_NAMES.supplemental_claim,
     shortName: INTAKE_FORM_NAMES_SHORT.supplemental_claim,
-    category: 'ama',
+    category: 'decisionReview',
     formName: 'supplementalClaim'
   },
   APPEAL: {
     key: 'appeal',
     name: INTAKE_FORM_NAMES.appeal,
     shortName: INTAKE_FORM_NAMES_SHORT.appeal,
-    category: 'ama',
+    category: 'decisionReview',
     formName: 'appeal'
   }
 };
@@ -57,45 +57,6 @@ export const BOOLEAN_RADIO_OPTIONS = [
     displayText: 'Yes' }
 ];
 
-const issueCategoriesArray = [
-  // Unknown issue category should be removed in the new add issues flow
-  'Unknown issue category',
-  'Apportionment',
-  'Incarceration Adjustments',
-  'Audit Error Worksheet (DFAS)',
-  'Active Duty Adjustments',
-  'Drill Pay Adjustments',
-  'Character of discharge determinations',
-  'Income/net worth (pension)',
-  'Dependent child - Adopted',
-  'Dependent child - Stepchild',
-  'Dependent child - Biological',
-  'Dependency Spouse - Common law marriage',
-  'Dependency Spouse - Inference of marriage',
-  'Dependency Spouse - Deemed valid marriage',
-  'Military Retired Pay',
-  'Contested Claims (other than apportionment)',
-  'Lack of Qualifying Service',
-  'Other non-rated'
-];
-
-export const ISSUE_CATEGORIES = issueCategoriesArray.map((category) => {
-  return {
-    value: category,
-    label: category
-  };
-});
-
-// Removes the "Unknown issue category"
-// which is temporary until we activate the new "Add issues" flow
-export const NONRATING_REQUEST_ISSUE_CATEGORIES = issueCategoriesArray.
-  filter((category) => category !== 'Unknown issue category').map((category) => {
-    return {
-      value: category,
-      label: category
-    };
-  });
-
 export const REQUEST_STATE = {
   NOT_STARTED: 'NOT_STARTED',
   IN_PROGRESS: 'IN_PROGRESS',
@@ -116,7 +77,7 @@ export const ACTIONS = {
   SET_SAME_OFFICE: 'SET_SAME_OFFICE',
   SET_BENEFIT_TYPE: 'SET_BENEFIT_TYPE',
   SET_RECEIPT_DATE: 'SET_RECEIPT_DATE',
-  SET_CLAIMANT_NOT_VETERAN: 'SET_CLAIMANT_NOT_VETERAN',
+  SET_VETERAN_IS_NOT_CLAIMANT: 'SET_VETERAN_IS_NOT_CLAIMANT',
   SET_CLAIMANT: 'SET_CLAIMANT',
   SET_PAYEE_CODE: 'SET_PAYEE_CODE',
   SET_LEGACY_OPT_IN_APPROVED: 'SET_LEGACY_OPT_IN_APPROVED',

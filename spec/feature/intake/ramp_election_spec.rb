@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "RAMP Election Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
 
@@ -153,7 +156,7 @@ RSpec.feature "RAMP Election Intake" do
 
     # Validate validation
     fill_in "What is the Receipt Date of this form?", with: "08/06/2017"
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Please select an option.")
     expect(page).to have_content(
@@ -164,7 +167,7 @@ RSpec.feature "RAMP Election Intake" do
       find("label", text: "Higher-Level Review", match: :prefer_exact).click
     end
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Finish processing Higher-Level Review election")
 
@@ -172,6 +175,7 @@ RSpec.feature "RAMP Election Intake" do
 
     ## Validate error message when complete intake fails
     allow(LegacyAppeal).to receive(:close).and_raise("A random error. Oh no!")
+
     safe_click "button#button-submit-review"
     expect(page).to have_content("Something went wrong")
 
@@ -182,7 +186,7 @@ RSpec.feature "RAMP Election Intake" do
     within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Supplemental Claim").click
     end
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(find("#confirm-finish", visible: false)).to_not be_checked
     expect(page).to_not have_content("Something went wrong")
@@ -210,7 +214,7 @@ RSpec.feature "RAMP Election Intake" do
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
     expect_any_instance_of(RampElectionIntake).to receive(:review!).and_raise("A random error. Oh no!")
 
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Something went wrong")
     expect(page).to have_current_path("/intake/review_request")
@@ -224,14 +228,14 @@ RSpec.feature "RAMP Election Intake" do
 
     # Validate that visiting the finish page takes you back to
     # the review request page if you haven't yet reviewed the intake
-    visit "/intake/finish"
+    visit "/intake/completed"
 
     within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Finish processing Higher-Level Review election")
 
@@ -241,7 +245,7 @@ RSpec.feature "RAMP Election Intake" do
 
     # Validate the app redirects you to the appropriate location
     visit "/intake"
-    safe_click "#button-submit-review"
+    click_intake_continue
     expect(page).to have_content("Finish processing Higher-Level Review election")
 
     expect(AppealRepository).to receive(:close_undecided_appeal!).with(
@@ -324,7 +328,7 @@ RSpec.feature "RAMP Election Intake" do
     end
 
     fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
-    safe_click "#button-submit-review"
+    click_intake_continue
 
     expect(page).to have_content("Finish processing Higher-Level Review election")
 

@@ -48,10 +48,10 @@ export const onReceiveUpcomingHearingDays = (upcomingHearingDays) => ({
   }
 });
 
-export const onReceiveVeteransReadyForHearing = (veterans) => ({
-  type: ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING,
+export const onReceiveAppealsReadyForHearing = (appeals) => ({
+  type: ACTIONS.RECEIVE_APPEALS_READY_FOR_HEARING,
   payload: {
-    veterans
+    appeals
   }
 });
 
@@ -234,4 +234,127 @@ export const toggleLocationFilterVisibility = () => ({
 
 export const toggleVljFilterVisibility = () => ({
   type: ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN
+});
+
+export const selectHearingType = (hearingType) => ({
+  type: ACTIONS.SELECT_HEARING_TYPE,
+  payload: {
+    hearingType
+  }
+});
+
+export const selectVlj = (vlj) => ({
+  type: ACTIONS.SELECT_VLJ,
+  payload: {
+    vlj
+  }
+});
+
+export const selectHearingCoordinator = (coordinator) => ({
+  type: ACTIONS.SELECT_COORDINATOR,
+  payload: {
+    coordinator
+  }
+});
+
+export const selectHearingRoom = (hearingRoom) => ({
+  type: ACTIONS.SELECT_HEARING_ROOM,
+  payload: {
+    hearingRoom
+  }
+});
+
+export const setNotes = (notes) => ({
+  type: ACTIONS.SET_NOTES,
+  payload: {
+    notes
+  }
+});
+
+export const onHearingDayModified = (hearingDayModified) => ({
+  type: ACTIONS.HEARING_DAY_MODIFIED,
+  payload: {
+    hearingDayModified
+  }
+});
+
+export const onReceiveJudges = (activeJudges) => ({
+  type: ACTIONS.RECEIVE_JUDGES,
+  payload: {
+    activeJudges
+  }
+});
+
+export const onReceiveCoordinators = (activeCoordinators) => ({
+  type: ACTIONS.RECEIVE_COORDINATORS,
+  payload: {
+    activeCoordinators
+  }
+});
+
+export const onClickRemoveHearingDay = () => ({
+  type: ACTIONS.ON_CLICK_REMOVE_HEARING_DAY
+});
+
+export const onCancelRemoveHearingDay = () => ({
+  type: ACTIONS.CANCEL_REMOVE_HEARING_DAY
+});
+
+export const onSuccessfulHearingDayDelete = (date) => ({
+  type: ACTIONS.SUCCESSFUL_HEARING_DAY_DELETE,
+  payload: {
+    date
+  }
+});
+
+export const onResetDeleteSuccessful = () => ({
+  type: ACTIONS.RESET_DELETE_SUCCESSFUL
+});
+
+export const onAssignHearingRoom = (roomRequired) => ({
+  type: ACTIONS.ASSIGN_HEARING_ROOM,
+  payload: {
+    roomRequired
+  }
+});
+
+export const onDisplayLockModal = () => ({
+  type: ACTIONS.DISPLAY_LOCK_MODAL
+});
+
+export const onCancelDisplayLockModal = () => ({
+  type: ACTIONS.CANCEL_DISPLAY_LOCK_MODAL
+});
+
+export const onUpdateLock = (lock) => ({
+  type: ACTIONS.UPDATE_LOCK,
+  payload: {
+    lock
+  }
+});
+
+export const onResetLockSuccessMessage = () => ({
+  type: ACTIONS.RESET_LOCK_SUCCESS_MESSAGE
+});
+
+export const handleDailyDocketServerError = (err) => ({
+  type: ACTIONS.HANDLE_DAILY_DOCKET_SERVER_ERROR,
+  payload: {
+    err
+  }
+});
+
+export const onResetDailyDocketAfterError = () => ({
+  type: ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR
+});
+
+export const handleLockHearingServerError = (err) => ({
+  type: ACTIONS.HANDLE_LOCK_HEARING_SERVER_ERROR,
+  payload: {
+    err
+  }
+});
+
+export const onResetLockHearingAfterError = () => ({
+  type: ACTIONS.RESET_LOCK_HEARING_SERVER_ERROR
 });

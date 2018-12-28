@@ -62,12 +62,12 @@ describe SyncReviewsJob do
 
     context "when there are claim reviews awaiting processing" do
       it "ignores completed and older expired reviews" do
-        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_attempts_ended)
-        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_processed)
-        expect(ClaimReviewProcessJob).to receive(:perform_later).with(higher_level_review_requiring_processing)
-        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(riu_attempts_ended)
-        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(riu_processed)
-        expect(ClaimReviewProcessJob).to receive(:perform_later).with(riu_requiring_processing)
+        expect(DecisionReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_attempts_ended)
+        expect(DecisionReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_processed)
+        expect(DecisionReviewProcessJob).to receive(:perform_later).with(higher_level_review_requiring_processing)
+        expect(DecisionReviewProcessJob).to_not receive(:perform_later).with(riu_attempts_ended)
+        expect(DecisionReviewProcessJob).to_not receive(:perform_later).with(riu_processed)
+        expect(DecisionReviewProcessJob).to receive(:perform_later).with(riu_requiring_processing)
 
         SyncReviewsJob.perform_now("limit" => 2)
       end
@@ -78,8 +78,8 @@ describe SyncReviewsJob do
       let!(:request_issue) { create(:request_issue) }
 
       it "ignores request issues that are not flagged" do
-        expect(DecisionRatingIssueSyncJob).to_not receive(:perform_later).with(request_issue)
-        expect(DecisionRatingIssueSyncJob).to receive(:perform_later).with(pending_request_issue)
+        expect(DecisionIssueSyncJob).to_not receive(:perform_later).with(request_issue)
+        expect(DecisionIssueSyncJob).to receive(:perform_later).with(pending_request_issue)
 
         SyncReviewsJob.perform_now("limit" => 2)
       end
@@ -117,6 +117,17 @@ describe SyncReviewsJob do
           expect(ramp_refiling2).to receive(:create_end_product_and_contentions!)
           SyncReviewsJob.perform_now
         end
+      end
+    end
+
+    context "when there are decision documents that need to be reprocessed" do
+      let!(:decision_document_already_processed) { create(:decision_document, :processed) }
+      let!(:decision_document_needs_reprocessing) { create(:decision_document, :requires_processing) }
+
+      it "starts jobs to reprocess them" do
+        expect do
+          SyncReviewsJob.perform_now
+        end.to have_enqueued_job(ProcessDecisionDocumentJob).with(decision_document_needs_reprocessing).exactly(:once)
       end
     end
   end

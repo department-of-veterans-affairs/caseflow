@@ -2,6 +2,6 @@ module HearingConcern
   extend ActiveSupport::Concern
 
   def request_type
-    (type != :central_office) ? type.to_s.capitalize : "CO"
+    (type != LegacyHearing::CO_HEARING) ? type.to_s.capitalize : "Central"
   end
 end

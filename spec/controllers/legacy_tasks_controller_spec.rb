@@ -64,14 +64,6 @@ RSpec.describe LegacyTasksController, type: :controller do
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
-    before do
-      FeatureToggle.enable!(:judge_assignment_to_attorney)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_assignment_to_attorney)
-    end
-
     context "when current user is an attorney" do
       let(:role) { :attorney_role }
       let(:params) do
@@ -170,12 +162,6 @@ RSpec.describe LegacyTasksController, type: :controller do
       User.stub = user
       @staff_user = FactoryBot.create(:staff, role, sdomainid: user.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
-
-      FeatureToggle.enable!(:judge_assignment_to_attorney)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_assignment_to_attorney)
     end
 
     context "when current user is an attorney" do

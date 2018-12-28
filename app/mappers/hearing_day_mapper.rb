@@ -3,22 +3,22 @@ module HearingDayMapper
   end
 
   COLUMN_NAME_REVERSE_MAP = {
-    hearing_pkseq: :id,
-    hearing_type: :hearing_type,
-    hearing_date: :hearing_date,
-    folder_nr:    :regional_office,
-    room:         :room_info,
-    board_member: :judge_id,
-    judge_name:   :judge_name,
-    team:         :team,
-    adduser:      :created_by,
-    addtime:      :created_at,
-    mduser:       :updated_by,
-    mdtime:       :updated_at,
-    vdbvapoc:     :bva_coordinator,
-    judge_last_name: :judge_last_name,
+    hearing_pkseq:     :id,
+    hearing_type:      :hearing_type,
+    hearing_date:      :hearing_date,
+    folder_nr:         :regional_office,
+    room:              :room,
+    board_member:      :judge_id,
+    team:              :team,
+    adduser:           :created_by,
+    addtime:           :created_at,
+    mduser:            :updated_by,
+    mdtime:            :updated_at,
+    vdbvapoc:          :bva_poc,
+    notes:             :notes,
+    judge_last_name:   :judge_last_name,
     judge_middle_name: :judge_middle_name,
-    judge_first_name: :judge_first_name
+    judge_first_name:  :judge_first_name
   }.freeze
 
   class << self
@@ -27,11 +27,12 @@ module HearingDayMapper
         hearing_pkseq: hearing_info[:hearing_pkseq],
         hearing_type: translate_hearing_type(hearing_info[:hearing_type]),
         hearing_date: hearing_info[:hearing_date],
-        room_info: hearing_info[:room_info],
+        room: hearing_info[:room],
         regional_office: validate_regional_office(hearing_info[:regional_office]),
         judge_id: hearing_info[:judge_id],
         team: hearing_info[:team],
-        judge_name: hearing_info[:judge_name],
+        bva_poc: hearing_info[:bva_poc],
+        notes: hearing_info[:notes],
         judge_last_name: hearing_info[:judge_last_name],
         judge_middle_name: hearing_info[:judge_middle_name],
         judge_first_name: hearing_info[:judge_first_name]

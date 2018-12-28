@@ -45,6 +45,7 @@ export type Issue = {
   labels: Array<string>,
   readjudication: Boolean,
   remand_reasons: Array<Object>,
+  benefit_type?: string,
   description?: string
 };
 
@@ -54,7 +55,7 @@ export type Task = {
   uniqueId: string,
   isLegacy: boolean,
   type: ?string,
-  action: string,
+  label: string,
   appealId: number,
   appealType: string,
   externalAppealId: string,
@@ -110,6 +111,7 @@ export type Hearing = {
 
 export type AppealDetail = {
   issues: Array<Object>,
+  decisionIssues: Array<Object>,
   hearings: Array<Hearing>,
   completedHearingOnPreviousAppeal: boolean,
   appellantFullName: string,
@@ -146,7 +148,13 @@ export type BasicAppeal = {
   veteranFileNumber: string,
   isPaperCase: ?boolean,
   tasks?: Array<Task>,
-  issueCount: number
+  issueCount: number,
+  sanitizedHearingRequestType?: string,
+  regionalOffice?: ?{
+    key: ?string,
+    city: ?string,
+    state: ?string
+  }
 };
 
 export type BasicAppeals = { [string]: BasicAppeal };

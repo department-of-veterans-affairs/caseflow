@@ -70,26 +70,29 @@ class Distribution < ApplicationRecord
   end
 
   def judge_has_no_unassigned_cases
-    pending_statuses = [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
-    return false if JudgeTask.where(assigned_to: judge, action: "assign", status: pending_statuses).any?
+    return false if assigned_tasks.any?
 
     legacy_tasks = QueueRepository.tasks_for_user(judge.css_id)
     legacy_tasks.none? { |task| task.assigned_to_attorney_date.nil? }
   end
 
+  def assigned_tasks
+    pending_statuses = [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
+    judge.tasks.select do |t|
+      assigned_legacy_task = t.is_a?(JudgeLegacyTask) && t.action == "assign"
+      (assigned_legacy_task || t.is_a?(JudgeAssignTask)) && pending_statuses.include?(t.status)
+    end
+  end
+
   def batch_size
-    Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env][judge.css_id]
-      .try(:[], :attorneys)
+    JudgeTeam.for_judge(judge)
+      .try(:non_admins)
       .try(:count)
       .try(:*, CASES_PER_ATTORNEY) || ALTERNATIVE_BATCH_SIZE
   end
 
   def total_batch_size
-    attorney_count = Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].inject(0) do |sum, judge|
-      sum + judge[1][:attorneys].count
-    end
-
-    attorney_count * CASES_PER_ATTORNEY
+    JudgeTeam.all.map(&:non_admins).flatten.count * CASES_PER_ATTORNEY
   end
 
   def distributed_cases_count

@@ -45,6 +45,7 @@ export const initialState = {
   pendingDistribution: null,
   attorneys: {},
   organizationId: null,
+  organizations: [],
   loadingAppealDetail: {}
 };
 
@@ -147,6 +148,14 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     };
+  case ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT:
+    return update(state, {
+      docCountForAppeal: {
+        [action.payload.appealId]: {
+          $set: 'Failed to load'
+        }
+      }
+    });
   case ACTIONS.SET_APPEAL_DOC_COUNT:
     return update(state, {
       docCountForAppeal: {

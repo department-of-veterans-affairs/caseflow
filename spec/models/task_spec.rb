@@ -56,24 +56,24 @@ describe Task do
       let(:organization) { Organization.create! }
       let(:task) { FactoryBot.create(:task, :on_hold, type: "Task", assigned_to: organization) }
       context "when task has no child tasks" do
-        it "should not call mark_as_complete!" do
-          expect_any_instance_of(Task).to_not receive(:mark_as_complete!)
+        it "should not update any attribute of the task" do
+          expect_any_instance_of(Task).to_not receive(:update!)
           task.when_child_task_completed
         end
       end
 
       context "when task has 1 incomplete child task" do
         before { FactoryBot.create(:task, :in_progress, type: "Task", parent_id: task.id) }
-        it "should not call mark_as_complete!" do
-          expect_any_instance_of(Task).to_not receive(:mark_as_complete!)
+        it "should not update any attribute of the task" do
+          expect_any_instance_of(Task).to_not receive(:update!)
           task.when_child_task_completed
         end
       end
 
       context "when task has 1 complete child task" do
         before { FactoryBot.create(:task, :completed, type: "Task", parent_id: task.id) }
-        it "should call mark_as_complete!" do
-          expect_any_instance_of(Task).to receive(:mark_as_complete!)
+        it "should update the task" do
+          expect_any_instance_of(Task).to receive(:update!)
           task.when_child_task_completed
         end
       end
@@ -83,24 +83,24 @@ describe Task do
           FactoryBot.create_list(:task, 3, :completed, type: "Task", parent_id: task.id)
           FactoryBot.create_list(:task, 2, :in_progress, type: "Task", parent_id: task.id)
         end
-        it "should not call mark_as_complete!" do
-          expect_any_instance_of(Task).to_not receive(:mark_as_complete!)
+        it "should not update any attribute of the task" do
+          expect_any_instance_of(Task).to_not receive(:update!)
           task.when_child_task_completed
         end
       end
 
       context "when task has only complete child tasks" do
         before { FactoryBot.create_list(:task, 4, :completed, type: "Task", parent_id: task.id) }
-        it "should call mark_as_complete!" do
-          expect_any_instance_of(Task).to receive(:mark_as_complete!)
+        it "should update the task" do
+          expect_any_instance_of(Task).to receive(:update!)
           task.when_child_task_completed
         end
       end
     end
   end
 
-  context "#can_be_accessed_by_user?" do
-    subject { task.can_be_accessed_by_user?(user) }
+  context "#can_be_updated_by_user?" do
+    subject { task.can_be_updated_by_user?(user) }
 
     context "when user is an assignee" do
       let(:user) { create(:user) }
@@ -249,6 +249,35 @@ describe Task do
       let(:task) { FactoryBot.create(:root_task) }
       it "should return itself" do
         expect(task.root_task.id).to eq(task.id)
+      end
+    end
+  end
+
+  describe ".available_actions_unwrapper" do
+    context "when task/user combination result in multiple available actions with same path" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:task) { FactoryBot.create(:generic_task) }
+
+      let(:path) { "modal/path_to_modal" }
+      let(:labels) { ["First option", "Second option"] }
+
+      before do
+        allow(task).to receive(:actions_available?).and_return(true)
+
+        dummy_actions = [
+          { label: labels[0], value: path },
+          { label: labels[1], value: path }
+        ]
+        allow(task).to receive(:available_actions).and_return(dummy_actions)
+      end
+
+      it "should throw an error" do
+        expect { task.available_actions_unwrapper(user) }.to(raise_error) do |e|
+          expect(e).to be_a(Caseflow::Error::DuplicateTaskActionPaths)
+          expect(e.task_id).to eq(task.id)
+          expect(e.user_id).to eq(user.id)
+          expect(e.labels).to match_array(labels)
+        end
       end
     end
   end

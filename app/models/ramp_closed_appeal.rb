@@ -77,20 +77,16 @@ class RampClosedAppeal < ApplicationRecord
       where.not(partial_closure_issue_sequence_ids: nil)
     end
 
-    def reclose_all!
-      appeals_to_reclose = []
+    def appeals_to_reclose
+      ramp_reopened_appeals = []
 
       fully_closed.find_in_batches(batch_size: 800) do |batch|
-        appeals_to_reclose += AppealRepository.find_ramp_reopened_appeals(batch.map(&:vacols_id))
+        ramp_reopened_appeals += AppealRepository.find_ramp_reopened_appeals(batch.map(&:vacols_id))
       end
 
-      appeals_to_reclose = appeals_to_reclose.map do |appeal|
-        RampClosedAppeal.find_by(vacols_id: appeal.vacols_id)
+      ramp_reopened_appeals.map do |legacy_appeal|
+        find_by(vacols_id: legacy_appeal.vacols_id)
       end
-
-      appeals_to_reclose.each(&:reclose!)
-
-      appeals_to_reclose
     end
   end
 end

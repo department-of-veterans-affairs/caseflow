@@ -14,12 +14,12 @@ class LegacyTasksController < ApplicationController
     return invalid_role_error unless ROLES.include?(current_role)
     respond_to do |format|
       format.html do
-        render "queue/show"
+        render "queue/index"
       end
       format.json do
         MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                               name: "LegacyTasksController.index") do
-          tasks, _appeals = LegacyWorkQueue.tasks_with_appeals(user, current_role)
+          tasks = LegacyWorkQueue.tasks_with_appeals(user, current_role)
           render json: {
             tasks: json_tasks(tasks, current_role)
           }
@@ -30,7 +30,7 @@ class LegacyTasksController < ApplicationController
 
   def create
     assigned_to = legacy_task_params[:assigned_to]
-    if assigned_to && assigned_to.vacols_roles.length == 1 && assigned_to.judge_in_vacols?
+    if assigned_to&.vacols_roles&.length == 1 && assigned_to.judge_in_vacols?
       return assign_to_judge
     end
 

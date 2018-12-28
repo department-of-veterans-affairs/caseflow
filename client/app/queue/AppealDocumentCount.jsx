@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import ApiUtil from '../util/ApiUtil';
 import _ from 'lodash';
 
-import { setAppealDocCount } from './QueueActions';
+import { setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
 
 import { css } from 'glamor';
 import { COLORS } from '../constants/AppConstants';
@@ -26,13 +26,15 @@ class AppealDocumentCount extends React.PureComponent {
     if (!this.props.docCountForAppeal) {
       const requestOptions = {
         withCredentials: true,
-        timeout: true
+        timeout: { response: 5 * 60 * 1000 }
       };
 
       ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
         const resp = JSON.parse(response.text);
 
         this.props.setAppealDocCount(this.props.externalId, resp.document_count);
+      }, (error) => {
+        this.props.errorFetchingDocumentCount(this.props.externalId, error);
       });
     }
   }
@@ -46,9 +48,7 @@ class AppealDocumentCount extends React.PureComponent {
       return null;
     }
 
-    return <span {...documentCountStyling}>
-      {`${this.props.docCountForAppeal} docs`}
-    </span>;
+    return this.props.docCountForAppeal;
   }
 }
 
@@ -67,7 +67,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setAppealDocCount
+  setAppealDocCount,
+  errorFetchingDocumentCount
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppealDocumentCount);

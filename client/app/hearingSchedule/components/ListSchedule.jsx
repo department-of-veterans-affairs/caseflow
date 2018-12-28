@@ -1,9 +1,9 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
 import Table from '../../components/Table';
-import { formatDate } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
 import FilterRibbon from '../../components/FilterRibbon';
@@ -18,6 +18,7 @@ import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
+import moment from 'moment';
 
 const downloadButtonStyling = css({
   marginTop: '60px'
@@ -111,13 +112,15 @@ class ListSchedule extends React.Component {
   getHearingScheduleRows = () => {
     const { hearingSchedule } = this.props;
 
-    return _.map(hearingSchedule, (hearingDay) => ({
-      hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDate(hearingDay.hearingDate)}</Link>,
-      hearingType: hearingDay.hearingType,
-      regionalOffice: hearingDay.regionalOffice,
-      room: hearingDay.roomInfo,
-      vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
-    }));
+    return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.hearingDate, 'asc').
+      map((hearingDay) => ({
+        hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>
+          {moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}</Link>,
+        hearingType: hearingDay.hearingType,
+        regionalOffice: hearingDay.regionalOffice,
+        room: hearingDay.room,
+        vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
+      }));
   };
 
   getHearingScheduleColumns = (hearingScheduleRows) => {
@@ -254,11 +257,17 @@ class ListSchedule extends React.Component {
               <FilterRibbon
                 filteredByList={this.state.filteredByList}
                 clearAllFilters={this.clearFilteredByList} />
+              <Button
+                linkStyling
+                onClick={this.props.openModal} >
+                Add Hearing Date
+              </Button>
             </div>
             <Table
               columns={hearingScheduleColumns}
               rowObjects={hearingScheduleRows}
-              summary="hearing-schedule" />
+              summary="hearing-schedule"
+              slowReRendersAreOk />
 
           </LoadingDataDisplay>
         </div>
@@ -273,13 +282,14 @@ ListSchedule.propTypes = {
     hearingDate: PropTypes.string,
     hearingType: PropTypes.string,
     regionalOffice: PropTypes.string,
-    roomInfo: PropTypes.string,
+    room: PropTypes.string,
     judgeId: PropTypes.string,
     judgeName: PropTypes.string,
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
-  onApply: PropTypes.func
+  onApply: PropTypes.func,
+  openModal: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -287,7 +297,8 @@ const mapStateToProps = (state) => ({
   filterLocationIsOpen: state.hearingSchedule.filterLocationIsOpen,
   filterVljIsOpen: state.hearingSchedule.filterVljIsOpen,
   startDate: state.hearingSchedule.viewStartDate,
-  endDate: state.hearingSchedule.viewEndDate
+  endDate: state.hearingSchedule.viewEndDate,
+  hearingSchedule: state.hearingSchedule.hearingSchedule
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -299,4 +310,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveHearingSchedule
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListSchedule);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListSchedule));

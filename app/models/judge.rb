@@ -32,14 +32,7 @@ class Judge
   end
 
   def attorneys
-    return [] unless user
-    (Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env][user.css_id].try(:[], :attorneys) || []).map do |css_id|
-      begin
-        User.find_or_create_by(css_id: css_id, station_id: User::BOARD_STATION_ID)
-      rescue ActiveRecord::RecordNotUnique
-        User.find_by(css_id: css_id, station_id: User::BOARD_STATION_ID)
-      end
-    end
+    JudgeTeam.for_judge(user).try(:attorneys) || []
   end
 
   private
@@ -49,7 +42,7 @@ class Judge
   end
 
   def upcoming_hearings(is_fetching_issues = false)
-    Hearing.repository.fetch_hearings_for_judge(user.css_id, is_fetching_issues).sort_by(&:date)
+    HearingRepository.fetch_hearings_for_judge(user.css_id, is_fetching_issues).sort_by(&:date)
   end
 
   def get_dockets_slots(dockets)

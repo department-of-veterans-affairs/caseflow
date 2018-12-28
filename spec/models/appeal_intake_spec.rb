@@ -68,6 +68,7 @@ describe AppealIntake do
     let(:claimant) { nil }
     let(:payee_code) { nil }
     let(:legacy_opt_in_approved) { true }
+    let(:veteran_is_not_claimant) { "false" }
     let(:detail) { Appeal.create!(veteran_file_number: veteran_file_number) }
 
     let(:request_params) do
@@ -76,7 +77,8 @@ describe AppealIntake do
         docket_type: docket_type,
         claimant: claimant,
         payee_code: payee_code,
-        legacy_opt_in_approved: legacy_opt_in_approved
+        legacy_opt_in_approved: legacy_opt_in_approved,
+        veteran_is_not_claimant: veteran_is_not_claimant
       )
     end
 
@@ -86,7 +88,8 @@ describe AppealIntake do
       expect(intake.detail).to have_attributes(
         receipt_date: Date.new(2018, 5, 25),
         docket_type: "hearing",
-        legacy_opt_in_approved: true
+        legacy_opt_in_approved: true,
+        veteran_is_not_claimant: false
       )
     end
 
@@ -115,6 +118,7 @@ describe AppealIntake do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
+      let(:veteran_is_not_claimant) { true }
 
       it "adds other relationship to claimants" do
         subject
@@ -125,25 +129,44 @@ describe AppealIntake do
           payee_code: nil
         )
       end
+
+      context "claimant is nil" do
+        let(:claimant) { nil }
+        let(:receipt_date) { 3.days.from_now }
+
+        it "is expected to add an error that claimant cannot be blank" do
+          expect(subject).to be_falsey
+          expect(detail.errors[:claimant]).to include("blank")
+          expect(detail.errors[:receipt_date]).to include("in_future")
+          expect(detail.claimants).to be_empty
+        end
+      end
     end
   end
 
   context "#complete!" do
     subject { intake.complete!(params) }
 
-    let(:params) do
-      { request_issues: [
-        { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" },
+    let(:legacy_opt_in_approved) { false }
+
+    let(:params) { { request_issues: issue_data } }
+
+    let(:issue_data) do
+      [
+        { rating_issue_profile_date: "2018-04-30",
+          rating_issue_reference_id: "reference-id",
+          decision_text: "decision text" },
         { decision_text: "nonrating request issue decision text",
           issue_category: "test issue category",
           decision_date: "2018-12-25" }
-      ] }
+      ]
     end
 
     let(:detail) do
       Appeal.create!(
         veteran_file_number: "64205555",
-        receipt_date: 3.days.ago
+        receipt_date: 3.days.ago,
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 
@@ -164,6 +187,52 @@ describe AppealIntake do
         description: "nonrating request issue decision text"
       )
       expect(intake.detail.tasks.count).to eq 1
+      expect(intake.detail.submitted?).to eq true
+      expect(intake.detail.attempted?).to eq true
+      expect(intake.detail.processed?).to eq true
+    end
+
+    context "when a legacy VACOLS opt-in occurs" do
+      let(:vacols_issue) { create(:case_issue) }
+      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
+      let(:legacy_appeal) do
+        create(:legacy_appeal, vacols_case: vacols_case)
+      end
+
+      let(:issue_data) do
+        [
+          {
+            profile_date: "2018-04-30",
+            reference_id: "reference-id",
+            decision_text: "decision text",
+            vacols_id: legacy_appeal.vacols_id,
+            vacols_sequence_id: vacols_issue.issseq
+          }
+        ]
+      end
+
+      context "legacy_opt_in_approved is false" do
+        it "does not submit a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
+
+          subject
+
+          expect(LegacyIssueOptin.count).to eq 0
+        end
+      end
+
+      context "legacy_opt_approved is true" do
+        let(:legacy_opt_in_approved) { true }
+
+        it "submits a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
+          expect_any_instance_of(LegacyOptinManager).to receive(:process!).once
+
+          subject
+
+          expect(LegacyIssueOptin.count).to eq 1
+        end
+      end
     end
   end
 end

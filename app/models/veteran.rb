@@ -40,8 +40,12 @@ class Veteran < ApplicationRecord
     FullName.new(first_name, "", last_name)
   end
 
+  def full_address
+    "#{address_line1}#{address_line2 ? " #{address_line2}" : ''}, #{city} #{state} #{zip_code}"
+  end
+
   def country_requires_zip?
-    COUNTRIES_REQUIRING_ZIP.include?(country && country.upcase)
+    COUNTRIES_REQUIRING_ZIP.include?(country&.upcase)
   end
 
   def state_is_required?
@@ -97,7 +101,7 @@ class Veteran < ApplicationRecord
     Raven.capture_exception(error)
 
     # Set the veteran as inaccessible if a sensitivity error is thrown
-    raise error unless error.message =~ /Sensitive File/
+    raise error unless error.message.match?(/Sensitive File/)
 
     @accessible = false
   end
@@ -112,7 +116,7 @@ class Veteran < ApplicationRecord
 
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
-    @zip_code || (@address_line3 if @address_line3 =~ /(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/)
+    @zip_code || (@address_line3 if (@address_line3 || "").match?(/(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/))
   end
   alias zip zip_code
   alias address_line_1 address_line1
@@ -155,7 +159,21 @@ class Veteran < ApplicationRecord
       find_and_maybe_backfill_name(file_number) || create_by_file_number(file_number)
     end
 
+    def find_by_file_number_or_ssn(file_number_or_ssn)
+      if file_number_or_ssn.to_s.length == 9
+        find_by(file_number: file_number_or_ssn) || find_by_ssn(file_number_or_ssn)
+      else
+        find_by(file_number: file_number_or_ssn)
+      end
+    end
+
     private
+
+    def find_by_ssn(ssn)
+      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      return unless file_number
+      find_by(file_number: file_number)
+    end
 
     def find_and_maybe_backfill_name(file_number)
       veteran = find_by(file_number: file_number)

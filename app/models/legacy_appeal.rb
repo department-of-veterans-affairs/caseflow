@@ -6,9 +6,6 @@ class LegacyAppeal < ApplicationRecord
   include AddressMapper
   include Taskable
 
-  APPEAL_ISSUE_SOC_ELIGIBLE = Time.zone.today - 60.days
-  APPEAL_ISSUE_NOD_ELIGIBLE = Time.zone.today - 372.days
-
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
   has_many :worksheet_issues, foreign_key: :appeal_id
@@ -194,7 +191,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran_ssn
-    vbms_id.ends_with?("C") ? (veteran && veteran.ssn) : sanitized_vbms_id
+    vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
   end
 
   delegate :address_line_1,
@@ -236,7 +233,7 @@ class LegacyAppeal < ApplicationRecord
 
   attr_writer :hearings
   def hearings
-    @hearings ||= Hearing.repository.hearings_for_appeal(vacols_id)
+    @hearings ||= HearingRepository.hearings_for_appeal(vacols_id)
   end
 
   def completed_hearing_on_previous_appeal?
@@ -272,7 +269,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran_death_date
-    veteran && veteran.date_of_death
+    veteran&.date_of_death
   end
 
   attr_writer :cavc_decisions
@@ -523,6 +520,10 @@ class LegacyAppeal < ApplicationRecord
     status == "Remand"
   end
 
+  def advance?
+    status == "Advance"
+  end
+
   def decided_by_bva?
     !active? && LegacyAppeal.bva_dispositions.include?(disposition)
   end
@@ -687,12 +688,20 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def eligible_for_soc_opt_in?
+  def matchable_to_request_issue?(receipt_date)
+    issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
+  end
+
+  def eligible_for_soc_opt_in?(receipt_date)
     return false unless nod_date
     return false unless soc_date
+    return false unless receipt_date
 
-    issues.any? && (active? ||
-      (soc_date > APPEAL_ISSUE_SOC_ELIGIBLE || nod_date > APPEAL_ISSUE_NOD_ELIGIBLE))
+    soc_eligible_date = receipt_date - 60.days
+    nod_eligible_date = receipt_date - 372.days
+
+    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
+    soc_date > soc_eligible_date || nod_date > nod_eligible_date || ssoc_dates.any? { |d| d > soc_eligible_date }
   end
 
   def serializer_class
@@ -701,6 +710,23 @@ class LegacyAppeal < ApplicationRecord
 
   def external_id
     vacols_id
+  end
+
+  def timeline
+    [
+      {
+        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
+        date: decision_date
+      },
+      {
+        title: form9_date ? COPY::CASE_TIMELINE_FORM_9_RECEIVED : COPY::CASE_TIMELINE_FORM_9_PENDING,
+        date: form9_date
+      },
+      {
+        title: nod_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
+        date: nod_date
+      }
+    ]
   end
 
   private
@@ -812,14 +838,15 @@ class LegacyAppeal < ApplicationRecord
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def reopen(appeals:, user:, disposition:, safeguards: true)
+    def reopen(appeals:, user:, disposition:, safeguards: true, reopen_issues: true)
       repository.transaction do
         appeals.each do |reopen_appeal|
           reopen_single(
             appeal: reopen_appeal,
             user: user,
             disposition: disposition,
-            safeguards: safeguards
+            safeguards: safeguards,
+            reopen_issues: reopen_issues
           )
         end
       end
@@ -910,7 +937,7 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
-    def reopen_single(appeal:, user:, disposition:, safeguards:)
+    def reopen_single(appeal:, user:, disposition:, safeguards:, reopen_issues: true)
       disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
@@ -932,7 +959,8 @@ class LegacyAppeal < ApplicationRecord
         repository.reopen_undecided_appeal!(
           appeal: appeal,
           user: user,
-          safeguards: safeguards
+          safeguards: safeguards,
+          reopen_issues: reopen_issues
         )
       end
     end

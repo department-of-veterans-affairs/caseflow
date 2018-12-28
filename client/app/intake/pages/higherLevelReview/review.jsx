@@ -10,11 +10,11 @@ import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
 import {
   setBenefitType,
-  setClaimantNotVeteran,
+  setVeteranIsNotClaimant,
   setClaimant,
   setPayeeCode,
   setLegacyOptInApproved
-} from '../../actions/ama';
+} from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
 import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
@@ -105,8 +105,10 @@ class Review extends React.PureComponent {
 const SelectClaimantConnected = connect(
   ({ higherLevelReview, intake }) => ({
     isVeteranDeceased: intake.veteran.isDeceased,
-    claimantNotVeteran: higherLevelReview.claimantNotVeteran,
+    veteranIsNotClaimant: higherLevelReview.veteranIsNotClaimant,
+    veteranIsNotClaimantError: higherLevelReview.veteranIsNotClaimantError,
     claimant: higherLevelReview.claimant,
+    claimantError: higherLevelReview.claimantError,
     payeeCode: higherLevelReview.payeeCode,
     payeeCodeError: higherLevelReview.payeeCodeError,
     relationships: higherLevelReview.relationships,
@@ -114,7 +116,7 @@ const SelectClaimantConnected = connect(
     formType: intake.formType
   }),
   (dispatch) => bindActionCreators({
-    setClaimantNotVeteran,
+    setVeteranIsNotClaimant,
     setClaimant,
     setPayeeCode
   }, dispatch)

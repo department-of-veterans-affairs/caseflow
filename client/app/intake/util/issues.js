@@ -12,7 +12,7 @@ const getNonVeteranClaimant = (intakeData) => {
 
 const getClaimantField = (formType, veteran, intakeData) => {
   if (formType === 'appeal' || intakeData.benefitType === 'compensation') {
-    const claimant = intakeData.claimantNotVeteran ? getNonVeteranClaimant(intakeData) : veteran.name;
+    const claimant = intakeData.veteranIsNotClaimant ? getNonVeteranClaimant(intakeData) : veteran.name;
 
     return [{
       field: 'Claimant',
@@ -23,25 +23,18 @@ const getClaimantField = (formType, veteran, intakeData) => {
   return [];
 };
 
-export const formatRatings = (ratings, requestIssues = []) => {
-  const result = _.keyBy(_.map(ratings, (rating) => {
-    return _.assign(rating,
-      { issues: _.keyBy(rating.issues, 'reference_id') }
-    );
-  }), 'profile_date');
+export const legacyIssue = (issue, legacyAppeals) => {
+  if (issue.vacolsIssue) {
+    return issue.vacolsIssue;
+  }
 
-  _.forEach(requestIssues, (requestIssue) => {
-    // filter out nil dates (request issues that are not yet rated)
-    if (requestIssue.reference_id) {
-      _.forEach(result, (rating) => {
-        if (rating.issues[requestIssue.reference_id]) {
-          rating.issues[requestIssue.reference_id].isSelected = true;
-        }
-      });
-    }
-  });
+  let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
 
-  return result;
+  if (!legacyAppeal) {
+    throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
+  }
+
+  return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
 };
 
 export const validateDate = (date) => {
@@ -78,18 +71,38 @@ export const validNonratingRequestIssue = (issue) => {
   return true;
 };
 
+const contestableIssueIndexByRequestIssue = (contestableIssuesByDate, requestIssue) => {
+  const foundContestableIssue = _.reduce(contestableIssuesByDate, (foundIssue, contestableIssues) => {
+    return foundIssue || _.find(contestableIssues, {
+      decisionIssueId: requestIssue.contested_decision_issue_id,
+      ratingIssueReferenceId: requestIssue.rating_issue_reference_id
+    });
+  }, null);
+
+  return foundContestableIssue && foundContestableIssue.index;
+};
+
 // formatRequestIssues takes an array of requestIssues in the server ui_hash format
 // and returns objects useful for displaying in UI
-export const formatRequestIssues = (requestIssues) => {
+export const formatRequestIssues = (requestIssues, contestableIssues) => {
   return requestIssues.map((issue) => {
+    // Nonrating issues
     if (issue.category) {
       return {
+        id: String(issue.id),
         isRating: false,
         category: issue.category,
         description: issue.description,
         decisionDate: formatDateStr(issue.decision_date),
         ineligibleReason: issue.ineligible_reason,
-        contentionText: issue.contention_text
+        ineligibleDueToId: issue.ineligible_due_to_id,
+        reviewRequestTitle: issue.review_request_title,
+        contentionText: issue.contention_text,
+        untimelyExemption: issue.untimelyExemption,
+        untimelyExemptionNotes: issue.untimelyExemptionNotes,
+        vacolsId: issue.vacols_id,
+        vacolsSequenceId: issue.vacols_sequence_id,
+        vacolsIssue: issue.vacols_issue
       };
     }
 
@@ -99,44 +112,60 @@ export const formatRequestIssues = (requestIssues) => {
         description: issue.description,
         contentionText: issue.contention_text,
         notes: issue.notes,
-        isUnidentified: issue.is_unidentified
+        isUnidentified: issue.is_unidentified,
+        vacolsId: issue.vacols_id,
+        vacolsSequenceId: issue.vacols_sequence_id,
+        vacolsIssue: issue.vacols_issue
       };
     }
 
     // Rating issues
-    const issueDate = new Date(issue.profile_date);
+    const issueDate = new Date(issue.rating_issue_profile_date);
 
     return {
+      index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
       isRating: true,
-      id: issue.reference_id,
-      profileDate: issueDate.toISOString(),
+      ratingIssueReferenceId: issue.rating_issue_reference_id,
+      ratingIssueProfileDate: issueDate.toISOString(),
+      date: issue.decision_date,
+      decisionIssueId: issue.contested_decision_issue_id,
       notes: issue.notes,
       description: issue.description,
       ineligibleReason: issue.ineligible_reason,
       titleOfActiveReview: issue.title_of_active_review,
       contentionText: issue.contention_text,
-      rampClaimId: issue.ramp_claim_id
+      rampClaimId: issue.ramp_claim_id,
+      untimelyExemption: issue.untimelyExemption,
+      untimelyExemptionNotes: issue.untimelyExemptionNotes,
+      vacolsId: issue.vacols_id,
+      vacolsSequenceId: issue.vacols_sequence_id,
+      vacolsIssue: issue.vacols_issue
     };
   });
 };
 
-const ratingIssuesById = (ratings) => {
-  return _.reduce(ratings, (result, rating) => {
-    _.forEach(rating.issues, (issue, id) => {
-      result[id] = issue.decision_text;
-    });
+export const formatContestableIssues = (contestableIssues) => {
+  // order by date, otherwise all decision issues will always
+  // come after rating issues regardless of date
+  const orderedContestableIssues = _.orderBy(contestableIssues, ['date'], ['desc']);
 
-    return result;
+  return orderedContestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
+    contestableIssue.index = String(index);
+
+    contestableIssuesByDate[contestableIssue.date] = contestableIssuesByDate[contestableIssue.date] || {};
+    contestableIssuesByDate[contestableIssue.date][index] = contestableIssue;
+
+    return contestableIssuesByDate;
   }, {});
 };
 
-export const issueById = (ratings, issueId) => {
-  const currentRating = _.filter(
-    ratings,
-    (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId })
+export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
+  const currentContestableIssueGroup = _.filter(
+    contestableIssuesByDate,
+    (contestableIssues) => _.some(contestableIssues, { index: issueIndex })
   )[0];
 
-  return currentRating.issues[issueId];
+  return currentContestableIssueGroup[issueIndex];
 };
 
 const formatUnidentifiedIssues = (state) => {
@@ -157,21 +186,22 @@ const formatUnidentifiedIssues = (state) => {
 };
 
 const formatRatingRequestIssues = (state) => {
-  const ratingIssues = ratingIssuesById(state.ratings);
-
   if (state.addedIssues && state.addedIssues.length > 0) {
     // we're using the new add issues page
     return state.addedIssues.
       filter((issue) => issue.isRating && !issue.isUnidentified).
       map((issue) => {
         return {
-          reference_id: issue.id,
-          decision_text: ratingIssues[issue.id],
-          profile_date: issue.profileDate,
+          rating_issue_reference_id: issue.ratingIssueReferenceId,
+          decision_text: issue.description,
+          rating_issue_profile_date: issue.ratingIssueProfileDate,
           notes: issue.notes,
           untimely_exemption: issue.untimelyExemption,
           untimely_exemption_notes: issue.untimelyExemptionNotes,
-          ramp_claim_id: issue.rampClaimId
+          ramp_claim_id: issue.rampClaimId,
+          vacols_id: issue.vacolsId,
+          vacols_sequence_id: issue.vacolsSequenceId,
+          contested_decision_isssue_id: issue.decisionIssueId
         };
       });
   }
@@ -197,7 +227,11 @@ const formatNonratingRequestIssues = (state) => {
         decision_text: issue.description,
         decision_date: formatDateStringForApi(issue.decisionDate),
         untimely_exemption: issue.untimelyExemption,
-        untimely_exemption_notes: issue.untimelyExemptionNotes
+        untimely_exemption_notes: issue.untimelyExemptionNotes,
+        vacols_id: issue.vacolsId,
+        vacols_sequence_id: issue.vacolsSequenceId,
+        ineligible_due_to_id: issue.ineligibleDueToId,
+        ineligible_reason: issue.ineligibleReason
       };
     });
   }
@@ -266,8 +300,6 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 
 export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
-  let ratingIssues = ratingIssuesById(intakeData.ratings);
-
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue) => {
@@ -279,23 +311,30 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
-      const profileDate = new Date(issue.profileDate);
+      // todo: date works for contestable issue
+      // and profile_date works for request issue (for the edit page)
+      // fix this to use same keys
+      const profileDate = new Date(issue.date || issue.profileDate);
 
       return {
         referenceId: issue.id,
-        text: ratingIssues[issue.id],
-        date: formatDateStr(issue.profileDate),
+        text: issue.description,
+        date: formatDateStr(profileDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         promulgationDate: issue.promulgationDate,
-        profileDate: issue.profileDate,
+        profileDate,
         timely: issue.timely,
         beforeAma: profileDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason,
-        rampClaimId: issue.rampClaimId
+        rampClaimId: issue.rampClaimId,
+        vacolsId: issue.vacolsId,
+        vacolsSequenceId: issue.vacolsSequenceId,
+        vacolsIssue: issue.vacolsIssue,
+        eligibleForSocOptIn: issue.eligibleForSocOptIn
       };
     }
 
@@ -306,11 +345,16 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       referenceId: issue.id,
       text: `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
-      beforeAma: decisionDate < amaActivationDate,
       timely: issue.timely,
-      ineligibleReason: issue.ineligibleReason,
+      beforeAma: decisionDate < amaActivationDate,
       untimelyExemption: issue.untimelyExemption,
-      untimelyExemptionNotes: issue.untimelyExemptionNotes
+      untimelyExemptionNotes: issue.untimelyExemptionNotes,
+      ineligibleReason: issue.ineligibleReason,
+      vacolsId: issue.vacolsId,
+      vacolsSequenceId: issue.vacolsSequenceId,
+      vacolsIssue: issue.vacolsIssue,
+      eligibleForSocOptIn: issue.eligibleForSocOptIn,
+      reviewRequestTitle: issue.reviewRequestTitle
     };
   });
 };

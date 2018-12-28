@@ -158,31 +158,6 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     end
   end
 
-  context "handle CO hearings" do
-    before do
-      co_hearing_days
-
-      date = get_unique_dates_between(schedule_period.start_date,
-                                      schedule_period.end_date, 1).first
-      create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
-                                      object_identifier: "CSS_ID1")
-    end
-
-    let(:co_hearing_days) do
-      get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 50).map do |date|
-        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: nil)
-      end
-    end
-
-    subject { assign_judges_to_hearing_days.video_co_hearing_days }
-
-    it "filter CO non wednesdays" do
-      subject.each do |hearing_day|
-        expect(hearing_day.hearing_date.wednesday?).to be(true)
-      end
-    end
-  end
-
   context "handle already assgined hearing day" do
     before do
       judge
@@ -337,7 +312,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
           expect(expected_day).to_not be_nil
           expect(hearing_day[:hearing_type]).to eq(type)
           expect(hearing_day[:hearing_date]).to eq(expected_day.hearing_date.to_date)
-          expect(hearing_day[:room_info]).to eq(expected_day.room)
+          expect(hearing_day[:room]).to eq(expected_day.room)
           expect(hearing_day[:regional_office]).to eq(ro)
           expect(hearing_day[:judge_id]).to_not be_nil
           expect(hearing_day[:judge_name]).to_not be_nil

@@ -2,8 +2,12 @@ class SupplementalClaim < ClaimReview
   END_PRODUCT_CODES = {
     rating: "040SCR",
     nonrating: "040SCNR",
+    pension_rating: "040SCRPMC",
+    pension_nonrating: "040SCNRPMC",
     dta_rating: "040HDER",
-    dta_nonrating: "040HDENR"
+    dta_nonrating: "040HDENR",
+    pension_dta_rating: "040HDERPMC",
+    pension_dta_nonrating: "040HDENRPMC"
   }.freeze
 
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
@@ -15,27 +19,10 @@ class SupplementalClaim < ClaimReview
     )
   end
 
-  def rating_end_product_establishment
-    @rating_end_product_establishment ||= end_product_establishments.find_by(code: END_PRODUCT_CODES[:rating])
-  end
-
-  def end_product_description
-    rating_end_product_establishment && rating_end_product_establishment.description
-  end
-
-  def end_product_base_modifier
-    valid_modifiers.first
-  end
-
-  def valid_modifiers
-    END_PRODUCT_MODIFIERS
-  end
-
   def issue_code(rating: true)
     issue_code_type = rating ? :rating : :nonrating
-    if is_dta_error?
-      issue_code_type = "dta_#{issue_code_type}".to_sym
-    end
+    issue_code_type = "dta_#{issue_code_type}".to_sym if is_dta_error?
+    issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
     END_PRODUCT_CODES[issue_code_type]
   end
 
