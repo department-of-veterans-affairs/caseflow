@@ -43,7 +43,8 @@ export const grayLineStyling = css({
 const taskContainerStyling = css({
   border: 'none',
   verticalAlign: 'top',
-  padding: '3px'
+  padding: '3px',
+  paddingBottom: '3rem'
 });
 
 const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
@@ -165,8 +166,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
           <Button
             linkStyling
             styling={css({ padding: '0' })}
-            name={(this.state.taskInstructionsIsVisible ? 'Hide ' : 'View ') +
-            COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}
+            name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
+              COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
             onClick={this.toggleTaskInstructionsVisibility} />
         </div>
       }
