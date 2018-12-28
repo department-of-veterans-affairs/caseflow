@@ -252,6 +252,7 @@
   "ASSIGN_TO_TEAM_DROPDOWN": "Select a team",
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
+  "CREATE_MAIL_TASK_TITLE": "Create new mail task",
 
   "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",

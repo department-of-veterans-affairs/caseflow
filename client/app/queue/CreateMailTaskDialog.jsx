@@ -113,6 +113,13 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks
 }, dispatch);
 
+const propsToText = (props) => {
+  return {
+    title: COPY.CREATE_MAIL_TASK_TITLE,
+    pathAfterSubmit: `/queue/appeals/${props.appealId}`
+  };
+};
+
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(CreateMailTaskDialog, { title: 'Created new mail task' })
+  editModalBase(CreateMailTaskDialog, { propsToText })
 ));
