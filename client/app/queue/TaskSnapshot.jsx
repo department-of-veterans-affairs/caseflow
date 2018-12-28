@@ -149,10 +149,10 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         </React.Fragment> }
 
       { <span>
-          <Link onClick={this.props.toggleVeteranCaseList}>
-            { primaryTask.instructions ? 'Hide' : 'View' } task instructions
-          </Link>
-        </span>}
+        <Link onClick={this.props.toggleVeteranCaseList}>
+          { task.instructions ? 'Hide' : 'View' } task instructions
+        </Link>
+      </span>}
     </React.Fragment>;
   }
   legacyTaskInformation = (task) => {
@@ -275,7 +275,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { userRole } = state.ui;
-  //taskInstructionsIsVisible: state.ui.taskInstructionsIsVisible,
+  // taskInstructionsIsVisible: state.ui.taskInstructionsIsVisible,
   /*
   Look at how I added CanEditAod to state and mimic with
 
