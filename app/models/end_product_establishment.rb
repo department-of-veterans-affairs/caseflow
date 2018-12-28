@@ -7,27 +7,12 @@
 # the current status of the EP when the EndProductEstablishment is synced.
 
 class EndProductEstablishment < ApplicationRecord
-  class EstablishedEndProductNotFound < StandardError; end
-  class ContentionCreationFailed < StandardError; end
-
   attr_accessor :valid_modifiers, :special_issues
-  # In AMA reviews, we may create 2 end products at the same time. To avoid using
+  # In decision reviews, we may create 2 end products at the same time. To avoid using
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
   belongs_to :source, polymorphic: true
   belongs_to :user
-
-  class InvalidEndProductError < StandardError; end
-  class NoAvailableModifiers < StandardError; end
-
-  class BGSSyncError < RuntimeError
-    def initialize(error, end_product_establishment)
-      Raven.extra_context(end_product_establishment: end_product_establishment.id)
-      super(error.message).tap do |result|
-        result.set_backtrace(error.backtrace)
-      end
-    end
-  end
 
   CANCELED_STATUS = "CAN".freeze
   CLEARED_STATUS = "CLR".freeze
@@ -37,6 +22,96 @@ class EndProductEstablishment < ApplicationRecord
     "1" => "CPL",
     "2" => "CPD"
   }.freeze
+
+  class EstablishedEndProductNotFound < StandardError; end
+  class ContentionCreationFailed < StandardError; end
+  class InvalidEndProductError < StandardError; end
+  class NoAvailableModifiers < StandardError; end
+  # Many BGS calls fail in off-hours because BGS has maintenance time, so it's useful to classify
+  # these transient errors and ignore the in our reporting tools. These are marked transient because
+  # they're self-resolving and a request can be retried (this typically happens during jobs)
+  #
+  # Only add new kinds of transient BGS errors when you have investigated that they are expected,
+  # and they happen frequently enough to pollute the alerts channel.
+  class BGSSyncError < RuntimeError
+    def initialize(error, end_product_establishment)
+      Raven.extra_context(end_product_establishment_id: end_product_establishment.id)
+      super(error.message).tap do |result|
+        result.set_backtrace(error.backtrace)
+      end
+    end
+
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/MethodLength
+    def self.from_bgs_error(error, epe)
+      error_message = if error.try(:body)
+                        # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3124/
+                        error.body.encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
+                      else
+                        error.message
+                      end
+      case error_message
+      when /WssVerification Exception - Security Verification Exception/
+        # This occasionally happens when client/server timestamps get out of sync. Uncertain why this
+        # happens or how to fix it - it only happens occasionally.
+        #
+        # A more detailed message is
+        #   "WSSecurityException: The message has expired (WSSecurityEngine: Invalid timestamp The
+        #    security semantics of the message have expired)"
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2884/
+        TransientBGSSyncError.new(error, epe)
+      when /ShareException thrown in findVeteranByPtcpntId./
+        # Some context:
+        #   "So when the call to get contentions occurred, our BGS call runs through the
+        #   Tuxedo layer to get further information, but ran into the issue with BDN and failed the
+        #   remainder of the call"
+        #
+        # BDN = Benefits Delivery Network
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2910/
+        TransientBGSSyncError.new(error, epe)
+      when /Connection timed out - connect\(2\) for "bepprod.vba.va.gov" port 443/
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
+        TransientBGSSyncError.new(error, epe)
+      when /Connection refused - connect\(2\) for "bepprod.vba.va.gov" port 443/
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3128/
+        TransientBGSSyncError.new(error, epe)
+      when /HTTP error \(504\): upstream request timeout/
+        # BGS timeout
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
+        TransientBGSSyncError.new(error, epe)
+      when /HTTPClient::KeepAliveDisconnected: Connection reset by peer/
+        # BGS kills connection
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3129/
+        TransientBGSSyncError.new(error, epe)
+      when /execution expired/
+        # Connection timeout
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2935/
+        TransientBGSSyncError.new(error, epe)
+      when /Unable to find SOAP operation: :find_benefit_claim/
+        # Transient failure because a VBMS service is unavailable
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2891/
+        TransientBGSSyncError.new(error, epe)
+      when /HTTP error (504): upstream request timeout/
+        # Transient failure when, for example, a WSDL is unavailable. For example, the originating
+        # error could be a Wasabi::Resolver::HTTPError
+        #  "Error: 504 for url http://localhost:10001/BenefitClaimServiceBean/BenefitClaimWebService?WSDL"
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
+        TransientBGSSyncError.new(error, epe)
+      else
+        new(error, epe)
+      end
+    end
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength
+  class TransientBGSSyncError < BGSSyncError; end
 
   class << self
     def order_by_sync_priority
@@ -97,7 +172,7 @@ class EndProductEstablishment < ApplicationRecord
       issue = issues_without_contentions.find do |i|
         i.contention_text == contention.text && i.contention_reference_id.nil?
       end
-      issue && issue.update!(contention_reference_id: contention.id)
+      issue&.update!(contention_reference_id: contention.id)
     end
 
     fail ContentionCreationFailed if issues_without_contentions.any? { |issue| issue.contention_reference_id.nil? }
@@ -146,8 +221,6 @@ class EndProductEstablishment < ApplicationRecord
     # do not cancel ramp reviews for now
     return if source.is_a?(RampReview)
 
-    active_request_issues = request_issues.select { |request_issue| request_issue.removed_at.nil? }
-
     if active_request_issues.empty?
       cancel!
     end
@@ -157,8 +230,12 @@ class EndProductEstablishment < ApplicationRecord
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
-
     fail EstablishedEndProductNotFound unless result
+
+    # load contentions now, in case "source" needs them.
+    # this VBMS call is slow and will cause the transaction below
+    # to timeout in some cases.
+    contentions
 
     transaction do
       update!(
@@ -171,14 +248,19 @@ class EndProductEstablishment < ApplicationRecord
   rescue EstablishedEndProductNotFound => e
     raise e
   rescue StandardError => e
-    raise BGSSyncError.new(e, self)
+    raise BGSSyncError.from_bgs_error(e, self)
+  end
+
+  def fetch_dispositions_from_vbms
+    VBMSService.get_dispositions!(claim_id: reference_id)
   end
 
   def status_canceled?
     synced_status == CANCELED_STATUS
   end
 
-  def status_cleared?
+  def status_cleared?(sync: false)
+    sync! if sync
     synced_status == CLEARED_STATUS
   end
 
@@ -215,18 +297,57 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def request_issues
+    return [] unless source.try(:request_issues)
+    source.request_issues.select { |ri| ri.end_product_establishment == self }
+  end
+
+  def active_request_issues
+    request_issues.select { |request_issue| request_issue.removed_at.nil? && request_issue.status_active? }
+  end
+
+  def associated_rating
+    @associated_rating ||= fetch_associated_rating
+  end
+
+  def sync_decision_issues!
+    request_issues.each do |request_issue|
+      request_issue.submit_for_processing!
+
+      DecisionIssueSyncJob.perform_later(request_issue)
+    end
+  end
+
+  def on_decision_issue_sync_processed
+    if decision_issues_sync_complete?
+      source.on_decision_issues_sync_processed(self)
+    end
+  end
+
   private
+
+  def decision_issues_sync_complete?
+    request_issues.all?(&:processed?)
+  end
+
+  def potential_decision_ratings
+    Rating.fetch_in_range(participant_id: veteran.participant_id,
+                          start_date: established_at.to_date,
+                          end_date: Time.zone.today)
+  end
 
   def cancel!
     transaction do
       # delete end product in bgs & set sync status to canceled
-      BGSService.new.cancel_end_product(:veteran_file_number, :code, :modifier)
+      BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
     end
   end
 
-  def request_issues
-    source.request_issues.select { |ri| ri.end_product_establishment == self }
+  def fetch_associated_rating
+    potential_decision_ratings.find do |rating|
+      rating.associated_end_products.any? { |end_product| end_product.claim_id == reference_id }
+    end
   end
 
   def rating_request_issues

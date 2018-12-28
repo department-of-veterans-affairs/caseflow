@@ -1,4 +1,33 @@
 describe Appeal do
+  context "priority and non-priority appeals" do
+    let!(:appeal) { create(:appeal) }
+    let!(:aod_age_appeal) { create(:appeal, :advanced_on_docket_due_to_age) }
+    let!(:aod_motion_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
+    let!(:denied_aod_motion_appeal) { create(:appeal, :denied_advance_on_docket) }
+    let!(:inapplicable_aod_motion_appeal) { create(:appeal, :inapplicable_aod_motion) }
+
+    context "#all_priority" do
+      subject { Appeal.all_priority }
+      it "returns aod appeals due to age and motion" do
+        expect(subject.include?(aod_age_appeal)).to eq(true)
+        expect(subject.include?(aod_motion_appeal)).to eq(true)
+        expect(subject.include?(appeal)).to eq(false)
+        expect(subject.include?(denied_aod_motion_appeal)).to eq(false)
+        expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(false)
+      end
+    end
+
+    context "#all_nonpriority" do
+      subject { Appeal.all_nonpriority }
+      it "returns non aod appeals" do
+        expect(subject.include?(appeal)).to eq(true)
+        expect(subject.include?(aod_motion_appeal)).to eq(false)
+        expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
+        expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
+      end
+    end
+  end
+
   context "#document_fetcher" do
     let(:veteran_file_number) { "64205050" }
     let(:appeal) do
@@ -8,6 +37,117 @@ describe Appeal do
     it "returns a DocumentFetcher" do
       expect(appeal.document_fetcher.appeal).to eq(appeal)
       expect(appeal.document_fetcher.use_efolder).to eq(true)
+    end
+  end
+
+  context "async logic scopes" do
+    let!(:appeal_requiring_processing) do
+      create(:appeal).tap(&:submit_for_processing!)
+    end
+
+    let!(:appeal_processed) do
+      create(:appeal).tap(&:processed!)
+    end
+
+    let!(:appeal_recently_attempted) do
+      create(
+        :appeal,
+        establishment_attempted_at: (Appeal::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+      )
+    end
+
+    let!(:appeal_attempts_ended) do
+      create(
+        :appeal,
+        establishment_submitted_at: (Appeal::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        establishment_attempted_at: (Appeal::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
+      )
+    end
+
+    context ".unexpired" do
+      it "matches appeals still inside the processing window" do
+        expect(Appeal.unexpired).to eq([appeal_requiring_processing])
+      end
+    end
+
+    context ".processable" do
+      it "matches appeals eligible for processing" do
+        expect(Appeal.processable).to match_array(
+          [appeal_requiring_processing, appeal_attempts_ended]
+        )
+      end
+    end
+
+    context ".attemptable" do
+      it "matches appeals that could be attempted" do
+        expect(Appeal.attemptable).not_to include(appeal_recently_attempted)
+      end
+    end
+
+    context ".requires_processing" do
+      it "matches appeals that must still be processed" do
+        expect(Appeal.requires_processing).to eq([appeal_requiring_processing])
+      end
+    end
+
+    context ".expired_without_processing" do
+      it "matches appeals unfinished but outside the retry window" do
+        expect(Appeal.expired_without_processing).to eq([appeal_attempts_ended])
+      end
+    end
+  end
+
+  context "#establish!" do
+    it { is_expected.to_not be_nil }
+  end
+
+  context "#special_issues" do
+    let(:appeal) { create(:appeal) }
+    let(:vacols_id) { nil }
+    let(:vacols_sequence_id) { nil }
+    let!(:request_issue) do
+      create(:request_issue, review_request: appeal, vacols_id: vacols_id, vacols_sequence_id: vacols_sequence_id)
+    end
+
+    subject { appeal.reload.special_issues }
+
+    context "no special conditions" do
+      it "is empty" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "VACOLS opt-in" do
+      let(:vacols_id) { "something" }
+      let!(:vacols_case) { create(:case, bfkey: vacols_id, case_issues: [vacols_issue]) }
+      let(:vacols_sequence_id) { 1 }
+      let!(:vacols_issue) { create(:case_issue, issseq: vacols_sequence_id) }
+      let!(:legacy_opt_in) do
+        create(:legacy_issue_optin, request_issue: request_issue)
+      end
+
+      it "includes VACOLS opt-in" do
+        expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
+      end
+    end
+  end
+
+  context "#every_request_issue_has_decision" do
+    let(:appeal) { create(:appeal, request_issues: [request_issue]) }
+    let(:request_issue) { create(:request_issue, decision_issues: decision_issues) }
+
+    subject { appeal.every_request_issue_has_decision? }
+
+    context "when no decision issues" do
+      let(:decision_issues) { [] }
+
+      it { is_expected.to eq false }
+    end
+
+    context "when decision issues" do
+      let(:decision_issues) { [create(:decision_issue)] }
+
+      it { is_expected.to eq true }
     end
   end
 
@@ -36,7 +176,7 @@ describe Appeal do
   context "#advanced_on_docket" do
     context "when a claimant is advanced_on_docket" do
       let(:appeal) do
-        create(:appeal, claimants: [create(:claimant, :advanced_on_docket)])
+        create(:appeal, claimants: [create(:claimant, :advanced_on_docket_due_to_age)])
       end
 
       it "returns true" do
@@ -75,7 +215,8 @@ describe Appeal do
     end
 
     context "with a legacy appeal" do
-      let(:vacols_case) { create(:case) }
+      let(:vacols_issue) { create(:case_issue) }
+      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
       let(:legacy_appeal) do
         create(:legacy_appeal, vacols_case: vacols_case)
       end
@@ -183,6 +324,113 @@ describe Appeal do
       expect(RootTask).to receive(:create_root_and_sub_tasks!).once
 
       appeal.create_tasks_on_intake_success!
+    end
+  end
+
+  context "#location_code" do
+    context "if the RootTask status is completed" do
+      let(:appeal) { create(:appeal) }
+
+      before do
+        create(:root_task, appeal: appeal, status: :completed)
+      end
+
+      it "returns Post-decision" do
+        expect(appeal.location_code).to eq(COPY::CASE_LIST_TABLE_POST_DECISION_LABEL)
+      end
+    end
+
+    context "if there are no active tasks" do
+      let(:appeal) { create(:appeal) }
+      it "returns nil" do
+        expect(appeal.location_code).to eq(nil)
+      end
+    end
+
+    context "if the only active case is a RootTask" do
+      let(:appeal) { create(:appeal) }
+
+      before do
+        create(:root_task, appeal: appeal, status: :in_progress)
+      end
+
+      it "returns Case storage" do
+        expect(appeal.location_code).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+      end
+    end
+
+    context "if there is an assignee" do
+      let(:organization) { create(:organization) }
+      let(:appeal_organization) { create(:appeal) }
+      let(:user) { create(:user) }
+      let(:appeal_user) { create(:appeal) }
+
+      before do
+        organization_root_task = create(:root_task, appeal: appeal_organization)
+        create(:generic_task, assigned_to: organization, appeal: appeal_organization, parent: organization_root_task)
+
+        user_root_task = create(:root_task, appeal: appeal_user)
+        create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
+      end
+
+      it "if the most recent assignee is an organization it returns the organization name" do
+        expect(appeal_organization.location_code).to eq(organization.name)
+      end
+
+      it "if the most recent assignee is not an organization it returns the id" do
+        expect(appeal_user.location_code).to eq(user.css_id)
+      end
+    end
+  end
+
+  context "is taskable" do
+    context "#assigned_attorney" do
+      let(:attorney) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_attorney_task, assigned_to: attorney, appeal: appeal) }
+
+      subject { appeal.assigned_attorney }
+
+      it { is_expected.to eq attorney }
+    end
+
+    context "#assigned_judge" do
+      let(:judge) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
+
+      subject { appeal.assigned_judge }
+
+      it { is_expected.to eq judge }
+    end
+  end
+
+  context ".tasks_for_timeline" do
+    context "when there are completed organization tasks with completed child tasks assigned to people" do
+      let(:judge) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
+      let!(:task2) do
+        create(:qr_task, appeal: appeal, status: Constants.TASK_STATUSES.completed, assigned_to_type: "Organization")
+      end
+      let!(:task3) do
+        create(:qr_task, assigned_to: judge, appeal: appeal, status: Constants.TASK_STATUSES.completed,
+                         parent_id: task2.id)
+      end
+
+      subject { appeal.tasks_for_timeline.first }
+      it { is_expected.to eq task3 }
+    end
+    context "when there are completed organization tasks without child tasks" do
+      let(:judge) { create(:user) }
+      let(:appeal) { create(:appeal) }
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
+      let!(:task2) do
+        create(:qr_task, appeal: appeal, status: Constants.TASK_STATUSES.completed, assigned_to_type: "Organization")
+      end
+
+      subject { appeal.tasks_for_timeline.first }
+      it { is_expected.to eq task2 }
     end
   end
 end

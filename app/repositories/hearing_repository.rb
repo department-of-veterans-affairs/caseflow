@@ -1,5 +1,8 @@
 # Hearing Prep repository.
 class HearingRepository
+  class NoOpenSlots < StandardError; end
+  class LockedHearingDay < StandardError; end
+
   class << self
     # :nocov:
     def fetch_hearings_for_judge(css_id, is_fetching_issues = false)
@@ -55,11 +58,88 @@ class HearingRepository
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
     end
 
-    def create_vacols_child_hearing(parent_hearing_hash)
-      parent_hearing_hash[:vdkey] = parent_hearing_hash[:hearing_pkseq]
-      parent_hearing_hash.delete(:hearing_pkseq)
-      parent_hearing_hash[:hearing_type] = "V"
-      VACOLS::CaseHearing.create_child_hearing!(parent_hearing_hash)
+    def to_hash(hearing)
+      hearing.as_json.each_with_object({}) do |(k, v), result|
+        result[k.to_sym] = v
+      end
+    end
+
+    def slot_new_hearing(parent_record_id, time, appeal)
+      hearing_day = HearingDay.find_hearing_day(nil, parent_record_id)
+
+      if hearing_day[:hearing_type] == "C"
+        update_co_hearing(
+          hearing_day[:hearing_date].to_datetime.change(
+            hour: time["h"].to_i,
+            minute: time["m"],
+            offset: time["offset"]
+          ),
+          appeal
+        )
+      else
+        create_child_video_hearing(parent_record_id, hearing_day[:hearing_date], appeal)
+      end
+    end
+
+    def update_co_hearing(hearing_date_str, appeal)
+      if hearing_date_str.to_date > HearingDay::CASEFLOW_CO_PARENT_DATE
+        return create_child_co_hearing(hearing_date_str, appeal)
+      end
+
+      # Get the next open slot for that hearing date and time.
+      hearing = VACOLS::CaseHearing.find_by(hearing_date: hearing_date_str, folder_nr: nil)
+      fail NoOpenSlots, message: "No available slots for this hearing day." if hearing.nil?
+      loaded_hearing = VACOLS::CaseHearing.load_hearing(hearing.hearing_pkseq)
+      HearingRepository.update_vacols_hearing!(loaded_hearing, folder_nr: appeal.vacols_id)
+    end
+
+    def create_child_co_hearing(hearing_date_str, appeal)
+      hearing_day = HearingDay.find_by(hearing_type: "C", hearing_date: hearing_date_str.to_date)
+      fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
+      attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
+      VACOLS::CaseHearing.create_child_hearing!(
+        folder_nr: appeal.vacols_id,
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date_str),
+        vdkey: hearing_day.id,
+        hearing_type: hearing_day.hearing_type,
+        room: hearing_day.room,
+        board_member: attorney_id,
+        vdbvapoc: hearing_day.bva_poc
+      )
+    end
+
+    def create_child_video_hearing(hearing_pkseq, hearing_date, appeal)
+      if hearing_date.to_date > HearingDay::CASEFLOW_V_PARENT_DATE
+        return create_caseflow_child_video_hearing(hearing_pkseq, hearing_date, appeal)
+      end
+
+      hearing = VACOLS::CaseHearing.find(hearing_pkseq)
+
+      VACOLS::CaseHearing.create_child_hearing!(
+        folder_nr: appeal.vacols_id,
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
+        vdkey: hearing.hearing_pkseq,
+        hearing_type: "V",
+        room: hearing.room,
+        board_member: hearing.board_member,
+        vdbvapoc: hearing.vdbvapoc
+      )
+    end
+
+    def create_caseflow_child_video_hearing(id, hearing_date, appeal)
+      hearing_day = HearingDay.find(id)
+
+      fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
+
+      VACOLS::CaseHearing.create_child_hearing!(
+        folder_nr: appeal.vacols_id,
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
+        vdkey: hearing_day.id,
+        hearing_type: hearing_day.hearing_type,
+        room: hearing_day.room,
+        board_member: hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil,
+        vdbvapoc: hearing_day.bva_poc
+      )
     end
 
     def load_vacols_data(hearing)
@@ -79,27 +159,6 @@ class HearingRepository
       false
     end
 
-    def number_of_slots(regional_office_key:, type:, date:)
-      record = VACOLS::Staff.find_by(stafkey: regional_office_key)
-      slots_based_on_type(staff: record, type: type, date: date) if record
-    end
-
-    def fetch_dockets_slots(dockets)
-      # fetching all the RO keys of the dockets
-      regional_office_keys = dockets.map { |_date, docket| docket.regional_office_key }
-
-      # fetching data of all dockets staff based on the regional office keys
-      ro_staff = VACOLS::Staff.where(stafkey: regional_office_keys)
-      ro_staff_hash = ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
-
-      # returns a hash of docket date (string) as key and number of slots for the docket
-      # as they key
-      dockets.map do |date, docket|
-        record = ro_staff_hash[docket.regional_office_key]
-        [date, (slots_based_on_type(staff: record, type: docket.type, date: docket.date) if record)]
-      end.to_h
-    end
-
     def appeals_ready_for_hearing(vbms_id)
       AppealRepository.appeals_ready_for_hearing(vbms_id)
     end
@@ -110,30 +169,16 @@ class HearingRepository
       hearing
     end
 
-    # STAFF.STC2 is the Travel Board limit for Mon and Fri
-    # STAFF.STC3 is the Travel Board limit for Tue, Wed, Thur
-    # STAFF.STC4 is the Video limit
-    def slots_based_on_type(staff:, type:, date:)
-      case type
-      when :central_office
-        11
-      when :video
-        staff.stc4
-      when :travel
-        (date.monday? || date.friday?) ? staff.stc2 : staff.stc3
-      end
-    end
-
     def hearings_for(case_hearings)
       vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact
 
-      fetched_hearings = Hearing.where(vacols_id: vacols_ids)
+      fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids)
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
       case_hearings.map do |vacols_record|
         next empty_dockets(vacols_record) if master_record?(vacols_record)
-        hearing = Hearing.assign_or_create_from_vacols_record(vacols_record,
-                                                              fetched_hearings_hash[vacols_record.hearing_pkseq])
+        hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record,
+                                                                    fetched_hearings_hash[vacols_record.hearing_pkseq])
         set_vacols_values(hearing, vacols_record)
       end.flatten
     end
@@ -185,12 +230,21 @@ class HearingRepository
         transcript_sent_date: AppealRepository.normalize_vacols_date(vacols_record.transent),
         add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
         notes: vacols_record.notes1,
+        appellant_address_line_1: vacols_record.saddrst1,
+        appellant_address_line_2: vacols_record.saddrst2,
+        appellant_city: vacols_record.saddrcty,
+        appellant_state: vacols_record.saddrstt,
+        appellant_country: vacols_record.saddrcnty,
+        appellant_zip: vacols_record.saddrzip,
+        appeal_type: VACOLS::Case::TYPES[vacols_record.bfac],
+        docket_number: vacols_record.tinum || "Missing Docket Number",
         veteran_first_name: vacols_record.snamef,
         veteran_middle_initial: vacols_record.snamemi,
         veteran_last_name: vacols_record.snamel,
         appellant_first_name: vacols_record.sspare2,
         appellant_middle_initial: vacols_record.sspare3,
         appellant_last_name: vacols_record.sspare1,
+        room: vacols_record.room,
         regional_office_key: ro,
         type: type,
         date: date,

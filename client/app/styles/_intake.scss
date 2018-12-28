@@ -3,11 +3,35 @@
   padding-left: 0.5em;
 }
 
-// the .cf-app-segment is needed in this rule so .cf-intake-statusmessage-checklist has a higher
-// specificity than the existing .cf-success-checklist class.
-.cf-app-segment .cf-intake-statusmessage-checklist {
-  max-width: 800px;
-  margin: 50px auto 65px;
+// the .cf-app-intake ancestor is needed for these rules to ensure a higher
+// specificity than the stock .cf component classes.
+.cf-app-intake {
+  .cf-success-checklist,
+  .cf-ineligible-checklist {
+    max-width: 800px;
+    margin: 50px auto 65px;
+  }
+
+  .cf-ineligible-checklist {
+    list-style-type: none;
+    margin-bottom: 20px;
+
+    li {
+      background: url(#{$image-url}/icons/asterisk.svg) no-repeat left top transparent;
+      background-size: 22px 22px;
+      background-position-y: 4px;
+      padding-left: 38px;
+      padding-top: 3px;
+    }
+  }
+
+  .cf-msg-screen-deck {
+    text-align: left;
+
+    strong {
+      color: $color-black;
+    }
+  }
 }
 
 .cf-intake-substeps {
@@ -78,6 +102,12 @@
     margin-bottom: 14px;
   }
 
+  .cf-form-radio {
+    legend {
+      margin-bottom: 14px;
+    }
+  }
+
   @media only screen and (max-width: 760px) {
     width: 650px;
 
@@ -111,10 +141,16 @@
 
 .add-nonrating-request-issue {
   max-width: 350px;
+}
 
+.add-nonrating-request-issue-description {
   .decision-date {
     margin-top: 20px;
     width: 8em;
+  }
+
+  .cf-form-radio {
+    margin-top: 20px;
   }
 }
 
@@ -162,6 +198,17 @@
 
         .not-eligible {
           color: $color-red;
+        }
+
+        .issue-vacols {
+          .msg {
+            display: block;
+            font-weight: bold;
+          }
+
+          .desc {
+            display: block;
+          }
         }
 
         .issue-action {

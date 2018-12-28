@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :case, class: VACOLS::Case do
     sequence(:bfkey)
     sequence(:bfcorkey)
-    sequence(:bfcorlid, 100_000_000) { |n| "#{n}S" }
+    sequence(:bfcorlid, 300_000_000) { |n| "#{n}S" }
 
     association :correspondent, factory: :correspondent
     association :folder, factory: :folder, ticknum: :bfkey
@@ -38,7 +38,7 @@ FactoryBot.define do
           defolder: vacols_case.bfkey,
           deadusr: slogid ? slogid : "TEST",
           demdusr: assigner_slogid ? assigner_slogid : "ASSIGNER",
-          dereceive: (evaluator.user && evaluator.user.vacols_roles.include?("judge")) ? Time.zone.today : nil,
+          dereceive: (evaluator.user&.vacols_roles&.include?("judge")) ? Time.zone.today : nil,
           dedocid: evaluator.document_id || nil,
           deatty: sattyid || "100"
         )
@@ -186,6 +186,7 @@ FactoryBot.define do
 
     trait :status_remand do
       bfmpro "REM"
+      bfdc "3"
     end
 
     trait :status_complete do
@@ -226,10 +227,15 @@ FactoryBot.define do
 
     trait :video_hearing_requested do
       bfdocind "V"
+      bfcurloc "57"
+      bfhr "2"
+      bfac "7"
     end
 
     trait :central_office_hearing do
       bfhr "1"
+      bfcurloc "57"
+      bfac "7"
     end
 
     trait :travel_board_hearing do
@@ -271,7 +277,7 @@ FactoryBot.define do
     trait :paper_case do
       after(:build) do |vacols_case, _evaluator|
         vacols_case.folder.tivbms = "N" if %w[Y 1 0].include?(vacols_case.folder.tivbms)
-        vacols_case.folder.tisubj2 = "N" if vacols_case.folder.tisubj2 && vacols_case.folder.tisubj2.eq?("Y")
+        vacols_case.folder.tisubj2 = "N" if vacols_case.folder.tisubj2&.eq?("Y")
       end
     end
 

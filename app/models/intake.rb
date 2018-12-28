@@ -207,8 +207,9 @@ class Intake < ApplicationRecord
       id: id,
       form_type: form_type,
       veteran_file_number: veteran_file_number,
-      veteran_name: veteran && veteran.name.formatted(:readable_short),
-      veteran_form_name: veteran && veteran.name.formatted(:form),
+      veteran_name: veteran&.name&.formatted(:readable_short),
+      veteran_form_name: veteran&.name&.formatted(:form),
+      veteran_is_deceased: veteran&.deceased?,
       completed_at: completed_at,
       relationships: ama_enabled && veteran && veteran.relationships
     }
@@ -226,6 +227,13 @@ class Intake < ApplicationRecord
   end
 
   private
+
+  def update_person!
+    # Update the person when a claimant is created
+    Person.find_or_create_by(participant_id: detail.claimant_participant_id).tap do |person|
+      person.update!(date_of_birth: BGSService.new.fetch_person_info(detail.claimant_participant_id)[:birth_date])
+    end
+  end
 
   def file_number_valid?
     return false unless veteran_file_number

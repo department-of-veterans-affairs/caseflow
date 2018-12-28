@@ -20,21 +20,19 @@ class RampElection < RampReview
     receipt_date && established_at && (established_at.beginning_of_day - receipt_date.in_time_zone)
   end
 
-  def recreate_issues_from_contentions!
+  def recreate_issues_from_contentions!(epe = nil)
     # If there is any ramp issues attached to saved ramp refilings connected to this election,
     # then the issues are locked and cannot be recreated
     return false if any_matching_refiling_ramp_issues?
 
     # Load contentions outside of the Postgres transaction so we don't keep a connection
     # open needlessly for the entirety of what could be a slow VBMS request.
-    contentions = end_product_establishment.contentions
+    contentions = epe ? epe.contentions : end_product_establishment.contentions
     transaction do
       issues.destroy_all
 
-      if contentions
-        contentions.each do |contention|
-          issues.create!(contention: contention)
-        end
+      contentions&.each do |contention|
+        issues.create!(contention: contention)
       end
     end
   end
@@ -63,7 +61,7 @@ class RampElection < RampReview
   end
 
   def on_sync(end_product_establishment)
-    recreate_issues_from_contentions!
+    recreate_issues_from_contentions!(end_product_establishment)
 
     if FeatureToggle.enabled?(:automatic_ramp_rollback) && end_product_establishment.status_canceled?
       rollback_ramp_review

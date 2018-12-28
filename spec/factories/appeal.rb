@@ -26,8 +26,42 @@ FactoryBot.define do
       end
     end
 
-    trait :advanced_on_docket do
-      claimants { [create(:claimant, :advanced_on_docket)] }
+    trait :advanced_on_docket_due_to_age do
+      claimants { [create(:claimant, :advanced_on_docket_due_to_age)] }
+    end
+
+    trait :advanced_on_docket_due_to_motion do
+      # the appeal has to be established before the motion is created to apply to it.
+      established_at { Time.zone.now - 1 }
+      claimants do
+        # Create an appeal with two claimants, one with a denied AOD motion
+        # and one with a granted motion. The appeal should still be counted as AOD.
+        claimant = create(:claimant)
+        another_claimant = create(:claimant)
+        create(:advance_on_docket_motion, person: claimant.person, granted: true)
+        create(:advance_on_docket_motion, person: another_claimant.person, granted: false)
+        [claimant, another_claimant]
+      end
+    end
+
+    trait :denied_advance_on_docket do
+      established_at { Time.zone.yesterday }
+      claimants do
+        claimant = create(:claimant)
+
+        create(:advance_on_docket_motion, person: claimant.person, granted: false)
+        [claimant]
+      end
+    end
+
+    trait :inapplicable_aod_motion do
+      established_at { Time.zone.tomorrow }
+      claimants do
+        claimant = create(:claimant)
+        create(:advance_on_docket_motion, person: claimant.person, granted: true)
+        create(:advance_on_docket_motion, person: claimant.person, granted: false)
+        [claimant]
+      end
     end
 
     transient do

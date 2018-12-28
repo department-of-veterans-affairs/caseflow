@@ -32,10 +32,7 @@ class Judge
   end
 
   def attorneys
-    return [] unless user
-    (Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env][user.css_id].try(:[], :attorneys) || []).map do |css_id|
-      User.find_or_create_by(css_id: css_id, station_id: User::BOARD_STATION_ID)
-    end
+    JudgeTeam.for_judge(user).try(:attorneys) || []
   end
 
   private
@@ -45,11 +42,22 @@ class Judge
   end
 
   def upcoming_hearings(is_fetching_issues = false)
-    Hearing.repository.fetch_hearings_for_judge(user.css_id, is_fetching_issues).sort_by(&:date)
+    HearingRepository.fetch_hearings_for_judge(user.css_id, is_fetching_issues).sort_by(&:date)
   end
 
   def get_dockets_slots(dockets)
-    Hearing.repository.fetch_dockets_slots(dockets)
+    # fetching all the RO keys of the dockets
+    regional_office_keys = dockets.map { |_date, docket| docket.regional_office_key }
+
+    # fetching data of all dockets staff based on the regional office keys
+    ro_staff_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
+
+    # returns a hash of docket date (string) as key and number of slots for the docket
+    # as they key
+    dockets.map do |date, docket|
+      record = ro_staff_hash[docket.regional_office_key]
+      [date, (HearingDayRepository.slots_based_on_type(staff: record, type: docket.type, date: docket.date) if record)]
+    end.to_h
   end
 
   class << self

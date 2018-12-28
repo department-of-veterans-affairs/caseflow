@@ -1,15 +1,15 @@
 class HigherLevelReview < ClaimReview
   with_options if: :saving_review do
-    validates :receipt_date, :benefit_type, presence: { message: "blank" }
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
-  validates :legacy_opt_in_approved, inclusion: {
-    in: [true, false], message: "blank"
-  }, if: [:legacy_opt_in_enabled?, :saving_review]
+  END_PRODUCT_CODES = {
+    rating: "030HLRR",
+    nonrating: "030HLRNR",
+    pension_rating: "030HLRRPMC",
+    pension_nonrating: "030HLRNRPMC"
+  }.freeze
 
-  END_PRODUCT_RATING_CODE = "030HLRR".freeze
-  END_PRODUCT_NONRATING_CODE = "030HLRNR".freeze
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
 
   # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
@@ -24,7 +24,7 @@ class HigherLevelReview < ClaimReview
     Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review
   end
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       formType: "higher_level_review",
       sameOffice: same_office,
@@ -32,40 +32,23 @@ class HigherLevelReview < ClaimReview
     )
   end
 
-  def rating_end_product_establishment
-    @rating_end_product_establishment ||= end_product_establishments.find_by(code: END_PRODUCT_RATING_CODE)
-  end
-
-  def end_product_description
-    rating_end_product_establishment && rating_end_product_establishment.description
-  end
-
-  def end_product_base_modifier
-    valid_modifiers.first
-  end
-
   def special_issues
-    return [] unless same_office
-    [{ code: "SSR", narrative: "Same Station Review" }]
-  end
-
-  def valid_modifiers
-    END_PRODUCT_MODIFIERS
-  end
-
-  def on_sync(end_product_establishment)
-    super { create_dta_supplemental_claim }
+    specials = super
+    specials << { code: "SSR", narrative: "Same Station Review" } if same_office
+    specials
   end
 
   def issue_code(rating: true)
-    rating ? END_PRODUCT_RATING_CODE : END_PRODUCT_NONRATING_CODE
+    issue_code_type = rating ? :rating : :nonrating
+    issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
+    END_PRODUCT_CODES[issue_code_type]
+  end
+
+  def on_decision_issues_sync_processed(_end_product_establishment)
+    create_dta_supplemental_claim
   end
 
   private
-
-  def informal_conference?
-    informal_conference
-  end
 
   def create_dta_supplemental_claim
     return if dta_issues_needing_follow_up.empty?
@@ -73,30 +56,14 @@ class HigherLevelReview < ClaimReview
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
 
     if run_async?
-      ClaimReviewProcessJob.perform_later(dta_supplemental_claim)
+      DecisionReviewProcessJob.perform_later(dta_supplemental_claim)
     else
-      ClaimReviewProcessJob.perform_now(dta_supplemental_claim)
-    end
-  end
-
-  def build_follow_up_dta_issues
-    dta_issues_needing_follow_up.map do |dta_issue|
-      # do not copy over end product establishment id,
-      # review request, removed_at, disposition, and contentions
-      RequestIssue.new(
-        review_request: dta_supplemental_claim,
-        parent_request_issue_id: dta_issue.id,
-        rating_issue_reference_id: dta_issue.rating_issue_reference_id,
-        rating_issue_profile_date: dta_issue.rating_issue_profile_date,
-        description: dta_issue.description,
-        issue_category: dta_issue.issue_category,
-        decision_date: dta_issue.decision_date
-      )
+      DecisionReviewProcessJob.perform_now(dta_supplemental_claim)
     end
   end
 
   def dta_issues_needing_follow_up
-    @dta_issues_needing_follow_up ||= request_issues.no_follow_up_issues.where(disposition: DTA_ERRORS)
+    @dta_issues_needing_follow_up ||= decision_issues.where(disposition: DTA_ERRORS)
   end
 
   def dta_supplemental_claim
@@ -104,13 +71,37 @@ class HigherLevelReview < ClaimReview
       veteran_file_number: veteran_file_number,
       receipt_date: Time.zone.now.to_date,
       is_dta_error: true,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
     ).tap do |sc|
       sc.create_claimants!(
         participant_id: claimant_participant_id,
         payee_code: payee_code
       )
     end
+  end
+
+  def build_follow_up_dta_issues
+    dta_issues_needing_follow_up.map do |dta_decision_issue|
+      # do not copy over end product establishment id,
+      # review request, removed_at, disposition, and contentions
+      RequestIssue.new(
+        review_request: dta_supplemental_claim,
+        contested_decision_issue_id: dta_decision_issue.id,
+        # parent_request_issue_id: dta_issue.id, delete this from table
+        rating_issue_reference_id: dta_decision_issue.rating_issue_reference_id,
+        rating_issue_profile_date: dta_decision_issue.profile_date,
+        description: dta_decision_issue.description,
+        issue_category: dta_decision_issue.issue_category,
+        benefit_type: dta_decision_issue.benefit_type,
+        decision_date: dta_decision_issue.approx_decision_date
+      )
+    end
+  end
+
+  def informal_conference?
+    informal_conference
   end
 
   def new_end_product_establishment(ep_code)

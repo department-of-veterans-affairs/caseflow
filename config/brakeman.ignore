@@ -7,7 +7,7 @@
       "check_name": "SendFile",
       "message": "Model attribute used in file name",
       "file": "app/controllers/hearings/schedule_periods_controller.rb",
-      "line": 64,
+      "line": 55,
       "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "send_file(SchedulePeriod.find(params[:schedule_period_id]).spreadsheet_location, :type => \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\", :disposition => (\"attachment; filename='#{SchedulePeriod.find(params[:schedule_period_id]).file_name}'\"))",
       "render_path": null,
@@ -78,8 +78,28 @@
       "user_input": "Document.find(params[:id]).serve",
       "confidence": "Medium",
       "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "62eee76f337de2ef652f6755165cf76c318d170b2a3a13a5da6c92dd7a2f18d7",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/vacols/case.rb",
+      "line": 264,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "connection.execute(\"insert all #{vacols_ids.map do\n sanitize_sql_array([\"into PRIORLOC (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY) values (SYSDATE, SYSDATE, ?, ?, ?)\", location, (RequestStore.store[:current_user].vacols_uniq_id or \"DSUSER\").upcase, vacols_id])\n end.join(\" \")} select 1 from dual\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "VACOLS::Case",
+        "method": "VACOLS::Case.batch_update_vacols_location"
+      },
+      "user_input": "vacols_ids.map do\n sanitize_sql_array([\"into PRIORLOC (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY) values (SYSDATE, SYSDATE, ?, ?, ?)\", location, (RequestStore.store[:current_user].vacols_uniq_id or \"DSUSER\").upcase, vacols_id])\n end.join(\" \")",
+      "confidence": "Medium",
+      "note": "False positive, all input is sanitized by sanitize_sql_array"
     }
   ],
-  "updated": "2018-07-30 11:36:17 -0400",
+  "updated": "2018-11-10 18:22:33 -0500",
   "brakeman_version": "4.1.1"
 }

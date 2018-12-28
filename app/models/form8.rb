@@ -3,7 +3,7 @@
 class Form8 < ApplicationRecord
   include UploadableDocument
 
-  FORM8_S3_SUB_BUCKET = "form_8".freeze
+  FORM8_S3_SUB_BUCKET = "form_8"
 
   FORM_FIELDS = [
     :vacols_id,
@@ -197,6 +197,10 @@ class Form8 < ApplicationRecord
     path = Form8.pdf_service.output_location_for(self)
     fetch_from_s3_and_save(path)
     path
+  end
+
+  def source
+    "VACOLS"
   end
 
   def fetch_from_s3_and_save(destination_path)

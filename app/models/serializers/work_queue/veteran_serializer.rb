@@ -16,6 +16,7 @@ class WorkQueue::VeteranSerializer < ActiveModel::Serializer
       {
         address_line_1: object.veteran_address_line_1,
         address_line_2: object.veteran_address_line_2,
+        address_line_3: object.veteran_address_line_3,
         city: object.veteran_city,
         state: object.veteran_state,
         zip: object.veteran_zip,

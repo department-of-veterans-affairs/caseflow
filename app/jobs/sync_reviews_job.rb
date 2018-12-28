@@ -1,4 +1,4 @@
-# This job will sync end products & contentions that we created for AMA reviews
+# This job will sync end products & contentions that we created for decision reviews
 class SyncReviewsJob < CaseflowJob
   queue_as :low_priority
   application_attr :intake
@@ -13,8 +13,10 @@ class SyncReviewsJob < CaseflowJob
     limit = args["limit"] || DEFAULT_EP_LIMIT
 
     perform_end_product_syncs(limit)
+    perform_decision_review_processing(limit)
+    perform_decision_rating_issues_syncs(limit)
+    reprocess_decision_documents(limit)
     perform_ramp_refiling_reprocessing
-    perform_claim_review_processing(limit)
   end
 
   private
@@ -27,20 +29,32 @@ class SyncReviewsJob < CaseflowJob
 
   def perform_ramp_refiling_reprocessing
     RampRefiling.need_to_reprocess.each do |ramp_refiling|
-      begin
-        ramp_refiling.create_end_product_and_contentions!
-      rescue StandardError => e
-        # Rescue and capture errors so they don't cause the job to stop
-        Raven.capture_exception(e)
+      ramp_refiling.create_end_product_and_contentions!
+    rescue StandardError => e
+      # Rescue and capture errors so they don't cause the job to stop
+      Raven.capture_exception(e, extra: { ramp_refiling_id: ramp_refiling.id })
+    end
+  end
+
+  def perform_decision_review_processing(limit)
+    # RequestIssuesUpdate is not a DecisionReview subclass but it acts like one
+    # for the purposes of DecisionReviewProcessJob
+    [Appeal, HigherLevelReview, SupplementalClaim, RequestIssuesUpdate].each do |klass|
+      klass.requires_processing.limit(limit).each do |review|
+        DecisionReviewProcessJob.perform_later(review)
       end
     end
   end
 
-  def perform_claim_review_processing(limit)
-    [HigherLevelReview, SupplementalClaim, RequestIssuesUpdate].each do |klass|
-      klass.requires_processing.limit(limit).each do |claim_review|
-        ClaimReviewProcessJob.perform_later(claim_review)
-      end
+  def perform_decision_rating_issues_syncs(limit)
+    RequestIssue.requires_processing.limit(limit).each do |request_issue|
+      DecisionIssueSyncJob.perform_later(request_issue)
+    end
+  end
+
+  def reprocess_decision_documents(limit)
+    DecisionDocument.requires_processing.limit(limit).each do |decision_document|
+      ProcessDecisionDocumentJob.perform_later(decision_document)
     end
   end
 end

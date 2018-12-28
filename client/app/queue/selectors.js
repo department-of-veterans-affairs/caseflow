@@ -42,6 +42,7 @@ const getAppeals = (state: State): BasicAppeals => state.queue.appeals;
 const getAppealDetails = (state: State): AppealDetails => state.queue.appealDetails;
 const getUserCssId = (state: State): string => state.ui.userCssId;
 const getAppealId = (state: State, props: Object): string => props.appealId;
+const getActiveOrganizationId = (state: State): ?number => state.ui.activeOrganizationId;
 const getTaskUniqueId = (state: State, props: Object): string => props.taskId;
 const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
 const getModals = (state: State): UiStateModals => state.ui.modals;
@@ -78,6 +79,12 @@ export const tasksWithAppealSelector = createSelector(
   }
 );
 
+export const tasksByOrganization = createSelector(
+  [tasksWithAppealSelector, getActiveOrganizationId],
+  (tasks: Array<TaskWithAppeal>, organizationId: string) =>
+    _.filter(tasks, (task) => (task.assignedTo.id === organizationId))
+);
+
 export const taskById = createSelector(
   [tasksWithAppealSelector, getTaskUniqueId],
   (tasks: Array<TaskWithAppeal>, taskId: string) =>
@@ -104,6 +111,23 @@ export const getTasksForAppeal = createSelector(
   }
 );
 
+export const getUnassignedOrganizationalTasks = createSelector(
+  [tasksWithAppealSelector],
+  (tasks: Tasks) => _.filter(tasks, (task) => {
+    return (task.status === TASK_STATUSES.assigned || task.status === TASK_STATUSES.in_progress);
+  })
+);
+
+export const getAssignedOrganizationalTasks = createSelector(
+  [tasksWithAppealSelector],
+  (tasks: Tasks) => _.filter(tasks, (task) => (task.status === TASK_STATUSES.on_hold))
+);
+
+export const getCompletedOrganizationalTasks = createSelector(
+  [tasksWithAppealSelector],
+  (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed)
+);
+
 export const tasksForAppealAssignedToUserSelector = createSelector(
   [getTasksForAppeal, getUserCssId],
   (tasks: Tasks, cssId: string) => {
@@ -118,14 +142,25 @@ export const appealsByCaseflowVeteranId = createSelector(
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
-const tasksByAssigneeCssIdSelector = createSelector(
+export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
   (tasks: Array<TaskWithAppeal>, cssId: string) =>
     _.filter(tasks, (task) => task.assignedTo.cssId === cssId)
 );
 
+export const tasksByAssignerCssIdSelector = createSelector(
+  [tasksWithAppealSelector, getUserCssId],
+  (tasks: Array<TaskWithAppeal>, cssId: string) =>
+    _.filter(tasks, (task) => task.assignedBy.cssId === cssId)
+);
+
 export const incompleteTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
+  (tasks: Tasks) => incompleteTasksSelector(tasks)
+);
+
+export const incompleteTasksByAssignerCssIdSelector = createSelector(
+  [tasksByAssignerCssIdSelector],
   (tasks: Tasks) => incompleteTasksSelector(tasks)
 );
 
@@ -146,13 +181,17 @@ export const newTasksByAssigneeCssIdSelector = createSelector(
 export const workableTasksByAssigneeCssIdSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks: Array<TaskWithAppeal>) => tasks.filter(
-    (task) => task.appeal.isLegacyAppeal || task.status !== TASK_STATUSES.on_hold
+    (task) => {
+      return (task.appeal.isLegacyAppeal ||
+          task.status === TASK_STATUSES.assigned ||
+          task.status === TASK_STATUSES.in_progress);
+    }
   )
 );
 
 const incompleteTasksWithHold: (State) => Array<Task> = createSelector(
   [incompleteTasksByAssigneeCssIdSelector],
-  (tasks: Array<Task>) => tasks.filter((task) => task.placedOnHoldAt)
+  (tasks: Array<Task>) => tasks.filter((task) => taskIsOnHold(task))
 );
 
 export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
@@ -169,16 +208,25 @@ export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = create
   )
 );
 
+export const onHoldTasksForAttorney: (State) => Array<Task> = createSelector(
+  [incompleteTasksWithHold, incompleteTasksByAssignerCssIdSelector],
+  (incompleteWithHold: Array<Task>, incompleteByAssigner: Array<Task>) => {
+    const onHoldTasksWithDuplicates = incompleteWithHold.concat(incompleteByAssigner);
+
+    return _.filter(onHoldTasksWithDuplicates, (task) => task.assignedTo.type === 'User');
+  }
+);
+
 export const judgeReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
     if (task.appealType === 'Appeal') {
-      return task.action === 'review' &&
+      return task.label === 'review' &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
     // eslint-disable-next-line no-undefined
-    return [null, undefined, 'review'].includes(task.action);
+    return [null, undefined, 'review'].includes(task.label);
   })
 );
 
@@ -186,11 +234,11 @@ export const judgeAssignTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
     if (task.appealType === 'Appeal') {
-      return task.action === 'assign' &&
+      return task.label === 'assign' &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
-    return task.action === 'assign';
+    return task.label === 'assign';
   })
 );
 
@@ -205,7 +253,7 @@ const getAttorney = (state: State, attorneyId: string) => {
 };
 
 export const getAssignedTasks = (state: State, attorneyId: string) => {
-  const tasks = tasksWithAppealSelector(state);
+  const tasks = incompleteTasksSelector(tasksWithAppealSelector(state));
   const attorney = getAttorney(state, attorneyId);
   const cssId = attorney ? attorney.css_id : null;
 
@@ -213,7 +261,7 @@ export const getAssignedTasks = (state: State, attorneyId: string) => {
 };
 
 export const getTasksByUserId = (state: State) => {
-  const tasks = tasksWithAppealSelector(state);
+  const tasks = incompleteTasksSelector(tasksWithAppealSelector(state));
   const attorneys = state.queue.attorneysOfJudge;
   const attorneysByCssId = _.keyBy(attorneys, 'css_id');
 

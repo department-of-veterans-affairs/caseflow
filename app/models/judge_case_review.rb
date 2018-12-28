@@ -1,5 +1,6 @@
 class JudgeCaseReview < ApplicationRecord
   include CaseReviewConcern
+  include IssueUpdater
 
   belongs_to :judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
@@ -33,6 +34,11 @@ class JudgeCaseReview < ApplicationRecord
     end
   end
 
+  def update_in_caseflow!
+    task.mark_as_complete!
+    update_issue_dispositions_in_caseflow!
+  end
+
   private
 
   def sign_decision_or_create_omo!
@@ -45,6 +51,7 @@ class JudgeCaseReview < ApplicationRecord
       decass_attrs: {
         complexity: complexity,
         quality: quality,
+        one_touch_initiative: one_touch_initiative,
         deficiencies: factors_not_considered + areas_for_improvement,
         comment: comment,
         modifying_user: modifying_user,
@@ -70,7 +77,7 @@ class JudgeCaseReview < ApplicationRecord
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         if record.valid?
-          record.legacy? ? record.update_in_vacols! : record.update_task_and_issue_dispositions
+          record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
         end
         record
       end

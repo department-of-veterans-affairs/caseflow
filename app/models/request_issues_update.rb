@@ -17,6 +17,7 @@ class RequestIssuesUpdate < ApplicationRecord
     transaction do
       review.create_issues!(new_issues)
       strip_removed_issues!
+      process_legacy_issues!
       review.mark_rating_request_issues_to_reassociate!
 
       update!(
@@ -32,30 +33,25 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def process_job
-    if review.respond_to?(:process_end_product_establishments!)
-      if run_async?
-        ClaimReviewProcessJob.perform_later(self)
-      else
-        ClaimReviewProcessJob.perform_now(self)
-      end
+    if run_async?
+      DecisionReviewProcessJob.perform_later(self)
     else
-      # appeals should just be set to processed
-      attempted!
-      processed!
+      DecisionReviewProcessJob.perform_now(self)
     end
   end
 
-  def process_end_product_establishments!
+  def establish!
     attempted!
 
-    review.process_end_product_establishments!
+    review.establish!
 
-    removed_issues.each do |request_issue|
+    potential_end_products_to_remove = []
+    removed_issues.select(&:end_product_establishment).each do |request_issue|
       request_issue.end_product_establishment.remove_contention!(request_issue)
+      potential_end_products_to_remove << request_issue.end_product_establishment
     end
 
-    potential_end_products_to_remove = removed_issues.map(&:end_product_establishment).uniq
-    potential_end_products_to_remove.each(&:cancel_unused_end_product!)
+    potential_end_products_to_remove.uniq.each(&:cancel_unused_end_product!)
     clear_error!
     processed!
   end
@@ -91,17 +87,7 @@ class RequestIssuesUpdate < ApplicationRecord
     before_issues
 
     @request_issues_data.map do |issue_data|
-      review.request_issues.find_or_initialize_by(
-        rating_issue_reference_id: issue_data[:reference_id],
-        rating_issue_profile_date: issue_data[:profile_date],
-        description: issue_data[:decision_text],
-        decision_date: issue_data[:decision_date],
-        issue_category: issue_data[:issue_category],
-        notes: issue_data[:notes],
-        is_unidentified: issue_data[:is_unidentified]
-      ).tap do |request_issue|
-        request_issue.rating_issue_profile_date ||= issue_data[:profile_date]
-      end
+      review.request_issues.find_or_build_from_intake_data(issue_data)
     end
   end
 
@@ -129,9 +115,16 @@ class RequestIssuesUpdate < ApplicationRecord
     RequestIssue.where(id: after_request_issue_ids)
   end
 
+  def process_legacy_issues!
+    LegacyOptinManager.new(decision_review: review).process!
+  end
+
   # Instead of fully deleting removed issues, we instead strip them from the review so we can
   # maintain a record of the other data that was on them incase we need to revert the update.
   def strip_removed_issues!
-    removed_issues.each { |issue| issue.update!(review_request: nil) }
+    removed_issues.each do |issue|
+      issue.update!(review_request: nil)
+      issue.legacy_issue_optin&.flag_for_rollback!
+    end
   end
 end

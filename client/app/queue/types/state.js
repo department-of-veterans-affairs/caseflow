@@ -7,7 +7,8 @@ import type {
   BasicAppeals,
   AppealDetails,
   User,
-  Attorneys
+  Attorneys,
+  Distribution
 } from './models';
 
 export type AttorneyAppealsLoadingState = {
@@ -35,6 +36,7 @@ export type UiStateModals = {|
 export type UiStateMessage = { title: string, detail?: React.Node };
 
 export type UiState = {
+  activeOrganizationId: ?number,
   selectingJudge: boolean,
   highlightFormItems: boolean,
   messages: {
@@ -55,7 +57,13 @@ export type UiState = {
   userIsVsoEmployee: boolean,
   feedbackUrl: string,
   veteranCaseListIsVisible: boolean,
-  organizationIds: Array<number>
+  organizations: Array<Object>,
+  canEditAod: boolean,
+  hearingDay: {
+    hearingDate: ?string,
+    hearingTime: ?string,
+    regionalOffice: ?string
+  }
 };
 
 export type UsersById = { [number]: ?User };
@@ -82,9 +90,11 @@ export type QueueState = {|
   attorneysOfJudge: AttorneysOfJudge,
   attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
   isTaskAssignedToUserSelected: IsTaskAssignedToUserSelected,
+  pendingDistribution: ?Distribution,
   attorneys: Attorneys,
   newDocsForAppeal: NewDocsForAppeal,
   organizationId: ?number,
+  organizations: Array<Object>,
   specialIssues: Object,
   loadingAppealDetail: Object
 |};
@@ -92,6 +102,9 @@ export type QueueState = {|
 export type CommonComponentState = {|
   regionalOffices: Array<Object>,
   selectedRegionalOffice: { label: string, value: string },
+  selectedHearingDate: string,
+  selectedHearingTime: string,
+  selectedHearingDay: Object
 |};
 
 export type State = {

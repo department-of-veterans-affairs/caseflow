@@ -12,7 +12,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { requestSave } from './uiReducer/uiActions';
-import { setTaskAttrs, setAppealAttrs } from './QueueActions';
+import { onReceiveAmaTasks, setAppealAttrs } from './QueueActions';
 
 import {
   appealWithDetailSelector,
@@ -31,7 +31,7 @@ import type { Appeal, Task } from './types/models';
 import type { UiStateMessage } from './types/state';
 
 type ComponentState = {|
-  action: ?string,
+  label: ?string,
   instructions: string
 |};
 
@@ -48,7 +48,7 @@ type Props = Params & {|
   task: Task,
   // dispatch
   requestSave: typeof requestSave,
-  setTaskAttrs: typeof setTaskAttrs,
+  onReceiveAmaTasks: typeof onReceiveAmaTasks,
   setAppealAttrs: typeof setAppealAttrs
 |};
 
@@ -57,30 +57,12 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     super(props);
 
     this.state = {
-      action: null,
+      label: null,
       instructions: ''
     };
   }
 
   validateForm = () => Object.values(this.state).every(Boolean);
-
-  buildPayload = () => {
-    const { task, appeal } = this.props;
-
-    return _.map([task], (singleTask: Task) => {
-      const mapped: Object = {
-        ...this.state,
-        type: 'ColocatedTask',
-        external_id: appeal.externalId
-      };
-
-      if (!appeal.isLegacyAppeal) {
-        mapped.parent_id = singleTask.taskId;
-      }
-
-      return mapped;
-    });
-  }
 
   buildPayload = () => {
     const { task, appeal } = this.props;
@@ -101,23 +83,25 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       }
     };
     const successMsg = {
-      title: sprintf(COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE, CO_LOCATED_ADMIN_ACTIONS[this.state.action]),
+      title: sprintf(COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE, CO_LOCATED_ADMIN_ACTIONS[this.state.label]),
       detail: <DispatchSuccessDetail task={task} />
     };
 
     this.props.requestSave('/tasks', payload, successMsg).
-      then(() => {
+      then((resp) => {
         if (task.isLegacy) {
           this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
         } else {
-          this.props.setTaskAttrs(task.uniqueId, { status: 'on_hold' });
+          const response = JSON.parse(resp.text);
+
+          this.props.onReceiveAmaTasks(response.tasks.data);
         }
       });
   }
 
   render = () => {
     const { highlightFormItems, error } = this.props;
-    const { action, instructions } = this.state;
+    const { instructions } = this.state;
 
     return <React.Fragment>
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
@@ -129,15 +113,15 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
       </Alert>}
       <div {...marginTop(4)}>
         <SearchableDropdown
-          errorMessage={highlightFormItems && !action ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+          errorMessage={highlightFormItems && !this.state.label ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
           placeholder="Select an action type"
           options={_.map(CO_LOCATED_ADMIN_ACTIONS, (label: string, value: string) => ({
             label,
             value
           }))}
-          onChange={(option) => option && this.setState({ action: option.value })}
-          value={this.state.action} />
+          onChange={(option) => option && this.setState({ label: option.value })}
+          value={this.state.label} />
       </div>
       <div {...marginTop(4)}>
         <TextareaField
@@ -159,7 +143,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
-  setTaskAttrs,
+  onReceiveAmaTasks,
   setAppealAttrs
 }, dispatch);
 

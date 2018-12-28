@@ -37,6 +37,21 @@ const rampIneligibleInstructions = <div>
   <BareList items={stepFns} />
 </div>;
 
+const veteranNotFoundInstructions = <div>
+  <p>Enter a valid Veteran ID or SSN and search again.</p>
+  <p>
+    Note: If you are certain the Veteran ID or SSN is correct,
+    the claimant may not exist in the VBA Corporate Database.
+    If you have access, please add claimant to the Corporate
+    Database to continue processing this intake. If you do not
+    have access, please
+    <b>
+      <a href="mailto:jennifer.umberhind@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database"> email </a>
+    </b>
+    for assistance.
+  </p>
+</div>;
+
 const missingFieldsMessage = (fields) => <p>
   Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database,
   then retry establishing the EP in Caseflow: {fields}.
@@ -79,8 +94,8 @@ class Search extends React.PureComponent {
         body: 'Please enter a valid Veteran ID and try again.'
       },
       veteran_not_found: {
-        title: 'Veteran ID not found',
-        body: 'Please enter a valid Veteran ID and try again.'
+        title: 'Veteran not found',
+        body: veteranNotFoundInstructions
       },
       veteran_not_accessible: {
         title: 'You don\'t have permission to view this Veteran\'s information​',
@@ -176,11 +191,11 @@ class Search extends React.PureComponent {
     return <div>
       { searchErrorCode && this.getSearchErrorAlert(searchErrorCode, searchErrorData) }
 
-      <h1>Search for Veteran ID</h1>
+      <h1>Search for Veteran by ID</h1>
 
       <SearchBar
         size="small"
-        title="Enter the Veteran's ID"
+        title="Enter the Veteran's ID or SSN"
         onSubmit={this.handleSearchSubmit}
         onChange={this.props.setFileNumberSearch}
         onClearSearch={this.clearSearch}

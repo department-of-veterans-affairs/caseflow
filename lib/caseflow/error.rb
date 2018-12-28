@@ -1,6 +1,6 @@
 module Caseflow::Error
-  class SerializableError < StandardError
-    attr_accessor :code, :message
+  module ErrorSerializer
+    extend ActiveSupport::Concern
 
     def initialize(args)
       @code = args[:code]
@@ -10,6 +10,11 @@ module Caseflow::Error
     def serialize_response
       { json: { "errors": [{ "status": code, "title": message, "detail": message }] }, status: code }
     end
+  end
+
+  class SerializableError < StandardError
+    include Caseflow::Error::ErrorSerializer
+    attr_accessor :code, :message
   end
 
   class EfolderError < SerializableError; end
@@ -32,6 +37,19 @@ module Caseflow::Error
     end
   end
 
+  class DuplicateTaskActionPaths < SerializableError
+    attr_accessor :task_id, :user_id, :labels
+
+    def initialize(args)
+      @task_id = args[:task_id]
+      @user_id = args[:user_id]
+      @labels = args[:labels]
+      @code = args[:code] || 500
+      @message = args[:message] || "Task #{@task_id} for user #{user_id} has more than one available action"\
+                                   " with same path. Labels: #{labels.join(', ')}"
+    end
+  end
+
   class BvaDispatchTaskCountMismatch < SerializableError
     # Add attr_accessors for testing
     attr_accessor :user_id, :appeal_id, :tasks
@@ -43,6 +61,15 @@ module Caseflow::Error
       @code = args[:code] || 400
       @message = args[:message] || "Expected 1 BvaDispatchTask received #{@tasks.count} tasks for"\
                                    " appeal #{@appeal_id}, user #{@user_id}"
+    end
+  end
+
+  class AttorneyJudgeCheckoutError < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
     end
   end
 
@@ -58,9 +85,29 @@ module Caseflow::Error
     end
   end
 
+  class DuplicateOrgTask < SerializableError
+    attr_accessor :appeal_id, :task_type, :assignee_type
+
+    def initialize(args)
+      @appeal_id = args[:appeal_id]
+      @task_type = args[:task_type]
+      @assignee_type = args[:assignee_type]
+      @code = args[:code] || 400
+      @message = args[:message] || "Appeal #{@appeal_id} already has an active task of type #{@task_type} assigned to "\
+                                   "#{assignee_type}. No action necessary"
+    end
+  end
+
   class OutcodeValidationFailure < SerializableError
     def initialize(args)
       @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
+
+  class DocumentUploadFailedInVBMS < SerializableError
+    def initialize(args)
+      @code = args[:code] || 502
       @message = args[:message]
     end
   end
@@ -117,8 +164,17 @@ module Caseflow::Error
 
   class VacolsRepositoryError < StandardError; end
   class VacolsRecordNotFound < VacolsRepositoryError; end
-  class UserRepositoryError < VacolsRepositoryError; end
+  class UserRepositoryError < VacolsRepositoryError
+    include Caseflow::Error::ErrorSerializer
+    attr_accessor :code, :message
+
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
   class IssueRepositoryError < VacolsRepositoryError; end
+  class RemandReasonRepositoryError < VacolsRepositoryError; end
   class QueueRepositoryError < VacolsRepositoryError; end
   class MissingRequiredFieldError < VacolsRepositoryError; end
 

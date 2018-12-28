@@ -97,8 +97,7 @@ describe Claimant do
   context "#advanced_on_docket" do
     context "when claimant is over 75 years old" do
       it "returns true" do
-        claimant = create(:claimant)
-        create(:person, participant_id: claimant.participant_id, date_of_birth: 80.years.ago)
+        claimant = create(:claimant, :advanced_on_docket_due_to_age)
         expect(claimant.advanced_on_docket(1.year.ago)).to eq(true)
       end
     end
@@ -106,8 +105,7 @@ describe Claimant do
     context "when claimant has motion granted" do
       it "returns true" do
         claimant = create(:claimant)
-        person = create(:person, participant_id: claimant.participant_id, date_of_birth: 20.years.ago)
-        create(:advance_on_docket_motion, person_id: person.id, granted: true)
+        create(:advance_on_docket_motion, person_id: claimant.person.id, granted: true)
 
         expect(claimant.advanced_on_docket(1.year.ago)).to eq(true)
       end
@@ -116,8 +114,44 @@ describe Claimant do
     context "when claimant is younger than 75 years old and has no motion granted" do
       it "returns false" do
         claimant = create(:claimant)
-        create(:person, participant_id: claimant.participant_id, date_of_birth: 20.years.ago)
         expect(claimant.advanced_on_docket(1.year.ago)).to eq(false)
+      end
+    end
+  end
+
+  context "#valid?" do
+    context "payee_code" do
+      let(:review_request) do
+        build(:higher_level_review, benefit_type: benefit_type, veteran_file_number: create(:veteran).file_number)
+      end
+
+      subject { build(:claimant, review_request: review_request) }
+
+      context "when review_request.benefit_type is compensation" do
+        let(:benefit_type) { "compensation" }
+
+        it "requires non-blank value" do
+          expect(subject).to_not be_valid
+          expect(subject.errors.messages[:payee_code]).to eq ["blank"]
+        end
+      end
+
+      context "when review_request.benefit_type is pension" do
+        let(:benefit_type) { "pension" }
+
+        it "requires non-blank value" do
+          expect(subject).to_not be_valid
+          expect(subject.errors.messages[:payee_code]).to eq ["blank"]
+        end
+      end
+
+      context "when review_request.benefit_type is fiduciary" do
+        let(:benefit_type) { "fiduciary" }
+
+        it "allows blank value" do
+          expect(subject).to be_valid
+          expect(subject.errors.messages[:payee_code]).to eq []
+        end
       end
     end
   end

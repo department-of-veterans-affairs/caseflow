@@ -24,7 +24,8 @@ FactoryBot.define do
         bgs_attrs: {
           claim_type_code: end_product_establishment.code,
           end_product_type_code: end_product_establishment.modifier,
-          benefit_claim_id: end_product_establishment.reference_id
+          benefit_claim_id: end_product_establishment.reference_id,
+          last_action_date: 5.days.ago
         }
       )
     end

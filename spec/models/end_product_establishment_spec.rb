@@ -46,6 +46,7 @@ describe EndProductEstablishment do
       benefit_type_code: benefit_type_code,
       doc_reference_id: doc_reference_id,
       development_item_reference_id: development_item_reference_id,
+      established_at: 30.days.ago,
       user: current_user
     )
   end
@@ -109,7 +110,7 @@ describe EndProductEstablishment do
             predischarge: false,
             claim_type: "Claim",
             end_product_modifier: "031",
-            end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+            end_product_code: HigherLevelReview::END_PRODUCT_CODES[:rating],
             end_product_label: "Higher-Level Review Rating",
             station_of_jurisdiction: "397",
             date: 2.days.ago.to_date,
@@ -137,7 +138,7 @@ describe EndProductEstablishment do
               predischarge: false,
               claim_type: "Claim",
               end_product_modifier: "032",
-              end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+              end_product_code: HigherLevelReview::END_PRODUCT_CODES[:rating],
               end_product_label: "Higher-Level Review Rating",
               station_of_jurisdiction: "397",
               date: 2.days.ago.to_date,
@@ -193,7 +194,7 @@ describe EndProductEstablishment do
             date: 2.days.ago.to_date,
             end_product_modifier: "030",
             end_product_label: "Higher-Level Review Rating",
-            end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
+            end_product_code: HigherLevelReview::END_PRODUCT_CODES[:rating],
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false
           },
@@ -301,11 +302,6 @@ describe EndProductEstablishment do
     subject { end_product_establishment.generate_claimant_letter! }
 
     context "when claimant letter has already been generated" do
-      before do
-        # Cleaning Fakes:BGSService because it seems to persist between tests
-        Fakes::BGSService.manage_claimant_letter_v2_requests = nil
-      end
-
       let(:doc_reference_id) { "doc_exists" }
 
       it "does not create a new claimant letter" do
@@ -335,11 +331,6 @@ describe EndProductEstablishment do
     subject { end_product_establishment.generate_tracked_item! }
 
     context "when tracked item has already been generated" do
-      before do
-        # Cleaning Fakes:BGSService because it seems to persist between tests
-        Fakes::BGSService.generate_tracked_items_requests = nil
-      end
-
       let(:development_item_reference_id) { "tracked_item_exists" }
 
       it "does not create a new tracked item" do
@@ -529,6 +520,35 @@ describe EndProductEstablishment do
         end
       end
 
+      context "when VBMS/BGS has a transient internal error" do
+        before do
+          # from https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3116/
+          # rubocop:disable Metrics/LineLength
+          sample_transient_error_body = '<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Header/><env:Body><env:Fault><faultcode xmlns:ns1="http://www.w3.org/2003/05/soap-envelope">ns1:Server</faultcode><faultstring>gov.va.vba.vbms.ws.VbmsWSException: WssVerification Exception - Security Verification Exception GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</faultstring><detail><cdm:faultDetailBean xmlns:cdm="http://vbms.vba.va.gov/cdm" cdm:message="gov.va.vba.vbms.ws.VbmsWSException: WssVerification Exception - Security Verification Exception GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" cdm:exceptionClassName="gov.va.vba.vbms.ws.VbmsWSException" cdm:uid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" cdm:serverException="true"/></detail></env:Fault></env:Body></env:Envelope>'
+          # rubocop:enable Metrics/LineLength
+          error = VBMS::HTTPError.new(500, sample_transient_error_body)
+          allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(error)
+        end
+
+        it "re-raises a transient ignorable error" do
+          expect { subject }.to raise_error(EndProductEstablishment::TransientBGSSyncError)
+        end
+      end
+
+      context "when VBMS/BGS has a transient network error" do
+        before do
+          # from https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
+          # rubocop:disable Metrics/LineLength
+          error = Errno::ETIMEDOUT.new('Connection timed out - Connection timed out - connect(2) for "bepprod.vba.va.gov" port 443 (bepprod.vba.va.gov:443)')
+          # rubocop:enable Metrics/LineLength
+          allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(error)
+        end
+
+        it "re-raises a transient ignorable error" do
+          expect { subject }.to raise_error(EndProductEstablishment::TransientBGSSyncError)
+        end
+      end
+
       context "when source exists" do
         context "when source implements on_sync" do
           let(:source) { create(:ramp_election) }
@@ -567,6 +587,126 @@ describe EndProductEstablishment do
       let(:synced_status) { "NOTCANCELED" }
 
       it { is_expected.to eq(false) }
+    end
+  end
+
+  context "#associated_rating" do
+    subject { end_product_establishment.associated_rating }
+    let(:associated_claims) { [] }
+
+    let(:promulgation_date) { end_product_establishment.established_at + 1.day }
+
+    let!(:rating) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: promulgation_date,
+        associated_claims: associated_claims
+      )
+    end
+
+    context "when ep is one of many associated to the rating" do
+      let(:associated_claims) do
+        [
+          { clm_id: "09123", bnft_clm_tc: end_product_establishment.code },
+          { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
+        ]
+      end
+
+      it {
+        is_expected.to have_attributes(
+          participant_id: rating.participant_id,
+          promulgation_date: rating.promulgation_date
+        )
+      }
+    end
+
+    context "when associated rating only has 1 ep" do
+      let(:associated_claims) do
+        [
+          { clm_id: end_product_establishment.reference_id, bnft_clm_tc: end_product_establishment.code }
+        ]
+      end
+
+      it {
+        is_expected.to have_attributes(
+          participant_id: rating.participant_id,
+          promulgation_date: rating.promulgation_date
+        )
+      }
+
+      context "when rating is before established_at date" do
+        let!(:another_rating) do
+          Generators::Rating.build(
+            participant_id: veteran.participant_id,
+            promulgation_date: end_product_establishment.established_at + 1.day,
+            associated_claims: []
+          )
+        end
+        let(:promulgation_date) { end_product_establishment.established_at - 1.day }
+
+        it { is_expected.to eq(nil) }
+      end
+    end
+  end
+
+  context "#on_decision_issue_sync_processed" do
+    subject { end_product_establishment.on_decision_issue_sync_processed }
+    let(:processed_at) { Time.zone.now }
+    let!(:request_issues) do
+      [
+        create(:request_issue,
+               review_request: source,
+               decision_sync_processed_at: Time.zone.now),
+        create(:request_issue,
+               review_request: source,
+               decision_sync_processed_at: processed_at)
+      ]
+    end
+
+    context "when decision issues are all synced" do
+      context "when source is a higher level review" do
+        let!(:claimant) do
+          Claimant.create!(
+            review_request: source,
+            participant_id: veteran.participant_id,
+            payee_code: "10"
+          )
+        end
+
+        let!(:decision_issue) do
+          create(:decision_issue,
+                 decision_review: source,
+                 disposition: HigherLevelReview::DTA_ERROR_PMR,
+                 rating_issue_reference_id: "rating1")
+        end
+
+        it "creates a supplemental claim if dta errors exist" do
+          subject
+
+          expect(SupplementalClaim.find_by(
+                   is_dta_error: true,
+                   veteran_file_number: source.veteran_file_number
+          )).to_not be_nil
+        end
+      end
+
+      context "when source is a supplemental claim" do
+        let(:source) { SupplementalClaim.new(veteran_file_number: veteran_file_number) }
+
+        it "does nothing" do
+          subject
+          expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
+        end
+      end
+    end
+
+    context "when decision issues are not all synced" do
+      let(:processed_at) { nil }
+
+      it "does nothing" do
+        subject
+        expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
+      end
     end
   end
 end

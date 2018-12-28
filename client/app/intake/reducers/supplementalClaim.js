@@ -1,14 +1,22 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
 import { formatDateStr } from '../../util/DateUtil';
-import { formatRatings, formatRequestIssues } from '../util/issues';
-import { getReceiptDateError, getBlankOptionError, getPageError, formatRelationships } from '../util';
+import { formatRequestIssues, formatContestableIssues } from '../util/issues';
+import {
+  convertStringToBoolean,
+  getReceiptDateError,
+  getBlankOptionError,
+  getPageError,
+  formatRelationships
+} from '../util';
 import { update } from '../../util/ReducerUtil';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.SUPPLEMENTAL_CLAIM.key) {
     return state;
   }
+
+  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 
   return update(state, {
     isStarted: {
@@ -20,26 +28,35 @@ const updateFromServerIntake = (state, serverIntake) => {
     benefitType: {
       $set: serverIntake.benefit_type
     },
-    claimantNotVeteran: {
-      $set: serverIntake.claimant_not_veteran
+    nonComp: {
+      $set: serverIntake.nonComp
+    },
+    veteranIsNotClaimant: {
+      $set: serverIntake.veteran_is_not_claimant
     },
     claimant: {
-      $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
+      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
     },
     payeeCode: {
-      $set: serverIntake.payee_code
+      $set: serverIntake.payeeCode
     },
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
     },
+    legacyAppeals: {
+      $set: serverIntake.legacyAppeals
+    },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
-    ratings: {
-      $set: formatRatings(serverIntake.ratings)
+    contestableIssues: {
+      $set: contestableIssues
+    },
+    activeNonratingRequestIssues: {
+      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
     },
     requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues)
+      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
@@ -58,22 +75,28 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
+    untimelyExemptionModalVisible: false,
     removeIssueModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     benefitType: null,
     benefitTypeError: null,
-    claimantNotVeteran: null,
+    veteranIsNotClaimant: null,
+    veteranIsNotClaimantError: null,
     claimant: null,
+    claimantError: null,
     payeeCode: null,
+    payeeCodeError: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
+    legacyAppeals: [],
     isStarted: false,
     isReviewed: false,
     isComplete: false,
     endProductDescription: null,
     issueCount: 0,
     nonRatingRequestIssues: { },
+    contestableIssues: { },
     reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
@@ -97,6 +120,12 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
     return state;
   }
 
+  let veteranIsNotClaimant;
+
+  if (action.payload) {
+    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+  }
+
   switch (action.type) {
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
     return mapDataToInitialSupplementalClaim();
@@ -112,13 +141,13 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: action.payload.benefitType
       }
     });
-  case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
+  case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:
     return update(state, {
-      claimantNotVeteran: {
-        $set: action.payload.claimantNotVeteran
+      veteranIsNotClaimant: {
+        $set: veteranIsNotClaimant
       },
       claimant: {
-        $set: action.payload.claimantNotVeteran === 'true' ? state.claimant : null
+        $set: veteranIsNotClaimant === true ? state.claimant : null
       }
     });
   case ACTIONS.SET_CLAIMANT:
@@ -158,6 +187,15 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       legacyOptInApprovedError: {
         $set: null
       },
+      veteranIsNotClaimantError: {
+        $set: null
+      },
+      claimantError: {
+        $set: null
+      },
+      payeeCodeError: {
+        $set: null
+      },
       isReviewed: {
         $set: true
       },
@@ -177,6 +215,15 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')
+      },
+      veteranIsNotClaimantError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+      },
+      claimantError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')
+      },
+      payeeCodeError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'payee_code')
       },
       requestStatus: {
         submitReview: {

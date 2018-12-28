@@ -52,9 +52,9 @@ describe RootTask do
         RootTask.create_root_and_sub_tasks!(appeal)
         expect(RootTask.count).to eq(1)
 
-        expect(GenericTask.count).to eq(2)
-        expect(GenericTask.first.assigned_to).to eq(pva)
-        expect(GenericTask.second.assigned_to).to eq(vva)
+        expect(InformalHearingPresentationTask.count).to eq(2)
+        expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
+        expect(InformalHearingPresentationTask.second.assigned_to).to eq(vva)
       end
 
       it "creates RootTask assigned to Bva organization" do
@@ -64,32 +64,49 @@ describe RootTask do
     end
 
     context "when only one VSO exists in our organization table" do
-      it "doesn't create a GenericTask for missing organization" do
+      it "doesn't create a InformalHearingPresentationTask for missing organization" do
         RootTask.create_root_and_sub_tasks!(appeal)
 
-        expect(GenericTask.count).to eq(1)
-        expect(GenericTask.first.assigned_to).to eq(pva)
+        expect(InformalHearingPresentationTask.count).to eq(1)
+        expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
       end
     end
   end
 
-  describe ".available_actions" do
+  describe ".available_actions_unwrapper" do
     let(:user) { FactoryBot.create(:user) }
     let(:root_task) { RootTask.find(FactoryBot.create(:root_task).id) }
 
-    subject { root_task.available_actions(user) }
+    subject { root_task.available_actions_unwrapper(user) }
 
     context "when user is a member of the Mail team" do
       before { allow_any_instance_of(MailTeam).to receive(:user_has_access?).and_return(true) }
 
       it "should return a list that includes only the create mail task" do
-        expect(subject).to eq([Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h])
+        expect(subject).to eq([root_task.build_action_hash(Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h)])
       end
     end
 
     context "when user is not a member of the Mail team" do
       it "should return an empty list" do
         expect(subject).to eq([])
+      end
+    end
+  end
+
+  describe ".available_actions_unwrapper for a legacy appeal" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:vacols_case) { create(:case, bfcorlid: "123456789S") }
+    let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:root_task) { RootTask.find(FactoryBot.create(:root_task, appeal: appeal).id) }
+
+    subject { root_task.available_actions_unwrapper(user) }
+
+    context "when user is member of Hearing Management" do
+      before { allow_any_instance_of(HearingsManagement).to receive(:user_has_access?).and_return(true) }
+
+      it "should return a list that includes only the schedule veteran task" do
+        expect(subject).to eq([root_task.build_action_hash(Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h)])
       end
     end
   end

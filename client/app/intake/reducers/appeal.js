@@ -1,14 +1,22 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
 import { formatDateStr } from '../../util/DateUtil';
-import { formatRatings, formatRequestIssues } from '../util/issues';
-import { getReceiptDateError, getBlankOptionError, getPageError, formatRelationships } from '../util';
+import { formatRequestIssues, formatContestableIssues } from '../util/issues';
+import {
+  convertStringToBoolean,
+  getReceiptDateError,
+  getBlankOptionError,
+  getPageError,
+  formatRelationships
+} from '../util';
 import { update } from '../../util/ReducerUtil';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.APPEAL.key) {
     return state;
   }
+
+  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 
   return update(state, {
     isStarted: {
@@ -20,26 +28,35 @@ const updateFromServerIntake = (state, serverIntake) => {
     receiptDate: {
       $set: serverIntake.receipt_date && formatDateStr(serverIntake.receipt_date)
     },
-    claimantNotVeteran: {
-      $set: serverIntake.claimant_not_veteran
+    veteranIsNotClaimant: {
+      $set: serverIntake.veteran_is_not_claimant
+    },
+    nonComp: {
+      $set: serverIntake.nonComp
     },
     claimant: {
-      $set: serverIntake.claimant_not_veteran ? serverIntake.claimant : null
+      $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
     },
     payeeCode: {
-      $set: serverIntake.payee_code
+      $set: serverIntake.payeeCode
     },
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
     },
+    legacyAppeals: {
+      $set: serverIntake.legacyAppeals
+    },
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
-    ratings: {
-      $set: formatRatings(serverIntake.ratings)
+    contestableIssues: {
+      $set: contestableIssues
+    },
+    activeNonratingRequestIssues: {
+      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
     },
     requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues)
+      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
@@ -55,20 +72,25 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
+    untimelyExemptionModalVisible: false,
     receiptDate: null,
     receiptDateError: null,
     docketType: null,
     docketTypeError: null,
-    claimantNotVeteran: null,
+    veteranIsNotClaimant: null,
+    veteranIsNotClaimantError: null,
     claimant: null,
+    claimantError: null,
     payeeCode: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
+    legacyAppeals: [],
     isStarted: false,
     isReviewed: false,
     isComplete: false,
     issueCount: 0,
     nonRatingRequestIssues: { },
+    contestableIssues: { },
     reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
@@ -92,6 +114,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return state;
   }
 
+  let veteranIsNotClaimant;
+
+  if (action.payload) {
+    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+  }
+
   switch (action.type) {
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
     return mapDataToInitialAppeal();
@@ -107,13 +135,13 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: action.payload.receiptDate
       }
     });
-  case ACTIONS.SET_CLAIMANT_NOT_VETERAN:
+  case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:
     return update(state, {
-      claimantNotVeteran: {
-        $set: action.payload.claimantNotVeteran
+      veteranIsNotClaimant: {
+        $set: veteranIsNotClaimant
       },
       claimant: {
-        $set: action.payload.claimantNotVeteran === 'true' ? state.claimant : null
+        $set: veteranIsNotClaimant === true ? state.claimant : null
       }
     });
   case ACTIONS.SET_CLAIMANT:
@@ -153,6 +181,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       legacyOptInApprovedError: {
         $set: null
       },
+      veteranIsNotClaimantError: {
+        $set: null
+      },
+      claimantError: {
+        $set: null
+      },
       isReviewed: {
         $set: true
       },
@@ -169,6 +203,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
       },
       receiptDateError: {
         $set: getReceiptDateError(action.payload.responseErrorCodes, state)
+      },
+      veteranIsNotClaimantError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
+      },
+      claimantError: {
+        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')

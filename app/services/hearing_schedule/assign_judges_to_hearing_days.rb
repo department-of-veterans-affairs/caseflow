@@ -5,7 +5,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   attr_reader :judges, :video_co_hearing_days
 
   TB_ADDITIONAL_NA_DAYS = 3
-  CO_ROOM_NUM = "1".freeze
+  CO_ROOM_NUM = "2".freeze
   DAYS_OF_SEPARATION = 3
 
   class HearingDaysNotAllocated < StandardError; end
@@ -24,7 +24,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def match_hearing_days_to_judges
     @assigned_hearing_days = []
-    @unassigned_hearing_days = deduped_hearing_days.shuffle
+    @unassigned_hearing_days = @video_co_hearing_days.shuffle
     evenly_assign_judges_to_hearing_days
     assign_remaining_hearing_days
     verify_assignments
@@ -72,39 +72,13 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def judges_sorted_by_assigned_days
-    days_by_judge = deduped_assigned_hearing_days.reduce({}) do |acc, hearing_day|
+    days_by_judge = @assigned_hearing_days.reduce({}) do |acc, hearing_day|
       acc[hearing_day[:css_id]] ||= 0
       acc[hearing_day[:css_id]] += 1
       acc
     end
 
     days_by_judge.to_a.shuffle.sort_by { |e| e[1] }.map { |e| e[0] }
-  end
-
-  def deduped_assigned_hearing_days
-    co_assigned = []
-
-    @assigned_hearing_days.map do |day|
-      if day[:hearing_type] == HearingDay::HEARING_TYPES[:video]
-        day
-      elsif !co_assigned.include?(day[:hearing_date])
-        co_assigned.push(day[:hearing_date])
-        day
-      end
-    end.compact
-  end
-
-  def deduped_hearing_days
-    co_assigned = []
-
-    @video_co_hearing_days.map do |day|
-      if !co_hearing_day?(day)
-        day
-      elsif !co_assigned.include?(day.hearing_date)
-        co_assigned.push(day.hearing_date)
-        day
-      end
-    end.compact
   end
 
   def day_can_be_assigned?(current_hearing_day, css_id)
@@ -226,7 +200,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def valid_co_day?(day)
-    co_hearing_day?(day) && day.hearing_date.wednesday? && day.room_info == CO_ROOM_NUM
+    co_hearing_day?(day) && day.room == CO_ROOM_NUM
   end
 
   def valid_ro_hearing_day?(day)

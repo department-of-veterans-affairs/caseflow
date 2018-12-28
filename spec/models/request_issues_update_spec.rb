@@ -4,8 +4,6 @@ describe RequestIssuesUpdate do
   before do
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))
-
-    review.create_issues!(existing_request_issues)
   end
 
   # TODO: make it simpler to set up a completed claim review, with end product data
@@ -36,6 +34,14 @@ describe RequestIssuesUpdate do
     ]
   end
 
+  let!(:vacols_id) { "vacols_id" }
+  let!(:vacols_sequence_id) { 1 }
+  let!(:vacols_issue) { create(:case_issue, issseq: vacols_sequence_id) }
+  let!(:vacols_case) { create(:case, bfkey: vacols_id, case_issues: [vacols_issue, create(:case_issue, issseq: 2)]) }
+  let(:legacy_appeal) do
+    create(:legacy_appeal, vacols_case: vacols_case)
+  end
+
   let!(:existing_request_issues) do
     [
       RequestIssue.new(
@@ -52,7 +58,9 @@ describe RequestIssuesUpdate do
         rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
         description: request_issue_contentions[1].text,
-        rating_issue_associated_at: 5.days.ago
+        rating_issue_associated_at: 5.days.ago,
+        vacols_id: vacols_id,
+        vacols_sequence_id: vacols_sequence_id
       )
     ]
   end
@@ -72,22 +80,30 @@ describe RequestIssuesUpdate do
   let(:existing_request_issues_data) do
     existing_request_issues.map do |issue|
       {
-        reference_id: issue.rating_issue_reference_id,
-        profile_date: issue.rating_issue_profile_date,
-        decision_text: issue.description
+        rating_issue_reference_id: issue.rating_issue_reference_id,
+        rating_issue_profile_date: issue.rating_issue_profile_date,
+        decision_text: issue.description,
+        vacols_id: issue.vacols_id,
+        vacols_sequence_id: issue.vacols_sequence_id
       }
     end
   end
 
+  let(:after_ama_start_date) { Time.zone.local(2017, 11, 7) }
+
   let(:request_issues_data_with_new_issue) do
     existing_request_issues_data + [{
-      reference_id: "issue3",
-      profile_date: Time.zone.local(2017, 4, 7),
+      rating_issue_reference_id: "issue3",
+      rating_issue_profile_date: after_ama_start_date,
       decision_text: "Service connection for cancer was denied"
     }]
   end
 
   context "async logic scopes" do
+    before do
+      review.create_issues!(existing_request_issues)
+    end
+
     let!(:riu_requiring_processing) do
       create(:request_issues_update).tap(&:submit_for_processing!)
     end
@@ -145,8 +161,12 @@ describe RequestIssuesUpdate do
   end
 
   context "#created_issues" do
+    before do
+      review.create_issues!(existing_request_issues)
+      request_issues_update.perform!
+    end
+
     subject { request_issues_update.created_issues }
-    before { request_issues_update.perform! }
 
     context "when new issues were added as part of the update" do
       let(:request_issues_data) { request_issues_data_with_new_issue }
@@ -163,8 +183,12 @@ describe RequestIssuesUpdate do
   end
 
   context "#removed_issues" do
+    before do
+      review.create_issues!(existing_request_issues)
+      request_issues_update.perform!
+    end
+
     subject { request_issues_update.removed_issues }
-    before { request_issues_update.perform! }
 
     context "when new issues were removed as part of the update" do
       let(:request_issues_data) { existing_request_issues_data[0...1] }
@@ -180,6 +204,10 @@ describe RequestIssuesUpdate do
   end
 
   context "#perform!" do
+    before do
+      review.create_issues!(existing_request_issues)
+    end
+
     let(:vbms_error) { VBMS::HTTPError.new("500", "More EPs more problems") }
 
     subject { request_issues_update.perform! }
@@ -224,7 +252,7 @@ describe RequestIssuesUpdate do
           hash_including(
             veteran_file_number: review.veteran_file_number,
             contention_descriptions: ["Service connection for cancer was denied"],
-            special_issues: []
+            special_issues: [{ code: "VO", narrative: "AMA SOC/SSOC Opt-in" }]
           )
         )
 
@@ -246,7 +274,7 @@ describe RequestIssuesUpdate do
 
         created_issue = review.request_issues.find_by(rating_issue_reference_id: "issue3")
         expect(created_issue).to have_attributes(
-          rating_issue_profile_date: Time.zone.local(2017, 4, 7),
+          rating_issue_profile_date: after_ama_start_date,
           description: "Service connection for cancer was denied"
         )
         expect(created_issue.contention_reference_id).to_not be_nil
@@ -255,9 +283,10 @@ describe RequestIssuesUpdate do
       context "with nonrating request issue" do
         let(:request_issues_data) do
           existing_request_issues_data + [{
-            reference_id: "issue3",
+            rating_reference_id: "issue3",
             decision_text: "Nonrating issue",
-            category: "Apportionment"
+            issue_category: "Apportionment",
+            decision_date: 1.month.ago
           }]
         end
 
@@ -318,6 +347,7 @@ describe RequestIssuesUpdate do
           review_request: nil
         )
         expect(removed_issue.removed_at).to_not be_nil
+        expect(removed_issue.legacy_issue_optin.rollback_processed_at).to_not be_nil
 
         expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
 
@@ -346,6 +376,12 @@ describe RequestIssuesUpdate do
           contention_reference_id: nonrating_request_issue_contention.id,
           description: nonrating_request_issue_contention.text,
           issue_category: "Apportionment"
+        )
+
+        expect_any_instance_of(Fakes::BGSService).to receive(:cancel_end_product).with(
+          veteran.file_number,
+          "030HLRNR",
+          "030"
         )
 
         allow_remove_contention

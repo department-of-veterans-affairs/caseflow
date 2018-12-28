@@ -8,19 +8,23 @@ import AddIssuesModal from '../components/AddIssuesModal';
 import NonratingRequestIssueModal from '../components/NonratingRequestIssueModal';
 import RemoveIssueModal from '../components/RemoveIssueModal';
 import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
+import UntimelyExemptionModal from '../components/UntimelyExemptionModal';
+import LegacyOptInModal from '../components/LegacyOptInModal';
 import Button from '../../components/Button';
+import AddedIssue from '../components/AddedIssue';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
-import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
 import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import {
   toggleAddIssuesModal,
+  toggleUntimelyExemptionModal,
   toggleNonratingRequestIssueModal,
   removeIssue,
   toggleUnidentifiedIssuesModal,
-  toggleIssueRemoveModal
+  toggleIssueRemoveModal,
+  toggleLegacyOptInModal
 } from '../actions/addIssues';
 
 export class AddIssuesPage extends React.Component {
@@ -44,29 +48,20 @@ export class AddIssuesPage extends React.Component {
     }
   }
 
-  checkIfEligible = (issue, formType) => {
-    if (issue.isUnidentified) {
-      return false;
-    } else if (issue.titleOfActiveReview) {
-      return INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.replace(
-        '{review_title}', issue.titleOfActiveReview
-      );
-    } else if (issue.ineligibleReason) {
-      return INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
-    } else if (issue.timely === false && formType !== 'supplemental_claim') {
-      return INELIGIBLE_REQUEST_ISSUES.untimely;
-    } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
-      return INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
+  onClickAddIssue = (ratingIssueCount) => {
+    if (!ratingIssueCount) {
+      return this.props.toggleNonratingRequestIssueModal;
     }
 
-    return true;
+    return this.props.toggleAddIssuesModal;
   }
 
   render() {
     const {
       intakeForms,
       formType,
-      veteran
+      veteran,
+      featureToggles
     } = this.props;
 
     if (!formType) {
@@ -75,6 +70,7 @@ export class AddIssuesPage extends React.Component {
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
+    const { useAmaActivationDate } = featureToggles;
     const intakeData = intakeForms[selectedForm.key];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
@@ -83,30 +79,24 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
     }
 
+    if (intakeData.hasClearedEP) {
+      return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
+    }
+
     const issuesComponent = () => {
-      let issues = formatAddedIssues(intakeData);
+      let issues = formatAddedIssues(intakeData, useAmaActivationDate);
 
       return <div className="issues">
         <div>
           { issues.map((issue, index) => {
-            let issueKlasses = ['issue-desc'];
-            let isEligible = this.checkIfEligible(issue, formType);
-            let addendum = '';
-
-            if (isEligible !== true) {
-              if (isEligible !== false) {
-                addendum = isEligible;
-              }
-              issueKlasses.push('not-eligible');
-            }
-
             return <div className="issue" key={`issue-${index}`}>
-              <div className={issueKlasses.join(' ')}>
-                <span className="issue-num">{index + 1}.&nbsp;</span>
-                {issue.text} {addendum}
-                { issue.date && <span className="issue-date">Decision date: {issue.date}</span> }
-                { issue.notes && <span className="issue-notes">Notes:&nbsp;{issue.notes}</span> }
-              </div>
+              <AddedIssue
+                issue={issue}
+                issueIdx={index}
+                requestIssues={intakeData.requestIssues}
+                legacyOptInApproved={intakeData.legacyOptInApproved}
+                legacyAppeals={intakeData.legacyAppeals}
+                formType={formType} />
               <div className="issue-action">
                 <Button
                   onClick={() => this.onRemoveClick(index)}
@@ -123,7 +113,7 @@ export class AddIssuesPage extends React.Component {
             name="add-issue"
             legacyStyling={false}
             classNames={['usa-button-secondary']}
-            onClick={this.props.toggleAddIssuesModal}
+            onClick={this.onClickAddIssue(_.size(intakeData.contestableIssues))}
           >
             + Add issue
           </Button>
@@ -154,15 +144,25 @@ export class AddIssuesPage extends React.Component {
     return <div className="cf-intake-edit">
       { intakeData.addIssuesModalVisible && <AddIssuesModal
         intakeData={intakeData}
+        formType={formType}
         closeHandler={this.props.toggleAddIssuesModal} />
+      }
+      { intakeData.untimelyExemptionModalVisible && <UntimelyExemptionModal
+        intakeData={intakeData}
+        closeHandler={this.props.toggleUntimelyExemptionModal} />
       }
       { intakeData.nonRatingRequestIssueModalVisible && <NonratingRequestIssueModal
         intakeData={intakeData}
+        formType={formType}
         closeHandler={this.props.toggleNonratingRequestIssueModal} />
       }
       { intakeData.unidentifiedIssuesModalVisible && <UnidentifiedIssuesModal
         intakeData={intakeData}
         closeHandler={this.props.toggleUnidentifiedIssuesModal} />
+      }
+      { intakeData.legacyOptInModalVisible && <LegacyOptInModal
+        intakeData={intakeData}
+        closeHandler={this.props.toggleLegacyOptInModal} />
       }
       { intakeData.removeIssueModalVisible && <RemoveIssueModal
         removeIndex={this.state.issueRemoveIndex}
@@ -184,19 +184,22 @@ export class AddIssuesPage extends React.Component {
 }
 
 export const IntakeAddIssuesPage = connect(
-  ({ intake, higherLevelReview, supplementalClaim, appeal }) => ({
+  ({ intake, higherLevelReview, supplementalClaim, appeal, featureToggles }) => ({
     intakeForms: {
       higher_level_review: higherLevelReview,
       supplemental_claim: supplementalClaim,
       appeal
     },
     formType: intake.formType,
-    veteran: intake.veteran
+    veteran: intake.veteran,
+    featureToggles
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
+    toggleUntimelyExemptionModal,
     toggleNonratingRequestIssueModal,
     toggleUnidentifiedIssuesModal,
+    toggleLegacyOptInModal,
     removeIssue
   }, dispatch)
 )(AddIssuesPage);
@@ -209,13 +212,16 @@ export const EditAddIssuesPage = connect(
       appeal: state
     },
     formType: state.formType,
-    veteran: state.veteran
+    veteran: state.veteran,
+    featureToggles: state.featureToggles
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
+    toggleUntimelyExemptionModal,
     toggleIssueRemoveModal,
     toggleNonratingRequestIssueModal,
     toggleUnidentifiedIssuesModal,
+    toggleLegacyOptInModal,
     removeIssue
   }, dispatch)
 )(AddIssuesPage);

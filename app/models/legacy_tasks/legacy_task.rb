@@ -8,20 +8,30 @@ class LegacyTask
   attr_accessor(*ATTRS)
   attr_writer :appeal
 
+  TASK_ID_REGEX = /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i
+
   ### Serializer Methods Start
   def assigned_on
     assigned_at
+  end
+
+  def label
+    action
+  end
+
+  def serializer_class
+    ::WorkQueue::LegacyTaskSerializer
   end
 
   delegate :css_id, :name, to: :added_by, prefix: true
   delegate :first_name, :last_name, :pg_id, :css_id, to: :assigned_by, prefix: true
 
   def user_id
-    assigned_to && assigned_to.css_id
+    assigned_to&.css_id
   end
 
   def assigned_to_pg_id
-    assigned_to && assigned_to.id
+    assigned_to&.id
   end
 
   def appeal

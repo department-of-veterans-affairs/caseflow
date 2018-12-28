@@ -10,6 +10,19 @@ export const getPageError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.other, 0) === 'unknown_error') && 'Unknown error.'
 );
 
+// use this conversion to change between rails model and react radio input
+// otherwise we send over a string true/false and reloading turns it into a boolean
+// which messes up logic on backend which expects a string
+export const convertStringToBoolean = (string) => {
+  if (string === 'true') {
+    return true;
+  } else if (string === 'false') {
+    return false;
+  }
+
+  return null;
+};
+
 export const getReceiptDateError = (responseErrorCodes, state) => (
   {
     blank:
@@ -55,6 +68,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       docket_type: intakeData.docketType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
+      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
@@ -63,6 +77,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       benefit_type: intakeData.benefitType,
       claimant: intakeData.claimant,
+      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
@@ -73,6 +88,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
       benefit_type: intakeData.benefitType,
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
+      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };
@@ -80,6 +96,7 @@ export const prepareReviewData = (intakeData, intakeType) => {
     return {
       receipt_date: formatDateStringForApi(intakeData.receiptDate),
       claimant: intakeData.claimant,
+      veteran_is_not_claimant: intakeData.veteranIsNotClaimant,
       payee_code: intakeData.payeeCode,
       legacy_opt_in_approved: intakeData.legacyOptInApproved
     };

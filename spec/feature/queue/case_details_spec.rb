@@ -3,7 +3,9 @@ require "rails_helper"
 RSpec.feature "Case details" do
   let(:attorney_first_name) { "Robby" }
   let(:attorney_last_name) { "McDobby" }
-  let!(:attorney_user) { FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}") }
+  let!(:attorney_user) do
+    FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}")
+  end
   let!(:vacols_atty) do
     FactoryBot.create(
       :staff,
@@ -224,6 +226,28 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.appellant_address_line_1)
       end
     end
+
+    context "when attorney has a case assigned in VACOLS without a DECASS record" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :legacy_appeal,
+          vacols_case: FactoryBot.create(
+            :case,
+            :assigned,
+            decass_count: 0,
+            user: attorney_user
+          )
+        )
+      end
+
+      it "should not display a tasks action dropdown" do
+        visit("/queue/appeals/#{appeal.external_id}")
+
+        # Expect to find content we know to be on the page so that we wait for the page to load.
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+        expect(page).not_to have_content("Select an action")
+      end
+    end
   end
 
   context "when an appeal has some number of documents" do
@@ -243,11 +267,11 @@ RSpec.feature "Case details" do
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       # TODO: Why isn't the document count coming through here?
       # click_on "View #{appeal.documents.count} documents"
-      click_on "View Veteran's documents"
+      click_on "View"
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("Caseflow> Reader")
-      expect(page).to have_content("Back to #{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
+      expect(page).to have_content("Back to Your Queue #{appeal.veteran_full_name}")
     end
   end
 
@@ -269,6 +293,8 @@ RSpec.feature "Case details" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
+      # Call have_content() so we wait for the case details page to load
+      expect(page).to have_content(appeal.veteran_full_name)
       expect(page.document.text).to match(/Disposition 1 - Allowed/i)
     end
   end
@@ -309,17 +335,20 @@ RSpec.feature "Case details" do
     end
 
     scenario "displays who prepared task" do
-      tasks, appeals = LegacyWorkQueue.tasks_with_appeals(judge_user, "judge")
+      tasks = LegacyWorkQueue.tasks_with_appeals(judge_user, "judge")
       task = tasks.first
-      appeal = appeals.first
+      appeal = task.appeal
 
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
       preparer_name = "#{task.assigned_by.first_name[0]}. #{task.assigned_by.last_name}"
 
-      expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
-      expect(page.document.text).to match(/#{COPY::CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
+      # Wait for page to load some known content before testing for expected content.
+      expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+
+      expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
+      expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
     end
   end
 
@@ -394,6 +423,48 @@ RSpec.feature "Case details" do
     end
   end
 
+  context "edit aod link appears/disappears as expected" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:user) { FactoryBot.create(:user) }
+    let(:user2) { FactoryBot.create(:user) }
+
+    context "when the current user is a member of the AOD team" do
+      before do
+        OrganizationsUser.add_user_to_organization(user, AodTeam.singleton)
+        User.authenticate!(user: user)
+      end
+
+      context "when requesting the case details page directly" do
+        it "should display the edit link" do
+          visit("/queue/appeals/#{appeal.external_id}")
+          expect(page).to have_content("Edit")
+        end
+      end
+
+      context "when reaching the case details page by way of the search page" do
+        it "should display the edit link" do
+          visit("/search")
+          fill_in("searchBarEmptyList", with: appeal.veteran.file_number)
+          click_on("Search")
+
+          click_on(appeal.docket_number)
+          expect(page).to have_content("Edit")
+        end
+      end
+    end
+
+    context "when the current user is not a member of the AOD team" do
+      before do
+        allow_any_instance_of(AodTeam).to receive(:user_has_access?).with(user2).and_return(false)
+        User.authenticate!(user: user2)
+        visit("/queue/appeals/#{appeal.uuid}")
+      end
+      it "should not display the edit link" do
+        expect(page).to_not have_content("Edit")
+      end
+    end
+  end
+
   describe "Marking organization task complete" do
     context "when there is no assigner" do
       let(:qr) { QualityReview.singleton }
@@ -401,6 +472,9 @@ RSpec.feature "Case details" do
       let(:user) { FactoryBot.create(:user) }
 
       before do
+        # Marking this task complete creates a BvaDispatchTask. Make sure there are members of that organization so
+        # that the creation of that BvaDispatchTask succeeds.
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
         OrganizationsUser.add_user_to_organization(user, qr)
         User.authenticate!(user: user)
       end
@@ -414,6 +488,195 @@ RSpec.feature "Case details" do
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, ""))
+      end
+    end
+
+    describe "Issue order by created_at in Case Details page" do
+      context "when there are two issues" do
+        let!(:appeal) { FactoryBot.create(:appeal) }
+        issue_description = "Head trauma 1"
+        issue_description2 = "Head trauma 2"
+        let!(:request_issue) do
+          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description,
+                                            review_request_type: "Appeal")
+        end
+        let!(:request_issue2) do
+          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description2,
+                                            review_request_type: "Appeal")
+        end
+
+        it "should display sorted issues" do
+          visit "/queue/appeals/#{appeal.uuid}"
+          expect(page).to have_content(issue_description + " Issue 2 DESCRIPTION " + issue_description2)
+        end
+      end
+    end
+
+    describe "Docket type badge shows up" do
+      let!(:appeal) { FactoryBot.create(:appeal, docket_type: "direct_review") }
+
+      it "should display docket type and number" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content("D #{appeal.docket_number}")
+      end
+    end
+
+    describe "CaseTimeline shows judge & attorney tasks" do
+      let!(:user) { FactoryBot.create(:user) }
+      let!(:appeal) { FactoryBot.create(:appeal) }
+      let!(:appeal2) { FactoryBot.create(:appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
+      let!(:attorney_task) do
+        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
+                                   completed_at: Time.zone.now - 4.days)
+      end
+      let!(:judge_task) do
+        create(:ama_judge_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
+                                       status: Constants.TASK_STATUSES.completed,
+                                       completed_at: Time.zone.now)
+      end
+
+      before do
+        # This attribute needs to be set here due to update_parent_status hook in the task model
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+
+      it "should display judge & attorney tasks" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
+        expect(page).to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+      end
+
+      it "should NOT display judge & attorney tasks" do
+        visit "/queue/appeals/#{appeal2.uuid}"
+        expect(page).not_to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+      end
+    end
+  end
+
+  describe "AMA decision issue notes" do
+    before { FeatureToggle.enable!(:ama_decision_issues) }
+    after { FeatureToggle.disable!(:ama_decision_issues) }
+
+    let(:request_issue) { create(:request_issue, description: "knee pain", notes: notes) }
+    let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
+
+    context "when notes are nil" do
+      let(:notes) { nil }
+
+      it "does not display the Notes div" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content("Note:")
+      end
+    end
+
+    context "when notes are empty" do
+      let(:notes) { "" }
+
+      it "does not display the Notes div" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to_not have_content("Note:")
+      end
+    end
+  end
+
+  describe "Show multiple tasks" do
+    let(:appeal) { create(:appeal) }
+    let!(:root_task) do
+      create(:root_task, appeal: appeal, assigned_to: judge_user,
+                         status: Constants.TASK_STATUSES.assigned)
+    end
+    let!(:task) do
+      create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
+                    assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
+                    parent_id: root_task.id, started_at: rand(1..10).days.ago)
+    end
+
+    context "single task" do
+      it "one task is displayed in the TaskSnapshot" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+        expect(page).to have_content(task.assigned_at.strftime("%-m/%-e/%Y"))
+        expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} #{task.assigned_to.css_id}")
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase)
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
+      end
+    end
+    context "multiple tasks" do
+      let!(:task2) do
+        create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
+                      assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
+                      parent_id: task.id, started_at: rand(1..20).days.ago)
+      end
+      let!(:task3) do
+        create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
+                      assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
+                      parent_id: task.id, started_at: rand(1..20).days.ago, assigned_at: 15.days.ago)
+      end
+      it "two tasks are displayed in the TaskSnapshot" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        expect(page).to have_content(task2.assigned_at.strftime("%-m/%-e/%Y"))
+        expect(page).to have_content(task2.assigned_to.css_id)
+        expect(page).to have_content(task3.assigned_at.strftime("%-m/%-e/%Y"))
+        expect(page).to have_content(task3.assigned_to.css_id)
+        expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL.upcase} \
+                                      #{task2.assigned_at.strftime('%-m/%-e/%Y')} \
+                                      #{COPY::TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL.upcase}")
+        expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} \
+                                      #{task3.assigned_to.css_id} \
+                                      #{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase}")
+      end
+    end
+  end
+
+  describe "Persist legacy tasks from backend" do
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+    context "one task" do
+      let!(:root_task) do
+        create(:root_task, appeal: legacy_appeal, assigned_to: judge_user,
+                           status: Constants.TASK_STATUSES.assigned)
+      end
+      let!(:legacy_task) do
+        create(:task, appeal: legacy_appeal, status: Constants.TASK_STATUSES.in_progress,
+                      assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
+                      parent_id: root_task.id, started_at: rand(1..10).days.ago)
+      end
+
+      it "is displayed in the TaskSnapshot" do
+        visit "/queue/appeals/#{legacy_appeal.vacols_id}"
+
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+        expect(page).to have_content(legacy_task.assigned_at.strftime("%-m/%-e/%y"))
+      end
+    end
+  end
+
+  describe "VLJ and Attorney working case in Universal Case Title" do
+    let(:attorney_user) { FactoryBot.create(:user) }
+    let(:judge_user) { FactoryBot.create(:user) }
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:appeal) { root_task.appeal }
+    let!(:atty_task) do
+      FactoryBot.create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_by: judge_user,
+                                            assigned_to: attorney_user)
+    end
+    let!(:judge_task) do
+      FactoryBot.create(:ama_judge_task, appeal: appeal, parent: atty_task, assigned_by: judge_user,
+                                         assigned_to: judge_user)
+    end
+
+    context "Attorney has been assigned" do
+      it "is displayed in the Universal Case Title" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL)
+        expect(page).to have_content(judge_user.full_name)
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL)
+        expect(page).to have_content(attorney_user.full_name)
       end
     end
   end

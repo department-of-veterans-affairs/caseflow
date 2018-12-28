@@ -2,12 +2,29 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
 
-import { addNonratingRequestIssue, toggleUnidentifiedIssuesModal } from '../actions/addIssues';
+import {
+  addNonratingRequestIssue,
+  toggleUnidentifiedIssuesModal,
+  toggleUntimelyExemptionModal,
+  toggleLegacyOptInModal
+} from '../actions/addIssues';
 import Modal from '../../components/Modal';
+import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
-import { NONRATING_REQUEST_ISSUE_CATEGORIES } from '../constants';
+import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
+
+const NO_MATCH_TEXT = 'None of these match';
+
+const nonratingRequestIssueCategories = (benefitType = 'compensation') => {
+  return ISSUE_CATEGORIES[benefitType].map((category) => {
+    return {
+      value: category,
+      label: category
+    };
+  });
+};
 
 class NonratingRequestIssueModal extends React.Component {
   constructor(props) {
@@ -16,13 +33,23 @@ class NonratingRequestIssueModal extends React.Component {
     this.state = {
       category: '',
       description: '',
-      decisionDate: ''
+      decisionDate: '',
+      selectedNonratingIssueId: '',
+      ineligibleDueToId: null,
+      ineligibleReason: null,
+      reviewRequestTitle: null
     };
   }
 
   categoryOnChange = (value) => {
     this.setState({
-      category: value
+      category: value,
+      description: '',
+      decisionDate: '',
+      selectedNonratingIssueId: '',
+      ineligibleDueToId: null,
+      ineligibleReason: null,
+      reviewRequestTitle: null
     });
   }
 
@@ -38,13 +65,90 @@ class NonratingRequestIssueModal extends React.Component {
     });
   }
 
+  selectedNonratingIssueIdOnChange = (value) => {
+    if (value === NO_MATCH_TEXT) {
+      this.setState({
+        selectedNonratingIssueId: value,
+        description: '',
+        decisionDate: '',
+        ineligibleReason: null
+      });
+    } else {
+      const activeNonratingRequestIssue = this.props.intakeData.activeNonratingRequestIssues.
+        find((issue) => issue.id === String(value));
+
+      this.setState({
+        selectedNonratingIssueId: activeNonratingRequestIssue.id,
+        description: activeNonratingRequestIssue.description,
+        decisionDate: activeNonratingRequestIssue.decisionDate,
+        ineligibleDueToId: activeNonratingRequestIssue.id,
+        reviewRequestTitle: activeNonratingRequestIssue.reviewRequestTitle,
+        ineligibleReason: 'duplicate_of_nonrating_issue_in_active_review'
+      });
+    }
+  }
+
+  hasLegacyAppeals = () => {
+    return this.props.intakeData.legacyAppeals.length > 0;
+  }
+
+  getNextButtonText = () => {
+    if (this.hasLegacyAppeals()) {
+      return 'Next';
+    }
+
+    return 'Add this issue';
+  }
+
+  requiresUntimelyExemption = () => {
+    if (this.props.formType === 'supplemental_claim') {
+      return false;
+    }
+
+    const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
+
+    // we must do our own date math for nonrating request issues.
+    // we assume the timezone of the browser for all these.
+    let decisionDate = new Date(this.state.decisionDate);
+    let receiptDate = new Date(this.props.intakeData.receiptDate);
+    let isTimely = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
+
+    return !isTimely;
+  }
+
   onAddIssue = () => {
-    this.props.addNonratingRequestIssue(
-      this.state.category.value,
-      this.state.description,
-      this.state.decisionDate
-    );
-    this.props.closeHandler();
+    const currentIssue = {
+      category: this.state.category.value,
+      description: this.state.description,
+      decisionDate: this.state.decisionDate,
+      ineligibleDueToId: this.state.ineligibleDueToId,
+      ineligibleReason: this.state.ineligibleReason,
+      reviewRequestTitle: this.state.reviewRequestTitle,
+      isRating: false
+    };
+
+    if (this.hasLegacyAppeals()) {
+      this.props.toggleLegacyOptInModal({
+        currentIssue,
+        notes: null });
+    } else if (this.requiresUntimelyExemption()) {
+      currentIssue.timely = false;
+      this.props.toggleUntimelyExemptionModal({
+        currentIssue,
+        notes: null
+      });
+    } else {
+      this.props.addNonratingRequestIssue({
+        category: this.state.category.value,
+        description: this.state.description,
+        decisionDate: this.state.decisionDate,
+        ineligibleDueToId: this.state.ineligibleDueToId,
+        ineligibleReason: this.state.ineligibleReason,
+        reviewRequestTitle: this.state.reviewRequestTitle,
+        timely: true
+      });
+      this.props.closeHandler();
+    }
   }
 
   render() {
@@ -53,9 +157,60 @@ class NonratingRequestIssueModal extends React.Component {
       closeHandler
     } = this.props;
 
-    const { category, description, decisionDate } = this.state;
+    const { category, description, decisionDate, selectedNonratingIssueId } = this.state;
     const issueNumber = (intakeData.addedIssues || []).length + 1;
     const requiredFieldsMissing = !description || !category || !decisionDate;
+
+    let nonratingRequestIssueOptions = intakeData.activeNonratingRequestIssues.filter((issue) => {
+      return category && issue.category === category.value;
+    }).map((issue) => {
+      return {
+        displayText: `${issue.category}: ${issue.description}, decided ${issue.decisionDate}`,
+        value: issue.id,
+        disabled: false
+      };
+    });
+
+    nonratingRequestIssueOptions.push({
+      displayText: NO_MATCH_TEXT,
+      value: NO_MATCH_TEXT,
+      disabled: false
+    });
+
+    let nonratingRequestIssueSelection = null;
+
+    if (nonratingRequestIssueOptions.length >= 2) {
+      nonratingRequestIssueSelection = <RadioField
+        vertical
+        label={<h3>Does issue {issueNumber} match any of the issues actively being reviewed?</h3>}
+        name="rating-radio"
+        options={nonratingRequestIssueOptions}
+        key={category}
+        value={selectedNonratingIssueId}
+        onChange={this.selectedNonratingIssueIdOnChange}
+      />;
+    }
+
+    let additionalDetails = null;
+
+    if (selectedNonratingIssueId === NO_MATCH_TEXT || !nonratingRequestIssueSelection) {
+      additionalDetails = <React.Fragment>
+        <div className="decision-date">
+          <DateSelector
+            name="decision-date"
+            label="Decision date"
+            strongLabel
+            value={decisionDate}
+            onChange={this.decisionDateOnChange} />
+        </div>
+
+        <TextField
+          name="Issue description"
+          strongLabel
+          value={description}
+          onChange={this.descriptionOnChange} />
+      </React.Fragment>;
+    }
 
     return <div className="intake-add-issues">
       <Modal
@@ -64,8 +219,8 @@ class NonratingRequestIssueModal extends React.Component {
             name: 'Cancel adding this issue',
             onClick: closeHandler
           },
-          { classNames: ['usa-button', 'usa-button-secondary', 'add-issue'],
-            name: 'Add this issue',
+          { classNames: ['usa-button', 'add-issue'],
+            name: this.getNextButtonText(),
             onClick: this.onAddIssue,
             disabled: requiredFieldsMissing
           },
@@ -88,24 +243,13 @@ class NonratingRequestIssueModal extends React.Component {
               label="Issue category"
               strongLabel
               placeholder="Select or enter..."
-              options={NONRATING_REQUEST_ISSUE_CATEGORIES}
+              options={nonratingRequestIssueCategories(intakeData.benefitType)}
               value={category}
               onChange={this.categoryOnChange} />
-
-            <div className="decision-date">
-              <DateSelector
-                name="decision-date"
-                label="Decision date"
-                strongLabel
-                value={decisionDate}
-                onChange={this.decisionDateOnChange} />
-            </div>
-
-            <TextField
-              name="Issue description"
-              strongLabel
-              value={description}
-              onChange={this.descriptionOnChange} />
+          </div>
+          <div className="add-nonrating-request-issue-description">
+            { nonratingRequestIssueSelection }
+            { additionalDetails }
           </div>
         </div>
       </Modal>
@@ -117,6 +261,8 @@ export default connect(
   null,
   (dispatch) => bindActionCreators({
     addNonratingRequestIssue,
-    toggleUnidentifiedIssuesModal
+    toggleUnidentifiedIssuesModal,
+    toggleUntimelyExemptionModal,
+    toggleLegacyOptInModal
   }, dispatch)
 )(NonratingRequestIssueModal);

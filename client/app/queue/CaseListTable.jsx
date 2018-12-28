@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 
 import CaseDetailsLink from './CaseDetailsLink';
-import DocketTypeBadge from './components/DocketTypeBadge';
+import DocketTypeBadge from '../components/DocketTypeBadge';
+import HearingBadge from './components/HearingBadge';
 import Table from '../components/Table';
 import { COLORS } from '../constants/AppConstants';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
@@ -23,7 +25,7 @@ const labelForLocation = (locationCode, userId) => {
     return '';
   }
 
-  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)${locationCode}\\b`);
+  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)?${locationCode}\\b`);
 
   if (userId.match(regex) !== null) {
     return <span {...currentAssigneeStyling}>{COPY.CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL}</span>;
@@ -37,47 +39,69 @@ class CaseListTable extends React.PureComponent {
 
   getKeyForRow = (rowNumber, object) => object.id;
 
-  getColumns = () => [
-    {
-      header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-      valueFunction: (appeal) => <React.Fragment>
-        <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
-        <CaseDetailsLink
-          appeal={appeal}
-          userRole={this.props.userRole}
-          getLinkText={() => appeal.docketNumber} />
-      </React.Fragment>
-    },
-    {
-      header: COPY.CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE,
-      valueFunction: (appeal) => appeal.appellantFullName || appeal.veteranFullName
-    },
-    {
-      header: COPY.CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE,
-      valueFunction: (appeal) => appeal.status
-    },
-    {
-      header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-      valueFunction: (appeal) => renderAppealType(appeal)
-    },
-    {
-      header: COPY.CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE,
-      valueFunction: (appeal) => appeal.decisionDate ?
-        <DateString date={appeal.decisionDate} /> :
-        ''
-    },
-    {
-      header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
-      valueFunction: (appeal) => labelForLocation(appeal.locationCode, this.props.userCssId)
+  getColumns = () => {
+    const columns = [
+      {
+        header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
+        valueFunction: (appeal) => {
+          return <React.Fragment>
+            <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
+            <CaseDetailsLink
+              appeal={appeal}
+              userRole={this.props.userRole}
+              getLinkText={() => appeal.docketNumber} />
+          </React.Fragment>;
+        }
+      },
+      {
+        header: COPY.CASE_LIST_TABLE_APPELLANT_NAME_COLUMN_TITLE,
+        valueFunction: (appeal) => appeal.appellantFullName || appeal.veteranFullName
+      },
+      {
+        header: COPY.CASE_LIST_TABLE_APPEAL_STATUS_COLUMN_TITLE,
+        valueFunction: (appeal) => appeal.status
+      },
+      {
+        header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
+        valueFunction: (appeal) => renderAppealType(appeal)
+      },
+      {
+        header: COPY.CASE_LIST_TABLE_DECISION_DATE_COLUMN_TITLE,
+        valueFunction: (appeal) => appeal.decisionDate ?
+          <DateString date={appeal.decisionDate} /> :
+          ''
+      },
+      {
+        header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
+        valueFunction: (appeal) => labelForLocation(appeal.locationCode, this.props.userCssId)
+      }
+    ];
+
+    const doAnyAppealsHaveHearings = Boolean(_.find(this.props.appeals, (appeal) => {
+      return appeal.hearings.length;
+    }));
+
+    if (doAnyAppealsHaveHearings) {
+      const hearingColumn = {
+        valueFunction: (appeal) => {
+          const hearings = appeal.hearings.sort((h1, h2) => h1.date < h2.date ? 1 : -1);
+
+          return <HearingBadge hearing={hearings[0]} />;
+        }
+      };
+
+      columns.unshift(hearingColumn);
     }
-  ];
+
+    return columns;
+  }
 
   render = () => <Table
     columns={this.getColumns}
     rowObjects={this.props.appeals}
     getKeyForRow={this.getKeyForRow}
     styling={this.props.styling}
-  />;
+  />
 }
 
 CaseListTable.propTypes = {

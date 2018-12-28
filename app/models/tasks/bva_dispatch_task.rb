@@ -3,7 +3,12 @@ class BvaDispatchTask < GenericTask
 
   class << self
     def create_and_assign(root_task)
-      parent = create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id, appeal: root_task.appeal)
+      parent = create!(
+        assigned_to: BvaDispatch.singleton,
+        parent_id: root_task.id,
+        appeal: root_task.appeal,
+        status: Constants.TASK_STATUSES.on_hold
+      )
       create!(
         appeal: parent.appeal,
         parent_id: parent.id,
@@ -22,19 +27,31 @@ class BvaDispatchTask < GenericTask
       fail(Caseflow::Error::BvaDispatchDoubleOutcode, appeal_id: appeal.id, task_id: task.id) if task.completed?
 
       params[:appeal_id] = appeal.id
-      Decision.create!(params)
+
+      create_decision_document!(params)
 
       task.mark_as_complete!
       task.root_task.mark_as_complete!
     rescue ActiveRecord::RecordInvalid => e
-      raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message =~ /^Validation failed:/
+      raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message.match?(/^Validation failed:/)
       raise e
     end
 
     private
 
     def list_of_assignees
-      Constants::BvaDispatchTeams::USERS[Rails.current_env]
+      BvaDispatch.singleton.users.order(:id).pluck(:css_id)
+    end
+
+    def create_decision_document!(params)
+      DecisionDocument.create!(params).tap do |decision_document|
+        decision_document.submit_for_processing!
+
+        # TODO: remove this unless statement when all decision documents require async processing
+        unless decision_document.processed?
+          ProcessDecisionDocumentJob.perform_later(decision_document)
+        end
+      end
     end
   end
 end

@@ -28,7 +28,7 @@ class UserRepository
     def fail_if_no_access_to_task!(css_id, vacols_id)
       unless QueueRepository.tasks_for_user(css_id).map(&:vacols_id).include?(vacols_id)
         msg = "User with css ID #{css_id} cannot modify appeal data with vacols ID: #{vacols_id}"
-        fail Caseflow::Error::UserRepositoryError, msg
+        fail(Caseflow::Error::UserRepositoryError, message: msg)
       end
       true
     end
@@ -65,6 +65,15 @@ class UserRepository
       staff.first.try(:sdomainid)
     end
     # :nocov:
+    #
+
+    def find_all_hearing_coordinators
+      coordinator_records = VACOLS::Staff.where(sdept: "HRG", sactive: "A")
+
+      coordinator_records.select(&:sdomainid).map do |record|
+        User.find_by_css_id_or_create_with_default_station_id(record.sdomainid)
+      end
+    end
 
     private
 
@@ -73,7 +82,7 @@ class UserRepository
       when "J"
         ["judge"]
       when "A"
-        staff_record.sattyid ? %w[attorney judge] : ["judge"]
+        staff_record.sattyid ? %w[attorney judge] : []
       when nil
         check_other_staff_fields(staff_record)
       else

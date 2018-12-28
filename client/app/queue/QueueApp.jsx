@@ -7,12 +7,13 @@ import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
 
 import {
+  setCanEditAod,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
   setFeedbackUrl,
-  setOrganizationIds
+  setOrganizations
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -35,11 +36,10 @@ import AssignHearingModal from './components/AssignHearingModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
-
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
-import SelectDispositionsView from './SelectDispositionsView';
+import SelectDispositionsContainer from './SelectDispositionsContainer';
 import SelectSpecialIssuesView from './SelectSpecialIssuesView';
 import SpecialIssueLoadingScreen from './SpecialIssueLoadingScreen';
 import AddEditIssueView from './AddEditIssueView';
@@ -68,23 +68,26 @@ type Props = {|
   reviewActionType: string,
   userIsVsoEmployee?: boolean,
   caseSearchHomePage?: boolean,
+  canEditAod: Boolean,
   featureToggles: Object,
-  organizationIds: Array<number>,
+  organizations: Array<Object>,
   // Action creators
+  setCanEditAod: typeof setCanEditAod,
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,
   setUserCssId: typeof setUserCssId,
   setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
   setFeedbackUrl: typeof setFeedbackUrl,
-  setOrganizationIds: typeof setOrganizationIds
+  setOrganizations: typeof setOrganizations
 |};
 
 class QueueApp extends React.PureComponent<Props> {
   componentDidMount = () => {
+    this.props.setCanEditAod(this.props.canEditAod);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
-    this.props.setOrganizationIds(this.props.organizationIds);
+    this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
   }
@@ -101,7 +104,6 @@ class QueueApp extends React.PureComponent<Props> {
     }
 
     return <ColocatedTaskListView />;
-
   }
 
   routedQueueList = () => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
@@ -112,8 +114,8 @@ class QueueApp extends React.PureComponent<Props> {
     <BeaamAppealListView {...this.props} />
   </QueueLoadingScreen>;
 
-  routedJudgeQueueList = (action) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
-    {action === 'assign' ?
+  routedJudgeQueueList = (label) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
+    {label === 'assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
       <JudgeReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
@@ -132,7 +134,7 @@ class QueueApp extends React.PureComponent<Props> {
     checkoutFlow={props.match.params.checkoutFlow}
     nextStep="/queue" />;
 
-  routedSelectDispositions = (props) => <SelectDispositionsView
+  routedSelectDispositions = (props) => <SelectDispositionsContainer
     appealId={props.match.params.appealId}
     taskId={props.match.params.taskId}
     checkoutFlow={props.match.params.checkoutFlow} />;
@@ -189,7 +191,11 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAssignToAttorney = (props) => <AssignToAttorneyModalView userId={this.props.userId} {...props.match.params} />;
 
+  routedAssignToSingleTeam = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
+
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
+
+  routedAssignMailTaskToTeam = (props) => <AssignToView isTeamAssign returnToCaseDetails {...props.match.params} />;
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
@@ -197,7 +203,7 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
 
-  routedAssignHearingModal = (props) => <AssignHearingModal {...props.match.params} />;
+  routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
   routedSendColocatedTaskModal = (props) =>
     <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
@@ -283,10 +289,14 @@ class QueueApp extends React.PureComponent<Props> {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_TEAM.value}`}
             render={this.routedAssignToTeam} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
-            render={this.routedAssignToTeam} />
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value}`}
+            render={this.routedAssignToSingleTeam} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PERSON.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
+            render={this.routedAssignMailTaskToTeam} />
+          <Route
+            path={'/queue/appeals/:appealId/tasks/:taskId/' +
+              `(${TASK_ACTIONS.ASSIGN_TO_PERSON.value}|${TASK_ACTIONS.RETURN_TO_JUDGE.value})`}
             render={this.routedAssignToUser} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
@@ -414,12 +424,13 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setCanEditAod,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
   setUserIsVsoEmployee,
   setFeedbackUrl,
-  setOrganizationIds
+  setOrganizations
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);

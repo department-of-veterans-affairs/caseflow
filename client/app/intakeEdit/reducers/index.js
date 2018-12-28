@@ -2,23 +2,25 @@ import { ACTIONS } from '../constants';
 import { applyCommonReducers } from '../../intake/reducers/common';
 import { REQUEST_STATE } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
-import { formatRequestIssues, formatRatings } from '../../intake/util/issues';
+import { formatRequestIssues, formatContestableIssues } from '../../intake/util/issues';
 import { formatRelationships } from '../../intake/util';
 
 export const mapDataToInitialState = function(props = {}) {
-  const { serverIntake, claimId } = props;
+  const { serverIntake, claimId, featureToggles } = props;
 
-  serverIntake.ratings = formatRatings(serverIntake.ratings);
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
+  serverIntake.contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 
   return {
     ...serverIntake,
     claimId,
+    featureToggles,
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
-    addedIssues: formatRequestIssues(serverIntake.requestIssues),
-    originalIssues: formatRequestIssues(serverIntake.requestIssues),
+    activeNonratingRequestIssues: formatRequestIssues(serverIntake.activeNonratingRequestIssues),
+    addedIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
+    originalIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },

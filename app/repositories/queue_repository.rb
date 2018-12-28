@@ -33,7 +33,7 @@ class QueueRepository
         # the # of appeals. Combine that data manually.
         case_records = QueueRepository.appeal_info_query(vacols_ids)
         aod_by_appeal = aod_query(vacols_ids)
-        hearings_by_appeal = Hearing.repository.hearings_for_appeals(vacols_ids)
+        hearings_by_appeal = HearingRepository.hearings_for_appeals(vacols_ids)
         issues_by_appeal = VACOLS::CaseIssue.descriptions(vacols_ids)
         remand_reasons_by_appeal = RemandReasonRepository.load_remand_reasons_for_appeals(vacols_ids)
 
@@ -123,17 +123,31 @@ class QueueRepository
 
         update_location_to_attorney(vacols_id, attorney)
 
-        VACOLS::Decass.create!(
-          defolder: vacols_id,
-          deatty: attorney.vacols_attorney_id,
-          deteam: attorney.vacols_group_id[0..2],
-          deadusr: judge.vacols_uniq_id,
-          deadtim: VacolsHelper.local_date_with_utc_timezone,
-          dedeadline: VacolsHelper.local_date_with_utc_timezone + 30.days,
-          deassign: VacolsHelper.local_date_with_utc_timezone,
-          deicr: decass_complexity_rating(vacols_id)
-        )
+        attrs = {
+          case_id: vacols_id,
+          attorney_id: attorney.vacols_attorney_id,
+          group_name: attorney.vacols_group_id[0..2],
+          assigned_to_attorney_date: VacolsHelper.local_date_with_utc_timezone,
+          deadline_date: VacolsHelper.local_date_with_utc_timezone + 30.days,
+          complexity_rating: decass_complexity_rating(vacols_id)
+        }
+
+        incomplete_record = incomplete_decass_record(vacols_id)
+        if incomplete_record.present?
+          return update_decass_record(incomplete_record,
+                                      attrs.merge(modifying_user: judge.vacols_uniq_id, work_product: nil))
+        end
+
+        create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
       end
+    end
+
+    def incomplete_decass_record(vacols_id)
+      VACOLS::Decass
+        .where(defolder: vacols_id)
+        .where.not(deprod: %w[REA REU DEV VHA IME AFI OTV OTI]).or(
+          VACOLS::Decass.where(defolder: vacols_id).where("DEOQ IS NULL")
+        ).first
     end
 
     def reassign_case_to_attorney!(judge:, attorney:, vacols_id:, created_in_vacols_date:)
@@ -188,9 +202,16 @@ class QueueRepository
     end
 
     def update_decass_record(decass_record, decass_attrs)
-      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+      decass_attrs = QueueMapper.new(decass_attrs).rename_and_validate_decass_attrs
       VACOLS::Decass.where(defolder: decass_record.defolder, deadtim: decass_record.deadtim)
         .update_all(decass_attrs)
+      decass_record.reload
+    end
+
+    def create_decass_record(decass_attrs)
+      decass_attrs = decass_attrs.merge(added_at_date: VacolsHelper.local_date_with_utc_timezone)
+      decass_attrs = QueueMapper.new(decass_attrs).rename_and_validate_decass_attrs
+      VACOLS::Decass.create!(decass_attrs)
     end
 
     def update_location_to_attorney(vacols_id, attorney)

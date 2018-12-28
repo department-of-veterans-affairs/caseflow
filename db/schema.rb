@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181031194415) do
+ActiveRecord::Schema.define(version: 20181221164327) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,11 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.datetime "established_at"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.boolean "legacy_opt_in_approved"
+    t.boolean "veteran_is_not_claimant"
+    t.datetime "establishment_submitted_at"
+    t.datetime "establishment_processed_at"
+    t.datetime "establishment_attempted_at"
+    t.string "establishment_error"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -182,22 +187,34 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.string "appeal_type", null: false
   end
 
-  create_table "decision_issues", force: :cascade do |t|
-    t.string "disposition"
-    t.string "disposition_date"
-    t.string "description"
-    t.integer "request_issue_id"
-  end
-
-  create_table "decisions", force: :cascade do |t|
+  create_table "decision_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
     t.string "citation_number", null: false
     t.date "decision_date", null: false
     t.string "redacted_document_location", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
-    t.index ["citation_number"], name: "index_decisions_on_citation_number", unique: true
+    t.datetime "submitted_at"
+    t.datetime "attempted_at"
+    t.datetime "processed_at"
+    t.string "error"
+    t.index ["appeal_id"], name: "index_decision_documents_on_appeal_id"
+    t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
+  end
+
+  create_table "decision_issues", force: :cascade do |t|
+    t.string "disposition"
+    t.string "description"
+    t.datetime "promulgation_date"
+    t.datetime "profile_date"
+    t.string "participant_id", null: false
+    t.string "rating_issue_reference_id"
+    t.string "decision_text"
+    t.string "decision_review_type"
+    t.integer "decision_review_id"
+    t.string "benefit_type"
+    t.date "end_product_last_action_date"
+    t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
@@ -215,6 +232,26 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.string "outgoing_reference_id"
     t.string "aasm_state"
     t.datetime "prepared_at"
+  end
+
+  create_table "distributed_cases", force: :cascade do |t|
+    t.integer "distribution_id"
+    t.string "case_id"
+    t.string "docket"
+    t.boolean "priority"
+    t.boolean "genpop"
+    t.string "genpop_query"
+    t.integer "docket_index"
+    t.datetime "ready_at"
+  end
+
+  create_table "distributions", force: :cascade do |t|
+    t.integer "judge_id"
+    t.string "status"
+    t.json "statistics"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "docket_snapshots", id: :serial, force: :cascade do |t|
@@ -376,15 +413,20 @@ ActiveRecord::Schema.define(version: 20181031194415) do
   end
 
   create_table "hearing_days", force: :cascade do |t|
-    t.datetime "hearing_date", null: false
+    t.date "hearing_date", null: false
     t.string "hearing_type", null: false
     t.string "regional_office"
-    t.string "judge_id"
-    t.string "room_info", null: false
+    t.integer "judge_id"
+    t.string "room", null: false
     t.datetime "created_at", null: false
     t.string "created_by", null: false
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
+    t.string "bva_poc"
+    t.datetime "deleted_at"
+    t.boolean "lock"
+    t.text "notes"
+    t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
@@ -393,16 +435,6 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true
-  end
-
-  create_table "hearings", id: :serial, force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "appeal_id"
-    t.string "vacols_id", null: false
-    t.string "witness"
-    t.string "military_service"
-    t.boolean "prepped"
-    t.text "summary"
   end
 
   create_table "higher_level_reviews", force: :cascade do |t|
@@ -416,6 +448,7 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
+    t.boolean "veteran_is_not_claimant"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -451,6 +484,7 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.text "areas_for_improvement", default: [], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "one_touch_initiative"
   end
 
   create_table "legacy_appeals", force: :cascade do |t|
@@ -488,6 +522,32 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.index ["vacols_id"], name: "index_legacy_appeals_on_vacols_id", unique: true
   end
 
+  create_table "legacy_hearings", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "appeal_id"
+    t.string "vacols_id", null: false
+    t.string "witness"
+    t.string "military_service"
+    t.boolean "prepped"
+    t.text "summary"
+  end
+
+  create_table "legacy_issue_optins", force: :cascade do |t|
+    t.bigint "request_issue_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "error"
+    t.string "vacols_id"
+    t.integer "vacols_sequence_id"
+    t.string "original_disposition_code"
+    t.date "original_disposition_date"
+    t.datetime "optin_processed_at"
+    t.datetime "rollback_created_at"
+    t.datetime "rollback_processed_at"
+    t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
+    t.index ["vacols_id", "vacols_sequence_id"], name: "unique_index_to_avoid_duplicate_opt_ins", unique: true, where: "(rollback_processed_at IS NULL)"
+  end
+
   create_table "non_availabilities", force: :cascade do |t|
     t.bigint "schedule_period_id", null: false
     t.string "type", null: false
@@ -509,6 +569,9 @@ ActiveRecord::Schema.define(version: 20181031194415) do
   create_table "organizations_users", force: :cascade do |t|
     t.integer "organization_id"
     t.integer "user_id"
+    t.boolean "admin", default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.index ["organization_id"], name: "index_organizations_users_on_organization_id"
     t.index ["user_id", "organization_id"], name: "index_organizations_users_on_user_id_and_organization_id", unique: true
   end
@@ -579,17 +642,6 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
-  create_table "rating_issues", force: :cascade do |t|
-    t.bigint "source_request_issue_id", null: false
-    t.string "reference_id", null: false
-    t.datetime "profile_date", null: false
-    t.string "decision_text"
-    t.datetime "promulgation_date", null: false
-    t.integer "participant_id", null: false
-    t.index ["reference_id", "participant_id"], name: "index_rating_issues_on_reference_id_and_participant_id", unique: true
-    t.index ["source_request_issue_id"], name: "index_rating_issues_on_source_request_issue_id"
-  end
-
   create_table "reader_users", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "documents_fetched_at"
@@ -603,7 +655,17 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "decision_issue_id"
+    t.index ["decision_issue_id"], name: "index_remand_reasons_on_decision_issue_id"
     t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
+  end
+
+  create_table "request_decision_issues", force: :cascade do |t|
+    t.integer "request_issue_id"
+    t.integer "decision_issue_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
   end
 
   create_table "request_issues", force: :cascade do |t|
@@ -622,12 +684,25 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.integer "parent_request_issue_id"
     t.text "notes"
     t.boolean "is_unidentified"
-    t.integer "ineligible_reason"
     t.bigint "ineligible_due_to_id"
+    t.boolean "untimely_exemption"
+    t.text "untimely_exemption_notes"
+    t.string "ramp_claim_id"
+    t.datetime "decision_sync_submitted_at"
+    t.datetime "decision_sync_attempted_at"
+    t.datetime "decision_sync_processed_at"
+    t.string "decision_sync_error"
+    t.string "ineligible_reason"
+    t.string "vacols_id"
+    t.integer "vacols_sequence_id"
+    t.datetime "created_at"
+    t.string "benefit_type"
+    t.integer "contested_decision_issue_id"
+    t.string "veteran_participant_id"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
+    t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
-    t.index ["ineligible_reason"], name: "index_request_issues_on_ineligible_reason"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
     t.index ["rating_issue_reference_id"], name: "index_request_issues_on_rating_issue_reference_id"
     t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
@@ -690,14 +765,6 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
   end
 
-  create_table "staff_field_for_organizations", force: :cascade do |t|
-    t.bigint "organization_id", null: false
-    t.string "name", null: false
-    t.string "values", default: [], null: false, array: true
-    t.boolean "exclude", default: false
-    t.index ["organization_id"], name: "index_staff_field_for_organizations_on_organization_id"
-  end
-
   create_table "supplemental_claims", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
@@ -708,6 +775,7 @@ ActiveRecord::Schema.define(version: 20181031194415) do
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
+    t.boolean "veteran_is_not_claimant"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 

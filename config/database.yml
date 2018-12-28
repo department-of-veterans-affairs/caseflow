@@ -40,14 +40,15 @@ production:
   <<: *default
   url: <%= ENV["POSTGRES_URL"] %>
 
-# Docker setup
 development_vacols:
- adapter: oracle_enhanced
- host: localhost
- port: 1522
- username: VACOLS
- password: VACOLS
- database: BVAP.localdomain
+  adapter: oracle_enhanced
+  username: VACOLS
+  password: VACOLS
+  <% if ! ENV['DOCKERIZED'] %>
+  host: localhost
+  port: 1522
+  <% end %>
+  database: <%= ENV['DEMO_DB'] || "BVAP.localdomain" %> 
 
 demo_vacols:
   adapter: sqlite3
