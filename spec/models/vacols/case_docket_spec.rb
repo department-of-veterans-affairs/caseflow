@@ -16,7 +16,7 @@ describe VACOLS::CaseDocket do
   let(:another_judge) { create(:user) }
   let!(:another_vacols_judge) { create(:staff, :judge_role, sdomainid: another_judge.css_id) }
 
-  let(:nonpriority_ready_case_bfbox)
+  let(:nonpriority_ready_case_bfbox) { nil }
   let(:nonpriority_ready_case_docket_number) { "1801001" }
   let!(:nonpriority_ready_case) do
     create(:case,
@@ -62,7 +62,7 @@ describe VACOLS::CaseDocket do
            bfdloout: 1.day.ago)
   end
 
-  let(:aod_ready_case_bfbox)
+  let(:aod_ready_case_bfbox) { nil }
   let(:aod_ready_case_docket_number) { "1801003" }
   let(:aod_ready_case_ready_time) { 3.days.ago }
   let!(:aod_ready_case) do
@@ -236,6 +236,7 @@ describe VACOLS::CaseDocket do
       let!(:mail) { create(:mail, mlfolder: nonpriority_ready_case.bfkey, mltype: mltype) }
 
       it "does not distribute the case" do
+        expect(subject.count).to eq(1)
         expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
       end
 
@@ -243,6 +244,7 @@ describe VACOLS::CaseDocket do
         let(:mltype) { "02" }
 
         it "distributes the case" do
+          expect(subject.count).to eq(2)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
@@ -399,6 +401,7 @@ describe VACOLS::CaseDocket do
       let!(:mail) { create(:mail, mlfolder: aod_ready_case.bfkey, mltype: mltype) }
 
       it "does not distribute the case" do
+        expect(subject.count).to eq(1)
         expect(aod_ready_case.reload.bfcurloc).to eq("81")
       end
 
@@ -406,6 +409,7 @@ describe VACOLS::CaseDocket do
         let(:mltype) { "02" }
 
         it "distributes the case" do
+          expect(subject.count).to eq(2)
           expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
