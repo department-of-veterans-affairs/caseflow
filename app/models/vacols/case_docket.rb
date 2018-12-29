@@ -10,6 +10,13 @@ class VACOLS::CaseDocket < VACOLS::Record
     for update
   ".freeze
 
+  # Distribution should be blocked by pending mail, with the exception of:
+  #
+  # 02 - Congressional interest
+  # 05 - Evidence or argument (because the attorney will pick this up)
+  # 08 - Motion to advance on the docket
+  # 13 - Status inquiry
+
   JOIN_MAIL_BLOCKS_DISTRIBUTION = "
     left join (
       select BRIEFF.BFKEY MAILKEY,
@@ -26,6 +33,12 @@ class VACOLS::CaseDocket < VACOLS::Record
     )
     on MAILKEY = BFKEY
   ".freeze
+
+  # Distribution should be blocked by a pending diary of one of the following types:
+  #
+  # EXT - Extension request
+  # HCL - Hearing clarification
+  # POA - Power of attorney clarification
 
   JOIN_DIARY_BLOCKS_DISTRIBUTION = "
     left join (
