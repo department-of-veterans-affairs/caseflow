@@ -1,12 +1,7 @@
 RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:colocated_queue)
     User.authenticate!(roles: ["System Admin"])
-  end
-
-  after do
-    FeatureToggle.disable!(:colocated_queue)
   end
 
   describe "GET tasks/xxx" do
@@ -16,35 +11,18 @@ RSpec.describe TasksController, type: :controller do
       create(:staff, role, sdomainid: user.css_id)
     end
 
-    let!(:task1) { create(:colocated_task, assigned_by: user) }
-    let!(:task2) { create(:colocated_task, assigned_by: user) }
-    let!(:task3) { create(:colocated_task, assigned_by: user, status: Constants.TASK_STATUSES.completed) }
-
-    let!(:task4) do
-      create(:colocated_task, assigned_to: user, appeal: create(:legacy_appeal, vacols_case: create(:case, :aod)))
-    end
-    let!(:task5) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.in_progress) }
-    let!(:task_ama_colocated_aod) do
-      create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket_due_to_age))
-    end
-    let!(:task6) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.completed) }
-    let!(:task7) { create(:colocated_task) }
-
-    let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
-    let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
-    let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
-    let!(:task15) do
-      create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user, completed_at: 3.weeks.ago)
-    end
-
-    let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
-    let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
-    let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
-    let!(:task16) { create(:ama_attorney_task, :completed, assigned_to: user, completed_at: 3.weeks.ago) }
-    let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
-
     context "when user is an attorney" do
       let(:role) { :attorney_role }
+
+      let!(:task1) { create(:colocated_task, assigned_by: user) }
+      let!(:task2) { create(:colocated_task, assigned_by: user) }
+      let!(:task3) { create(:colocated_task, assigned_by: user, status: Constants.TASK_STATUSES.completed) }
+
+      let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
+      let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
+      let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
+      let!(:task16) { create(:ama_attorney_task, :completed, assigned_to: user, completed_at: 3.weeks.ago) }
+      let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
 
       it "should process the request successfully" do
         get :index, params: { user_id: user.id, role: "attorney" }
@@ -89,6 +67,16 @@ RSpec.describe TasksController, type: :controller do
     context "when user is a colocated admin" do
       let(:role) { :colocated_role }
 
+      let!(:task4) do
+        create(:colocated_task, assigned_to: user, appeal: create(:legacy_appeal, vacols_case: create(:case, :aod)))
+      end
+      let!(:task5) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.in_progress) }
+      let!(:task_ama_colocated_aod) do
+        create(:ama_colocated_task, assigned_to: user, appeal: create(:appeal, :advanced_on_docket_due_to_age))
+      end
+      let!(:task6) { create(:colocated_task, assigned_to: user, status: Constants.TASK_STATUSES.completed) }
+      let!(:task7) { create(:colocated_task) }
+
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "colocated" }
         response_body = JSON.parse(response.body)["tasks"]["data"]
@@ -114,6 +102,13 @@ RSpec.describe TasksController, type: :controller do
 
     context "when getting tasks for a judge" do
       let(:role) { :judge_role }
+
+      let!(:task8) { create(:ama_judge_task, assigned_to: user, assigned_by: user) }
+      let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
+      let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
+      let!(:task15) do
+        create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user, completed_at: 3.weeks.ago)
+      end
 
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "judge" }
@@ -180,23 +175,22 @@ RSpec.describe TasksController, type: :controller do
       end
 
       context "when the task belongs to the user" do
-        let(:user) { FactoryBot.create(:user) }
-        let!(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
-        before { User.authenticate!(user: user) }
+        let(:no_role_user) { FactoryBot.create(:user) }
+        let!(:task) { FactoryBot.create(:generic_task, assigned_to: no_role_user) }
+        before { User.authenticate!(user: no_role_user) }
 
         context "when there are Organizations in the table" do
           let(:org_count) { 8 }
           before { FactoryBot.create_list(:organization, org_count) }
 
           it "should return a list of all Organizations" do
-            get :index, params: { user_id: user.id }
+            get :index, params: { user_id: no_role_user.id }
             expect(response.status).to eq(200)
             response_body = JSON.parse(response.body)
             task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
 
             expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
 
-            # org count minus one since we can't assign to ourselves.
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
               action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
             end
@@ -236,7 +230,7 @@ RSpec.describe TasksController, type: :controller do
 
         it "should be successful" do
           post :create, params: { tasks: params }
-          expect(response.status).to eq 201
+          expect(response.status).to eq 200
 
           response_body = JSON.parse(response.body)["tasks"]["data"]
           expect(response_body.second["attributes"]["type"]).to eq AttorneyTask.name
@@ -302,7 +296,7 @@ RSpec.describe TasksController, type: :controller do
 
         it "should be successful" do
           post :create, params: { tasks: params }
-          expect(response.status).to eq 201
+          expect(response.status).to eq 200
         end
       end
     end
@@ -362,7 +356,7 @@ RSpec.describe TasksController, type: :controller do
           it "should be successful" do
             expect(AppealRepository).to receive(:update_location!).exactly(1).times
             post :create, params: { tasks: params }
-            expect(response.status).to eq 201
+            expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(4)
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
@@ -409,7 +403,7 @@ RSpec.describe TasksController, type: :controller do
           it "should be successful" do
             expect(AppealRepository).to receive(:update_location!).exactly(1).times
             post :create, params: { tasks: params }
-            expect(response.status).to eq 201
+            expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(4)
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
@@ -444,7 +438,7 @@ RSpec.describe TasksController, type: :controller do
 
           it "should be successful" do
             post :create, params: { tasks: params }
-            expect(response.status).to eq 201
+            expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(2)
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
@@ -466,7 +460,7 @@ RSpec.describe TasksController, type: :controller do
 
           it "should be successful" do
             post :create, params: { tasks: params }
-            expect(response.status).to eq 201
+            expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(2)
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
@@ -520,7 +514,7 @@ RSpec.describe TasksController, type: :controller do
 
           it "should be successful" do
             post :create, params: { tasks: params }
-            expect(response.status).to eq 201
+            expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq 1
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
@@ -638,7 +632,7 @@ RSpec.describe TasksController, type: :controller do
 
         assert_response :success
         response_body = JSON.parse(response.body)
-        expect(response_body["tasks"].length).to eq 1
+        expect(response_body["tasks"].length).to eq 3
         task = response_body["tasks"][0]
         expect(task["id"]).to eq(legacy_appeal.vacols_id)
         expect(task["type"]).to eq("attorney_legacy_tasks")

@@ -15,13 +15,8 @@ describe LegacyWorkQueue do
       let(:role) { "Attorney" }
 
       it "returns tasks" do
-        expect(subject[0].length).to eq(2)
-        expect(subject[0][0].class).to eq(AttorneyLegacyTask)
-      end
-
-      it "returns appeals" do
-        expect(subject[1].length).to eq(2)
-        expect(subject[1][0].class).to eq(LegacyAppeal)
+        expect(subject.length).to eq(2)
+        expect(subject[0].class).to eq(AttorneyLegacyTask)
       end
     end
 
@@ -29,13 +24,8 @@ describe LegacyWorkQueue do
       let(:role) { "Judge" }
 
       it "returns tasks" do
-        expect(subject[0].length).to eq(2)
-        expect(subject[0][0].class).to eq(JudgeLegacyTask)
-      end
-
-      it "returns appeals" do
-        expect(subject[1].length).to eq(2)
-        expect(subject[1][0].class).to eq(LegacyAppeal)
+        expect(subject.length).to eq(2)
+        expect(subject[0].class).to eq(JudgeLegacyTask)
       end
     end
   end
@@ -57,13 +47,8 @@ describe LegacyWorkQueue do
       let(:role) { "attorney" }
 
       it "returns a task" do
-        expect(subject[0].length).to eq(1)
-        expect(subject[0][0].class).to eq(AttorneyLegacyTask)
-      end
-
-      it "returns an appeal" do
-        expect(subject[1].length).to eq(1)
-        expect(subject[1][0].class).to eq(LegacyAppeal)
+        expect(subject.length).to eq(1)
+        expect(subject[0].class).to eq(AttorneyLegacyTask)
       end
     end
   end
@@ -85,14 +70,12 @@ describe LegacyWorkQueue do
       let(:role) { "attorney" }
 
       it "returns a task and an appeal" do
-        tasks, appeals = subject
+        tasks = subject
         expect(tasks.length).to eq(1)
         task = tasks[0]
         expect(task.class).to eq(AttorneyLegacyTask)
         expect(task.user_id).to be_nil
         expect(task.assigned_to_pg_id).to be_nil
-        expect(appeals.length).to eq(1)
-        expect(appeals[0].class).to eq(LegacyAppeal)
       end
     end
   end

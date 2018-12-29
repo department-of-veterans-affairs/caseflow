@@ -1,12 +1,5 @@
 require "rails_helper"
 
-def click_dropdown_text(opt_text, container = page)
-  dropdown = container.find(".Select-control")
-  dropdown.click
-  yield if block_given?
-  dropdown.sibling(".Select-menu-outer").find("div .Select-option", text: opt_text).click
-end
-
 RSpec.feature "Judge assignment to attorney" do
   let(:judge) { Judge.new(FactoryBot.create(:user, full_name: "Billie Daniel")) }
   let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
@@ -48,7 +41,7 @@ RSpec.feature "Judge assignment to attorney" do
       check "2", allow_label_click: true
 
       safe_click ".Select"
-      click_dropdown_text attorney_one.full_name
+      click_dropdown(text: attorney_one.full_name)
 
       click_on "Assign 2 cases"
       expect(page).to have_content("Assigned 2 cases")
@@ -65,7 +58,7 @@ RSpec.feature "Judge assignment to attorney" do
       check "3", allow_label_click: true
 
       safe_click ".Select"
-      click_dropdown_text attorney_two.full_name
+      click_dropdown(text: attorney_two.full_name)
 
       click_on "Assign 1 case"
       expect(page).to have_content("Assigned 1 case")

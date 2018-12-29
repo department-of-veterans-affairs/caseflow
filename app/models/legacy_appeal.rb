@@ -233,7 +233,7 @@ class LegacyAppeal < ApplicationRecord
 
   attr_writer :hearings
   def hearings
-    @hearings ||= Hearing.repository.hearings_for_appeal(vacols_id)
+    @hearings ||= HearingRepository.hearings_for_appeal(vacols_id)
   end
 
   def completed_hearing_on_previous_appeal?
@@ -688,15 +688,20 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def matchable_to_request_issue?
-    issues.any? && (active? || eligible_for_soc_opt_in?)
+  def matchable_to_request_issue?(receipt_date)
+    issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
   end
 
-  def eligible_for_soc_opt_in?
+  def eligible_for_soc_opt_in?(receipt_date)
     return false unless nod_date
     return false unless soc_date
+    return false unless receipt_date
 
-    soc_date > soc_eligible_date || nod_date > nod_eligible_date
+    soc_eligible_date = receipt_date - 60.days
+    nod_eligible_date = receipt_date - 372.days
+
+    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
+    soc_date > soc_eligible_date || nod_date > nod_eligible_date || ssoc_dates.any? { |d| d > soc_eligible_date }
   end
 
   def serializer_class
@@ -725,14 +730,6 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
-
-  def soc_eligible_date
-    Time.zone.today - 60.days
-  end
-
-  def nod_eligible_date
-    Time.zone.today - 372.days
-  end
 
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
@@ -841,14 +838,15 @@ class LegacyAppeal < ApplicationRecord
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def reopen(appeals:, user:, disposition:, safeguards: true)
+    def reopen(appeals:, user:, disposition:, safeguards: true, reopen_issues: true)
       repository.transaction do
         appeals.each do |reopen_appeal|
           reopen_single(
             appeal: reopen_appeal,
             user: user,
             disposition: disposition,
-            safeguards: safeguards
+            safeguards: safeguards,
+            reopen_issues: reopen_issues
           )
         end
       end
@@ -939,7 +937,7 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
-    def reopen_single(appeal:, user:, disposition:, safeguards:)
+    def reopen_single(appeal:, user:, disposition:, safeguards:, reopen_issues: true)
       disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
@@ -961,7 +959,8 @@ class LegacyAppeal < ApplicationRecord
         repository.reopen_undecided_appeal!(
           appeal: appeal,
           user: user,
-          safeguards: safeguards
+          safeguards: safeguards,
+          reopen_issues: reopen_issues
         )
       end
     end

@@ -1,6 +1,5 @@
 class DecisionReview < ApplicationRecord
   include CachedAttributes
-  include LegacyOptinable
   include Asyncable
 
   validate :validate_receipt_date
@@ -12,6 +11,7 @@ class DecisionReview < ApplicationRecord
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
   has_many :decision_issues, as: :decision_review
+  has_many :tasks, as: :appeal
 
   before_destroy :remove_issues!
 
@@ -55,8 +55,13 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def non_comp?
+    !ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
+  end
+
   def serialized_ratings
     return unless receipt_date
+    return if non_comp?
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
@@ -65,6 +70,18 @@ class DecisionReview < ApplicationRecord
         rating_issue_hash.merge!(RatingIssue.deserialize(rating_issue_hash).serialize)
       end
     end
+  end
+
+  def veteran_full_name
+    veteran&.name&.formatted(:readable_full)
+  end
+
+  def number_of_issues
+    request_issues.count
+  end
+
+  def external_id
+    id.to_s
   end
 
   def ui_hash
@@ -82,6 +99,7 @@ class DecisionReview < ApplicationRecord
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash),
+      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize)
     }
   end
@@ -140,16 +158,24 @@ class DecisionReview < ApplicationRecord
       {
         vacols_id: legacy_appeal.vacols_id,
         date: legacy_appeal.nod_date,
-        eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?,
+        eligible_for_soc_opt_in: legacy_appeal.eligible_for_soc_opt_in?(receipt_date),
         issues: legacy_appeal.issues.map(&:intake_attributes)
       }
     end
   end
 
+  def vacols_optin_special_issue
+    { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O }
+  end
+
   def special_issues
     [].tap do |specials|
-      specials << vacols_optin_special_issue if needs_vacols_optin_special_issue?
+      specials << vacols_optin_special_issue if request_issues.any?(&:legacy_issue_optin)
     end
+  end
+
+  def process_legacy_issues!
+    LegacyOptinManager.new(decision_review: self).process!
   end
 
   def on_decision_issues_sync_processed(end_product_establishment)
@@ -160,12 +186,21 @@ class DecisionReview < ApplicationRecord
     # no-op
   end
 
-  def process_legacy_issues!
-    LegacyOptinManager.new(decision_review: self).process!
+  def contestable_issues
+    return contestable_issues_from_decision_issues if non_comp?
+    contestable_issues_from_ratings + contestable_issues_from_decision_issues
   end
 
-  def contestable_issues
-    contestable_issues_from_ratings + contestable_issues_from_decision_issues
+  def active_nonrating_request_issues
+    @active_nonrating_request_issues ||= RequestIssue.nonrating
+      .where(veteran_participant_id: veteran.participant_id)
+      .where.not(id: request_issues.map(&:id))
+      .select(&:status_active?)
+  end
+
+  # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
+  def serializer_class
+    ::WorkQueue::DecisionReviewSerializer
   end
 
   private
@@ -200,7 +235,7 @@ class DecisionReview < ApplicationRecord
   def matchable_legacy_appeals
     @matchable_legacy_appeals ||= LegacyAppeal
       .fetch_appeals_by_file_number(veteran_file_number)
-      .select(&:matchable_to_request_issue?)
+      .select { |appeal| appeal.matchable_to_request_issue?(receipt_date) }
   end
 
   def active_matchable_legacy_appeals

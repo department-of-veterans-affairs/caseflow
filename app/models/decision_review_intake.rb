@@ -5,10 +5,12 @@ class DecisionReviewIntake < Intake
       claimant: detail.claimant_participant_id,
       veteran_is_not_claimant: detail.veteran_is_not_claimant,
       payeeCode: detail.payee_code,
+      nonComp: detail.non_comp?,
       legacy_opt_in_approved: detail.legacy_opt_in_approved,
       legacyAppeals: detail.serialized_legacy_appeals,
       ratings: detail.serialized_ratings,
       requestIssues: detail.request_issues.map(&:ui_hash),
+      activeNonratingRequestIssues: detail.active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: detail.contestable_issues.map(&:serialize)
     )
   rescue Rating::NilRatingProfileListError

@@ -42,7 +42,8 @@ RSpec.feature "Edit issues" do
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: "000" },
-        { reference_id: "def456", decision_text: "PTSD denied" }
+        { reference_id: "def456", decision_text: "PTSD denied" },
+        { reference_id: "abcdef", decision_text: "Back pain" }
       ]
     )
   end
@@ -168,7 +169,7 @@ RSpec.feature "Edit issues" do
       add_intake_rating_issue(issue_description, "a new comment")
       expect(page).to have_content(issue_description)
       expect(page).to_not have_content(
-        Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.gsub("{review_title}", "Appeal")
+        Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
       )
 
       # issue note was added
@@ -198,6 +199,10 @@ RSpec.feature "Edit issues" do
             "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
           )
 
+          click_intake_add_issue
+          add_intake_rating_issue("Back pain")
+          add_intake_rating_issue("ankylosis of hip") # eligible issue
+
           safe_click("#button-submit-update")
           safe_click ".confirm"
 
@@ -209,6 +214,33 @@ RSpec.feature "Edit issues" do
                    vacols_id: "vacols2",
                    vacols_sequence_id: "1"
           )).to_not be_nil
+
+          ri_with_optin = RequestIssue.find_by(
+            description: "Back pain",
+            ineligible_reason: nil,
+            vacols_id: "vacols1",
+            vacols_sequence_id: "1"
+          )
+
+          expect(ri_with_optin).to_not be_nil
+          li_optin = ri_with_optin.legacy_issue_optin
+          expect(li_optin.optin_processed_at).to_not be_nil
+          expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
+            LegacyIssueOptin::VACOLS_DISPOSITION_CODE
+          )
+
+          # Check rollback
+          visit "appeals/#{appeal.uuid}/edit/"
+          click_remove_intake_issue_by_text("Back pain")
+          click_remove_issue_confirmation
+          safe_click("#button-submit-update")
+          safe_click ".confirm"
+
+          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+          expect(li_optin.reload.rollback_processed_at).to_not be_nil
+          expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
+            li_optin.original_disposition_code
+          )
         end
       end
 
@@ -295,7 +327,7 @@ RSpec.feature "Edit issues" do
     expect(page).to have_content(nonrating_decision_issue_description)
     expect(page).to have_content(
       Constants.INELIGIBLE_REQUEST_ISSUES
-        .duplicate_of_issue_in_active_review.gsub("{review_title}", "Higher-Level Review")
+        .duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Higher-Level Review")
     )
 
     safe_click("#button-submit-update")
@@ -318,7 +350,7 @@ RSpec.feature "Edit issues" do
 
     expect(RequestIssue.find_by(review_request: review_request,
                                 contested_decision_issue_id: contested_decision_issues.second.id,
-                                ineligible_reason: :duplicate_of_issue_in_active_review,
+                                ineligible_reason: :duplicate_of_rating_issue_in_active_review,
                                 description: contested_decision_issues.second.formatted_description)).to_not be_nil
   end
   # rubocop:enable Metrics/MethodLength
@@ -416,7 +448,7 @@ RSpec.feature "Edit issues" do
           review_request: higher_level_review,
           description: "PTSD denied",
           contention_reference_id: "111",
-          ineligible_reason: :duplicate_of_issue_in_active_review,
+          ineligible_reason: :duplicate_of_rating_issue_in_active_review,
           ineligible_due_to: ri_in_review
         )
       end
@@ -516,7 +548,6 @@ RSpec.feature "Edit issues" do
 
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
         visit "higher_level_reviews/#{ep_claim_id}/edit"
-
         expect(page).to have_content(
           "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
         )
@@ -669,16 +700,19 @@ RSpec.feature "Edit issues" do
         )
       end
 
+      let(:nonrating_ep_claim_id) do
+        EndProductEstablishment.find_by(
+          source: higher_level_review,
+          code: "030HLRNR"
+        ).reference_id
+      end
+
       before do
         higher_level_review.create_issues!([nonrating_request_issue])
         higher_level_review.establish!
       end
 
       it "shows the Higher-Level Review Edit page with a nonrating claim id" do
-        nonrating_ep_claim_id = EndProductEstablishment.find_by(
-          source: higher_level_review,
-          code: "030HLRNR"
-        ).reference_id
         visit "higher_level_reviews/#{nonrating_ep_claim_id}/edit"
 
         expect(page).to have_content("Military Retired Pay")
@@ -711,6 +745,45 @@ RSpec.feature "Edit issues" do
           "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
         )
         expect(page).to have_content("Edit Confirmed")
+      end
+
+      context "when veteran has active nonrating request issues" do
+        let!(:active_nonrating_request_issue) do
+          create(:request_issue,
+                 :nonrating,
+                 review_request: another_higher_level_review)
+        end
+
+        before do
+          another_higher_level_review.create_issues!([active_nonrating_request_issue])
+        end
+
+        scenario "shows ineligibility message and saves conflicting request issue id" do
+          visit "higher_level_reviews/#{nonrating_ep_claim_id}/edit"
+          click_intake_add_issue
+          click_intake_no_matching_issues
+
+          fill_in "Issue category", with: active_nonrating_request_issue.issue_category
+          find("#issue-category").send_keys :enter
+          expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
+          expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+                                       "#{active_nonrating_request_issue.description}")
+          add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
+          expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+                                       " #{active_nonrating_request_issue.description}" \
+                                       " is ineligible because it's already under review as a Higher-Level Review")
+
+          safe_click("#button-submit-update")
+          safe_click ".confirm"
+          expect(page).to have_content("Edit Confirmed")
+
+          expect(RequestIssue.find_by(review_request: higher_level_review,
+                                      issue_category: active_nonrating_request_issue.issue_category,
+                                      ineligible_due_to: active_nonrating_request_issue.id,
+                                      ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
+                                      description: active_nonrating_request_issue.description,
+                                      decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
+        end
       end
     end
 
@@ -953,12 +1026,12 @@ RSpec.feature "Edit issues" do
 
         rating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
-          code: HigherLevelReview::END_PRODUCT_RATING_CODE
+          code: HigherLevelReview::END_PRODUCT_CODES[:rating]
         )
 
         nonrating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
-          code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+          code: HigherLevelReview::END_PRODUCT_CODES[:nonrating]
         )
 
         # expect the remove/re-add to create a new RequestIssue for same RatingIssue
@@ -1124,12 +1197,13 @@ RSpec.feature "Edit issues" do
 
   context "Supplemental claims" do
     let(:is_dta_error) { false }
+    let(:benefit_type) { "compensation" }
 
     let!(:supplemental_claim) do
       SupplementalClaim.create!(
         veteran_file_number: veteran.file_number,
         receipt_date: receipt_date,
-        benefit_type: "compensation",
+        benefit_type: benefit_type,
         is_dta_error: is_dta_error,
         veteran_is_not_claimant: true
       )
@@ -1196,6 +1270,19 @@ RSpec.feature "Edit issues" do
           visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
           expect(page).to have_content("Issues Not Editable")
         end
+
+        context "when benefit type is pension" do
+          let(:benefit_type) { "pension" }
+          it "cannot be edited" do
+            nonrating_dta_claim_id = EndProductEstablishment.find_by(
+              source: supplemental_claim,
+              code: "040HDENRPMC"
+            ).reference_id
+
+            visit "supplemental_claims/#{nonrating_dta_claim_id}/edit"
+            expect(page).to have_content("Issues Not Editable")
+          end
+        end
       end
 
       it "shows the Supplemental Claim Edit page with a nonrating claim id" do
@@ -1255,6 +1342,19 @@ RSpec.feature "Edit issues" do
 
           visit "supplemental_claims/#{rating_dta_claim_id}/edit"
           expect(page).to have_content("Issues Not Editable")
+        end
+
+        context "when benefit type is pension" do
+          let(:benefit_type) { "pension" }
+          it "cannot be edited" do
+            rating_dta_claim_id = EndProductEstablishment.find_by(
+              source: supplemental_claim,
+              code: "040HDERPMC"
+            ).reference_id
+
+            visit "supplemental_claims/#{rating_dta_claim_id}/edit"
+            expect(page).to have_content("Issues Not Editable")
+          end
         end
       end
 
@@ -1322,6 +1422,51 @@ RSpec.feature "Edit issues" do
         add_intake_unidentified_issue("This is an unidentified issue")
         expect(page).to have_content("4 issues")
         expect(page).to have_content("This is an unidentified issue")
+      end
+
+      context "when veteran has active nonrating request issues" do
+        let(:another_higher_level_review) do
+          create(:higher_level_review,
+                 veteran_file_number: veteran.file_number,
+                 benefit_type: "compensation")
+        end
+
+        let!(:active_nonrating_request_issue) do
+          create(:request_issue,
+                 :nonrating,
+                 review_request: another_higher_level_review)
+        end
+
+        before do
+          another_higher_level_review.create_issues!([active_nonrating_request_issue])
+        end
+
+        scenario "shows ineligibility message and saves conflicting request issue id" do
+          visit "supplemental_claims/#{rating_ep_claim_id}/edit"
+          click_intake_add_issue
+          click_intake_no_matching_issues
+
+          fill_in "Issue category", with: active_nonrating_request_issue.issue_category
+          find("#issue-category").send_keys :enter
+          expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
+          expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+                                       "#{active_nonrating_request_issue.description}")
+          add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
+          expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+                                       " #{active_nonrating_request_issue.description}" \
+                                       " is ineligible because it's already under review as a Higher-Level Review")
+
+          safe_click("#button-submit-update")
+          safe_click ".confirm"
+          expect(page).to have_content("Edit Confirmed")
+
+          expect(RequestIssue.find_by(review_request: supplemental_claim,
+                                      issue_category: active_nonrating_request_issue.issue_category,
+                                      ineligible_due_to: active_nonrating_request_issue.id,
+                                      ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
+                                      description: active_nonrating_request_issue.description,
+                                      decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
+        end
       end
 
       context "has decision issues" do

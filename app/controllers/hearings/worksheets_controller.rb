@@ -41,7 +41,7 @@ class Hearings::WorksheetsController < HearingsController
   end
 
   def worksheet
-    Hearing.find(params[:hearing_id])
+    LegacyHearing.find(params[:hearing_id])
   end
   helper_method :worksheet
 

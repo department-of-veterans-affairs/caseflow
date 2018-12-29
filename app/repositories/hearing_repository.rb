@@ -1,6 +1,7 @@
 # Hearing Prep repository.
 class HearingRepository
   class NoOpenSlots < StandardError; end
+  class LockedHearingDay < StandardError; end
 
   class << self
     # :nocov:
@@ -94,6 +95,7 @@ class HearingRepository
 
     def create_child_co_hearing(hearing_date_str, appeal)
       hearing_day = HearingDay.find_by(hearing_type: "C", hearing_date: hearing_date_str.to_date)
+      fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
       VACOLS::CaseHearing.create_child_hearing!(
         folder_nr: appeal.vacols_id,
@@ -126,6 +128,8 @@ class HearingRepository
 
     def create_caseflow_child_video_hearing(id, hearing_date, appeal)
       hearing_day = HearingDay.find(id)
+
+      fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
       VACOLS::CaseHearing.create_child_hearing!(
         folder_nr: appeal.vacols_id,
@@ -168,13 +172,13 @@ class HearingRepository
     def hearings_for(case_hearings)
       vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact
 
-      fetched_hearings = Hearing.where(vacols_id: vacols_ids)
+      fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids)
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
       case_hearings.map do |vacols_record|
         next empty_dockets(vacols_record) if master_record?(vacols_record)
-        hearing = Hearing.assign_or_create_from_vacols_record(vacols_record,
-                                                              fetched_hearings_hash[vacols_record.hearing_pkseq])
+        hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record,
+                                                                    fetched_hearings_hash[vacols_record.hearing_pkseq])
         set_vacols_values(hearing, vacols_record)
       end.flatten
     end

@@ -3,9 +3,8 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
-  has_many :tasks, as: :appeal
   has_many :decision_issues, through: :request_issues
-  has_many :decisions
+  has_many :decision_documents
   has_one :special_issue_list
 
   with_options on: :intake_review do
@@ -100,6 +99,10 @@ class Appeal < DecisionReview
     tasks.map(&:attorney_case_reviews).flatten
   end
 
+  def every_request_issue_has_decision?
+    eligible_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
+  end
+
   def reviewing_judge_name
     task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
     task ? task.assigned_to.try(:full_name) : ""
@@ -120,7 +123,7 @@ class Appeal < DecisionReview
   end
 
   def decision_date
-    decisions.last.try(:decision_date)
+    decision_documents.last.try(:decision_date)
   end
 
   def hearing_docket?
@@ -135,17 +138,9 @@ class Appeal < DecisionReview
     docket_type == "direct_review"
   end
 
-  def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
-  end
-
   def veteran_name
     # For consistency with LegacyAppeal.veteran_name
     veteran&.name&.formatted(:form)
-  end
-
-  def veteran_full_name
-    veteran&.name&.formatted(:readable_full)
   end
 
   def veteran_middle_initial
@@ -180,10 +175,6 @@ class Appeal < DecisionReview
 
   delegate :first_name, :last_name, :name_suffix, :ssn, to: :veteran, prefix: true, allow_nil: true
 
-  def number_of_issues
-    issues[:request_issues].size
-  end
-
   def appellant
     claimants.first
   end
@@ -202,12 +193,16 @@ class Appeal < DecisionReview
     "not implemented for AMA"
   end
 
+  def benefit_type
+    # temporary until ticket for appeals benefit type by issue is implemented
+    # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
+    "compensation"
+  end
+
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      # temporary until ticket for appeals benefit type by issue is implemented
-      # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
-      issue.update!(benefit_type: "compensation")
-      create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
+      issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
+      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
   end
 

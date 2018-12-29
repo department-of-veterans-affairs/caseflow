@@ -20,7 +20,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :decision_issues do
-    object.decision_issues.map do |issue|
+    object.decision_issues.uniq.map do |issue|
       {
         id: issue.id,
         disposition: issue.disposition,
@@ -30,6 +30,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
       }
     end
+  end
+
+  attribute :can_edit_request_issues do
+    @instance_options[:user]&.can_edit_request_issues?(object)
   end
 
   attribute :hearings do

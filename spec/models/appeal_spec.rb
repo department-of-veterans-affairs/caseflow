@@ -104,8 +104,9 @@ describe Appeal do
   context "#special_issues" do
     let(:appeal) { create(:appeal) }
     let(:vacols_id) { nil }
+    let(:vacols_sequence_id) { nil }
     let!(:request_issue) do
-      create(:request_issue, review_request: appeal, vacols_id: vacols_id)
+      create(:request_issue, review_request: appeal, vacols_id: vacols_id, vacols_sequence_id: vacols_sequence_id)
     end
 
     subject { appeal.reload.special_issues }
@@ -118,6 +119,9 @@ describe Appeal do
 
     context "VACOLS opt-in" do
       let(:vacols_id) { "something" }
+      let!(:vacols_case) { create(:case, bfkey: vacols_id, case_issues: [vacols_issue]) }
+      let(:vacols_sequence_id) { 1 }
+      let!(:vacols_issue) { create(:case_issue, issseq: vacols_sequence_id) }
       let!(:legacy_opt_in) do
         create(:legacy_issue_optin, request_issue: request_issue)
       end
@@ -125,6 +129,25 @@ describe Appeal do
       it "includes VACOLS opt-in" do
         expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
       end
+    end
+  end
+
+  context "#every_request_issue_has_decision" do
+    let(:appeal) { create(:appeal, request_issues: [request_issue]) }
+    let(:request_issue) { create(:request_issue, decision_issues: decision_issues) }
+
+    subject { appeal.every_request_issue_has_decision? }
+
+    context "when no decision issues" do
+      let(:decision_issues) { [] }
+
+      it { is_expected.to eq false }
+    end
+
+    context "when decision issues" do
+      let(:decision_issues) { [create(:decision_issue)] }
+
+      it { is_expected.to eq true }
     end
   end
 
@@ -192,7 +215,8 @@ describe Appeal do
     end
 
     context "with a legacy appeal" do
-      let(:vacols_case) { create(:case) }
+      let(:vacols_issue) { create(:case_issue) }
+      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
       let(:legacy_appeal) do
         create(:legacy_appeal, vacols_case: vacols_case)
       end

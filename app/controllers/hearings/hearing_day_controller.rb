@@ -1,5 +1,5 @@
 class Hearings::HearingDayController < HearingScheduleController
-  # Controller to add and update hearing schedule days.
+  before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
 
   # show schedule days for date range provided
   def index
@@ -53,12 +53,6 @@ class Hearings::HearingDayController < HearingScheduleController
     end
 
     render json: { hearing_days: json_hearings(enriched_hearings) }
-  end
-
-  def appeals_ready_for_hearing_schedule
-    ro = HearingDayMapper.validate_regional_office(params[:regional_office])
-
-    render json: { veterans: json_appeals(AppealRepository.appeals_ready_for_hearing_schedule(ro)) }
   end
 
   # Create a hearing schedule day
@@ -185,29 +179,6 @@ class Hearings::HearingDayController < HearingScheduleController
     end
   end
 
-  def json_appeals(appeals)
-    appeals.each_with_object([]) do |appeal, result|
-      result << json_appeal(appeal)
-    end
-  end
-
-  def json_appeal(appeal)
-    {
-      appeal_id: appeal.id,
-      appellantFirstName: appeal.appellant_first_name,
-      appellantLastName: appeal.appellant_last_name,
-      veteranFirstName: appeal.veteran_first_name,
-      veteranLastName: appeal.veteran_last_name,
-      type: appeal.type,
-      docket_number: appeal.docket_number,
-      location: HearingDayMapper.city_for_regional_office(appeal.regional_office_key),
-      time: nil,
-      vacols_id: appeal.case_record.bfkey,
-      vbms_id: appeal.vbms_id,
-      aod: appeal.aod
-    }
-  end
-
   def json_tb_hearings(tbhearings)
     json_hash = ActiveModelSerializers::SerializableResource.new(
       tbhearings,
@@ -241,8 +212,11 @@ class Hearings::HearingDayController < HearingScheduleController
     return true unless params.key?(:assign_room)
 
     # Coming from Add Hearing Day modal and room required
-    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date]).group(:room).count
-    available_room = select_available_room(hearing_count_by_room)
+    available_room = if params[:hearing_type] == HearingDay::HEARING_TYPES[:central]
+                       select_co_available_room
+                     else
+                       select_video_available_room
+                     end
 
     params.delete(:assign_room)
     params[:room] = available_room if !available_room.nil?
@@ -253,15 +227,20 @@ class Hearings::HearingDayController < HearingScheduleController
     params.key?(:assign_room) && (!params[:assign_room] || params[:assign_room] == "false")
   end
 
-  def select_available_room(hearing_count_by_room)
+  def select_co_available_room
+    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date], hearing_type: params[:hearing_type])
+      .group(:room).count
+    room_count = hearing_count_by_room["2"]
+    "2" unless !(room_count.nil? || room_count == 0)
+  end
+
+  def select_video_available_room
+    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date], hearing_type: params[:hearing_type])
+      .group(:room).count
     available_room = nil
     (1..HearingRooms::ROOMS.size).each do |hearing_room|
       room_count = hearing_count_by_room[hearing_room.to_s]
-      if room_count.nil?
-        available_room = hearing_room.to_s
-        break
-      end
-      if !room_count.nil? && room_count == 0
+      if hearing_room != 2 && (room_count.nil? || room_count == 0)
         available_room = hearing_room.to_s
         break
       end

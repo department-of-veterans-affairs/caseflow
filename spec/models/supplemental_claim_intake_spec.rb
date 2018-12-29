@@ -25,7 +25,8 @@ describe SupplementalClaimIntake do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
     let(:detail) do
-      SupplementalClaim.create!(
+      create(
+        :supplemental_claim,
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago
       )
@@ -73,7 +74,9 @@ describe SupplementalClaimIntake do
     let(:veteran_is_not_claimant) { false }
 
     let(:detail) do
-      SupplementalClaim.create!(
+      create(
+        :supplemental_claim,
+        benefit_type: nil,
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago
       )
@@ -194,7 +197,8 @@ describe SupplementalClaimIntake do
     let(:legacy_opt_in_approved) { false }
 
     let(:detail) do
-      SupplementalClaim.create!(
+      create(
+        :supplemental_claim,
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago,
         legacy_opt_in_approved: legacy_opt_in_approved
@@ -202,8 +206,10 @@ describe SupplementalClaimIntake do
     end
 
     let!(:claimant) do
-      Claimant.create!(
+      create(
+        :claimant,
         review_request: detail,
+        payee_code: "00",
         participant_id: "1234"
       )
     end
@@ -264,7 +270,8 @@ describe SupplementalClaimIntake do
     end
 
     context "when a legacy VACOLS opt-in occurs" do
-      let(:vacols_case) { create(:case) }
+      let(:vacols_issue) { create(:case_issue) }
+      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
       let(:legacy_appeal) do
         create(:legacy_appeal, vacols_case: vacols_case)
       end
@@ -275,7 +282,7 @@ describe SupplementalClaimIntake do
           reference_id: "reference-id",
           decision_text: "decision text",
           vacols_id: legacy_appeal.vacols_id,
-          vacols_sequence_id: 1
+          vacols_sequence_id: vacols_issue.issseq
         }
       end
 

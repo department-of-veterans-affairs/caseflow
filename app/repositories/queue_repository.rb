@@ -33,7 +33,7 @@ class QueueRepository
         # the # of appeals. Combine that data manually.
         case_records = QueueRepository.appeal_info_query(vacols_ids)
         aod_by_appeal = aod_query(vacols_ids)
-        hearings_by_appeal = Hearing.repository.hearings_for_appeals(vacols_ids)
+        hearings_by_appeal = HearingRepository.hearings_for_appeals(vacols_ids)
         issues_by_appeal = VACOLS::CaseIssue.descriptions(vacols_ids)
         remand_reasons_by_appeal = RemandReasonRepository.load_remand_reasons_for_appeals(vacols_ids)
 
@@ -202,7 +202,7 @@ class QueueRepository
     end
 
     def update_decass_record(decass_record, decass_attrs)
-      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+      decass_attrs = QueueMapper.new(decass_attrs).rename_and_validate_decass_attrs
       VACOLS::Decass.where(defolder: decass_record.defolder, deadtim: decass_record.deadtim)
         .update_all(decass_attrs)
       decass_record.reload
@@ -210,7 +210,7 @@ class QueueRepository
 
     def create_decass_record(decass_attrs)
       decass_attrs = decass_attrs.merge(added_at_date: VacolsHelper.local_date_with_utc_timezone)
-      decass_attrs = QueueMapper.rename_and_validate_decass_attrs(decass_attrs)
+      decass_attrs = QueueMapper.new(decass_attrs).rename_and_validate_decass_attrs
       VACOLS::Decass.create!(decass_attrs)
     end
 

@@ -1,7 +1,7 @@
 RSpec.describe HearingsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
-  let(:hearing) { create(:hearing) }
+  let(:hearing) { create(:legacy_hearing) }
 
   describe "PATCH update" do
     it "should be successful" do
