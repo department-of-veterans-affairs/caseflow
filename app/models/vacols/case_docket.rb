@@ -10,6 +10,40 @@ class VACOLS::CaseDocket < VACOLS::Record
     for update
   ".freeze
 
+  JOIN_MAIL_BLOCKS_DISTRIBUTION = "
+    left join (
+      select BRIEFF.BFKEY MAILKEY,
+        (case when nvl(MAIL.CNT, 0) > 0 then 1 else 0 end) MAIL_BLOCKS_DISTRIBUTION
+      from BRIEFF
+
+      left join (
+        select MLFOLDER, count(*) CNT
+        from MAIL
+        where MLCOMPDATE is null and MLTYPE not in ('02', '05', '08', '13')
+        group by MLFOLDER
+      ) MAIL
+      on MAIL.MLFOLDER = BRIEFF.BFKEY
+    )
+    on MAILKEY = BFKEY
+  ".freeze
+
+  JOIN_DIARY_BLOCKS_DISTRIBUTION = "
+    left join (
+      select BRIEFF.BFKEY DIARYKEY,
+        (case when nvl(DIARIES.CNT, 0) > 0 then 1 else 0 end) DIARY_BLOCKS_DISTRIBUTION
+      from BRIEFF
+
+      left join (
+        select TSKTKNM, count(*) CNT
+        from ASSIGN
+        where TSKDCLS is null and TSKACTCD in ('EXT', 'HCL', 'POA')
+        group by TSKTKNM
+      ) DIARIES
+      on DIARIES.TSKTKNM = BRIEFF.BFKEY
+    )
+    on DIARYKEY = BFKEY
+  ".freeze
+
   SELECT_READY_APPEALS = "
     select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
     from BRIEFF
@@ -22,40 +56,6 @@ class VACOLS::CaseDocket < VACOLS::Record
       and BRIEFF.BFBOX is null
       and MAIL_BLOCKS_DISTRIBUTION = 0
       and DIARY_BLOCKS_DISTRIBUTION = 0
-  ".freeze
-
-  JOIN_MAIL_BLOCKS_DISTRIBUTION = "
-    left join (
-      select BRIEFF.BFKEY MAILKEY,
-        (nvl(MAIL.CNT, 0) > 0 then 1 else 0 end) MAIL_BLOCKS_DISTRIBUTION
-      from BRIEFF
-
-      left join (
-        select MLFOLDER, count(*) CNT
-        from MAIL
-        MLCOMPDATE is null and MLTYPE not in ('02', '05', '08', '13')
-        group by MLFOLDER
-      ) MAIL
-      on MAIL.MLFOLDER = BRIEFF.BFKEY
-    )
-    on MAILKEY = BFKEY
-  ".freeze
-
-  JOIN_DIARY_BLOCKS_DISTRIBUTION = "
-    left join (
-      select BRIEFF.BFKEY DIARYKEY,
-        (nvl(DIARIES.CNT, 0) > 0 then 1 else 0 end) DIARY_BLOCKS_DISTRIBUTION
-      from BRIEFF
-
-      left join (
-        select TSKTKNM, count(*) CNT
-        from ASSIGN
-        TSKDCLS is null and TSKACTCD in ('EXT', 'HCL', 'POA')
-        group by TSKTKNM
-      ) DIARIES
-      on DIARIES.TSKTKNM = BRIEFF.BFKEY
-    )
-    on DIARYKEY = BFKEY
   ".freeze
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
