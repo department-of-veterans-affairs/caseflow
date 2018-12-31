@@ -86,6 +86,12 @@ FactoryBot.define do
       assigned_to { QualityReview.singleton }
     end
 
+    factory :quality_review_task do
+      type QualityReviewTask.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
+
     factory :bva_dispatch_task do
       type BvaDispatchTask.name
       appeal { create(:appeal) }
@@ -94,12 +100,6 @@ FactoryBot.define do
 
     factory :schedule_hearing_task do
       type ScheduleHearingTask.name
-      appeal { create(:appeal) }
-      assigned_by nil
-    end
-
-    factory :quality_review_task do
-      type QualityReviewTask.name
       appeal { create(:appeal) }
       assigned_by nil
     end
