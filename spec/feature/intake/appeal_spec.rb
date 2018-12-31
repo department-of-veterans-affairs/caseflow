@@ -193,7 +193,7 @@ feature "Appeal Intake" do
 
     expect(appeal.request_issues.count).to eq 2
 
-    rating_request_issue = appeal.request_issues.find(&:ri.rating_issue_reference_id)
+    rating_request_issue = appeal.request_issues.find(&:rating_issue_reference_id)
     nonrating_request_issue = appeal.request_issues.find { |ri| ri.rating_issue_reference_id.nil? }
 
     expect(rating_request_issue).to have_attributes(
