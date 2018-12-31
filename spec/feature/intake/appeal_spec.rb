@@ -48,7 +48,7 @@ feature "Appeal Intake" do
 
   let(:profile_date) { post_ramp_start_date - 35.days }
 
-  let(:untimely_date) { receipt_date - 373.days }
+  let(:untimely_date) { receipt_date - untimely_days - 1.day }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -154,7 +154,7 @@ feature "Appeal Intake" do
     intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
     expect(appeal).to_not be_nil
-    expect(appeal.receipt_date).to eq(receipt_date)
+    expect(appeal.receipt_date.to_date).to eq(receipt_date.to_date)
     expect(appeal.docket_type).to eq("evidence_submission")
     expect(appeal.legacy_opt_in_approved).to eq(false)
     expect(appeal.claimant_participant_id).to eq(
@@ -190,23 +190,28 @@ feature "Appeal Intake" do
     expect(intake).to be_success
 
     appeal.reload
+
     expect(appeal.request_issues.count).to eq 2
-    expect(appeal.request_issues.first).to have_attributes(
+
+    rating_request_issue = appeal.request_issues.find(&:ri.rating_issue_reference_id)
+    nonrating_request_issue = appeal.request_issues.find { |ri| ri.rating_issue_reference_id.nil? }
+
+    expect(rating_request_issue).to have_attributes(
       rating_issue_reference_id: "def456",
-      rating_issue_profile_date: profile_date.asctime.in_time_zone(Time.zone),
       description: "PTSD denied",
       decision_date: nil,
       benefit_type: "compensation"
     )
+    expect(rating_request_issue.rating_issue_profile_date.to_date).to eq(profile_date.to_date)
 
-    expect(appeal.request_issues.last).to have_attributes(
+    expect(nonrating_request_issue).to have_attributes(
       rating_issue_reference_id: nil,
       rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      decision_date: profile_date,
       benefit_type: "compensation"
     )
+    expect(nonrating_request_issue.decision_date.to_date).to eq(profile_date.to_date)
   end
 
   it "Shows a review error when something goes wrong" do
