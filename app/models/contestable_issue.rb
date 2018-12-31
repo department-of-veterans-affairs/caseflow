@@ -4,7 +4,7 @@ class ContestableIssue
 
   attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id,
                 :source_higher_level_review, :contesting_decision_review, :decision_issue_id,
-                :promulgation_date, :rating_issue_profile_date
+                :promulgation_date, :rating_issue_profile_date, :source_request_issue
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -15,6 +15,7 @@ class ContestableIssue
         description: rating_issue.decision_text,
         ramp_claim_id: rating_issue.ramp_claim_id,
         source_higher_level_review: rating_issue.source_higher_level_review,
+        source_request_issue: rating_issue.source_request_issue,
         contesting_decision_review: contesting_decision_review
       )
     end
@@ -27,6 +28,7 @@ class ContestableIssue
         date: decision_issue.approx_decision_date,
         description: decision_issue.formatted_description,
         source_higher_level_review: decision_issue.source_higher_level_review,
+        source_review_type: decision_issue.decision_review_type,
         contesting_decision_review: contesting_decision_review
       )
     end

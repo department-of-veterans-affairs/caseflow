@@ -175,6 +175,8 @@ class RequestIssue < ApplicationRecord
     check_for_active_request_issue!
     check_for_untimely!
     check_for_previous_higher_level_review!
+    check_for_appeal_to_appeal!
+    check_for_appeal_to_higher_level_review!
     check_for_before_ama!
     check_for_legacy_issue_not_withdrawn!
     check_for_legacy_appeal_not_eligible!
@@ -184,8 +186,7 @@ class RequestIssue < ApplicationRecord
   def contested_rating_issue
     return unless review_request
     @contested_rating_issue ||= begin
-      ui_hash = fetch_contested_rating_issue_ui_hash
-      ui_hash ? RatingIssue.deserialize(ui_hash) : nil
+      contested_rating_issue_ui_hash ? RatingIssue.deserialize(contested_rating_issue_ui_hash) : nil
     end
   end
 
@@ -299,31 +300,42 @@ class RequestIssue < ApplicationRecord
   end
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
-  def fetch_contested_rating_issue_ui_hash
+  def contested_rating_issue_ui_hash
     rating_with_issue = review_request.serialized_ratings.find do |rating|
       rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
     end || { issues: [] }
 
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
+    # binding.pry
   end
 
   def check_for_previous_higher_level_review!
-    return unless rating?
+    return unless review_request.is_a?(HigherLevelReview)
     return unless eligible?
-    check_for_previous_review!(:source_higher_level_review)
+
+    if contested_issue.source_request_issue.review_request.is_a?(HigherLevelReview)
+      self.ineligible_reason = :previous_higher_level_review
+      self.ineligible_due_to_id = contested_issue.source_request_issue.id
+    end
   end
 
-  def check_for_previous_appeal
+  def check_for_appeal_to_appeal!
+    return unless review_request.is_a?(Appeal)
     return unless eligible?
+
+    if contested_issue.source_request_issue.review_request.is_a?(Appeal)
+      self.ineligible_reason = :appeal_to_appeal
+      self.ineligible_due_to_id = contested_issue.source_request_issue.id
+    end
   end
 
-  def check_for_previous_review!(review_type)
-    reason = rating_issue_rationale_to_request_issue_reason(review_type)
-    contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
+  def check_for_appeal_to_higher_level_review!
+    return unless review_request.is_a?(HigherLevelReview)
+    return unless eligible?
 
-    if contested_rating_issue_ui_hash && contested_rating_issue_ui_hash[review_type].present?
-      self.ineligible_reason = reason
-      self.ineligible_due_to_id = contested_rating_issue_ui_hash[review_type]
+    if contested_issue.source_request_issue.review_request.is_a?(Appeal)
+      self.ineligible_reason = :appeal_to_higher_level_review
+      self.ineligible_due_to_id = contested_issue.source_request_issue.id
     end
   end
 
@@ -363,10 +375,6 @@ class RequestIssue < ApplicationRecord
 
   def legacy_appeal_eligible_for_opt_in?
     vacols_issue.legacy_appeal.eligible_for_soc_opt_in?(review_request.receipt_date)
-  end
-
-  def rating_issue_rationale_to_request_issue_reason(rationale)
-    rationale.to_s.sub(/^source_/, "previous_").to_sym
   end
 
   def check_for_active_request_issue_by_rating!

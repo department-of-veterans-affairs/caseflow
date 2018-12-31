@@ -66,6 +66,8 @@ class RatingIssue
       ramp_claim_id: ramp_claim_id,
       title_of_active_review: title_of_active_review,
       source_higher_level_review: source_higher_level_review,
+      source_review_type: source_request_issue.try(:review_request_type),
+      source_request_issue_id: source_request_issue.try(:id),
       rba_contentions_data: rba_contentions_data,
       associated_end_products: associated_end_products.map(&:serialize)
     }
