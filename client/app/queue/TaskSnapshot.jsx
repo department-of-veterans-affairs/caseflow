@@ -150,12 +150,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         <React.Fragment>
           <dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{this.getActionName(task)}</dd>
         </React.Fragment> }
-      { taskIsOnHold(task) &&
-        <React.Fragment>
-          <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
-          <dd><OnHoldLabel task={task} /></dd>
-        </React.Fragment>
-      }
       { task.instructions && task.instructions.length > 0 &&
         <div>
           { this.state.taskInstructionsIsVisible &&
@@ -175,6 +169,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
   }
   legacyTaskInformation = (task) => {
     // If this is not a task attached to a legacy appeal, use taskInformation.
+
+    // TODO - isLegacy is not properly set to true in legacy cases (@lowell)
     if (!this.props.appeal.isLegacyAppeal) {
       return this.taskInformation(task);
     }
@@ -188,17 +184,21 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
     </React.Fragment> : null;
 
+    // TODO - are these conditionals accurate? (@lowell)
+
     if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
 
       const assignedByFirstName = task.assignedBy.firstName;
       const assignedByLastName = task.assignedBy.lastName;
 
+      // Assigned to
       if (!assignedByFirstName ||
           !assignedByLastName ||
           (userRole === USER_ROLE_TYPES.judge && !task.documentId)) {
         return assignedToListItem;
       }
 
+      // Assigned by
       if (userRole === USER_ROLE_TYPES.judge) {
         return <React.Fragment>
           <dt>{COPY.TASK_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{assignedByAbbrev}</dd>
@@ -207,19 +207,23 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       } else if (userRole === USER_ROLE_TYPES.colocated) {
 
         return <React.Fragment>
-          <dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[task.label]}</dd>
           <dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
-          { taskIsOnHold(task) &&
-            <React.Fragment>
-              <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
-              <dd><OnHoldLabel task={task} /></dd>
-            </React.Fragment>
-          }
+          <dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[task.label]}</dd>
           { task.instructions && task.instructions.length > 0 &&
-            <React.Fragment>
-              <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
-              <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
-            </React.Fragment> }
+            <div>
+              { this.state.taskInstructionsIsVisible &&
+              <React.Fragment>
+                <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+                <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
+              </React.Fragment> }
+              <Button
+                linkStyling
+                styling={css({ padding: '0' })}
+                name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
+                  COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
+                onClick={this.toggleTaskInstructionsVisibility} />
+            </div>
+          }
         </React.Fragment>;
       }
 
@@ -254,13 +258,19 @@ export class TaskSnapshot extends React.PureComponent<Props> {
                   <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd>
                 </React.Fragment>
               }
+              { taskIsOnHold(task) ?
+                <React.Fragment>
+                  <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
+                  <dd><OnHoldLabel task={task} /></dd>
+                </React.Fragment> :
+                this.daysSinceTaskAssignmentListItem(task)
+              }
               { task.dueOn &&
                 <React.Fragment>
                   <dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
                   <dd><DateString date={task.dueOn} dateFormat="MM/DD/YYYY" /></dd>
                 </React.Fragment>
               }
-              {this.daysSinceTaskAssignmentListItem(task)}
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskInfoWithIconContainer}><GrayDot />
