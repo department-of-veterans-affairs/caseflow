@@ -411,6 +411,7 @@ RSpec.feature "Case details" do
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
 
       expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
+      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
       expect(page).to have_content("TASK INSTRUCTIONS #{on_hold_task.instructions[0]}")
       expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
 
