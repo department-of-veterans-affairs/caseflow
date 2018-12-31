@@ -231,7 +231,7 @@ class RequestIssue < ApplicationRecord
     return unless review_request
     if contested_decision_issue
       ContestableIssue.from_decision_issue(contested_decision_issue, review_request)
-    elsif rating?
+    elsif contested_rating_issue
       ContestableIssue.from_rating_issue(contested_rating_issue, review_request)
     end
   end
@@ -306,34 +306,36 @@ class RequestIssue < ApplicationRecord
     end || { issues: [] }
 
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
-    # binding.pry
   end
 
   def check_for_previous_higher_level_review!
-    return unless review_request.is_a?(HigherLevelReview)
     return unless eligible?
+    return unless contested_issue
+    return unless review_request.is_a?(HigherLevelReview)
 
-    if contested_issue.source_request_issue.review_request.is_a?(HigherLevelReview)
+    if contested_issue.source_review.is_a?(HigherLevelReview)
       self.ineligible_reason = :previous_higher_level_review
       self.ineligible_due_to_id = contested_issue.source_request_issue.id
     end
   end
 
   def check_for_appeal_to_appeal!
-    return unless review_request.is_a?(Appeal)
     return unless eligible?
+    return unless contested_issue
+    return unless review_request.is_a?(Appeal)
 
-    if contested_issue.source_request_issue.review_request.is_a?(Appeal)
+    if contested_issue.source_review.is_a?(Appeal)
       self.ineligible_reason = :appeal_to_appeal
       self.ineligible_due_to_id = contested_issue.source_request_issue.id
     end
   end
 
   def check_for_appeal_to_higher_level_review!
-    return unless review_request.is_a?(HigherLevelReview)
     return unless eligible?
+    return unless contested_issue
+    return unless review_request.is_a?(HigherLevelReview)
 
-    if contested_issue.source_request_issue.review_request.is_a?(Appeal)
+    if contested_issue.source_review.is_a?(Appeal)
       self.ineligible_reason = :appeal_to_higher_level_review
       self.ineligible_due_to_id = contested_issue.source_request_issue.id
     end
