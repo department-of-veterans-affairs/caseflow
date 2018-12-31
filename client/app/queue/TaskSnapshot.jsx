@@ -280,6 +280,10 @@ export class TaskSnapshot extends React.PureComponent<Props> {
           </td>
         </tr>);
     }
+//debugger;
+
+    // const rootTask = tasks.select.where(ROOTTASK)
+    // Show link up top and hide root task from task snapshot
 
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
