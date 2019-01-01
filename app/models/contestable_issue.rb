@@ -46,6 +46,7 @@ class ContestableIssue
       rampClaimId: ramp_claim_id,
       titleOfActiveReview: title_of_active_review,
       sourceHigherLevelReview: source_higher_level_review,
+      sourceAppeal: source_review.is_a?(Appeal),
       timely: timely?
     }
   end

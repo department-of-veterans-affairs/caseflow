@@ -332,6 +332,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_appeal_to_higher_level_review!
+    # binding.pry
     return unless eligible?
     return unless contested_issue
     return unless review_request.is_a?(HigherLevelReview)
@@ -418,6 +419,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).count > 0
+    false
+    # review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).count > 0
   end
 end

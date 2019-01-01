@@ -41,7 +41,7 @@ class AddedIssue extends React.PureComponent {
       return { errorMsg,
         cssKlasses: cssKlassesWithError.concat(['issue-unidentified']) };
     }
-
+console.log("sourceReview::", issue)
     if (issue.titleOfActiveReview ||
       (issue.reviewRequestTitle && issue.ineligibleReason === 'duplicate_of_nonrating_issue_in_active_review')
     ) {
@@ -56,8 +56,15 @@ class AddedIssue extends React.PureComponent {
                !issue.vacolsId
     ) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.untimely;
-    } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
-      errorMsg = INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
+    } else if (formType === 'higher_level_review') {
+      if (issue.sourceHigherLevelReview) {
+        errorMsg = INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
+      }
+      if (issue.sourceAppeal) {
+        errorMsg = INELIGIBLE_REQUEST_ISSUES.appeal_to_higher_level_review;
+      }
+    } else if (formType === 'appeal' && issue.sourceAppeal) {
+      errorMsg = INELIGIBLE_REQUEST_ISSUES.appeal_to_appeal;
     } else if (issue.beforeAma) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
     } else if (issue.vacolsId) {

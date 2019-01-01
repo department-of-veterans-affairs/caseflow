@@ -117,7 +117,6 @@ class ClaimReview < DecisionReview
 
   def contestable_decision_issues
     DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
-      .where.not(decision_review_type: "Appeal")
   end
 
   def informal_conference?

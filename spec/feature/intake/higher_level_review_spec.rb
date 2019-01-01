@@ -1,7 +1,6 @@
-require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "Higher-Level Review" do
+feature "Higher-Level Review" do
   include IntakeHelpers
 
   before do
@@ -1057,6 +1056,53 @@ RSpec.feature "Higher-Level Review" do
           contention_descriptions: array_including("Left knee granted 2")
         )
       )
+    end
+
+    context "when veteran chooses decision issue from a previous appeal" do
+      let(:previous_appeal) { create(:appeal, veteran: veteran) }
+      let(:appeal_reference_id) { "appeal123" }
+      let!(:previous_appeal_request_issue) do
+        create(
+          :request_issue,
+          review_request: previous_appeal,
+          rating_issue_reference_id: appeal_reference_id
+        )
+      end
+      let!(:previous_appeal_decision_issue) do
+        create(:decision_issue,
+               decision_review: previous_appeal,
+               request_issues: [previous_appeal_request_issue],
+               rating_issue_reference_id: appeal_reference_id,
+               participant_id: veteran.participant_id,
+               promulgation_date: another_promulgation_date,
+               description: "appeal decision issue",
+               decision_text: "appeal decision issue",
+               profile_date: profile_date,
+               benefit_type: "compensation")
+      end
+
+      scenario "the issue is ineligible" do
+        higher_level_review, = start_higher_level_review(
+          veteran,
+          claim_participant_id: "5382910292",
+          veteran_is_not_claimant: false
+        )
+        visit "/intake/add_issues"
+
+        expect(page).to have_content("Add / Remove Issues")
+
+        click_intake_add_issue
+        add_intake_rating_issue("appeal decision issue")
+        expect(page).to have_content(
+          "appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}"
+        )
+        click_intake_finish
+
+        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+        expect(RequestIssue.find_by(description: "appeal decision issue").ineligible_reason).to eq("appeal_to_higher_level_review")
+        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        expect(ineligible_checklist).to have_content("appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}")
+      end
     end
 
     context "when veteran has active nonrating request issues" do
