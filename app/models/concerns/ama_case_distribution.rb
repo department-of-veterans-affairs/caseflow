@@ -2,8 +2,12 @@
 module AmaCaseDistribution
   extend ActiveSupport::Concern
 
+  # MINIMUM_LEGACY_PROPORTION + MAXIMUM_DIRECT_REVIEW_PROPORTION cannot exceed 1.
   MINIMUM_LEGACY_PROPORTION = 0.1
   MAXIMUM_DIRECT_REVIEW_PROPORTION = 0.8
+
+  # A lever controlling how many direct review docket appeals are distributed before the time goal is reached.
+  # A lower number will distribute fewer appeals, accelerating faster toward the time goal.
   INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT = 0.67
 
   private
