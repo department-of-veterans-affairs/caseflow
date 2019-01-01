@@ -221,8 +221,7 @@ module AmaCaseDistribution
 
       cumulative_probabilities = inject({}) do |hash, (key, proportion)|
         probability = (n * proportion).modulo(1) / rem
-        cumprob = (hash.values.last || 0) + probability
-        hash[key] = cumprob
+        hash[key] = (hash.values.last || 0) + probability
         hash
       end
 
