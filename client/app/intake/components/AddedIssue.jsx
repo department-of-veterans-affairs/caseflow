@@ -41,7 +41,6 @@ class AddedIssue extends React.PureComponent {
       return { errorMsg,
         cssKlasses: cssKlassesWithError.concat(['issue-unidentified']) };
     }
-console.log("sourceReview::", issue)
     if (issue.titleOfActiveReview ||
       (issue.reviewRequestTitle && issue.ineligibleReason === 'duplicate_of_nonrating_issue_in_active_review')
     ) {

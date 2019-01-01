@@ -1082,7 +1082,7 @@ feature "Higher-Level Review" do
       end
 
       scenario "the issue is ineligible" do
-        higher_level_review, = start_higher_level_review(
+        start_higher_level_review(
           veteran,
           claim_participant_id: "5382910292",
           veteran_is_not_claimant: false
@@ -1099,9 +1099,13 @@ feature "Higher-Level Review" do
         click_intake_finish
 
         expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
-        expect(RequestIssue.find_by(description: "appeal decision issue").ineligible_reason).to eq("appeal_to_higher_level_review")
+        expect(RequestIssue.find_by(description: "appeal decision issue").ineligible_reason).to eq(
+          "appeal_to_higher_level_review"
+        )
         ineligible_checklist = find("ul.cf-ineligible-checklist")
-        expect(ineligible_checklist).to have_content("appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}")
+        expect(ineligible_checklist).to have_content(
+          "appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}"
+        )
       end
     end
 

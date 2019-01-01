@@ -12,7 +12,6 @@ describe RequestIssue do
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
   let(:contested_decision_issue_id) { nil }
-  let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
 
   let(:review) do
     create(
@@ -32,6 +31,7 @@ describe RequestIssue do
     )
   end
 
+  let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
   let!(:decision_sync_processed_at) { nil }
   let!(:end_product_establishment) { nil }
   let(:issues) do

@@ -332,7 +332,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def check_for_appeal_to_higher_level_review!
-    # binding.pry
     return unless eligible?
     return unless contested_issue
     return unless review_request.is_a?(HigherLevelReview)

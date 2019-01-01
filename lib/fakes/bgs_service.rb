@@ -115,28 +115,6 @@ class Fakes::BGSService
         ) do |reqi|
           reqi.rating_issue_profile_date = Time.zone.today - 100
         end
-        previous_appeal = Appeal.find_or_create_by!(
-          veteran_file_number: veteran.file_number,
-          receipt_date: 1.month.ago
-        )
-        previous_appeal_request_issue = RequestIssue.find_or_create_by!(
-          review_request: previous_appeal,
-          rating_issue_reference_id: "appeal1234"
-        )
-        previous_appeal_decision_issue = DecisionIssue.find_or_create_by!(
-                 decision_review: previous_appeal,
-                 disposition: "allowed",
-                 rating_issue_reference_id: "appeal1234",
-                 participant_id: veteran.participant_id,
-                 promulgation_date: Date.new(2018,10,10),
-                 description: "appeal decision issue",
-                 decision_text: "appeal decision issue",
-                 profile_date: Date.new(2018,10,10),
-                 benefit_type: "compensation")
-        RequestDecisionIssue.find_or_create_by!(
-          request_issue_id: previous_appeal_request_issue.id,
-          decision_issue_id: previous_appeal_decision_issue.id
-        )
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
           bgs_attrs: { benefit_claim_id: in_active_review_reference_id }

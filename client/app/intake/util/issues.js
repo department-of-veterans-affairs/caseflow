@@ -324,7 +324,6 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceHigherLevelReview: issue.sourceHigherLevelReview,
         sourceAppeal: issue.sourceAppeal,
-        sourceReviewType: issue.sourceReviewType,
         promulgationDate: issue.promulgationDate,
         profileDate,
         timely: issue.timely,

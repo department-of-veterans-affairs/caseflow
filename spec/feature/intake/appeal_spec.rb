@@ -1,7 +1,6 @@
-require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "Appeal Intake" do
+feature "Appeal Intake" do
   include IntakeHelpers
 
   before do
@@ -608,7 +607,7 @@ RSpec.feature "Appeal Intake" do
     end
 
     scenario "the issue is ineligible" do
-      appeal, = start_appeal(
+      start_appeal(
         veteran,
         veteran_is_not_claimant: false
       )
