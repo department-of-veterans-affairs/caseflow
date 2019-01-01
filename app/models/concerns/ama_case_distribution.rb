@@ -215,29 +215,22 @@ module AmaCaseDistribution
 
     def stochastic_allocation(n)
       result = transform_values { |proportion| (n * proportion).floor }
-      rem = probability_budget = iterations = n - result.values.reduce(0, :+)
+      rem = n - result.values.reduce(0, :+)
 
-      catch :complete do
-        each do |key, proportion|
-          prop_rem = (n * proportion).modulo(1)
+      return result if rem == 0
 
-          if prop_rem >= probability_budget
-            result[key] += rem
-            throw :complete
-          end
+      cumulative_probabilities = inject({}) do |hash, (key, proportion)|
+        probability = (n * proportion).modulo(1) / rem
+        cumprob = (hash.values.last || 0) + probability
+        hash[key] = cumprob
+        hash
+      end
 
-          iterations.times do
-            probability = prop_rem / probability_budget
-            probability_budget -= prop_rem / iterations
-
-            next unless probability > rand
-
-            result[key] += 1
-            rem -= 1
-
-            throw :complete if rem == 0
-          end
-        end
+      rem.times do
+        random = rand
+        pick = cumulative_probabilities.find { |_, cumprob| cumprob > random }
+        key = pick ? pick[0] : cumulative_probabilities.keys.last
+        result[key] += 1
       end
 
       result
