@@ -280,7 +280,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
           </td>
         </tr>);
     }
-//debugger;
+    // debugger;
 
     // const rootTask = tasks.select.where(ROOTTASK)
     // Show link up top and hide root task from task snapshot
@@ -288,6 +288,12 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
         <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}</a>
+        { <Button
+          linkStyling
+          styling={css({ float: 'right',
+            paddingRight: '10px' })}
+          name={COPY.TASK_SNAPSHOT_ADD_NEW_TASK_LABEL}
+          onClick={this.toggleTaskInstructionsVisibility} /> }
       </h2>
       <div {...sectionSegmentStyling}>
         <table {...tableStyling}>
