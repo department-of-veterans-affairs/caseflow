@@ -253,7 +253,8 @@ describe HearingDay do
 
     context "get parent and children structure" do
       subject do
-        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day, hearing.hearing_date.beginning_of_day + 10, "C")
+        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
+                                                     hearing.hearing_date.beginning_of_day + 10, "C")
       end
 
       it "returns nested hash structure" do
