@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 
 import {
   actionableTasksForAppeal,
-  appealWithDetailSelector
+  appealWithDetailSelector,
+  rootTaskForAppeal
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import ActionsDropdown from './components/ActionsDropdown';
@@ -79,11 +80,32 @@ export class TaskSnapshot extends React.PureComponent<Props> {
   constructor(props) {
     super(props);
     this.state = {
-      taskInstructionsIsVisible: false
+      taskInstructionsIsVisible: false,
+      addNewTaskIsVisible: this.props.rootTask[0].availableActions[0]
     };
   }
 
+  changeRoute = (option: ?OptionType) => {
+    console.log('--changeRoute()--')
+    const {
+      appealId,
+      task,
+      history
+    } = this.props;
+
+    if (!option) {
+      return;
+    }
+
+    this.props.stageAppeal(appealId);
+    this.props.resetDecisionOptions();
+
+    history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${option.value}`);
+  };
+
   toggleTaskInstructionsVisibility = () => {
+    console.log('--toggleTaskInstructionsVisibility()--')
+
     const prevState = this.state.taskInstructionsIsVisible;
 
     this.setState({ taskInstructionsIsVisible: !prevState });
@@ -243,6 +265,10 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
     const taskLength = this.props.tasks.length;
 
+    console.log('---------------')
+    console.log(this.props.tasks)
+    console.log(this.props.rootTask)
+
     if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>
         <tr>
@@ -281,19 +307,17 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         </tr>);
     }
     // debugger;
-
-    // const rootTask = tasks.select.where(ROOTTASK)
     // Show link up top and hide root task from task snapshot
 
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
         <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}</a>
-        { <Button
+        { this.state.addNewTaskIsVisible && <Button
           linkStyling
           styling={css({ float: 'right',
             paddingRight: '10px' })}
           name={COPY.TASK_SNAPSHOT_ADD_NEW_TASK_LABEL}
-          onClick={this.toggleTaskInstructionsVisibility} /> }
+          onClick={this.changeRoute} /> }
       </h2>
       <div {...sectionSegmentStyling}>
         <table {...tableStyling}>
@@ -312,7 +336,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
-    tasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId })
+    tasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
+    rootTask: rootTaskForAppeal(state, { appealId: ownProps.appealId })
   };
 };
 

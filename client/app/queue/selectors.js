@@ -173,6 +173,10 @@ export const actionableTasksForAppeal = createSelector(
   [getTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.availableActions.length)
 );
 
+export const rootTaskForAppeal = createSelector(
+  [getTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.type == 'RootTask')
+);
+
 export const newTasksByAssigneeCssIdSelector = createSelector(
   [incompleteTasksByAssigneeCssIdSelector],
   (tasks: Array<Task>) => tasks.filter((task) => !taskIsOnHold(task))
