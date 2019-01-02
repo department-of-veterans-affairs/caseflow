@@ -58,7 +58,7 @@ describe HearingDay do
       it "creates a video hearing" do
         expect(hearing[:hearing_type]).to eq "C"
         expect(hearing[:hearing_date].strftime("%Y-%m-%d %H:%M:%S"))
-          .to eq test_hearing_date_vacols.strftime("%Y-%m-%d %H:%M:%S")
+          .to eq test_hearing_date_vacols.to_date.strftime("%Y-%m-%d %H:%M:%S")
         expect(hearing[:regional_office]).to eq "RO89"
         expect(hearing[:room]).to eq "5"
       end
