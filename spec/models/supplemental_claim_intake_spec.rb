@@ -192,6 +192,8 @@ describe SupplementalClaimIntake do
       }
     end
 
+    let(:benefit_type) { "compensation" }
+
     let(:params) { { request_issues: [issue_data] } }
 
     let(:legacy_opt_in_approved) { false }
@@ -201,6 +203,7 @@ describe SupplementalClaimIntake do
         :supplemental_claim,
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago,
+        benefit_type: benefit_type,
         legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
@@ -267,6 +270,19 @@ describe SupplementalClaimIntake do
         description: "decision text",
         rating_issue_associated_at: Time.zone.now
       )
+    end
+
+    context "when benefit type is non comp" do
+      let(:benefit_type) { "fiduciary" }
+
+      it "creates DecisionReviewTask" do
+        subject
+
+        intake.detail.reload
+
+        expect(intake.detail.tasks.count).to eq(1)
+        expect(intake.detail.tasks.first).to be_a(DecisionReviewTask)
+      end
     end
 
     context "when a legacy VACOLS opt-in occurs" do
