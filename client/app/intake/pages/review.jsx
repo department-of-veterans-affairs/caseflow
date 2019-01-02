@@ -71,6 +71,7 @@ class ReviewNextButton extends React.PureComponent {
     // in that case, just use null as data types since page will be redirected
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const intakeData = selectedForm ? intakeForms[selectedForm.key] : null;
+    const needsRelationships = intakeData && intakeData.veteranIsNotClaimant && intakeData.relationships.length === 0;
 
     return <Button
       name="submit-review"
@@ -79,7 +80,7 @@ class ReviewNextButton extends React.PureComponent {
       }}
       loading={intakeData ? intakeData.requestStatus.submitReview === REQUEST_STATE.IN_PROGRESS : true}
       disabled={formType === 'ramp_refiling' ?
-        toggleIneligibleError(intakeData.hasInvalidOption, intakeData.optionSelected) : false}
+        toggleIneligibleError(intakeData.hasInvalidOption, intakeData.optionSelected) : needsRelationships}
     >
       Continue to next step
     </Button>;
