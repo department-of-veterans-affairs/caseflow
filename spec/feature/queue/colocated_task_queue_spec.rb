@@ -38,10 +38,10 @@ RSpec.feature "ColocatedTask" do
       find(".Select-control", text: "Select an action").click
       find("div", class: "Select-option", text: action).click
       fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
-      find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
+      find("button", text: "Assign Action").click
 
       # Redirected to personal queue page. Assignment succeeds.
-      expect(page).to have_content("You have assigned an administrative action (#{action})")
+      expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, action))
 
       # Visit case details page for VLJ support staff.
       User.authenticate!(user: vlj_support_staff)
