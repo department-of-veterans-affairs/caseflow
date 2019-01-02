@@ -26,7 +26,7 @@ import QueueLoadingScreen from './QueueLoadingScreen';
 import CaseDetailsLoadingScreen from './CaseDetailsLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
-import JudgeReviewTaskListView from './JudgeReviewTaskListView';
+import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
@@ -100,7 +100,7 @@ class QueueApp extends React.PureComponent<Props> {
     if (userRole === USER_ROLE_TYPES.attorney) {
       return <AttorneyTaskListView />;
     } else if (userRole === USER_ROLE_TYPES.judge) {
-      return <JudgeReviewTaskListView {...this.props} />;
+      return <JudgeDecisionReviewTaskListView {...this.props} />;
     }
 
     return <ColocatedTaskListView />;
@@ -117,7 +117,7 @@ class QueueApp extends React.PureComponent<Props> {
   routedJudgeQueueList = (label) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
     {label === 'assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
-      <JudgeReviewTaskListView {...this.props} />}
+      <JudgeDecisionReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId} />;
