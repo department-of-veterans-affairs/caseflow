@@ -1,4 +1,4 @@
-describe ColocatedQueue do
+describe GenericQueue do
   describe "#tasks" do
     let(:atty) { FactoryBot.create(:user) }
     let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: atty.css_id) }
@@ -19,7 +19,7 @@ describe ColocatedQueue do
 
     context "when some on hold tasks have expired" do
       it "should set the status of the expired task to in_progress" do
-        tasks = ColocatedQueue.new(user: user).tasks
+        tasks = GenericQueue.new(user: user).tasks
         expect(tasks.size).to eq(task_count + 1)
 
         expired_on_hold_task = tasks.select { |t| t.id == on_hold_task.id }.first

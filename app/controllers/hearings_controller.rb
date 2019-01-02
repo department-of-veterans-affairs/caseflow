@@ -34,7 +34,7 @@ class HearingsController < ApplicationController
   end
 
   def hearing
-    @hearing ||= Hearing.find(hearing_id)
+    @hearing ||= LegacyHearing.find(hearing_id)
   end
 
   def hearing_id

@@ -33,7 +33,7 @@ class QueueRepository
         # the # of appeals. Combine that data manually.
         case_records = QueueRepository.appeal_info_query(vacols_ids)
         aod_by_appeal = aod_query(vacols_ids)
-        hearings_by_appeal = Hearing.repository.hearings_for_appeals(vacols_ids)
+        hearings_by_appeal = HearingRepository.hearings_for_appeals(vacols_ids)
         issues_by_appeal = VACOLS::CaseIssue.descriptions(vacols_ids)
         remand_reasons_by_appeal = RemandReasonRepository.load_remand_reasons_for_appeals(vacols_ids)
 
