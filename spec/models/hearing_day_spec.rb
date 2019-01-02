@@ -46,7 +46,7 @@ describe HearingDay do
         expect(hearing[:room]).to eq "1"
       end
     end
-
+    
     context "add a video hearing - Caseflow" do
       let(:hearing_hash) do
         { hearing_type: "C",
