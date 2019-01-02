@@ -174,7 +174,7 @@ export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
 };
 
 const formatUnidentifiedIssues = (state) => {
-  return state.addedIssues.
+  return (state.addedIssues || []).
     filter((issue) => issue.isUnidentified).
     map((issue) => {
       return {
@@ -187,7 +187,7 @@ const formatUnidentifiedIssues = (state) => {
 };
 
 const formatRatingRequestIssues = (state) => {
-  return state.addedIssues.
+  return (state.addedIssues || []).
     filter((issue) => issue.isRating && !issue.isUnidentified).
     map((issue) => {
       return {
@@ -209,7 +209,7 @@ const formatRatingRequestIssues = (state) => {
 };
 
 const formatNonratingRequestIssues = (state) => {
-  return state.addedIssues.filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
+  return (state.addedIssues || []).filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
     return {
       request_issue_id: issue.id,
       contested_decision_isssue_id: issue.decisionIssueId,
