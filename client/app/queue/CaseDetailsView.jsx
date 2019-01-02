@@ -45,6 +45,10 @@ const anchorEditLinkStyling = css({
   margin: '5px'
 });
 
+const alertPaddingStyle = css({
+  marginTop: '2rem'
+});
+
 class CaseDetailsView extends React.PureComponent {
   componentDidMount = () => {
     window.analyticsEvent(CATEGORIES.QUEUE_TASK, TASK_ACTIONS.VIEW_APPEAL_INFO);
@@ -72,44 +76,46 @@ class CaseDetailsView extends React.PureComponent {
 
     const amaIssueType = featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
 
-    return <AppSegment filledBackground>
-      <CaseTitle appeal={appeal} />
-      {error && <Alert title={error.title} type="error">
+    return <React.Fragment>
+      {error && <div {...alertPaddingStyle}><Alert title={error.title} type="error">
         {error.detail}
-      </Alert>}
-      {success && <Alert type="success" title={success.title} scrollOnAlert={false}>
+      </Alert></div>}
+      {success && <div {...alertPaddingStyle}><Alert type="success" title={success.title} scrollOnAlert={false}>
         {success.detail}
-      </Alert>}
-      <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname} />
-      { this.props.veteranCaseListIsVisible &&
-        <VeteranCasesView
-          caseflowVeteranId={appeal.caseflowVeteranId}
-          veteranId={appeal.veteranFileNumber}
-        />
-      }
-      <TaskSnapshot appealId={appealId} />
-      <hr {...horizontalRuleStyling} />
-      <StickyNavContentArea>
-        <CaseDetailsIssueList
-          amaIssueType={amaIssueType}
-          title="Issues"
-          isLegacyAppeal={appeal.isLegacyAppeal}
-          additionalHeaderContent={amaIssueType && appeal.canEditRequestIssues &&
-            <span className="cf-push-right" {...anchorEditLinkStyling}>
-              <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_REQUEST_ISSUES_LINK}</Link>
-            </span>}
-          issues={appeal.issues}
-          decisionIssues={appeal.decisionIssues}
-        />
-        <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
-        {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&
-        <CaseHearingsDetail title="Hearings" appeal={appeal} />}
-        <VeteranDetail title="About the Veteran" appeal={appeal} />
-        {!_.isNull(appeal.appellantFullName) &&
-        <AppellantDetail title="About the Appellant" appeal={appeal} />}
-        <CaseTimeline title="Case Timeline" appeal={appeal} />}
-      </StickyNavContentArea>
-    </AppSegment>;
+      </Alert></div>}
+      <AppSegment filledBackground>
+        <CaseTitle appeal={appeal} />
+        <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname} />
+        { this.props.veteranCaseListIsVisible &&
+          <VeteranCasesView
+            caseflowVeteranId={appeal.caseflowVeteranId}
+            veteranId={appeal.veteranFileNumber}
+          />
+        }
+        <TaskSnapshot appealId={appealId} />
+        <hr {...horizontalRuleStyling} />
+        <StickyNavContentArea>
+          <CaseDetailsIssueList
+            amaIssueType={amaIssueType}
+            title="Issues"
+            isLegacyAppeal={appeal.isLegacyAppeal}
+            additionalHeaderContent={amaIssueType && appeal.canEditRequestIssues &&
+              <span className="cf-push-right" {...anchorEditLinkStyling}>
+                <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_REQUEST_ISSUES_LINK}</Link>
+              </span>}
+            issues={appeal.issues}
+            decisionIssues={appeal.decisionIssues}
+          />
+          <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
+          {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&
+          <CaseHearingsDetail title="Hearings" appeal={appeal} />}
+          <VeteranDetail title="About the Veteran" appeal={appeal} />
+          {!_.isNull(appeal.appellantFullName) &&
+          <AppellantDetail title="About the Appellant" appeal={appeal} />}
+          <CaseTimeline title="Case Timeline" appeal={appeal} />}
+        </StickyNavContentArea>
+      </AppSegment>
+    </React.Fragment>;
   };
 }
 
