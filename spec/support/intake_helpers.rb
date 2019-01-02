@@ -303,22 +303,20 @@ module IntakeHelpers
   end
 
   def setup_request_issue_with_nonrating_decision_issue(decision_review, issue_category: "Active Duty Adjustments")
-    random_date = Time.zone.now - 4.days
     create(:request_issue,
            :with_nonrating_decision_issue,
            description: "Test nonrating decision issue",
            review_request: decision_review,
-           decision_date: random_date,
+           decision_date: decision_review.receipt_date - 1.day,
            issue_category: issue_category,
            veteran_participant_id: veteran.participant_id)
   end
 
   def setup_request_issue_with_rating_decision_issue(decision_review, rating_issue_reference_id: "rating123")
-    random_date = Time.zone.now - 2.days
     create(:request_issue,
            :with_rating_decision_issue,
            rating_issue_reference_id: rating_issue_reference_id,
-           rating_issue_profile_date: random_date,
+           rating_issue_profile_date: decision_review.receipt_date - 1.day,
            description: "Test rating decision issue",
            review_request: decision_review,
            veteran_participant_id: veteran.participant_id)

@@ -1043,14 +1043,22 @@ RSpec.feature "Higher-Level Review" do
           hlr, = start_higher_level_review(veteran, is_comp: false)
           create(:decision_issue,
                  decision_review: hlr,
+                 profile_date: receipt_date - 1.day,
                  benefit_type: hlr.benefit_type,
-                 decision_text: "something was decided",
+                 decision_text: "something was decided in the past",
+                 participant_id: veteran.participant_id)
+          create(:decision_issue,
+                 decision_review: hlr,
+                 profile_date: receipt_date + 1.day,
+                 benefit_type: hlr.benefit_type,
+                 decision_text: "something was decided in the future",
                  participant_id: veteran.participant_id)
 
           visit "/intake/add_issues"
           click_intake_add_issue
 
-          expect(page).to have_content("something was decided")
+          expect(page).to have_content("something was decided in the past")
+          expect(page).to_not have_content("something was decided in the future")
           expect(page).to_not have_content("Left knee granted")
         end
       end
