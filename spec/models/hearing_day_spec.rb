@@ -47,23 +47,6 @@ describe HearingDay do
       end
     end
 
-    context "add a video hearing - VACOLS" do
-      let(:hearing_hash) do
-        { hearing_type: "C",
-          hearing_date: test_hearing_date_vacols,
-          regional_office: "RO89",
-          room: "5" }
-      end
-
-      it "creates a video hearing" do
-        expect(hearing[:hearing_type]).to eq "C"
-        expect(hearing[:hearing_date].strftime("%Y-%m-%d %H:%M:%S"))
-          .to eq test_hearing_date_vacols.strftime("%Y-%m-%d %H:%M:%S")
-        expect(hearing[:regional_office]).to eq "RO89"
-        expect(hearing[:room]).to eq "5"
-      end
-    end
-
     context "add a video hearing - Caseflow" do
       let(:hearing_hash) do
         { hearing_type: "C",
@@ -222,7 +205,6 @@ describe HearingDay do
     let(:vacols_case2) do
       create(
         :case,
-        folder: create(:folder),
         bfregoff: "RO13",
         bfcurloc: "57",
         bfdocind: "V"
@@ -264,14 +246,14 @@ describe HearingDay do
       create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
+    let!(:hearing_day) { create(:hearing_day) }
     let(:hearing) do
-      create(:case_hearing, hearing_type: "C", folder_nr: appeal.vacols_id)
+      create(:case_hearing, hearing_type: "C", folder_nr: appeal.vacols_id, hearing_date: hearing_day.hearing_date)
     end
 
     context "get parent and children structure" do
       subject do
-        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
-                                                     hearing.hearing_date.beginning_of_day + 10, "C")
+        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day, hearing.hearing_date.beginning_of_day + 10, "C")
       end
 
       it "returns nested hash structure" do
@@ -279,42 +261,6 @@ describe HearingDay do
         expect(subject[0][:hearings].size).to eq 1
         expect(subject[0][:hearing_type]).to eq "C"
         expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
-      end
-    end
-  end
-
-  context "Central Office return only slots with folder_nr null (available)" do
-    let(:vacols_case) do
-      create(
-        :case,
-        folder: create(:folder, tinum: "docket-number"),
-        bfregoff: "RO04",
-        bfcurloc: "57"
-      )
-    end
-    let(:appeal) do
-      create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
-    end
-    let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
-    let!(:hearing) do
-      create(:case_hearing, hearing_type: "C", folder_nr: appeal.vacols_id)
-    end
-    let!(:hearing2) do
-      create(:case_hearing, hearing_type: "C")
-    end
-
-    context "get CO hearings with no veterans assigned to them" do
-      subject do
-        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
-                                                     hearing.hearing_date.beginning_of_day + 10, "C")
-      end
-
-      it "returns nested hash structure" do
-        expect(subject.size).to eq 1
-        expect(subject[0][:hearings].size).to eq 1
-        expect(subject[0][:hearing_type]).to eq "C"
-        expect(subject[0][:hearings].size).to eq 1
-        expect(subject[0][:hearings][0][:vacols_id]).to eql(hearing.hearing_pkseq.to_s)
       end
     end
   end
