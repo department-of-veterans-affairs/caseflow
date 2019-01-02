@@ -34,7 +34,7 @@ class HearingsController < ApplicationController
   end
 
   def hearing
-    @hearing ||= LegacyHearing.find(hearing_id)
+    @hearing ||= Hearing.find_hearing_by_id_or_find_or_create_legacy_hearing_by_vacols_id(hearing_id)
   end
 
   def hearing_id
