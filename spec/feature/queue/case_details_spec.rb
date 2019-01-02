@@ -526,9 +526,9 @@ RSpec.feature "Case details" do
                                    completed_at: Time.zone.now - 4.days)
       end
       let!(:judge_task) do
-        create(:ama_judge_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
-                                       status: Constants.TASK_STATUSES.completed,
-                                       completed_at: Time.zone.now)
+        create(:ama_judge_decision_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
+                                                status: Constants.TASK_STATUSES.completed,
+                                                completed_at: Time.zone.now)
       end
 
       before do

@@ -190,7 +190,7 @@ describe ColocatedTask do
         end
 
         it "should not update location to assignor in vacols" do
-          colocated_admin_action.mark_as_complete!
+          colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
           expect(vacols_case.reload.bfcurloc).to_not eq staff.slogid
         end
       end
@@ -199,7 +199,7 @@ describe ColocatedTask do
         let(:action) { :translation }
         it "should update location to translation in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
-          colocated_admin_action.mark_as_complete!
+          colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:translation]
         end
       end
@@ -208,7 +208,7 @@ describe ColocatedTask do
         let(:action) { :schedule_hearing }
         it "should update location to schedule hearing in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
-          colocated_admin_action.mark_as_complete!
+          colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
         end
       end
@@ -229,7 +229,7 @@ describe ColocatedTask do
 
         it "should update location to assignor in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
-          colocated_admin_action.mark_as_complete!
+          colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
           expect(vacols_case.reload.bfcurloc).to eq staff.slogid
         end
       end
@@ -270,7 +270,7 @@ describe ColocatedTask do
 
         time6 = Time.utc(2015, 1, 8, 12, 0, 0)
         Timecop.freeze(time6)
-        colocated_admin_action.mark_as_complete!
+        colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
