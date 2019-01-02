@@ -33,7 +33,14 @@ class Task < ApplicationRecord
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
-    actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action) } : []
+    actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action) } : []
+
+    # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
+    if actions.length > actions.pluck(:value).uniq.length
+      fail Caseflow::Error::DuplicateTaskActionPaths, task_id: id, user_id: user.id, labels: actions.pluck(:label)
+    end
+
+    actions
   end
 
   def build_action_hash(action)
@@ -224,6 +231,19 @@ class Task < ApplicationRecord
       title: timeline_title,
       date: completed_at
     }
+  end
+
+  def update_if_hold_expired!
+    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
+  end
+
+  def on_hold_expired?
+    return true if placed_on_hold_at && on_hold_duration && placed_on_hold_at + on_hold_duration.days < Time.zone.now
+    false
+  end
+
+  def serializer_class
+    ::WorkQueue::TaskSerializer
   end
 
   private

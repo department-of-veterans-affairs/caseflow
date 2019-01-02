@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181212150819) do
+ActiveRecord::Schema.define(version: 20181228182233) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -187,6 +187,21 @@ ActiveRecord::Schema.define(version: 20181212150819) do
     t.string "appeal_type", null: false
   end
 
+  create_table "decision_documents", force: :cascade do |t|
+    t.bigint "appeal_id", null: false
+    t.string "citation_number", null: false
+    t.date "decision_date", null: false
+    t.string "redacted_document_location", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "submitted_at"
+    t.datetime "attempted_at"
+    t.datetime "processed_at"
+    t.string "error"
+    t.index ["appeal_id"], name: "index_decision_documents_on_appeal_id"
+    t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
+  end
+
   create_table "decision_issues", force: :cascade do |t|
     t.string "disposition"
     t.string "description"
@@ -200,17 +215,6 @@ ActiveRecord::Schema.define(version: 20181212150819) do
     t.string "benefit_type"
     t.date "end_product_last_action_date"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
-  end
-
-  create_table "decisions", force: :cascade do |t|
-    t.bigint "appeal_id", null: false
-    t.string "citation_number", null: false
-    t.date "decision_date", null: false
-    t.string "redacted_document_location", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["appeal_id"], name: "index_decisions_on_appeal_id"
-    t.index ["citation_number"], name: "index_decisions_on_citation_number", unique: true
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
@@ -433,16 +437,6 @@ ActiveRecord::Schema.define(version: 20181212150819) do
     t.index ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true
   end
 
-  create_table "hearings", id: :serial, force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "appeal_id"
-    t.string "vacols_id", null: false
-    t.string "witness"
-    t.string "military_service"
-    t.boolean "prepped"
-    t.text "summary"
-  end
-
   create_table "higher_level_reviews", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
@@ -528,14 +522,26 @@ ActiveRecord::Schema.define(version: 20181212150819) do
     t.index ["vacols_id"], name: "index_legacy_appeals_on_vacols_id", unique: true
   end
 
+  create_table "legacy_hearings", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "appeal_id"
+    t.string "vacols_id", null: false
+    t.string "witness"
+    t.string "military_service"
+    t.boolean "prepped"
+    t.text "summary"
+  end
+
   create_table "legacy_issue_optins", force: :cascade do |t|
     t.bigint "request_issue_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "submitted_at"
-    t.datetime "attempted_at"
-    t.datetime "processed_at"
     t.string "error"
+    t.string "original_disposition_code"
+    t.date "original_disposition_date"
+    t.datetime "optin_processed_at"
+    t.datetime "rollback_created_at"
+    t.datetime "rollback_processed_at"
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
   end
 
@@ -633,17 +639,6 @@ ActiveRecord::Schema.define(version: 20181212150819) do
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
-  create_table "rating_issues", force: :cascade do |t|
-    t.bigint "source_request_issue_id", null: false
-    t.string "reference_id", null: false
-    t.datetime "profile_date", null: false
-    t.string "decision_text"
-    t.datetime "promulgation_date", null: false
-    t.integer "participant_id", null: false
-    t.index ["reference_id", "participant_id"], name: "index_rating_issues_on_reference_id_and_participant_id", unique: true
-    t.index ["source_request_issue_id"], name: "index_rating_issues_on_source_request_issue_id"
-  end
-
   create_table "reader_users", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "documents_fetched_at"
@@ -696,10 +691,11 @@ ActiveRecord::Schema.define(version: 20181212150819) do
     t.string "decision_sync_error"
     t.string "ineligible_reason"
     t.string "vacols_id"
-    t.string "vacols_sequence_id"
+    t.integer "vacols_sequence_id"
     t.datetime "created_at"
     t.string "benefit_type"
     t.integer "contested_decision_issue_id"
+    t.string "veteran_participant_id"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"

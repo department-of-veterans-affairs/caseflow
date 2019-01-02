@@ -88,7 +88,10 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
       isRating: false,
       vacolsId: args.vacolsId,
       vacolsSequenceId: args.vacolsSequenceId,
-      eligibleForSocOptIn: args.eligibleForSocOptIn
+      eligibleForSocOptIn: args.eligibleForSocOptIn,
+      ineligibleDueToId: args.ineligibleDueToId,
+      ineligibleReason: args.ineligibleReason,
+      reviewRequestTitle: args.reviewRequestTitle
     }
   });
 };

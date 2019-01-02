@@ -132,7 +132,12 @@ class Issue
   end
 
   def active?
+    return false if !legacy_appeal.active?
     disposition.nil? || in_remand?
+  end
+
+  def closed?
+    !active?
   end
 
   def allowed?
@@ -140,7 +145,7 @@ class Issue
   end
 
   def remanded?
-    disposition == :remanded
+    disposition == :remanded || disposition == :manlincon_remand
   end
 
   def merged?
@@ -202,26 +207,16 @@ class Issue
     @remand_reasons ||= self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
   end
 
-  # For status (BFMPRO) of ADV or REM, for the most part, having a disposition means the issue is closed.
-  # On appeal where the status is REM (remanded) the issues with disposition "3" are still active.
-  def closed?
-    return false if disposition.nil?
-    return false if in_remand?
-    return true if legacy_appeal.remand? || legacy_appeal.advance? || !legacy_appeal.active?
-    false
-  end
-
   def eligible_for_opt_in?
-    return false unless legacy_appeal.eligible_for_soc_opt_in?
     return disposition_date_after_legacy_appeal_soc? if disposition_is_failure_to_respond?
     active?
   end
 
-  private
-
   def legacy_appeal
     @legacy_appeal ||= LegacyAppeal.find_by(vacols_id: id)
   end
+
+  private
 
   def disposition_is_failure_to_respond?
     [:remand_failure_to_respond, :advance_failure_to_respond].include?(disposition)
@@ -315,6 +310,17 @@ class Issue
         issue_attrs: {
           disposition: disposition_code, # TODO: yes, this key is mis-named in IssueMapper
           disposition_date: Time.zone.today
+        }
+      )
+    end
+
+    def rollback_opt_in!(opt_in_issue)
+      update_in_vacols!(
+        vacols_id: opt_in_issue.vacols_id,
+        vacols_sequence_id: opt_in_issue.vacols_sequence_id,
+        issue_attrs: {
+          disposition: opt_in_issue.original_disposition_code,
+          disposition_date: opt_in_issue.original_disposition_date
         }
       )
     end

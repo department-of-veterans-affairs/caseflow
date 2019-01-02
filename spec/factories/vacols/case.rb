@@ -186,6 +186,7 @@ FactoryBot.define do
 
     trait :status_remand do
       bfmpro "REM"
+      bfdc "3"
     end
 
     trait :status_complete do
@@ -226,10 +227,15 @@ FactoryBot.define do
 
     trait :video_hearing_requested do
       bfdocind "V"
+      bfcurloc "57"
+      bfhr "2"
+      bfac "7"
     end
 
     trait :central_office_hearing do
       bfhr "1"
+      bfcurloc "57"
+      bfac "7"
     end
 
     trait :travel_board_hearing do

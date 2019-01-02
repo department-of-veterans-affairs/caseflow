@@ -17,6 +17,8 @@ class ClaimReview < DecisionReview
 
   self.abstract_class = true
 
+  class NoEndProductsRequired < StandardError; end
+
   def ui_hash
     super.merge(
       benefitType: benefit_type,
@@ -33,12 +35,23 @@ class ClaimReview < DecisionReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      issue.update!(
-        end_product_establishment: end_product_establishment_for_issue(issue),
-        benefit_type: benefit_type
-      )
-      create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
+      if non_comp?
+        issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
+      else
+        issue.update!(
+          end_product_establishment: end_product_establishment_for_issue(issue),
+          benefit_type: benefit_type,
+          veteran_participant_id: veteran.participant_id
+        )
+      end
+      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
+  end
+
+  def create_non_comp_task!
+    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+    # TODO: better user?
+    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: User.system_user)
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -46,6 +59,10 @@ class ClaimReview < DecisionReview
   # establishment_processed_at is successfully set.
   def establish!
     attempted!
+
+    if non_comp? && end_product_establishments.any?
+      fail NoEndProductsRequired, message: "Non-comp decision reviews should not have End Products"
+    end
 
     end_product_establishments.each do |end_product_establishment|
       end_product_establishment.perform!
@@ -66,6 +83,24 @@ class ClaimReview < DecisionReview
 
   def invalid_modifiers
     end_product_establishments.map(&:modifier).reject(&:nil?)
+  end
+
+  def rating_end_product_establishment
+    @rating_end_product_establishment ||= end_product_establishments.find_by(
+      code: self.class::END_PRODUCT_CODES[:rating]
+    )
+  end
+
+  def end_product_description
+    rating_end_product_establishment&.description
+  end
+
+  def end_product_base_modifier
+    valid_modifiers.first
+  end
+
+  def valid_modifiers
+    self.class::END_PRODUCT_MODIFIERS
   end
 
   def on_sync(end_product_establishment)

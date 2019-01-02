@@ -196,12 +196,15 @@ describe HigherLevelReviewIntake do
     let(:params) { { request_issues: [issue_data] } }
 
     let(:legacy_opt_in_approved) { false }
+    let(:benefit_type) { "compensation" }
 
     let(:detail) do
-      HigherLevelReview.create!(
+      create(
+        :higher_level_review,
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago,
-        legacy_opt_in_approved: legacy_opt_in_approved
+        legacy_opt_in_approved: legacy_opt_in_approved,
+        benefit_type: benefit_type
       )
     end
 
@@ -260,8 +263,40 @@ describe HigherLevelReviewIntake do
       )
     end
 
+    context "when benefit type is pension" do
+      let(:benefit_type) { "pension" }
+      let(:pension_rating_ep_establishment) do
+        EndProductEstablishment.find_by(source: intake.reload.detail, code: "030HLRRPMC")
+      end
+
+      it "completes the intake with pension ep code" do
+        subject
+
+        expect(pension_rating_ep_establishment).to_not be_nil
+        expect(pension_rating_ep_establishment.established_at).to eq(Time.zone.now)
+
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          hash_including(claim_hash: hash_including(end_product_code: "030HLRRPMC"))
+        )
+      end
+    end
+
+    context "when benefit type is non comp" do
+      let(:benefit_type) { "fiduciary" }
+
+      it "creates DecisionReviewTask" do
+        subject
+
+        intake.detail.reload
+
+        expect(intake.detail.tasks.count).to eq(1)
+        expect(intake.detail.tasks.first).to be_a(DecisionReviewTask)
+      end
+    end
+
     context "when a legacy VACOLS opt-in occurs" do
-      let(:vacols_case) { create(:case) }
+      let(:vacols_issue) { create(:case_issue) }
+      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
       let(:legacy_appeal) do
         create(:legacy_appeal, vacols_case: vacols_case)
       end
@@ -272,7 +307,7 @@ describe HigherLevelReviewIntake do
           reference_id: "reference-id",
           decision_text: "decision text",
           vacols_id: legacy_appeal.vacols_id,
-          vacols_sequence_id: 1
+          vacols_sequence_id: vacols_issue.issseq
         }
       end
 

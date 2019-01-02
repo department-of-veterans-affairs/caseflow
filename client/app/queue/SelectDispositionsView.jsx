@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { css } from 'glamor';
 
+import Button from '../components/Button';
 import decisionViewBase from './components/DecisionViewBase';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Modal from '../components/Modal';
@@ -27,12 +29,18 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
 import uuid from 'uuid';
 
+const connectedIssueDiv = css({
+  display: 'flex',
+  justifyContent: 'space-between',
+  marginBottom: '10px'
+});
+
 class SelectDispositionsView extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      openRequestIssueIds: null,
+      openRequestIssueId: null,
       decisionIssue: null,
       editingExistingIssue: false,
       highlightModal: false
@@ -90,19 +98,19 @@ class SelectDispositionsView extends React.PureComponent {
     });
   }
 
-  openDecisionHandler = (requestIssueIds, decisionIssue) => () => {
-    const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueIds.includes(issue.id)).program;
+  openDecisionHandler = (requestIssueId, decisionIssue) => () => {
+    const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
       description: '',
       disposition: null,
       benefit_type: benefitType,
-      request_issue_ids: requestIssueIds
+      request_issue_ids: [requestIssueId]
     };
 
     this.setState({
-      openRequestIssueIds: requestIssueIds,
+      openRequestIssueId: requestIssueId,
       decisionIssue: decisionIssue || newDecisionIssue,
       editingExistingIssue: Boolean(decisionIssue)
     });
@@ -110,7 +118,7 @@ class SelectDispositionsView extends React.PureComponent {
 
   handleModalClose = () => {
     this.setState({
-      openRequestIssueIds: null,
+      openRequestIssueId: null,
       decisionIssue: null,
       editingExistingIssue: false,
       highlightModal: false
@@ -166,12 +174,12 @@ class SelectDispositionsView extends React.PureComponent {
   }
 
   selectedIssues = () => {
-    if (!this.state.openRequestIssueIds) {
+    if (!this.state.openRequestIssueId) {
       return [];
     }
 
     return this.props.appeal.issues.filter((issue) => {
-      return this.state.openRequestIssueIds.includes(issue.id);
+      return this.state.openRequestIssueId === issue.id;
     });
   }
 
@@ -180,7 +188,7 @@ class SelectDispositionsView extends React.PureComponent {
     const {
       highlightModal,
       decisionIssue,
-      openRequestIssueIds,
+      openRequestIssueId,
       editingExistingIssue
     } = this.state;
 
@@ -202,6 +210,10 @@ class SelectDispositionsView extends React.PureComponent {
       });
     }
 
+    const connectedRequestIssues = appeal.issues.filter((issue) => {
+      return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
+    });
+
     return <React.Fragment>
       <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
       <p>{COPY.DECISION_ISSUE_PAGE_EXPLANATION}</p>
@@ -214,7 +226,7 @@ class SelectDispositionsView extends React.PureComponent {
         numbered
         highlight={highlight}
       />
-      { openRequestIssueIds && <Modal
+      { openRequestIssueId && <Modal
         buttons = {modalButtons}
         closeHandler={this.handleModalClose}
         title = {`${editingExistingIssue ? 'Edit' : 'Add'} decision`}>
@@ -223,9 +235,7 @@ class SelectDispositionsView extends React.PureComponent {
           Contested Issue
           <ul>
             {
-              appeal.issues.filter((issue) => {
-                return decisionIssue.request_issue_ids.includes(issue.id);
-              }).map((issue) => <li key={issue.id}>{issue.description}</li>)
+              connectedRequestIssues.map((issue) => <li key={issue.id}>{issue.description}</li>)
             }
           </ul>
         </div>
@@ -283,6 +293,49 @@ class SelectDispositionsView extends React.PureComponent {
             }
           })}
         />
+        <p>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</p>
+        <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE}</h3>
+        <SearchableDropdown
+          name="Issues"
+          placeholder="Select issues"
+          hideLabel
+          value={null}
+          options={appeal.issues.
+            filter((issue) => !decisionIssue.request_issue_ids.includes(issue.id)).
+            map((issue) => (
+              {
+                label: issue.description,
+                value: issue.id
+              }
+            ))
+          }
+          onChange={(issue) => this.setState({
+            decisionIssue: {
+              ...decisionIssue,
+              request_issue_ids: [...decisionIssue.request_issue_ids, issue.value]
+            }
+          })}
+        />
+        {
+          connectedRequestIssues.filter((issue) => {
+            return issue.id !== openRequestIssueId;
+          }).map((issue) =>
+            <div key={issue.id} {...connectedIssueDiv}>
+              <span>{issue.description}</span>
+              <Button
+                classNames={['cf-btn-link']}
+                onClick={() => this.setState({
+                  decisionIssue: {
+                    ...decisionIssue,
+                    request_issue_ids: decisionIssue.request_issue_ids.filter((id) => id !== issue.id)
+                  }
+                })}
+              >
+                Remove
+              </Button>
+            </div>
+          )
+        }
       </Modal>}
     </React.Fragment>;
   };

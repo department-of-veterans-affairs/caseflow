@@ -45,7 +45,8 @@ class ColocatedTask < Task
       {
         label: COPY::COLOCATED_ACTION_PLACE_HOLD,
         value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
-      }
+      },
+      Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h
     ]
 
     if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
@@ -68,13 +69,14 @@ class ColocatedTask < Task
     true
   end
 
-  def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
-  end
+  def assign_to_privacy_team_data
+    org = PrivacyTeam.singleton
 
-  def on_hold_expired?
-    return true if placed_on_hold_at && on_hold_duration && placed_on_hold_at + on_hold_duration.days < Time.zone.now
-    false
+    {
+      selected: org,
+      options: [{ label: org.name, value: org.id }],
+      type: GenericTask.name
+    }
   end
 
   private
