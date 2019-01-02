@@ -173,92 +173,56 @@ export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
 };
 
 const formatUnidentifiedIssues = (state) => {
-  // only used for the new add intake flow
-  if (state.addedIssues && state.addedIssues.length > 0) {
-    return state.addedIssues.
-      filter((issue) => issue.isUnidentified).
-      map((issue) => {
-        return {
-          request_issue_id: issue.id,
-          decision_text: issue.description,
-          notes: issue.notes,
-          is_unidentified: true
-        };
-      });
-  }
-
-  return [];
+  return state.addedIssues.
+    filter((issue) => issue.isUnidentified).
+    map((issue) => {
+      return {
+        request_issue_id: issue.id,
+        decision_text: issue.description,
+        notes: issue.notes,
+        is_unidentified: true
+      };
+    });
 };
 
 const formatRatingRequestIssues = (state) => {
-  if (state.addedIssues && state.addedIssues.length > 0) {
-    // we're using the new add issues page
-    return state.addedIssues.
-      filter((issue) => issue.isRating && !issue.isUnidentified).
-      map((issue) => {
-        return {
-          request_issue_id: issue.id,
-          rating_issue_reference_id: issue.ratingIssueReferenceId,
-          decision_text: issue.description,
-          rating_issue_profile_date: issue.ratingIssueProfileDate,
-          notes: issue.notes,
-          untimely_exemption: issue.untimelyExemption,
-          untimely_exemption_notes: issue.untimelyExemptionNotes,
-          ramp_claim_id: issue.rampClaimId,
-          vacols_id: issue.vacolsId,
-          vacols_sequence_id: issue.vacolsSequenceId,
-          contested_decision_isssue_id: issue.decisionIssueId,
-          ineligible_reason: issue.ineligibleReason,
-          ineligible_due_to_id: issue.ineligibleDueToId
-        };
-      });
-  }
-
-  // default to original ratings format
-  return _(state.ratings).
-    map((rating) => {
-      return _.map(rating.issues, (issue) => {
-        return _.merge(issue, { profile_date: rating.profile_date });
-      });
-    }).
-    flatten().
-    filter('isSelected').
-    value();
+  return state.addedIssues.
+    filter((issue) => issue.isRating && !issue.isUnidentified).
+    map((issue) => {
+      return {
+        request_issue_id: issue.id,
+        rating_issue_reference_id: issue.ratingIssueReferenceId,
+        decision_text: issue.description,
+        rating_issue_profile_date: issue.ratingIssueProfileDate,
+        notes: issue.notes,
+        untimely_exemption: issue.untimelyExemption,
+        untimely_exemption_notes: issue.untimelyExemptionNotes,
+        ramp_claim_id: issue.rampClaimId,
+        vacols_id: issue.vacolsId,
+        vacols_sequence_id: issue.vacolsSequenceId,
+        contested_decision_isssue_id: issue.decisionIssueId,
+        ineligible_reason: issue.ineligibleReason,
+        ineligible_due_to_id: issue.ineligibleDueToId
+      };
+    });
 };
 
 const formatNonratingRequestIssues = (state) => {
-  if (state.addedIssues && state.addedIssues.length > 0) {
-    // we're using the new add issues page
-    return state.addedIssues.filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
-      return {
-        request_issue_id: issue.id,
-        contested_decision_isssue_id: issue.decisionIssueId,
-        issue_category: issue.category,
-        decision_text: issue.description,
-        decision_date: formatDateStringForApi(issue.decisionDate),
-        untimely_exemption: issue.untimelyExemption,
-        untimely_exemption_notes: issue.untimelyExemptionNotes,
-        vacols_id: issue.vacolsId,
-        vacols_sequence_id: issue.vacolsSequenceId,
-        ineligible_due_to_id: issue.ineligibleDueToId,
-        ineligible_reason: issue.ineligibleReason
-      };
-    });
-  }
-
-  // default to original format
-  return _(state.nonRatingRequestIssues).
-    filter((issue) => {
-      return validNonratingRequestIssue(issue);
-    }).
-    map((issue) => {
-      return {
-        decision_text: issue.description,
-        issue_category: issue.category,
-        decision_date: formatDateStringForApi(issue.decisionDate)
-      };
-    }).
-    value();
+  return state.addedIssues.filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
+    return {
+      request_issue_id: issue.id,
+      contested_decision_isssue_id: issue.decisionIssueId,
+      issue_category: issue.category,
+      decision_text: issue.description,
+      decision_date: formatDateStringForApi(issue.decisionDate),
+      untimely_exemption: issue.untimelyExemption,
+      untimely_exemption_notes: issue.untimelyExemptionNotes,
+      vacols_id: issue.vacolsId,
+      vacols_sequence_id: issue.vacolsSequenceId,
+      ineligible_due_to_id: issue.ineligibleDueToId,
+      ineligible_reason: issue.ineligibleReason
+    };
+  });
 };
 
 export const formatIssues = (state) => {
