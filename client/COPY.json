@@ -284,7 +284,8 @@
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
 
   "JUDGE_ASSIGN_TASK_LABEL": "assign",
-  "JUDGE_REVIEW_TASK_LABEL": "review",
+  "JUDGE_DECISION_REVIEW_TASK_LABEL": "review",
+  "JUDGE_QUALITY_REVIEW_TASK_LABEL": "quality review",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues"
 }
