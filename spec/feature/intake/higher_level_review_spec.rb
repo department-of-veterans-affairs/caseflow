@@ -258,22 +258,24 @@ RSpec.feature "Higher-Level Review" do
 
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-      claim_hash: {
-        benefit_type_code: "1",
-        payee_code: "10",
-        predischarge: false,
-        claim_type: "Claim",
-        station_of_jurisdiction: "499",
-        date: higher_level_review.receipt_date.to_date,
-        end_product_modifier: "033",
-        end_product_label: "Higher-Level Review Rating",
-        end_product_code: HigherLevelReview::END_PRODUCT_CODES[:rating],
-        gulf_war_registry: false,
-        suppress_acknowledgement_letter: false,
-        claimant_participant_id: "5382910292"
-      },
-      veteran_hash: intake.veteran.to_vbms_hash,
-      user: current_user
+      hash_including(
+        claim_hash: hash_including(
+          benefit_type_code: "1",
+          payee_code: "10",
+          predischarge: false,
+          claim_type: "Claim",
+          station_of_jurisdiction: "499",
+          date: higher_level_review.receipt_date.to_date,
+          end_product_modifier: "033",
+          end_product_label: "Higher-Level Review Rating",
+          end_product_code: HigherLevelReview::END_PRODUCT_CODES[:rating],
+          gulf_war_registry: false,
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: "5382910292"
+        ),
+        veteran_hash: intake.veteran.to_vbms_hash,
+        user: current_user
+      )
     )
 
     ratings_end_product_establishment = EndProductEstablishment.find_by(
@@ -466,61 +468,6 @@ RSpec.feature "Higher-Level Review" do
     )
   end
 
-  it "Requires Payee Code for compensation and pension benefit types and non-Veteran claimant" do
-    intake = HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: current_user)
-    intake.start!
-    visit "/intake"
-
-    expect(page).to have_current_path("/intake/review_request")
-
-    within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Compensation", match: :prefer_exact).click
-    end
-
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2019"
-
-    within_fieldset("Was an informal conference requested?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
-
-    within_fieldset("Was an interview by the same office requested?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
-
-    within_fieldset("Is the claimant someone other than the Veteran?") do
-      find("label", text: "Yes", match: :prefer_exact).click
-    end
-
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
-
-    find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
-
-    click_intake_continue
-
-    expect(page).to have_content(
-      "Receipt date cannot be in the future."
-    )
-    expect(page).to have_content("Please select an option.")
-
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
-
-    within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Pension", match: :prefer_exact).click
-    end
-
-    click_intake_continue
-
-    expect(page).to have_content("Please select an option.")
-
-    fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
-    find("#cf-payee-code").send_keys :enter
-
-    click_intake_continue
-    expect(page).to have_current_path("/intake/add_issues")
-  end
-
   it "Shows a review error when something goes wrong" do
     start_higher_level_review(veteran_no_ratings)
     visit "/intake"
@@ -586,27 +533,6 @@ RSpec.feature "Higher-Level Review" do
     click_intake_finish
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
-  end
-
-  context "when veteran is deceased" do
-    let(:veteran) do
-      Generators::Veteran.build(file_number: "123121234", date_of_death: Date.new(2017, 11, 20))
-    end
-
-    scenario "do not show veteran as a valid payee code" do
-      start_higher_level_review(veteran)
-      visit "/intake"
-
-      # click on payee code dropdown
-      within_fieldset("Is the claimant someone other than the Veteran?") do
-        find("label", text: "Yes", match: :prefer_exact).click
-      end
-      find(".Select-control").click
-
-      # verify that veteran cannot be selected
-      expect(page).not_to have_content("00 - Veteran")
-      expect(page).to have_content("10 - Spouse")
-    end
   end
 
   context "Add / Remove Issues page" do
