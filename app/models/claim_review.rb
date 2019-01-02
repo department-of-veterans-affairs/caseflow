@@ -48,6 +48,12 @@ class ClaimReview < DecisionReview
     end
   end
 
+  def create_non_comp_task!
+    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+    # TODO: better user?
+    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: User.system_user)
+  end
+
   # Idempotent method to create all the artifacts for this claim.
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
