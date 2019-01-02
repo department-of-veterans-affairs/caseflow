@@ -79,7 +79,7 @@ RSpec.feature "Judge assignment to attorney" do
       appeal_review = judge_review_task.appeal
       vet = appeal_review.veteran
       attorney_completed_task = create(:ama_attorney_task, appeal: appeal_review, parent: judge_review_task)
-      attorney_completed_task.mark_as_complete!
+      attorney_completed_task.update!(status: Constants.TASK_STATUSES.completed)
       case_review = create(:attorney_case_review, task_id: attorney_completed_task.id)
 
       visit "/queue"

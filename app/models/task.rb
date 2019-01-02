@@ -141,10 +141,6 @@ class Task < ApplicationRecord
     ["", ""]
   end
 
-  def mark_as_complete!
-    update!(status: Constants.TASK_STATUSES.completed)
-  end
-
   def when_child_task_completed
     update_status_if_children_tasks_are_complete
   end

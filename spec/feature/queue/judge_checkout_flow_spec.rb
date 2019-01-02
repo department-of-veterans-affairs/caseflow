@@ -39,7 +39,7 @@ RSpec.feature "Judge checkout flow" do
     end
 
     before do
-      child_task.mark_as_complete!
+      child_task.update!(status: Constants.TASK_STATUSES.completed)
       User.authenticate!(user: judge_user)
     end
 

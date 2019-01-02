@@ -58,7 +58,7 @@ describe JudgeTask do
         let!(:atty_task) { AttorneyTask.create_many_from_params(atty_task_params, judge).first }
 
         # Attorney is done with corrections and sends case back to judge.
-        let!(:complete_atty_task) { atty_task.mark_as_complete! }
+        let!(:complete_atty_task) { atty_task.update!(status: Constants.TASK_STATUSES.completed) }
 
         # The judge task changed type so we have to grab it from the database again
         let!(:assign_task) { Task.find(judge_task.id) }
