@@ -249,6 +249,25 @@ describe VACOLS::CaseDocket do
         end
       end
     end
+
+    context "when the case has a pending diary" do
+      let(:code) { "POA" }
+      let!(:diary) { create(:diary, tsktknm: nonpriority_ready_case.bfkey, tskactcd: code) }
+
+      it "does not distribute the case" do
+        expect(subject.count).to eq(1)
+        expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+      end
+
+      context "when the diary should not block distribution" do
+        let(:code) { "IHP" }
+
+        it "distributes the case" do
+          expect(subject.count).to eq(2)
+          expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        end
+      end
+    end
   end
 
   context ".distribute_priority_appeals" do
@@ -407,6 +426,25 @@ describe VACOLS::CaseDocket do
 
       context "when the mail should not block distribution" do
         let(:mltype) { "02" }
+
+        it "distributes the case" do
+          expect(subject.count).to eq(2)
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        end
+      end
+    end
+
+    context "when the case has a pending diary" do
+      let(:code) { "POA" }
+      let!(:diary) { create(:diary, tsktknm: aod_ready_case.bfkey, tskactcd: code) }
+
+      it "does not distribute the case" do
+        expect(subject.count).to eq(1)
+        expect(aod_ready_case.reload.bfcurloc).to eq("81")
+      end
+
+      context "when the diary should not block distribution" do
+        let(:code) { "IHP" }
 
         it "distributes the case" do
           expect(subject.count).to eq(2)
