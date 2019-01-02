@@ -90,8 +90,8 @@ describe ClaimReview do
     VBMS::HTTPError.new("500", "More EPs more problems")
   end
 
-  context "#contestable_decision_issues" do
-    subject { claim_review.send(:contestable_decision_issues) }
+  context "#contestable_issues" do
+    subject { claim_review.contestable_issues }
 
     let(:another_review) do
       create(:supplemental_claim, veteran_file_number: veteran_file_number, receipt_date: receipt_date)
@@ -119,7 +119,7 @@ describe ClaimReview do
 
     it "does not return Decision Issues in the future" do
       expect(subject.count).to eq(1)
-      expect(subject).to include(past_decision_issue)
+      expect(subject.first.decision_issue_id).to eq(past_decision_issue.id)
     end
   end
 

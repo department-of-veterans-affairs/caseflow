@@ -40,8 +40,8 @@ describe Appeal do
     end
   end
 
-  context "#contestable_decision_issues" do
-    subject { appeal.send(:contestable_decision_issues) }
+  context "#contestable_issues" do
+    subject { appeal.contestable_issues }
 
     let(:veteran_file_number) { "64205050" }
 
@@ -85,7 +85,7 @@ describe Appeal do
 
     it "does not return Decision Issues in the future" do
       expect(subject.count).to eq(1)
-      expect(subject).to include(past_decision_issue)
+      expect(subject.first.decision_issue_id).to eq(past_decision_issue.id)
     end
   end
 
