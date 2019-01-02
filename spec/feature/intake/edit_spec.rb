@@ -146,7 +146,7 @@ RSpec.feature "Edit issues" do
       expect(page).not_to have_content("nonrating description")
 
       # canceling should redirect to queue
-      click_on "Cancel edit"
+      click_on "Cancel"
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
 
@@ -1166,7 +1166,7 @@ RSpec.feature "Edit issues" do
       feature "cancel edits" do
         def click_cancel(visit_page)
           visit "higher_level_reviews/#{rating_ep_claim_id}/edit#{visit_page}"
-          click_on "Cancel edit"
+          click_on "Cancel"
           correct_path = "/higher_level_reviews/#{rating_ep_claim_id}/edit/cancel"
           expect(page).to have_current_path(correct_path)
           expect(page).to have_content("Edit Canceled")
@@ -1604,7 +1604,7 @@ RSpec.feature "Edit issues" do
       feature "cancel edits" do
         def click_cancel(visit_page)
           visit "supplemental_claims/#{rating_ep_claim_id}/edit#{visit_page}"
-          click_on "Cancel edit"
+          click_on "Cancel"
           correct_path = "/supplemental_claims/#{rating_ep_claim_id}/edit/cancel"
           expect(page).to have_current_path(correct_path)
           expect(page).to have_content("Edit Canceled")
