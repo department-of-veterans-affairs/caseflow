@@ -28,7 +28,8 @@ class ClaimReview < DecisionReview
   end
 
   def self.find_all_by_file_number(file_number)
-    HigherLevelReview.where(veteran_file_number: file_number) + SupplementalClaim.where(veteran_file_number: file_number)
+    HigherLevelReview.where(veteran_file_number: file_number) +
+      SupplementalClaim.where(veteran_file_number: file_number)
   end
 
   def issue_code(*)
