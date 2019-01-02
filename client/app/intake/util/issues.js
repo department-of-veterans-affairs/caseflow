@@ -110,6 +110,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
     // Unidentified issues
     if (issue.is_unidentified) {
       return {
+        id: String(issue.id),
         description: issue.description,
         contentionText: issue.contention_text,
         notes: issue.notes,
@@ -124,6 +125,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
     const issueDate = new Date(issue.rating_issue_profile_date);
 
     return {
+      id: String(issue.id),
       index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
       isRating: true,
       ratingIssueReferenceId: issue.rating_issue_reference_id,
@@ -177,6 +179,7 @@ const formatUnidentifiedIssues = (state) => {
       filter((issue) => issue.isUnidentified).
       map((issue) => {
         return {
+          request_issue_id: issue.id,
           decision_text: issue.description,
           notes: issue.notes,
           is_unidentified: true
@@ -194,6 +197,7 @@ const formatRatingRequestIssues = (state) => {
       filter((issue) => issue.isRating && !issue.isUnidentified).
       map((issue) => {
         return {
+          request_issue_id: issue.id,
           rating_issue_reference_id: issue.ratingIssueReferenceId,
           decision_text: issue.description,
           rating_issue_profile_date: issue.ratingIssueProfileDate,
@@ -227,6 +231,7 @@ const formatNonratingRequestIssues = (state) => {
     // we're using the new add issues page
     return state.addedIssues.filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
       return {
+        request_issue_id: issue.id,
         contested_decision_isssue_id: issue.decisionIssueId,
         issue_category: issue.category,
         decision_text: issue.description,
