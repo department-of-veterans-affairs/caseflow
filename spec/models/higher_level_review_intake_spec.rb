@@ -281,8 +281,22 @@ describe HigherLevelReviewIntake do
       end
     end
 
+    context "when benefit type is non comp" do
+      let(:benefit_type) { "fiduciary" }
+
+      it "creates DecisionReviewTask" do
+        subject
+
+        intake.detail.reload
+
+        expect(intake.detail.tasks.count).to eq(1)
+        expect(intake.detail.tasks.first).to be_a(DecisionReviewTask)
+      end
+    end
+
     context "when a legacy VACOLS opt-in occurs" do
-      let(:vacols_case) { create(:case) }
+      let(:vacols_issue) { create(:case_issue) }
+      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
       let(:legacy_appeal) do
         create(:legacy_appeal, vacols_case: vacols_case)
       end
@@ -293,7 +307,7 @@ describe HigherLevelReviewIntake do
           reference_id: "reference-id",
           decision_text: "decision text",
           vacols_id: legacy_appeal.vacols_id,
-          vacols_sequence_id: 1
+          vacols_sequence_id: vacols_issue.issseq
         }
       end
 

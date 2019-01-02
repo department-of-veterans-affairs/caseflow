@@ -46,7 +46,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def tasks_assigned_to_user
     tasks = if user.attorney_in_vacols? || user.judge_in_vacols?
-              LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.activated? }
+              LegacyWorkQueue.tasks_with_appeals(user, role).select { |task| task.appeal.activated? }
             else
               []
             end

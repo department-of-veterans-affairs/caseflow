@@ -64,11 +64,9 @@ describe BvaDispatchTask do
 
       context "when :decision_document_upload feature is enabled" do
         it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
-          delayed_decision_time = Time.zone.now + DecisionDocument::DECISION_OUTCODING_DELAY
-
           expect do
             BvaDispatchTask.outcode(root_task.appeal, params, user)
-          end.to have_enqueued_job(ProcessDecisionDocumentJob).at(delayed_decision_time)
+          end.to have_enqueued_job(ProcessDecisionDocumentJob).exactly(:once)
 
           tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
           expect(tasks.length).to eq(1)

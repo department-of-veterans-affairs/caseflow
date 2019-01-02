@@ -44,8 +44,14 @@ class ClaimReview < DecisionReview
           veteran_participant_id: veteran.participant_id
         )
       end
-      create_legacy_issue_optin(issue) if issue.vacols_id && issue.eligible?
+      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
+  end
+
+  def create_non_comp_task!
+    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+    # TODO: better user?
+    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: User.system_user)
   end
 
   # Idempotent method to create all the artifacts for this claim.
