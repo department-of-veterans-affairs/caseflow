@@ -19,7 +19,7 @@ RSpec.feature "Judge checkout flow" do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:parent_task) do
       FactoryBot.create(
-        :ama_judge_review_task,
+        :ama_judge_decision_review_task,
         :in_progress,
         assigned_to: judge_user,
         appeal: appeal,

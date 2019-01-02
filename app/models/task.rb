@@ -208,7 +208,7 @@ class Task < ApplicationRecord
     {
       selected: root_task.children.find { |task| task.is_a?(JudgeTask) }.assigned_to,
       options: users_to_options(Judge.list_all),
-      type: JudgeAssignTask.name
+      type: JudgeQualityReviewTask.name
     }
   end
 
