@@ -36,11 +36,12 @@ class SelectSpecialIssuesView extends React.PureComponent {
   render = () => {
     const {
       specialIssues,
+      appeal,
       error
     } = this.props;
 
     const specialIssueCheckboxes = SPECIAL_ISSUES.map((issue) => {
-      if (issue.nonCompensation) {
+      if (issue.nonCompensation && !appeal.isLegacyAppeal) {
         return null;
       }
 
