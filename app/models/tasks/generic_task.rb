@@ -51,7 +51,7 @@ class GenericTask < Task
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    update!(params[:status]) if params[:status]
+    update!(status: params[:status]) if params[:status]
 
     [self]
   end
