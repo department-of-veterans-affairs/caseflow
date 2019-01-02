@@ -176,6 +176,56 @@ RSpec.feature "Edit issues" do
       expect(page).to have_button("Save", disabled: false)
     end
 
+    context "with multiple request issues with same data fields" do
+      let!(:duplicate_nonrating_request_issue) do
+        create(:request_issue,
+               review_request: appeal,
+               issue_category: "Military Retired Pay",
+               description: "nonrating description",
+               contention_reference_id: "1234",
+               decision_date: 1.month.ago)
+      end
+
+      let!(:duplicate_rating_request_issue) do
+        create(:request_issue,
+               review_request: appeal,
+               rating_issue_reference_id: "def456",
+               rating_issue_profile_date: profile_date,
+               description: "PTSD denied",
+               contention_reference_id: "4567")
+      end
+
+      scenario "saves by id" do
+        visit "appeals/#{appeal.uuid}/edit/"
+
+        expect(page).to have_content(duplicate_nonrating_request_issue.description, count: 2)
+        expect(page).to have_content(duplicate_rating_request_issue.description, count: 2)
+
+        # add another new issue
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "A description!",
+          date: "04/26/2018"
+        )
+
+        safe_click("#button-submit-update")
+        safe_click ".confirm"
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+        request_issue_update = RequestIssuesUpdate.where(review: appeal).last
+        non_modified_ids = [duplicate_nonrating_request_issue.id, duplicate_rating_request_issue.id,
+          nonrating_request_issue.id, rating_request_issue.id]
+
+        # duplicate issues should be neither added nor removed
+        expect(request_issue_update.created_issues
+          .select { |created| non_modified_ids.include? created.id }.empty?).to eq(true)
+        expect(request_issue_update.removed_issues
+          .select { |created| non_modified_ids.include? created.id }.empty?).to eq(true)
+      end
+    end
+
     context "with legacy appeals" do
       before do
         setup_legacy_opt_in_appeals(veteran.file_number)
