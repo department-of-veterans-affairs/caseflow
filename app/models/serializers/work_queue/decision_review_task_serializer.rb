@@ -36,6 +36,14 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
     task.assigned_at
   end
 
+  attribute :completed_at do
+    task.completed_at
+  end
+
+  attribute :started_at do
+    task.started_at
+  end
+
   attribute :type do
     decision_review.class.review_title
   end
