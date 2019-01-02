@@ -34,10 +34,10 @@ class HearingsController < ApplicationController
   end
 
   def hearing
-    @hearing ||= Hearing.find_hearing_by_id_or_find_or_create_legacy_hearing_by_vacols_id(hearing_id)
+    @hearing ||= Hearing.find_hearing_by_id_or_find_or_create_legacy_hearing_by_vacols_id(hearing_external_id)
   end
 
-  def hearing_id
+  def hearing_external_id
     params[:id]
   end
 
