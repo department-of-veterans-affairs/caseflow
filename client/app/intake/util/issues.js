@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES.json';
+import { FORM_TYPES } from '../constants';
 
 const getNonVeteranClaimant = (intakeData) => {
   const claimant = intakeData.relationships.filter((relationship) => {
@@ -239,10 +240,18 @@ export const formatIssues = (state) => {
 
 export const getAddIssuesFields = (formType, veteran, intakeData) => {
   let fields;
+  const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
+  const selectedForm = _.find(FORM_TYPES, { key: formType });
 
   switch (formType) {
   case 'higher_level_review':
     fields = [
+      { field: 'Form',
+        content: selectedForm.name },
+      { field: 'Veteran',
+        content: veteranInfo },
+      { field: 'Receipt date of this form',
+        content: formatDate(intakeData.receiptDate) },
       { field: 'Benefit type',
         content: _.startCase(intakeData.benefitType) },
       { field: 'Informal conference request',
@@ -253,12 +262,22 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
     break;
   case 'supplemental_claim':
     fields = [
+      { field: 'Form',
+        content: selectedForm.name },
+      { field: 'Veteran',
+        content: veteranInfo },
+      { field: 'Receipt date of this form',
+        content: formatDate(intakeData.receiptDate) },
       { field: 'Benefit type',
         content: _.startCase(intakeData.benefitType) }
     ];
     break;
   case 'appeal':
     fields = [
+      { field: 'Veteran',
+        content: veteranInfo },
+      { field: 'NOD receipt date',
+        content: formatDate(intakeData.receiptDate) },
       { field: 'Review option',
         content: _.startCase(intakeData.docketType.split('_').join(' ')) }
     ];
