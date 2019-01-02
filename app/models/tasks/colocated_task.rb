@@ -12,7 +12,7 @@ class ColocatedTask < Task
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
-        assignee = Colocated.singleton.next_assignee(ColocatedTask.name)
+        assignee = Colocated.singleton.next_assignee(self)
         records = params_array.map do |params|
           team_task = create_from_params(
             params.merge(assigned_to: Colocated.singleton, status: Constants.TASK_STATUSES.on_hold), user
