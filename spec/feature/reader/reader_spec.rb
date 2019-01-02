@@ -449,7 +449,7 @@ RSpec.feature "Reader" do
       expect(find("#procedural", visible: false).checked?).to be false
     end
 
-    scenario "Add, edit, and delete comments" do
+    scenario "Add, edit, share, and delete comments", focus: true do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       expect(page).to have_content("Caseflow> Reader")
 
@@ -479,6 +479,15 @@ RSpec.feature "Reader" do
 
       # Expect comment to be in database
       expect(documents[0].reload.annotations.first.comment).to eq("FooBar")
+
+      # Share the comment
+      click_on "Share"
+
+      # Expect there to be a link to this comment in the modal
+      expect(page).to have_content("/annotation/1")
+
+      # Close the share modal
+      click_on "Close"
 
       # Delete the comment
       click_on "Delete"
