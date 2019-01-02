@@ -40,6 +40,55 @@ describe Appeal do
     end
   end
 
+  context "#contestable_decision_issues" do
+    subject { appeal.send(:contestable_decision_issues) }
+
+    let(:veteran_file_number) { "64205050" }
+
+    let!(:veteran) do
+      Generators::Veteran.build(
+        file_number: veteran_file_number,
+        first_name: "Ed",
+        last_name: "Merica",
+        participant_id: "55443322"
+      )
+    end
+
+    let(:receipt_date) { Time.zone.today }
+    let(:appeal) do
+      create(:appeal, veteran: veteran, receipt_date: receipt_date)
+    end
+
+    let(:another_review) do
+      create(:higher_level_review, veteran_file_number: veteran_file_number, receipt_date: receipt_date)
+    end
+
+    let!(:past_decision_issue) do
+      create(:decision_issue,
+             decision_review: another_review,
+             profile_date: receipt_date - 1.day,
+             benefit_type: another_review.benefit_type,
+             decision_text: "something decided in the past",
+             description: "past issue",
+             participant_id: veteran.participant_id)
+    end
+
+    let!(:future_decision_issue) do
+      create(:decision_issue,
+             decision_review: another_review,
+             profile_date: receipt_date + 1.day,
+             benefit_type: another_review.benefit_type,
+             decision_text: "something was decided in the future",
+             description: "future issue",
+             participant_id: veteran.participant_id)
+    end
+
+    it "does not return Decision Issues in the future" do
+      expect(subject.count).to eq(1)
+      expect(subject).to include(past_decision_issue)
+    end
+  end
+
   context "async logic scopes" do
     let!(:appeal_requiring_processing) do
       create(:appeal).tap(&:submit_for_processing!)
@@ -198,6 +247,7 @@ describe Appeal do
   context "#find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
+
       let(:appeal) do
         create(:appeal, veteran_file_number: veteran_file_number)
       end
