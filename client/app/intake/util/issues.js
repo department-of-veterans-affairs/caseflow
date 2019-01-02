@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES.json';
+import { FORM_TYPES } from '../constants';
 
 const getNonVeteranClaimant = (intakeData) => {
   const claimant = intakeData.relationships.filter((relationship) => {
@@ -89,11 +90,14 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
     // Nonrating issues
     if (issue.category) {
       return {
+        id: String(issue.id),
         isRating: false,
         category: issue.category,
         description: issue.description,
         decisionDate: formatDateStr(issue.decision_date),
         ineligibleReason: issue.ineligible_reason,
+        ineligibleDueToId: issue.ineligible_due_to_id,
+        reviewRequestTitle: issue.review_request_title,
         contentionText: issue.contention_text,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
@@ -226,7 +230,9 @@ const formatNonratingRequestIssues = (state) => {
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
         vacols_id: issue.vacolsId,
-        vacols_sequence_id: issue.vacolsSequenceId
+        vacols_sequence_id: issue.vacolsSequenceId,
+        ineligible_due_to_id: issue.ineligibleDueToId,
+        ineligible_reason: issue.ineligibleReason
       };
     });
   }
@@ -260,10 +266,18 @@ export const formatIssues = (state) => {
 
 export const getAddIssuesFields = (formType, veteran, intakeData) => {
   let fields;
+  const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
+  const selectedForm = _.find(FORM_TYPES, { key: formType });
 
   switch (formType) {
   case 'higher_level_review':
     fields = [
+      { field: 'Form',
+        content: selectedForm.name },
+      { field: 'Veteran',
+        content: veteranInfo },
+      { field: 'Receipt date of this form',
+        content: formatDate(intakeData.receiptDate) },
       { field: 'Benefit type',
         content: _.startCase(intakeData.benefitType) },
       { field: 'Informal conference request',
@@ -274,12 +288,22 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
     break;
   case 'supplemental_claim':
     fields = [
+      { field: 'Form',
+        content: selectedForm.name },
+      { field: 'Veteran',
+        content: veteranInfo },
+      { field: 'Receipt date of this form',
+        content: formatDate(intakeData.receiptDate) },
       { field: 'Benefit type',
         content: _.startCase(intakeData.benefitType) }
     ];
     break;
   case 'appeal':
     fields = [
+      { field: 'Veteran',
+        content: veteranInfo },
+      { field: 'NOD receipt date',
+        content: formatDate(intakeData.receiptDate) },
       { field: 'Review option',
         content: _.startCase(intakeData.docketType.split('_').join(' ')) }
     ];
@@ -348,7 +372,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       vacolsId: issue.vacolsId,
       vacolsSequenceId: issue.vacolsSequenceId,
       vacolsIssue: issue.vacolsIssue,
-      eligibleForSocOptIn: issue.eligibleForSocOptIn
+      eligibleForSocOptIn: issue.eligibleForSocOptIn,
+      reviewRequestTitle: issue.reviewRequestTitle
     };
   });
 };

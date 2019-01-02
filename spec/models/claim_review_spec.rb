@@ -24,6 +24,7 @@ describe ClaimReview do
   let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
+  let(:benefit_type) { "compensation" }
 
   let(:rating_request_issue) do
     build(
@@ -71,7 +72,8 @@ describe ClaimReview do
       veteran_file_number: veteran_file_number,
       receipt_date: receipt_date,
       informal_conference: informal_conference,
-      same_office: same_office
+      same_office: same_office,
+      benefit_type: benefit_type
     )
   end
 
@@ -86,6 +88,39 @@ describe ClaimReview do
 
   let(:vbms_error) do
     VBMS::HTTPError.new("500", "More EPs more problems")
+  end
+
+  context "#contestable_issues" do
+    subject { claim_review.contestable_issues }
+
+    let(:another_review) do
+      create(:supplemental_claim, veteran_file_number: veteran_file_number, receipt_date: receipt_date)
+    end
+
+    let!(:past_decision_issue) do
+      create(:decision_issue,
+             decision_review: another_review,
+             profile_date: receipt_date - 1.day,
+             benefit_type: another_review.benefit_type,
+             decision_text: "something decided in the past",
+             description: "past issue",
+             participant_id: veteran.participant_id)
+    end
+
+    let!(:future_decision_issue) do
+      create(:decision_issue,
+             decision_review: another_review,
+             profile_date: receipt_date + 1.day,
+             benefit_type: another_review.benefit_type,
+             decision_text: "something was decided in the future",
+             description: "future issue",
+             participant_id: veteran.participant_id)
+    end
+
+    it "does not return Decision Issues in the future" do
+      expect(subject.count).to eq(1)
+      expect(subject.first.decision_issue_id).to eq(past_decision_issue.id)
+    end
   end
 
   context "async logic scopes" do
@@ -237,6 +272,17 @@ describe ClaimReview do
 
         expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRR")
         expect(non_rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRNR")
+      end
+
+      context "when the benefit type is pension" do
+        let(:benefit_type) { "pension" }
+
+        it "creates issues and assigns pension end product codes to them" do
+          subject
+
+          expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRRPMC")
+          expect(non_rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRNRPMC")
+        end
       end
     end
   end

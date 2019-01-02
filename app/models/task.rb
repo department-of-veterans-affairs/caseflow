@@ -218,7 +218,7 @@ class Task < ApplicationRecord
     {
       selected: root_task.children.find { |task| task.is_a?(JudgeTask) }.assigned_to,
       options: users_to_options(Judge.list_all),
-      type: JudgeAssignTask.name
+      type: JudgeQualityReviewTask.name
     }
   end
 
@@ -231,6 +231,19 @@ class Task < ApplicationRecord
       title: timeline_title,
       date: completed_at
     }
+  end
+
+  def update_if_hold_expired!
+    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
+  end
+
+  def on_hold_expired?
+    return true if placed_on_hold_at && on_hold_duration && placed_on_hold_at + on_hold_duration.days < Time.zone.now
+    false
+  end
+
+  def serializer_class
+    ::WorkQueue::TaskSerializer
   end
 
   private

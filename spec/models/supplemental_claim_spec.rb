@@ -12,6 +12,7 @@ describe SupplementalClaim do
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
   let(:receipt_date) { nil }
   let(:benefit_type) { nil }
+  let(:is_dta_error) { false }
   let(:legacy_opt_in_approved) { nil }
   let(:veteran_is_not_claimant) { false }
 
@@ -21,14 +22,68 @@ describe SupplementalClaim do
       receipt_date: receipt_date,
       benefit_type: benefit_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: veteran_is_not_claimant
+      veteran_is_not_claimant: veteran_is_not_claimant,
+      is_dta_error: is_dta_error
     )
+  end
+
+  context "#issue_code" do
+    let(:rating) { nil }
+    subject { supplemental_claim.issue_code(rating: rating) }
+
+    context "for a rating issue" do
+      let(:rating) { true }
+      it "returns the rating end product code" do
+        expect(subject).to eq("040SCR")
+      end
+
+      context "when benefit type is pension" do
+        let(:benefit_type) { "pension" }
+        it "returns the rating pension end product code" do
+          expect(subject).to eq("040SCRPMC")
+        end
+
+        context "when it is from a dta error" do
+          let(:is_dta_error) { true }
+
+          it "returns the rating pension dta error end product code" do
+            expect(subject).to eq("040HDERPMC")
+          end
+        end
+      end
+    end
+
+    context "for a nonrating issue" do
+      let(:rating) { false }
+      it "returns the nonrating end product code" do
+        expect(subject).to eq("040SCNR")
+      end
+
+      context "when benefit type is pension" do
+        let(:benefit_type) { "pension" }
+        it "returns the nonrating pension end product code" do
+          expect(subject).to eq("040SCNRPMC")
+        end
+
+        context "when it is from a dta error" do
+          let(:is_dta_error) { true }
+
+          it "returns the nonrating pension dta error end product code" do
+            expect(subject).to eq("040HDENRPMC")
+          end
+        end
+      end
+    end
   end
 
   context "#special_issues" do
     let(:vacols_id) { nil }
+    let(:vacols_sequence_id) { nil }
     let!(:request_issue) do
-      create(:request_issue, review_request: supplemental_claim, vacols_id: vacols_id)
+      create(:request_issue,
+             review_request: supplemental_claim,
+             vacols_id: vacols_id,
+             vacols_sequence_id: vacols_sequence_id)
     end
 
     subject { supplemental_claim.special_issues }
@@ -41,6 +96,9 @@ describe SupplementalClaim do
 
     context "VACOLS opt-in" do
       let(:vacols_id) { "something" }
+      let!(:vacols_case) { create(:case, bfkey: vacols_id, case_issues: [vacols_issue]) }
+      let(:vacols_sequence_id) { 1 }
+      let!(:vacols_issue) { create(:case_issue, issseq: vacols_sequence_id) }
       let!(:legacy_opt_in) do
         create(:legacy_issue_optin, request_issue: request_issue)
       end

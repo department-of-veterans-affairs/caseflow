@@ -31,7 +31,7 @@ const spanStyling = css({
   marginBotton: '5px'
 });
 
-const roomNotRequiredStyling = css({
+const roomRequiredStyling = css({
   marginTop: '15px'
 });
 
@@ -195,7 +195,7 @@ class HearingDayAddModal extends React.Component {
     this.props.setNotes(value);
   };
 
-  onRoomNotRequired = (value) => {
+  onRoomRequired = (value) => {
     this.props.onAssignHearingRoom(value);
   };
 
@@ -255,12 +255,12 @@ class HearingDayAddModal extends React.Component {
           textAreaStyling={notesFieldStyling}
           value={this.props.notes} />
         <Checkbox
-          name="roomNotRequired"
-          label="Board Hearing Room Not Required"
+          name="roomRequired"
+          label="Assign Board Hearing Room"
           strongLabel
-          value={this.props.roomNotRequired}
-          onChange={this.onRoomNotRequired}
-          {...roomNotRequiredStyling} />
+          value={this.props.roomRequired}
+          onChange={this.onRoomRequired}
+          {...roomRequiredStyling} />
       </div>
     </React.Fragment>;
   };
@@ -297,7 +297,7 @@ const mapStateToProps = (state) => ({
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   notes: state.hearingSchedule.notes,
-  roomNotRequired: state.hearingSchedule.roomNotRequired,
+  roomRequired: state.hearingSchedule.roomRequired,
   activeJudges: state.hearingSchedule.activeJudges,
   activeCoordinators: state.hearingSchedule.activeCoordinators
 });

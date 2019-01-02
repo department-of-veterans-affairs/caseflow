@@ -8,7 +8,6 @@ RSpec.feature "Supplemental Claim Intake" do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
-    FeatureToggle.disable!(:intake_enable_add_issues_page)
 
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 11, 28))
@@ -404,74 +403,6 @@ RSpec.feature "Supplemental Claim Intake" do
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
   end
 
-  it "Requires Payee Code for compensation and pension benefit types and non-Veteran claimant" do
-    intake = SupplementalClaimIntake.new(veteran_file_number: veteran.file_number, user: current_user)
-    intake.start!
-    visit "/intake"
-
-    expect(page).to have_current_path("/intake/review_request")
-
-    within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Compensation", match: :prefer_exact).click
-    end
-
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2019"
-
-    within_fieldset("Is the claimant someone other than the Veteran?") do
-      find("label", text: "Yes", match: :prefer_exact).click
-    end
-
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
-
-    find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
-
-    click_intake_continue
-
-    expect(page).to have_content(
-      "Receipt date cannot be in the future."
-    )
-    expect(page).to have_content("Please select an option.")
-
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
-    within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Pension", match: :prefer_exact).click
-    end
-
-    click_intake_continue
-
-    expect(page).to have_content("Please select an option.")
-
-    fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
-    find("#cf-payee-code").send_keys :enter
-
-    click_intake_continue
-    expect(page).to have_current_path("/intake/add_issues")
-  end
-
-  context "when veteran is deceased" do
-    let(:veteran) do
-      Generators::Veteran.build(file_number: "123121234", date_of_death: Date.new(2017, 11, 20))
-    end
-
-    scenario "do not show veteran as a valid payee code" do
-      start_supplemental_claim(veteran)
-
-      visit "/intake"
-
-      # click on payee code dropdown
-      within_fieldset("Is the claimant someone other than the Veteran?") do
-        find("label", text: "Yes", match: :prefer_exact).click
-      end
-      find(".Select-control").click
-
-      # verify that veteran cannot be selected
-      expect(page).not_to have_content("00 - Veteran")
-      expect(page).to have_content("10 - Spouse")
-    end
-  end
-
   context "Add / Remove Issues page" do
     def check_row(label, text)
       row = find("tr", text: label)
@@ -745,7 +676,7 @@ RSpec.feature "Supplemental Claim Intake" do
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
       expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
@@ -785,6 +716,7 @@ RSpec.feature "Supplemental Claim Intake" do
           sc, = start_supplemental_claim(veteran, is_comp: false)
           create(:decision_issue,
                  decision_review: sc,
+                 profile_date: receipt_date - 1.day,
                  benefit_type: sc.benefit_type,
                  decision_text: "something was decided",
                  participant_id: veteran.participant_id)
@@ -811,8 +743,8 @@ RSpec.feature "Supplemental Claim Intake" do
 
           click_intake_add_issue
           add_intake_nonrating_issue(
-            category: "Active Duty Adjustments",
-            description: "Description for Active Duty Adjustments",
+            category: "Accrued",
+            description: "I am a description",
             date: "10/25/2017"
           )
           expect(page).to_not have_content("Establish EP")
@@ -826,7 +758,7 @@ RSpec.feature "Supplemental Claim Intake" do
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
                    review_request: sc,
-                   description: "Description for Active Duty Adjustments",
+                   issue_category: "Accrued",
                    benefit_type: sc.benefit_type
           )).to_not be_nil
         end

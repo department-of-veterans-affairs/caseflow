@@ -99,7 +99,7 @@ describe Task do
     end
   end
 
-  context "#can_be_updated_by_user?" do
+  describe "#can_be_updated_by_user?" do
     subject { task.can_be_updated_by_user?(user) }
 
     context "when user is an assignee" do
@@ -132,7 +132,7 @@ describe Task do
     end
   end
 
-  context "#prepared_by_display_name" do
+  describe "#prepared_by_display_name" do
     let(:task) { create(:task, type: "Task") }
 
     context "when there is no attorney_case_review" do
@@ -153,7 +153,7 @@ describe Task do
     end
   end
 
-  context "#latest_attorney_case_review" do
+  describe "#latest_attorney_case_review" do
     let(:task) { create(:task, type: "Task") }
 
     context "when there is no sub task" do
@@ -279,6 +279,28 @@ describe Task do
           expect(e.labels).to match_array(labels)
         end
       end
+    end
+  end
+
+  describe "#create_from_params" do
+    let!(:judge) { FactoryBot.create(:user) }
+    let!(:attorney) { FactoryBot.create(:user) }
+    let!(:appeal) { FactoryBot.create(:appeal) }
+    let!(:task) { FactoryBot.create(:task, type: "Task", appeal: appeal) }
+    let(:params) { { assigned_to: judge, appeal: task.appeal, parent_id: task.id, type: "Task" } }
+
+    before do
+      FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
+      FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+    end
+
+    subject { Task.create_from_params(params, attorney) }
+
+    it "the parent task status should be 'on hold'" do
+      expect(task.status).to eq("assigned")
+      new_task = subject
+      expect(new_task.parent_id).to eq(task.id)
+      expect(task.reload.status).to eq("on_hold")
     end
   end
 end

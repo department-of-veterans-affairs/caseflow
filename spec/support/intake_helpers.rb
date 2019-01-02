@@ -1,5 +1,131 @@
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
+  # rubocop: disable Metrics/MethodLength
+  # rubocop: disable Metrics/ParameterLists
+  def start_higher_level_review(
+    test_veteran,
+    receipt_date: 1.day.ago,
+    claim_participant_id: nil,
+    legacy_opt_in_approved: false,
+    veteran_is_not_claimant: false,
+    benefit_type: "compensation"
+  )
+
+    higher_level_review = HigherLevelReview.create!(
+      veteran_file_number: test_veteran.file_number,
+      receipt_date: receipt_date,
+      informal_conference: false, same_office: false,
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
+    )
+
+    intake = HigherLevelReviewIntake.create!(
+      veteran_file_number: test_veteran.file_number,
+      user: User.authenticate!(roles: ["Mail Intake"]),
+      started_at: 5.minutes.ago,
+      detail: higher_level_review
+    )
+
+    if claim_participant_id
+      Claimant.create!(
+        review_request: higher_level_review,
+        participant_id: claim_participant_id ? claim_participant_id : test_veteran.participant_id,
+        payee_code: claim_participant_id ? "02" : "00"
+      )
+    end
+
+    higher_level_review.start_review!
+
+    [higher_level_review, intake]
+  end
+
+  def start_supplemental_claim(
+    test_veteran,
+    receipt_date: 1.day.ago,
+    legacy_opt_in_approved: false,
+    veteran_is_not_claimant: false,
+    claim_participant_id: nil,
+    benefit_type: "compensation"
+  )
+
+    supplemental_claim = SupplementalClaim.create!(
+      veteran_file_number: test_veteran.file_number,
+      receipt_date: receipt_date,
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
+    )
+
+    intake = SupplementalClaimIntake.create!(
+      veteran_file_number: test_veteran.file_number,
+      user: User.authenticate!(roles: ["Mail Intake"]),
+      started_at: 5.minutes.ago,
+      detail: supplemental_claim
+    )
+
+    if claim_participant_id
+      Claimant.create!(
+        review_request: supplemental_claim,
+        participant_id: claim_participant_id
+      )
+    end
+
+    supplemental_claim.start_review!
+    [supplemental_claim, intake]
+  end
+
+  def start_appeal(
+    test_veteran,
+    receipt_date: 1.day.ago,
+    veteran_is_not_claimant: false,
+    legacy_opt_in_approved: false
+  )
+    appeal = Appeal.create!(
+      veteran_file_number: test_veteran.file_number,
+      receipt_date: receipt_date,
+      docket_type: "evidence_submission",
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
+    )
+
+    intake = AppealIntake.create!(
+      veteran_file_number: test_veteran.file_number,
+      user: User.authenticate!(roles: ["Mail Intake"]),
+      started_at: 5.minutes.ago,
+      detail: appeal
+    )
+
+    Claimant.create!(
+      review_request: appeal,
+      participant_id: test_veteran.participant_id
+    )
+
+    appeal.start_review!
+
+    [appeal, intake]
+  end
+  # rubocop: enable Metrics/MethodLength
+  # rubocop: enable Metrics/ParameterLists
+
+  def setup_intake_flags
+    FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:intakeAma)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
+
+    Time.zone = "America/New_York"
+    Timecop.freeze(Time.zone.today)
+
+    # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
+  end
+
+  def teardown_intake_flags
+    FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
+  end
+
   def search_page_title
     "Search for Veteran by ID"
   end
@@ -47,6 +173,11 @@ module IntakeHelpers
     fill_in "Issue description", with: description
     fill_in "Decision date", with: date
     expect(page).to have_button(add_button_text, disabled: false)
+    safe_click ".add-issue"
+  end
+
+  def add_active_intake_nonrating_issue(description)
+    find_all("label", text: description, minimum: 1).first.click
     safe_click ".add-issue"
   end
 
@@ -172,22 +303,20 @@ module IntakeHelpers
   end
 
   def setup_request_issue_with_nonrating_decision_issue(decision_review, issue_category: "Active Duty Adjustments")
-    random_date = Time.zone.now - 4.days
     create(:request_issue,
            :with_nonrating_decision_issue,
            description: "Test nonrating decision issue",
            review_request: decision_review,
-           decision_date: random_date,
+           decision_date: decision_review.receipt_date - 1.day,
            issue_category: issue_category,
            veteran_participant_id: veteran.participant_id)
   end
 
   def setup_request_issue_with_rating_decision_issue(decision_review, rating_issue_reference_id: "rating123")
-    random_date = Time.zone.now - 2.days
     create(:request_issue,
            :with_rating_decision_issue,
            rating_issue_reference_id: rating_issue_reference_id,
-           rating_issue_profile_date: random_date,
+           rating_issue_profile_date: decision_review.receipt_date - 1.day,
            description: "Test rating decision issue",
            review_request: decision_review,
            veteran_participant_id: veteran.participant_id)

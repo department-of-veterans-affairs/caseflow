@@ -258,27 +258,29 @@ RSpec.feature "Higher-Level Review" do
 
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-      claim_hash: {
-        benefit_type_code: "1",
-        payee_code: "10",
-        predischarge: false,
-        claim_type: "Claim",
-        station_of_jurisdiction: "499",
-        date: higher_level_review.receipt_date.to_date,
-        end_product_modifier: "033",
-        end_product_label: "Higher-Level Review Rating",
-        end_product_code: HigherLevelReview::END_PRODUCT_RATING_CODE,
-        gulf_war_registry: false,
-        suppress_acknowledgement_letter: false,
-        claimant_participant_id: "5382910292"
-      },
-      veteran_hash: intake.veteran.to_vbms_hash,
-      user: current_user
+      hash_including(
+        claim_hash: hash_including(
+          benefit_type_code: "1",
+          payee_code: "10",
+          predischarge: false,
+          claim_type: "Claim",
+          station_of_jurisdiction: "499",
+          date: higher_level_review.receipt_date.to_date,
+          end_product_modifier: "033",
+          end_product_label: "Higher-Level Review Rating",
+          end_product_code: HigherLevelReview::END_PRODUCT_CODES[:rating],
+          gulf_war_registry: false,
+          suppress_acknowledgement_letter: false,
+          claimant_participant_id: "5382910292"
+        ),
+        veteran_hash: intake.veteran.to_vbms_hash,
+        user: current_user
+      )
     )
 
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: HigherLevelReview::END_PRODUCT_RATING_CODE
+      code: HigherLevelReview::END_PRODUCT_CODES[:rating]
     )
 
     expect(ratings_end_product_establishment).to have_attributes(
@@ -297,7 +299,7 @@ RSpec.feature "Higher-Level Review" do
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
         end_product_label: "Higher-Level Review Nonrating",
-        end_product_code: HigherLevelReview::END_PRODUCT_NONRATING_CODE,
+        end_product_code: HigherLevelReview::END_PRODUCT_CODES[:nonrating],
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       ),
@@ -307,7 +309,7 @@ RSpec.feature "Higher-Level Review" do
 
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: HigherLevelReview::END_PRODUCT_NONRATING_CODE
+      code: HigherLevelReview::END_PRODUCT_CODES[:nonrating]
     )
 
     expect(nonratings_end_product_establishment).to have_attributes(
@@ -466,61 +468,6 @@ RSpec.feature "Higher-Level Review" do
     )
   end
 
-  it "Requires Payee Code for compensation and pension benefit types and non-Veteran claimant" do
-    intake = HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: current_user)
-    intake.start!
-    visit "/intake"
-
-    expect(page).to have_current_path("/intake/review_request")
-
-    within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Compensation", match: :prefer_exact).click
-    end
-
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2019"
-
-    within_fieldset("Was an informal conference requested?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
-
-    within_fieldset("Was an interview by the same office requested?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
-
-    within_fieldset("Is the claimant someone other than the Veteran?") do
-      find("label", text: "Yes", match: :prefer_exact).click
-    end
-
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
-
-    find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
-
-    click_intake_continue
-
-    expect(page).to have_content(
-      "Receipt date cannot be in the future."
-    )
-    expect(page).to have_content("Please select an option.")
-
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
-
-    within_fieldset("What is the Benefit Type?") do
-      find("label", text: "Pension", match: :prefer_exact).click
-    end
-
-    click_intake_continue
-
-    expect(page).to have_content("Please select an option.")
-
-    fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
-    find("#cf-payee-code").send_keys :enter
-
-    click_intake_continue
-    expect(page).to have_current_path("/intake/add_issues")
-  end
-
   it "Shows a review error when something goes wrong" do
     start_higher_level_review(veteran_no_ratings)
     visit "/intake"
@@ -586,27 +533,6 @@ RSpec.feature "Higher-Level Review" do
     click_intake_finish
 
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
-  end
-
-  context "when veteran is deceased" do
-    let(:veteran) do
-      Generators::Veteran.build(file_number: "123121234", date_of_death: Date.new(2017, 11, 20))
-    end
-
-    scenario "do not show veteran as a valid payee code" do
-      start_higher_level_review(veteran)
-      visit "/intake"
-
-      # click on payee code dropdown
-      within_fieldset("Is the claimant someone other than the Veteran?") do
-        find("label", text: "Yes", match: :prefer_exact).click
-      end
-      find(".Select-control").click
-
-      # verify that veteran cannot be selected
-      expect(page).not_to have_content("00 - Veteran")
-      expect(page).to have_content("10 - Spouse")
-    end
   end
 
   context "Add / Remove Issues page" do
@@ -1030,7 +956,7 @@ RSpec.feature "Higher-Level Review" do
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
       expect(duplicate_request_issues).to include(request_issue_in_progress)
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
@@ -1059,6 +985,42 @@ RSpec.feature "Higher-Level Review" do
       )
     end
 
+    context "when veteran has active nonrating request issues" do
+      let(:another_higher_level_review) { create(:higher_level_review) }
+      let!(:active_nonrating_request_issue) do
+        create(:request_issue_with_epe,
+               :nonrating,
+               veteran_participant_id: veteran.participant_id,
+               review_request: another_higher_level_review)
+      end
+
+      scenario "shows ineligibility message and saves conflicting request issue id" do
+        hlr, = start_higher_level_review(veteran)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+        click_intake_no_matching_issues
+
+        fill_in "Issue category", with: active_nonrating_request_issue.issue_category
+        find("#issue-category").send_keys :enter
+        expect(page).to have_content("Does issue 1 match any of the issues actively being reviewed?")
+        expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+                                     "#{active_nonrating_request_issue.description}")
+        add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
+        expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+                                     " #{active_nonrating_request_issue.description}" \
+                                     " is ineligible because it's already under review as a Higher-Level Review")
+
+        click_intake_finish
+        expect(page).to have_content("Intake completed")
+        expect(RequestIssue.find_by(review_request: hlr,
+                                    issue_category: active_nonrating_request_issue.issue_category,
+                                    ineligible_due_to: active_nonrating_request_issue.id,
+                                    ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
+                                    description: active_nonrating_request_issue.description,
+                                    decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
+      end
+    end
+
     it "Shows a review error when something goes wrong" do
       start_higher_level_review(veteran)
       visit "/intake/add_issues"
@@ -1081,14 +1043,22 @@ RSpec.feature "Higher-Level Review" do
           hlr, = start_higher_level_review(veteran, is_comp: false)
           create(:decision_issue,
                  decision_review: hlr,
+                 profile_date: receipt_date - 1.day,
                  benefit_type: hlr.benefit_type,
-                 decision_text: "something was decided",
+                 decision_text: "something was decided in the past",
+                 participant_id: veteran.participant_id)
+          create(:decision_issue,
+                 decision_review: hlr,
+                 profile_date: receipt_date + 1.day,
+                 benefit_type: hlr.benefit_type,
+                 decision_text: "something was decided in the future",
                  participant_id: veteran.participant_id)
 
           visit "/intake/add_issues"
           click_intake_add_issue
 
-          expect(page).to have_content("something was decided")
+          expect(page).to have_content("something was decided in the past")
+          expect(page).to_not have_content("something was decided in the future")
           expect(page).to_not have_content("Left knee granted")
         end
       end
@@ -1106,8 +1076,8 @@ RSpec.feature "Higher-Level Review" do
           expect(page).to_not have_content("Left knee granted")
 
           add_intake_nonrating_issue(
-            category: "Active Duty Adjustments",
-            description: "Description for Active Duty Adjustments",
+            category: "Accrued",
+            description: "I am a description",
             date: "10/25/2017"
           )
           expect(page).to_not have_content("Establish EP")
@@ -1118,7 +1088,7 @@ RSpec.feature "Higher-Level Review" do
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
                    review_request: hlr,
-                   description: "Description for Active Duty Adjustments",
+                   issue_category: "Accrued",
                    benefit_type: hlr.benefit_type
           )).to_not be_nil
         end
@@ -1239,6 +1209,19 @@ RSpec.feature "Higher-Level Review" do
           )).to_not be_nil
 
           expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
+
+          expect(LegacyIssueOptin.all.count).to eq(1)
+
+          li_optin = LegacyIssueOptin.first
+
+          expect(li_optin.optin_processed_at).to_not be_nil
+          expect(li_optin).to have_attributes(
+            vacols_id: "vacols1",
+            vacols_sequence_id: 1
+          )
+          expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
+            LegacyIssueOptin::VACOLS_DISPOSITION_CODE
+          )
         end
       end
 
