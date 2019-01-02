@@ -15,12 +15,24 @@ class AppealRepository
     end
   end
 
+  def self.find_case_record(id)
+    VACOLS::Case.includes(:folder, :correspondent, :representatives).find(id)
+  end
+
+  def self.vacols_records_for_appeals(ids)
+    MetricsService.record("VACOLS: eager_load_legacy_appeals_batch",
+                          service: :vacols,
+                          name: "eager_load_legacy_appeals_batch") do
+      find_case_record(ids)
+    end
+  end
+
   # Returns a boolean saying whether the load succeeded
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
                                         name: "load_vacols_data") do
-      VACOLS::Case.includes(:folder, :correspondent, :representatives).find(appeal.vacols_id)
+      find_case_record(appeal.vacols_id)
     end
 
     set_vacols_values(appeal: appeal, case_record: case_record)
