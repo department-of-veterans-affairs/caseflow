@@ -201,6 +201,27 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.on_decision_issue_sync_processed
   end
 
+  def create_legacy_issue_optin
+    LegacyIssueOptin.create!(
+      request_issue: self,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id,
+      original_disposition_code: vacols_issue.disposition_id,
+      original_disposition_date: vacols_issue.disposition_date
+    )
+  end
+
+  def vacols_issue
+    return unless vacols_id && vacols_sequence_id
+    @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
+      issue.vacols_sequence_id == vacols_sequence_id
+    end
+  end
+
+  def legacy_issue_opted_in?
+    eligible? && vacols_id && vacols_sequence_id
+  end
+
   private
 
   def build_contested_issue
@@ -222,14 +243,6 @@ class RequestIssue < ApplicationRecord
 
   def duplicate_of_issue_in_active_review?
     duplicate_of_rating_issue_in_active_review? || duplicate_of_nonrating_issue_in_active_review?
-  end
-
-  def vacols_issue
-    return unless vacols_id && vacols_sequence_id
-    @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
-      # coerce both into strings since VACOLS may store as int
-      issue.vacols_sequence_id.to_s == vacols_sequence_id.to_s
-    end
   end
 
   def create_decision_issues
