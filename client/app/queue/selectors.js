@@ -221,16 +221,16 @@ export const onHoldTasksForAttorney: (State) => Array<Task> = createSelector(
   }
 );
 
-export const judgeReviewTasksSelector = createSelector(
+export const judgeDecisionReviewTasksSelector = createSelector(
   [tasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task: TaskWithAppeal) => {
     if (task.appealType === 'Appeal') {
-      return task.label === 'review' &&
+      return (['review', 'quality review'].includes(task.label)) &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
     // eslint-disable-next-line no-undefined
-    return [null, undefined, 'review'].includes(task.label);
+    return [null, undefined, 'review', 'quality review'].includes(task.label);
   })
 );
 

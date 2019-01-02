@@ -274,6 +274,7 @@ class Appeal < DecisionReview
   def contestable_decision_issues
     DecisionIssue.where(participant_id: veteran.participant_id)
       .where.not(decision_review_type: "Appeal")
+      .select { |issue| issue.approx_decision_date && issue.approx_decision_date < receipt_date }
   end
 
   def bgs
