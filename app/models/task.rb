@@ -105,12 +105,6 @@ class Task < ApplicationRecord
     [self]
   end
 
-  def update_status(new_status)
-    return unless new_status
-
-    update!(status: new_status)
-  end
-
   def legacy?
     appeal_type == LegacyAppeal.name
   end

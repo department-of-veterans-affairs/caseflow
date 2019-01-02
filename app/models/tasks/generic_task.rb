@@ -51,7 +51,7 @@ class GenericTask < Task
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    update_status(params[:status])
+    update!(params[:status]) if params[:status]
 
     [self]
   end
@@ -93,7 +93,7 @@ class GenericTask < Task
 
       params = modify_params(params)
       child = create_child_task(parent, user, params)
-      parent.update_status(params[:status])
+      parent.update!(status: params[:status]) if params[:status]
       child
     end
 
@@ -101,7 +101,7 @@ class GenericTask < Task
       # Create an assignee from the input arguments so we throw an error if the assignee does not exist.
       assignee = Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
 
-      parent.update_status(Constants.TASK_STATUSES.on_hold)
+      parent.update!(status: Constants.TASK_STATUSES.on_hold)
 
       Task.create!(
         type: name,

@@ -40,7 +40,7 @@ class JudgeTask < Task
 
     params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
 
-    update_status(params.delete("status")) if params.key?("status")
+    update!(status: params.delete("status")) if params.key?("status")
     update(params)
 
     [self]
