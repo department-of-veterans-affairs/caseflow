@@ -114,7 +114,8 @@ RSpec.feature "Reader" do
   end
 
   let(:documents) { [] }
-
+  let(:file_number) { '123456789' }
+  let!(:ama_appeal) { Appeal.create(veteran_file_number: file_number)}
   let!(:appeal) do
     Generators::LegacyAppealV2.create(documents: documents)
   end
@@ -138,7 +139,8 @@ RSpec.feature "Reader" do
             Generators::Tag.create(text: "New Tag1"),
             Generators::Tag.create(text: "New Tag2")
           ],
-          description: Generators::Random.word_characters(50)
+          description: Generators::Random.word_characters(50),
+          file_number: file_number
         ),
         Generators::Document.create(
           filename: "My Form 9",
@@ -746,6 +748,20 @@ RSpec.feature "Reader" do
 
         # This filter is the blue highlight around the comment icon
         find("g[filter=\"url(##{id})\"]")
+      end
+
+      scenario "Follow comment deep link" do
+        visit "/annotation/#{documents[0].annotations[0].id}"
+
+        # Ensure we are redirected to the correct document
+        expect(current_path).to have_content("/documents/#{documents[0].id}")
+
+        # TODO: Ensure we are on the right page
+      end
+
+      scenario "404 on bad comment id" do
+        visit "/annotation/#{annotations.length}"
+        expect(page).to have_content("Page not found")
       end
 
       scenario "Scrolling pages changes page numbers" do
