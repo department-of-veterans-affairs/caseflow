@@ -195,8 +195,9 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       <dd><OnHoldLabel task={task} /></dd></div> : this.daysSinceTaskAssignmentListItem(task);
   }
 
-  showActionsListItem = (task) => {
-    return  ? <div></div> : null;
+  showActionsListItem = (task, appeal) => {
+    return this.showActionsSection(task) ? <div><h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
+      <ActionsDropdown task={task} appealId={appeal.externalId} /></div> : null;
   }
 
   taskInformation = (task) => {
@@ -264,17 +265,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
     const taskLength = this.props.tasks.length;
 
-    const ShowActionsSectionListItem = ({ task }) => {
-      if (!this.showActionsSection(task)) {
-        return null;
-      }
-
-      return <React.Fragment>
-        <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-        <ActionsDropdown task={task} appealId={appeal.externalId} />
-      </React.Fragment>;
-    };
-
     if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>
         <tr>
@@ -293,8 +283,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskActionsContainerStyling}>
-            <ShowActionsSectionListItem task={task} />
-            { this.showActionsListItem(task) }
+            { this.showActionsListItem(task, appeal) }
           </td>
         </tr>);
     }
