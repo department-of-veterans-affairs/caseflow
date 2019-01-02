@@ -130,6 +130,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       {instructions.map((text, i) => <React.Fragment><span key={i}>{text}</span><br /></React.Fragment>)}
     </React.Fragment>;
   }
+
   taskInformation = (task) => {
     const assignedByAbbrev = task.assignedBy.firstName ?
       this.getAbbrevName(task.assignedBy) : null;
@@ -167,11 +168,11 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       }
     </React.Fragment>;
   }
+
   legacyTaskInformation = (task) => {
     // If this is not a task attached to a legacy appeal, use taskInformation.
 
-    // TODO - isLegacy is not properly set to true in legacy cases (@lowell)
-    if (!this.props.appeal.isLegacyAppeal) {
+    if (!this.props.appeal.isLegacy) {
       return this.taskInformation(task);
     }
     const {
@@ -184,21 +185,17 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
     </React.Fragment> : null;
 
-    // TODO - are these conditionals accurate? (@lowell)
-
     if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
 
       const assignedByFirstName = task.assignedBy.firstName;
       const assignedByLastName = task.assignedBy.lastName;
 
-      // Assigned to
       if (!assignedByFirstName ||
           !assignedByLastName ||
           (userRole === USER_ROLE_TYPES.judge && !task.documentId)) {
         return assignedToListItem;
       }
 
-      // Assigned by
       if (userRole === USER_ROLE_TYPES.judge) {
         return <React.Fragment>
           <dt>{COPY.TASK_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{assignedByAbbrev}</dd>
