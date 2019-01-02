@@ -84,8 +84,6 @@ class ColocatedTask < Task
   private
 
   def update_location_in_vacols
-    # byebug
-
     if saved_change_to_status? &&
        completed? &&
        appeal_type == LegacyAppeal.name &&
