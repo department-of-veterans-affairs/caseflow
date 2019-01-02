@@ -130,7 +130,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       {instructions.map((text, i) => <React.Fragment><span key={i}>{text}</span><br /></React.Fragment>)}
     </React.Fragment>;
   }
-
   taskInformation = (task) => {
     const assignedByAbbrev = task.assignedBy.firstName ?
       this.getAbbrevName(task.assignedBy) : null;
@@ -171,10 +170,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       }
     </React.Fragment>;
   }
-
   legacyTaskInformation = (task) => {
     // If this is not a task attached to a legacy appeal, use taskInformation.
-
     if (!this.props.appeal.isLegacy) {
       return this.taskInformation(task);
     }
@@ -258,18 +255,18 @@ export class TaskSnapshot extends React.PureComponent<Props> {
                   <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd>
                 </React.Fragment>
               }
+              { task.dueOn &&
+                <React.Fragment>
+                  <dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
+                  <dd><DateString date={task.dueOn} dateFormat="MM/DD/YYYY" /></dd>
+                </React.Fragment>
+              }
               { taskIsOnHold(task) ?
                 <React.Fragment>
                   <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
                   <dd><OnHoldLabel task={task} /></dd>
                 </React.Fragment> :
                 this.daysSinceTaskAssignmentListItem(task)
-              }
-              { task.dueOn &&
-                <React.Fragment>
-                  <dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
-                  <dd><DateString date={task.dueOn} dateFormat="MM/DD/YYYY" /></dd>
-                </React.Fragment>
               }
             </CaseDetailsDescriptionList>
           </td>
