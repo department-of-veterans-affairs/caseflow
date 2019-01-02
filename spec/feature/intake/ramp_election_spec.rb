@@ -1,14 +1,12 @@
-require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "RAMP Election Intake" do
+feature "RAMP Election Intake" do
   include IntakeHelpers
 
   before do
     FeatureToggle.enable!(:intake)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 12, 8))
+    Timecop.freeze(post_ramp_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
