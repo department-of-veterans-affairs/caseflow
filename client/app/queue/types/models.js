@@ -166,7 +166,7 @@ export type ClaimReview = {
   caseflowVeteranId: string,
   claimId: number,
   claimantNames: ?Array<string>,
-  endProducts: ?Array<object>,
+  endProducts: ?Array<Object>,
   reviewType: string,
   veteranFileNumber: string,
   veteranFullName: string

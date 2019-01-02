@@ -90,7 +90,7 @@ class CaseListTable extends React.PureComponent {
         review.endProducts.map((endProduct, i) => {
           const epStatus = endProduct.synced_status ?
             EP_STATUSES[endProduct.synced_status] :
-            EP_STATUSES['PROCESSING'];
+            EP_STATUSES.PROCESSING;
 
           return <SubdividedTableRow rowNumber={i}>{epStatus}</SubdividedTableRow>;
         }) : ''

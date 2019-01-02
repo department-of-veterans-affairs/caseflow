@@ -4,7 +4,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -62,7 +61,6 @@ class CaseListView extends React.PureComponent {
   </React.Fragment>;
 
   caseListTable = () => {
-    let otherReviewsTable;
     const appealsCount = this.props.appeals.length;
 
     if (!appealsCount) {
@@ -72,12 +70,6 @@ class CaseListView extends React.PureComponent {
         <p><Link href="/help">Caseflow Help</Link></p>
       </div>;
     }
-
-    // const claimReviewsCount = this.props.claimReviews && this.props.claimReviews.length;
-
-    // if (claimReviewsCount) {
-    //   otherReviewsTable = <OtherReviewsTable reviews={this.props.claimReviews} />;
-    // }
 
     // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
     // the same for all appeals in the list.
