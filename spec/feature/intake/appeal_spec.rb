@@ -368,7 +368,6 @@ feature "Appeal Intake" do
     visit "/intake/add_issues"
 
     expect(page).to have_content("Add / Remove Issues")
-    check_row("Form", Constants.INTAKE_FORM_NAMES.appeal)
     check_row("Review option", "Evidence Submission")
     check_row("Claimant", "Ed Merica")
 
