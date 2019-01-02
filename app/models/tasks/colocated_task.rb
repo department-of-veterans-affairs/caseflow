@@ -1,6 +1,4 @@
 class ColocatedTask < Task
-  include RoundRobinAssigner
-
   validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validate :assigned_by_role_is_valid
   validates :assigned_by, presence: true
@@ -14,7 +12,7 @@ class ColocatedTask < Task
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
-        assignee = next_assignee
+        assignee = Colocated.singleton.next_assignee(ColocatedTask.name)
         records = params_array.map do |params|
           team_task = create_from_params(
             params.merge(assigned_to: Colocated.singleton, status: Constants.TASK_STATUSES.on_hold), user
@@ -38,6 +36,10 @@ class ColocatedTask < Task
     def list_of_assignees
       Colocated.singleton.non_admins.sort_by(&:id).pluck(:css_id)
     end
+  end
+
+  def automatically_assign_org_task?
+    false
   end
 
   def available_actions(_user)
@@ -82,6 +84,8 @@ class ColocatedTask < Task
   private
 
   def update_location_in_vacols
+    # byebug
+
     if saved_change_to_status? &&
        completed? &&
        appeal_type == LegacyAppeal.name &&

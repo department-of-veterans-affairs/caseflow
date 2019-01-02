@@ -21,6 +21,14 @@ class Organization < ApplicationRecord
     true
   end
 
+  def next_assignee(_task_type)
+    nil
+  end
+
+  def automatically_assign_to_member?(task_type)
+    !!next_assignee(task_type)
+  end
+
   def selectable_in_queue?
     true
   end
