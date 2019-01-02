@@ -335,8 +335,7 @@ RSpec.feature "Case details" do
     end
 
     scenario "displays who prepared task" do
-      tasks = LegacyWorkQueue.tasks_with_appeals(judge_user, "judge")
-      task = tasks.first
+      task = LegacyWorkQueue.tasks_for_user(judge_user).first
       appeal = task.appeal
 
       visit "/queue"
