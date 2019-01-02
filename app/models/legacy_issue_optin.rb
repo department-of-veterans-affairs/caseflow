@@ -4,9 +4,13 @@ class LegacyIssueOptin < ApplicationRecord
   VACOLS_DISPOSITION_CODE = "O".freeze # oh not zero
   REMAND_DISPOSITION_CODES = %w[3 L].freeze
 
+  delegate :vacols_id, :vacols_id=, :vacols_sequence_id, :vacols_sequence_id=, to: :request_issue
+
   class << self
     def related_remand_issues(vacols_id)
-      where(vacols_id: vacols_id, original_disposition_code: REMAND_DISPOSITION_CODES)
+      joins(:request_issue)
+        .where("request_issues.vacols_id = ?", vacols_id)
+        .where(original_disposition_code: REMAND_DISPOSITION_CODES)
     end
 
     def revert_opted_in_remand_issues(vacols_id)
