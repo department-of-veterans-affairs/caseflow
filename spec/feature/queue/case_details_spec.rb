@@ -81,7 +81,7 @@ RSpec.feature "Case details" do
 
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
         expect(page).to have_content("Type: #{hearing_preference}")
-        expect(page).to have_content("Date: #{hearing.date.strftime('%-m/%-e/%y')}")
+        expect(page).to have_content("Date: #{hearing.date.strftime('%-m/%-d/%y')}")
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
       end
 
@@ -595,7 +595,7 @@ RSpec.feature "Case details" do
         visit "/queue/appeals/#{appeal.uuid}"
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-        expect(page).to have_content(task.assigned_at.strftime("%-m/%-e/%Y"))
+        expect(page).to have_content(task.assigned_at.strftime("%m/%d/%Y")) # rubocop:disable Style/FormatStringToken
         expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} #{task.assigned_to.css_id}")
         expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase)
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
@@ -622,17 +622,18 @@ RSpec.feature "Case details" do
       end
       it "two tasks are displayed in the TaskSnapshot" do
         visit "/queue/appeals/#{appeal.uuid}"
-
-        expect(page).to have_content(task2.assigned_at.strftime("%-m/%-e/%Y"))
+        # rubocop:disable Style/FormatStringToken
+        expect(page).to have_content(task2.assigned_at.strftime("%m/%d/%Y"))
         expect(page).to have_content(task2.assigned_to.css_id)
-        expect(page).to have_content(task3.assigned_at.strftime("%-m/%-e/%Y"))
+        expect(page).to have_content(task3.assigned_at.strftime("%m/%d/%Y"))
         expect(page).to have_content(task3.assigned_to.css_id)
         expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL.upcase} \
-                                      #{task2.assigned_at.strftime('%-m/%-e/%Y')} \
+                                      #{task2.assigned_at.strftime('%m/%d/%Y')} \
                                       #{COPY::TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL.upcase}")
         expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} \
                                       #{task3.assigned_to.css_id} \
                                       #{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase}")
+        # rubocop:enable Style/FormatStringToken
       end
     end
   end
@@ -655,7 +656,9 @@ RSpec.feature "Case details" do
         visit "/queue/appeals/#{legacy_appeal.vacols_id}"
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-        expect(page).to have_content(legacy_task.assigned_at.strftime("%-m/%-e/%Y"))
+        # rubocop:disable Style/FormatStringToken
+        expect(page).to have_content(legacy_task.assigned_at.strftime("%m/%d/%Y"))
+        # rubocop:enable Style/FormatStringToken
       end
     end
   end
