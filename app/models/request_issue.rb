@@ -298,6 +298,7 @@ class RequestIssue < ApplicationRecord
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
   def fetch_contested_rating_issue_ui_hash
+    return {} unless review_request.serialized_ratings
     rating_with_issue = review_request.serialized_ratings.find do |rating|
       rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
     end || { issues: [] }
