@@ -582,10 +582,11 @@ RSpec.feature "Case details" do
       create(:root_task, appeal: appeal, assigned_to: judge_user,
                          status: Constants.TASK_STATUSES.assigned)
     end
+    let(:instructions_text) { "note #1" }
     let!(:task) do
       create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
                     assigned_by: judge_user, assigned_to: attorney_user, type: GenericTask,
-                    parent_id: root_task.id, started_at: rand(1..10).days.ago)
+                    parent_id: root_task.id, started_at: rand(1..10).days.ago, instructions: [instructions_text])
     end
 
     context "single task" do
@@ -597,6 +598,14 @@ RSpec.feature "Case details" do
         expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} #{task.assigned_to.css_id}")
         expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase)
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
+      end
+      it "Show/hide task instructions" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        expect(page).to have_content(instructions_text)
+        find("button", text: COPY::TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL).click
+        expect(page).to_not have_content(instructions_text)
       end
     end
     context "multiple tasks" do
