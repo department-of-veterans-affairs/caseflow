@@ -658,7 +658,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         # rubocop:disable Style/FormatStringToken
         expect(page).to have_content(legacy_task.assigned_at.strftime("%m/%d/%Y"))
-        # rubocop:disable Style/FormatStringToken
+        # rubocop:enable Style/FormatStringToken
       end
     end
   end
