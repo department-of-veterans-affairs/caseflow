@@ -138,7 +138,10 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       this.getAbbrevName(task.decisionPreparedBy) : null;
 
     return <React.Fragment>
-      <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{task.assignedTo.cssId}</dd>
+      { task.assignedTo.cssId &&
+        <React.Fragment>
+          <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{task.assignedTo.cssId}</dd>
+        </React.Fragment> }
       { assignedByAbbrev &&
         <React.Fragment>
           <dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
