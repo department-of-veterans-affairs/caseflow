@@ -461,7 +461,7 @@ class SeedDB
                                          eligible_request_issue,
                                          untimely_request_issue
                                        ])
-    higher_level_review.process_end_product_establishments!
+    higher_level_review.establish!
 
     SupplementalClaim.create(
       veteran_file_number: veteran.file_number,
