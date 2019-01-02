@@ -1,7 +1,7 @@
 describe Distribution do
   let(:judge) { FactoryBot.create(:user) }
   let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
-  let(:member_count) { 3 }
+  let(:member_count) { 5 }
   let(:attorneys) { FactoryBot.create_list(:user, member_count) }
   let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge.css_id) }
 
@@ -15,7 +15,7 @@ describe Distribution do
     # set up a couple of extra judge teams
     2.times do
       team = JudgeTeam.create_for_judge(FactoryBot.create(:user))
-      FactoryBot.create_list(:user, 3).each do |attorney|
+      FactoryBot.create_list(:user, 5).each do |attorney|
         OrganizationsUser.add_user_to_organization(attorney, team)
       end
     end
