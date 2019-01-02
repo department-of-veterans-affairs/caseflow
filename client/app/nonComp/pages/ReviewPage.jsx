@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import NonCompTabs from '../components/NonCompTabs';
 import Button from '../../components/Button';
 
-class NonCompPageUnconnected extends React.PureComponent {
+class NonCompReviewsPage extends React.PureComponent {
   render = () => {
     return <div>
       <h1>{this.props.businessLine}</h1>
@@ -28,10 +28,10 @@ class NonCompPageUnconnected extends React.PureComponent {
   }
 }
 
-const NonCompPage = connect(
+const ReviewPage = connect(
   (state) => ({
     businessLine: state.businessLine
   })
-)(NonCompPageUnconnected);
+)(NonCompReviewsPage);
 
-export default NonCompPage;
+export default ReviewPage;
