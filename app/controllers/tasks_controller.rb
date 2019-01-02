@@ -15,13 +15,6 @@ class TasksController < ApplicationController
     InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
 
-  QUEUES = {
-    attorney: AttorneyQueue,
-    colocated: ColocatedQueue,
-    judge: JudgeQueue,
-    generic: GenericQueue
-  }.freeze
-
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -98,7 +91,7 @@ class TasksController < ApplicationController
 
     tasks = appeal.tasks
     if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
-      legacy_appeal_tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], user_role)
+      legacy_appeal_tasks = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(params[:appeal_id], user_role)
       tasks = (legacy_appeal_tasks + tasks).uniq
     end
 
@@ -123,7 +116,7 @@ class TasksController < ApplicationController
   end
 
   def queue_class
-    QUEUES[user_role.try(:to_sym)] || QUEUES[:generic]
+    (user_role == "attorney") ? AttorneyQueue : GenericQueue
   end
 
   def user_role
