@@ -5,6 +5,8 @@ class DecisionDocument < ApplicationRecord
   class NoFileError < StandardError; end
 
   belongs_to :appeal
+  has_many :end_product_establishments, as: :source
+
   validates :citation_number, format: { with: /\AA\d{8}\Z/i }
 
   attr_writer :file
@@ -36,7 +38,9 @@ class DecisionDocument < ApplicationRecord
 
   def process!
     attempted!
-    VBMSService.upload_document_to_vbms(appeal, self)
+    upload_to_vbms!
+    create_board_grant_effectuations!
+    process_board_grant_effectuations!
     processed!
   rescue StandardError => err
     update_error!(err.to_s)
@@ -44,6 +48,22 @@ class DecisionDocument < ApplicationRecord
   end
 
   private
+
+  # on create it finds or creates the appropriate end product establishment
+  def create_board_grant_effectuations!
+    appeal.decision_issues.each do |granted_decision_issue|
+      BoardGrantEffectuation.find_or_create_by(granted_decision_issue: granted_decision_issue)
+    end
+  end
+
+  def process_board_grant_effectuations!
+    # for each unprocessed end product establishment, establish it and create contentions
+  end
+
+  def upload_to_vbms!
+    VBMSService.upload_document_to_vbms(appeal, self)
+    # set uploaded_to_vbms_at
+  end
 
   def upload_enabled?
     FeatureToggle.enabled?(:decision_document_upload, user: RequestStore.store[:current_user])

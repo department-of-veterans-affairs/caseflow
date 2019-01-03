@@ -58,13 +58,57 @@ describe DecisionDocument do
     subject { decision_document.process! }
 
     context "when processing was successful" do
-      it "works" do
-        expect(VBMSService).to receive(:upload_document_to_vbms).with(decision_document.appeal, decision_document)
+      context "when no granted issues" do
+        it "uploads document and does not create effectuations" do
+          expect(VBMSService).to receive(:upload_document_to_vbms).with(decision_document.appeal, decision_document)
 
-        subject
+          subject
 
-        expect(decision_document.attempted_at).to eq(Time.zone.now)
-        expect(decision_document.processed_at).to eq(Time.zone.now)
+          expect(decision_document.attempted_at).to eq(Time.zone.now)
+          expect(decision_document.processed_at).to eq(Time.zone.now)
+        end
+      end
+
+      context "when granted compensation issues" do
+        let!(:granted_issue) do
+          FactoryBot.create(
+            :decision_issue,
+            disposition: "allowed",
+            decision_review: decision_document.appeal
+          )
+        end
+
+        let!(:another_granted_issue) do
+          FactoryBot.create(
+            :decision_issue,
+            disposition: "allowed",
+            decision_review: decision_document.appeal
+          )
+        end
+
+        it "uploads document and creates effectuations" do
+          expect(VBMSService).to receive(:upload_document_to_vbms).with(decision_document.appeal, decision_document)
+
+          subject
+
+          expect(granted_issue.effectuation).to_not be_nil
+          expect(granted_issue.effectuation).to have_attributes(
+            appeal: decision_document.appeal,
+            decision_document: decision_document,
+            granted_decision_issue: granted_issue
+          )
+
+          expect(another_granted_issue.effectuation).to_not be_nil
+
+          # some extra broader assertions to make sure the end products are the same for both issues
+          expect(granted_issue.effectuation.end_product_establishment).to_not be_nil
+          expect(granted_issue.effectuation.end_product_establishment).to eq(
+            another_granted_issue.effectuation.end_product_establishment
+          )
+
+          expect(decision_document.attempted_at).to eq(Time.zone.now)
+          expect(decision_document.processed_at).to eq(Time.zone.now)
+        end
       end
     end
 

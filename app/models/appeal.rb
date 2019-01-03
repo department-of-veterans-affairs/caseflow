@@ -3,7 +3,7 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
-  has_many :decision_issues, through: :request_issues
+  has_many :decision_issues, as: :decision_review
   has_many :decision_documents
   has_one :special_issue_list
 
@@ -123,7 +123,13 @@ class Appeal < DecisionReview
   end
 
   def decision_date
-    decision_documents.last.try(:decision_date)
+    decision_document.try(:decision_date)
+  end
+
+  # TODO: Why is decision_documents a has_many? It seems like there should only ever be one
+  # .      decision document per appeal.
+  def decision_document
+    decision_documents.last
   end
 
   def hearing_docket?
