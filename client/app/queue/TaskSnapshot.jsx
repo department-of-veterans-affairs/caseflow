@@ -28,6 +28,7 @@ import {
   sectionHeadingStyling,
   anchorJumpLinkStyling
 } from './StickyNavContentArea';
+import Button from '../components/Button';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -42,7 +43,8 @@ export const grayLineStyling = css({
 const taskContainerStyling = css({
   border: 'none',
   verticalAlign: 'top',
-  padding: '3px'
+  padding: '3px',
+  paddingBottom: '3rem'
 });
 
 const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
@@ -74,6 +76,19 @@ type Props = Params & {|
 |};
 
 export class TaskSnapshot extends React.PureComponent<Props> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      taskInstructionsIsVisible: false
+    };
+  }
+
+  toggleTaskInstructionsVisibility = () => {
+    const prevState = this.state.taskInstructionsIsVisible;
+
+    this.setState({ taskInstructionsIsVisible: !prevState });
+  }
+
   daysSinceTaskAssignmentListItem = (task) => {
     if (task) {
       const today = moment().startOf('day');
@@ -142,10 +157,20 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         </React.Fragment>
       }
       { task.instructions && task.instructions.length > 0 &&
-        <React.Fragment>
-          <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
-          <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
-        </React.Fragment> }
+        <div>
+          { this.state.taskInstructionsIsVisible &&
+          <React.Fragment>
+            <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+            <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
+          </React.Fragment> }
+          <Button
+            linkStyling
+            styling={css({ padding: '0' })}
+            name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
+              COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
+            onClick={this.toggleTaskInstructionsVisibility} />
+        </div>
+      }
     </React.Fragment>;
   }
   legacyTaskInformation = (task) => {
@@ -159,9 +184,9 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
     const assignedByAbbrev = task.assignedBy.firstName ?
       this.getAbbrevName(task.assignedBy) : null;
-    const assignedToListItem = <React.Fragment>
+    const assignedToListItem = this.props.appeal.locationCode ? <React.Fragment>
       <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
-    </React.Fragment>;
+    </React.Fragment> : null;
 
     if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
 
@@ -205,10 +230,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
         <dd>{task.addedByName}</dd>
       </React.Fragment> }
-      <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-      <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YY" /></dd>
-      <dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
-      <dd><DateString date={task.dueOn} dateFormat="MM/DD/YY" /></dd>
     </React.Fragment>;
   };
 
@@ -227,9 +248,18 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         <tr>
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
-              <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-              <dd>{task && task.assignedOn &&
-                moment(task.assignedOn).format('MM/DD/YYYY')}</dd>
+              { task.assignedOn &&
+                <React.Fragment>
+                  <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
+                  <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd>
+                </React.Fragment>
+              }
+              { task.dueOn &&
+                <React.Fragment>
+                  <dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
+                  <dd><DateString date={task.dueOn} dateFormat="MM/DD/YYYY" /></dd>
+                </React.Fragment>
+              }
               {this.daysSinceTaskAssignmentListItem(task)}
             </CaseDetailsDescriptionList>
           </td>

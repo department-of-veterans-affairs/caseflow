@@ -51,6 +51,9 @@
   "TASK_SNAPSHOT_TASK_TYPE_LABEL": "Task",
   "TASK_SNAPSHOT_TASK_FROM_LABEL": "Assigned by",
   "TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL": "Task instructions",
+  "TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL": "View task instructions",
+  "TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL": "Hide task instructions",
+
   "TASK_SNAPSHOT_ACTION_BOX_TITLE": "Actions",
   "TASK_SNAPSHOT_NO_ACTIVE_LABEL": "No active tasks",
   "TASK_SNAPSHOT_ACTIVE_TASKS_LABEL": "Currently active tasks",
@@ -216,7 +219,11 @@
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
   "ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL": "Provide instructions and context for this action:",
-  "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "You have assigned an administrative action (%s)",
+  "ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL": "+ Add another action",
+  "ADD_COLOCATED_TASK_REMOVE_BUTTON_LABEL": "Remove this action",
+  "ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL": "Assign Action",
+  "ADD_COLOCATED_TASK_CONFIRMATION_SUBJECT": "action",
+  "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "You have assigned %s administrative %s (%s)",
   "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please email your administration action team.",
 
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
@@ -277,7 +284,8 @@
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
 
   "JUDGE_ASSIGN_TASK_LABEL": "assign",
-  "JUDGE_REVIEW_TASK_LABEL": "review",
+  "JUDGE_DECISION_REVIEW_TASK_LABEL": "review",
+  "JUDGE_QUALITY_REVIEW_TASK_LABEL": "quality review",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues"
 }

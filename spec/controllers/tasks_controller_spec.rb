@@ -1,12 +1,7 @@
 RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:colocated_queue)
     User.authenticate!(roles: ["System Admin"])
-  end
-
-  after do
-    FeatureToggle.disable!(:colocated_queue)
   end
 
   describe "GET tasks/xxx" do
@@ -218,7 +213,7 @@ RSpec.describe TasksController, type: :controller do
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
-    context "Attornet task" do
+    context "Attorney task" do
       context "when current user is a judge" do
         let(:ama_appeal) { create(:appeal) }
         let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user) }
