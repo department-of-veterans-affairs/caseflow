@@ -152,10 +152,6 @@ class EndProductEstablishment < ApplicationRecord
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
-  def records_ready_for_contentions
-    @records_ready_for_contentions ||= calculate_records_ready_for_contentions
-  end
-
   # All records that create contentions should be an instance of ApplicationRecord with
   # a contention_reference_id column, and contention_text method
   # TODO: this can be refactored to ask the source instead of using a case statement
@@ -169,6 +165,7 @@ class EndProductEstablishment < ApplicationRecord
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
   def create_contentions!
+    records_ready_for_contentions = calculate_records_ready_for_contentions
     return if records_ready_for_contentions.empty?
 
     set_establishment_values_from_source

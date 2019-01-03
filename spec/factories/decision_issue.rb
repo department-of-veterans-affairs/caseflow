@@ -3,7 +3,6 @@ FactoryBot.define do
     sequence(:participant_id, 500_000_000)
     disposition "allowed"
     benefit_type "compensation"
-    description "description"
 
     transient do
       request_issues []
