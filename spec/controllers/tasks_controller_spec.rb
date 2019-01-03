@@ -213,7 +213,7 @@ RSpec.describe TasksController, type: :controller do
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
-    context "Attornet task" do
+    context "Attorney task" do
       context "when current user is a judge" do
         let(:ama_appeal) { create(:appeal) }
         let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user) }

@@ -28,7 +28,7 @@ class AttorneyCaseReview < ApplicationRecord
   end
 
   def update_in_caseflow!
-    task.mark_as_complete!
+    task.update!(status: Constants.TASK_STATUSES.completed)
 
     if task.assigned_by_id != reviewing_judge_id
       task.parent.update(assigned_to_id: reviewing_judge_id)
