@@ -44,12 +44,11 @@ type Params = Props & {|
 
 class CaseHearingsDetail extends React.PureComponent<Params> {
   getHearingAttrs = (hearing: Hearing): Array<Object> => {
-    const listElements = [{
+    return [{
       label: 'Type',
       value: StringUtil.snakeCaseToCapitalized(hearing.type)
-    }];
-
-    listElements.push({
+    },
+    {
       label: 'Disposition',
       value: <React.Fragment>
         {hearing.disposition && StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
@@ -60,19 +59,15 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
           </Link>
         </Tooltip>}
       </React.Fragment>
-    });
-
-    if (hearing.disposition === 'cancelled') {
-      return listElements;
-    }
-
-    return listElements.concat([{
+    },
+    {
       label: 'Date',
       value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
     }, {
       label: 'Judge',
       value: hearing.heldBy
-    }]);
+    }
+    ];
   }
 
   getHearingInfo = () => {
