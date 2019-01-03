@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "NonComp Queue" do
+feature "NonComp Reviews Queue" do
   before do
     FeatureToggle.enable!(:decision_reviews)
   end
