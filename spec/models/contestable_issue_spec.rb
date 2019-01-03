@@ -49,7 +49,6 @@ describe ContestableIssue do
         description: rating_issue.decision_text,
         rampClaimId: nil,
         titleOfActiveReview: nil,
-        sourceHigherLevelReview: nil,
         timely: true
       )
     end
@@ -66,7 +65,6 @@ describe ContestableIssue do
           description: rating_issue.decision_text,
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: nil,
           timely: false
         )
       end
@@ -95,7 +93,6 @@ describe ContestableIssue do
         description: decision_issue.decision_text,
         rampClaimId: nil,
         titleOfActiveReview: nil,
-        sourceHigherLevelReview: nil,
         timely: true
       )
     end
@@ -112,7 +109,6 @@ describe ContestableIssue do
           description: decision_issue.decision_text,
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: nil,
           timely: false
         )
       end

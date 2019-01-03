@@ -174,9 +174,7 @@ class RequestIssue < ApplicationRecord
   def validate_eligibility!
     check_for_active_request_issue!
     check_for_untimely!
-    check_for_previous_higher_level_review!
-    check_for_appeal_to_appeal!
-    check_for_appeal_to_higher_level_review!
+    check_for_eligible_previous_review!
     check_for_before_ama!
     check_for_legacy_issue_not_withdrawn!
     check_for_legacy_appeal_not_eligible!
@@ -301,7 +299,7 @@ class RequestIssue < ApplicationRecord
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
   def contested_rating_issue_ui_hash
-    return unless review_request.serialized_ratings
+    return unless rating_issue_reference_id
     rating_with_issue = review_request.serialized_ratings.find do |rating|
       rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
     end || { issues: [] }
@@ -309,42 +307,30 @@ class RequestIssue < ApplicationRecord
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
   end
 
-  def check_for_previous_higher_level_review!
-    return unless eligible?
-    return unless contested_issue
-    return unless review_request.is_a?(HigherLevelReview)
-
-    if contested_issue.source_review.is_a?(HigherLevelReview)
-      self.ineligible_reason = :previous_higher_level_review
-      self.ineligible_due_to_id = contested_issue.source_request_issue.id
-    end
-  end
-
-  def check_for_appeal_to_appeal!
-    return unless eligible?
-    return unless contested_issue
-    return unless review_request.is_a?(Appeal)
-
-    if contested_issue.source_review.is_a?(Appeal)
-      self.ineligible_reason = :appeal_to_appeal
-      self.ineligible_due_to_id = contested_issue.source_request_issue.id
-    end
-  end
-
-  def check_for_appeal_to_higher_level_review!
-    return unless eligible?
-    return unless contested_issue
-    return unless review_request.is_a?(HigherLevelReview)
-
-    if contested_issue.source_review.is_a?(Appeal)
-      self.ineligible_reason = :appeal_to_higher_level_review
-      self.ineligible_due_to_id = contested_issue.source_request_issue.id
-    end
-  end
-
   def decision_or_promulgation_date
     return decision_date if nonrating?
     return contested_rating_issue.try(:promulgation_date) if rating?
+  end
+
+  def check_for_eligible_previous_review!
+    return unless eligible?
+    return unless contested_issue
+
+    if review_request.is_a?(HigherLevelReview)
+      if contested_issue.source_review_type == "HigherLevelReview"
+        self.ineligible_reason = :previous_higher_level_review
+      end
+
+      if contested_issue.source_review_type == "Appeal"
+        self.ineligible_reason = :appeal_to_higher_level_review
+      end
+    end
+
+    if review_request.is_a?(Appeal) && contested_issue.source_review_type == "Appeal"
+      self.ineligible_reason = :appeal_to_appeal
+    end
+
+    self.ineligible_due_to_id = contested_issue.source_request_issue.id if self.ineligible_reason
   end
 
   def check_for_before_ama!
@@ -418,7 +404,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    false
-    # review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).count > 0
+    review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).count > 0
   end
 end
