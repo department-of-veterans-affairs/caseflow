@@ -435,10 +435,8 @@ RSpec.feature "Edit issues" do
     request_issue_update = RequestIssuesUpdate.find_by(review: decision_review)
 
     # existing issues should not be added or removed
-    expect(request_issue_update.created_issues
-      .select { |created| non_modified_ids.include? created.id }.empty?).to eq(true)
-    expect(request_issue_update.removed_issues
-      .select { |created| non_modified_ids.include? created.id }.empty?).to eq(true)
+    expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+    expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
