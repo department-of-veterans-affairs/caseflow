@@ -68,11 +68,9 @@ class Appeal < DecisionReview
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
-  # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
   def location_code
     location_code = nil
-    root_task = tasks.first.root_task if !tasks.empty?
 
     if root_task && root_task.status == Constants.TASK_STATUSES.completed
       location_code = COPY::CASE_LIST_TABLE_POST_DECISION_LABEL
@@ -92,7 +90,6 @@ class Appeal < DecisionReview
 
     location_code
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 
   def attorney_case_reviews
@@ -269,12 +266,15 @@ class Appeal < DecisionReview
     processed!
   end
 
-  private
-
-  def contestable_decision_issues
-    DecisionIssue.where(participant_id: veteran.participant_id)
-      .select { |issue| issue.approx_decision_date && issue.approx_decision_date < receipt_date }
+  def outcoded?
+    root_task && root_task.status == Constants.TASK_STATUSES.completed
   end
+
+  def root_task
+    tasks.first.root_task if !tasks.empty?
+  end
+
+  private
 
   def bgs
     BGSService.new
