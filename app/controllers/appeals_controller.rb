@@ -23,7 +23,6 @@ class AppealsController < ApplicationController
       format.json do
         caseflow_veteran_id = params[:caseflow_veteran_id]
         veteran_file_number = Veteran.find(caseflow_veteran_id).file_number
-
         # correct?
         # return render json: {
         return {
@@ -134,7 +133,7 @@ class AppealsController < ApplicationController
       end
       # rubocop:enable Lint/HandleExceptions
 
-      json_appeals(appeals)[:data]
+      render json: { appeals: json_appeals(appeals)[:data] }
     end
   end
 
