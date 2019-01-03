@@ -100,7 +100,8 @@ class DecisionReview < ApplicationRecord
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
-      contestableIssuesByDate: contestable_issues.map(&:serialize)
+      contestableIssuesByDate: contestable_issues.map(&:serialize),
+      editIssuesUrl: edit_issues_url
     }
   end
 

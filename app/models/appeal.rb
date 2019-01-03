@@ -62,6 +62,10 @@ class Appeal < DecisionReview
     )
   end
 
+  def edit_issues_url
+    "/appeals/#{uuid}/edit"
+  end
+
   def type
     "Original"
   end

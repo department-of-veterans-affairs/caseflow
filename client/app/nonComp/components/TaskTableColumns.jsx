@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 export const claimantColumn = () => {
   return {

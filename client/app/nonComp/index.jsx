@@ -15,7 +15,6 @@ import { nonCompReducer, mapDataToInitialState } from './reducers';
 class NonComp extends React.PureComponent {
   render() {
     const Router = this.props.router || BrowserRouter;
-    console.log(this.props);
     const initialState = mapDataToInitialState(this.props);
     const appName = 'Non-Compensation Business Lines';
 
@@ -36,15 +35,15 @@ class NonComp extends React.PureComponent {
               <AppSegment filledBackground>
                 <div>
                   <PageRoute
-                   exact
-                   path="/:businessLineSlug/tasks/:taskId"
-                   title="Dispositions | Caseflow"
-                   component={DispositionPage} />
-                 <PageRoute
-                   exact
-                   path="/:businessLineSlug"
-                   title="Reviews | Caseflow"
-                   component={ReviewPage} />
+                    exact
+                    path="/:businessLineSlug/tasks/:taskId"
+                    title="Dispositions | Caseflow"
+                    component={DispositionPage} />
+                  <PageRoute
+                    exact
+                    path="/:businessLineSlug"
+                    title="Reviews | Caseflow"
+                    component={ReviewPage} />
                 </div>
               </AppSegment>
             </AppFrame>
