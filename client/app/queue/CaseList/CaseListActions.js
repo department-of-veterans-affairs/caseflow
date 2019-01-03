@@ -103,15 +103,19 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
       headers: { 'veteran-id': veteranId }
     }).
       then((response) => {
-        const isResponseEmpty = !response.text || (_.size(JSON.parse(response.text)) === 0);
+        let isResponseEmpty;
+        const returnedObject = (response.text) ? JSON.parse(response.text) : null;
 
-        if (isResponseEmpty) {
+        if (returnedObject) {
+          isResponseEmpty = _.size(returnedObject.appeals) === 0 &&
+            _.size(returnedObject.claim_reviews) === 0;
+        }
+
+        if (!returnedObject || isResponseEmpty) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
 
           return reject();
         }
-
-        const returnedObject = JSON.parse(response.text);
 
         dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
 
