@@ -16,6 +16,8 @@ class AttorneyCaseReview < ApplicationRecord
     draft_decision: Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
   }
 
+  before_create :strip_document_id
+
   def update_in_vacols!
     MetricsService.record("VACOLS: reassign_case_to_judge #{task_id}",
                           service: :vacols,
@@ -26,7 +28,7 @@ class AttorneyCaseReview < ApplicationRecord
   end
 
   def update_in_caseflow!
-    task.mark_as_complete!
+    task.update!(status: Constants.TASK_STATUSES.completed)
 
     if task.assigned_by_id != reviewing_judge_id
       task.parent.update(assigned_to_id: reviewing_judge_id)
@@ -60,6 +62,10 @@ class AttorneyCaseReview < ApplicationRecord
 
   def modifying_user
     attorney.vacols_uniq_id
+  end
+
+  def strip_document_id
+    self.document_id = document_id&.strip
   end
 
   class << self
