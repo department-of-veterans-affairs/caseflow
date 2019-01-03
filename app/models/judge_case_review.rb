@@ -35,7 +35,7 @@ class JudgeCaseReview < ApplicationRecord
   end
 
   def update_in_caseflow!
-    task.mark_as_complete!
+    task.update!(status: Constants.TASK_STATUSES.completed)
     update_issue_dispositions_in_caseflow!
   end
 

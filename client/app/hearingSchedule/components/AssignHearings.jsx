@@ -12,6 +12,7 @@ import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import { renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
+import DocketTypeBadge from '../../components/DocketTypeBadge';
 
 const sectionNavigationListStyling = css({
   '& > li': {
@@ -129,6 +130,26 @@ export default class AssignHearings extends React.Component {
     return `${appeal.attributes.veteranFullName} | ${appeal.attributes.veteranFileNumber}`;
   };
 
+  getHearingDocketTag = (hearing) => {
+    if (hearing.docketNumber) {
+      return <div>
+        <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
+        {hearing.docketNumber}
+      </div>;
+    }
+
+  }
+
+  getAppealDocketTag = (appeal) => {
+    if (appeal.attributes.docketNumber) {
+      return <div>
+        <DocketTypeBadge name={appeal.attributes.docketName} number={appeal.attributes.docketNumber} />
+        {appeal.attributes.docketNumber}
+      </div>;
+    }
+
+  }
+
   tableAssignHearingsRows = (appeals) => {
     return _.map(appeals, (appeal) => ({
       caseDetails: this.getCaseDetailsInformation(appeal),
@@ -136,7 +157,7 @@ export default class AssignHearings extends React.Component {
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod
       }),
-      docketNumber: appeal.attributes.docketNumber,
+      docketNumber: this.getAppealDocketTag(appeal),
       location: this.getAppealLocation(appeal),
       time: null,
       externalId: appeal.attributes.externalId
@@ -151,7 +172,7 @@ export default class AssignHearings extends React.Component {
         caseType: hearing.appealType,
         isAdvancedOnDocket: hearing.aod
       }),
-      docketNumber: hearing.docketNumber,
+      docketNumber: this.getHearingDocketTag(hearing),
       location: hearing.readableLocation,
       time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
