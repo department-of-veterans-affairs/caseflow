@@ -12,10 +12,14 @@ class RoundRobinTaskDistributor
     latest_task ? latest_task.assigned_to.css_id : nil
   end
 
+  def last_assignee_index
+    @list_of_assignees.index(last_assignee_css_id)
+  end
+
   def next_assignee_index
     return 0 unless last_assignee_css_id
-    return 0 unless @list_of_assignees.index(last_assignee_css_id)
-    (@list_of_assignees.index(last_assignee_css_id) + 1) % @list_of_assignees.length
+    return 0 unless last_assignee_index
+    (last_assignee_index + 1) % @list_of_assignees.length
   end
 
   def next_assignee_css_id
