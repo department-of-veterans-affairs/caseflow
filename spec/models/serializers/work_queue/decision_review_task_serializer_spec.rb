@@ -12,6 +12,8 @@ describe WorkQueue::DecisionReviewTaskSerializer do
                                     url: "TODO",
                                     veteran_participant_id: veteran.participant_id,
                                     assigned_on: task.assigned_at,
+                                    completed_at: task.completed_at,
+                                    started_at: task.started_at,
                                     type: "Higher-Level Review")
     end
   end

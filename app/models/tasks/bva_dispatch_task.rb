@@ -30,8 +30,8 @@ class BvaDispatchTask < GenericTask
 
       create_decision_document!(params)
 
-      task.mark_as_complete!
-      task.root_task.mark_as_complete!
+      task.update!(status: Constants.TASK_STATUSES.completed)
+      task.root_task.update!(status: Constants.TASK_STATUSES.completed)
     rescue ActiveRecord::RecordInvalid => e
       raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message.match?(/^Validation failed:/)
       raise e
