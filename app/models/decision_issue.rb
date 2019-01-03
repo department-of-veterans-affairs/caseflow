@@ -27,6 +27,11 @@ class DecisionIssue < ApplicationRecord
     associated_request_issue&.issue_category
   end
 
+  def delete_on_removed_request_issue(request_issue_id)
+    # delete if the request issue is deleted and there are no other request issues associated
+    delete if request_issues.length == 1 && request_issues.first.id == request_issue_id
+  end
+
   private
 
   def associated_request_issue

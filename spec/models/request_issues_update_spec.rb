@@ -335,6 +335,61 @@ describe RequestIssuesUpdate do
           )
           expect(found_nonrating_ep).to_not be_nil
         end
+
+        context "with decision issues" do
+          let!(:deleted_decision_issue) do
+            create(:decision_issue,
+                   request_issues: [RequestIssue.find(existing_legacy_opt_in_request_issue_id)],
+                   participant_id: veteran.participant_id)
+          end
+
+          it "deletes associated decision issues" do
+            expect(subject).to be_truthy
+
+            expect(RequestDecisionIssue.find_by(
+                     request_issue_id: existing_legacy_opt_in_request_issue_id,
+                     decision_issue_id: deleted_decision_issue.id
+            )).to be_nil
+
+            expect(DecisionIssue.find_by(id: deleted_decision_issue.id)).to be_nil
+          end
+
+          context "with decision issue connected to multiple request issues" do
+            let!(:not_deleted_decision_issue) do
+              create(:decision_issue,
+                     request_issues: [
+                       RequestIssue.find(existing_request_issue_id),
+                       RequestIssue.find(existing_legacy_opt_in_request_issue_id)
+                     ],
+                     participant_id: veteran.participant_id)
+            end
+
+            it "does not delete decision issues associated with undeleted request issue" do
+              expect(subject).to be_truthy
+
+              expect(RequestDecisionIssue.find_by(
+                       request_issue_id: existing_legacy_opt_in_request_issue_id,
+                       decision_issue_id: deleted_decision_issue.id
+              )).to be_nil
+
+              expect(DecisionIssue.find_by(id: deleted_decision_issue.id)).to be_nil
+
+              # record associating not_deleted_decision_issue with the deleted request issue
+              # should be deleted
+              expect(RequestDecisionIssue.find_by(
+                       request_issue_id: existing_legacy_opt_in_request_issue_id,
+                       decision_issue_id: not_deleted_decision_issue.id
+              )).to be_nil
+
+              expect(RequestDecisionIssue.find_by(
+                       request_issue_id: existing_request_issue_id,
+                       decision_issue_id: not_deleted_decision_issue.id
+              )).to_not be_nil
+
+              expect(DecisionIssue.find_by(id: not_deleted_decision_issue.id)).to_not be_nil
+            end
+          end
+        end
       end
 
       context "when create_contentions raises VBMS service error" do
