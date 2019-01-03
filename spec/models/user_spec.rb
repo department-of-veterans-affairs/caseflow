@@ -281,7 +281,7 @@ describe User do
     context "when appeal has in-progress judge task assigned to user" do
       let!(:task) do
         create(:task,
-               type: "JudgeReviewTask",
+               type: "JudgeDecisionReviewTask",
                appeal: appeal,
                assigned_to: user,
                status: Constants.TASK_STATUSES.in_progress)

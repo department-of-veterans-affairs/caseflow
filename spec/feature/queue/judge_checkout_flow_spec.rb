@@ -19,7 +19,7 @@ RSpec.feature "Judge checkout flow" do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:parent_task) do
       FactoryBot.create(
-        :ama_judge_review_task,
+        :ama_judge_decision_review_task,
         :in_progress,
         assigned_to: judge_user,
         appeal: appeal,
@@ -39,7 +39,7 @@ RSpec.feature "Judge checkout flow" do
     end
 
     before do
-      child_task.mark_as_complete!
+      child_task.update!(status: Constants.TASK_STATUSES.completed)
       User.authenticate!(user: judge_user)
     end
 

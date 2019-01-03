@@ -27,11 +27,13 @@ module IntakeHelpers
       detail: higher_level_review
     )
 
-    Claimant.create!(
-      review_request: higher_level_review,
-      participant_id: claim_participant_id ? claim_participant_id : test_veteran.participant_id,
-      payee_code: claim_participant_id ? "02" : "00"
-    )
+    if claim_participant_id
+      Claimant.create!(
+        review_request: higher_level_review,
+        participant_id: claim_participant_id ? claim_participant_id : test_veteran.participant_id,
+        payee_code: claim_participant_id ? "02" : "00"
+      )
+    end
 
     higher_level_review.start_review!
 
@@ -43,6 +45,7 @@ module IntakeHelpers
     receipt_date: 1.day.ago,
     legacy_opt_in_approved: false,
     veteran_is_not_claimant: false,
+    claim_participant_id: nil,
     benefit_type: "compensation"
   )
 
@@ -61,10 +64,12 @@ module IntakeHelpers
       detail: supplemental_claim
     )
 
-    Claimant.create!(
-      review_request: supplemental_claim,
-      participant_id: test_veteran.participant_id
-    )
+    if claim_participant_id
+      Claimant.create!(
+        review_request: supplemental_claim,
+        participant_id: claim_participant_id
+      )
+    end
 
     supplemental_claim.start_review!
     [supplemental_claim, intake]
@@ -102,6 +107,24 @@ module IntakeHelpers
   end
   # rubocop: enable Metrics/MethodLength
   # rubocop: enable Metrics/ParameterLists
+
+  def setup_intake_flags
+    FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:intakeAma)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
+
+    Time.zone = "America/New_York"
+    Timecop.freeze(Time.zone.today)
+
+    # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
+  end
+
+  def teardown_intake_flags
+    FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
+  end
 
   def search_page_title
     "Search for Veteran by ID"
@@ -280,22 +303,20 @@ module IntakeHelpers
   end
 
   def setup_request_issue_with_nonrating_decision_issue(decision_review, issue_category: "Active Duty Adjustments")
-    random_date = Time.zone.now - 4.days
     create(:request_issue,
            :with_nonrating_decision_issue,
            description: "Test nonrating decision issue",
            review_request: decision_review,
-           decision_date: random_date,
+           decision_date: decision_review.receipt_date - 1.day,
            issue_category: issue_category,
            veteran_participant_id: veteran.participant_id)
   end
 
   def setup_request_issue_with_rating_decision_issue(decision_review, rating_issue_reference_id: "rating123")
-    random_date = Time.zone.now - 2.days
     create(:request_issue,
            :with_rating_decision_issue,
            rating_issue_reference_id: rating_issue_reference_id,
-           rating_issue_profile_date: random_date,
+           rating_issue_profile_date: decision_review.receipt_date - 1.day,
            description: "Test rating decision issue",
            review_request: decision_review,
            veteran_participant_id: veteran.participant_id)

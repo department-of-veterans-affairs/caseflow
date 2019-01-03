@@ -90,6 +90,39 @@ describe ClaimReview do
     VBMS::HTTPError.new("500", "More EPs more problems")
   end
 
+  context "#contestable_issues" do
+    subject { claim_review.contestable_issues }
+
+    let(:another_review) do
+      create(:supplemental_claim, veteran_file_number: veteran_file_number, receipt_date: receipt_date)
+    end
+
+    let!(:past_decision_issue) do
+      create(:decision_issue,
+             decision_review: another_review,
+             profile_date: receipt_date - 1.day,
+             benefit_type: another_review.benefit_type,
+             decision_text: "something decided in the past",
+             description: "past issue",
+             participant_id: veteran.participant_id)
+    end
+
+    let!(:future_decision_issue) do
+      create(:decision_issue,
+             decision_review: another_review,
+             profile_date: receipt_date + 1.day,
+             benefit_type: another_review.benefit_type,
+             decision_text: "something was decided in the future",
+             description: "future issue",
+             participant_id: veteran.participant_id)
+    end
+
+    it "does not return Decision Issues in the future" do
+      expect(subject.count).to eq(1)
+      expect(subject.first.decision_issue_id).to eq(past_decision_issue.id)
+    end
+  end
+
   context "async logic scopes" do
     let!(:claim_review_requiring_processing) do
       create(:higher_level_review, receipt_date: receipt_date).tap(&:submit_for_processing!)

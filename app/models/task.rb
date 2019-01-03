@@ -105,12 +105,6 @@ class Task < ApplicationRecord
     [self]
   end
 
-  def update_status(new_status)
-    return unless new_status
-
-    update!(status: new_status)
-  end
-
   def legacy?
     appeal_type == LegacyAppeal.name
   end
@@ -139,10 +133,6 @@ class Task < ApplicationRecord
     end
 
     ["", ""]
-  end
-
-  def mark_as_complete!
-    update!(status: Constants.TASK_STATUSES.completed)
   end
 
   def when_child_task_completed
@@ -218,7 +208,7 @@ class Task < ApplicationRecord
     {
       selected: root_task.children.find { |task| task.is_a?(JudgeTask) }.assigned_to,
       options: users_to_options(Judge.list_all),
-      type: JudgeAssignTask.name
+      type: JudgeQualityReviewTask.name
     }
   end
 
