@@ -78,7 +78,7 @@ class RequestIssue < ApplicationRecord
     def find_or_build_from_intake_data(data)
       # request issues on edit have ids
       # but newly added issues do not
-      data[:request_issue_id] ? RequestIssue.find(data[:request_issue_id]) : from_intake_data(data)
+      data[:request_issue_id] ? find(data[:request_issue_id]) : from_intake_data(data)
     end
 
     def find_active_by_rating_issue_reference_id(rating_issue_reference_id)

@@ -110,7 +110,7 @@ RSpec.feature "Edit issues" do
       }
     end
 
-    let!(:nonrating_request_issue){ create(:request_issue, nonrating_request_issue_attributes) }
+    let!(:nonrating_request_issue) { create(:request_issue, nonrating_request_issue_attributes) }
 
     let(:rating_request_issue_attributes) do
       {
@@ -122,7 +122,7 @@ RSpec.feature "Edit issues" do
       }
     end
 
-    let!(:rating_request_issue){ create(:request_issue, rating_request_issue_attributes) }
+    let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
 
     scenario "allows adding/removing issues" do
       visit "appeals/#{appeal.uuid}/edit/"

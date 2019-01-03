@@ -46,6 +46,7 @@ class ClaimReview < DecisionReview
       end
       issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
+    request_issues.reload
   end
 
   def create_non_comp_task!
