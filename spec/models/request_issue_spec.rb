@@ -368,12 +368,13 @@ describe RequestIssue do
     end
 
     context "issues with previous decision reviews" do
+      let(:rating_reference_id) { higher_level_review_reference_id }
+
       context "when the previous review is a higher level review" do
         let(:previous_review) { create(:higher_level_review) }
 
         context "when the current review is a higher level review" do
           it "is not eligible after a higher level review" do
-            rating_request_issue.rating_issue_reference_id = higher_level_review_reference_id
             rating_request_issue.validate_eligibility!
 
             expect(rating_request_issue.previous_higher_level_review?).to eq(true)
@@ -395,7 +396,6 @@ describe RequestIssue do
           end
 
           it "does not get flagged for previous higher level review" do
-            rating_request_issue.rating_issue_reference_id = higher_level_review_reference_id
             rating_request_issue.validate_eligibility!
 
             expect(rating_request_issue.ineligible_reason).to_not eq("previous_higher_level_review")
@@ -412,7 +412,6 @@ describe RequestIssue do
           end
 
           it "is still eligible after a previous higher level review" do
-            rating_request_issue.rating_issue_reference_id = higher_level_review_reference_id
             rating_request_issue.validate_eligibility!
 
             expect(rating_request_issue.ineligible_reason).to be_nil
@@ -433,7 +432,6 @@ describe RequestIssue do
           end
 
           it "is not eligible after an appeal" do
-            rating_request_issue.rating_issue_reference_id = higher_level_review_reference_id
             rating_request_issue.validate_eligibility!
 
             expect(rating_request_issue.ineligible_reason).to eq("appeal_to_higher_level_review")
@@ -451,7 +449,6 @@ describe RequestIssue do
           end
 
           it "is not eligible after an appeal" do
-            rating_request_issue.rating_issue_reference_id = higher_level_review_reference_id
             rating_request_issue.validate_eligibility!
 
             expect(rating_request_issue.ineligible_reason).to eq("appeal_to_appeal")
