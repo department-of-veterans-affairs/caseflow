@@ -152,30 +152,43 @@ class EndProductEstablishment < ApplicationRecord
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
+  def records_ready_for_contentions
+    @records_ready_for_contentions ||= calculate_records_ready_for_contentions
+  end
+
+  # All records that create contentions should be an instance of ApplicationRecord with
+  # a contention_reference_id column, and contention_text method
+  # TODO: this can be refactored to ask the source instead of using a case statement
+  def calculate_records_ready_for_contentions
+    case source
+    when ClaimReview then request_issues_ready_for_contentions
+    when DecisionDocument then source.effectuations.where(end_product_establishment: self)
+    end
+  end
+
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
   def create_contentions!
-    issues_without_contentions = request_issues_ready_for_contentions
-    return if issues_without_contentions.empty?
+    return if records_ready_for_contentions.empty?
 
     set_establishment_values_from_source
 
-    descriptions = issues_without_contentions.map(&:contention_text)
+    descriptions = records_ready_for_contentions.map(&:contention_text)
 
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
 
     # We don't care about duplicate text; we just care that every request issue
     # has a contention.
-
     create_contentions_in_vbms(descriptions).each do |contention|
-      issue = issues_without_contentions.find do |i|
-        i.contention_text == contention.text && i.contention_reference_id.nil?
+      record = records_ready_for_contentions.find do |r|
+        r.contention_text == contention.text && r.contention_reference_id.nil?
       end
-      issue&.update!(contention_reference_id: contention.id)
+
+      record&.update!(contention_reference_id: contention.id)
     end
 
-    fail ContentionCreationFailed if issues_without_contentions.any? { |issue| issue.contention_reference_id.nil? }
+    fail ContentionCreationFailed if records_ready_for_contentions.any? { |r| r.contention_reference_id.nil? }
   end
 
   def remove_contention!(for_object)

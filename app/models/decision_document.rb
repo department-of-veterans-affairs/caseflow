@@ -6,6 +6,7 @@ class DecisionDocument < ApplicationRecord
 
   belongs_to :appeal
   has_many :end_product_establishments, as: :source
+  has_many :effectuations, class_name: "BoardGrantEffectuation"
 
   validates :citation_number, format: { with: /\AA\d{8}\Z/i }
 
@@ -37,6 +38,8 @@ class DecisionDocument < ApplicationRecord
   end
 
   def process!
+    return if processed?
+
     attempted!
     upload_to_vbms!
     create_board_grant_effectuations!
@@ -47,9 +50,13 @@ class DecisionDocument < ApplicationRecord
     raise err
   end
 
+  # Used by EndProductEstablishment to determine what modifier to use for the effectuation EPs
+  def valid_modifiers
+    HigherLevelReview::END_PRODUCT_MODIFIERS
+  end
+
   private
 
-  # on create it finds or creates the appropriate end product establishment
   def create_board_grant_effectuations!
     appeal.decision_issues.each do |granted_decision_issue|
       BoardGrantEffectuation.find_or_create_by(granted_decision_issue: granted_decision_issue)
@@ -57,12 +64,18 @@ class DecisionDocument < ApplicationRecord
   end
 
   def process_board_grant_effectuations!
-    # for each unprocessed end product establishment, establish it and create contentions
+    end_product_establishments.each do |end_product_establishment|
+      end_product_establishment.perform!
+      end_product_establishment.create_contentions!
+      end_product_establishment.commit!
+    end
   end
 
   def upload_to_vbms!
+    return if uploaded_to_vbms_at
+
     VBMSService.upload_document_to_vbms(appeal, self)
-    # set uploaded_to_vbms_at
+    update!(uploaded_to_vbms_at: Time.zone.now)
   end
 
   def upload_enabled?

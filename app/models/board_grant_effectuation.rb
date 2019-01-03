@@ -10,7 +10,9 @@ class BoardGrantEffectuation < ApplicationRecord
   validates :granted_decision_issue, presence: true
   before_save :hydrate_from_granted_decision_issue, on: :create
 
-  END_PRODUCT_CODES = {}.freeze
+  def contention_text
+    granted_decision_issue.formatted_description
+  end
 
   private
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190102201419) do
+ActiveRecord::Schema.define(version: 20190103175308) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -210,6 +210,7 @@ ActiveRecord::Schema.define(version: 20190102201419) do
     t.datetime "attempted_at"
     t.datetime "processed_at"
     t.string "error"
+    t.datetime "uploaded_to_vbms_at"
     t.index ["appeal_id"], name: "index_decision_documents_on_appeal_id"
     t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
   end
