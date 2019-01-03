@@ -9,12 +9,12 @@ class AppealsController < ApplicationController
   def index
     veteran_file_number = request.headers["HTTP_VETERAN_ID"]
 
-    if !veteran_file_number return file_number_not_found_error
+    return file_number_not_found_error unless veteran_file_number
 
-    render json: {
+    {
       appeals: get_appeals_for_file_number(veteran_file_number),
       claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
-    }
+    } && return
   end
 
   def show_case_list
@@ -24,7 +24,9 @@ class AppealsController < ApplicationController
         caseflow_veteran_id = params[:caseflow_veteran_id]
         veteran_file_number = Veteran.find(caseflow_veteran_id).file_number
 
-        return render json: {
+        # correct?
+        # return render json: {
+        return {
           appeals: get_appeals_for_file_number(veteran_file_number),
           claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
         }
@@ -125,6 +127,7 @@ class AppealsController < ApplicationController
                           name: "AppealsController.index") do
 
       appeals = Appeal.where(veteran_file_number: file_number).to_a
+      # rubocop:disable Lint/HandleExceptions
       begin
         appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(file_number))
       rescue ActiveRecord::RecordNotFound
