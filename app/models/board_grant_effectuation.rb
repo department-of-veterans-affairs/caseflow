@@ -16,13 +16,19 @@ class BoardGrantEffectuation < ApplicationRecord
 
   private
 
+  def effectuated_in_vbms?
+    granted_decision_issue.benefit_type == "compensation"
+  end
+
   def hydrate_from_granted_decision_issue
     assign_attributes(
       appeal: granted_decision_issue.decision_review,
       decision_document: granted_decision_issue.decision_review.decision_document
     )
 
-    self.end_product_establishment = find_or_build_end_product_establishment
+    if effectuated_in_vbms?
+      self.end_product_establishment = find_or_build_end_product_establishment
+    end
   end
 
   def find_or_build_end_product_establishment

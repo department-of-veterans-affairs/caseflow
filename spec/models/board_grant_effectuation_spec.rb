@@ -13,11 +13,13 @@ describe BoardGrantEffectuation do
         :decision_issue,
         rating_or_nonrating,
         disposition: "allowed",
-        decision_review: decision_document.appeal
+        decision_review: decision_document.appeal,
+        benefit_type: benefit_type
       )
     end
 
     let(:rating_or_nonrating) { :rating }
+    let(:benefit_type) { "compensation" }
 
     it do
       is_expected.to have_attributes(
@@ -58,44 +60,57 @@ describe BoardGrantEffectuation do
       end
     end
 
-    context "when rating issue" do
-      let(:rating_or_nonrating) { :rating }
+    context "when non compensation issue" do
+      let(:benefit_type) { "insurance" }
+      let(:rating_or_nonrating) { :nonrating }
 
-      it "creates rating end product establishment" do
-        expect(subject.end_product_establishment).to have_attributes(
-          source: decision_document,
-          veteran_file_number: decision_document.appeal.veteran.file_number,
-          claim_date: decision_document.decision_date,
-          payee_code: "00",
-          benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
-          user: User.system_user,
-          code: "030BGR"
-        )
+      it "does not create end product establishment" do
+        expect(subject.end_product_establishment).to be_nil
       end
     end
 
-    context "when non rating issue" do
-      let(:rating_or_nonrating) { :nonrating }
+    context "when compensation issue" do
+      let(:benefit_type) { "compensation" }
 
-      # Create a not matching end product establishment to make sure that never matches
-      let!(:not_matching_end_product_establishment) do
-        FactoryBot.create(
-          :end_product_establishment,
-          code: "030BGR",
-          source: decision_document
-        )
+      context "when rating issue" do
+        let(:rating_or_nonrating) { :rating }
+
+        it "creates rating end product establishment" do
+          expect(subject.end_product_establishment).to have_attributes(
+            source: decision_document,
+            veteran_file_number: decision_document.appeal.veteran.file_number,
+            claim_date: decision_document.decision_date,
+            payee_code: "00",
+            benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+            user: User.system_user,
+            code: "030BGR"
+          )
+        end
       end
 
-      it "creates nonrating end product establishment" do
-        expect(subject.end_product_establishment).to have_attributes(
-          source: decision_document,
-          veteran_file_number: decision_document.appeal.veteran.file_number,
-          claim_date: decision_document.decision_date,
-          payee_code: "00",
-          benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
-          user: User.system_user,
-          code: "030BGNR"
-        )
+      context "when non rating issue" do
+        let(:rating_or_nonrating) { :nonrating }
+
+        # Create a not matching end product establishment to make sure that never matches
+        let!(:not_matching_end_product_establishment) do
+          FactoryBot.create(
+            :end_product_establishment,
+            code: "030BGR",
+            source: decision_document
+          )
+        end
+
+        it "creates nonrating end product establishment" do
+          expect(subject.end_product_establishment).to have_attributes(
+            source: decision_document,
+            veteran_file_number: decision_document.appeal.veteran.file_number,
+            claim_date: decision_document.decision_date,
+            payee_code: "00",
+            benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+            user: User.system_user,
+            code: "030BGNR"
+          )
+        end
       end
     end
   end
