@@ -1,9 +1,11 @@
-.cf-review-details {
+.cf-gray-box {
   background-color: $color-gray-lightest;
   border: 1px solid $color-gray-lighter;
   padding: 2rem;
   margin: 2rem -2rem;
+}
 
+.cf-review-details {
   .cf-claimant-name {
     font-weight: bold;
     font-size: 2rem;
@@ -52,4 +54,14 @@
       margin-top: 1.7rem;
     }
   }
+}
+
+.cf-decision-date {
+  input {
+    width: auto;
+  }
+}
+
+.cf-cancel-link {
+  margin-right: 2rem;
 }

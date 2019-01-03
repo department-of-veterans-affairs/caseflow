@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { formatDate } from '../../util/DateUtil';
-// import Button from '../../components/Button';
+import InlineForm from '../../components/InlineForm';
+import DateSelector from '../../components/DateSelector';
+import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { DISPOSITION_OPTIONS } from '../constants';
 
@@ -67,6 +69,20 @@ class NonCompDecisionIssue extends React.PureComponent {
 }
 
 class NonCompDispositionsPage extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    let today = formatDate(new Date());
+
+    this.state = {
+      decisionDate: today
+    };
+  }
+
+  handleDecisionDate = (value) => {
+    this.setState({ decisionDate: value });
+  }
+
   render = () => {
     const {
       appeal,
@@ -76,7 +92,7 @@ class NonCompDispositionsPage extends React.PureComponent {
 
     return <div>
       <h1>{businessLine}</h1>
-      <div className="cf-review-details">
+      <div className="cf-review-details cf-gray-box">
         <div className="usa-grid-full">
           <div className="usa-width-one-half">
             <span className="cf-claimant-name">{task.claimant.name}</span>
@@ -130,6 +146,22 @@ class NonCompDispositionsPage extends React.PureComponent {
             })
           }
         </div>
+      </div>
+      <div className="cf-gray-box">
+        <div className="cf-decision-date">
+          <InlineForm>
+            <DateSelector
+              label="Thank you for completing your decision in Caseflow. Please indicate the decision date."
+              name="decision-date"
+              value={this.state.decisionDate}
+              onChange={this.handleDecisionDate}
+            />
+          </InlineForm>
+        </div>
+      </div>
+      <div className="cf-txt-r">
+        <a className="cf-cancel-link" href={`/decision_reviews/${businessLine}`}>Cancel</a>
+        <Button className="usa-button" onClick={this.handleSave}>Complete</Button>
       </div>
     </div>;
   }
