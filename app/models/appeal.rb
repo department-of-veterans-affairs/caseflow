@@ -3,7 +3,10 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
+  
+  # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
+
   has_one :special_issue_list
 
   with_options on: :intake_review do
@@ -125,9 +128,9 @@ class Appeal < DecisionReview
     decision_document.try(:decision_date)
   end
 
-  # TODO: Why is decision_documents a has_many? It seems like there should only ever be one
-  # .      decision document per appeal.
   def decision_document
+    # NOTE: This is used for outcoding and effectuations
+    #       When post decisional motions are supported, this will need to be accounted for. 
     decision_documents.last
   end
 
