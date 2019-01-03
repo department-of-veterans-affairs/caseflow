@@ -18,6 +18,8 @@ class AnnotationController < ApplicationController
   def show
     annotation = Annotation.find(params[:id])
     document = Document.find(annotation[:document_id])
+
+    # Not yet working
     appeals = LegacyAppeal.fetch_appeals_by_file_number(document[:file_number])
     if appeals.size > 0
       redirect_to "/reader/appeal/#{appeals[0][:vacols_id]}/documents/#{document[:id]}"
@@ -26,7 +28,6 @@ class AnnotationController < ApplicationController
 
     appeals = Appeal.where(veteran_file_number: document[:file_number])
     if appeals.size > 0
-      puts appeals[0].inspect
       redirect_to "/reader/appeal/#{appeals[0][:uuid]}/documents/#{document[:id]}"
       return
     end
