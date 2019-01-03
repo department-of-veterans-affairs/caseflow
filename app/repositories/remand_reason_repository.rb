@@ -85,6 +85,9 @@ class RemandReasonRepository
     disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[record.issdc]
     new_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[issue_attrs[:disposition]]
 
+    # leave remand reasons in tact if an issue is opted into AMA, or the opt-in is rolled back
+    return if [disposition, new_disposition].include? "AMA SOC/SSOC Opt-in"
+
     if disposition.eql?("Remanded") && !new_disposition.eql?("Remanded")
       delete_remand_reasons!(*args)
       return

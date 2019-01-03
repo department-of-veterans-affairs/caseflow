@@ -160,7 +160,7 @@ class CancelEditButtonUnconnected extends React.PureComponent {
         }
       }
     >
-      Cancel edit
+      Cancel
     </Button>;
   }
 }

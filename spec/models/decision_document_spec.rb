@@ -1,4 +1,4 @@
-describe DecisionDocument, focus: true do
+describe DecisionDocument do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
@@ -33,7 +33,7 @@ describe DecisionDocument, focus: true do
       it "caches the file" do
         expect(S3Service).to receive(:store_file).with(expected_path, /PDF/)
         subject
-        expect(decision_document.submitted_at).to eq(Time.zone.now + DecisionDocument::DECISION_OUTCODING_DELAY)
+        expect(decision_document.submitted_at).to eq(Time.zone.now)
       end
     end
 

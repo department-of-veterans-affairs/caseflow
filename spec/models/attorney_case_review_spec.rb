@@ -145,6 +145,7 @@ describe AttorneyCaseReview do
     let(:document_type) { Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"] }
     let(:work_product) { "OMO - IME" }
     let(:document_id) { "123456789.1234" }
+    let(:padded_document_id) { "     #{document_id}    " }
     let(:note) { "something" }
     let(:task_id) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney).id }
     let(:params) do
@@ -152,7 +153,7 @@ describe AttorneyCaseReview do
         document_type: document_type,
         reviewing_judge: judge,
         work_product: work_product,
-        document_id: document_id,
+        document_id: padded_document_id,
         overtime: true,
         note: note,
         task_id: task_id,
@@ -238,7 +239,7 @@ describe AttorneyCaseReview do
           document_type: document_type,
           reviewing_judge: judge,
           work_product: work_product,
-          document_id: document_id,
+          document_id: padded_document_id,
           overtime: true,
           note: note,
           task_id: task_id,
@@ -405,9 +406,7 @@ describe AttorneyCaseReview do
           end
 
           it "should create draft decision record" do
-            expect(decass_record.deprod).to eq QueueMapper.work_product_to_vacols_code(
-              work_product, params[:overtime]
-            )
+            expect(decass_record.deprod).to eq "OTD"
             expect(decass_record.deatcom).to eq note
             expect(decass_record.dedocid).to eq document_id
           end

@@ -13,9 +13,18 @@ import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
-import { NONRATING_REQUEST_ISSUE_CATEGORIES } from '../constants';
+import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
 
 const NO_MATCH_TEXT = 'None of these match';
+
+const nonratingRequestIssueCategories = (benefitType = 'compensation') => {
+  return ISSUE_CATEGORIES[benefitType].map((category) => {
+    return {
+      value: category,
+      label: category
+    };
+  });
+};
 
 class NonratingRequestIssueModal extends React.Component {
   constructor(props) {
@@ -234,7 +243,7 @@ class NonratingRequestIssueModal extends React.Component {
               label="Issue category"
               strongLabel
               placeholder="Select or enter..."
-              options={NONRATING_REQUEST_ISSUE_CATEGORIES}
+              options={nonratingRequestIssueCategories(intakeData.benefitType)}
               value={category}
               onChange={this.categoryOnChange} />
           </div>

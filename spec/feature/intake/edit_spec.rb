@@ -42,7 +42,8 @@ RSpec.feature "Edit issues" do
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: "000" },
-        { reference_id: "def456", decision_text: "PTSD denied" }
+        { reference_id: "def456", decision_text: "PTSD denied" },
+        { reference_id: "abcdef", decision_text: "Back pain" }
       ]
     )
   end
@@ -145,7 +146,7 @@ RSpec.feature "Edit issues" do
       expect(page).not_to have_content("nonrating description")
 
       # canceling should redirect to queue
-      click_on "Cancel edit"
+      click_on "Cancel"
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
 
@@ -198,6 +199,10 @@ RSpec.feature "Edit issues" do
             "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
           )
 
+          click_intake_add_issue
+          add_intake_rating_issue("Back pain")
+          add_intake_rating_issue("ankylosis of hip") # eligible issue
+
           safe_click("#button-submit-update")
           safe_click ".confirm"
 
@@ -209,6 +214,33 @@ RSpec.feature "Edit issues" do
                    vacols_id: "vacols2",
                    vacols_sequence_id: "1"
           )).to_not be_nil
+
+          ri_with_optin = RequestIssue.find_by(
+            description: "Back pain",
+            ineligible_reason: nil,
+            vacols_id: "vacols1",
+            vacols_sequence_id: "1"
+          )
+
+          expect(ri_with_optin).to_not be_nil
+          li_optin = ri_with_optin.legacy_issue_optin
+          expect(li_optin.optin_processed_at).to_not be_nil
+          expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
+            LegacyIssueOptin::VACOLS_DISPOSITION_CODE
+          )
+
+          # Check rollback
+          visit "appeals/#{appeal.uuid}/edit/"
+          click_remove_intake_issue_by_text("Back pain")
+          click_remove_issue_confirmation
+          safe_click("#button-submit-update")
+          safe_click ".confirm"
+
+          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+          expect(li_optin.reload.rollback_processed_at).to_not be_nil
+          expect(VACOLS::CaseIssue.find_by(isskey: "vacols1", issseq: 1).issdc).to eq(
+            li_optin.original_disposition_code
+          )
         end
       end
 
@@ -1134,7 +1166,7 @@ RSpec.feature "Edit issues" do
       feature "cancel edits" do
         def click_cancel(visit_page)
           visit "higher_level_reviews/#{rating_ep_claim_id}/edit#{visit_page}"
-          click_on "Cancel edit"
+          click_on "Cancel"
           correct_path = "/higher_level_reviews/#{rating_ep_claim_id}/edit/cancel"
           expect(page).to have_current_path(correct_path)
           expect(page).to have_content("Edit Canceled")
@@ -1572,7 +1604,7 @@ RSpec.feature "Edit issues" do
       feature "cancel edits" do
         def click_cancel(visit_page)
           visit "supplemental_claims/#{rating_ep_claim_id}/edit#{visit_page}"
-          click_on "Cancel edit"
+          click_on "Cancel"
           correct_path = "/supplemental_claims/#{rating_ep_claim_id}/edit/cancel"
           expect(page).to have_current_path(correct_path)
           expect(page).to have_content("Edit Canceled")

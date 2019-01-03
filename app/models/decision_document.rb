@@ -34,7 +34,7 @@ class DecisionDocument < ApplicationRecord
     return no_processing_required! unless upload_enabled?
 
     cache_file!
-    super(delay: DECISION_OUTCODING_DELAY)
+    super
   end
 
   def process!

@@ -12,6 +12,7 @@ import { COLORS } from '../../constants/AppConstants';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import { renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
+import DocketTypeBadge from '../../components/DocketTypeBadge';
 
 const sectionNavigationListStyling = css({
   '& > li': {
@@ -24,6 +25,14 @@ const sectionNavigationListStyling = css({
 const roSelectionStyling = css({ marginTop: '10px' });
 
 export default class AssignHearings extends React.Component {
+
+  amaAppeal = (appeal) => {
+    return appeal.type === 'appeals';
+  };
+
+  getAmaAppeals = _.filter(this.props.appealsReadyForHearing, (appeal) => this.amaAppeal(appeal));
+
+  getLegacyAppeals = _.filter(this.props.appealsReadyForHearing, (appeal) => !this.amaAppeal(appeal));
 
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
@@ -106,16 +115,40 @@ export default class AssignHearings extends React.Component {
       return 'Washington DC';
     }
 
+    if (!appeal.attributes.regionalOffice) {
+      return null;
+    }
+
     return `${appeal.attributes.regionalOffice.city}, ${appeal.attributes.regionalOffice.state}`;
   };
 
   getCaseDetailsInformation = (appeal) => {
     if (appeal.attributes.appellantFullName) {
-      return `${appeal.attributes.appellantFullName} | ${appeal.attributes.vbmsId}`;
+      return `${appeal.attributes.appellantFullName} | ${appeal.attributes.veteranFileNumber}`;
     }
 
-    return `${appeal.attributes.veteranFullName} | ${appeal.attributes.vbmsId}`;
+    return `${appeal.attributes.veteranFullName} | ${appeal.attributes.veteranFileNumber}`;
   };
+
+  getHearingDocketTag = (hearing) => {
+    if (hearing.docketNumber) {
+      return <div>
+        <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
+        {hearing.docketNumber}
+      </div>;
+    }
+
+  }
+
+  getAppealDocketTag = (appeal) => {
+    if (appeal.attributes.docketNumber) {
+      return <div>
+        <DocketTypeBadge name={appeal.attributes.docketName} number={appeal.attributes.docketNumber} />
+        {appeal.attributes.docketNumber}
+      </div>;
+    }
+
+  }
 
   tableAssignHearingsRows = (appeals) => {
     return _.map(appeals, (appeal) => ({
@@ -124,7 +157,7 @@ export default class AssignHearings extends React.Component {
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod
       }),
-      docketNumber: appeal.attributes.docketNumber,
+      docketNumber: this.getAppealDocketTag(appeal),
       location: this.getAppealLocation(appeal),
       time: null,
       externalId: appeal.attributes.externalId
@@ -139,7 +172,7 @@ export default class AssignHearings extends React.Component {
         caseType: hearing.appealType,
         isAdvancedOnDocket: hearing.aod
       }),
-      docketNumber: hearing.docketNumber,
+      docketNumber: this.getHearingDocketTag(hearing),
       location: hearing.readableLocation,
       time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
     }));
@@ -202,8 +235,8 @@ export default class AssignHearings extends React.Component {
     const veteranNotAssignedTitleStyle = css({ fontSize: '4rem' });
     const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no schedulable veterans</span>;
 
-    const scheduleableVeterans = () => {
-      if (_.isEmpty(this.props.appealsReadyForHearing)) {
+    const scheduleableLegacyVeterans = () => {
+      if (_.isEmpty(this.getLegacyAppeals)) {
         return <div>
           <StatusMessage
             title= {veteranNotAssignedTitle}
@@ -216,11 +249,31 @@ export default class AssignHearings extends React.Component {
 
       return <Table
         columns={tabWindowColumns}
-        rowObjects={this.tableAssignHearingsRows(this.props.appealsReadyForHearing)}
+        rowObjects={this.tableAssignHearingsRows(this.getLegacyAppeals)}
         summary="scheduled-hearings-table"
         slowReRendersAreOk
       />;
 
+    };
+
+    const scheduleableAmaVeterans = () => {
+      if (_.isEmpty(this.getAmaAppeals)) {
+        return <div>
+          <StatusMessage
+            title= {veteranNotAssignedTitle}
+            type="alert"
+            messageText={veteranNotAssignedMessage}
+            wrapInAppSegment={false}
+          />
+        </div>;
+      }
+
+      return <Table
+        columns={tabWindowColumns}
+        rowObjects={this.tableAssignHearingsRows(this.getAmaAppeals)}
+        summary="scheduled-hearings-table"
+        slowReRendersAreOk
+      />;
     };
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
@@ -236,7 +289,7 @@ export default class AssignHearings extends React.Component {
         name="scheduledHearings-tabwindow"
         tabs={[
           {
-            label: 'Scheduled',
+            label: 'Scheduled Veterans',
             page: <Table
               columns={tabWindowColumns}
               rowObjects={this.tableScheduledHearingsRows(scheduledOrder)}
@@ -245,8 +298,12 @@ export default class AssignHearings extends React.Component {
             />
           },
           {
-            label: 'Schedule a Veteran',
-            page: scheduleableVeterans()
+            label: 'Legacy Veterans Waiting',
+            page: scheduleableLegacyVeterans()
+          },
+          {
+            label: 'AMA Veterans Waiting',
+            page: scheduleableAmaVeterans()
           }
         ]}
       />

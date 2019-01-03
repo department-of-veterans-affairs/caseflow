@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import TabWindow from '../../components/TabWindow';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
-import { claimantColumn, veteranSsnColumn, decisionReviewTypeColumn } from './TaskTableColumns';
+import { claimantColumn, veteranParticipantIdColumn, decisionReviewTypeColumn } from './TaskTableColumns';
 
 class NonCompTabsUnconnected extends React.PureComponent {
   render = () => {
@@ -26,11 +26,10 @@ class NonCompTabsUnconnected extends React.PureComponent {
   }
 }
 
-const TaskTableTab = ({ description, tasks }) => <React.Fragment>
-  <p className="cf-margin-top-0">{description}</p>
+const TaskTableTab = ({ tasks }) => <React.Fragment>
   <TaskTableUnconnected
     getKeyForRow={(row, object) => object.appeal.id}
-    customColumns={[claimantColumn(), veteranSsnColumn(), decisionReviewTypeColumn()]}
+    customColumns={[claimantColumn(), veteranParticipantIdColumn(), decisionReviewTypeColumn()]}
     includeIssueCount
     includeDaysWaiting
     tasks={tasks}
