@@ -312,6 +312,8 @@ class RequestIssue < ApplicationRecord
     return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def check_for_eligible_previous_review!
     return unless eligible?
     return unless contested_issue
@@ -330,8 +332,10 @@ class RequestIssue < ApplicationRecord
       self.ineligible_reason = :appeal_to_appeal
     end
 
-    self.ineligible_due_to_id = contested_issue.source_request_issue.id if self.ineligible_reason
+    self.ineligible_due_to_id = contested_issue.source_request_issue.id if ineligible_reason
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def check_for_before_ama!
     return unless eligible?

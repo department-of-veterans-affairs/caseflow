@@ -55,14 +55,11 @@ class AddedIssue extends React.PureComponent {
                !issue.vacolsId
     ) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.untimely;
-    } else if (formType === 'higher_level_review') {
-      if (issue.sourceReviewType === "HigherLevelReview") {
-        errorMsg = INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
-      }
-      if (issue.sourceReviewType === "Appeal") {
-        errorMsg = INELIGIBLE_REQUEST_ISSUES.appeal_to_higher_level_review;
-      }
-    } else if (formType === 'appeal' && issue.sourceReviewType === "Appeal") {
+    } else if (formType === 'higher_level_review' && issue.sourceReviewType === 'HigherLevelReview') {
+      errorMsg = INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
+    } else if (formType === 'higher_level_review' && issue.sourceReviewType === 'Appeal') {
+      errorMsg = INELIGIBLE_REQUEST_ISSUES.appeal_to_higher_level_review;
+    } else if (formType === 'appeal' && issue.sourceReviewType === 'Appeal') {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.appeal_to_appeal;
     } else if (issue.beforeAma) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
