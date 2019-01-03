@@ -108,8 +108,8 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content("Disposition: Cancelled")
 
-        expect(page).to_not have_content("Date: ")
-        expect(page).to_not have_content("Judge: ")
+        expect(page).to have_content("Date: ")
+        expect(page).to have_content("Judge: ")
       end
     end
 
