@@ -66,7 +66,7 @@ describe DecisionReview do
   context "#contestable_issues" do
     subject { higher_level_review.contestable_issues }
     it "creates a list of contestable rating and decision issues" do
-      expect(subject.map(&:serialize)).to contain_exactly(
+      expect(subject.map(&:serialize)).to include(
         { # this rating issue got replaced with a decision issue
           ratingIssueReferenceId: "123",
           ratingIssueProfileDate: profile_date,
