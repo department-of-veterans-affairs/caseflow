@@ -61,12 +61,12 @@ class ExternalApi::VADotGovService
       "address_validation/v0/validate"
     end
 
-    # rubocop/disable Metrics/ParameterLists
+    # rubocop:disable Metrics/ParameterLists
     def geocode_body(
         address_line1:, address_line2: nil,
         address_line3: nil, city:, state:, zip_code:, country:
     )
-      # rubocop/enable Metrics/ParameterLists
+      # rubocop:enable Metrics/ParameterLists
       {
         requestAddress: {
           addressLine1: address_line1,
@@ -111,7 +111,7 @@ class ExternalApi::VADotGovService
 
       facilities = resp_body["data"]
       distances = resp_body["meta"]["distances"]
-      total_pages = resp_body["meta"]["pagination"]["total_pages"]
+      has_next = !resp_body["links"]["next"].nil?
       selected_facilities = facilities.select { |facility| ids.include? facility["id"] }
 
       facilities_result = selected_facilities.map do |selected|
@@ -119,7 +119,7 @@ class ExternalApi::VADotGovService
         facility_json(selected, distance)
       end
 
-      { facilities: facilities_result, has_next: query[:page] + 1 <= total_pages }
+      { facilities: facilities_result, has_next: has_next }
     end
 
     def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)

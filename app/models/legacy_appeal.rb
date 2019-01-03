@@ -634,14 +634,7 @@ class LegacyAppeal < ApplicationRecord
     # values, so we should not sanitize the vbms_id.
     return vbms_id.to_s if vbms_id =~ /DEMO/ && Rails.env.development?
 
-    numeric = vbms_id.gsub(/[^0-9]/, "")
-
-    # ensure 8 digits if "C"-type id
-    if vbms_id.ends_with?("C")
-      numeric.rjust(8, "0")
-    else
-      numeric
-    end
+    veteran_file_number_from_bfcorlid vbms_id
   end
 
   # Alias sanitized_vbms_id becauase file_number is the term used VBA wide for this veteran identifier
@@ -797,6 +790,17 @@ class LegacyAppeal < ApplicationRecord
         .reject { |a| a.latest_event_date.nil? }
         .sort_by(&:latest_event_date)
         .reverse
+    end
+
+    def veteran_file_number_from_bfcorlid(bfcorlid)
+      numeric = bfcorlid.gsub(/[^0-9]/, "")
+
+      # ensure 8 digits if "C"-type id
+      if bfcorlid.ends_with?("C")
+        numeric.rjust(8, "0")
+      else
+        numeric
+      end
     end
 
     def bgs
