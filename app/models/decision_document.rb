@@ -13,7 +13,6 @@ class DecisionDocument < ApplicationRecord
   attr_writer :file
 
   S3_SUB_BUCKET = "decisions".freeze
-  DECISION_OUTCODING_DELAY = 3.hours
 
   def document_type
     "BVA Decision"
