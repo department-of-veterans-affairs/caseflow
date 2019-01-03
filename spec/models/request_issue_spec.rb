@@ -377,8 +377,8 @@ describe RequestIssue do
           it "is not eligible after a higher level review" do
             rating_request_issue.validate_eligibility!
 
-            expect(rating_request_issue.previous_higher_level_review?).to eq(true)
-            expect(rating_request_issue.ineligible_reason).to eq("previous_higher_level_review")
+            expect(rating_request_issue.higher_level_review_to_higher_level_review?).to eq(true)
+            expect(rating_request_issue.ineligible_reason).to eq("higher_level_review_to_higher_level_review")
             expect(rating_request_issue.ineligible_due_to).to eq(previous_request_issue)
 
             rating_request_issue.save!
@@ -398,7 +398,7 @@ describe RequestIssue do
           it "does not get flagged for previous higher level review" do
             rating_request_issue.validate_eligibility!
 
-            expect(rating_request_issue.ineligible_reason).to_not eq("previous_higher_level_review")
+            expect(rating_request_issue.ineligible_reason).to_not eq("higher_level_review_to_higher_level_review")
           end
         end
 

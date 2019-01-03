@@ -471,7 +471,7 @@ feature "Edit issues" do
           rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "Left knee granted",
-          ineligible_reason: :previous_higher_level_review,
+          ineligible_reason: :higher_level_review_to_higher_level_review,
           ineligible_due_to: ri_previous_hlr
         )
       end
@@ -550,7 +550,7 @@ feature "Edit issues" do
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
         visit "higher_level_reviews/#{ep_claim_id}/edit"
         expect(page).to have_content(
-          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
         )
         expect(page).to have_content(
           "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
@@ -610,7 +610,7 @@ feature "Edit issues" do
         click_remove_issue_confirmation
 
         expect(page).to_not have_content(
-          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
         )
 
         click_intake_add_issue
@@ -619,7 +619,7 @@ feature "Edit issues" do
 
         expect_ineligible_issue(8)
         expect(page).to have_content(
-          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
         )
 
         # 5

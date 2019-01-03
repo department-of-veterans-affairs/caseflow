@@ -18,7 +18,7 @@ class RequestIssue < ApplicationRecord
     duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
     duplicate_of_rating_issue_in_active_review: "duplicate_of_rating_issue_in_active_review",
     untimely: "untimely",
-    previous_higher_level_review: "previous_higher_level_review",
+    higher_level_review_to_higher_level_review: "higher_level_review_to_higher_level_review",
     appeal_to_appeal: "appeal_to_appeal",
     appeal_to_higher_level_review: "appeal_to_higher_level_review",
     before_ama: "before_ama",
@@ -320,7 +320,7 @@ class RequestIssue < ApplicationRecord
 
     if review_request.is_a?(HigherLevelReview)
       if contested_issue.source_review_type == "HigherLevelReview"
-        self.ineligible_reason = :previous_higher_level_review
+        self.ineligible_reason = :higher_level_review_to_higher_level_review
       end
 
       if contested_issue.source_review_type == "Appeal"
