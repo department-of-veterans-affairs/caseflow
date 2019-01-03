@@ -1,4 +1,4 @@
-class RoundRobinTaskAssigneeFactory
+class RoundRobinTaskDistributor
   def initialize(list_of_assignees:, task_type:)
     @list_of_assignees = list_of_assignees
     @task_type = task_type

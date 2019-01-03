@@ -10,7 +10,7 @@ class Task < ApplicationRecord
   validates :assigned_to, :appeal, :type, :status, presence: true
 
   before_create :set_assigned_at_and_update_parent_status
-  after_create :create_org_auto_assign_task, if: :automatically_assign_org_task?
+  after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
 
   before_update :set_timestamps
   after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
@@ -249,7 +249,7 @@ class Task < ApplicationRecord
 
   private
 
-  def create_org_auto_assign_task
+  def create_and_auto_assign_child_task
     dup.tap do |child_task|
       child_task.assigned_to = assigned_to.next_assignee(self.class)
       child_task.parent = self

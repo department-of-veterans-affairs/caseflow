@@ -4,6 +4,6 @@ class Colocated < Organization
   end
 
   def next_assignee(_task_type)
-    ColocatedTaskAssigneeFactory.new.next_assignee
+    ColocatedTaskDistributor.new.next_assignee
   end
 end
