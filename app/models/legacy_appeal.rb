@@ -635,7 +635,7 @@ class LegacyAppeal < ApplicationRecord
     # values, so we should not sanitize the vbms_id.
     return vbms_id.to_s if vbms_id =~ /DEMO/ && Rails.env.development?
 
-    veteran_file_number_from_bfcorlid vbms_id
+    LegacyAppeal.veteran_file_number_from_bfcorlid vbms_id
   end
 
   # Alias sanitized_vbms_id becauase file_number is the term used VBA wide for this veteran identifier
