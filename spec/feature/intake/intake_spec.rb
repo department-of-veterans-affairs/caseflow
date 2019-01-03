@@ -216,6 +216,7 @@ RSpec.feature "Intake" do
       expect(page).to have_content("Make sure you’ve filled out the comment box below.")
       fill_in "Tell us more about your situation.", with: "blue!"
       safe_click ".confirm-cancel"
+
       expect(page).to have_content("Welcome to Caseflow Intake!")
       expect(page).to_not have_css(".cf-modal-title")
 

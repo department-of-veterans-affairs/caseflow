@@ -1,7 +1,7 @@
 describe LegacyWorkQueue do
-  context ".tasks_with_appeals" do
-    let(:user) { User.find_or_create_by(css_id: "DNYGLVR", station_id: "LANCASTER") }
-
+  context ".tasks_for_user" do
+    let!(:user) { FactoryBot.create(:user) }
+    let!(:staff_record) { FactoryBot.create(:staff, role, sdomainid: user.css_id) }
     let!(:appeals) do
       [
         create(:legacy_appeal, vacols_case: create(:case, :assigned, user: user)),
@@ -9,38 +9,28 @@ describe LegacyWorkQueue do
       ]
     end
 
-    subject { LegacyWorkQueue.tasks_with_appeals(user, role) }
+    subject { LegacyWorkQueue.tasks_for_user(user) }
 
     context "when it is an attorney" do
-      let(:role) { "Attorney" }
+      let(:role) { :attorney_role }
 
       it "returns tasks" do
-        expect(subject[0].length).to eq(2)
-        expect(subject[0][0].class).to eq(AttorneyLegacyTask)
-      end
-
-      it "returns appeals" do
-        expect(subject[1].length).to eq(2)
-        expect(subject[1][0].class).to eq(LegacyAppeal)
+        expect(subject.length).to eq(2)
+        expect(subject[0].class).to eq(AttorneyLegacyTask)
       end
     end
 
     context "when it is a judge" do
-      let(:role) { "Judge" }
+      let(:role) { :judge_role }
 
       it "returns tasks" do
-        expect(subject[0].length).to eq(2)
-        expect(subject[0][0].class).to eq(JudgeLegacyTask)
-      end
-
-      it "returns appeals" do
-        expect(subject[1].length).to eq(2)
-        expect(subject[1][0].class).to eq(LegacyAppeal)
+        expect(subject.length).to eq(2)
+        expect(subject[0].class).to eq(JudgeLegacyTask)
       end
     end
   end
 
-  context ".tasks_with_appeals_by_appeal_id" do
+  context ".tasks_by_appeal_id" do
     let(:user) { User.find_or_create_by(css_id: "DNYGLVR", station_id: "LANCASTER") }
 
     let!(:appeals) do
@@ -51,24 +41,23 @@ describe LegacyWorkQueue do
     end
     let!(:appeal) { appeals[0] }
 
-    subject { LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal.vacols_id, role) }
+    before do
+      FactoryBot.create(:staff, role)
+    end
+
+    subject { LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id) }
 
     context "when the user is an attorney" do
-      let(:role) { "attorney" }
+      let(:role) { :attorney_role }
 
       it "returns a task" do
-        expect(subject[0].length).to eq(1)
-        expect(subject[0][0].class).to eq(AttorneyLegacyTask)
-      end
-
-      it "returns an appeal" do
-        expect(subject[1].length).to eq(1)
-        expect(subject[1][0].class).to eq(LegacyAppeal)
+        expect(subject.length).to eq(1)
+        expect(subject[0].class).to eq(AttorneyLegacyTask)
       end
     end
   end
 
-  context ".tasks_with_appeals_by_appeal_id: appeal assigned to a location" do
+  context ".tasks_by_appeal_id: appeal assigned to a location" do
     let!(:location) { create(:staff, slogid: "38", sdomainid: nil) }
 
     let!(:appeals) do
@@ -79,21 +68,15 @@ describe LegacyWorkQueue do
     end
     let!(:appeal) { appeals[0] }
 
-    subject { LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal.vacols_id, role) }
+    subject { LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id) }
 
-    context "when the user is an attorney" do
-      let(:role) { "attorney" }
-
-      it "returns a task and an appeal" do
-        tasks, appeals = subject
-        expect(tasks.length).to eq(1)
-        task = tasks[0]
-        expect(task.class).to eq(AttorneyLegacyTask)
-        expect(task.user_id).to be_nil
-        expect(task.assigned_to_pg_id).to be_nil
-        expect(appeals.length).to eq(1)
-        expect(appeals[0].class).to eq(LegacyAppeal)
-      end
+    it "returns a task and an appeal" do
+      tasks = subject
+      expect(tasks.length).to eq(1)
+      task = tasks[0]
+      expect(task.class).to eq(AttorneyLegacyTask)
+      expect(task.user_id).to be_nil
+      expect(task.assigned_to_pg_id).to be_nil
     end
   end
 end
