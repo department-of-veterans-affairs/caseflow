@@ -4,6 +4,8 @@ FactoryBot.define do
     disposition "allowed"
     benefit_type "compensation"
 
+    description { decision_review.is_a?(Appeal) ? "description" : nil }
+
     transient do
       request_issues []
     end
