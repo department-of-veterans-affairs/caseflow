@@ -41,7 +41,7 @@ describe RoundRobinTaskDistributor do
 
       it "should raise an error" do
         expect { round_robin_assigner.next_assignee }.to(raise_error) do |error|
-          expect(error).to be_a(RuntimeError)
+          expect(error).to be_a(Caseflow::Error::RoundRobinTaskDistributorError)
           expect(error.message).to eq("list_of_assignees cannot be empty")
         end
       end

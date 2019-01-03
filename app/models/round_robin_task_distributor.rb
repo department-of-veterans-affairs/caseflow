@@ -23,7 +23,9 @@ class RoundRobinTaskDistributor
   end
 
   def next_assignee_css_id
-    fail "list_of_assignees cannot be empty" if @list_of_assignees.blank?
+    if @list_of_assignees.blank?
+      fail Caseflow::Error::RoundRobinTaskDistributorError, message: "list_of_assignees cannot be empty"
+    end
 
     @list_of_assignees[next_assignee_index]
   end
