@@ -204,6 +204,7 @@ class Appeal < DecisionReview
       issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
+    request_issues.reload
   end
 
   def serializer_class
@@ -274,6 +275,7 @@ class Appeal < DecisionReview
   def contestable_decision_issues
     DecisionIssue.where(participant_id: veteran.participant_id)
       .where.not(decision_review_type: "Appeal")
+      .select { |issue| issue.approx_decision_date && issue.approx_decision_date < receipt_date }
   end
 
   def bgs

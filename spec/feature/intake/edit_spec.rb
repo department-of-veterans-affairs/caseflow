@@ -100,23 +100,29 @@ RSpec.feature "Edit issues" do
              legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
     end
 
-    let!(:nonrating_request_issue) do
-      create(:request_issue,
-             review_request: appeal,
-             issue_category: "Military Retired Pay",
-             description: "nonrating description",
-             contention_reference_id: "1234",
-             decision_date: 1.month.ago)
+    let(:nonrating_request_issue_attributes) do
+      {
+        review_request: appeal,
+        issue_category: "Military Retired Pay",
+        description: "nonrating description",
+        contention_reference_id: "1234",
+        decision_date: 1.month.ago
+      }
     end
 
-    let!(:rating_request_issue) do
-      create(:request_issue,
-             review_request: appeal,
-             rating_issue_reference_id: "def456",
-             rating_issue_profile_date: profile_date,
-             description: "PTSD denied",
-             contention_reference_id: "4567")
+    let!(:nonrating_request_issue) { create(:request_issue, nonrating_request_issue_attributes) }
+
+    let(:rating_request_issue_attributes) do
+      {
+        review_request: appeal,
+        rating_issue_reference_id: "def456",
+        rating_issue_profile_date: profile_date,
+        description: "PTSD denied",
+        contention_reference_id: "4567"
+      }
     end
+
+    let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
 
     scenario "allows adding/removing issues" do
       visit "appeals/#{appeal.uuid}/edit/"
@@ -146,7 +152,7 @@ RSpec.feature "Edit issues" do
       expect(page).not_to have_content("nonrating description")
 
       # canceling should redirect to queue
-      click_on "Cancel edit"
+      click_on "Cancel"
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
 
@@ -174,6 +180,38 @@ RSpec.feature "Edit issues" do
 
       # issue note was added
       expect(page).to have_button("Save", disabled: false)
+    end
+
+    context "with multiple request issues with same data fields" do
+      let!(:duplicate_nonrating_request_issue) { create(:request_issue, nonrating_request_issue_attributes) }
+      let!(:duplicate_rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
+
+      scenario "saves by id" do
+        visit "appeals/#{appeal.uuid}/edit/"
+        expect(page).to have_content(duplicate_nonrating_request_issue.description, count: 2)
+        expect(page).to have_content(duplicate_rating_request_issue.description, count: 2)
+
+        # add another new issue
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          category: "Active Duty Adjustments",
+          description: "A description!",
+          date: "04/26/2018"
+        )
+
+        safe_click("#button-submit-update")
+        safe_click ".confirm"
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+        request_issue_update = RequestIssuesUpdate.where(review: appeal).last
+        non_modified_ids = [duplicate_nonrating_request_issue.id, duplicate_rating_request_issue.id,
+                            nonrating_request_issue.id, rating_request_issue.id]
+
+        # duplicate issues should be neither added nor removed
+        expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+        expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
+      end
     end
 
     context "with legacy appeals" do
@@ -352,6 +390,53 @@ RSpec.feature "Edit issues" do
                                 contested_decision_issue_id: contested_decision_issues.second.id,
                                 ineligible_reason: :duplicate_of_rating_issue_in_active_review,
                                 description: contested_decision_issues.second.formatted_description)).to_not be_nil
+  end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
+
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def verify_request_issue_contending_decision_issue_not_readded(
+      page_url,
+      decision_review,
+      contested_decision_issues
+  )
+    # verify that not modifying a request issue contenting a decision issue
+    # does not result in readding
+
+    visit page_url
+    expect(page).to have_content(contested_decision_issues.first.description)
+    expect(page).to have_content(contested_decision_issues.second.description)
+    expect(page).to have_content("PTSD denied")
+
+    click_remove_intake_issue_by_text("PTSD denied")
+    click_remove_issue_confirmation
+
+    click_intake_add_issue
+    add_intake_rating_issue("Issue with legacy issue not withdrawn")
+
+    safe_click("#button-submit-update")
+    expect(page).to have_content("Edit Confirmed")
+
+    first_not_modified_request_issue = RequestIssue.find_by(
+      review_request: decision_review,
+      contested_decision_issue_id: contested_decision_issues.first.id
+    )
+
+    second_not_modified_request_issue = RequestIssue.find_by(
+      review_request: decision_review,
+      contested_decision_issue_id: contested_decision_issues.second.id
+    )
+
+    expect(first_not_modified_request_issue).to_not be_nil
+    expect(second_not_modified_request_issue).to_not be_nil
+
+    non_modified_ids = [first_not_modified_request_issue.id, second_not_modified_request_issue.id]
+    request_issue_update = RequestIssuesUpdate.find_by(review: decision_review)
+
+    # existing issues should not be added or removed
+    expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+    expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
@@ -859,6 +944,7 @@ RSpec.feature "Edit issues" do
 
       context "has decision issues" do
         let(:contested_decision_issues) { setup_prior_decision_issues(veteran) }
+
         let(:decision_request_issue) do
           create(
             :request_issue,
@@ -889,6 +975,26 @@ RSpec.feature "Edit issues" do
             decision_request_issue,
             higher_level_review,
             contested_decision_issues
+          )
+        end
+      end
+
+      context "with existing request issues contesting decision issues" do
+        let(:decision_request_issue) do
+          setup_request_issue_with_nonrating_decision_issue(higher_level_review)
+        end
+
+        let(:nonrating_decision_request_issue) do
+          setup_request_issue_with_rating_decision_issue(higher_level_review, rating_issue_reference_id: "abc123")
+        end
+
+        let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
+
+        it "does not remove & readd unedited issues" do
+          verify_request_issue_contending_decision_issue_not_readded(
+            "higher_level_reviews/#{rating_ep_claim_id}/edit",
+            higher_level_review,
+            decision_request_issue.decision_issues + nonrating_decision_request_issue.decision_issues
           )
         end
       end
@@ -1166,7 +1272,7 @@ RSpec.feature "Edit issues" do
       feature "cancel edits" do
         def click_cancel(visit_page)
           visit "higher_level_reviews/#{rating_ep_claim_id}/edit#{visit_page}"
-          click_on "Cancel edit"
+          click_on "Cancel"
           correct_path = "/higher_level_reviews/#{rating_ep_claim_id}/edit/cancel"
           expect(page).to have_current_path(correct_path)
           expect(page).to have_content("Edit Canceled")
@@ -1505,6 +1611,26 @@ RSpec.feature "Edit issues" do
         end
       end
 
+      context "with existing request issues contesting decision issues" do
+        let(:decision_request_issue) do
+          setup_request_issue_with_nonrating_decision_issue(supplemental_claim)
+        end
+
+        let(:nonrating_decision_request_issue) do
+          setup_request_issue_with_rating_decision_issue(supplemental_claim, rating_issue_reference_id: "abc123")
+        end
+
+        let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
+
+        it "does not remove & readd unedited issues" do
+          verify_request_issue_contending_decision_issue_not_readded(
+            "supplemental_claims/#{rating_ep_claim_id}/edit",
+            supplemental_claim,
+            decision_request_issue.decision_issues + nonrating_decision_request_issue.decision_issues
+          )
+        end
+      end
+
       it "enables save button only when dirty" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit"
 
@@ -1604,7 +1730,7 @@ RSpec.feature "Edit issues" do
       feature "cancel edits" do
         def click_cancel(visit_page)
           visit "supplemental_claims/#{rating_ep_claim_id}/edit#{visit_page}"
-          click_on "Cancel edit"
+          click_on "Cancel"
           correct_path = "/supplemental_claims/#{rating_ep_claim_id}/edit/cancel"
           expect(page).to have_current_path(correct_path)
           expect(page).to have_content("Edit Canceled")
