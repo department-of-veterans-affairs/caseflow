@@ -10,9 +10,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
   context "assign judges info from VACOLS staff and Caseflow" do
     before do
-      date = get_unique_dates_between(schedule_period.start_date,
-                                      schedule_period.end_date, 1).first
-      create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
+      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 7, 6), folder_nr: "VIDEO RO13")
     end
     subject { assign_judges_to_hearing_days }
 
@@ -20,9 +18,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
       before do
         3.times do
           judge = FactoryBot.create(:user)
-          date = get_unique_dates_between(schedule_period.start_date,
-                                          schedule_period.end_date, 1).first
-          create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
+          create(:judge_non_availability, date: Date.new(2018, 7, 6), schedule_period_id: schedule_period.id,
                                           object_identifier: judge.css_id)
           create(:staff, :hearing_judge, sdomainid: judge.css_id)
         end
