@@ -46,6 +46,7 @@ class ClaimReview < DecisionReview
       end
       issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
+    request_issues.reload
   end
 
   def create_non_comp_task!
@@ -122,9 +123,10 @@ class ClaimReview < DecisionReview
   private
 
   def contestable_decision_issues
+    return [] unless receipt_date
     DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
       .where.not(decision_review_type: "Appeal")
-      .select { |issue| issue.approx_decision_date ? issue.approx_decision_date < receipt_date : false }
+      .select { |issue| issue.approx_decision_date && issue.approx_decision_date < receipt_date }
   end
 
   def informal_conference?
