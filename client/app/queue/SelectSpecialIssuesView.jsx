@@ -15,6 +15,7 @@ import ApiUtil from '../util/ApiUtil';
 
 class SelectSpecialIssuesView extends React.PureComponent {
   getPageName = () => COPY.SPECIAL_ISSUES_PAGE_TITLE;
+  getPageNote = () => COPY.SPECIAL_ISSUES_PAGE_NOTE;
 
   onChangeSpecialIssue = (issue) => (value) => {
     this.props.setSpecialIssues({
@@ -58,6 +59,9 @@ class SelectSpecialIssuesView extends React.PureComponent {
       <h1>
         {this.getPageName()}
       </h1>
+      <p>
+        {this.getPageNote()}
+      </p>
       {error && <Alert type="error" title={error.title} message={error.detail} />}
       <div className="cf-multiple-columns">
         {specialIssueCheckboxes}
