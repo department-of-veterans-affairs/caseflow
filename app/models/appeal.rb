@@ -3,7 +3,6 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
-  has_many :decision_issues, as: :decision_review
   has_many :decision_documents
   has_one :special_issue_list
 
