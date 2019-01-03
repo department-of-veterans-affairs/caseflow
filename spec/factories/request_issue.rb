@@ -20,14 +20,15 @@ FactoryBot.define do
       end
 
       after(:create) do |request_issue, evaluator|
-        create(:decision_issue,
-               decision_review: request_issue.review_request,
-               participant_id: evaluator.veteran_participant_id,
-               rating_issue_reference_id: request_issue.rating_issue_reference_id,
-               profile_date: request_issue.rating_issue_profile_date,
-               benefit_type: request_issue.review_request.benefit_type,
-               decision_text: "a rating decision issue",
-               request_issues: [request_issue])
+        decision_issue = create(:decision_issue,
+                                decision_review: request_issue.review_request,
+                                participant_id: evaluator.veteran_participant_id,
+                                rating_issue_reference_id: request_issue.rating_issue_reference_id,
+                                profile_date: request_issue.rating_issue_profile_date,
+                                benefit_type: request_issue.review_request.benefit_type,
+                                decision_text: "a rating decision issue",
+                                request_issues: [request_issue])
+        request_issue.update!(contested_decision_issue_id: decision_issue.id)
       end
     end
 
@@ -37,14 +38,15 @@ FactoryBot.define do
       end
 
       after(:create) do |request_issue, evaluator|
-        create(:decision_issue,
-               decision_review: request_issue.review_request,
-               participant_id: evaluator.veteran_participant_id,
-               benefit_type: request_issue.review_request.benefit_type,
-               decision_text: "a rating decision issue",
-               end_product_last_action_date: request_issue.decision_date,
-               disposition: "nonrating decision issue dispositon",
-               request_issues: [request_issue])
+        decision_issue = create(:decision_issue,
+                                decision_review: request_issue.review_request,
+                                participant_id: evaluator.veteran_participant_id,
+                                benefit_type: request_issue.review_request.benefit_type,
+                                decision_text: "arating decision issue",
+                                end_product_last_action_date: request_issue.decision_date,
+                                disposition: "nonrating decision issue dispositon",
+                                request_issues: [request_issue])
+        request_issue.update!(contested_decision_issue_id: decision_issue.id)
       end
     end
 
