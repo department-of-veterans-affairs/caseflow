@@ -152,8 +152,10 @@ export class TaskSnapshot extends React.PureComponent<Props> {
   }
 
   assignedToListItem = (task) => {
-    return task.assignedTo.cssId ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
-      <dd>{task.assignedTo.cssId}</dd></div> : null;
+    const assignee = task.isLegacy ? this.props.appeal.locationCode : task.assignedTo.cssId;
+
+    return assignee ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
+      <dd>{assignee}</dd></div> : null;
   }
 
   assignedByListItem = (task) => {
@@ -202,13 +204,10 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
   taskInformation = (task) => {
     return <React.Fragment>
-      { this.assignedToListItem(task) }
-      { this.assignedByListItem(task) }
-      { this.preparedByListItem(task) }
-      { this.taskLabelListItem(task) }
-      { this.taskInstructionsListItem(task) }
+      
     </React.Fragment>;
   }
+
   legacyTaskInformation = (task) => {
     // If this is not a task attached to a legacy appeal, use taskInformation.
     if (!this.props.appeal.isLegacy) {
@@ -220,9 +219,19 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
     const assignedByAbbrev = task.assignedBy.firstName ?
       this.getAbbrevName(task.assignedBy) : null;
+
+    // TODO: When do we show the assigned to list item?
+    // * Never if there is no assignee
+    // * Always for Caseflow tasks
+    // * For VACOLS tasks...
+    //   * If the user is an attorney AND there is no assignor
+    //   * OR if the user is a judge and there is no document ID nor assignor
     const assignedToListItem = this.props.appeal.locationCode ? <React.Fragment>
       <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
     </React.Fragment> : null;
+
+    // If the current user is not a judge nor an attorney -> return early.
+    // 
 
     if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
 
@@ -268,6 +277,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>
         <tr>
+
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
               { this.assignedOnListItem(task) }
@@ -275,16 +285,25 @@ export class TaskSnapshot extends React.PureComponent<Props> {
               { this.daysWaitingListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
+
           <td {...taskInfoWithIconContainer}><GrayDot />
-            { (index + 1 < taskLength) && <div {...grayLineStyling} /> }</td>
+            { (index + 1 < taskLength) && <div {...grayLineStyling} /> }
+          </td>
+
           <td {...taskInformationContainerStyling}>
             <CaseDetailsDescriptionList>
-              {this.legacyTaskInformation(task)}
+              { this.assignedToListItem(task) }
+              { this.assignedByListItem(task) }
+              { this.preparedByListItem(task) }
+              { this.taskLabelListItem(task) }
+              { this.taskInstructionsListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
+
           <td {...taskActionsContainerStyling}>
             { this.showActionsListItem(task, appeal) }
           </td>
+
         </tr>);
     }
 
