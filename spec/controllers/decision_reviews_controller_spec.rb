@@ -56,6 +56,14 @@ describe DecisionReviewsController, type: :controller do
 
         expect(response.status).to eq 200
       end
+
+      context "task does not exist" do
+        it "returns 404" do
+          get :show, params: { decision_review_business_line_slug: non_comp_org.url, task_id: 0 }
+
+          expect(response.status).to eq 404
+        end
+      end
     end
 
     context "user is not in org" do
