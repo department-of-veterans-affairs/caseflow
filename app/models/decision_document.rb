@@ -41,8 +41,12 @@ class DecisionDocument < ApplicationRecord
 
     attempted!
     upload_to_vbms!
-    create_board_grant_effectuations!
-    process_board_grant_effectuations!
+
+    if FeatureToggle.enabled?(:create_board_grant_effectuations)
+      create_board_grant_effectuations!
+      process_board_grant_effectuations!
+    end
+
     processed!
   rescue StandardError => err
     update_error!(err.to_s)

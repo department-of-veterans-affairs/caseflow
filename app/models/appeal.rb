@@ -3,7 +3,7 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
-  
+
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
 
@@ -130,7 +130,7 @@ class Appeal < DecisionReview
 
   def decision_document
     # NOTE: This is used for outcoding and effectuations
-    #       When post decisional motions are supported, this will need to be accounted for. 
+    #       When post decisional motions are supported, this will need to be accounted for.
     decision_documents.last
   end
 
