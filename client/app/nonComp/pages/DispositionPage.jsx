@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
+import { formatDate } from '../../util/DateUtil';
 // import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { DISPOSITION_OPTIONS } from '../constants';
@@ -37,7 +37,7 @@ class NonCompDecisionIssue extends React.PureComponent {
       index
     } = this.props;
 
-    let issueDate = issue.rating_issue_profile_date || issue.decision_date;
+    let issueDate = formatDate(issue.rating_issue_profile_date || issue.decision_date);
 
     return <div className="cf-decision">
       <hr />
@@ -79,21 +79,35 @@ class NonCompDispositionsPage extends React.PureComponent {
       <div className="cf-review-details">
         <div className="usa-grid-full">
           <div className="usa-width-one-half">
-            <strong className="cf-claimant-name">{task.claimant.name}</strong>
-            &nbsp;|&nbsp;
-            <strong>Relationship to Veteran</strong> {task.claimant.relationship}
+            <span className="cf-claimant-name">{task.claimant.name}</span>
+            <strong className="cf-relationship">Relationship to Veteran</strong> {task.claimant.relationship}
           </div>
-          <div className="usa-width-one-half cf-txt-r">
-            <span><strong>Intake date</strong> {appeal.receiptDate}</span>
+          <div className="usa-width-one-half cf-txt-r pad-top">
+            <span className="cf-intake-date"><strong>Intake date</strong> {formatDate(task.created_at)}</span>
             <span>Veteran ID: {appeal.veteran.fileNumber}</span>
           </div>
         </div>
-        <div className="usa-grid-full">
+        <div className="usa-grid-full row-two">
           <div className="usa-width-one-half">
-            { appeal.veteranIsNotClaimant ? `Veteran Name ${appeal.veteran.name}` : '' }
+            { appeal.veteranIsNotClaimant ? `Veteran Name ${appeal.veteran.name}` : '\u00a0' }
           </div>
           <div className="usa-width-one-half cf-txt-r">
-            <span>SSN: TODO</span>
+            <div>SSN: {appeal.veteran.ssn || '[unknown]'}</div>
+          </div>
+        </div>
+        <hr />
+        <div className="usa-grid-full">
+          <div className="usa-width-two-thirds">
+            <div className="cf-form-details">
+              <div><strong>Form being processed</strong> TODO</div>
+              <div><strong>Informal conference requested</strong> TODO</div>
+              <div><strong>Review by same office requested</strong> TODO</div>
+            </div>
+          </div>
+          <div className="usa-width-one-third">
+            <div className="cf-receipt-date cf-txt-r">
+              <div><strong>Form receipt date</strong> {formatDate(appeal.receiptDate)}</div>
+            </div>
           </div>
         </div>
       </div>

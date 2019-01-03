@@ -89,7 +89,8 @@ class DecisionReview < ApplicationRecord
       veteran: {
         name: veteran&.name&.formatted(:readable_short),
         fileNumber: veteran_file_number,
-        formName: veteran&.name&.formatted(:form)
+        formName: veteran&.name&.formatted(:form),
+        ssn: veteran&.ssn
       },
       relationships: veteran&.relationships,
       claimant: claimant_participant_id,

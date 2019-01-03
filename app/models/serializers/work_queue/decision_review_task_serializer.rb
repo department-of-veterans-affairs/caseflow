@@ -38,6 +38,8 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
 
   attribute :id
 
+  attribute :created_at
+
   attribute :veteran_participant_id do
     decision_review.veteran.participant_id
   end
