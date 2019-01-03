@@ -57,7 +57,7 @@ class DecisionDocument < ApplicationRecord
   private
 
   def create_board_grant_effectuations!
-    appeal.decision_issues.each do |granted_decision_issue|
+    appeal.decision_issues.granted.each do |granted_decision_issue|
       BoardGrantEffectuation.find_or_create_by(granted_decision_issue: granted_decision_issue)
     end
   end

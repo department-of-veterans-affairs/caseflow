@@ -78,6 +78,15 @@ describe DecisionDocument do
     end
 
     context "there was no upload error" do
+      let!(:denied_issue) do
+        FactoryBot.create(
+          :decision_issue,
+          :rating,
+          disposition: "denied",
+          decision_review: decision_document.appeal
+        )
+      end
+
       context "when no granted issues" do
         it "uploads document and does not create effectuations" do
           subject
@@ -85,6 +94,10 @@ describe DecisionDocument do
           expect(VBMSService).to have_received(:upload_document_to_vbms).with(
             decision_document.appeal, decision_document
           )
+
+          expect(VBMSService).to_not have_received(:establish_claim!)
+          expect(VBMSService).to_not have_received(:create_contentions!)
+          expect(decision_document.effectuations).to be_empty
 
           expect(decision_document.attempted_at).to eq(Time.zone.now)
           expect(decision_document.processed_at).to eq(Time.zone.now)
@@ -131,6 +144,7 @@ describe DecisionDocument do
           )
 
           expect(another_granted_issue.effectuation).to_not be_nil
+          expect(denied_issue.effectuation).to be_nil
 
           # some extra broader assertions to make sure the end products are the same for both issues
           expect(granted_issue.effectuation.end_product_establishment).to_not be_nil
