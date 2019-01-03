@@ -14,6 +14,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
   MAX_NUMBER_OF_DAYS_PER_DATE = 12
   BVA_VIDEO_ROOMS = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].freeze
 
+  MAX_ITERATIONS = 100
+
   def initialize(schedule_period)
     @amortized = 0
     @co_non_availability_days = []
@@ -25,7 +27,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @available_days = filter_non_availability_days(schedule_period.start_date, schedule_period.end_date)
 
     assign_and_filter_ro_days(schedule_period)
-    @date_allocated = {}
   end
 
   def extract_non_available_days
@@ -78,22 +79,38 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def allocate_hearing_days_to_ros
-    @amortized = 0
+    sorted_ros = sort_ros_by_rooms_and_allocated_days
 
-    @ros = sort_ros_by_rooms_and_allocated_days
-    ros = @ros.each_key do |ro_key|
-      allocate_all_ro_monthly_hearing_days(ro_key)
+    loop do
+      @ros = sorted_ros.transform_values(&:clone)
+      result = allocate_hearing_days_loop
+      return result if result
     end
-    ros
   end
 
   def sort_ros_by_rooms_and_allocated_days
     @ros.sort_by do |_k, v|
-      [v[:num_of_rooms], v[:allocated_days]]
+      v[:allocated_days].to_f / v[:num_of_rooms] / v[:available_days].count
     end.reverse.to_h
   end
 
   private
+
+  def allocate_hearing_days_loop
+    @date_allocated = {}
+    @amortized = 0
+
+    ros = @ros.each_key do |ro_key|
+      allocate_all_ro_monthly_hearing_days(ro_key)
+    end
+
+    return ros
+  rescue HearingSchedule::Errors::NotEnoughAvailableDays => e
+    @iterations ||= 0
+    @iterations += 1
+    return if @iterations < MAX_ITERATIONS
+    raise e
+  end
 
   def allocate_all_ro_monthly_hearing_days(ro_key)
     grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
@@ -103,12 +120,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def assign_hearing_days(ro_key)
+    i = 0
     date_index = 0
 
     monthly_allocations = allocations_by_month(ro_key)
 
     # Keep allocating the days until all monthly allocations are 0
-    while monthly_allocations.values.inject(:+) != 0
+    while i < 10 && monthly_allocations.values.inject(:+) != 0
+      i += 1
       allocate_hearing_days_to_individual_ro(
         ro_key,
         monthly_allocations,
