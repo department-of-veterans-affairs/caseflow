@@ -23,14 +23,15 @@ class Helpers::Sanitizers
   # Utility method to randomly either write a value, or nil
   def random_or_nil(value)
     return value if ::Faker::Number.number(1).to_i < 5
+
     nil
   end
 
   VETID_REGEX = /((?:^|[^0-9]|SS\ )[0-9]{3}[-\ ]?[0-9]{2}[-\ ]?[0-9]{4}(?![0-9])S?|(?:^|[^0-9]|C )
-    [0-9]{1,2}\ ?[0-9]{3}\ ?[0-9]{3}(?![0-9])C?)/x
-  EMAIL_REGEX = /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
-  PHONE_REGEX = /\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})/
-  SENTENCE_REGEX = /[^\s]\s[^\s]/
+    [0-9]{1,2}\ ?[0-9]{3}\ ?[0-9]{3}(?![0-9])C?)/x.freeze
+  EMAIL_REGEX = /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i.freeze
+  PHONE_REGEX = /\(?([0-9]{3})\)?[-.●]?([0-9]{3})[-.●]?([0-9]{4})/.freeze
+  SENTENCE_REGEX = /[^\s]\s[^\s]/.freeze
 
   # Anything in this array will not throw PII warnings even if it looks like PII.
   # Note Staff-snamel is only used when it's associated with a numerical location or RO, in
@@ -77,6 +78,7 @@ class Helpers::Sanitizers
   def switch_slogid(record)
     record.attributes.each do |k, v|
       next if !staff_id_hash[v] || RO_REGEX =~ v || LOCATION_REGEX =~ v || CO_LOCATED_TEAM_REGEX =~ v
+
       record[k] = staff_id_hash[v][:login]
     end
   end
@@ -101,9 +103,9 @@ class Helpers::Sanitizers
        stmduser stmdtime stc1 stc2 stc3 stc4 sactive smemgrp sattyid svlj]
   end
 
-  RO_REGEX = /^RO\d\d?$/
-  LOCATION_REGEX = /^\d+$/
-  CO_LOCATED_TEAM_REGEX = /^A1|A2$/
+  RO_REGEX = /^RO\d\d?$/.freeze
+  LOCATION_REGEX = /^\d+$/.freeze
+  CO_LOCATED_TEAM_REGEX = /^A1|A2$/.freeze
 
   def generate_staff_mapping(staff, record_index)
     if RO_REGEX.match(staff.stafkey) || LOCATION_REGEX.match(staff.stafkey)
@@ -323,7 +325,7 @@ class Helpers::Sanitizers
        aod holddays vdkey canceldate]
   end
 
-  ONLY_NUMBER_REGEX = /^\d*$/
+  ONLY_NUMBER_REGEX = /^\d*$/.freeze
 
   def sanitize_casehearing(hearing, _exist_hash)
     ::Faker::Config.random = Random.new(hearing.hearing_pkseq)
@@ -382,4 +384,3 @@ end
 # rubocop:enable Metrics/CyclomaticComplexity
 # rubocop:enable Metrics/PerceivedComplexity
 # rubocop:enable Metrics/AbcSize
-# rubocop:enable Metrics/PerceivedComplexity

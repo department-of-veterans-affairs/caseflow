@@ -99,6 +99,7 @@ class DecisionDocument < ApplicationRecord
 
   def cache_file!
     fail NoFileError unless @file
+
     S3Service.store_file(s3_location, Base64.decode64(@file))
   end
 end

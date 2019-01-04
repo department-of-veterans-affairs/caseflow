@@ -44,7 +44,7 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
   end
 
   def update_fetched_at(reader_user)
-    reader_user.update_attributes!(documents_fetched_at: Time.zone.now)
+    reader_user.update!(documents_fetched_at: Time.zone.now)
   end
 
   def fetch_documents_for_appeals(appeals)

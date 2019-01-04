@@ -6,7 +6,7 @@ class DecisionReviewsController < ApplicationController
       render "index"
     else
       # TODO: make index show error message
-      render json: { error: "#{business_line_slug} not found" }, status: 404
+      render json: { error: "#{business_line_slug} not found" }, status: :not_found
     end
   end
 
@@ -14,7 +14,7 @@ class DecisionReviewsController < ApplicationController
     if task
       render "show"
     else
-      render json: { error: "Task #{task_id} not found" }, status: 404
+      render json: { error: "Task #{task_id} not found" }, status: :not_found
     end
   end
 

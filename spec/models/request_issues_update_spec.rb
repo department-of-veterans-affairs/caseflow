@@ -349,7 +349,7 @@ describe RequestIssuesUpdate do
             expect(RequestDecisionIssue.find_by(
                      request_issue_id: existing_legacy_opt_in_request_issue_id,
                      decision_issue_id: deleted_decision_issue.id
-            )).to be_nil
+                   )).to be_nil
 
             expect(DecisionIssue.find_by(id: deleted_decision_issue.id)).to be_nil
           end
@@ -370,7 +370,7 @@ describe RequestIssuesUpdate do
               expect(RequestDecisionIssue.find_by(
                        request_issue_id: existing_legacy_opt_in_request_issue_id,
                        decision_issue_id: deleted_decision_issue.id
-              )).to be_nil
+                     )).to be_nil
 
               expect(DecisionIssue.find_by(id: deleted_decision_issue.id)).to be_nil
 
@@ -379,12 +379,12 @@ describe RequestIssuesUpdate do
               expect(RequestDecisionIssue.find_by(
                        request_issue_id: existing_legacy_opt_in_request_issue_id,
                        decision_issue_id: not_deleted_decision_issue.id
-              )).to be_nil
+                     )).to be_nil
 
               expect(RequestDecisionIssue.find_by(
                        request_issue_id: existing_request_issue_id,
                        decision_issue_id: not_deleted_decision_issue.id
-              )).to_not be_nil
+                     )).to_not be_nil
 
               expect(DecisionIssue.find_by(id: not_deleted_decision_issue.id)).to_not be_nil
             end
