@@ -93,6 +93,9 @@ class HigherLevelReview < ClaimReview
         rating_issue_reference_id: dta_decision_issue.rating_issue_reference_id,
         rating_issue_profile_date: dta_decision_issue.profile_date,
         description: dta_decision_issue.description,
+        contested_rating_issue_reference_id: dta_decision_issue.rating_issue_reference_id,
+        contested_rating_issue_profile_date: dta_decision_issue.profile_date,
+        contested_rating_issue_description: dta_decision_issue.description,
         issue_category: dta_decision_issue.issue_category,
         benefit_type: dta_decision_issue.benefit_type,
         decision_date: dta_decision_issue.approx_decision_date
