@@ -91,8 +91,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
   constructor(props) {
     super(props);
     this.state = {
-      taskInstructionsIsVisible: false,
-      addNewTaskIsVisible: Boolean(this.props.rootTask[0].availableActions[0])
+      taskInstructionsIsVisible: false
     };
   }
 
@@ -266,7 +265,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
   render = () => {
     const {
-      appeal
+      appeal,
+      rootTask
     } = this.props;
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
@@ -279,7 +279,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
     if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>
-        task.type !== 'RootTask' && !this.state.addNewTaskIsVisible && <tr key={task.uniqueId}>
+        task.type !== 'RootTask' && !(rootTask[0] && rootTask[0].availableActions[0]) && <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
               { task.assignedOn &&
@@ -318,7 +318,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
         <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}</a>
-        { this.state.addNewTaskIsVisible && <Button
+        { rootTask[0] && rootTask[0].availableActions[0] && <Button
           linkStyling
           styling={css({ float: 'right',
             paddingRight: '10px' })}
