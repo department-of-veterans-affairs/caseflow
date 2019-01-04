@@ -3,8 +3,10 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
-  has_many :decision_issues, through: :request_issues
+
+  # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
+
   has_one :special_issue_list
 
   with_options on: :intake_review do
@@ -127,7 +129,13 @@ class Appeal < DecisionReview
   end
 
   def decision_date
-    decision_documents.last.try(:decision_date)
+    decision_document.try(:decision_date)
+  end
+
+  def decision_document
+    # NOTE: This is used for outcoding and effectuations
+    #       When post decisional motions are supported, this will need to be accounted for.
+    decision_documents.last
   end
 
   def hearing_docket?
