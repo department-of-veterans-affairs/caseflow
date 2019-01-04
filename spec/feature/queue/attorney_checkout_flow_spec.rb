@@ -265,7 +265,9 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(page.current_path).to eq("/queue")
 
-        expect(appeal.decision_issues.count).to eq(4)
+        # Two request issues are merged into 1 decision issue
+        expect(appeal.decision_issues.count).to eq 3
+        expect(appeal.request_decision_issues.count).to eq(4)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
         expect(appeal.decision_issues.first.disposition).to eq("remanded")
         expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
@@ -320,8 +322,10 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
+        # Two request issues are merged into 1 decision issue
+        expect(appeal.decision_issues.count).to eq 3
+        expect(appeal.request_decision_issues.count).to eq(4)
         # The decision issue should have the new content the judge added
-        expect(appeal.decision_issues.count).to eq(4)
         expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
 
         remand_reasons = appeal.decision_issues.where(disposition: "remanded").map do |decision|
@@ -330,7 +334,7 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
         expect(appeal.decision_issues.where(disposition: "remanded").count).to eq(2)
-        expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(2)
+        expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(1)
         expect(appeal.request_issues.map { |issue| issue.decision_issues.count }).to match_array([3, 1])
       end
     end

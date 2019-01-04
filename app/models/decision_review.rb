@@ -10,6 +10,7 @@ class DecisionReview < ApplicationRecord
 
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
+  has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review
   has_many :tasks, as: :appeal
 
@@ -89,7 +90,8 @@ class DecisionReview < ApplicationRecord
       veteran: {
         name: veteran&.name&.formatted(:readable_short),
         fileNumber: veteran_file_number,
-        formName: veteran&.name&.formatted(:form)
+        formName: veteran&.name&.formatted(:form),
+        ssn: veteran&.ssn
       },
       relationships: veteran&.relationships,
       claimant: claimant_participant_id,
@@ -100,7 +102,8 @@ class DecisionReview < ApplicationRecord
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
-      contestableIssuesByDate: contestable_issues.map(&:serialize)
+      contestableIssuesByDate: contestable_issues.map(&:serialize),
+      editIssuesUrl: edit_issues_url
     }
   end
 

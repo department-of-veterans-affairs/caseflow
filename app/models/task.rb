@@ -10,8 +10,9 @@ class Task < ApplicationRecord
   validates :assigned_to, :appeal, :type, :status, presence: true
 
   before_create :set_assigned_at_and_update_parent_status
-  before_update :set_timestamps
+  after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
 
+  before_update :set_timestamps
   after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
 
   enum status: {
@@ -237,6 +238,18 @@ class Task < ApplicationRecord
   end
 
   private
+
+  def create_and_auto_assign_child_task
+    dup.tap do |child_task|
+      child_task.assigned_to = assigned_to.next_assignee(self.class)
+      child_task.parent = self
+      child_task.save!
+    end
+  end
+
+  def automatically_assign_org_task?
+    assigned_to.is_a?(Organization) && assigned_to.automatically_assign_to_member?(self.class)
+  end
 
   def update_parent_status
     parent.when_child_task_completed

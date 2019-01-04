@@ -27,6 +27,10 @@ class ClaimReview < DecisionReview
     )
   end
 
+  def edit_issues_url
+    "/#{self.class.to_s.underscore.pluralize}/#{end_product_establishments.first.reference_id}/edit"
+  end
+
   def issue_code(*)
     fail Caseflow::Error::MustImplementInSubclass
   end
