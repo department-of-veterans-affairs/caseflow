@@ -76,9 +76,9 @@ class RequestIssue < ApplicationRecord
     end
 
     def find_or_build_from_intake_data(data)
-      find_or_initialize_by(
-        attributes_from_intake_data(data)
-      ).tap(&:validate_eligibility!)
+      # request issues on edit have ids
+      # but newly added issues do not
+      data[:request_issue_id] ? find(data[:request_issue_id]) : from_intake_data(data)
     end
 
     def find_active_by_rating_issue_reference_id(rating_issue_reference_id)

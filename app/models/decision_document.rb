@@ -5,6 +5,9 @@ class DecisionDocument < ApplicationRecord
   class NoFileError < StandardError; end
 
   belongs_to :appeal
+  has_many :end_product_establishments, as: :source
+  has_many :effectuations, class_name: "BoardGrantEffectuation"
+
   validates :citation_number, format: { with: /\AA\d{8}\Z/i }
 
   attr_writer :file
@@ -34,15 +37,49 @@ class DecisionDocument < ApplicationRecord
   end
 
   def process!
+    return if processed?
+
     attempted!
-    VBMSService.upload_document_to_vbms(appeal, self)
+    upload_to_vbms!
+
+    if FeatureToggle.enabled?(:create_board_grant_effectuations)
+      create_board_grant_effectuations!
+      process_board_grant_effectuations!
+    end
+
     processed!
   rescue StandardError => err
     update_error!(err.to_s)
     raise err
   end
 
+  # Used by EndProductEstablishment to determine what modifier to use for the effectuation EPs
+  def valid_modifiers
+    HigherLevelReview::END_PRODUCT_MODIFIERS
+  end
+
   private
+
+  def create_board_grant_effectuations!
+    appeal.decision_issues.granted.each do |granted_decision_issue|
+      BoardGrantEffectuation.find_or_create_by(granted_decision_issue: granted_decision_issue)
+    end
+  end
+
+  def process_board_grant_effectuations!
+    end_product_establishments.each do |end_product_establishment|
+      end_product_establishment.perform!
+      end_product_establishment.create_contentions!
+      end_product_establishment.commit!
+    end
+  end
+
+  def upload_to_vbms!
+    return if uploaded_to_vbms_at
+
+    VBMSService.upload_document_to_vbms(appeal, self)
+    update!(uploaded_to_vbms_at: Time.zone.now)
+  end
 
   def upload_enabled?
     FeatureToggle.enabled?(:decision_document_upload, user: RequestStore.store[:current_user])
