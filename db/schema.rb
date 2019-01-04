@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190104170322) do
+ActiveRecord::Schema.define(version: 20190104190600) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -711,9 +711,16 @@ ActiveRecord::Schema.define(version: 20190104170322) do
     t.string "benefit_type"
     t.integer "contested_decision_issue_id"
     t.string "veteran_participant_id"
+    t.string "decision_review_type"
+    t.bigint "decision_review_id"
+    t.string "contested_rating_issue_reference_id"
+    t.string "contested_rating_issue_profile_date"
+    t.string "contested_rating_issue_description"
     t.string "contested_rating_issue_diagnostic_code"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
+    t.index ["contested_rating_issue_reference_id"], name: "index_request_issues_on_contested_rating_issue_reference_id"
+    t.index ["decision_review_type", "decision_review_id"], name: "index_request_issues_on_decision_review_columns"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
