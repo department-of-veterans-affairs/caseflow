@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :decision_document do
     appeal { create(:appeal) }
-    sequence(:citation_number) { |n| "A181#{n}3456" }
+    sequence(:citation_number) { |n| "A181#{n % 10}3456" }
     decision_date { Time.zone.today }
     redacted_document_location { "C://Windows/User/BOBLAW/Documents/Decision.docx" }
 

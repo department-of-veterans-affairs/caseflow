@@ -6,15 +6,37 @@ describe RequestIssue do
   end
 
   let(:description) { nil }
-  let(:nonrating_decision_issue) do
-    random_date = 2.days.ago
-    create(:decision_issue,
-           disposition: "test disposition",
-           description: description,
-           request_issues: [create(:request_issue,
-                                   issue_category: "test category",
-                                   decision_date: random_date,
-                                   description: "request issue description")])
+
+  let(:decision_issue) do
+    create(
+      :decision_issue,
+      disposition: "test disposition",
+      decision_text: "decision text",
+      description: description,
+      request_issues: request_issues
+    )
+  end
+
+  let(:request_issues) { [] }
+
+  context "#rating?" do
+    subject { decision_issue.rating? }
+
+    context "when there are no associated nonrating issues" do
+      let(:request_issues) do
+        [create(:request_issue, :rating)]
+      end
+
+      it { is_expected.to eq true }
+    end
+
+    context "when there is one associated nonrating issue" do
+      let(:request_issues) do
+        [create(:request_issue, :rating), create(:request_issue, :nonrating)]
+      end
+
+      it { is_expected.to eq false }
+    end
   end
 
   context "#approx_decision_date" do
@@ -51,34 +73,43 @@ describe RequestIssue do
     end
   end
 
-  it "finds the issue category" do
-    expect(nonrating_decision_issue.issue_category).to eq("test category")
+  context "#issue_category" do
+    subject { decision_issue.issue_category }
+
+    let(:request_issues) do
+      [create(:request_issue, issue_category: "test category", description: "request issue description")]
+    end
+
+    it "finds the issue category" do
+      is_expected.to eq("test category")
+    end
   end
 
   context "#formatted_description" do
-    let(:rating_decision_issue) do
-      create(:decision_issue,
-             description: description,
-             decision_text: "decision text",
-             request_issues: [create(:request_issue,
-                                     notes: "a note")])
-    end
+    subject { decision_issue.formatted_description }
 
-    context "without a description" do
-      it "displays a formatted description" do
-        expect(nonrating_decision_issue.formatted_description)
-          .to eq("test disposition: test category - request issue description")
-        expect(rating_decision_issue.formatted_description).to eq("decision text. Notes: a note")
+    context "when description not set" do
+      context "when nonrating" do
+        let(:request_issues) do
+          [create(:request_issue, :nonrating, issue_category: "test category", description: "req issue description")]
+        end
+
+        it { is_expected.to eq("test disposition: test category - req issue description") }
+      end
+
+      context "when rating" do
+        let(:request_issues) do
+          [create(:request_issue, notes: "a note")]
+        end
+
+        it { is_expected.to eq("decision text. Notes: a note") }
       end
     end
 
-    context "with a description" do
+    context "when description set" do
       let(:description) { "a description" }
 
-      it "displays the description" do
-        expect(nonrating_decision_issue.formatted_description).to eq(description)
-        expect(rating_decision_issue.formatted_description).to eq(description)
-      end
+      it { is_expected.to eq(description) }
     end
   end
 end
