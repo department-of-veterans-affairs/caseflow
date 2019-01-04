@@ -245,7 +245,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
     if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>
-        <tr>
+        <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
               { task.assignedOn &&
