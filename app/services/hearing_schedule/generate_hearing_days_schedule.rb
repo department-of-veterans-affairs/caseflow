@@ -14,7 +14,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   MAX_NUMBER_OF_DAYS_PER_DATE = 12
   BVA_VIDEO_ROOMS = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].freeze
 
-  MAX_ITERATIONS = 100
+  MAX_ITERATIONS = 1
 
   def initialize(schedule_period)
     @amortized = 0
@@ -100,6 +100,14 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @date_allocated = {}
     @amortized = 0
 
+    @availability_coocurrence = @ros.inject({}) do |h, (_k, v)|
+      v[:available_days].each do |date|
+        h[date] ||= 0
+        h[date] += 1
+      end
+      h
+    end
+
     ros = @ros.each_key do |ro_key|
       allocate_all_ro_monthly_hearing_days(ro_key)
     end
@@ -108,13 +116,19 @@ class HearingSchedule::GenerateHearingDaysSchedule
   rescue HearingSchedule::Errors::NotEnoughAvailableDays => e
     @iterations ||= 0
     @iterations += 1
+    puts e.message
     return if @iterations < MAX_ITERATIONS
     raise e
   end
 
   def allocate_all_ro_monthly_hearing_days(ro_key)
     grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
-    @ros[ro_key][:allocated_dates] = self.class.shuffle_grouped_monthly_dates(grouped_monthly_avail_dates)
+    @ros[ro_key][:allocated_dates] = grouped_monthly_avail_dates.map do |k, dates|
+      [k, dates.sort_by { |date| @availability_coocurrence[date] }.reduce({}) do |acc, date|
+        acc[date] = []
+        acc
+      end]
+    end.to_h
     assign_hearing_days(ro_key)
     add_allocated_days_and_format(ro_key)
   end
@@ -126,7 +140,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     monthly_allocations = allocations_by_month(ro_key)
 
     # Keep allocating the days until all monthly allocations are 0
-    while i < 10 && monthly_allocations.values.inject(:+) != 0
+    while i < 31 && monthly_allocations.values.inject(:+) != 0
       i += 1
       allocate_hearing_days_to_individual_ro(
         ro_key,
