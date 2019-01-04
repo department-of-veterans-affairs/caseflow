@@ -18,6 +18,7 @@ describe RoundRobinTaskDistributor do
     end
 
     context "when a task has been assigned to a member of the list of assignees" do
+      let!(:previous_tasks) { FactoryBot.create_list(:task, 8) }
       let!(:task) { FactoryBot.create(:task, assigned_to: assignee) }
 
       it "should return the most recent task" do
