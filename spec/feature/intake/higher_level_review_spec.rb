@@ -505,7 +505,7 @@ feature "Higher-Level Review" do
 
     Claimant.create!(
       review_request: higher_level_review,
-      participant_id: claim_participant_id ? claim_participant_id : test_veteran.participant_id,
+      participant_id: claim_participant_id || test_veteran.participant_id,
       payee_code: claim_participant_id ? "02" : "00"
     )
 
@@ -845,7 +845,7 @@ feature "Higher-Level Review" do
                establishment_submitted_at: Time.zone.now,
                establishment_processed_at: Time.zone.now,
                establishment_error: nil
-      )).to_not be_nil
+             )).to_not be_nil
 
       end_product_establishment = EndProductEstablishment.find_by(
         source: higher_level_review,
@@ -876,7 +876,7 @@ feature "Higher-Level Review" do
                end_product_establishment_id: end_product_establishment.id,
                notes: "decision issue with note",
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
@@ -885,7 +885,7 @@ feature "Higher-Level Review" do
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note",
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
@@ -894,7 +894,7 @@ feature "Higher-Level Review" do
                untimely_exemption: false,
                untimely_exemption_notes: "I am an exemption note",
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
         review_request: higher_level_review,
@@ -924,7 +924,7 @@ feature "Higher-Level Review" do
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id,
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       # Issues before AMA
       expect(RequestIssue.find_by(
@@ -933,7 +933,7 @@ feature "Higher-Level Review" do
                end_product_establishment_id: end_product_establishment.id,
                ineligible_reason: :before_ama,
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
@@ -942,7 +942,7 @@ feature "Higher-Level Review" do
                ramp_claim_id: "ramp_claim_id",
                end_product_establishment_id: end_product_establishment.id,
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
@@ -950,7 +950,7 @@ feature "Higher-Level Review" do
                ineligible_reason: :before_ama,
                end_product_establishment_id: non_rating_end_product_establishment.id,
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
@@ -1140,7 +1140,7 @@ feature "Higher-Level Review" do
                    review_request: hlr,
                    issue_category: "Accrued",
                    benefit_type: hlr.benefit_type
-          )).to_not be_nil
+                 )).to_not be_nil
         end
       end
     end
@@ -1256,7 +1256,7 @@ feature "Higher-Level Review" do
                    ineligible_reason: :legacy_appeal_not_eligible,
                    vacols_id: "vacols2",
                    vacols_sequence_id: "1"
-          )).to_not be_nil
+                 )).to_not be_nil
 
           expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
 
@@ -1305,7 +1305,7 @@ feature "Higher-Level Review" do
                    ineligible_reason: :legacy_issue_not_withdrawn,
                    vacols_id: "vacols1",
                    vacols_sequence_id: "1"
-          )).to_not be_nil
+                 )).to_not be_nil
 
           expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
         end

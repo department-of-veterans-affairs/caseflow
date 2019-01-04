@@ -90,8 +90,9 @@ class Test::UsersController < ApplicationController
 
     user = User.find_by(css_id: params[:id], station_id: params[:station_id])
     return head :not_found if user.nil?
+
     session["user"] = user.to_session_hash
-    session[:regional_office] = user.selected_regional_office ? user.selected_regional_office : user.regional_office
+    session[:regional_office] = user.selected_regional_office || user.regional_office
     head :ok
   end
 

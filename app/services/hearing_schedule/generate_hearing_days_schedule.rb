@@ -245,6 +245,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
       if any_other_days_a_better_fit?(monthly_grouped_days, num_of_rooms)
         return 0
       end
+
       return num_left_to_max
     else
       (num_of_rooms <= allocated_days) ? num_of_rooms : allocated_days
@@ -279,8 +280,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
   end
 
-  def get_num_of_rooms(ro)
-    if RegionalOffice::MULTIPLE_ROOM_ROS.include?(ro)
+  def get_num_of_rooms(regional_office)
+    if RegionalOffice::MULTIPLE_ROOM_ROS.include?(regional_office)
       RegionalOffice::MULTIPLE_NUM_OF_RO_ROOMS
     else
       RegionalOffice::DEFAULT_NUM_OF_RO_ROOMS
@@ -291,7 +292,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     travel_board_hearing_days = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
     tb_master_records = TravelBoardScheduleMapper.convert_from_vacols_format(travel_board_hearing_days)
 
-    tb_master_records.select { |tb_master_record| @ros.keys.include?(tb_master_record[:ro]) }
+    tb_master_records.select { |tb_master_record| @ros.key?(tb_master_record[:ro]) }
       .map do |tb_master_record|
         tb_days = (tb_master_record[:start_date]..tb_master_record[:end_date]).to_a
         @ros[tb_master_record[:ro]][:available_days] -= tb_days

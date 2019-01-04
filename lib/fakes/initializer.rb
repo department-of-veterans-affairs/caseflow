@@ -25,8 +25,6 @@ class Fakes::Initializer
         end
       end
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
-    # rubocop:enable Metrics/PerceivedComplexity
 
     # This setup method is called on every request during development
     # to properly reload class attributes like the fake repositories and

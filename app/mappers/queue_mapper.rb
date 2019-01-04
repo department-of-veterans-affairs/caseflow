@@ -131,7 +131,8 @@ class QueueMapper
     @renamed_attributes ||= begin
       COLUMN_NAMES.keys.each_with_object({}) do |key, result|
         # Skip only if the key is not passed. If the key is passed and the value is nil, include it.
-        next unless decass_attrs.keys.include? key
+        next unless decass_attrs.key?(key)
+
         result[COLUMN_NAMES[key]] = decass_attrs[key]
         result
       end
@@ -145,12 +146,14 @@ class QueueMapper
   def complexity_to_vacols_code
     result = COMPLEXITY.key(complexity.to_sym)
     fail Caseflow::Error::QueueRepositoryError, "Complexity value is not valid" unless result
+
     result
   end
 
   def quality_to_vacols_code
     result = QUALITY.key(quality.to_sym)
     fail Caseflow::Error::QueueRepositoryError, "Quality value is not valid" unless result
+
     result
   end
 

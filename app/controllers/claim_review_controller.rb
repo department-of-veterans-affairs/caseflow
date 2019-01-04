@@ -7,7 +7,7 @@ class ClaimReviewController < ApplicationController
         requestIssues: claim_review.request_issues.map(&:ui_hash)
       }
     else
-      render json: { error_code: request_issues_update.error_code }, status: 422
+      render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
     end
   end
 

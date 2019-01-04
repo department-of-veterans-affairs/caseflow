@@ -4,7 +4,7 @@ class IssuesController < ApplicationController
   rescue_from ActiveRecord::RecordInvalid do |e|
     Rails.logger.error "IssuesController failed: #{e.message}"
     Raven.capture_exception(e)
-    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: :bad_request
   end
 
   rescue_from Caseflow::Error::UserRepositoryError do |e|
@@ -80,6 +80,6 @@ class IssuesController < ApplicationController
         "title": "Record Not Found",
         "detail": "Record with that ID is not found"
       ]
-    }, status: 404
+    }, status: :not_found
   end
 end

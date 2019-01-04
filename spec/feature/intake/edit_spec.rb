@@ -250,7 +250,7 @@ feature "Edit issues" do
                    ineligible_reason: :legacy_appeal_not_eligible,
                    vacols_id: "vacols2",
                    vacols_sequence_id: "1"
-          )).to_not be_nil
+                 )).to_not be_nil
 
           ri_with_optin = RequestIssue.find_by(
             description: "Back pain",
@@ -309,7 +309,7 @@ feature "Edit issues" do
                    ineligible_reason: :legacy_issue_not_withdrawn,
                    vacols_id: "vacols1",
                    vacols_sequence_id: "1"
-          )).to_not be_nil
+                 )).to_not be_nil
         end
       end
 
@@ -402,7 +402,7 @@ feature "Edit issues" do
       page_url,
       decision_review,
       contested_decision_issues
-  )
+    )
     # verify that not modifying a request issue contenting a decision issue
     # does not result in readding
 
@@ -1122,12 +1122,12 @@ feature "Edit issues" do
         expect(RequestIssue.find_by(
                  review_request: higher_level_review,
                  description: "This is an unidentified issue"
-        )).to_not be_nil
+               )).to_not be_nil
 
         expect(RequestIssue.find_by(
                  review_request: higher_level_review,
                  ramp_claim_id: "ramp_claim_id"
-        )).to_not be_nil
+               )).to_not be_nil
 
         rating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,

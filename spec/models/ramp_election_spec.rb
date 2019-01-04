@@ -59,7 +59,7 @@ describe RampElection do
                    ramp_election: ramp_election,
                    user: User.system_user,
                    reason: "Automatic roll back due to EP 683 cancelation"
-          )).to_not be_nil
+                 )).to_not be_nil
         end
       end
 

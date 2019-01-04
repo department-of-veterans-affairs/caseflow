@@ -84,6 +84,7 @@ class VACOLS::Note < VACOLS::Record
     def delete!(note)
       record = find_active_by_user_and_type(note)
       return unless record
+
       MetricsService.record("VACOLS: Note.delete! #{note[:case_id]}",
                             service: :vacols,
                             name: "delete") do
