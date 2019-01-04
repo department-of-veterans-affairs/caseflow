@@ -10,7 +10,7 @@ RSpec.describe Hearings::WorksheetsController, type: :controller do
       expect(response.status).to eq 200
       expect(response_hearing[:veteran_sex]).to eq nil
       expect(response_hearing[:veteran_age]).to eq nil
-      expect(response_hearing["id"]).to eq hearing.id
+      expect(response_hearing["id"]).to eq legacy_hearing.id
       expect(response_hearing["external_id"]).to eq legacy_hearing.external_id
     end
 
