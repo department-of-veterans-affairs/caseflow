@@ -57,6 +57,7 @@ feature "NonComp Dispositions Page" do
       expect(page).to have_content("Non-Comp Org")
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
+      expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     end
 
     context "with user enabled for intake" do
