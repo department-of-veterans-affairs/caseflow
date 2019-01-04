@@ -92,7 +92,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     super(props);
     this.state = {
       taskInstructionsIsVisible: false,
-      addNewTaskIsVisible: this.props.rootTask[0].availableActions[0]
+      addNewTaskIsVisible: Boolean(this.props.rootTask[0].availableActions[0])
     };
   }
 
@@ -266,16 +266,20 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
   render = () => {
     const {
-      appeal,
-      rootTask
+      appeal
     } = this.props;
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
     const taskLength = this.props.tasks.length;
 
+    /* console.log(this.props.tasks);
+    console.log(this.props.tasks[0].type);
+    console.log(this.props.tasks[0].type !== 'RootTask');
+    console.log(!this.state.addNewTaskIsVisible);*/
+
     if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>
-        !rootTask && <tr>
+        task.type !== 'RootTask' && !this.state.addNewTaskIsVisible && <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
               { task.assignedOn &&
