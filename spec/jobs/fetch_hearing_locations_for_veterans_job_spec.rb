@@ -24,6 +24,8 @@ describe FetchHearingLocationsForVeteransJob do
       before do
         VADotGovService = ExternalApi::VADotGovService
 
+        expect(DataDogService).to receive(:emit_gauge).with(hash_including(metric_name: "pages_requested"), any_args).and_return("") # rubocop:disable Metrics/LineLength
+
         distance_response = HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11))
         expect(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response).once
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)

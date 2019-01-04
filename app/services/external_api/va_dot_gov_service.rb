@@ -27,6 +27,8 @@ class ExternalApi::VADotGovService
         fail Caseflow::Error::VaDotGovAPIError, code: 500, message: msg
       end
 
+      track_pages(page)
+
       facility_results
     end
 
@@ -163,6 +165,18 @@ class ExternalApi::VADotGovService
         msg = "Error: #{response_body}, HTTP code: #{code}"
         fail Caseflow::Error::VaDotGovServerError, code: code, message: msg
       end
+    end
+
+    def track_pages(pages)
+      DataDogService.emit_gauge(
+        metric_group: "service",
+        metric_name: "pages_requested",
+        metric_value: pages,
+        app_name: RequestStore[:application],
+        attrs: {
+          service: "va_dot_gov"
+        }
+      )
     end
     # :nocov:
   end
