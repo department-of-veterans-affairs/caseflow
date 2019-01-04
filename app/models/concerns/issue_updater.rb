@@ -14,7 +14,7 @@ module IssueUpdater
   def delete_and_create_decision_issues!
     return unless appeal
     # We will always delete and re-create decision issues on attorney/judge checkout
-    DecisionIssue.where(id: appeal.decision_issues.map(&:id)).destroy_all
+    appeal.decision_issues.destroy_all
     create_decision_issues!
     fail_if_not_all_request_issues_have_decision!
   end
