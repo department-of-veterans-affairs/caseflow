@@ -230,7 +230,7 @@ class RequestIssue < ApplicationRecord
 
     # removing a request issue also deletes the associated request_decision_issue
     # if the decision issue is not associated with any other request issue, also delete
-    decision_issues.each{ |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
+    decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
     decision_issues.delete_all
   end
 
