@@ -59,7 +59,7 @@ class NonCompDecisionIssue extends React.PureComponent {
             name={`disposition-issue-${index}`}
             // empty label to get "true" value, nothing visible
             label=" "
-            placeholder="Choose Disposition"
+            placeholder="Select Disposition"
             options={this.dispositionOptions()}
             value={this.state.disposition}
             onChange={this.handleDispositionChange} />
