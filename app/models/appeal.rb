@@ -64,7 +64,7 @@ class Appeal < DecisionReview
     )
   end
 
-  def edit_issues_url
+  def caseflow_only_edit_issues_url
     "/appeals/#{uuid}/edit"
   end
 
