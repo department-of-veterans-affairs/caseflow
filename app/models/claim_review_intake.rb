@@ -41,7 +41,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   def complete!(request_params)
     super(request_params) do
       detail.submit_for_processing!
-      detail.create_non_comp_task! if detail.non_comp?
+      detail.create_decision_review_task! if detail.caseflow_only?
       if run_async?
         DecisionReviewProcessJob.perform_later(detail)
       else
