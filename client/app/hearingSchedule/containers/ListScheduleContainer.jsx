@@ -163,7 +163,7 @@ export class ListScheduleContainer extends React.Component {
 
     if (this.props.selectedRegionalOffice &&
         this.props.selectedRegionalOffice.value !== '' &&
-        this.props.hearingType.value !== "C") {
+        this.props.hearingType.value !== 'C') {
       data.regional_office = this.props.selectedRegionalOffice.value;
     }
 
