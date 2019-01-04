@@ -8,6 +8,11 @@ FactoryBot.define do
       end_product_establishment { create(:end_product_establishment) }
     end
 
+    trait :rating do
+      sequence(:rating_issue_reference_id) { |n| "rating_issue#{n}" }
+      rating_issue_profile_date { Time.zone.today }
+    end
+
     trait :nonrating do
       issue_category "Apportionment"
       decision_date { 2.months.ago }
