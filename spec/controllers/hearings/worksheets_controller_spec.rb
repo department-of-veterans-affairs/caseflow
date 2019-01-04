@@ -4,13 +4,13 @@ RSpec.describe Hearings::WorksheetsController, type: :controller do
 
   describe "SHOW worksheet" do
     it "returns data with success" do
-      get :show, params: { id: hearing.vacols_id }, format: "json"
+      get :show, params: { id: hearing.external_id }, format: "json"
       response_hearing = JSON.parse(response.body)
       expect(response.status).to eq 200
       expect(response_hearing[:veteran_sex]).to eq nil
       expect(response_hearing[:veteran_age]).to eq nil
       expect(response_hearing["id"]).to eq hearing.id
-      expect(response_hearing["vacols_id"]).to eq hearing.vacols_id
+      expect(response_hearing["external_id"]).to eq hearing.external_id
     end
 
     it "should fail with 404 error message" do

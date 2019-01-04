@@ -12,4 +12,8 @@ class Hearing < ApplicationRecord
       LegacyHearing.find_by!(vacols_id: id)
     end
   end
+
+  def external_id
+    uuid
+  end
 end

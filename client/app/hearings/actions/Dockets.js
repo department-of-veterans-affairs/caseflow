@@ -234,7 +234,7 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
   dispatch(toggleWorksheetSaving(true));
   dispatch(setWorksheetSaveFailedStatus(false));
 
-  ApiUtil.patch(`/hearings/worksheets/${worksheet.vacols_id}`, { data: { worksheet } }).
+  ApiUtil.patch(`/hearings/worksheets/${worksheet.external_id}`, { data: { worksheet } }).
     then(() => {
       dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
     },
@@ -309,7 +309,7 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
 
   hearingsToSave.forEach((hearing) => {
     const promise = new Promise((resolve) => {
-      ApiUtil.patch(`/hearings/${hearing.vacols_id}`, { data: { hearing } }).
+      ApiUtil.patch(`/hearings/${hearing.external_id}`, { data: { hearing } }).
         then(() => {
           dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
             payload: { date,

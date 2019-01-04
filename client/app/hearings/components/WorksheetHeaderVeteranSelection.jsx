@@ -65,7 +65,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       [] :
       docket.map((hearing) => ({
         label: this.getOptionLabel(hearing),
-        value: hearing.vacols_id
+        value: hearing.external_id
       }))
   );
 
@@ -89,8 +89,6 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
     const docketNotLoaded = _.isEmpty(currentDocket);
 
-    console.log(this.getDocketVeteranOptions(currentDocket, worksheetIssues));
-
     return <span className="worksheet-header" {...headerSelectionStyling}>
       <div className="cf-push-left" {...containerStyling}>
         <div {...selectVeteranStyling}>
@@ -101,7 +99,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
               message="Loading..." /> : ''}
             options={this.getDocketVeteranOptions(currentDocket, worksheetIssues)}
             onChange={this.onDropdownChange}
-            value={worksheet.vacols_id}
+            value={worksheet.external_id}
             searchable={false}
           />
         </div>
