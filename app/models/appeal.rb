@@ -272,7 +272,7 @@ class Appeal < DecisionReview
   end
 
   def root_task
-    RootTask.find_by(appeal_id: id)
+    tasks.first.root_task if !tasks.empty?
   end
 
   private
