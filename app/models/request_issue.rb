@@ -2,6 +2,7 @@ class RequestIssue < ApplicationRecord
   include Asyncable
 
   belongs_to :review_request, polymorphic: true
+  belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment
   has_many :request_decision_issues
   has_many :decision_issues, through: :request_decision_issues
@@ -23,6 +24,9 @@ class RequestIssue < ApplicationRecord
     legacy_issue_not_withdrawn: "legacy_issue_not_withdrawn",
     legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
   }
+
+  # TEMPORARY CODE: used to keep decision_review and review_request in sync
+  before_save :copy_review_request_to_decision_review
 
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -99,9 +103,15 @@ class RequestIssue < ApplicationRecord
 
     def attributes_from_intake_data(data)
       {
+        # TODO: these are going away in favor of `contested_rating_issue_*`
         rating_issue_reference_id: data[:rating_issue_reference_id],
         rating_issue_profile_date: data[:rating_issue_profile_date],
         description: data[:decision_text],
+
+        contested_rating_issue_reference_id: data[:rating_issue_reference_id],
+        contested_rating_issue_profile_date: data[:rating_issue_profile_date],
+        contested_rating_issue_description: data[:decision_text],
+
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
         notes: data[:notes],
@@ -403,5 +413,9 @@ class RequestIssue < ApplicationRecord
 
   def appeal_active?
     review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).count > 0
+  end
+
+  def copy_review_request_to_decision_review
+    self.decision_review = review_request
   end
 end
