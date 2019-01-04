@@ -15,6 +15,7 @@ class AnnotationController < ApplicationController
     render json: { id: annotation.id }
   end
 
+  # Needed?
   def show
     annotation = Annotation.find(params[:id])
     document = Document.find(annotation[:document_id])

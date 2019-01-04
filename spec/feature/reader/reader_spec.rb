@@ -508,7 +508,7 @@ RSpec.feature "Reader" do
       click_on "Share"
 
       # Expect there to be a link to this comment in the modal
-      expect(page).to have_content("/annotation/1")
+      expect(page).to have_content("#{current_url}?annotation=1")
 
       # Close the share modal
       click_on "Close"

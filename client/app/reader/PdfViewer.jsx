@@ -260,7 +260,9 @@ export class PdfViewer extends React.Component {
           ]}
           closeHandler={this.props.closeAnnotationShareModal}
           title="Share Comment">
-          <CopyTextButton text={`${window.location.origin}/annotation/${this.props.shareAnnotationModalIsOpenFor}`} />
+          <CopyTextButton
+            text={`${location.origin}${location.pathname}?annotation=${this.props.shareAnnotationModalIsOpenFor}`}
+          />
         </Modal>}
       </div>
     );
