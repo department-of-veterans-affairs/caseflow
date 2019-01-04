@@ -1,3 +1,6 @@
+import { FORM_TYPES } from '../../intake/constants';
+import _ from 'lodash';
+
 export const formatTasks = (serverTasks) => {
   return (serverTasks || []).map((task) => {
     return {
@@ -6,4 +9,8 @@ export const formatTasks = (serverTasks) => {
       veteranParticipantId: task.veteran_participant_id
     };
   });
+};
+
+export const longFormNameFromShort = (shortFormName) => {
+  return _.find(FORM_TYPES, { shortName: shortFormName }).name;
 };
