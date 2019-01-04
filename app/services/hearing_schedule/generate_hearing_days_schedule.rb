@@ -14,8 +14,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
   MAX_NUMBER_OF_DAYS_PER_DATE = 12
   BVA_VIDEO_ROOMS = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].freeze
 
-  MAX_ITERATIONS = 1
-
   def initialize(schedule_period)
     @amortized = 0
     @co_non_availability_days = []
@@ -79,13 +77,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def allocate_hearing_days_to_ros
-    sorted_ros = sort_ros_by_rooms_and_allocated_days
-
-    loop do
-      @ros = sorted_ros.transform_values(&:clone)
-      result = allocate_hearing_days_loop
-      return result if result
-    end
+    @ros = sort_ros_by_rooms_and_allocated_days
+    do_allocate_hearing_days
   end
 
   def sort_ros_by_rooms_and_allocated_days
@@ -96,7 +89,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   private
 
-  def allocate_hearing_days_loop
+  def do_allocate_hearing_days
     @date_allocated = {}
     @amortized = 0
 
@@ -112,13 +105,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
       allocate_all_ro_monthly_hearing_days(ro_key)
     end
 
-    return ros
-  rescue HearingSchedule::Errors::NotEnoughAvailableDays => e
-    @iterations ||= 0
-    @iterations += 1
-    puts e.message
-    return if @iterations < MAX_ITERATIONS
-    raise e
+    ros
   end
 
   def allocate_all_ro_monthly_hearing_days(ro_key)
