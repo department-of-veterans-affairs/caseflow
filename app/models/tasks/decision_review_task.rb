@@ -6,4 +6,8 @@ class DecisionReviewTask < GenericTask
   def serializer_class
     ::WorkQueue::DecisionReviewTaskSerializer
   end
+
+  def ui_hash
+    serializer_class.new(self).as_json
+  end
 end
