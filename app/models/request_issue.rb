@@ -232,6 +232,18 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
+  # Instead of fully deleting removed issues, we instead strip them from the review so we can
+  # maintain a record of the other data that was on them incase we need to revert the update.
+  def remove_from_review
+    update!(review_request: nil)
+    legacy_issue_optin&.flag_for_rollback!
+
+    # removing a request issue also deletes the associated request_decision_issue
+    # if the decision issue is not associated with any other request issue, also delete
+    decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
+    decision_issues.delete_all
+  end
+
   private
 
   def build_contested_issue
