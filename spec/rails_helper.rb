@@ -17,6 +17,7 @@ require_relative "support/database_cleaner"
 require_relative "support/download_helper"
 require_relative "support/clear_cache"
 require_relative "support/feature_helper"
+require_relative "support/date_time_helper"
 require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -116,6 +117,7 @@ module StubbableUser
     def clear_stub!
       Functions.delete_all_keys!
       @stub = nil
+      @system_user = nil
     end
 
     def stub=(user)
@@ -380,4 +382,5 @@ RSpec.configure do |config|
   config.include ActionView::Helpers::NumberHelper
   config.include FakeDateHelper
   config.include FeatureHelper, type: :feature
+  config.include DateTimeHelper
 end

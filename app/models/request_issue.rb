@@ -76,9 +76,9 @@ class RequestIssue < ApplicationRecord
     end
 
     def find_or_build_from_intake_data(data)
-      find_or_initialize_by(
-        attributes_from_intake_data(data)
-      ).tap(&:validate_eligibility!)
+      # request issues on edit have ids
+      # but newly added issues do not
+      data[:request_issue_id] ? find(data[:request_issue_id]) : from_intake_data(data)
     end
 
     def find_active_by_rating_issue_reference_id(rating_issue_reference_id)
@@ -201,6 +201,27 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.on_decision_issue_sync_processed
   end
 
+  def create_legacy_issue_optin
+    LegacyIssueOptin.create!(
+      request_issue: self,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id,
+      original_disposition_code: vacols_issue.disposition_id,
+      original_disposition_date: vacols_issue.disposition_date
+    )
+  end
+
+  def vacols_issue
+    return unless vacols_id && vacols_sequence_id
+    @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
+      issue.vacols_sequence_id == vacols_sequence_id
+    end
+  end
+
+  def legacy_issue_opted_in?
+    eligible? && vacols_id && vacols_sequence_id
+  end
+
   private
 
   def build_contested_issue
@@ -222,14 +243,6 @@ class RequestIssue < ApplicationRecord
 
   def duplicate_of_issue_in_active_review?
     duplicate_of_rating_issue_in_active_review? || duplicate_of_nonrating_issue_in_active_review?
-  end
-
-  def vacols_issue
-    return unless vacols_id && vacols_sequence_id
-    @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
-      # coerce both into strings since VACOLS may store as int
-      issue.vacols_sequence_id.to_s == vacols_sequence_id.to_s
-    end
   end
 
   def create_decision_issues
@@ -285,6 +298,7 @@ class RequestIssue < ApplicationRecord
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
   def fetch_contested_rating_issue_ui_hash
+    return {} unless review_request.serialized_ratings
     rating_with_issue = review_request.serialized_ratings.find do |rating|
       rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
     end || { issues: [] }

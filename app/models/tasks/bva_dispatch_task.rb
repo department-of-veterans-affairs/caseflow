@@ -27,11 +27,10 @@ class BvaDispatchTask < GenericTask
       fail(Caseflow::Error::BvaDispatchDoubleOutcode, appeal_id: appeal.id, task_id: task.id) if task.completed?
 
       params[:appeal_id] = appeal.id
-
       create_decision_document!(params)
 
-      task.mark_as_complete!
-      task.root_task.mark_as_complete!
+      task.update!(status: Constants.TASK_STATUSES.completed)
+      task.root_task.update!(status: Constants.TASK_STATUSES.completed)
     rescue ActiveRecord::RecordInvalid => e
       raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message.match?(/^Validation failed:/)
       raise e
@@ -49,13 +48,9 @@ class BvaDispatchTask < GenericTask
 
         # TODO: remove this unless statement when all decision documents require async processing
         unless decision_document.processed?
-          delayed_process_decision_document_job.perform_later(decision_document)
+          ProcessDecisionDocumentJob.perform_later(decision_document)
         end
       end
-    end
-
-    def delayed_process_decision_document_job
-      ProcessDecisionDocumentJob.set(wait: DecisionDocument::DECISION_OUTCODING_DELAY)
     end
   end
 end

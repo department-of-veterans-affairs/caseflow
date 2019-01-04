@@ -36,15 +36,37 @@ RSpec.feature "NonComp Queue" do
 
     scenario "displays tasks page" do
       visit "decision_reviews/nco"
-
       expect(page).to have_content("Non-Comp Org")
       expect(page).to have_content("In progress tasks")
       expect(page).to have_content("Completed tasks")
 
       # default is the in progress page
       expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Bob Smith", count: 2)
+      expect(page).to have_content(veteran.participant_id, count: 2)
+
       click_on "Completed tasks"
       expect(page).to have_content("Higher-Level Review", count: 2)
+    end
+
+    context "with user enabled for intake" do
+      before do
+        FeatureToggle.enable!(:intake)
+      end
+
+      after do
+        FeatureToggle.disable!(:intake)
+      end
+
+      scenario "goes back to intake" do
+        # allow user to have access to intake
+        user.update(roles: user.roles << "Mail Intake")
+        Functions.grant!("Mail Intake", users: [user.css_id])
+
+        visit "decision_reviews/nco"
+        click_on "Intake new form"
+        expect(page).to have_current_path("/intake")
+      end
     end
   end
 end

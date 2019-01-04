@@ -1,23 +1,20 @@
 require "rails_helper"
 
-RSpec.feature "Checkout flows" do
+RSpec.feature "Attorney checkout flow" do
   let(:attorney_user) { FactoryBot.create(:default_user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
   let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
-  let(:colocated_user) { FactoryBot.create(:user) }
-  let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
-
-  context "given a valid appeal and an attorney user" do
+  context "given a valid ama appeal" do
     let(:issue_note) { "Test note" }
     let(:issue_description) { "Tinnitus" }
     let!(:appeal) do
       FactoryBot.create(
         :appeal,
         number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(:request_issue, 1, description: issue_description, notes: issue_note)
+        request_issues: FactoryBot.build_list(:request_issue, 4, description: issue_description, notes: issue_note)
       )
     end
 
@@ -40,6 +37,9 @@ RSpec.feature "Checkout flows" do
     scenario "submits draft decision" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
+
+      expect(page).not_to have_content "Correct issues"
+
       click_dropdown(index: 0)
       click_label "radiation"
 
@@ -65,12 +65,30 @@ RSpec.feature "Checkout flows" do
         count: appeal.request_issues.length
       )
 
-      issue_dispositions.each do |row|
+      issue_dispositions.each_with_index do |row, index|
+        disposition = (index == 0 || index == 1) ? "Remanded" : "Allowed"
         row.click
-        page.find("div", class: "Select-option", text: "Allowed").click
+        page.find("div", class: "Select-option", text: disposition).click
       end
 
       click_on "Continue"
+
+      find_field("Service treatment records", visible: false).sibling("label").click
+      find_field("Post AOJ", visible: false).sibling("label").click
+
+      click_on "Continue"
+      # For some reason clicking too quickly on the next remand reason breaks the test.
+      # Adding sleeps is bad... but I'm not sure how else to get this to work.
+      sleep 1
+
+      all("label", text: "Medical examinations", visible: false, count: 2)[1].click
+      all("label", text: "Pre AOJ", visible: false, count: 2)[1].click
+
+      all("label", text: "VA records", visible: false, count: 2)[1].click
+      all("label", text: "Post AOJ", visible: false, count: 3)[1].click
+
+      click_on "Continue"
+
       expect(page).to have_content("Submit Draft Decision for Review")
 
       document_id = Array.new(35).map { rand(10) }.join
@@ -86,6 +104,10 @@ RSpec.feature "Checkout flows" do
       expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
       expect(page.current_path).to eq("/queue")
+
+      expect(appeal.reload.request_issues.where(disposition: "remanded").count).to eq(2)
+      expect(appeal.request_issues.where(disposition: "allowed").count).to eq(2)
+      expect(appeal.request_issues.map(&:remand_reasons).flatten.size).to eq 3
     end
 
     context "when ama issue feature toggle is turned on" do
@@ -115,13 +137,14 @@ RSpec.feature "Checkout flows" do
         )
       end
 
-      scenario "veteran is the appellant" do
+      scenario "submits draft decision with new issue format" do
         visit "/queue"
         click_on "(#{appeal.veteran_file_number})"
 
         # Ensure the issue is on the case details screen
         expect(page).to have_content(issue_description)
         expect(page).to have_content(issue_note)
+        expect(page).to have_content "Correct issues"
 
         click_dropdown(index: 0)
 
@@ -242,7 +265,7 @@ RSpec.feature "Checkout flows" do
 
         expect(page.current_path).to eq("/queue")
 
-        expect(appeal.decision_issues.count).to eq(4)
+        expect(appeal.request_decision_issues.count).to eq(4)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
         expect(appeal.decision_issues.first.disposition).to eq("remanded")
         expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
@@ -262,8 +285,8 @@ RSpec.feature "Checkout flows" do
 
         click_on "(#{appeal.veteran_file_number})"
 
+        expect(page).to have_content "Correct issues"
         expect(page).to have_content("Added to 2 issues", count: 2)
-
         click_dropdown(index: 0)
 
         # Skip the special issues page
@@ -298,7 +321,7 @@ RSpec.feature "Checkout flows" do
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
         # The decision issue should have the new content the judge added
-        expect(appeal.decision_issues.count).to eq(4)
+        expect(appeal.request_decision_issues.count).to eq(4)
         expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
 
         remand_reasons = appeal.decision_issues.where(disposition: "remanded").map do |decision|
@@ -307,13 +330,13 @@ RSpec.feature "Checkout flows" do
 
         expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
         expect(appeal.decision_issues.where(disposition: "remanded").count).to eq(2)
-        expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(2)
+        expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(1)
         expect(appeal.request_issues.map { |issue| issue.decision_issues.count }).to match_array([3, 1])
       end
     end
   end
 
-  context "given a valid legacy appeal and an attorney user" do
+  context "given a valid legacy appeal" do
     let!(:appeal) do
       FactoryBot.create(
         :legacy_appeal,
@@ -336,6 +359,23 @@ RSpec.feature "Checkout flows" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
+
+        click_label "vamc"
+
+        click_on "Continue"
+
+        # Ensure we can reload the flow and the special issue is saved
+        click_on "Cancel"
+        click_on "Yes, cancel"
+
+        click_dropdown(index: 0)
+
+        # Vamc should still be checked
+        expect(page).to have_field("vamc", checked: true, visible: false)
+
+        # Vamc should also be marked in the database
+        expect(appeal.special_issue_list.vamc).to eq(true)
+        click_on "Continue"
 
         expect(page).to have_content "Select disposition"
 
@@ -381,6 +421,8 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
 
+        click_on "Continue"
+
         expect(page).to have_content("Select disposition")
 
         table_rows = page.find_all("tr[id^='table-row-']")
@@ -408,6 +450,8 @@ RSpec.feature "Checkout flows" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
+
+        click_on "Continue"
 
         issue_dispositions = page.find_all(".Select-control", text: "Select disposition", count: appeal.issues.length)
 
@@ -456,12 +500,20 @@ RSpec.feature "Checkout flows" do
         expect(appeal.reload.issues.first.remand_reasons.size).to eq 1
         expect(appeal.issues.second.remand_reasons.size).to eq 2
         expect(appeal.issues.third.remand_reasons.size).to eq 0
+
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[0].issdc).to eq "3"
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[1].issdc).to eq "3"
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[2].issdc).to eq "1"
+
+        expect(VACOLS::RemandReason.where(rmdkey: appeal.vacols_id).size).to eq 3
       end
 
       scenario "submits omo request" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 1)
+
+        click_on "Continue"
 
         expect(page).to have_content("Submit OMO for Review")
 
@@ -495,6 +547,8 @@ RSpec.feature "Checkout flows" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
+
+        click_on "Continue"
 
         expect(page).to have_content("Select disposition")
 
@@ -552,6 +606,8 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
 
+        click_on "Continue"
+
         expect(page).to have_content("Select disposition")
 
         first("a", text: "Edit Issue").click
@@ -582,6 +638,8 @@ RSpec.feature "Checkout flows" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
 
+        click_on "Continue"
+
         expect(page).to have_content "Select disposition"
 
         diag_code_no_l2 = %w[4 5 0 *]
@@ -590,8 +648,9 @@ RSpec.feature "Checkout flows" do
         no_diag_code_w_l2 = %w[4 8 0 2]
 
         [diag_code_no_l2, no_diag_code_no_l2, diag_code_w_l2, no_diag_code_w_l2].each do |opt_set|
-          first("a", text: "Edit Issue").click
           expect(page).to have_content "Edit Issue"
+          click_link("Edit Issue", match: :first)
+          expect(page).to have_content "Program"
           selected_vals = select_issue_level_options(opt_set)
           click_on "Continue"
           selected_vals.each { |v| expect(page).to have_content v }
@@ -602,6 +661,8 @@ RSpec.feature "Checkout flows" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
+
+        click_on "Continue"
 
         expect(page).to have_content "Select disposition"
 
@@ -638,345 +699,6 @@ RSpec.feature "Checkout flows" do
 
         expect(appeal.reload.issues.length).to eq 2
       end
-    end
-  end
-
-  context "given a valid ama appeal with single issue assigned to current judge user" do
-    let!(:appeal) do
-      FactoryBot.create(
-        :appeal,
-        number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus", disposition: "allowed")
-      )
-    end
-
-    let(:root_task) { FactoryBot.create(:root_task) }
-    let(:parent_task) do
-      FactoryBot.create(
-        :ama_judge_review_task,
-        :in_progress,
-        assigned_to: judge_user,
-        appeal: appeal,
-        parent: root_task
-      )
-    end
-
-    let(:child_task) do
-      FactoryBot.create(
-        :ama_attorney_task,
-        :in_progress,
-        assigned_to: attorney_user,
-        assigned_by: judge_user,
-        parent: parent_task,
-        appeal: appeal
-      )
-    end
-
-    before do
-      child_task.mark_as_complete!
-      User.authenticate!(user: attorney_user)
-    end
-
-    before do
-      FeatureToggle.enable!(:judge_case_review_checkout)
-
-      User.authenticate!(user: judge_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_case_review_checkout)
-    end
-
-    scenario "starts dispatch checkout flow" do
-      visit "/queue"
-      click_on "(#{appeal.veteran_file_number})"
-
-      click_dropdown(index: 0) do
-        visible_options = page.find_all(".Select-option")
-        expect(visible_options.length).to eq 1
-        expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
-      end
-
-      # Special Issues screen
-      click_on "Continue"
-      # Request Issues screen
-      click_on "Continue"
-      expect(page).to have_content("Evaluate Decision")
-
-      expect(page).to_not have_content("One Touch Initiative")
-
-      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
-      text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
-      find("label", text: text_to_click).click
-      find("#issues_are_not_addressed", visible: false).sibling("label").click
-
-      dummy_note = generate_words 5
-      fill_in "additional-factors", with: dummy_note
-      expect(page).to have_content(dummy_note[0..5])
-
-      click_on "Continue"
-      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
-      case_review = JudgeCaseReview.find_by(task_id: parent_task.id)
-      expect(case_review.attorney).to eq attorney_user
-      expect(case_review.judge).to eq judge_user
-      expect(case_review.complexity).to eq "easy"
-      expect(case_review.quality).to eq "does_not_meet_expectations"
-      expect(case_review.one_touch_initiative).to eq false
-    end
-  end
-
-  context "given a valid legacy appeal with single issue assigned to current judge user" do
-    let!(:appeal) do
-      FactoryBot.create(
-        :legacy_appeal,
-        :with_veteran,
-        vacols_case: FactoryBot.create(
-          :case,
-          :assigned,
-          user: judge_user,
-          assigner: attorney_user,
-          case_issues: [
-            FactoryBot.create(:case_issue, :disposition_allowed),
-            FactoryBot.create(:case_issue, :disposition_granted_by_aoj)
-          ],
-          work_product: work_product
-        )
-      )
-    end
-
-    before do
-      FeatureToggle.enable!(:judge_case_review_checkout)
-
-      User.authenticate!(user: judge_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:judge_case_review_checkout)
-    end
-
-    context "where work product is decision draft" do
-      let(:work_product) { :draft_decision }
-
-      scenario "starts dispatch checkout flow" do
-        visit "/queue"
-        click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
-
-        click_dropdown(index: 0) do
-          visible_options = page.find_all(".Select-option")
-          expect(visible_options.length).to eq 1
-          expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
-        end
-
-        # one issue is decided, excluded from checkout flow
-        expect(appeal.issues.length).to eq 2
-        expect(page.find_all(".issue-disposition-dropdown").length).to eq 1
-
-        click_on "Continue"
-        expect(page).to have_content("Evaluate Decision")
-
-        expect(page).to have_content("One Touch Initiative")
-        find("label", text: COPY::JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD).click
-
-        find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
-        text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
-        find("label", text: text_to_click).click
-
-        find("#issues_are_not_addressed", visible: false).sibling("label").click
-
-        dummy_note = generate_words 5
-        fill_in "additional-factors", with: dummy_note
-        expect(page).to have_content(dummy_note[0..5])
-
-        click_on "Continue"
-
-        expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
-
-        expect(VACOLS::Decass.find(appeal.vacols_id).de1touch).to eq "Y"
-      end
-    end
-
-    context "where work product is omo request" do
-      let(:work_product) { :omo_request }
-
-      scenario "completes assign to omo checkout flow" do
-        visit "/queue/appeals/#{appeal.vacols_id}"
-
-        click_dropdown(index: 0) do
-          visible_options = page.find_all(".Select-option")
-          expect(visible_options.length).to eq 1
-          expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_OMO_LABEL
-        end
-
-        expect(page).to have_content("Evaluate Decision")
-
-        radio_group_cls = "usa-fieldset-inputs cf-form-radio "
-        case_complexity_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][1]//label")
-        case_quality_opts = page.find_all(:xpath, "//fieldset[@class='#{radio_group_cls}'][2]//label")
-
-        expect(case_quality_opts.first.text).to eq(
-          "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}"
-        )
-        expect(case_quality_opts.last.text).to eq(
-          "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
-        )
-
-        case_complexity_opts[0].click
-        case_quality_opts[2].click
-        # areas of improvement
-        areas_of_improvement = page.find_all(
-          :xpath, "//fieldset[@class='checkbox-wrapper-Identify areas for improvement cf-form-checkboxes']//label"
-        )
-        areas_of_improvement[0].double_click
-        areas_of_improvement[5].double_click
-
-        dummy_note = "lorem ipsum dolor sit amet"
-        fill_in "additional-factors", with: dummy_note
-
-        click_on "Continue"
-
-        expect(page).to have_content(COPY::JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
-        decass = VACOLS::Decass.find_by(defolder: appeal.vacols_id, deadtim: Time.zone.today)
-        expect(decass.decomp).to eq(VacolsHelper.local_date_with_utc_timezone)
-        expect(decass.deoq).to eq("3")
-      end
-    end
-  end
-
-  context "given a valid legacy appeal and a colocated user" do
-    let!(:appeal) do
-      FactoryBot.create(
-        :legacy_appeal,
-        :with_veteran,
-        vacols_case: FactoryBot.create(
-          :case,
-          :assigned,
-          user: colocated_user,
-          case_issues: FactoryBot.create_list(:case_issue, 1)
-        )
-      )
-    end
-    let!(:appeal_with_translation_task) do
-      FactoryBot.create(
-        :legacy_appeal,
-        :with_veteran,
-        vacols_case: FactoryBot.create(
-          :case,
-          :assigned,
-          user: colocated_user,
-          case_issues: FactoryBot.create_list(:case_issue, 1)
-        )
-      )
-    end
-    let!(:colocated_action) do
-      FactoryBot.create(
-        :colocated_task,
-        appeal: appeal,
-        assigned_to: colocated_user,
-        assigned_by: attorney_user,
-        action: "pending_scanning_vbms"
-      )
-    end
-    let!(:translation_action) do
-      FactoryBot.create(
-        :colocated_task,
-        appeal: appeal_with_translation_task,
-        assigned_to: colocated_user,
-        assigned_by: attorney_user,
-        action: "translation"
-      )
-    end
-
-    before do
-      FeatureToggle.enable!(:colocated_queue)
-      User.authenticate!(user: colocated_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:colocated_queue)
-    end
-
-    scenario "reassigns task to assigning attorney" do
-      visit "/queue"
-
-      appeal = colocated_action.appeal
-
-      vet_name = appeal.veteran_full_name
-
-      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
-      click_dropdown(index: 0)
-
-      expect(page).to have_content(COPY::MARK_TASK_COMPLETE_BUTTON)
-      click_on COPY::MARK_TASK_COMPLETE_BUTTON
-
-      expect(page).to have_content(
-        format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, vet_name)
-      )
-
-      expect(colocated_action.reload.status).to eq "completed"
-      expect(colocated_action.assigned_at.to_date).to eq Time.zone.today
-    end
-
-    scenario "places task on hold" do
-      visit "/queue"
-
-      appeal = colocated_action.appeal
-
-      vet_name = appeal.veteran_full_name
-      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
-
-      expect(page).to have_content("Actions")
-
-      click_dropdown(index: 1)
-
-      expect(page).to have_content(
-        format(COPY::COLOCATED_ACTION_PLACE_HOLD_HEAD, vet_name, appeal.sanitized_vbms_id)
-      )
-
-      click_dropdown(index: 6)
-      expect(page).to have_content(COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)
-
-      hold_duration = [rand(100), 1].max
-      fill_in COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY, with: hold_duration
-
-      instructions = generate_words 5
-      fill_in "instructions", with: instructions
-      click_on "Place case on hold"
-
-      expect(page).to have_content(
-        format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, vet_name, hold_duration)
-      )
-      expect(colocated_action.reload.on_hold_duration).to eq hold_duration
-      expect(colocated_action.status).to eq "on_hold"
-      expect(colocated_action.instructions[1]).to eq instructions
-    end
-
-    scenario "sends task to team" do
-      visit "/queue"
-
-      appeal = translation_action.appeal
-      vacols_case = appeal.case_record
-
-      team_name = Constants::CO_LOCATED_ADMIN_ACTIONS[translation_action.action]
-      vet_name = appeal.veteran_full_name
-      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
-
-      click_dropdown(index: 0)
-
-      expect(page).to have_content(
-        format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD, team_name)
-      )
-      expect(page).to have_content(
-        format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_COPY, vet_name, appeal.sanitized_vbms_id)
-      )
-
-      click_on COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON
-
-      expect(page).to have_content(
-        format(COPY::COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION, vet_name, team_name)
-      )
-
-      expect(translation_action.reload.status).to eq "completed"
-      expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[translation_action.action.to_sym]
     end
   end
 end

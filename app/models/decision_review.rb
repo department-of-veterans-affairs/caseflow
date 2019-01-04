@@ -1,6 +1,5 @@
 class DecisionReview < ApplicationRecord
   include CachedAttributes
-  include LegacyOptinable
   include Asyncable
 
   validate :validate_receipt_date
@@ -11,6 +10,7 @@ class DecisionReview < ApplicationRecord
 
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
+  has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review
   has_many :tasks, as: :appeal
 
@@ -165,10 +165,18 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def vacols_optin_special_issue
+    { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O }
+  end
+
   def special_issues
     [].tap do |specials|
-      specials << vacols_optin_special_issue if needs_vacols_optin_special_issue?
+      specials << vacols_optin_special_issue if request_issues.any?(&:legacy_issue_optin)
     end
+  end
+
+  def process_legacy_issues!
+    LegacyOptinManager.new(decision_review: self).process!
   end
 
   def on_decision_issues_sync_processed(end_product_establishment)
@@ -177,10 +185,6 @@ class DecisionReview < ApplicationRecord
 
   def establish!
     # no-op
-  end
-
-  def process_legacy_issues!
-    LegacyOptinManager.new(decision_review: self).process!
   end
 
   def contestable_issues

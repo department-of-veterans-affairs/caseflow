@@ -10,16 +10,10 @@ class TasksController < ApplicationController
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
     JudgeAssignTask: JudgeAssignTask,
+    JudgeQualityReviewTask: JudgeQualityReviewTask,
     ScheduleHearingTask: ScheduleHearingTask,
     MailTask: MailTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask
-  }.freeze
-
-  QUEUES = {
-    attorney: AttorneyQueue,
-    colocated: ColocatedQueue,
-    judge: JudgeQueue,
-    generic: GenericQueue
   }.freeze
 
   def set_application
@@ -65,7 +59,7 @@ class TasksController < ApplicationController
 
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
 
-    render json: { tasks: json_tasks(tasks_to_return) }, status: :created
+    render json: { tasks: json_tasks(tasks_to_return) }
   end
 
   # To update attorney task
@@ -96,11 +90,15 @@ class TasksController < ApplicationController
       return json_vso_tasks
     end
 
+    tasks = appeal.tasks
     if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
-      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
+      legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
+      tasks = (legacy_appeal_tasks + tasks).uniq
     end
 
-    all_json_tasks
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
   end
 
   private
@@ -119,7 +117,7 @@ class TasksController < ApplicationController
   end
 
   def queue_class
-    QUEUES[user_role.try(:to_sym)] || QUEUES[:generic]
+    (user_role == "attorney") ? AttorneyQueue : GenericQueue
   end
 
   def user_role
@@ -191,20 +189,6 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
-    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
-
-    render json: {
-      tasks: json_legacy_tasks(tasks, role)[:data]
-    }
-  end
-
-  def all_json_tasks
-    render json: {
-      tasks: json_tasks(appeal.tasks)[:data]
-    }
-  end
-
   def json_legacy_tasks(tasks, role)
     ActiveModelSerializers::SerializableResource.new(
       tasks,
@@ -213,11 +197,27 @@ class TasksController < ApplicationController
     ).as_json
   end
 
+  def eager_load_legacy_appeals_for_tasks(tasks)
+    # Make a single request to VACOLS to grab all of the rows we want here?
+    legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
+
+    # Load the VACOLS case records associated with legacy tasks into memory in a single batch.
+    cases = AppealRepository.vacols_records_for_appeals(legacy_appeal_ids) || []
+
+    # Associate the cases we pulled from VACOLS to the appeals of the tasks.
+    tasks.each do |t|
+      if t.appeal.is_a?(LegacyAppeal)
+        case_record = cases.select { |cr| cr.id == t.appeal.vacols_id }.first
+        AppealRepository.set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
+      end
+    end
+  end
+
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
-      tasks,
-      each_serializer: ::WorkQueue::TaskSerializer,
-      user: current_user
+      eager_load_legacy_appeals_for_tasks(tasks),
+      user: current_user,
+      role: user_role
     ).as_json
   end
 end
