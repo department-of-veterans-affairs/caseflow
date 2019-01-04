@@ -5,11 +5,9 @@ export const mapDataToInitialState = function(props = {}) {
 
   let state = serverNonComp;
 
-  if (serverNonComp.inProgressTasks) {
-    state.inProgressTasks = formatTasks(serverNonComp.inProgressTasks);
-    state.completedTasks = formatTasks(serverNonComp.completedTasks);
-    state.selectedTask = null;
-  }
+  state.inProgressTasks = formatTasks(serverNonComp.inProgressTasks);
+  state.completedTasks = formatTasks(serverNonComp.completedTasks);
+  state.selectedTask = null;
 
   return state;
 };
