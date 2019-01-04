@@ -311,7 +311,7 @@ describe Task do
       class AutoAssignOrg < Organization
         attr_accessor :assignee
 
-        def next_assignee(_task_type)
+        def next_assignee(_task_class)
           assignee
         end
       end

@@ -1,6 +1,6 @@
 describe Colocated do
   let(:colocated_org) { Colocated.singleton }
-  let(:task_type) { nil }
+  let(:task_class) { nil }
 
   before do
     FactoryBot.create_list(:user, 6).each do |u|
@@ -9,7 +9,7 @@ describe Colocated do
   end
 
   describe ".next_assignee" do
-    subject { colocated_org.next_assignee(task_type) }
+    subject { colocated_org.next_assignee(task_class) }
 
     context "when there are no members of the Colocated team" do
       before do
@@ -31,7 +31,7 @@ describe Colocated do
     end
 
     context "when task type is specified" do
-      let(:task_type) { GenericTask }
+      let(:task_class) { GenericTask }
       it "should return the first member of the Colocated team" do
         expect(subject).to eq(colocated_org.users.first)
       end
@@ -39,7 +39,7 @@ describe Colocated do
   end
 
   describe ".automatically_assign_to_member?" do
-    subject { colocated_org.automatically_assign_to_member?(task_type) }
+    subject { colocated_org.automatically_assign_to_member?(task_class) }
 
     context "when there are no members of the Colocated team" do
       before do
@@ -61,7 +61,7 @@ describe Colocated do
     end
 
     context "when task type is specified" do
-      let(:task_type) { GenericTask }
+      let(:task_class) { GenericTask }
       it "should return true" do
         expect(subject).to eq(true)
       end

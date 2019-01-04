@@ -1,10 +1,10 @@
 class RoundRobinTaskDistributor
   include ActiveModel::Model
 
-  attr_accessor :list_of_assignees, :task_type
+  attr_accessor :list_of_assignees, :task_class
 
   def latest_task
-    task_type.where(assigned_to_type: User.name).order("created_at").last
+    task_class.where(assigned_to_type: User.name).order("created_at").last
   end
 
   def last_assignee_css_id

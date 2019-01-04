@@ -1,9 +1,9 @@
 describe RoundRobinTaskDistributor do
   let(:assignee_pool_size) { 6 }
   let!(:assignee_pool) { FactoryBot.create_list(:user, assignee_pool_size) }
-  let(:task_type) { Task }
+  let(:task_class) { Task }
   let(:round_robin_distributor) do
-    RoundRobinTaskDistributor.new(list_of_assignees: assignee_pool.pluck(:css_id), task_type: task_type)
+    RoundRobinTaskDistributor.new(list_of_assignees: assignee_pool.pluck(:css_id), task_class: task_class)
   end
 
   describe ".latest_task" do
@@ -37,7 +37,7 @@ describe RoundRobinTaskDistributor do
 
   describe ".next_assignee" do
     context "when the list_of_assignees is an empty array" do
-      let(:round_robin_distributor) { RoundRobinTaskDistributor.new(list_of_assignees: [], task_type: task_type) }
+      let(:round_robin_distributor) { RoundRobinTaskDistributor.new(list_of_assignees: [], task_class: task_class) }
 
       it "should raise an error" do
         expect { round_robin_distributor.next_assignee }.to(raise_error) do |error|
