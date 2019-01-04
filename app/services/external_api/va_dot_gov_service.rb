@@ -59,7 +59,7 @@ class ExternalApi::VADotGovService
     private
 
     def base_url
-      ENV["VA_DOT_GOV_API_URL"]
+      ENV["VA_DOT_GOV_API_URL"] || ""
     end
 
     def facilities_endpoint
