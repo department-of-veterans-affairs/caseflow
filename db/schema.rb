@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190103200519) do
+ActiveRecord::Schema.define(version: 20190104163907) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -462,6 +462,7 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -786,6 +787,7 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 

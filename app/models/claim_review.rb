@@ -28,7 +28,7 @@ class ClaimReview < DecisionReview
   end
 
   def edit_issues_url
-    "/#{self.class.to_s.underscore.pluralize}/#{end_product_establishments.first.reference_id}/edit"
+    "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
   def issue_code(*)
@@ -55,8 +55,14 @@ class ClaimReview < DecisionReview
 
   def create_non_comp_task!
     return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
-    # TODO: better user?
-    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: User.system_user)
+    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: non_comp_business_line)
+  end
+
+  def non_comp_business_line
+    return unless non_comp?
+    business_line_name = Constants::BENEFIT_TYPES[benefit_type]
+    fail "No such business line: #{benefit_type}" unless business_line_name
+    @non_comp_business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
   end
 
   # Idempotent method to create all the artifacts for this claim.
