@@ -151,8 +151,7 @@ RSpec.feature "Task queue" do
       it "should allow us to assign a mail task to a user" do
         visit "/queue/appeals/#{appeal.uuid}"
 
-        find(".Select-control", text: "Select an action…").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CREATE_MAIL_TASK.label).click
+        find("button", text: "+ Add a new task").click
 
         find(".Select-control", text: "Select a team").click
         find("div", class: "Select-option", text: org.name).click
