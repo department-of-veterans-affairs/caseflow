@@ -7,13 +7,14 @@ describe WorkQueue::DecisionReviewTaskSerializer do
 
   describe "#as_json" do
     it "renders ready for client consumption" do
-      expect(subject.as_json).to eq(claimant: hlr.veteran_full_name,
+      expect(subject.as_json).to eq(claimant: { name: hlr.veteran_full_name, relationship: "self" },
                                     appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0 },
-                                    url: "TODO",
                                     veteran_participant_id: veteran.participant_id,
                                     assigned_on: task.assigned_at,
                                     completed_at: task.completed_at,
                                     started_at: task.started_at,
+                                    id: task.id,
+                                    created_at: task.created_at,
                                     type: "Higher-Level Review")
     end
   end

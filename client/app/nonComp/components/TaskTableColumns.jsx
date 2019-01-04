@@ -1,13 +1,12 @@
 import React from 'react';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 export const claimantColumn = () => {
   return {
     header: 'Claimant',
     valueFunction: (task) => {
-      return <Link to={`/queue/${task.type}/${task.id}`}>{task.claimant}</Link>;
+      return <a href={`/decision_reviews/${task.business_line}/tasks/${task.id}`}>{task.claimant.name}</a>;
     },
-    getSortValue: (task) => task.claimant
+    getSortValue: (task) => task.claimant.name
   };
 };
 

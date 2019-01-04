@@ -1,5 +1,5 @@
-export const formatTasks = (severTasks) => {
-  return severTasks.map((task) => {
+export const formatTasks = (serverTasks) => {
+  return (serverTasks || []).map((task) => {
     return {
       ...task,
       assignedOn: task.assigned_on,
