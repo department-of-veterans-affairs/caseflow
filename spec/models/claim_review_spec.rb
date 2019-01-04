@@ -193,10 +193,10 @@ describe ClaimReview do
     end
   end
 
-  context "#non_comp?" do
+  context "#caseflow_only?" do
     let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
 
-    subject { claim_review.non_comp? }
+    subject { claim_review.caseflow_only? }
 
     context "when benefit_type is compensation" do
       let(:benefit_type) { "compensation" }
@@ -625,6 +625,20 @@ describe ClaimReview do
         expect(rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
         expect(non_rating_request_issue.rating_issue_associated_at).to be_nil
       end
+    end
+  end
+
+  describe ".find_by_uuid_or_reference_id!" do
+    let(:hlr) { create(:higher_level_review, :with_end_product_establishment).reload }
+
+    it "finds by UUID" do
+      expect(HigherLevelReview.find_by_uuid_or_reference_id!(hlr.uuid)).to eq(hlr)
+    end
+
+    it "finds by EPE reference_id" do
+      hlr.end_product_establishments.first.update!(reference_id: "abc123")
+
+      expect(HigherLevelReview.find_by_uuid_or_reference_id!("abc123")).to eq(hlr)
     end
   end
 end

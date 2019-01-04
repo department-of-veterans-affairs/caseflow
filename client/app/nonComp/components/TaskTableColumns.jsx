@@ -1,13 +1,12 @@
 import React from 'react';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 export const claimantColumn = () => {
   return {
     header: 'Claimant',
     valueFunction: (task) => {
-      return <Link to={`/queue/${task.type}/${task.id}`}>{task.claimant}</Link>;
+      return <a href={`/decision_reviews/${task.business_line}/tasks/${task.id}`}>{task.claimant.name}</a>;
     },
-    getSortValue: (task) => task.claimant
+    getSortValue: (task) => task.claimant.name
   };
 };
 
@@ -19,11 +18,29 @@ export const veteranParticipantIdColumn = () => {
   };
 };
 
-export const decisionReviewTypeColumn = () => {
+const createFilterDropdown = (values) => {
+  return values.map((value) => {
+    return {
+      value,
+      displayText: value
+    };
+  });
+};
+
+export const decisionReviewTypeColumn = (onFilter, isFilterOpen, onFilterToggle) => {
   return {
     header: 'Type',
+    align: 'left',
     valueFunction: (task) => task.type,
-    getSortValue: (task) => task.type,
+    label: 'Filter by type',
+    valueName: 'type',
+    getFilterValues: createFilterDropdown(['Clear category filter', 'Board Grant',
+      'Higher-Level Review', 'Remand - Supplemental Claim',
+      'Supplemental Claim']),
+    anyFiltersAreSet: false,
+    isDropdownFilterOpen: isFilterOpen,
+    toggleDropdownFilterVisiblity: onFilterToggle,
+    setSelectedValue: onFilter,
     // order determines where this column displays
     // make it -1 so this column is always last
     order: -1

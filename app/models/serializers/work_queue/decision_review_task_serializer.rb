@@ -7,13 +7,25 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
     task.appeal
   end
 
-  attribute :claimant do
+  def claimant_name
     if decision_review.claimants.any?
       # TODO: support multiple?
       decision_review.claimants.first.try(:name)
     else
       decision_review.veteran_full_name
     end
+  end
+
+  def claimant_relationship
+    return "self" unless decision_review.claimants.any?
+    decision_review.claimants.first.try(:relationship)
+  end
+
+  attribute :claimant do
+    {
+      name: claimant_name,
+      relationship: claimant_relationship
+    }
   end
 
   attribute :appeal do
@@ -24,9 +36,9 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
     }
   end
 
-  attribute :url do
-    "TODO"
-  end
+  attribute :id
+
+  attribute :created_at
 
   attribute :veteran_participant_id do
     decision_review.veteran.participant_id

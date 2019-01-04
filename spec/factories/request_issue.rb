@@ -2,10 +2,16 @@ FactoryBot.define do
   factory :request_issue do
     review_request_type "Appeal"
     benefit_type "compensation"
+    contested_rating_issue_diagnostic_code "1234"
     sequence(:review_request_id) { |n| "review#{n}" }
 
     factory :request_issue_with_epe do
       end_product_establishment { create(:end_product_establishment) }
+    end
+
+    trait :rating do
+      sequence(:rating_issue_reference_id) { |n| "rating_issue#{n}" }
+      rating_issue_profile_date { Time.zone.today }
     end
 
     trait :nonrating do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190103200519) do
+ActiveRecord::Schema.define(version: 20190104190600) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,6 +107,18 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.string "task_id"
   end
 
+  create_table "board_grant_effectuations", force: :cascade do |t|
+    t.bigint "appeal_id", null: false
+    t.bigint "granted_decision_issue_id", null: false
+    t.bigint "end_product_establishment_id"
+    t.string "contention_reference_id"
+    t.bigint "decision_document_id"
+    t.index ["appeal_id"], name: "index_board_grant_effectuations_on_appeal_id"
+    t.index ["decision_document_id"], name: "index_board_grant_effectuations_on_decision_document_id"
+    t.index ["end_product_establishment_id"], name: "index_board_grant_effectuations_on_end_product_establishment_id"
+    t.index ["granted_decision_issue_id"], name: "index_board_grant_effectuations_on_granted_decision_issue_id"
+  end
+
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
     t.integer "certification_id"
     t.string "cancellation_reason"
@@ -198,6 +210,7 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.datetime "attempted_at"
     t.datetime "processed_at"
     t.string "error"
+    t.datetime "uploaded_to_vbms_at"
     t.index ["appeal_id"], name: "index_decision_documents_on_appeal_id"
     t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
   end
@@ -214,6 +227,7 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.integer "decision_review_id"
     t.string "benefit_type"
     t.date "end_product_last_action_date"
+    t.string "diagnostic_code"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
   end
 
@@ -449,6 +463,7 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -696,8 +711,16 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.string "benefit_type"
     t.integer "contested_decision_issue_id"
     t.string "veteran_participant_id"
+    t.string "decision_review_type"
+    t.bigint "decision_review_id"
+    t.string "contested_rating_issue_reference_id"
+    t.string "contested_rating_issue_profile_date"
+    t.string "contested_rating_issue_description"
+    t.string "contested_rating_issue_diagnostic_code"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
+    t.index ["contested_rating_issue_reference_id"], name: "index_request_issues_on_contested_rating_issue_reference_id"
+    t.index ["decision_review_type", "decision_review_id"], name: "index_request_issues_on_decision_review_columns"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
@@ -773,6 +796,7 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
