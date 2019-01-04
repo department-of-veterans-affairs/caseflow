@@ -63,7 +63,7 @@ class ExternalApi::VADotGovService
     end
 
     def address_validation_endpoint
-      "address_validation/v0/validate"
+      "address_validation/v1/validate"
     end
 
     # rubocop:disable Metrics/ParameterLists
