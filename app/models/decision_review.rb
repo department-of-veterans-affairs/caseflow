@@ -103,7 +103,7 @@ class DecisionReview < ApplicationRecord
       requestIssues: request_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
-      editIssuesUrl: edit_issues_url
+      editIssuesUrl: caseflow_only_edit_issues_url
     }
   end
 

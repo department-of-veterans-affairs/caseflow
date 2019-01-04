@@ -76,7 +76,7 @@ feature "NonComp Dispositions Page" do
         visit dispositions_url
         click_on "Edit Issues"
 
-        expect(page).to have_current_path(hlr.reload.edit_issues_url)
+        expect(page).to have_current_path(hlr.reload.caseflow_only_edit_issues_url)
       end
     end
   end

@@ -36,7 +36,7 @@ class ClaimReview < DecisionReview
     )
   end
 
-  def edit_issues_url
+  def caseflow_only_edit_issues_url
     "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
