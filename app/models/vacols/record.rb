@@ -1,4 +1,11 @@
 class VACOLS::Record < ApplicationRecord
+  after_find :count_finds
+
+  def count_finds
+    RequestStore[:vacols_finds] = (RequestStore[:vacols_finds] || 0) + 1
+    Rails.logger.info "VACOLS finds #{RequestStore[:vacols_finds]}"
+  end
+
   self.abstract_class = true
 
   establish_connection "#{Rails.env}_vacols".to_sym
