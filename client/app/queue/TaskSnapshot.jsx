@@ -12,7 +12,6 @@ import ActionsDropdown from './components/ActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 
 import COPY from '../../COPY.json';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
 import StringUtil from '../util/StringUtil';
@@ -152,65 +151,17 @@ export class TaskSnapshot extends React.PureComponent<Props> {
   }
 
   assignedToListItem = (task) => {
-    const {
-      userRole
-    } = this.props;
-
-    let assignee = '';
-
-    if (task.isLegacy) {
-      assignee = this.props.appeal.locationCode;
-      const assignedByFirstName = task.assignedBy.firstName;
-      const assignedByLastName = task.assignedBy.lastName;
-
-      if (!assignedByFirstName || !assignedByLastName ||
-          (userRole === USER_ROLE_TYPES.judge && !task.documentId) ||
-          ![USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
-        assignee = null;
-      }
-    } else {
-      assignee = task.assignedTo.cssId;
-    }
+    const assignee = task.isLegacy ? this.props.appeal.locationCode : task.assignedTo.cssId;
 
     return assignee ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
       <dd>{assignee}</dd></div> : null;
   }
 
   assignedByListItem = (task) => {
-    const {
-      userRole
-    } = this.props;
+    const assignor = task.assignedBy.firstName ? this.getAbbrevName(task.assignedBy) : null;
 
-    let assignor = '';
-
-    if (task.isLegacy) {
-      assignor = task.assignedBy.firstName ? this.getAbbrevName(task.assignedBy) : null;
-
-      if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
-        if (userRole === USER_ROLE_TYPES.judge) {
-          return <React.Fragment>
-            <dt>{COPY.TASK_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{assignor}</dd>
-          </React.Fragment>;
-
-        } else if (userRole === USER_ROLE_TYPES.colocated) {
-
-          return <React.Fragment>
-            <dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignor}</dd>
-            <dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[task.label]}</dd>
-            { this.taskInstructionsListItem(task) }
-          </React.Fragment>;
-        }
-
-        return <React.Fragment>
-          { this.addedByNameListItem(task) }
-        </React.Fragment>;
-      }
-    } else {
-      assignor = task.assignedBy.firstName ? this.getAbbrevName(task.assignedBy) : null;
-
-      return assignor ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt>
-        <dd>{assignor}</dd></div> : null;
-    }
+    return assignor ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt>
+      <dd>{assignor}</dd></div> : null;
   }
 
   preparedByListItem = (task) => {
