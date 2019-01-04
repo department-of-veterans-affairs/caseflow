@@ -117,6 +117,7 @@ module StubbableUser
     def clear_stub!
       Functions.delete_all_keys!
       @stub = nil
+      @system_user = nil
     end
 
     def stub=(user)
