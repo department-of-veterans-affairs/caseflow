@@ -16,4 +16,8 @@ class Hearing < ApplicationRecord
   def external_id
     uuid
   end
+
+  def to_hash_for_worksheet(_current_user_id)
+    serializable_hash(methods: :external_id)
+  end
 end

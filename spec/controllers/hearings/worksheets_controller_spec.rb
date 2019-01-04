@@ -1,15 +1,23 @@
 RSpec.describe Hearings::WorksheetsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
-  let(:hearing) { create(:legacy_hearing) }
+  let(:legacy_hearing) { create(:legacy_hearing) }
+  let(:hearing) { create(:hearing) }
 
   describe "SHOW worksheet" do
-    it "returns data with success" do
-      get :show, params: { id: hearing.external_id }, format: "json"
+    it "returns legacy data with success" do
+      get :show, params: { id: legacy_hearing.external_id }, format: "json"
       response_hearing = JSON.parse(response.body)
       expect(response.status).to eq 200
       expect(response_hearing[:veteran_sex]).to eq nil
       expect(response_hearing[:veteran_age]).to eq nil
       expect(response_hearing["id"]).to eq hearing.id
+      expect(response_hearing["external_id"]).to eq legacy_hearing.external_id
+    end
+
+    it "returns data with success" do
+      get :show, params: { id: hearing.external_id }, format: "json"
+      response_hearing = JSON.parse(response.body)
+      expect(response.status).to eq 200
       expect(response_hearing["external_id"]).to eq hearing.external_id
     end
 

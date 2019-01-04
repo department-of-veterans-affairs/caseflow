@@ -7,6 +7,7 @@ class CreateAmaHearings < ActiveRecord::Migration[5.1]
       t.integer :judge_id
       t.boolean :evidence_window_waived
       t.boolean :transcript_requested
+      t.string  :notes
       t.string  :disposition
       t.string  :witness
       t.string  :military_service
