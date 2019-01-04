@@ -266,7 +266,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
   render = () => {
     const {
-      appeal
+      appeal,
+      rootTask
     } = this.props;
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
@@ -274,7 +275,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
     if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>
-        <tr>
+        !rootTask && <tr>
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
               { task.assignedOn &&
