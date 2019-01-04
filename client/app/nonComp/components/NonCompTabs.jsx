@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import SearchBar from '../../components/SearchBar';
 import TabWindow from '../../components/TabWindow';
 import { TaskTableUnconnected } from '../../queue/components/TaskTable';
 import { claimantColumn, veteranParticipantIdColumn, decisionReviewTypeColumn } from './TaskTableColumns';
@@ -10,12 +11,12 @@ class NonCompTabsUnconnected extends React.PureComponent {
     const tabs = [{
       label: 'In progress tasks',
       page: <TaskTableTab
-        description="In progress"
+        key="inprogress"
         tasks={this.props.inProgressTasks} />
     }, {
       label: 'Completed tasks',
       page: <TaskTableTab
-        description="Completed"
+        key="completed"
         tasks={this.props.completedTasks} />
     }];
 
@@ -26,15 +27,82 @@ class NonCompTabsUnconnected extends React.PureComponent {
   }
 }
 
-const TaskTableTab = ({ tasks }) => <React.Fragment>
-  <TaskTableUnconnected
-    getKeyForRow={(row, object) => object.appeal.id}
-    customColumns={[claimantColumn(), veteranParticipantIdColumn(), decisionReviewTypeColumn()]}
-    includeIssueCount
-    includeDaysWaiting
-    tasks={tasks}
-  />
-</React.Fragment>;
+class TaskTableTab extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      allTasks: this.props.tasks,
+      shownTasks: this.props.tasks,
+      searchText: '',
+      isReviewFilterOpen: false
+    };
+  }
+
+  onSearch = (searchText) => {
+    const lowercaseSearchText = searchText.toLowerCase();
+
+    const filteredTasks = this.state.allTasks.filter((task) => {
+      return task.claimant.name.toLowerCase().includes(lowercaseSearchText) ||
+        task.veteran_participant_id.includes(searchText);
+    });
+
+    this.setState({ shownTasks: filteredTasks,
+      searchText });
+  }
+
+  onClearSearch = () => {
+    this.setState({ shownTasks: this.state.allTasks,
+      searchText: '' });
+  }
+
+  onReviewTypeSearch = (reviewType) => {
+    if (reviewType === 'Clear category filter') {
+      this.setState({ shownTasks: this.state.allTasks,
+        searchText: '',
+        isReviewFilterOpen: false });
+    } else {
+      const filteredTasks = this.state.allTasks.filter((task) => task.type === reviewType);
+
+      this.setState({ shownTasks: filteredTasks,
+        isReviewFilterOpen: false });
+    }
+  }
+
+  onReviewFilterToggle = () => {
+    this.setState({ isReviewFilterOpen: !this.state.isReviewFilterOpen });
+  }
+
+  render = () => {
+    return <React.Fragment>
+      <div className="cf-search-ahead-parent cf-push-right cf-noncomp-search">
+        <SearchBar
+          id="searchBar"
+          size="small"
+          onChange={this.onSearch}
+          placeholder="Type to search..."
+          onClearSearch={this.onClearSearch}
+          isSearchAhead
+          value={this.state.searchText}
+        />
+      </div>
+      <div className="section-hearings-list">
+        <TaskTableUnconnected
+          getKeyForRow={(row, object) => object.appeal.id}
+          customColumns={[claimantColumn(), veteranParticipantIdColumn(),
+            decisionReviewTypeColumn(
+              this.onReviewTypeSearch,
+              this.state.isReviewFilterOpen,
+              this.onReviewFilterToggle)
+          ]}
+          includeIssueCount
+          includeDaysWaiting
+          tasks={this.state.shownTasks}
+        />
+      </div>
+    </React.Fragment>;
+  }
+}
 
 const NonCompTabs = connect(
   (state) => ({
