@@ -40,13 +40,14 @@ RSpec.describe AppealsController, type: :controller do
     context "when a legacy appeal has documents" do
       let(:documents) do
         [
-          Document.new(type: "SSOC", received_at: 6.days.ago),
-          Document.new(type: "SSOC", received_at: 7.days.ago)
+          create(:document, type: "SSOC", received_at: 6.days.ago),
+          create(:document, type: "SSOC", received_at: 7.days.ago)
         ]
       end
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfkey: "654321", documents: documents)) }
 
       it "should return document count" do
+        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
         get :document_count, params: { appeal_id: appeal.vacols_id }
 
         response_body = JSON.parse(response.body)
