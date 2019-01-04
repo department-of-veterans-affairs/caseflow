@@ -226,10 +226,10 @@ describe ClaimReview do
     end
   end
 
-  context "#non_comp?" do
+  context "#caseflow_only?" do
     let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
 
-    subject { claim_review.non_comp? }
+    subject { claim_review.caseflow_only? }
 
     context "when benefit_type is compensation" do
       let(:benefit_type) { "compensation" }
