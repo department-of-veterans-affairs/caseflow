@@ -107,6 +107,18 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.string "task_id"
   end
 
+  create_table "board_grant_effectuations", force: :cascade do |t|
+    t.bigint "appeal_id", null: false
+    t.bigint "granted_decision_issue_id", null: false
+    t.bigint "end_product_establishment_id"
+    t.string "contention_reference_id"
+    t.bigint "decision_document_id"
+    t.index ["appeal_id"], name: "index_board_grant_effectuations_on_appeal_id"
+    t.index ["decision_document_id"], name: "index_board_grant_effectuations_on_decision_document_id"
+    t.index ["end_product_establishment_id"], name: "index_board_grant_effectuations_on_end_product_establishment_id"
+    t.index ["granted_decision_issue_id"], name: "index_board_grant_effectuations_on_granted_decision_issue_id"
+  end
+
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
     t.integer "certification_id"
     t.string "cancellation_reason"
@@ -198,6 +210,7 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.datetime "attempted_at"
     t.datetime "processed_at"
     t.string "error"
+    t.datetime "uploaded_to_vbms_at"
     t.index ["appeal_id"], name: "index_decision_documents_on_appeal_id"
     t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
   end
