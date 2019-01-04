@@ -56,13 +56,13 @@ class DecisionReview < ApplicationRecord
     end
   end
 
-  def non_comp?
+  def caseflow_only?
     !ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
   end
 
   def serialized_ratings
     return unless receipt_date
-    return if non_comp?
+    return if caseflow_only?
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
@@ -90,7 +90,8 @@ class DecisionReview < ApplicationRecord
       veteran: {
         name: veteran&.name&.formatted(:readable_short),
         fileNumber: veteran_file_number,
-        formName: veteran&.name&.formatted(:form)
+        formName: veteran&.name&.formatted(:form),
+        ssn: veteran&.ssn
       },
       relationships: veteran&.relationships,
       claimant: claimant_participant_id,
@@ -101,7 +102,8 @@ class DecisionReview < ApplicationRecord
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
-      contestableIssuesByDate: contestable_issues.map(&:serialize)
+      contestableIssuesByDate: contestable_issues.map(&:serialize),
+      editIssuesUrl: caseflow_only_edit_issues_url
     }
   end
 
@@ -188,7 +190,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def contestable_issues
-    return contestable_issues_from_decision_issues if non_comp?
+    return contestable_issues_from_decision_issues if caseflow_only?
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
   end
 
