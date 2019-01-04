@@ -14,6 +14,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         program: "compensation",
         description: issue.description,
         notes: issue.notes,
+        diagnostic_code: issue.diagnostic_code,
         remand_reasons: issue.remand_reasons
       }
     end
@@ -27,6 +28,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         description: issue.description,
         benefit_type: "compensation",
         remand_reasons: issue.remand_reasons,
+        diagnostic_code: issue.diagnostic_code,
         request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
       }
     end

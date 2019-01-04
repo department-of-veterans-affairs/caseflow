@@ -142,9 +142,13 @@ export default class ContestedIssues extends React.PureComponent {
         <div {...indentedIssueStyling} className={shouldShowError ? 'usa-input-error' : ''}>
           <div {...verticalSpaceDiv}>Benefit type: {BENEFIT_TYPES[issue.program]}</div>
           {issue.description}
+          { issue.diagnostic_code &&
+            <div>Diagnostic code: {issue.diagnostic_code}</div>
+          }
           { issue.notes &&
             <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>
           }
+
           {this.decisionIssues(issue)}
           { openDecisionHandler &&
             <React.Fragment>

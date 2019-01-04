@@ -10,7 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20190104163907) do
+=======
+ActiveRecord::Schema.define(version: 20190104170322) do
+>>>>>>> ce5513bf4... Add diagnostic code columns to request issues and decision issues
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -227,6 +231,7 @@ ActiveRecord::Schema.define(version: 20190104163907) do
     t.integer "decision_review_id"
     t.string "benefit_type"
     t.date "end_product_last_action_date"
+    t.string "diagnostic_code"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
   end
 
@@ -710,6 +715,7 @@ ActiveRecord::Schema.define(version: 20190104163907) do
     t.string "benefit_type"
     t.integer "contested_decision_issue_id"
     t.string "veteran_participant_id"
+    t.string "diagnostic_code"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
