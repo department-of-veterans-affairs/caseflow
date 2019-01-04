@@ -227,6 +227,7 @@ ActiveRecord::Schema.define(version: 20190104190600) do
     t.integer "decision_review_id"
     t.string "benefit_type"
     t.date "end_product_last_action_date"
+    t.string "diagnostic_code"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
   end
 
@@ -715,6 +716,7 @@ ActiveRecord::Schema.define(version: 20190104190600) do
     t.string "contested_rating_issue_reference_id"
     t.string "contested_rating_issue_profile_date"
     t.string "contested_rating_issue_description"
+    t.string "contested_rating_issue_diagnostic_code"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["contested_rating_issue_reference_id"], name: "index_request_issues_on_contested_rating_issue_reference_id"
