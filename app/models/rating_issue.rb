@@ -65,7 +65,6 @@ class RatingIssue
       contention_reference_id: contention_reference_id,
       ramp_claim_id: ramp_claim_id,
       title_of_active_review: title_of_active_review,
-      source_higher_level_review: source_higher_level_review,
       rba_contentions_data: rba_contentions_data,
       associated_end_products: associated_end_products.map(&:serialize)
     }
@@ -75,12 +74,6 @@ class RatingIssue
     return unless reference_id
     request_issue = RequestIssue.find_active_by_rating_issue_reference_id(reference_id)
     request_issue&.review_title
-  end
-
-  def source_higher_level_review
-    return unless reference_id
-    return unless source_request_issue
-    source_request_issue.review_request.is_a?(HigherLevelReview) ? source_request_issue.id : nil
   end
 
   def decision_issue

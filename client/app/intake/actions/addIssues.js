@@ -61,7 +61,7 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
       titleOfActiveReview: currentIssue.titleOfActiveReview,
       description: currentIssue.description,
       timely: currentIssue.timely,
-      sourceHigherLevelReview: currentIssue.sourceHigherLevelReview,
+      sourceReviewType: currentIssue.sourceReviewType,
       rampClaimId: currentIssue.rampClaimId,
       promulgationDate: currentIssue.date,
       date: currentIssue.date,

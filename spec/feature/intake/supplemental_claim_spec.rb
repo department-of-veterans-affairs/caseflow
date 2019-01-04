@@ -1,7 +1,6 @@
-require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "Supplemental Claim Intake" do
+feature "Supplemental Claim Intake" do
   include IntakeHelpers
 
   before do

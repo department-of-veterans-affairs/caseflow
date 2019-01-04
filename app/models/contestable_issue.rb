@@ -2,9 +2,8 @@
 class ContestableIssue
   include ActiveModel::Model
 
-  attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id,
-                :source_higher_level_review, :contesting_decision_review, :decision_issue_id,
-                :promulgation_date, :rating_issue_profile_date
+  attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id, :contesting_decision_review,
+                :decision_issue_id, :promulgation_date, :rating_issue_profile_date, :source_request_issue
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -14,7 +13,7 @@ class ContestableIssue
         date: rating_issue.profile_date.to_date,
         description: rating_issue.decision_text,
         ramp_claim_id: rating_issue.ramp_claim_id,
-        source_higher_level_review: rating_issue.source_higher_level_review,
+        source_request_issue: rating_issue.source_request_issue,
         contesting_decision_review: contesting_decision_review
       )
     end
@@ -26,7 +25,7 @@ class ContestableIssue
         decision_issue_id: decision_issue.id,
         date: decision_issue.approx_decision_date,
         description: decision_issue.formatted_description,
-        source_higher_level_review: decision_issue.source_higher_level_review,
+        source_request_issue: decision_issue,
         contesting_decision_review: contesting_decision_review
       )
     end
@@ -41,9 +40,14 @@ class ContestableIssue
       description: description,
       rampClaimId: ramp_claim_id,
       titleOfActiveReview: title_of_active_review,
-      sourceHigherLevelReview: source_higher_level_review,
+      sourceReviewType: source_review_type,
       timely: timely?
     }
+  end
+
+  def source_review_type
+    return unless source_request_issue
+    decision_issue? ? source_request_issue.decision_review_type : source_request_issue.review_request_type
   end
 
   private

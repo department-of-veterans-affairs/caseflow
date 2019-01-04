@@ -226,6 +226,17 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def contestable_decision_issues
+    return [] unless receipt_date
+    # binding.pry
+    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+      .select do |issue|
+        next if issue.decision_review.is_a?(Appeal) && !issue.decision_review.outcoded?
+        # binding.pry
+        issue.approx_decision_date && issue.approx_decision_date < receipt_date
+      end
+  end
+
   def contestable_issues_from_decision_issues
     contestable_decision_issues.map { |decision_issue| ContestableIssue.from_decision_issue(decision_issue, self) }
   end
