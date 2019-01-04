@@ -11,10 +11,10 @@ class AppealsController < ApplicationController
 
     return file_number_not_found_error unless veteran_file_number
 
-    {
+    render json: {
       appeals: get_appeals_for_file_number(veteran_file_number),
       claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
-    } && return
+    }
   end
 
   def show_case_list
@@ -23,9 +23,7 @@ class AppealsController < ApplicationController
       format.json do
         caseflow_veteran_id = params[:caseflow_veteran_id]
         veteran_file_number = Veteran.find(caseflow_veteran_id).file_number
-        # correct?
-        # return render json: {
-        return {
+        render json: {
           appeals: get_appeals_for_file_number(veteran_file_number),
           claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
         }
@@ -133,7 +131,7 @@ class AppealsController < ApplicationController
       end
       # rubocop:enable Lint/HandleExceptions
 
-      render json: { appeals: json_appeals(appeals)[:data] }
+      json_appeals(appeals)[:data]
     end
   end
 
