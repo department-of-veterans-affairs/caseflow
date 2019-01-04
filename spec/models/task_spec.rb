@@ -303,4 +303,33 @@ describe Task do
       expect(task.reload.status).to eq("on_hold")
     end
   end
+
+  describe ".create_and_auto_assign_child_task" do
+    subject { Task.create!(assigned_to: org, appeal: FactoryBot.create(:appeal), type: Task.name) }
+
+    context "when the task is assigned to an organization that automatically assigns tasks to its members" do
+      class AutoAssignOrg < Organization
+        attr_accessor :assignee
+
+        def next_assignee(_task_class)
+          assignee
+        end
+      end
+
+      let(:user) { FactoryBot.create(:user) }
+      let(:org) { AutoAssignOrg.create(assignee: user) }
+
+      it "should create a child task when a task assigned to the organization is created" do
+        expect(subject.children.length).to eq(1)
+      end
+    end
+
+    context "when the task is assigned to an organization that does not automatically assign tasks to its members" do
+      let(:org) { FactoryBot.create(:organization) }
+
+      it "should not create a child task when a task assigned to the organization is created" do
+        expect(subject.children).to eq([])
+      end
+    end
+  end
 end
