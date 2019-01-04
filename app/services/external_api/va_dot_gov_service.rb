@@ -37,7 +37,11 @@ class ExternalApi::VADotGovService
     )
       # rubocop:enable Metrics/ParameterLists
       response = send_va_dot_gov_request(
-        body: geocode_body(address_line1, address_line2, address_line3, city, state, zip_code, country),
+        body: geocode_body(
+          address_line1: address_line1, address_line2: address_line2,
+          address_line3: address_line3, city: city,
+          state: state, zip_code: zip_code, country: country
+        ),
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json"
