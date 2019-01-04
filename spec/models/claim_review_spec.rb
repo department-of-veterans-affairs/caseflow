@@ -660,4 +660,18 @@ describe ClaimReview do
       end
     end
   end
+
+  describe ".find_by_uuid_or_reference_id!" do
+    let(:hlr) { create(:higher_level_review, :with_end_product_establishment).reload }
+
+    it "finds by UUID" do
+      expect(HigherLevelReview.find_by_uuid_or_reference_id!(hlr.uuid)).to eq(hlr)
+    end
+
+    it "finds by EPE reference_id" do
+      hlr.end_product_establishments.first.update!(reference_id: "abc123")
+
+      expect(HigherLevelReview.find_by_uuid_or_reference_id!("abc123")).to eq(hlr)
+    end
+  end
 end

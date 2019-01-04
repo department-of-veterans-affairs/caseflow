@@ -19,6 +19,15 @@ class ClaimReview < DecisionReview
 
   class NoEndProductsRequired < StandardError; end
 
+  class << self
+    def find_by_uuid_or_reference_id!(claim_id)
+      claim_review = find_by(uuid: claim_id) ||
+                     EndProductEstablishment.find_by(reference_id: claim_id, source_type: to_s).source
+      fail ActiveRecord::RecordNotFound unless claim_review
+      claim_review
+    end
+  end
+
   def ui_hash
     super.merge(
       benefitType: benefit_type,

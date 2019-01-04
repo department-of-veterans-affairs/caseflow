@@ -26,9 +26,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def claim_review
-    @claim_review ||=
-      source_type.constantize.find(url_claim_id) ||
-      EndProductEstablishment.find_by!(reference_id: url_claim_id, source_type: source_type).source
+    @claim_review ||= source_type.constantize.find_by_uuid_or_reference_id!(url_claim_id)
   end
 
   def url_claim_id
