@@ -10,11 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(version: 20190104163907) do
-=======
 ActiveRecord::Schema.define(version: 20190104170322) do
->>>>>>> ce5513bf4... Add diagnostic code columns to request issues and decision issues
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
