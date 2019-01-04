@@ -127,13 +127,19 @@ RSpec.feature "Attorney checkout flow" do
 
       let(:decision_issue_disposition) { "Remanded" }
       let(:benefit_type) { "Education" }
+      let(:diagnostic_code) { "5678" }
       let(:old_benefit_type) { Constants::BENEFIT_TYPES[appeal.request_issues.first.benefit_type] }
 
       let!(:appeal) do
         FactoryBot.create(
           :appeal,
           number_of_claimants: 1,
-          request_issues: FactoryBot.build_list(:request_issue, 2, description: issue_description, notes: issue_note)
+          request_issues: FactoryBot.build_list(
+            :request_issue, 2,
+            description: issue_description,
+            notes: issue_note,
+            diagnostic_code: diagnostic_code
+          )
         )
       end
 
@@ -144,6 +150,7 @@ RSpec.feature "Attorney checkout flow" do
         # Ensure the issue is on the case details screen
         expect(page).to have_content(issue_description)
         expect(page).to have_content(issue_note)
+        expect(page).to have_content("Diagnostic code: #{diagnostic_code}")
         expect(page).to have_content "Correct issues"
 
         click_dropdown(index: 0)
