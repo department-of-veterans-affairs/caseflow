@@ -170,16 +170,17 @@ RSpec.feature "Hearings" do
 
       scenario "Hearing worksheet switch veterans" do
         visit "/hearings/" + hearing.vacols_id.to_s + "/worksheet"
-
         find(".Select-control").click
         find("#react-select-2--option-0").click
-        expect(page).to have_current_path("/hearings/1/worksheet")
-        expect(page).to have_content(LegacyHearing.find(1).veteran_first_name)
+        hearing = LegacyHearing.find(1)
+        expect(page).to have_current_path("/hearings/" + hearing.vacols_id.to_s + "/worksheet")
+        expect(page).to have_content(hearing.veteran_first_name)
 
         find(".Select-control").click
         find("#react-select-2--option-1").click
-        expect(page).to have_current_path("/hearings/2/worksheet")
-        expect(page).to have_content(LegacyHearing.find(2).veteran_first_name)
+        hearing = LegacyHearing.find(2)
+        expect(page).to have_current_path("/hearings/" + hearing.vacols_id.to_s + "/worksheet")
+        expect(page).to have_content(hearing.veteran_first_name)
       end
     end
 
