@@ -37,7 +37,7 @@ RSpec.describe AppealsController, type: :controller do
   end
 
   describe "GET appeals/appeal_id/document_count" do
-    context "when appeal has documents" do
+    context "when a legacy appeal has documents" do
       let(:documents) do
         [
           Document.new(type: "SSOC", received_at: 6.days.ago),
@@ -48,6 +48,25 @@ RSpec.describe AppealsController, type: :controller do
 
       it "should return document count" do
         get :document_count, params: { appeal_id: appeal.vacols_id }
+
+        response_body = JSON.parse(response.body)
+        expect(response_body["document_count"]).to eq 2
+      end
+    end
+
+    context "when an ama appeal has documents" do
+      let(:file_number) { Random.rand(999_999_999).to_s }
+
+      let!(:documents) do
+        [
+          create(:document, type: "SSOC", received_at: 6.days.ago, file_number: file_number),
+          create(:document, type: "SSOC", received_at: 7.days.ago, file_number: file_number)
+        ]
+      end
+      let(:appeal) { create(:appeal, veteran_file_number: file_number) }
+
+      it "should return document count" do
+        get :document_count, params: { appeal_id: appeal.uuid }
 
         response_body = JSON.parse(response.body)
         expect(response_body["document_count"]).to eq 2
