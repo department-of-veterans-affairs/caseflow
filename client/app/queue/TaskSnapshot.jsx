@@ -2,6 +2,8 @@ import { css } from 'glamor';
 import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 
 import {
   actionableTasksForAppeal,
@@ -30,6 +32,11 @@ import {
   anchorJumpLinkStyling
 } from './StickyNavContentArea';
 import Button from '../components/Button';
+
+import {
+  resetDecisionOptions,
+  stageAppeal
+} from './QueueActions';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -73,7 +80,11 @@ type Params = {|
 
 type Props = Params & {|
   userRole: string,
-  appeal: Appeal
+  appeal: Appeal,
+  stageAppeal: typeof stageAppeal,
+  resetDecisionOptions: typeof resetDecisionOptions,
+  // withrouter
+  history: Object
 |};
 
 export class TaskSnapshot extends React.PureComponent<Props> {
@@ -85,26 +96,22 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     };
   }
 
-  changeRoute = (option: ?OptionType) => {
-    console.log('--changeRoute()--')
+  changeRoute = () => {
     const {
-      appealId,
-      task,
+      rootTask,
       history
     } = this.props;
 
-    if (!option) {
-      return;
-    }
-
-    this.props.stageAppeal(appealId);
+    this.props.stageAppeal(rootTask[0].appealId);
     this.props.resetDecisionOptions();
+    const appealId = rootTask[0].externalAppealId;
+    const uniqueId = rootTask[0].uniqueId;
+    const modalPath = rootTask[0].availableActions[0].value;
 
-    history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${option.value}`);
+    history.push(`/queue/appeals/${appealId}/tasks/${uniqueId}/${modalPath}`);
   };
 
   toggleTaskInstructionsVisibility = () => {
-    console.log('--toggleTaskInstructionsVisibility()--')
 
     const prevState = this.state.taskInstructionsIsVisible;
 
@@ -265,10 +272,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
     const taskLength = this.props.tasks.length;
 
-    console.log('---------------')
-    console.log(this.props.tasks)
-    console.log(this.props.rootTask)
-
     if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>
         <tr>
@@ -306,8 +309,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
           </td>
         </tr>);
     }
-    // debugger;
-    // Show link up top and hide root task from task snapshot
 
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
@@ -341,4 +342,11 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   };
 };
 
-export default connect(mapStateToProps)(TaskSnapshot);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  resetDecisionOptions,
+  stageAppeal
+}, dispatch);
+
+export default (withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(TaskSnapshot)
+): React.ComponentType<Params>);

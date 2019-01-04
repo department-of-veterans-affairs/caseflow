@@ -174,7 +174,7 @@ export const actionableTasksForAppeal = createSelector(
 );
 
 export const rootTaskForAppeal = createSelector(
-  [getTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.type == 'RootTask')
+  [getTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.type === 'RootTask')
 );
 
 export const newTasksByAssigneeCssIdSelector = createSelector(
