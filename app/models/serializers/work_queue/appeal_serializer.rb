@@ -14,7 +14,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
         program: "compensation",
         description: issue.description,
         notes: issue.notes,
-        diagnostic_code: issue.diagnostic_code,
+        diagnostic_code: issue.contested_rating_issue_diagnostic_code,
         remand_reasons: issue.remand_reasons
       }
     end

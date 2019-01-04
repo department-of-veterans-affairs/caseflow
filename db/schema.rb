@@ -715,7 +715,7 @@ ActiveRecord::Schema.define(version: 20190104170322) do
     t.string "benefit_type"
     t.integer "contested_decision_issue_id"
     t.string "veteran_participant_id"
-    t.string "diagnostic_code"
+    t.string "contested_rating_issue_diagnostic_code"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"

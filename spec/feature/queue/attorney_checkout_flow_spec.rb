@@ -138,7 +138,7 @@ RSpec.feature "Attorney checkout flow" do
             :request_issue, 2,
             description: issue_description,
             notes: issue_note,
-            diagnostic_code: diagnostic_code
+            contested_rating_issue_diagnostic_code: diagnostic_code
           )
         )
       end
