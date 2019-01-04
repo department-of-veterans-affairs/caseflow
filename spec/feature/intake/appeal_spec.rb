@@ -587,7 +587,7 @@ feature "Appeal Intake" do
   end
 
   context "when veteran chooses decision issue from a previous appeal" do
-    let(:previous_appeal) { create(:appeal, veteran: veteran) }
+    let(:previous_appeal) { create(:appeal, :outcoded, veteran: veteran) }
     let(:appeal_reference_id) { "appeal123" }
     let!(:previous_appeal_request_issue) do
       create(

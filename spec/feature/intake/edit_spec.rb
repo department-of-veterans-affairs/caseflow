@@ -40,7 +40,7 @@ feature "Edit issues" do
       promulgation_date: receipt_date,
       profile_date: profile_date,
       issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 12345 },
+        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
         { reference_id: "def456", decision_text: "PTSD denied" },
         { reference_id: "abcdef", decision_text: "Back pain" }
       ]
@@ -546,7 +546,7 @@ feature "Edit issues" do
           rating_issue_profile_date: rating.profile_date,
           review_request: another_higher_level_review,
           description: "Left knee granted",
-          contention_reference_id: 12345
+          contention_reference_id: 55
         )
       end
 
