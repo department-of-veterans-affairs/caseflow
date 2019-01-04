@@ -191,7 +191,8 @@ class Fakes::BGSService
       when "has_ramp_election_with_contentions"
         claim_id = "123456"
         ramp_election = RampElection.find_or_create_by!(
-          veteran_file_number: veteran.file_number
+          veteran_file_number: veteran.file_number,
+          established_at: 1.day.ago
         )
         EndProductEstablishment.find_or_create_by!(reference_id: claim_id, source: ramp_election) do |e|
           e.veteran_file_number = veteran.file_number

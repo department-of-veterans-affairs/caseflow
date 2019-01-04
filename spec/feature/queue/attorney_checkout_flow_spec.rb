@@ -265,7 +265,7 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(page.current_path).to eq("/queue")
 
-        expect(appeal.decision_issues.count).to eq(4)
+        expect(appeal.request_decision_issues.count).to eq(4)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
         expect(appeal.decision_issues.first.disposition).to eq("remanded")
         expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
@@ -321,7 +321,7 @@ RSpec.feature "Attorney checkout flow" do
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
         # The decision issue should have the new content the judge added
-        expect(appeal.decision_issues.count).to eq(4)
+        expect(appeal.request_decision_issues.count).to eq(4)
         expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
 
         remand_reasons = appeal.decision_issues.where(disposition: "remanded").map do |decision|
@@ -330,7 +330,7 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
         expect(appeal.decision_issues.where(disposition: "remanded").count).to eq(2)
-        expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(2)
+        expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(1)
         expect(appeal.request_issues.map { |issue| issue.decision_issues.count }).to match_array([3, 1])
       end
     end
@@ -359,6 +359,23 @@ RSpec.feature "Attorney checkout flow" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
+
+        click_label "vamc"
+
+        click_on "Continue"
+
+        # Ensure we can reload the flow and the special issue is saved
+        click_on "Cancel"
+        click_on "Yes, cancel"
+
+        click_dropdown(index: 0)
+
+        # Vamc should still be checked
+        expect(page).to have_field("vamc", checked: true, visible: false)
+
+        # Vamc should also be marked in the database
+        expect(appeal.special_issue_list.vamc).to eq(true)
+        click_on "Continue"
 
         expect(page).to have_content "Select disposition"
 
@@ -404,6 +421,8 @@ RSpec.feature "Attorney checkout flow" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
 
+        click_on "Continue"
+
         expect(page).to have_content("Select disposition")
 
         table_rows = page.find_all("tr[id^='table-row-']")
@@ -431,6 +450,8 @@ RSpec.feature "Attorney checkout flow" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
+
+        click_on "Continue"
 
         issue_dispositions = page.find_all(".Select-control", text: "Select disposition", count: appeal.issues.length)
 
@@ -492,6 +513,8 @@ RSpec.feature "Attorney checkout flow" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 1)
 
+        click_on "Continue"
+
         expect(page).to have_content("Submit OMO for Review")
 
         click_label("omo-type_OMO - VHA")
@@ -524,6 +547,8 @@ RSpec.feature "Attorney checkout flow" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
+
+        click_on "Continue"
 
         expect(page).to have_content("Select disposition")
 
@@ -581,6 +606,8 @@ RSpec.feature "Attorney checkout flow" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
 
+        click_on "Continue"
+
         expect(page).to have_content("Select disposition")
 
         first("a", text: "Edit Issue").click
@@ -611,6 +638,8 @@ RSpec.feature "Attorney checkout flow" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
 
+        click_on "Continue"
+
         expect(page).to have_content "Select disposition"
 
         diag_code_no_l2 = %w[4 5 0 *]
@@ -632,6 +661,8 @@ RSpec.feature "Attorney checkout flow" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
         click_dropdown(index: 0)
+
+        click_on "Continue"
 
         expect(page).to have_content "Select disposition"
 

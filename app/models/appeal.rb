@@ -3,8 +3,10 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
-  has_many :decision_issues, through: :request_issues
+
+  # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
+
   has_one :special_issue_list
 
   with_options on: :intake_review do
@@ -123,7 +125,13 @@ class Appeal < DecisionReview
   end
 
   def decision_date
-    decision_documents.last.try(:decision_date)
+    decision_document.try(:decision_date)
+  end
+
+  def decision_document
+    # NOTE: This is used for outcoding and effectuations
+    #       When post decisional motions are supported, this will need to be accounted for.
+    decision_documents.last
   end
 
   def hearing_docket?
@@ -208,6 +216,7 @@ class Appeal < DecisionReview
       issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
+    request_issues.reload
   end
 
   def serializer_class
@@ -276,8 +285,10 @@ class Appeal < DecisionReview
   private
 
   def contestable_decision_issues
+    return [] unless receipt_date
     DecisionIssue.where(participant_id: veteran.participant_id)
       .where.not(decision_review_type: "Appeal")
+      .select { |issue| issue.approx_decision_date && issue.approx_decision_date < receipt_date }
   end
 
   def bgs

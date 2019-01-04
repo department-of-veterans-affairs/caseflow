@@ -8,6 +8,13 @@ class DecisionIssue < ApplicationRecord
   has_many :request_issues, through: :request_decision_issues
   has_many :remand_reasons, dependent: :destroy
   belongs_to :decision_review, polymorphic: true
+  has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
+
+  def self.granted
+    # TODO: "allowed" is the disposition for BVA grants, not necessarily the disposition for granted HLRs and SCs
+    #       we need to add that
+    where(disposition: "allowed")
+  end
 
   def source_higher_level_review
     return unless decision_review
@@ -25,6 +32,12 @@ class DecisionIssue < ApplicationRecord
 
   def issue_category
     associated_request_issue&.issue_category
+  end
+
+  # Since nonrating issues require specialization to process, if any associated request issue is nonrating
+  # the entire decision issue gets set to nonrating
+  def rating?
+    request_issues.none?(&:nonrating?)
   end
 
   private

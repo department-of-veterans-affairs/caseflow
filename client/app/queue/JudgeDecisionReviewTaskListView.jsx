@@ -16,12 +16,12 @@ import {
   resetSaveState
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
-import { judgeReviewTasksSelector } from './selectors';
+import { judgeDecisionReviewTasksSelector } from './selectors';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
 
-class JudgeReviewTaskListView extends React.PureComponent {
+class JudgeDecisionReviewTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -73,7 +73,7 @@ class JudgeReviewTaskListView extends React.PureComponent {
   };
 }
 
-JudgeReviewTaskListView.propTypes = {
+JudgeDecisionReviewTaskListView.propTypes = {
   tasks: PropTypes.array.isRequired
 };
 
@@ -85,7 +85,7 @@ const mapStateToProps = (state) => {
   } = state;
 
   return {
-    tasks: judgeReviewTasksSelector(state),
+    tasks: judgeDecisionReviewTasksSelector(state),
     messages
   };
 };
@@ -99,4 +99,4 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
-export default connect(mapStateToProps, mapDispatchToProps)(JudgeReviewTaskListView);
+export default connect(mapStateToProps, mapDispatchToProps)(JudgeDecisionReviewTaskListView);

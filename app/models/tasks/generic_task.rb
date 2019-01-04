@@ -51,7 +51,7 @@ class GenericTask < Task
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    update_status(params[:status])
+    update!(status: params[:status]) if params[:status]
 
     [self]
   end
@@ -59,7 +59,7 @@ class GenericTask < Task
   def reassign(reassign_params, current_user)
     reassign_params[:instructions] = [instructions, reassign_params[:instructions]].flatten
     sibling = self.class.create_child_task(parent, current_user, reassign_params)
-    mark_as_complete!
+    update!(status: Constants.TASK_STATUSES.completed)
 
     children_to_update = children.reject { |t| t.status == Constants.TASK_STATUSES.completed }
     children_to_update.each { |t| t.update!(parent_id: sibling.id) }
@@ -93,13 +93,13 @@ class GenericTask < Task
 
       params = modify_params(params)
       child = create_child_task(parent, user, params)
-      parent.update_status(params[:status])
+      parent.update!(status: params[:status]) if params[:status]
       child
     end
 
     def create_child_task(parent, current_user, params)
-      parent.update_status(Constants.TASK_STATUSES.on_hold)
-
+      parent.update!(status: Constants.TASK_STATUSES.on_hold)
+      
       Task.create!(
         type: name,
         appeal: parent.appeal,

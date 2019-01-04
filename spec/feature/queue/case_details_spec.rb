@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.feature "Case details" do
+  before do
+    Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
+  end
+
   let(:attorney_first_name) { "Robby" }
   let(:attorney_last_name) { "McDobby" }
   let!(:attorney_user) do
@@ -108,8 +112,8 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content("Disposition: Cancelled")
 
-        expect(page).to_not have_content("Date: ")
-        expect(page).to_not have_content("Judge: ")
+        expect(page).to have_content("Date: ")
+        expect(page).to have_content("Judge: ")
       end
     end
 
@@ -335,8 +339,7 @@ RSpec.feature "Case details" do
     end
 
     scenario "displays who prepared task" do
-      tasks = LegacyWorkQueue.tasks_with_appeals(judge_user, "judge")
-      task = tasks.first
+      task = LegacyWorkQueue.tasks_for_user(judge_user).first
       appeal = task.appeal
 
       visit "/queue"
@@ -526,9 +529,9 @@ RSpec.feature "Case details" do
                                    completed_at: Time.zone.now - 4.days)
       end
       let!(:judge_task) do
-        create(:ama_judge_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
-                                       status: Constants.TASK_STATUSES.completed,
-                                       completed_at: Time.zone.now)
+        create(:ama_judge_decision_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
+                                                status: Constants.TASK_STATUSES.completed,
+                                                completed_at: Time.zone.now)
       end
 
       before do

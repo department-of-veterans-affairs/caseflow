@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181221164327) do
+ActiveRecord::Schema.define(version: 20190103200519) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,6 +107,18 @@ ActiveRecord::Schema.define(version: 20181221164327) do
     t.string "task_id"
   end
 
+  create_table "board_grant_effectuations", force: :cascade do |t|
+    t.bigint "appeal_id", null: false
+    t.bigint "granted_decision_issue_id", null: false
+    t.bigint "end_product_establishment_id"
+    t.string "contention_reference_id"
+    t.bigint "decision_document_id"
+    t.index ["appeal_id"], name: "index_board_grant_effectuations_on_appeal_id"
+    t.index ["decision_document_id"], name: "index_board_grant_effectuations_on_decision_document_id"
+    t.index ["end_product_establishment_id"], name: "index_board_grant_effectuations_on_end_product_establishment_id"
+    t.index ["granted_decision_issue_id"], name: "index_board_grant_effectuations_on_granted_decision_issue_id"
+  end
+
   create_table "certification_cancellations", id: :serial, force: :cascade do |t|
     t.integer "certification_id"
     t.string "cancellation_reason"
@@ -198,6 +210,7 @@ ActiveRecord::Schema.define(version: 20181221164327) do
     t.datetime "attempted_at"
     t.datetime "processed_at"
     t.string "error"
+    t.datetime "uploaded_to_vbms_at"
     t.index ["appeal_id"], name: "index_decision_documents_on_appeal_id"
     t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
   end
@@ -537,15 +550,12 @@ ActiveRecord::Schema.define(version: 20181221164327) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "error"
-    t.string "vacols_id"
-    t.integer "vacols_sequence_id"
     t.string "original_disposition_code"
     t.date "original_disposition_date"
     t.datetime "optin_processed_at"
     t.datetime "rollback_created_at"
     t.datetime "rollback_processed_at"
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
-    t.index ["vacols_id", "vacols_sequence_id"], name: "unique_index_to_avoid_duplicate_opt_ins", unique: true, where: "(rollback_processed_at IS NULL)"
   end
 
   create_table "non_availabilities", force: :cascade do |t|
