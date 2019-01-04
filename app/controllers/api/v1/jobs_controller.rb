@@ -13,7 +13,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "sync_intake" => SyncIntakeJob,
     "sync_reviews" => SyncReviewsJob,
     "take_docket_snapshot" => TakeDocketSnapshotJob,
-    "fetch_hearing_locations_for_veteran_job" => FetchHearingLocationsForVeteranJob
+    "fetch_hearing_locations_for_veteran_job" => FetchHearingLocationsForVeteransJob
   }.freeze
 
   def create

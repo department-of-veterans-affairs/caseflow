@@ -33,7 +33,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         distance: alternate_hearing_location[:distance],
         facility_id: alternate_hearing_location[:id],
         name: alternate_hearing_location[:name],
-        address: alternate_hearing_location[:address]["address_1"]
+        address: full_address_for(alternate_hearing_location[:address])
       )
     end
   end
@@ -52,9 +52,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         zip_code: veteran.zip_code
       )
 
-      facility_ids = facility_ids_for_veteran veteran
+      facility_ids = facility_ids_for_veteran(veteran)
 
-      create_available_locations_for_veteran veteran, lat, long, facility_ids
+      create_available_locations_for_veteran(veteran, lat, long, facility_ids)
     end
   end
 
@@ -73,5 +73,13 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     ro = ros_hash[file_number]
 
     RegionalOffice::CITIES[ro][:alternate_locations] || [] << RegionalOffice::CITIES[ro][:facility_locator_id]
+  end
+
+  def full_address_for(address)
+    address_1 = address["address_1"]
+    address_2 = address["address_2"] ? " " + address["address_2"] : ""
+    address_3 = address["address_3"] ? " " + address["address_3"] : ""
+
+    "#{address_1}#{address_2}#{address_3} #{address['city']}, #{address['state']}"
   end
 end

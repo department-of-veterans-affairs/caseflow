@@ -30,9 +30,14 @@ class ExternalApi::VADotGovService
       facility_results
     end
 
-    def geocode(**args)
+    # rubocop:disable Metrics/ParameterLists
+    def geocode(
+        address_line1:, address_line2: nil,
+        address_line3: nil, city:, state:, zip_code:, country:
+    )
+      # rubocop:enable Metrics/ParameterLists
       response = send_va_dot_gov_request(
-        body: geocode_body(**args),
+        body: geocode_body(address_line1, address_line2, address_line3, city, state, zip_code, country),
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json"
@@ -50,7 +55,7 @@ class ExternalApi::VADotGovService
     private
 
     def base_url
-      "https://staging-api.va.gov/services/"
+      ENV["VA_DOT_GOV_API_URL"]
     end
 
     def facilities_endpoint
@@ -131,7 +136,7 @@ class ExternalApi::VADotGovService
       request.body = body.to_json unless body.nil?
       request.headers = headers.merge(apikey: ENV["VA_DOT_GOV_API_KEY"])
 
-      MetricsService.record("api.va.gov GET request to #{url}",
+      MetricsService.record("api.va.gov #{method.to_s.upcase} request to #{url}",
                             service: :va_dot_gov,
                             name: endpoint) do
         case method
