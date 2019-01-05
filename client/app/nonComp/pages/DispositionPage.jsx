@@ -13,16 +13,12 @@ class NonCompDecisionIssue extends React.PureComponent {
     super(props);
 
     this.state = {
-      disposition: '',
-      description: '',
-      issueIdx: props.index - 1
+      issueIdx: props.index
     };
   }
 
   handleDispositionChange = (value) => {
-    this.setState({
-      disposition: value
-    });
+    this.props.onDispositionChange(this.state.issueIdx, value);
   }
 
   dispositionOptions = () => {
@@ -34,12 +30,15 @@ class NonCompDecisionIssue extends React.PureComponent {
     });
   }
 
+  handleDescriptionChange = (event) => {
+    this.props.onDescriptionChange(this.state.issueIdx, event.target.value);
+  }
+
   render = () => {
     const {
       issue,
       index
     } = this.props;
-
     let issueDate = formatDate(issue.rating_issue_profile_date || issue.decision_date);
 
     return <div className="cf-decision">
@@ -52,7 +51,7 @@ class NonCompDecisionIssue extends React.PureComponent {
         </div>
         <div className="usa-width-two-thirds">
           <div><strong>Decision description</strong> <span className="cf-optional">Optional</span></div>
-          <textarea name={`description-issue-${index}`} value={this.state.description}></textarea>
+          <textarea name={`description-issue-${index}`} value={this.props.description || undefined} onChange={this.handleDescriptionChange}></textarea>
         </div>
         <div className="usa-width-one-third cf-disposition">
           <SearchableDropdown
@@ -61,7 +60,7 @@ class NonCompDecisionIssue extends React.PureComponent {
             label=" "
             placeholder="Select Disposition"
             options={this.dispositionOptions()}
-            value={this.state.disposition}
+            value={this.props.disposition}
             onChange={this.handleDispositionChange} />
         </div>
       </div>
@@ -76,12 +75,38 @@ class NonCompDispositionsPage extends React.PureComponent {
     let today = formatDate(new Date());
 
     this.state = {
-      decisionDate: today
+      requestIssues: this.props.appeal.requestIssues,
+      decisionDate: today,
+      isFilledOut: false
     };
   }
 
   handleDecisionDate = (value) => {
     this.setState({ decisionDate: value });
+    this.checkFormFilledOut();
+  }
+
+  handleSave = () => {
+    
+  }
+
+  checkFormFilledOut = () => {
+    // check if all dispositions have values & date is set
+    const allDispositionsSet = this.state.requestIssues.every((requestIssue) => Boolean(requestIssue.disposition));
+    this.setState({isFilledOut: allDispositionsSet && Boolean(this.state.decisionDate)})
+  }
+
+  onDecisionIssueDispositionChange = (requestIssueIndex, value) => {
+    let newRequestIssues = this.state.requestIssues;
+    newRequestIssues[requestIssueIndex].disposition = value;
+    this.setState({requestIssues: newRequestIssues});
+    this.checkFormFilledOut();
+  }
+
+  onDecisionIssueDescriptionChange = (requestIssueIndex, value) => {
+    let newRequestIssues = this.state.requestIssues;
+    newRequestIssues[requestIssueIndex].description = value;
+    this.setState({requestIssues: newRequestIssues});
   }
 
   render = () => {
@@ -142,8 +167,13 @@ class NonCompDispositionsPage extends React.PureComponent {
         </div>
         <div className="cf-decision-list">
           {
-            appeal.requestIssues.map((issue, index) => {
-              return <NonCompDecisionIssue key={`issue-${index}`} issue={issue} index={index + 1} />;
+            this.state.requestIssues.map((issue, index) => {
+              return <NonCompDecisionIssue key={`issue-${index}`} issue={issue} index={index}
+                onDispositionChange={this.onDecisionIssueDispositionChange}
+                onDescriptionChange={this.onDecisionIssueDescriptionChange}
+                description={issue.description}
+                disposition={issue.disposition}
+              />;
             })
           }
         </div>
@@ -162,7 +192,7 @@ class NonCompDispositionsPage extends React.PureComponent {
       </div>
       <div className="cf-txt-r">
         <a className="cf-cancel-link" href={`/decision_reviews/${businessLine}`}>Cancel</a>
-        <Button className="usa-button" onClick={this.handleSave}>Complete</Button>
+        <Button className="usa-button" disabled={!this.state.isFilledOut} onClick={this.handleSave}>Complete</Button>
       </div>
     </div>;
   }
