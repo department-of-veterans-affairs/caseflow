@@ -202,6 +202,7 @@ class RequestIssue < ApplicationRecord
     return unless contested_rating_issue_reference_id
 
     @contested_rating_issue ||= begin
+      contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
       contested_rating_issue_ui_hash ? RatingIssue.deserialize(contested_rating_issue_ui_hash) : nil
     end
   end
@@ -340,7 +341,7 @@ class RequestIssue < ApplicationRecord
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
   # TODO: performance could be improved by using the profile date by loading the specific rating
   def fetch_contested_rating_issue_ui_hash
-    return {} unless review_request.serialized_ratings
+    return unless review_request.serialized_ratings
 
     rating_with_issue = review_request.serialized_ratings.find do |rating|
       rating[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }

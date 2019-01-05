@@ -984,7 +984,10 @@ feature "Edit issues" do
         end
 
         let(:nonrating_decision_request_issue) do
-          setup_request_issue_with_rating_decision_issue(higher_level_review, contested_rating_issue_reference_id: "abc123")
+          setup_request_issue_with_rating_decision_issue(
+            higher_level_review,
+            contested_rating_issue_reference_id: "abc123"
+          )
         end
 
         let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
@@ -1142,7 +1145,9 @@ feature "Edit issues" do
         # expect the remove/re-add to create a new RequestIssue for same RatingIssue
         expect(higher_level_review.reload.request_issues).to_not include(request_issue)
         new_version_of_request_issue = higher_level_review.find_request_issue_by_description(request_issue.description)
-        expect(new_version_of_request_issue.contested_rating_issue_reference_id).to eq(request_issue.contested_rating_issue_reference_id)
+        expect(new_version_of_request_issue.contested_rating_issue_reference_id).to eq(
+          request_issue.contested_rating_issue_reference_id
+        )
 
         # expect contentions to reflect issue update
         existing_contention = rating_epe.contentions.first
@@ -1616,7 +1621,10 @@ feature "Edit issues" do
         end
 
         let(:nonrating_decision_request_issue) do
-          setup_request_issue_with_rating_decision_issue(supplemental_claim, contested_rating_issue_reference_id: "abc123")
+          setup_request_issue_with_rating_decision_issue(
+            supplemental_claim,
+            contested_rating_issue_reference_id: "abc123"
+          )
         end
 
         let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }

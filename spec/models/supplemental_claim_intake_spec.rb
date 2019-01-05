@@ -186,7 +186,7 @@ describe SupplementalClaimIntake do
 
     let(:issue_data) do
       {
-        contested_rating_issue_reference_id: "reference-id",
+        rating_issue_reference_id: "reference-id",
         decision_text: "decision text"
       }
     end

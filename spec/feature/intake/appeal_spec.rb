@@ -593,9 +593,10 @@ feature "Appeal Intake" do
       create(
         :request_issue,
         review_request: previous_appeal,
-        rating_issue_reference_id: appeal_reference_id
+        contested_rating_issue_reference_id: appeal_reference_id
       )
     end
+
     let!(:previous_appeal_decision_issue) do
       create(:decision_issue,
              decision_review: previous_appeal,

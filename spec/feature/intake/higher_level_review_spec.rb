@@ -960,7 +960,7 @@ feature "Higher-Level Review" do
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
 
-      expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).untimely?).to eq(true)
+      expect(RequestIssue.find_by(contested_rating_issue_reference_id: old_reference_id).untimely?).to eq(true)
 
       hlr_request_issues = RequestIssue.where(contested_rating_issue_reference_id: higher_level_review_reference_id)
       expect(hlr_request_issues.count).to eq(2)
@@ -991,7 +991,7 @@ feature "Higher-Level Review" do
         create(
           :request_issue,
           review_request: previous_appeal,
-          rating_issue_reference_id: appeal_reference_id
+          contested_rating_issue_reference_id: appeal_reference_id
         )
       end
       let!(:previous_appeal_decision_issue) do

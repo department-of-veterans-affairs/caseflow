@@ -126,8 +126,8 @@ describe RequestIssue do
       end
 
       it "filters by reference_id" do
-        request_issue_in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
-        expect(request_issue_in_review).to eq(rating_request_issue)
+        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
+        expect(in_review).to eq(rating_request_issue)
       end
 
       it "ignores request issues that are already ineligible" do
@@ -137,8 +137,8 @@ describe RequestIssue do
           ineligible_reason: :duplicate_of_rating_issue_in_active_review
         )
 
-        request_issue_in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
-        expect(request_issue_in_review).to eq(rating_request_issue)
+        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
+        expect(in_review).to eq(rating_request_issue)
       end
     end
 
@@ -401,14 +401,8 @@ describe RequestIssue do
       expect(rating_request_issue.duplicate_of_rating_issue_in_active_review?).to eq(true)
     end
 
-<<<<<<< Updated upstream
     context "issues with previous decision reviews" do
       let(:rating_reference_id) { higher_level_review_reference_id }
-=======
-    it "flags previous HLR" do
-      rating_request_issue.contested_rating_issue_reference_id = higher_level_review_reference_id
-      rating_request_issue.validate_eligibility!
->>>>>>> Stashed changes
 
       context "when the previous review is a higher level review" do
         let(:previous_review) { create(:higher_level_review) }
