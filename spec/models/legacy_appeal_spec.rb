@@ -196,20 +196,6 @@ describe LegacyAppeal do
     end
   end
 
-  context "#v1_events" do
-    subject { appeal.v1_events }
-
-    let(:vacols_case) do
-      create(:case_with_soc)
-    end
-
-    it "returns list of events sorted from oldest to newest by date" do
-      expect(subject.length > 1).to be_truthy
-      expect(subject.first.date.to_date).to eq(vacols_case.bfdnod)
-      expect(subject.first.type).to eq(:nod)
-    end
-  end
-
   context "#form9_due_date" do
     subject { appeal.form9_due_date }
 

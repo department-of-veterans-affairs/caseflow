@@ -161,10 +161,6 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def v1_events
-    @v1_events ||= AppealEvents.new(appeal: self, version: 1).all.sort_by(&:date)
-  end
-
   def events
     @events ||= AppealEvents.new(appeal: self).all
   end
