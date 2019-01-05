@@ -1,7 +1,6 @@
-require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "Nonrating Request Issue Modal" do
+feature "Nonrating Request Issue Modal" do
   include IntakeHelpers
 
   before do

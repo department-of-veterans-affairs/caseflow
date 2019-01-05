@@ -2,6 +2,7 @@ class RequestIssue < ApplicationRecord
   include Asyncable
 
   belongs_to :review_request, polymorphic: true
+  belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment
   has_many :request_decision_issues
   has_many :decision_issues, through: :request_decision_issues
@@ -18,11 +19,16 @@ class RequestIssue < ApplicationRecord
     duplicate_of_nonrating_issue_in_active_review: "duplicate_of_nonrating_issue_in_active_review",
     duplicate_of_rating_issue_in_active_review: "duplicate_of_rating_issue_in_active_review",
     untimely: "untimely",
-    previous_higher_level_review: "previous_higher_level_review",
+    higher_level_review_to_higher_level_review: "higher_level_review_to_higher_level_review",
+    appeal_to_appeal: "appeal_to_appeal",
+    appeal_to_higher_level_review: "appeal_to_higher_level_review",
     before_ama: "before_ama",
     legacy_issue_not_withdrawn: "legacy_issue_not_withdrawn",
     legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
   }
+
+  # TEMPORARY CODE: used to keep decision_review and review_request in sync
+  before_save :copy_review_request_to_decision_review
 
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -99,9 +105,15 @@ class RequestIssue < ApplicationRecord
 
     def attributes_from_intake_data(data)
       {
+        # TODO: these are going away in favor of `contested_rating_issue_*`
         rating_issue_reference_id: data[:rating_issue_reference_id],
         rating_issue_profile_date: data[:rating_issue_profile_date],
         description: data[:decision_text],
+
+        contested_rating_issue_reference_id: data[:rating_issue_reference_id],
+        contested_rating_issue_profile_date: data[:rating_issue_profile_date],
+        contested_rating_issue_description: data[:decision_text],
+
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
         notes: data[:notes],
@@ -172,7 +184,7 @@ class RequestIssue < ApplicationRecord
   def validate_eligibility!
     check_for_active_request_issue!
     check_for_untimely!
-    check_for_previous_higher_level_review!
+    check_for_eligible_previous_review!
     check_for_before_ama!
     check_for_legacy_issue_not_withdrawn!
     check_for_legacy_appeal_not_eligible!
@@ -182,8 +194,7 @@ class RequestIssue < ApplicationRecord
   def contested_rating_issue
     return unless review_request
     @contested_rating_issue ||= begin
-      ui_hash = fetch_contested_rating_issue_ui_hash
-      ui_hash ? RatingIssue.deserialize(ui_hash) : nil
+      contested_rating_issue_ui_hash ? RatingIssue.deserialize(contested_rating_issue_ui_hash) : nil
     end
   end
 
@@ -222,13 +233,25 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
+  # Instead of fully deleting removed issues, we instead strip them from the review so we can
+  # maintain a record of the other data that was on them incase we need to revert the update.
+  def remove_from_review
+    update!(review_request: nil)
+    legacy_issue_optin&.flag_for_rollback!
+
+    # removing a request issue also deletes the associated request_decision_issue
+    # if the decision issue is not associated with any other request issue, also delete
+    decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
+    decision_issues.delete_all
+  end
+
   private
 
   def build_contested_issue
     return unless review_request
     if contested_decision_issue
       ContestableIssue.from_decision_issue(contested_decision_issue, review_request)
-    elsif rating?
+    elsif contested_rating_issue
       ContestableIssue.from_rating_issue(contested_rating_issue, review_request)
     end
   end
@@ -297,8 +320,8 @@ class RequestIssue < ApplicationRecord
   end
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
-  def fetch_contested_rating_issue_ui_hash
-    return {} unless review_request.serialized_ratings
+  def contested_rating_issue_ui_hash
+    return unless review_request.serialized_ratings
     rating_with_issue = review_request.serialized_ratings.find do |rating|
       rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
     end || { issues: [] }
@@ -306,26 +329,35 @@ class RequestIssue < ApplicationRecord
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
   end
 
-  def check_for_previous_higher_level_review!
-    return unless rating?
-    return unless eligible?
-    check_for_previous_review!(:source_higher_level_review)
-  end
-
-  def check_for_previous_review!(review_type)
-    reason = rating_issue_rationale_to_request_issue_reason(review_type)
-    contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
-
-    if contested_rating_issue_ui_hash && contested_rating_issue_ui_hash[review_type].present?
-      self.ineligible_reason = reason
-      self.ineligible_due_to_id = contested_rating_issue_ui_hash[review_type]
-    end
-  end
-
   def decision_or_promulgation_date
     return decision_date if nonrating?
     return contested_rating_issue.try(:promulgation_date) if rating?
   end
+
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
+  def check_for_eligible_previous_review!
+    return unless eligible?
+    return unless contested_issue
+
+    if review_request.is_a?(HigherLevelReview)
+      if contested_issue.source_review_type == "HigherLevelReview"
+        self.ineligible_reason = :higher_level_review_to_higher_level_review
+      end
+
+      if contested_issue.source_review_type == "Appeal"
+        self.ineligible_reason = :appeal_to_higher_level_review
+      end
+    end
+
+    if review_request.is_a?(Appeal) && contested_issue.source_review_type == "Appeal"
+      self.ineligible_reason = :appeal_to_appeal
+    end
+
+    self.ineligible_due_to_id = contested_issue.source_request_issue.id if ineligible_reason
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def check_for_before_ama!
     return unless eligible?
@@ -358,10 +390,6 @@ class RequestIssue < ApplicationRecord
 
   def legacy_appeal_eligible_for_opt_in?
     vacols_issue.legacy_appeal.eligible_for_soc_opt_in?(review_request.receipt_date)
-  end
-
-  def rating_issue_rationale_to_request_issue_reason(rationale)
-    rationale.to_s.sub(/^source_/, "previous_").to_sym
   end
 
   def check_for_active_request_issue_by_rating!
@@ -403,5 +431,9 @@ class RequestIssue < ApplicationRecord
 
   def appeal_active?
     review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).count > 0
+  end
+
+  def copy_review_request_to_decision_review
+    self.decision_review = review_request
   end
 end

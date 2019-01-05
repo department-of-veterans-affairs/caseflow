@@ -5,6 +5,7 @@
 class HearingDay < ApplicationRecord
   acts_as_paranoid
   belongs_to :judge, class_name: "User"
+  validates :regional_office, absence: true, if: :central_office?
 
   HEARING_TYPES = {
     video: "V",
@@ -15,6 +16,10 @@ class HearingDay < ApplicationRecord
   # rubocop:disable Style/SymbolProc
   after_update { |hearing_day| hearing_day.update_children_records }
   # rubocop:enable Style/SymbolProc
+
+  def central_office?
+    hearing_type == HEARING_TYPES[:central]
+  end
 
   def update_children_records
     hearings = if hearing_type == HEARING_TYPES[:central]

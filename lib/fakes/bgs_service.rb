@@ -53,6 +53,9 @@ class Fakes::BGSService
       when "has_many_ratings"
         in_active_review_reference_id = "in-active-review-ref-id"
         in_active_review_receipt_date = Time.zone.parse("2018-04-01")
+        completed_review_receipt_date = in_active_review_receipt_date - 30.days
+        completed_review_reference_id = "cleared-review-ref-id"
+
         Generators::Rating.build(
           participant_id: veteran.participant_id
         )
@@ -64,7 +67,8 @@ class Fakes::BGSService
             { decision_text: "Left knee" },
             { decision_text: "Right knee" },
             { decision_text: "PTSD" },
-            { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id }
+            { decision_text: "This rating is in active review", reference_id: in_active_review_reference_id },
+            { decision_text: "I am on a completed Higher Level Review", contention_reference_id: 999 }
           ]
         )
         Generators::Rating.build(
@@ -119,6 +123,29 @@ class Fakes::BGSService
           veteran_file_number: veteran.file_number,
           bgs_attrs: { benefit_claim_id: in_active_review_reference_id }
         )
+        previous_hlr = HigherLevelReview.find_or_create_by!(
+          veteran_file_number: veteran.file_number,
+          receipt_date: completed_review_receipt_date
+        )
+        cleared_epe = EndProductEstablishment.find_or_create_by!(
+          reference_id: completed_review_reference_id,
+          veteran_file_number: veteran.file_number,
+          source: previous_hlr,
+          synced_status: "CLR"
+        )
+        RequestIssue.find_or_create_by!(
+          review_request: previous_hlr,
+          end_product_establishment: cleared_epe,
+          rating_issue_reference_id: completed_review_reference_id,
+          contention_reference_id: 999
+        ) do |reqi|
+          reqi.rating_issue_profile_date = Time.zone.today - 100
+        end
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { benefit_claim_id: completed_review_reference_id }
+        )
+
         Generators::Rating.build(
           participant_id: veteran.participant_id,
           promulgation_date: Time.zone.today - 60,
