@@ -81,6 +81,18 @@ feature "Supplemental Claim Intake" do
     )
   end
 
+  let!(:future_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date + 2.days,
+      profile_date: receipt_date + 2.days,
+      issues: [
+        { reference_id: "future1", decision_text: "Future rating issue 1" },
+        { reference_id: "future2", decision_text: "Future rating issue 2" }
+      ]
+    )
+  end
+
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -184,6 +196,7 @@ feature "Supplemental Claim Intake" do
     intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
     click_intake_add_issue
+    expect(page).to_not have_content("Future rating issue 1")
     add_intake_rating_issue("PTSD denied")
     expect(page).to have_content("1 issue")
 
