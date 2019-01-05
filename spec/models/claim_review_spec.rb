@@ -30,8 +30,8 @@ describe ClaimReview do
     build(
       :request_issue,
       review_request: claim_review,
-      rating_issue_reference_id: "reference-id",
-      rating_issue_profile_date: Date.new(2018, 4, 30),
+      contested_rating_issue_reference_id: "reference-id",
+      contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       description: "decision text"
     )
   end
@@ -40,8 +40,8 @@ describe ClaimReview do
     build(
       :request_issue,
       review_request: claim_review,
-      rating_issue_reference_id: "reference-id2",
-      rating_issue_profile_date: Date.new(2018, 4, 30),
+      contested_rating_issue_reference_id: "reference-id2",
+      contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       description: "another decision text"
     )
   end

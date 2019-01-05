@@ -257,6 +257,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def ratings_with_issues
+    return [] unless veteran
     veteran.ratings.reject { |rating| rating.issues.empty? }
   end
 

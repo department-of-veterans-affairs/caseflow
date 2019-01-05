@@ -11,13 +11,14 @@ describe RequestIssue do
     create(
       :decision_issue,
       disposition: "test disposition",
-      decision_text: "decision text",
+      decision_text: decision_text,
       description: description,
       request_issues: request_issues
     )
   end
 
   let(:request_issues) { [] }
+  let(:decision_text) { "decision text" }
 
   context "#rating?" do
     subject { decision_issue.rating? }
@@ -102,7 +103,15 @@ describe RequestIssue do
           [create(:request_issue, notes: "a note")]
         end
 
-        it { is_expected.to eq("decision text. Notes: a note") }
+        context "when no decision text" do
+          let(:decision_text) { nil }
+          it { is_expected.to eq("test disposition: ") }
+        end
+
+        context "when decision text" do
+          let(:decision_text) { "decision_text" }
+          it { is_expected.to eq("decision text. Notes: a note") }
+        end
       end
     end
 

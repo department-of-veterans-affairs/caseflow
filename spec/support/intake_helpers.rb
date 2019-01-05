@@ -312,11 +312,11 @@ module IntakeHelpers
            veteran_participant_id: veteran.participant_id)
   end
 
-  def setup_request_issue_with_rating_decision_issue(decision_review, rating_issue_reference_id: "rating123")
+  def setup_request_issue_with_rating_decision_issue(decision_review, contested_rating_issue_reference_id: "rating123")
     create(:request_issue,
            :with_rating_decision_issue,
-           rating_issue_reference_id: rating_issue_reference_id,
-           rating_issue_profile_date: decision_review.receipt_date - 1.day,
+           contested_rating_issue_reference_id: contested_rating_issue_reference_id,
+           contested_rating_issue_profile_date: decision_review.receipt_date - 1.day,
            description: "Test rating decision issue",
            review_request: decision_review,
            veteran_participant_id: veteran.participant_id)
