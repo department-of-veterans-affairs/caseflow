@@ -43,24 +43,14 @@ class ColocatedTask < Task
   end
 
   def available_actions(_user)
-    actions = [
-      {
-        label: COPY::COLOCATED_ACTION_PLACE_HOLD,
-        value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
-      },
-      Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h
-    ]
+    actions = [Constants.TASK_ACTIONS.PLACE_HOLD.to_h, Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h]
 
     if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
-      actions.unshift(
-        label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
-        value: "modal/send_colocated_task"
-      )
+      send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
+      send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
+      actions.unshift(send_to_team)
     else
-      actions.unshift(
-        label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
-        value: "modal/mark_task_complete"
-      )
+      actions.unshift(Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h)
     end
 
     actions
