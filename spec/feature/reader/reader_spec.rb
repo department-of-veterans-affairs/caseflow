@@ -773,12 +773,11 @@ RSpec.feature "Reader" do
       end
 
       scenario "Follow comment deep link" do
-        visit "/annotation/#{documents[0].annotations[0].id}"
+        annotation = documents[1].annotations[0]
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[1].id}?annotation=#{annotation.id}"
 
-        # Ensure we are redirected to the correct document
-        expect(current_path).to have_content("/documents/#{documents[0].id}")
+        expect_in_viewport("commentIcon-container-#{annotation.id}")
 
-        # TODO: Ensure we are on the right page
       end
 
       scenario "404 on bad comment id" do
