@@ -3,7 +3,7 @@ class Hearing < ApplicationRecord
   belongs_to :appeal
   belongs_to :judge, class_name: "User"
 
-  UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
+  UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   def self.find_hearing_by_uuid_or_vacols_id(id)
     if UUID_REGEX.match?(id)
