@@ -212,6 +212,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
         date_count[date] ||= 0
 
         next if date_count[date] >= 1 && date.wednesday?
+
         case_hearing = create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
         hearing_days[case_hearing.hearing_pkseq] = case_hearing
 
@@ -273,6 +274,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
                                    Random.rand(1..50)).map do |date|
             date_count[date] ||= 0
             next unless date_count[date] < 10
+
             create(:judge_non_availability, date: date, schedule_period_id: schedule_period.id,
                                             object_identifier: judge.css_id)
             date_count[date] += 1

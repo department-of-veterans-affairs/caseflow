@@ -18,6 +18,7 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
 
   def claimant_relationship
     return "self" unless decision_review.claimants.any?
+
     decision_review.claimants.first.try(:relationship)
   end
 

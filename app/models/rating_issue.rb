@@ -73,6 +73,7 @@ class RatingIssue
   def title_of_active_review
     return unless reference_id
     request_issue = RequestIssue.find_active_by_contested_rating_issue_reference_id(reference_id)
+
     request_issue&.review_title
   end
 
@@ -86,11 +87,13 @@ class RatingIssue
 
   def contention_reference_id
     return unless rba_contentions_data
+
     @contention_reference_id ||= rba_contentions_data.first.dig(:cntntn_id)
   end
 
   def source_request_issue
     return if contention_reference_id.nil?
+
     @source_request_issue ||= RequestIssue.unscoped.find_by(contention_reference_id: contention_reference_id)
   end
 

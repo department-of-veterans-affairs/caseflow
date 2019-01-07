@@ -1,19 +1,20 @@
 # bundle exec rails runner scripts/enable_features_dev.rb
 
-def sql_fmt(o)
-  if o.nil?
+def sql_fmt(attribute)
+  if attribute.nil?
     return "is null"
   end
-  if o.is_a? Date
-    return "= to_date('#{o}', 'YYYY-MM-DD')"
+  if attribute.is_a? Date
+    return "= to_date('#{attribute}', 'YYYY-MM-DD')"
   end
-  if o.is_a? Numeric
-    return "= #{o}"
+  if attribute.is_a? Numeric
+    return "= #{attribute}"
   end
-  if o.is_a? String
-    return "= '#{o}'"
+  if attribute.is_a? String
+    return "= '#{attribute}'"
   end
-  fail o.inspect
+
+  fail attribute.inspect
 end
 
 # rubocop:disable Metrics/AbcSize
@@ -88,6 +89,7 @@ defolders.each do |defolder|
       if records_duplicate.length == 1
         next
       end
+
       query_select = <<EOS.strip_heredoc
         select 1
         from decass

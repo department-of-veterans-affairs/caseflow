@@ -29,8 +29,10 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
 
   def pdf
     return redirect_to "/404" if task.appeal.decisions.blank?
+
     decision_number = params[:decision_number].to_i
     return redirect_to "/404" if decision_number >= task.appeal.decisions.size || decision_number < 0
+
     decision = task.appeal.decisions[decision_number]
     send_file(decision.serve, type: "application/pdf", disposition: "inline")
   end
@@ -39,6 +41,7 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
     assigned_task = tasks.assign_next_to!(current_user)
 
     return not_found unless assigned_task
+
     render json: { next_task_id: assigned_task.id }
   end
 
@@ -49,9 +52,9 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
     task.perform!(establish_claim_params) unless task.reviewed?
     render json: {}
   rescue EstablishClaim::InvalidEndProductError
-    render json: { error_code: "end_product_invalid" }, status: 422
+    render json: { error_code: "end_product_invalid" }, status: :unprocessable_entity
   rescue Caseflow::Error::EstablishClaimFailedInVBMS => e
-    render json: { error_code: e.error_code }, status: 422
+    render json: { error_code: e.error_code }, status: :unprocessable_entity
   end
 
   # This POST updates VACOLS & VBMS Note
@@ -100,7 +103,8 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
 
   def verify_bgs_info_valid
     return true if task.bgs_info_valid?
-    render json: { error_code: "bgs_info_invalid" }, status: 422
+
+    render json: { error_code: "bgs_info_invalid" }, status: :unprocessable_entity
   end
 
   def to_complete_count

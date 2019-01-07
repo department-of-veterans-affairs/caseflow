@@ -33,6 +33,7 @@ class BvaDispatchTask < GenericTask
       task.root_task.update!(status: Constants.TASK_STATUSES.completed)
     rescue ActiveRecord::RecordInvalid => e
       raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message.match?(/^Validation failed:/)
+
       raise e
     end
 

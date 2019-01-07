@@ -508,21 +508,21 @@ feature "Appeal Intake" do
              id: appeal.id,
              veteran_file_number: veteran.file_number,
              established_at: Time.zone.now
-    )).to_not be_nil
+           )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
              contested_rating_issue_reference_id: "xyz123",
              description: "Left knee granted 2",
              notes: "I am an issue note"
-    )).to_not be_nil
+           )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
              description: "Really old injury",
              untimely_exemption: false,
              untimely_exemption_notes: "I am an exemption note"
-    )).to_not be_nil
+           )).to_not be_nil
 
     active_duty_adjustments_request_issue = RequestIssue.find_by!(
       review_request: appeal,
@@ -548,33 +548,33 @@ feature "Appeal Intake" do
              review_request: appeal,
              description: "This is an unidentified issue",
              is_unidentified: true
-    )).to_not be_nil
+           )).to_not be_nil
 
     # Issues before AMA
     expect(RequestIssue.find_by(
              review_request: appeal,
              description: "Non-RAMP Issue before AMA Activation",
              ineligible_reason: :before_ama
-    )).to_not be_nil
+           )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
              description: "Issue before AMA Activation from RAMP",
              ineligible_reason: nil,
              ramp_claim_id: "ramp_claim_id"
-    )).to_not be_nil
+           )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
              description: "A nonrating issue before AMA",
              ineligible_reason: :before_ama
-    )).to_not be_nil
+           )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
              description: "A nonrating issue before AMA",
              decision_date: pre_ramp_start_date
-    )).to_not be_nil
+           )).to_not be_nil
 
     duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
     ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
@@ -753,7 +753,7 @@ feature "Appeal Intake" do
                  ineligible_reason: :legacy_appeal_not_eligible,
                  vacols_id: "vacols2",
                  vacols_sequence_id: "1"
-        )).to_not be_nil
+               )).to_not be_nil
 
         expect(page).to have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
       end
@@ -789,7 +789,7 @@ feature "Appeal Intake" do
                  ineligible_reason: :legacy_issue_not_withdrawn,
                  vacols_id: "vacols1",
                  vacols_sequence_id: "1"
-        )).to_not be_nil
+               )).to_not be_nil
 
         expect(page).to_not have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
       end

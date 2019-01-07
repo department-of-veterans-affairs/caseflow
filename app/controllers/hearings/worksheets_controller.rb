@@ -1,12 +1,12 @@
 class Hearings::WorksheetsController < HearingsController
   rescue_from ActiveRecord::RecordNotFound do |e|
     Rails.logger.debug "Worksheets Controller failed: #{e.message}"
-    render json: { "errors": ["message": e.message, code: 1000] }, status: 404
+    render json: { "errors": ["message": e.message, code: 1000] }, status: :not_found
   end
 
   rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.debug "Worksheets Controller failed: #{e.message}"
-    render json: { "errors": ["message": e.message, code: 1001] }, status: 404
+    render json: { "errors": ["message": e.message, code: 1001] }, status: :not_found
   end
 
   def show

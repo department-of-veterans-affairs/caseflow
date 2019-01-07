@@ -55,7 +55,7 @@ class PowerOfAttorney
   private
 
   def bgs_power_of_attorney
-    @bgs_poa ||= BgsPowerOfAttorney.new(file_number: file_number)
+    @bgs_power_of_attorney ||= BgsPowerOfAttorney.new(file_number: file_number)
   end
 
   class << self

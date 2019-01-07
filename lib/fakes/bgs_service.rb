@@ -507,6 +507,7 @@ class Fakes::BGSService
     if participant_id == VSO_PARTICIPANT_ID
       return default_vsos_by_participant_id.map { |poa| get_poa_from_bgs_poa(poa) }
     end
+
     []
   end
 
@@ -591,6 +592,7 @@ class Fakes::BGSService
 
   def get_participant_id_for_user(user)
     return VSO_PARTICIPANT_ID if user.css_id == "VSO"
+
     DEFAULT_PARTICIPANT_ID
   end
 
