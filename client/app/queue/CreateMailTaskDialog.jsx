@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import { sprintf } from 'sprintf-js';
 
 import COPY from '../../COPY.json';
 import { onReceiveAmaTasks } from './QueueActions';
@@ -45,7 +46,7 @@ class CreateMailTaskDialog extends React.Component {
 
     const label = this.taskActionData().options.find((option) => option.value === this.state.selectedValue).label;
 
-    const successMsg = { title: `Created ${label} mail task` };
+    const successMsg = { title: sprintf(COPY.MAIL_TASK_CREATION_SUCCESS_MESSAGE, label) };
 
     return this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
@@ -83,7 +84,7 @@ class CreateMailTaskDialog extends React.Component {
         searchable
         hideLabel
         errorMessage={highlightFormItems && !this.state.selectedValue ? 'Choose one' : null}
-        placeholder="Select correspondence type"
+        placeholder={COPY.MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL}
         value={this.state.selectedValue}
         onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
         options={this.taskActionData().options} />

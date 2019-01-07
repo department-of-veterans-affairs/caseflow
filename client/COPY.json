@@ -255,11 +255,16 @@
   "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN_PLACEHOLDER": "Select grant or deny",
   "ADVANCE_ON_DOCKET_MOTION_REASON_DROPDOWN_PLACEHOLDER": "Select a type",
 
+  "TASK_ACTION_DROPDOWN_BOX_LABEL": "Select an action…",
+
   "ASSIGN_TO_USER_DROPDOWN": "Select a user",
   "ASSIGN_TO_TEAM_DROPDOWN": "Select a team",
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
+
   "CREATE_MAIL_TASK_TITLE": "Create new mail task",
+  "MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL": "Select correspondence type",
+  "MAIL_TASK_CREATION_SUCCESS_MESSAGE": "Created %s task",
 
   "CASE_TIMELINE_HEADER": "Below is the history of this case. Soon, you'll be able to see many more details.",
   "CASE_TIMELINE_DISPATCHED_FROM_BVA": "Dispatched from BVA",
@@ -293,6 +298,7 @@
   "APPEAL_WITHDRAWAL_MAIL_TASK_LABEL": "Withdrawal of appeal",
   "CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL": "CUE-related",
   "CONGRESSIONAL_INTEREST_MAIL_TASK_LABEL": "Congressional interest",
+  "CONTROLLED_CORRESPONDENCE_MAIL_TASK_LABEL": "Cotrolled correspondence",
   "DEATH_CERTIFICATE_MAIL_TASK_LABEL": "Death certificate",
   "EVIDENCE_OR_ARGUMENT_MAIL_TASK_LABEL": "Evidence or argument",
   "EXTENSION_REQUEST_MAIL_TASK_LABEL": "Extension request",
