@@ -112,6 +112,7 @@ class CaseListTable extends React.PureComponent {
     }
 
     return <Table
+      className="cf-other-reviews-table"
       columns={this.getColumns}
       rowObjects={this.props.reviews}
       getKeyForRow={this.getKeyForRow}

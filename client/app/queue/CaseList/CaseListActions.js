@@ -118,6 +118,7 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
         }
 
         dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
+        dispatch(onReceiveClaimReviewsUsingVeteranId(returnedObject.claim_reviews));
 
         // Expect all of the appeals will be for the same Caseflow Veteran ID so we pull off the first for the URL.
         const caseflowVeteranId = returnedObject.appeals[0].attributes.caseflow_veteran_id;
