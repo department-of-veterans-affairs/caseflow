@@ -33,7 +33,6 @@ class MailTask < GenericTask
       MailTask.subclasses.map { |subclass| { value: subclass.name, label: subclass.label } }
     end
 
-    # TODO: Put this whole thing in a transaction so if we fail to create any of the child tasks, we don't create any.
     def create_from_params(params, user)
       verify_user_can_create!(user)
 
@@ -42,15 +41,18 @@ class MailTask < GenericTask
         fail(Caseflow::Error::NoRootTask, message: "Could not find root task for appeal with ID #{params[:appeal]}")
       end
 
-      # Create a task assigned to the mail organization with a child task so we can track how that child was created.
-      mail_task = create!(
-        appeal: root_task.appeal,
-        parent_id: root_task.id,
-        assigned_to: MailTeam.singleton
-      )
+      # Fail to create the parent mail task if we fail to create any of the children tasks.
+      transaction do
+        # Create a task assigned to the mail organization with a child task so we can track how that child was created.
+        mail_task = create!(
+          appeal: root_task.appeal,
+          parent_id: root_task.id,
+          assigned_to: MailTeam.singleton
+        )
 
-      params = modify_params(params)
-      create_child_task(mail_task, user, params)
+        params = modify_params(params)
+        create_child_task(mail_task, user, params)
+      end
     end
 
     def verify_user_can_create!(user)
