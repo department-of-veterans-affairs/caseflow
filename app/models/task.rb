@@ -86,7 +86,8 @@ class Task < ApplicationRecord
   end
 
   def self.create_from_params(params, user)
-    verify_user_can_create!(user)
+    parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
+    verify_user_can_create!(user, parent_task)
     params = modify_params(params)
     create(params)
   end
@@ -155,8 +156,8 @@ class Task < ApplicationRecord
     end
   end
 
-  def self.verify_user_can_create!(user)
-    unless user.attorney_in_vacols? || user.judge_in_vacols?
+  def self.verify_user_can_create!(user, parent)
+    unless parent.available_actions_unwrapper(user).any? { |action| action.dig(:data, :type) == name }
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
     end
   end
