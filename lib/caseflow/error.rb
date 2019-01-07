@@ -68,6 +68,13 @@ module Caseflow::Error
     end
   end
 
+  class RoundRobinTaskDistributorError < SerializableError
+    def initialize(args)
+      @code = args[:code] || 500
+      @message = args[:message] || "RoundRobinTaskDistributor error"
+    end
+  end
+
   class AttorneyJudgeCheckoutError < SerializableError
     attr_accessor :code, :message
 
