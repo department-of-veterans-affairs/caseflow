@@ -242,8 +242,9 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
     const taskLength = this.props.tasks.length;
-    console.log('---TaskSnapshot---');
-    console.log(this.props.tasks);
+
+    /* console.log('---TaskSnapshot---');
+    console.log(this.props.tasks);*/
 
     if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>

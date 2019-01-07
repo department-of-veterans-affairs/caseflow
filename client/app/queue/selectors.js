@@ -50,7 +50,9 @@ const getNewDocsForAppeal = (state: State): NewDocsForAppeal => state.queue.newD
 
 const incompleteTasksSelector = (tasks: Tasks | Array<Task>) =>
   _.filter(tasks, (task) => task.status !== TASK_STATUSES.completed);
-export const completeTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed);
+
+export const completeTasksSelector = (tasks: Tasks) =>
+  _.filter(tasks, (task) => task.status === TASK_STATUSES.completed);
 
 export const getActiveModalType = createSelector(
   [getModals],

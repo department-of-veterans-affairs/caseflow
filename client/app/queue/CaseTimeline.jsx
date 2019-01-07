@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { connect } from 'react-redux';
+import type { State } from './types/state';
 
 import { GrayDot, GreenCheckmark } from '../components/RenderFunctions';
 import moment from 'moment';
@@ -31,6 +32,10 @@ const tableCell = css({
   padding: '3px'
 });
 
+type Params = {|
+  appealId: string
+|};
+
 const getEventRow = ({ title, date }, lastRow) => {
   const formattedDate = date ? moment(date).format('MM/DD/YYYY') : null;
   const eventImage = date ? <GreenCheckmark /> : <GrayDot />;
@@ -42,23 +47,29 @@ const getEventRow = ({ title, date }, lastRow) => {
   </tr>;
 };
 
-export const CaseTimeline = ({ appeal }) => {
-  console.log('---CaseTimeline---');
-  console.log(appeal);
-  console.log('--completedTasks--');
-  console.log(this.props);
+class CaseTimeline extends React.PureComponent {
+  render = () => {
+    const {
+      appeal
+    } = this.props;
 
-  return <React.Fragment>
-    {COPY.CASE_TIMELINE_HEADER}
-    <table>
-      <tbody>
-        {appeal.timeline.map((event, index) => {
-          return getEventRow(event, index === appeal.timeline.length - 1);
-        })}
-      </tbody>
-    </table>
-  </React.Fragment>;
-};
+    /* console.log('---CaseTimeline---');
+    console.log(appeal);
+    console.log('--completedTasks--');
+    console.log(this.props);*/
+
+    return <React.Fragment>
+      {COPY.CASE_TIMELINE_HEADER}
+      <table>
+        <tbody>
+          {appeal.timeline.map((event, index) => {
+            return getEventRow(event, index === appeal.timeline.length - 1);
+          })}
+        </tbody>
+      </table>
+    </React.Fragment>;
+  }
+}
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   return {
