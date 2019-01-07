@@ -164,13 +164,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       <dd>{assignor}</dd></div> : null;
   }
 
-  preparedByListItem = (task) => {
-    const preparedByAbbrev = task.decisionPreparedBy ? this.getAbbrevName(task.decisionPreparedBy) : null;
-
-    return preparedByAbbrev ? <div><dt>{COPY.TASK_SNAPSHOT_DECISION_PREPARER_LABEL}</dt>
-      <dd>{preparedByAbbrev}</dd></div> : null;
-  }
-
   taskLabelListItem = (task) => {
     return task.label ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt>
       <dd>{this.getActionName(task)}</dd></div> : null;
@@ -228,7 +221,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
             <CaseDetailsDescriptionList>
               { this.assignedToListItem(task) }
               { this.assignedByListItem(task) }
-              { this.preparedByListItem(task) }
               { this.taskLabelListItem(task) }
               { this.taskInstructionsListItem(task) }
             </CaseDetailsDescriptionList>
