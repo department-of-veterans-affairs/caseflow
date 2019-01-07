@@ -140,7 +140,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       .count
   end
 
-  def self.docket_date_of_nth_appeal_in_case_storage(n)
+  def self.docket_date_of_nth_appeal_in_case_storage(row_number)
     query = <<-SQL
       select BFD19 from (
         select row_number() over (order by BFD19 asc) as ROWNUMBER,
@@ -153,7 +153,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       where ROWNUMBER = least(?, MAX_ROWNUMBER)
     SQL
 
-    connection.exec_query(sanitize_sql_array([query, n])).first["bfd19"].to_date
+    connection.exec_query(sanitize_sql_array([query, row_number])).first["bfd19"].to_date
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -204,6 +204,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:disable Metrics/PerceivedComplexity
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, dry_run = false)
     fail DocketNumberCentennialLoop if Time.zone.now.year >= 2030
+
     # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
     # Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding
     # of clear and unmistakable error, which would result in a brand new docket number being assigned.
@@ -293,6 +294,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         conn.execute(LOCK_READY_APPEALS)
         appeals = conn.exec_query(fmtd_query).to_hash
         return appeals if appeals.empty?
+
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
         VACOLS::Case.batch_update_vacols_location(judge.vacols_uniq_id, vacols_ids)
         appeals

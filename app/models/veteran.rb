@@ -67,14 +67,18 @@ class Veteran < ApplicationRecord
 
   def periods_of_service
     return [] unless service
-    service.inject([]) do |result, s|
-      result << period_of_service(s) if s[:branch_of_service] && s[:entered_on_duty_date]
+
+    service.inject([]) do |result, service_attributes|
+      if service_attributes[:branch_of_service] && service_attributes[:entered_on_duty_date]
+        result << period_of_service(service_attributes)
+      end
       result
     end
   end
 
   def age
     return unless date_of_birth
+
     dob = Time.strptime(date_of_birth, "%m/%d/%Y")
     # Age calc copied from https://stackoverflow.com/a/2357790
     now = Time.now.utc.to_date
@@ -172,12 +176,14 @@ class Veteran < ApplicationRecord
     def find_by_ssn(ssn)
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
+
       find_by(file_number: file_number)
     end
 
     def find_and_maybe_backfill_name(file_number)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
+
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
       # a symbol that will blow up, so check if bgs_record is a hash first.
@@ -244,20 +250,21 @@ class Veteran < ApplicationRecord
     relationships_array.map { |relationship_hash| Relationship.from_bgs_hash(relationship_hash) }
   end
 
-  def period_of_service(s)
-    s[:branch_of_service].strip + " " +
-      service_date(s[:entered_on_duty_date]) + " - " +
-      service_date(s[:released_active_duty_date]) +
-      character_of_service(s)
+  def period_of_service(service_attributes)
+    service_attributes[:branch_of_service].strip + " " +
+      service_date(service_attributes[:entered_on_duty_date]) + " - " +
+      service_date(service_attributes[:released_active_duty_date]) +
+      character_of_service(service_attributes)
   end
 
-  def character_of_service(s)
-    text = CHARACTER_OF_SERVICE_CODES[s[:char_of_svc_code]]
+  def character_of_service(service_attributes)
+    text = CHARACTER_OF_SERVICE_CODES[service_attributes[:char_of_svc_code]]
     text.present? ? ", #{text}" : ""
   end
 
   def service_date(date)
     return "" unless date
+
     Date.strptime(date, "%m%d%Y").strftime("%m/%d/%Y")
   rescue ArgumentError
     ""
@@ -266,6 +273,7 @@ class Veteran < ApplicationRecord
   def address_type
     return "OVR" if military_address?
     return "INT" if country != "USA"
+
     "" # Empty string means the address doesn't have a special type
   end
 

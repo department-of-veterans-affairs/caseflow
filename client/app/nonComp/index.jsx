@@ -16,7 +16,7 @@ class NonComp extends React.PureComponent {
   render() {
     const Router = this.props.router || BrowserRouter;
     const initialState = mapDataToInitialState(this.props);
-    const appName = 'Non-Compensation Business Lines';
+    const appName = 'Lines of Business';
 
     return <ReduxBase initialState={initialState} reducer={nonCompReducer}>
       <Router basename="/decision_reviews" {...this.props.routerTestProps}>

@@ -31,8 +31,7 @@ RSpec.describe HearingsController, type: :controller do
           hearing_type: "C",
           hearing_date: hearing_date,
           room: "123",
-          judge_id: "456",
-          regional_office: "RO18"
+          judge_id: "456"
         )
       end
 

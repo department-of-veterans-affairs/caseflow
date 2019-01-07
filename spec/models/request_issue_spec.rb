@@ -12,6 +12,7 @@ describe RequestIssue do
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
   let(:contested_decision_issue_id) { nil }
+
   let(:review) do
     create(
       :higher_level_review,
@@ -265,15 +266,16 @@ describe RequestIssue do
     let(:active_epe) { create(:end_product_establishment, :active) }
     let(:receipt_date) { review.receipt_date }
 
-    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let(:previous_review) { create(:higher_level_review) }
     let!(:previous_request_issue) do
       create(
         :request_issue,
-        review_request: previous_higher_level_review,
+        review_request: previous_review,
         rating_issue_reference_id: higher_level_review_reference_id,
         contention_reference_id: contention_reference_id
       )
     end
+
     let(:appeal_in_progress) do
       create(:appeal, veteran_file_number: veteran.file_number).tap(&:create_tasks_on_intake_success!)
     end
@@ -365,15 +367,95 @@ describe RequestIssue do
       expect(rating_request_issue.duplicate_of_rating_issue_in_active_review?).to eq(true)
     end
 
-    it "flags previous HLR" do
-      rating_request_issue.rating_issue_reference_id = higher_level_review_reference_id
-      rating_request_issue.validate_eligibility!
+    context "issues with previous decision reviews" do
+      let(:rating_reference_id) { higher_level_review_reference_id }
 
-      expect(rating_request_issue.previous_higher_level_review?).to eq(true)
-      expect(rating_request_issue.ineligible_due_to).to eq(previous_request_issue)
+      context "when the previous review is a higher level review" do
+        let(:previous_review) { create(:higher_level_review) }
 
-      rating_request_issue.save!
-      expect(previous_request_issue.duplicate_but_ineligible).to eq([rating_request_issue])
+        context "when the current review is a higher level review" do
+          it "is not eligible after a higher level review" do
+            rating_request_issue.validate_eligibility!
+
+            expect(rating_request_issue.higher_level_review_to_higher_level_review?).to eq(true)
+            expect(rating_request_issue.ineligible_reason).to eq("higher_level_review_to_higher_level_review")
+            expect(rating_request_issue.ineligible_due_to).to eq(previous_request_issue)
+
+            rating_request_issue.save!
+            expect(previous_request_issue.duplicate_but_ineligible).to eq([rating_request_issue])
+          end
+        end
+
+        context "when the current review is a supplemental claim" do
+          let(:review) do
+            create(
+              :supplemental_claim,
+              veteran_file_number: veteran.file_number,
+              legacy_opt_in_approved: legacy_opt_in_approved
+            )
+          end
+
+          it "does not get flagged for previous higher level review" do
+            rating_request_issue.validate_eligibility!
+
+            expect(rating_request_issue.ineligible_reason).to_not eq("higher_level_review_to_higher_level_review")
+          end
+        end
+
+        context "when the current review is an appeal" do
+          let(:review) do
+            create(
+              :appeal,
+              veteran: veteran,
+              legacy_opt_in_approved: legacy_opt_in_approved
+            )
+          end
+
+          it "is still eligible after a previous higher level review" do
+            rating_request_issue.validate_eligibility!
+
+            expect(rating_request_issue.ineligible_reason).to be_nil
+          end
+        end
+      end
+
+      context "when the previous review is an appeal" do
+        let(:previous_review) { create(:appeal) }
+
+        context "when the current review is a higher level review" do
+          let(:review) do
+            create(
+              :higher_level_review,
+              veteran_file_number: veteran.file_number,
+              legacy_opt_in_approved: legacy_opt_in_approved
+            )
+          end
+
+          it "is not eligible after an appeal" do
+            rating_request_issue.validate_eligibility!
+
+            expect(rating_request_issue.ineligible_reason).to eq("appeal_to_higher_level_review")
+            expect(rating_request_issue.ineligible_due_to).to eq(previous_request_issue)
+          end
+        end
+
+        context "when the current review is an appeal" do
+          let(:review) do
+            create(
+              :appeal,
+              veteran: veteran,
+              legacy_opt_in_approved: legacy_opt_in_approved
+            )
+          end
+
+          it "is not eligible after an appeal" do
+            rating_request_issue.validate_eligibility!
+
+            expect(rating_request_issue.ineligible_reason).to eq("appeal_to_appeal")
+            expect(rating_request_issue.ineligible_due_to).to eq(previous_request_issue)
+          end
+        end
+      end
     end
 
     context "Issues with legacy issues" do

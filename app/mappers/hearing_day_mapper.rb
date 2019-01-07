@@ -3,22 +3,22 @@ module HearingDayMapper
   end
 
   COLUMN_NAME_REVERSE_MAP = {
-    hearing_pkseq:     :id,
-    hearing_type:      :hearing_type,
-    hearing_date:      :hearing_date,
-    folder_nr:         :regional_office,
-    room:              :room,
-    board_member:      :judge_id,
-    team:              :team,
-    adduser:           :created_by,
-    addtime:           :created_at,
-    mduser:            :updated_by,
-    mdtime:            :updated_at,
-    vdbvapoc:          :bva_poc,
-    notes:             :notes,
-    judge_last_name:   :judge_last_name,
+    hearing_pkseq: :id,
+    hearing_type: :hearing_type,
+    hearing_date: :hearing_date,
+    folder_nr: :regional_office,
+    room: :room,
+    board_member: :judge_id,
+    team: :team,
+    adduser: :created_by,
+    addtime: :created_at,
+    mduser: :updated_by,
+    mdtime: :updated_at,
+    vdbvapoc: :bva_poc,
+    notes: :notes,
+    judge_last_name: :judge_last_name,
     judge_middle_name: :judge_middle_name,
-    judge_first_name:  :judge_first_name
+    judge_first_name: :judge_first_name
   }.freeze
 
   class << self
@@ -51,10 +51,11 @@ module HearingDayMapper
 
       ro = begin
         RegionalOffice.find!(regional_office)
-      rescue RegionalOffice::NotFoundError
-        nil
+           rescue RegionalOffice::NotFoundError
+             nil
       end
       fail(InvalidRegionalOfficeError) if ro.nil?
+
       ro.key
     end
 
@@ -63,10 +64,11 @@ module HearingDayMapper
 
       ro = begin
         RegionalOffice.find!(regional_office)
-      rescue RegionalOffice::NotFoundError
-        nil
+           rescue RegionalOffice::NotFoundError
+             nil
       end
       return "" if ro.nil?
+
       "#{ro.city}, #{ro.state}"
     end
 

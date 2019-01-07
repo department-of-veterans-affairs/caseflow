@@ -45,7 +45,7 @@ class CaseReviewsController < ApplicationController
         "title": "Invalid Case Review Type Error",
         "detail": "Case review type is invalid, valid types: #{CASE_REVIEW_CLASSES.keys}"
       ]
-    }, status: 400
+    }, status: :bad_request
   end
 
   def complete_params

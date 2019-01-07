@@ -19,6 +19,7 @@ class DependenciesReportService
     def degraded_dependencies
       str_report = Rails.cache.read(:dependencies_report)
       return [] if !str_report
+
       report = JSON.parse str_report
       report.values.each_with_object([]) do |element, result|
         result << element["name"] if element["up_rate_5"].to_i < 50

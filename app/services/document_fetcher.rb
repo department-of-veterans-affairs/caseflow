@@ -16,7 +16,7 @@ class DocumentFetcher
   end
 
   def find_or_create_documents!
-    @created_documents ||= save!
+    @find_or_create_documents ||= save!
   end
 
   def new_documents_for_user(user)
