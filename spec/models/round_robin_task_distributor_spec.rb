@@ -27,11 +27,13 @@ describe RoundRobinTaskDistributor do
     end
 
     context "when task assigned to Organization is most recent task" do
-      let!(:user_task) { FactoryBot.create(:task, assigned_to: assignee) }
-      let!(:org_task) { FactoryBot.create(:task, assigned_to: FactoryBot.create(:organization)) }
+      before do
+        FactoryBot.create(:task, assigned_to: assignee)
+        FactoryBot.create(:task, assigned_to: FactoryBot.create(:organization))
+      end
 
       it "should return the most recent task assigned to a User" do
-        expect(round_robin_distributor.latest_task.id).to eq(user_task.id)
+        expect(round_robin_distributor.latest_task.assigned_to_type).to eq(User.name)
       end
     end
   end
