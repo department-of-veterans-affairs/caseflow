@@ -776,6 +776,8 @@ RSpec.feature "Reader" do
         annotation = documents[1].annotations[0]
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[1].id}?annotation=#{annotation.id}"
 
+        expect(page).to have_content(annotation.comment)
+        expect(page).to have_css(".page")
         expect_in_viewport("commentIcon-container-#{annotation.id}")
       end
 
