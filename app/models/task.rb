@@ -225,6 +225,14 @@ class Task < ApplicationRecord
     }
   end
 
+  def add_admin_action_data
+    {
+      selected: nil,
+      options: nil,
+      type: ColocatedTask.name
+    }
+  end
+
   def timeline_title
     "#{type} completed"
   end
