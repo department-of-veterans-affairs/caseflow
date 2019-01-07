@@ -220,7 +220,10 @@ class Task < ApplicationRecord
   def timeline_details
     {
       title: timeline_title,
-      date: completed_at
+      date: completed_at,
+      assigned_to: assigned_to.full_name,
+      assigned_by: assigned_by.full_name,
+      instructions: instructions,
     }
   end
 

@@ -10,7 +10,8 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import COPY from '../../COPY.json';
 import {
   completeTasksSelector,
-  actionableTasksForAppeal
+  actionableTasksForAppeal,
+  incompleteTasksSelector
 } from './selectors';
 
 const grayLine = css({
@@ -29,21 +30,32 @@ const tableCellWithIcon = css({
 const tableCell = css({
   border: 'none',
   verticalAlign: 'top',
-  padding: '3px'
+  padding: '3px',
+  '& > dd': { textTransform: 'uppercase' }
+});
+
+const tableTitle = css({
+  textTransform: 'uppercase',
+  fontWeight: 'bold',
+  display: 'inline'
 });
 
 type Params = {|
   appealId: string
 |};
 
-const getEventRow = ({ title, date }, lastRow) => {
+const getEventRow = ({ title, date, assigned_by }, lastRow) => {
   const formattedDate = date ? moment(date).format('MM/DD/YYYY') : null;
   const eventImage = date ? <GreenCheckmark /> : <GrayDot />;
 
   return <tr key={title}>
-    <td {...tableCell}>{formattedDate}</td>
+    <td {...tableCell}><dd {...tableTitle}>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}: </dd>{formattedDate}</td>
     <td {...tableCellWithIcon}>{eventImage}{!lastRow && <div {...grayLine} />}</td>
-    <td {...tableCell}>{title}</td>
+    <td {...tableCell}>
+      {title} <br />
+      <dt {...tableTitle} >{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}: </dt>
+      <dd {...css({ display: 'inline' })}>{assigned_by}</dd>
+    </td>
   </tr>;
 };
 
@@ -53,9 +65,7 @@ class CaseTimeline extends React.PureComponent {
       appeal
     } = this.props;
 
-    /* console.log('---CaseTimeline---');
-    console.log(appeal);
-    console.log('--completedTasks--');
+    /* console.log('--completedTasks--');
     console.log(this.props);*/
 
     return <React.Fragment>
@@ -73,6 +83,7 @@ class CaseTimeline extends React.PureComponent {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   return {
+    incompletedTasks: incompleteTasksSelector(state, { appealId: ownProps.appealId }),
     completedTasks: completeTasksSelector(state, { appealId: ownProps.appealId }),
     tasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId })
   };
