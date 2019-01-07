@@ -243,7 +243,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       rootTask
     } = this.props;
 
-    let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
+    let sectionBody = <tr><td {...css({ borderStyle: 'none' })}>{COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL}</td></tr>;
     const tasks = this.props.tasks.filter((task) => {
       return task.type !== 'RootTask';
     });
