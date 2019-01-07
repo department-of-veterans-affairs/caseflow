@@ -20,17 +20,39 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
 
+    describe "#fetch_and_update_ro_for_veteran" do
+      let(:veteran) { create(:veteran, file_number: bfcorlid_file_number) }
+
+      before do
+        facility_ros = RegionalOffice::CITIES.values.reject { |ro| ro.facility_locator_id.nil? }
+        body = mock_distance_body(
+          data: facility_ros.map { |ro| mock_data(id: ro[:facility_locator_id]) },
+          distances: facility_ros.map_with_index do |ro, index|
+            mock_distance(distance: index, id: ro[:facility_locator_id])
+          end
+        )
+        distance_response = HTTPI::Response.new(200, [], body)
+        expect(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response).once
+        allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
+      end
+
+      it "updates veteran hearing_regional_office with closest ro" do
+        job.fetch_and_update_ro_for_veteran(veteran, 0.0, 0.0)
+        expect(Veteran.first.hearing_regional_office).to eq RegionalOffice::CITIES.keys[0]
+      end
+    end
+
     describe "#perform" do
       before do
         VADotGovService = ExternalApi::VADotGovService
 
         expect(DataDogService).to receive(:emit_gauge).with(hash_including(metric_name: "pages_requested"), any_args).and_return("") # rubocop:disable Metrics/LineLength
 
-        distance_response = HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11))
+        distance_response = HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11).to_json)
         expect(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response).once
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
 
-        geocode_response = HTTPI::Response.new(200, [], mock_geocode_body)
+        geocode_response = HTTPI::Response.new(200, [], mock_geocode_body.to_json)
         expect(MetricsService).to receive(:record).with(/POST/, any_args).and_return(geocode_response).once
         allow(HTTPI).to receive(:post).with(instance_of(HTTPI::Request)).and_return(geocode_response)
       end
@@ -146,45 +168,49 @@ describe FetchHearingLocationsForVeteransJob do
         "latitude": lat,
         "longitude": long
       }
-    }.to_json
+    }
   end
 
-  def mock_distance_body(distance: 0.0)
+  def mock_distance_body(distance: 0.0, id: "vba_301", data: nil, distances: nil)
     {
-      "data": [
-        {
-          "id": "vba_301",
-          "type": "va_facilities",
-          "attributes": {
-            "name": "Holdrege VA Clinic",
-            "facility_type": "va_health_facility",
-            "lat": 40.4454392100001,
-            "long": -99.37959413,
-            "address": {
-              "physical": {
-                "zip": "68949-1705",
-                "city": "Holdrege",
-                "state": "NE",
-                "address_1": "1118 Burlington Street",
-                "address_2": "",
-                "address_3": nil
-              }
-            }
-          }
-        }
-      ],
+      "data": data || [mock_data(id: id)],
       "links": {
         "next": nil
       },
       "meta": {
-        "distances": [
-          {
-            "id": "vba_301",
-            "distance": distance
-          }
-        ]
+        "distances": distances || [mock_distance(distance: distance, id: id)]
       }
-    }.to_json
+    }
+  end
+
+  def mock_data(id:)
+    {
+      "id": id,
+      "type": "va_facilities",
+      "attributes": {
+        "name": "Holdrege VA Clinic",
+        "facility_type": "va_health_facility",
+        "lat": 40.4454392100001,
+        "long": -99.37959413,
+        "address": {
+          "physical": {
+            "zip": "68949-1705",
+            "city": "Holdrege",
+            "state": "NE",
+            "address_1": "1118 Burlington Street",
+            "address_2": "",
+            "address_3": nil
+          }
+        }
+      }
+    }
+  end
+
+  def mock_distance(distance:, id:)
+    {
+      "id": id,
+      "distance": distance
+    }
   end
   # rubocop:enable Metrics/MethodLength
 end
