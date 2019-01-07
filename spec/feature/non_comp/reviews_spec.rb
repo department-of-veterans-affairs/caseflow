@@ -41,12 +41,14 @@ feature "NonComp Reviews Queue" do
       expect(page).to have_content("Completed tasks")
 
       # default is the in progress page
+      expect(page).to have_content("Days Waiting")
       expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Bob Smith", count: 2)
       expect(page).to have_content(veteran.participant_id, count: 2)
 
       click_on "Completed tasks"
       expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Date Sent")
     end
 
     context "with user enabled for intake" do
