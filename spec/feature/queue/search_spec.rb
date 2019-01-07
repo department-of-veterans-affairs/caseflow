@@ -111,7 +111,8 @@ RSpec.feature "Search" do
         end
 
         it "table does not display a column for a badge if no cases have hearings" do
-          docket_column_header = page.find(:xpath, "//thead/tr/th[1]/span")
+          expect(page).to have_content("case found for")
+          docket_column_header = find("table.cf-case-list-table > thead > tr > th:first-child > span")
           expect(docket_column_header).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
         end
       end
