@@ -113,14 +113,20 @@ class RequestIssue < ApplicationRecord
     private
 
     def attributes_from_intake_data(data)
+      contested_issue_present = data[:rating_issue_reference_id] || data[:contested_decision_isssue_id]
+
       {
         # TODO: these are going away in favor of `contested_rating_issue_*`
         rating_issue_reference_id: data[:rating_issue_reference_id],
         rating_issue_profile_date: data[:rating_issue_profile_date],
+
         description: data[:decision_text],
 
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
-        contested_rating_issue_description: data[:decision_text],
+
+        contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
+        nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
+        unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
 
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
