@@ -91,6 +91,7 @@ class RequestIssue < ApplicationRecord
       request_issue = unscoped.find_by(rating_issue_reference_id:
                                        rating_issue_reference_id, removed_at: nil, ineligible_reason: nil)
       return unless request_issue&.status_active?
+
       request_issue
     end
 
@@ -98,6 +99,7 @@ class RequestIssue < ApplicationRecord
       request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id,
                                        removed_at: nil, ineligible_reason: nil)
       return unless request_issue&.status_active?
+
       request_issue
     end
 
@@ -133,6 +135,7 @@ class RequestIssue < ApplicationRecord
   def status_active?
     return appeal_active? if review_request.is_a?(Appeal)
     return false unless end_product_establishment
+
     end_product_establishment.status_active?
   end
 
@@ -147,6 +150,7 @@ class RequestIssue < ApplicationRecord
   def contention_text
     return "#{issue_category} - #{description}" if nonrating?
     return UNIDENTIFIED_ISSUE_MSG if is_unidentified
+
     description
   end
 
@@ -193,6 +197,7 @@ class RequestIssue < ApplicationRecord
 
   def contested_rating_issue
     return unless review_request
+
     @contested_rating_issue ||= begin
       contested_rating_issue_ui_hash ? RatingIssue.deserialize(contested_rating_issue_ui_hash) : nil
     end
@@ -224,6 +229,7 @@ class RequestIssue < ApplicationRecord
 
   def vacols_issue
     return unless vacols_id && vacols_sequence_id
+
     @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
       issue.vacols_sequence_id == vacols_sequence_id
     end
@@ -249,6 +255,7 @@ class RequestIssue < ApplicationRecord
 
   def build_contested_issue
     return unless review_request
+
     if contested_decision_issue
       ContestableIssue.from_decision_issue(contested_decision_issue, review_request)
     elsif contested_rating_issue
@@ -271,12 +278,14 @@ class RequestIssue < ApplicationRecord
   def create_decision_issues
     if rating?
       return unless end_product_establishment.associated_rating
+
       create_decision_issues_from_rating
     end
 
     create_decision_issue_from_disposition if decision_issues.empty?
 
     fail ErrorCreatingDecisionIssue, id if decision_issues.empty?
+
     processed!
   end
 
@@ -322,6 +331,7 @@ class RequestIssue < ApplicationRecord
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
   def contested_rating_issue_ui_hash
     return unless review_request.serialized_ratings
+
     rating_with_issue = review_request.serialized_ratings.find do |rating|
       rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
     end || { issues: [] }
@@ -415,6 +425,7 @@ class RequestIssue < ApplicationRecord
     # skip checking if nonrating ineligiblity is already set
     return if ineligible_reason == :duplicate_of_nonrating_issue_in_active_review
     return unless eligible?
+
     check_for_active_request_issue_by_rating!
     check_for_active_request_issue_by_decision_issue!
   end
@@ -422,7 +433,7 @@ class RequestIssue < ApplicationRecord
   def check_for_untimely!
     return unless eligible?
     return if untimely_exemption
-    return if review_request && review_request.is_a?(SupplementalClaim)
+    return if review_request&.is_a?(SupplementalClaim)
 
     if !review_request.timely_issue?(decision_or_promulgation_date)
       self.ineligible_reason = :untimely

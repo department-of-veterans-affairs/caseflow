@@ -451,6 +451,21 @@ ActiveRecord::Schema.define(version: 20190104190600) do
     t.index ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true
   end
 
+  create_table "hearings", force: :cascade do |t|
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
+    t.integer "hearing_day_id", null: false
+    t.integer "appeal_id", null: false
+    t.integer "judge_id"
+    t.boolean "evidence_window_waived"
+    t.boolean "transcript_requested"
+    t.string "notes"
+    t.string "disposition"
+    t.string "witness"
+    t.string "military_service"
+    t.boolean "prepped"
+    t.text "summary"
+  end
+
   create_table "higher_level_reviews", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"

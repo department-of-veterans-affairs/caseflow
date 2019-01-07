@@ -9,6 +9,7 @@ class ApplicationController < ApplicationBaseController
 
   rescue_from StandardError do |e|
     fail e unless e.class.method_defined?(:serialize_response)
+
     Raven.capture_exception(e)
     render(e.serialize_response)
   end
@@ -22,7 +23,7 @@ class ApplicationController < ApplicationBaseController
     if e.class.method_defined?(:serialize_response)
       render(e.serialize_response)
     else
-      render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+      render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: :bad_request
     end
   end
 
@@ -62,6 +63,7 @@ class ApplicationController < ApplicationBaseController
 
   def logo_class
     return "cf-logo-image-default" if logo_name.nil?
+
     "cf-logo-image-#{logo_name.downcase.tr(' ', '-')}"
   end
   helper_method :logo_class
@@ -139,6 +141,7 @@ class ApplicationController < ApplicationBaseController
       return false if current_user.organization_queue_user? || current_user.vso_employee?
       return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
       return false if current_user.colocated_in_vacols?
+
       return true
     end
     false
@@ -168,9 +171,9 @@ class ApplicationController < ApplicationBaseController
   # :nocov:
 
   def invalid_record_error(record)
-    render json:  {
+    render json: {
       "errors": ["title": "Record is invalid", "detail": record.errors.full_messages.join(" ,")]
-    }, status: 400
+    }, status: :bad_request
   end
 
   def required_parameters_missing(array_of_keys)
@@ -179,7 +182,7 @@ class ApplicationController < ApplicationBaseController
         "title": "Missing required parameters",
         "detail": "Required parameters are missing: #{array_of_keys.join(' ,')}"
       ]
-    }, status: 400
+    }, status: :bad_request
   end
 
   def set_raven_user
@@ -254,15 +257,15 @@ class ApplicationController < ApplicationBaseController
     @react_routed = true
   end
 
-  def on_vbms_error(e)
-    Raven.capture_exception(e)
+  def on_vbms_error(error)
+    Raven.capture_exception(error)
     respond_to do |format|
       format.html do
-        render "errors/500", layout: "application", status: 500
+        render "errors/500", layout: "application", status: :internal_server_error
       end
 
       format.json do
-        render json: { errors: [:vbms_error] }, status: 500
+        render json: { errors: [:vbms_error] }, status: :internal_server_error
       end
     end
   end
@@ -286,6 +289,7 @@ class ApplicationController < ApplicationBaseController
     unless ENV["CASEFLOW_FEEDBACK_URL"]
       return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
     end
+
     # :nocov:
 
     redirect_url = redirect || request.original_url

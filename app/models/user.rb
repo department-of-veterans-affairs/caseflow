@@ -29,7 +29,7 @@ class User < ApplicationRecord
 
   def roles
     (self[:roles] || []).inject([]) do |result, role|
-      result.concat([role]).concat(FUNCTION_ALIASES[role] ? FUNCTION_ALIASES[role] : [])
+      result.concat([role]).concat(FUNCTION_ALIASES[role] || [])
     end
   end
 
@@ -146,6 +146,7 @@ class User < ApplicationRecord
     return false if denied?(thing)
     # Ignore "System Admin" function from CSUM/CSEM users
     return false if thing.include?("System Admin")
+
     roles.include?(thing)
   end
 

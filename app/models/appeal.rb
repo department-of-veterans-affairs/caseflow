@@ -38,7 +38,7 @@ class Appeal < DecisionReview
   }
   # rubocop:enable Metrics/LineLength
 
-  UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
+  UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
@@ -222,6 +222,7 @@ class Appeal < DecisionReview
 
   def docket_number
     return "Missing Docket Number" unless receipt_date
+
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 

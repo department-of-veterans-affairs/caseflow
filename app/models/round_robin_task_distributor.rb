@@ -18,6 +18,7 @@ class RoundRobinTaskDistributor
   def next_assignee_index
     return 0 unless last_assignee_css_id
     return 0 unless last_assignee_index
+
     (last_assignee_index + 1) % list_of_assignees.length
   end
 

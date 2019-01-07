@@ -3,13 +3,13 @@ class Idt::Api::V1::BaseController < ActionController::Base
   before_action :validate_token
 
   def validate_token
-    return render json: { message: "Missing token" }, status: 400 unless token
-    return render json: { message: "Invalid token" }, status: 403 unless Idt::Token.active?(token)
+    return render json: { message: "Missing token" }, status: :bad_request unless token
+    return render json: { message: "Invalid token" }, status: :forbidden unless Idt::Token.active?(token)
   end
 
   def verify_access
     has_access = user.attorney_in_vacols? || user.judge_in_vacols? || user.dispatch_user_in_vacols?
-    return render json: { message: "User must be attorney, judge, or dispatch" }, status: 403 unless has_access
+    return render json: { message: "User must be attorney, judge, or dispatch" }, status: :forbidden unless has_access
   end
 
   def user

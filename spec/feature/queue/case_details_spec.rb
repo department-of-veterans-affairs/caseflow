@@ -350,7 +350,7 @@ RSpec.feature "Case details" do
       # Wait for page to load some known content before testing for expected content.
       expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
 
-      expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_PREPARER_LABEL} #{preparer_name}/i)
+      expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
     end
   end
@@ -414,6 +414,7 @@ RSpec.feature "Case details" do
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
 
       expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
+      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
       expect(page).to have_content("TASK INSTRUCTIONS #{on_hold_task.instructions[0]}")
       expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
 
@@ -598,7 +599,7 @@ RSpec.feature "Case details" do
         visit "/queue/appeals/#{appeal.uuid}"
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-        expect(page).to have_content(task.assigned_at.strftime("%m/%d/%Y")) # rubocop:disable Style/FormatStringToken
+        expect(page).to have_content(task.assigned_at.strftime("%m/%d/%Y"))
         expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} #{task.assigned_to.css_id}")
         expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase)
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
@@ -625,7 +626,6 @@ RSpec.feature "Case details" do
       end
       it "two tasks are displayed in the TaskSnapshot" do
         visit "/queue/appeals/#{appeal.uuid}"
-        # rubocop:disable Style/FormatStringToken
         expect(page).to have_content(task2.assigned_at.strftime("%m/%d/%Y"))
         expect(page).to have_content(task2.assigned_to.css_id)
         expect(page).to have_content(task3.assigned_at.strftime("%m/%d/%Y"))
@@ -636,7 +636,6 @@ RSpec.feature "Case details" do
         expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} \
                                       #{task3.assigned_to.css_id} \
                                       #{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase}")
-        # rubocop:enable Style/FormatStringToken
       end
     end
   end
@@ -659,9 +658,7 @@ RSpec.feature "Case details" do
         visit "/queue/appeals/#{legacy_appeal.vacols_id}"
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-        # rubocop:disable Style/FormatStringToken
         expect(page).to have_content(legacy_task.assigned_at.strftime("%m/%d/%Y"))
-        # rubocop:enable Style/FormatStringToken
       end
     end
   end
