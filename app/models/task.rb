@@ -217,6 +217,14 @@ class Task < ApplicationRecord
     }
   end
 
+  def assign_to_attorney_data
+    {
+      selected: nil,
+      options: nil,
+      type: AttorneyTask.name
+    }
+  end
+
   def timeline_title
     "#{type} completed"
   end

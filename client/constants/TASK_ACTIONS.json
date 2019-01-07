@@ -1,7 +1,7 @@
 {
     "ADD_ADMIN_ACTION": { "label": "Add admin action", "value": "colocated_task" },
     "ASSIGN_OMO": { "label": "Assign OMO", "value": "omo_request/evaluate" },
-    "ASSIGN_TO_ATTORNEY": { "label": "Assign to attorney", "value": "modal/assign_to_attorney" },
+    "ASSIGN_TO_ATTORNEY": { "label": "Assign to attorney", "value": "modal/assign_to_attorney", "func": "assign_to_attorney_data" },
     "ASSIGN_TO_PERSON": { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assign_to_user_data" },
     "ASSIGN_TO_PRIVACY_TEAM": { "label": "Assign to Privacy team", "value": "modal/assign_to_privacy_team", "func": "assign_to_privacy_team_data" },
     "ASSIGN_TO_TEAM": { "label": "Assign to team", "value": "modal/assign_to_team", "func": "assign_to_organization_data" },
