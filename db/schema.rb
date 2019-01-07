@@ -107,6 +107,20 @@ ActiveRecord::Schema.define(version: 20190107184216) do
     t.string "task_id"
   end
 
+  create_table "available_hearing_locations", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.float "distance"
+    t.string "facility_id"
+    t.string "name"
+    t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "zip_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
+  end
+
   create_table "board_grant_effectuations", force: :cascade do |t|
     t.bigint "appeal_id", null: false
     t.bigint "granted_decision_issue_id", null: false
@@ -714,12 +728,12 @@ ActiveRecord::Schema.define(version: 20190107184216) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
+    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
-    t.string "ineligible_reason"
     t.string "vacols_id"
     t.integer "vacols_sequence_id"
     t.datetime "created_at"
