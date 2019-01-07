@@ -58,8 +58,10 @@ class Hearings::HearingDayController < HearingScheduleController
   # Create a hearing schedule day
   def create
     return no_available_rooms unless rooms_are_available
+
     hearing = HearingDay.create_hearing_day(create_params)
     return invalid_record_error(hearing) if hearing.nil?
+
     render json: {
       hearing: json_hearing(hearing)
     }, status: :created
@@ -136,9 +138,9 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def invalid_record_error(hearing)
-    render json:  {
+    render json: {
       "errors": ["title": "Record is invalid", "detail": hearing.errors.full_messages.join(" ,")]
-    }, status: 400
+    }, status: :bad_request
   end
 
   def record_not_found
@@ -147,7 +149,7 @@ class Hearings::HearingDayController < HearingScheduleController
         "title": "Record Not Found",
         "detail": "Record with that ID is not found"
       ]
-    }, status: 404
+    }, status: :not_found
   end
 
   def json_created_hearings(hearings)
@@ -254,6 +256,6 @@ class Hearings::HearingDayController < HearingScheduleController
         "title": "No rooms available",
         "detail": "All rooms are taken for the date selected."
       ]
-    }, status: 404
+    }, status: :not_found
   end
 end

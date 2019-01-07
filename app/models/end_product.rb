@@ -193,7 +193,7 @@ class EndProduct
   end
 
   def dispatch_code?
-    DISPATCH_CODES.keys.include?(claim_type_code)
+    DISPATCH_CODES.key?(claim_type_code)
   end
 
   def dispatch_modifier?

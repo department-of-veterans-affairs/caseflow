@@ -1,7 +1,6 @@
-require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "Nonrating Request Issue Modal" do
+feature "Nonrating Request Issue Modal" do
   include IntakeHelpers
 
   before do
@@ -50,7 +49,7 @@ RSpec.feature "Nonrating Request Issue Modal" do
     expect(page).to have_content("Intake completed")
     expect(RequestIssue.find_by(
              issue_category: included_category
-    )).to_not be_nil
+           )).to_not be_nil
   end
   # rubocop: enable Metrics/MethodLength
 

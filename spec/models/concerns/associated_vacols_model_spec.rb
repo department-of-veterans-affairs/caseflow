@@ -8,6 +8,7 @@ describe AssociatedVacolsModel do
 
     def self.load_vacols_data(model)
       return false if fail_load_vacols_data
+
       model.foo = "bar"
     end
   end
