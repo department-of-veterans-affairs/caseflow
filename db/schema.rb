@@ -113,9 +113,6 @@ ActiveRecord::Schema.define(version: 20190104190600) do
     t.string "facility_id"
     t.string "name"
     t.string "address"
-    t.string "city"
-    t.string "state"
-    t.string "zip_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
