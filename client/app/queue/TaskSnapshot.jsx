@@ -270,15 +270,13 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     } = this.props;
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
-    const taskLength = this.props.tasks.length;
-
-    /* console.log(this.props.tasks);
-    console.log(this.props.tasks[0].type);
-    console.log(this.props.tasks[0].type !== 'RootTask');
-    console.log(!this.state.addNewTaskIsVisible);*/
+    const tasks = this.props.tasks.filter((task) => {
+      return task.type !== 'RootTask';
+    });
+    const taskLength = tasks.length;
 
     if (taskLength) {
-      sectionBody = this.props.tasks.map((task, index) =>
+      sectionBody = tasks.map((task, index) =>
         task.type !== 'RootTask' && !(rootTask[0] && rootTask[0].availableActions[0]) && <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
