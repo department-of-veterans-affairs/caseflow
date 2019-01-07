@@ -781,11 +781,6 @@ RSpec.feature "Reader" do
         expect_in_viewport("commentIcon-container-#{annotation.id}")
       end
 
-      scenario "404 on bad comment id" do
-        visit "/annotation/#{annotations.length}"
-        expect(page).to have_content("Page not found")
-      end
-
       scenario "Scrolling pages changes page numbers" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
 
