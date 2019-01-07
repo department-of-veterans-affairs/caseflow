@@ -119,6 +119,7 @@ class ExternalApi::VADotGovService
         endpoint: facilities_endpoint
       )
       resp_body = JSON.parse(response.body)
+
       check_for_error(response_body: resp_body, code: response.code)
 
       facilities = resp_body["data"]

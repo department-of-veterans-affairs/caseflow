@@ -87,7 +87,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def ro_facility_ids
     @ro_facility_ids ||=
-      RegionalOffice::CITIES.values.reject { |ro| ro[facility_locator_id].nil? }.pluck(:facility_locator_id)
+      RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }.pluck(:facility_locator_id)
   end
 
   def bfcorlid_to_ro_hash

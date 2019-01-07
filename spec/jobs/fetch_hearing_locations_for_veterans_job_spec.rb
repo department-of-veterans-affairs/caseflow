@@ -24,19 +24,20 @@ describe FetchHearingLocationsForVeteransJob do
       let(:veteran) { create(:veteran, file_number: bfcorlid_file_number) }
 
       before do
-        facility_ros = RegionalOffice::CITIES.values.reject { |ro| ro.facility_locator_id.nil? }
+        facility_ros = RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }
         body = mock_distance_body(
           data: facility_ros.map { |ro| mock_data(id: ro[:facility_locator_id]) },
-          distances: facility_ros.map_with_index do |ro, index|
+          distances: facility_ros.map.with_index do |ro, index|
             mock_distance(distance: index, id: ro[:facility_locator_id])
           end
         )
-        distance_response = HTTPI::Response.new(200, [], body)
+        distance_response = HTTPI::Response.new(200, [], body.to_json)
         expect(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response).once
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
       end
 
       it "updates veteran hearing_regional_office with closest ro" do
+        VADotGovService = ExternalApi::VADotGovService
         job.fetch_and_update_ro_for_veteran(veteran, 0.0, 0.0)
         expect(Veteran.first.hearing_regional_office).to eq RegionalOffice::CITIES.keys[0]
       end
