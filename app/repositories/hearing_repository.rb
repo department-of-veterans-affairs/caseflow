@@ -79,7 +79,7 @@ class HearingRepository
           appeal
         )
       else
-        create_child_video_hearing(parent_record_id, hearing_day[:hearing_date], appeal)
+        create_child_video_hearing(parent_record_id, hearing_day[:scheduled_for], appeal)
       end
     end
 
