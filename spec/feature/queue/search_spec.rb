@@ -9,6 +9,8 @@ RSpec.feature "Search" do
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
   let(:veteran_with_no_appeals) { FactoryBot.create(:veteran) }
   let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
+  let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number)}
+  let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)}
 
   before do
     User.authenticate!(user: attorney_user)
@@ -39,6 +41,27 @@ RSpec.feature "Search" do
         expect(page).to_not have_content("1 case found for")
       end
     end
+
+    context "when a claim has a higher level review and/or supplemental claim" do
+      before do
+        visit "/search"
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        click_on "Search"
+      end
+
+      it "shows a higher level review" do
+        expect(page).to have_content("Higher Level Reviews &")
+        expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+        expect(find(".cf-other-reviews-table > tbody")).to have_content("Higher Level Review")
+      end
+
+      it "shows a supplemental claim" do
+        expect(page).to have_content("Higher Level Reviews &")
+        expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+        expect(find(".cf-other-reviews-table > tbody")).to have_content("Supplemental Claim")
+      end
+    end
+  end
 
     context "queue case search for appeals that have hearings" do
       context "a case in the search view has a hearing" do
