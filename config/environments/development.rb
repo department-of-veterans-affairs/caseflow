@@ -90,10 +90,6 @@ Rails.application.configure do
 
   config.google_analytics_account = "UA-74789258-5"
 
-  config.after_initialize do
-    Bullet.rails_logger = true
-  end
-
   # configure pry
   silence_warnings do
     begin
