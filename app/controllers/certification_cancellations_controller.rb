@@ -6,9 +6,9 @@ class CertificationCancellationsController < ApplicationController
     @certification_cancellation = CertificationCancellation.new(certification_cancellation_params)
 
     if @certification_cancellation.save
-      render json: { is_cancelled: true }, status: 201
+      render json: { is_cancelled: true }, status: :created
     else
-      render json: { is_cancelled: false }, status: 422
+      render json: { is_cancelled: false }, status: :unprocessable_entity
     end
   end
 

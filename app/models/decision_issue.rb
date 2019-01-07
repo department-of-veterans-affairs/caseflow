@@ -8,10 +8,12 @@ class DecisionIssue < ApplicationRecord
   has_many :request_issues, through: :request_decision_issues
   has_many :remand_reasons, dependent: :destroy
   belongs_to :decision_review, polymorphic: true
+  has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
 
-  def source_higher_level_review
-    return unless decision_review
-    decision_review.is_a?(HigherLevelReview) ? decision_review.id : nil
+  def self.granted
+    # TODO: "allowed" is the disposition for BVA grants, not necessarily the disposition for granted HLRs and SCs
+    #       we need to add that
+    where(disposition: "allowed")
   end
 
   def approx_decision_date
@@ -20,6 +22,7 @@ class DecisionIssue < ApplicationRecord
 
   def formatted_description
     return description if description
+
     (associated_request_issue&.nonrating?) ? nonrating_description : rating_description
   end
 
@@ -27,10 +30,22 @@ class DecisionIssue < ApplicationRecord
     associated_request_issue&.issue_category
   end
 
+  def destroy_on_removed_request_issue(request_issue_id)
+    # destroy if the request issue is deleted and there are no other request issues associated
+    destroy if request_issues.length == 1 && request_issues.first.id == request_issue_id
+  end
+
+  # Since nonrating issues require specialization to process, if any associated request issue is nonrating
+  # the entire decision issue gets set to nonrating
+  def rating?
+    request_issues.none?(&:nonrating?)
+  end
+
   private
 
   def associated_request_issue
     return unless request_issues.any?
+
     request_issues.first
   end
 
@@ -40,6 +55,7 @@ class DecisionIssue < ApplicationRecord
 
   def rating_description
     return decision_text unless associated_request_issue&.notes
+
     "#{decision_text}. Notes: #{associated_request_issue.notes}"
   end
 

@@ -144,7 +144,7 @@ export class DailyDocket extends React.PureComponent {
          boldCondition={!hearing.viewed_by_current_user}
          onOpen={this.setHearingViewed(hearing.id)}
          linkProps={{
-           to: `/hearings/${hearing.id}/worksheet`,
+           to: `/hearings/${hearing.external_id}/worksheet`,
            target: '_blank'
          }}>
          {hearing.vbms_id}
@@ -159,9 +159,9 @@ export class DailyDocket extends React.PureComponent {
          {hearing.veteran_mi_formatted} (Veteran)</span><br />
        <ViewableItemLink
          boldCondition={!hearing.viewed_by_current_user}
-         onOpen={this.setHearingViewed}
+         onOpen={this.setHearingViewed(hearing.id)}
          linkProps={{
-           to: `/hearings/${hearing.id}/worksheet`,
+           to: `/hearings/${hearing.external_id}/worksheet`,
            target: '_blank'
          }}>
          {hearing.vbms_id}

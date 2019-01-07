@@ -39,9 +39,9 @@ describe ReaderUser do
           # at this point, we've generated users with the reader role
           # now also create reader_user records
           ReaderUser.create_records
-          ReaderUser.first.update_attributes!(documents_fetched_at: 25.hours.ago)
-          ReaderUser.second.update_attributes!(documents_fetched_at: 2.hours.ago)
-          ReaderUser.third.update_attributes!(documents_fetched_at: 2.hours.ago)
+          ReaderUser.first.update!(documents_fetched_at: 25.hours.ago)
+          ReaderUser.second.update!(documents_fetched_at: 2.hours.ago)
+          ReaderUser.third.update!(documents_fetched_at: 2.hours.ago)
         end
 
         it "should return only readers who fetched documents over 24 hours ago" do

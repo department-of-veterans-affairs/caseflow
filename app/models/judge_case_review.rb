@@ -67,6 +67,7 @@ class JudgeCaseReview < ApplicationRecord
 
   def select_case_for_quality_review
     return if self.class.reached_monthly_limit_in_quality_reviews?
+
     # We are using 25 sided die to randomly select a case for quality review
     # https://github.com/department-of-veterans-affairs/caseflow/issues/6407
     update(location: :quality_review) if bva_dispatch? && rand < QUALITY_REVIEW_SELECTION_PROBABILITY

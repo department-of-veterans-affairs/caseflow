@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.feature "Case details" do
+  before do
+    Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
+  end
+
   let(:attorney_first_name) { "Robby" }
   let(:attorney_last_name) { "McDobby" }
   let!(:attorney_user) do
@@ -108,8 +112,8 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content("Disposition: Cancelled")
 
-        expect(page).to_not have_content("Date: ")
-        expect(page).to_not have_content("Judge: ")
+        expect(page).to have_content("Date: ")
+        expect(page).to have_content("Judge: ")
       end
     end
 
@@ -595,7 +599,7 @@ RSpec.feature "Case details" do
         visit "/queue/appeals/#{appeal.uuid}"
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-        expect(page).to have_content(task.assigned_at.strftime("%m/%d/%Y")) # rubocop:disable Style/FormatStringToken
+        expect(page).to have_content(task.assigned_at.strftime("%m/%d/%Y"))
         expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} #{task.assigned_to.css_id}")
         expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase)
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
@@ -622,7 +626,6 @@ RSpec.feature "Case details" do
       end
       it "two tasks are displayed in the TaskSnapshot" do
         visit "/queue/appeals/#{appeal.uuid}"
-        # rubocop:disable Style/FormatStringToken
         expect(page).to have_content(task2.assigned_at.strftime("%m/%d/%Y"))
         expect(page).to have_content(task2.assigned_to.css_id)
         expect(page).to have_content(task3.assigned_at.strftime("%m/%d/%Y"))
@@ -633,7 +636,6 @@ RSpec.feature "Case details" do
         expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} \
                                       #{task3.assigned_to.css_id} \
                                       #{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase}")
-        # rubocop:enable Style/FormatStringToken
       end
     end
   end
@@ -656,9 +658,7 @@ RSpec.feature "Case details" do
         visit "/queue/appeals/#{legacy_appeal.vacols_id}"
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-        # rubocop:disable Style/FormatStringToken
         expect(page).to have_content(legacy_task.assigned_at.strftime("%m/%d/%Y"))
-        # rubocop:enable Style/FormatStringToken
       end
     end
   end
