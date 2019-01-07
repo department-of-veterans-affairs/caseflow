@@ -82,6 +82,7 @@ class LegacyIssueOptin < ApplicationRecord
 
   def legacy_appeal_needs_to_be_reopened?
     return false unless (REMAND_DISPOSITION_CODES.include? original_disposition_code) || original_disposition_code.nil?
+
     !legacy_appeal.active?
   end
 

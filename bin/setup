@@ -3,7 +3,7 @@ require "pathname"
 require "fileutils"
 
 # path to your application root.
-APP_ROOT = Pathname.new File.expand_path("../../", __FILE__)
+APP_ROOT = Pathname.new File.expand_path("..", __dir__)
 
 demo_files = [
   "README.md",
@@ -23,7 +23,7 @@ Dir.chdir APP_ROOT do
   require "rainbow"
   require "active_support/inflector"
 
-  app_name = File.basename(File.expand_path("../../", __FILE__))
+  app_name = File.basename(File.expand_path("..", __dir__))
 
   if app_name == "caseflow-certification"
     puts Rainbow("This project appears to already have been setup.").red
@@ -57,7 +57,7 @@ Dir.chdir APP_ROOT do
 
   puts Rainbow("== Renaming stuff to match app name: #{app_name} ==").cyan
   {
-    "Roadrunner" + "Rails"  => camel_name,
+    "Roadrunner" + "Rails" => camel_name,
     "roadrunner" + "-rails" => app_name,
     "roadrunner" + "_rails" => underscore_name,
     "Roadrunner" + " Rails" => title_name

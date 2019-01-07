@@ -1,10 +1,4 @@
 AllCops:
-  TargetRailsVersion: 4.2
-  Include:
-    - '**/config.ru'
-    - '**/Rakefile'
-    - '**/*.rake'
-    - '**/seeds.rb'
   Exclude:
     - 'db/migrate/*'
     - 'db/schema.rb'
@@ -13,6 +7,12 @@ AllCops:
     - 'vendor/**/*'
     - './.simplecov'
     - 'client/node_modules/**/*'
+  TargetRailsVersion: 5.1
+  UseCache: true
+
+Bundler/OrderedGems:
+  Enabled: true
+  TreatCommentsAsGroupSeparators: false
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

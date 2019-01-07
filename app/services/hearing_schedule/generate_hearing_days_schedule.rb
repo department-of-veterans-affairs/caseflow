@@ -25,7 +25,6 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @available_days = filter_non_availability_days(schedule_period.start_date, schedule_period.end_date)
 
     assign_and_filter_ro_days(schedule_period)
-    @date_allocated = {}
   end
 
   def extract_non_available_days
@@ -78,37 +77,58 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def allocate_hearing_days_to_ros
-    @amortized = 0
-
     @ros = sort_ros_by_rooms_and_allocated_days
-    ros = @ros.each_key do |ro_key|
-      allocate_all_ro_monthly_hearing_days(ro_key)
-    end
-    ros
+    do_allocate_hearing_days
   end
 
   def sort_ros_by_rooms_and_allocated_days
     @ros.sort_by do |_k, v|
-      [v[:num_of_rooms], v[:allocated_days]]
+      v[:allocated_days].to_f / v[:num_of_rooms] / v[:available_days].count
     end.reverse.to_h
   end
 
   private
 
+  def do_allocate_hearing_days
+    @date_allocated = {}
+    @amortized = 0
+
+    @availability_coocurrence = @ros.inject({}) do |h, (_k, v)|
+      v[:available_days].each do |date|
+        h[date] ||= 0
+        h[date] += 1
+      end
+      h
+    end
+
+    ros = @ros.each_key do |ro_key|
+      allocate_all_ro_monthly_hearing_days(ro_key)
+    end
+
+    ros
+  end
+
   def allocate_all_ro_monthly_hearing_days(ro_key)
     grouped_monthly_avail_dates = group_dates_by_month(@ros[ro_key][:available_days])
-    @ros[ro_key][:allocated_dates] = self.class.shuffle_grouped_monthly_dates(grouped_monthly_avail_dates)
+    @ros[ro_key][:allocated_dates] = grouped_monthly_avail_dates.map do |k, dates|
+      [k, dates.sort_by { |date| @availability_coocurrence[date] }.reduce({}) do |acc, date|
+        acc[date] = []
+        acc
+      end]
+    end.to_h
     assign_hearing_days(ro_key)
     add_allocated_days_and_format(ro_key)
   end
 
   def assign_hearing_days(ro_key)
+    i = 0
     date_index = 0
 
     monthly_allocations = allocations_by_month(ro_key)
 
     # Keep allocating the days until all monthly allocations are 0
-    while monthly_allocations.values.inject(:+) != 0
+    while i < 31 && monthly_allocations.values.inject(:+) != 0
+      i += 1
       allocate_hearing_days_to_individual_ro(
         ro_key,
         monthly_allocations,
@@ -225,6 +245,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
       if any_other_days_a_better_fit?(monthly_grouped_days, num_of_rooms)
         return 0
       end
+
       return num_left_to_max
     else
       (num_of_rooms <= allocated_days) ? num_of_rooms : allocated_days
@@ -259,8 +280,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
     end
   end
 
-  def get_num_of_rooms(ro)
-    if RegionalOffice::MULTIPLE_ROOM_ROS.include?(ro)
+  def get_num_of_rooms(regional_office)
+    if RegionalOffice::MULTIPLE_ROOM_ROS.include?(regional_office)
       RegionalOffice::MULTIPLE_NUM_OF_RO_ROOMS
     else
       RegionalOffice::DEFAULT_NUM_OF_RO_ROOMS
@@ -271,7 +292,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
     travel_board_hearing_days = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
     tb_master_records = TravelBoardScheduleMapper.convert_from_vacols_format(travel_board_hearing_days)
 
-    tb_master_records.select { |tb_master_record| @ros.keys.include?(tb_master_record[:ro]) }
+    tb_master_records.select { |tb_master_record| @ros.key?(tb_master_record[:ro]) }
       .map do |tb_master_record|
         tb_days = (tb_master_record[:start_date]..tb_master_record[:end_date]).to_a
         @ros[tb_master_record[:ro]][:available_days] -= tb_days

@@ -33,7 +33,7 @@ class AppealSeriesAlerts
 
   def scheduled_hearing
     if appeal_series.active? && !latest_appeal.scheduled_hearings.empty?
-      hearing = latest_appeal.scheduled_hearings.sort_by(&:date).first
+      hearing = latest_appeal.scheduled_hearings.min_by(&:date)
       {
         type: :scheduled_hearing,
         details: {
@@ -50,8 +50,7 @@ class AppealSeriesAlerts
       most_recent_missed_hearing = latest_appeal.hearings.select do |hearing|
         hearing.no_show? && Time.zone.today <= hearing.no_show_excuse_letter_due_date
       end
-        .sort_by(&:date)
-        .last
+        .max_by(&:date)
 
       return unless most_recent_missed_hearing
 

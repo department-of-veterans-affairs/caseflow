@@ -64,6 +64,13 @@ FactoryBot.define do
       end
     end
 
+    trait :outcoded do
+      after(:create) do |appeal, _evaluator|
+        appeal.create_tasks_on_intake_success!
+        appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+    end
+
     transient do
       documents []
     end

@@ -6,6 +6,7 @@ import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { DISPOSITION_OPTIONS } from '../constants';
+import { longFormNameFromShort } from '../util';
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -58,7 +59,7 @@ class NonCompDecisionIssue extends React.PureComponent {
             name={`disposition-issue-${index}`}
             // empty label to get "true" value, nothing visible
             label=" "
-            placeholder="Choose Disposition"
+            placeholder="Select Disposition"
             options={this.dispositionOptions()}
             value={this.state.disposition}
             onChange={this.handleDispositionChange} />
@@ -115,9 +116,9 @@ class NonCompDispositionsPage extends React.PureComponent {
         <div className="usa-grid-full">
           <div className="usa-width-two-thirds">
             <div className="cf-form-details">
-              <div><strong>Form being processed</strong> TODO</div>
-              <div><strong>Informal conference requested</strong> TODO</div>
-              <div><strong>Review by same office requested</strong> TODO</div>
+              <div><strong>Form being processed</strong> {longFormNameFromShort(task.type)}</div>
+              <div><strong>Informal conference requested</strong> {appeal.informalConference ? 'Yes' : 'No'}</div>
+              <div><strong>Review by same office requested</strong> {appeal.sameOffice ? 'Yes' : 'No'}</div>
             </div>
           </div>
           <div className="usa-width-one-third">
