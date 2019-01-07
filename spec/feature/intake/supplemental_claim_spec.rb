@@ -1,7 +1,6 @@
-require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "Supplemental Claim Intake" do
+feature "Supplemental Claim Intake" do
   include IntakeHelpers
 
   before do
@@ -78,6 +77,18 @@ RSpec.feature "Supplemental Claim Intake" do
       issues: [
         { reference_id: "old123", decision_text: "Untimely rating issue 1" },
         { reference_id: "old456", decision_text: "Untimely rating issue 2" }
+      ]
+    )
+  end
+
+  let!(:future_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date + 2.days,
+      profile_date: receipt_date + 2.days,
+      issues: [
+        { reference_id: "future1", decision_text: "Future rating issue 1" },
+        { reference_id: "future2", decision_text: "Future rating issue 2" }
       ]
     )
   end
@@ -185,6 +196,7 @@ RSpec.feature "Supplemental Claim Intake" do
     intake = Intake.find_by(veteran_file_number: veteran_file_number)
 
     click_intake_add_issue
+    expect(page).to_not have_content("Future rating issue 1")
     add_intake_rating_issue("PTSD denied")
     expect(page).to have_content("1 issue")
 
@@ -606,7 +618,7 @@ RSpec.feature "Supplemental Claim Intake" do
                establishment_submitted_at: Time.zone.now,
                establishment_processed_at: Time.zone.now,
                establishment_error: nil
-      )).to_not be_nil
+             )).to_not be_nil
 
       end_product_establishment = EndProductEstablishment.find_by(
         source: supplemental_claim,
@@ -633,7 +645,7 @@ RSpec.feature "Supplemental Claim Intake" do
                description: "Left knee granted 2",
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note"
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
@@ -641,14 +653,14 @@ RSpec.feature "Supplemental Claim Intake" do
                description: "Description for Active Duty Adjustments",
                decision_date: 1.month.ago.to_date,
                end_product_establishment_id: non_rating_end_product_establishment.id
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
                description: "This is an unidentified issue",
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id
-      )).to_not be_nil
+             )).to_not be_nil
 
       # Issues before AMA
       expect(RequestIssue.find_by(
@@ -656,7 +668,7 @@ RSpec.feature "Supplemental Claim Intake" do
                description: "Non-RAMP Issue before AMA Activation",
                end_product_establishment_id: end_product_establishment.id,
                ineligible_reason: :before_ama
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
@@ -664,14 +676,14 @@ RSpec.feature "Supplemental Claim Intake" do
                ineligible_reason: nil,
                ramp_claim_id: "ramp_claim_id",
                end_product_establishment_id: end_product_establishment.id
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
                description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
                end_product_establishment_id: non_rating_end_product_establishment.id
-      )).to_not be_nil
+             )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
@@ -760,7 +772,7 @@ RSpec.feature "Supplemental Claim Intake" do
                    review_request: sc,
                    issue_category: "Accrued",
                    benefit_type: sc.benefit_type
-          )).to_not be_nil
+                 )).to_not be_nil
         end
       end
     end
@@ -867,7 +879,7 @@ RSpec.feature "Supplemental Claim Intake" do
                    ineligible_reason: :legacy_appeal_not_eligible,
                    vacols_id: "vacols2",
                    vacols_sequence_id: "1"
-          )).to_not be_nil
+                 )).to_not be_nil
 
           expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
         end
@@ -903,7 +915,7 @@ RSpec.feature "Supplemental Claim Intake" do
                    ineligible_reason: :legacy_issue_not_withdrawn,
                    vacols_id: "vacols1",
                    vacols_sequence_id: "1"
-          )).to_not be_nil
+                 )).to_not be_nil
 
           expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
         end

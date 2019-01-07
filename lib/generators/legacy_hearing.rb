@@ -37,7 +37,7 @@ class Generators::LegacyHearing
       attrs[:appeal_id] ||= attrs[:appeal].try(:id) || default_appeal_id(hearing)
       attrs[:appeal_vacols_id] = LegacyAppeal.find(attrs[:appeal_id]).vacols_id
       attrs[:user_id] ||= attrs[:user].try(:id) || Generators::User.create.id
-      hearing.update_attributes(attrs)
+      hearing.update(attrs)
 
       hearing
     end

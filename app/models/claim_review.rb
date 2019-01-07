@@ -24,6 +24,7 @@ class ClaimReview < DecisionReview
       claim_review = find_by(uuid: claim_id) ||
                      EndProductEstablishment.find_by(reference_id: claim_id, source_type: to_s).try(:source)
       fail ActiveRecord::RecordNotFound unless claim_review
+
       claim_review
     end
   end
@@ -64,13 +65,16 @@ class ClaimReview < DecisionReview
 
   def create_decision_review_task!
     return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+
     DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
   end
 
   def business_line
     return unless caseflow_only?
+
     business_line_name = Constants::BENEFIT_TYPES[benefit_type]
     fail "No such business line: #{benefit_type}" unless business_line_name
+
     @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
   end
 
@@ -140,13 +144,6 @@ class ClaimReview < DecisionReview
   end
 
   private
-
-  def contestable_decision_issues
-    return [] unless receipt_date
-    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
-      .where.not(decision_review_type: "Appeal")
-      .select { |issue| issue.approx_decision_date && issue.approx_decision_date < receipt_date }
-  end
 
   def informal_conference?
     false

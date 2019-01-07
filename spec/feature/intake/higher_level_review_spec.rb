@@ -1,7 +1,6 @@
-require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "Higher-Level Review" do
+feature "Higher-Level Review" do
   include IntakeHelpers
 
   before do
@@ -73,6 +72,18 @@ RSpec.feature "Higher-Level Review" do
       issues: [
         { reference_id: "old123", decision_text: "Untimely rating issue 1" },
         { reference_id: "old456", decision_text: "Untimely rating issue 2" }
+      ]
+    )
+  end
+
+  let!(:future_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date + 2.days,
+      profile_date: receipt_date + 2.days,
+      issues: [
+        { reference_id: "future1", decision_text: "Future rating issue 1" },
+        { reference_id: "future2", decision_text: "Future rating issue 2" }
       ]
     )
   end
@@ -428,7 +439,7 @@ RSpec.feature "Higher-Level Review" do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.strftime("%D")
 
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -506,7 +517,7 @@ RSpec.feature "Higher-Level Review" do
 
     Claimant.create!(
       review_request: higher_level_review,
-      participant_id: claim_participant_id ? claim_participant_id : test_veteran.participant_id,
+      participant_id: claim_participant_id || test_veteran.participant_id,
       payee_code: claim_participant_id ? "02" : "00"
     )
 
@@ -701,6 +712,7 @@ RSpec.feature "Higher-Level Review" do
       expect(page).to have_content("PTSD denied")
       expect(page).to have_content("Old injury")
       expect(page).to have_content("supplemental claim decision issue")
+      expect(page).to_not have_content("Future rating issue 1")
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
@@ -793,7 +805,7 @@ RSpec.feature "Higher-Level Review" do
       add_intake_rating_issue("Already reviewed injury")
       expect(page).to have_content("7 issues")
       expect(page).to have_content(
-        "7. Already reviewed injury #{ineligible_constants.previous_higher_level_review}"
+        "7. Already reviewed injury #{ineligible_constants.higher_level_review_to_higher_level_review}"
       )
 
       # add before_ama ratings
@@ -846,7 +858,7 @@ RSpec.feature "Higher-Level Review" do
                establishment_submitted_at: Time.zone.now,
                establishment_processed_at: Time.zone.now,
                establishment_error: nil
-      )).to_not be_nil
+             )).to_not be_nil
 
       end_product_establishment = EndProductEstablishment.find_by(
         source: higher_level_review,
@@ -877,7 +889,7 @@ RSpec.feature "Higher-Level Review" do
                end_product_establishment_id: end_product_establishment.id,
                notes: "decision issue with note",
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
@@ -886,7 +898,7 @@ RSpec.feature "Higher-Level Review" do
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note",
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
@@ -895,7 +907,7 @@ RSpec.feature "Higher-Level Review" do
                untimely_exemption: false,
                untimely_exemption_notes: "I am an exemption note",
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
         review_request: higher_level_review,
@@ -925,7 +937,7 @@ RSpec.feature "Higher-Level Review" do
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id,
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       # Issues before AMA
       expect(RequestIssue.find_by(
@@ -934,7 +946,7 @@ RSpec.feature "Higher-Level Review" do
                end_product_establishment_id: end_product_establishment.id,
                ineligible_reason: :before_ama,
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
@@ -943,7 +955,7 @@ RSpec.feature "Higher-Level Review" do
                ramp_claim_id: "ramp_claim_id",
                end_product_establishment_id: end_product_establishment.id,
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
@@ -951,7 +963,7 @@ RSpec.feature "Higher-Level Review" do
                ineligible_reason: :before_ama,
                end_product_establishment_id: non_rating_end_product_establishment.id,
                benefit_type: "compensation"
-      )).to_not be_nil
+             )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
@@ -966,7 +978,7 @@ RSpec.feature "Higher-Level Review" do
       hlr_request_issues = RequestIssue.where(rating_issue_reference_id: higher_level_review_reference_id)
       expect(hlr_request_issues.count).to eq(2)
 
-      ineligible_due_to_previous_hlr = hlr_request_issues.select(&:previous_higher_level_review?).first
+      ineligible_due_to_previous_hlr = hlr_request_issues.select(&:higher_level_review_to_higher_level_review?).first
       expect(hlr_request_issues).to include(previous_request_issue)
       expect(ineligible_due_to_previous_hlr).to_not eq(previous_request_issue)
       expect(ineligible_due_to_previous_hlr.contention_reference_id).to be_nil
@@ -983,6 +995,57 @@ RSpec.feature "Higher-Level Review" do
           contention_descriptions: array_including("Left knee granted 2")
         )
       )
+    end
+
+    context "when veteran chooses decision issue from a previous appeal" do
+      let(:previous_appeal) { create(:appeal, :outcoded, veteran: veteran) }
+      let(:appeal_reference_id) { "appeal123" }
+      let!(:previous_appeal_request_issue) do
+        create(
+          :request_issue,
+          review_request: previous_appeal,
+          rating_issue_reference_id: appeal_reference_id
+        )
+      end
+      let!(:previous_appeal_decision_issue) do
+        create(:decision_issue,
+               decision_review: previous_appeal,
+               request_issues: [previous_appeal_request_issue],
+               rating_issue_reference_id: appeal_reference_id,
+               participant_id: veteran.participant_id,
+               promulgation_date: another_promulgation_date,
+               description: "appeal decision issue",
+               decision_text: "appeal decision issue",
+               profile_date: profile_date,
+               benefit_type: "compensation")
+      end
+
+      scenario "the issue is ineligible" do
+        start_higher_level_review(
+          veteran,
+          claim_participant_id: "5382910292",
+          veteran_is_not_claimant: false
+        )
+        visit "/intake/add_issues"
+
+        expect(page).to have_content("Add / Remove Issues")
+
+        click_intake_add_issue
+        add_intake_rating_issue("appeal decision issue")
+        expect(page).to have_content(
+          "appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}"
+        )
+        click_intake_finish
+
+        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+        expect(RequestIssue.find_by(description: "appeal decision issue").ineligible_reason).to eq(
+          "appeal_to_higher_level_review"
+        )
+        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        expect(ineligible_checklist).to have_content(
+          "appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}"
+        )
+      end
     end
 
     context "when veteran has active nonrating request issues" do
@@ -1090,7 +1153,7 @@ RSpec.feature "Higher-Level Review" do
                    review_request: hlr,
                    issue_category: "Accrued",
                    benefit_type: hlr.benefit_type
-          )).to_not be_nil
+                 )).to_not be_nil
         end
       end
     end
@@ -1206,7 +1269,7 @@ RSpec.feature "Higher-Level Review" do
                    ineligible_reason: :legacy_appeal_not_eligible,
                    vacols_id: "vacols2",
                    vacols_sequence_id: "1"
-          )).to_not be_nil
+                 )).to_not be_nil
 
           expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
 
@@ -1255,7 +1318,7 @@ RSpec.feature "Higher-Level Review" do
                    ineligible_reason: :legacy_issue_not_withdrawn,
                    vacols_id: "vacols1",
                    vacols_sequence_id: "1"
-          )).to_not be_nil
+                 )).to_not be_nil
 
           expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
         end

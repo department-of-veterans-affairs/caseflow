@@ -43,6 +43,7 @@ class Api::V2::AppealsController < Api::ApplicationController
 
   def fetch_vbms_id
     fail Caseflow::Error::InvalidSSN if !ssn || ssn.length != 9 || ssn.scan(/\D/).any?
+
     LegacyAppeal.vbms_id_for_ssn(ssn)
   end
 
@@ -58,7 +59,7 @@ class Api::V2::AppealsController < Api::ApplicationController
         "title": "Veteran not found",
         "detail": "A veteran with that SSN was not found in our systems."
       ]
-    }, status: 404
+    }, status: :not_found
   end
 
   def invalid_ssn
@@ -68,7 +69,7 @@ class Api::V2::AppealsController < Api::ApplicationController
         "title": "Invalid SSN",
         "detail": "Please enter a valid 9 digit SSN in the 'ssn' header"
       ]
-    }, status: 422
+    }, status: :unprocessable_entity
   end
 
   def upstream_timeout
@@ -78,6 +79,6 @@ class Api::V2::AppealsController < Api::ApplicationController
         "title": "Gateway Timeout",
         "detail": "Upstream service timed out"
       ]
-    }, status: 504
+    }, status: :gateway_timeout
   end
 end

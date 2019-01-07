@@ -686,7 +686,7 @@ describe EndProductEstablishment do
           expect(SupplementalClaim.find_by(
                    is_dta_error: true,
                    veteran_file_number: source.veteran_file_number
-          )).to_not be_nil
+                 )).to_not be_nil
         end
       end
 

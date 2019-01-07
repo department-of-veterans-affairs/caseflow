@@ -18,6 +18,7 @@ class Organization < ApplicationRecord
   def can_receive_task?(task)
     return false if task.assigned_to == self
     return false if task.assigned_to.is_a?(User) && task.parent && task.parent.assigned_to == self
+
     true
   end
 
@@ -42,7 +43,7 @@ class Organization < ApplicationRecord
   end
 
   def path
-    "/organizations/#{url ? url : id}"
+    "/organizations/#{url || id}"
   end
 
   def user_admin_path

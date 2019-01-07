@@ -1,16 +1,16 @@
 class Hearings::WorksheetsController < HearingsController
   rescue_from ActiveRecord::RecordNotFound do |e|
     Rails.logger.debug "Worksheets Controller failed: #{e.message}"
-    render json: { "errors": ["message": e.message, code: 1000] }, status: 404
+    render json: { "errors": ["message": e.message, code: 1000] }, status: :not_found
   end
 
   rescue_from ActiveRecord::RecordInvalid, Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.debug "Worksheets Controller failed: #{e.message}"
-    render json: { "errors": ["message": e.message, code: 1001] }, status: 404
+    render json: { "errors": ["message": e.message, code: 1001] }, status: :not_found
   end
 
   def show
-    HearingView.find_or_create_by(hearing_id: params[:hearing_id], user_id: current_user.id).touch
+    HearingView.find_or_create_by(hearing_id: hearing.id, user_id: current_user.id).touch
 
     respond_to do |format|
       format.html { render template: "hearings/index" }
@@ -25,8 +25,8 @@ class Hearings::WorksheetsController < HearingsController
   end
 
   def update
-    worksheet.update!(worksheet_params)
-    worksheet.class.repository.update_vacols_hearing!(worksheet.vacols_record, worksheet_params)
+    hearing.update!(worksheet_params)
+    hearing.class.repository.update_vacols_hearing!(hearing.vacols_record, worksheet_params)
     render json: { worksheet: hearing_worksheet }
   end
 
@@ -40,12 +40,7 @@ class Hearings::WorksheetsController < HearingsController
                                        :summary)
   end
 
-  def worksheet
-    LegacyHearing.find(params[:hearing_id])
-  end
-  helper_method :worksheet
-
   def hearing_worksheet
-    worksheet.to_hash_for_worksheet(current_user.id)
+    hearing.to_hash_for_worksheet(current_user.id)
   end
 end

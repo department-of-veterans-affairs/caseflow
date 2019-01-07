@@ -295,6 +295,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def generate_claimant_letter!
     return if doc_reference_id
+
     generate_claimant_letter_in_bgs.tap do |result|
       update!(doc_reference_id: result)
     end
@@ -302,6 +303,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def generate_tracked_item!
     return if development_item_reference_id
+
     generate_tracked_item_in_bgs.tap do |result|
       update!(development_item_reference_id: result)
     end
@@ -309,6 +311,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def request_issues
     return [] unless source.try(:request_issues)
+
     source.request_issues.select { |ri| ri.end_product_establishment == self }
   end
 
@@ -431,6 +434,7 @@ class EndProductEstablishment < ApplicationRecord
     end
 
     fail EstablishedEndProductNotFound unless result
+
     result
   end
 
@@ -451,7 +455,8 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync_source!
-    return unless source && source.respond_to?(:on_sync)
+    return unless source&.respond_to?(:on_sync)
+
     source.on_sync(self)
   end
 
