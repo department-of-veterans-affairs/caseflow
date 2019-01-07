@@ -30,7 +30,7 @@ FactoryBot.define do
                                 decision_review: request_issue.review_request,
                                 participant_id: evaluator.veteran_participant_id,
                                 rating_issue_reference_id: request_issue.contested_rating_issue_reference_id,
-                                profile_date: request_issue.rating_issue_profile_date,
+                                profile_date: request_issue.contested_rating_issue_profile_date.to_date,
                                 benefit_type: request_issue.review_request.benefit_type,
                                 decision_text: "a rating decision issue",
                                 request_issues: [request_issue])

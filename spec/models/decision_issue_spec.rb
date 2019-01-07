@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe RequestIssue do
+describe DecisionIssue do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
@@ -96,22 +96,6 @@ describe RequestIssue do
         end
 
         it { is_expected.to eq("test disposition: test category - req issue description") }
-      end
-
-      context "when rating" do
-        let(:request_issues) do
-          [create(:request_issue, notes: "a note")]
-        end
-
-        context "when no decision text" do
-          let(:decision_text) { nil }
-          it { is_expected.to eq("test disposition: ") }
-        end
-
-        context "when decision text" do
-          let(:decision_text) { "decision_text" }
-          it { is_expected.to eq("decision text. Notes: a note") }
-        end
       end
     end
 
