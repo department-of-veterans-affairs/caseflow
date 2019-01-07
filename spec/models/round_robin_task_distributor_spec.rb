@@ -34,6 +34,7 @@ describe RoundRobinTaskDistributor do
 
       it "should return the most recent task assigned to a User" do
         expect(round_robin_distributor.latest_task.assigned_to_type).to eq(User.name)
+        expect(Task.all.max_by(&:created_at).assigned_to_type).to eq(Organization.name)
       end
     end
   end
