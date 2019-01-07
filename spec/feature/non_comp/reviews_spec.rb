@@ -15,6 +15,10 @@ feature "NonComp Reviews Queue" do
 
     let(:veteran) { create(:veteran) }
     let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+
+    let(:today) { Time.zone.now }
+    let(:yesterday) { Time.zone.now - 1.day }
+
     let!(:in_progress_tasks) do
       [
         create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org),
@@ -24,8 +28,8 @@ feature "NonComp Reviews Queue" do
 
     let!(:completed_tasks) do
       [
-        create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org),
-        create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org)
+        create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org, completed_at: yesterday),
+        create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org, completed_at: today)
       ]
     end
 
@@ -49,6 +53,11 @@ feature "NonComp Reviews Queue" do
       click_on "Completed tasks"
       expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Date Sent")
+
+      # ordered by completed_at descending
+      expect(page).to have_content(
+        today.strftime("%D") + " Higher-Level Review Bob Smith 500000000 0 " + yesterday.strftime("%D")
+      )
     end
 
     context "with user enabled for intake" do
