@@ -105,19 +105,17 @@ class TasksController < ApplicationController
     ro = HearingDayMapper.validate_regional_office(params[:ro])
 
     tasks = AppealRepository.appeals_ready_for_hearing_schedule(ro).map do |appeal|
-      GenericTask.new(appeal: appeal, status: Constants.TASK_STATUSES.in_progress.to_sym, assigned_to: HearingsManagement.singleton)
+      ScheduleHearingTask.new(appeal: appeal, status: Constants.TASK_STATUSES.in_progress.to_sym, assigned_to: HearingsManagement.singleton)
     end
 
     render json: {
-      appeals: {
-        data: tasks.map do |task|
-            ActiveModelSerializers::SerializableResource.new(
-              task,
-              user: current_user,
-              role: user_role
-            ).as_json[:data]
-          end
-      }
+      data: tasks.map do |task|
+        ActiveModelSerializers::SerializableResource.new(
+          task,
+          user: current_user,
+          role: user_role
+        ).as_json[:data]
+      end
     }
   end
 
