@@ -1792,25 +1792,6 @@ describe LegacyAppeal do
     end
   end
 
-  context ".for_api" do
-    subject { LegacyAppeal.for_api(vbms_id: bfcorlid) }
-    let(:bfcorlid) { "VBMS_ID" }
-    let(:case_with_form_9) { create(:case_with_form_9, :type_original, bfcorlid: bfcorlid) }
-    let!(:veteran_appeals) do
-      [
-        create(:case_with_soc, :type_original, bfcorlid: bfcorlid),
-        create(:case_with_soc, :type_reconsideration, bfcorlid: bfcorlid),
-        case_with_form_9,
-        create(:case, :type_original, bfcorlid: bfcorlid)
-      ]
-    end
-
-    it "returns filtered appeals with events only for veteran sorted by latest event date" do
-      expect(subject.length).to eq(2)
-      expect(subject.first.form9_date.to_date).to eq(case_with_form_9.bfd19)
-    end
-  end
-
   context "#vbms_id" do
     let(:appeal) { LegacyAppeal.new(vacols_id: "12345", vbms_id: "6789") }
     context "when vbms_id exists in the caseflow DB" do
