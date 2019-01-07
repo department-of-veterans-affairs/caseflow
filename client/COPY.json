@@ -289,8 +289,23 @@
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "quality review",
 
   "ADDRESS_CHANGE_MAIL_TASK_LABEL": "Change of address",
-  "POWER_OF_ATTORNEY_MAIL_TASK_LABEL": "Power of attorney-related",
+  "AOD_MOTION_MAIL_TASK_LABEL": "Motion to Advance on Docket",
+  "APPEAL_WITHDRAWAL_MAIL_TASK_LABEL": "Withdrawal of appeal",
+  "CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL": "CUE-related",
+  "CONGRESSIONAL_INTEREST_MAIL_TASK_LABEL": "Congressional interest",
+  "DEATH_CERTIFICATE_MAIL_TASK_LABEL": "Death certificate",
   "EVIDENCE_OR_ARGUMENT_MAIL_TASK_LABEL": "Evidence or argument",
+  "EXTENSION_REQUEST_MAIL_TASK_LABEL": "Extension request",
+  "FOIA_REQUEST_MAIL_TASK_LABEL": "FOIA request",
+  "HEARING_RELATED_MAIL_TASK_LABEL": "Hearing-related",
+  "OTHER_MOTION_MAIL_TASK_LABEL": "Other motion",
+  "POWER_OF_ATTORNEY_MAIL_TASK_LABEL": "Power of attorney-related",
+  "PRIVACY_ACT_REQUEST_MAIL_TASK_LABEL": "Privacy act request",
+  "PRIVACY_COMPLAINT_MAIL_TASK_LABEL": "Privacy complaint",
+  "RECONSIDERATION_MOTION_MAIL_TASK_LABEL": "Motion for reconsideration",
+  "RETURNED_CORRESPONDENCE_MAIL_TASK_LABEL": "Returned or undeliverable mail",
+  "STATUS_INQUIRY_MAIL_TASK_LABEL": "Status inquiry",
+  "VACATE_MOTION_MAIL_TASK_LABEL": "Motion to vacate",
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues"
 }
