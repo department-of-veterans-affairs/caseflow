@@ -114,8 +114,8 @@ RSpec.feature "Reader" do
   end
 
   let(:documents) { [] }
-  let(:file_number) { '123456789' }
-  let!(:ama_appeal) { Appeal.create(veteran_file_number: file_number)}
+  let(:file_number) { "123456789" }
+  let!(:ama_appeal) { Appeal.create(veteran_file_number: file_number) }
   let!(:appeal) do
     Generators::LegacyAppealV2.create(documents: documents)
   end
@@ -777,7 +777,6 @@ RSpec.feature "Reader" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[1].id}?annotation=#{annotation.id}"
 
         expect_in_viewport("commentIcon-container-#{annotation.id}")
-
       end
 
       scenario "404 on bad comment id" do
