@@ -42,6 +42,37 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
 
+    context "and a veteran with an available location defined more than a month ago exists" do
+      before do
+        create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "246810120S")
+        create(:veteran, file_number: "246810120")
+        create(:available_hearing_locations, veteran_file_number: "246810120", updated_at: 2.months.ago)
+      end
+
+      describe "#veterans" do
+        it "returns both veterans" do
+          job.create_missing_veterans
+          expect(job.veterans.count).to eq 2
+        end
+      end
+    end
+
+    context "and a veteran with an available location defined today" do
+      before do
+        create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "246810120S")
+        create(:veteran, file_number: "246810120")
+        create(:available_hearing_locations, veteran_file_number: "246810120")
+      end
+
+      describe "#veterans" do
+        it "returns one veteran" do
+          job.create_missing_veterans
+          expect(job.veterans.count).to eq 1
+          expect(job.veterans.first.file_number).to eq bfcorlid_file_number
+        end
+      end
+    end
+
     context "and a case exists in a location other than 57" do
       before do
         create(:case, bfcurloc: 67, bfregoff: "RO10", bfcorlid: "987654321")
@@ -57,7 +88,6 @@ describe FetchHearingLocationsForVeteransJob do
     context "and an additional case exists in location 57 *with* an associated veteran" do
       before do
         create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "987654321")
-        Fakes::BGSService.veteran_records["987654321"] = veteran_record(file_number: "987654321")
         create(:veteran, file_number: "987654321")
       end
 
