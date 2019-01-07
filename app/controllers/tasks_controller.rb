@@ -105,6 +105,7 @@ class TasksController < ApplicationController
 
   def can_assign_task?
     return true if create_params.first[:appeal].is_a?(Appeal)
+
     super
   end
 
@@ -145,7 +146,7 @@ class TasksController < ApplicationController
         "title": "Invalid Task Type Error",
         "detail": "Task type is invalid, valid types: #{TASK_CLASSES.keys}"
       ]
-    }, status: 400
+    }, status: :bad_request
   end
 
   def task

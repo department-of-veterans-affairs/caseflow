@@ -101,7 +101,7 @@ class Form8 < ApplicationRecord
   # rubocop:enable Metrics/AbcSize
 
   def update_certification_date
-    update_attributes!(certification_date: Time.zone.now.to_date)
+    update!(certification_date: Time.zone.now.to_date)
   end
 
   def hearing_on_file
@@ -112,34 +112,12 @@ class Form8 < ApplicationRecord
     increased_rating_for_rolled.initial unless increased_rating_for_rolled.blank?
   end
 
-  def increased_rating_for_rolled
-    RolledOverText.new(increased_rating_for, 2, continued_prepend: "Increased Rating For Continued:")
-  end
-  private :increased_rating_for_rolled
-
   def other_for_initial
     other_for_rolled.initial unless other_for_rolled.blank?
   end
 
-  def other_for_rolled
-    RolledOverText.new(other_for, 2, continued_prepend: "Other Continued:")
-  end
-  private :other_for_rolled
-
-  def service_connection_for_rolled
-    @service_connection_for_rolled = nil if @service_connection_for_rolled &&
-                                            @service_connection_for_rolled.raw != @service_connection_for
-    @service_connection_for_rolled ||= RolledOverText.new(service_connection_for, 2,
-                                                          continued_prepend: "Service Connection For Continued:")
-  end
-
   def service_connection_for_initial
     service_connection_for_rolled.initial unless service_connection_for_rolled.blank?
-  end
-
-  def remarks_rolled
-    @remarks_rolled = nil if @remarks_rolled && @remarks_rolled.raw != @remarks
-    @remarks_rolled ||= RolledOverText.new(remarks, 6)
   end
 
   def remarks_rollover?
@@ -177,8 +155,6 @@ class Form8 < ApplicationRecord
     { name: "INSURANCE F", attribute: :record_insurance_f },
     { name: "OTHER", attribute: :record_other }
   ].freeze
-
-  private :service_connection_for_rolled, :remarks_rolled
 
   def attributes
     record_attrs = RECORD_TYPE_FIELDS.map { |field| field[:attribute] }
@@ -225,7 +201,8 @@ class Form8 < ApplicationRecord
     ]
     date_fields.each do |f|
       raw_value = params[f]
-      next unless raw_value && raw_value.is_a?(String)
+      next unless raw_value&.is_a?(String)
+
       params[f] = begin
                     Date.strptime(raw_value, "%m/%d/%Y")
                   rescue StandardError
@@ -245,5 +222,27 @@ class Form8 < ApplicationRecord
     def pdf_service
       @pdf_service ||= Form8PdfService
     end
+  end
+
+  private
+
+  def increased_rating_for_rolled
+    RolledOverText.new(increased_rating_for, 2, continued_prepend: "Increased Rating For Continued:")
+  end
+
+  def other_for_rolled
+    RolledOverText.new(other_for, 2, continued_prepend: "Other Continued:")
+  end
+
+  def service_connection_for_rolled
+    @service_connection_for_rolled = nil if @service_connection_for_rolled &&
+                                            @service_connection_for_rolled.raw != @service_connection_for
+    @service_connection_for_rolled ||= RolledOverText.new(service_connection_for, 2,
+                                                          continued_prepend: "Service Connection For Continued:")
+  end
+
+  def remarks_rolled
+    @remarks_rolled = nil if @remarks_rolled && @remarks_rolled.raw != @remarks
+    @remarks_rolled ||= RolledOverText.new(remarks, 6)
   end
 end

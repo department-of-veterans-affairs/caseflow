@@ -11,7 +11,7 @@ class Person < ApplicationRecord
   # we want to fetch it from BGS, save it to the DB, then return it
   def date_of_birth
     super || begin
-      update_attributes(date_of_birth: BGSService.new.fetch_person_info(participant_id)[:birth_date]) if persisted?
+      update(date_of_birth: BGSService.new.fetch_person_info(participant_id)[:birth_date]) if persisted?
       super
     end
   end

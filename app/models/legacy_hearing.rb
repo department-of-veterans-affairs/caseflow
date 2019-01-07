@@ -57,6 +57,7 @@ class LegacyHearing < ApplicationRecord
 
   def hold_release_date
     return unless held_open?
+
     date.to_date + hold_open.days
   end
 
@@ -66,6 +67,7 @@ class LegacyHearing < ApplicationRecord
 
   def active_appeal_streams
     return appeals if appeals.any?
+
     appeals << self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
   end
 
@@ -232,7 +234,7 @@ class LegacyHearing < ApplicationRecord
   # we want to fetch it from BGS, save it to the DB, then return it
   def military_service
     super || begin
-      update_attributes(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
+      update(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
       super
     end
   end

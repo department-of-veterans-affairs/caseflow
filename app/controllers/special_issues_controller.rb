@@ -52,6 +52,6 @@ class SpecialIssuesController < ApplicationController
         "title": "Record Not Found",
         "detail": "Record with that ID is not found"
       ]
-    }, status: 404
+    }, status: :not_found
   end
 end

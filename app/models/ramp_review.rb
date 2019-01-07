@@ -89,7 +89,7 @@ class RampReview < ApplicationRecord
   end
 
   def end_product_establishment
-    find_end_product_establishment || new_end_product_establishment
+    preexisting_end_product_establishment || new_end_product_establishment
   end
 
   def valid_modifiers
@@ -102,7 +102,7 @@ class RampReview < ApplicationRecord
 
   private
 
-  def find_end_product_establishment
+  def preexisting_end_product_establishment
     @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self)
   end
 

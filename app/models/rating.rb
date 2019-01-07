@@ -48,6 +48,7 @@ class Rating
 
   def associated_claims_data
     return [] if rating_profile[:associated_claims].nil?
+
     [rating_profile[:associated_claims]].flatten
   end
 
@@ -107,6 +108,7 @@ class Rating
       if response.dig(:rating_profile_list, :rating_profile).nil?
         fail NilRatingProfileListError, message: response
       end
+
       # If only one rating is returned, we need to convert it to an array
       [response[:rating_profile_list][:rating_profile]].flatten.map do |rating_data|
         Rating.from_bgs_hash(rating_data)
