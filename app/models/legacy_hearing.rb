@@ -52,7 +52,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def scheduled_pending?
-    date && !closed?
+    scheduled_for && !closed?
   end
 
   def held_open?
@@ -62,11 +62,11 @@ class LegacyHearing < ApplicationRecord
   def hold_release_date
     return unless held_open?
 
-    date.to_date + hold_open.days
+    scheduled_for.to_date + hold_open.days
   end
 
   def no_show_excuse_letter_due_date
-    date.to_date + 15.days
+    scheduled_for.to_date + 15.days
   end
 
   def active_appeal_streams
@@ -97,7 +97,7 @@ class LegacyHearing < ApplicationRecord
   # rubocop:disable Metrics/MethodLength
   def vacols_attributes
     {
-      date: date,
+      scheduled_for: scheduled_for,
       type: type,
       venue_key: venue_key,
       vacols_record: vacols_record,
@@ -147,7 +147,7 @@ class LegacyHearing < ApplicationRecord
   def to_hash(current_user_id)
     serializable_hash(
       methods: [
-        :date,
+        :scheduled_for,
         :request_type,
         :disposition,
         :aod,

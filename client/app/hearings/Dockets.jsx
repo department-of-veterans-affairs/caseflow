@@ -78,7 +78,7 @@ export class Dockets extends React.Component {
   }
 
   getDocketDateTime = (docket) => {
-    let convertedDate = moment(docket.date);
+    let convertedDate = moment(docket.scheduled_for);
 
     if (docket.type === 'travel' && docket.master_record) {
       if (convertedDate.day() === MONDAY_AS_DAY_OF_THE_WEEK) {
@@ -98,16 +98,19 @@ export class Dockets extends React.Component {
   }
 
   linkToDailyDocket = (docket) => {
-    const momentDate = moment(docket.date);
+    const momentDate = moment(docket.scheduled_for);
 
     // don't show a link if it's a master record or if the docket date is more
     // than 30 days away from current day.
     if (docket.master_record || momentDate.isAfter(moment().add(30, 'days'))) {
-      return moment(docket.date).format('ddd M/DD/YYYY');
+      return moment(docket.scheduled_for).format('ddd M/DD/YYYY');
     }
 
-    return <Link onClick={this.dateClicked} to={`/hearings/dockets/${moment(docket.date).format('YYYY-MM-DD')}`}>
-      {moment(docket.date).format('ddd M/DD/YYYY')}
+    return <Link
+      onClick={this.dateClicked}
+      to={`/hearings/dockets/${moment(docket.scheduled_for).format('YYYY-MM-DD')}`}
+    >
+      {moment(docket.scheduled_for).format('ddd M/DD/YYYY')}
     </Link>;
   }
 

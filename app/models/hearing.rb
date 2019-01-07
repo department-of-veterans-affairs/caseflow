@@ -21,11 +21,11 @@ class Hearing < ApplicationRecord
   end
 
   def regional_office_key
-    'RO18'
+    "RO19"
   end
 
   def regional_office_name
-    'RO18'
+    "Winston-Salem, NC"
   end
 
   def type

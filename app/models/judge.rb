@@ -57,9 +57,11 @@ class Judge
     # as they key
     dockets.map do |date, docket|
       record = ro_staff_hash[docket.regional_office_key]
-      [date, (HearingDayRepository.slots_based_on_type(staff: record,
-                                                       type: docket.type,
-                                                       date: docket.scheduled_for) if record)]
+      [date, (if record
+                HearingDayRepository.slots_based_on_type(staff: record,
+                                                         type: docket.type,
+                                                         date: docket.scheduled_for)
+              end)]
     end.to_h
   end
 
