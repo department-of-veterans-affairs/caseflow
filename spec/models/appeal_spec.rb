@@ -483,4 +483,40 @@ describe Appeal do
       it { is_expected.to eq task2 }
     end
   end
+
+  context ".active?" do
+    subject { appeal.active? }
+
+    context "when there are no tasks for an appeal" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+
+      it "should indicate the appeal is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when there are only completed tasks for an appeal" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+
+      before do
+        FactoryBot.create_list(:task, 6, :completed, appeal: appeal)
+      end
+
+      it "should indicate the appeal is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when there are incomplete tasks for an appeal" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+
+      before do
+        FactoryBot.create_list(:task, 3, :in_progress, appeal: appeal)
+      end
+
+      it "should indicate the appeal is active" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
 end
