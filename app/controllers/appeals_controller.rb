@@ -7,14 +7,18 @@ class AppealsController < ApplicationController
   skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
 
   def index
-    veteran_file_number = request.headers["HTTP_VETERAN_ID"]
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      format.json do
+        veteran_file_number = request.headers["HTTP_VETERAN_ID"]
+        file_number_not_found_error && return unless veteran_file_number
 
-    return file_number_not_found_error unless veteran_file_number
-
-    render json: {
-      appeals: get_appeals_for_file_number(veteran_file_number),
-      claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
-    }
+        render json: {
+          appeals: get_appeals_for_file_number(veteran_file_number),
+          claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
+        }
+      end
+    end
   end
 
   def show_case_list
@@ -150,9 +154,8 @@ class AppealsController < ApplicationController
                 else
                   []
                 end
-      render json: {
-        appeals: json_appeals(appeals)[:data]
-      }
+
+      json_appeals(appeals)[:data]
     end
   end
 
