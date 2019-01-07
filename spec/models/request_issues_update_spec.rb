@@ -46,16 +46,16 @@ describe RequestIssuesUpdate do
     [
       RequestIssue.new(
         review_request: review,
-        rating_issue_profile_date: Time.zone.local(2017, 4, 5),
-        rating_issue_reference_id: "issue1",
+        contested_rating_issue_profile_date: Time.zone.local(2017, 4, 5),
+        contested_rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
         description: request_issue_contentions[0].text,
         rating_issue_associated_at: 5.days.ago
       ),
       RequestIssue.new(
         review_request: review,
-        rating_issue_profile_date: Time.zone.local(2017, 4, 6),
-        rating_issue_reference_id: "issue2",
+        contested_rating_issue_profile_date: Time.zone.local(2017, 4, 6),
+        contested_rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
         description: request_issue_contentions[1].text,
         rating_issue_associated_at: 5.days.ago,
@@ -97,7 +97,7 @@ describe RequestIssuesUpdate do
     end
 
     let(:existing_request_issue_id) do
-      review.request_issues.find { |issue| issue.rating_issue_reference_id == "issue1" }.id
+      review.request_issues.find { |issue| issue.contested_rating_issue_reference_id == "issue1" }.id
     end
 
     context "#created_issues" do
@@ -109,7 +109,7 @@ describe RequestIssuesUpdate do
 
       context "when new issues were added as part of the update" do
         let(:request_issues_data) { request_issues_data_with_new_issue }
-        let(:new_request_issue) { RequestIssue.find_by(rating_issue_reference_id: "issue3") }
+        let(:new_request_issue) { RequestIssue.find_by(contested_rating_issue_reference_id: "issue3") }
 
         it { is_expected.to contain_exactly(new_request_issue) }
       end
@@ -208,9 +208,8 @@ describe RequestIssuesUpdate do
             expect(value).to eq(Time.zone.now)
           end
 
-          created_issue = review.request_issues.find_by(rating_issue_reference_id: "issue3")
+          created_issue = review.request_issues.find_by(contested_rating_issue_reference_id: "issue3")
           expect(created_issue).to have_attributes(
-            rating_issue_profile_date: after_ama_start_date,
             description: "Service connection for cancer was denied"
           )
           expect(created_issue.contention_reference_id).to_not be_nil
@@ -334,6 +333,61 @@ describe RequestIssuesUpdate do
             synced_status: "CAN"
           )
           expect(found_nonrating_ep).to_not be_nil
+        end
+
+        context "with decision issues" do
+          let!(:deleted_decision_issue) do
+            create(:decision_issue,
+                   request_issues: [RequestIssue.find(existing_legacy_opt_in_request_issue_id)],
+                   participant_id: veteran.participant_id)
+          end
+
+          it "deletes associated decision issues" do
+            expect(subject).to be_truthy
+
+            expect(RequestDecisionIssue.find_by(
+                     request_issue_id: existing_legacy_opt_in_request_issue_id,
+                     decision_issue_id: deleted_decision_issue.id
+                   )).to be_nil
+
+            expect(DecisionIssue.find_by(id: deleted_decision_issue.id)).to be_nil
+          end
+
+          context "with decision issue connected to multiple request issues" do
+            let!(:not_deleted_decision_issue) do
+              create(:decision_issue,
+                     request_issues: [
+                       RequestIssue.find(existing_request_issue_id),
+                       RequestIssue.find(existing_legacy_opt_in_request_issue_id)
+                     ],
+                     participant_id: veteran.participant_id)
+            end
+
+            it "does not delete decision issues associated with undeleted request issue" do
+              expect(subject).to be_truthy
+
+              expect(RequestDecisionIssue.find_by(
+                       request_issue_id: existing_legacy_opt_in_request_issue_id,
+                       decision_issue_id: deleted_decision_issue.id
+                     )).to be_nil
+
+              expect(DecisionIssue.find_by(id: deleted_decision_issue.id)).to be_nil
+
+              # record associating not_deleted_decision_issue with the deleted request issue
+              # should be deleted
+              expect(RequestDecisionIssue.find_by(
+                       request_issue_id: existing_legacy_opt_in_request_issue_id,
+                       decision_issue_id: not_deleted_decision_issue.id
+                     )).to be_nil
+
+              expect(RequestDecisionIssue.find_by(
+                       request_issue_id: existing_request_issue_id,
+                       decision_issue_id: not_deleted_decision_issue.id
+                     )).to_not be_nil
+
+              expect(DecisionIssue.find_by(id: not_deleted_decision_issue.id)).to_not be_nil
+            end
+          end
         end
       end
 

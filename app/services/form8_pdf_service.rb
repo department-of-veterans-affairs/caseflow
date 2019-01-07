@@ -110,8 +110,6 @@ class Form8PdfService
     File.delete(tmp_location)
   end
   # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
-  # rubocop:enable Metrics/MethodLength
 
   def self.output_location_for(form8)
     File.join(Rails.root, "tmp", "pdfs", form8.pdf_filename)

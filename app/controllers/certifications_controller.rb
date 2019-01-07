@@ -59,6 +59,7 @@ class CertificationsController < ApplicationController
   def certification_data
     return render json: { loading_data_failed: true } if certification.loading_data_failed
     return render json: { loading_data: true } if certification.loading_data
+
     render json: { certification: certification.to_hash, form9PdfPath: form9_pdfjs_path }
   end
 

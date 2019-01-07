@@ -36,7 +36,8 @@ class Dispatch::TasksController < ApplicationController
 
   def verify_not_complete
     return true unless task.completed?
-    render json: { error_code: "task_already_completed" }, status: 422
+
+    render json: { error_code: "task_already_completed" }, status: :unprocessable_entity
   end
 
   def task_id

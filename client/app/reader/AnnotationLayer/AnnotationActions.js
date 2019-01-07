@@ -31,6 +31,30 @@ export const closeAnnotationDeleteModal = (includeMetrics = true) => ({
   } : null)
 });
 
+export const openAnnotationShareModal = (annotationId, analyticsLabel) => ({
+  type: Constants.OPEN_ANNOTATION_SHARE_MODAL,
+  payload: {
+    annotationId
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'open-annotation-share-modal',
+      label: analyticsLabel
+    }
+  }
+});
+
+export const closeAnnotationShareModal = (includeMetrics = true) => ({
+  type: Constants.CLOSE_ANNOTATION_SHARE_MODAL,
+  meta: (includeMetrics ? {
+    analytics: {
+      category: CATEGORIES.VIEW_DOCUMENT_PAGE,
+      action: 'close-annotation-share-modal'
+    }
+  } : null)
+});
+
 export const selectAnnotation = (annotationId) => ({
   type: Constants.SELECT_ANNOTATION,
   payload: {

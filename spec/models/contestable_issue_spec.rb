@@ -38,6 +38,7 @@ describe ContestableIssue do
         decision_issue_id: nil,
         date: profile_date,
         description: rating_issue.decision_text,
+        source_request_issue: rating_issue.source_request_issue,
         contesting_decision_review: decision_review
       )
 
@@ -49,7 +50,7 @@ describe ContestableIssue do
         description: rating_issue.decision_text,
         rampClaimId: nil,
         titleOfActiveReview: nil,
-        sourceHigherLevelReview: nil,
+        sourceReviewType: nil,
         timely: true
       )
     end
@@ -66,7 +67,7 @@ describe ContestableIssue do
           description: rating_issue.decision_text,
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: nil,
+          sourceReviewType: nil,
           timely: false
         )
       end
@@ -84,6 +85,7 @@ describe ContestableIssue do
         decision_issue_id: decision_issue.id,
         date: profile_date,
         description: decision_issue.decision_text,
+        source_request_issue: decision_issue,
         contesting_decision_review: decision_review
       )
 
@@ -95,7 +97,7 @@ describe ContestableIssue do
         description: decision_issue.decision_text,
         rampClaimId: nil,
         titleOfActiveReview: nil,
-        sourceHigherLevelReview: nil,
+        sourceReviewType: nil,
         timely: true
       )
     end
@@ -112,7 +114,7 @@ describe ContestableIssue do
           description: decision_issue.decision_text,
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: nil,
+          sourceReviewType: nil,
           timely: false
         )
       end

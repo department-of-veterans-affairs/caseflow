@@ -230,24 +230,24 @@ describe EndProductEstablishment do
           :request_issue,
           end_product_establishment: end_product_establishment,
           review_request: source,
-          rating_issue_reference_id: "reference-id",
-          rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_reference_id: "reference-id",
+          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
           description: "this is a big decision"
         ),
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           review_request: source,
-          rating_issue_reference_id: "reference-id",
-          rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_reference_id: "reference-id",
+          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
           description: "more decisionz"
         ),
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           review_request: source,
-          rating_issue_reference_id: "reference-id",
-          rating_issue_profile_date: Date.new(2018, 4, 30),
+          contested_rating_issue_reference_id: "reference-id",
+          contested_rating_issue_profile_date: Date.new(2018, 4, 30),
           description: "this is a big decision", # intentional duplicate
         ),
         create(
@@ -256,8 +256,8 @@ describe EndProductEstablishment do
           is_unidentified: true,
           description: "identity unknown",
           review_request: source,
-          rating_issue_reference_id: "reference-id",
-          rating_issue_profile_date: Date.new(2018, 4, 30)
+          contested_rating_issue_reference_id: "reference-id",
+          contested_rating_issue_profile_date: Date.new(2018, 4, 30)
         )
       ]
     end
@@ -380,8 +380,8 @@ describe EndProductEstablishment do
     let(:for_object) do
       RequestIssue.new(
         review_request: source,
-        rating_issue_reference_id: "reference-id",
-        rating_issue_profile_date: Date.new(2018, 4, 30),
+        contested_rating_issue_reference_id: "reference-id",
+        contested_rating_issue_profile_date: Date.new(2018, 4, 30),
         description: "this is a big decision",
         contention_reference_id: contention_ref_id
       )
@@ -686,7 +686,7 @@ describe EndProductEstablishment do
           expect(SupplementalClaim.find_by(
                    is_dta_error: true,
                    veteran_file_number: source.veteran_file_number
-          )).to_not be_nil
+                 )).to_not be_nil
         end
       end
 

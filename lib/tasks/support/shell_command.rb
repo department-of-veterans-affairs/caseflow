@@ -18,8 +18,9 @@ class ShellCommand
   end
 
   def self.run_and_batch_output(command)
+    # rubocop:disable Security/Open
     output_stream = open("|#{command}", "r")
-
+    # rubocop:enable Security/Open
     output = ""
     output_stream.each do |line|
       output << line

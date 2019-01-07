@@ -30,7 +30,7 @@ class AppealIntake < DecisionReviewIntake
 
     detail.validate
     detail.errors[:claimant] << claimant_error if claimant_error
-    return false
+    false
   end
 
   def complete!(request_params)

@@ -30,8 +30,8 @@ describe ClaimReview do
     build(
       :request_issue,
       review_request: claim_review,
-      rating_issue_reference_id: "reference-id",
-      rating_issue_profile_date: Date.new(2018, 4, 30),
+      contested_rating_issue_reference_id: "reference-id",
+      contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       description: "decision text"
     )
   end
@@ -40,8 +40,8 @@ describe ClaimReview do
     build(
       :request_issue,
       review_request: claim_review,
-      rating_issue_reference_id: "reference-id2",
-      rating_issue_profile_date: Date.new(2018, 4, 30),
+      contested_rating_issue_reference_id: "reference-id2",
+      contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       description: "another decision text"
     )
   end
@@ -88,39 +88,6 @@ describe ClaimReview do
 
   let(:vbms_error) do
     VBMS::HTTPError.new("500", "More EPs more problems")
-  end
-
-  context "#contestable_issues" do
-    subject { claim_review.contestable_issues }
-
-    let(:another_review) do
-      create(:supplemental_claim, veteran_file_number: veteran_file_number, receipt_date: receipt_date)
-    end
-
-    let!(:past_decision_issue) do
-      create(:decision_issue,
-             decision_review: another_review,
-             profile_date: receipt_date - 1.day,
-             benefit_type: another_review.benefit_type,
-             decision_text: "something decided in the past",
-             description: "past issue",
-             participant_id: veteran.participant_id)
-    end
-
-    let!(:future_decision_issue) do
-      create(:decision_issue,
-             decision_review: another_review,
-             profile_date: receipt_date + 1.day,
-             benefit_type: another_review.benefit_type,
-             decision_text: "something was decided in the future",
-             description: "future issue",
-             participant_id: veteran.participant_id)
-    end
-
-    it "does not return Decision Issues in the future" do
-      expect(subject.count).to eq(1)
-      expect(subject.first.decision_issue_id).to eq(past_decision_issue.id)
-    end
   end
 
   context "async logic scopes" do
@@ -226,10 +193,10 @@ describe ClaimReview do
     end
   end
 
-  context "#non_comp?" do
+  context "#caseflow_only?" do
     let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
 
-    subject { claim_review.non_comp? }
+    subject { claim_review.caseflow_only? }
 
     context "when benefit_type is compensation" do
       let(:benefit_type) { "compensation" }
@@ -658,6 +625,20 @@ describe ClaimReview do
         expect(rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
         expect(non_rating_request_issue.rating_issue_associated_at).to be_nil
       end
+    end
+  end
+
+  describe ".find_by_uuid_or_reference_id!" do
+    let(:hlr) { create(:higher_level_review, :with_end_product_establishment).reload }
+
+    it "finds by UUID" do
+      expect(HigherLevelReview.find_by_uuid_or_reference_id!(hlr.uuid)).to eq(hlr)
+    end
+
+    it "finds by EPE reference_id" do
+      hlr.end_product_establishments.first.update!(reference_id: "abc123")
+
+      expect(HigherLevelReview.find_by_uuid_or_reference_id!("abc123")).to eq(hlr)
     end
   end
 end

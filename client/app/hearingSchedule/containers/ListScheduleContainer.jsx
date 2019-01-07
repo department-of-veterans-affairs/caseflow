@@ -161,7 +161,9 @@ export class ListScheduleContainer extends React.Component {
       assign_room: this.props.roomRequired
     };
 
-    if (this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.value !== '') {
+    if (this.props.selectedRegionalOffice &&
+        this.props.selectedRegionalOffice.value !== '' &&
+        this.props.hearingType.value !== 'C') {
       data.regional_office = this.props.selectedRegionalOffice.value;
     }
 

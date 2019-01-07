@@ -68,6 +68,7 @@ class ColocatedTask < Task
 
   def actions_available?(user)
     return false if completed? || assigned_to != user
+
     true
   end
 
