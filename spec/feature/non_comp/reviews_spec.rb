@@ -56,7 +56,7 @@ feature "NonComp Reviews Queue" do
 
       # ordered by completed_at descending
       expect(page).to have_content(
-        today.strftime("%D") + " Higher-Level Review Bob Smith 500000000 0 " + yesterday.strftime("%D")
+        /#{today.strftime("%D")} Higher-Level Review #{veteran.name} \d+ 0 #{yesterday.strftime("%D")}/
       )
     end
 
