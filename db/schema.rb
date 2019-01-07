@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190104190600) do
+ActiveRecord::Schema.define(version: 20190107184216) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -427,7 +427,7 @@ ActiveRecord::Schema.define(version: 20190104190600) do
   end
 
   create_table "hearing_days", force: :cascade do |t|
-    t.date "hearing_date", null: false
+    t.date "scheduled_for", null: false
     t.string "hearing_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
@@ -726,12 +726,12 @@ ActiveRecord::Schema.define(version: 20190104190600) do
     t.string "benefit_type"
     t.integer "contested_decision_issue_id"
     t.string "veteran_participant_id"
+    t.string "contested_rating_issue_diagnostic_code"
     t.string "decision_review_type"
     t.bigint "decision_review_id"
     t.string "contested_rating_issue_reference_id"
     t.string "contested_rating_issue_profile_date"
     t.string "contested_rating_issue_description"
-    t.string "contested_rating_issue_diagnostic_code"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["contested_rating_issue_reference_id"], name: "index_request_issues_on_contested_rating_issue_reference_id"

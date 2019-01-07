@@ -206,7 +206,7 @@ class HearingRepository
       values = MasterRecordHelper.values_based_on_type(vacols_record)
       # Travel Board master records have a date range, so we create a master record for each day
       values[:dates].inject([]) do |result, date|
-        result << Hearings::MasterRecord.new(date: VacolsHelper.normalize_vacols_datetime(date),
+        result << Hearings::MasterRecord.new(scheduled_for: VacolsHelper.normalize_vacols_datetime(date),
                                              type: values[:type],
                                              master_record: true,
                                              regional_office_key: values[:ro])
@@ -252,7 +252,7 @@ class HearingRepository
         room: vacols_record.room,
         regional_office_key: ro,
         type: type,
-        date: date,
+        scheduled_for: date,
         master_record: false
       }
     end
