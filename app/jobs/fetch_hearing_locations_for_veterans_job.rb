@@ -33,7 +33,10 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         distance: alternate_hearing_location[:distance],
         facility_id: alternate_hearing_location[:id],
         name: alternate_hearing_location[:name],
-        address: full_address_for(alternate_hearing_location[:address])
+        address: full_address_for(alternate_hearing_location[:address]),
+        city: alternate_hearing_location[:address]["city"],
+        state: alternate_hearing_location[:address]["state"],
+        zip_code: alternate_hearing_location[:address]["zip"]
       )
     end
   end
@@ -77,9 +80,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def full_address_for(address)
     address_1 = address["address_1"]
-    address_2 = address["address_2"] ? " " + address["address_2"] : ""
-    address_3 = address["address_3"] ? " " + address["address_3"] : ""
+    address_2 = address["address_2"].blank? ? "" : " " + address["address_2"]
+    address_3 = address["address_3"].blank? ? "" : " " + address["address_3"]
 
-    "#{address_1}#{address_2}#{address_3} #{address['city']}, #{address['state']}"
+    "#{address_1}#{address_2}#{address_3}"
   end
 end

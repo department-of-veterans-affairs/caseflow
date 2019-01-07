@@ -11,7 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 20190104170322) do
-  
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -113,11 +113,14 @@ ActiveRecord::Schema.define(version: 20190104170322) do
     t.string "facility_id"
     t.string "name"
     t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "zip_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
-  
+
   create_table "board_grant_effectuations", force: :cascade do |t|
     t.bigint "appeal_id", null: false
     t.bigint "granted_decision_issue_id", null: false
