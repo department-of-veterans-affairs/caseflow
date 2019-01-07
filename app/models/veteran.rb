@@ -5,6 +5,10 @@
 class Veteran < ApplicationRecord
   include AssociatedBgsRecord
 
+  has_many :available_hearing_locations,
+           foreign_key: :veteran_file_number,
+           primary_key: :file_number, class_name: "AvailableHearingLocations"
+
   bgs_attr_accessor :ptcpnt_id, :sex, :ssn, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,
                     :military_postal_type_code, :military_post_office_type_code,
