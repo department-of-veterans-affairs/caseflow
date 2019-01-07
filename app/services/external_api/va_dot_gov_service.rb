@@ -18,6 +18,7 @@ class ExternalApi::VADotGovService
         facility_results += results[:facilities]
 
         break if !results[:has_next]
+
         page += 1
         sleep 1
       end
@@ -36,7 +37,7 @@ class ExternalApi::VADotGovService
     def geocode(
         address_line1:, address_line2: nil,
         address_line3: nil, city:, state:, zip_code:, country:
-    )
+      )
       # rubocop:enable Metrics/ParameterLists
       response = send_va_dot_gov_request(
         body: geocode_body(
@@ -76,7 +77,7 @@ class ExternalApi::VADotGovService
     def geocode_body(
         address_line1:, address_line2: nil,
         address_line3: nil, city:, state:, zip_code:, country:
-    )
+      )
       # rubocop:enable Metrics/ParameterLists
       {
         requestAddress: {
