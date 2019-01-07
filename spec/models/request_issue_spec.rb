@@ -293,7 +293,6 @@ describe RequestIssue do
   end
 
   context "#validate_eligibility!" do
-    let(:contested_rating_issue_reference_id) { higher_level_review_reference_id }
     let(:duplicate_reference_id) { "xyz789" }
     let(:duplicate_appeal_reference_id) { "xyz555" }
     let(:old_reference_id) { "old123" }
@@ -403,7 +402,7 @@ describe RequestIssue do
     end
 
     context "issues with previous decision reviews" do
-      let(:rating_reference_id) { higher_level_review_reference_id }
+      let(:contested_rating_issue_reference_id) { higher_level_review_reference_id }
 
       context "when the previous review is a higher level review" do
         let(:previous_review) { create(:higher_level_review) }
