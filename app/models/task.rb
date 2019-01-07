@@ -9,8 +9,9 @@ class Task < ApplicationRecord
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
-  before_create :set_assigned_at_and_update_parent_status
+  before_create :set_assigned_at
   after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
+  after_create :put_parent_on_hold
 
   before_update :set_timestamps
   after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
@@ -296,8 +297,11 @@ class Task < ApplicationRecord
     end
   end
 
-  def set_assigned_at_and_update_parent_status
+  def set_assigned_at
     self.assigned_at = created_at unless assigned_at
+  end
+
+  def put_parent_on_hold
     if ama? && parent
       parent.update(status: :on_hold)
     end
