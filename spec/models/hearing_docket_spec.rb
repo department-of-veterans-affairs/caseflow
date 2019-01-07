@@ -28,7 +28,10 @@ describe HearingDocket do
     subject { HearingDocket.from_hearings(hearings) }
 
     let(:hearings) do
-      [Generators::LegacyHearing.create(scheduled_for: 5.minutes.ago), Generators::LegacyHearing.create(scheduled_for: 10.minutes.ago)]
+      [
+        Generators::LegacyHearing.create(scheduled_for: 5.minutes.ago),
+        Generators::LegacyHearing.create(scheduled_for: 10.minutes.ago)
+      ]
     end
 
     it "returns the earliest date" do
