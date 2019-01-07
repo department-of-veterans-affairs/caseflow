@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
   # TODO: remove this eventually, used to protect caching from screwing up removed columns
@@ -62,7 +64,7 @@ class RequestIssue < ApplicationRecord
 
   class NotYetSubmitted < StandardError; end
 
-  UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
+  UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix"
 
   END_PRODUCT_CODES = {
     original: {

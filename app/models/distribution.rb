@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Distribution < ApplicationRecord
   include ActiveModel::Serializers::JSON
   include LegacyCaseDistribution

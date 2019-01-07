@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VaDotGovAddressValidator
   attr_accessor :appeal
 

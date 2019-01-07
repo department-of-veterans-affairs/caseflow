@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # bundle exec rails runner scripts/enable_features_dev.rb
 
 def sql_fmt(attribute)

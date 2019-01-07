@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ClassLength
 class RegionalOffice
   class NotFoundError < StandardError; end

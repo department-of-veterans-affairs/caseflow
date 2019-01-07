@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :tasks do
   class InvalidTaskType < StandardError; end
   class NoTasksToChange < StandardError; end

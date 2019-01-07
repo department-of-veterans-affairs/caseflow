@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AppealHistory do
   let(:original) do
     create(:legacy_appeal, vacols_case:

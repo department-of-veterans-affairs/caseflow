@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DistributionsController < ApplicationController
   def set_application
     RequestStore.store[:application] = "queue"

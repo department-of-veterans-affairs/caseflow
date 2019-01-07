@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HearingsController < ApplicationController
   before_action :verify_access, except: [:show_print, :show, :update, :find_closest_hearing_locations]
   before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]

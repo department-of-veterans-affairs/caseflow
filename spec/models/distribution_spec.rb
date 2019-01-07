@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Distribution do
   let(:judge) { FactoryBot.create(:user) }
   let!(:judge_team) { JudgeTeam.create_for_judge(judge) }

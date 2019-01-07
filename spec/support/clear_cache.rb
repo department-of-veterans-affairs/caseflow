@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 REDIS_NAMESPACES = [
   "idt_test",
   "end_product_records_test",

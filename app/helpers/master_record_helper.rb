@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MasterRecordHelper
   class << self
     # This method filters master records that have children;

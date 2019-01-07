@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VACOLS::Record < ApplicationRecord
   self.abstract_class = true
 

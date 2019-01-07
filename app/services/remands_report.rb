@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemandsReport < Report
   def self.output_filename
     "remands"

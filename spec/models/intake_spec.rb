@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Intake do
   before do
     FeatureToggle.enable!(:intake_legacy_opt_in)

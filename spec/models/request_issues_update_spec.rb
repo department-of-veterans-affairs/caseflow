@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe RequestIssuesUpdate do
   before do
     Time.zone = "America/New_York"

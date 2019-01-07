@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Idt::Api::V1::UploadVbmsDocumentController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   skip_before_action :verify_authenticity_token, only: [:create]

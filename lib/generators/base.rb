@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Base class for a generator.
 #
 # The purpose of generators is to easily setup data for testing.

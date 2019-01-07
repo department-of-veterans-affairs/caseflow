@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BvaDispatchTaskDistributor < RoundRobinTaskDistributor
   def initialize(assignee_pool: BvaDispatch.singleton.users.order(:id),
                  task_class: BvaDispatchTask)

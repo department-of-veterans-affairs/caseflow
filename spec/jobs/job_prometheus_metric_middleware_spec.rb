@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe JobPrometheusMetricMiddleware do
   before do
     @middleware = JobPrometheusMetricMiddleware.new

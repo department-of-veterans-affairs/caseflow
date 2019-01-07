@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttorneyCaseReview < ApplicationRecord
   include CaseReviewConcern
   include IssueUpdater
