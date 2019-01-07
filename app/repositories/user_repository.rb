@@ -14,6 +14,7 @@ class UserRepository
     def user_info_for_idt(css_id)
       staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
       return {} unless staff_record
+
       {
         first_name: staff_record.snamef,
         middle_name: staff_record.snamemi,
@@ -103,6 +104,7 @@ class UserRepository
 
     def check_other_staff_fields(staff_record)
       return ["attorney"] if staff_record.sattyid
+
       roles = []
       roles << "colocated" if staff_record.stitle == "A1" || staff_record.stitle == "A2"
       roles << "dispatch" if staff_record.sdept == "DSP"
@@ -117,6 +119,7 @@ class UserRepository
     # If the STAFF.SVLJ is nil and STAFF.SATTYID is not nil then it is an attorney.
     def vacols_roles(staff_record)
       return roles_based_on_staff_fields(staff_record) if staff_record
+
       []
     end
 

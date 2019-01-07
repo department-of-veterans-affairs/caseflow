@@ -36,9 +36,11 @@ class HearingRepository
 
       hearings.map do |hearing|
         next if hearing.master_record
+
         issues_hash_array = issues[hearing.appeal_vacols_id] || []
         hearing_worksheet_issues = worksheet_issues_for_appeals_hash[hearing.appeal_id] || []
         next unless hearing_worksheet_issues.empty?
+
         issues_hash_array.map { |i| WorksheetIssue.create_from_issue(hearing.appeal, Issue.load_from_vacols(i)) }
       end
     end
@@ -89,6 +91,7 @@ class HearingRepository
       # Get the next open slot for that hearing date and time.
       hearing = VACOLS::CaseHearing.find_by(hearing_date: hearing_date_str, folder_nr: nil)
       fail NoOpenSlots, message: "No available slots for this hearing day." if hearing.nil?
+
       loaded_hearing = VACOLS::CaseHearing.load_hearing(hearing.hearing_pkseq)
       HearingRepository.update_vacols_hearing!(loaded_hearing, folder_nr: appeal.vacols_id)
     end
@@ -96,6 +99,7 @@ class HearingRepository
     def create_child_co_hearing(hearing_date_str, appeal)
       hearing_day = HearingDay.find_by(hearing_type: "C", hearing_date: hearing_date_str.to_date)
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
+
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
       VACOLS::CaseHearing.create_child_hearing!(
         folder_nr: appeal.vacols_id,
@@ -177,6 +181,7 @@ class HearingRepository
 
       case_hearings.map do |vacols_record|
         next empty_dockets(vacols_record) if master_record?(vacols_record)
+
         hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record,
                                                                     fetched_hearings_hash[vacols_record.hearing_pkseq])
         set_vacols_values(hearing, vacols_record)

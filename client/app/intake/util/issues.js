@@ -93,6 +93,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         id: String(issue.id),
         isRating: false,
         category: issue.category,
+        decisionIssueId: issue.contested_decision_issue_id,
         description: issue.description,
         decisionDate: formatDateStr(issue.decision_date),
         ineligibleReason: issue.ineligible_reason,
@@ -110,6 +111,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
     // Unidentified issues
     if (issue.is_unidentified) {
       return {
+        id: String(issue.id),
         description: issue.description,
         contentionText: issue.contention_text,
         notes: issue.notes,
@@ -124,6 +126,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
     const issueDate = new Date(issue.rating_issue_profile_date);
 
     return {
+      id: String(issue.id),
       index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
       isRating: true,
       ratingIssueReferenceId: issue.rating_issue_reference_id,
@@ -133,6 +136,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       notes: issue.notes,
       description: issue.description,
       ineligibleReason: issue.ineligible_reason,
+      ineligibleDueToId: issue.ineligible_due_to_id,
       titleOfActiveReview: issue.title_of_active_review,
       contentionText: issue.contention_text,
       rampClaimId: issue.ramp_claim_id,
@@ -170,86 +174,56 @@ export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
 };
 
 const formatUnidentifiedIssues = (state) => {
-  // only used for the new add intake flow
-  if (state.addedIssues && state.addedIssues.length > 0) {
-    return state.addedIssues.
-      filter((issue) => issue.isUnidentified).
-      map((issue) => {
-        return {
-          decision_text: issue.description,
-          notes: issue.notes,
-          is_unidentified: true
-        };
-      });
-  }
-
-  return [];
+  return (state.addedIssues || []).
+    filter((issue) => issue.isUnidentified).
+    map((issue) => {
+      return {
+        request_issue_id: issue.id,
+        decision_text: issue.description,
+        notes: issue.notes,
+        is_unidentified: true
+      };
+    });
 };
 
 const formatRatingRequestIssues = (state) => {
-  if (state.addedIssues && state.addedIssues.length > 0) {
-    // we're using the new add issues page
-    return state.addedIssues.
-      filter((issue) => issue.isRating && !issue.isUnidentified).
-      map((issue) => {
-        return {
-          rating_issue_reference_id: issue.ratingIssueReferenceId,
-          decision_text: issue.description,
-          rating_issue_profile_date: issue.ratingIssueProfileDate,
-          notes: issue.notes,
-          untimely_exemption: issue.untimelyExemption,
-          untimely_exemption_notes: issue.untimelyExemptionNotes,
-          ramp_claim_id: issue.rampClaimId,
-          vacols_id: issue.vacolsId,
-          vacols_sequence_id: issue.vacolsSequenceId,
-          contested_decision_isssue_id: issue.decisionIssueId
-        };
-      });
-  }
-
-  // default to original ratings format
-  return _(state.ratings).
-    map((rating) => {
-      return _.map(rating.issues, (issue) => {
-        return _.merge(issue, { profile_date: rating.profile_date });
-      });
-    }).
-    flatten().
-    filter('isSelected').
-    value();
+  return (state.addedIssues || []).
+    filter((issue) => issue.isRating && !issue.isUnidentified).
+    map((issue) => {
+      return {
+        request_issue_id: issue.id,
+        rating_issue_reference_id: issue.ratingIssueReferenceId,
+        decision_text: issue.description,
+        rating_issue_profile_date: issue.ratingIssueProfileDate,
+        notes: issue.notes,
+        untimely_exemption: issue.untimelyExemption,
+        untimely_exemption_notes: issue.untimelyExemptionNotes,
+        ramp_claim_id: issue.rampClaimId,
+        vacols_id: issue.vacolsId,
+        vacols_sequence_id: issue.vacolsSequenceId,
+        contested_decision_isssue_id: issue.decisionIssueId,
+        ineligible_reason: issue.ineligibleReason,
+        ineligible_due_to_id: issue.ineligibleDueToId
+      };
+    });
 };
 
 const formatNonratingRequestIssues = (state) => {
-  if (state.addedIssues && state.addedIssues.length > 0) {
-    // we're using the new add issues page
-    return state.addedIssues.filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
-      return {
-        issue_category: issue.category,
-        decision_text: issue.description,
-        decision_date: formatDateStringForApi(issue.decisionDate),
-        untimely_exemption: issue.untimelyExemption,
-        untimely_exemption_notes: issue.untimelyExemptionNotes,
-        vacols_id: issue.vacolsId,
-        vacols_sequence_id: issue.vacolsSequenceId,
-        ineligible_due_to_id: issue.ineligibleDueToId,
-        ineligible_reason: issue.ineligibleReason
-      };
-    });
-  }
-
-  // default to original format
-  return _(state.nonRatingRequestIssues).
-    filter((issue) => {
-      return validNonratingRequestIssue(issue);
-    }).
-    map((issue) => {
-      return {
-        decision_text: issue.description,
-        issue_category: issue.category,
-        decision_date: formatDateStringForApi(issue.decisionDate)
-      };
-    }).
-    value();
+  return (state.addedIssues || []).filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
+    return {
+      request_issue_id: issue.id,
+      contested_decision_isssue_id: issue.decisionIssueId,
+      issue_category: issue.category,
+      decision_text: issue.description,
+      decision_date: formatDateStringForApi(issue.decisionDate),
+      untimely_exemption: issue.untimelyExemption,
+      untimely_exemption_notes: issue.untimelyExemptionNotes,
+      vacols_id: issue.vacolsId,
+      vacols_sequence_id: issue.vacolsSequenceId,
+      ineligible_due_to_id: issue.ineligibleDueToId,
+      ineligible_reason: issue.ineligibleReason
+    };
+  });
 };
 
 export const formatIssues = (state) => {
@@ -341,7 +315,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         date: formatDateStr(profileDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
-        sourceHigherLevelReview: issue.sourceHigherLevelReview,
+        sourceReviewType: issue.sourceReviewType,
         promulgationDate: issue.promulgationDate,
         profileDate,
         timely: issue.timely,

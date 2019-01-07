@@ -35,6 +35,13 @@ class EndProduct
     "040SCNRPMC" => "PMC Supplemental Claim Non-Rating"
   }.freeze
 
+  EFFECTUATION_CODES = {
+    "030BGR" => "Board Grant Rating",
+    "030BGNR" => "Board Grant Non-Rating",
+    "030BGRPMC" => "PMC Board Grant Rating",
+    "030BGNRPMC" => "PMC Board Grant Non-Rating"
+  }.freeze
+
   DISPATCH_CODES = {
     # TODO(jd): Remove this when we've verified they are
     # no longer needed. Maybe 30 days after May 2017?
@@ -66,7 +73,7 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES)
+  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES).merge(EFFECTUATION_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
@@ -188,7 +195,7 @@ class EndProduct
   end
 
   def dispatch_code?
-    DISPATCH_CODES.keys.include?(claim_type_code)
+    DISPATCH_CODES.key?(claim_type_code)
   end
 
   def dispatch_modifier?

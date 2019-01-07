@@ -83,6 +83,7 @@ class HearingDayRepository
       if hearing_day.is_a?(HearingDay)
         return hearing_day.to_hash
       end
+
       hearing_day_hash = hearing_day.as_json.each_with_object({}) do |(k, v), result|
         result[HearingDayMapper::COLUMN_NAME_REVERSE_MAP[k.to_sym]] = v
       end

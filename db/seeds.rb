@@ -288,11 +288,20 @@ class SeedDB
 
   def create_higher_level_review_tasks
     6.times do
+      veteran = FactoryBot.create(:veteran)
+      epe = FactoryBot.create(:end_product_establishment, veteran_file_number: veteran.file_number)
       higher_level_review = FactoryBot.create(
         :higher_level_review,
-        request_issues: FactoryBot.create_list(:request_issue, 3),
-        veteran_file_number: FactoryBot.create(:veteran).file_number
+        end_product_establishments: [epe],
+        veteran_file_number: veteran.file_number
       )
+      3.times do
+        FactoryBot.create(:request_issue,
+                          :nonrating,
+                          end_product_establishment: epe,
+                          veteran_participant_id: veteran.participant_id,
+                          review_request: higher_level_review)
+      end
       FactoryBot.create(:higher_level_review_task,
                         assigned_to: Organization.find_by(name: "National Cemetery Association"),
                         appeal: higher_level_review)
@@ -593,8 +602,8 @@ class SeedDB
     atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
 
     # Happens in CaseReviewConcern.update_task_and_issue_dispositions()
-    atty_task.mark_as_complete!
-    judge_task.mark_as_complete!
+    atty_task.update!(status: Constants.TASK_STATUSES.completed)
+    judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
     qr_org_task = QualityReviewTask.create_from_root_task(root_task)
 

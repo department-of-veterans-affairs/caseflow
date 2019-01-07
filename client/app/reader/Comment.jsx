@@ -7,7 +7,7 @@ import Button from '../components/Button';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { openAnnotationDeleteModal } from '../reader/AnnotationLayer/AnnotationActions';
+import { openAnnotationDeleteModal, openAnnotationShareModal } from '../reader/AnnotationLayer/AnnotationActions';
 import { INTERACTION_TYPES } from '../reader/analytics';
 import Highlight from '../components/Highlight';
 
@@ -21,6 +21,8 @@ export class Comment extends React.Component {
   onEditComment = () => this.props.onEditComment(this.props.uuid)
 
   onClickDelete = () => this.props.openAnnotationDeleteModal(this.props.uuid, INTERACTION_TYPES.VISIBLE_UI)
+
+  onShareComment = () => this.props.openAnnotationShareModal(this.props.uuid, INTERACTION_TYPES.VISIBLE_UI)
 
   getControlButtons = () => {
     return <div>
@@ -38,6 +40,15 @@ export class Comment extends React.Component {
         classNames={['cf-btn-link comment-control-button']}
         onClick={this.onEditComment}>
           Edit
+      </Button>
+      <span className="comment-control-button-divider">
+          |
+      </span>
+      <Button
+        name={`share-comment-${this.props.uuid}`}
+        classNames={['cf-btn-link comment-control-button']}
+        onClick={this.onShareComment}>
+          Share
       </Button>
     </div>;
   }
@@ -118,6 +129,7 @@ Comment.propTypes = {
   selected: PropTypes.bool,
   onEditComment: PropTypes.func,
   openAnnotationDeleteModal: PropTypes.func,
+  openAnnotationShareModal: PropTypes.func,
   onJumpToComment: PropTypes.func,
   onClick: PropTypes.func,
   page: PropTypes.number,
@@ -126,7 +138,10 @@ Comment.propTypes = {
 };
 
 const mapStateToProps = null;
-const mapDispatchToProps = (dispatch) => bindActionCreators({ openAnnotationDeleteModal }, dispatch);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  openAnnotationDeleteModal,
+  openAnnotationShareModal
+}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Comment);
 

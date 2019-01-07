@@ -84,6 +84,7 @@ class RampElection < RampReview
 
   def validate_receipt_date
     return unless receipt_date
+
     validate_receipt_date_not_before_ramp
     validate_receipt_date_not_in_future
   end

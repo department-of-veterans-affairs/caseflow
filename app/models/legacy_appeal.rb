@@ -12,6 +12,7 @@ class LegacyAppeal < ApplicationRecord
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
+  has_one :special_issue_list, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -139,6 +140,7 @@ class LegacyAppeal < ApplicationRecord
 
   def number_of_documents_after_certification
     return 0 unless certification_date
+
     documents.count { |d| d.received_at && d.received_at > certification_date }
   end
 
@@ -170,11 +172,13 @@ class LegacyAppeal < ApplicationRecord
 
   def form9_due_date
     return unless notification_date && soc_date
+
     [notification_date + 1.year, soc_date + 60.days].max.to_date
   end
 
   def cavc_due_date
     return unless decided_by_bva?
+
     (decision_date + 120.days).to_date
   end
 
@@ -221,7 +225,7 @@ class LegacyAppeal < ApplicationRecord
   def power_of_attorney
     # TODO: this will only return a single power of attorney. There are sometimes multiple values, eg.
     # when a contesting claimant is present. Refactor so we surface all POA data.
-    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
+    @power_of_attorney ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
       # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
       poa.class.repository.set_vacols_values(
         poa: poa,
@@ -459,6 +463,7 @@ class LegacyAppeal < ApplicationRecord
 
   def documents_match?
     return false if missing_certification_data?
+
     nod.matching? && soc.matching? && form9.matching? && ssocs.all?(&:matching?)
   end
 
@@ -566,7 +571,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def reviewing_judge_name
-    das_assignments.sort_by(&:created_at).last.try(:assigned_by_name)
+    das_assignments.max_by(&:created_at).try(:assigned_by_name)
   end
 
   attr_writer :issues
@@ -583,7 +588,7 @@ class LegacyAppeal < ApplicationRecord
     issues.select do |issue|
       issue.disposition_id.nil? || (
         issue.disposition_id.to_i.between?(1, 9) &&
-        Constants::VACOLS_DISPOSITIONS_BY_ID.keys.include?(issue.disposition_id)
+        Constants::VACOLS_DISPOSITIONS_BY_ID.key?(issue.disposition_id)
       )
     end
   end
@@ -634,14 +639,7 @@ class LegacyAppeal < ApplicationRecord
     # values, so we should not sanitize the vbms_id.
     return vbms_id.to_s if vbms_id =~ /DEMO/ && Rails.env.development?
 
-    numeric = vbms_id.gsub(/[^0-9]/, "")
-
-    # ensure 8 digits if "C"-type id
-    if vbms_id.ends_with?("C")
-      numeric.rjust(8, "0")
-    else
-      numeric
-    end
+    LegacyAppeal.veteran_file_number_from_bfcorlid vbms_id
   end
 
   # Alias sanitized_vbms_id becauase file_number is the term used VBA wide for this veteran identifier
@@ -757,6 +755,7 @@ class LegacyAppeal < ApplicationRecord
 
   def fuzzy_matched_document(type, vacols_datetime, excluding: [])
     return nil unless vacols_datetime
+
     Document.new(type: type, vacols_date: vacols_datetime.to_date).tap do |doc|
       doc.fuzzy_match_vbms_document_from(exclude_and_sort_documents(excluding))
     end
@@ -797,6 +796,17 @@ class LegacyAppeal < ApplicationRecord
         .reject { |a| a.latest_event_date.nil? }
         .sort_by(&:latest_event_date)
         .reverse
+    end
+
+    def veteran_file_number_from_bfcorlid(bfcorlid)
+      numeric = bfcorlid.gsub(/[^0-9]/, "")
+
+      # ensure 8 digits if "C"-type id
+      if bfcorlid.ends_with?("C")
+        numeric.rjust(8, "0")
+      else
+        numeric
+      end
     end
 
     def bgs
