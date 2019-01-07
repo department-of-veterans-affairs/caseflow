@@ -12,13 +12,13 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'In progress tasks',
       page: <TaskTableTab
         key="inprogress"
-        columns={{ includeDaysWaiting: true }}
+        predefinedColumns={{ includeDaysWaiting: true }}
         tasks={this.props.inProgressTasks} />
     }, {
       label: 'Completed tasks',
       page: <TaskTableTab
         key="completed"
-        columns={{ includeCompletedDate: true }}
+        predefinedColumns={{ includeCompletedDate: true }}
         tasks={this.props.completedTasks} />
     }];
 
@@ -35,7 +35,7 @@ class TaskTableTab extends React.PureComponent {
 
     this.state = {
       allTasks: this.props.tasks,
-      columns: this.props.columns,
+      predefinedColumns: this.props.predefinedColumns,
       shownTasks: this.props.tasks,
       searchText: '',
       isReviewFilterOpen: false
@@ -91,7 +91,7 @@ class TaskTableTab extends React.PureComponent {
       </div>
       <div className="section-hearings-list">
         <TaskTableUnconnected
-          {...this.state.columns}
+          {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.appeal.id}
           customColumns={[claimantColumn(), veteranParticipantIdColumn(),
             decisionReviewTypeColumn(
