@@ -71,7 +71,7 @@ class HearingRepository
 
       if hearing_day[:hearing_type] == "C"
         update_co_hearing(
-          hearing_day[:hearing_date].to_datetime.change(
+          hearing_day[:scheduled_for].to_datetime.change(
             hour: time["h"].to_i,
             minute: time["m"],
             offset: time["offset"]
@@ -97,7 +97,7 @@ class HearingRepository
     end
 
     def create_child_co_hearing(hearing_date_str, appeal)
-      hearing_day = HearingDay.find_by(hearing_type: "C", hearing_date: hearing_date_str.to_date)
+      hearing_day = HearingDay.find_by(hearing_type: "C", scheduled_for: hearing_date_str.to_date)
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil

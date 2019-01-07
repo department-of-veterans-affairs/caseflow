@@ -32,7 +32,7 @@ class HearingDocket
     @slots ||= HearingDayRepository.slots_based_on_type(
       staff: ro_staff[0],
       type: type,
-      date: date
+      date: scheduled_for
     ) || SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
   end
 
