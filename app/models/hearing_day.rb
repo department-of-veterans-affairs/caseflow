@@ -50,7 +50,7 @@ class HearingDay < ApplicationRecord
 
   class << self
     def create_hearing_day(hearing_hash)
-      hearing_date = hearing_hash[:hearing_date]
+      hearing_date = hearing_hash[:scheduled_for]
       hearing_date = if hearing_date.is_a?(DateTime) | hearing_date.is_a?(Date)
                        hearing_date
                      else
@@ -80,14 +80,14 @@ class HearingDay < ApplicationRecord
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
-        cf_video_and_co = where("DATE(hearing_date) between ? and ?", start_date, end_date).each_with_object([])
+        cf_video_and_co = where("DATE(scheduled_for) between ? and ?", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
       elsif regional_office == HEARING_TYPES[:central]
-        cf_video_and_co = where("hearing_type = ? and DATE(hearing_date) between ? and ?",
+        cf_video_and_co = where("hearing_type = ? and DATE(scheduled_for) between ? and ?",
                                 "C", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
       else
-        cf_video_and_co = where("regional_office = ? and DATE(hearing_date) between ? and ?",
+        cf_video_and_co = where("regional_office = ? and DATE(scheduled_for) between ? and ?",
                                 regional_office, start_date, end_date).each_with_object([])
         video_and_co, travel_board =
           HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
@@ -107,7 +107,7 @@ class HearingDay < ApplicationRecord
       enriched_hearing_days = []
       total_video_and_co.each do |hearing_day|
         hearings = if hearing_day[:regional_office].nil?
-                     HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date])
+                     HearingRepository.fetch_co_hearings_for_parent(hearing_day[:scheduled_for])
                    else
                      HearingRepository.fetch_video_hearings_for_parent(hearing_day[:id])
                    end
