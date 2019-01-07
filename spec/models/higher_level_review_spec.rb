@@ -292,8 +292,8 @@ describe HigherLevelReview do
         first_dta_request_issue = RequestIssue.find_by(
           review_request: supplemental_claim,
           contested_decision_issue_id: decision_issues.first.id,
-          rating_issue_reference_id: "rating1",
-          rating_issue_profile_date: decision_issues.first.profile_date,
+          contested_rating_issue_reference_id: "rating1",
+          contested_rating_issue_profile_date: decision_issues.first.profile_date.to_s,
           issue_category: decision_issues.first.issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.first.approx_decision_date
@@ -305,8 +305,8 @@ describe HigherLevelReview do
         second_dta_request_issue = RequestIssue.find_by(
           review_request: supplemental_claim,
           contested_decision_issue_id: decision_issues.second.id,
-          rating_issue_reference_id: "rating2",
-          rating_issue_profile_date: decision_issues.second.profile_date,
+          contested_rating_issue_reference_id: "rating2",
+          contested_rating_issue_profile_date: decision_issues.second.profile_date.to_s,
           issue_category: decision_issues.second.issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.second.approx_decision_date
@@ -322,7 +322,7 @@ describe HigherLevelReview do
         it "creates end product establishment with pension ep code" do
           subject
 
-          first_dta_request_issue = RequestIssue.find_by(rating_issue_reference_id: "rating1")
+          first_dta_request_issue = RequestIssue.find_by(contested_rating_issue_reference_id: "rating1")
 
           expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDERPMC")
         end

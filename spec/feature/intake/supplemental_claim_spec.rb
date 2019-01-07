@@ -310,7 +310,7 @@ feature "Supplemental Claim Intake" do
     expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
       claim_id: ratings_end_product_establishment.reference_id,
       rating_issue_contention_map: {
-        rating_request_issue.rating_issue_reference_id => rating_request_issue.contention_reference_id
+        rating_request_issue.contested_rating_issue_reference_id => rating_request_issue.contention_reference_id
       }
     )
 
@@ -321,15 +321,15 @@ feature "Supplemental Claim Intake" do
 
     expect(supplemental_claim.request_issues.count).to eq 2
     expect(supplemental_claim.request_issues.first).to have_attributes(
-      rating_issue_reference_id: "def456",
-      rating_issue_profile_date: profile_date,
+      contested_rating_issue_reference_id: "def456",
+      contested_rating_issue_profile_date: profile_date.to_s,
       description: "PTSD denied",
       decision_date: nil,
       rating_issue_associated_at: Time.zone.now
     )
     expect(supplemental_claim.request_issues.last).to have_attributes(
-      rating_issue_reference_id: nil,
-      rating_issue_profile_date: nil,
+      contested_rating_issue_reference_id: nil,
+      contested_rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
       decision_date: 1.month.ago.to_date
@@ -479,7 +479,7 @@ feature "Supplemental Claim Intake" do
       create(
         :request_issue,
         end_product_establishment: active_epe,
-        rating_issue_reference_id: duplicate_reference_id,
+        contested_rating_issue_reference_id: duplicate_reference_id,
         description: "Old injury"
       )
     end
@@ -641,7 +641,7 @@ feature "Supplemental Claim Intake" do
 
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
-               rating_issue_reference_id: "xyz123",
+               contested_rating_issue_reference_id: "xyz123",
                description: "Left knee granted 2",
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note"
@@ -685,13 +685,13 @@ feature "Supplemental Claim Intake" do
                end_product_establishment_id: non_rating_end_product_establishment.id
              )).to_not be_nil
 
-      duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
+      duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
       ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
-      expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
+      expect(RequestIssue.find_by(contested_rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
