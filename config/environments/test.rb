@@ -64,6 +64,7 @@ Rails.application.configure do
   ENV["METRICS_PASSWORD"] = "caseflow"
   ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
   ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
+  ENV["VA_DOT_GOV_API_URL"] = "https://staging-api.va.gov/"
 
   # For testing uncertification methods
   ENV["TEST_USER_ID"] = "TEST_USER_ID"
