@@ -30,7 +30,7 @@ class BoardGrantEffectuation < ApplicationRecord
   end
 
   def effectuated_in_vbms?
-    %w[compensation pension].include?(granted_decision_issue.benefit_type)
+    %w[compensation pension].include?(benefit_type)
   end
 
   def hydrate_from_granted_decision_issue
@@ -42,7 +42,7 @@ class BoardGrantEffectuation < ApplicationRecord
     if effectuated_in_vbms?
       self.end_product_establishment = find_or_build_end_product_establishment
     else
-      # create_noncomp_task!
+      create_noncomp_task!
     end
   end
 
@@ -94,7 +94,7 @@ class BoardGrantEffectuation < ApplicationRecord
     return unless effectuated_in_vbms?
 
     issue_code_type = granted_decision_issue.rating? ? :rating : :nonrating
-    issue_code_type = "pension_#{issue_code_type}".to_sym if granted_decision_issue.benefit_type == "pension"
+    issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
     END_PRODUCT_CODES[issue_code_type]
   end
 
