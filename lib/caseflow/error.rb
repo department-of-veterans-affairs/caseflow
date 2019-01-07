@@ -22,6 +22,10 @@ module Caseflow::Error
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
 
+  class VaDotGovAPIError < SerializableError; end
+  class VaDotGovRequestError < VaDotGovAPIError; end
+  class VaDotGovServerError < VaDotGovAPIError; end
+
   class ActionForbiddenError < SerializableError
     def initialize(args)
       @code = args[:code] || 403
