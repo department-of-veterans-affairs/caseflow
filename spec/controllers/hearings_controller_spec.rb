@@ -12,7 +12,7 @@ RSpec.describe HearingsController, type: :controller do
                  add_on: true,
                  disposition: :held,
                  prepped: true }
-      patch :update, as: :json, params: { id: hearing.id, hearing: params }
+      patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["notes"]).to eq "Test"
@@ -53,7 +53,7 @@ RSpec.describe HearingsController, type: :controller do
                      }
                    },
                    prepped: true }
-        patch :update, as: :json, params: { id: hearing.id, hearing: params }
+        patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
         expect(response.status).to eq 200
 
         expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id]).hearing_date).to eq(
