@@ -76,6 +76,18 @@ feature "Higher-Level Review" do
     )
   end
 
+  let!(:future_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: receipt_date + 2.days,
+      profile_date: receipt_date + 2.days,
+      issues: [
+        { reference_id: "future1", decision_text: "Future rating issue 1" },
+        { reference_id: "future2", decision_text: "Future rating issue 2" }
+      ]
+    )
+  end
+
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -427,7 +439,7 @@ feature "Higher-Level Review" do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.strftime("%D")
 
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -700,6 +712,7 @@ feature "Higher-Level Review" do
       expect(page).to have_content("PTSD denied")
       expect(page).to have_content("Old injury")
       expect(page).to have_content("supplemental claim decision issue")
+      expect(page).to_not have_content("Future rating issue 1")
 
       # test canceling adding an issue by closing the modal
       safe_click ".close-modal"
