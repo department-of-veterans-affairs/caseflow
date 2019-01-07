@@ -121,7 +121,7 @@ describe RatingIssue do
       create(
         :request_issue,
         end_product_establishment: active_end_product_establishment,
-        rating_issue_reference_id: reference_id,
+        contested_rating_issue_reference_id: reference_id,
         review_request_type: review_request_type
       )
     end
@@ -130,7 +130,7 @@ describe RatingIssue do
       create(
         :request_issue,
         end_product_establishment: inactive_end_product_establishment,
-        rating_issue_reference_id: reference_id,
+        contested_rating_issue_reference_id: reference_id,
         review_request_type: review_request_type
       )
     end
