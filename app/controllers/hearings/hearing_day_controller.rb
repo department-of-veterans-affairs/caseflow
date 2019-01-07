@@ -25,9 +25,6 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def show
-
-    binding.pry
-
     hearing_day = HearingDayRepository.to_canonical_hash(HearingDay.find_hearing_day(nil, params[:id]))
     hearings, regional_office = fetch_hearings(hearing_day, params[:id]).values_at(:hearings, :regional_office)
 
