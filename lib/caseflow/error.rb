@@ -22,6 +22,10 @@ module Caseflow::Error
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
 
+  class VaDotGovAPIError < SerializableError; end
+  class VaDotGovRequestError < VaDotGovAPIError; end
+  class VaDotGovServerError < VaDotGovAPIError; end
+
   class ActionForbiddenError < SerializableError
     def initialize(args)
       @code = args[:code] || 403
@@ -61,6 +65,13 @@ module Caseflow::Error
       @code = args[:code] || 400
       @message = args[:message] || "Expected 1 BvaDispatchTask received #{@tasks.count} tasks for"\
                                    " appeal #{@appeal_id}, user #{@user_id}"
+    end
+  end
+
+  class RoundRobinTaskDistributorError < SerializableError
+    def initialize(args)
+      @code = args[:code] || 500
+      @message = args[:message] || "RoundRobinTaskDistributor error"
     end
   end
 

@@ -39,7 +39,7 @@ class AppealRepository
 
     true
   rescue ActiveRecord::RecordNotFound
-    return false
+    false
   end
 
   def self.appeals_by_vbms_id(vbms_id)
@@ -253,6 +253,7 @@ class AppealRepository
   # dates in VACOLS are incorrectly recorded as UTC.
   def self.normalize_vacols_date(datetime)
     return nil unless datetime
+
     utc_datetime = datetime.in_time_zone("UTC")
 
     Time.zone.local(
@@ -370,7 +371,7 @@ class AppealRepository
     end
 
     VACOLS::Case.transaction do
-      case_record.update_attributes!(
+      case_record.update!(
         bfmpro: "HIS",
         bfddec: dateshift_to_utc(closed_on),
         bfdc: disposition_code,
@@ -381,7 +382,7 @@ class AppealRepository
 
       case_record.update_vacols_location!("99")
 
-      folder_record.update_attributes!(
+      folder_record.update!(
         ticukey: "HISTORY",
         tikeywrd: "HISTORY",
         tidcls: dateshift_to_utc(closed_on),
@@ -418,11 +419,11 @@ class AppealRepository
     fail AppealNotValidToClose unless case_record.bfmpro == "REM"
 
     VACOLS::Case.transaction do
-      case_record.update_attributes!(bfmpro: "HIS")
+      case_record.update!(bfmpro: "HIS")
 
       case_record.update_vacols_location!("99")
 
-      folder_record.update_attributes!(
+      folder_record.update!(
         ticukey: "HISTORY",
         tikeywrd: "HISTORY",
         timdtime: VacolsHelper.local_time_with_utc_timezone,
@@ -512,7 +513,7 @@ class AppealRepository
     tikeywrd = adv_status ? "ADVANCE" : "ACTIVE"
 
     VACOLS::Case.transaction do
-      case_record.update_attributes!(
+      case_record.update!(
         bfmpro: bfmpro,
         bfddec: nil,
         bfdc: nil,
@@ -523,7 +524,7 @@ class AppealRepository
 
       case_record.update_vacols_location!(previous_active_location)
 
-      folder_record.update_attributes!(
+      folder_record.update!(
         ticukey: "ACTIVE",
         tikeywrd: tikeywrd,
         tidcls: nil,
@@ -564,11 +565,11 @@ class AppealRepository
     fail not_valid_to_reopen_err unless VACOLS::Case.where(bfkey: follow_up_appeal_key).count == 1
 
     VACOLS::Case.transaction do
-      case_record.update_attributes!(bfmpro: "REM")
+      case_record.update!(bfmpro: "REM")
 
       case_record.update_vacols_location!(previous_active_location)
 
-      folder_record.update_attributes!(
+      folder_record.update!(
         ticukey: "REMAND",
         tikeywrd: "REMAND",
         timdtime: VacolsHelper.local_time_with_utc_timezone,

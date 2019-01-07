@@ -1,20 +1,18 @@
 describe DecisionReviewsController, type: :controller do
   before do
     FeatureToggle.enable!(:decision_reviews)
+
+    User.stub = user
   end
 
   after do
     FeatureToggle.disable!(:decision_reviews)
   end
 
+  let(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+  let(:user) { create(:default_user) }
+
   describe "#index" do
-    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
-    let(:user) { create(:default_user) }
-
-    before do
-      User.stub = user
-    end
-
     context "user is not in org" do
       it "returns unauthorized" do
         get :index, params: { business_line_slug: non_comp_org.url }
@@ -41,6 +39,39 @@ describe DecisionReviewsController, type: :controller do
         get :index, params: { business_line_slug: "foobar" }
 
         expect(response.status).to eq 404
+      end
+    end
+  end
+
+  describe "#show" do
+    let(:task) { create(:higher_level_review_task).becomes(DecisionReviewTask) }
+
+    context "user is in org" do
+      before do
+        OrganizationsUser.add_user_to_organization(user, non_comp_org)
+      end
+
+      it "displays task details page" do
+        get :show, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
+
+        expect(response.status).to eq 200
+      end
+
+      context "task does not exist" do
+        it "returns 404" do
+          get :show, params: { decision_review_business_line_slug: non_comp_org.url, task_id: 0 }
+
+          expect(response.status).to eq 404
+        end
+      end
+    end
+
+    context "user is not in org" do
+      it "returns unauthorized" do
+        get :show, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
+
+        expect(response.status).to eq 302
+        expect(response.body).to match(/unauthorized/)
       end
     end
   end

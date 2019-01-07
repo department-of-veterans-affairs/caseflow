@@ -27,13 +27,13 @@ class BvaDispatchTask < GenericTask
       fail(Caseflow::Error::BvaDispatchDoubleOutcode, appeal_id: appeal.id, task_id: task.id) if task.completed?
 
       params[:appeal_id] = appeal.id
-
       create_decision_document!(params)
 
       task.update!(status: Constants.TASK_STATUSES.completed)
       task.root_task.update!(status: Constants.TASK_STATUSES.completed)
     rescue ActiveRecord::RecordInvalid => e
       raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message.match?(/^Validation failed:/)
+
       raise e
     end
 

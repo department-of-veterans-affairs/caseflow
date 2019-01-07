@@ -3,8 +3,10 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
-  has_many :decision_issues, through: :request_issues
+
+  # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
+
   has_one :special_issue_list
 
   with_options on: :intake_review do
@@ -36,7 +38,7 @@ class Appeal < DecisionReview
   }
   # rubocop:enable Metrics/LineLength
 
-  UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/
+  UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
@@ -62,17 +64,19 @@ class Appeal < DecisionReview
     )
   end
 
+  def caseflow_only_edit_issues_url
+    "/appeals/#{uuid}/edit"
+  end
+
   def type
     "Original"
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
-  # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
   def location_code
     location_code = nil
-    root_task = tasks.first.root_task if !tasks.empty?
 
     if root_task && root_task.status == Constants.TASK_STATUSES.completed
       location_code = COPY::CASE_LIST_TABLE_POST_DECISION_LABEL
@@ -92,7 +96,6 @@ class Appeal < DecisionReview
 
     location_code
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 
   def attorney_case_reviews
@@ -123,7 +126,13 @@ class Appeal < DecisionReview
   end
 
   def decision_date
-    decision_documents.last.try(:decision_date)
+    decision_document.try(:decision_date)
+  end
+
+  def decision_document
+    # NOTE: This is used for outcoding and effectuations
+    #       When post decisional motions are supported, this will need to be accounted for.
+    decision_documents.last
   end
 
   def hearing_docket?
@@ -204,6 +213,7 @@ class Appeal < DecisionReview
       issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
+    request_issues.reload
   end
 
   def serializer_class
@@ -212,6 +222,7 @@ class Appeal < DecisionReview
 
   def docket_number
     return "Missing Docket Number" unless receipt_date
+
     "#{receipt_date.strftime('%y%m%d')}-#{id}"
   end
 
@@ -269,13 +280,15 @@ class Appeal < DecisionReview
     processed!
   end
 
-  private
-
-  def contestable_decision_issues
-    DecisionIssue.where(participant_id: veteran.participant_id)
-      .where.not(decision_review_type: "Appeal")
-      .select { |issue| issue.approx_decision_date && issue.approx_decision_date < receipt_date }
+  def outcoded?
+    root_task && root_task.status == Constants.TASK_STATUSES.completed
   end
+
+  def root_task
+    RootTask.find_by(appeal_id: id)
+  end
+
+  private
 
   def bgs
     BGSService.new

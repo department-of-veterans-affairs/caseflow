@@ -10,7 +10,7 @@ class AttorneyLegacyTask < LegacyTask
     actions = [
       {
         label: COPY::ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
-        value: "draft_decision/dispositions"
+        value: "draft_decision/special_issues"
       },
       {
         label: COPY::ATTORNEY_CHECKOUT_OMO_LABEL,

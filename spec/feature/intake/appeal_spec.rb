@@ -46,7 +46,7 @@ feature "Appeal Intake" do
 
   let(:untimely_days) { 372.days }
 
-  let(:profile_date) { post_ramp_start_date - 35.days }
+  let(:profile_date) { post_ramp_start_date.to_datetime - 35.days }
 
   let(:untimely_date) { receipt_date - untimely_days - 1.day }
 
@@ -183,20 +183,20 @@ feature "Appeal Intake" do
 
     expect(appeal.request_issues.count).to eq 2
 
-    rating_request_issue = appeal.request_issues.find(&:rating_issue_reference_id)
-    nonrating_request_issue = appeal.request_issues.find { |ri| ri.rating_issue_reference_id.nil? }
+    rating_request_issue = appeal.request_issues.rating.first
+    nonrating_request_issue = appeal.request_issues.nonrating.first
 
     expect(rating_request_issue).to have_attributes(
-      rating_issue_reference_id: "def456",
+      contested_rating_issue_reference_id: "def456",
+      contested_rating_issue_profile_date: profile_date.to_s,
       description: "PTSD denied",
       decision_date: nil,
       benefit_type: "compensation"
     )
-    expect(rating_request_issue.rating_issue_profile_date.to_date).to eq(profile_date.to_date)
 
     expect(nonrating_request_issue).to have_attributes(
-      rating_issue_reference_id: nil,
-      rating_issue_profile_date: nil,
+      contested_rating_issue_reference_id: nil,
+      contested_rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
       benefit_type: "compensation"
@@ -350,7 +350,7 @@ feature "Appeal Intake" do
     request_issue_in_progress = create(
       :request_issue,
       end_product_establishment: epe,
-      rating_issue_reference_id: duplicate_reference_id,
+      contested_rating_issue_reference_id: duplicate_reference_id,
       description: "Old injury"
     )
 
@@ -508,21 +508,21 @@ feature "Appeal Intake" do
              id: appeal.id,
              veteran_file_number: veteran.file_number,
              established_at: Time.zone.now
-    )).to_not be_nil
+           )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
-             rating_issue_reference_id: "xyz123",
+             contested_rating_issue_reference_id: "xyz123",
              description: "Left knee granted 2",
              notes: "I am an issue note"
-    )).to_not be_nil
+           )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
              description: "Really old injury",
              untimely_exemption: false,
              untimely_exemption_notes: "I am an exemption note"
-    )).to_not be_nil
+           )).to_not be_nil
 
     active_duty_adjustments_request_issue = RequestIssue.find_by!(
       review_request: appeal,
@@ -548,42 +548,91 @@ feature "Appeal Intake" do
              review_request: appeal,
              description: "This is an unidentified issue",
              is_unidentified: true
-    )).to_not be_nil
+           )).to_not be_nil
 
     # Issues before AMA
     expect(RequestIssue.find_by(
              review_request: appeal,
              description: "Non-RAMP Issue before AMA Activation",
              ineligible_reason: :before_ama
-    )).to_not be_nil
+           )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
              description: "Issue before AMA Activation from RAMP",
              ineligible_reason: nil,
              ramp_claim_id: "ramp_claim_id"
-    )).to_not be_nil
+           )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
              description: "A nonrating issue before AMA",
              ineligible_reason: :before_ama
-    )).to_not be_nil
+           )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
              description: "A nonrating issue before AMA",
              decision_date: pre_ramp_start_date
-    )).to_not be_nil
+           )).to_not be_nil
 
-    duplicate_request_issues = RequestIssue.where(rating_issue_reference_id: duplicate_reference_id)
+    duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
     ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
 
     expect(duplicate_request_issues.count).to eq(2)
     expect(duplicate_request_issues).to include(request_issue_in_progress)
     expect(ineligible_issue).to_not eq(request_issue_in_progress)
 
-    expect(RequestIssue.find_by(rating_issue_reference_id: old_reference_id).eligible?).to eq(false)
+    expect(RequestIssue.find_by(contested_rating_issue_reference_id: old_reference_id).eligible?).to eq(false)
+  end
+
+  context "when veteran chooses decision issue from a previous appeal" do
+    let(:previous_appeal) { create(:appeal, :outcoded, veteran: veteran) }
+    let(:appeal_reference_id) { "appeal123" }
+    let!(:previous_appeal_request_issue) do
+      create(
+        :request_issue,
+        review_request: previous_appeal,
+        contested_rating_issue_reference_id: appeal_reference_id
+      )
+    end
+
+    let!(:previous_appeal_decision_issue) do
+      create(:decision_issue,
+             decision_review: previous_appeal,
+             request_issues: [previous_appeal_request_issue],
+             rating_issue_reference_id: appeal_reference_id,
+             participant_id: veteran.participant_id,
+             promulgation_date: 1.month.ago,
+             description: "appeal decision issue",
+             decision_text: "appeal decision issue",
+             profile_date: profile_date,
+             benefit_type: "compensation")
+    end
+
+    scenario "the issue is ineligible" do
+      start_appeal(
+        veteran,
+        veteran_is_not_claimant: false
+      )
+      visit "/intake/add_issues"
+
+      expect(page).to have_content("Add / Remove Issues")
+
+      click_intake_add_issue
+      add_intake_rating_issue("appeal decision issue")
+      expect(page).to have_content(
+        "appeal decision issue #{Constants.INELIGIBLE_REQUEST_ISSUES.appeal_to_appeal}"
+      )
+      click_intake_finish
+
+      expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+      expect(RequestIssue.find_by(description: "appeal decision issue").ineligible_reason).to eq("appeal_to_appeal")
+      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      expect(ineligible_checklist).to have_content(
+        "appeal decision issue #{Constants.INELIGIBLE_REQUEST_ISSUES.appeal_to_appeal}"
+      )
+    end
   end
 
   it "Shows a review error when something goes wrong" do
@@ -704,7 +753,7 @@ feature "Appeal Intake" do
                  ineligible_reason: :legacy_appeal_not_eligible,
                  vacols_id: "vacols2",
                  vacols_sequence_id: "1"
-        )).to_not be_nil
+               )).to_not be_nil
 
         expect(page).to have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
       end
@@ -740,7 +789,7 @@ feature "Appeal Intake" do
                  ineligible_reason: :legacy_issue_not_withdrawn,
                  vacols_id: "vacols1",
                  vacols_sequence_id: "1"
-        )).to_not be_nil
+               )).to_not be_nil
 
         expect(page).to_not have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
       end

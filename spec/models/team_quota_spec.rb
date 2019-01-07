@@ -4,7 +4,7 @@ class FakeTask < Dispatch::Task
 end
 
 class OtherFakeTask < Dispatch::Task
-  def self.completed_on(_)
+  def self.completed_on(_date)
     []
   end
 end

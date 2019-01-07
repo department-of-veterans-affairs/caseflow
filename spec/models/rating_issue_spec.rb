@@ -121,7 +121,7 @@ describe RatingIssue do
       create(
         :request_issue,
         end_product_establishment: active_end_product_establishment,
-        rating_issue_reference_id: reference_id,
+        contested_rating_issue_reference_id: reference_id,
         review_request_type: review_request_type
       )
     end
@@ -130,7 +130,7 @@ describe RatingIssue do
       create(
         :request_issue,
         end_product_establishment: inactive_end_product_establishment,
-        rating_issue_reference_id: reference_id,
+        contested_rating_issue_reference_id: reference_id,
         review_request_type: review_request_type
       )
     end
@@ -165,34 +165,6 @@ describe RatingIssue do
       rating_issue = RatingIssue.new(reference_id: reference_id)
 
       expect(rating_issue.title_of_active_review).to be_nil
-    end
-  end
-
-  context "#source_higher_level_review" do
-    before do
-      Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
-    end
-
-    let(:reference_id) { "abc123" }
-    let(:contention_ref_id) { 123 }
-    let!(:request_issue) do
-      create(
-        :request_issue,
-        rating_issue_reference_id: reference_id,
-        rating_issue_profile_date: Time.zone.today,
-        contention_reference_id: contention_ref_id,
-        review_request: create(:higher_level_review)
-      )
-    end
-    subject do
-      RatingIssue.new(
-        reference_id: reference_id,
-        rba_contentions_data: [{ cntntn_id: contention_ref_id }]
-      )
-    end
-
-    it "flags request_issue as having a previous higher level review" do
-      expect(subject.source_higher_level_review).to eq(request_issue.id)
     end
   end
 end

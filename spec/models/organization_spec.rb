@@ -104,4 +104,44 @@ describe Organization do
       end
     end
   end
+
+  describe ".next_assignee" do
+    let(:org) { FactoryBot.create(:organization) }
+    let(:task_class) { nil }
+
+    subject { org.next_assignee(task_class) }
+
+    context "when no task type is specified" do
+      it "should return nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+
+    context "when task type is specified" do
+      let(:task_class) { GenericTask }
+      it "should return nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+  end
+
+  describe ".automatically_assign_to_member?" do
+    let(:org) { FactoryBot.create(:organization) }
+    let(:task_class) { nil }
+
+    subject { org.automatically_assign_to_member?(task_class) }
+
+    context "when no task type is specified" do
+      it "should return false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when task type is specified" do
+      let(:task_class) { GenericTask }
+      it "should return false" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
 end

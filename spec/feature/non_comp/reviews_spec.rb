@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "NonComp Queue" do
+feature "NonComp Reviews Queue" do
   before do
     FeatureToggle.enable!(:decision_reviews)
   end
@@ -15,17 +15,21 @@ RSpec.feature "NonComp Queue" do
 
     let(:veteran) { create(:veteran) }
     let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+
+    let(:today) { Time.zone.now }
+    let(:last_week) { Time.zone.now - 7.days }
+
     let!(:in_progress_tasks) do
       [
-        create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org),
-        create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org)
+        create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org, assigned_at: last_week),
+        create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org, assigned_at: today)
       ]
     end
 
     let!(:completed_tasks) do
       [
-        create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org),
-        create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org)
+        create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org, completed_at: last_week),
+        create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org, completed_at: today)
       ]
     end
 
@@ -41,12 +45,24 @@ RSpec.feature "NonComp Queue" do
       expect(page).to have_content("Completed tasks")
 
       # default is the in progress page
+      expect(page).to have_content("Days Waiting")
       expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Bob Smith", count: 2)
       expect(page).to have_content(veteran.participant_id, count: 2)
 
+      # ordered by assigned_at descending
+      expect(page).to have_content(
+        /#{veteran.name} 5\d+ 0 0 Higher-Level Review #{veteran.name} 5\d+ 0 6/
+      )
+
       click_on "Completed tasks"
       expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Date Sent")
+
+      # ordered by completed_at descending
+      expect(page).to have_content(
+        /#{today.strftime("%D")} Higher-Level Review #{veteran.name} 5\d+ 0 #{last_week.strftime("%D")}/
+      )
     end
 
     context "with user enabled for intake" do

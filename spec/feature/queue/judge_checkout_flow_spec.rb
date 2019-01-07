@@ -123,8 +123,27 @@ RSpec.feature "Judge checkout flow" do
           expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
         end
 
+        click_label "vamc"
+
+        click_on "Continue"
+
+        # Ensure we can reload the flow and the special issue is saved
+        click_on "Cancel"
+        click_on "Yes, cancel"
+
+        click_dropdown(index: 0)
+
+        # Vamc should still be checked
+        expect(page).to have_field("vamc", checked: true, visible: false)
+
+        # Vamc should also be marked in the database
+        expect(appeal.special_issue_list.vamc).to eq(true)
+        click_on "Continue"
+
         # one issue is decided, excluded from checkout flow
         expect(appeal.issues.length).to eq 2
+
+        expect(page).to have_content("Review Dispositions")
         expect(page.find_all(".issue-disposition-dropdown").length).to eq 1
 
         click_on "Continue"
