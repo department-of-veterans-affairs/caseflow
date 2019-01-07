@@ -84,9 +84,9 @@ RSpec.describe AppealsController, type: :controller do
 
   describe "GET cases/:id" do
     let(:the_case) { FactoryBot.create(:case) }
-    let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: the_case)}
-    let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number)}
-    let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)}
+    let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: the_case) }
+    let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
+    let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
     let(:options) { { caseflow_veteran_id: veteran_id, format: request_format } }
 
     context "when requesting html response" do

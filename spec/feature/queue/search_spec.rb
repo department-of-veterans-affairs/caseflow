@@ -1,5 +1,4 @@
 require "rails_helper"
-# rubocop:disable Style/FormatString
 # rubocop:disable Style/FormatStringToken
 
 RSpec.feature "Search" do
@@ -9,8 +8,8 @@ RSpec.feature "Search" do
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
   let(:veteran_with_no_appeals) { FactoryBot.create(:veteran) }
   let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
-  let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number)}
-  let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)}
+  let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
+  let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
 
   before do
     User.authenticate!(user: attorney_user)
@@ -25,7 +24,7 @@ RSpec.feature "Search" do
       end
 
       it "page displays invalid Veteran ID message" do
-        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
+        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
       it "searching in search bar works" do
@@ -61,7 +60,6 @@ RSpec.feature "Search" do
         expect(find(".cf-other-reviews-table > tbody")).to have_content("Supplemental Claim")
       end
     end
-  end
 
     context "queue case search for appeals that have hearings" do
       context "a case in the search view has a hearing" do
@@ -128,7 +126,7 @@ RSpec.feature "Search" do
 
       it "page displays no cases found message" do
         expect(page).to have_content(
-          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
+          format(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
         )
       end
 
@@ -155,7 +153,7 @@ RSpec.feature "Search" do
       end
 
       it "displays error message on same page" do
-        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
+        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
       end
 
       it "searching in search bar produces another error" do
@@ -163,7 +161,7 @@ RSpec.feature "Search" do
         click_on "Search"
 
         expect(page).to have_content(
-          sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
+          format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
         )
       end
     end
@@ -245,7 +243,7 @@ RSpec.feature "Search" do
       end
 
       it "page displays invalid Veteran ID message" do
-        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
+        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
       it "searching in search bar works" do
@@ -272,7 +270,7 @@ RSpec.feature "Search" do
 
       it "page displays no cases found message" do
         expect(page).to have_content(
-          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
+          format(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
         )
       end
 
@@ -304,14 +302,14 @@ RSpec.feature "Search" do
       end
 
       it "displays error message" do
-        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
+        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
       end
 
       it "searching in search bar works" do
         fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
         click_on "Search"
         expect(page).to have_content(
-          sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
+          format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
         )
       end
 
@@ -346,5 +344,4 @@ RSpec.feature "Search" do
   end
 end
 
-# rubocop:enable Style/FormatString
 # rubocop:enable Style/FormatStringToken
