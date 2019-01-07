@@ -377,7 +377,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def rating_issue_contention_map(request_issues_to_associate)
     request_issues_to_associate.inject({}) do |contention_map, issue|
-      contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
+      contention_map[issue.contested_rating_issue_reference_id] = issue.contention_reference_id
       contention_map
     end
   end
