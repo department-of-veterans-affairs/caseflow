@@ -10,11 +10,17 @@ class BoardGrantEffectuation < ApplicationRecord
   validates :granted_decision_issue, presence: true
   before_save :hydrate_from_granted_decision_issue, on: :create
 
+  has_many :tasks
+
   def contention_text
     granted_decision_issue.formatted_description
   end
 
   private
+
+  def benefit_type
+    granted_decision_issue.benefit_type
+  end
 
   def effectuated_in_vbms?
     granted_decision_issue.benefit_type == "compensation"
@@ -22,13 +28,30 @@ class BoardGrantEffectuation < ApplicationRecord
 
   def hydrate_from_granted_decision_issue
     assign_attributes(
-      appeal: granted_decision_issue.decision_review,
-      decision_document: granted_decision_issue.decision_review.decision_document
+      appeal: appeal,
+      decision_document: appeal.decision_document
     )
 
     if effectuated_in_vbms?
       self.end_product_establishment = find_or_build_end_product_establishment
+    else
+      # create_noncomp_task!
     end
+  end
+
+  def create_noncomp_task!
+    return if tasks.any? { |task| task.is_a?(BoardGrantEffectuationTask) } # TODO: more specific check?
+
+    BoardGrantEffectuationTask.create!(
+      appeal: appeal,
+      assigned_at: Time.zone.now,
+      assigned_to: business_line
+    )
+  end
+
+  def business_line
+    business_line_name = Constants::BENEFIT_TYPES[benefit_type]
+    @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
   end
 
   def find_or_build_end_product_establishment
