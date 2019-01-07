@@ -37,7 +37,9 @@ class EndProduct
 
   EFFECTUATION_CODES = {
     "030BGR" => "Board Grant Rating",
-    "030BGNR" => "Board Grant Non-Rating"
+    "030BGNR" => "Board Grant Non-Rating",
+    "030BGRPMC" => "PMC Board Grant Rating",
+    "030BGNRPMC" => "PMC Board Grant Non-Rating"
   }.freeze
 
   DISPATCH_CODES = {
