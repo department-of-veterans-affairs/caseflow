@@ -13,6 +13,7 @@ import {
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import ActionsDropdown from './components/ActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
+import AddNewTaskButton from './components/AddNewTaskButton';
 
 import COPY from '../../COPY.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
@@ -94,21 +95,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       taskInstructionsIsVisible: false
     };
   }
-
-  changeRoute = () => {
-    const {
-      rootTask,
-      history
-    } = this.props;
-
-    this.props.stageAppeal(rootTask[0].appealId);
-    this.props.resetDecisionOptions();
-    const appealId = rootTask[0].externalAppealId;
-    const uniqueId = rootTask[0].uniqueId;
-    const modalPath = rootTask[0].availableActions[0].value;
-
-    history.push(`/queue/appeals/${appealId}/tasks/${uniqueId}/${modalPath}`);
-  };
 
   toggleTaskInstructionsVisibility = () => {
 
@@ -316,12 +302,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
         <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}</a>
-        { rootTask[0] && rootTask[0].availableActions[0] && <Button
-          linkStyling
-          styling={css({ float: 'right',
-            paddingRight: '10px' })}
-          name={COPY.TASK_SNAPSHOT_ADD_NEW_TASK_LABEL}
-          onClick={this.changeRoute} /> }
+        { rootTask[0] && rootTask[0].availableActions[0] && <AddNewTaskButton rootTask={rootTask[0]} /> }
       </h2>
       <div {...sectionSegmentStyling}>
         <table {...tableStyling}>
