@@ -31,6 +31,10 @@ class LegacyHearing < ApplicationRecord
     self.class.venues[venue_key]
   end
 
+  def external_id
+    vacols_id
+  end
+
   def location
     (type == :central) ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
   end
@@ -173,9 +177,10 @@ class LegacyHearing < ApplicationRecord
         :appellant_state,
         :appellant_zip,
         :readable_location,
-        :appeal_vacols_id
+        :appeal_vacols_id,
+        :external_id
       ],
-      except: :military_service
+      except: [:military_service, :vacols_id]
     ).merge(
       viewed_by_current_user: hearing_views.all.any? do |hearing_view|
         hearing_view.user_id == current_user_id

@@ -219,7 +219,11 @@ class DecisionReview < ApplicationRecord
   end
 
   def unfiltered_contestable_issues_from_ratings
-    cached_rating_issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
+    return [] unless receipt_date
+
+    cached_rating_issues
+      .select { |issue| issue.profile_date && issue.profile_date.to_date < receipt_date }
+      .map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
   end
 
   def contestable_issues_from_ratings
