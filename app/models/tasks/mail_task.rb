@@ -64,81 +64,45 @@ class MailTask < GenericTask
   end
 end
 
-class ColocatedMailTask < MailTask
-  include RoundRobinAssigner
-
-  after_update :create_grandchild_task, if: :should_create_grandchild_task?
-
-  class << self
-    def latest_task
-      Task.where(assigned_to_type: User.name, assigned_to_id: [assignee_pool.pluck(:id)]).order("created_at").last
-    end
-
-    def assignee_pool
-      Colocated.singleton.non_admins.sort_by(&:id)
-    end
-
-    def list_of_assignees
-      assignee_pool.pluck(:css_id)
-    end
-
-    def get_child_task_assignee(parent, _params)
-      parent_colocated_task_already_created?(parent) ? next_assignee : Colocated.singleton
-    end
-
-    def parent_colocated_task_already_created?(parent)
-      parent.is_a?(name.constantize) && parent.assigned_to == Colocated.singleton
-    end
-  end
-
-  def create_grandchild_task
-    self.class.create_child_task(self, nil, instructions: instructions)
-  end
-
-  def should_create_grandchild_task?
-    assigned_to == Colocated.singleton
-  end
-end
-
-class AddressChangeMailTask < ColocatedMailTask
+class AddressChangeMailTask < MailTask
   class << self
     def label
       COPY::ADDRESS_CHANGE_MAIL_TASK_LABEL
     end
 
-    def get_child_task_assignee(parent, params)
+    def get_child_task_assignee(parent, _params)
       return HearingsManagement.singleton if pending_hearing_task?(parent)
-      return super if case_active?(parent)
+      return Colocated.singleton if case_active?(parent)
 
       fail Caseflow::Error::MailRoutingError
     end
   end
 end
 
-class EvidenceOrArgumentMailTask < ColocatedMailTask
+class EvidenceOrArgumentMailTask < MailTask
   class << self
     def label
       COPY::EVIDENCE_OR_ARGUMENT_MAIL_TASK_LABEL
     end
 
-    def get_child_task_assignee(parent, params)
+    def get_child_task_assignee(parent, _params)
       return LitigationSupport.singleton if outstanding_cavc_tasks?(parent)
-      return super if case_active?(parent)
+      return Colocated.singleton if case_active?(parent)
 
       LitigationSupport.singleton
     end
   end
 end
 
-class PowerOfAttorneyRelatedMailTask < ColocatedMailTask
+class PowerOfAttorneyRelatedMailTask < MailTask
   class << self
     def label
       COPY::POWER_OF_ATTORNEY_MAIL_TASK_LABEL
     end
 
-    def get_child_task_assignee(parent, params)
+    def get_child_task_assignee(parent, _params)
       return HearingsManagement.singleton if pending_hearing_task?(parent)
-      return super if case_active?(parent)
+      return Colocated.singleton if case_active?(parent)
 
       fail Caseflow::Error::MailRoutingError
     end
