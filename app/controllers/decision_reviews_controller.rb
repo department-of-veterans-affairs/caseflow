@@ -18,6 +18,18 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
+  def update
+    if task
+      if validate_decision_issue_per_request_issue
+        task.complete(decision_issue_params)
+      else
+        render json: { error: "Each request issue does not have a matching decision issue" }, status: 400
+      end
+    else
+      render json: { error: "Task #{task_id} not found" }, status: 404
+    end
+  end
+
   def business_line_slug
     allowed_params[:business_line_slug] || allowed_params[:decision_review_business_line_slug]
   end
@@ -45,6 +57,18 @@ class DecisionReviewsController < ApplicationController
   helper_method :in_progress_tasks, :completed_tasks, :business_line, :task
 
   private
+
+  def validate_decision_issue_per_request_issue
+    task.appeal.request_issues.map(&:id).sort == decision_issue_params.map do |decision_issue_param|
+      decision_issue_param[:request_issue_id].to_i
+    end.sort
+  end
+
+  def decision_issue_params
+    params.require("decision_issues").map do |decision_issue_param|
+      decision_issue_param.permit(:request_issue_id, :disposition, :description)
+    end
+  end
 
   def apply_task_serializer(tasks)
     tasks.map { |task| task.ui_hash.merge(business_line: business_line_slug) }

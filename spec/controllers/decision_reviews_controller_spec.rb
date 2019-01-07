@@ -1,7 +1,7 @@
 describe DecisionReviewsController, type: :controller do
   before do
     FeatureToggle.enable!(:decision_reviews)
-
+    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
     User.stub = user
   end
 
@@ -72,6 +72,62 @@ describe DecisionReviewsController, type: :controller do
 
         expect(response.status).to eq 302
         expect(response.body).to match(/unauthorized/)
+      end
+    end
+  end
+
+  describe "#update" do
+    let(:veteran) { create(:veteran) }
+    let(:task) { create(:higher_level_review_task).becomes(DecisionReviewTask) }
+    let!(:request_issues) do
+      [
+        create(:request_issue, :rating, review_request: task.appeal),
+        create(:request_issue, :nonrating, review_request: task.appeal)
+      ]
+    end
+
+    context "user is in org" do
+      before do
+        OrganizationsUser.add_user_to_organization(user, non_comp_org)
+        task.appeal.update!(veteran_file_number: veteran.file_number)
+      end
+
+      it "creates decision issues for each request issue" do
+        put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id,
+          decision_issues: [
+          {
+            request_issue_id: request_issues.first.id,
+            disposition: "Granted",
+            description: "a rating note"
+          },
+          {
+            request_issue_id: request_issues.second.id,
+            disposition: "Denied",
+            description: "a nonrating note"
+          }]
+        }
+
+        expect(response.status).to eq(204)
+        task.reload
+        appeal = task.appeal
+        expect(task.appeal.decision_issues.length).to eq(2)
+        expect(task.appeal.decision_issues.find_by(disposition: "Granted", description: "a rating note")).to_not be_nil
+        expect(task.appeal.decision_issues.find_by(disposition: "Denied", description: "a nonrating note")).to_not be_nil
+        expect(task.status).to eq("completed")
+        expect(task.completed_at).to eq(Time.zone.now)
+      end
+
+      it "returns 400 when there is not a matching decision issue for each request issue" do
+        put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id,
+          decision_issues: [
+          {
+            request_issue_id: request_issues.first.id,
+            disposition: "Granted",
+            description: "a rating note"
+          }]
+        }
+
+        expect(response.status).to eq(400)
       end
     end
   end

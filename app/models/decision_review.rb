@@ -206,6 +206,13 @@ class DecisionReview < ApplicationRecord
     ::WorkQueue::DecisionReviewSerializer
   end
 
+  def create_decision_issues_for_tasks(decision_issue_params)
+    decision_issue_params.each do |decision_issue_param|
+      request_issues.find_by(id: decision_issue_param[:request_issue_id]).
+        create_decision_issue_from_params(decision_issue_param)
+    end
+  end
+
   private
 
   def cached_rating_issues

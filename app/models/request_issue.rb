@@ -244,6 +244,17 @@ class RequestIssue < ApplicationRecord
     decision_issues.delete_all
   end
 
+  def create_decision_issue_from_params(decision_issue_param)
+    decision_issues.create!(
+      participant_id: review_request.veteran.participant_id,
+      disposition: decision_issue_param[:disposition],
+      description: decision_issue_param[:description],
+      decision_review: review_request,
+      benefit_type: benefit_type,
+      promulgation_date: Time.zone.now
+    )
+  end
+
   private
 
   def build_contested_issue
