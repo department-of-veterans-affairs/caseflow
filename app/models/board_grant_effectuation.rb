@@ -12,6 +12,13 @@ class BoardGrantEffectuation < ApplicationRecord
 
   has_many :tasks
 
+  END_PRODUCT_CODES = {
+    rating: "030BGR",
+    nonrating: "030BGNR",
+    pension_rating: "030BGRPMC",
+    pension_nonrating: "030BGNRPMC"
+  }.freeze
+
   def contention_text
     granted_decision_issue.formatted_description
   end
@@ -23,7 +30,7 @@ class BoardGrantEffectuation < ApplicationRecord
   end
 
   def effectuated_in_vbms?
-    granted_decision_issue.benefit_type == "compensation"
+    %w[compensation pension].include?(granted_decision_issue.benefit_type)
   end
 
   def hydrate_from_granted_decision_issue
@@ -84,7 +91,11 @@ class BoardGrantEffectuation < ApplicationRecord
   end
 
   def ep_code
-    granted_decision_issue.rating? ? "030BGR" : "030BGNR"
+    return unless effectuated_in_vbms?
+
+    issue_code_type = granted_decision_issue.rating? ? :rating : :nonrating
+    issue_code_type = "pension_#{issue_code_type}".to_sym if granted_decision_issue.benefit_type == "pension"
+    END_PRODUCT_CODES[issue_code_type]
   end
 
   def end_product_station
