@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
+import querystring from 'querystring';
 
 import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
@@ -12,6 +13,7 @@ import { selectCurrentPdf, closeDocumentUpdatedModal } from '../reader/Documents
 import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation,
   closeAnnotationDeleteModal, closeAnnotationShareModal
 } from '../reader/AnnotationLayer/AnnotationActions';
+import { onScrollToComment } from '../reader/Pdf/PdfActions';
 
 import { isUserEditingText, shouldFetchAppeal } from './utils';
 import CopyTextButton from '../components/CopyTextButton';
@@ -139,6 +141,12 @@ export class PdfViewer extends React.Component {
       this.props.fetchAppealDetails(this.props.match.params.vacolsId);
     }
     this.updateWindowTitle();
+
+    const query = querystring.parse(window.location.search.slice(1));
+
+    if ('annotation' in query) {
+      this.props.onScrollToComment(this.props.annotations[query.annotation]);
+    }
   }
 
   componentWillUnmount = () => {
@@ -272,6 +280,7 @@ export class PdfViewer extends React.Component {
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
   appeal: state.pdfViewer.loadedAppeal,
+  annotations: state.annotationLayer.annotations,
   ..._.pick(state.pdfViewer, 'hidePdfSidebar'),
   ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords',
     'deleteAnnotationModalIsOpenFor', 'shareAnnotationModalIsOpenFor',
@@ -288,7 +297,8 @@ const mapDispatchToProps = (dispatch) => ({
     stopPlacingAnnotation,
     fetchAppealDetails,
     showSearchBar,
-    closeDocumentUpdatedModal
+    closeDocumentUpdatedModal,
+    onScrollToComment
   }, dispatch),
 
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))

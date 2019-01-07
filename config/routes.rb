@@ -180,7 +180,6 @@ Rails.application.routes.draw do
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
 
   resources :users, only: [:index]
-  resources :annotation, only: [:show]
 
   get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
   get 'cases_to_schedule/:ro', to: 'appeals#ready_for_hearing_schedule'
