@@ -2,8 +2,6 @@ import { css } from 'glamor';
 import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
 
 import {
   actionableTasksForAppeal,
@@ -33,11 +31,6 @@ import {
   anchorJumpLinkStyling
 } from './StickyNavContentArea';
 import Button from '../components/Button';
-
-import {
-  resetDecisionOptions,
-  stageAppeal
-} from './QueueActions';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -81,11 +74,7 @@ type Params = {|
 
 type Props = Params & {|
   userRole: string,
-  appeal: Appeal,
-  stageAppeal: typeof stageAppeal,
-  resetDecisionOptions: typeof resetDecisionOptions,
-  // withrouter
-  history: Object
+  appeal: Appeal
 |};
 
 export class TaskSnapshot extends React.PureComponent<Props> {
@@ -97,7 +86,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
   }
 
   toggleTaskInstructionsVisibility = () => {
-
     const prevState = this.state.taskInstructionsIsVisible;
 
     this.setState({ taskInstructionsIsVisible: !prevState });
@@ -326,11 +314,4 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  resetDecisionOptions,
-  stageAppeal
-}, dispatch);
-
-export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(TaskSnapshot)
-): React.ComponentType<Params>);
+export default connect(mapStateToProps)(TaskSnapshot);
