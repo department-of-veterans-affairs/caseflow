@@ -2,7 +2,7 @@
 ENV["RAILS_ENV"] ||= "test"
 require "simplecov"
 
-require File.expand_path("../../config/environment", __FILE__)
+require File.expand_path("../config/environment", __dir__)
 
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
@@ -44,7 +44,7 @@ ActiveRecord::Migration.maintain_test_schema!
 require "capybara"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
-Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
+Sniffybara::Driver.configuration_file = File.expand_path("support/VA-axe-configuration.json", __dir__)
 
 download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
 cache_directory = Rails.root.join("tmp/browser_cache_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
@@ -191,17 +191,17 @@ def current_user
 end
 
 # Utility functions for reading CSV data
-def dateshift_field(items, date_shift, k)
+def dateshift_field(items, date_shift, key)
   items.map! do |item|
-    item[k] = item[k] + date_shift if item[k]
+    item[key] = item[key] + date_shift if item[key]
     item
   end
 end
 
-def truncate_string(items, sql_type, k)
+def truncate_string(items, sql_type, key)
   max_index = /\((\d*)\)/.match(sql_type)[1].to_i - 1
   items.map! do |item|
-    item[k] = item[k][0..max_index] if item[k]
+    item[key] = item[key][0..max_index] if item[key]
     item
   end
 end

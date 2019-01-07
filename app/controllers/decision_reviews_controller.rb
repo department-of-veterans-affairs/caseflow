@@ -6,12 +6,28 @@ class DecisionReviewsController < ApplicationController
       render "index"
     else
       # TODO: make index show error message
-      render json: { error: "#{business_line_slug} not found" }, status: 404
+      render json: { error: "#{business_line_slug} not found" }, status: :not_found
+    end
+  end
+
+  def show
+    if task
+      render "show"
+    else
+      render json: { error: "Task #{task_id} not found" }, status: :not_found
     end
   end
 
   def business_line_slug
-    params.permit(:business_line_slug)[:business_line_slug]
+    allowed_params[:business_line_slug] || allowed_params[:decision_review_business_line_slug]
+  end
+
+  def task_id
+    allowed_params[:task_id]
+  end
+
+  def task
+    @task ||= DecisionReviewTask.find(task_id)
   end
 
   def in_progress_tasks
@@ -26,12 +42,12 @@ class DecisionReviewsController < ApplicationController
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
   end
 
-  helper_method :in_progress_tasks, :completed_tasks, :business_line
+  helper_method :in_progress_tasks, :completed_tasks, :business_line, :task
 
   private
 
   def apply_task_serializer(tasks)
-    tasks.map { |task| task.serializer_class.new(task) }
+    tasks.map { |task| task.ui_hash.merge(business_line: business_line_slug) }
   end
 
   def set_application
@@ -53,5 +69,9 @@ class DecisionReviewsController < ApplicationController
 
   def verify_feature_enabled
     redirect_to "/unauthorized" unless FeatureToggle.enabled?(:decision_reviews)
+  end
+
+  def allowed_params
+    params.permit(:decision_review_business_line_slug, :business_line_slug, :task_id)
   end
 end

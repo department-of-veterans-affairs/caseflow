@@ -31,6 +31,10 @@ class LegacyHearing < ApplicationRecord
     self.class.venues[venue_key]
   end
 
+  def external_id
+    vacols_id
+  end
+
   def location
     (type == :central) ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
   end
@@ -57,6 +61,7 @@ class LegacyHearing < ApplicationRecord
 
   def hold_release_date
     return unless held_open?
+
     date.to_date + hold_open.days
   end
 
@@ -66,6 +71,7 @@ class LegacyHearing < ApplicationRecord
 
   def active_appeal_streams
     return appeals if appeals.any?
+
     appeals << self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
   end
 
@@ -171,9 +177,10 @@ class LegacyHearing < ApplicationRecord
         :appellant_state,
         :appellant_zip,
         :readable_location,
-        :appeal_vacols_id
+        :appeal_vacols_id,
+        :external_id
       ],
-      except: :military_service
+      except: [:military_service, :vacols_id]
     ).merge(
       viewed_by_current_user: hearing_views.all.any? do |hearing_view|
         hearing_view.user_id == current_user_id
@@ -232,7 +239,7 @@ class LegacyHearing < ApplicationRecord
   # we want to fetch it from BGS, save it to the DB, then return it
   def military_service
     super || begin
-      update_attributes(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
+      update(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
       super
     end
   end

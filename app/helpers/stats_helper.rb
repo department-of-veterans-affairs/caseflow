@@ -17,6 +17,7 @@ module StatsHelper
     return "#{format('%.2f', seconds)} <span class=\"cf-stat-unit\">sec</span>".html_safe if seconds < 60
     return "#{format('%.2f', seconds / 60)} <span class=\"cf-stat-unit\">min</span>".html_safe if seconds / 60 < 60
     return "#{format('%.2f', seconds / 360)} <span class=\"cf-stat-unit\">hours</span>".html_safe if seconds / 360 < 24
+
     "#{format('%.2f', seconds / 360 / 24)} <span class=\"cf-stat-unit\">days</span>".html_safe
   end
 

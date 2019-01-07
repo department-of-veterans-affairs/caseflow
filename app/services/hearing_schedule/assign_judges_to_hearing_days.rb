@@ -179,6 +179,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
     non_availabilities.each do |non_availability|
       next unless non_availability.instance_of? JudgeNonAvailability
+
       css_id = non_availability.object_identifier
       @judges[css_id] ||= {}
       @judges[css_id][:non_availabilities] ||= Set.new
@@ -192,6 +193,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
     # raises an exception if hearing days have not already been allocated
     fail HearingDaysNotAllocated if @video_co_hearing_days.empty?
+
     filter_travel_board_hearing_days(hearing_days[1])
   end
 

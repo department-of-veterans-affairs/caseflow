@@ -34,7 +34,6 @@ describe Rating do
       contention_reference_id: nil,
       ramp_claim_id: nil,
       title_of_active_review: nil,
-      source_higher_level_review: nil,
       rba_contentions_data: [{ prfil_dt: profile_date, cntntn_id: nil }]
     }
   end

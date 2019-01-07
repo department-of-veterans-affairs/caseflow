@@ -8,7 +8,7 @@ class LegacyTask
   attr_accessor(*ATTRS)
   attr_writer :appeal
 
-  TASK_ID_REGEX = /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i
+  TASK_ID_REGEX = /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i.freeze
 
   ### Serializer Methods Start
   def assigned_on

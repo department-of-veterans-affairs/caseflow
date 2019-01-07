@@ -1,6 +1,5 @@
 require "rails_helper"
 # rubocop:disable Style/FormatString
-# rubocop:disable Style/FormatStringToken
 
 RSpec.feature "Search" do
   let(:attorney_user) { FactoryBot.create(:user) }
@@ -324,4 +323,3 @@ RSpec.feature "Search" do
 end
 
 # rubocop:enable Style/FormatString
-# rubocop:enable Style/FormatStringToken

@@ -272,9 +272,9 @@ RSpec.describe "Hearing Schedule", type: :request do
     let!(:hearings) do
       RequestStore[:current_user] = user
       HearingDay.create(
-        [{ hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "7-Jun-2019 09:00:00.000-4:00",
+        [{ hearing_type: HearingDay::HEARING_TYPES[:video], hearing_date: "7-Jun-2019 09:00:00.000-4:00",
            room: "1", regional_office: "RO17", created_by: "ramiro", updated_by: "ramiro" },
-         { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Jun-2019 09:00:00.000-4:00",
+         { hearing_type: HearingDay::HEARING_TYPES[:video], hearing_date: "9-Jun-2019 09:00:00.000-4:00",
            room: "3", regional_office: "RO27", created_by: "ramiro", updated_by: "ramiro" }]
       )
       Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
@@ -301,9 +301,9 @@ RSpec.describe "Hearing Schedule", type: :request do
       RequestStore[:current_user] = user
       Generators::Vacols::Staff.create(sattyid: "111")
       HearingDay.create(
-        [{ hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "7-Mar-2019 09:00:00.000-4:00",
+        [{ hearing_type: HearingDay::HEARING_TYPES[:video], hearing_date: "7-Mar-2019 09:00:00.000-4:00",
            room: "1", regional_office: "RO04", created_by: "ramiro", updated_by: "ramiro" },
-         { hearing_type: HearingDay::HEARING_TYPES[:central], hearing_date: "9-Mar-2019 09:00:00.000-4:00",
+         { hearing_type: HearingDay::HEARING_TYPES[:video], hearing_date: "9-Mar-2019 09:00:00.000-4:00",
            room: "3", regional_office: "RO04", created_by: "ramiro", updated_by: "ramiro" }]
       )
     end
