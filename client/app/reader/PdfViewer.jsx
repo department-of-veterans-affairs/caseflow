@@ -1,4 +1,3 @@
-import { css } from 'glamor';
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -26,10 +25,6 @@ import { ROTATION_INCREMENTS } from './Documents/actionTypes';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from './analytics';
 
 const NUMBER_OF_DIRECTIONS = 4;
-
-const copyTextButtonStyling = css({
-  wordBreak: 'break-word'
-});
 
 // Given a direction, the current coordinates, an array of the div elements for each page,
 // the file, and rotation of the document, this function calculates the next location of the comment.
@@ -275,7 +270,6 @@ export class PdfViewer extends React.Component {
           title="Share Comment">
           <CopyTextButton
             text={`${location.origin}${location.pathname}?annotation=${this.props.shareAnnotationModalIsOpenFor}`}
-            styling={copyTextButtonStyling}
           />
         </Modal>}
       </div>

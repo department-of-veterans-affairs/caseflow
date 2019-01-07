@@ -20,6 +20,7 @@ const clipboardButtonStyling = css({
     borderColor: COLORS.PRIMARY,
     borderBottomWidth: '1px'
   },
+  overflowWrap: 'break-word',
   '& > svg path': { fill: COLORS.GREY_LIGHT },
   '&:hover > svg path': { fill: COLORS.PRIMARY }
 });
@@ -27,16 +28,14 @@ const clipboardButtonStyling = css({
 export default class CopyTextButton extends React.PureComponent {
   render = () => {
     const {
-      text,
-      styling
+      text
     } = this.props;
 
     return <Tooltip id={`tooltip-${text}`} text="Click to copy" position="bottom">
       <CopyToClipboard text={text}>
         <button type="submit"
           className="cf-apppeal-id"
-          {...clipboardButtonStyling}
-          {...styling} >
+          {...clipboardButtonStyling} >
           {text}&nbsp;
           <ClipboardIcon />
         </button>
@@ -46,6 +45,5 @@ export default class CopyTextButton extends React.PureComponent {
 }
 
 CopyTextButton.propTypes = {
-  text: PropTypes.string,
-  styling: PropTypes.object
+  text: PropTypes.string
 };
