@@ -101,6 +101,28 @@ class TasksController < ApplicationController
     }
   end
 
+  def ready_for_hearing_schedule
+    ro = HearingDayMapper.validate_regional_office(params[:ro])
+
+    tasks = AppealRepository.appeals_ready_for_hearing_schedule(ro).map do |appeal|
+      ScheduleHearingTask.new(
+        appeal: appeal,
+        status: Constants.TASK_STATUSES.in_progress.to_sym,
+        assigned_to: HearingsManagement.singleton
+      )
+    end
+
+    render json: {
+      data: tasks.map do |task|
+        ActiveModelSerializers::SerializableResource.new(
+          task,
+          user: current_user,
+          role: user_role
+        ).as_json[:data]
+      end
+    }
+  end
+
   private
 
   def can_assign_task?
@@ -190,33 +212,9 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_legacy_tasks(tasks, role)
-    ActiveModelSerializers::SerializableResource.new(
-      tasks,
-      each_serializer: ::WorkQueue::LegacyTaskSerializer,
-      role: role
-    ).as_json
-  end
-
-  def eager_load_legacy_appeals_for_tasks(tasks)
-    # Make a single request to VACOLS to grab all of the rows we want here?
-    legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
-
-    # Load the VACOLS case records associated with legacy tasks into memory in a single batch.
-    cases = AppealRepository.vacols_records_for_appeals(legacy_appeal_ids) || []
-
-    # Associate the cases we pulled from VACOLS to the appeals of the tasks.
-    tasks.each do |t|
-      if t.appeal.is_a?(LegacyAppeal)
-        case_record = cases.select { |cr| cr.id == t.appeal.vacols_id }.first
-        AppealRepository.set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
-      end
-    end
-  end
-
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
-      eager_load_legacy_appeals_for_tasks(tasks),
+      AppealRepository.eager_load_legacy_appeals_for_tasks(tasks),
       user: current_user,
       role: user_role
     ).as_json
