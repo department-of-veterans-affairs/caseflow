@@ -128,12 +128,14 @@ describe LegacyHearing do
   context "#to_hash_for_worksheet" do
     subject { hearing.to_hash_for_worksheet(nil).with_indifferent_access }
 
+    let(:documents) { create_list(:document, 3) }
     let(:appeal) do
       create(:legacy_appeal, :with_veteran, vacols_case:
         create(
           :case_with_form_9,
           bfcorlid: "12345678",
-          case_issues: [create(:case_issue)]
+          case_issues: [create(:case_issue)],
+          documents: documents
         ))
     end
     let!(:additional_appeal) do
@@ -155,6 +157,7 @@ describe LegacyHearing do
 
     context "when a hearing & appeal exist" do
       it "returns expected keys" do
+        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
         expect(subject["appellant_city"]).to eq(appeal.appellant_city)
         expect(subject["appellant_state"]).to eq(appeal.appellant_state)
         expect(subject["veteran_age"]).to eq(appeal.veteran_age)

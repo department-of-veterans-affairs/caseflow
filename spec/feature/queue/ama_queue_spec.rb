@@ -50,7 +50,7 @@ RSpec.feature "AmaQueue" do
 
     let(:poa_name) { "Test POA" }
     let(:veteran_participant_id) { "600085544" }
-    let(:file_numbers) { Array.new(3) { Random.rand(999_999_999).to_s }}
+    let(:file_numbers) { Array.new(3) { Random.rand(999_999_999).to_s } }
     let!(:appeals) do
       [
         create(
