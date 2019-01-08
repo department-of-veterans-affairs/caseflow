@@ -19,12 +19,6 @@ class AppealsController < ApplicationController
     end
   end
 
-  def ready_for_hearing_schedule
-    ro = HearingDayMapper.validate_regional_office(params[:ro])
-
-    render json: json_appeals(AppealRepository.appeals_ready_for_hearing_schedule(ro))
-  end
-
   def document_count
     render json: { document_count: appeal.number_of_documents }
   rescue StandardError => e
