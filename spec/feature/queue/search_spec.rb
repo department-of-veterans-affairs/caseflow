@@ -7,8 +7,6 @@ RSpec.feature "Search" do
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
   let(:veteran_with_no_appeals) { FactoryBot.create(:veteran) }
   let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
-  let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
-  let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
 
   before do
     User.authenticate!(user: attorney_user)
@@ -40,23 +38,66 @@ RSpec.feature "Search" do
       end
     end
 
-    context "when a claim has a higher level review and/or supplemental claim" do
-      before do
-        visit "/search"
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
-        click_on "Search"
+    context "higher level reviews and supplemental claims" do
+      context "when a claim has no higher level review and/or supplemental claims" do
+        before do
+          visit "/search"
+          fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+          click_on "Search"
+        end
+
+        it "does not show the HLR / SCs table" do
+          expect(page).to_not have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+        end
       end
 
-      it "shows a higher level review" do
-        expect(page).to have_content("Higher Level Reviews &")
-        expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
-        expect(find(".cf-other-reviews-table > tbody")).to have_content("Higher Level Review")
-      end
+      context "when a claim has a higher level review and/or supplemental claim" do
+        let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
+        let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
+        let!(:eligible_request_issue) { create(:request_issue, review_request: higher_level_review) }
 
-      it "shows a supplemental claim" do
-        expect(page).to have_content("Higher Level Reviews &")
-        expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
-        expect(find(".cf-other-reviews-table > tbody")).to have_content("Supplemental Claim")
+        before do
+          visit "/search"
+          fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+          click_on "Search"
+        end
+
+        context "has a higher level review" do
+          it "shows the HLR / SCs table" do
+            expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+          end
+
+          it "shows a higher level review" do
+            expect(find(".cf-other-reviews-table > tbody")).to have_content("Higher Level Review")
+          end
+
+          context "and has no end products" do
+            it "shows no end products" do
+              expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+              expect(find(".cf-other-reviews-table > tbody")).to have_content(COPY::OTHER_REVIEWS_TABLE_NO_EPS_NOTE)
+            end
+          end
+
+          context "and has end products" do
+            let!(:end_product_establishment_1) { create(:end_product_establishment, source: higher_level_review, veteran_file_number: appeal.veteran_file_number, synced_status: "CAN") }
+            let!(:end_product_establishment_2) { create(:end_product_establishment, source: higher_level_review, veteran_file_number: appeal.veteran_file_number, synced_status: "CLR") }
+
+            it "shows the end product status" do
+              expect(find(".cf-other-reviews-table > tbody")).to have_content("Cancelled")
+              expect(find(".cf-other-reviews-table > tbody")).to have_content("Cleared")
+            end
+          end
+        end
+
+        context "has a supplemental claim" do
+          it "shows the HLR / SCs table" do
+            expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+          end
+
+          it "shows a supplemental claim and that it's 'tracked in caseflow'" do
+            expect(find(".cf-other-reviews-table > tbody")).to have_content(COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE)
+          end
+        end
       end
     end
 
