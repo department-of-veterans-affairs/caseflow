@@ -170,7 +170,7 @@ class EndProductEstablishment < ApplicationRecord
 
     set_establishment_values_from_source
 
-    contentions = records_ready_for_contentions.map |issue| do
+    contentions = records_ready_for_contentions.map do |issue|
       { description: issue.contention_text, special_issues: issue.try(:special_issues) }
     end
 
