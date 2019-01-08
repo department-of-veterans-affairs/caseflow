@@ -3,34 +3,8 @@ class MailTask < GenericTask
   def verify_org_task_unique; end
 
   class << self
-    # rubocop:disable Metrics/MethodLength
-    def subclasses
-      [
-        AddressChangeMailTask,
-        CongressionalInterestMailTask,
-        ControlledCorrespondenceMailTask,
-        ClearAndUnmistakeableErrorMailTask,
-        EvidenceOrArgumentMailTask,
-        FoiaRequestMailTask,
-        HearingRelatedMailTask,
-        AodMotionMailTask,
-        ReconsiderationMotionMailTask,
-        PowerOfAttorneyRelatedMailTask,
-        ReturnedUndeliverableCorrespondenceMailTask,
-        StatusInquiryMailTask,
-        DeathCertificateMailTask,
-        ExtensionRequestMailTask,
-        PrivacyActRequestMailTask,
-        OtherMotionMailTask,
-        PrivacyComplaintMailTask,
-        VacateMotionMailTask,
-        AppealWithdrawalMailTask
-      ]
-    end
-    # rubocop:enable Metrics/MethodLength
-
     def subclass_routing_options
-      MailTask.subclasses.map { |subclass| { value: subclass.name, label: subclass.label } }
+      MailTask.subclasses.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
     end
 
     def create_from_params(params, user)
