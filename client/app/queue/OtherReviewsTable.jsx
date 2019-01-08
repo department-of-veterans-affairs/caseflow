@@ -76,33 +76,59 @@ class CaseListTable extends React.PureComponent {
       header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
       valueFunction: (review) => {
         if (review.endProducts && review.endProducts.length > 0) {
-          return review.endProducts.map((endProduct, i) => {
-            return <SubdividedTableRow rowNumber={i}>{`${endProduct.code} ${endProduct.modifier}`}</SubdividedTableRow>;
-          });
+          if (review.endProducts.length > 1) {
+            return review.endProducts.map((endProduct, i) => {
+              return <SubdividedTableRow rowNumber={i}>
+                {`${endProduct.code} ${endProduct.modifier}`}
+              </SubdividedTableRow>;
+            });
+          }
+          const endProduct = review.endProducts[0];
+
+          return `${endProduct.code} ${endProduct.modifier}`;
         }
 
-        return <em>{CLAIM_REVIEW_TEXT[review.reviewType]}</em>;
+        return <em>{COPY[CLAIM_REVIEW_TEXT[review.reviewType]]}</em>;
       }
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE,
-      valueFunction: (review) => review.endProducts ?
-        review.endProducts.map((endProduct, i) => {
-          const epStatus = endProduct.synced_status ?
+      valueFunction: (review) => {
+        if (review.endProducts && review.endProducts.length > 0) {
+          if (review.endProducts.length > 1) {
+            return review.endProducts.map((endProduct, i) => {
+              const epStatus = endProduct.synced_status ?
+                EP_STATUSES[endProduct.synced_status] :
+                EP_STATUSES.PROCESSING;
+
+              return <SubdividedTableRow rowNumber={i}>{epStatus}</SubdividedTableRow>;
+            });
+          }
+          const endProduct = review.endProducts[0];
+
+          return endProduct.synced_status ?
             EP_STATUSES[endProduct.synced_status] :
             EP_STATUSES.PROCESSING;
+        }
 
-          return <SubdividedTableRow rowNumber={i}>{epStatus}</SubdividedTableRow>;
-        }) : ''
+        return '';
+      }
     },
     {
       header: COPY.OTHER_REVIEWS_TABLE_DECISION_DATE_COLUMN_TITLE,
-      valueFunction: (review) => review.endProducts ?
-        review.endProducts.map((endProduct, i) => {
-          return <SubdividedTableRow rowNumber={i}>
-            {endProduct.last_synced_at && <DateString date={endProduct.last_synced_at} />}
-          </SubdividedTableRow>;
-        }) : ''
+      valueFunction: (review) => {
+        if (review.endProducts && review.endProducts.length > 1) {
+          return review.endProducts.map((endProduct, i) => {
+            return <SubdividedTableRow rowNumber={i}>
+              {endProduct.last_synced_at && <DateString date={endProduct.last_synced_at} />}
+            </SubdividedTableRow>;
+          });
+        } else if (review.endProducts && review.endProducts.length === 1) {
+          if (review.endProducts[0].last_synced_at) {
+            return <DateString date={review.endProducts[0].last_synced_at} />;
+          }
+        }
+      }
     }
   ];
 
