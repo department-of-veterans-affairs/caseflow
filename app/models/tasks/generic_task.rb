@@ -105,12 +105,12 @@ class GenericTask < Task
         appeal: parent.appeal,
         assigned_by_id: child_assigned_by_id(parent, current_user),
         parent_id: parent.id,
-        assigned_to: get_child_task_assignee(parent, params),
+        assigned_to: child_task_assignee(parent, params),
         instructions: params[:instructions]
       )
     end
 
-    def get_child_task_assignee(_parent, params)
+    def child_task_assignee(_parent, params)
       Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
     end
 

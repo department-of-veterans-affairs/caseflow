@@ -74,12 +74,12 @@ describe MailTask do
   # case_active?
   # most_recent_active_task_assignee
 
-  describe ".get_child_task_assignee (routing logic)" do
+  describe ".child_task_assignee (routing logic)" do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
     let(:params) { {} }
 
-    subject { task_class.get_child_task_assignee(mail_task, params) }
+    subject { task_class.child_task_assignee(mail_task, params) }
 
     context "for an AddressChangeMailTask" do
       let(:task_class) { AddressChangeMailTask }
