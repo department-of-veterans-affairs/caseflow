@@ -114,8 +114,8 @@ feature "Edit issues" do
     let(:rating_request_issue_attributes) do
       {
         review_request: appeal,
-        rating_issue_reference_id: "def456",
-        rating_issue_profile_date: profile_date,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: profile_date,
         description: "PTSD denied",
         contention_reference_id: "4567"
       }
@@ -372,7 +372,7 @@ feature "Edit issues" do
 
     safe_click("#button-submit-update")
     safe_click ".confirm"
-    expect(page).to have_content("Edit Confirmed")
+    expect(page).to have_current_path("/#{page_url}/confirmation")
 
     visit page_url
     expect(page).to have_content(nonrating_decision_issue_description)
@@ -418,7 +418,7 @@ feature "Edit issues" do
     add_intake_rating_issue("Issue with legacy issue not withdrawn")
 
     safe_click("#button-submit-update")
-    expect(page).to have_content("Edit Confirmed")
+    expect(page).to have_content("has been processed")
 
     first_not_modified_request_issue = RequestIssue.find_by(
       review_request: decision_review,
@@ -520,8 +520,8 @@ feature "Edit issues" do
 
       let!(:ri_in_review) do
         RequestIssue.create!(
-          rating_issue_reference_id: "def456",
-          rating_issue_profile_date: rating.profile_date,
+          contested_rating_issue_reference_id: "def456",
+          contested_rating_issue_profile_date: rating.profile_date,
           review_request: another_higher_level_review,
           description: "PTSD denied",
           contention_reference_id: "123",
@@ -533,8 +533,8 @@ feature "Edit issues" do
 
       let!(:ri_with_active_previous_review) do
         RequestIssue.create!(
-          rating_issue_reference_id: "def456",
-          rating_issue_profile_date: rating.profile_date,
+          contested_rating_issue_reference_id: "def456",
+          contested_rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "PTSD denied",
           contention_reference_id: "111",
@@ -546,8 +546,8 @@ feature "Edit issues" do
 
       let!(:ri_previous_hlr) do
         RequestIssue.create!(
-          rating_issue_reference_id: "abc123",
-          rating_issue_profile_date: rating.profile_date,
+          contested_rating_issue_reference_id: "abc123",
+          contested_rating_issue_profile_date: rating.profile_date,
           review_request: another_higher_level_review,
           benefit_type: "compensation",
           description: "Left knee granted",
@@ -557,8 +557,8 @@ feature "Edit issues" do
 
       let!(:ri_with_previous_hlr) do
         RequestIssue.create!(
-          rating_issue_reference_id: "abc123",
-          rating_issue_profile_date: rating.profile_date,
+          contested_rating_issue_reference_id: "abc123",
+          contested_rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "Left knee granted",
           benefit_type: "compensation",
@@ -569,8 +569,8 @@ feature "Edit issues" do
 
       let!(:ri_before_ama) do
         RequestIssue.create!(
-          rating_issue_reference_id: "before_ama_ref_id",
-          rating_issue_profile_date: rating_before_ama.profile_date,
+          contested_rating_issue_reference_id: "before_ama_ref_id",
+          contested_rating_issue_profile_date: rating_before_ama.profile_date,
           review_request: higher_level_review,
           benefit_type: "compensation",
           description: "Non-RAMP Issue before AMA Activation",
@@ -581,8 +581,8 @@ feature "Edit issues" do
 
       let!(:eligible_ri_before_ama) do
         RequestIssue.create!(
-          rating_issue_reference_id: "ramp_ref_id",
-          rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
+          contested_rating_issue_reference_id: "ramp_ref_id",
+          contested_rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
           review_request: higher_level_review,
           benefit_type: "compensation",
           description: "Issue before AMA Activation from RAMP",
@@ -593,8 +593,8 @@ feature "Edit issues" do
 
       let!(:ri_legacy_issue_not_withdrawn) do
         RequestIssue.create!(
-          rating_issue_reference_id: "has_legacy_issue",
-          rating_issue_profile_date: rating_before_ama.profile_date,
+          contested_rating_issue_reference_id: "has_legacy_issue",
+          contested_rating_issue_profile_date: rating_before_ama.profile_date,
           review_request: higher_level_review,
           description: "Issue with legacy issue not withdrawn",
           vacols_id: "vacols1",
@@ -607,8 +607,8 @@ feature "Edit issues" do
 
       let!(:ri_legacy_issue_ineligible) do
         RequestIssue.create!(
-          rating_issue_reference_id: "has_ineligible_legacy_appeal",
-          rating_issue_profile_date: rating_before_ama.profile_date,
+          contested_rating_issue_reference_id: "has_ineligible_legacy_appeal",
+          contested_rating_issue_profile_date: rating_before_ama.profile_date,
           review_request: higher_level_review,
           description: "Issue connected to ineligible legacy appeal",
           contention_reference_id: "12345678",
@@ -839,7 +839,6 @@ feature "Edit issues" do
         expect(page).to have_current_path(
           "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Edit Confirmed")
       end
 
       context "when veteran has active nonrating request issues" do
@@ -870,7 +869,9 @@ feature "Edit issues" do
 
           safe_click("#button-submit-update")
           safe_click ".confirm"
-          expect(page).to have_content("Edit Confirmed")
+          expect(page).to have_current_path(
+            "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
+          )
 
           expect(RequestIssue.find_by(review_request: higher_level_review,
                                       issue_category: active_nonrating_request_issue.issue_category,
@@ -932,8 +933,8 @@ feature "Edit issues" do
       let(:contention_ref_id) { "123" }
       let!(:request_issue) do
         create(:request_issue,
-               rating_issue_reference_id: "def456",
-               rating_issue_profile_date: rating.profile_date,
+               contested_rating_issue_reference_id: "def456",
+               contested_rating_issue_profile_date: rating.profile_date,
                review_request: higher_level_review,
                description: "PTSD denied")
       end
@@ -995,7 +996,10 @@ feature "Edit issues" do
         end
 
         let(:nonrating_decision_request_issue) do
-          setup_request_issue_with_rating_decision_issue(higher_level_review, rating_issue_reference_id: "abc123")
+          setup_request_issue_with_rating_decision_issue(
+            higher_level_review,
+            contested_rating_issue_reference_id: "abc123"
+          )
         end
 
         let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
@@ -1108,7 +1112,9 @@ feature "Edit issues" do
         expect(page).to have_content("The review originally had 1 issue but now has 7.")
 
         safe_click "#Number-of-issues-has-changed-button-id-1"
-        expect(page).to have_content("Edit Confirmed")
+        expect(page).to have_current_path(
+          "/higher_level_reviews/#{rating_ep_claim_id}/edit/confirmation"
+        )
 
         # assert server has updated data for nonrating and unidentified issues
         active_duty_adjustments_request_issue = RequestIssue.find_by!(
@@ -1153,7 +1159,9 @@ feature "Edit issues" do
         # expect the remove/re-add to create a new RequestIssue for same RatingIssue
         expect(higher_level_review.reload.request_issues).to_not include(request_issue)
         new_version_of_request_issue = higher_level_review.find_request_issue_by_description(request_issue.description)
-        expect(new_version_of_request_issue.rating_issue_reference_id).to eq(request_issue.rating_issue_reference_id)
+        expect(new_version_of_request_issue.contested_rating_issue_reference_id).to eq(
+          request_issue.contested_rating_issue_reference_id
+        )
 
         # expect contentions to reflect issue update
         existing_contention = rating_epe.contentions.first
@@ -1273,7 +1281,7 @@ feature "Edit issues" do
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
           claim_id: rating_ep_claim_id,
           rating_issue_contention_map: {
-            new_request_issue.rating_issue_reference_id => new_request_issue.contention_reference_id
+            new_request_issue.contested_rating_issue_reference_id => new_request_issue.contention_reference_id
           }
         )
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
@@ -1427,15 +1435,14 @@ feature "Edit issues" do
         expect(page).to have_current_path(
           "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Edit Confirmed")
       end
     end
 
     context "when there is a rating end product" do
       let(:request_issue) do
         RequestIssue.create!(
-          rating_issue_reference_id: "def456",
-          rating_issue_profile_date: rating.profile_date,
+          contested_rating_issue_reference_id: "def456",
+          contested_rating_issue_profile_date: rating.profile_date,
           review_request: supplemental_claim,
           benefit_type: "compensation",
           description: "PTSD denied"
@@ -1576,7 +1583,9 @@ feature "Edit issues" do
 
           safe_click("#button-submit-update")
           safe_click ".confirm"
-          expect(page).to have_content("Edit Confirmed")
+          expect(page).to have_current_path(
+            "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
+          )
 
           expect(RequestIssue.find_by(review_request: supplemental_claim,
                                       issue_category: active_nonrating_request_issue.issue_category,
@@ -1629,7 +1638,10 @@ feature "Edit issues" do
         end
 
         let(:nonrating_decision_request_issue) do
-          setup_request_issue_with_rating_decision_issue(supplemental_claim, rating_issue_reference_id: "abc123")
+          setup_request_issue_with_rating_decision_issue(
+            supplemental_claim,
+            contested_rating_issue_reference_id: "abc123"
+          )
         end
 
         let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
@@ -1733,7 +1745,7 @@ feature "Edit issues" do
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
           claim_id: rating_ep_claim_id,
           rating_issue_contention_map: {
-            new_request_issue.rating_issue_reference_id => new_request_issue.contention_reference_id
+            new_request_issue.contested_rating_issue_reference_id => new_request_issue.contention_reference_id
           }
         )
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once

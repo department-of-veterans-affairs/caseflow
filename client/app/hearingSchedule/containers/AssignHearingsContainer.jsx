@@ -88,7 +88,7 @@ class AssignHearingsContainer extends React.PureComponent {
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      this.props.onReceiveAppealsReadyForHearing(_.keyBy(resp.data, 'id'));
+      this.props.onReceiveAppealsReadyForHearing(resp.data);
     });
   };
 
