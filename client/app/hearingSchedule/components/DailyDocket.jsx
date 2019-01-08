@@ -18,6 +18,7 @@ import StatusMessage from '../../components/StatusMessage';
 import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
+import { crossSymbolHtml, pencilSymbol } from '../../components/RenderFunctions';
 
 const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
@@ -412,18 +413,22 @@ export default class DailyDocket extends React.Component {
             {...editLinkStyling}
             linkStyling
             onClick={this.props.openModal} >
-            Edit Hearing Day
+            <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+            <span {...css({ marginRight: '5px',
+              marginLeft: '20px' })}>Edit Hearing Day</span>
           </Button>&nbsp;&nbsp;
           <Button
             linkStyling
             onClick={this.props.onDisplayLockModal} >
-            {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
+            <span {...css({ marginRight: '5px' })}>
+              {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
+            </span>
           </Button>&nbsp;&nbsp;
           { _.isEmpty(this.props.hearings) && this.props.userRoleBuild &&
           <Button
             linkStyling
             onClick={this.props.onClickRemoveHearingDay} >
-            Remove Hearing Day
+            {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
           </Button>
           }
           {this.props.notes &&

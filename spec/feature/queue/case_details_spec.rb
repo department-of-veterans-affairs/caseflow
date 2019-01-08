@@ -125,7 +125,7 @@ RSpec.feature "Case details" do
         visit "/queue"
         page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
-        worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print?keep_open=true']")
+        worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
         expect(worksheet_link.text).to eq("View Hearing Worksheet")
       end
     end

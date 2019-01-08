@@ -154,13 +154,13 @@ export default class AssignHearings extends React.Component {
     return _.map(appeals, (appeal) => ({
       caseDetails: this.getCaseDetailsInformation(appeal),
       type: renderAppealType({
-        caseType: appeal.attributes.type,
+        caseType: appeal.attributes.caseType,
         isAdvancedOnDocket: appeal.attributes.aod
       }),
       docketNumber: this.getAppealDocketTag(appeal),
       location: this.getAppealLocation(appeal),
       time: null,
-      externalId: appeal.attributes.externalId
+      externalId: appeal.attributes.externalAppealId
     }));
   };
 

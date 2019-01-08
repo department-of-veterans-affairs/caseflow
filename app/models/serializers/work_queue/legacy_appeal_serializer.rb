@@ -23,7 +23,7 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
         viewed_by_judge: !hearing.hearing_views.empty?,
         date: hearing.scheduled_for,
         type: hearing.type,
-        id: hearing.id,
+        external_id: hearing.external_id,
         disposition: hearing.disposition
       }
     end
