@@ -20,7 +20,7 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
 
-    describe "#fetch_and_update_ro_for_veteran" do
+    describe "#find_or_update_ro_for_veteran" do
       let(:veteran) { create(:veteran, file_number: bfcorlid_file_number) }
 
       context "when legacy RO is defined" do
@@ -57,9 +57,8 @@ describe FetchHearingLocationsForVeteransJob do
           expect(Veteran.first.hearing_regional_office).to eq expected_ro
         end
 
-        context "and existing hearing_regional_office is defined but no legacy RO" do
+        context "and existing hearing_regional_office is defined" do
           let(:expected_ro) { "EXISTINGRO" }
-          let(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: nil, bfcorlid: bfcorlid) }
           let(:veteran) { create(:veteran, file_number: bfcorlid_file_number, hearing_regional_office: expected_ro) }
 
           it "the veteran's hearing_regional_office does not update" do
