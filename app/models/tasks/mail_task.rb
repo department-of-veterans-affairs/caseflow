@@ -37,11 +37,8 @@ class MailTask < GenericTask
       verify_user_can_create!(user)
 
       root_task = RootTask.find(params[:parent_id])
-      unless root_task
-        fail(Caseflow::Error::NoRootTask, message: "Could not find root task for appeal with ID #{params[:appeal]}")
-      end
 
-      # Fail to create the parent mail task if we fail to create any of the children tasks.
+      # Do not create the parent mail task if we fail to create any of the children tasks.
       transaction do
         # Create a task assigned to the mail organization with a child task so we can track how that child was created.
         mail_task = create!(
