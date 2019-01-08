@@ -53,11 +53,11 @@ export default class AssignHearings extends React.Component {
       <h3>Hearings to Schedule</h3>
       <h4>Available Hearing Days</h4>
       <ul className="usa-sidenav-list" {...sectionNavigationListStyling}>
-        {_.orderBy(Object.values(this.props.upcomingHearingDays), (hearingDay) => hearingDay.hearingDate, 'asc').
+        {_.orderBy(Object.values(this.props.upcomingHearingDays), (hearingDay) => hearingDay.scheduledFor, 'asc').
           map((hearingDay) => {
             const { selectedHearingDay } = this.props;
             const dateSelected = selectedHearingDay &&
-            (selectedHearingDay.hearingDate === hearingDay.hearingDate &&
+            (selectedHearingDay.scheduledFor === hearingDay.scheduledFor &&
                selectedHearingDay.room === hearingDay.room);
             const buttonColorSelected = css({
               backgroundColor: COLORS.GREY_DARK,
@@ -77,7 +77,7 @@ export default class AssignHearings extends React.Component {
                 onClick={this.onSelectedHearingDayChange(hearingDay)}
                 linkStyling
               >
-                {`${moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}
+                {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
                 ${this.room(hearingDay)}`}
               </Button>
             </li>;
@@ -181,10 +181,10 @@ export default class AssignHearings extends React.Component {
   appealsReadyForHearing = () => {
 
     const { selectedHearingDay, selectedRegionalOffice } = this.props;
-    const date = moment(selectedHearingDay.hearingDate).format('YYYY-MM-DD');
+    const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
     const SROVal = selectedRegionalOffice.value;
     const timer = () => {
-      let time = getTime(selectedHearingDay.hearingDate);
+      let time = getTime(selectedHearingDay.scheduledFor);
 
       if (time === '12:00 am ET') {
         return '';
@@ -282,7 +282,7 @@ export default class AssignHearings extends React.Component {
 
     return <div className="usa-width-three-fourths">
       <h1>
-        {`${moment(selectedHearingDay.hearingDate).format('ddd M/DD/YYYY')}
+        {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}
        ${this.room(selectedHearingDay)} (${availableSlots} slots remaining)`}
       </h1>
       <TabWindow
