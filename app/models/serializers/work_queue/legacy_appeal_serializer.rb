@@ -21,7 +21,7 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
         # this assumes only the assigned judge will view the hearing worksheet. otherwise,
         # we should check `hearing.hearing_views.map(&:user_id).include? judge.css_id`
         viewed_by_judge: !hearing.hearing_views.empty?,
-        date: hearing.date,
+        date: hearing.scheduled_for,
         type: hearing.type,
         id: hearing.id,
         disposition: hearing.disposition

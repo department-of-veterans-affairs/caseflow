@@ -26,7 +26,7 @@ describe JudgeSchedulePeriod do
       expect(subject.count).to eq(3)
       expect(subject[0].key?(:id)).to be_truthy
       expect(subject[0].key?(:hearing_type)).to be_truthy
-      expect(subject[0].key?(:hearing_date)).to be_truthy
+      expect(subject[0].key?(:scheduled_for)).to be_truthy
       expect(subject[0].key?(:room)).to be_truthy
       expect(subject[0].key?(:regional_office)).to be_truthy
       expect(subject[0].key?(:judge_id)).to be_truthy
