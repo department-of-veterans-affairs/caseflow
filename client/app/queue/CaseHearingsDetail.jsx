@@ -86,7 +86,9 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
       _.extend(hearingElementsStyle, marginLeft);
     }
 
-    const hearingElements = _.map(uniqueOrderedHearings, (hearing) => <div key={hearing.id} {...hearingElementsStyle}>
+    const hearingElements = _.map(uniqueOrderedHearings, (hearing) => <div
+      key={hearing.externalId} {...hearingElementsStyle}
+    >
       <span {...boldText}>Hearing{uniqueOrderedHearings.length > 1 ?
         ` ${uniqueOrderedHearings.indexOf(hearing) + 1}` : ''}:</span>
       <BareList compact
