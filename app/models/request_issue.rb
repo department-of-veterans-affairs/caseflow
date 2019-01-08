@@ -113,7 +113,7 @@ class RequestIssue < ApplicationRecord
     private
 
     def attributes_from_intake_data(data)
-      contested_issue_present = data[:rating_issue_reference_id] || data[:contested_decision_isssue_id]
+      contested_issue_present = data[:rating_issue_reference_id] || data[:contested_decision_issue_id]
 
       {
         # TODO: these are going away in favor of `contested_rating_issue_*`
