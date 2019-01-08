@@ -158,9 +158,10 @@ class Task < ApplicationRecord
   end
 
   def self.verify_user_can_create!(user, parent)
-    unless parent.available_actions_unwrapper(user).any? { |action| action.dig(:data, :type) == name }
-      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
+    can_create = parent.available_actions_unwrapper(user).any? do |action|
+      action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
     end
+    fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task" unless can_create
   end
 
   def root_task(task_id = nil)
