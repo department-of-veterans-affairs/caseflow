@@ -15,6 +15,22 @@ class AppealRepository
     end
   end
 
+  def self.eager_load_legacy_appeals_for_tasks(tasks)
+    # Make a single request to VACOLS to grab all of the rows we want here?
+    legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
+
+    # Load the VACOLS case records associated with legacy tasks into memory in a single batch.
+    cases = vacols_records_for_appeals(legacy_appeal_ids) || []
+
+    # Associate the cases we pulled from VACOLS to the appeals of the tasks.
+    tasks.each do |t|
+      if t.appeal.is_a?(LegacyAppeal)
+        case_record = cases.select { |cr| cr.id == t.appeal.vacols_id }.first
+        set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
+      end
+    end
+  end
+
   def self.find_case_record(id)
     VACOLS::Case.includes(:folder, :correspondent, :representatives).find(id)
   end
