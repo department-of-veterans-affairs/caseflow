@@ -76,8 +76,8 @@ group :test, :development, :demo do
   gem "activerecord-import"
   # Security scanners
   gem "brakeman"
-  gem "bundler-audit"
   gem "bullet"
+  gem "bundler-audit"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: :ruby
   # Testing tools
