@@ -15,6 +15,7 @@ RSpec.feature "Intake Edit Confirmation" do
     let(:rating) do
       Generators::Rating.build(
         participant_id: decision_review.veteran.participant_id,
+        profile_date: decision_review.receipt_date - 1.month,
         issues: [{ decision_text: "Left knee granted" }, { reference_id: "def456", decision_text: "PTSD denied" }]
       )
     end
