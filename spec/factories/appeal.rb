@@ -5,6 +5,7 @@ FactoryBot.define do
     end
 
     sequence(:veteran_file_number, 500_000_000)
+    docket_type "evidence_submission"
 
     transient do
       veteran do
