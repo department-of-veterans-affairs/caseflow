@@ -372,7 +372,7 @@ feature "Edit issues" do
 
     safe_click("#button-submit-update")
     safe_click ".confirm"
-    expect(page).to have_content("Edit Confirmed")
+    expect(page).to have_current_path("/#{page_url}/confirmation")
 
     visit page_url
     expect(page).to have_content(nonrating_decision_issue_description)
@@ -418,7 +418,7 @@ feature "Edit issues" do
     add_intake_rating_issue("Issue with legacy issue not withdrawn")
 
     safe_click("#button-submit-update")
-    expect(page).to have_content("Edit Confirmed")
+    expect(page).to have_content("has been processed")
 
     first_not_modified_request_issue = RequestIssue.find_by(
       review_request: decision_review,
@@ -828,7 +828,6 @@ feature "Edit issues" do
         expect(page).to have_current_path(
           "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Edit Confirmed")
       end
 
       context "when veteran has active nonrating request issues" do
@@ -859,7 +858,9 @@ feature "Edit issues" do
 
           safe_click("#button-submit-update")
           safe_click ".confirm"
-          expect(page).to have_content("Edit Confirmed")
+          expect(page).to have_current_path(
+            "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
+          )
 
           expect(RequestIssue.find_by(review_request: higher_level_review,
                                       issue_category: active_nonrating_request_issue.issue_category,
@@ -1100,7 +1101,9 @@ feature "Edit issues" do
         expect(page).to have_content("The review originally had 1 issue but now has 7.")
 
         safe_click "#Number-of-issues-has-changed-button-id-1"
-        expect(page).to have_content("Edit Confirmed")
+        expect(page).to have_current_path(
+          "/higher_level_reviews/#{rating_ep_claim_id}/edit/confirmation"
+        )
 
         # assert server has updated data for nonrating and unidentified issues
         active_duty_adjustments_request_issue = RequestIssue.find_by!(
@@ -1420,7 +1423,6 @@ feature "Edit issues" do
         expect(page).to have_current_path(
           "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Edit Confirmed")
       end
     end
 
@@ -1568,7 +1570,9 @@ feature "Edit issues" do
 
           safe_click("#button-submit-update")
           safe_click ".confirm"
-          expect(page).to have_content("Edit Confirmed")
+          expect(page).to have_current_path(
+            "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
+          )
 
           expect(RequestIssue.find_by(review_request: supplemental_claim,
                                       issue_category: active_nonrating_request_issue.issue_category,
