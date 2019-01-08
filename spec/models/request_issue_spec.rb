@@ -51,6 +51,7 @@ describe RequestIssue do
       review_request: review,
       contested_rating_issue_reference_id: contested_rating_issue_reference_id,
       contested_rating_issue_profile_date: profile_date,
+      contested_issue_description: "a rating request issue",
       description: "a rating request issue",
       ramp_claim_id: ramp_claim_id,
       decision_sync_processed_at: decision_sync_processed_at,
@@ -64,6 +65,7 @@ describe RequestIssue do
     create(
       :request_issue,
       review_request: review,
+      nonrating_issue_description: "a nonrating request issue description",
       description: "a nonrating request issue description",
       issue_category: "a category",
       decision_date: 1.day.ago,
@@ -77,6 +79,7 @@ describe RequestIssue do
     create(
       :request_issue,
       review_request: review,
+      unidentified_issue_text: "an unidentified issue",
       description: "an unidentified issue",
       is_unidentified: true
     )
@@ -248,6 +251,7 @@ describe RequestIssue do
         review_request: previous_higher_level_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
         contested_rating_issue_profile_date: profile_date,
+        contested_issue_description: "a rating request issue",
         contention_reference_id: contention_reference_id,
         end_product_establishment: previous_end_product_establishment,
         description: "a rating request issue"
@@ -317,6 +321,7 @@ describe RequestIssue do
         :request_issue,
         review_request: appeal_in_progress,
         contested_rating_issue_reference_id: duplicate_appeal_reference_id,
+        contested_issue_description: "Appealed injury",
         description: "Appealed injury"
       )
     end
@@ -364,6 +369,7 @@ describe RequestIssue do
         :request_issue,
         end_product_establishment: active_epe,
         contested_rating_issue_reference_id: duplicate_reference_id,
+        contested_issue_description: "Old injury",
         description: "Old injury"
       )
     end
