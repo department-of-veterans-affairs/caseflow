@@ -54,7 +54,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
         {hearing.disposition && StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
         {hearing.viewedByJudge &&
         <Tooltip id="hearing-worksheet-tip" text={COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP}>
-          <Link rel="noopener" target="_blank" href={`/hearings/${hearing.id}/worksheet/print?keep_open=true`}>
+          <Link rel="noopener" target="_blank" href={`/hearings/${hearing.external_id}/worksheet/print?keep_open=true`}>
             {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
           </Link>
         </Tooltip>}
