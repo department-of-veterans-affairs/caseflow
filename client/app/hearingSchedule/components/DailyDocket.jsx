@@ -160,7 +160,7 @@ export default class DailyDocket extends React.Component {
 
   getHearingDateOptions = () => {
     return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
-      label: this.getHearingDate(hearingDayOption.hearingDate),
+      label: this.getHearingDate(hearingDayOption.scheduledFor),
       value: hearingDayOption.id
     }));
   };
@@ -170,7 +170,7 @@ export default class DailyDocket extends React.Component {
      value: hearing.id }];
 
    const hearingDayoptions = _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
-     label: this.getHearingDate(hearingDayOption.hearingDate),
+     label: this.getHearingDate(hearingDayOption.scheduledFor),
      value: hearingDayOption.id
    }));
 
@@ -289,7 +289,7 @@ export default class DailyDocket extends React.Component {
   getRemoveHearingDayMessage = () => {
     return 'Once the hearing day is removed, users will no longer be able to ' +
       `schedule Veterans for this ${this.props.dailyDocket.hearingType} hearing day on ` +
-      `${moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')}.`;
+      `${moment(this.props.dailyDocket.scheduledFor).format('ddd M/DD/YYYY')}.`;
   };
 
   getDisplayLockModalTitle = () => {
@@ -392,19 +392,19 @@ export default class DailyDocket extends React.Component {
         type="error"
         styling={alertStyling}
         title={` Unable to delete Hearing Day
-                ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')} in Caseflow.`}
+                ${moment(this.props.dailyDocket.scheduledFor).format('M/DD/YYYY')} in Caseflow.`}
         message="Please delete the hearing day through VACOLS" />}
 
       { this.props.onErrorHearingDayLock && <Alert
         type="error"
         styling={alertStyling}
-        title={`VACOLS Hearing Day ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')}
+        title={`VACOLS Hearing Day ${moment(this.props.dailyDocket.scheduledFor).format('M/DD/YYYY')}
            cannot be locked in Caseflow.`}
         message="VACOLS Hearing Day cannot be locked"
       />}
 
       <div className="cf-push-left">
-        <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
+        <h1>Daily Docket ({moment(this.props.dailyDocket.scheduledFor).format('ddd M/DD/YYYY')})</h1> <br />
         <div {...backLinkStyling}>
           <Link
             linkStyling to="/schedule" >&lt; Back to schedule</Link>&nbsp;&nbsp;
