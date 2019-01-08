@@ -308,8 +308,18 @@ RSpec.feature "Case details" do
     let(:ineligible_issue_cnt) { 3 }
     let(:issues) do
       [
-        build_list(:request_issue, eligible_issue_cnt, description: "Knee pain"),
-        build_list(:request_issue, ineligible_issue_cnt, description: "Sunburn", ineligible_reason: :untimely)
+        build_list(
+          :request_issue,
+          eligible_issue_cnt,
+          contested_issue_description: "Knee pain",
+          description: "Knee pain"
+        ),
+        build_list(
+          :request_issue,
+          ineligible_issue_cnt,
+          contested_issue_description: "Sunburn",
+          ineligible_reason: :untimely
+        )
       ].flatten
     end
     let!(:appeal) { FactoryBot.create(:appeal, request_issues: issues) }
@@ -496,12 +506,22 @@ RSpec.feature "Case details" do
         issue_description = "Head trauma 1"
         issue_description2 = "Head trauma 2"
         let!(:request_issue) do
-          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description,
-                                            review_request_type: "Appeal")
+          FactoryBot.create(
+            :request_issue,
+            review_request_id: appeal.id,
+            contested_issue_description: issue_description,
+            description: issue_description,
+            review_request_type: "Appeal"
+          )
         end
         let!(:request_issue2) do
-          FactoryBot.create(:request_issue, review_request_id: appeal.id, description: issue_description2,
-                                            review_request_type: "Appeal")
+          FactoryBot.create(
+            :request_issue,
+            review_request_id: appeal.id,
+            contested_issue_description: issue_description2,
+            description: issue_description2,
+            review_request_type: "Appeal"
+          )
         end
 
         it "should display sorted issues" do
