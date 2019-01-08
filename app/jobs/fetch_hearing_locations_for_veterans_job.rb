@@ -15,28 +15,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  def find_legacy_ro_and_update_for_veteran(veteran)
-    ro = bfcorlid_to_ro_hash[LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)]
-
-    veteran.update(hearing_regional_office: ro) unless ro.nil?
-
-    ro
-  end
-
-  def fetch_and_update_ro_for_veteran(veteran, lat, long)
-    distances = VADotGovService.get_distance(lat: lat, long: long, ids: ro_facility_ids)
-
-    unless distances.empty?
-      closest_ro_index = RegionalOffice::CITIES.values.find_index { |ro| ro[:facility_locator_id] == distances[0][:id] }
-      closest_ro = RegionalOffice::CITIES.keys[closest_ro_index]
-      veteran.update(hearing_regional_office: closest_ro)
-
-      return closest_ro
-    end
-
-    nil
-  end
-
   def missing_veteran_file_numbers
     existing_veteran_file_numbers = Veteran.where(file_number: file_numbers).pluck(:file_number)
     file_numbers - existing_veteran_file_numbers
@@ -46,6 +24,12 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     missing_veteran_file_numbers.each do |file_number|
       Veteran.find_or_create_by_file_number(file_number)
     end
+  end
+
+  def find_or_update_ro_for_veteran(veteran, lat, long)
+    veteran.hearing_regional_office ||
+      find_legacy_ro_and_update_for_veteran(veteran) ||
+      fetch_and_update_ro_for_veteran(veteran, lat, long)
   end
 
   def create_available_locations_for_veteran(veteran, lat, long, ids)
@@ -101,11 +85,31 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def facility_ids_for_veteran(veteran, lat, long)
-    ro = veteran.hearing_regional_office ||
-         find_legacy_ro_and_update_for_veteran(veteran) ||
-         fetch_and_update_ro_for_veteran(veteran, lat, long)
+    ro = find_or_update_ro_for_veteran(veteran, lat, long)
 
     RegionalOffice::CITIES[ro][:alternate_locations] || [] << RegionalOffice::CITIES[ro][:facility_locator_id]
+  end
+
+  def find_legacy_ro_and_update_for_veteran(veteran)
+    ro = bfcorlid_to_ro_hash[LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)]
+
+    veteran.update(hearing_regional_office: ro) unless ro.nil?
+
+    ro
+  end
+
+  def fetch_and_update_ro_for_veteran(veteran, lat, long)
+    distances = VADotGovService.get_distance(lat: lat, long: long, ids: ro_facility_ids)
+
+    unless distances.empty?
+      closest_ro_index = RegionalOffice::CITIES.values.find_index { |ro| ro[:facility_locator_id] == distances[0][:id] }
+      closest_ro = RegionalOffice::CITIES.keys[closest_ro_index]
+      veteran.update(hearing_regional_office: closest_ro)
+
+      return closest_ro
+    end
+
+    nil
   end
 
   def full_address_for(address)

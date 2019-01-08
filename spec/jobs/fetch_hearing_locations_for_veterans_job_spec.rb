@@ -1,16 +1,16 @@
 require "rails_helper"
 require "faker"
 
-describe FetchHearingLocationsForVeteransJob do
+describe FetchHearingLocationsForVeteransJob, focus: true do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
   context "when there is a case in location 57 *without* an associated veteran" do
-    let(:bfcorlid) { "123456789S" }
-    let(:bfcorlid_file_number) { "123456789" }
+    let!(:bfcorlid) { "123456789S" }
+    let!(:bfcorlid_file_number) { "123456789" }
+    let!(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S") }
 
     before(:each) do
-      create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: bfcorlid)
-      Fakes::BGSService.veteran_records = { bfcorlid_file_number => veteran_record(file_number: bfcorlid_file_number) }
+      Fakes::BGSService.veteran_records = { "123456789" => veteran_record(file_number: "123456789S") }
     end
 
     describe "#create_missing_veterans" do
@@ -23,23 +23,50 @@ describe FetchHearingLocationsForVeteransJob do
     describe "#fetch_and_update_ro_for_veteran" do
       let(:veteran) { create(:veteran, file_number: bfcorlid_file_number) }
 
-      before do
-        facility_ros = RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }
-        body = mock_distance_body(
-          data: facility_ros.map { |ro| mock_data(id: ro[:facility_locator_id]) },
-          distances: facility_ros.map.with_index do |ro, index|
-            mock_distance(distance: index, id: ro[:facility_locator_id])
-          end
-        )
-        distance_response = HTTPI::Response.new(200, [], body.to_json)
-        expect(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response).once
-        allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
+      context "when legacy RO is defined" do
+        let(:expected_ro) { "EXPECTEDRO" }
+        let(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: expected_ro, bfcorlid: bfcorlid) }
+
+        it "updates veteran hearing_regional_office with legacy RO" do
+          job.find_or_update_ro_for_veteran(veteran, 0.0, 0.0)
+          expect(Veteran.first.hearing_regional_office).to eq expected_ro
+        end
       end
 
-      it "updates veteran hearing_regional_office with closest ro" do
-        VADotGovService = ExternalApi::VADotGovService
-        job.fetch_and_update_ro_for_veteran(veteran, 0.0, 0.0)
-        expect(Veteran.first.hearing_regional_office).to eq RegionalOffice::CITIES.keys[0]
+      context "when legacy RO is not defined" do
+        let(:expected_ro) { RegionalOffice::CITIES.keys[0] }
+        let(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: nil, bfcorlid: bfcorlid) }
+
+        before do
+          VADotGovService = ExternalApi::VADotGovService
+
+          facility_ros = RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }
+          body = mock_distance_body(
+            data: facility_ros.map { |ro| mock_data(id: ro[:facility_locator_id]) },
+            distances: facility_ros.map.with_index do |ro, index|
+              mock_distance(distance: index, id: ro[:facility_locator_id])
+            end
+          )
+          distance_response = HTTPI::Response.new(200, [], body.to_json)
+          allow(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response)
+          allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
+        end
+
+        it "updates veteran hearing_regional_office with fetched RO" do
+          job.find_or_update_ro_for_veteran(veteran, 0.0, 0.0)
+          expect(Veteran.first.hearing_regional_office).to eq expected_ro
+        end
+
+        context "and existing hearing_regional_office is defined but no legacy RO" do
+          let(:expected_ro) { "EXISTINGRO" }
+          let(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: nil, bfcorlid: bfcorlid) }
+          let(:veteran) { create(:veteran, file_number: bfcorlid_file_number, hearing_regional_office: expected_ro) }
+
+          it "the veteran's hearing_regional_office does not update" do
+            job.find_or_update_ro_for_veteran(veteran, 0.0, 0.0)
+            expect(Veteran.first.hearing_regional_office).to eq expected_ro
+          end
+        end
       end
     end
 
@@ -50,11 +77,11 @@ describe FetchHearingLocationsForVeteransJob do
         expect(DataDogService).to receive(:emit_gauge).with(hash_including(metric_name: "pages_requested"), any_args).and_return("") # rubocop:disable Metrics/LineLength
 
         distance_response = HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11).to_json)
-        expect(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response).once
+        allow(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response).once
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
 
         geocode_response = HTTPI::Response.new(200, [], mock_geocode_body.to_json)
-        expect(MetricsService).to receive(:record).with(/POST/, any_args).and_return(geocode_response).once
+        allow(MetricsService).to receive(:record).with(/POST/, any_args).and_return(geocode_response).once
         allow(HTTPI).to receive(:post).with(instance_of(HTTPI::Request)).and_return(geocode_response)
       end
 
