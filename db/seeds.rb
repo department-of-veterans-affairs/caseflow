@@ -372,7 +372,7 @@ class SeedDB
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
-      veteran_file_number: "231439628S",
+      veteran_file_number: "231439628",
       docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
