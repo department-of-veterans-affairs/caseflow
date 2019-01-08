@@ -64,10 +64,11 @@ class AddressChangeMailTask < MailTask
   end
 
   def self.child_task_assignee(parent, _params)
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
-    return Colocated.singleton if case_active?(parent)
+    fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    fail Caseflow::Error::MailRoutingError
+    return HearingsManagement.singleton if pending_hearing_task?(parent)
+
+    Colocated.singleton
   end
 end
 
@@ -151,9 +152,9 @@ class ExtensionRequestMailTask < MailTask
   end
 
   def self.child_task_assignee(parent, _params)
-    return Colocated.singleton if case_active?(parent)
+    fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    fail Caseflow::Error::MailRoutingError
+    Colocated.singleton
   end
 end
 
@@ -173,10 +174,11 @@ class HearingRelatedMailTask < MailTask
   end
 
   def self.child_task_assignee(parent, _params)
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
-    return Colocated.singleton if case_active?(parent)
+    fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    fail Caseflow::Error::MailRoutingError
+    return HearingsManagement.singleton if pending_hearing_task?(parent)
+
+    Colocated.singleton
   end
 end
 
@@ -196,10 +198,11 @@ class PowerOfAttorneyRelatedMailTask < MailTask
   end
 
   def self.child_task_assignee(parent, _params)
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
-    return Colocated.singleton if case_active?(parent)
+    fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    fail Caseflow::Error::MailRoutingError
+    return HearingsManagement.singleton if pending_hearing_task?(parent)
+
+    Colocated.singleton
   end
 end
 

@@ -199,5 +199,235 @@ describe MailTask do
         expect(subject).to eq(AodTeam.singleton)
       end
     end
+
+    context "for an AppealWithdrawalMailTask" do
+      let(:task_class) { AppealWithdrawalMailTask }
+
+      it "should always route to the VLJ support staff" do
+        expect(subject).to eq(Colocated.singleton)
+      end
+    end
+
+    context "for a ClearAndUnmistakeableErrorMailTask" do
+      let(:task_class) { ClearAndUnmistakeableErrorMailTask }
+
+      it "should always route to Lit Support" do
+        expect(subject).to eq(LitigationSupport.singleton)
+      end
+    end
+
+    context "for a CongressionalInterestMailTask" do
+      let(:task_class) { CongressionalInterestMailTask }
+
+      it "should always route to Lit Support" do
+        expect(subject).to eq(LitigationSupport.singleton)
+      end
+    end
+
+    context "for a ControlledCorrespondenceMailTask" do
+      let(:task_class) { ControlledCorrespondenceMailTask }
+
+      it "should always route to Lit Support" do
+        expect(subject).to eq(LitigationSupport.singleton)
+      end
+    end
+
+    context "for a DeathCertificateMailTask" do
+      let(:task_class) { DeathCertificateMailTask }
+
+      it "should always route to the VLJ support staff" do
+        expect(subject).to eq(Colocated.singleton)
+      end
+    end
+
+    context "for an EvidenceOrArgumentMailTask" do
+      let(:task_class) { EvidenceOrArgumentMailTask }
+
+      context "when the appeal has a pending hearing task" do
+        before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
+
+        it "should route to hearings management branch" do
+          expect(subject).to eq(HearingsManagement.singleton)
+        end
+      end
+
+      context "when the appeal is not active" do
+        before { allow(task_class).to receive(:case_active?).and_return(false) }
+
+        it "should raise an error" do
+          expect { subject }.to raise_error(Caseflow::Error::MailRoutingError)
+        end
+      end
+
+      context "when the appeal is active and has no pending_hearing_task" do
+        it "should route to VLJ support staff" do
+          expect(subject).to eq(Colocated.singleton)
+        end
+      end
+    end
+
+    context "for an ExtensionRequestMailTask" do
+      let(:task_class) { ExtensionRequestMailTask }
+
+      context "when the appeal is not active" do
+        before { allow(task_class).to receive(:case_active?).and_return(false) }
+
+        it "should raise an error" do
+          expect { subject }.to raise_error(Caseflow::Error::MailRoutingError)
+        end
+      end
+
+      context "when the appeal is active and has no pending_hearing_task" do
+        it "should route to VLJ support staff" do
+          expect(subject).to eq(Colocated.singleton)
+        end
+      end
+    end
+
+    context "for an FoiaRequestMailTask" do
+      let(:task_class) { FoiaRequestMailTask }
+
+      it "should always route to the Privacy team" do
+        expect(subject).to eq(PrivacyTeam.singleton)
+      end
+    end
+
+    context "for an HearingRelatedMailTask" do
+      let(:task_class) { HearingRelatedMailTask }
+
+      context "when the appeal has a pending hearing task" do
+        before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
+
+        it "should route to hearings management branch" do
+          expect(subject).to eq(HearingsManagement.singleton)
+        end
+      end
+
+      context "when the appeal is not active" do
+        before { allow(task_class).to receive(:case_active?).and_return(false) }
+
+        it "should raise an error" do
+          expect { subject }.to raise_error(Caseflow::Error::MailRoutingError)
+        end
+      end
+
+      context "when the appeal is active and has no pending_hearing_task" do
+        it "should route to VLJ support staff" do
+          expect(subject).to eq(Colocated.singleton)
+        end
+      end
+    end
+
+    context "for an OtherMotionMailTask" do
+      let(:task_class) { OtherMotionMailTask }
+
+      it "should always route to Lit Support" do
+        expect(subject).to eq(LitigationSupport.singleton)
+      end
+    end
+
+    context "for an PowerOfAttorneyRelatedMailTask" do
+      let(:task_class) { PowerOfAttorneyRelatedMailTask }
+
+      context "when the appeal has a pending hearing task" do
+        before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
+
+        it "should route to hearings management branch" do
+          expect(subject).to eq(HearingsManagement.singleton)
+        end
+      end
+
+      context "when the appeal is not active" do
+        before { allow(task_class).to receive(:case_active?).and_return(false) }
+
+        it "should raise an error" do
+          expect { subject }.to raise_error(Caseflow::Error::MailRoutingError)
+        end
+      end
+
+      context "when the appeal is active and has no pending_hearing_task" do
+        it "should route to VLJ support staff" do
+          expect(subject).to eq(Colocated.singleton)
+        end
+      end
+    end
+
+    context "for an PrivacyActRequestMailTask" do
+      let(:task_class) { PrivacyActRequestMailTask }
+
+      it "should always route to the Privacy team" do
+        expect(subject).to eq(PrivacyTeam.singleton)
+      end
+    end
+
+    context "for an PrivacyComplaintMailTask" do
+      let(:task_class) { PrivacyComplaintMailTask }
+
+      it "should always route to the Privacy team" do
+        expect(subject).to eq(PrivacyTeam.singleton)
+      end
+    end
+
+    context "for an ReturnedUndeliverableCorrespondenceMailTask" do
+      let(:task_class) { ReturnedUndeliverableCorrespondenceMailTask }
+
+      context "when the appeal has a pending hearing task" do
+        before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
+
+        it "should route to hearings management branch" do
+          expect(subject).to eq(HearingsManagement.singleton)
+        end
+      end
+
+      context "when the appeal is not active" do
+        before { allow(task_class).to receive(:case_active?).and_return(false) }
+
+        it "should route to BVA dispatch" do
+          expect(subject).to eq(BvaDispatch.singleton)
+        end
+      end
+
+      context "when the appeal is active, does not have any hearing tasks, but does have individually assigned tasks" do
+        let(:user) { FactoryBot.create(:user) }
+        before do
+          FactoryBot.create_list(:generic_task, 4, appeal: root_task.appeal)
+          FactoryBot.create(:generic_task, appeal: root_task.appeal, assigned_to: user)
+        end
+
+        it "should route to the user who is assigned the most recently created active task" do
+          expect(subject).to eq(user)
+        end
+      end
+
+      context "when the appeal is active but has no individually assigned tasks" do
+        it "should raise an error" do
+          expect { subject }.to raise_error(Caseflow::Error::MailRoutingError)
+        end
+      end
+    end
+
+    context "for an ReconsiderationMotionMailTask" do
+      let(:task_class) { ReconsiderationMotionMailTask }
+
+      it "should always route to Lit Support" do
+        expect(subject).to eq(LitigationSupport.singleton)
+      end
+    end
+
+    context "for an StatusInquiryMailTask" do
+      let(:task_class) { StatusInquiryMailTask }
+
+      it "should always route to Lit Support" do
+        expect(subject).to eq(LitigationSupport.singleton)
+      end
+    end
+
+    context "for an VacateMotionMailTask" do
+      let(:task_class) { VacateMotionMailTask }
+
+      it "should always route to Lit Support" do
+        expect(subject).to eq(LitigationSupport.singleton)
+      end
+    end
   end
 end
