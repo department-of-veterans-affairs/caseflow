@@ -189,6 +189,7 @@ feature "Appeal Intake" do
     expect(rating_request_issue).to have_attributes(
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
+      contested_issue_description: "PTSD denied",
       description: "PTSD denied",
       decision_date: nil,
       benefit_type: "compensation"
@@ -199,6 +200,7 @@ feature "Appeal Intake" do
       contested_rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
+      nonrating_issue_description: "Description for Active Duty Adjustments",
       benefit_type: "compensation"
     )
     expect(nonrating_request_issue.decision_date.to_date).to eq(profile_date.to_date)
@@ -351,6 +353,7 @@ feature "Appeal Intake" do
       :request_issue,
       end_product_establishment: epe,
       contested_rating_issue_reference_id: duplicate_reference_id,
+      contested_issue_description: "Old injury",
       description: "Old injury"
     )
 
@@ -513,12 +516,14 @@ feature "Appeal Intake" do
     expect(RequestIssue.find_by(
              review_request: appeal,
              contested_rating_issue_reference_id: "xyz123",
+             contested_issue_description: "Left knee granted 2",
              description: "Left knee granted 2",
              notes: "I am an issue note"
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
+             contested_issue_description: "Really old injury",
              description: "Really old injury",
              untimely_exemption: false,
              untimely_exemption_notes: "I am an exemption note"
@@ -527,6 +532,7 @@ feature "Appeal Intake" do
     active_duty_adjustments_request_issue = RequestIssue.find_by!(
       review_request: appeal,
       issue_category: "Active Duty Adjustments",
+      nonrating_issue_description: "Description for Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
       decision_date: profile_date
     )
@@ -537,6 +543,7 @@ feature "Appeal Intake" do
       review_request_type: "Appeal",
       review_request_id: appeal.id,
       issue_category: "Active Duty Adjustments",
+      nonrating_issue_description: "Another Description for Active Duty Adjustments",
       description: "Another Description for Active Duty Adjustments"
     )
 
@@ -546,19 +553,21 @@ feature "Appeal Intake" do
 
     expect(RequestIssue.find_by(
              review_request: appeal,
-             description: "This is an unidentified issue",
+             unidentified_issue_text: "This is an unidentified issue",
              is_unidentified: true
            )).to_not be_nil
 
     # Issues before AMA
     expect(RequestIssue.find_by(
              review_request: appeal,
+             contested_issue_description: "Non-RAMP Issue before AMA Activation",
              description: "Non-RAMP Issue before AMA Activation",
              ineligible_reason: :before_ama
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
+             contested_issue_description: "Issue before AMA Activation from RAMP",
              description: "Issue before AMA Activation from RAMP",
              ineligible_reason: nil,
              ramp_claim_id: "ramp_claim_id"
@@ -566,12 +575,14 @@ feature "Appeal Intake" do
 
     expect(RequestIssue.find_by(
              review_request: appeal,
+             nonrating_issue_description: "A nonrating issue before AMA",
              description: "A nonrating issue before AMA",
              ineligible_reason: :before_ama
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
              review_request: appeal,
+             nonrating_issue_description: "A nonrating issue before AMA",
              description: "A nonrating issue before AMA",
              decision_date: pre_ramp_start_date
            )).to_not be_nil
@@ -627,7 +638,12 @@ feature "Appeal Intake" do
       click_intake_finish
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
-      expect(RequestIssue.find_by(description: "appeal decision issue").ineligible_reason).to eq("appeal_to_appeal")
+      expect(
+        RequestIssue.find_by(
+          contested_issue_description: "appeal decision issue",
+          description: "appeal decision issue"
+        ).ineligible_reason
+      ).to eq("appeal_to_appeal")
       ineligible_checklist = find("ul.cf-ineligible-checklist")
       expect(ineligible_checklist).to have_content(
         "appeal decision issue #{Constants.INELIGIBLE_REQUEST_ISSUES.appeal_to_appeal}"
@@ -750,6 +766,7 @@ feature "Appeal Intake" do
 
         expect(RequestIssue.find_by(
                  description: "Left knee granted",
+                 contested_issue_description: "Left knee granted",
                  ineligible_reason: :legacy_appeal_not_eligible,
                  vacols_id: "vacols2",
                  vacols_sequence_id: "1"
@@ -786,6 +803,7 @@ feature "Appeal Intake" do
 
         expect(RequestIssue.find_by(
                  description: "Left knee granted",
+                 contested_issue_description: "Left knee granted",
                  ineligible_reason: :legacy_issue_not_withdrawn,
                  vacols_id: "vacols1",
                  vacols_sequence_id: "1"
