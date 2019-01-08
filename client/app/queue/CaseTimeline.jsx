@@ -8,11 +8,6 @@ import { GrayDot, GreenCheckmark } from '../components/RenderFunctions';
 import moment from 'moment';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
-import {
-  completeTasksSelector,
-  actionableTasksForAppeal,
-  incompleteTasksSelector
-} from './selectors';
 
 const grayLine = css({
   width: '5px',
@@ -44,17 +39,35 @@ type Params = {|
   appealId: string
 |};
 
-const getEventRow = ({ title, date, assigned_by }, lastRow) => {
+const getEventRow = ({ title, date, assigned_to, assigned_by, instructions }, lastRow) => {
   const formattedDate = date ? moment(date).format('MM/DD/YYYY') : null;
   const eventImage = date ? <GreenCheckmark /> : <GrayDot />;
 
   return <tr key={title}>
-    <td {...tableCell}><dd {...tableTitle}>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}: </dd>{formattedDate}</td>
+    <td {...tableCell}>
+      { formattedDate && <React.Fragment>
+        <dd {...tableTitle}>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}: </dd>{formattedDate}
+      </React.Fragment> }
+    </td>
     <td {...tableCellWithIcon}>{eventImage}{!lastRow && <div {...grayLine} />}</td>
     <td {...tableCell}>
       {title} <br />
-      <dt {...tableTitle} >{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}: </dt>
-      <dd {...css({ display: 'inline' })}>{assigned_by}</dd>
+      { assigned_to && <React.Fragment>
+        <dt {...tableTitle} >{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}: </dt>
+        <dd {...css({ display: 'inline' })}>{assigned_to}</dd>
+      </React.Fragment> } <br />
+      { assigned_by && <React.Fragment>
+        <dt {...tableTitle} >{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}: </dt>
+        <dd {...css({ display: 'inline' })}>{assigned_by}</dd>
+      </React.Fragment> } <br />
+      { assigned_by && <React.Fragment>
+        <dt {...tableTitle} >{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}: </dt>
+        <dd {...css({ display: 'inline' })}>TODO #1</dd>
+      </React.Fragment> } <br />
+      { instructions && <React.Fragment>
+        <dt {...tableTitle} >{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}: </dt>
+        <dd {...css({ display: 'inline' })}>TODO #2</dd>
+      </React.Fragment> }
     </td>
   </tr>;
 };
@@ -66,7 +79,8 @@ class CaseTimeline extends React.PureComponent {
     } = this.props;
 
     /* console.log('--completedTasks--');
-    console.log(this.props);*/
+    console.log(this.props.appeal);
+    console.log(this.props.appeal.timeline);*/
 
     return <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
@@ -83,9 +97,6 @@ class CaseTimeline extends React.PureComponent {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   return {
-    incompletedTasks: incompleteTasksSelector(state, { appealId: ownProps.appealId }),
-    completedTasks: completeTasksSelector(state, { appealId: ownProps.appealId }),
-    tasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };
 
