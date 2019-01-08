@@ -214,6 +214,11 @@ class NonratingRequestIssueModal extends React.Component {
       </React.Fragment>;
     }
 
+    let benefitTypeElement = '';
+    if (intakeData.formType === 'appeal') {
+      benefitTypeElement = <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} />;
+    }
+
     return <div className="intake-add-issues">
       <Modal
         buttons={[
@@ -240,12 +245,7 @@ class NonratingRequestIssueModal extends React.Component {
             Does issue {issueNumber} match any of these issue categories?
           </h2>
           <div className="add-nonrating-request-issue">
-            <BenefitType
-              disabled={intakeData.formType !== 'appeal'}
-              value={benefitType}
-              onChange={this.benefitTypeOnChange}
-              // errorMessage={benefitTypeError}
-            />
+            {benefitTypeElement}
             <SearchableDropdown
               name="issue-category"
               label="Issue category"
