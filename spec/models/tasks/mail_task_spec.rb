@@ -53,5 +53,18 @@ describe MailTask do
         expect(root_task.children.length).to eq(0)
       end
     end
+
+    context "when user is not a member of the mail team" do
+      let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+      let(:root_task_id) { root_task.id }
+
+      let(:non_mail_user) { FactoryBot.create(:user) }
+
+      it "should raise an error" do
+        expect { task_class.create_from_params(params, non_mail_user) }.to raise_error(
+          Caseflow::Error::ActionForbiddenError
+        )
+      end
+    end
   end
 end
