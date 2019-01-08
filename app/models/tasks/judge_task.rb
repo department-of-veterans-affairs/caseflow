@@ -61,6 +61,7 @@ class JudgeTask < Task
   end
 
   def self.eligible_for_assigment?(task)
+    return false if task.appeal.nil?
     return false if task.appeal.class == LegacyAppeal
     return false if task.appeal.docket_name.nil?
     # Hearing cases will not be processed until February 2019
@@ -71,10 +72,16 @@ class JudgeTask < Task
     if task.appeal.evidence_submission_docket?
       return false if task.appeal.receipt_date > 90.days.ago
     end
-    # If the task already has been assigned to a judge, or if it
-    # is a VSO task, it will have children tasks. We only want to
-    # assign tasks that have not been assigned yet.
+
+    if has_completed_vso_task(task)
+      return true
+    end
+    
     task.children.empty?
+  end
+
+  def self.has_completed_vso_task(task)
+    task.children.all? { |t| t.type == "InformalHearingPresentationTask" && t.status == "completed" }
   end
 
   def self.list_of_assignees
