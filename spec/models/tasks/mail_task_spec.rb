@@ -65,10 +65,100 @@ describe MailTask do
     end
   end
 
-  # TODO: Add tests for:
-  # pending_hearing_task?
-  # case_active?
-  # most_recent_active_task_assignee
+  describe ".pending_hearing_task?" do
+    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+
+    subject { MailTask.pending_hearing_task?(root_task) }
+
+    context "when the task's appeal is in the hearing docket" do
+      let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
+      it "should be true" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when the task's appeal is not in the hearing docket" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+      it "should be false" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
+  describe ".case_active?" do
+    subject { MailTask.case_active?(root_task) }
+
+    context "when the appeal is active" do
+      before { allow_any_instance_of(Appeal).to receive(:active?).and_return(true) }
+
+      it "should return true" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when the appeal is not active" do
+      before { allow_any_instance_of(Appeal).to receive(:active?).and_return(false) }
+
+      it "should return false" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
+  describe ".most_recent_active_task_assignee" do
+    subject { MailTask.most_recent_active_task_assignee(root_task) }
+
+    context "when the only task for an appeal is the root task" do
+      it "should return nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+
+    context "when all individually assigned tasks are complete" do
+      before do
+        FactoryBot.create_list(:generic_task, 4, :completed, appeal: root_task.appeal)
+      end
+
+      it "should return nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+
+    context "when the most recent active task is assigned to an organization" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:user_task) { FactoryBot.create(:generic_task, appeal: root_task.appeal, assigned_to: user) }
+
+      before do
+        FactoryBot.create(
+          :generic_task,
+          appeal: root_task.appeal,
+          assigned_to: FactoryBot.create(:organization),
+          parent: user_task
+        )
+      end
+
+      it "should return a user object" do
+        expect(subject).to be_a(User)
+
+        user_task = Task.find_by(assigned_to: user)
+        expect(user_task.children.count).to eq(1)
+        expect(user_task.children.first.assigned_to).to be_a(Organization)
+      end
+    end
+
+    context "when there are multiple active tasks assigned to individual users" do
+      let(:user) { FactoryBot.create(:user) }
+
+      before do
+        FactoryBot.create_list(:generic_task, 6, appeal: root_task.appeal)
+        FactoryBot.create(:generic_task, appeal: root_task.appeal, assigned_to: user)
+      end
+
+      it "should return the user who was assigned the most recently created task" do
+        expect(subject).to eq(user)
+      end
+    end
+  end
 
   describe ".child_task_assignee (routing logic)" do
     let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }

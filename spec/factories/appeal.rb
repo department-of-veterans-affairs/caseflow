@@ -26,6 +26,10 @@ FactoryBot.define do
       end
     end
 
+    trait :hearing_docket do
+      docket_type "hearing"
+    end
+
     trait :advanced_on_docket_due_to_age do
       claimants { [create(:claimant, :advanced_on_docket_due_to_age)] }
     end
