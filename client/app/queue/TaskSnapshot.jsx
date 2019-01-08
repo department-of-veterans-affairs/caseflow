@@ -4,9 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import {
-  actionableTasksForAppeal,
   appealWithDetailSelector,
-  rootTasksForAppeal,
   nonRootActionableTasksForAppeal
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
@@ -201,17 +199,16 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
   render = () => {
     const {
-      appeal,
-      rootTask
+      appeal
     } = this.props;
 
     let sectionBody = <tr><td {...css({ borderStyle: 'none' })}>{COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL}</td></tr>;
-    const nonRootTasks = this.props.nonRootTasks;
-    const taskLength = nonRootTasks.length;
+    const tasks = this.props.tasks;
+    const taskLength = tasks.length;
 
     if (taskLength) {
-      sectionBody = nonRootTasks.map((task, index) =>
-        !(rootTask[0]) && <tr key={task.uniqueId}>
+      sectionBody = tasks.map((task, index) =>
+        <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
               { this.assignedOnListItem(task) }
@@ -258,9 +255,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
-    tasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
-    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId }),
-    nonRootTasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId })
+    tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };
 

@@ -22,9 +22,9 @@ class AddNewTaskButton extends React.PureComponent {
       history
     } = this.props;
 
-    const appealId = rootTask[0].externalAppealId;
-    const uniqueId = rootTask[0].uniqueId;
-    const modalPath = rootTask[0].availableActions[0].value;
+    const appealId = rootTask.externalAppealId;
+    const uniqueId = rootTask.uniqueId;
+    const modalPath = rootTask.availableActions[0].value;
 
     history.push(`/queue/appeals/${appealId}/tasks/${uniqueId}/${modalPath}`);
   }
@@ -34,7 +34,7 @@ class AddNewTaskButton extends React.PureComponent {
       rootTask
     } = this.props;
 
-    return (rootTask[0]) ? <Button
+    return (rootTask) ? <Button
       linkStyling
       styling={buttonStyling}
       name={COPY.TASK_SNAPSHOT_ADD_NEW_TASK_LABEL}
@@ -45,7 +45,7 @@ class AddNewTaskButton extends React.PureComponent {
 const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
-    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId })
+    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId })[0]
   };
 };
 
