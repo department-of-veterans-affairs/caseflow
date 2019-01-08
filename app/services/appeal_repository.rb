@@ -300,18 +300,21 @@ class AppealRepository
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
   def self.appeals_ready_for_hearing_schedule(regional_office)
     if regional_office == HearingDay::HEARING_TYPES[:central]
       return appeals_ready_for_co_hearing_schedule
     end
 
-    cavc_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57", bfac: "7", bfdocind: "V",
-                                                   bfhr: "2").order("folder.tinum").limit(30)
+    cavc_cases = VACOLS::Case.joins(:folder)
+      .where(bfregoff: regional_office, bfcurloc: "57", bfac: "7", bfdocind: "V", bfhr: "2")
+      .order("folder.tinum").limit(30).includes(:correspondent, :folder)
     aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).joins(:folder).where("aod = 1").where(
       bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V"
-    ).order("folder.tinum").limit(30)
-    other_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfhr: "2", bfcurloc: "57",
-                                                    bfdocind: "V").order("folder.tinum").limit(30)
+    ).order("folder.tinum").limit(30).includes(:correspondent, :folder)
+    other_cases = VACOLS::Case.joins(:folder)
+      .where(bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V")
+      .order("folder.tinum").limit(30).includes(:correspondent, :folder)
 
     aod_vacols_ids = aod_cases.pluck(:bfkey)
 
@@ -321,12 +324,16 @@ class AppealRepository
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def self.appeals_ready_for_co_hearing_schedule
     cavc_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57", bfac: "7").order("folder.tinum").limit(30)
-    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD)
+      .includes(:correspondent, :folder)
+    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).includes(:correspondent, :folder)
       .joins(:folder).where("aod = 1").where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
+      .includes(:correspondent, :folder)
     other_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
+      .includes(:correspondent, :folder)
 
     aod_vacols_ids = aod_cases.pluck(:bfkey)
 
