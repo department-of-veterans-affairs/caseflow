@@ -418,7 +418,7 @@ feature "Edit issues" do
     add_intake_rating_issue("Issue with legacy issue not withdrawn")
 
     safe_click("#button-submit-update")
-    expect(page).to have_content("Edit Confirmed")
+    expect(page).to have_content("has been processed")
 
     first_not_modified_request_issue = RequestIssue.find_by(
       review_request: decision_review,
