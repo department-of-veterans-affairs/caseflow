@@ -77,7 +77,8 @@ class AppealsController < ApplicationController
   def update
     if request_issues_update.perform!
       render json: {
-        requestIssues: appeal.request_issues.map(&:ui_hash)
+        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
