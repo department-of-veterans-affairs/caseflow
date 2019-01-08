@@ -3,7 +3,9 @@ describe MailTask do
     let(:user) { FactoryBot.create(:user) }
     let(:appeal) { FactoryBot.create(:appeal) }
 
-    before { allow_any_instance_of(MailTeam).to receive(:user_has_access?).and_return(true) }
+    before do
+      OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
+    end
 
     context "when no root_task exists for appeal" do
       let(:params) { { appeal: appeal } }
@@ -20,7 +22,8 @@ describe MailTask do
         {
           appeal: appeal,
           assigned_to_id: org.id,
-          assigned_to_type: org.class.name
+          assigned_to_type: org.class.name,
+          parent_id: root_task.id
         }
       end
 

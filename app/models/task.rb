@@ -212,7 +212,7 @@ class Task < ApplicationRecord
 
   def assign_to_judge_data
     {
-      selected: root_task.children.find { |task| task.is_a?(JudgeTask) }.assigned_to,
+      selected: root_task.children.find { |task| task.is_a?(JudgeTask) }&.assigned_to,
       options: users_to_options(Judge.list_all),
       type: JudgeQualityReviewTask.name
     }
