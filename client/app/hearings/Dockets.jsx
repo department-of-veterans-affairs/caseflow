@@ -180,7 +180,7 @@ export class Dockets extends React.Component {
     };
 
     const groupedHearings = _.reduce(this.props.upcomingHearings, (result, value, key) => {
-      const dateMoment = moment(value.date);
+      const dateMoment = moment(value.scheduled_for);
       const pastOrUpcoming = dateMoment.isAfter(new Date().setHours(0, 0, 0, 0)) ? 'upcoming' : 'past';
 
       result[pastOrUpcoming][key] = value;

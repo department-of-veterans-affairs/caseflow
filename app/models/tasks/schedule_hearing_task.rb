@@ -16,11 +16,11 @@ class ScheduleHearingTask < GenericTask
     verify_user_can_update!(current_user)
 
     task_payloads = params.delete(:business_payloads)
-    scheduled_for = task_payloads[:values][:scheduled_for]
+    hearing_date = task_payloads[:values][:hearing_date]
     new_date = Time.use_zone("Eastern Time (US & Canada)") do
-      Time.zone.parse(scheduled_for)
+      Time.zone.parse(hearing_date)
     end
-    task_payloads[:values][:scheduled_for] = new_date
+    task_payloads[:values][:hearing_date] = new_date
 
     if !task_business_payloads.empty?
       task_business_payloads.update(task_payloads)
@@ -34,14 +34,14 @@ class ScheduleHearingTask < GenericTask
   def update_parent_status
     hearing_pkseq = task_business_payloads[0].values["hearing_pkseq"]
     hearing_type = task_business_payloads[0].values["hearing_type"]
-    scheduled_for = Time.zone.parse(task_business_payloads[0].values["scheduled_for"])
-    scheduled_for_str = "#{scheduled_for.year}-#{scheduled_for.month}-#{scheduled_for.day} " \
-                       "#{format('%##d', scheduled_for.hour)}:#{format('%##d', scheduled_for.min)}:00"
+    hearing_date = Time.zone.parse(task_business_payloads[0].values["hearing_date"])
+    hearing_date_str = "#{hearing_date.year}-#{hearing_date.month}-#{hearing_date.day} " \
+                       "#{format('%##d', hearing_date.hour)}:#{format('%##d', hearing_date.min)}:00"
 
     if hearing_type == LegacyHearing::CO_HEARING
-      HearingRepository.update_co_hearing(scheduled_for_str, appeal)
+      HearingRepository.update_co_hearing(hearing_date_str, appeal)
     else
-      HearingRepository.create_child_video_hearing(hearing_pkseq, scheduled_for, appeal)
+      HearingRepository.create_child_video_hearing(hearing_pkseq, hearing_date, appeal)
     end
 
     AppealRepository.update_location!(appeal, location_based_on_hearing_type(hearing_type))
