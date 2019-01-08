@@ -168,6 +168,13 @@ class RequestIssue < ApplicationRecord
     ineligible_reason.nil?
   end
 
+  def special_issues
+    specials = []
+    specials << { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
+    specials << { code: "SSR", narrative: "Same Station Review" } if decision_review.try(:same_office)
+    specials
+  end
+
   def ui_hash
     {
       id: id,

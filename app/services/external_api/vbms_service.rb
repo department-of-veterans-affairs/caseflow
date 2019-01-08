@@ -129,14 +129,13 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
-  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [], user:)
+  def self.create_contentions!(veteran_file_number:, claim_id:, contentions:, user:)
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::CreateContentions.new(
       veteran_file_number: veteran_file_number,
       claim_id: claim_id,
-      contentions: contention_descriptions,
-      special_issues: special_issues,
+      contentions: contentions,
       v5: FeatureToggle.enabled?(:claims_service_v5),
       send_userid: FeatureToggle.enabled?(:vbms_include_user)
     )
