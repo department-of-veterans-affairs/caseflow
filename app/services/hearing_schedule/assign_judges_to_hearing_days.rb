@@ -38,7 +38,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
     judge_count = sorted_judges.length
     total_hearing_day_count = @unassigned_hearing_days.length
-    max_days_per_judge = (total_hearing_day_count.to_f / judge_count).floor
+    max_days_per_judge = [(total_hearing_day_count.to_f / judge_count).floor, 1].max
 
     sorted_judges.each do |css_id|
       days_assigned = 0

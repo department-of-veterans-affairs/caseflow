@@ -174,7 +174,7 @@ export default class AssignHearings extends React.Component {
       }),
       docketNumber: this.getHearingDocketTag(hearing),
       location: hearing.readableLocation,
-      time: this.getHearingTime(hearing.date, hearing.regionalOfficeTimezone)
+      time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
     }));
   };
 
