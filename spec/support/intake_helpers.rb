@@ -173,6 +173,7 @@ module IntakeHelpers
   end
 
   def add_intake_nonrating_issue(
+    benefit_type: "Compensation",
     category: "Active Duty Adjustments",
     description: "Some description",
     date: "01/01/2016",
@@ -181,6 +182,9 @@ module IntakeHelpers
     add_button_text = legacy_issues ? "Next" : "Add this issue"
     expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
     expect(page).to have_button(add_button_text, disabled: true)
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: benefit_type, match: :prefer_exact).click
+    end
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: description

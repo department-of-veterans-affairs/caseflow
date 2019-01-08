@@ -51,7 +51,6 @@ export const commonReducers = (state, action) => {
   };
 
   actionsMap[ACTIONS.TOGGLE_UNTIMELY_EXEMPTION_MODAL] = () => {
-    throw new Error('toggle untimely modal called from');
     return update(state, {
       $toggle: ['untimelyExemptionModalVisible'],
       addIssuesModalVisible: {

@@ -121,10 +121,6 @@ class NonratingRequestIssueModal extends React.Component {
     let receiptDate = new Date(this.props.intakeData.receiptDate);
     let isTimely = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
 
-    console.log('decisionDate:', decisionDate);
-    console.log('receiptDate:', receiptDate);
-    console.log('isTimely:', isTimely);
-
     return !isTimely;
   }
 
@@ -137,7 +133,8 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleDueToId: this.state.ineligibleDueToId,
       ineligibleReason: this.state.ineligibleReason,
       reviewRequestTitle: this.state.reviewRequestTitle,
-      isRating: false
+      isRating: false,
+      timely: true
     };
 
     if (this.hasLegacyAppeals()) {
@@ -145,24 +142,13 @@ class NonratingRequestIssueModal extends React.Component {
         currentIssue,
         notes: null });
     } else if (this.requiresUntimelyExemption()) {
-      console.log('this.requiresUntimelyExemption is true');
       currentIssue.timely = false;
       this.props.toggleUntimelyExemptionModal({
         currentIssue,
         notes: null
       });
     } else {
-      console.log('addNonRatingRequestIssue raw');
-      this.props.addNonratingRequestIssue({
-        benefitType: this.state.benefitType,
-        category: this.state.category.value,
-        description: this.state.description,
-        decisionDate: this.state.decisionDate,
-        ineligibleDueToId: this.state.ineligibleDueToId,
-        ineligibleReason: this.state.ineligibleReason,
-        reviewRequestTitle: this.state.reviewRequestTitle,
-        timely: true
-      });
+      this.props.addNonratingRequestIssue(currentIssue);
       this.props.closeHandler();
     }
   }
