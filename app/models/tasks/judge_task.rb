@@ -64,6 +64,7 @@ class JudgeTask < Task
   end
 
   def self.eligible_for_assignment?(task)
+    return false if task.completed?
     return false if task.appeal.nil?
     return false if task.appeal.class == LegacyAppeal
     return false if task.appeal.docket_name.nil?
@@ -76,7 +77,7 @@ class JudgeTask < Task
       return false if task.appeal.receipt_date > 90.days.ago
     end
 
-    task.children.all? { |t| !t.type.is_a?(JudgeTask) && t.completed? }
+    task.children.all? { |t| !t.is_a?(JudgeTask) && t.completed? }
   end
 
   def self.list_of_assignees
