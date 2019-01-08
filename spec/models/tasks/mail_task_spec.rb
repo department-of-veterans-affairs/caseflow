@@ -1,16 +1,16 @@
 describe MailTask do
   let(:user) { FactoryBot.create(:user) }
   let(:mail_team) { MailTeam.singleton }
+  let(:root_task) { FactoryBot.create(:root_task) }
   before do
     OrganizationsUser.add_user_to_organization(user, mail_team)
   end
 
   describe ".create_from_params" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-
     # Use AodMotionMailTask because we do create subclasses of MailTask, never MailTask itself.
     let(:task_class) { AodMotionMailTask }
-    let(:params) { { appeal: appeal, parent_id: root_task_id, type: task_class.name } }
+    let(:params) { { appeal: root_task.appeal, parent_id: root_task_id, type: task_class.name } }
+    let(:root_task_id) { root_task.id }
 
     context "when no root_task exists for appeal" do
       let(:root_task_id) { nil }
@@ -21,9 +21,6 @@ describe MailTask do
     end
 
     context "when root_task exists for appeal" do
-      let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-      let(:root_task_id) { root_task.id }
-
       it "creates AodMotionMailTask assigned to MailTeam and AodTeam" do
         expect { task_class.create_from_params(params, user) }.to_not raise_error
         expect(root_task.children.length).to eq(1)
@@ -41,9 +38,6 @@ describe MailTask do
     end
 
     context "when child task creation fails" do
-      let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-      let(:root_task_id) { root_task.id }
-
       before do
         allow(task_class).to receive(:create_child_task).and_raise(StandardError)
       end
@@ -55,9 +49,6 @@ describe MailTask do
     end
 
     context "when user is not a member of the mail team" do
-      let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-      let(:root_task_id) { root_task.id }
-
       let(:non_mail_user) { FactoryBot.create(:user) }
 
       it "should raise an error" do
@@ -68,14 +59,18 @@ describe MailTask do
     end
   end
 
+  describe ".outstanding_cavc_tasks?" do
+    it "should always return false since we do not yet have CAVC tasks" do
+      expect(MailTask.outstanding_cavc_tasks?(root_task)).to eq(false)
+    end
+  end
+
   # TODO: Add tests for:
-  # outstanding_cavc_tasks?
   # pending_hearing_task?
   # case_active?
   # most_recent_active_task_assignee
 
   describe ".child_task_assignee (routing logic)" do
-    let(:root_task) { FactoryBot.create(:root_task) }
     let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
     let(:params) { {} }
 
