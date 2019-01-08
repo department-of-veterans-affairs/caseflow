@@ -29,7 +29,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       appeal_link.click
       expect(page).not_to have_content("loading to VACOLS.", wait: 30)
       expect(page).to have_content("Select an action", wait: 30)
-      click_dropdown(index: 0)
+      click_dropdown(text: "Schedule Veteran")
       expect(page).to have_content("Time")
       radio_link = find(".cf-form-radio-option", match: :first)
       radio_link.click
@@ -74,7 +74,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       appeal_link.click
       expect(page).not_to have_content("loading to VACOLS.", wait: 30)
       expect(page).to have_content("Select an action", wait: 30)
-      click_dropdown(index: 0)
+      click_dropdown(text: "Schedule Veteran")
       expect(page).to have_content("Time")
       radio_link = find(".cf-form-radio-option", match: :first)
       radio_link.click

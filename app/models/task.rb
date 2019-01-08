@@ -234,6 +234,14 @@ class Task < ApplicationRecord
     }
   end
 
+  def schedule_veteran_data
+    {
+      selected: nil,
+      options: nil,
+      type: ScheduleHearingTask.name
+    }
+  end
+
   def timeline_title
     "#{type} completed"
   end
