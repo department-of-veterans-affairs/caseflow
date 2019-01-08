@@ -6,7 +6,8 @@ import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { DISPOSITION_OPTIONS } from '../constants';
-import { longFormNameFromShort } from '../util';
+import { longFormNameFromShort, formatDecisionIssuesFromRequestIssues } from '../util';
+import { taskUpdateDecisionIssues } from '../actions/task';
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -51,7 +52,7 @@ class NonCompDecisionIssue extends React.PureComponent {
         </div>
         <div className="usa-width-two-thirds">
           <div><strong>Decision description</strong> <span className="cf-optional">Optional</span></div>
-          <textarea name={`description-issue-${index}`} value={this.props.description || undefined} onChange={this.handleDescriptionChange}></textarea>
+          <textarea name={`description-issue-${index}`} value={this.props.decisionDescription || undefined} onChange={this.handleDescriptionChange}></textarea>
         </div>
         <div className="usa-width-one-third cf-disposition">
           <SearchableDropdown
@@ -60,7 +61,7 @@ class NonCompDecisionIssue extends React.PureComponent {
             label=" "
             placeholder="Select Disposition"
             options={this.dispositionOptions()}
-            value={this.props.disposition}
+            value={this.props.decisionDisposition}
             onChange={this.handleDispositionChange} />
         </div>
       </div>
@@ -74,8 +75,13 @@ class NonCompDispositionsPage extends React.PureComponent {
 
     let today = formatDate(new Date());
 
+    const formattedRequestIssues = this.props.appeal.requestIssues.map((requestIssue) => {
+      requestIssue.decisionIssue = requestIssue.decisionIssue || {};
+      return requestIssue;
+    });
+
     this.state = {
-      requestIssues: this.props.appeal.requestIssues,
+      requestIssues: formattedRequestIssues,
       decisionDate: today,
       isFilledOut: false
     };
@@ -87,7 +93,8 @@ class NonCompDispositionsPage extends React.PureComponent {
   }
 
   handleSave = () => {
-    
+    const decisionIssues = formatDecisionIssuesFromRequestIssues(this.state.requestIssues);
+    this.props.taskUpdateDecisionIssues(this.props.task.id, this.props.businessLine, decisionIssues);
   }
 
   checkFormFilledOut = () => {
@@ -98,14 +105,14 @@ class NonCompDispositionsPage extends React.PureComponent {
 
   onDecisionIssueDispositionChange = (requestIssueIndex, value) => {
     let newRequestIssues = this.state.requestIssues;
-    newRequestIssues[requestIssueIndex].disposition = value;
+    newRequestIssues[requestIssueIndex].decisionIssue.disposition = value;
     this.setState({requestIssues: newRequestIssues});
     this.checkFormFilledOut();
   }
 
   onDecisionIssueDescriptionChange = (requestIssueIndex, value) => {
     let newRequestIssues = this.state.requestIssues;
-    newRequestIssues[requestIssueIndex].description = value;
+    newRequestIssues[requestIssueIndex].decisionIssue.description = value;
     this.setState({requestIssues: newRequestIssues});
   }
 
@@ -113,7 +120,8 @@ class NonCompDispositionsPage extends React.PureComponent {
     const {
       appeal,
       businessLine,
-      task
+      task,
+      decisionIssuesStatus
     } = this.props;
 
     return <div>
@@ -171,8 +179,8 @@ class NonCompDispositionsPage extends React.PureComponent {
               return <NonCompDecisionIssue key={`issue-${index}`} issue={issue} index={index}
                 onDispositionChange={this.onDecisionIssueDispositionChange}
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
-                description={issue.description}
-                disposition={issue.disposition}
+                decisionDescription={issue.decisionIssue.description}
+                decisionDisposition={issue.decisionIssue.disposition}
               />;
             })
           }
@@ -192,7 +200,9 @@ class NonCompDispositionsPage extends React.PureComponent {
       </div>
       <div className="cf-txt-r">
         <a className="cf-cancel-link" href={`/decision_reviews/${businessLine}`}>Cancel</a>
-        <Button className="usa-button" disabled={!this.state.isFilledOut} onClick={this.handleSave}>Complete</Button>
+        <Button className="usa-button"
+          loading={decisionIssuesStatus.update === "IN_PROGRESS"}
+          disabled={!this.state.isFilledOut} onClick={this.handleSave}>Complete</Button>
       </div>
     </div>;
   }
@@ -202,8 +212,12 @@ const DispositionPage = connect(
   (state) => ({
     appeal: state.appeal,
     businessLine: state.businessLine,
-    task: state.task
-  })
+    task: state.task,
+    decisionIssuesStatus: state.decisionIssuesStatus
+  }),
+  (dispatch) => bindActionCreators({
+    taskUpdateDecisionIssues
+  }, dispatch)
 )(NonCompDispositionsPage);
 
 export default DispositionPage;
