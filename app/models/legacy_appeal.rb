@@ -662,10 +662,6 @@ class LegacyAppeal < ApplicationRecord
     TYPE_CODES[type] || "other"
   end
 
-  def latest_event_date
-    v1_events.last.try(:date)
-  end
-
   def cavc
     type == "Court Remand"
   end
