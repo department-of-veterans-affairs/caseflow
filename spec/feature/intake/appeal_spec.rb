@@ -678,6 +678,33 @@ feature "Appeal Intake" do
     expect(intake).to be_canceled
   end
 
+  scenario "adding nonrating issue with non-comp benefit type" do
+    _, intake = start_appeal(veteran)
+    visit "/intake/add_issues"
+
+    expect(page).to have_content("Add / Remove Issues")
+
+    click_intake_add_issue
+    click_intake_no_matching_issues
+    add_intake_nonrating_issue(
+      benefit_type: "Education",
+      category: "Accrued",
+      description: "Description for Accrued",
+      date: profile_date.strftime("%D")
+    )
+
+    expect(page).to have_content("Description for Accrued")
+
+    click_intake_finish
+
+    expect(page).to have_content("Intake completed")
+
+    request_issue = intake.reload.detail.request_issues.first
+
+    expect(request_issue.description).to eq("Description for Accrued")
+    expect(request_issue.benefit_type).to eq("education")
+  end
+
   context "with active legacy appeal" do
     before do
       setup_legacy_opt_in_appeals(veteran.file_number)

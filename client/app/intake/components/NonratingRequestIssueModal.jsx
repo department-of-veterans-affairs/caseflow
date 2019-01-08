@@ -241,7 +241,7 @@ class NonratingRequestIssueModal extends React.Component {
           </h2>
           <div className="add-nonrating-request-issue">
             <BenefitType
-              disabled={ intakeData.formType !== 'appeal' }
+              disabled={intakeData.formType !== 'appeal'}
               value={benefitType}
               onChange={this.benefitTypeOnChange}
               // errorMessage={benefitTypeError}
