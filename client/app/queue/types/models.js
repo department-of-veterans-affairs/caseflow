@@ -105,7 +105,7 @@ export type Hearing = {
   viewedByJudge: boolean,
   date: string,
   type: string,
-  id: string,
+  externalId: string,
   disposition: string
 };
 
