@@ -319,7 +319,7 @@ describe RequestIssuesUpdate do
             end_product_establishment: nonrating_end_product_establishment,
             contention_reference_id: nonrating_request_issue_contention.id,
             description: nonrating_request_issue_contention.text,
-            nonrating_issue_description: "Service connection for cancer was denied",
+            nonrating_issue_description: nonrating_request_issue_contention.text,
             issue_category: "Apportionment"
           )
 

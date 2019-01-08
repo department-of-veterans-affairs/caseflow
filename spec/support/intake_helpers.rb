@@ -319,7 +319,7 @@ module IntakeHelpers
            contested_rating_issue_reference_id: contested_rating_issue_reference_id,
            contested_rating_issue_profile_date: decision_review.receipt_date - 1.day,
            description: "Test rating decision issue",
-           contested_issue_description: "Test nonrating decision issue",
+           contested_issue_description: "Test rating decision issue",
            review_request: decision_review,
            veteran_participant_id: veteran.participant_id)
   end
