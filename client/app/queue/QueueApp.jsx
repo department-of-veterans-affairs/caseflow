@@ -36,6 +36,8 @@ import AssignHearingModal from './components/AssignHearingModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
+import CreateMailTaskDialog from './CreateMailTaskDialog';
+
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -195,7 +197,7 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
 
-  routedAssignMailTaskToTeam = (props) => <AssignToView isTeamAssign returnToCaseDetails {...props.match.params} />;
+  routedCreateMailTask = (props) => <CreateMailTaskDialog {...props.match.params} />;
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
@@ -299,7 +301,7 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedAssignToTeam} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
-            render={this.routedAssignMailTaskToTeam} />
+            render={this.routedCreateMailTask} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
             render={this.routedReassignToUser} />
