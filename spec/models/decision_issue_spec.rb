@@ -78,7 +78,12 @@ describe DecisionIssue do
     subject { decision_issue.issue_category }
 
     let(:request_issues) do
-      [create(:request_issue, issue_category: "test category", description: "request issue description")]
+      [create(
+        :request_issue,
+        issue_category: "test category",
+        nonrating_issue_description: "request issue description",
+        description: "request issue description"
+      )]
     end
 
     it "finds the issue category" do
@@ -92,7 +97,13 @@ describe DecisionIssue do
     context "when description not set" do
       context "when nonrating" do
         let(:request_issues) do
-          [create(:request_issue, :nonrating, issue_category: "test category", description: "req issue description")]
+          [create(
+            :request_issue,
+            :nonrating,
+            issue_category: "test category",
+            nonrating_issue_description: "req issue description",
+            description: "req issue description"
+          )]
         end
 
         it { is_expected.to eq("test disposition: test category - req issue description") }

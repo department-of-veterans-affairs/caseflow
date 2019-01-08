@@ -319,7 +319,8 @@ RSpec.describe "Hearing Schedule", type: :request do
     end
   end
 
-  describe "Get CO scheduled hearing with correct time." do
+  describe "Get CO scheduled hearing with correct time.", skip: "This test can come back when we pull CO
+      children records by ID instead of by date" do
     let!(:staff) { create(:staff, stafkey: "RO18", stc2: 2, stc3: 3, stc4: 4) }
     let(:vacols_case) do
       create(
