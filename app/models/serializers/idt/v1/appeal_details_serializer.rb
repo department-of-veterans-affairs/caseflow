@@ -86,11 +86,11 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
       end
     else
       object.request_issues.map do |issue|
-        { 
-          id: issue.id, 
-          disposition: issue.disposition, 
-          program: Constants::BENEFIT_TYPES[issue.benefit_type], 
-          description: issue.description 
+        {
+          id: issue.id,
+          disposition: issue.disposition,
+          program: Constants::BENEFIT_TYPES[issue.benefit_type],
+          description: issue.description
         }
       end
     end
