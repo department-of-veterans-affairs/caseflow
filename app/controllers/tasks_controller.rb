@@ -105,7 +105,11 @@ class TasksController < ApplicationController
     ro = HearingDayMapper.validate_regional_office(params[:ro])
 
     tasks = AppealRepository.appeals_ready_for_hearing_schedule(ro).map do |appeal|
-      ScheduleHearingTask.new(appeal: appeal, status: Constants.TASK_STATUSES.in_progress.to_sym, assigned_to: HearingsManagement.singleton)
+      ScheduleHearingTask.new(
+        appeal: appeal,
+        status: Constants.TASK_STATUSES.in_progress.to_sym,
+        assigned_to: HearingsManagement.singleton
+      )
     end
 
     render json: {
