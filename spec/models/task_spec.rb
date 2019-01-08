@@ -302,6 +302,17 @@ describe Task do
       expect(new_task.parent_id).to eq(task.id)
       expect(task.reload.status).to eq("on_hold")
     end
+
+    context "when the instructions field is a string" do
+      let(:instructions_text) { "instructions for this task" }
+      let(:params) do
+        { assigned_to: judge, appeal: task.appeal, parent_id: task.id, type: "Task", instructions: instructions_text }
+      end
+
+      it "should transform it into an array of strings" do
+        expect(subject.instructions).to eq([instructions_text])
+      end
+    end
   end
 
   describe ".create_and_auto_assign_child_task" do

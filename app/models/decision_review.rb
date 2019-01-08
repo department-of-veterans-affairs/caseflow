@@ -219,7 +219,11 @@ class DecisionReview < ApplicationRecord
   end
 
   def unfiltered_contestable_issues_from_ratings
-    cached_rating_issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
+    return [] unless receipt_date
+
+    cached_rating_issues
+      .select { |issue| issue.profile_date && issue.profile_date.to_date < receipt_date }
+      .map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
   end
 
   def contestable_issues_from_ratings
@@ -233,12 +237,10 @@ class DecisionReview < ApplicationRecord
   def contestable_decision_issues
     return [] unless receipt_date
 
-    # binding.pry
     DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
       .select do |issue|
         next if issue.decision_review.is_a?(Appeal) && !issue.decision_review.outcoded?
 
-        # binding.pry
         issue.approx_decision_date && issue.approx_decision_date < receipt_date
       end
   end
@@ -263,6 +265,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def ratings_with_issues
+    return [] unless veteran
+
     veteran.ratings.reject { |rating| rating.issues.empty? }
   end
 

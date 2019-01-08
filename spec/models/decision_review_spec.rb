@@ -126,13 +126,28 @@ describe DecisionReview do
                profile_date: receipt_date + 1.day,
                benefit_type: supplemental_claim.benefit_type,
                decision_text: "something was decided in the future",
-               description: "future issue",
+               description: "future decision issue",
                participant_id: veteran.participant_id)
+      end
+
+      let!(:future_rating) do
+        Generators::Rating.build(
+          issues: [
+            { reference_id: "321", decision_text: "future rating issue 1" },
+            { reference_id: "654", decision_text: "future rating issue 2" }
+          ],
+          promulgation_date: receipt_date + 1,
+          profile_date: receipt_date + 1,
+          participant_id: participant_id,
+          associated_claims: associated_claims
+        )
       end
 
       it "does not return Decision Issues in the future" do
         expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
-        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future issue"))
+        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue"))
+        expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
+        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
       end
     end
 

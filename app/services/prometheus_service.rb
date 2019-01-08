@@ -4,6 +4,27 @@ require "prometheus/client/push"
 class PrometheusService
   # :nocov:
   class << self
+    def va_dot_gov_request_attempt_counter
+      @va_dot_gov_request_attempt_counter ||=
+        find_or_register_metric(:counter,
+                                :va_dot_gov_request_attempt_counter,
+                                "A counter of attempted api.va.gov requests")
+    end
+
+    def va_dot_gov_request_error_counter
+      @va_dot_gov_request_error_counter ||=
+        find_or_register_metric(:counter,
+                                :va_dot_gov_request_error_counter,
+                                "A counter of errored api.va.gov requests")
+    end
+
+    def va_dot_gov_request_latency
+      @va_dot_gov_request_latency ||=
+        find_or_register_metric(:counter,
+                                :va_dot_gov_request_latency,
+                                "latency of completed api.va.gov requests")
+    end
+
     def efolder_request_attempt_counter
       @efolder_request_attempt_counter ||=
         find_or_register_metric(:counter,

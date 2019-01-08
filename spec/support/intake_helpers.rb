@@ -153,6 +153,10 @@ module IntakeHelpers
     safe_click "#button-submit-review"
   end
 
+  def click_edit_submit
+    safe_click "#button-submit-update"
+  end
+
   def click_intake_no_matching_issues
     safe_click ".no-matching-issues"
   end
@@ -164,7 +168,16 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
-  def add_intake_nonrating_issue(category:, description:, date:, legacy_issues: false)
+  def get_claim_id(claim_review)
+    EndProductEstablishment.find_by(source: claim_review).reference_id
+  end
+
+  def add_intake_nonrating_issue(
+    category: "Active Duty Adjustments",
+    description: "Some description",
+    date: "01/01/2016",
+    legacy_issues: false
+  )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
     expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
     expect(page).to have_button(add_button_text, disabled: true)
@@ -181,7 +194,7 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
-  def add_intake_unidentified_issue(description)
+  def add_intake_unidentified_issue(description = "unidentified issue description")
     safe_click ".no-matching-issues"
     safe_click ".no-matching-issues"
     expect(page).to have_content("Describe the issue to mark it as needing further review.")
@@ -201,6 +214,14 @@ module IntakeHelpers
 
   def click_remove_issue_confirmation
     safe_click ".remove-issue"
+  end
+
+  def click_number_of_issues_changed_confirmation
+    safe_click "#Number-of-issues-has-changed-button-id-1"
+  end
+
+  def click_still_have_unidentified_issue_confirmation
+    safe_click "#Unidentified-issue-button-id-1"
   end
 
   def find_intake_issue_by_number(number)
@@ -306,18 +327,20 @@ module IntakeHelpers
     create(:request_issue,
            :with_nonrating_decision_issue,
            description: "Test nonrating decision issue",
+           nonrating_issue_description: "Test nonrating decision issue",
            review_request: decision_review,
            decision_date: decision_review.receipt_date - 1.day,
            issue_category: issue_category,
            veteran_participant_id: veteran.participant_id)
   end
 
-  def setup_request_issue_with_rating_decision_issue(decision_review, rating_issue_reference_id: "rating123")
+  def setup_request_issue_with_rating_decision_issue(decision_review, contested_rating_issue_reference_id: "rating123")
     create(:request_issue,
            :with_rating_decision_issue,
-           rating_issue_reference_id: rating_issue_reference_id,
-           rating_issue_profile_date: decision_review.receipt_date - 1.day,
+           contested_rating_issue_reference_id: contested_rating_issue_reference_id,
+           contested_rating_issue_profile_date: decision_review.receipt_date - 1.day,
            description: "Test rating decision issue",
+           contested_issue_description: "Test rating decision issue",
            review_request: decision_review,
            veteran_participant_id: veteran.participant_id)
   end

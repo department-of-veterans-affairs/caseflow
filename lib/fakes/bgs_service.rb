@@ -115,9 +115,9 @@ class Fakes::BGSService
         RequestIssue.find_or_create_by!(
           review_request: hlr,
           end_product_establishment: epe,
-          rating_issue_reference_id: in_active_review_reference_id
+          contested_rating_issue_reference_id: in_active_review_reference_id
         ) do |reqi|
-          reqi.rating_issue_profile_date = Time.zone.today - 100
+          reqi.contested_rating_issue_profile_date = (Time.zone.today - 100).to_s
         end
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,

@@ -113,5 +113,50 @@ describe BoardGrantEffectuation do
         end
       end
     end
+
+    context "when pension issue" do
+      let(:benefit_type) { "pension" }
+
+      context "when rating issue" do
+        let(:rating_or_nonrating) { :rating }
+
+        it "creates rating end product establishment" do
+          expect(subject.end_product_establishment).to have_attributes(
+            source: decision_document,
+            veteran_file_number: decision_document.appeal.veteran.file_number,
+            claim_date: decision_document.decision_date,
+            payee_code: "00",
+            benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+            user: User.system_user,
+            code: "030BGRPMC"
+          )
+        end
+      end
+
+      context "when non rating issue" do
+        let(:rating_or_nonrating) { :nonrating }
+
+        # Create a not matching end product establishment to make sure that never matches
+        let!(:not_matching_end_product_establishment) do
+          FactoryBot.create(
+            :end_product_establishment,
+            code: "030BGR",
+            source: decision_document
+          )
+        end
+
+        it "creates nonrating end product establishment" do
+          expect(subject.end_product_establishment).to have_attributes(
+            source: decision_document,
+            veteran_file_number: decision_document.appeal.veteran.file_number,
+            claim_date: decision_document.decision_date,
+            payee_code: "00",
+            benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+            user: User.system_user,
+            code: "030BGNRPMC"
+          )
+        end
+      end
+    end
   end
 end
