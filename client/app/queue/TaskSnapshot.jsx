@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import {
   actionableTasksForAppeal,
   appealWithDetailSelector,
-  rootTaskForAppeal
+  rootTasksForAppeal,
+  nonRootActionableTasksForAppeal
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import ActionsDropdown from './components/ActionsDropdown';
@@ -205,14 +206,12 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     } = this.props;
 
     let sectionBody = <tr><td {...css({ borderStyle: 'none' })}>{COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL}</td></tr>;
-    const tasks = this.props.tasks.filter((task) => {
-      return task.type !== 'RootTask';
-    });
-    const taskLength = tasks.length;
+    const nonRootTasks = this.props.nonRootTasks;
+    const taskLength = nonRootTasks.length;
 
     if (taskLength) {
-      sectionBody = tasks.map((task, index) =>
-        task.type !== 'RootTask' && !(rootTask[0] && rootTask[0].availableActions[0]) && <tr key={task.uniqueId}>
+      sectionBody = nonRootTasks.map((task, index) =>
+        !(rootTask[0]) && <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
               { this.assignedOnListItem(task) }
@@ -240,7 +239,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
         <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}</a>
-        { rootTask[0] && rootTask[0].availableActions[0] && <AddNewTaskButton rootTask={rootTask[0]} /> }
+        { <AddNewTaskButton appealId={appeal.externalId} /> }
       </h2>
       <div {...sectionSegmentStyling}>
         <table {...tableStyling}>
@@ -260,7 +259,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
     tasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
-    rootTask: rootTaskForAppeal(state, { appealId: ownProps.appealId })
+    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId }),
+    nonRootTasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };
 

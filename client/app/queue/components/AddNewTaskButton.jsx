@@ -2,13 +2,18 @@ import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
 import Button from '../../components/Button';
 import COPY from '../../../COPY.json';
-import {
-  resetDecisionOptions,
-  stageAppeal
-} from '../QueueActions';
+import type { State } from '../types/state';
+import { rootTasksForAppeal } from '../selectors';
+const buttonStyling = css({
+  float: 'right',
+  paddingRight: '10px'
+});
+
+type Params = {|
+  appealId: string
+|};
 
 class AddNewTaskButton extends React.PureComponent {
   changeRoute = () => {
@@ -17,28 +22,31 @@ class AddNewTaskButton extends React.PureComponent {
       history
     } = this.props;
 
-    this.props.stageAppeal(rootTask.appealId);
-    this.props.resetDecisionOptions();
-    const appealId = rootTask.externalAppealId;
-    const uniqueId = rootTask.uniqueId;
-    const modalPath = rootTask.availableActions[0].value;
+    const appealId = rootTask[0].externalAppealId;
+    const uniqueId = rootTask[0].uniqueId;
+    const modalPath = rootTask[0].availableActions[0].value;
 
     history.push(`/queue/appeals/${appealId}/tasks/${uniqueId}/${modalPath}`);
   }
 
   render = () => {
-    return <Button
+    const {
+      rootTask
+    } = this.props;
+
+    return (rootTask[0]) ? <Button
       linkStyling
-      styling={css({ float: 'right',
-        paddingRight: '10px' })}
+      styling={buttonStyling}
       name={COPY.TASK_SNAPSHOT_ADD_NEW_TASK_LABEL}
-      onClick={this.changeRoute} />;
+      onClick={this.changeRoute} /> : null;
   }
 }
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  resetDecisionOptions,
-  stageAppeal
-}, dispatch);
+const mapStateToProps = (state: State, ownProps: Params) => {
 
-export default (withRouter(connect(null, mapDispatchToProps)(AddNewTaskButton)): React.ComponentType<>);
+  return {
+    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId })
+  };
+};
+
+export default (withRouter(connect(mapStateToProps, null)(AddNewTaskButton)): React.ComponentType<>);
