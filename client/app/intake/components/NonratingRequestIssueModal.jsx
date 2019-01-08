@@ -215,6 +215,7 @@ class NonratingRequestIssueModal extends React.Component {
     }
 
     let benefitTypeElement = '';
+
     if (intakeData.formType === 'appeal') {
       benefitTypeElement = <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} />;
     }

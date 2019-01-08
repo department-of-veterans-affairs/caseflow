@@ -182,8 +182,10 @@ module IntakeHelpers
     add_button_text = legacy_issues ? "Next" : "Add this issue"
     expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
     expect(page).to have_button(add_button_text, disabled: true)
-    within_fieldset("What is the Benefit Type?") do
-      find("label", text: benefit_type, match: :prefer_exact).click
+    if page.body.match?(/What is the Benefit Type/)
+      within_fieldset("What is the Benefit Type?") do
+        find("label", text: benefit_type, match: :prefer_exact).click
+      end
     end
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
