@@ -112,7 +112,6 @@ class RequestIssue < ApplicationRecord
 
     private
 
-    # rubocop:disable Metrics/MethodLength
     def attributes_from_intake_data(data)
       contested_issue_present = data[:rating_issue_reference_id] || data[:contested_decision_issue_id]
 
@@ -120,15 +119,10 @@ class RequestIssue < ApplicationRecord
         # TODO: these are going away in favor of `contested_rating_issue_*`
         rating_issue_reference_id: data[:rating_issue_reference_id],
         rating_issue_profile_date: data[:rating_issue_profile_date],
-
-        description: data[:decision_text],
-
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
-
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
-
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
         notes: data[:notes],
@@ -138,13 +132,12 @@ class RequestIssue < ApplicationRecord
         ramp_claim_id: data[:ramp_claim_id],
         vacols_id: data[:vacols_id],
         vacols_sequence_id: data[:vacols_sequence_id],
-        contested_decision_issue_id: data[:contested_decision_isssue_id],
+        contested_decision_issue_id: data[:contested_decision_issue_id],
         ineligible_reason: data[:ineligible_reason],
         ineligible_due_to_id: data[:ineligible_due_to_id]
       }
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def status_active?
     return appeal_active? if review_request.is_a?(Appeal)
@@ -157,13 +150,23 @@ class RequestIssue < ApplicationRecord
     contested_rating_issue_reference_id
   end
 
+  # TODO: If a nonrating decision issue is contested, the request issue should also be considered
+  #       nonrating. Currently it won't be because we don't copy over these fields from the contested
+  #       decision issue if they are present.
   def nonrating?
     issue_category && decision_date
   end
 
+  def description
+    return contested_issue_description if contested_issue_description
+    return "#{issue_category} - #{nonrating_issue_description}" if nonrating?
+    return unidentified_issue_text if is_unidentified?
+  end
+
+  # If the request issue is unidentified, we want to prompt the VBMS/SHARE user to correct the issue.
+  # For that reason we use a special prompt message instead of the issue text.
   def contention_text
-    return "#{issue_category} - #{description}" if nonrating?
-    return UNIDENTIFIED_ISSUE_MSG if is_unidentified
+    return UNIDENTIFIED_ISSUE_MSG if is_unidentified?
 
     description
   end

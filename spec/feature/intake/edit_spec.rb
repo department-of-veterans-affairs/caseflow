@@ -386,12 +386,12 @@ feature "Edit issues" do
     # check that new request issue is created contesting the decision issue
     expect(RequestIssue.find_by(review_request: review_request,
                                 contested_decision_issue_id: contested_decision_issues.first.id,
-                                description: contested_decision_issues.first.formatted_description)).to_not be_nil
+                                description: contested_decision_issues.first.description)).to_not be_nil
 
     expect(RequestIssue.find_by(review_request: review_request,
                                 contested_decision_issue_id: contested_decision_issues.second.id,
                                 ineligible_reason: :duplicate_of_rating_issue_in_active_review,
-                                description: contested_decision_issues.second.formatted_description)).to_not be_nil
+                                description: contested_decision_issues.second.description)).to_not be_nil
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
