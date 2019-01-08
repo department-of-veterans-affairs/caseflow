@@ -91,8 +91,11 @@ class HigherLevelReview < ClaimReview
         contested_decision_issue_id: dta_decision_issue.id,
         # parent_request_issue_id: dta_issue.id, delete this from table
         rating_issue_reference_id: dta_decision_issue.rating_issue_reference_id,
-        rating_issue_profile_date: dta_decision_issue.profile_date,
+        rating_issue_profile_date: dta_decision_issue.profile_date.to_s,
         description: dta_decision_issue.description,
+        contested_rating_issue_reference_id: dta_decision_issue.rating_issue_reference_id,
+        contested_rating_issue_profile_date: dta_decision_issue.profile_date,
+        contested_issue_description: dta_decision_issue.description,
         issue_category: dta_decision_issue.issue_category,
         benefit_type: dta_decision_issue.benefit_type,
         decision_date: dta_decision_issue.approx_decision_date

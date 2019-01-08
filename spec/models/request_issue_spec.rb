@@ -5,13 +5,14 @@ describe RequestIssue do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
-  let(:rating_reference_id) { "abc123" }
+  let(:contested_rating_issue_reference_id) { "abc123" }
+  let(:profile_date) { Time.zone.now.to_s }
   let(:contention_reference_id) { 1234 }
-  let(:profile_date) { Time.zone.now }
   let(:ramp_claim_id) { nil }
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
   let(:contested_decision_issue_id) { nil }
+
   let(:review) do
     create(
       :higher_level_review,
@@ -36,7 +37,7 @@ describe RequestIssue do
   let(:issues) do
     [
       {
-        reference_id: rating_reference_id,
+        reference_id: contested_rating_issue_reference_id,
         decision_text: "Left knee granted",
         contention_reference_id: contention_reference_id
       },
@@ -48,8 +49,9 @@ describe RequestIssue do
     create(
       :request_issue,
       review_request: review,
-      rating_issue_reference_id: rating_reference_id,
-      rating_issue_profile_date: profile_date,
+      contested_rating_issue_reference_id: contested_rating_issue_reference_id,
+      contested_rating_issue_profile_date: profile_date,
+      contested_issue_description: "a rating request issue",
       description: "a rating request issue",
       ramp_claim_id: ramp_claim_id,
       decision_sync_processed_at: decision_sync_processed_at,
@@ -63,6 +65,7 @@ describe RequestIssue do
     create(
       :request_issue,
       review_request: review,
+      nonrating_issue_description: "a nonrating request issue description",
       description: "a nonrating request issue description",
       issue_category: "a category",
       decision_date: 1.day.ago,
@@ -76,6 +79,7 @@ describe RequestIssue do
     create(
       :request_issue,
       review_request: review,
+      unidentified_issue_text: "an unidentified issue",
       description: "an unidentified issue",
       is_unidentified: true
     )
@@ -83,74 +87,105 @@ describe RequestIssue do
 
   let(:associated_claims) { [] }
 
-  context "finds issues" do
+  context ".rating" do
+    subject { RequestIssue.rating }
+
     it "filters by rating issues" do
-      rating_request_issues = RequestIssue.rating
-      expect(rating_request_issues.length).to eq(2)
-      expect(rating_request_issues.find_by(id: rating_request_issue.id)).to_not be_nil
-      expect(rating_request_issues.find_by(id: unidentified_issue.id)).to_not be_nil
+      expect(subject.length).to eq(2)
+
+      expect(subject.find_by(id: rating_request_issue.id)).to_not be_nil
+      expect(subject.find_by(id: unidentified_issue.id)).to_not be_nil
     end
+  end
+
+  context ".nonrating" do
+    subject { RequestIssue.nonrating }
 
     it "filters by nonrating issues" do
-      nonrating_request_issues = RequestIssue.nonrating
-      expect(nonrating_request_issues.length).to eq(1)
-      expect(nonrating_request_issues.find_by(id: nonrating_request_issue.id)).to_not be_nil
+      expect(subject.length).to eq(1)
+      expect(subject.find_by(id: nonrating_request_issue.id)).to_not be_nil
     end
+  end
+
+  context ".unidentified" do
+    subject { RequestIssue.unidentified }
 
     it "filters by unidentified issues" do
-      unidentified_issues = RequestIssue.unidentified
-      expect(unidentified_issues.length).to eq(1)
-      expect(unidentified_issues.find_by(id: unidentified_issue.id)).to_not be_nil
+      expect(subject.length).to eq(1)
+      expect(subject.find_by(id: unidentified_issue.id)).to_not be_nil
+    end
+  end
+
+  context ".find_active_by_contested_rating_issue_reference_id" do
+    let(:active_rating_request_issue) do
+      rating_request_issue.tap do |ri|
+        ri.update!(end_product_establishment: create(:end_product_establishment, :active))
+      end
     end
 
-    context ".find_active_by_rating_issue_reference_id" do
-      let(:active_rating_request_issue) do
-        rating_request_issue.tap do |ri|
-          ri.update!(end_product_establishment: create(:end_product_establishment, :active))
-        end
+    context "EPE is active" do
+      let(:rating_issue) do
+        RatingIssue.new(reference_id: active_rating_request_issue.contested_rating_issue_reference_id)
       end
 
-      context "EPE is active" do
-        let(:rating_issue) { RatingIssue.new(reference_id: active_rating_request_issue.rating_issue_reference_id) }
-
-        it "filters by reference_id" do
-          request_issue_in_review = RequestIssue.find_active_by_rating_issue_reference_id(rating_issue.reference_id)
-          expect(request_issue_in_review).to eq(rating_request_issue)
-        end
-
-        it "ignores request issues that are already ineligible" do
-          create(
-            :request_issue,
-            rating_issue_reference_id: rating_request_issue.rating_issue_reference_id,
-            ineligible_reason: :duplicate_of_rating_issue_in_active_review
-          )
-
-          request_issue_in_review = RequestIssue.find_active_by_rating_issue_reference_id(rating_issue.reference_id)
-          expect(request_issue_in_review).to eq(rating_request_issue)
-        end
+      it "filters by reference_id" do
+        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
+        expect(in_review).to eq(rating_request_issue)
       end
 
-      context "EPE is not active" do
-        let(:rating_issue) { RatingIssue.new(reference_id: rating_request_issue.rating_issue_reference_id) }
+      it "ignores request issues that are already ineligible" do
+        create(
+          :request_issue,
+          contested_rating_issue_reference_id: rating_request_issue.contested_rating_issue_reference_id,
+          ineligible_reason: :duplicate_of_rating_issue_in_active_review
+        )
 
-        it "ignores request issues" do
-          expect(RequestIssue.find_active_by_rating_issue_reference_id(rating_issue.reference_id)).to be_nil
-        end
+        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
+        expect(in_review).to eq(rating_request_issue)
+      end
+    end
+
+    context "EPE is not active" do
+      let(:rating_issue) { RatingIssue.new(reference_id: rating_request_issue.contested_rating_issue_reference_id) }
+
+      it "ignores request issues" do
+        expect(RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)).to be_nil
       end
     end
   end
 
   context "#ui_hash" do
     context "when there is a previous request issue in active review" do
-      let(:previous_higher_level_review) { create(:higher_level_review, id: 10) }
-      let(:new_higher_level_review) { create(:higher_level_review, id: 11) }
+      let!(:ratings) do
+        Generators::Rating.build(
+          participant_id: veteran.participant_id,
+          promulgation_date: 10.days.ago,
+          profile_date: 20.days.ago,
+          issues: [
+            {
+              reference_id: higher_level_review_reference_id,
+              decision_text: "text",
+              contention_reference_id: contention_reference_id
+            }
+          ]
+        )
+      end
+
+      let(:previous_higher_level_review) do
+        create(:higher_level_review, id: 10, veteran_file_number: veteran.file_number)
+      end
+
+      let(:new_higher_level_review) do
+        create(:higher_level_review, id: 11, veteran_file_number: veteran.file_number)
+      end
+
       let(:active_epe) { create(:end_product_establishment, :active) }
 
       let!(:request_issue_in_active_review) do
         create(
           :request_issue,
           review_request: previous_higher_level_review,
-          rating_issue_reference_id: higher_level_review_reference_id,
+          contested_rating_issue_reference_id: higher_level_review_reference_id,
           contention_reference_id: contention_reference_id,
           end_product_establishment: active_epe,
           removed_at: nil,
@@ -162,7 +197,7 @@ describe RequestIssue do
         create(
           :request_issue,
           review_request: new_higher_level_review,
-          rating_issue_reference_id: higher_level_review_reference_id,
+          contested_rating_issue_reference_id: higher_level_review_reference_id,
           contention_reference_id: contention_reference_id,
           ineligible_reason: :duplicate_of_rating_issue_in_active_review,
           ineligible_due_to: request_issue_in_active_review
@@ -193,13 +228,14 @@ describe RequestIssue do
 
   context "#contested_rating_issue" do
     it "returns the rating issue hash that prompted the RequestIssue" do
-      expect(rating_request_issue.contested_rating_issue.reference_id).to eq rating_reference_id
+      expect(rating_request_issue.contested_rating_issue.reference_id).to eq contested_rating_issue_reference_id
       expect(rating_request_issue.contested_rating_issue.decision_text).to eq "Left knee granted"
     end
   end
 
   context "#previous_request_issue" do
     let(:previous_higher_level_review) { create(:higher_level_review, receipt_date: review.receipt_date - 10.days) }
+
     let(:previous_end_product_establishment) do
       create(
         :end_product_establishment,
@@ -208,14 +244,16 @@ describe RequestIssue do
         established_at: previous_higher_level_review.receipt_date - 100.days
       )
     end
+
     let!(:previous_request_issue) do
       create(
         :request_issue,
         review_request: previous_higher_level_review,
-        rating_issue_reference_id: higher_level_review_reference_id,
+        contested_rating_issue_reference_id: higher_level_review_reference_id,
+        contested_rating_issue_profile_date: profile_date,
+        contested_issue_description: "a rating request issue",
         contention_reference_id: contention_reference_id,
         end_product_establishment: previous_end_product_establishment,
-        rating_issue_profile_date: profile_date,
         description: "a rating request issue"
       )
     end
@@ -265,15 +303,16 @@ describe RequestIssue do
     let(:active_epe) { create(:end_product_establishment, :active) }
     let(:receipt_date) { review.receipt_date }
 
-    let(:previous_higher_level_review) { create(:higher_level_review) }
+    let(:previous_review) { create(:higher_level_review) }
     let!(:previous_request_issue) do
       create(
         :request_issue,
-        review_request: previous_higher_level_review,
-        rating_issue_reference_id: higher_level_review_reference_id,
+        review_request: previous_review,
+        contested_rating_issue_reference_id: higher_level_review_reference_id,
         contention_reference_id: contention_reference_id
       )
     end
+
     let(:appeal_in_progress) do
       create(:appeal, veteran_file_number: veteran.file_number).tap(&:create_tasks_on_intake_success!)
     end
@@ -281,7 +320,8 @@ describe RequestIssue do
       create(
         :request_issue,
         review_request: appeal_in_progress,
-        rating_issue_reference_id: duplicate_appeal_reference_id,
+        contested_rating_issue_reference_id: duplicate_appeal_reference_id,
+        contested_issue_description: "Appealed injury",
         description: "Appealed injury"
       )
     end
@@ -328,7 +368,8 @@ describe RequestIssue do
       create(
         :request_issue,
         end_product_establishment: active_epe,
-        rating_issue_reference_id: duplicate_reference_id,
+        contested_rating_issue_reference_id: duplicate_reference_id,
+        contested_issue_description: "Old injury",
         description: "Old injury"
       )
     end
@@ -341,14 +382,14 @@ describe RequestIssue do
     end
 
     it "flags rating request issue as untimely when promulgation_date is year+ older than receipt_date" do
-      rating_request_issue.rating_issue_reference_id = old_reference_id
+      rating_request_issue.contested_rating_issue_reference_id = old_reference_id
       rating_request_issue.validate_eligibility!
 
       expect(rating_request_issue.untimely?).to eq(true)
     end
 
     it "flags duplicate rating request issue as in progress" do
-      rating_request_issue.rating_issue_reference_id = duplicate_reference_id
+      rating_request_issue.contested_rating_issue_reference_id = duplicate_reference_id
       rating_request_issue.validate_eligibility!
 
       expect(rating_request_issue.duplicate_of_rating_issue_in_active_review?).to eq(true)
@@ -359,21 +400,102 @@ describe RequestIssue do
     end
 
     it "flags duplicate appeal as in progress" do
-      rating_request_issue.rating_issue_reference_id = appeal_request_issue_in_progress.rating_issue_reference_id
+      rating_request_issue.contested_rating_issue_reference_id =
+        appeal_request_issue_in_progress.contested_rating_issue_reference_id
       rating_request_issue.validate_eligibility!
 
       expect(rating_request_issue.duplicate_of_rating_issue_in_active_review?).to eq(true)
     end
 
-    it "flags previous HLR" do
-      rating_request_issue.rating_issue_reference_id = higher_level_review_reference_id
-      rating_request_issue.validate_eligibility!
+    context "issues with previous decision reviews" do
+      let(:contested_rating_issue_reference_id) { higher_level_review_reference_id }
 
-      expect(rating_request_issue.previous_higher_level_review?).to eq(true)
-      expect(rating_request_issue.ineligible_due_to).to eq(previous_request_issue)
+      context "when the previous review is a higher level review" do
+        let(:previous_review) { create(:higher_level_review) }
 
-      rating_request_issue.save!
-      expect(previous_request_issue.duplicate_but_ineligible).to eq([rating_request_issue])
+        context "when the current review is a higher level review" do
+          it "is not eligible after a higher level review" do
+            rating_request_issue.validate_eligibility!
+
+            expect(rating_request_issue.higher_level_review_to_higher_level_review?).to eq(true)
+            expect(rating_request_issue.ineligible_reason).to eq("higher_level_review_to_higher_level_review")
+            expect(rating_request_issue.ineligible_due_to).to eq(previous_request_issue)
+
+            rating_request_issue.save!
+            expect(previous_request_issue.duplicate_but_ineligible).to eq([rating_request_issue])
+          end
+        end
+
+        context "when the current review is a supplemental claim" do
+          let(:review) do
+            create(
+              :supplemental_claim,
+              veteran_file_number: veteran.file_number,
+              legacy_opt_in_approved: legacy_opt_in_approved
+            )
+          end
+
+          it "does not get flagged for previous higher level review" do
+            rating_request_issue.validate_eligibility!
+
+            expect(rating_request_issue.ineligible_reason).to_not eq("higher_level_review_to_higher_level_review")
+          end
+        end
+
+        context "when the current review is an appeal" do
+          let(:review) do
+            create(
+              :appeal,
+              veteran: veteran,
+              legacy_opt_in_approved: legacy_opt_in_approved
+            )
+          end
+
+          it "is still eligible after a previous higher level review" do
+            rating_request_issue.validate_eligibility!
+
+            expect(rating_request_issue.ineligible_reason).to be_nil
+          end
+        end
+      end
+
+      context "when the previous review is an appeal" do
+        let(:previous_review) { create(:appeal) }
+
+        context "when the current review is a higher level review" do
+          let(:review) do
+            create(
+              :higher_level_review,
+              veteran_file_number: veteran.file_number,
+              legacy_opt_in_approved: legacy_opt_in_approved
+            )
+          end
+
+          it "is not eligible after an appeal" do
+            rating_request_issue.validate_eligibility!
+
+            expect(rating_request_issue.ineligible_reason).to eq("appeal_to_higher_level_review")
+            expect(rating_request_issue.ineligible_due_to).to eq(previous_request_issue)
+          end
+        end
+
+        context "when the current review is an appeal" do
+          let(:review) do
+            create(
+              :appeal,
+              veteran: veteran,
+              legacy_opt_in_approved: legacy_opt_in_approved
+            )
+          end
+
+          it "is not eligible after an appeal" do
+            rating_request_issue.validate_eligibility!
+
+            expect(rating_request_issue.ineligible_reason).to eq("appeal_to_appeal")
+            expect(rating_request_issue.ineligible_due_to).to eq(previous_request_issue)
+          end
+        end
+      end
     end
 
     context "Issues with legacy issues" do
@@ -465,7 +587,7 @@ describe RequestIssue do
       end
 
       it "flags rating issues before AMA" do
-        rating_request_issue.rating_issue_reference_id = "before_ama_ref_id"
+        rating_request_issue.contested_rating_issue_reference_id = "before_ama_ref_id"
         rating_request_issue.validate_eligibility!
         expect(rating_request_issue.ineligible_reason).to eq("before_ama")
       end
@@ -474,7 +596,7 @@ describe RequestIssue do
         let(:ramp_claim_id) { "ramp_claim_id" }
 
         it "does not flag rating issues before AMA from a RAMP decision" do
-          rating_request_issue.rating_issue_reference_id = "ramp_ref_id"
+          rating_request_issue.contested_rating_issue_reference_id = "ramp_ref_id"
           rating_request_issue.validate_eligibility!
           expect(rating_request_issue.ineligible_reason).to be_nil
         end
@@ -515,7 +637,7 @@ describe RequestIssue do
               subject
               expect(rating_request_issue.decision_issues.count).to eq(1)
               expect(rating_request_issue.decision_issues.first).to have_attributes(
-                rating_issue_reference_id: rating_reference_id,
+                rating_issue_reference_id: contested_rating_issue_reference_id,
                 participant_id: veteran.participant_id,
                 promulgation_date: ratings.promulgation_date,
                 decision_text: "Left knee granted",

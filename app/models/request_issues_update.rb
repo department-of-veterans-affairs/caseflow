@@ -64,6 +64,14 @@ class RequestIssuesUpdate < ApplicationRecord
     before_issues - after_issues
   end
 
+  def before_issues
+    @before_issues ||= before_request_issue_ids ? fetch_before_issues : calculate_before_issues
+  end
+
+  def after_issues
+    @after_issues ||= after_request_issue_ids ? fetch_after_issues : calculate_after_issues
+  end
+
   private
 
   def changes?
@@ -72,14 +80,6 @@ class RequestIssuesUpdate < ApplicationRecord
 
   def new_issues
     after_issues.reject(&:persisted?)
-  end
-
-  def before_issues
-    @before_issues ||= before_request_issue_ids ? fetch_before_issues : calculate_before_issues
-  end
-
-  def after_issues
-    @after_issues ||= after_request_issue_ids ? fetch_after_issues : calculate_after_issues
   end
 
   def calculate_after_issues
@@ -119,12 +119,7 @@ class RequestIssuesUpdate < ApplicationRecord
     LegacyOptinManager.new(decision_review: review).process!
   end
 
-  # Instead of fully deleting removed issues, we instead strip them from the review so we can
-  # maintain a record of the other data that was on them incase we need to revert the update.
   def strip_removed_issues!
-    removed_issues.each do |issue|
-      issue.update!(review_request: nil)
-      issue.legacy_issue_optin&.flag_for_rollback!
-    end
+    removed_issues.each(&:remove_from_review)
   end
 end

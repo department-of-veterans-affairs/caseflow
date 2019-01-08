@@ -39,7 +39,7 @@ module FakeDateHelper
     end
   end
 
-  def get_every_nth_date_between(start_date, end_date, n = 2, exclude_weekends = true)
+  def get_every_nth_date_between(start_date, end_date, days_to_skip = 2, exclude_weekends = true)
     dates = []
     holidays = Holidays.between(start_date, end_date, :federal_reserve)
     date = start_date
@@ -52,7 +52,7 @@ module FakeDateHelper
 
       dates.push(date)
 
-      date += n
+      date += days_to_skip
     end
 
     dates

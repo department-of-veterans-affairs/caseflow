@@ -12,7 +12,6 @@ import ActionsDropdown from './components/ActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 
 import COPY from '../../COPY.json';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
 import StringUtil from '../util/StringUtil';
@@ -130,108 +129,70 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       {instructions.map((text, i) => <React.Fragment><span key={i}>{text}</span><br /></React.Fragment>)}
     </React.Fragment>;
   }
-  taskInformation = (task) => {
-    const assignedByAbbrev = task.assignedBy.firstName ?
-      this.getAbbrevName(task.assignedBy) : null;
-    const preparedByAbbrev = task.decisionPreparedBy ?
-      this.getAbbrevName(task.decisionPreparedBy) : null;
 
-    return <React.Fragment>
-      <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{task.assignedTo.cssId}</dd>
-      { assignedByAbbrev &&
-        <React.Fragment>
-          <dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
-        </React.Fragment> }
-      { preparedByAbbrev &&
-        <React.Fragment>
-          <dt>{COPY.TASK_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{preparedByAbbrev}</dd>
-        </React.Fragment> }
-      { task.label &&
-        <React.Fragment>
-          <dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{this.getActionName(task)}</dd>
-        </React.Fragment> }
-      { taskIsOnHold(task) &&
-        <React.Fragment>
-          <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
-          <dd><OnHoldLabel task={task} /></dd>
-        </React.Fragment>
-      }
-      { task.instructions && task.instructions.length > 0 &&
-        <div>
-          { this.state.taskInstructionsIsVisible &&
-          <React.Fragment>
-            <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
-            <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
-          </React.Fragment> }
-          <Button
-            linkStyling
-            styling={css({ padding: '0' })}
-            name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
-              COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
-            onClick={this.toggleTaskInstructionsVisibility} />
-        </div>
-      }
-    </React.Fragment>;
-  }
-  legacyTaskInformation = (task) => {
-    // If this is not a task attached to a legacy appeal, use taskInformation.
-    if (!this.props.appeal.isLegacyAppeal) {
-      return this.taskInformation(task);
-    }
-    const {
-      userRole
-    } = this.props;
-
-    const assignedByAbbrev = task.assignedBy.firstName ?
-      this.getAbbrevName(task.assignedBy) : null;
-    const assignedToListItem = this.props.appeal.locationCode ? <React.Fragment>
-      <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt><dd>{this.props.appeal.locationCode}</dd>
-    </React.Fragment> : null;
-
-    if ([USER_ROLE_TYPES.judge, USER_ROLE_TYPES.colocated].includes(userRole)) {
-
-      const assignedByFirstName = task.assignedBy.firstName;
-      const assignedByLastName = task.assignedBy.lastName;
-
-      if (!assignedByFirstName ||
-          !assignedByLastName ||
-          (userRole === USER_ROLE_TYPES.judge && !task.documentId)) {
-        return assignedToListItem;
-      }
-
-      if (userRole === USER_ROLE_TYPES.judge) {
-        return <React.Fragment>
-          <dt>{COPY.TASK_SNAPSHOT_DECISION_PREPARER_LABEL}</dt><dd>{assignedByAbbrev}</dd>
-        </React.Fragment>;
-
-      } else if (userRole === USER_ROLE_TYPES.colocated) {
-
-        return <React.Fragment>
-          <dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt><dd>{CO_LOCATED_ADMIN_ACTIONS[task.label]}</dd>
-          <dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt><dd>{assignedByAbbrev}</dd>
-          { taskIsOnHold(task) &&
-            <React.Fragment>
-              <dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
-              <dd><OnHoldLabel task={task} /></dd>
-            </React.Fragment>
-          }
-          { task.instructions && task.instructions.length > 0 &&
-            <React.Fragment>
-              <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
-              <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
-            </React.Fragment> }
-        </React.Fragment>;
-      }
-
+  taskInstructionsListItem = (task) => {
+    if (!task.instructions || !task.instructions.length > 0) {
+      return null;
     }
 
-    return <React.Fragment>
-      { task.addedByName && <React.Fragment>
-        <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
-        <dd>{task.addedByName}</dd>
+    return <div>
+      { this.state.taskInstructionsIsVisible &&
+      <React.Fragment key={task.uniqueId} >
+        <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+        <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
       </React.Fragment> }
-    </React.Fragment>;
-  };
+      <Button
+        linkStyling
+        styling={css({ padding: '0' })}
+        name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
+          COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
+        onClick={this.toggleTaskInstructionsVisibility} />
+    </div>;
+  }
+
+  assignedToListItem = (task) => {
+    const assignee = task.isLegacy ? this.props.appeal.locationCode : task.assignedTo.cssId;
+
+    return assignee ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
+      <dd>{assignee}</dd></div> : null;
+  }
+
+  assignedByListItem = (task) => {
+    const assignor = task.assignedBy.firstName ? this.getAbbrevName(task.assignedBy) : null;
+
+    return assignor ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_FROM_LABEL}</dt>
+      <dd>{assignor}</dd></div> : null;
+  }
+
+  taskLabelListItem = (task) => {
+    return task.label ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt>
+      <dd>{this.getActionName(task)}</dd></div> : null;
+  }
+
+  addedByNameListItem = (task) => {
+    return task.addedByName ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
+      <dd>{task.addedByName}</dd></div> : null;
+  }
+
+  assignedOnListItem = (task) => {
+    return task.assignedOn ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
+      <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+  }
+
+  dueDateListItem = (task) => {
+    return task.dueOn ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
+      <dd><DateString date={task.dueOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+  }
+
+  daysWaitingListItem = (task) => {
+    return taskIsOnHold(task) ? <div><dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
+      <dd><OnHoldLabel task={task} /></dd></div> : this.daysSinceTaskAssignmentListItem(task);
+  }
+
+  showActionsListItem = (task, appeal) => {
+    return this.showActionsSection(task) ? <div><h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
+      <ActionsDropdown task={task} appealId={appeal.externalId} /></div> : null;
+  }
 
   showActionsSection = (task) => (task && !this.props.hideDropdown);
 
@@ -248,38 +209,27 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
     if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>
-        <tr>
+        <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
-              { task.assignedOn &&
-                <React.Fragment>
-                  <dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-                  <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd>
-                </React.Fragment>
-              }
-              { task.dueOn &&
-                <React.Fragment>
-                  <dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
-                  <dd><DateString date={task.dueOn} dateFormat="MM/DD/YYYY" /></dd>
-                </React.Fragment>
-              }
-              {this.daysSinceTaskAssignmentListItem(task)}
+              { this.assignedOnListItem(task) }
+              { this.dueDateListItem(task) }
+              { this.daysWaitingListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskInfoWithIconContainer}><GrayDot />
-            { (index + 1 < taskLength) && <div {...grayLineStyling} /> }</td>
+            { (index + 1 < taskLength) && <div {...grayLineStyling} /> }
+          </td>
           <td {...taskInformationContainerStyling}>
             <CaseDetailsDescriptionList>
-              {this.legacyTaskInformation(task)}
+              { this.assignedToListItem(task) }
+              { this.assignedByListItem(task) }
+              { this.taskLabelListItem(task) }
+              { this.taskInstructionsListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskActionsContainerStyling}>
-            {this.showActionsSection(task) &&
-            <React.Fragment>
-              <h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-              <ActionsDropdown task={task} appealId={appeal.externalId} />
-            </React.Fragment>
-            }
+            { this.showActionsListItem(task, appeal) }
           </td>
         </tr>);
     }

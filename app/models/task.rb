@@ -16,10 +16,10 @@ class Task < ApplicationRecord
   after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
 
   enum status: {
-    Constants.TASK_STATUSES.assigned.to_sym    => Constants.TASK_STATUSES.assigned,
+    Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
-    Constants.TASK_STATUSES.on_hold.to_sym     => Constants.TASK_STATUSES.on_hold,
-    Constants.TASK_STATUSES.completed.to_sym   => Constants.TASK_STATUSES.completed
+    Constants.TASK_STATUSES.on_hold.to_sym => Constants.TASK_STATUSES.on_hold,
+    Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed
   }
 
   def available_actions(_user)
@@ -53,6 +53,7 @@ class Task < ApplicationRecord
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
     return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
+
     true
   end
 
@@ -91,8 +92,8 @@ class Task < ApplicationRecord
   end
 
   def self.modify_params(params)
-    if params.key?("instructions") && !params[:instructions].is_a?(Array)
-      params["instructions"] = [params["instructions"]]
+    if params.key?(:instructions) && !params[:instructions].is_a?(Array)
+      params[:instructions] = [params[:instructions]]
     end
     params
   end
@@ -144,6 +145,7 @@ class Task < ApplicationRecord
     return true if [assigned_to, assigned_by].include?(user) ||
                    parent&.assigned_to == user ||
                    user.administered_teams.select { |team| team.is_a?(JudgeTeam) }.any?
+
     false
   end
 
@@ -163,6 +165,7 @@ class Task < ApplicationRecord
     task_id = id if task_id.nil?
     return parent.root_task(task_id) if parent
     return self if type == RootTask.name
+
     fail Caseflow::Error::NoRootTask, task_id: task_id
   end
 
@@ -186,7 +189,7 @@ class Task < ApplicationRecord
   end
 
   def mail_assign_to_organization_data
-    assign_to_organization_data.merge(type: MailTask.name)
+    { options: MailTask.subclass_routing_options }
   end
 
   def assign_to_user_data
@@ -233,6 +236,7 @@ class Task < ApplicationRecord
 
   def on_hold_expired?
     return true if placed_on_hold_at && on_hold_duration && placed_on_hold_at + on_hold_duration.days < Time.zone.now
+
     false
   end
 
@@ -279,7 +283,7 @@ class Task < ApplicationRecord
   end
 
   def set_assigned_at_and_update_parent_status
-    self.assigned_at = created_at
+    self.assigned_at = created_at unless assigned_at
     if ama? && parent
       parent.update(status: :on_hold)
     end

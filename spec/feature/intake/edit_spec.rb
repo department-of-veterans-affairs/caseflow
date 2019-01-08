@@ -1,7 +1,6 @@
-require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "Edit issues" do
+feature "Edit issues" do
   include IntakeHelpers
 
   before do
@@ -41,7 +40,7 @@ RSpec.feature "Edit issues" do
       promulgation_date: receipt_date,
       profile_date: profile_date,
       issues: [
-        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: "000" },
+        { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
         { reference_id: "def456", decision_text: "PTSD denied" },
         { reference_id: "abcdef", decision_text: "Back pain" }
       ]
@@ -115,8 +114,8 @@ RSpec.feature "Edit issues" do
     let(:rating_request_issue_attributes) do
       {
         review_request: appeal,
-        rating_issue_reference_id: "def456",
-        rating_issue_profile_date: profile_date,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: profile_date,
         description: "PTSD denied",
         contention_reference_id: "4567"
       }
@@ -251,7 +250,7 @@ RSpec.feature "Edit issues" do
                    ineligible_reason: :legacy_appeal_not_eligible,
                    vacols_id: "vacols2",
                    vacols_sequence_id: "1"
-          )).to_not be_nil
+                 )).to_not be_nil
 
           ri_with_optin = RequestIssue.find_by(
             description: "Back pain",
@@ -310,7 +309,7 @@ RSpec.feature "Edit issues" do
                    ineligible_reason: :legacy_issue_not_withdrawn,
                    vacols_id: "vacols1",
                    vacols_sequence_id: "1"
-          )).to_not be_nil
+                 )).to_not be_nil
         end
       end
 
@@ -345,8 +344,9 @@ RSpec.feature "Edit issues" do
 
     nonrating_decision_issue_description = "nonrating decision issue dispositon: " \
                                            "Active Duty Adjustments - Test nonrating decision issue"
-    rating_decision_issue_description = "rating decision issue"
+    rating_decision_issue_description = "a rating decision issue"
     # check that nonrating and rating decision issues show up
+
     expect(page).to have_content(nonrating_decision_issue_description)
     expect(page).to have_content(rating_decision_issue_description)
     safe_click ".close-modal"
@@ -356,11 +356,13 @@ RSpec.feature "Edit issues" do
     click_remove_issue_confirmation
 
     # add new decision issue
+
     click_intake_add_issue
     add_intake_rating_issue(rating_decision_issue_description)
     expect(page).to have_content(rating_decision_issue_description)
 
     click_intake_add_issue
+
     add_intake_rating_issue(nonrating_decision_issue_description)
     expect(page).to have_content(nonrating_decision_issue_description)
     expect(page).to have_content(
@@ -370,7 +372,7 @@ RSpec.feature "Edit issues" do
 
     safe_click("#button-submit-update")
     safe_click ".confirm"
-    expect(page).to have_content("Edit Confirmed")
+    expect(page).to have_current_path("/#{page_url}/confirmation")
 
     visit page_url
     expect(page).to have_content(nonrating_decision_issue_description)
@@ -400,7 +402,7 @@ RSpec.feature "Edit issues" do
       page_url,
       decision_review,
       contested_decision_issues
-  )
+    )
     # verify that not modifying a request issue contenting a decision issue
     # does not result in readding
 
@@ -416,7 +418,7 @@ RSpec.feature "Edit issues" do
     add_intake_rating_issue("Issue with legacy issue not withdrawn")
 
     safe_click("#button-submit-update")
-    expect(page).to have_content("Edit Confirmed")
+    expect(page).to have_content("has been processed")
 
     first_not_modified_request_issue = RequestIssue.find_by(
       review_request: decision_review,
@@ -500,6 +502,7 @@ RSpec.feature "Edit issues" do
           description: "eligible nonrating description",
           contention_reference_id: "1234",
           ineligible_reason: nil,
+          benefit_type: "compensation",
           decision_date: Date.new(2018, 5, 1)
         )
       end
@@ -510,17 +513,19 @@ RSpec.feature "Edit issues" do
           issue_category: "Active Duty Adjustments",
           description: "untimely nonrating description",
           contention_reference_id: "12345",
+          benefit_type: "compensation",
           ineligible_reason: :untimely
         )
       end
 
       let!(:ri_in_review) do
         RequestIssue.create!(
-          rating_issue_reference_id: "def456",
-          rating_issue_profile_date: rating.profile_date,
+          contested_rating_issue_reference_id: "def456",
+          contested_rating_issue_profile_date: rating.profile_date,
           review_request: another_higher_level_review,
           description: "PTSD denied",
           contention_reference_id: "123",
+          benefit_type: "compensation",
           ineligible_reason: nil,
           removed_at: nil
         )
@@ -528,43 +533,46 @@ RSpec.feature "Edit issues" do
 
       let!(:ri_with_active_previous_review) do
         RequestIssue.create!(
-          rating_issue_reference_id: "def456",
-          rating_issue_profile_date: rating.profile_date,
+          contested_rating_issue_reference_id: "def456",
+          contested_rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "PTSD denied",
           contention_reference_id: "111",
           ineligible_reason: :duplicate_of_rating_issue_in_active_review,
+          benefit_type: "compensation",
           ineligible_due_to: ri_in_review
         )
       end
 
       let!(:ri_previous_hlr) do
         RequestIssue.create!(
-          rating_issue_reference_id: "abc123",
-          rating_issue_profile_date: rating.profile_date,
+          contested_rating_issue_reference_id: "abc123",
+          contested_rating_issue_profile_date: rating.profile_date,
           review_request: another_higher_level_review,
+          benefit_type: "compensation",
           description: "Left knee granted",
-          contention_reference_id: "000"
+          contention_reference_id: 55
         )
       end
 
       let!(:ri_with_previous_hlr) do
         RequestIssue.create!(
-          rating_issue_reference_id: "abc123",
-          rating_issue_profile_date: rating.profile_date,
+          contested_rating_issue_reference_id: "abc123",
+          contested_rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "Left knee granted",
-          contention_reference_id: "222",
-          ineligible_reason: :previous_higher_level_review,
+          benefit_type: "compensation",
+          ineligible_reason: :higher_level_review_to_higher_level_review,
           ineligible_due_to: ri_previous_hlr
         )
       end
 
       let!(:ri_before_ama) do
         RequestIssue.create!(
-          rating_issue_reference_id: "before_ama_ref_id",
-          rating_issue_profile_date: rating_before_ama.profile_date,
+          contested_rating_issue_reference_id: "before_ama_ref_id",
+          contested_rating_issue_profile_date: rating_before_ama.profile_date,
           review_request: higher_level_review,
+          benefit_type: "compensation",
           description: "Non-RAMP Issue before AMA Activation",
           contention_reference_id: "12345",
           ineligible_reason: :before_ama
@@ -573,9 +581,10 @@ RSpec.feature "Edit issues" do
 
       let!(:eligible_ri_before_ama) do
         RequestIssue.create!(
-          rating_issue_reference_id: "ramp_ref_id",
-          rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
+          contested_rating_issue_reference_id: "ramp_ref_id",
+          contested_rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
           review_request: higher_level_review,
+          benefit_type: "compensation",
           description: "Issue before AMA Activation from RAMP",
           contention_reference_id: "123456",
           ramp_claim_id: "ramp_claim_id"
@@ -584,11 +593,12 @@ RSpec.feature "Edit issues" do
 
       let!(:ri_legacy_issue_not_withdrawn) do
         RequestIssue.create!(
-          rating_issue_reference_id: "has_legacy_issue",
-          rating_issue_profile_date: rating_before_ama.profile_date,
+          contested_rating_issue_reference_id: "has_legacy_issue",
+          contested_rating_issue_profile_date: rating_before_ama.profile_date,
           review_request: higher_level_review,
           description: "Issue with legacy issue not withdrawn",
           vacols_id: "vacols1",
+          benefit_type: "compensation",
           vacols_sequence_id: "1",
           contention_reference_id: "1234567",
           ineligible_reason: :legacy_issue_not_withdrawn
@@ -597,12 +607,13 @@ RSpec.feature "Edit issues" do
 
       let!(:ri_legacy_issue_ineligible) do
         RequestIssue.create!(
-          rating_issue_reference_id: "has_ineligible_legacy_appeal",
-          rating_issue_profile_date: rating_before_ama.profile_date,
+          contested_rating_issue_reference_id: "has_ineligible_legacy_appeal",
+          contested_rating_issue_profile_date: rating_before_ama.profile_date,
           review_request: higher_level_review,
           description: "Issue connected to ineligible legacy appeal",
           contention_reference_id: "12345678",
           vacols_id: "vacols2",
+          benefit_type: "compensation",
           vacols_sequence_id: "2",
           ineligible_reason: :legacy_appeal_not_eligible
         )
@@ -634,7 +645,7 @@ RSpec.feature "Edit issues" do
       it "shows the Higher-Level Review Edit page with ineligibility messages" do
         visit "higher_level_reviews/#{ep_claim_id}/edit"
         expect(page).to have_content(
-          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
         )
         expect(page).to have_content(
           "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
@@ -661,14 +672,6 @@ RSpec.feature "Edit issues" do
         visit "higher_level_reviews/#{ep_claim_id}/edit"
 
         expect(page).to have_content("8 issues")
-        expect_ineligible_issue(1)
-        expect_ineligible_issue(2)
-        expect_eligible_issue(3)
-        expect_ineligible_issue(4)
-        expect_ineligible_issue(5)
-        expect_ineligible_issue(6)
-        expect_ineligible_issue(7)
-        expect_eligible_issue(8)
 
         # remove and re-add each ineligible issue. when re-added, it should always be issue 8.
         # excludes ineligible legacy opt in issue because it requires the HLR to have that option selected
@@ -677,6 +680,7 @@ RSpec.feature "Edit issues" do
         ri_legacy_issue_not_withdrawn_num = find_intake_issue_number_by_text(
           ri_legacy_issue_not_withdrawn.contention_text
         )
+        expect_ineligible_issue(ri_legacy_issue_not_withdrawn_num)
         click_remove_intake_issue(ri_legacy_issue_not_withdrawn_num)
         click_remove_issue_confirmation
 
@@ -689,17 +693,19 @@ RSpec.feature "Edit issues" do
         add_intake_rating_issue("ankylosis of hip")
 
         expect_ineligible_issue(8)
+
         expect(page).to have_content(
           "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
         )
 
         # 4
         ri_with_previous_hlr_issue_num = find_intake_issue_number_by_text(ri_with_previous_hlr.contention_text)
+        expect_ineligible_issue(ri_with_previous_hlr_issue_num)
         click_remove_intake_issue(ri_with_previous_hlr_issue_num)
         click_remove_issue_confirmation
 
         expect(page).to_not have_content(
-          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
         )
 
         click_intake_add_issue
@@ -708,11 +714,12 @@ RSpec.feature "Edit issues" do
 
         expect_ineligible_issue(8)
         expect(page).to have_content(
-          "#{ri_with_previous_hlr.contention_text} #{ineligible.previous_higher_level_review}"
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
         )
 
         # 5
         ri_in_review_issue_num = find_intake_issue_number_by_text(ri_in_review.contention_text)
+        expect_ineligible_issue(ri_in_review_issue_num)
         click_remove_intake_issue(ri_in_review_issue_num)
         click_remove_issue_confirmation
 
@@ -731,6 +738,7 @@ RSpec.feature "Edit issues" do
 
         # 6
         untimely_request_issue_num = find_intake_issue_number_by_text(untimely_request_issue.contention_text)
+        expect_ineligible_issue(untimely_request_issue_num)
         click_remove_intake_issue(untimely_request_issue_num)
         click_remove_issue_confirmation
 
@@ -756,6 +764,7 @@ RSpec.feature "Edit issues" do
 
         # 7
         ri_before_ama_num = find_intake_issue_number_by_text(ri_before_ama.contention_text)
+        expect_ineligible_issue(ri_before_ama_num)
         click_remove_intake_issue(ri_before_ama_num)
         click_remove_issue_confirmation
 
@@ -781,6 +790,7 @@ RSpec.feature "Edit issues" do
           issue_category: "Military Retired Pay",
           description: "nonrating description",
           contention_reference_id: "1234",
+          benefit_type: "compensation",
           decision_date: 1.month.ago
         )
       end
@@ -829,7 +839,6 @@ RSpec.feature "Edit issues" do
         expect(page).to have_current_path(
           "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Edit Confirmed")
       end
 
       context "when veteran has active nonrating request issues" do
@@ -860,7 +869,9 @@ RSpec.feature "Edit issues" do
 
           safe_click("#button-submit-update")
           safe_click ".confirm"
-          expect(page).to have_content("Edit Confirmed")
+          expect(page).to have_current_path(
+            "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
+          )
 
           expect(RequestIssue.find_by(review_request: higher_level_review,
                                       issue_category: active_nonrating_request_issue.issue_category,
@@ -922,8 +933,8 @@ RSpec.feature "Edit issues" do
       let(:contention_ref_id) { "123" }
       let!(:request_issue) do
         create(:request_issue,
-               rating_issue_reference_id: "def456",
-               rating_issue_profile_date: rating.profile_date,
+               contested_rating_issue_reference_id: "def456",
+               contested_rating_issue_profile_date: rating.profile_date,
                review_request: higher_level_review,
                description: "PTSD denied")
       end
@@ -985,7 +996,10 @@ RSpec.feature "Edit issues" do
         end
 
         let(:nonrating_decision_request_issue) do
-          setup_request_issue_with_rating_decision_issue(higher_level_review, rating_issue_reference_id: "abc123")
+          setup_request_issue_with_rating_decision_issue(
+            higher_level_review,
+            contested_rating_issue_reference_id: "abc123"
+          )
         end
 
         let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
@@ -1098,7 +1112,9 @@ RSpec.feature "Edit issues" do
         expect(page).to have_content("The review originally had 1 issue but now has 7.")
 
         safe_click "#Number-of-issues-has-changed-button-id-1"
-        expect(page).to have_content("Edit Confirmed")
+        expect(page).to have_current_path(
+          "/higher_level_reviews/#{rating_ep_claim_id}/edit/confirmation"
+        )
 
         # assert server has updated data for nonrating and unidentified issues
         active_duty_adjustments_request_issue = RequestIssue.find_by!(
@@ -1123,12 +1139,12 @@ RSpec.feature "Edit issues" do
         expect(RequestIssue.find_by(
                  review_request: higher_level_review,
                  description: "This is an unidentified issue"
-        )).to_not be_nil
+               )).to_not be_nil
 
         expect(RequestIssue.find_by(
                  review_request: higher_level_review,
                  ramp_claim_id: "ramp_claim_id"
-        )).to_not be_nil
+               )).to_not be_nil
 
         rating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
@@ -1143,7 +1159,9 @@ RSpec.feature "Edit issues" do
         # expect the remove/re-add to create a new RequestIssue for same RatingIssue
         expect(higher_level_review.reload.request_issues).to_not include(request_issue)
         new_version_of_request_issue = higher_level_review.find_request_issue_by_description(request_issue.description)
-        expect(new_version_of_request_issue.rating_issue_reference_id).to eq(request_issue.rating_issue_reference_id)
+        expect(new_version_of_request_issue.contested_rating_issue_reference_id).to eq(
+          request_issue.contested_rating_issue_reference_id
+        )
 
         # expect contentions to reflect issue update
         existing_contention = rating_epe.contentions.first
@@ -1263,7 +1281,7 @@ RSpec.feature "Edit issues" do
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
           claim_id: rating_ep_claim_id,
           rating_issue_contention_map: {
-            new_request_issue.rating_issue_reference_id => new_request_issue.contention_reference_id
+            new_request_issue.contested_rating_issue_reference_id => new_request_issue.contention_reference_id
           }
         )
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
@@ -1355,6 +1373,7 @@ RSpec.feature "Edit issues" do
           issue_category: "Military Retired Pay",
           description: "nonrating description",
           contention_reference_id: "1234",
+          benefit_type: "compensation",
           decision_date: 1.month.ago
         )
       end
@@ -1416,16 +1435,16 @@ RSpec.feature "Edit issues" do
         expect(page).to have_current_path(
           "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
         )
-        expect(page).to have_content("Edit Confirmed")
       end
     end
 
     context "when there is a rating end product" do
       let(:request_issue) do
         RequestIssue.create!(
-          rating_issue_reference_id: "def456",
-          rating_issue_profile_date: rating.profile_date,
+          contested_rating_issue_reference_id: "def456",
+          contested_rating_issue_profile_date: rating.profile_date,
           review_request: supplemental_claim,
+          benefit_type: "compensation",
           description: "PTSD denied"
         )
       end
@@ -1564,7 +1583,9 @@ RSpec.feature "Edit issues" do
 
           safe_click("#button-submit-update")
           safe_click ".confirm"
-          expect(page).to have_content("Edit Confirmed")
+          expect(page).to have_current_path(
+            "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
+          )
 
           expect(RequestIssue.find_by(review_request: supplemental_claim,
                                       issue_category: active_nonrating_request_issue.issue_category,
@@ -1617,7 +1638,10 @@ RSpec.feature "Edit issues" do
         end
 
         let(:nonrating_decision_request_issue) do
-          setup_request_issue_with_rating_decision_issue(supplemental_claim, rating_issue_reference_id: "abc123")
+          setup_request_issue_with_rating_decision_issue(
+            supplemental_claim,
+            contested_rating_issue_reference_id: "abc123"
+          )
         end
 
         let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
@@ -1721,7 +1745,7 @@ RSpec.feature "Edit issues" do
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
           claim_id: rating_ep_claim_id,
           rating_issue_contention_map: {
-            new_request_issue.rating_issue_reference_id => new_request_issue.contention_reference_id
+            new_request_issue.contested_rating_issue_reference_id => new_request_issue.contention_reference_id
           }
         )
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once

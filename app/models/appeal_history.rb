@@ -181,6 +181,7 @@ class AppealHistory
         abbr_merge_str = merge_strs[i][0...abbr_len]
         cnt = merge_strs.count { |str| str.start_with?(abbr_merge_str) }
         break if cnt == 1 || abbr_len == merge_strs[i].length
+
         abbr_len += 1
       end
 
