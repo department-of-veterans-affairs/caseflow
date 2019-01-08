@@ -502,6 +502,7 @@ feature "Edit issues" do
           description: "eligible nonrating description",
           contention_reference_id: "1234",
           ineligible_reason: nil,
+          benefit_type: "compensation",
           decision_date: Date.new(2018, 5, 1)
         )
       end
@@ -512,6 +513,7 @@ feature "Edit issues" do
           issue_category: "Active Duty Adjustments",
           description: "untimely nonrating description",
           contention_reference_id: "12345",
+          benefit_type: "compensation",
           ineligible_reason: :untimely
         )
       end
@@ -523,6 +525,7 @@ feature "Edit issues" do
           review_request: another_higher_level_review,
           description: "PTSD denied",
           contention_reference_id: "123",
+          benefit_type: "compensation",
           ineligible_reason: nil,
           removed_at: nil
         )
@@ -536,6 +539,7 @@ feature "Edit issues" do
           description: "PTSD denied",
           contention_reference_id: "111",
           ineligible_reason: :duplicate_of_rating_issue_in_active_review,
+          benefit_type: "compensation",
           ineligible_due_to: ri_in_review
         )
       end
@@ -545,6 +549,7 @@ feature "Edit issues" do
           contested_rating_issue_reference_id: "abc123",
           contested_rating_issue_profile_date: rating.profile_date,
           review_request: another_higher_level_review,
+          benefit_type: "compensation",
           description: "Left knee granted",
           contention_reference_id: 55
         )
@@ -556,6 +561,7 @@ feature "Edit issues" do
           contested_rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
           description: "Left knee granted",
+          benefit_type: "compensation",
           ineligible_reason: :higher_level_review_to_higher_level_review,
           ineligible_due_to: ri_previous_hlr
         )
@@ -566,6 +572,7 @@ feature "Edit issues" do
           contested_rating_issue_reference_id: "before_ama_ref_id",
           contested_rating_issue_profile_date: rating_before_ama.profile_date,
           review_request: higher_level_review,
+          benefit_type: "compensation",
           description: "Non-RAMP Issue before AMA Activation",
           contention_reference_id: "12345",
           ineligible_reason: :before_ama
@@ -577,6 +584,7 @@ feature "Edit issues" do
           contested_rating_issue_reference_id: "ramp_ref_id",
           contested_rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
           review_request: higher_level_review,
+          benefit_type: "compensation",
           description: "Issue before AMA Activation from RAMP",
           contention_reference_id: "123456",
           ramp_claim_id: "ramp_claim_id"
@@ -590,6 +598,7 @@ feature "Edit issues" do
           review_request: higher_level_review,
           description: "Issue with legacy issue not withdrawn",
           vacols_id: "vacols1",
+          benefit_type: "compensation",
           vacols_sequence_id: "1",
           contention_reference_id: "1234567",
           ineligible_reason: :legacy_issue_not_withdrawn
@@ -604,6 +613,7 @@ feature "Edit issues" do
           description: "Issue connected to ineligible legacy appeal",
           contention_reference_id: "12345678",
           vacols_id: "vacols2",
+          benefit_type: "compensation",
           vacols_sequence_id: "2",
           ineligible_reason: :legacy_appeal_not_eligible
         )
@@ -780,6 +790,7 @@ feature "Edit issues" do
           issue_category: "Military Retired Pay",
           description: "nonrating description",
           contention_reference_id: "1234",
+          benefit_type: "compensation",
           decision_date: 1.month.ago
         )
       end
@@ -1362,6 +1373,7 @@ feature "Edit issues" do
           issue_category: "Military Retired Pay",
           description: "nonrating description",
           contention_reference_id: "1234",
+          benefit_type: "compensation",
           decision_date: 1.month.ago
         )
       end
@@ -1432,6 +1444,7 @@ feature "Edit issues" do
           contested_rating_issue_reference_id: "def456",
           contested_rating_issue_profile_date: rating.profile_date,
           review_request: supplemental_claim,
+          benefit_type: "compensation",
           description: "PTSD denied"
         )
       end
