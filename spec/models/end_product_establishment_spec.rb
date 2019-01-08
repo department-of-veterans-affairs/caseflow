@@ -6,6 +6,7 @@ describe EndProductEstablishment do
       allow(source).to receive(:valid_modifiers).and_return(%w[030 031 032])
       allow(source).to receive(:invalid_modifiers).and_return(invalid_modifiers)
       allow(source).to receive(:special_issues).and_return(special_issues)
+      allow(source).to receive(:benefit_type).and_return("compensation")
     end
   end
 
@@ -388,6 +389,7 @@ describe EndProductEstablishment do
         contested_rating_issue_profile_date: Date.new(2018, 4, 30),
         contested_issue_description: "this is a big decision",
         description: "this is a big decision",
+        benefit_type: "compensation",
         contention_reference_id: contention_ref_id
       )
     end

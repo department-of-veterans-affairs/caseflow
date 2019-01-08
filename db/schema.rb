@@ -737,7 +737,7 @@ ActiveRecord::Schema.define(version: 20190107210543) do
     t.string "vacols_id"
     t.integer "vacols_sequence_id"
     t.datetime "created_at"
-    t.string "benefit_type"
+    t.string "benefit_type", null: false
     t.integer "contested_decision_issue_id"
     t.string "veteran_participant_id"
     t.string "decision_review_type"
