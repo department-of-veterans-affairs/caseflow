@@ -1,16 +1,16 @@
 describe MailTask do
+  let(:user) { FactoryBot.create(:user) }
+  let(:mail_team) { MailTeam.singleton }
+  before do
+    OrganizationsUser.add_user_to_organization(user, mail_team)
+  end
+
   describe ".create_from_params" do
-    let(:user) { FactoryBot.create(:user) }
     let(:appeal) { FactoryBot.create(:appeal) }
-    let(:mail_team) { MailTeam.singleton }
 
     # Use AodMotionMailTask because we do create subclasses of MailTask, never MailTask itself.
     let(:task_class) { AodMotionMailTask }
     let(:params) { { appeal: appeal, parent_id: root_task_id, type: task_class.name } }
-
-    before do
-      OrganizationsUser.add_user_to_organization(user, mail_team)
-    end
 
     context "when no root_task exists for appeal" do
       let(:root_task_id) { nil }
@@ -64,6 +64,54 @@ describe MailTask do
         expect { task_class.create_from_params(params, non_mail_user) }.to raise_error(
           Caseflow::Error::ActionForbiddenError
         )
+      end
+    end
+  end
+
+  # TODO: Add tests for:
+  # outstanding_cavc_tasks?
+  # pending_hearing_task?
+  # case_active?
+  # most_recent_active_task_assignee
+
+  describe ".get_child_task_assignee (routing logic)" do
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
+    let(:params) { {} }
+
+    subject { task_class.get_child_task_assignee(mail_task, params) }
+
+    context "for an AddressChangeMailTask" do
+      let(:task_class) { AddressChangeMailTask }
+
+      context "when the appeal has a pending hearing task" do
+        before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
+
+        it "should route to hearings management branch" do
+          expect(subject).to eq(HearingsManagement.singleton)
+        end
+      end
+
+      context "when the appeal is not active" do
+        before { allow(task_class).to receive(:case_active?).and_return(false) }
+
+        it "should raise an error" do
+          expect { subject }.to raise_error(Caseflow::Error::MailRoutingError)
+        end
+      end
+
+      context "when the appeal is active and has no pending_hearing_task" do
+        it "should route to VLJ support staff" do
+          expect(subject).to eq(Colocated.singleton)
+        end
+      end
+    end
+
+    context "for an AodMotionMailTask" do
+      let(:task_class) { AodMotionMailTask }
+
+      it "should always route to the AOD team" do
+        expect(subject).to eq(AodTeam.singleton)
       end
     end
   end
