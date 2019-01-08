@@ -202,35 +202,41 @@ export class TaskSnapshot extends React.PureComponent<Props> {
       appeal
     } = this.props;
 
-    let sectionBody = <tr><td {...css({ borderStyle: 'none' })}>{COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL}</td></tr>;
+    let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
     const tasks = this.props.tasks;
     const taskLength = tasks.length;
 
     if (taskLength) {
-      sectionBody = tasks.map((task, index) =>
-        <tr key={task.uniqueId}>
-          <td {...taskTimeContainerStyling}>
-            <CaseDetailsDescriptionList>
-              { this.assignedOnListItem(task) }
-              { this.dueDateListItem(task) }
-              { this.daysWaitingListItem(task) }
-            </CaseDetailsDescriptionList>
-          </td>
-          <td {...taskInfoWithIconContainer}><GrayDot />
-            { (index + 1 < taskLength) && <div {...grayLineStyling} /> }
-          </td>
-          <td {...taskInformationContainerStyling}>
-            <CaseDetailsDescriptionList>
-              { this.assignedToListItem(task) }
-              { this.assignedByListItem(task) }
-              { this.taskLabelListItem(task) }
-              { this.taskInstructionsListItem(task) }
-            </CaseDetailsDescriptionList>
-          </td>
-          <td {...taskActionsContainerStyling}>
-            { this.showActionsListItem(task, appeal) }
-          </td>
-        </tr>);
+      sectionBody = <table {...tableStyling}>
+        <tbody>
+          { tasks.map((task, index) =>
+            <tr key={task.uniqueId}>
+              <td {...taskTimeContainerStyling}>
+                <CaseDetailsDescriptionList>
+                  { this.assignedOnListItem(task) }
+                  { this.dueDateListItem(task) }
+                  { this.daysWaitingListItem(task) }
+                </CaseDetailsDescriptionList>
+              </td>
+              <td {...taskInfoWithIconContainer}><GrayDot />
+                { (index + 1 < taskLength) && <div {...grayLineStyling} /> }
+              </td>
+              <td {...taskInformationContainerStyling}>
+                <CaseDetailsDescriptionList>
+                  { this.assignedToListItem(task) }
+                  { this.assignedByListItem(task) }
+                  { this.taskLabelListItem(task) }
+                  { this.taskInstructionsListItem(task) }
+                </CaseDetailsDescriptionList>
+              </td>
+              <td {...taskActionsContainerStyling}>
+                { this.showActionsListItem(task, appeal) }
+              </td>
+            </tr>
+          )
+          }
+        </tbody>
+      </table>;
     }
 
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
@@ -239,11 +245,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
         { <AddNewTaskButton appealId={appeal.externalId} /> }
       </h2>
       <div {...sectionSegmentStyling}>
-        <table {...tableStyling}>
-          <tbody>
-            { sectionBody }
-          </tbody>
-        </table>
+        { sectionBody }
       </div>
     </div>;
   };
