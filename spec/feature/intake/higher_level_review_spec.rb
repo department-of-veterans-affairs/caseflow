@@ -8,8 +8,8 @@ feature "Higher-Level Review" do
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 11, 28))
+    #Time.zone = "America/New_York"
+    Timecop.freeze(post_ramp_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original

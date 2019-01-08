@@ -9,7 +9,7 @@ feature "Appeal Intake" do
     FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
     FeatureToggle.enable!(:intake_legacy_opt_in, users: [current_user.css_id])
 
-    Time.zone = "America/New_York"
+    #Time.zone = "America/New_York"
     Timecop.freeze(post_ramp_start_date)
   end
 
@@ -854,6 +854,10 @@ feature "Appeal Intake" do
         )
 
         click_intake_finish
+
+        binding.pry
+
+        # server error when timezone set
 
         ineligible_checklist = find("ul.cf-ineligible-checklist")
         expect(ineligible_checklist).to have_content(
