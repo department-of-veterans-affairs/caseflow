@@ -26,7 +26,7 @@ class JudgeTask < Task
   # This function to be manually run in production when we need to fetch all RAMP
   # appeals that are eligible for assignment to judges, and assign them. This and related methods
   # can be removed after February 14th 2019.
-  def self.assign_ramp_judge_tasks(dry_run: false, batch_size: 10)
+  def self.assign_ramp_judge_tasks(dry_run: true, batch_size: 10)
     # Find all unassigned tasks, sort them by the NOD date, and take the first N.
     tasks = unassigned_ramp_tasks.sort_by { |task| task.appeal.receipt_date }[0..batch_size - 1]
 
