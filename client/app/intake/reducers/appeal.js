@@ -311,6 +311,16 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         }
       }
     });
+  case ACTIONS.SET_ISSUE_BENEFIT_TYPE:
+    return update(state, {
+      nonRatingRequestIssues: {
+        [action.payload.issueId]: {
+          benefitType: {
+            $set: action.payload.benefitType
+          }
+        }
+      }
+    });
   default:
     return applyCommonReducers(state, action);
   }
