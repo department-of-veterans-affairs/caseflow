@@ -79,7 +79,6 @@ class JudgeTask < Task
     task.children.all? { |t| !t.type.is_a?(JudgeTask) && t.completed? }
   end
 
-
   def self.list_of_assignees
     Constants::RampJudges::USERS[Rails.current_env]
   end
