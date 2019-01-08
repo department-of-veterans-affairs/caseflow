@@ -138,6 +138,13 @@ module Caseflow::Error
     end
   end
 
+  class MailRoutingError < SerializableError
+    def initialize
+      @code = 500
+      @message = "Appeal is not active at the Board. Send mail to appropriate Regional Office in mail portal"
+    end
+  end
+
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
   class InvalidSSN < StandardError; end
