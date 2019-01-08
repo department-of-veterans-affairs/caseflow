@@ -10,8 +10,6 @@ class BoardGrantEffectuation < ApplicationRecord
   validates :granted_decision_issue, presence: true
   before_save :hydrate_from_granted_decision_issue, on: :create
 
-  has_many :tasks
-
   END_PRODUCT_CODES = {
     rating: "030BGR",
     nonrating: "030BGNR",
@@ -35,30 +33,39 @@ class BoardGrantEffectuation < ApplicationRecord
 
   def hydrate_from_granted_decision_issue
     assign_attributes(
-      appeal: appeal,
-      decision_document: appeal.decision_document
+      appeal: granted_decision_issue.decision_review,
+      decision_document: granted_decision_issue.decision_review.decision_document
     )
 
     if effectuated_in_vbms?
       self.end_product_establishment = find_or_build_end_product_establishment
     else
-      create_noncomp_task!
+      find_or_build_noncomp_task
     end
-  end
-
-  def create_noncomp_task!
-    return if tasks.any? { |task| task.is_a?(BoardGrantEffectuationTask) } # TODO: more specific check?
-
-    BoardGrantEffectuationTask.create!(
-      appeal: appeal,
-      assigned_at: Time.zone.now,
-      assigned_to: business_line
-    )
   end
 
   def business_line
     business_line_name = Constants::BENEFIT_TYPES[benefit_type]
     @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
+  end
+
+  def find_or_build_noncomp_task
+    find_matching_noncomp_task || create_noncomp_task!
+  end
+
+  def find_matching_noncomp_task
+    BoardGrantEffectuationTask.find_by(
+      appeal: appeal,
+      assigned_to: business_line
+    )
+  end
+
+  def create_noncomp_task!
+    BoardGrantEffectuationTask.create!(
+      appeal: appeal,
+      assigned_at: Time.zone.now,
+      assigned_to: business_line
+    )
   end
 
   def find_or_build_end_product_establishment
@@ -68,7 +75,7 @@ class BoardGrantEffectuation < ApplicationRecord
   def find_matching_end_product_establishment
     EndProductEstablishment.find_by(
       source: decision_document,
-      code: ep_code,
+      code: end_product_code,
       established_at: nil
     )
   end
@@ -79,7 +86,7 @@ class BoardGrantEffectuation < ApplicationRecord
       veteran_file_number: veteran.file_number,
       claim_date: decision_document.decision_date,
       payee_code: "00",
-      code: ep_code,
+      code: end_product_code,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
       user: User.system_user
@@ -90,7 +97,7 @@ class BoardGrantEffectuation < ApplicationRecord
     appeal.veteran
   end
 
-  def ep_code
+  def end_product_code
     return unless effectuated_in_vbms?
 
     issue_code_type = granted_decision_issue.rating? ? :rating : :nonrating

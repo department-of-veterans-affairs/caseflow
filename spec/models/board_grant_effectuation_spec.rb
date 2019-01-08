@@ -66,6 +66,9 @@ describe BoardGrantEffectuation do
 
       it "does not create end product establishment" do
         expect(subject.end_product_establishment).to be_nil
+        expect(BoardGrantEffectuationTask.find_by(appeal: decision_document.appeal)).to have_attributes(
+          assigned_to: BusinessLine.find_by(url: benefit_type)
+        )
       end
     end
 
