@@ -429,6 +429,7 @@ describe LegacyAppeal do
     subject { appeal.number_of_documents }
 
     it "should return number of documents" do
+      documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
       expect(subject).to eq 3
     end
   end
@@ -449,13 +450,17 @@ describe LegacyAppeal do
     context "when certification_date is nil" do
       let(:certification_date) { nil }
 
-      it { is_expected.to eq 0 }
+      it do
+        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
+        is_expected.to eq 0
+      end
     end
 
     context "when certification_date is set" do
       let(:certification_date) { 2.days.ago }
 
       it do
+        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
         is_expected.to eq 1
       end
     end
