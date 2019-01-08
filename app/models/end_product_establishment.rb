@@ -170,14 +170,16 @@ class EndProductEstablishment < ApplicationRecord
 
     set_establishment_values_from_source
 
-    descriptions = records_ready_for_contentions.map(&:contention_text)
+    contentions = records_ready_for_contentions.map |issue| do
+      { description: issue.contention_text, special_issues: issue.try(:special_issues) }
+    end
 
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
 
     # We don't care about duplicate text; we just care that every request issue
     # has a contention.
-    create_contentions_in_vbms(descriptions).each do |contention|
+    create_contentions_in_vbms(contentions).each do |contention|
       record = records_ready_for_contentions.find do |r|
         r.contention_text == contention.text && r.contention_reference_id.nil?
       end
@@ -460,12 +462,11 @@ class EndProductEstablishment < ApplicationRecord
     source.on_sync(self)
   end
 
-  def create_contentions_in_vbms(descriptions)
+  def create_contentions_in_vbms(contentions)
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
       claim_id: reference_id,
-      contention_descriptions: descriptions,
-      special_issues: special_issues || [],
+      contentions: contentions,
       user: user
     )
   end

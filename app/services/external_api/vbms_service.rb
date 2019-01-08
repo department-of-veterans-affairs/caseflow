@@ -130,6 +130,8 @@ class ExternalApi::VBMSService
   end
 
   def self.create_contentions!(veteran_file_number:, claim_id:, contentions:, user:)
+    # Contentions should be an array of objects representing the contention descriptions and special issues
+    # [{description: "contention description", special_issues: [{ code: "SSR", narrative: "Same Station Review" }]}]
     @vbms_client ||= init_vbms_client
 
     request = VBMS::Requests::CreateContentions.new(
