@@ -112,6 +112,7 @@ class RequestIssue < ApplicationRecord
 
     private
 
+    # rubocop:disable Metrics/MethodLength
     def attributes_from_intake_data(data)
       contested_issue_present = data[:rating_issue_reference_id] || data[:contested_decision_isssue_id]
 
@@ -143,6 +144,7 @@ class RequestIssue < ApplicationRecord
       }
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def status_active?
     return appeal_active? if review_request.is_a?(Appeal)

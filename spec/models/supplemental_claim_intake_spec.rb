@@ -47,8 +47,7 @@ describe SupplementalClaimIntake do
         contested_rating_issue_profile_date: Time.zone.local(2018, 4, 5),
         contested_issue_description: "description",
         description: "description",
-        contention_reference_id: "1234",
-        description: "description"
+        contention_reference_id: "1234"
       )
     end
 

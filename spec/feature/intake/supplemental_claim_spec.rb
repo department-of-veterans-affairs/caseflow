@@ -481,7 +481,7 @@ feature "Supplemental Claim Intake" do
         :request_issue,
         end_product_establishment: active_epe,
         contested_rating_issue_reference_id: duplicate_reference_id,
-        contested_issue_description: "Old injury"
+        contested_issue_description: "Old injury",
         description: "Old injury"
       )
     end

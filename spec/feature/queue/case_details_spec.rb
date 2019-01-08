@@ -311,7 +311,7 @@ RSpec.feature "Case details" do
         build_list(
           :request_issue,
           eligible_issue_cnt,
-          contested_issue_description: "Knee pain"
+          contested_issue_description: "Knee pain",
           description: "Knee pain"
         ),
         build_list(
