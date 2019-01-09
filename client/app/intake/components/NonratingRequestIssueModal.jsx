@@ -119,9 +119,9 @@ class NonratingRequestIssueModal extends React.Component {
     // we assume the timezone of the browser for all these.
     let decisionDate = new Date(this.state.decisionDate);
     let receiptDate = new Date(this.props.intakeData.receiptDate);
-    let isTimely = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
+    let lessThanOneYear = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
 
-    return isTimely;
+    return lessThanOneYear;
   }
 
   onAddIssue = () => {
