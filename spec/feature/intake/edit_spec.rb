@@ -391,7 +391,7 @@ feature "Edit issues" do
     )
 
     expect(second_request_issue).to have_attributes(
-      ineligible_reason: :duplicate_of_rating_issue_in_active_review,
+      ineligible_reason: "duplicate_of_rating_issue_in_active_review",
       contested_issue_description: contested_decision_issues.second.description
     )
   end
