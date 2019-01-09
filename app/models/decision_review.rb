@@ -101,6 +101,7 @@ class DecisionReview < ApplicationRecord
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash),
+      decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
       editIssuesUrl: caseflow_only_edit_issues_url

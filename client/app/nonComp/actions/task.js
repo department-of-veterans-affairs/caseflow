@@ -3,24 +3,20 @@ import { ACTIONS } from '../constants';
 
 const analytics = true;
 
-export const taskUpdateDecisionIssues = (taskId, businessLine, decisionIssues) => (dispatch) => {
+export const taskUpdateDecisionIssues = (taskId, businessLine, decisionIssues, veteran) => (dispatch) => {
   dispatch({
     type: ACTIONS.TASK_UPDATE_DECISION_ISSUES_START,
     meta: { analytics }
   });
 
-  // const data = formatDecisionIssues(decisionIssues);
-
-  // /decision_reviews/:decision_review_business_line_slug/tasks/:task_id
-  return ApiUtil.put(`/decision_reviews/${businessLine}/tasks/${taskId}`, { decisionIssues }, 'decision-issues-update').
+  return ApiUtil.put(`/decision_reviews/${businessLine}/tasks/${taskId}`, {data: decisionIssues}, 'decision-issues-update').
     then(
       (response) => {
-        const responseObject = JSON.parse(response.text);
-
         dispatch({
           type: ACTIONS.TASK_UPDATE_DECISION_ISSUES_SUCCEED,
           payload: {
-            decisionIssues: responseObject.decisionIssues
+            veteran: veteran,
+            completedTaskId: taskId
           },
           meta: { analytics }
         });
@@ -46,4 +42,14 @@ export const taskUpdateDecisionIssues = (taskId, businessLine, decisionIssues) =
         throw error;
       }
     );
-}
+};
+
+export const taskUpdateDefaultPage = (page) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.TASK_DEFAULT_PAGE,
+    payload: {
+      currentTab: page
+    }
+  });
+};
+

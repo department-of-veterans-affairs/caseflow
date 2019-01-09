@@ -22,6 +22,7 @@ class DecisionReviewsController < ApplicationController
     if task
       if validate_decision_issue_per_request_issue
         task.complete(decision_issue_params)
+        render json: { decisionIssues: task.appeal.decision_issues }, status: 204
       else
         render json: { error: "Each request issue does not have a matching decision issue" }, status: 400
       end

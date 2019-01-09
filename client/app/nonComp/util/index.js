@@ -17,12 +17,27 @@ export const longFormNameFromShort = (shortFormName) => {
 
 export const formatDecisionIssuesFromRequestIssues = (requestIssues) => {
   const decisionIssues = requestIssues.map((requestIssue) => {
-    return {
+    let formmatedDecisionIssue =  {
       request_issue_id: requestIssue.id,
-      description: requestIssue.decisionIssue.description,
       disposition: requestIssue.decisionIssue.disposition,
     }
+
+    if (requestIssue.decisionIssue.description) {
+      formmatedDecisionIssue.description = requestIssue.decisionIssue.description;
+    }
+
+    return formmatedDecisionIssue;
   });
 
   return {decision_issues: decisionIssues};
+}
+
+export const formatRequestIssuesWithDecisionIssues = (requestIssues, decisionIssues) => {
+  return requestIssues.map((requestIssue) => {
+    const foundDecisionIssue = decisionIssues.find((decisionIssue) => decisionIssue.requestIssueId === requestIssue.id) || {};
+    return {
+      decisionIssue: foundDecisionIssue,
+      ...requestIssue
+    }
+  });
 }

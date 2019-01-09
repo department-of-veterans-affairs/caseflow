@@ -1,13 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
 import { formatDate } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
-import { DISPOSITION_OPTIONS } from '../constants';
-import { longFormNameFromShort, formatDecisionIssuesFromRequestIssues } from '../util';
-import { taskUpdateDecisionIssues } from '../actions/task';
+
+import { ErrorAlert } from '../components/Alerts';
+import { DISPOSITION_OPTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
+import { longFormNameFromShort, formatDecisionIssuesFromRequestIssues, formatRequestIssuesWithDecisionIssues } from '../util';
+import { taskUpdateDecisionIssues, taskUpdateDefaultPage } from '../actions/task';
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -18,8 +22,8 @@ class NonCompDecisionIssue extends React.PureComponent {
     };
   }
 
-  handleDispositionChange = (value) => {
-    this.props.onDispositionChange(this.state.issueIdx, value);
+  handleDispositionChange = (option) => {
+    this.props.onDispositionChange(this.state.issueIdx, option.value);
   }
 
   dispositionOptions = () => {
@@ -45,7 +49,7 @@ class NonCompDecisionIssue extends React.PureComponent {
     return <div className="cf-decision">
       <hr />
       <div className="usa-grid-full">
-        <h3>Issue #{index}</h3>
+        <h3>Issue #{index + 1}</h3>
         <div className="cf-decision-details">
           <div className="desc">{issue.description}</div>
           <div className="date"><strong>Prior decision date:</strong> {issueDate}.</div>
@@ -75,13 +79,8 @@ class NonCompDispositionsPage extends React.PureComponent {
 
     let today = formatDate(new Date());
 
-    const formattedRequestIssues = this.props.appeal.requestIssues.map((requestIssue) => {
-      requestIssue.decisionIssue = requestIssue.decisionIssue || {};
-      return requestIssue;
-    });
-
     this.state = {
-      requestIssues: formattedRequestIssues,
+      requestIssues: formatRequestIssuesWithDecisionIssues(this.props.appeal.requestIssues, this.props.appeal.decisionIssues),
       decisionDate: today,
       isFilledOut: false
     };
@@ -94,12 +93,20 @@ class NonCompDispositionsPage extends React.PureComponent {
 
   handleSave = () => {
     const decisionIssues = formatDecisionIssuesFromRequestIssues(this.state.requestIssues);
-    this.props.taskUpdateDecisionIssues(this.props.task.id, this.props.businessLine, decisionIssues);
+
+    function successHandler() {
+      // update to the completed tab
+      this.props.taskUpdateDefaultPage(1);
+      this.props.history.push(`/${this.props.businessLineUrl}`);
+    }
+
+    this.props.taskUpdateDecisionIssues(this.props.task.id, this.props.businessLineUrl,
+      decisionIssues, this.props.appeal.veteran).then(successHandler.bind(this));
   }
 
   checkFormFilledOut = () => {
     // check if all dispositions have values & date is set
-    const allDispositionsSet = this.state.requestIssues.every((requestIssue) => Boolean(requestIssue.disposition));
+    const allDispositionsSet = this.state.requestIssues.every((requestIssue) => Boolean(requestIssue.decisionIssue.disposition));
     this.setState({isFilledOut: allDispositionsSet && Boolean(this.state.decisionDate)})
   }
 
@@ -124,7 +131,14 @@ class NonCompDispositionsPage extends React.PureComponent {
       decisionIssuesStatus
     } = this.props;
 
+    let errorAlert = null;
+
+    if (decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.FAIL) {
+      errorAlert = <ErrorAlert errorCode="decisionIssueUpdateFailed"/>
+    }
+
     return <div>
+      { errorAlert }
       <h1>{businessLine}</h1>
       <div className="cf-review-details cf-gray-box">
         <div className="usa-grid-full">
@@ -201,7 +215,8 @@ class NonCompDispositionsPage extends React.PureComponent {
       <div className="cf-txt-r">
         <a className="cf-cancel-link" href={`/decision_reviews/${businessLine}`}>Cancel</a>
         <Button className="usa-button"
-          loading={decisionIssuesStatus.update === "IN_PROGRESS"}
+          name="submit-update"
+          loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
           disabled={!this.state.isFilledOut} onClick={this.handleSave}>Complete</Button>
       </div>
     </div>;
@@ -212,11 +227,13 @@ const DispositionPage = connect(
   (state) => ({
     appeal: state.appeal,
     businessLine: state.businessLine,
+    businessLineUrl: state.businessLineUrl,
     task: state.task,
     decisionIssuesStatus: state.decisionIssuesStatus
   }),
   (dispatch) => bindActionCreators({
-    taskUpdateDecisionIssues
+    taskUpdateDecisionIssues,
+    taskUpdateDefaultPage
   }, dispatch)
 )(NonCompDispositionsPage);
 
