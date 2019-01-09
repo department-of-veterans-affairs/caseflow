@@ -165,7 +165,7 @@ class Fakes::VBMSService
     Rails.logger.info("User:\n #{user}")
 
     # Used to simulate a contention that fails to be created in VBMS
-    contentions.delete({ description: "FAIL ME" })
+    contentions.delete(description: "FAIL ME")
 
     # return fake list of contentions
     contentions.map do |contention|

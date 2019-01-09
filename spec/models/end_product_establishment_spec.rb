@@ -265,11 +265,13 @@ describe EndProductEstablishment do
       ]
     end
 
-    let(:contentions) { request_issues.map do |issue|
-      contention = { description: issue.contention_text }
-      issue.special_issues && contention[:special_issues] = issue.special_issues
-      contention
-    end.reverse }
+    let(:contentions) do
+      request_issues.map do |issue|
+        contention = { description: issue.contention_text }
+        issue.special_issues && contention[:special_issues] = issue.special_issues
+        contention
+      end.reverse
+    end
 
     it "creates contentions and saves them to objects" do
       subject
@@ -300,12 +302,12 @@ describe EndProductEstablishment do
           claim_id: end_product_establishment.reference_id,
           contentions: array_including(
             { description: "this is a big decision",
-              special_issues: [{ code: "SSR", narrative: "Same Station Review" }]},
-            { description: "more decisionz",
-              special_issues: array_including(
-                { code: "SSR", narrative: "Same Station Review" },
-                { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O }
-                )}
+              special_issues: [{ code: "SSR", narrative: "Same Station Review" }] },
+            description: "more decisionz",
+            special_issues: array_including(
+              { code: "SSR", narrative: "Same Station Review" },
+              code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
+            )
           ),
           user: current_user
         )

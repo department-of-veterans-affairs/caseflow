@@ -179,11 +179,10 @@ describe DecisionDocument do
           expect(VBMSService).to have_received(:create_contentions!).once.with(
             veteran_file_number: decision_document.appeal.veteran_file_number,
             claim_id: decision_document.end_product_establishments.last.reference_id,
-            contention_descriptions: array_including(
-              granted_issue.formatted_description,
-              another_granted_issue.formatted_description
+            contentions: array_including(
+              { description: granted_issue.formatted_description },
+              description: another_granted_issue.formatted_description
             ),
-            special_issues: [],
             user: User.system_user
           )
 

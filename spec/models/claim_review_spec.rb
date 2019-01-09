@@ -314,7 +314,7 @@ describe ClaimReview do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.last.reference_id,
-          contentions: array_including({ description: "another decision text" }, { description: "decision text" }),
+          contentions: array_including({ description: "another decision text" }, description: "decision text"),
           user: user
         )
 

@@ -190,7 +190,7 @@ describe RequestIssuesUpdate do
               contentions: [{
                 description: "Service connection for cancer was denied",
                 special_issues: [{ code: "VO", narrative: "AMA SOC/SSOC Opt-in" }]
-                }]
+              }]
             )
           )
 
