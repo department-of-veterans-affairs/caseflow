@@ -150,14 +150,18 @@ class ClaimReview < DecisionReview
 
   def search_table_ui_hash
     {
-      caseflow_veteran_id: Veteran.find_by(file_number: veteran_file_number).id,
+      caseflow_veteran_id: veteran&.id,
       claim_id: id,
       veteran_file_number: veteran_file_number,
-      veteran_full_name: Veteran.find_by(file_number: veteran_file_number).name.formatted(:readable_full),
-      end_products: end_product_establishments.map(&:search_table_ui_hash),
+      veteran_full_name: veteran&.name&.formatted(:readable_full),
+      end_products: end_product_establishments,
       claimant_names: claimants.map(&:name),
       review_type: self.class.to_s.underscore
     }
+  end
+
+  def veteran
+    Veteran.find_by(file_number: veteran_file_number)
   end
 
   private
