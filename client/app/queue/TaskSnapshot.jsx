@@ -4,12 +4,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import {
-  actionableTasksForAppeal,
-  appealWithDetailSelector
+  appealWithDetailSelector,
+  nonRootActionableTasksForAppeal
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import ActionsDropdown from './components/ActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
+import AddNewTaskButton from './components/AddNewTaskButton';
 
 import COPY from '../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
@@ -202,45 +203,49 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     } = this.props;
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
-    const taskLength = this.props.tasks.length;
+    const tasks = this.props.tasks;
+    const taskLength = tasks.length;
 
     if (taskLength) {
-      sectionBody = this.props.tasks.map((task, index) =>
-        <tr key={task.uniqueId}>
-          <td {...taskTimeContainerStyling}>
-            <CaseDetailsDescriptionList>
-              { this.assignedOnListItem(task) }
-              { this.dueDateListItem(task) }
-              { this.daysWaitingListItem(task) }
-            </CaseDetailsDescriptionList>
-          </td>
-          <td {...taskInfoWithIconContainer}><GrayDot />
-            { (index + 1 < taskLength) && <div {...grayLineStyling} /> }
-          </td>
-          <td {...taskInformationContainerStyling}>
-            <CaseDetailsDescriptionList>
-              { this.assignedToListItem(task) }
-              { this.assignedByListItem(task) }
-              { this.taskLabelListItem(task) }
-              { this.taskInstructionsListItem(task) }
-            </CaseDetailsDescriptionList>
-          </td>
-          <td {...taskActionsContainerStyling}>
-            { this.showActionsListItem(task, appeal) }
-          </td>
-        </tr>);
+      sectionBody = <table {...tableStyling}>
+        <tbody>
+          { tasks.map((task, index) =>
+            <tr key={task.uniqueId}>
+              <td {...taskTimeContainerStyling}>
+                <CaseDetailsDescriptionList>
+                  { this.assignedOnListItem(task) }
+                  { this.dueDateListItem(task) }
+                  { this.daysWaitingListItem(task) }
+                </CaseDetailsDescriptionList>
+              </td>
+              <td {...taskInfoWithIconContainer}><GrayDot />
+                { (index + 1 < taskLength) && <div {...grayLineStyling} /> }
+              </td>
+              <td {...taskInformationContainerStyling}>
+                <CaseDetailsDescriptionList>
+                  { this.assignedToListItem(task) }
+                  { this.assignedByListItem(task) }
+                  { this.taskLabelListItem(task) }
+                  { this.taskInstructionsListItem(task) }
+                </CaseDetailsDescriptionList>
+              </td>
+              <td {...taskActionsContainerStyling}>
+                { this.showActionsListItem(task, appeal) }
+              </td>
+            </tr>
+          )
+          }
+        </tbody>
+      </table>;
     }
 
     return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
         <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}</a>
+        { <AddNewTaskButton appealId={appeal.externalId} /> }
       </h2>
       <div {...sectionSegmentStyling}>
-        <table {...tableStyling}>
-          <tbody>
-            { sectionBody }
-          </tbody>
-        </table>
+        { sectionBody }
       </div>
     </div>;
   };
@@ -252,7 +257,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
-    tasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId })
+    tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };
 

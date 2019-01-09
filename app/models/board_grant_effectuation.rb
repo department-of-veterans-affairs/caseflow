@@ -18,7 +18,7 @@ class BoardGrantEffectuation < ApplicationRecord
   }.freeze
 
   def contention_text
-    granted_decision_issue.formatted_description
+    granted_decision_issue.description
   end
 
   private

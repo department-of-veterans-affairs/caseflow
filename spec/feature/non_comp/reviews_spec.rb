@@ -3,6 +3,9 @@ require "rails_helper"
 feature "NonComp Reviews Queue" do
   before do
     FeatureToggle.enable!(:decision_reviews)
+
+    # freeze the local time so that our date math is predictable.
+    Timecop.freeze(Time.new(2019, 1, 7, 20, 55, 0).in_time_zone)
   end
 
   after do
@@ -56,8 +59,11 @@ feature "NonComp Reviews Queue" do
       expect(page).to have_content(veteran.participant_id, count: 3)
 
       # ordered by assigned_at descending
+      # this funky regex is due to how the momentjs lib does date math and rounding.
+      # since we can't control the time/zone of the browser, only here in the specs with Timecop,
+      # we allow for a range of "days" like [01] or [678]
       expect(page).to have_content(
-        /#{veteran.name} 5\d+ 0 0 Higher-Level Review #{veteran.name} 5\d+ 0 6/
+        /#{veteran.name} 5\d+ 0 [01] Higher-Level Review #{veteran.name} 5\d+ 0 [678]/
       )
 
       click_on "Completed tasks"

@@ -6,6 +6,7 @@ describe EndProductEstablishment do
       allow(source).to receive(:valid_modifiers).and_return(%w[030 031 032])
       allow(source).to receive(:invalid_modifiers).and_return(invalid_modifiers)
       allow(source).to receive(:special_issues).and_return(special_issues)
+      allow(source).to receive(:benefit_type).and_return("compensation")
     end
   end
 
@@ -232,7 +233,7 @@ describe EndProductEstablishment do
           review_request: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-          description: "this is a big decision"
+          contested_issue_description: "this is a big decision"
         ),
         create(
           :request_issue,
@@ -240,7 +241,7 @@ describe EndProductEstablishment do
           review_request: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-          description: "more decisionz"
+          contested_issue_description: "more decisionz"
         ),
         create(
           :request_issue,
@@ -248,13 +249,13 @@ describe EndProductEstablishment do
           review_request: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-          description: "this is a big decision", # intentional duplicate
+          contested_issue_description: "this is a big decision"
         ),
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           is_unidentified: true,
-          description: "identity unknown",
+          unidentified_issue_text: "identity unknown",
           review_request: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30)
@@ -382,7 +383,8 @@ describe EndProductEstablishment do
         review_request: source,
         contested_rating_issue_reference_id: "reference-id",
         contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-        description: "this is a big decision",
+        contested_issue_description: "this is a big decision",
+        benefit_type: "compensation",
         contention_reference_id: contention_ref_id
       )
     end
@@ -526,6 +528,7 @@ describe EndProductEstablishment do
           # rubocop:disable Metrics/LineLength
           sample_transient_error_body = '<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Header/><env:Body><env:Fault><faultcode xmlns:ns1="http://www.w3.org/2003/05/soap-envelope">ns1:Server</faultcode><faultstring>gov.va.vba.vbms.ws.VbmsWSException: WssVerification Exception - Security Verification Exception GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</faultstring><detail><cdm:faultDetailBean xmlns:cdm="http://vbms.vba.va.gov/cdm" cdm:message="gov.va.vba.vbms.ws.VbmsWSException: WssVerification Exception - Security Verification Exception GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" cdm:exceptionClassName="gov.va.vba.vbms.ws.VbmsWSException" cdm:uid="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" cdm:serverException="true"/></detail></env:Fault></env:Body></env:Envelope>'
           # rubocop:enable Metrics/LineLength
+
           error = VBMS::HTTPError.new(500, sample_transient_error_body)
           allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(error)
         end
@@ -541,6 +544,7 @@ describe EndProductEstablishment do
           # rubocop:disable Metrics/LineLength
           error = Errno::ETIMEDOUT.new('Connection timed out - Connection timed out - connect(2) for "bepprod.vba.va.gov" port 443 (bepprod.vba.va.gov:443)')
           # rubocop:enable Metrics/LineLength
+
           allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(error)
         end
 

@@ -34,7 +34,10 @@ FactoryBot.define do
                                 benefit_type: request_issue.review_request.benefit_type,
                                 decision_text: "a rating decision issue",
                                 request_issues: [request_issue])
-        request_issue.update!(contested_decision_issue_id: decision_issue.id)
+        request_issue.update!(
+          contested_decision_issue_id: decision_issue.id,
+          contested_issue_description: decision_issue.description
+        )
       end
     end
 
@@ -52,7 +55,10 @@ FactoryBot.define do
                                 end_product_last_action_date: request_issue.decision_date,
                                 disposition: "nonrating decision issue dispositon",
                                 request_issues: [request_issue])
-        request_issue.update!(contested_decision_issue_id: decision_issue.id)
+        request_issue.update!(
+          contested_decision_issue_id: decision_issue.id,
+          contested_issue_description: decision_issue.description
+        )
       end
     end
 
