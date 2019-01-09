@@ -21,12 +21,12 @@ class DecisionReviewsController < ApplicationController
   def update
     if task
       if task.complete!(decision_issue_params, decision_date)
-        render json: { decisionIssues: task.appeal.decision_issues }, status: 204
+        render json: { decisionIssues: task.appeal.decision_issues }, status: :created
       else
-        render json: { error_code: task.error_code }, status: 400
+        render json: { error_code: task.error_code }, status: :bad_request
       end
     else
-      render json: { error: "Task #{task_id} not found" }, status: 404
+      render json: { error: "Task #{task_id} not found" }, status: :not_found
     end
   end
 

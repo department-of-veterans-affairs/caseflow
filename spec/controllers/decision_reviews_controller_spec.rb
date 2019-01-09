@@ -112,7 +112,7 @@ describe DecisionReviewsController, type: :controller do
 
         datetime = Date.parse(decision_date).to_datetime
 
-        expect(response.status).to eq(204)
+        expect(response.status).to eq(201)
         task.reload
         expect(task.appeal.decision_issues.length).to eq(2)
         expect(task.appeal.decision_issues.find_by(
