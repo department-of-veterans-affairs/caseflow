@@ -1,6 +1,6 @@
 require "support/intake_helpers"
 
-feature "Edit issues" do
+feature "Supplemental Claim Edit issues" do
   include IntakeHelpers
 
   before do
