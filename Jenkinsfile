@@ -72,7 +72,7 @@ node('deploy') {
 
 // Execute the common pipeline.
 // Note that this must be outside of the node block since the common pipeline
-// runs another set of stages
+// runs another set of stages.
 if (env.COMMON_PIPELINE_TASK == 'build') {
   commonPipeline.build(APP_NAME, APP_VERSION, DEPLOY_MESSAGE);
 } else {
