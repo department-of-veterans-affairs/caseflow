@@ -113,6 +113,14 @@ export const getTasksForAppeal = createSelector(
   }
 );
 
+export const getAllTasksForAppeal = createSelector(
+  [getTasks, getAmaTasks, getAppealId],
+  (tasks: Tasks, amaTasks: Tasks, appealId: string) => {
+    return _.filter(tasks, (task) => task.externalAppealId === appealId).
+      concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId));
+  }
+);
+
 export const getUnassignedOrganizationalTasks = createSelector(
   [tasksWithAppealSelector],
   (tasks: Tasks) => _.filter(tasks, (task) => {

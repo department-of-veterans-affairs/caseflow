@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 
 import {
   actionableTasksForAppeal,
-  appealWithDetailSelector
+  appealWithDetailSelector,
+  getAllTasksForAppeal
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
 import ActionsDropdown from './components/ActionsDropdown';
@@ -207,7 +208,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     if (taskLength) {
       sectionBody = this.props.tasks.map((task, index) =>
         <tr key={task.uniqueId}>
-          <td {...taskTimeContainerStyling}>
+          {/*<td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
               { this.assignedOnListItem(task) }
               { this.dueDateListItem(task) }
@@ -224,7 +225,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
               { this.taskLabelListItem(task) }
               { this.taskInstructionsListItem(task) }
             </CaseDetailsDescriptionList>
-          </td>
+          </td>*/}
+          { /* TODO - Call component here */ }
           <td {...taskActionsContainerStyling}>
             { this.showActionsListItem(task, appeal) }
           </td>
@@ -252,7 +254,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
-    tasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId })
+    tasks: actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
+    allTasks: getAllTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };
 
