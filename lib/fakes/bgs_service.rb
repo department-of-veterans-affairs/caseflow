@@ -114,6 +114,7 @@ class Fakes::BGSService
         )
         RequestIssue.find_or_create_by!(
           review_request: hlr,
+          benefit_type: "compensation",
           end_product_establishment: epe,
           contested_rating_issue_reference_id: in_active_review_reference_id
         ) do |reqi|
@@ -135,6 +136,7 @@ class Fakes::BGSService
         )
         RequestIssue.find_or_create_by!(
           review_request: previous_hlr,
+          benefit_type: "compensation",
           end_product_establishment: cleared_epe,
           rating_issue_reference_id: completed_review_reference_id,
           contention_reference_id: 999
@@ -196,6 +198,7 @@ class Fakes::BGSService
         )
         RequestIssue.find_or_create_by!(
           review_request: hlr,
+          benefit_type: "compensation",
           end_product_establishment: epe,
           contention_reference_id: contention_reference_id
         )

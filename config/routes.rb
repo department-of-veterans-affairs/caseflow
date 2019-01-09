@@ -184,7 +184,7 @@ Rails.application.routes.draw do
   resources :users, only: [:index]
 
   get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
-  get 'cases_to_schedule/:ro', to: 'appeals#ready_for_hearing_schedule'
+  get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
