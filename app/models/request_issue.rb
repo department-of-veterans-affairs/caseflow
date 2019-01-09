@@ -29,6 +29,7 @@ class RequestIssue < ApplicationRecord
 
   # TEMPORARY CODE: used to keep decision_review and review_request in sync
   before_save :copy_review_request_to_decision_review
+  before_save :set_contested_rating_issue_profile_date
 
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -57,21 +58,23 @@ class RequestIssue < ApplicationRecord
     end
 
     def rating
-      where.not(rating_issue_reference_id: nil, rating_issue_profile_date: nil)
-        .or(where(is_unidentified: true))
+      where.not(
+        contested_rating_issue_reference_id: nil
+      ).or(where(is_unidentified: true))
     end
 
     def nonrating
-      where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: [nil, false])
-        .where.not(issue_category: nil)
+      where(
+        contested_rating_issue_reference_id: nil,
+        is_unidentified: [nil, false]
+      ).where.not(issue_category: nil)
     end
 
     def unidentified
-      where(rating_issue_reference_id: nil, rating_issue_profile_date: nil, is_unidentified: true)
-    end
-
-    def no_follow_up_issues
-      where.not(id: select(:parent_request_issue_id).uniq)
+      where(
+        contested_rating_issue_reference_id: nil,
+        is_unidentified: true
+      )
     end
 
     # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
@@ -87,10 +90,15 @@ class RequestIssue < ApplicationRecord
       data[:request_issue_id] ? find(data[:request_issue_id]) : from_intake_data(data)
     end
 
-    def find_active_by_rating_issue_reference_id(rating_issue_reference_id)
-      request_issue = unscoped.find_by(rating_issue_reference_id:
-                                       rating_issue_reference_id, removed_at: nil, ineligible_reason: nil)
+    def find_active_by_contested_rating_issue_reference_id(rating_issue_reference_id)
+      request_issue = unscoped.find_by(
+        contested_rating_issue_reference_id: rating_issue_reference_id,
+        removed_at: nil,
+        ineligible_reason: nil
+      )
+
       return unless request_issue&.status_active?
+
       request_issue
     end
 
@@ -98,21 +106,28 @@ class RequestIssue < ApplicationRecord
       request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id,
                                        removed_at: nil, ineligible_reason: nil)
       return unless request_issue&.status_active?
+
       request_issue
     end
 
     private
 
+    # rubocop:disable Metrics/MethodLength
     def attributes_from_intake_data(data)
+      contested_issue_present = data[:rating_issue_reference_id] || data[:contested_decision_issue_id]
+
       {
         # TODO: these are going away in favor of `contested_rating_issue_*`
         rating_issue_reference_id: data[:rating_issue_reference_id],
         rating_issue_profile_date: data[:rating_issue_profile_date],
+
         description: data[:decision_text],
 
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
-        contested_rating_issue_profile_date: data[:rating_issue_profile_date],
-        contested_rating_issue_description: data[:decision_text],
+
+        contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
+        nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
+        unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
 
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
@@ -129,15 +144,17 @@ class RequestIssue < ApplicationRecord
       }
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def status_active?
     return appeal_active? if review_request.is_a?(Appeal)
     return false unless end_product_establishment
+
     end_product_establishment.status_active?
   end
 
   def rating?
-    rating_issue_reference_id && rating_issue_profile_date
+    contested_rating_issue_reference_id
   end
 
   def nonrating?
@@ -147,6 +164,7 @@ class RequestIssue < ApplicationRecord
   def contention_text
     return "#{issue_category} - #{description}" if nonrating?
     return UNIDENTIFIED_ISSUE_MSG if is_unidentified
+
     description
   end
 
@@ -161,8 +179,8 @@ class RequestIssue < ApplicationRecord
   def ui_hash
     {
       id: id,
-      rating_issue_reference_id: rating_issue_reference_id,
-      rating_issue_profile_date: rating_issue_profile_date,
+      rating_issue_reference_id: contested_rating_issue_reference_id,
+      rating_issue_profile_date: contested_rating_issue_profile_date,
       description: description,
       contention_text: contention_text,
       decision_date: contested_issue ? contested_issue.date : decision_date,
@@ -193,7 +211,10 @@ class RequestIssue < ApplicationRecord
 
   def contested_rating_issue
     return unless review_request
+    return unless contested_rating_issue_reference_id
+
     @contested_rating_issue ||= begin
+      contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
       contested_rating_issue_ui_hash ? RatingIssue.deserialize(contested_rating_issue_ui_hash) : nil
     end
   end
@@ -224,6 +245,7 @@ class RequestIssue < ApplicationRecord
 
   def vacols_issue
     return unless vacols_id && vacols_sequence_id
+
     @vacols_issue ||= AppealRepository.issues(vacols_id).find do |issue|
       issue.vacols_sequence_id == vacols_sequence_id
     end
@@ -247,8 +269,19 @@ class RequestIssue < ApplicationRecord
 
   private
 
+  # The contested_rating_issue_profile_date is used as an identifier to retrieve the
+  # appropriate rating. It needs to be saved in the same format and time zone that it
+  # was fetched from BGS in order for it to work as an identifier.
+  #
+  # In order to prevent browser/API automatic time zone changes from altering it, we
+  # re-retrieve the value from the cache and save it to the DB as a string. Yikes.
+  def set_contested_rating_issue_profile_date
+    self.contested_rating_issue_profile_date ||= contested_rating_issue&.profile_date
+  end
+
   def build_contested_issue
     return unless review_request
+
     if contested_decision_issue
       ContestableIssue.from_decision_issue(contested_decision_issue, review_request)
     elsif contested_rating_issue
@@ -271,12 +304,14 @@ class RequestIssue < ApplicationRecord
   def create_decision_issues
     if rating?
       return unless end_product_establishment.associated_rating
+
       create_decision_issues_from_rating
     end
 
     create_decision_issue_from_disposition if decision_issues.empty?
 
     fail ErrorCreatingDecisionIssue, id if decision_issues.empty?
+
     processed!
   end
 
@@ -320,13 +355,17 @@ class RequestIssue < ApplicationRecord
   end
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
-  def contested_rating_issue_ui_hash
+  # TODO: performance could be improved by using the profile date by loading the specific rating
+  def fetch_contested_rating_issue_ui_hash
     return unless review_request.serialized_ratings
-    rating_with_issue = review_request.serialized_ratings.find do |rating|
-      rating[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
-    end || { issues: [] }
 
-    rating_with_issue[:issues].find { |issue| issue[:reference_id] == rating_issue_reference_id }
+    rating_with_issue = review_request.serialized_ratings.find do |rating|
+      rating[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
+    end
+
+    rating_with_issue ||= { issues: [] }
+
+    rating_with_issue[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
   end
 
   def decision_or_promulgation_date
@@ -395,7 +434,9 @@ class RequestIssue < ApplicationRecord
   def check_for_active_request_issue_by_rating!
     return unless rating?
 
-    add_duplicate_issue_error(self.class.find_active_by_rating_issue_reference_id(rating_issue_reference_id))
+    add_duplicate_issue_error(
+      self.class.find_active_by_contested_rating_issue_reference_id(contested_rating_issue_reference_id)
+    )
   end
 
   def check_for_active_request_issue_by_decision_issue!
@@ -415,6 +456,7 @@ class RequestIssue < ApplicationRecord
     # skip checking if nonrating ineligiblity is already set
     return if ineligible_reason == :duplicate_of_nonrating_issue_in_active_review
     return unless eligible?
+
     check_for_active_request_issue_by_rating!
     check_for_active_request_issue_by_decision_issue!
   end
@@ -422,7 +464,7 @@ class RequestIssue < ApplicationRecord
   def check_for_untimely!
     return unless eligible?
     return if untimely_exemption
-    return if review_request && review_request.is_a?(SupplementalClaim)
+    return if review_request&.is_a?(SupplementalClaim)
 
     if !review_request.timely_issue?(decision_or_promulgation_date)
       self.ineligible_reason = :untimely

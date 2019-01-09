@@ -47,6 +47,7 @@ class ContestableIssue
 
   def source_review_type
     return unless source_request_issue
+
     decision_issue? ? source_request_issue.decision_review_type : source_request_issue.review_request_type
   end
 
@@ -62,11 +63,13 @@ class ContestableIssue
 
   def conflicting_request_issue_by_rating
     return unless rating_issue_reference_id
-    potentially_conflicting_request_issues.find_active_by_rating_issue_reference_id(rating_issue_reference_id)
+
+    potentially_conflicting_request_issues.find_active_by_contested_rating_issue_reference_id(rating_issue_reference_id)
   end
 
   def conflicting_request_issue_by_decision_issue
     return unless decision_issue_id
+
     potentially_conflicting_request_issues.find_active_by_contested_decision_id(decision_issue_id)
   end
 
@@ -76,14 +79,17 @@ class ContestableIssue
 
   def conflicting_request_issue
     return unless contesting_decision_review
+
     found_request_issue = conflicting_request_issue_by_decision_issue || conflicting_request_issue_by_rating
 
     return unless different_decision_review(found_request_issue)
+
     found_request_issue
   end
 
   def different_decision_review(found_request_issue)
     return unless found_request_issue
+
     found_request_issue.review_request_id != contesting_decision_review.id ||
       found_request_issue.review_request_type != contesting_decision_review.class.name
   end

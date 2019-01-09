@@ -12,6 +12,7 @@ class Issue
   attr_writer :labels
   def labels
     fail Caseflow::Error::AttributeNotLoaded if @labels == :not_loaded
+
     @labels
   end
 
@@ -133,6 +134,7 @@ class Issue
 
   def active?
     return false if !legacy_appeal.active?
+
     disposition.nil? || in_remand?
   end
 
@@ -209,6 +211,7 @@ class Issue
 
   def eligible_for_opt_in?
     return disposition_date_after_legacy_appeal_soc? if disposition_is_failure_to_respond?
+
     active?
   end
 
@@ -231,6 +234,7 @@ class Issue
     return false unless legacy_appeal
     # the close_date is our local normalized disposition_date
     return close_date > legacy_appeal.soc_date if legacy_appeal.soc_date
+
     legacy_appeal.ssoc_dates.any? { |ssoc_date| close_date > ssoc_date }
   end
 
@@ -244,6 +248,7 @@ class Issue
       unless child_levels
         description = levels[code]["plain_description"] || levels[code]["description"]
         break description if description.is_a?(String)
+
         return nil
       end
 
@@ -253,6 +258,7 @@ class Issue
     if diagnostic_code
       diagnostic_code_description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
       return if diagnostic_code_description.nil?
+
       # Some description strings are templates. This is a no-op unless the description string contains %s.
       issue_description = issue_description % diagnostic_code_description["status_description"]
     end
@@ -272,6 +278,7 @@ class Issue
 
     def disposition_code_for_sym(symbol)
       return nil if symbol.nil?
+
       Constants::VACOLS_DISPOSITIONS_BY_ID.keys.find do |code|
         symbol == Constants::VACOLS_DISPOSITIONS_BY_ID[code].parameterize.underscore.to_sym
       end

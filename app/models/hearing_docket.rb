@@ -48,7 +48,7 @@ class HearingDocket
   class << self
     def from_hearings(hearings)
       new(
-        date: hearings.sort_by(&:date).first.date,
+        date: hearings.min_by(&:date).date,
         type: hearings.first.type,
         hearings: hearings,
         regional_office_names: hearings.map(&:regional_office_name).uniq,
