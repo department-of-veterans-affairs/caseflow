@@ -210,7 +210,7 @@ class Appeal < DecisionReview
     fail "Multiple benefit_types possible"
   end
 
-  def caseflow_only?
+  def benefit_type_requires_payee_code?
     false
   end
 

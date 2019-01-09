@@ -49,7 +49,7 @@ class ClaimReview < DecisionReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      if caseflow_only?
+      if effectuated_in_caseflow?
         issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       else
         issue.update!(
@@ -70,12 +70,9 @@ class ClaimReview < DecisionReview
   end
 
   def business_line
-    return unless caseflow_only?
+    return if benefit_type_requires_payee_code?
 
-    business_line_name = Constants::BENEFIT_TYPES[benefit_type]
-    fail "No such business line: #{benefit_type}" unless business_line_name
-
-    @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
+    super
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -84,7 +81,7 @@ class ClaimReview < DecisionReview
   def establish!
     attempted!
 
-    if caseflow_only? && end_product_establishments.any?
+    if effectuated_in_caseflow? && end_product_establishments.any?
       fail NoEndProductsRequired, message: "Non-comp decision reviews should not have End Products"
     end
 

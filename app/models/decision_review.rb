@@ -1,6 +1,7 @@
 class DecisionReview < ApplicationRecord
   include CachedAttributes
   include Asyncable
+  include Benefitable
 
   validate :validate_receipt_date
 
@@ -56,13 +57,9 @@ class DecisionReview < ApplicationRecord
     end
   end
 
-  def caseflow_only?
-    !ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
-  end
-
   def serialized_ratings
     return unless receipt_date
-    return if caseflow_only? && include_ratings_based_on_benefit_type?
+    return unless benefit_type_requires_payee_code? || is_a?(Appeal)
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
@@ -184,7 +181,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def contestable_issues
-    return contestable_issues_from_decision_issues if caseflow_only?
+    return contestable_issues_from_decision_issues if effectuated_in_caseflow?
 
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
   end
