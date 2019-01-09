@@ -311,8 +311,7 @@ RSpec.feature "Case details" do
         build_list(
           :request_issue,
           eligible_issue_cnt,
-          contested_issue_description: "Knee pain",
-          description: "Knee pain"
+          contested_issue_description: "Knee pain"
         ),
         build_list(
           :request_issue,
@@ -510,7 +509,6 @@ RSpec.feature "Case details" do
             :request_issue,
             review_request_id: appeal.id,
             contested_issue_description: issue_description,
-            description: issue_description,
             review_request_type: "Appeal"
           )
         end
@@ -519,7 +517,6 @@ RSpec.feature "Case details" do
             :request_issue,
             review_request_id: appeal.id,
             contested_issue_description: issue_description2,
-            description: issue_description2,
             review_request_type: "Appeal"
           )
         end

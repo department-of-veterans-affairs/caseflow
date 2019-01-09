@@ -294,6 +294,7 @@ describe HigherLevelReview do
           contested_decision_issue_id: decision_issues.first.id,
           contested_rating_issue_reference_id: "rating1",
           contested_rating_issue_profile_date: decision_issues.first.profile_date.to_s,
+          contested_issue_description: decision_issues.first.description,
           issue_category: decision_issues.first.issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.first.approx_decision_date
@@ -307,6 +308,7 @@ describe HigherLevelReview do
           contested_decision_issue_id: decision_issues.second.id,
           contested_rating_issue_reference_id: "rating2",
           contested_rating_issue_profile_date: decision_issues.second.profile_date.to_s,
+          contested_issue_description: decision_issues.first.description,
           issue_category: decision_issues.second.issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.second.approx_decision_date
