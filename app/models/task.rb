@@ -13,7 +13,7 @@ class Task < ApplicationRecord
   after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
 
   before_update :set_timestamps
-  after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
+  after_update :on_complete, if: :status_changed_to_completed_and_has_parent?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -255,7 +255,7 @@ class Task < ApplicationRecord
     assigned_to.is_a?(Organization) && assigned_to.automatically_assign_to_member?(self.class)
   end
 
-  def update_parent_status
+  def on_complete
     parent.when_child_task_completed
   end
 
