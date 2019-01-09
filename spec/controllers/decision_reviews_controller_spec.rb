@@ -94,7 +94,7 @@ describe DecisionReviewsController, type: :controller do
 
       let(:decision_date) { "2018-10-1" }
 
-      it "creates decision issues for each request issue", focus: true do
+      it "creates decision issues for each request issue" do
         put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id,
                                decision_issues: [
                                  {
