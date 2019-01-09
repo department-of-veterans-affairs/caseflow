@@ -382,23 +382,20 @@ feature "Edit issues" do
     expect(updated_request_issue.review_request).to be_nil
 
     # check that new request issue is created contesting the decision issue
-    expect(
-      RequestIssue.find_by(
-        review_request: review_request,
-        contested_decision_issue_id: contested_decision_issues.first.id,
-        contested_issue_description: contested_decision_issues.first.description
-      )
-    ).to_not be_nil
+    request_issues = review_request.reload.request_issues
+    first_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.first.id)
+    second_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.second.id)
 
-    expect(
-      RequestIssue.find_by(
-        review_request: review_request,
-        contested_decision_issue_id: contested_decision_issues.second.id,
-        ineligible_reason: :duplicate_of_rating_issue_in_active_review,
-        contested_issue_description: contested_decision_issues.second.description
-      )
-    ).to_not be_nil
+    expect(first_request_issue).to have_attributes(
+      contested_issue_description: contested_decision_issues.first.description
+    )
+
+    expect(second_request_issue).to have_attributes(
+      ineligible_reason: :duplicate_of_rating_issue_in_active_review,
+      contested_issue_description: contested_decision_issues.second.description
+    )
   end
+
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 
