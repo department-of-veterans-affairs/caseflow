@@ -875,7 +875,6 @@ feature "Supplemental Claim Intake" do
           )
 
           expect(RequestIssue.find_by(
-                   description: "Left knee granted",
                    contested_issue_description: "Left knee granted",
                    ineligible_reason: :legacy_appeal_not_eligible,
                    vacols_id: "vacols2",
@@ -912,7 +911,6 @@ feature "Supplemental Claim Intake" do
           )
 
           expect(RequestIssue.find_by(
-                   description: "Left knee granted",
                    contested_issue_description: "Left knee granted",
                    ineligible_reason: :legacy_issue_not_withdrawn,
                    vacols_id: "vacols1",
