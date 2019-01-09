@@ -3,13 +3,13 @@ import { ACTIONS } from '../constants';
 
 const analytics = true;
 
-export const taskUpdateDecisionIssues = (taskId, businessLine, decisionIssues, veteran) => (dispatch) => {
+export const taskUpdateDecisionIssues = (taskId, businessLine, data, veteran) => (dispatch) => {
   dispatch({
     type: ACTIONS.TASK_UPDATE_DECISION_ISSUES_START,
     meta: { analytics }
   });
 
-  return ApiUtil.put(`/decision_reviews/${businessLine}/tasks/${taskId}`, {data: decisionIssues}, 'decision-issues-update').
+  return ApiUtil.put(`/decision_reviews/${businessLine}/tasks/${taskId}`, data, 'decision-issues-update').
     then(
       (response) => {
         dispatch({

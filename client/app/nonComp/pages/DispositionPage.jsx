@@ -97,16 +97,17 @@ class NonCompDispositionsPage extends React.PureComponent {
   }
 
   handleSave = () => {
-    const decisionIssues = formatDecisionIssuesFromRequestIssues(this.state.requestIssues);
-
     function successHandler() {
       // update to the completed tab
       this.props.taskUpdateDefaultPage(1);
       this.props.history.push(`/${this.props.businessLineUrl}`);
     }
 
+    const decisionIssues = formatDecisionIssuesFromRequestIssues(this.state.requestIssues);
+    const dispositionData = buildDispositionSubmission(decisionIssues, this.state.decisionDate);
+
     this.props.taskUpdateDecisionIssues(this.props.task.id, this.props.businessLineUrl,
-      decisionIssues, this.props.appeal.veteran).then(successHandler.bind(this));
+      dispositionData, this.props.appeal.veteran).then(successHandler.bind(this));
   }
 
   checkFormFilledOut = () => {

@@ -92,7 +92,9 @@ describe DecisionReviewsController, type: :controller do
         task.appeal.update!(veteran_file_number: veteran.file_number)
       end
 
-      it "creates decision issues for each request issue" do
+      let(:decision_date) { "2018-10-1" }
+
+      it "creates decision issues for each request issue", :focus => true do
         put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id,
           decision_issues: [
           {
@@ -104,15 +106,18 @@ describe DecisionReviewsController, type: :controller do
             request_issue_id: request_issues.second.id,
             disposition: "Denied",
             description: "a nonrating note"
-          }]
+          }],
+          decision_date: decision_date
         }
+
+        datetime = Date.parse(decision_date).to_datetime
 
         expect(response.status).to eq(204)
         task.reload
         appeal = task.appeal
         expect(task.appeal.decision_issues.length).to eq(2)
-        expect(task.appeal.decision_issues.find_by(disposition: "Granted", description: "a rating note")).to_not be_nil
-        expect(task.appeal.decision_issues.find_by(disposition: "Denied", description: "a nonrating note")).to_not be_nil
+        expect(task.appeal.decision_issues.find_by(disposition: "Granted", description: "a rating note", promulgation_date: datetime)).to_not be_nil
+        expect(task.appeal.decision_issues.find_by(disposition: "Denied", description: "a nonrating note", promulgation_date: datetime)).to_not be_nil
         expect(task.status).to eq("completed")
         expect(task.completed_at).to eq(Time.zone.now)
       end

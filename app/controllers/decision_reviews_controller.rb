@@ -20,7 +20,7 @@ class DecisionReviewsController < ApplicationController
 
   def update
     if task
-      if task.complete!(decision_issue_params)
+      if task.complete!(decision_issue_params, decision_date)
         render json: { decisionIssues: task.appeal.decision_issues }, status: 204
       else
         render json: { error_code: task.error_code }, status: 400
@@ -58,6 +58,10 @@ class DecisionReviewsController < ApplicationController
 
   private
 
+  def decision_date
+    allowed_params[:decision_date]
+  end
+
   def decision_issue_params
     params.require("decision_issues").map do |decision_issue_param|
       decision_issue_param.permit(:request_issue_id, :disposition, :description)
@@ -90,6 +94,6 @@ class DecisionReviewsController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:decision_review_business_line_slug, :business_line_slug, :task_id)
+    params.permit(:decision_review_business_line_slug, :business_line_slug, :task_id, :decision_date)
   end
 end

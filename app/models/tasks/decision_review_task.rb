@@ -13,11 +13,11 @@ class DecisionReviewTask < GenericTask
     serializer_class.new(self).as_json
   end
 
-  def complete!(decision_issue_params)
+  def complete!(decision_issue_params, decision_date)
     return false unless validate(decision_issue_params)
 
     transaction do
-      appeal.create_decision_issues_for_tasks(decision_issue_params)
+      appeal.create_decision_issues_for_tasks(decision_issue_params, decision_date)
       update!(status: Constants.TASK_STATUSES.completed, completed_at: Time.zone.now)
     end
 

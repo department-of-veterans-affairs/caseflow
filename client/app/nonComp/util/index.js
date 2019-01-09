@@ -1,5 +1,6 @@
-import { FORM_TYPES } from '../../intake/constants';
 import _ from 'lodash';
+
+import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const formatTasks = (serverTasks) => {
   return (serverTasks || []).map((task) => {
@@ -11,12 +12,8 @@ export const formatTasks = (serverTasks) => {
   });
 };
 
-export const longFormNameFromShort = (shortFormName) => {
-  return _.find(FORM_TYPES, { shortName: shortFormName }).name;
-};
-
-export const formatDecisionIssuesFromRequestIssues = (requestIssues) => {
-  const decisionIssues = requestIssues.map((requestIssue) => {
+const formatDecisionIssuesFromRequestIssues = (requestIssues) => {
+  return requestIssues.map((requestIssue) => {
     let formmatedDecisionIssue =  {
       request_issue_id: requestIssue.id,
       disposition: requestIssue.decisionIssue.disposition,
@@ -28,8 +25,6 @@ export const formatDecisionIssuesFromRequestIssues = (requestIssues) => {
 
     return formmatedDecisionIssue;
   });
-
-  return {decision_issues: decisionIssues};
 }
 
 export const formatRequestIssuesWithDecisionIssues = (requestIssues, decisionIssues) => {
@@ -40,4 +35,13 @@ export const formatRequestIssuesWithDecisionIssues = (requestIssues, decisionIss
       ...requestIssue
     }
   });
+}
+
+export const buildDispositionSubmission = (dispositionIssues, decisionDate) => {
+  return { data:
+    {
+      decision_issues: decisionIssues,
+      decision_date: formatDateStringForApi(decisionDate)
+    }
+  }
 }

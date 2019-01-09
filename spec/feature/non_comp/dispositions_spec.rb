@@ -116,7 +116,6 @@ feature "NonComp Dispositions Page" do
         fill_in_disposition(2, "Denied", "denied")
 
         click_on "Complete"
-        binding.pry
         expect(page).to have_content("Something went wrong")
         expect(page).to have_current_path("/#{dispositions_url}")
       end
