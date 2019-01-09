@@ -208,10 +208,6 @@ class DecisionReview < ApplicationRecord
 
   private
 
-  def include_ratings_based_on_benefit_type?
-    true
-  end
-
   def cached_rating_issues
     cached_serialized_ratings.inject([]) do |result, rating_hash|
       result + rating_hash[:issues].map { |rating_issue_hash| RatingIssue.deserialize(rating_issue_hash) }
