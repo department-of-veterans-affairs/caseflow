@@ -6,30 +6,34 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :issues do
     object.eligible_request_issues.map do |issue|
-      # Hard code program for October 1st Pilot, we don't have all the info for how we'll
-      # break down request issues yet but all RAMP appeals will be 'compensation'
       {
         id: issue.id,
         disposition: issue.disposition,
-        program: "compensation",
+        program: issue.benefit_type,
         description: issue.description,
         notes: issue.notes,
+        diagnostic_code: issue.contested_rating_issue_diagnostic_code,
         remand_reasons: issue.remand_reasons
       }
     end
   end
 
   attribute :decision_issues do
-    object.decision_issues.map do |issue|
+    object.decision_issues.uniq.map do |issue|
       {
         id: issue.id,
         disposition: issue.disposition,
         description: issue.description,
-        benefit_type: "compensation",
+        benefit_type: issue.benefit_type,
         remand_reasons: issue.remand_reasons,
+        diagnostic_code: issue.diagnostic_code,
         request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
       }
     end
+  end
+
+  attribute :can_edit_request_issues do
+    @instance_options[:user]&.can_edit_request_issues?(object)
   end
 
   attribute :hearings do

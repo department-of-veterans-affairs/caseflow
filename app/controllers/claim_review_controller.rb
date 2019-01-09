@@ -4,10 +4,11 @@ class ClaimReviewController < ApplicationController
   def update
     if request_issues_update.perform!
       render json: {
-        requestIssues: claim_review.request_issues.map(&:ui_hash)
+        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
       }
     else
-      render json: { error_code: request_issues_update.error_code }, status: 422
+      render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
     end
   end
 
@@ -26,8 +27,7 @@ class ClaimReviewController < ApplicationController
   end
 
   def claim_review
-    @claim_review ||=
-      EndProductEstablishment.find_by!(reference_id: url_claim_id, source_type: source_type).source
+    @claim_review ||= source_type.constantize.find_by_uuid_or_reference_id!(url_claim_id)
   end
 
   def url_claim_id

@@ -12,6 +12,7 @@ class Issue
   attr_writer :labels
   def labels
     fail Caseflow::Error::AttributeNotLoaded if @labels == :not_loaded
+
     @labels
   end
 
@@ -132,7 +133,13 @@ class Issue
   end
 
   def active?
+    return false if !legacy_appeal.active?
+
     disposition.nil? || in_remand?
+  end
+
+  def closed?
+    !active?
   end
 
   def allowed?
@@ -140,7 +147,7 @@ class Issue
   end
 
   def remanded?
-    disposition == :remanded
+    disposition == :remanded || disposition == :manlincon_remand
   end
 
   def merged?
@@ -202,17 +209,9 @@ class Issue
     @remand_reasons ||= self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
   end
 
-  # For status (BFMPRO) of ADV or REM, for the most part, having a disposition means the issue is closed.
-  # On appeal where the status is REM (remanded) the issues with disposition "3" are still active.
-  def closed?
-    return false if disposition.nil?
-    return false if in_remand?
-    return true if legacy_appeal.remand? || legacy_appeal.advance? || !legacy_appeal.active?
-    false
-  end
-
   def eligible_for_opt_in?
     return disposition_date_after_legacy_appeal_soc? if disposition_is_failure_to_respond?
+
     active?
   end
 
@@ -235,6 +234,7 @@ class Issue
     return false unless legacy_appeal
     # the close_date is our local normalized disposition_date
     return close_date > legacy_appeal.soc_date if legacy_appeal.soc_date
+
     legacy_appeal.ssoc_dates.any? { |ssoc_date| close_date > ssoc_date }
   end
 
@@ -248,6 +248,7 @@ class Issue
       unless child_levels
         description = levels[code]["plain_description"] || levels[code]["description"]
         break description if description.is_a?(String)
+
         return nil
       end
 
@@ -257,6 +258,7 @@ class Issue
     if diagnostic_code
       diagnostic_code_description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
       return if diagnostic_code_description.nil?
+
       # Some description strings are templates. This is a no-op unless the description string contains %s.
       issue_description = issue_description % diagnostic_code_description["status_description"]
     end
@@ -276,6 +278,7 @@ class Issue
 
     def disposition_code_for_sym(symbol)
       return nil if symbol.nil?
+
       Constants::VACOLS_DISPOSITIONS_BY_ID.keys.find do |code|
         symbol == Constants::VACOLS_DISPOSITIONS_BY_ID[code].parameterize.underscore.to_sym
       end
@@ -314,6 +317,17 @@ class Issue
         issue_attrs: {
           disposition: disposition_code, # TODO: yes, this key is mis-named in IssueMapper
           disposition_date: Time.zone.today
+        }
+      )
+    end
+
+    def rollback_opt_in!(opt_in_issue)
+      update_in_vacols!(
+        vacols_id: opt_in_issue.vacols_id,
+        vacols_sequence_id: opt_in_issue.vacols_sequence_id,
+        issue_attrs: {
+          disposition: opt_in_issue.original_disposition_code,
+          disposition_date: opt_in_issue.original_disposition_date
         }
       )
     end

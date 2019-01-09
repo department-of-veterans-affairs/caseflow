@@ -10,13 +10,65 @@ class VACOLS::CaseDocket < VACOLS::Record
     for update
   ".freeze
 
+  # Distribution should be blocked by pending mail, with the exception of:
+  #
+  # 02 - Congressional interest
+  # 05 - Evidence or argument (because the attorney will pick this up)
+  # 08 - Motion to advance on the docket
+  # 13 - Status inquiry
+
+  JOIN_MAIL_BLOCKS_DISTRIBUTION = "
+    left join (
+      select BRIEFF.BFKEY MAILKEY,
+        (case when nvl(MAIL.CNT, 0) > 0 then 1 else 0 end) MAIL_BLOCKS_DISTRIBUTION
+      from BRIEFF
+
+      left join (
+        select MLFOLDER, count(*) CNT
+        from MAIL
+        where MLCOMPDATE is null and MLTYPE not in ('02', '05', '08', '13')
+        group by MLFOLDER
+      ) MAIL
+      on MAIL.MLFOLDER = BRIEFF.BFKEY
+    )
+    on MAILKEY = BFKEY
+  ".freeze
+
+  # Distribution should be blocked by a pending diary of one of the following types:
+  #
+  # EXT - Extension request
+  # HCL - Hearing clarification
+  # POA - Power of attorney clarification
+
+  JOIN_DIARY_BLOCKS_DISTRIBUTION = "
+    left join (
+      select BRIEFF.BFKEY DIARYKEY,
+        (case when nvl(DIARIES.CNT, 0) > 0 then 1 else 0 end) DIARY_BLOCKS_DISTRIBUTION
+      from BRIEFF
+
+      left join (
+        select TSKTKNM, count(*) CNT
+        from ASSIGN
+        where TSKDCLS is null and TSKACTCD in ('EXT', 'HCL', 'POA')
+        group by TSKTKNM
+      ) DIARIES
+      on DIARIES.TSKTKNM = BRIEFF.BFKEY
+    )
+    on DIARYKEY = BFKEY
+  ".freeze
+
   SELECT_READY_APPEALS = "
     select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
     from BRIEFF
     #{VACOLS::Case::JOIN_AOD}
-    #{VACOLS::Case::JOIN_SPECIALTY_CASE_TEAM_ISSUES}
+    #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
+    #{JOIN_DIARY_BLOCKS_DISTRIBUTION}
     inner join FOLDER on FOLDER.TICKNUM = BRIEFF.BFKEY
-    where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83') and SCT.ISSUES is null
+    where BRIEFF.BFMPRO = 'ACT'
+      and BRIEFF.BFCURLOC in ('81', '83')
+      and BRIEFF.BFBOX is null
+      and MAIL_BLOCKS_DISTRIBUTION = 0
+      and DIARY_BLOCKS_DISTRIBUTION = 0
   ".freeze
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
@@ -88,7 +140,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       .count
   end
 
-  def self.docket_date_of_nth_appeal_in_case_storage(n)
+  def self.docket_date_of_nth_appeal_in_case_storage(row_number)
     query = <<-SQL
       select BFD19 from (
         select row_number() over (order by BFD19 asc) as ROWNUMBER,
@@ -101,7 +153,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       where ROWNUMBER = least(?, MAX_ROWNUMBER)
     SQL
 
-    connection.exec_query(sanitize_sql_array([query, n])).first["bfd19"].to_date
+    connection.exec_query(sanitize_sql_array([query, row_number])).first["bfd19"].to_date
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -152,6 +204,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   # rubocop:disable Metrics/PerceivedComplexity
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, dry_run = false)
     fail DocketNumberCentennialLoop if Time.zone.now.year >= 2030
+
     # Docket numbers begin with the two digit year. The Board of Veterans Appeals was created in 1930.
     # Although there are no new legacy appeals after 2019, an old appeal can be reopened through a finding
     # of clear and unmistakable error, which would result in a brand new docket number being assigned.
@@ -241,6 +294,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         conn.execute(LOCK_READY_APPEALS)
         appeals = conn.exec_query(fmtd_query).to_hash
         return appeals if appeals.empty?
+
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
         VACOLS::Case.batch_update_vacols_location(judge.vacols_uniq_id, vacols_ids)
         appeals

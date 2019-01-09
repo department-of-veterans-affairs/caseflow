@@ -15,11 +15,11 @@ json_config = <<EOS.strip_heredoc
           users: ["CASEFLOW_397", "CASEFLOW1"]
         },
         {
-          feature: "intake",
+          feature: "decision_reviews",
           enable_all: true
         },
         {
-          feature: "intake_enable_add_issues_page",
+          feature: "intake",
           enable_all: true
         },
         {
@@ -28,10 +28,6 @@ json_config = <<EOS.strip_heredoc
         },
         {
           feature: "search",
-          enable_all: true
-        },
-        {
-          feature: "colocated_queue",
           enable_all: true
         },
         {

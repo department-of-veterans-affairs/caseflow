@@ -11,7 +11,8 @@ module IssueMapper
     vacols_id: :isskey
   }.freeze
 
-  ALLOWED_DISPOSITION_CODES = %w[1 3 4 5 6 8 O P].freeze
+  # For disposition descriptions, please see the VACOLS_DISPOSITIONS_BY_ID file
+  ALLOWED_DISPOSITION_CODES = %w[1 3 4 5 6 8 O P G S X L].freeze
 
   class << self
     def rename_and_validate_vacols_attrs(action:, issue_attrs:)
@@ -55,7 +56,8 @@ module IssueMapper
     def rename(issue_attrs)
       COLUMN_NAMES.keys.each_with_object({}) do |k, result|
         # skip only if the key is not passed, if the key is passed and the value is nil - include that
-        next unless issue_attrs.keys.include? k
+        next unless issue_attrs.key?(k)
+
         issue_attrs[k] = disposition_to_vacols_format(issue_attrs[k]) if k == :disposition
         issue_attrs[k] = issue_attrs[k][0..99] if k == :note && issue_attrs[k]
         result[COLUMN_NAMES[k]] = issue_attrs[k]
@@ -64,6 +66,9 @@ module IssueMapper
     end
 
     def disposition_to_vacols_format(disposition)
+      # allow nil for rolling back issues
+      return if disposition.nil?
+
       unless ALLOWED_DISPOSITION_CODES.include? disposition
         readable_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[disposition]
         fail Caseflow::Error::IssueRepositoryError, "Not allowed disposition: #{readable_disposition} (#{disposition})"

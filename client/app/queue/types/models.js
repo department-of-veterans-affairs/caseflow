@@ -45,6 +45,7 @@ export type Issue = {
   labels: Array<string>,
   readjudication: Boolean,
   remand_reasons: Array<Object>,
+  benefit_type?: string,
   description?: string
 };
 
@@ -104,7 +105,7 @@ export type Hearing = {
   viewedByJudge: boolean,
   date: string,
   type: string,
-  id: string,
+  externalId: string,
   disposition: string
 };
 

@@ -43,10 +43,10 @@ describe SupplementalClaimIntake do
     let!(:request_issue) do
       RequestIssue.new(
         review_request: detail,
-        rating_issue_profile_date: Time.zone.local(2018, 4, 5),
-        rating_issue_reference_id: "issue1",
-        contention_reference_id: "1234",
-        description: "description"
+        contested_rating_issue_reference_id: "issue1",
+        contested_rating_issue_profile_date: Time.zone.local(2018, 4, 5),
+        contested_issue_description: "description",
+        contention_reference_id: "1234"
       )
     end
 
@@ -186,11 +186,12 @@ describe SupplementalClaimIntake do
 
     let(:issue_data) do
       {
-        rating_issue_profile_date: "2018-04-30T11:11:00.000-04:00",
         rating_issue_reference_id: "reference-id",
         decision_text: "decision text"
       }
     end
+
+    let(:benefit_type) { "compensation" }
 
     let(:params) { { request_issues: [issue_data] } }
 
@@ -201,6 +202,7 @@ describe SupplementalClaimIntake do
         :supplemental_claim,
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago,
+        benefit_type: benefit_type,
         legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
@@ -262,15 +264,28 @@ describe SupplementalClaimIntake do
 
       expect(intake.detail.request_issues.count).to eq 1
       expect(intake.detail.request_issues.first).to have_attributes(
-        rating_issue_reference_id: "reference-id",
-        rating_issue_profile_date: Time.zone.local(2018, 4, 30, 11, 11),
-        description: "decision text",
+        contested_rating_issue_reference_id: "reference-id",
+        contested_issue_description: "decision text",
         rating_issue_associated_at: Time.zone.now
       )
     end
 
+    context "when benefit type is non comp" do
+      let(:benefit_type) { "fiduciary" }
+
+      it "creates DecisionReviewTask" do
+        subject
+
+        intake.detail.reload
+
+        expect(intake.detail.tasks.count).to eq(1)
+        expect(intake.detail.tasks.first).to be_a(DecisionReviewTask)
+      end
+    end
+
     context "when a legacy VACOLS opt-in occurs" do
-      let(:vacols_case) { create(:case) }
+      let(:vacols_issue) { create(:case_issue) }
+      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
       let(:legacy_appeal) do
         create(:legacy_appeal, vacols_case: vacols_case)
       end
@@ -281,7 +296,7 @@ describe SupplementalClaimIntake do
           reference_id: "reference-id",
           decision_text: "decision text",
           vacols_id: legacy_appeal.vacols_id,
-          vacols_sequence_id: 1
+          vacols_sequence_id: vacols_issue.issseq
         }
       end
 

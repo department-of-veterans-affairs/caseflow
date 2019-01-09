@@ -10,16 +10,10 @@ class TasksController < ApplicationController
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
     JudgeAssignTask: JudgeAssignTask,
+    JudgeQualityReviewTask: JudgeQualityReviewTask,
     ScheduleHearingTask: ScheduleHearingTask,
     MailTask: MailTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask
-  }.freeze
-
-  QUEUES = {
-    attorney: AttorneyQueue,
-    colocated: ColocatedQueue,
-    judge: JudgeQueue,
-    generic: GenericQueue
   }.freeze
 
   def set_application
@@ -65,7 +59,7 @@ class TasksController < ApplicationController
 
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
 
-    render json: { tasks: json_tasks(tasks_to_return) }, status: :created
+    render json: { tasks: json_tasks(tasks_to_return) }
   end
 
   # To update attorney task
@@ -96,17 +90,44 @@ class TasksController < ApplicationController
       return json_vso_tasks
     end
 
+    tasks = appeal.tasks
     if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
-      return json_tasks_by_legacy_appeal_id_and_role(params[:appeal_id], user_role)
+      legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
+      tasks = (legacy_appeal_tasks + tasks).uniq
     end
 
-    all_json_tasks
+    render json: {
+      tasks: json_tasks(tasks)[:data]
+    }
+  end
+
+  def ready_for_hearing_schedule
+    ro = HearingDayMapper.validate_regional_office(params[:ro])
+
+    tasks = AppealRepository.appeals_ready_for_hearing_schedule(ro).map do |appeal|
+      ScheduleHearingTask.new(
+        appeal: appeal,
+        status: Constants.TASK_STATUSES.in_progress.to_sym,
+        assigned_to: HearingsManagement.singleton
+      )
+    end
+
+    render json: {
+      data: tasks.map do |task|
+        ActiveModelSerializers::SerializableResource.new(
+          task,
+          user: current_user,
+          role: user_role
+        ).as_json[:data]
+      end
+    }
   end
 
   private
 
   def can_assign_task?
     return true if create_params.first[:appeal].is_a?(Appeal)
+
     super
   end
 
@@ -119,7 +140,7 @@ class TasksController < ApplicationController
   end
 
   def queue_class
-    QUEUES[user_role.try(:to_sym)] || QUEUES[:generic]
+    (user_role == "attorney") ? AttorneyQueue : GenericQueue
   end
 
   def user_role
@@ -132,7 +153,9 @@ class TasksController < ApplicationController
   helper_method :user
 
   def task_class
-    TASK_CLASSES[create_params.first[:type].try(:to_sym)]
+    mail_task_classes = Hash[*MailTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten]
+    classes = TASK_CLASSES.merge(mail_task_classes)
+    classes[create_params.first[:type].try(:to_sym)]
   end
 
   def appeal
@@ -145,7 +168,7 @@ class TasksController < ApplicationController
         "title": "Invalid Task Type Error",
         "detail": "Task type is invalid, valid types: #{TASK_CLASSES.keys}"
       ]
-    }, status: 400
+    }, status: :bad_request
   end
 
   def task
@@ -191,33 +214,11 @@ class TasksController < ApplicationController
     }
   end
 
-  def json_tasks_by_legacy_appeal_id_and_role(appeal_id, role)
-    tasks, = LegacyWorkQueue.tasks_with_appeals_by_appeal_id(appeal_id, role)
-
-    render json: {
-      tasks: json_legacy_tasks(tasks, role)[:data]
-    }
-  end
-
-  def all_json_tasks
-    render json: {
-      tasks: json_tasks(appeal.tasks)[:data]
-    }
-  end
-
-  def json_legacy_tasks(tasks, role)
-    ActiveModelSerializers::SerializableResource.new(
-      tasks,
-      each_serializer: ::WorkQueue::LegacyTaskSerializer,
-      role: role
-    ).as_json
-  end
-
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
-      tasks,
-      each_serializer: ::WorkQueue::TaskSerializer,
-      user: current_user
+      AppealRepository.eager_load_legacy_appeals_for_tasks(tasks),
+      user: current_user,
+      role: user_role
     ).as_json
   end
 end

@@ -14,6 +14,10 @@ const documentCountSizeStyling = css({
   fontSize: '.9em'
 });
 
+const newFileIconStyling = css({
+  paddingLeft: '.75rem'
+});
+
 export default class ReaderLink extends React.PureComponent {
   readerLinkAnalytics = () => {
     window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER);
@@ -48,7 +52,7 @@ export default class ReaderLink extends React.PureComponent {
     return <React.Fragment>
       <Link {...linkProps} onClick={this.readerLinkAnalytics}>
           View { docCountWithinLink && <AppealDocumentCount appeal={appeal} /> } docs
-        <NewFile externalAppealId={appeal.externalId} /></Link>
+        <span {...newFileIconStyling}><NewFile externalAppealId={appeal.externalId} /></span></Link>
       { docCountBelowLink &&
             <div {...documentCountSizeStyling}>
               <AppealDocumentCount loadingText appeal={appeal} />

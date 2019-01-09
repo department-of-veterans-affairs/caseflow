@@ -1,9 +1,11 @@
 class JudgeAssignTask < JudgeTask
   def available_actions(_user)
-    actions = [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
-    actions << Constants.TASK_ACTIONS.MARK_COMPLETE.to_h if parent && parent.is_a?(QualityReviewTask)
+    [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
+  end
 
-    actions
+  def when_child_task_completed
+    update!(type: JudgeDecisionReviewTask.name)
+    super
   end
 
   def label

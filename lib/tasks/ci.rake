@@ -93,11 +93,11 @@ namespace :ci do
     # Set the merge_timeout very large so that we don't exclude results
     # just because the runs took a long time.
     SimpleCov.merge_timeout(3600 * 24 * 30)
-    artifacts = JSON.parse(open(api_url).read)
+    artifacts = JSON.parse(URI.parse(api_url).read)
     artifact_urls = artifacts.map { |a| a["url"] }
     resultset_urls = artifact_urls.select { |u| u.end_with?(".resultset.json") }
     resultsets = resultset_urls.map do |u|
-      c = open(u).read
+      c = URI.parse(u).read
       JSON.parse(c)
     end
     # SimpleCov doesn't really support merging results after the fact.

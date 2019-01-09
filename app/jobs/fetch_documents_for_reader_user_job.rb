@@ -15,8 +15,13 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
 
     setup_debug_context(reader_user)
     update_fetched_at(reader_user)
-    appeals = reader_user.user.current_case_assignments
-    fetch_documents_for_appeals(appeals)
+    legacy_appeals = reader_user.user.current_case_assignments
+
+    ama_user_tasks = Task.where(assigned_to: reader_user.user)
+      .where.not(status: Constants.TASK_STATUSES.completed)
+    ama_appeals = ama_user_tasks.map(&:appeal).uniq
+
+    fetch_documents_for_appeals(legacy_appeals + ama_appeals)
     log_info
   rescue StandardError => e
     log_error
@@ -39,7 +44,7 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
   end
 
   def update_fetched_at(reader_user)
-    reader_user.update_attributes!(documents_fetched_at: Time.zone.now)
+    reader_user.update!(documents_fetched_at: Time.zone.now)
   end
 
   def fetch_documents_for_appeals(appeals)

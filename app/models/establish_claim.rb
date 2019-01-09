@@ -127,6 +127,7 @@ class EstablishClaim < Dispatch::Task
 
   def time_to_complete
     return nil if !created_at
+
     completed_at - created_at
   end
 
@@ -212,6 +213,7 @@ class EstablishClaim < Dispatch::Task
 
   def email_sent_action_description
     return nil unless sent_email
+
     "Sent email to: #{sent_email.recipient} in #{sent_email.ro_name} - re: #{special_issues} Issue(s)"
   end
 

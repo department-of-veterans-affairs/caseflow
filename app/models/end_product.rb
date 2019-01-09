@@ -17,15 +17,29 @@ class EndProduct
   }.freeze
 
   DTA_CODES = {
+    "040HDER" => "Supplemental Claim Rating DTA",
     "040HDENR" => "Supplemental Claim Nonrating DTA",
-    "040HDER" => "Supplemental Claim Rating DTA"
+    "040HDERPMC" => "PMC HLR DTA Error - Rating",
+    "040HDENRPMC" => "PMC HLR DTA Error - Non-Rating",
+    "040BDEIMOPMC" => "PMC Board DTA Error - w/IMO"
   }.freeze
 
   DECISION_REVIEW_CODES = {
     "030HLRR" => "Higher-Level Review Rating",
     "030HLRNR" => "Higher-Level Review Nonrating",
+    "030HLRRPMC" => "PMC Higher-Level Review Rating",
+    "030HLRNRPMC" => "PMC Higher-Level Review Non-Rating",
     "040SCR" => "Supplemental Claim Rating",
-    "040SCNR" => "Supplemental Claim Nonrating"
+    "040SCNR" => "Supplemental Claim Nonrating",
+    "040SCRPMC" => "PMC Supplemental Claim Rating",
+    "040SCNRPMC" => "PMC Supplemental Claim Non-Rating"
+  }.freeze
+
+  EFFECTUATION_CODES = {
+    "030BGR" => "Board Grant Rating",
+    "030BGNR" => "Board Grant Non-Rating",
+    "030BGRPMC" => "PMC Board Grant Rating",
+    "030BGNRPMC" => "PMC Board Grant Non-Rating"
   }.freeze
 
   DISPATCH_CODES = {
@@ -59,7 +73,7 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES)
+  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES).merge(EFFECTUATION_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
@@ -181,7 +195,7 @@ class EndProduct
   end
 
   def dispatch_code?
-    DISPATCH_CODES.keys.include?(claim_type_code)
+    DISPATCH_CODES.key?(claim_type_code)
   end
 
   def dispatch_modifier?

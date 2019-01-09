@@ -21,8 +21,6 @@ class Generators::LegacyAppealV2
       }
     end
 
-    # rubocop:enable Metrics/MethodLength
-
     # Build an appeal with the corresponding data in VACOLS
     # @attrs - Different attributes to pass to the various data generators associated with an appeal.
     #   - :vacols_id [String] - Value to assign to the bfkey column. Defaults to a random id.

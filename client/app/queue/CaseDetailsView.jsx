@@ -15,7 +15,7 @@ import CaseHearingsDetail from './CaseHearingsDetail';
 import PowerOfAttorneyDetail from './PowerOfAttorneyDetail';
 import CaseTitle from './CaseTitle';
 import CaseTitleDetails from './CaseTitleDetails';
-import CaseSnapshot from './CaseSnapshot';
+import TaskSnapshot from './TaskSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
@@ -24,6 +24,8 @@ import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
+import COPY from '../../COPY.json';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
   appealWithDetailSelector
@@ -35,6 +37,16 @@ const horizontalRuleStyling = css({
   borderTop: `1px solid ${COLORS.GREY_LIGHT}`,
   marginTop: '3rem',
   marginBottom: '3rem'
+});
+
+const anchorEditLinkStyling = css({
+  fontSize: '1.5rem',
+  fontWeight: 'normal',
+  margin: '5px'
+});
+
+const alertPaddingStyle = css({
+  marginTop: '2rem'
 });
 
 class CaseDetailsView extends React.PureComponent {
@@ -62,40 +74,48 @@ class CaseDetailsView extends React.PureComponent {
       featureToggles
     } = this.props;
 
-    return <AppSegment filledBackground>
-      <CaseTitle appeal={appeal} />
-      {error && <Alert title={error.title} type="error">
+    const amaIssueType = featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
+
+    return <React.Fragment>
+      {error && <div {...alertPaddingStyle}><Alert title={error.title} type="error">
         {error.detail}
-      </Alert>}
-      {success && <Alert type="success" title={success.title} scrollOnAlert={false}>
+      </Alert></div>}
+      {success && <div {...alertPaddingStyle}><Alert type="success" title={success.title} scrollOnAlert={false}>
         {success.detail}
-      </Alert>}
-      <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname} />
-      { this.props.veteranCaseListIsVisible &&
-        <VeteranCasesView
-          caseflowVeteranId={appeal.caseflowVeteranId}
-          veteranId={appeal.veteranFileNumber}
-        />
-      }
-      <CaseSnapshot appealId={appealId} />
-      <hr {...horizontalRuleStyling} />
-      <StickyNavContentArea>
-        <CaseDetailsIssueList
-          amaIssueType={featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)}
-          title="Issues"
-          isLegacyAppeal={appeal.isLegacyAppeal}
-          issues={appeal.issues}
-          decisionIssues={appeal.decisionIssues}
-        />
-        <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
-        {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&
-        <CaseHearingsDetail title="Hearings" appeal={appeal} />}
-        <VeteranDetail title="About the Veteran" appeal={appeal} />
-        {!_.isNull(appeal.appellantFullName) &&
-        <AppellantDetail title="About the Appellant" appeal={appeal} />}
-        <CaseTimeline title="Case Timeline" appeal={appeal} />}
-      </StickyNavContentArea>
-    </AppSegment>;
+      </Alert></div>}
+      <AppSegment filledBackground>
+        <CaseTitle appeal={appeal} />
+        <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname} />
+        { this.props.veteranCaseListIsVisible &&
+          <VeteranCasesView
+            caseflowVeteranId={appeal.caseflowVeteranId}
+            veteranId={appeal.veteranFileNumber}
+          />
+        }
+        <TaskSnapshot appealId={appealId} />
+        <hr {...horizontalRuleStyling} />
+        <StickyNavContentArea>
+          <CaseDetailsIssueList
+            amaIssueType={amaIssueType}
+            title="Issues"
+            isLegacyAppeal={appeal.isLegacyAppeal}
+            additionalHeaderContent={amaIssueType && appeal.canEditRequestIssues &&
+              <span className="cf-push-right" {...anchorEditLinkStyling}>
+                <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_REQUEST_ISSUES_LINK}</Link>
+              </span>}
+            issues={appeal.issues}
+            decisionIssues={appeal.decisionIssues}
+          />
+          <PowerOfAttorneyDetail title="Power of Attorney" appealId={appealId} />
+          {(appeal.hearings.length || appeal.completedHearingOnPreviousAppeal) &&
+          <CaseHearingsDetail title="Hearings" appeal={appeal} />}
+          <VeteranDetail title="About the Veteran" appeal={appeal} />
+          {!_.isNull(appeal.appellantFullName) &&
+          <AppellantDetail title="About the Appellant" appeal={appeal} />}
+          <CaseTimeline title="Case Timeline" appeal={appeal} />}
+        </StickyNavContentArea>
+      </AppSegment>
+    </React.Fragment>;
   };
 }
 
