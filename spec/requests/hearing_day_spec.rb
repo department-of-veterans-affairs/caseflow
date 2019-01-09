@@ -8,7 +8,7 @@ RSpec.describe "Hearing Schedule", type: :request do
   describe "Create a schedule slot - VACOLS" do
     it "Create one schedule day" do
       post "/hearings/hearing_day", params: { hearing_type: HearingDay::HEARING_TYPES[:central],
-                                              scheduled_for: "7-Jun-2018", room: "1" }
+                                              scheduled_for: DateTime.new(2018, 6, 7, 9, 0, 0, "+0"), room: "1" }
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2018, 6, 7))
