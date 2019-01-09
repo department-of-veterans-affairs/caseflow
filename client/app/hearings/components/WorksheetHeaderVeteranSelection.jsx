@@ -65,7 +65,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       [] :
       docket.map((hearing) => ({
         label: this.getOptionLabel(hearing),
-        value: hearing.id
+        value: hearing.external_id
       }))
   );
 
@@ -99,7 +99,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
               message="Loading..." /> : ''}
             options={this.getDocketVeteranOptions(currentDocket, worksheetIssues)}
             onChange={this.onDropdownChange}
-            value={worksheet.id}
+            value={worksheet.external_id}
             searchable={false}
           />
         </div>

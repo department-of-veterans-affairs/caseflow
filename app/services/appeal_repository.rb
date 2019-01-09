@@ -15,6 +15,22 @@ class AppealRepository
     end
   end
 
+  def self.eager_load_legacy_appeals_for_tasks(tasks)
+    # Make a single request to VACOLS to grab all of the rows we want here?
+    legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
+
+    # Load the VACOLS case records associated with legacy tasks into memory in a single batch.
+    cases = vacols_records_for_appeals(legacy_appeal_ids) || []
+
+    # Associate the cases we pulled from VACOLS to the appeals of the tasks.
+    tasks.each do |t|
+      if t.appeal.is_a?(LegacyAppeal)
+        case_record = cases.select { |cr| cr.id == t.appeal.vacols_id }.first
+        set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
+      end
+    end
+  end
+
   def self.find_case_record(id)
     VACOLS::Case.includes(:folder, :correspondent, :representatives).find(id)
   end
@@ -39,7 +55,7 @@ class AppealRepository
 
     true
   rescue ActiveRecord::RecordNotFound
-    return false
+    false
   end
 
   def self.appeals_by_vbms_id(vbms_id)
@@ -253,6 +269,7 @@ class AppealRepository
   # dates in VACOLS are incorrectly recorded as UTC.
   def self.normalize_vacols_date(datetime)
     return nil unless datetime
+
     utc_datetime = datetime.in_time_zone("UTC")
 
     Time.zone.local(
@@ -283,18 +300,21 @@ class AppealRepository
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
   def self.appeals_ready_for_hearing_schedule(regional_office)
     if regional_office == HearingDay::HEARING_TYPES[:central]
       return appeals_ready_for_co_hearing_schedule
     end
 
-    cavc_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfcurloc: "57", bfac: "7", bfdocind: "V",
-                                                   bfhr: "2").order("folder.tinum").limit(30)
+    cavc_cases = VACOLS::Case.joins(:folder)
+      .where(bfregoff: regional_office, bfcurloc: "57", bfac: "7", bfdocind: "V", bfhr: "2")
+      .order("folder.tinum").limit(30).includes(:correspondent, :folder)
     aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).joins(:folder).where("aod = 1").where(
       bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V"
-    ).order("folder.tinum").limit(30)
-    other_cases = VACOLS::Case.joins(:folder).where(bfregoff: regional_office, bfhr: "2", bfcurloc: "57",
-                                                    bfdocind: "V").order("folder.tinum").limit(30)
+    ).order("folder.tinum").limit(30).includes(:correspondent, :folder)
+    other_cases = VACOLS::Case.joins(:folder)
+      .where(bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V")
+      .order("folder.tinum").limit(30).includes(:correspondent, :folder)
 
     aod_vacols_ids = aod_cases.pluck(:bfkey)
 
@@ -304,12 +324,16 @@ class AppealRepository
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def self.appeals_ready_for_co_hearing_schedule
     cavc_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57", bfac: "7").order("folder.tinum").limit(30)
-    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD)
+      .includes(:correspondent, :folder)
+    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).includes(:correspondent, :folder)
       .joins(:folder).where("aod = 1").where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
+      .includes(:correspondent, :folder)
     other_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
+      .includes(:correspondent, :folder)
 
     aod_vacols_ids = aod_cases.pluck(:bfkey)
 
@@ -370,7 +394,7 @@ class AppealRepository
     end
 
     VACOLS::Case.transaction do
-      case_record.update_attributes!(
+      case_record.update!(
         bfmpro: "HIS",
         bfddec: dateshift_to_utc(closed_on),
         bfdc: disposition_code,
@@ -381,7 +405,7 @@ class AppealRepository
 
       case_record.update_vacols_location!("99")
 
-      folder_record.update_attributes!(
+      folder_record.update!(
         ticukey: "HISTORY",
         tikeywrd: "HISTORY",
         tidcls: dateshift_to_utc(closed_on),
@@ -418,11 +442,11 @@ class AppealRepository
     fail AppealNotValidToClose unless case_record.bfmpro == "REM"
 
     VACOLS::Case.transaction do
-      case_record.update_attributes!(bfmpro: "HIS")
+      case_record.update!(bfmpro: "HIS")
 
       case_record.update_vacols_location!("99")
 
-      folder_record.update_attributes!(
+      folder_record.update!(
         ticukey: "HISTORY",
         tikeywrd: "HISTORY",
         timdtime: VacolsHelper.local_time_with_utc_timezone,
@@ -512,7 +536,7 @@ class AppealRepository
     tikeywrd = adv_status ? "ADVANCE" : "ACTIVE"
 
     VACOLS::Case.transaction do
-      case_record.update_attributes!(
+      case_record.update!(
         bfmpro: bfmpro,
         bfddec: nil,
         bfdc: nil,
@@ -523,7 +547,7 @@ class AppealRepository
 
       case_record.update_vacols_location!(previous_active_location)
 
-      folder_record.update_attributes!(
+      folder_record.update!(
         ticukey: "ACTIVE",
         tikeywrd: tikeywrd,
         tidcls: nil,
@@ -564,11 +588,11 @@ class AppealRepository
     fail not_valid_to_reopen_err unless VACOLS::Case.where(bfkey: follow_up_appeal_key).count == 1
 
     VACOLS::Case.transaction do
-      case_record.update_attributes!(bfmpro: "REM")
+      case_record.update!(bfmpro: "REM")
 
       case_record.update_vacols_location!(previous_active_location)
 
-      folder_record.update_attributes!(
+      folder_record.update!(
         ticukey: "REMAND",
         tikeywrd: "REMAND",
         timdtime: VacolsHelper.local_time_with_utc_timezone,

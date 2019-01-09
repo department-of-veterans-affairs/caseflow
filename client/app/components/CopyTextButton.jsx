@@ -20,6 +20,7 @@ const clipboardButtonStyling = css({
     borderColor: COLORS.PRIMARY,
     borderBottomWidth: '1px'
   },
+  overflowWrap: 'break-word',
   '& > svg path': { fill: COLORS.GREY_LIGHT },
   '&:hover > svg path': { fill: COLORS.PRIMARY }
 });

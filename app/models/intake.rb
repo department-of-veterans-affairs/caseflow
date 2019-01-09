@@ -98,12 +98,12 @@ class Intake < ApplicationRecord
     if validate_start
       self.class.close_expired_intakes!
 
-      update_attributes(
+      update(
         started_at: Time.zone.now,
         detail: find_or_build_initial_detail
       )
     else
-      update_attributes(
+      update(
         started_at: Time.zone.now,
         completed_at: Time.zone.now,
         completion_status: :error
@@ -125,7 +125,7 @@ class Intake < ApplicationRecord
 
     transaction do
       cancel_detail!
-      update_attributes!(
+      update!(
         cancel_reason: reason,
         cancel_other: other
       )
@@ -153,15 +153,15 @@ class Intake < ApplicationRecord
   end
 
   def start_completion!
-    update_attributes!(completion_started_at: Time.zone.now)
+    update!(completion_started_at: Time.zone.now)
   end
 
   def abort_completion!
-    update_attributes!(completion_started_at: nil)
+    update!(completion_started_at: nil)
   end
 
   def complete_with_status!(status)
-    update_attributes!(
+    update!(
       completed_at: Time.zone.now,
       completion_status: status
     )

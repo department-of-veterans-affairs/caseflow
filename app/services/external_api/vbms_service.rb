@@ -201,7 +201,7 @@ class ExternalApi::VBMSService
     MetricsService.record("sent VBMS request #{request.class} for #{vbms_id}",
                           service: :vbms,
                           name: name) do
-      (override_vbms_client ? override_vbms_client : @vbms_client).send_request(request)
+      (override_vbms_client || @vbms_client).send_request(request)
     end
   rescue VBMS::ClientError => e
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
