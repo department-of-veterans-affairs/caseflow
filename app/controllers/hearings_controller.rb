@@ -65,6 +65,6 @@ class HearingsController < ApplicationController
                                      :transcript_requested,
                                      :add_on,
                                      :prepped,
-                                     :date)
+                                     :scheduled_for)
   end
 end

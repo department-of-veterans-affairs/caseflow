@@ -129,13 +129,13 @@ export default class DailyDocket extends React.Component {
 
   getHearingTime = (hearing) => {
     if (hearing.requestType === 'Central') {
-      return <div>{getTime(hearing.date)} <br />
+      return <div>{getTime(hearing.scheduledFor)} <br />
         {hearing.regionalOfficeName}
       </div>;
     }
 
-    return <div>{getTime(hearing.date)} /<br />
-      {getTimeInDifferentTimeZone(hearing.date, hearing.regionalOfficeTimezone)} <br />
+    return <div>{getTime(hearing.scheduledFor)} /<br />
+      {getTimeInDifferentTimeZone(hearing.scheduledFor, hearing.regionalOfficeTimezone)} <br />
       {hearing.regionalOfficeName}
     </div>;
   };
@@ -167,7 +167,7 @@ export default class DailyDocket extends React.Component {
   };
 
  getHearingDateOptions = (hearing) => {
-   const hearings = [{ label: this.getHearingDate(hearing.date),
+   const hearings = [{ label: this.getHearingDate(hearing.scheduledFor),
      value: hearing.id }];
 
    const hearingDayoptions = _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
@@ -231,7 +231,7 @@ export default class DailyDocket extends React.Component {
     <RadioField
       name={`hearingTime${hearing.id}`}
       options={this.getHearingTimeOptions(hearing, readOnly)}
-      value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.date, timezone)}
+      value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
       onChange={this.onHearingTimeUpdate(hearing.id)}
       hideLabel /></div>;
   };
