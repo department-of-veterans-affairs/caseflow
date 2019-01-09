@@ -9,6 +9,15 @@ feature "NonComp Dispositions Page" do
     FeatureToggle.disable!(:decision_reviews)
   end
 
+  def fill_in_disposition(num, disposition, description=nil)
+    if description
+      fill_in "description-issue-#{num}", with: description
+    end
+
+    fill_in "disposition-issue-#{num}", with: disposition
+    find("#disposition-issue-#{num}").send_keys :enter
+  end
+
   context "with an existing organization" do
     let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
 
@@ -26,7 +35,7 @@ feature "NonComp Dispositions Page" do
       )
     end
 
-    let(:request_issues) do
+    let!(:request_issues) do
       3.times do
         create(:request_issue,
                :nonrating,
@@ -44,8 +53,8 @@ feature "NonComp Dispositions Page" do
       create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org)
     end
 
-    let(:dispositions_url) { "decision_reviews/nco/tasks/#{in_progress_task.id}" }
-
+    let(:business_line_url) { "decision_reviews/nco" }
+    let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
     before do
       User.stub = user
       OrganizationsUser.add_user_to_organization(user, non_comp_org)
@@ -58,6 +67,59 @@ feature "NonComp Dispositions Page" do
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
       expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+    end
+
+    scenario "cancel returns back to business line page" do
+      visit dispositions_url
+
+      click_on "Cancel"
+      expect(page.current_path).to eq business_line_url
+    end
+
+    scenario "saves decision issues" do
+      visit dispositions_url
+
+      expect(page).to have_button("Complete", disabled: true)
+
+      # set description & disposition for each request issue
+      fill_in_disposition(0, "Granted")
+      fill_in_disposition(1, "Granted", "test description")
+      fill_in_disposition(2, "Denied", "denied")
+
+      # save
+      expect(page).to have_button("Complete", disabled: false)
+      click_on "Complete"
+
+      # should have success message
+      expect(page).to have_content("Decision Completed")
+      # should redirect to business line's completed tab
+      expect(page.current_path).to eq "/#{business_line_url}"
+      expect(page).to have_content(veteran.participant_id)
+
+      # verify database updated
+      hlr.decision_issues.reload
+      expect(hlr.decision_issues.length).to eq(3)
+      expect(hlr.decision_issues.find_by(disposition: "Granted", description: nil)).to_not be_nil
+      expect(hlr.decision_issues.find_by(disposition: "Granted", description: "test description")).to_not be_nil
+      expect(hlr.decision_issues.find_by(disposition: "Denied", description: "denied")).to_not be_nil
+    end
+
+    context "when there is an error saving" do
+
+      scenario "Shows an error when something goes wrong" do
+        visit dispositions_url
+
+        expect_any_instance_of(DecisionReviewTask).to receive(:complete!).and_throw("Error!")
+
+        fill_in_disposition(0, "Granted")
+        fill_in_disposition(1, "Granted", "test description")
+        fill_in_disposition(2, "Denied", "denied")
+
+        click_on "Complete"
+        binding.pry
+        expect(page).to have_content("Something went wrong")
+        expect(page).to have_current_path("/#{dispositions_url}")
+      end
     end
 
     context "with user enabled for intake" do

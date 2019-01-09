@@ -7,6 +7,7 @@ import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import TextareaField from '../../components/TextareaField';
 
 import { ErrorAlert } from '../components/Alerts';
 import { DISPOSITION_OPTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
@@ -35,8 +36,8 @@ class NonCompDecisionIssue extends React.PureComponent {
     });
   }
 
-  handleDescriptionChange = (event) => {
-    this.props.onDescriptionChange(this.state.issueIdx, event.target.value);
+  handleDescriptionChange = (value) => {
+    this.props.onDescriptionChange(this.state.issueIdx, value);
   }
 
   render = () => {
@@ -56,13 +57,17 @@ class NonCompDecisionIssue extends React.PureComponent {
         </div>
         <div className="usa-width-two-thirds">
           <div><strong>Decision description</strong> <span className="cf-optional">Optional</span></div>
-          <textarea name={`description-issue-${index}`} value={this.props.decisionDescription || undefined} onChange={this.handleDescriptionChange}></textarea>
+          <TextareaField name={`description-issue-${index}`}
+            label={`description-issue-${index}`}
+            hideLabel
+            value={this.props.decisionDescription}
+            onChange={this.handleDescriptionChange}/>
         </div>
         <div className="usa-width-one-third cf-disposition">
           <SearchableDropdown
             name={`disposition-issue-${index}`}
-            // empty label to get "true" value, nothing visible
-            label=" "
+            label={`disposition-issue-${index}`}
+            hideLabel
             placeholder="Select Disposition"
             options={this.dispositionOptions()}
             value={this.props.decisionDisposition}
@@ -127,6 +132,7 @@ class NonCompDispositionsPage extends React.PureComponent {
     const {
       appeal,
       businessLine,
+      businessLineUrl,
       task,
       decisionIssuesStatus
     } = this.props;
@@ -213,7 +219,7 @@ class NonCompDispositionsPage extends React.PureComponent {
         </div>
       </div>
       <div className="cf-txt-r">
-        <a className="cf-cancel-link" href={`/decision_reviews/${businessLine}`}>Cancel</a>
+        <a className="cf-cancel-link" href={`/decision_reviews/${businessLineUrl}`}>Cancel</a>
         <Button className="usa-button"
           name="submit-update"
           loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}

@@ -20,11 +20,10 @@ class DecisionReviewsController < ApplicationController
 
   def update
     if task
-      if validate_decision_issue_per_request_issue
-        task.complete(decision_issue_params)
+      if task.complete!(decision_issue_params)
         render json: { decisionIssues: task.appeal.decision_issues }, status: 204
       else
-        render json: { error: "Each request issue does not have a matching decision issue" }, status: 400
+        render json: { error_code: task.error_code }, status: 400
       end
     else
       render json: { error: "Task #{task_id} not found" }, status: 404
@@ -58,12 +57,6 @@ class DecisionReviewsController < ApplicationController
   helper_method :in_progress_tasks, :completed_tasks, :business_line, :task
 
   private
-
-  def validate_decision_issue_per_request_issue
-    task.appeal.request_issues.map(&:id).sort == decision_issue_params.map do |decision_issue_param|
-      decision_issue_param[:request_issue_id].to_i
-    end.sort
-  end
 
   def decision_issue_params
     params.require("decision_issues").map do |decision_issue_param|

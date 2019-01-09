@@ -22,7 +22,7 @@ export const formatDecisionIssuesFromRequestIssues = (requestIssues) => {
       disposition: requestIssue.decisionIssue.disposition,
     }
 
-    if (requestIssue.decisionIssue.description) {
+    if (!_.isEmpty(requestIssue.decisionIssue.description)) {
       formmatedDecisionIssue.description = requestIssue.decisionIssue.description;
     }
 
