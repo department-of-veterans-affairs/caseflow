@@ -65,7 +65,7 @@ describe BoardGrantEffectuation do
       let(:rating_or_nonrating) { :nonrating }
 
       context "when a task doesn't exist yet" do
-        it "creates a task and not and end product establishment" do
+        it "creates a task and not an end product establishment" do
           expect(subject.end_product_establishment).to be_nil
           expect(BoardGrantEffectuationTask.find_by(appeal: decision_document.appeal)).to have_attributes(
             assigned_to: BusinessLine.find_by(url: benefit_type)

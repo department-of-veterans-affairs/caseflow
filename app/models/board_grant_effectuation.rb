@@ -44,6 +44,7 @@ class BoardGrantEffectuation < ApplicationRecord
     end
   end
 
+  # TODO: Refactor with ClaimReview business_line in a concern
   def business_line
     business_line_name = Constants::BENEFIT_TYPES[benefit_type]
     @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)

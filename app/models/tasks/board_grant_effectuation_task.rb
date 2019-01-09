@@ -4,7 +4,7 @@ class BoardGrantEffectuationTask < DecisionReviewTask
   end
 
   def serializer_class
-    ::WorkQueue::DecisionReviewTaskSerializer
+    ::WorkQueue::BoardGrantEffectuationTaskSerializer
   end
 
   def ui_hash
