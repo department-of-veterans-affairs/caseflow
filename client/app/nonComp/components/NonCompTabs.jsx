@@ -18,7 +18,8 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'Completed tasks',
       page: <TaskTableTab
         key="completed"
-        predefinedColumns={{ includeCompletedDate: true }}
+        predefinedColumns={{ includeCompletedDate: true,
+          defaultSortIdx: 3 }}
         tasks={this.props.completedTasks} />
     }];
 
