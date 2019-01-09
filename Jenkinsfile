@@ -76,5 +76,5 @@ node('deploy') {
 if (env.COMMON_PIPELINE_TASK == 'build') {
   commonPipeline.build(APP_NAME, APP_VERSION, DEPLOY_MESSAGE);
 } else {
-  commonPipeline.deploy(APP_NAME, DEPLOY_MESSAGE);
+  commonPipeline.deploy(APP_NAME, APP_VERSION, DEPLOY_MESSAGE);
 }
