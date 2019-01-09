@@ -34,13 +34,13 @@ class ExternalApi::VADotGovService
     end
 
     # rubocop:disable Metrics/ParameterLists
-    def geocode(
+    def validate_address(
         address_line1:, address_line2: nil,
         address_line3: nil, city:, state:, zip_code:, country:
       )
       # rubocop:enable Metrics/ParameterLists
       response = send_va_dot_gov_request(
-        body: geocode_body(
+        body: validate_request_body(
           address_line1: address_line1, address_line2: address_line2,
           address_line3: address_line3, city: city,
           state: state, zip_code: zip_code, country: country
@@ -56,7 +56,15 @@ class ExternalApi::VADotGovService
       resp_body = JSON.parse(response.body)
       check_for_error(response_body: resp_body, code: response.code)
 
-      [resp_body["geocode"]["latitude"], resp_body["geocode"]["longitude"]]
+      validated_address_json(resp_body)
+    end
+
+    def full_address(address_1:, address_2: nil, address_3: nil)
+      address_line1 = address_1
+      address_line2 = address_2.blank? ? "" : " " + address_2
+      address_line3 = address_3.blank? ? "" : " " + address_3
+
+      "#{address_line1}#{address_line2}#{address_line3}"
     end
 
     private
@@ -74,7 +82,7 @@ class ExternalApi::VADotGovService
     end
 
     # rubocop:disable Metrics/ParameterLists
-    def geocode_body(
+    def validate_request_body(
         address_line1:, address_line2: nil,
         address_line3: nil, city:, state:, zip_code:, country:
       )
@@ -96,6 +104,22 @@ class ExternalApi::VADotGovService
       }
     end
 
+    def validated_address_json(resp_body)
+      {
+        lat: resp_body["geocode"]["latitude"],
+        long: resp_body["geocode"]["longitude"],
+        city: resp_body["address"]["city"],
+        full_address: full_address(
+          address_1: resp_body["address"]["address_line1"],
+          address_2: resp_body["address"]["address_line2"],
+          address_3: resp_body["address"]["address_line3"]
+        ),
+        country_code: resp_body["address"]["country"]["fipsCode"],
+        state_code: resp_body["address"]["stateProvince"]["code"],
+        zip_code: resp_body["address"]["zipCode5"]
+      }
+    end
+
     def facility_json(facility, distance)
       attrs = facility["attributes"]
       dist = distance["distance"] if distance
@@ -106,7 +130,11 @@ class ExternalApi::VADotGovService
         facility_type: attrs["facility_type"],
         name: attrs["name"],
         classification: attrs["classification"],
-        address: attrs["address"]["physical"],
+        address: full_address(
+          address_1: attrs["address"]["physical"]["address_1"],
+          address_2: attrs["address"]["physical"]["address_2"],
+          address_3: attrs["address"]["physical"]["address_3"]
+        ),
         lat: attrs["lat"],
         long: attrs["long"],
         distance: dist

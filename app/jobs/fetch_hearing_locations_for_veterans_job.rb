@@ -26,32 +26,31 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  def find_or_update_ro_for_veteran(veteran, lat, long)
-    veteran.hearing_regional_office ||
-      find_legacy_ro_and_update_for_veteran(veteran) ||
-      fetch_and_update_ro_for_veteran(veteran, lat, long)
+  def find_or_update_ro_for_veteran(veteran, va_dot_gov_address:)
+    veteran.hearing_regional_office || fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
   end
 
-  def create_available_locations_for_veteran(veteran, lat, long, ids)
-    VADotGovService.get_distance(lat: lat, long: long, ids: ids).each do |alternate_hearing_location|
-      AvailableHearingLocations.create(
-        veteran_file_number: veteran.file_number,
-        distance: alternate_hearing_location[:distance],
-        facility_id: alternate_hearing_location[:id],
-        name: alternate_hearing_location[:name],
-        address: full_address_for(alternate_hearing_location[:address]),
-        city: alternate_hearing_location[:address]["city"],
-        state: alternate_hearing_location[:address]["state"],
-        zip_code: alternate_hearing_location[:address]["zip"]
-      )
-    end
+  def create_available_locations_for_veteran(veteran, va_dot_gov_address:, ids:)
+    VADotGovService.get_distance(lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: ids)
+      .each do |alternate_hearing_location|
+        AvailableHearingLocations.create(
+          veteran_file_number: veteran.file_number,
+          distance: alternate_hearing_location[:distance],
+          facility_id: alternate_hearing_location[:id],
+          name: alternate_hearing_location[:name],
+          address: alternate_hearing_location[:address],
+          city: alternate_hearing_location[:address]["city"],
+          state: alternate_hearing_location[:address]["state"],
+          zip_code: alternate_hearing_location[:address]["zip"]
+        )
+      end
   end
 
   def perform
     create_missing_veterans
 
     veterans.each do |veteran|
-      lat, long = VADotGovService.geocode(
+      va_dot_gov_address = VADotGovService.validate_address(
         address_line1: veteran.address_line1,
         address_line2: veteran.address_line2,
         address_line3: veteran.address_line3,
@@ -61,18 +60,13 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         zip_code: veteran.zip_code
       )
 
-      facility_ids = facility_ids_for_veteran(veteran, lat, long)
+      facility_ids = facility_ids_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
 
-      create_available_locations_for_veteran(veteran, lat, long, facility_ids)
+      create_available_locations_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address, ids: facility_ids)
     end
   end
 
   private
-
-  def ro_facility_ids
-    @ro_facility_ids ||=
-      RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }.pluck(:facility_locator_id)
-  end
 
   def bfcorlid_to_ro_hash
     @bfcorlid_to_ro_hash ||= begin
@@ -84,39 +78,57 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  def facility_ids_for_veteran(veteran, lat, long)
-    ro = find_or_update_ro_for_veteran(veteran, lat, long)
+  def facility_ids_for_veteran(veteran, va_dot_gov_address:)
+    ro = find_or_update_ro_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
 
     RegionalOffice::CITIES[ro][:alternate_locations] || [] << RegionalOffice::CITIES[ro][:facility_locator_id]
   end
 
-  def find_legacy_ro_and_update_for_veteran(veteran)
-    ro = bfcorlid_to_ro_hash[LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)]
-
-    veteran.update(hearing_regional_office: ro) unless ro.nil?
-
-    ro
+  def ro_facility_ids_for_state(state_code)
+    RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? || ro[:state] != state_code }
+      .pluck(:facility_locator_id)
   end
 
-  def fetch_and_update_ro_for_veteran(veteran, lat, long)
-    distances = VADotGovService.get_distance(lat: lat, long: long, ids: ro_facility_ids)
+  def fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address:)
+    state_code = get_state_code(va_dot_gov_address)
+    facility_ids = ro_facility_ids_for_state(state_code)
 
-    unless distances.empty?
-      closest_ro_index = RegionalOffice::CITIES.values.find_index { |ro| ro[:facility_locator_id] == distances[0][:id] }
-      closest_ro = RegionalOffice::CITIES.keys[closest_ro_index]
-      veteran.update(hearing_regional_office: closest_ro)
+    distances = VADotGovService.get_distance(
+      lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: facility_ids
+    )
 
-      return closest_ro
+    if distances.empty?
+      msg = "VADotGovServices returned regional offices for VeteranId: #{veteran.id}."
+      fail Caseflow::Error::FetchHearingLocationsJobError, code: 500, message: msg
     end
 
-    nil
+    closest_ro_index = RegionalOffice::CITIES.values.find_index { |ro| ro[:facility_locator_id] == distances[0][:id] }
+    closest_ro = RegionalOffice::CITIES.keys[closest_ro_index]
+    veteran.update(hearing_regional_office: closest_ro)
+
+    closest_ro
   end
 
-  def full_address_for(address)
-    address_1 = address["address_1"]
-    address_2 = address["address_2"].blank? ? "" : " " + address["address_2"]
-    address_3 = address["address_3"].blank? ? "" : " " + address["address_3"]
+  def valid_states
+    @valid_states ||= RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }.pluck(:state)
+  end
 
-    "#{address_1}#{address_2}#{address_3}"
+  def get_state_code(va_dot_gov_address)
+    state_code = case va_dot_gov_address[:country_code]
+                 # Guam, American Somao, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
+                 when "GQ", "AQ", "RM", "FM", "CQ", "PS"
+                   "HI"
+                 when "PH", "RP", "PI"
+                   "PI"
+                 when "VI", "VQ", "PR"
+                   "PR"
+                 else
+                   va_dot_gov_address[:state_code]
+                 end
+
+    return state_code if valid_states.include?(state_code)
+
+    msg = "#{state_code} is not a valid state code."
+    fail Caseflow::Error::FetchHearingLocationsJobError, code: 500, message: msg
   end
 end
