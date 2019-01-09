@@ -188,8 +188,7 @@ describe RequestIssuesUpdate do
             hash_including(
               veteran_file_number: review.veteran_file_number,
               contentions: [{
-                description: "Service connection for cancer was denied",
-                special_issues: [{ code: "VO", narrative: "AMA SOC/SSOC Opt-in" }]
+                description: "Service connection for cancer was denied"
               }]
             )
           )

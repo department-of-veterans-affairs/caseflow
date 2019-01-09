@@ -172,7 +172,7 @@ class EndProductEstablishment < ApplicationRecord
 
     contentions = records_ready_for_contentions.map do |issue|
       contention = { description: issue.contention_text }
-      issue.special_issues && contention[:special_issues] = issue.special_issues
+      issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
       contention
     end
 
