@@ -23,7 +23,7 @@ import type { NewDocsForAppeal } from './types/state';
 
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
-import VALID_VACOLS_DISPOSITIONS_BY_ID from '../../constants/VALID_VACOLS_DISPOSITIONS_BY_ID.json';
+import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
@@ -42,7 +42,7 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
     return true;
   }
 
-  if (issue.disposition && issue.disposition in VALID_VACOLS_DISPOSITIONS_BY_ID) {
+  if (issue.disposition && issue.disposition in UNDECIDED_VACOLS_DISPOSITIONS_BY_ID) {
     return true;
   }
 });

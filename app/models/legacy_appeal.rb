@@ -587,7 +587,7 @@ class LegacyAppeal < ApplicationRecord
   def undecided_issues
     issues.select do |issue|
       issue.disposition_id.nil? ||
-        Constants::VALID_VACOLS_DISPOSITIONS_BY_ID.key?(issue.disposition_id)
+        Constants::UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.key?(issue.disposition_id)
     end
   end
 
