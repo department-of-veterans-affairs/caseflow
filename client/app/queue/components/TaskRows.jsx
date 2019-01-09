@@ -14,6 +14,7 @@ import { rootTasksForAppeal } from '../selectors';
 import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import ActionsDropdown from '../components/ActionsDropdown';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -55,6 +56,18 @@ type Params = {|
 |};
 
 class TaskRows extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      taskInstructionsIsVisible: false
+    };
+  }
+
+  toggleTaskInstructionsVisibility = () => {
+    const prevState = this.state.taskInstructionsIsVisible;
+
+    this.setState({ taskInstructionsIsVisible: !prevState });
+  }
 
   daysSinceTaskAssignmentListItem = (task) => {
     if (task) {
@@ -122,12 +135,50 @@ class TaskRows extends React.PureComponent {
       <dd>{this.getActionName(task)}</dd></div> : null;
   }
 
+  taskInstructionsWithLineBreaks = (instructions?: Array<string>) => {
+    if (!instructions || !instructions.length) {
+      return <br />;
+    }
+
+    return <React.Fragment>
+      {instructions.map((text, i) => <React.Fragment><span key={i}>{text}</span><br /></React.Fragment>)}
+    </React.Fragment>;
+  }
+
+  taskInstructionsListItem = (task) => {
+    if (!task.instructions || !task.instructions.length > 0) {
+      return null;
+    }
+
+    return <div>
+      { this.state.taskInstructionsIsVisible &&
+      <React.Fragment key={`${task.uniqueId} instructions`} >
+        <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
+        <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
+      </React.Fragment> }
+      <Button
+        linkStyling
+        styling={css({ padding: '0' })}
+        name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
+          COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
+        onClick={this.toggleTaskInstructionsVisibility} />
+    </div>;
+  }
+
+  showActionsListItem = (task, appeal) => {
+    return this.showActionsSection(task) ? <div><h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
+      <ActionsDropdown task={task} appealId={appeal.externalId} /></div> : null;
+  }
+
+  showActionsSection = (task) => (task && !this.props.hideDropdown);
+
   render = () => {
     const {
+      appeal,
       taskList
     } = this.props;
 
-    console.log('------');
+    console.log('---TaskRows---');
     console.log(taskList);
 
     return taskList.map((task, index) =>
@@ -147,12 +198,12 @@ class TaskRows extends React.PureComponent {
             { this.assignedToListItem(task) }
             { this.assignedByListItem(task) }
             { this.taskLabelListItem(task) }
-            { /*this.taskInstructionsListItem(task)*/ }
+            { this.taskInstructionsListItem(task) }
           </CaseDetailsDescriptionList>
         </td>
-        <td {...taskActionsContainerStyling}>
-          { /*this.showActionsListItem(task, appeal)*/ }
-        </td>
+        { !taskList[0].completedOn && <td {...taskActionsContainerStyling}>
+          { this.showActionsListItem(task, appeal) }
+        </td> }
       </tr>
     )
   }

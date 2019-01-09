@@ -8,7 +8,6 @@ import {
   getAllTasksForAppeal
 } from './selectors';
 import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
-import ActionsDropdown from './components/ActionsDropdown';
 import OnHoldLabel from './components/OnHoldLabel';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
@@ -50,60 +49,11 @@ type Props = Params & {|
 |};
 
 export class TaskSnapshot extends React.PureComponent<Props> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      taskInstructionsIsVisible: false
-    };
-  }
-
-  toggleTaskInstructionsVisibility = () => {
-    const prevState = this.state.taskInstructionsIsVisible;
-
-    this.setState({ taskInstructionsIsVisible: !prevState });
-  }
-
-  taskInstructionsWithLineBreaks = (instructions?: Array<string>) => {
-    if (!instructions || !instructions.length) {
-      return <br />;
-    }
-
-    return <React.Fragment>
-      {instructions.map((text, i) => <React.Fragment><span key={i}>{text}</span><br /></React.Fragment>)}
-    </React.Fragment>;
-  }
-
-  taskInstructionsListItem = (task) => {
-    if (!task.instructions || !task.instructions.length > 0) {
-      return null;
-    }
-
-    return <div>
-      { this.state.taskInstructionsIsVisible &&
-      <React.Fragment key={task.uniqueId} >
-        <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
-        <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
-      </React.Fragment> }
-      <Button
-        linkStyling
-        styling={css({ padding: '0' })}
-        name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
-          COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
-        onClick={this.toggleTaskInstructionsVisibility} />
-    </div>;
-  }
 
   addedByNameListItem = (task) => {
     return task.addedByName ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
       <dd>{task.addedByName}</dd></div> : null;
   }
-
-  showActionsListItem = (task, appeal) => {
-    return this.showActionsSection(task) ? <div><h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
-      <ActionsDropdown task={task} appealId={appeal.externalId} /></div> : null;
-  }
-
-  showActionsSection = (task) => (task && !this.props.hideDropdown);
 
   render = () => {
     const {
@@ -117,8 +67,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     if (taskLength) {
       sectionBody = <table {...tableStyling}>
         <tbody>
-          { <TaskRows taskList={tasks} /> }
-          { /*tasks.map((task, index) =>
+          { <TaskRows appeal={appeal} taskList={tasks} /> }
+          { /* tasks.map((task, index) =>
             <tr key={task.uniqueId}>
               <td {...taskTimeContainerStyling}>
                 <CaseDetailsDescriptionList>
