@@ -46,10 +46,10 @@ class Appeal < DecisionReview
     )
   end
 
-  delegate :documents, :manifest_vbms_fetched_at,
+  delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :new_documents_for_user, :manifest_vva_fetched_at, to: :document_fetcher
 
-  def number_of_documents
+  def number_of_documents_from_caseflow
     Document.where(file_number: veteran_file_number).size
   end
 

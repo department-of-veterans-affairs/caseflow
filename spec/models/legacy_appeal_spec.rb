@@ -426,7 +426,7 @@ describe LegacyAppeal do
       create(:case, documents: documents)
     end
 
-    subject { appeal.number_of_documents }
+    subject { appeal.number_of_documents_from_caseflow }
 
     it "should return number of documents" do
       documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }

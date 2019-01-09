@@ -29,7 +29,7 @@ class AppealDocumentCount extends React.PureComponent {
         timeout: { response: 5 * 60 * 1000 }
       };
 
-      ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
+      ApiUtil.get(`/appeals/${this.props.externalId}/document_count_from_caseflow`, requestOptions).then((response) => {
         const resp = JSON.parse(response.text);
 
         this.props.setAppealDocCount(this.props.externalId, resp.document_count);
