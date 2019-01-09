@@ -144,10 +144,6 @@ class ClaimReview < DecisionReview
     end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
 
-  def find_request_issue_by_description(description)
-    request_issues.find { |reqi| reqi.description == description }
-  end
-
   def search_table_ui_hash
     {
       caseflow_veteran_id: veteran&.id,

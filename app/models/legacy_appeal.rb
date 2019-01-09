@@ -162,10 +162,6 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def v1_events
-    @v1_events ||= AppealEvents.new(appeal: self, version: 1).all.sort_by(&:date)
-  end
-
   def events
     @events ||= AppealEvents.new(appeal: self).all
   end
@@ -586,10 +582,8 @@ class LegacyAppeal < ApplicationRecord
   # a list of issues with undecided dispositions (see queue/utils.getUndecidedIssues)
   def undecided_issues
     issues.select do |issue|
-      issue.disposition_id.nil? || (
-        issue.disposition_id.to_i.between?(1, 9) &&
-        Constants::VACOLS_DISPOSITIONS_BY_ID.key?(issue.disposition_id)
-      )
+      issue.disposition_id.nil? ||
+        Constants::UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.key?(issue.disposition_id)
     end
   end
 
@@ -661,10 +655,6 @@ class LegacyAppeal < ApplicationRecord
 
   def type_code
     TYPE_CODES[type] || "other"
-  end
-
-  def latest_event_date
-    v1_events.last.try(:date)
   end
 
   def cavc
@@ -785,17 +775,6 @@ class LegacyAppeal < ApplicationRecord
 
       appeal.save
       appeal
-    end
-
-    def for_api(vbms_id:)
-      # Some appeals that are early on in the process
-      # have no events recorded. We are not showing these.
-      # TODD: Research and revise strategy around appeals with no events
-      repository.appeals_by_vbms_id(vbms_id)
-        .select(&:api_supported?)
-        .reject { |a| a.latest_event_date.nil? }
-        .sort_by(&:latest_event_date)
-        .reverse
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)

@@ -49,7 +49,7 @@ describe RequestIssuesUpdate do
         contested_rating_issue_profile_date: Time.zone.local(2017, 4, 5),
         contested_rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
-        description: request_issue_contentions[0].text,
+        contested_issue_description: request_issue_contentions[0].text,
         rating_issue_associated_at: 5.days.ago
       ),
       RequestIssue.new(
@@ -57,7 +57,7 @@ describe RequestIssuesUpdate do
         contested_rating_issue_profile_date: Time.zone.local(2017, 4, 6),
         contested_rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
-        description: request_issue_contentions[1].text,
+        contested_issue_description: request_issue_contentions[1].text,
         rating_issue_associated_at: 5.days.ago,
         vacols_id: vacols_id,
         vacols_sequence_id: vacols_sequence_id
@@ -109,7 +109,13 @@ describe RequestIssuesUpdate do
 
       context "when new issues were added as part of the update" do
         let(:request_issues_data) { request_issues_data_with_new_issue }
-        let(:new_request_issue) { RequestIssue.find_by(contested_rating_issue_reference_id: "issue3") }
+
+        let(:new_request_issue) do
+          RequestIssue.find_by(
+            contested_rating_issue_reference_id: "issue3",
+            contested_issue_description: "Service connection for cancer was denied"
+          )
+        end
 
         it { is_expected.to contain_exactly(new_request_issue) }
       end
@@ -210,7 +216,7 @@ describe RequestIssuesUpdate do
 
           created_issue = review.request_issues.find_by(contested_rating_issue_reference_id: "issue3")
           expect(created_issue).to have_attributes(
-            description: "Service connection for cancer was denied"
+            contested_issue_description: "Service connection for cancer was denied"
           )
           expect(created_issue.contention_reference_id).to_not be_nil
         end
@@ -218,7 +224,6 @@ describe RequestIssuesUpdate do
         context "with nonrating request issue" do
           let(:request_issues_data) do
             review.request_issues.map { |issue| { request_issue_id: issue.id } } + [{
-              rating_reference_id: "issue3",
               decision_text: "Nonrating issue",
               issue_category: "Apportionment",
               decision_date: 1.month.ago
@@ -310,7 +315,7 @@ describe RequestIssuesUpdate do
             review_request: review,
             end_product_establishment: nonrating_end_product_establishment,
             contention_reference_id: nonrating_request_issue_contention.id,
-            description: nonrating_request_issue_contention.text,
+            nonrating_issue_description: nonrating_request_issue_contention.text,
             issue_category: "Apportionment"
           )
 
