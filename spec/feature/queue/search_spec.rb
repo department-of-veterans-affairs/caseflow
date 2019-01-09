@@ -79,8 +79,22 @@ RSpec.feature "Search" do
           end
 
           context "and has end products" do
-            let!(:end_product_establishment_1) { create(:end_product_establishment, source: higher_level_review, veteran_file_number: appeal.veteran_file_number, synced_status: "CAN") }
-            let!(:end_product_establishment_2) { create(:end_product_establishment, source: higher_level_review, veteran_file_number: appeal.veteran_file_number, synced_status: "CLR") }
+            let!(:end_product_establishment_1) do
+              create(
+                :end_product_establishment,
+                source: higher_level_review,
+                veteran_file_number: appeal.veteran_file_number,
+                synced_status: "CAN"
+              )
+            end
+            let!(:end_product_establishment_2) do
+              create(
+                :end_product_establishment,
+                source: higher_level_review,
+                veteran_file_number: appeal.veteran_file_number,
+                synced_status: "CLR"
+              )
+            end
 
             it "shows the end product status" do
               expect(find(".cf-other-reviews-table > tbody")).to have_content("Cancelled")
@@ -95,7 +109,8 @@ RSpec.feature "Search" do
           end
 
           it "shows a supplemental claim and that it's 'tracked in caseflow'" do
-            expect(find(".cf-other-reviews-table > tbody")).to have_content(COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE)
+            expect(find(".cf-other-reviews-table > tbody")).to
+            have_content(COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE)
           end
         end
       end

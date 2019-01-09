@@ -79,8 +79,8 @@ describe ClaimReview do
 
   let!(:supplemental_claim) do
     create(
-     :supplemental_claim,
-     veteran_file_number: veteran_file_number
+      :supplemental_claim,
+      veteran_file_number: veteran_file_number
     )
   end
 
@@ -658,8 +658,8 @@ describe ClaimReview do
   describe "#search_table_ui_hash" do
     it "returns review type" do
       expect([*supplemental_claim].map(&:search_table_ui_hash)).to include(hash_including(
-        review_type: "supplemental_claim"
-      ))
+                                                                             review_type: "supplemental_claim"
+                                                                           ))
     end
   end
 
