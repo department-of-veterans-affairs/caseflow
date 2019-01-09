@@ -397,7 +397,8 @@ module IntakeHelpers
 
     expect(page).to have_content(nonrating_decision_issue_description)
 
-    # TODO: not clear if this test still applies.
+    # TODO: not clear if this test still applies. It is currently failing
+    # but it is not clear if the conditions are still correct.
     # expect(page).to have_content(
     #  Constants.INELIGIBLE_REQUEST_ISSUES
     #     .duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Higher-Level Review")
@@ -426,7 +427,7 @@ module IntakeHelpers
     )
 
     expect(second_request_issue).to have_attributes(
-      # TODO: ineligible_reason: "duplicate_of_rating_issue_in_active_review",
+      # TODO: same as above # ineligible_reason: "duplicate_of_rating_issue_in_active_review",
       contested_issue_description: contested_decision_issues.second.description
     )
   end
