@@ -21,9 +21,12 @@ class JudgeTask < Task
 
   #:nocov:
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   # This function to be manually run in production when we need to fetch all RAMP
-  # appeals that are eligible for assignment to judges, and assign them.
-  def self.assign_ramp_judge_tasks(dry_run: false, batch_size: 10)
+  # appeals that are eligible for assignment to judges, and assign them. This and related methods
+  # can be removed after February 14th 2019.
+  def self.assign_ramp_judge_tasks(dry_run: true, batch_size: 10)
     # Find all unassigned tasks, sort them by the NOD date, and take the first N.
     tasks = unassigned_ramp_tasks.sort_by { |task| task.appeal.receipt_date }[0..batch_size - 1]
 
@@ -57,10 +60,12 @@ class JudgeTask < Task
   end
 
   def self.unassigned_ramp_tasks
-    RootTask.includes(:appeal).all.select { |task| eligible_for_assigment?(task) }
+    RootTask.includes(:appeal).all.select { |task| eligible_for_assignment?(task) }
   end
 
-  def self.eligible_for_assigment?(task)
+  def self.eligible_for_assignment?(task)
+    return false if task.completed?
+    return false if task.appeal.nil?
     return false if task.appeal.class == LegacyAppeal
     return false if task.appeal.docket_name.nil?
     # Hearing cases will not be processed until February 2019
@@ -71,10 +76,8 @@ class JudgeTask < Task
     if task.appeal.evidence_submission_docket?
       return false if task.appeal.receipt_date > 90.days.ago
     end
-    # If the task already has been assigned to a judge, or if it
-    # is a VSO task, it will have children tasks. We only want to
-    # assign tasks that have not been assigned yet.
-    task.children.empty?
+
+    task.children.all? { |t| !t.is_a?(JudgeTask) && t.completed? }
   end
 
   def self.list_of_assignees
@@ -82,4 +85,6 @@ class JudgeTask < Task
   end
   #:nocov:
   # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 end

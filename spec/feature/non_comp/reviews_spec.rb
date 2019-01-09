@@ -3,6 +3,9 @@ require "rails_helper"
 feature "NonComp Reviews Queue" do
   before do
     FeatureToggle.enable!(:decision_reviews)
+
+    # freeze the local time so that our date math is predictable.
+    Timecop.freeze(Time.new(2019, 1, 7, 20, 55, 0).in_time_zone)
   end
 
   after do
@@ -52,7 +55,7 @@ feature "NonComp Reviews Queue" do
 
       # ordered by assigned_at descending
       expect(page).to have_content(
-        /#{veteran.name} 5\d+ 0 0 Higher-Level Review #{veteran.name} 5\d+ 0 6/
+        /#{veteran.name} 5\d+ 0 0 Higher-Level Review #{veteran.name} 5\d+ 0 7/
       )
 
       click_on "Completed tasks"

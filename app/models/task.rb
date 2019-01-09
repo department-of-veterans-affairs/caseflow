@@ -189,7 +189,7 @@ class Task < ApplicationRecord
   end
 
   def mail_assign_to_organization_data
-    assign_to_organization_data.merge(type: MailTask.name)
+    { options: MailTask.subclass_routing_options }
   end
 
   def assign_to_user_data

@@ -45,8 +45,9 @@ describe SupplementalClaimIntake do
         review_request: detail,
         contested_rating_issue_reference_id: "issue1",
         contested_rating_issue_profile_date: Time.zone.local(2018, 4, 5),
-        contention_reference_id: "1234",
-        description: "description"
+        contested_issue_description: "description",
+        description: "description",
+        contention_reference_id: "1234"
       )
     end
 
@@ -265,6 +266,7 @@ describe SupplementalClaimIntake do
       expect(intake.detail.request_issues.first).to have_attributes(
         contested_rating_issue_reference_id: "reference-id",
         description: "decision text",
+        contested_issue_description: "decision text",
         rating_issue_associated_at: Time.zone.now
       )
     end
