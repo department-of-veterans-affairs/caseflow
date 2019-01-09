@@ -7,7 +7,7 @@
 # the current status of the EP when the EndProductEstablishment is synced.
 
 class EndProductEstablishment < ApplicationRecord
-  attr_accessor :valid_modifiers, :special_issues
+  attr_accessor :valid_modifiers
   # In decision reviews, we may create 2 end products at the same time. To avoid using
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
@@ -171,7 +171,9 @@ class EndProductEstablishment < ApplicationRecord
     set_establishment_values_from_source
 
     contentions = records_ready_for_contentions.map do |issue|
-      { description: issue.contention_text, special_issues: issue.try(:special_issues) }
+      contention = { description: issue.contention_text }
+      issue.special_issues && contention[:special_issues] = issue.special_issues
+      contention
     end
 
     # Currently not making any assumptions about the order in which VBMS returns
@@ -480,8 +482,7 @@ class EndProductEstablishment < ApplicationRecord
   def set_establishment_values_from_source
     self.attributes = {
       invalid_modifiers: source.respond_to?(:invalid_modifiers) && source.invalid_modifiers,
-      valid_modifiers: source.valid_modifiers,
-      special_issues: source.respond_to?(:special_issues) && source.special_issues
+      valid_modifiers: source.valid_modifiers
     }
   end
 

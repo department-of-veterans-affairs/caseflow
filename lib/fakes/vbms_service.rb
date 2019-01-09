@@ -157,20 +157,19 @@ class Fakes::VBMSService
     (contention_records || {})[claim_id] || []
   end
 
-  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [], user:)
+  def self.create_contentions!(veteran_file_number:, claim_id:, contentions:, user:)
     Rails.logger.info("Submitting contentions to VBMS...")
     Rails.logger.info("File number: #{veteran_file_number}")
     Rails.logger.info("Claim id:\n #{claim_id}")
-    Rails.logger.info("Contention descriptions: #{contention_descriptions.inspect}")
-    Rails.logger.info("Special issues: #{special_issues.inspect}")
+    Rails.logger.info("Contentions: #{contentions.inspect}")
     Rails.logger.info("User:\n #{user}")
 
     # Used to simulate a contention that fails to be created in VBMS
-    contention_descriptions.delete("FAIL ME")
+    contentions.delete({ description: "FAIL ME" })
 
     # return fake list of contentions
-    contention_descriptions.map do |description|
-      Generators::Contention.build(text: description, claim_id: claim_id)
+    contentions.map do |contention|
+      Generators::Contention.build(text: contention[:description], claim_id: claim_id)
     end
   end
 

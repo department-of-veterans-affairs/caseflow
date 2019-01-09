@@ -5,7 +5,6 @@ describe EndProductEstablishment do
     if source.is_a?(HigherLevelReview)
       allow(source).to receive(:valid_modifiers).and_return(%w[030 031 032])
       allow(source).to receive(:invalid_modifiers).and_return(invalid_modifiers)
-      allow(source).to receive(:special_issues).and_return(special_issues)
     end
   end
 
@@ -21,10 +20,10 @@ describe EndProductEstablishment do
   let(:code) { "030HLRR" }
   let(:payee_code) { "00" }
   let(:reference_id) { nil }
-  let(:source) { HigherLevelReview.new(veteran_file_number: veteran_file_number) }
+  let(:same_office) { false }
+  let(:source) { HigherLevelReview.new(veteran_file_number: veteran_file_number, same_office: same_office) }
   let(:invalid_modifiers) { nil }
   let(:synced_status) { nil }
-  let(:special_issues) { nil }
   let(:committed_at) { nil }
   let(:fake_claim_id) { "FAKECLAIMID" }
   let(:benefit_type_code) { "2" }
@@ -223,6 +222,8 @@ describe EndProductEstablishment do
     subject { end_product_establishment.create_contentions! }
 
     let(:reference_id) { "stevenasmith" }
+    let(:vacols_id) { nil }
+    let(:vacols_sequence_id) { nil }
 
     let!(:request_issues) do
       [
@@ -240,7 +241,9 @@ describe EndProductEstablishment do
           review_request: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-          description: "more decisionz"
+          description: "more decisionz",
+          vacols_id: vacols_id,
+          vacols_sequence_id: vacols_sequence_id
         ),
         create(
           :request_issue,
@@ -262,7 +265,11 @@ describe EndProductEstablishment do
       ]
     end
 
-    let(:contention_descriptions) { request_issues.map(&:contention_text).reverse }
+    let(:contentions) { request_issues.map do |issue|
+      contention = { description: issue.contention_text }
+      issue.special_issues && contention[:special_issues] = issue.special_issues
+      contention
+    end.reverse }
 
     it "creates contentions and saves them to objects" do
       subject
@@ -270,8 +277,7 @@ describe EndProductEstablishment do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
-        contention_descriptions: array_including(contention_descriptions),
-        special_issues: [],
+        contentions: array_including(contentions),
         user: current_user
       )
 
@@ -281,8 +287,10 @@ describe EndProductEstablishment do
       )
     end
 
-    context "when source has special issues" do
-      let(:special_issues) { "SPECIALISSUES!" }
+    context "when issues have special issues" do
+      let(:same_office) { true }
+      let(:vacols_id) { 1 }
+      let(:vacols_sequence_id) { 1 }
 
       it "sets special issues when creating the contentions" do
         subject
@@ -290,8 +298,15 @@ describe EndProductEstablishment do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: end_product_establishment.reference_id,
-          contention_descriptions: array_including(contention_descriptions),
-          special_issues: "SPECIALISSUES!",
+          contentions: array_including(
+            { description: "this is a big decision",
+              special_issues: [{ code: "SSR", narrative: "Same Station Review" }]},
+            { description: "more decisionz",
+              special_issues: array_including(
+                { code: "SSR", narrative: "Same Station Review" },
+                { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O }
+                )}
+          ),
           user: current_user
         )
       end
