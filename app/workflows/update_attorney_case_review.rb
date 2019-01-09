@@ -2,6 +2,7 @@ class UpdateAttorneyCaseReview
   include ActiveModel::Model
 
   validates :id, presence: true
+  validate :attorney_case_review_exists
   validate :authorized_to_edit
   validate :correct_format
 
@@ -28,13 +29,21 @@ class UpdateAttorneyCaseReview
     @case_review ||= AttorneyCaseReview.find_by(id: id)
   end
 
+  def attorney_case_review_exists
+    return if case_review
+
+    errors.add(:document_id, "Could not find an Attorney Case Review with id #{id}")
+  end
+
   def authorized_to_edit
+    return unless case_review
     return if [case_review.attorney_id, case_review.reviewing_judge_id].include?(user_id)
 
-    errors.add(:user_id, "You are not authorized to edit this document ID")
+    errors.add(:document_id, "You are not authorized to edit this document ID")
   end
 
   def correct_format
+    return unless case_review
     return if correct_format?
 
     errors.add(:document_id, work_product_error_hash[work_product])
@@ -84,9 +93,11 @@ class UpdateAttorneyCaseReview
 
   def work_product_error_hash
     {
-      "OMO - VHA" => "VHA Document IDs must must be in one of the these formats: V1234567.123 or V1234567.1234",
-      "OMO - IME" => "IME Document IDs must must be in one of the these formats: M1234567.123 or M1234567.1234",
-      "Decision" => "Draft Decision Document IDs must be in one of the these formats: " \
+      "OMO - VHA" => "VHA Document IDs must be in one of these formats: " \
+                     "V1234567.123 or V1234567.1234",
+      "OMO - IME" => "IME Document IDs must be in one of these formats: " \
+                     "M1234567.123 or M1234567.1234",
+      "Decision" => "Draft Decision Document IDs must be in one of these formats: " \
                     "12345-12345678 or 12345678.123 or 12345678.1234"
     }
   end

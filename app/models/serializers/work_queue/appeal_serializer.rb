@@ -110,10 +110,14 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :document_id do
-    object.attorney_case_reviews.map(&:document_id).last
+    latest_attorney_case_review&.document_id
   end
 
   attribute :attorney_case_review_id do
-    object.attorney_case_reviews.last&.id
+    latest_attorney_case_review&.id
+  end
+
+  def latest_attorney_case_review
+    AttorneyCaseReview.where(task_id: Task.where(appeal: object).pluck(:id)).order(:created_at).last
   end
 end

@@ -10,7 +10,7 @@ describe UpdateAttorneyCaseReview do
           document_id: valid_decision_document_id,
           user_id: 123_456_789
         ).call
-        errors = { user_id: ["not authorized"] }
+        errors = { document_id: ["You are not authorized to edit this document ID"] }
 
         expect(review.reload.document_id).to_not eq "123"
         expect(result.errors).to eq errors
@@ -53,7 +53,7 @@ describe UpdateAttorneyCaseReview do
         ).call
 
         errors = {
-          document_id: ["VHA document_ids must have the format V1234567.123 or V1234567.1234"]
+          document_id: ["VHA Document IDs must be in one of these formats: V1234567.123 or V1234567.1234"]
         }
 
         expect(result.errors).to eq errors
@@ -83,7 +83,7 @@ describe UpdateAttorneyCaseReview do
         ).call
 
         errors = {
-          document_id: ["IME document_ids must have the format M1234567.123 or M1234567.1234"]
+          document_id: ["IME Document IDs must be in one of these formats: M1234567.123 or M1234567.1234"]
         }
 
         expect(result.errors).to eq errors
@@ -112,8 +112,26 @@ describe UpdateAttorneyCaseReview do
           user_id: review.attorney_id
         ).call
 
+        error_message = "Draft Decision Document IDs must be in one of these formats: " \
+                        "12345-12345678 or 12345678.123 or 12345678.1234"
         errors = {
-          document_id: ["Decision document_ids must have the format 12345-12345678 or 12345678.123 or 12345678.1234"]
+          document_id: [error_message]
+        }
+
+        expect(result.errors).to eq errors
+      end
+    end
+
+    context "when the AttorneyCaseReview cannot be found" do
+      it "returns an error" do
+        result = UpdateAttorneyCaseReview.new(
+          id: 123,
+          document_id: "V1234567.123",
+          user_id: 1
+        ).call
+
+        errors = {
+          document_id: ["Could not find an Attorney Case Review with id 123"]
         }
 
         expect(result.errors).to eq errors

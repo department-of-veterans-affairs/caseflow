@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Modal from '../components/Modal';
 import TextField from '../components/TextField';
-import BaseForm from '../containers/BaseForm';
+import Button from '../components/Button';
 import { bindActionCreators } from 'redux';
 
 import {
@@ -13,6 +13,7 @@ import DocketTypeBadge from './../components/DocketTypeBadge';
 import CopyTextButton from '../components/CopyTextButton';
 import ReaderLink from './ReaderLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { pencilSymbol } from '../components/RenderFunctions';
 
 import COPY from '../../COPY.json';
 import { COLORS } from '../constants/AppConstants';
@@ -20,7 +21,6 @@ import { renderLegacyAppealType } from './utils';
 
 import {
   requestPatch,
-  requestUpdate,
   requestSave
 } from './uiReducer/uiActions';
 
@@ -70,10 +70,6 @@ const docketBadgeContainerStyle = css({
   backgroundColor: COLORS.WHITE
 });
 
-type Props = {|
-  requestSave: typeof requestSave,
-|};
-
 const CaseDetailTitleScaffolding = (props) => <div {...containingDivStyling}>
   <ul {...listStyling}>
     {props.children.map((child, i) => child && <li key={i} {...listItemStyling}>{child}</li>)}
@@ -86,7 +82,6 @@ export class CaseTitleDetails extends React.PureComponent {
 
     this.state = {
       showModal: false,
-      buttonCss: 'usa-button-disabled',
       value: '',
       showError: false,
       documentIdError: ''
@@ -107,24 +102,25 @@ export class CaseTitleDetails extends React.PureComponent {
     });
   }
 
-  submitForm = (appeal) => (event) => {
+  submitForm = (appealId) => () => {
     const payload = {
       data: {
-        case_review: {document_id: this.state.value}
+        document_id: this.state.value
       }
     };
-    this.props.requestSave(`/case_reviews/${appeal}/update`, payload, { title: 'Document Id Saved!' }).
-      then((resp, error) => {
-        //changeButtonsState();
+
+    this.props.requestPatch(`/case_reviews/${appealId}`, payload, { title: 'Document Id Saved!' }).
+      then(() => {
         this.handleModalClose();
-      }).catch((err) => {
-        const documentIdErrors = JSON.parse(err.message).errors.document_id;
+      }).
+      catch((error) => {
+        const documentIdErrors = JSON.parse(error.message).errors.document_id;
+
         const documentIdErrorText = documentIdErrors && documentIdErrors[0];
-        const userIdErrors = JSON.parse(err.message).errors.user_id;
-        const userIdErrorText = userIdErrors && userIdErrors[0];
+
         this.setState({
           highlightModal: true,
-          documentIdError: userIdErrorText || documentIdErrorText,
+          documentIdError: documentIdErrorText,
           value: ''
         });
       });
@@ -136,7 +132,7 @@ export class CaseTitleDetails extends React.PureComponent {
       appealId,
       redirectUrl,
       taskType,
-      userIsVsoEmployee,
+      userIsVsoEmployee
     } = this.props;
 
     const {
@@ -188,10 +184,17 @@ export class CaseTitleDetails extends React.PureComponent {
       { !userIsVsoEmployee && appeal && appeal.documentID &&
         <React.Fragment>
           <h4>{COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
-          <div><CopyTextButton text={this.state.value || appeal.documentID} /></div>
-          <button onClick = {this.handleModalClose} {...editButton} >
-            Edit <i className="fa fa-pencil" aria-hidden="true"></i>
-          </button>
+          <div><CopyTextButton text={this.state.value || appeal.documentID} />
+            { !appeal.isLegacyAppeal &&
+              <Button
+                linkStyling
+                onClick={this.handleModalClose} >
+                <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+                <span {...css({ marginRight: '5px',
+                  marginLeft: '20px' })}>Edit</span>
+              </Button>
+            }
+          </div>
           { this.state.showModal && <Modal
             buttons = {[
               { classNames: ['cf-modal-link', 'cf-btn-link'],
@@ -244,8 +247,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
+  requestPatch
 }, dispatch);
 
-//export default connect(mapStateToProps)(CaseTitleDetails);
-export default (connect(mapStateToProps, mapDispatchToProps)(CaseTitleDetails): React.ComponentType<Params>);
-
+export default (connect(mapStateToProps, mapDispatchToProps)(CaseTitleDetails));

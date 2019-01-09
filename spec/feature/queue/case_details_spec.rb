@@ -358,7 +358,7 @@ RSpec.feature "Case details" do
 
       # Wait for page to load some known content before testing for expected content.
       expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-
+      expect(page).to_not have_button "Edit"
       expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
     end
