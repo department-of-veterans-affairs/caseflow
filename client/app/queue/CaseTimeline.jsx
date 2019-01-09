@@ -78,9 +78,9 @@ class CaseTimeline extends React.PureComponent {
       appeal
     } = this.props;
 
-    /* console.log('--completedTasks--');
+    console.log('--completedTasks--');
     console.log(this.props.appeal);
-    console.log(this.props.appeal.timeline);*/
+    console.log(this.props.appeal.timeline);
 
     return <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
