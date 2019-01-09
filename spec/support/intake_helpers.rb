@@ -326,7 +326,6 @@ module IntakeHelpers
   def setup_request_issue_with_nonrating_decision_issue(decision_review, issue_category: "Active Duty Adjustments")
     create(:request_issue,
            :with_nonrating_decision_issue,
-           description: "Test nonrating decision issue",
            nonrating_issue_description: "Test nonrating decision issue",
            review_request: decision_review,
            decision_date: decision_review.receipt_date - 1.day,
@@ -339,7 +338,6 @@ module IntakeHelpers
            :with_rating_decision_issue,
            contested_rating_issue_reference_id: contested_rating_issue_reference_id,
            contested_rating_issue_profile_date: decision_review.receipt_date - 1.day,
-           description: "Test rating decision issue",
            contested_issue_description: "Test rating decision issue",
            review_request: decision_review,
            veteran_participant_id: veteran.participant_id)
