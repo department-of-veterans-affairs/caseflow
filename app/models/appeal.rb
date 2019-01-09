@@ -300,10 +300,6 @@ class Appeal < DecisionReview
     BGSService.new
   end
 
-  def include_ratings_based_on_benefit_type?
-    false
-  end
-
   def contestable_decision_issues
     return [] unless receipt_date
 
