@@ -136,7 +136,7 @@ RSpec.feature "Attorney checkout flow" do
           number_of_claimants: 1,
           request_issues: FactoryBot.build_list(
             :request_issue, 2,
-            description: issue_description,
+            contested_issue_description: issue_description,
             notes: issue_note,
             contested_rating_issue_diagnostic_code: diagnostic_code
           )

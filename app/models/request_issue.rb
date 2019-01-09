@@ -85,8 +85,7 @@ class RequestIssue < ApplicationRecord
     end
 
     def find_or_build_from_intake_data(data)
-      # request issues on edit have ids
-      # but newly added issues do not
+      # request issues on edit have ids but newly added issues do not
       data[:request_issue_id] ? find(data[:request_issue_id]) : from_intake_data(data)
     end
 
@@ -154,7 +153,7 @@ class RequestIssue < ApplicationRecord
   #       nonrating. Currently it won't be because we don't copy over these fields from the contested
   #       decision issue if they are present.
   def nonrating?
-    issue_category && decision_date
+    !!issue_category
   end
 
   def description

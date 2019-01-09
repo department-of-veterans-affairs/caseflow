@@ -103,7 +103,7 @@ feature "Edit issues" do
       {
         review_request: appeal,
         issue_category: "Military Retired Pay",
-        description: "nonrating description",
+        nonrating_issue_description: "nonrating description",
         contention_reference_id: "1234",
         decision_date: 1.month.ago
       }
@@ -116,7 +116,7 @@ feature "Edit issues" do
         review_request: appeal,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: profile_date,
-        description: "PTSD denied",
+        contested_issue_description: "PTSD denied",
         contention_reference_id: "4567"
       }
     end
@@ -246,14 +246,14 @@ feature "Edit issues" do
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
           expect(RequestIssue.find_by(
-                   description: "Left knee granted",
+                   contested_issue_description: "Left knee granted",
                    ineligible_reason: :legacy_appeal_not_eligible,
                    vacols_id: "vacols2",
                    vacols_sequence_id: "1"
                  )).to_not be_nil
 
           ri_with_optin = RequestIssue.find_by(
-            description: "Back pain",
+            contested_issue_description: "Back pain",
             ineligible_reason: nil,
             vacols_id: "vacols1",
             vacols_sequence_id: "1"
@@ -305,7 +305,7 @@ feature "Edit issues" do
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
           expect(RequestIssue.find_by(
-                   description: "Left knee granted",
+                   contested_issue_description: "Left knee granted",
                    ineligible_reason: :legacy_issue_not_withdrawn,
                    vacols_id: "vacols1",
                    vacols_sequence_id: "1"
@@ -342,8 +342,7 @@ feature "Edit issues" do
     expect(page).to have_css("input[disabled]", visible: false)
     expect(page).to have_content("PTSD denied (already selected for")
 
-    nonrating_decision_issue_description = "nonrating decision issue dispositon: " \
-                                           "Active Duty Adjustments - Test nonrating decision issue"
+    nonrating_decision_issue_description = "nonrating decision issue"
     rating_decision_issue_description = "a rating decision issue"
     # check that nonrating and rating decision issues show up
 
@@ -356,7 +355,6 @@ feature "Edit issues" do
     click_remove_issue_confirmation
 
     # add new decision issue
-
     click_intake_add_issue
     add_intake_rating_issue(rating_decision_issue_description)
     expect(page).to have_content(rating_decision_issue_description)
@@ -384,14 +382,22 @@ feature "Edit issues" do
     expect(updated_request_issue.review_request).to be_nil
 
     # check that new request issue is created contesting the decision issue
-    expect(RequestIssue.find_by(review_request: review_request,
-                                contested_decision_issue_id: contested_decision_issues.first.id,
-                                description: contested_decision_issues.first.description)).to_not be_nil
+    expect(
+      RequestIssue.find_by(
+        review_request: review_request,
+        contested_decision_issue_id: contested_decision_issues.first.id,
+        contested_issue_description: contested_decision_issues.first.description
+      )
+    ).to_not be_nil
 
-    expect(RequestIssue.find_by(review_request: review_request,
-                                contested_decision_issue_id: contested_decision_issues.second.id,
-                                ineligible_reason: :duplicate_of_rating_issue_in_active_review,
-                                description: contested_decision_issues.second.description)).to_not be_nil
+    expect(
+      RequestIssue.find_by(
+        review_request: review_request,
+        contested_decision_issue_id: contested_decision_issues.second.id,
+        ineligible_reason: :duplicate_of_rating_issue_in_active_review,
+        contested_issue_description: contested_decision_issues.second.description
+      )
+    ).to_not be_nil
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
@@ -499,7 +505,7 @@ feature "Edit issues" do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Military Retired Pay",
-          description: "eligible nonrating description",
+          nonrating_issue_description: "eligible nonrating description",
           contention_reference_id: "1234",
           ineligible_reason: nil,
           benefit_type: "compensation",
@@ -511,7 +517,7 @@ feature "Edit issues" do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Active Duty Adjustments",
-          description: "untimely nonrating description",
+          nonrating_issue_description: "untimely nonrating description",
           contention_reference_id: "12345",
           benefit_type: "compensation",
           ineligible_reason: :untimely
@@ -523,7 +529,7 @@ feature "Edit issues" do
           contested_rating_issue_reference_id: "def456",
           contested_rating_issue_profile_date: rating.profile_date,
           review_request: another_higher_level_review,
-          description: "PTSD denied",
+          contested_issue_description: "PTSD denied",
           contention_reference_id: "123",
           benefit_type: "compensation",
           ineligible_reason: nil,
@@ -536,7 +542,7 @@ feature "Edit issues" do
           contested_rating_issue_reference_id: "def456",
           contested_rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
-          description: "PTSD denied",
+          contested_issue_description: "PTSD denied",
           contention_reference_id: "111",
           ineligible_reason: :duplicate_of_rating_issue_in_active_review,
           benefit_type: "compensation",
@@ -550,7 +556,7 @@ feature "Edit issues" do
           contested_rating_issue_profile_date: rating.profile_date,
           review_request: another_higher_level_review,
           benefit_type: "compensation",
-          description: "Left knee granted",
+          contested_issue_description: "Left knee granted",
           contention_reference_id: 55
         )
       end
@@ -560,7 +566,7 @@ feature "Edit issues" do
           contested_rating_issue_reference_id: "abc123",
           contested_rating_issue_profile_date: rating.profile_date,
           review_request: higher_level_review,
-          description: "Left knee granted",
+          contested_issue_description: "Left knee granted",
           benefit_type: "compensation",
           ineligible_reason: :higher_level_review_to_higher_level_review,
           ineligible_due_to: ri_previous_hlr
@@ -573,7 +579,7 @@ feature "Edit issues" do
           contested_rating_issue_profile_date: rating_before_ama.profile_date,
           review_request: higher_level_review,
           benefit_type: "compensation",
-          description: "Non-RAMP Issue before AMA Activation",
+          contested_issue_description: "Non-RAMP Issue before AMA Activation",
           contention_reference_id: "12345",
           ineligible_reason: :before_ama
         )
@@ -585,7 +591,7 @@ feature "Edit issues" do
           contested_rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
           review_request: higher_level_review,
           benefit_type: "compensation",
-          description: "Issue before AMA Activation from RAMP",
+          contested_issue_description: "Issue before AMA Activation from RAMP",
           contention_reference_id: "123456",
           ramp_claim_id: "ramp_claim_id"
         )
@@ -596,7 +602,7 @@ feature "Edit issues" do
           contested_rating_issue_reference_id: "has_legacy_issue",
           contested_rating_issue_profile_date: rating_before_ama.profile_date,
           review_request: higher_level_review,
-          description: "Issue with legacy issue not withdrawn",
+          contested_issue_description: "Issue with legacy issue not withdrawn",
           vacols_id: "vacols1",
           benefit_type: "compensation",
           vacols_sequence_id: "1",
@@ -610,7 +616,7 @@ feature "Edit issues" do
           contested_rating_issue_reference_id: "has_ineligible_legacy_appeal",
           contested_rating_issue_profile_date: rating_before_ama.profile_date,
           review_request: higher_level_review,
-          description: "Issue connected to ineligible legacy appeal",
+          contested_issue_description: "Issue connected to ineligible legacy appeal",
           contention_reference_id: "12345678",
           vacols_id: "vacols2",
           benefit_type: "compensation",
@@ -788,7 +794,7 @@ feature "Edit issues" do
         RequestIssue.create!(
           review_request: higher_level_review,
           issue_category: "Military Retired Pay",
-          description: "nonrating description",
+          nonrating_issue_description: "nonrating description",
           contention_reference_id: "1234",
           benefit_type: "compensation",
           decision_date: 1.month.ago
@@ -873,12 +879,16 @@ feature "Edit issues" do
             "/higher_level_reviews/#{nonrating_ep_claim_id}/edit/confirmation"
           )
 
-          expect(RequestIssue.find_by(review_request: higher_level_review,
-                                      issue_category: active_nonrating_request_issue.issue_category,
-                                      ineligible_due_to: active_nonrating_request_issue.id,
-                                      ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
-                                      description: active_nonrating_request_issue.description,
-                                      decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
+          expect(
+            RequestIssue.find_by(
+              review_request: higher_level_review,
+              issue_category: active_nonrating_request_issue.issue_category,
+              ineligible_due_to: active_nonrating_request_issue.id,
+              ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
+              nonrating_issue_description: active_nonrating_request_issue.description,
+              decision_date: active_nonrating_request_issue.decision_date
+            )
+          ).to_not be_nil
         end
       end
     end
@@ -902,7 +912,12 @@ feature "Edit issues" do
         )
       end
       let(:request_issue) do
-        create(:request_issue, description: "nonrating issue desc", review_request: higher_level_review)
+        create(
+          :request_issue,
+          :nonrating,
+          nonrating_issue_description: "nonrating issue desc",
+          review_request: higher_level_review
+        )
       end
       let(:rating_ep_claim_id) do
         higher_level_review.end_product_establishments.first.reference_id
@@ -932,11 +947,13 @@ feature "Edit issues" do
     context "when there is a rating end product" do
       let(:contention_ref_id) { "123" }
       let!(:request_issue) do
-        create(:request_issue,
-               contested_rating_issue_reference_id: "def456",
-               contested_rating_issue_profile_date: rating.profile_date,
-               review_request: higher_level_review,
-               description: "PTSD denied")
+        create(
+          :request_issue,
+          review_request: higher_level_review,
+          contested_rating_issue_reference_id: "def456",
+          contested_rating_issue_profile_date: rating.profile_date,
+          contested_issue_description: "PTSD denied"
+        )
       end
 
       let(:request_issues) { [request_issue] }
@@ -960,7 +977,7 @@ feature "Edit issues" do
           create(
             :request_issue,
             review_request: higher_level_review,
-            description: "currently contesting decision issue",
+            contested_issue_description: "currently contesting decision issue",
             decision_date: Time.zone.now - 2.days,
             contested_decision_issue_id: contested_decision_issues.first.id
           )
@@ -971,7 +988,7 @@ feature "Edit issues" do
           create(
             :request_issue,
             review_request: already_active_hlr,
-            description: "currently active request issue",
+            contested_issue_description: "currently active request issue",
             decision_date: Time.zone.now - 2.days,
             end_product_establishment_id: already_active_hlr.end_product_establishments.first.id,
             contested_decision_issue_id: contested_decision_issues.second.id
@@ -1121,7 +1138,7 @@ feature "Edit issues" do
           review_request: higher_level_review,
           issue_category: "Active Duty Adjustments",
           decision_date: 1.month.ago,
-          description: "Description for Active Duty Adjustments"
+          nonrating_issue_description: "Description for Active Duty Adjustments"
         )
 
         expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
@@ -1129,22 +1146,26 @@ feature "Edit issues" do
         another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
           review_request: higher_level_review,
           issue_category: "Active Duty Adjustments",
-          description: "Another Description for Active Duty Adjustments"
+          nonrating_issue_description: "Another Description for Active Duty Adjustments"
         )
 
         expect(another_active_duty_adjustments_request_issue.untimely?).to eq(true)
         expect(another_active_duty_adjustments_request_issue.untimely_exemption?).to eq(false)
         expect(another_active_duty_adjustments_request_issue.untimely_exemption_notes).to_not be_nil
 
-        expect(RequestIssue.find_by(
-                 review_request: higher_level_review,
-                 description: "This is an unidentified issue"
-               )).to_not be_nil
+        expect(
+          RequestIssue.find_by(
+            review_request: higher_level_review,
+            unidentified_issue_text: "This is an unidentified issue"
+          )
+        ).to_not be_nil
 
-        expect(RequestIssue.find_by(
-                 review_request: higher_level_review,
-                 ramp_claim_id: "ramp_claim_id"
-               )).to_not be_nil
+        expect(
+          RequestIssue.find_by(
+            review_request: higher_level_review,
+            ramp_claim_id: "ramp_claim_id"
+          )
+        ).to_not be_nil
 
         rating_epe = EndProductEstablishment.find_by!(
           source: higher_level_review,
@@ -1158,7 +1179,11 @@ feature "Edit issues" do
 
         # expect the remove/re-add to create a new RequestIssue for same RatingIssue
         expect(higher_level_review.reload.request_issues).to_not include(request_issue)
-        new_version_of_request_issue = higher_level_review.find_request_issue_by_description(request_issue.description)
+
+        new_version_of_request_issue = higher_level_review.request_issues.find do |ri|
+          ri.description == request_issue.description
+        end
+
         expect(new_version_of_request_issue.contested_rating_issue_reference_id).to eq(
           request_issue.contested_rating_issue_reference_id
         )
@@ -1371,7 +1396,7 @@ feature "Edit issues" do
         RequestIssue.create!(
           review_request: supplemental_claim,
           issue_category: "Military Retired Pay",
-          description: "nonrating description",
+          nonrating_issue_description: "nonrating description",
           contention_reference_id: "1234",
           benefit_type: "compensation",
           decision_date: 1.month.ago
@@ -1445,7 +1470,7 @@ feature "Edit issues" do
           contested_rating_issue_profile_date: rating.profile_date,
           review_request: supplemental_claim,
           benefit_type: "compensation",
-          description: "PTSD denied"
+          contested_issue_description: "PTSD denied"
         )
       end
 
@@ -1587,12 +1612,16 @@ feature "Edit issues" do
             "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
           )
 
-          expect(RequestIssue.find_by(review_request: supplemental_claim,
-                                      issue_category: active_nonrating_request_issue.issue_category,
-                                      ineligible_due_to: active_nonrating_request_issue.id,
-                                      ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
-                                      description: active_nonrating_request_issue.description,
-                                      decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
+          expect(
+            RequestIssue.find_by(
+              review_request: supplemental_claim,
+              issue_category: active_nonrating_request_issue.issue_category,
+              ineligible_due_to: active_nonrating_request_issue.id,
+              ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
+              nonrating_issue_description: active_nonrating_request_issue.description,
+              decision_date: active_nonrating_request_issue.decision_date
+            )
+          ).to_not be_nil
         end
       end
 
@@ -1602,7 +1631,7 @@ feature "Edit issues" do
           create(
             :request_issue,
             review_request: supplemental_claim,
-            description: "currently contesting decision issue",
+            contested_issue_description: "currently contesting decision issue",
             decision_date: Time.zone.now - 2.days,
             contested_decision_issue_id: contested_decision_issues.first.id
           )
@@ -1615,7 +1644,7 @@ feature "Edit issues" do
           create(
             :request_issue,
             review_request: already_active_hlr,
-            description: "currently active request issue",
+            contested_issue_description: "currently active request issue",
             decision_date: Time.zone.now - 2.days,
             end_product_establishment_id: already_active_hlr.end_product_establishments.first.id,
             contested_decision_issue_id: contested_decision_issues.second.id

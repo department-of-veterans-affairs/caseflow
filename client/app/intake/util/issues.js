@@ -201,7 +201,7 @@ const formatRatingRequestIssues = (state) => {
         ramp_claim_id: issue.rampClaimId,
         vacols_id: issue.vacolsId,
         vacols_sequence_id: issue.vacolsSequenceId,
-        contested_decision_isssue_id: issue.decisionIssueId,
+        contested_decision_issue_id: issue.decisionIssueId,
         ineligible_reason: issue.ineligibleReason,
         ineligible_due_to_id: issue.ineligibleDueToId
       };
@@ -212,7 +212,7 @@ const formatNonratingRequestIssues = (state) => {
   return (state.addedIssues || []).filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
     return {
       request_issue_id: issue.id,
-      contested_decision_isssue_id: issue.decisionIssueId,
+      contested_decision_issue_id: issue.decisionIssueId,
       issue_category: issue.category,
       decision_text: issue.description,
       decision_date: formatDateStringForApi(issue.decisionDate),
@@ -336,7 +336,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
     // returns nonrating request issue format
     return {
       referenceId: issue.id,
-      text: `${issue.category} - ${issue.description}`,
+      text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
       date: formatDate(issue.decisionDate),
       timely: issue.timely,
       beforeAma: decisionDate < amaActivationDate,
