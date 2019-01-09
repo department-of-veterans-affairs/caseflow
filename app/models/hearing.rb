@@ -20,6 +20,8 @@ class Hearing < ApplicationRecord
     false
   end
 
+  #:nocov:
+  # This is all fake data that will be refactored in a future PR.
   def regional_office_key
     "RO19"
   end
@@ -31,6 +33,7 @@ class Hearing < ApplicationRecord
   def type
     hearing_type
   end
+  #:nocov:
 
   def external_id
     uuid
