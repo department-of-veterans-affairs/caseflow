@@ -701,7 +701,7 @@ feature "Appeal Intake" do
 
     request_issue = intake.reload.detail.request_issues.first
 
-    expect(request_issue.description).to eq("Description for Accrued")
+    expect(request_issue.description).to eq("Accrued - Description for Accrued")
     expect(request_issue.benefit_type).to eq("education")
   end
 

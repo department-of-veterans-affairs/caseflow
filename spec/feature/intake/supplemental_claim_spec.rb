@@ -847,7 +847,6 @@ feature "Supplemental Claim Intake" do
           expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
           add_intake_rating_issue("None of these match")
-          add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Description for Active Duty Adjustments")
 
