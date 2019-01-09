@@ -36,7 +36,7 @@ RSpec.describe AppealsController, type: :controller do
     end
   end
 
-  describe "GET appeals/appeal_id/document_count_from_caseflow" do
+  describe "GET appeals/appeal_id/document_count" do
     context "when a legacy appeal has documents" do
       let(:documents) do
         [
@@ -48,7 +48,7 @@ RSpec.describe AppealsController, type: :controller do
 
       it "should return document count" do
         documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
-        get :document_count_from_caseflow, params: { appeal_id: appeal.vacols_id }
+        get :document_count, params: { appeal_id: appeal.vacols_id }
 
         response_body = JSON.parse(response.body)
         expect(response_body["document_count"]).to eq 2
@@ -67,7 +67,7 @@ RSpec.describe AppealsController, type: :controller do
       let(:appeal) { create(:appeal, veteran_file_number: file_number) }
 
       it "should return document count" do
-        get :document_count_from_caseflow, params: { appeal_id: appeal.uuid }
+        get :document_count, params: { appeal_id: appeal.uuid }
 
         response_body = JSON.parse(response.body)
         expect(response_body["document_count"]).to eq 2
@@ -76,7 +76,7 @@ RSpec.describe AppealsController, type: :controller do
 
     context "when appeal is not found" do
       it "should return status 404" do
-        get :document_count_from_caseflow, params: { appeal_id: "123456" }
+        get :document_count, params: { appeal_id: "123456" }
         expect(response.status).to eq 404
       end
     end

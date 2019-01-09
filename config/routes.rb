@@ -99,7 +99,6 @@ Rails.application.routes.draw do
   resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
     member do
       get :document_count
-      get :document_count_from_caseflow
       get :new_documents
       get :veteran
       get :power_of_attorney
