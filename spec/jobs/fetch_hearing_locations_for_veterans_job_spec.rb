@@ -53,16 +53,23 @@ describe FetchHearingLocationsForVeteransJob do
           country_code: "US"
         }
       end
-      let(:facility_ros) { RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? || ro[:state] != veteran_state } } # rubocop:disable Metrics/LineLength
+      let(:facility_ros) do
+        RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? || ro[:state] != veteran_state }
+      end
+
       let(:expected_ro) do
-        index = RegionalOffice::CITIES.values.find_index { |ro| !ro[:facility_locator_id].nil? && ro[:state] == "VA" }
+        index = RegionalOffice::CITIES.values.find_index do |ro|
+          !ro[:facility_locator_id].nil? && ro[:state] == veteran_state
+        end
         RegionalOffice::CITIES.keys[index]
       end
       let(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: nil, bfcorlid: bfcorlid) }
 
       before do
         VADotGovService = ExternalApi::VADotGovService
-        Fakes::BGSService.veteran_records = { "123456789" => veteran_record(file_number: "123456789S", state: veteran_state) } # rubocop:disable Metrics/LineLength
+        Fakes::BGSService.veteran_records = {
+          "123456789": veteran_record(file_number: "123456789S", state: veteran_state)
+        }
 
         body = mock_distance_body(
           data: facility_ros.map { |ro| mock_data(id: ro[:facility_locator_id]) },
