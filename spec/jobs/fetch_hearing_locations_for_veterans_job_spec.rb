@@ -75,18 +75,18 @@ describe FetchHearingLocationsForVeteransJob do
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
       end
 
-      it "updates veteran hearing_regional_office with fetched RO within veteran's state" do
+      it "updates veteran closest_regional_office with fetched RO within veteran's state" do
         job.find_or_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address)
-        expect(Veteran.first.hearing_regional_office).to eq expected_ro
+        expect(Veteran.first.closest_regional_office).to eq expected_ro
       end
 
-      context "when existing hearing_regional_office is defined" do
+      context "when existing closest_regional_office is defined" do
         let(:expected_ro) { "EXISTINGRO" }
-        let(:veteran) { create(:veteran, file_number: bfcorlid_file_number, hearing_regional_office: expected_ro) }
+        let(:veteran) { create(:veteran, file_number: bfcorlid_file_number, closest_regional_office: expected_ro) }
 
-        it "the veteran's hearing_regional_office does not update" do
+        it "the veteran's closest_regional_office does not update" do
           job.find_or_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address)
-          expect(Veteran.first.hearing_regional_office).to eq expected_ro
+          expect(Veteran.first.closest_regional_office).to eq expected_ro
         end
       end
     end

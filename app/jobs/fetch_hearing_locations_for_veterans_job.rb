@@ -27,7 +27,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def find_or_update_ro_for_veteran(veteran, va_dot_gov_address:)
-    veteran.hearing_regional_office || fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
+    veteran.closest_regional_office || fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
   end
 
   def create_available_locations_for_veteran(veteran, va_dot_gov_address:, ids:)
@@ -104,7 +104,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     closest_ro_index = RegionalOffice::CITIES.values.find_index { |ro| ro[:facility_locator_id] == distances[0][:id] }
     closest_ro = RegionalOffice::CITIES.keys[closest_ro_index]
-    veteran.update(hearing_regional_office: closest_ro)
+    veteran.update(closest_regional_office: closest_ro)
 
     closest_ro
   end

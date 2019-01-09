@@ -910,7 +910,7 @@ ActiveRecord::Schema.define(version: 20190107214300) do
     t.string "last_name"
     t.string "middle_name"
     t.string "name_suffix"
-    t.string "hearing_regional_office"
+    t.string "closest_regional_office"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
   end
 
