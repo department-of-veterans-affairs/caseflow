@@ -68,16 +68,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   private
 
-  def bfcorlid_to_ro_hash
-    @bfcorlid_to_ro_hash ||= begin
-      bfcorlids = veterans.pluck(:file_number).map do |file_number|
-        LegacyAppeal.convert_file_number_to_vacols(file_number)
-      end
-
-      VACOLS::Case.where(bfcorlid: bfcorlids).pluck(:bfcorlid, :bfregoff).to_h
-    end
-  end
-
   def facility_ids_for_veteran(veteran, va_dot_gov_address:)
     ro = find_or_update_ro_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
 
