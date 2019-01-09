@@ -63,7 +63,6 @@ class JudgeTask < Task
     RootTask.includes(:appeal).all.select { |task| eligible_for_assignment?(task) }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def self.eligible_for_assignment?(task)
     return false if task.completed?
     return false if task.appeal.nil?
@@ -80,7 +79,6 @@ class JudgeTask < Task
 
     task.children.all? { |t| !t.is_a?(JudgeTask) && t.completed? }
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.list_of_assignees
     Constants::RampJudges::USERS[Rails.current_env]
