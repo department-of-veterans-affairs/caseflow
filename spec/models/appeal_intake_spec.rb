@@ -39,10 +39,10 @@ describe AppealIntake do
     let!(:request_issue) do
       RequestIssue.new(
         review_request: detail,
-        rating_issue_profile_date: Time.zone.local(2018, 4, 30),
-        rating_issue_reference_id: "issue1",
-        contention_reference_id: "1234",
-        description: "description"
+        contested_rating_issue_profile_date: Time.zone.local(2018, 4, 30),
+        contested_rating_issue_reference_id: "issue1",
+        contested_issue_description: "description",
+        contention_reference_id: "1234"
       )
     end
 
@@ -153,9 +153,10 @@ describe AppealIntake do
 
     let(:issue_data) do
       [
-        { rating_issue_profile_date: "2018-04-30",
+        {
           rating_issue_reference_id: "reference-id",
-          decision_text: "decision text" },
+          decision_text: "decision text"
+        },
         { decision_text: "nonrating request issue decision text",
           issue_category: "test issue category",
           decision_date: "2018-12-25" }
@@ -177,14 +178,13 @@ describe AppealIntake do
       expect(intake.detail.established_at).to_not be_nil
       expect(intake.detail.request_issues.count).to eq 2
       expect(intake.detail.request_issues.first).to have_attributes(
-        rating_issue_reference_id: "reference-id",
-        rating_issue_profile_date: Time.zone.local(2018, 4, 30),
-        description: "decision text"
+        contested_rating_issue_reference_id: "reference-id",
+        contested_issue_description: "decision text"
       )
       expect(intake.detail.request_issues.second).to have_attributes(
         issue_category: "test issue category",
         decision_date: Date.new(2018, 12, 25),
-        description: "nonrating request issue decision text"
+        nonrating_issue_description: "nonrating request issue decision text"
       )
       expect(intake.detail.tasks.count).to eq 1
       expect(intake.detail.submitted?).to eq true

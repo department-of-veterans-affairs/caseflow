@@ -54,7 +54,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
         {hearing.disposition && StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
         {hearing.viewedByJudge &&
         <Tooltip id="hearing-worksheet-tip" text={COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP}>
-          <Link rel="noopener" target="_blank" href={`/hearings/${hearing.id}/worksheet/print?keep_open=true`}>
+          <Link rel="noopener" target="_blank" href={`/hearings/${hearing.externalId}/worksheet/print?keep_open=true`}>
             {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
           </Link>
         </Tooltip>}
@@ -86,7 +86,9 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
       _.extend(hearingElementsStyle, marginLeft);
     }
 
-    const hearingElements = _.map(uniqueOrderedHearings, (hearing) => <div key={hearing.id} {...hearingElementsStyle}>
+    const hearingElements = _.map(uniqueOrderedHearings, (hearing) => <div
+      key={hearing.externalId} {...hearingElementsStyle}
+    >
       <span {...boldText}>Hearing{uniqueOrderedHearings.length > 1 ?
         ` ${uniqueOrderedHearings.indexOf(hearing) + 1}` : ''}:</span>
       <BareList compact

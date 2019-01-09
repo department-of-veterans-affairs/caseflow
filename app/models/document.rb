@@ -219,7 +219,7 @@ class Document < ApplicationRecord
       end
     end
 
-    update_attributes(
+    update(
       category_procedural: source_document.category_procedural,
       category_medical: source_document.category_medical,
       category_other: source_document.category_other,

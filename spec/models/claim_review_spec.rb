@@ -30,9 +30,9 @@ describe ClaimReview do
     build(
       :request_issue,
       review_request: claim_review,
-      rating_issue_reference_id: "reference-id",
-      rating_issue_profile_date: Date.new(2018, 4, 30),
-      description: "decision text"
+      contested_rating_issue_reference_id: "reference-id",
+      contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+      contested_issue_description: "decision text"
     )
   end
 
@@ -40,9 +40,9 @@ describe ClaimReview do
     build(
       :request_issue,
       review_request: claim_review,
-      rating_issue_reference_id: "reference-id2",
-      rating_issue_profile_date: Date.new(2018, 4, 30),
-      description: "another decision text"
+      contested_rating_issue_reference_id: "reference-id2",
+      contested_rating_issue_profile_date: Date.new(2018, 4, 30),
+      contested_issue_description: "another decision text"
     )
   end
 
@@ -50,7 +50,7 @@ describe ClaimReview do
     build(
       :request_issue,
       review_request: claim_review,
-      description: "Issue text",
+      nonrating_issue_description: "Issue text",
       issue_category: "surgery",
       decision_date: 4.days.ago.to_date
     )
@@ -60,7 +60,7 @@ describe ClaimReview do
     build(
       :request_issue,
       review_request: claim_review,
-      description: "some other issue",
+      nonrating_issue_description: "some other issue",
       issue_category: "something",
       decision_date: 3.days.ago.to_date
     )
@@ -88,39 +88,6 @@ describe ClaimReview do
 
   let(:vbms_error) do
     VBMS::HTTPError.new("500", "More EPs more problems")
-  end
-
-  context "#contestable_issues" do
-    subject { claim_review.contestable_issues }
-
-    let(:another_review) do
-      create(:supplemental_claim, veteran_file_number: veteran_file_number, receipt_date: receipt_date)
-    end
-
-    let!(:past_decision_issue) do
-      create(:decision_issue,
-             decision_review: another_review,
-             profile_date: receipt_date - 1.day,
-             benefit_type: another_review.benefit_type,
-             decision_text: "something decided in the past",
-             description: "past issue",
-             participant_id: veteran.participant_id)
-    end
-
-    let!(:future_decision_issue) do
-      create(:decision_issue,
-             decision_review: another_review,
-             profile_date: receipt_date + 1.day,
-             benefit_type: another_review.benefit_type,
-             decision_text: "something was decided in the future",
-             description: "future issue",
-             participant_id: veteran.participant_id)
-    end
-
-    it "does not return Decision Issues in the future" do
-      expect(subject.count).to eq(1)
-      expect(subject.first.decision_issue_id).to eq(past_decision_issue.id)
-    end
   end
 
   context "async logic scopes" do

@@ -136,7 +136,7 @@ RSpec.feature "Attorney checkout flow" do
           number_of_claimants: 1,
           request_issues: FactoryBot.build_list(
             :request_issue, 2,
-            description: issue_description,
+            contested_issue_description: issue_description,
             notes: issue_note,
             contested_rating_issue_diagnostic_code: diagnostic_code
           )
@@ -424,8 +424,8 @@ RSpec.feature "Attorney checkout flow" do
       end
     end
 
-    context "with three issues" do
-      let(:case_issues) { FactoryBot.create_list(:case_issue, 3) }
+    context "with four issues" do
+      let(:case_issues) { FactoryBot.create_list(:case_issue, 4) }
 
       scenario "selects issue dispositions" do
         visit "/queue"
@@ -466,12 +466,17 @@ RSpec.feature "Attorney checkout flow" do
 
         issue_dispositions = page.find_all(".Select-control", text: "Select disposition", count: appeal.issues.length)
 
-        # We want two issues to be a remand to make the remand reason screen show up.
-        issue_dispositions.each_with_index do |row, index|
-          disposition = (index == 0 || index == 1) ? "Remanded" : "Allowed"
-          row.click
-          page.find("div", class: "Select-option", text: disposition).click
-        end
+        issue_dispositions[0].click
+        page.find("div", class: "Select-option", text: "Remanded").click
+
+        issue_dispositions[1].click
+        page.find("div", class: "Select-option", text: "Remanded").click
+
+        issue_dispositions[2].click
+        page.find("div", class: "Select-option", text: "Allowed").click
+
+        issue_dispositions[3].click
+        page.find("div", class: "Select-option", text: "Stay").click
 
         click_on "Continue"
         expect(page).to have_content("Select Remand Reasons")
@@ -515,6 +520,7 @@ RSpec.feature "Attorney checkout flow" do
         expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[0].issdc).to eq "3"
         expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[1].issdc).to eq "3"
         expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[2].issdc).to eq "1"
+        expect(VACOLS::CaseIssue.where(isskey: appeal.vacols_id)[3].issdc).to eq "S"
 
         expect(VACOLS::RemandReason.where(rmdkey: appeal.vacols_id).size).to eq 3
       end

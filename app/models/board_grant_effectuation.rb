@@ -10,14 +10,25 @@ class BoardGrantEffectuation < ApplicationRecord
   validates :granted_decision_issue, presence: true
   before_save :hydrate_from_granted_decision_issue, on: :create
 
+  END_PRODUCT_CODES = {
+    rating: "030BGR",
+    nonrating: "030BGNR",
+    pension_rating: "030BGRPMC",
+    pension_nonrating: "030BGNRPMC"
+  }.freeze
+
   def contention_text
-    granted_decision_issue.formatted_description
+    granted_decision_issue.description
   end
 
   private
 
+  def benefit_type
+    granted_decision_issue.benefit_type
+  end
+
   def effectuated_in_vbms?
-    granted_decision_issue.benefit_type == "compensation"
+    ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
   end
 
   def hydrate_from_granted_decision_issue
@@ -28,7 +39,34 @@ class BoardGrantEffectuation < ApplicationRecord
 
     if effectuated_in_vbms?
       self.end_product_establishment = find_or_build_end_product_establishment
+    else
+      find_or_build_effectuation_task
     end
+  end
+
+  # TODO: Refactor with ClaimReview business_line in a concern
+  def business_line
+    business_line_name = Constants::BENEFIT_TYPES[benefit_type]
+    @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
+  end
+
+  def find_or_build_effectuation_task
+    find_matching_effectuation_task || create_effectuation_task!
+  end
+
+  def find_matching_effectuation_task
+    BoardGrantEffectuationTask.find_by(
+      appeal: appeal,
+      assigned_to: business_line
+    )
+  end
+
+  def create_effectuation_task!
+    BoardGrantEffectuationTask.create!(
+      appeal: appeal,
+      assigned_at: Time.zone.now,
+      assigned_to: business_line
+    )
   end
 
   def find_or_build_end_product_establishment
@@ -38,7 +76,7 @@ class BoardGrantEffectuation < ApplicationRecord
   def find_matching_end_product_establishment
     EndProductEstablishment.find_by(
       source: decision_document,
-      code: ep_code,
+      code: end_product_code,
       established_at: nil
     )
   end
@@ -49,7 +87,7 @@ class BoardGrantEffectuation < ApplicationRecord
       veteran_file_number: veteran.file_number,
       claim_date: decision_document.decision_date,
       payee_code: "00",
-      code: ep_code,
+      code: end_product_code,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
       user: User.system_user
@@ -60,8 +98,12 @@ class BoardGrantEffectuation < ApplicationRecord
     appeal.veteran
   end
 
-  def ep_code
-    granted_decision_issue.rating? ? "030BGR" : "030BGNR"
+  def end_product_code
+    return unless effectuated_in_vbms?
+
+    issue_code_type = granted_decision_issue.rating? ? :rating : :nonrating
+    issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
+    END_PRODUCT_CODES[issue_code_type]
   end
 
   def end_product_station

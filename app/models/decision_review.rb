@@ -110,6 +110,7 @@ class DecisionReview < ApplicationRecord
 
   def timely_issue?(decision_date)
     return true unless receipt_date && decision_date
+
     decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
   end
 
@@ -128,6 +129,7 @@ class DecisionReview < ApplicationRecord
 
   def claimant_participant_id
     return nil if claimants.empty?
+
     claimants.first.participant_id
   end
 
@@ -139,6 +141,7 @@ class DecisionReview < ApplicationRecord
 
   def payee_code
     return nil if claimants.empty?
+
     claimants.first.payee_code
   end
 
@@ -192,6 +195,7 @@ class DecisionReview < ApplicationRecord
 
   def contestable_issues
     return contestable_issues_from_decision_issues if caseflow_only?
+
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
   end
 
@@ -224,7 +228,11 @@ class DecisionReview < ApplicationRecord
   end
 
   def unfiltered_contestable_issues_from_ratings
-    cached_rating_issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
+    return [] unless receipt_date
+
+    cached_rating_issues
+      .select { |issue| issue.profile_date && issue.profile_date.to_date < receipt_date }
+      .map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
   end
 
   def contestable_issues_from_ratings
@@ -233,6 +241,17 @@ class DecisionReview < ApplicationRecord
         contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
       end
     end
+  end
+
+  def contestable_decision_issues
+    return [] unless receipt_date
+
+    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+      .select do |issue|
+        next if issue.decision_review.is_a?(Appeal) && !issue.decision_review.outcoded?
+
+        issue.approx_decision_date && issue.approx_decision_date < receipt_date
+      end
   end
 
   def contestable_issues_from_decision_issues
@@ -255,6 +274,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def ratings_with_issues
+    return [] unless veteran
+
     veteran.ratings.reject { |rating| rating.issues.empty? }
   end
 
@@ -281,6 +302,7 @@ class DecisionReview < ApplicationRecord
 
   def validate_receipt_date
     return unless receipt_date
+
     validate_receipt_date_not_before_ama
     validate_receipt_date_not_in_future
   end

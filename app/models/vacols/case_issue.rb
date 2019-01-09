@@ -113,7 +113,8 @@ class VACOLS::CaseIssue < VACOLS::Record
 
   def self.generate_sequence_id(vacols_id)
     return unless vacols_id
-    last_issue = (descriptions(vacols_id)[vacols_id] || []).sort_by { |k| k["issseq"] }.last
+
+    last_issue = (descriptions(vacols_id)[vacols_id] || []).max_by { |k| k["issseq"] }
     last_issue.present? ? last_issue["issseq"] + 1 : 1
   end
 

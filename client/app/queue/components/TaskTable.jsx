@@ -48,13 +48,15 @@ type Params = {|
   customColumns?: Array<Function>,
   getKeyForRow?: Function,
   userId?: string,
+  defaultSortIdx?: number,
 |};
 
 type Props = Params & {|
   setSelectionOfTaskOfUser: Function,
   isTaskAssignedToUserSelected?: Object,
   userIsVsoEmployee: boolean,
-  userRole: string
+  userRole: string,
+  defaultSortIdx: number
 |};
 
 export class TaskTableUnconnected extends React.PureComponent<Props> {
@@ -296,6 +298,10 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       ])), ['order'], ['desc']);
 
   getDefaultSortableColumn = () => {
+    if (this.props.defaultSortIdx) {
+      return this.props.defaultSortIdx;
+    }
+
     const index = _.findIndex(this.getQueueColumns(),
       (column) => column.header === COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE);
 

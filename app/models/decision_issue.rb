@@ -10,24 +10,17 @@ class DecisionIssue < ApplicationRecord
   belongs_to :decision_review, polymorphic: true
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
 
+  # Attorneys will be entering in a description of the decision manually for appeals
+  before_save :calculate_and_set_description, unless: :appeal?
+
   def self.granted
     # TODO: "allowed" is the disposition for BVA grants, not necessarily the disposition for granted HLRs and SCs
     #       we need to add that
     where(disposition: "allowed")
   end
 
-  def source_higher_level_review
-    return unless decision_review
-    decision_review.is_a?(HigherLevelReview) ? decision_review.id : nil
-  end
-
   def approx_decision_date
     profile_date ? profile_date.to_date : end_product_last_action_date
-  end
-
-  def formatted_description
-    return description if description
-    (associated_request_issue&.nonrating?) ? nonrating_description : rating_description
   end
 
   def issue_category
@@ -56,18 +49,21 @@ class DecisionIssue < ApplicationRecord
 
   private
 
+  def calculate_and_set_description
+    self.description ||= calculate_description
+  end
+
+  def calculate_description
+    return decision_text if decision_text
+    return nil unless associated_request_issue
+
+    "#{disposition}: #{associated_request_issue.description}"
+  end
+
   def associated_request_issue
     return unless request_issues.any?
+
     request_issues.first
-  end
-
-  def nonrating_description
-    "#{disposition}: #{issue_category} - #{associated_request_issue.description}"
-  end
-
-  def rating_description
-    return decision_text unless associated_request_issue&.notes
-    "#{decision_text}. Notes: #{associated_request_issue.notes}"
   end
 
   def appeal?

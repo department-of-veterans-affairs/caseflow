@@ -197,7 +197,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   private
 
   def current_user_css_id
-    @css_id ||= RequestStore.store[:current_user].css_id.upcase
+    @current_user_css_id ||= RequestStore.store[:current_user].css_id.upcase
   end
 
   def update_hearing_action

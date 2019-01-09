@@ -6,7 +6,7 @@ class DecisionReviewsController < ApplicationController
       render "index"
     else
       # TODO: make index show error message
-      render json: { error: "#{business_line_slug} not found" }, status: 404
+      render json: { error: "#{business_line_slug} not found" }, status: :not_found
     end
   end
 
@@ -14,7 +14,7 @@ class DecisionReviewsController < ApplicationController
     if task
       render "show"
     else
-      render json: { error: "Task #{task_id} not found" }, status: 404
+      render json: { error: "Task #{task_id} not found" }, status: :not_found
     end
   end
 
@@ -43,11 +43,11 @@ class DecisionReviewsController < ApplicationController
   end
 
   def in_progress_tasks
-    apply_task_serializer(business_line.tasks.reject(&:completed?))
+    apply_task_serializer(business_line.tasks.order(assigned_at: :desc).reject(&:completed?))
   end
 
   def completed_tasks
-    apply_task_serializer(business_line.tasks.select(&:completed?))
+    apply_task_serializer(business_line.tasks.order(completed_at: :desc).select(&:completed?))
   end
 
   def business_line

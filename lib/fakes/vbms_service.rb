@@ -40,8 +40,9 @@ class Fakes::VBMSService
     @document_records ||= {}
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
-      @document_records[row_hash["vbms_id"].gsub(/[^0-9]/, "")] =
-        Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
+      vbms_id = row_hash["vbms_id"].gsub(/[^0-9]/, "")
+      @document_records[vbms_id] = Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
+      (@document_records[vbms_id] || []).each { |document| document.write_attribute(:file_number, vbms_id) }
     end
   end
 
@@ -113,6 +114,7 @@ class Fakes::VBMSService
   def self.establish_claim!(claim_hash:, veteran_hash:, user:)
     (HOLD_REQUEST_TIMEOUT_SECONDS * 100).times do
       break unless @hold_request
+
       sleep 0.01
     end
 
