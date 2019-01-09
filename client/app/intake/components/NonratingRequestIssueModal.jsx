@@ -108,9 +108,9 @@ class NonratingRequestIssueModal extends React.Component {
     return 'Add this issue';
   }
 
-  requiresUntimelyExemption = () => {
+  isTimely = () => {
     if (this.props.formType === 'supplemental_claim') {
-      return false;
+      return true;
     }
 
     const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
@@ -121,7 +121,7 @@ class NonratingRequestIssueModal extends React.Component {
     let receiptDate = new Date(this.props.intakeData.receiptDate);
     let isTimely = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
 
-    return !isTimely;
+    return isTimely;
   }
 
   onAddIssue = () => {
@@ -134,15 +134,14 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason: this.state.ineligibleReason,
       reviewRequestTitle: this.state.reviewRequestTitle,
       isRating: false,
-      timely: true
+      timely: this.isTimely()
     };
 
     if (this.hasLegacyAppeals()) {
       this.props.toggleLegacyOptInModal({
         currentIssue,
         notes: null });
-    } else if (this.requiresUntimelyExemption()) {
-      currentIssue.timely = false;
+    } else if (currentIssue.timely === false) {
       this.props.toggleUntimelyExemptionModal({
         currentIssue,
         notes: null
