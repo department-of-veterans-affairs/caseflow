@@ -353,5 +353,128 @@ module IntakeHelpers
 
     rating_request_issue.decision_issues + nonrating_request_issue.decision_issues
   end
+
+  def check_row(label, text)
+    row = find("tr", text: label)
+    expect(row).to have_text(text)
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def verify_decision_issues_can_be_added_and_removed(page_url,
+                                                      original_request_issue,
+                                                      review_request,
+                                                      contested_decision_issues)
+    visit page_url
+    expect(page).to have_content("currently contesting decision issue")
+    expect(page).to have_content("PTSD denied")
+
+    # check that we cannot add the same issue again
+    click_intake_add_issue
+    expect(page).to have_css("input[disabled]", visible: false)
+    expect(page).to have_content("PTSD denied (already selected for")
+
+    nonrating_decision_issue_description = "nonrating decision issue"
+    rating_decision_issue_description = "a rating decision issue"
+    # check that nonrating and rating decision issues show up
+
+    expect(page).to have_content(nonrating_decision_issue_description)
+    expect(page).to have_content(rating_decision_issue_description)
+    safe_click ".close-modal"
+
+    # remove original decision issue
+    click_remove_intake_issue_by_text("currently contesting decision issue")
+    click_remove_issue_confirmation
+
+    # add new decision issue
+    click_intake_add_issue
+    add_intake_rating_issue(rating_decision_issue_description)
+    expect(page).to have_content(rating_decision_issue_description)
+
+    click_intake_add_issue
+
+    add_intake_rating_issue(nonrating_decision_issue_description)
+    expect(page).to have_content(nonrating_decision_issue_description)
+    expect(page).to have_content(
+      Constants.INELIGIBLE_REQUEST_ISSUES
+        .duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Higher-Level Review")
+    )
+
+    safe_click("#button-submit-update")
+    safe_click ".confirm"
+    expect(page).to have_current_path("/#{page_url}/confirmation")
+
+    visit page_url
+    expect(page).to have_content(nonrating_decision_issue_description)
+    expect(page).to have_content(rating_decision_issue_description)
+    expect(page).to have_content("PTSD denied")
+
+    # check that decision_request_issue is closed
+    updated_request_issue = RequestIssue.find_by(id: original_request_issue.id)
+    expect(updated_request_issue.review_request).to be_nil
+
+    # check that new request issue is created contesting the decision issue
+    request_issues = review_request.reload.request_issues
+    first_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.first.id)
+    second_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.second.id)
+
+    expect(first_request_issue).to have_attributes(
+      contested_issue_description: contested_decision_issues.first.description
+    )
+
+    expect(second_request_issue).to have_attributes(
+      ineligible_reason: "duplicate_of_rating_issue_in_active_review",
+      contested_issue_description: contested_decision_issues.second.description
+    )
+  end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
+
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def verify_request_issue_contending_decision_issue_not_readded(
+      page_url,
+      decision_review,
+      contested_decision_issues
+    )
+    # verify that not modifying a request issue contenting a decision issue
+    # does not result in readding
+
+    visit page_url
+    expect(page).to have_content(contested_decision_issues.first.description)
+    expect(page).to have_content(contested_decision_issues.second.description)
+    expect(page).to have_content("PTSD denied")
+
+    click_remove_intake_issue_by_text("PTSD denied")
+    click_remove_issue_confirmation
+
+    click_intake_add_issue
+    add_intake_rating_issue("Issue with legacy issue not withdrawn")
+
+    safe_click("#button-submit-update")
+    expect(page).to have_content("has been processed")
+
+    first_not_modified_request_issue = RequestIssue.find_by(
+      review_request: decision_review,
+      contested_decision_issue_id: contested_decision_issues.first.id
+    )
+
+    second_not_modified_request_issue = RequestIssue.find_by(
+      review_request: decision_review,
+      contested_decision_issue_id: contested_decision_issues.second.id
+    )
+
+    expect(first_not_modified_request_issue).to_not be_nil
+    expect(second_not_modified_request_issue).to_not be_nil
+
+    non_modified_ids = [first_not_modified_request_issue.id, second_not_modified_request_issue.id]
+    request_issue_update = RequestIssuesUpdate.find_by(review: decision_review)
+
+    # existing issues should not be added or removed
+    expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+    expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
+  end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 end
 # rubocop:enable Metrics/ModuleLength
