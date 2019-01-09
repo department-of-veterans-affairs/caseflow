@@ -162,10 +162,6 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def v1_events
-    @v1_events ||= AppealEvents.new(appeal: self, version: 1).all.sort_by(&:date)
-  end
-
   def events
     @events ||= AppealEvents.new(appeal: self).all
   end
@@ -661,10 +657,6 @@ class LegacyAppeal < ApplicationRecord
     TYPE_CODES[type] || "other"
   end
 
-  def latest_event_date
-    v1_events.last.try(:date)
-  end
-
   def cavc
     type == "Court Remand"
   end
@@ -783,17 +775,6 @@ class LegacyAppeal < ApplicationRecord
 
       appeal.save
       appeal
-    end
-
-    def for_api(vbms_id:)
-      # Some appeals that are early on in the process
-      # have no events recorded. We are not showing these.
-      # TODD: Research and revise strategy around appeals with no events
-      repository.appeals_by_vbms_id(vbms_id)
-        .select(&:api_supported?)
-        .reject { |a| a.latest_event_date.nil? }
-        .sort_by(&:latest_event_date)
-        .reverse
     end
 
     def veteran_file_number_from_bfcorlid(bfcorlid)

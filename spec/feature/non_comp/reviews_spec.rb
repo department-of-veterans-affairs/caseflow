@@ -16,6 +16,7 @@ feature "NonComp Reviews Queue" do
 
     let(:veteran) { create(:veteran) }
     let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+    let(:appeal) { create(:appeal, veteran: veteran) }
 
     let(:today) { Time.zone.now }
     let(:last_week) { Time.zone.now - 7.days }
@@ -23,7 +24,10 @@ feature "NonComp Reviews Queue" do
     let!(:in_progress_tasks) do
       [
         create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org, assigned_at: last_week),
-        create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org, assigned_at: today)
+        create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org, assigned_at: today),
+        create(
+          :board_grant_effectuation_task, :in_progress, appeal: appeal, assigned_to: non_comp_org, assigned_at: today
+        )
       ]
     end
 
@@ -48,8 +52,9 @@ feature "NonComp Reviews Queue" do
       # default is the in progress page
       expect(page).to have_content("Days Waiting")
       expect(page).to have_content("Higher-Level Review", count: 2)
+      expect(page).to have_content("Board Grant")
       expect(page).to have_content("Bob Smith", count: 2)
-      expect(page).to have_content(veteran.participant_id, count: 2)
+      expect(page).to have_content(veteran.participant_id, count: 3)
 
       # ordered by assigned_at descending
       # this funky regex is due to how the momentjs lib does date math and rounding.
