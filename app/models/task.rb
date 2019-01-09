@@ -92,8 +92,8 @@ class Task < ApplicationRecord
   end
 
   def self.modify_params(params)
-    if params.key?("instructions") && !params[:instructions].is_a?(Array)
-      params["instructions"] = [params["instructions"]]
+    if params.key?(:instructions) && !params[:instructions].is_a?(Array)
+      params[:instructions] = [params[:instructions]]
     end
     params
   end
@@ -189,7 +189,7 @@ class Task < ApplicationRecord
   end
 
   def mail_assign_to_organization_data
-    assign_to_organization_data.merge(type: MailTask.name)
+    { options: MailTask.subclass_routing_options }
   end
 
   def assign_to_user_data
@@ -280,7 +280,7 @@ class Task < ApplicationRecord
   end
 
   def set_assigned_at_and_update_parent_status
-    self.assigned_at = created_at
+    self.assigned_at = created_at unless assigned_at
     if ama? && parent
       parent.update(status: :on_hold)
     end

@@ -212,7 +212,7 @@ export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) =>
     viewedByJudge: hearing.viewed_by_judge,
     date: hearing.date,
     type: hearing.type,
-    id: hearing.id,
+    externalId: hearing.external_id,
     disposition: hearing.disposition
   }));
 
