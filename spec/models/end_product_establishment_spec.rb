@@ -234,8 +234,7 @@ describe EndProductEstablishment do
           review_request: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-          contested_issue_description: "this is a big decision",
-          description: "this is a big decision"
+          contested_issue_description: "this is a big decision"
         ),
         create(
           :request_issue,
@@ -245,8 +244,7 @@ describe EndProductEstablishment do
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
           vacols_id: vacols_id,
           vacols_sequence_id: vacols_sequence_id,
-          contested_issue_description: "more decisionz",
-          description: "more decisionz"
+          contested_issue_description: "more decisionz"
         ),
         create(
           :request_issue,
@@ -254,15 +252,13 @@ describe EndProductEstablishment do
           review_request: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-          contested_issue_description: "this is a big decision",
-          description: "this is a big decision" # intentional duplicate
+          contested_issue_description: "this is a big decision"
         ),
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           is_unidentified: true,
           unidentified_issue_text: "identity unknown",
-          description: "identity unknown",
           review_request: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30)
@@ -405,7 +401,6 @@ describe EndProductEstablishment do
         contested_rating_issue_reference_id: "reference-id",
         contested_rating_issue_profile_date: Date.new(2018, 4, 30),
         contested_issue_description: "this is a big decision",
-        description: "this is a big decision",
         benefit_type: "compensation",
         contention_reference_id: contention_ref_id
       )

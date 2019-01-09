@@ -50,7 +50,6 @@ describe RequestIssuesUpdate do
         contested_rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
         contested_issue_description: request_issue_contentions[0].text,
-        description: request_issue_contentions[0].text,
         rating_issue_associated_at: 5.days.ago
       ),
       RequestIssue.new(
@@ -59,7 +58,6 @@ describe RequestIssuesUpdate do
         contested_rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
         contested_issue_description: request_issue_contentions[1].text,
-        description: request_issue_contentions[1].text,
         rating_issue_associated_at: 5.days.ago,
         vacols_id: vacols_id,
         vacols_sequence_id: vacols_sequence_id
@@ -219,7 +217,6 @@ describe RequestIssuesUpdate do
 
           created_issue = review.request_issues.find_by(contested_rating_issue_reference_id: "issue3")
           expect(created_issue).to have_attributes(
-            description: "Service connection for cancer was denied",
             contested_issue_description: "Service connection for cancer was denied"
           )
           expect(created_issue.contention_reference_id).to_not be_nil
@@ -319,7 +316,6 @@ describe RequestIssuesUpdate do
             review_request: review,
             end_product_establishment: nonrating_end_product_establishment,
             contention_reference_id: nonrating_request_issue_contention.id,
-            description: nonrating_request_issue_contention.text,
             nonrating_issue_description: nonrating_request_issue_contention.text,
             issue_category: "Apportionment"
           )

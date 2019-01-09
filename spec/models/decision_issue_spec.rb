@@ -10,6 +10,7 @@ describe DecisionIssue do
   let(:decision_issue) do
     create(
       :decision_issue,
+      decision_review: decision_review,
       disposition: "test disposition",
       decision_text: decision_text,
       description: description,
@@ -19,7 +20,42 @@ describe DecisionIssue do
 
   let(:request_issues) { [] }
   let(:decision_text) { "decision text" }
+  let(:decision_review) { create(:supplemental_claim) }
 
+  context "#save" do
+    subject { decision_issue.save }
+
+    context "when description is not set" do
+      let(:description) { nil }
+
+      context "when decision text is set" do
+        it "sets description" do
+          subject
+          expect(decision_issue).to have_attributes(description: "decision text")
+        end
+      end
+
+      context "when decision text is not set" do
+        let(:decision_text) { nil }
+        let(:request_issues) { [create(:request_issue, :rating, contested_issue_description: "req desc")] }
+
+        it "sets description" do
+          subject
+
+          expect(decision_issue).to have_attributes(description: "test disposition: req desc")
+        end
+      end
+    end
+
+    context "when description is already set" do
+      let(:description) { "this is my decision" }
+
+      it "doesn't overwrite description" do
+        subject
+        expect(decision_issue).to have_attributes(description: "this is my decision")
+      end
+    end
+  end
   context "#rating?" do
     subject { decision_issue.rating? }
 
@@ -81,39 +117,12 @@ describe DecisionIssue do
       [create(
         :request_issue,
         issue_category: "test category",
-        nonrating_issue_description: "request issue description",
-        description: "request issue description"
+        nonrating_issue_description: "request issue description"
       )]
     end
 
     it "finds the issue category" do
       is_expected.to eq("test category")
-    end
-  end
-
-  context "#formatted_description" do
-    subject { decision_issue.formatted_description }
-
-    context "when description not set" do
-      context "when nonrating" do
-        let(:request_issues) do
-          [create(
-            :request_issue,
-            :nonrating,
-            issue_category: "test category",
-            nonrating_issue_description: "req issue description",
-            description: "req issue description"
-          )]
-        end
-
-        it { is_expected.to eq("test disposition: test category - req issue description") }
-      end
-    end
-
-    context "when description set" do
-      let(:description) { "a description" }
-
-      it { is_expected.to eq(description) }
     end
   end
 end
