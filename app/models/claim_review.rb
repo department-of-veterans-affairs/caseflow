@@ -69,12 +69,6 @@ class ClaimReview < DecisionReview
     DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
   end
 
-  def business_line
-    return if benefit_type_requires_payee_code?
-
-    super
-  end
-
   # Idempotent method to create all the artifacts for this claim.
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
