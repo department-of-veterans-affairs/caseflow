@@ -9,7 +9,7 @@ feature "NonComp Dispositions Page" do
     FeatureToggle.disable!(:decision_reviews)
   end
 
-  def fill_in_disposition(num, disposition, description=nil)
+  def fill_in_disposition(num, disposition, description = nil)
     if description
       fill_in "description-issue-#{num}", with: description
     end
@@ -73,7 +73,7 @@ feature "NonComp Dispositions Page" do
       visit dispositions_url
 
       click_on "Cancel"
-      expect(page.current_path).to eq business_line_url
+      expect(page).to have_current_path("/#{business_line_url}")
     end
 
     scenario "saves decision issues" do
@@ -105,7 +105,6 @@ feature "NonComp Dispositions Page" do
     end
 
     context "when there is an error saving" do
-
       scenario "Shows an error when something goes wrong" do
         visit dispositions_url
 

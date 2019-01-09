@@ -21,7 +21,7 @@ class DecisionReviewTask < GenericTask
       update!(status: Constants.TASK_STATUSES.completed, completed_at: Time.zone.now)
     end
 
-    return true
+    true
   end
 
   private

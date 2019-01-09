@@ -48,7 +48,7 @@ class DecisionIssue < ApplicationRecord
   def ui_hash
     {
       id: id,
-      requestIssueId: request_issues&.first.id,
+      requestIssueId: request_issues&.first&.id,
       description: description,
       disposition: disposition
     }

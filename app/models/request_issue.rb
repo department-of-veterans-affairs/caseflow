@@ -251,7 +251,7 @@ class RequestIssue < ApplicationRecord
       description: decision_issue_param[:description],
       decision_review: review_request,
       benefit_type: benefit_type,
-      promulgation_date: DateTime.parse(decision_issue_param[:decision_date])
+      promulgation_date: decision_issue_param[:decision_date]
     )
   end
 

@@ -13,7 +13,7 @@ class NonCompReviewsPage extends React.PureComponent {
     if (this.props.decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.SUCCEED) {
       successAlert = <SuccessAlert successCode="decisionIssueUpdateSucceeded"
         veteranName={this.props.decisionIssuesStatus.veteranName}
-        />
+      />;
     }
 
     return <div>

@@ -59,7 +59,7 @@ class DecisionReviewsController < ApplicationController
   private
 
   def decision_date
-    allowed_params[:decision_date]
+    Date.parse(params.require("decision_date")).to_datetime
   end
 
   def decision_issue_params
@@ -94,6 +94,6 @@ class DecisionReviewsController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:decision_review_business_line_slug, :business_line_slug, :task_id, :decision_date)
+    params.permit(:decision_review_business_line_slug, :business_line_slug, :task_id)
   end
 end

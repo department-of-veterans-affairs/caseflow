@@ -94,43 +94,51 @@ describe DecisionReviewsController, type: :controller do
 
       let(:decision_date) { "2018-10-1" }
 
-      it "creates decision issues for each request issue", :focus => true do
+      it "creates decision issues for each request issue", focus: true do
         put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id,
-          decision_issues: [
-          {
-            request_issue_id: request_issues.first.id,
-            disposition: "Granted",
-            description: "a rating note"
-          },
-          {
-            request_issue_id: request_issues.second.id,
-            disposition: "Denied",
-            description: "a nonrating note"
-          }],
-          decision_date: decision_date
-        }
+                               decision_issues: [
+                                 {
+                                   request_issue_id: request_issues.first.id,
+                                   disposition: "Granted",
+                                   description: "a rating note"
+                                 },
+                                 {
+                                   request_issue_id: request_issues.second.id,
+                                   disposition: "Denied",
+                                   description: "a nonrating note"
+                                 }
+                               ],
+                               decision_date: decision_date }
 
         datetime = Date.parse(decision_date).to_datetime
 
         expect(response.status).to eq(204)
         task.reload
-        appeal = task.appeal
         expect(task.appeal.decision_issues.length).to eq(2)
-        expect(task.appeal.decision_issues.find_by(disposition: "Granted", description: "a rating note", promulgation_date: datetime)).to_not be_nil
-        expect(task.appeal.decision_issues.find_by(disposition: "Denied", description: "a nonrating note", promulgation_date: datetime)).to_not be_nil
+        expect(task.appeal.decision_issues.find_by(
+                 disposition: "Granted",
+                 description: "a rating note",
+                 promulgation_date: datetime
+        )).to_not be_nil
+        expect(task.appeal.decision_issues.find_by(
+                 disposition: "Denied",
+                 description: "a nonrating note",
+                 promulgation_date: datetime
+        )).to_not be_nil
         expect(task.status).to eq("completed")
         expect(task.completed_at).to eq(Time.zone.now)
       end
 
       it "returns 400 when there is not a matching decision issue for each request issue" do
         put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id,
-          decision_issues: [
-          {
-            request_issue_id: request_issues.first.id,
-            disposition: "Granted",
-            description: "a rating note"
-          }]
-        }
+                               decision_issues: [
+                                 {
+                                   request_issue_id: request_issues.first.id,
+                                   disposition: "Granted",
+                                   description: "a rating note"
+                                 }
+                               ],
+                               decision_date: decision_date }
 
         expect(response.status).to eq(400)
       end

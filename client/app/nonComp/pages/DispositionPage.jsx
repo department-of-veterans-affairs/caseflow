@@ -11,7 +11,10 @@ import TextareaField from '../../components/TextareaField';
 
 import { ErrorAlert } from '../components/Alerts';
 import { DISPOSITION_OPTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
-import { longFormNameFromShort, formatDecisionIssuesFromRequestIssues, formatRequestIssuesWithDecisionIssues } from '../util';
+import { longFormNameFromShort,
+  formatDecisionIssuesFromRequestIssues,
+  formatRequestIssuesWithDecisionIssues,
+  buildDispositionSubmission } from '../util';
 import { taskUpdateDecisionIssues, taskUpdateDefaultPage } from '../actions/task';
 
 class NonCompDecisionIssue extends React.PureComponent {
@@ -61,7 +64,7 @@ class NonCompDecisionIssue extends React.PureComponent {
             label={`description-issue-${index}`}
             hideLabel
             value={this.props.decisionDescription}
-            onChange={this.handleDescriptionChange}/>
+            onChange={this.handleDescriptionChange} />
         </div>
         <div className="usa-width-one-third cf-disposition">
           <SearchableDropdown
@@ -85,7 +88,8 @@ class NonCompDispositionsPage extends React.PureComponent {
     let today = formatDate(new Date());
 
     this.state = {
-      requestIssues: formatRequestIssuesWithDecisionIssues(this.props.appeal.requestIssues, this.props.appeal.decisionIssues),
+      requestIssues: formatRequestIssuesWithDecisionIssues(
+        this.props.appeal.requestIssues, this.props.appeal.decisionIssues),
       decisionDate: today,
       isFilledOut: false
     };
@@ -97,11 +101,11 @@ class NonCompDispositionsPage extends React.PureComponent {
   }
 
   handleSave = () => {
-    function successHandler() {
+    const successHandler = () => {
       // update to the completed tab
       this.props.taskUpdateDefaultPage(1);
       this.props.history.push(`/${this.props.businessLineUrl}`);
-    }
+    };
 
     const decisionIssues = formatDecisionIssuesFromRequestIssues(this.state.requestIssues);
     const dispositionData = buildDispositionSubmission(decisionIssues, this.state.decisionDate);
@@ -112,21 +116,25 @@ class NonCompDispositionsPage extends React.PureComponent {
 
   checkFormFilledOut = () => {
     // check if all dispositions have values & date is set
-    const allDispositionsSet = this.state.requestIssues.every((requestIssue) => Boolean(requestIssue.decisionIssue.disposition));
-    this.setState({isFilledOut: allDispositionsSet && Boolean(this.state.decisionDate)})
+    const allDispositionsSet = this.state.requestIssues.every(
+      (requestIssue) => Boolean(requestIssue.decisionIssue.disposition));
+
+    this.setState({ isFilledOut: allDispositionsSet && Boolean(this.state.decisionDate) });
   }
 
   onDecisionIssueDispositionChange = (requestIssueIndex, value) => {
     let newRequestIssues = this.state.requestIssues;
+
     newRequestIssues[requestIssueIndex].decisionIssue.disposition = value;
-    this.setState({requestIssues: newRequestIssues});
+    this.setState({ requestIssues: newRequestIssues });
     this.checkFormFilledOut();
   }
 
   onDecisionIssueDescriptionChange = (requestIssueIndex, value) => {
     let newRequestIssues = this.state.requestIssues;
+
     newRequestIssues[requestIssueIndex].decisionIssue.description = value;
-    this.setState({requestIssues: newRequestIssues});
+    this.setState({ requestIssues: newRequestIssues });
   }
 
   render = () => {
@@ -141,7 +149,7 @@ class NonCompDispositionsPage extends React.PureComponent {
     let errorAlert = null;
 
     if (decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.FAIL) {
-      errorAlert = <ErrorAlert errorCode="decisionIssueUpdateFailed"/>
+      errorAlert = <ErrorAlert errorCode="decisionIssueUpdateFailed" />;
     }
 
     return <div>
