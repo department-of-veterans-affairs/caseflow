@@ -417,11 +417,6 @@ feature "Supplemental Claim Intake" do
   end
 
   context "Add / Remove Issues page" do
-    def check_row(label, text)
-      row = find("tr", text: label)
-      expect(row).to have_text(text)
-    end
-
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old1234" }
     let(:active_epe) { create(:end_product_establishment, :active) }
