@@ -52,7 +52,6 @@ describe RequestIssue do
       contested_rating_issue_reference_id: contested_rating_issue_reference_id,
       contested_rating_issue_profile_date: profile_date,
       contested_issue_description: "a rating request issue",
-      description: "a rating request issue",
       ramp_claim_id: ramp_claim_id,
       decision_sync_processed_at: decision_sync_processed_at,
       end_product_establishment: end_product_establishment,
@@ -66,7 +65,7 @@ describe RequestIssue do
       :request_issue,
       review_request: review,
       nonrating_issue_description: "a nonrating request issue description",
-      description: "a nonrating request issue description",
+      contested_issue_description: nonrating_contested_issue_description,
       issue_category: "a category",
       decision_date: 1.day.ago,
       decision_sync_processed_at: decision_sync_processed_at,
@@ -75,12 +74,13 @@ describe RequestIssue do
     )
   end
 
+  let(:nonrating_contested_issue_description) { nil }
+
   let!(:unidentified_issue) do
     create(
       :request_issue,
       review_request: review,
       unidentified_issue_text: "an unidentified issue",
-      description: "an unidentified issue",
       is_unidentified: true
     )
   end
@@ -209,6 +209,122 @@ describe RequestIssue do
           title_of_active_review: request_issue_in_active_review.review_title
         )
       end
+    end
+  end
+
+  context ".from_intake_data" do
+    subject { RequestIssue.from_intake_data(data) }
+
+    let(:data) do
+      {
+        rating_issue_reference_id: rating_issue_reference_id,
+        decision_text: "decision text",
+        issue_category: issue_category,
+        is_unidentified: is_unidentified,
+        decision_date: Time.zone.today,
+        notes: "notes",
+        untimely_exemption: true,
+        untimely_exemption_notes: "untimely notes",
+        ramp_claim_id: "ramp_claim_id",
+        vacols_sequence_id: 2,
+        contested_decision_issue_id: contested_decision_issue_id,
+        ineligible_reason: "untimely",
+        ineligible_due_to_id: 345
+      }
+    end
+
+    let(:rating_issue_reference_id) { nil }
+    let(:contested_decision_issue_id) { nil }
+    let(:issue_category) { nil }
+    let(:is_unidentified) { nil }
+
+    it do
+      is_expected.to have_attributes(
+        decision_date: Time.zone.today,
+        notes: "notes",
+        untimely_exemption: true,
+        untimely_exemption_notes: "untimely notes",
+        ramp_claim_id: "ramp_claim_id",
+        vacols_sequence_id: 2,
+        ineligible_reason: "untimely",
+        ineligible_due_to_id: 345
+      )
+    end
+
+    context "when rating_issue_reference_id is set" do
+      let(:rating_issue_reference_id) { "refid" }
+
+      it do
+        is_expected.to have_attributes(
+          contested_rating_issue_reference_id: "refid",
+          contested_issue_description: "decision text",
+          nonrating_issue_description: nil,
+          unidentified_issue_text: nil
+        )
+      end
+    end
+
+    context "when contested_decision_issue_id is set" do
+      let(:contested_decision_issue_id) { create(:decision_issue).id }
+
+      it do
+        is_expected.to have_attributes(
+          contested_decision_issue_id: contested_decision_issue_id,
+          contested_issue_description: "decision text",
+          nonrating_issue_description: nil,
+          unidentified_issue_text: nil
+        )
+      end
+    end
+
+    context "when issue_category is set" do
+      let(:issue_category) { "other" }
+
+      it do
+        is_expected.to have_attributes(
+          issue_category: "other",
+          contested_issue_description: nil,
+          nonrating_issue_description: "decision text",
+          unidentified_issue_text: nil
+        )
+      end
+    end
+
+    context "when is_unidentified is set" do
+      let(:is_unidentified) { true }
+
+      it do
+        is_expected.to have_attributes(
+          is_unidentified: true,
+          contested_issue_description: nil,
+          nonrating_issue_description: nil,
+          unidentified_issue_text: "decision text"
+        )
+      end
+    end
+  end
+
+  context "#description" do
+    subject { request_issue.description }
+
+    context "when contested_issue_description present" do
+      let(:request_issue) { rating_request_issue }
+      it { is_expected.to eq("a rating request issue") }
+    end
+
+    context "when nonrating" do
+      let(:request_issue) { nonrating_request_issue }
+      it { is_expected.to eq("a category - a nonrating request issue description") }
+
+      context "when contested_issue_description present" do
+        let(:nonrating_contested_issue_description) { "nonrating contested" }
+        it { is_expected.to eq("nonrating contested") }
+      end
+    end
+
+    context "when unidentified" do
+      let(:request_issue) { unidentified_issue }
+      it { is_expected.to eq("an unidentified issue") }
     end
   end
 
