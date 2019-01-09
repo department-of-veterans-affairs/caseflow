@@ -364,6 +364,8 @@ feature "Edit issues" do
     click_intake_add_issue
 
     add_intake_rating_issue(nonrating_decision_issue_description)
+
+    binding.pry
     expect(page).to have_content(nonrating_decision_issue_description)
     expect(page).to have_content(
       Constants.INELIGIBLE_REQUEST_ISSUES
@@ -384,14 +386,13 @@ feature "Edit issues" do
     expect(updated_request_issue.review_request).to be_nil
 
     # check that new request issue is created contesting the decision issue
-    expect(RequestIssue.find_by(review_request: review_request,
-                                contested_decision_issue_id: contested_decision_issues.first.id,
-                                description: contested_decision_issues.first.formatted_description)).to_not be_nil
+    request_issues = review_request.reload.request_issues
+    ri_one = request_issues.find { |ri| ri.contested_decision_issue_id == contested_decision_issues.first.id }
+    ri_two = request_issues.find { |ri| ri.contested_decision_issue_id == contested_decision_issues.second.id }
 
-    expect(RequestIssue.find_by(review_request: review_request,
-                                contested_decision_issue_id: contested_decision_issues.second.id,
-                                ineligible_reason: :duplicate_of_rating_issue_in_active_review,
-                                description: contested_decision_issues.second.formatted_description)).to_not be_nil
+    expect(ri_one.description).to eq(contested_decision_issues.first.formatted_description)
+    expect(ri_two.ineligible_reason).to eq(:duplicate_of_rating_issue_in_active_review)
+    expect(ro_two.description).to eq(contested_decision_issues.second.formatted_description)
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
