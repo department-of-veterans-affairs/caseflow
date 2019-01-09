@@ -265,6 +265,15 @@ class EndProductEstablishment < ApplicationRecord
     VBMSService.get_dispositions!(claim_id: reference_id)
   end
 
+  def search_table_ui_hash
+    {
+      code: code,
+      modifier: modifier,
+      synced_status: synced_status,
+      last_synced_at: last_synced_at
+    }
+  end
+
   def status_canceled?
     synced_status == CANCELED_STATUS
   end

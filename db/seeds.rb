@@ -694,6 +694,7 @@ class SeedDB
 
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
+    Fakes::EndProductStore.new.clear!
   end
 
   def setup_dispatch

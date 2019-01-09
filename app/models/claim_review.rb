@@ -27,6 +27,11 @@ class ClaimReview < DecisionReview
 
       claim_review
     end
+
+    def find_all_by_file_number(file_number)
+      HigherLevelReview.where(veteran_file_number: file_number) +
+        SupplementalClaim.where(veteran_file_number: file_number)
+    end
   end
 
   def ui_hash
@@ -35,11 +40,6 @@ class ClaimReview < DecisionReview
       payeeCode: payee_code,
       hasClearedEP: cleared_ep?
     )
-  end
-
-  def self.find_all_by_file_number(file_number)
-    HigherLevelReview.where(veteran_file_number: file_number) +
-      SupplementalClaim.where(veteran_file_number: file_number)
   end
 
   def caseflow_only_edit_issues_url
@@ -154,7 +154,7 @@ class ClaimReview < DecisionReview
       claim_id: id,
       veteran_file_number: veteran_file_number,
       veteran_full_name: Veteran.find_by(file_number: veteran_file_number).name.formatted(:readable_full),
-      end_products: end_product_establishments,
+      end_products: end_product_establishments.map(&:search_table_ui_hash),
       claimant_names: claimants.map(&:name),
       review_type: self.class.to_s.underscore
     }

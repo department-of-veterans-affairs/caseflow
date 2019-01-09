@@ -20,6 +20,7 @@ class SubdividedTableRow extends React.PureComponent {
       height: '2.2rem',
       padding: '1rem 1.5rem'
     };
+
     const topBorderStyle = '1px solid #D6D7D9';
 
     if (this.props.rowNumber > 0) {

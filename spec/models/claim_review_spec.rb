@@ -77,6 +77,13 @@ describe ClaimReview do
     )
   end
 
+  let!(:supplemental_claim) do
+    create(
+     :supplemental_claim,
+     veteran_file_number: veteran_file_number
+    )
+  end
+
   let!(:claimant) do
     create(
       :claimant,
@@ -639,6 +646,20 @@ describe ClaimReview do
       hlr.end_product_establishments.first.update!(reference_id: "abc123")
 
       expect(HigherLevelReview.find_by_uuid_or_reference_id!("abc123")).to eq(hlr)
+    end
+  end
+
+  describe "#find_all_by_file_number" do
+    it "finds higher level reviews and supplemental claims" do
+      expect(ClaimReview.find_all_by_file_number(veteran_file_number).length).to eq(2)
+    end
+  end
+
+  describe "#search_table_ui_hash" do
+    it "returns review type" do
+      expect([*supplemental_claim].map(&:search_table_ui_hash)).to include(hash_including(
+        review_type: "supplemental_claim"
+      ))
     end
   end
 end
