@@ -19,12 +19,18 @@ class HearingRepository
       hearings
     end
 
-    def fetch_video_hearings_for_parent(parent_hearing_pkseq)
-      hearings_for(VACOLS::CaseHearing.video_hearings_for_master_record(parent_hearing_pkseq))
+    def fetch_video_hearings_for_parents(parent_hearings_pkseq)
+      VACOLS::CaseHearing.video_hearings_for_master_records(parent_hearings_pkseq)
+        .group_by(&:vdkey).transform_values do |value|
+        hearings_for(value)
+      end
     end
 
-    def fetch_co_hearings_for_parent(parent_hearing_date)
-      hearings_for(VACOLS::CaseHearing.co_hearings_for_master_record(parent_hearing_date))
+    def fetch_co_hearings_for_dates(parent_hearing_dates)
+      VACOLS::CaseHearing.co_hearings_for_master_records(parent_hearing_date)
+        .group_by(&:hearing_date).transform_values do |value|
+        hearings_for(value)
+      end
     end
 
     def load_issues(hearings)

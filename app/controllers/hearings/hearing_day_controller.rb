@@ -90,12 +90,12 @@ class Hearings::HearingDayController < HearingScheduleController
   def fetch_hearings(hearing_day, id)
     if hearing_day[:hearing_type] == "V"
       {
-        hearings: HearingRepository.fetch_video_hearings_for_parent(id),
+        hearings: HearingRepository.fetch_video_hearings_for_parents([id]),
         regional_office: hearing_day[:regional_office]
       }
     elsif hearing_day[:hearing_type] == "C"
       {
-        hearings: HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date]),
+        hearings: HearingRepository.fetch_co_hearings_for_dates([hearing_day[:hearing_date]]),
         regional_office: "C"
       }
     else

@@ -23,9 +23,9 @@ class HearingDay < ApplicationRecord
 
   def update_children_records
     hearings = if hearing_type == HEARING_TYPES[:central]
-                 HearingRepository.fetch_co_hearings_for_parent(hearing_date)
+                 HearingRepository.fetch_co_hearings_for_dates([hearing_date])
                else
-                 HearingRepository.fetch_video_hearings_for_parent(id)
+                 HearingRepository.fetch_video_hearings_for_parents([id])
                end
     hearings.each do |hearing|
       hearing.update_caseflow_and_vacols(
@@ -104,25 +104,40 @@ class HearingDay < ApplicationRecord
       regional_office_keys = total_video_and_co.map { |hearing_day| hearing_day[:regional_office] }
       regional_office_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
 
-      enriched_hearing_days = []
-      total_video_and_co.each do |hearing_day|
-        hearings = if hearing_day[:regional_office].nil?
-                     HearingRepository.fetch_co_hearings_for_parent(hearing_day[:hearing_date])
-                   else
-                     HearingRepository.fetch_video_hearings_for_parent(hearing_day[:id])
-                   end
+      symbol_to_group_by = nil
 
-        scheduled_hearings = filter_non_scheduled_hearings(hearings)
-        total_slots = HearingDayRepository
-          .fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)
+      all_hearings_for_days = if regional_office.nil?
+        symbol_to_group_by = :hearing_date
 
-        next unless scheduled_hearings.length < total_slots && !hearing_day[:lock]
+        HearingRepository.fetch_co_hearings_for_dates(
+          total_video_and_co.map { |hearing| hearing[symbol_to_group_by]}
+        )
+      else
+        symbol_to_group_by = :id
 
-        enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room)
-        enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] = total_slots
-        enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = scheduled_hearings
+        HearingRepository.fetch_video_hearings_for_parents(
+          total_video_and_co.map { |hearing| hearing[symbol_to_group_by]}
+        )
       end
-      enriched_hearing_days
+
+      binding.pry
+
+      grouped_all_hearings_for_days = total_video_and_co.group_by do |hearing_day|
+        hearing_day[symbol_to_group_by]
+      end
+      
+      grouped_all_hearings_for_days.keys.map do |key|
+        hearing_day = grouped_all_hearings_for_days[key][0]
+        scheduled_hearings = filter_non_scheduled_hearings(all_hearings_for_days[key.to_s])
+        total_slots = HearingDayRepository.fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)
+
+        return nil if scheduled_hearings.length >= total_slots || hearing_day[:lock]
+
+        hearing_day.slice(:id, :hearing_date, :hearing_type, :room).tap do |day|
+          day[:hearings] = scheduled_hearings
+          day[:total_slots] = total_slots
+        end
+      end.compact
     end
 
     def filter_non_scheduled_hearings(hearings)

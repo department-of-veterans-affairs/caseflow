@@ -257,7 +257,7 @@ describe HearingDay do
                                                      hearing.hearing_date.beginning_of_day + 10, "C")
       end
 
-      it "returns nested hash structure" do
+      it "returns nested hash structure", focus: true do
         expect(subject.size).to eq 1
         expect(subject[0][:hearings].size).to eq 1
         expect(subject[0][:hearing_type]).to eq "C"
