@@ -58,6 +58,6 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
   end
 
   attribute :type do
-    decision_review.class.review_title
+    decision_review.is_a?(Appeal) ? "Board Grant" : decision_review.class.review_title
   end
 end
