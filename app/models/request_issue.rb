@@ -125,6 +125,7 @@ class RequestIssue < ApplicationRecord
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
+        benefit_type: data[:benefit_type] || "compensation",
         notes: data[:notes],
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],

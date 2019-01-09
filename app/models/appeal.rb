@@ -207,14 +207,16 @@ class Appeal < DecisionReview
   end
 
   def benefit_type
-    # temporary until ticket for appeals benefit type by issue is implemented
-    # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
-    "compensation"
+    fail "Multiple benefit_types possible"
+  end
+
+  def caseflow_only?
+    false
   end
 
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
+      issue.update!(veteran_participant_id: veteran.participant_id)
       issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
     request_issues.reload
@@ -296,5 +298,19 @@ class Appeal < DecisionReview
 
   def bgs
     BGSService.new
+  end
+
+  def include_ratings_based_on_benefit_type?
+    false
+  end
+
+  def contestable_decision_issues
+    return [] unless receipt_date
+
+    DecisionIssue.where(participant_id: veteran.participant_id).select do |issue|
+      next if issue.decision_review.is_a?(Appeal) && !issue.decision_review.outcoded?
+
+      issue.approx_decision_date && issue.approx_decision_date < receipt_date
+    end
   end
 end

@@ -155,13 +155,18 @@ class NonratingRequestIssueModal extends React.Component {
 
   render() {
     let {
+      formType,
       intakeData,
       closeHandler
     } = this.props;
 
     const { benefitType, category, description, decisionDate, selectedNonratingIssueId } = this.state;
     const issueNumber = (intakeData.addedIssues || []).length + 1;
-    const requiredFieldsMissing = !benefitType || !description || !category || !decisionDate;
+    let requiredFieldsMissing = !description || !category || !decisionDate;
+
+    if (formType === 'appeal' && !benefitType) {
+      requiredFieldsMissing = true;
+    }
 
     let nonratingRequestIssueOptions = intakeData.activeNonratingRequestIssues.filter((issue) => {
       return category && issue.category === category.value;
@@ -216,7 +221,7 @@ class NonratingRequestIssueModal extends React.Component {
 
     let benefitTypeElement = '';
 
-    if (intakeData.formType === 'appeal') {
+    if (formType === 'appeal') {
       benefitTypeElement = <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} />;
     }
 

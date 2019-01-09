@@ -62,7 +62,7 @@ class DecisionReview < ApplicationRecord
 
   def serialized_ratings
     return unless receipt_date
-    return if caseflow_only?
+    return if caseflow_only? && include_ratings_based_on_benefit_type?
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
@@ -210,6 +210,10 @@ class DecisionReview < ApplicationRecord
   end
 
   private
+
+  def include_ratings_based_on_benefit_type?
+    true
+  end
 
   def cached_rating_issues
     cached_serialized_ratings.inject([]) do |result, rating_hash|
