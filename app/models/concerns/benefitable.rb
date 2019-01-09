@@ -6,8 +6,6 @@ module Benefitable
     @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
   end
 
-  private
-
   def effectuated_in_vbms?
     benefit_type_requires_payee_code?
   end
