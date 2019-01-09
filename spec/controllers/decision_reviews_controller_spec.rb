@@ -119,12 +119,12 @@ describe DecisionReviewsController, type: :controller do
                  disposition: "Granted",
                  description: "a rating note",
                  promulgation_date: datetime
-        )).to_not be_nil
+               )).to_not be_nil
         expect(task.appeal.decision_issues.find_by(
                  disposition: "Denied",
                  description: "a nonrating note",
                  promulgation_date: datetime
-        )).to_not be_nil
+               )).to_not be_nil
         expect(task.status).to eq("completed")
         expect(task.completed_at).to eq(Time.zone.now)
       end
