@@ -694,7 +694,8 @@ class SeedDB
 
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
-    Fakes::EndProductStore.new.clear!
+    r = Redis.new(url: Rails.application.secrets.redis_url_cache)
+    r.keys.each { |k| r.del(k) }
   end
 
   def setup_dispatch
