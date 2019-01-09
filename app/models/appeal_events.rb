@@ -5,52 +5,24 @@ class AppealEvents
   attr_accessor :version
 
   def all
-    if version == 1
-      scope_to_appeal(all_unscoped)
-    else
-      [
-        claim_event,
-        nod_event,
-        soc_event,
-        form9_event,
-        ssoc_events,
-        certification_event,
-        remand_return_event,
-        hearing_events,
-        hearing_transcript_events,
-        decision_event,
-        issue_event,
-        ramp_notice_event,
-        cavc_decision_events
-      ].flatten.uniq.select(&:valid?)
-    end
-  end
-
-  private
-
-  def all_unscoped
     [
+      claim_event,
       nod_event,
       soc_event,
       form9_event,
-      v1_ssoc_events,
+      ssoc_events,
       certification_event,
-      activation_event,
-      v1_hearing_events,
-      v1_decision_event,
+      remand_return_event,
+      hearing_events,
+      hearing_transcript_events,
+      decision_event,
+      issue_event,
+      ramp_notice_event,
       cavc_decision_events
-    ].flatten.select(&:valid?)
+    ].flatten.uniq.select(&:valid?)
   end
 
-  # If there is a prior_decision_date for this appeal, we should scope
-  # events to only those made after the prior_decision_date, because
-  # any events that happened before the prior_decision_date are associated
-  # with the remanded appeal, not this appeal.
-  def scope_to_appeal(events)
-    return events unless appeal.prior_decision_date
-
-    events.reject { |event| event.date < appeal.prior_decision_date }
-  end
+  private
 
   def claim_event
     AppealEvent.new(type: :claim_decision, date: appeal.notification_date)
@@ -68,25 +40,8 @@ class AppealEvents
     AppealEvent.new(type: :form9, date: appeal.form9_date)
   end
 
-  def v1_ssoc_events
-    appeal.ssoc_dates.map do |ssoc_date|
-      # If the SSOC was released after the appeal was certified,
-      # mark it as a post-remand ssoc so consumers of the API
-      # can easily tell which SSOCs happened at which step of the process.
-      if appeal.certification_date && ssoc_date > appeal.certification_date
-        AppealEvent.new(type: :remand_ssoc, date: ssoc_date)
-      else
-        AppealEvent.new(type: :ssoc, date: ssoc_date)
-      end
-    end
-  end
-
   def ssoc_events
     appeal.ssoc_dates.map { |ssoc_date| AppealEvent.new(type: :ssoc, date: ssoc_date) }
-  end
-
-  def v1_decision_event
-    AppealEvent.new(v1_disposition: appeal.disposition_remand_priority, date: appeal.decision_date)
   end
 
   def decision_event
@@ -109,10 +64,6 @@ class AppealEvents
 
   def remand_return_event
     AppealEvent.new(type: :remand_return, date: appeal.remand_return_date)
-  end
-
-  def v1_hearing_events
-    appeal.hearings.select(&:closed?).map { |hearing| AppealEvent.new(v1_hearing: hearing) }
   end
 
   def hearing_events
