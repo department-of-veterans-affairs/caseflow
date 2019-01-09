@@ -28,7 +28,7 @@ class BoardGrantEffectuation < ApplicationRecord
   end
 
   def effectuated_in_vbms?
-    %w[compensation pension].include?(benefit_type)
+    ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
   end
 
   def hydrate_from_granted_decision_issue
@@ -40,7 +40,7 @@ class BoardGrantEffectuation < ApplicationRecord
     if effectuated_in_vbms?
       self.end_product_establishment = find_or_build_end_product_establishment
     else
-      find_or_build_noncomp_task
+      find_or_build_effectuation_task
     end
   end
 
@@ -49,18 +49,18 @@ class BoardGrantEffectuation < ApplicationRecord
     @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
   end
 
-  def find_or_build_noncomp_task
-    find_matching_noncomp_task || create_noncomp_task!
+  def find_or_build_effectuation_task
+    find_matching_effectuation_task || create_effectuation_task!
   end
 
-  def find_matching_noncomp_task
+  def find_matching_effectuation_task
     BoardGrantEffectuationTask.find_by(
       appeal: appeal,
       assigned_to: business_line
     )
   end
 
-  def create_noncomp_task!
+  def create_effectuation_task!
     BoardGrantEffectuationTask.create!(
       appeal: appeal,
       assigned_at: Time.zone.now,
