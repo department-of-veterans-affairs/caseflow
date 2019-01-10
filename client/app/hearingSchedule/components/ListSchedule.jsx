@@ -112,10 +112,10 @@ class ListSchedule extends React.Component {
   getHearingScheduleRows = () => {
     const { hearingSchedule } = this.props;
 
-    return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.hearingDate, 'asc').
+    return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.scheduledFor, 'asc').
       map((hearingDay) => ({
-        hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>
-          {moment(hearingDay.hearingDate).format('ddd M/DD/YYYY')}</Link>,
+        scheduledFor: <Link to={`/schedule/docket/${hearingDay.id}`}>
+          {moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}</Link>,
         hearingType: hearingDay.hearingType,
         regionalOffice: hearingDay.regionalOffice,
         room: hearingDay.room,
@@ -133,9 +133,9 @@ class ListSchedule extends React.Component {
       {
         header: 'Date',
         align: 'left',
-        valueName: 'hearingDate',
+        valueName: 'scheduledFor',
         getSortValue: (hearingDay) => {
-          return hearingDay.hearingDate;
+          return hearingDay.scheduledFor;
         }
       },
       {
@@ -279,7 +279,7 @@ class ListSchedule extends React.Component {
 
 ListSchedule.propTypes = {
   hearingSchedule: PropTypes.shape({
-    hearingDate: PropTypes.string,
+    scheduledFor: PropTypes.string,
     hearingType: PropTypes.string,
     regionalOffice: PropTypes.string,
     room: PropTypes.string,

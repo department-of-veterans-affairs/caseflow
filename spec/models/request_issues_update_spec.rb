@@ -193,8 +193,9 @@ describe RequestIssuesUpdate do
           expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
             hash_including(
               veteran_file_number: review.veteran_file_number,
-              contention_descriptions: ["Service connection for cancer was denied"],
-              special_issues: [{ code: "VO", narrative: "AMA SOC/SSOC Opt-in" }]
+              contentions: [{
+                description: "Service connection for cancer was denied"
+              }]
             )
           )
 

@@ -299,11 +299,6 @@ feature "Appeal Intake" do
     end
   end
 
-  def check_row(label, text)
-    row = find("tr", text: label)
-    expect(row).to have_text(text)
-  end
-
   scenario "Add / Remove Issues page" do
     duplicate_reference_id = "xyz789"
     old_reference_id = "old1234"
