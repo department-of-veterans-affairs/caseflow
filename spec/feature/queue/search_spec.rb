@@ -166,7 +166,6 @@ RSpec.feature "Search" do
         end
 
         it "table does not display a column for a badge if no cases have hearings" do
-          expect(page).to have_content("case found for")
           docket_column_header = find("table.cf-case-list-table > thead > tr > th:first-child > span")
           expect(docket_column_header).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
         end
