@@ -233,10 +233,10 @@ class AppealSeries < ApplicationRecord
   def details_for_status
     case status
     when :scheduled_hearing
-      hearing = latest_appeal.scheduled_hearings.min_by(&:date)
+      hearing = latest_appeal.scheduled_hearings.min_by(&:scheduled_for)
 
       {
-        date: hearing.date.to_date,
+        date: hearing.scheduled_for.to_date,
         type: hearing.type,
         location: hearing.location
       }
