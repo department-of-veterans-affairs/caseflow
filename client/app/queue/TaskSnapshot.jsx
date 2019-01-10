@@ -1,18 +1,14 @@
 import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
-
 import {
   appealWithDetailSelector,
   nonRootActionableTasksForAppeal,
   getAllTasksForAppeal
 } from './selectors';
-import CaseDetailsDescriptionList from './components/CaseDetailsDescriptionList';
-import OnHoldLabel from './components/OnHoldLabel';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
 import COPY from '../../COPY.json';
-import { DateString } from '../util/DateUtil';
 import type { Appeal } from './types/models';
 import type { State } from './types/state';
 import {
@@ -20,18 +16,6 @@ import {
   sectionHeadingStyling,
   anchorJumpLinkStyling
 } from './StickyNavContentArea';
-import Button from '../components/Button';
-
-const taskContainerStyling = css({
-  border: 'none',
-  verticalAlign: 'top',
-  padding: '3px',
-  paddingBottom: '3rem'
-});
-
-const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
-const taskInformationContainerStyling = css(taskContainerStyling, { width: '25%' });
-const taskActionsContainerStyling = css(taskContainerStyling, { width: '50%' });
 
 const tableStyling = css({
   width: '100%',
@@ -67,7 +51,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     if (taskLength) {
       sectionBody = <table {...tableStyling}>
         <tbody>
-          { <TaskRows appeal={appeal} taskList={tasks} /> }
+          { <TaskRows appeal={appeal} taskList={tasks} timeline={false} /> }
         </tbody>
       </table>;
     }

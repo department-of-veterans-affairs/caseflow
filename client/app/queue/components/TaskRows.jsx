@@ -22,16 +22,9 @@ export const grayLineStyling = css({
   background: COLORS.GREY_LIGHT,
   margin: 'auto',
   position: 'absolute',
-  top: '25px',
-  left: '45%',
   top: '39px',
   left: '49.5%',
   bottom: 0
-});
-
-const buttonStyling = css({
-  float: 'right',
-  paddingRight: '10px'
 });
 
 const taskContainerStyling = css({
@@ -52,19 +45,6 @@ const taskInfoWithIconContainer = css({
   position: 'relative',
   verticalAlign: 'top',
   width: '45px'
-});
-
-const tableCellWithIcon = css({
-  textAlign: 'center',
-  border: 'none',
-  padding: 0
-});
-
-const tableCell = css({
-  border: 'none',
-  verticalAlign: 'top',
-  padding: '3px',
-  '& > dd': { textTransform: 'uppercase' }
 });
 
 type Params = {|
@@ -157,7 +137,7 @@ class TaskRows extends React.PureComponent {
     }
 
     return <React.Fragment key={`${task.uniqueId}fragment`}>
-      {task.instructions.map((text, i) => <React.Fragment key={`${task.uniqueId}span`}>
+      {task.instructions.map((text) => <React.Fragment key={`${task.uniqueId}span`}>
         <span key={`${task.uniqueId}instructions`}>{text}</span><br /></React.Fragment>)}
     </React.Fragment>;
   }
@@ -192,19 +172,20 @@ class TaskRows extends React.PureComponent {
   render = () => {
     const {
       appeal,
-      taskList
+      taskList,
+      timeline
     } = this.props;
 
-    return taskList.map((task, index) =>
-      <React.Fragment>
-        { taskList[0].completedOn && <tr>
-            <td {...taskTimeContainerStyling}></td>
-            <td {...taskInfoWithIconContainer}><GrayDot /><div {...grayLineStyling} {...css({ top: '25px' })} /></td>
-            <td {...taskInformationContainerStyling}>
-              { appeal.decisionDate ? COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING } <br />
-            </td>
-          </tr>
-        }
+    return <React.Fragment key={appeal.externalId}>
+      { timeline && <tr>
+        <td {...taskTimeContainerStyling}></td>
+        <td {...taskInfoWithIconContainer}><GrayDot /><div {...grayLineStyling} {...css({ top: '25px' })} /></td>
+        <td {...taskInformationContainerStyling}>
+          { appeal.decisionDate ? COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
+          } <br />
+        </td>
+      </tr> }
+      { taskList.map((task, index) =>
         <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling}>
             <CaseDetailsDescriptionList>
@@ -224,22 +205,21 @@ class TaskRows extends React.PureComponent {
               { this.taskInstructionsListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
-          { !taskList[0].completedOn && <td {...taskActionsContainerStyling}>
+          { !timeline && <td {...taskActionsContainerStyling}>
             { this.showActionsListItem(task, appeal) }
           </td> }
         </tr>
-        { taskList[0].completedOn && <tr>
-            <td {...taskTimeContainerStyling}>
-              { appeal.receiptDate ? moment(appeal.receiptDate).format('MM/DD/YYYY') : null }
-            </td>
-            <td {...taskInfoWithIconContainer}>{ task.completedOn ? <GreenCheckmark /> : <GrayDot /> } </td>
-            <td {...taskInformationContainerStyling}>
-              { appeal.receiptDate ? COPY.CASE_TIMELINE_NOD_RECEIVED : COPY.CASE_TIMELINE_NOD_PENDING } <br />
-            </td>
-          </tr>
-        }
-      </React.Fragment>
-    )
+      ) }
+      { timeline && <tr>
+        <td {...taskTimeContainerStyling}>
+          { appeal.receiptDate ? moment(appeal.receiptDate).format('MM/DD/YYYY') : null }
+        </td>
+        <td {...taskInfoWithIconContainer}>{ appeal.receiptDate ? <GreenCheckmark /> : <GrayDot /> } </td>
+        <td {...taskInformationContainerStyling}>
+          { appeal.receiptDate ? COPY.CASE_TIMELINE_NOD_RECEIVED : COPY.CASE_TIMELINE_NOD_PENDING } <br />
+        </td>
+      </tr> }
+    </React.Fragment>;
   }
 }
 
