@@ -26,6 +26,7 @@ class NonCompTabsUnconnected extends React.PureComponent {
     return <TabWindow
       name="tasks-organization-queue"
       tabs={tabs}
+      defaultPage={this.props.currentTab}
     />;
   }
 }
@@ -111,7 +112,8 @@ class TaskTableTab extends React.PureComponent {
 const NonCompTabs = connect(
   (state) => ({
     inProgressTasks: state.inProgressTasks,
-    completedTasks: state.completedTasks
+    completedTasks: state.completedTasks,
+    currentTab: state.currentTab
   })
 )(NonCompTabsUnconnected);
 

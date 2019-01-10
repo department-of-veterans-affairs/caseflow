@@ -180,6 +180,13 @@ class RequestIssue < ApplicationRecord
     ineligible_reason.nil?
   end
 
+  def special_issues
+    specials = []
+    specials << { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
+    specials << { code: "SSR", narrative: "Same Station Review" } if decision_review.try(:same_office)
+    return specials unless specials.empty?
+  end
+
   def ui_hash
     {
       id: id,
@@ -269,6 +276,17 @@ class RequestIssue < ApplicationRecord
     # if the decision issue is not associated with any other request issue, also delete
     decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
     decision_issues.delete_all
+  end
+
+  def create_decision_issue_from_params(decision_issue_param)
+    decision_issues.create!(
+      participant_id: review_request.veteran.participant_id,
+      disposition: decision_issue_param[:disposition],
+      description: decision_issue_param[:description],
+      decision_review: review_request,
+      benefit_type: benefit_type,
+      promulgation_date: decision_issue_param[:decision_date]
+    )
   end
 
   private
