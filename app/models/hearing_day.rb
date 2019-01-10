@@ -23,10 +23,11 @@ class HearingDay < ApplicationRecord
 
   def update_children_records
     hearings = if hearing_type == HEARING_TYPES[:central]
-                 HearingRepository.fetch_co_hearings_for_dates([hearing_date])
+                 HearingRepository.fetch_co_hearings_for_date(hearing_date)
                else
-                 HearingRepository.fetch_video_hearings_for_parents([id])
+                 HearingRepository.fetch_video_hearings_for_parent(id)
                end
+
     hearings.each do |hearing|
       hearing.update_caseflow_and_vacols(
         room: room,
@@ -106,7 +107,7 @@ class HearingDay < ApplicationRecord
 
       symbol_to_group_by = nil
 
-      all_hearings_for_days = if regional_office.nil?
+      all_hearings_for_days = if regional_office.nil? || regional_office == "C"
         symbol_to_group_by = :hearing_date
 
         HearingRepository.fetch_co_hearings_for_dates(
@@ -120,15 +121,14 @@ class HearingDay < ApplicationRecord
         )
       end
 
-      binding.pry
-
       grouped_all_hearings_for_days = total_video_and_co.group_by do |hearing_day|
-        hearing_day[symbol_to_group_by]
+        hearing_day[symbol_to_group_by].to_s
       end
-      
+
       grouped_all_hearings_for_days.keys.map do |key|
         hearing_day = grouped_all_hearings_for_days[key][0]
-        scheduled_hearings = filter_non_scheduled_hearings(all_hearings_for_days[key.to_s])
+
+        scheduled_hearings = filter_non_scheduled_hearings(all_hearings_for_days[key] || [])
         total_slots = HearingDayRepository.fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)
 
         return nil if scheduled_hearings.length >= total_slots || hearing_day[:lock]

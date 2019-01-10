@@ -19,16 +19,24 @@ class HearingRepository
       hearings
     end
 
+    def fetch_video_hearings_for_parent(parent_hearing_pkseq)
+      fetch_video_hearings_for_parents([parent_hearing_pkseq]).values.first || []
+    end
+
     def fetch_video_hearings_for_parents(parent_hearings_pkseq)
       VACOLS::CaseHearing.video_hearings_for_master_records(parent_hearings_pkseq)
-        .group_by(&:vdkey).transform_values do |value|
+        .group_by { |record| record.vdkey.to_s }.transform_values do |value|
         hearings_for(value)
       end
     end
 
+    def fetch_co_hearings_for_date(parent_hearing_date)
+      fetch_co_hearings_for_dates([parent_hearing_date]).values.first || []
+    end
+
     def fetch_co_hearings_for_dates(parent_hearing_dates)
-      VACOLS::CaseHearing.co_hearings_for_master_records(parent_hearing_date)
-        .group_by(&:hearing_date).transform_values do |value|
+      VACOLS::CaseHearing.co_hearings_for_master_records(parent_hearing_dates)
+        .group_by { |record| record.hearing_date.to_time.to_date.to_s }.transform_values do |value|
         hearings_for(value)
       end
     end
@@ -182,7 +190,7 @@ class HearingRepository
     def hearings_for(case_hearings)
       vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact
 
-      fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids)
+      fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids).includes(:appeal, :user)
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
       case_hearings.map do |vacols_record|

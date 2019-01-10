@@ -65,18 +65,14 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def find_hearing_day(hearing_pkseq)
-      select_schedule_days.find_by(hearing_pkseq: hearing_pkseq)
+      select_schedule_days.find_by(hearing_pkseq: hearing_pkseq).includes(brieff: [:representative])
     end
 
     def video_hearings_for_master_records(parent_hearings_pkseq)
-      RequestStore[:video_hearings_for_master_record] = (RequestStore[:video_hearings_for_master_record] || 0) + 1
-      Rails.logger.info "VIDEO #{RequestStore[:video_hearings_for_master_record]}"
       select_hearings.where(vdkey: parent_hearings_pkseq)
     end
 
     def co_hearings_for_master_records(parent_hearing_dates)
-      RequestStore[:co_hearings_for_master_record] = (RequestStore[:co_hearings_for_master_record] || 0) + 1
-      Rails.logger.info "CO #{RequestStore[:co_hearings_for_master_record]}"
       select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) = ?",
                             "C", "%VIDEO%", parent_hearing_dates.map(&:to_date))
     end
