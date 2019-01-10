@@ -84,7 +84,7 @@ RSpec.feature "Colocated checkout flows" do
 
       expect(page).to have_content("Actions")
 
-      click_dropdown(text: "Place hold")
+      click_dropdown(text: Constants.TASK_ACTIONS.PLACE_HOLD.to_h[:label])
 
       expect(page).to have_content(
         format(COPY::COLOCATED_ACTION_PLACE_HOLD_HEAD, vet_name, appeal.sanitized_vbms_id)

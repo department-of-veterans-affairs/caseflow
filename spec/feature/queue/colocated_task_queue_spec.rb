@@ -31,7 +31,7 @@ RSpec.feature "ColocatedTask" do
       visit("/queue/appeals/#{appeal.uuid}")
 
       find(".Select-control", text: "Select an action…").click
-      find("div", class: "Select-option", text: COPY::ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label]).click
 
       # Redirected to assign colocated action page
       action = Constants.CO_LOCATED_ADMIN_ACTIONS.poa_clarification
@@ -49,7 +49,7 @@ RSpec.feature "ColocatedTask" do
 
       # Return case to attorney.
       find(".Select-control", text: "Select an action…").click
-      find("div", class: "Select-option", text: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h[:label]).click
       find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
       # Redirected to personal queue page. Return to attorney succeeds.
@@ -64,7 +64,7 @@ RSpec.feature "ColocatedTask" do
       # Click into case details page. Expect to see draft decision option.
       click_on(appeal.veteran.name.formatted(:readable_full))
       find(".Select-control", text: "Select an action…").click
-      expect(page).to have_content(COPY::ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL)
+      expect(page).to have_content(Constants.TASK_ACTIONS.REVIEW_DECISION.to_h[:label])
 
       # ColocatedTask assigned to organization should have status completed.
       expect(atty_task.children.first.status).to eq(Constants.TASK_STATUSES.completed)
