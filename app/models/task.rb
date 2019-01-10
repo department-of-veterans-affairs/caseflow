@@ -141,6 +141,8 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete
   end
 
+  def when_child_task_created; end
+
   def can_be_updated_by_user?(user)
     return true if [assigned_to, assigned_by].include?(user) ||
                    parent&.assigned_to == user ||
