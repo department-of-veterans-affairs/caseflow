@@ -59,12 +59,12 @@ describe DecisionIssue do
   end
 
   context "#finalized?" do
-    let(:description) { "something" }
-    let(:disposition) { "denied" }
-
     subject { decision_issue.finalized? }
 
     context "decision_review is Appeal" do
+      let(:description) { "something" }
+      let(:disposition) { "denied" }
+
       context "is not outcoded" do
         let(:decision_review) { create(:appeal, :with_tasks) }
 
@@ -79,7 +79,17 @@ describe DecisionIssue do
     end
 
     context "decision_review is ClaimReview" do
-      it { is_expected.to be_falsey }
+      context "disposition is set" do
+        let(:disposition) { "denied" }
+
+        it { is_expected.to be_truthy }
+      end
+
+      context "disposition is not set" do
+        let(:disposition) { nil }
+
+        it { is_expected.to be_falsey }
+      end
     end
   end
 
