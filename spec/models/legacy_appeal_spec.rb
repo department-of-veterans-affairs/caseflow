@@ -196,20 +196,6 @@ describe LegacyAppeal do
     end
   end
 
-  context "#v1_events" do
-    subject { appeal.v1_events }
-
-    let(:vacols_case) do
-      create(:case_with_soc)
-    end
-
-    it "returns list of events sorted from oldest to newest by date" do
-      expect(subject.length > 1).to be_truthy
-      expect(subject.first.date.to_date).to eq(vacols_case.bfdnod)
-      expect(subject.first.type).to eq(:nod)
-    end
-  end
-
   context "#form9_due_date" do
     subject { appeal.form9_due_date }
 
@@ -1803,25 +1789,6 @@ describe LegacyAppeal do
       it "includes issues in hash" do
         expect(subject["issues"]).to eq(issues.map(&:attributes))
       end
-    end
-  end
-
-  context ".for_api" do
-    subject { LegacyAppeal.for_api(vbms_id: bfcorlid) }
-    let(:bfcorlid) { "VBMS_ID" }
-    let(:case_with_form_9) { create(:case_with_form_9, :type_original, bfcorlid: bfcorlid) }
-    let!(:veteran_appeals) do
-      [
-        create(:case_with_soc, :type_original, bfcorlid: bfcorlid),
-        create(:case_with_soc, :type_reconsideration, bfcorlid: bfcorlid),
-        case_with_form_9,
-        create(:case, :type_original, bfcorlid: bfcorlid)
-      ]
-    end
-
-    it "returns filtered appeals with events only for veteran sorted by latest event date" do
-      expect(subject.length).to eq(2)
-      expect(subject.first.form9_date.to_date).to eq(case_with_form_9.bfd19)
     end
   end
 

@@ -12,7 +12,7 @@ module IssueMapper
   }.freeze
 
   # For disposition descriptions, please see the VACOLS_DISPOSITIONS_BY_ID file
-  ALLOWED_DISPOSITION_CODES = %w[1 3 4 5 6 8 O P G X L].freeze
+  ALLOWED_DISPOSITION_CODES = %w[1 3 4 5 6 8 O P G S X L].freeze
 
   class << self
     def rename_and_validate_vacols_attrs(action:, issue_attrs:)
