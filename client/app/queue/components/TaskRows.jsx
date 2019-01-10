@@ -10,7 +10,7 @@ import { GrayDot, GreenCheckmark } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import type { State } from '../types/state';
 import { taskIsOnHold } from '../utils';
-import { rootTasksForAppeal } from '../selectors';
+import { rootTasksForAppeal, getAllTasksForAppeal } from '../selectors';
 import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
@@ -152,7 +152,7 @@ class TaskRows extends React.PureComponent {
 
     return <div>
       { this.state.taskInstructionsIsVisible &&
-      <React.Fragment key={`${task.uniqueId} instructions`} >
+      <React.Fragment key={`${task.uniqueId}instructions`} >
         <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
         <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
       </React.Fragment> }
@@ -178,8 +178,9 @@ class TaskRows extends React.PureComponent {
       taskList
     } = this.props;
 
-    console.log('---TaskRows---');
-    console.log(taskList);
+    //console.log('---TaskRows---');
+    //console.log(this.props);
+    //console.log(taskList);
 
     return taskList.map((task, index) =>
       <tr key={task.uniqueId}>
@@ -211,8 +212,14 @@ class TaskRows extends React.PureComponent {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
 
+  /*console.log('--TRs mapStateToProps--');
+  console.log(state);
+  console.log(ownProps.appealId);
+  console.log(rootTasksForAppeal(state, { appealId: ownProps.appealId })[0]);*/
+
   return {
-    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId })[0]
+    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId })[0],
+    allTasks: getAllTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };
 

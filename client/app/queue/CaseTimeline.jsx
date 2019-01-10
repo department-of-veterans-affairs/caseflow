@@ -3,11 +3,19 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { connect } from 'react-redux';
 import type { State } from './types/state';
-
+import {
+  nonRootActionableTasksForAppeal,
+  getAllTasksForAppeal,
+  completeTasksSelector,
+  rootTasksForAppeal,
+  appealWithDetailSelector,
+  allCompleteTasksForAppeal
+} from './selectors';
 import { GrayDot, GreenCheckmark } from '../components/RenderFunctions';
 import moment from 'moment';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import COPY from '../../COPY.json';
+import TaskRows from './components/TaskRows';
 
 const grayLine = css({
   width: '5px',
@@ -37,6 +45,10 @@ const tableTitle = css({
 
 type Params = {|
   appealId: string
+|};
+
+type Props = Params & {|
+  appeal: Appeal
 |};
 
 const getEventRow = ({ title, date, assigned_to, assigned_by, instructions }, lastRow) => {
@@ -78,25 +90,32 @@ class CaseTimeline extends React.PureComponent {
       appeal
     } = this.props;
 
-    console.log('--completedTasks--');
-    console.log(this.props.appeal);
-    console.log(this.props.appeal.timeline);
+    console.log('--CaseTimeline--');
+    //console.log(this);
+    console.log(this.props);
+    //console.log(this.props.appeal);
+    //console.log(this.props.appeal.timeline);
 
     return <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
       <table>
         <tbody>
-          {appeal.timeline.map((event, index) => {
+          { /*appeal.timeline.map((event, index) => {
             return getEventRow(event, index === appeal.timeline.length - 1);
-          })}
+          })*/}
+          { <TaskRows appeal={appeal} taskList={this.props.completedTasks} /> }
         </tbody>
       </table>
     </React.Fragment>;
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+/*const mapStateToProps = (state: State, ownProps: Params) => {
   return {
+    tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId }),
+    allTasks: getAllTasksForAppeal(state, { appealId: ownProps.appealId }),
+    completedTasks: completeTasksSelector(state, { appealId: ownProps.appealId }),
+    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId })[0]
   };
 };
 
@@ -104,4 +123,21 @@ export default connect(mapStateToProps)(CaseTimeline);
 
 CaseTimeline.propTypes = {
   appeal: PropTypes.object.isRequired
+};*/
+
+const mapStateToProps = (state: State, ownProps: Params) => {
+
+  return {
+    allTasks: getAllTasksForAppeal(state, { appealId: ownProps.appeal.externalId }),
+    completedTasks: allCompleteTasksForAppeal(state, { appealId: ownProps.appeal.externalId }),
+    //tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appeal.externalId }),
+
+
+    /*tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId }),
+    allTasks: getAllTasksForAppeal(state, { appealId: ownProps.appealId }),
+    completedTasks: completeTasksSelector(state, { appealId: ownProps.appealId }),
+    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId })[0]*/
+  };
 };
+
+export default connect(mapStateToProps)(CaseTimeline);

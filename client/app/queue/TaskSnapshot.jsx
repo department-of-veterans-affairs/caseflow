@@ -63,6 +63,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
     const tasks = this.props.tasks;
     const taskLength = tasks.length;
+    console.log('--TaskSnapshot--')
+    console.log(this.props)
 
     if (taskLength) {
       sectionBody = <table {...tableStyling}>
@@ -112,6 +114,10 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { userRole } = state.ui;
+  /*console.log('--TS mapStateToProps--');
+  console.log(state);
+  console.log(ownProps.appealId);
+  console.log(getAllTasksForAppeal(state, { appealId: ownProps.appealId })[0]);*/
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),

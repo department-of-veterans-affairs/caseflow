@@ -191,6 +191,13 @@ export const nonRootActionableTasksForAppeal = createSelector(
   [actionableTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.type !== 'RootTask')
 );
 
+export const allCompleteTasksForAppeal = createSelector(
+  [getAllTasksForAppeal, getAppealId],
+  (tasks: Tasks, appealId: string) => {
+    return _.filter(tasks, (task) => task.externalAppealId === appealId && task.status === TASK_STATUSES.completed);
+  }
+);
+
 export const newTasksByAssigneeCssIdSelector = createSelector(
   [incompleteTasksByAssigneeCssIdSelector],
   (tasks: Array<Task>) => tasks.filter((task) => !taskIsOnHold(task))
