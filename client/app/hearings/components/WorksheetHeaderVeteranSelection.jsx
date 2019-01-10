@@ -116,7 +116,6 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       <div className="cf-push-right">
         <Link
           name="view-case-detail"
-          onClick={this.onClickReviewClaimsFolder}
           href={`/queue/appeals/${worksheet.appeal_vacols_id}`}
           button="primary"
           target="_blank">
