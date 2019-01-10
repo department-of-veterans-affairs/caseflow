@@ -38,6 +38,10 @@ class DecisionIssue < ApplicationRecord
     request_issues.none?(&:nonrating?)
   end
 
+  def finalized?
+    decision_review.is_a?(Appeal) && decision_review.outcoded?
+  end
+
   def ui_hash
     {
       id: id,

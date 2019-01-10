@@ -307,9 +307,7 @@ class Appeal < DecisionReview
   def contestable_decision_issues
     return [] unless receipt_date
 
-    DecisionIssue.where(participant_id: veteran.participant_id).select do |issue|
-      next if issue.decision_review.is_a?(Appeal) && !issue.decision_review.outcoded?
-
+    DecisionIssue.where(participant_id: veteran.participant_id).reject(&:finalized?).select do |issue|
       issue.approx_decision_date && issue.approx_decision_date < receipt_date
     end
   end

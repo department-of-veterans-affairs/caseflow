@@ -237,9 +237,8 @@ class DecisionReview < ApplicationRecord
     return [] unless receipt_date
 
     DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+      .reject(&:finalized?)
       .select do |issue|
-        next if issue.decision_review.is_a?(Appeal) && !issue.decision_review.outcoded?
-
         issue.approx_decision_date && issue.approx_decision_date < receipt_date
       end
   end

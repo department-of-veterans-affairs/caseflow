@@ -6,12 +6,13 @@ describe DecisionIssue do
   end
 
   let(:description) { nil }
+  let(:disposition) { "test disposition" }
 
   let(:decision_issue) do
     create(
       :decision_issue,
       decision_review: decision_review,
-      disposition: "test disposition",
+      disposition: disposition,
       decision_text: decision_text,
       description: description,
       request_issues: request_issues
@@ -56,6 +57,32 @@ describe DecisionIssue do
       end
     end
   end
+
+  context "#finalized?" do
+    let(:description) { "something" }
+    let(:disposition) { "denied" }
+
+    subject { decision_issue.finalized? }
+
+    context "decision_review is Appeal" do
+      context "is not outcoded" do
+        let(:decision_review) { create(:appeal, :with_tasks) }
+
+        it { is_expected.to be_falsey }
+      end
+
+      context "is outcoded" do
+        let(:decision_review) { create(:appeal, :outcoded) }
+
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    context "decision_review is ClaimReview" do
+      it { is_expected.to be_falsey }
+    end
+  end
+
   context "#rating?" do
     subject { decision_issue.rating? }
 
