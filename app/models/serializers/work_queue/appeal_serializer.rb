@@ -2,8 +2,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
-  attribute :timeline
-
   attribute :issues do
     object.eligible_request_issues.map do |issue|
       {

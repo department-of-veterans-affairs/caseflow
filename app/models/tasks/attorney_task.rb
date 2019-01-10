@@ -27,10 +27,6 @@ class AttorneyTask < Task
     ]
   end
 
-  def timeline_title
-    COPY::CASE_TIMELINE_ATTORNEY_TASK
-  end
-
   private
 
   def parent_attorney_child_count

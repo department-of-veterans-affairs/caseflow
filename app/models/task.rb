@@ -216,20 +216,6 @@ class Task < ApplicationRecord
     }
   end
 
-  def timeline_title
-    "#{type} completed"
-  end
-
-  def timeline_details
-    {
-      title: timeline_title,
-      date: completed_at,
-      assigned_to: assigned_to.full_name,
-      assigned_by: assigned_by.full_name,
-      instructions: instructions
-    }
-  end
-
   def update_if_hold_expired!
     update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
   end

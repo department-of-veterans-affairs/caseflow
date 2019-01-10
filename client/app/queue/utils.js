@@ -262,7 +262,6 @@ export const prepareAppealForStore =
         veteranAddress: appeal.attributes.veteran_address,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
-        timeline: appeal.attributes.timeline,
         decisionDate: appeal.attributes.decision_date,
         form9Date: appeal.attributes.form9_date,
         receiptDate: appeal.attributes.receipt_date,
