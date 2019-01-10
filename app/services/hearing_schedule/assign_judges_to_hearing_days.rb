@@ -28,7 +28,7 @@ class HearingSchedule::AssignJudgesToHearingDays
     evenly_assign_judges_to_hearing_days
     assign_remaining_hearing_days
     verify_assignments
-    @assigned_hearing_days.sort_by { |day| day[:hearing_date] }
+    @assigned_hearing_days.sort_by { |day| day[:scheduled_for] }
   end
 
   private
@@ -38,7 +38,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
     judge_count = sorted_judges.length
     total_hearing_day_count = @unassigned_hearing_days.length
-    max_days_per_judge = (total_hearing_day_count.to_f / judge_count).floor
+    max_days_per_judge = [(total_hearing_day_count.to_f / judge_count).floor, 1].max
 
     sorted_judges.each do |css_id|
       days_assigned = 0
@@ -82,12 +82,12 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def day_can_be_assigned?(current_hearing_day, css_id)
-    hearing_date = current_hearing_day.hearing_date
+    scheduled_for = current_hearing_day.scheduled_for
     judge_id = @judges[css_id][:staff_info].sattyid
 
-    problems = @judges[css_id][:non_availabilities].include?(hearing_date) ||
+    problems = @judges[css_id][:non_availabilities].include?(scheduled_for) ||
                hearing_day_already_assigned?(current_hearing_day.id) ||
-               judge_already_assigned_on_date?(judge_id, hearing_date) ||
+               judge_already_assigned_on_date?(judge_id, scheduled_for) ||
                (co_hearing_day?(current_hearing_day) && judge_already_assigned_to_co?(judge_id))
 
     !problems
@@ -99,7 +99,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def judge_already_assigned_on_date?(judge_id, date)
     @assigned_hearing_days.any? do |day|
-      day[:judge_id] == judge_id && (day[:hearing_date] - date).abs <= DAYS_OF_SEPARATION
+      day[:judge_id] == judge_id && (day[:scheduled_for] - date).abs <= DAYS_OF_SEPARATION
     end
   end
 
@@ -112,7 +112,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   def verify_assignments
     if @assigned_hearing_days.length != @video_co_hearing_days.length
       if @algo_counter >= 20
-        dates = @unassigned_hearing_days.map(&:hearing_date)
+        dates = @unassigned_hearing_days.map(&:scheduled_for)
         fail HearingSchedule::Errors::CannotAssignJudges.new(
           "Hearing days on these dates couldn't be assigned #{dates}.",
           dates: dates
@@ -140,13 +140,13 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def co_hearing_days_by_date(date)
     @video_co_hearing_days.select do |day|
-      day.hearing_date == date && co_hearing_day?(day)
+      day.scheduled_for == date && co_hearing_day?(day)
     end
   end
 
   def assign_judge_to_hearing_day(day, css_id)
     is_central_hearing = co_hearing_day?(day)
-    date = day.hearing_date
+    date = day.scheduled_for
 
     hearing_days = is_central_hearing ? co_hearing_days_by_date(date) : [day]
 
@@ -212,7 +212,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   def filter_co_hearings(video_co_hearing_days)
     video_co_hearing_days.map do |hearing_day|
       day = OpenStruct.new(hearing_day)
-      day.hearing_date = day.hearing_date.to_date
+      day.scheduled_for = day.scheduled_for.to_date
 
       day if (valid_co_day?(day) || valid_ro_hearing_day?(day)) && !hearing_day_already_assigned(day)
     end.compact
@@ -224,7 +224,7 @@ class HearingSchedule::AssignJudgesToHearingDays
     if assigned
       @judges.each do |css_id, judge|
         if judge[:staff_info].sattyid == hearing_day.judge_id
-          @judges[css_id][:non_availabilities] << hearing_day.hearing_date
+          @judges[css_id][:non_availabilities] << hearing_day.scheduled_for
         end
       end
     end
