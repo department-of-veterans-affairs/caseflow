@@ -2,14 +2,17 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   queue_as :low_priority
   application_attr :hearing_schedule
 
+  QUERY_LIMIT = 500
+
   def veterans
     @veterans ||= Veteran.where(file_number: file_numbers)
       .left_outer_joins(:available_hearing_locations)
       .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.month.ago)
-      .limit(500)
+      .limit(QUERY_LIMIT)
   end
 
   def file_numbers
+    # TODO: will ned an AMA equivalent of this query
     @file_numbers ||= VACOLS::Case.where(bfcurloc: 57).pluck(:bfcorlid).map do |bfcorlid|
       LegacyAppeal.veteran_file_number_from_bfcorlid(bfcorlid)
     end
@@ -17,7 +20,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def missing_veteran_file_numbers
     existing_veteran_file_numbers = Veteran.where(file_number: file_numbers).pluck(:file_number)
-    file_numbers - existing_veteran_file_numbers
+    (file_numbers - existing_veteran_file_numbers)[0, (QUERY_LIMIT - existing_veteran_file_numbers.length)]
   end
 
   def create_missing_veterans
@@ -33,6 +36,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   def create_available_locations_for_veteran(veteran, va_dot_gov_address:, ids:)
     VADotGovService.get_distance(lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: ids)
       .each do |alternate_hearing_location|
+        AvailableHearingLocations.where(veteran_file_number: veteran.file_number).delete_all
         AvailableHearingLocations.create(
           veteran_file_number: veteran.file_number,
           distance: alternate_hearing_location[:distance],

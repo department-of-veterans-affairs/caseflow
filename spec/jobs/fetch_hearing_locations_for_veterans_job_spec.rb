@@ -1,7 +1,7 @@
 require "rails_helper"
 require "faker"
 
-describe FetchHearingLocationsForVeteransJob do
+describe FetchHearingLocationsForVeteransJob, focus: true do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
   context "when there is a case in location 57 *without* an associated veteran" do
@@ -39,6 +39,20 @@ describe FetchHearingLocationsForVeteransJob do
         FetchHearingLocationsForVeteransJob.perform_now
         expect(AvailableHearingLocations.count).to eq 1
         expect(AvailableHearingLocations.first.distance).to eq 11.11
+      end
+
+      context "when there is an existing available_hearing_location" do
+        let(:existing_location) do
+          create(:available_hearing_locations, veteran_file_number: bfcorlid_file_number, distance: 22.22)
+        end
+
+        it "deletes existing location and creates a new location" do
+          FetchHearingLocationsForVeteransJob.perform_now
+          expect(AvailableHearingLocations.where(distance: 22.22, veteran_file_number: bfcorlid_file_number))
+            .to be_empty
+          expect(AvailableHearingLocations.count).to eq 1
+          expect(AvailableHearingLocations.first.distance).to eq 11.11
+        end
       end
     end
 
