@@ -107,12 +107,14 @@ class SelectDispositionsView extends React.PureComponent {
 
   openDecisionHandler = (requestIssueId, decisionIssue) => () => {
     const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
+    const diagnosticCode = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).diagnostic_code;
 
     const newDecisionIssue = {
       id: `temporary-id-${uuid.v4()}`,
       description: '',
       disposition: null,
       benefit_type: benefitType,
+      diagnostic_code: diagnosticCode,
       request_issue_ids: [requestIssueId]
     };
 
@@ -135,7 +137,8 @@ class SelectDispositionsView extends React.PureComponent {
   validate = () => {
     const { decisionIssue } = this.state;
 
-    return decisionIssue.benefit_type && decisionIssue.disposition && decisionIssue.description;
+    return decisionIssue.benefit_type && decisionIssue.disposition &&
+      decisionIssue.description && decisionIssue.diagnostic_code;
   }
 
   saveDecision = () => {
