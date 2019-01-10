@@ -62,7 +62,7 @@ feature "NonComp Reviews Queue" do
       # we allow for a range of "days" like [01] or [678]
 
       # expect(page).to have_content(
-        # /#{veteran.name} 5\d+ 0 [01] Higher-Level Review #{veteran.name} 5\d+ 0 [678]/
+      # /#{veteran.name} 5\d+ 0 [01] Higher-Level Review #{veteran.name} 5\d+ 0 [678]/
       # )
 
       click_on "Completed tasks"
