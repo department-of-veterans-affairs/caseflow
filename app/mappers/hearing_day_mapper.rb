@@ -5,7 +5,7 @@ module HearingDayMapper
   COLUMN_NAME_REVERSE_MAP = {
     hearing_pkseq: :id,
     hearing_type: :hearing_type,
-    hearing_date: :hearing_date,
+    hearing_date: :scheduled_for,
     folder_nr: :regional_office,
     room: :room,
     board_member: :judge_id,
@@ -26,7 +26,7 @@ module HearingDayMapper
       {
         hearing_pkseq: hearing_info[:hearing_pkseq],
         hearing_type: translate_hearing_type(hearing_info[:hearing_type]),
-        hearing_date: hearing_info[:hearing_date],
+        scheduled_for: hearing_info[:scheduled_for],
         room: hearing_info[:room],
         regional_office: validate_regional_office(hearing_info[:regional_office]),
         judge_id: hearing_info[:judge_id],

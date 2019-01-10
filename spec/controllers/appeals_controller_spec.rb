@@ -4,11 +4,12 @@ RSpec.describe AppealsController, type: :controller do
   describe "GET appeals" do
     let(:ssn) { Generators::Random.unique_ssn }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
-    let(:veteran_id) { appeal.vbms_id }
+    let(:options) { { format: :json } }
+    let(:veteran_id) { appeal.sanitized_vbms_id }
 
     context "when request header does not contain Veteran ID" do
       it "response should error" do
-        get :index
+        get :index, params: options
         expect(response.status).to eq 400
       end
     end
@@ -17,7 +18,7 @@ RSpec.describe AppealsController, type: :controller do
       before { request.headers["HTTP_VETERAN_ID"] = veteran_id }
 
       it "returns valid response with one appeal" do
-        get :index
+        get :index, params: options
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["appeals"].size).to eq 1
@@ -28,7 +29,7 @@ RSpec.describe AppealsController, type: :controller do
       before { request.headers["HTTP_VETERAN_ID"] = "#{Generators::Random.unique_ssn}S" }
 
       it "returns valid response with empty appeals array" do
-        get :index
+        get :index, params: options
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["appeals"].size).to eq 0
@@ -63,8 +64,10 @@ RSpec.describe AppealsController, type: :controller do
   end
 
   describe "GET cases/:id" do
-    let(:ssn) { Generators::Random.unique_ssn }
-    let(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
+    let(:the_case) { FactoryBot.create(:case) }
+    let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: the_case) }
+    let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
+    let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
     let(:options) { { caseflow_veteran_id: veteran_id, format: request_format } }
 
     context "when requesting html response" do
@@ -100,6 +103,7 @@ RSpec.describe AppealsController, type: :controller do
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)
           expect(response_body["appeals"].size).to eq 1
+          expect(response_body["claim_reviews"].size).to eq 2
         end
       end
 

@@ -27,6 +27,11 @@ class ClaimReview < DecisionReview
 
       claim_review
     end
+
+    def find_all_by_file_number(file_number)
+      HigherLevelReview.where(veteran_file_number: file_number) +
+        SupplementalClaim.where(veteran_file_number: file_number)
+    end
   end
 
   def ui_hash
@@ -137,6 +142,22 @@ class ClaimReview < DecisionReview
 
   def cleared_ep?
     end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
+  end
+
+  def search_table_ui_hash
+    {
+      caseflow_veteran_id: claim_veteran&.id,
+      claim_id: id,
+      veteran_file_number: veteran_file_number,
+      veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
+      end_products: end_product_establishments,
+      claimant_names: claimants.map(&:name),
+      review_type: self.class.to_s.underscore
+    }
+  end
+
+  def claim_veteran
+    Veteran.find_by(file_number: veteran_file_number)
   end
 
   private
