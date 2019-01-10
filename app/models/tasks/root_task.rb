@@ -67,7 +67,7 @@ class RootTask < GenericTask
       transaction do
         distribution_task = create_distribution_task!(appeal, parent)
 
-        if appeal.evidence_submission_docket? 
+        if appeal.evidence_submission_docket?
           create_evidence_submission_task!(appeal, distribution_task)
         else
           create_vso_subtask!(appeal, distribution_task)
