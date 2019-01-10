@@ -279,6 +279,28 @@ export const prepareAppealForStore =
     };
   };
 
+export const prepareClaimReviewForStore = (claimReviews: Array<Object>) => {
+  const claimReviewHash = claimReviews.reduce((accumulator, claimReview) => {
+    const key = `${claimReview.review_type}-${claimReview.claim_id}`;
+
+    accumulator[key] = {
+      caseflowVeteranId: claimReview.caseflow_veteran_id,
+      claimantNames: claimReview.claimant_names,
+      claimId: claimReview.claim_id,
+      endProducts: claimReview.end_products,
+      reviewType: claimReview.review_type,
+      veteranFileNumber: claimReview.veteran_file_number,
+      veteranFullName: claimReview.veteran_full_name
+    };
+
+    return accumulator;
+  }, {});
+
+  return {
+    claimReviews: claimReviewHash
+  };
+};
+
 export const renderAppealType = (appeal: BasicAppeal) => {
   const {
     isAdvancedOnDocket,

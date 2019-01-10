@@ -92,7 +92,7 @@ class RampRefiling < RampReview
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
       claim_id: end_product_establishment.reference_id,
-      contention_descriptions: contention_descriptions_to_create,
+      contentions: contention_descriptions_to_create.map { |desc| { "description": desc } },
       user: intake_processed_by
     )
   end
