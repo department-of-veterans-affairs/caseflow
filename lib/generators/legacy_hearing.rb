@@ -6,7 +6,7 @@ class Generators::LegacyHearing
       vacols_id = generate_external_id
       {
         type: :video,
-        date: Time.zone.now - 5.days,
+        scheduled_for: Time.zone.now - 5.days,
         venue_key: "RO13",
         vacols_id: vacols_id,
         vacols_record: { vacols_id: vacols_id },

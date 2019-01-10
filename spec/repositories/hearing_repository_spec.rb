@@ -14,7 +14,7 @@ describe HearingRepository do
       }
     end
     let(:staff_record) { create(:staff) }
-    let(:hearing_day) { create(:hearing_day, hearing_date: Date.new(2019, 3, 2)) }
+    let(:hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 2)) }
 
     before do
       RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: staff_record.slogid)
@@ -54,7 +54,7 @@ describe HearingRepository do
       expect(subject.venue[:city]).to eq("San Antonio")
       expect(subject.type).to eq(:video)
       expect(subject.vacols_record).to eq(hearing_hash)
-      expect(subject.date.class).to eq(ActiveSupport::TimeWithZone)
+      expect(subject.scheduled_for.class).to eq(ActiveSupport::TimeWithZone)
       expect(subject.disposition).to eq(:no_show)
       expect(subject.aod).to eq :filed
       expect(subject.transcript_requested).to eq nil

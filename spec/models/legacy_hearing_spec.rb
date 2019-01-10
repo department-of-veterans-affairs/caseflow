@@ -7,7 +7,7 @@ describe LegacyHearing do
   let(:hearing) do
     build(
       :legacy_hearing,
-      date: date,
+      scheduled_for: scheduled_for,
       disposition: disposition,
       hold_open: hold_open,
       type: type
@@ -17,14 +17,14 @@ describe LegacyHearing do
   let(:hearing2) do
     build(
       :legacy_hearing,
-      date: date,
+      scheduled_for: scheduled_for,
       disposition: disposition,
       hold_open: hold_open,
       type: type
     )
   end
 
-  let(:date) { 1.day.ago }
+  let(:scheduled_for) { 1.day.ago }
   let(:disposition) { nil }
   let(:hold_open) { nil }
   let(:type) { :video }
