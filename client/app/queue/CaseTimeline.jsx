@@ -90,9 +90,9 @@ class CaseTimeline extends React.PureComponent {
       appeal
     } = this.props;
 
-    console.log('--CaseTimeline--');
+    //console.log('--CaseTimeline--');
     //console.log(this);
-    console.log(this.props);
+    //console.log(this.props);
     //console.log(this.props.appeal);
     //console.log(this.props.appeal.timeline);
 

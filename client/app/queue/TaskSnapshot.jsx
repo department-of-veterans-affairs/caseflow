@@ -63,8 +63,8 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
     const tasks = this.props.tasks;
     const taskLength = tasks.length;
-    console.log('--TaskSnapshot--')
-    console.log(this.props)
+    /*console.log('--TaskSnapshot--')
+    console.log(this.props)*/
 
     if (taskLength) {
       sectionBody = <table {...tableStyling}>

@@ -15,6 +15,7 @@ import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import ActionsDropdown from '../components/ActionsDropdown';
+import OnHoldLabel from '../components/OnHoldLabel';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -135,13 +136,14 @@ class TaskRows extends React.PureComponent {
       <dd>{this.getActionName(task)}</dd></div> : null;
   }
 
-  taskInstructionsWithLineBreaks = (instructions?: Array<string>) => {
-    if (!instructions || !instructions.length) {
+  taskInstructionsWithLineBreaks = (task) => {
+    if (!task.instructions || !task.instructions.length) {
       return <br />;
     }
 
-    return <React.Fragment>
-      {instructions.map((text, i) => <React.Fragment><span key={i}>{text}</span><br /></React.Fragment>)}
+    return <React.Fragment key={`${task.uniqueId}fragment`}>
+      {task.instructions.map((text, i) => <React.Fragment key={`${task.uniqueId}span`}>
+        <span key={`${task.uniqueId}instructions`}>{text}</span><br /></React.Fragment>)}
     </React.Fragment>;
   }
 
@@ -152,9 +154,9 @@ class TaskRows extends React.PureComponent {
 
     return <div>
       { this.state.taskInstructionsIsVisible &&
-      <React.Fragment key={`${task.uniqueId}instructions`} >
+      <React.Fragment key={`${task.uniqueId}instructions_text`} >
         <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
-        <dd>{this.taskInstructionsWithLineBreaks(task.instructions)}</dd>
+        <dd>{this.taskInstructionsWithLineBreaks(task)}</dd>
       </React.Fragment> }
       <Button
         linkStyling
