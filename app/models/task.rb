@@ -226,7 +226,7 @@ class Task < ApplicationRecord
       date: completed_at,
       assigned_to: assigned_to.full_name,
       assigned_by: assigned_by.full_name,
-      instructions: instructions,
+      instructions: instructions
     }
   end
 
