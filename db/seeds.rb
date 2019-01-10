@@ -390,6 +390,122 @@ class SeedDB
     LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
   end
 
+  def create_higher_level_reviews_and_supplemental_claims
+    veteran_file_number = "682007349"
+    veteran = Veteran.find_by(file_number: veteran_file_number)
+
+    ep_rating_code = "030HLRR"
+    ep_nonrating_code = "030HLRNR"
+
+    one_day_in_seconds = 60 * 60 * 24
+    two_days_in_seconds = 2 * one_day_in_seconds
+    thirty_days_in_seconds = 30 * one_day_in_seconds
+
+    higher_level_review = HigherLevelReview.create!(
+      veteran_file_number: veteran_file_number,
+      receipt_date: Time.zone.now - thirty_days_in_seconds,
+      informal_conference: false,
+      same_office: false,
+      benefit_type: "compensation"
+    )
+    higher_level_review.create_claimants!(
+      participant_id: "5382910292",
+      payee_code: "10"
+    )
+
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
+      code: ep_rating_code,
+      station: "397",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "CAN",
+      claimant_participant_id: veteran.participant_id
+    )
+
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
+      code: ep_rating_code,
+      station: "397",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: nil,
+      claimant_participant_id: veteran.participant_id
+    )
+
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
+      code: ep_rating_code,
+      station: "397",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "PEND",
+      claimant_participant_id: veteran.participant_id
+    )
+
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
+      code: ep_rating_code,
+      station: "397",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "CLR",
+      last_synced_at: Time.zone.now - one_day_in_seconds,
+      claimant_participant_id: veteran.participant_id
+    )
+
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
+      code: ep_nonrating_code,
+      station: "397",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "CLR",
+      last_synced_at: Time.zone.now - two_days_in_seconds,
+      claimant_participant_id: veteran.participant_id
+    )
+
+    eligible_request_issue = RequestIssue.create!(
+      review_request: higher_level_review,
+      issue_category: "Military Retired Pay",
+      description: "nonrating description",
+      contention_reference_id: "1234",
+      ineligible_reason: nil,
+      decision_date: Date.new(2018, 5, 1)
+    )
+
+    untimely_request_issue = RequestIssue.create!(
+      review_request: higher_level_review,
+      issue_category: "Active Duty Adjustments",
+      description: "nonrating description",
+      contention_reference_id: "12345",
+      decision_date: Date.new(2018, 5, 1),
+      ineligible_reason: :untimely
+    )
+
+    higher_level_review.create_issues!([
+                                         eligible_request_issue,
+                                         untimely_request_issue
+                                       ])
+    higher_level_review.establish!
+
+    SupplementalClaim.create(
+      veteran_file_number: veteran.file_number,
+      receipt_date: Time.zone.now,
+      benefit_type: "compensation"
+    )
+  end
+
   def create_root_task(appeal)
     FactoryBot.create(:root_task, appeal: appeal)
   end
@@ -578,6 +694,8 @@ class SeedDB
 
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
+    r = Redis.new(url: Rails.application.secrets.redis_url_cache)
+    r.keys.each { |k| r.del(k) }
   end
 
   def setup_dispatch
@@ -651,6 +769,8 @@ class SeedDB
     setup_dispatch
     create_previously_held_hearing_data
     create_legacy_issues_eligible_for_opt_in
+
+    create_higher_level_reviews_and_supplemental_claims
 
     return if Rails.env.development?
 

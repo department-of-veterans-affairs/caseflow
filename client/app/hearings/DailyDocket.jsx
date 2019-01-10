@@ -177,13 +177,13 @@ export class DailyDocket extends React.PureComponent {
 
 getRoTime = (hearing) => {
   if (hearing.request_type === 'Central') {
-    return <div>{getTime(hearing.date)} <br />
+    return <div>{getTime(hearing.scheduled_for)} <br />
       {hearing.regional_office_name}
     </div>;
   }
 
-  return <div>{getTime(hearing.date)} /<br />
-    {getTimeInDifferentTimeZone(hearing.date, hearing.regional_office_timezone)} <br />
+  return <div>{getTime(hearing.scheduled_for)} /<br />
+    {getTimeInDifferentTimeZone(hearing.scheduled_for, hearing.regional_office_timezone)} <br />
     <span>{hearing.regional_office_name}</span>
   </div>;
 };
@@ -191,7 +191,7 @@ getRoTime = (hearing) => {
 getPrepCheckBox = (hearing) => {
   return <Checkbox
     id={`${hearing.id}-prep`}
-    onChange={this.preppedOnChange(hearing.id, getDate(hearing.date))}
+    onChange={this.preppedOnChange(hearing.id, getDate(hearing.scheduled_for))}
     key={`${hearing.id}`}
     value={hearing.prepped || false}
     name={`${hearing.id}-prep`}
@@ -205,7 +205,7 @@ getTranscriptRequested = (hearing) => {
     label="Transcript Requested"
     name={`${hearing.id}.transcript_requested`}
     value={hearing.transcript_requested || false}
-    onChange={this.setTranscriptRequested(hearing.id, getDate(hearing.date))}
+    onChange={this.setTranscriptRequested(hearing.id, getDate(hearing.scheduled_for))}
   />;
 };
 
@@ -214,7 +214,7 @@ getDispositionDropdown = (hearing) => {
     label="Disposition"
     name={`${hearing.id}-disposition`}
     options={DISPOSITION_OPTIONS}
-    onChange={this.setDisposition(hearing.id, getDate(hearing.date))}
+    onChange={this.setDisposition(hearing.id, getDate(hearing.scheduled_for))}
     value={hearing.disposition}
     searchable={false}
   />;
@@ -224,8 +224,8 @@ getHoldOpenDropdown = (hearing) => {
   return <SearchableDropdown
     label="Hold Open"
     name={`${hearing.id}-hold_open`}
-    options={holdOptions(getDate(hearing.date))}
-    onChange={this.setHoldOpen(hearing.id, getDate(hearing.date))}
+    options={holdOptions(getDate(hearing.scheduled_for))}
+    onChange={this.setHoldOpen(hearing.id, getDate(hearing.scheduled_for))}
     value={hearing.hold_open}
     searchable={false}
   />;
@@ -236,7 +236,7 @@ getAodDropdown = (hearing) => {
     label="AOD"
     name={`${hearing.id}-aod`}
     options={aodOptions}
-    onChange={this.setAod(hearing.id, getDate(hearing.date))}
+    onChange={this.setAod(hearing.id, getDate(hearing.scheduled_for))}
     value={hearing.aod}
     searchable={false}
   />;
@@ -250,7 +250,7 @@ getAodDropdown = (hearing) => {
          id={`${hearing.id}.notes`}
          value={hearing.notes || ''}
          name="Notes"
-         onChange={this.setNotes(hearing.id, getDate(hearing.date))}
+         onChange={this.setNotes(hearing.id, getDate(hearing.scheduled_for))}
        />
      </div>
    </span>;
@@ -344,7 +344,7 @@ getAodDropdown = (hearing) => {
             <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
           </div>
           <div className="meta">
-            <div>{moment(docket[0].date).format('ddd l')}</div>
+            <div>{moment(docket[0].scheduled_for).format('ddd l')}</div>
             <div>Hearing Type: {docket[0].request_type}</div>
           </div>
         </div>

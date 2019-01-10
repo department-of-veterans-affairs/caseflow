@@ -1,4 +1,4 @@
-RSpec.feature "Build Hearing Schedule", skip: "Skipping due to flaky test" do
+RSpec.feature "Build Hearing Schedule" do
   context "Build RO Hearing Schedule" do
     let!(:current_user) do
       User.authenticate!(roles: ["Build HearSched"])
@@ -21,7 +21,7 @@ RSpec.feature "Build Hearing Schedule", skip: "Skipping due to flaky test" do
       expect(allocation_count).to eq(358)
       click_on "Confirm assignments"
       click_on "Confirm upload"
-      expect(page).not_to have_content("We are uploading to VACOLS.", wait: 15)
+      expect(page).not_to have_content("We are uploading to VACOLS.", wait: 30)
       expect(page).to have_content("You have successfully assigned hearings between 01/01/2018 and 05/31/2018")
       hearing_day_count = HearingDay.load_days(Date.new(2018, 1, 1), Date.new(2018, 5, 31)).flatten
         .select do |hearing_day|
@@ -34,10 +34,8 @@ RSpec.feature "Build Hearing Schedule", skip: "Skipping due to flaky test" do
       before do
         create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")
         create(:staff, sattyid: "861", snamef: "Doris", snamel: "Lamphere")
-        create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 4, 2), folder_nr: "VIDEO RO13")
-        create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 4, 4), folder_nr: "VIDEO RO13")
-        create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 4, 6), folder_nr: "VIDEO RO13")
-        create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 4, 8), folder_nr: "VIDEO RO13")
+        create(:hearing_day, hearing_type: "C", scheduled_for: Date.new(2018, 4, 2))
+        create(:hearing_day, hearing_type: "C", scheduled_for: Date.new(2018, 4, 20))
       end
 
       let!(:current_user) do
@@ -63,7 +61,7 @@ RSpec.feature "Build Hearing Schedule", skip: "Skipping due to flaky test" do
           .select do |hearing_day|
           hearing_day.key?(:judge_id) && !hearing_day[:judge_id].nil?
         end.count
-        expect(vlj_ids_count).to eq(4)
+        expect(vlj_ids_count).to eq(2)
       end
     end
   end

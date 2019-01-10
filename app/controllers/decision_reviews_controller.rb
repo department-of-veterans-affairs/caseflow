@@ -18,6 +18,18 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
+  def update
+    if task
+      if task.complete!(decision_issue_params, decision_date)
+        render json: { decisionIssues: task.appeal.decision_issues }, status: :created
+      else
+        render json: { error_code: task.error_code }, status: :bad_request
+      end
+    else
+      render json: { error: "Task #{task_id} not found" }, status: :not_found
+    end
+  end
+
   def business_line_slug
     allowed_params[:business_line_slug] || allowed_params[:decision_review_business_line_slug]
   end
@@ -45,6 +57,16 @@ class DecisionReviewsController < ApplicationController
   helper_method :in_progress_tasks, :completed_tasks, :business_line, :task
 
   private
+
+  def decision_date
+    Date.parse(params.require("decision_date")).to_datetime
+  end
+
+  def decision_issue_params
+    params.require("decision_issues").map do |decision_issue_param|
+      decision_issue_param.permit(:request_issue_id, :disposition, :description)
+    end
+  end
 
   def apply_task_serializer(tasks)
     tasks.map { |task| task.ui_hash.merge(business_line: business_line_slug) }
