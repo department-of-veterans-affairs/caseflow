@@ -64,6 +64,7 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :docket_number
   attribute :status
   attribute :decision_date
+  attribute :form9_date
   attribute :certification_date
   attribute :paper_case do
     object.file_type.eql? "Paper"

@@ -210,6 +210,16 @@ class TaskRows extends React.PureComponent {
           </td> }
         </tr>
       ) }
+      { timeline && appeal.isLegacyAppeal && <tr>
+        <td {...taskTimeContainerStyling}>
+          { appeal.form9Date ? moment(appeal.form9Date).format('MM/DD/YYYY') : null }
+        </td>
+        <td {...taskInfoWithIconContainer}>{ appeal.form9Date ? <GreenCheckmark /> : <GrayDot /> }
+          <div {...grayLineStyling} /></td>
+        <td {...taskInformationContainerStyling}>
+          { appeal.form9Date ? COPY.CASE_TIMELINE_FORM_9_RECEIVED : COPY.CASE_TIMELINE_FORM_9_PENDING}
+        </td>
+      </tr> }
       { timeline && <tr>
         <td {...taskTimeContainerStyling}>
           { appeal.receiptDate ? moment(appeal.receiptDate).format('MM/DD/YYYY') : null }
