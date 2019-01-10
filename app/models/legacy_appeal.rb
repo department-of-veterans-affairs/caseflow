@@ -139,7 +139,8 @@ class LegacyAppeal < ApplicationRecord
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_from_caseflow
-    Document.where(file_number: veteran_file_number).size || number_of_documents
+    count = Document.where(file_number: veteran_file_number).size
+    count != 0 ? count : number_of_documents
   end
 
   def number_of_documents_after_certification
