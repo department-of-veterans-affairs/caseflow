@@ -10,8 +10,9 @@ describe ColocatedTaskDistributor do
   end
 
   describe ".next_assignee" do
+    let(:iterations) { 6 }
+
     context "when the list_of_assignees is a populated array" do
-      let(:iterations) { 6 }
       let(:total_distribution_count) { iterations * assignee_pool_size }
 
       before do
@@ -24,6 +25,20 @@ describe ColocatedTaskDistributor do
         colocated_org.users.each do |user|
           expect(Task.where(assigned_to: user).count).to eq(iterations)
         end
+      end
+    end
+
+    context "when there are multiple tasks for the same appeal" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+
+      before do
+        iterations.times do
+          FactoryBot.create(:task, appeal: appeal, assigned_to: colocated_task_distributor.next_assignee(Task, appeal))
+        end
+      end
+
+      it "should assign all tasks to the same assignee" do
+        expect(Task.all.map(&:assigned_to_id).uniq.count).to eq 1
       end
     end
   end

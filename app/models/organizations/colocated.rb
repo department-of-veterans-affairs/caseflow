@@ -3,7 +3,7 @@ class Colocated < Organization
     Colocated.first || Colocated.create(name: "VLJ Support Staff", url: "vlj-support")
   end
 
-  def next_assignee(_task_class)
-    ColocatedTaskDistributor.new.next_assignee
+  def next_assignee(task_class = nil, appeal = nil)
+    ColocatedTaskDistributor.new.next_assignee(task_class, appeal)
   end
 end

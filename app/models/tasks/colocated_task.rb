@@ -12,34 +12,24 @@ class ColocatedTask < Task
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
-        assignee = Colocated.singleton.next_assignee(self)
-        records = params_array.map do |params|
-          team_task = create_from_params(
-            params.merge(assigned_to: Colocated.singleton, status: Constants.TASK_STATUSES.on_hold), user
-          )
-          individual_task = create_from_params(params.merge(assigned_to: assignee, parent: team_task), user)
+        team_tasks = super(params_array.map { |p| p.merge(assigned_to: Colocated.singleton) }, user)
 
-          [team_task, individual_task]
-        end.flatten
+        all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten
 
-        individual_task = records.select { |r| r.assigned_to.is_a?(User) }.first
-        if records.map(&:valid?).uniq == [true] && individual_task.legacy?
-          AppealRepository.update_location!(individual_task.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        all_tasks.map(&:appeal).uniq.each do |appeal|
+          if appeal.is_a? LegacyAppeal
+            AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+          end
         end
 
-        records
+        all_tasks
       end
-    end
-
-    private
-
-    def list_of_assignees
-      Colocated.singleton.non_admins.sort_by(&:id).pluck(:css_id)
     end
   end
 
-  def automatically_assign_org_task?
-    false
+  def set_assigned_at_and_update_parent_status
+    self.assigned_at = created_at unless assigned_at
+    parent&.update(status: :on_hold)
   end
 
   def available_actions(_user)
@@ -83,6 +73,14 @@ class ColocatedTask < Task
   end
 
   private
+
+  def create_and_auto_assign_child_task
+    dup.tap do |child_task|
+      child_task.assigned_to = assigned_to.next_assignee(self.class, appeal)
+      child_task.parent = self
+      child_task.save!
+    end
+  end
 
   def update_location_in_vacols
     if saved_change_to_status? &&

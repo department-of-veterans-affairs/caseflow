@@ -313,6 +313,14 @@ describe Task do
         expect(subject.instructions).to eq([instructions_text])
       end
     end
+
+    context "the params are incomplete" do
+      let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: "Task" } }
+
+      it "raises an error" do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Appeal can't be blank/)
+      end
+    end
   end
 
   describe ".create_and_auto_assign_child_task" do

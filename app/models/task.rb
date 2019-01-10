@@ -88,7 +88,7 @@ class Task < ApplicationRecord
   def self.create_from_params(params, user)
     verify_user_can_create!(user)
     params = modify_params(params)
-    create(params)
+    create!(params)
   end
 
   def self.modify_params(params)
