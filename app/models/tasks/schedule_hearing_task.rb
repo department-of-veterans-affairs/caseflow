@@ -31,7 +31,7 @@ class ScheduleHearingTask < GenericTask
     super(params, current_user)
   end
 
-  def update_parent_status
+  def on_complete
     hearing_pkseq = task_business_payloads[0].values["hearing_pkseq"]
     hearing_type = task_business_payloads[0].values["hearing_type"]
     hearing_date = Time.zone.parse(task_business_payloads[0].values["hearing_date"])
