@@ -161,7 +161,13 @@ class Task < ApplicationRecord
     can_create = parent&.available_actions_unwrapper(user)&.any? do |action|
       action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
     end
-    fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task" unless can_create
+
+    unless can_create
+      user_description = user ? "User #{user.id}" : "nil User"
+      parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
+      message = "#{user_description} cannot assign #{name}#{parent_description}."
+      fail Caseflow::Error::ActionForbiddenError, message: message
+    end
   end
 
   def root_task(task_id = nil)
