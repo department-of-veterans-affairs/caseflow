@@ -9,12 +9,12 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     if e.class.method_defined?(:serialize_response)
       render(e.serialize_response)
     else
-      render json: { message: "Unexpected error: #{e.message}" }, status: 500
+      render json: { message: "Unexpected error: #{e.message}" }, status: :internal_server_error
     end
   end
 
   rescue_from ActionController::ParameterMissing do |e|
-    render(json: { message: e.message }, status: 400)
+    render(json: { message: e.message }, status: :bad_request)
   end
 
   rescue_from Caseflow::Error::DocumentUploadFailedInVBMS do |e|
@@ -22,7 +22,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   rescue_from ActiveRecord::RecordNotFound do |_e|
-    render(json: { message: "Record not found" }, status: 404)
+    render(json: { message: "Record not found" }, status: :not_found)
   end
 
   def list
@@ -46,7 +46,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def tasks_assigned_to_user
     tasks = if user.attorney_in_vacols? || user.judge_in_vacols?
-              LegacyWorkQueue.tasks_with_appeals(user, role)[0].select { |task| task.appeal.activated? }
+              LegacyWorkQueue.tasks_for_user(user).select { |task| task.appeal.activated? }
             else
               []
             end
@@ -55,10 +55,6 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
       tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
     end
     tasks.reject { |task| (task.is_a?(JudgeLegacyTask) && task.action == "assign") || task.is_a?(JudgeAssignTask) }
-  end
-
-  def role
-    user.vacols_roles.first || "attorney"
   end
 
   def appeal

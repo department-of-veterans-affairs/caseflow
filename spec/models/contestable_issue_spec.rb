@@ -23,7 +23,7 @@ describe ContestableIssue do
       id: "1",
       rating_issue_reference_id: "rating1",
       profile_date: profile_date,
-      decision_text: "this is a disposition"
+      description: "this is a good decision"
     )
   end
 
@@ -38,6 +38,7 @@ describe ContestableIssue do
         decision_issue_id: nil,
         date: profile_date,
         description: rating_issue.decision_text,
+        source_request_issue: rating_issue.source_request_issue,
         contesting_decision_review: decision_review
       )
 
@@ -49,7 +50,7 @@ describe ContestableIssue do
         description: rating_issue.decision_text,
         rampClaimId: nil,
         titleOfActiveReview: nil,
-        sourceHigherLevelReview: nil,
+        sourceReviewType: nil,
         timely: true
       )
     end
@@ -66,7 +67,7 @@ describe ContestableIssue do
           description: rating_issue.decision_text,
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: nil,
+          sourceReviewType: nil,
           timely: false
         )
       end
@@ -83,7 +84,8 @@ describe ContestableIssue do
         rating_issue_profile_date: profile_date,
         decision_issue_id: decision_issue.id,
         date: profile_date,
-        description: decision_issue.decision_text,
+        description: decision_issue.description,
+        source_request_issue: decision_issue,
         contesting_decision_review: decision_review
       )
 
@@ -92,10 +94,10 @@ describe ContestableIssue do
         ratingIssueProfileDate: profile_date,
         decisionIssueId: decision_issue.id,
         date: profile_date,
-        description: decision_issue.decision_text,
+        description: decision_issue.description,
         rampClaimId: nil,
         titleOfActiveReview: nil,
-        sourceHigherLevelReview: nil,
+        sourceReviewType: nil,
         timely: true
       )
     end
@@ -109,10 +111,10 @@ describe ContestableIssue do
           ratingIssueProfileDate: profile_date,
           decisionIssueId: decision_issue.id,
           date: profile_date,
-          description: decision_issue.decision_text,
+          description: decision_issue.description,
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: nil,
+          sourceReviewType: nil,
           timely: false
         )
       end

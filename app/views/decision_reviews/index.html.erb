@@ -1,0 +1,14 @@
+<% content_for :full_page_content do %>
+  <%= react_component("NonComp", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date,
+    serverNonComp: {
+      businessLine: business_line.name,
+      businessLineUrl: business_line.url,
+      inProgressTasks: in_progress_tasks,
+      completedTasks: completed_tasks
+    }
+  }) %>
+<% end %>

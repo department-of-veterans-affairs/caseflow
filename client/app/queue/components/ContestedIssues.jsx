@@ -4,6 +4,7 @@ import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
+import { LinkSymbol } from '../../components/RenderFunctions';
 
 const TEXT_INDENTATION = '10px';
 
@@ -73,6 +74,8 @@ export default class ContestedIssues extends React.PureComponent {
     return decisionIssues.filter((decisionIssue) => {
       return decisionIssue.request_issue_ids.includes(requestIssue.id);
     }).map((decisionIssue) => {
+      const linkedDecisionIssue = decisionIssue.request_issue_ids.length > 1;
+
       return <div {...outerDiv} key={decisionIssue.id}>
         <div {...grayLine} />
         <div {...decisionIssueDiv}>
@@ -81,8 +84,8 @@ export default class ContestedIssues extends React.PureComponent {
             {openDecisionHandler && <span>
               <Button
                 name="Edit"
-                id={`edit-issue-${decisionIssue.id}`}
-                onClick={openDecisionHandler([requestIssue.id], decisionIssue)}
+                id={`edit-issue-${requestIssue.id}-${decisionIssue.id}`}
+                onClick={openDecisionHandler(requestIssue.id, decisionIssue)}
                 classNames={['cf-btn-link']}
               />
             </span>}
@@ -90,11 +93,17 @@ export default class ContestedIssues extends React.PureComponent {
           <div {...verticalSpaceDiv} {...flexContainer}>
             <span {...descriptionSpan}>
               {decisionIssue.description}
+              { decisionIssue.diagnostic_code &&
+              <div>Diagnostic code: {decisionIssue.diagnostic_code}</div>
+              }
             </span>
             <span>
               {ISSUE_DISPOSITIONS_BY_ID[decisionIssue.disposition]}
             </span>
           </div>
+          {linkedDecisionIssue && <div {...noteDiv} {...verticalSpaceDiv}>
+            <LinkSymbol /> Added to {decisionIssue.request_issue_ids.length} issues
+          </div>}
         </div>
       </div>;
     });
@@ -126,26 +135,31 @@ export default class ContestedIssues extends React.PureComponent {
 
       return <li {...listPadding} key={issue.id}>
         <div {...contestedIssueStyling}>
-          Contested Issue
+          Issue
         </div>
         { shouldShowError &&
           <span {...errorTextSpacing} className="usa-input-error-message">
-            Each request issue must have at least one decision issue
+            You must add a decision before you continue.
           </span>
         }
         <div {...indentedIssueStyling} className={shouldShowError ? 'usa-input-error' : ''}>
-          {issue.description}
           <div {...verticalSpaceDiv}>Benefit type: {BENEFIT_TYPES[issue.program]}</div>
+          {issue.description}
+          { issue.diagnostic_code &&
+            <div>Diagnostic code: {issue.diagnostic_code}</div>
+          }
           { issue.notes &&
             <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>
           }
+
           {this.decisionIssues(issue)}
           { openDecisionHandler &&
             <React.Fragment>
               <div {...buttonDiv}>
                 <Button
-                  name="+ Add Decision"
-                  onClick={openDecisionHandler([issue.id])}
+                  name="+ Add decision"
+                  id={`add-decision-${issue.id}`}
+                  onClick={openDecisionHandler(issue.id)}
                   classNames={['usa-button-secondary']}
                 />
               </div>

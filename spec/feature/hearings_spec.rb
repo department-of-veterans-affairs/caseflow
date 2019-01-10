@@ -12,7 +12,7 @@ RSpec.feature "Hearings" do
 
     let!(:vacols_staff) { create(:staff, user: current_user) }
 
-    let!(:hearing) { create(:hearing, user: current_user) }
+    let!(:hearing) { create(:legacy_hearing, user: current_user) }
 
     before do
       2.times do
@@ -156,7 +156,7 @@ RSpec.feature "Hearings" do
     end
 
     scenario "Hearing worksheet page displays worksheet information" do
-      visit "/hearings/" + hearing.id.to_s + "/worksheet"
+      visit "/hearings/" + hearing.external_id.to_s + "/worksheet"
 
       expect(page).to have_content("HEARING TYPE Video")
       expect(page).to have_content("Docket #" + hearing.docket_number)
@@ -165,45 +165,46 @@ RSpec.feature "Hearings" do
 
     context "worksheet header" do
       before do
-        create(:hearing, user: current_user)
+        create(:legacy_hearing, user: current_user)
       end
 
       scenario "Hearing worksheet switch veterans" do
-        visit "/hearings/" + hearing.id.to_s + "/worksheet"
-
+        visit "/hearings/" + hearing.external_id.to_s + "/worksheet"
         find(".Select-control").click
         find("#react-select-2--option-0").click
-        expect(page).to have_current_path("/hearings/1/worksheet")
-        expect(page).to have_content(Hearing.find(1).veteran_first_name)
+        hearing = LegacyHearing.find(1)
+        expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/worksheet")
+        expect(page).to have_content(hearing.veteran_first_name)
 
         find(".Select-control").click
         find("#react-select-2--option-1").click
-        expect(page).to have_current_path("/hearings/2/worksheet")
-        expect(page).to have_content(Hearing.find(2).veteran_first_name)
+        hearing = LegacyHearing.find(2)
+        expect(page).to have_current_path("/hearings/" + hearing.external_id.to_s + "/worksheet")
+        expect(page).to have_content(hearing.veteran_first_name)
       end
     end
 
     scenario "Hearing worksheet default summary shows up" do
-      visit "/hearings/" + hearing.id.to_s + "/worksheet"
+      visit "/hearings/" + hearing.external_id.to_s + "/worksheet"
       expect(page).to have_content("Contentions")
       expect(page).to have_content("Evidence")
       expect(page).to have_content("Comments and special instructions to attorneys")
     end
 
     scenario "Worksheet saves on refresh" do
-      visit "/hearings/" + hearing.id.to_s + "/worksheet"
+      visit "/hearings/" + hearing.external_id.to_s + "/worksheet"
       page.find(".public-DraftEditor-content").set("These are the notes being taken here")
       fill_in "appellant-vet-rep-name", with: "This is a rep name"
       fill_in "appellant-vet-witness", with: "This is a witness"
       fill_in "worksheet-military-service", with: "This is military service"
 
-      visit "/hearings/" + hearing.id.to_s + "/worksheet"
+      visit "/hearings/" + hearing.external_id.to_s + "/worksheet"
       expect(page).to have_content("This is a rep name")
       expect(page).to have_content("This is a witness")
       expect(page).to have_content("These are the notes being taken here")
       expect(page).to have_content("This is military service")
 
-      visit "/hearings/" + hearing.id.to_s + "/worksheet/print?do_not_open_print_prompt=1"
+      visit "/hearings/" + hearing.external_id.to_s + "/worksheet/print?do_not_open_print_prompt=1"
       expect(page).to have_content("This is a rep name")
       expect(page).to have_content("This is a witness")
       expect(page).to have_content("These are the notes being taken here")
@@ -211,7 +212,7 @@ RSpec.feature "Hearings" do
     end
 
     scenario "Worksheet adds, deletes, edits, and saves user created issues" do
-      visit "/hearings/" + hearing.id.to_s + "/worksheet"
+      visit "/hearings/" + hearing.external_id.to_s + "/worksheet"
 
       click_on "button-addIssue-1"
       fill_in "3-issue-description", with: "This is the description"
@@ -225,7 +226,7 @@ RSpec.feature "Hearings" do
       click_on "Confirm delete"
       expect(page).to_not have_content("Vba_burial:")
 
-      visit "/hearings/" + hearing.id.to_s + "/worksheet"
+      visit "/hearings/" + hearing.external_id.to_s + "/worksheet"
       expect(page).to have_content("This is the description")
       expect(page).to have_content("This is a note")
       expect(page).to have_content("This is a disposition")
@@ -240,7 +241,7 @@ RSpec.feature "Hearings" do
       end
 
       scenario "Numbering is consistent" do
-        visit "/hearings/" + hearing.id.to_s + "/worksheet"
+        visit "/hearings/" + hearing.external_id.to_s + "/worksheet"
 
         click_on "button-addIssue-2"
         expect(page).to have_content("5.")
@@ -251,7 +252,7 @@ RSpec.feature "Hearings" do
     end
 
     scenario "Can click from hearing worksheet to reader" do
-      visit "/hearings/" + hearing.id.to_s + "/worksheet"
+      visit "/hearings/" + hearing.external_id.to_s + "/worksheet"
       link = find("#review-claims-folder")
       link_href = link[:href]
       expect(page).to have_content("Review claims folder")

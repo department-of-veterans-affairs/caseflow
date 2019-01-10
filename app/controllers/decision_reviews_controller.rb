@@ -3,20 +3,73 @@ class DecisionReviewsController < ApplicationController
 
   def index
     if business_line
-      render json: { tasks: business_line.tasks }
+      render "index"
     else
-      render json: { error: "#{business_line_slug} not found" }, status: 404
+      # TODO: make index show error message
+      render json: { error: "#{business_line_slug} not found" }, status: :not_found
     end
   end
 
-  private
+  def show
+    if task
+      render "show"
+    else
+      render json: { error: "Task #{task_id} not found" }, status: :not_found
+    end
+  end
+
+  def update
+    if task
+      if task.complete!(decision_issue_params, decision_date)
+        render json: { decisionIssues: task.appeal.decision_issues }, status: :created
+      else
+        render json: { error_code: task.error_code }, status: :bad_request
+      end
+    else
+      render json: { error: "Task #{task_id} not found" }, status: :not_found
+    end
+  end
 
   def business_line_slug
-    params.permit(:business_line_slug)[:business_line_slug]
+    allowed_params[:business_line_slug] || allowed_params[:decision_review_business_line_slug]
+  end
+
+  def task_id
+    allowed_params[:task_id]
+  end
+
+  def task
+    @task ||= DecisionReviewTask.find(task_id)
+  end
+
+  def in_progress_tasks
+    apply_task_serializer(business_line.tasks.order(assigned_at: :desc).reject(&:completed?))
+  end
+
+  def completed_tasks
+    apply_task_serializer(business_line.tasks.order(completed_at: :desc).select(&:completed?))
   end
 
   def business_line
     @business_line ||= BusinessLine.find_by(url: business_line_slug)
+  end
+
+  helper_method :in_progress_tasks, :completed_tasks, :business_line, :task
+
+  private
+
+  def decision_date
+    Date.parse(params.require("decision_date")).to_datetime
+  end
+
+  def decision_issue_params
+    params.require("decision_issues").map do |decision_issue_param|
+      decision_issue_param.permit(:request_issue_id, :disposition, :description)
+    end
+  end
+
+  def apply_task_serializer(tasks)
+    tasks.map { |task| task.ui_hash.merge(business_line: business_line_slug) }
   end
 
   def set_application
@@ -38,5 +91,9 @@ class DecisionReviewsController < ApplicationController
 
   def verify_feature_enabled
     redirect_to "/unauthorized" unless FeatureToggle.enabled?(:decision_reviews)
+  end
+
+  def allowed_params
+    params.permit(:decision_review_business_line_slug, :business_line_slug, :task_id)
   end
 end

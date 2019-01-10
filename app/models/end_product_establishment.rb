@@ -7,7 +7,7 @@
 # the current status of the EP when the EndProductEstablishment is synced.
 
 class EndProductEstablishment < ApplicationRecord
-  attr_accessor :valid_modifiers, :special_issues
+  attr_accessor :valid_modifiers
   # In decision reviews, we may create 2 end products at the same time. To avoid using
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
@@ -152,30 +152,44 @@ class EndProductEstablishment < ApplicationRecord
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
+  # All records that create contentions should be an instance of ApplicationRecord with
+  # a contention_reference_id column, and contention_text method
+  # TODO: this can be refactored to ask the source instead of using a case statement
+  def calculate_records_ready_for_contentions
+    case source
+    when ClaimReview then request_issues_ready_for_contentions
+    when DecisionDocument then source.effectuations.where(end_product_establishment: self)
+    end
+  end
+
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
   def create_contentions!
-    issues_without_contentions = request_issues_ready_for_contentions
-    return if issues_without_contentions.empty?
+    records_ready_for_contentions = calculate_records_ready_for_contentions
+    return if records_ready_for_contentions.empty?
 
     set_establishment_values_from_source
 
-    descriptions = issues_without_contentions.map(&:contention_text)
+    contentions = records_ready_for_contentions.map do |issue|
+      contention = { description: issue.contention_text }
+      issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
+      contention
+    end
 
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
 
     # We don't care about duplicate text; we just care that every request issue
     # has a contention.
-
-    create_contentions_in_vbms(descriptions).each do |contention|
-      issue = issues_without_contentions.find do |i|
-        i.contention_text == contention.text && i.contention_reference_id.nil?
+    create_contentions_in_vbms(contentions).each do |contention|
+      record = records_ready_for_contentions.find do |r|
+        r.contention_text == contention.text && r.contention_reference_id.nil?
       end
-      issue&.update!(contention_reference_id: contention.id)
+
+      record&.update!(contention_reference_id: contention.id)
     end
 
-    fail ContentionCreationFailed if issues_without_contentions.any? { |issue| issue.contention_reference_id.nil? }
+    fail ContentionCreationFailed if records_ready_for_contentions.any? { |r| r.contention_reference_id.nil? }
   end
 
   def remove_contention!(for_object)
@@ -285,6 +299,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def generate_claimant_letter!
     return if doc_reference_id
+
     generate_claimant_letter_in_bgs.tap do |result|
       update!(doc_reference_id: result)
     end
@@ -292,6 +307,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def generate_tracked_item!
     return if development_item_reference_id
+
     generate_tracked_item_in_bgs.tap do |result|
       update!(development_item_reference_id: result)
     end
@@ -299,6 +315,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def request_issues
     return [] unless source.try(:request_issues)
+
     source.request_issues.select { |ri| ri.end_product_establishment == self }
   end
 
@@ -364,7 +381,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def rating_issue_contention_map(request_issues_to_associate)
     request_issues_to_associate.inject({}) do |contention_map, issue|
-      contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
+      contention_map[issue.contested_rating_issue_reference_id] = issue.contention_reference_id
       contention_map
     end
   end
@@ -421,6 +438,7 @@ class EndProductEstablishment < ApplicationRecord
     end
 
     fail EstablishedEndProductNotFound unless result
+
     result
   end
 
@@ -441,16 +459,16 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync_source!
-    return unless source && source.respond_to?(:on_sync)
+    return unless source&.respond_to?(:on_sync)
+
     source.on_sync(self)
   end
 
-  def create_contentions_in_vbms(descriptions)
+  def create_contentions_in_vbms(contentions)
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
       claim_id: reference_id,
-      contention_descriptions: descriptions,
-      special_issues: special_issues || [],
+      contentions: contentions,
       user: user
     )
   end
@@ -464,8 +482,7 @@ class EndProductEstablishment < ApplicationRecord
   def set_establishment_values_from_source
     self.attributes = {
       invalid_modifiers: source.respond_to?(:invalid_modifiers) && source.invalid_modifiers,
-      valid_modifiers: source.valid_modifiers,
-      special_issues: source.respond_to?(:special_issues) && source.special_issues
+      valid_modifiers: source.valid_modifiers
     }
   end
 

@@ -29,7 +29,7 @@ class User < ApplicationRecord
 
   def roles
     (self[:roles] || []).inject([]) do |result, role|
-      result.concat([role]).concat(FUNCTION_ALIASES[role] ? FUNCTION_ALIASES[role] : [])
+      result.concat([role]).concat(FUNCTION_ALIASES[role] || [])
     end
   end
 
@@ -76,6 +76,14 @@ class User < ApplicationRecord
     @vacols_full_name ||= user_info[:full_name]
   rescue Caseflow::Error::UserRepositoryError
     nil
+  end
+
+  def can_edit_request_issues?(appeal)
+    Task.where(
+      appeal: appeal,
+      assigned_to: self,
+      status: [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
+    ).select { |t| t.is_a?(JudgeTask) || t.is_a?(AttorneyTask) }.any?
   end
 
   def participant_id
@@ -138,6 +146,7 @@ class User < ApplicationRecord
     return false if denied?(thing)
     # Ignore "System Admin" function from CSUM/CSEM users
     return false if thing.include?("System Admin")
+
     roles.include?(thing)
   end
 
@@ -255,7 +264,7 @@ class User < ApplicationRecord
   end
 
   def appeal_hearings(appeal_ids)
-    Hearing.where(appeal_id: appeal_ids)
+    LegacyHearing.where(appeal_id: appeal_ids)
   end
 
   class << self

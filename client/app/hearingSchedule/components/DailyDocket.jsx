@@ -18,6 +18,7 @@ import StatusMessage from '../../components/StatusMessage';
 import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
+import { crossSymbolHtml, pencilSymbol } from '../../components/RenderFunctions';
 
 const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
@@ -391,9 +392,18 @@ export default class DailyDocket extends React.Component {
       { this.props.dailyDocketServerError && <Alert
         type="error"
         styling={alertStyling}
-        title={` Unable to delete Hearing Day 
+        title={` Unable to delete Hearing Day
                 ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')} in Caseflow.`}
         message="Please delete the hearing day through VACOLS" />}
+
+      { this.props.onErrorHearingDayLock && <Alert
+        type="error"
+        styling={alertStyling}
+        title={`VACOLS Hearing Day ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')}
+           cannot be locked in Caseflow.`}
+        message="VACOLS Hearing Day cannot be locked"
+      />}
+
       <div className="cf-push-left">
         <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
         <div {...backLinkStyling}>
@@ -403,18 +413,22 @@ export default class DailyDocket extends React.Component {
             {...editLinkStyling}
             linkStyling
             onClick={this.props.openModal} >
-            Edit Hearing Day
+            <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+            <span {...css({ marginRight: '5px',
+              marginLeft: '20px' })}>Edit Hearing Day</span>
           </Button>&nbsp;&nbsp;
           <Button
             linkStyling
             onClick={this.props.onDisplayLockModal} >
-            {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
+            <span {...css({ marginRight: '5px' })}>
+              {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
+            </span>
           </Button>&nbsp;&nbsp;
           { _.isEmpty(this.props.hearings) && this.props.userRoleBuild &&
           <Button
             linkStyling
             onClick={this.props.onClickRemoveHearingDay} >
-            Remove Hearing Day
+            {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
           </Button>
           }
           {this.props.notes &&
@@ -428,7 +442,8 @@ export default class DailyDocket extends React.Component {
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
         Coordinator: {this.props.dailyDocket.bvaPoc} <br />
-        Hearing type: {this.props.dailyDocket.hearingType}
+        Hearing type: {this.props.dailyDocket.hearingType} <br />
+        Room number: {this.props.dailyDocket.room}
       </span>
       <div {...noMarginStyling}>
         { !_.isEmpty(dailyDocketRows) && <Table

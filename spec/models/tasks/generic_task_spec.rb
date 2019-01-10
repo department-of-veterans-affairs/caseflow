@@ -150,9 +150,15 @@ describe GenericTask do
       end
 
       context "who is the current user" do
-        it "should update the task's status" do
+        it "should receive the update" do
           expect_any_instance_of(GenericTask).to receive(:update!)
           task.update_from_params({ status: Constants.TASK_STATUSES.completed }, user)
+        end
+
+        it "should update the task's status" do
+          expect(task.status).to eq(Constants.TASK_STATUSES.in_progress)
+          task.update_from_params({ status: Constants.TASK_STATUSES.completed }, user)
+          expect(task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         end
       end
 

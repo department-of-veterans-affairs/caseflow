@@ -5,6 +5,7 @@ FactoryBot.define do
     assigned_to { create(:user) }
     appeal { create(:legacy_appeal, vacols_case: create(:case)) }
     action { nil }
+    type { Task.name }
 
     trait :in_progress do
       status Constants.TASK_STATUSES.in_progress
@@ -56,8 +57,13 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :ama_judge_review_task, class: JudgeReviewTask do
-      type JudgeReviewTask.name
+    factory :ama_judge_decision_review_task, class: JudgeDecisionReviewTask do
+      type JudgeDecisionReviewTask.name
+      appeal { create(:appeal) }
+    end
+
+    factory :ama_judge_quality_review_task, class: JudgeQualityReviewTask do
+      type JudgeQualityReviewTask.name
       appeal { create(:appeal) }
     end
 
@@ -81,6 +87,12 @@ FactoryBot.define do
       assigned_to { QualityReview.singleton }
     end
 
+    factory :quality_review_task do
+      type QualityReviewTask.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
+
     factory :bva_dispatch_task do
       type BvaDispatchTask.name
       appeal { create(:appeal) }
@@ -89,12 +101,6 @@ FactoryBot.define do
 
     factory :schedule_hearing_task do
       type ScheduleHearingTask.name
-      appeal { create(:appeal) }
-      assigned_by nil
-    end
-
-    factory :quality_review_task do
-      type QualityReviewTask.name
       appeal { create(:appeal) }
       assigned_by nil
     end
@@ -108,6 +114,12 @@ FactoryBot.define do
     factory :higher_level_review_task do
       type DecisionReviewTask.name
       appeal { create(:higher_level_review) }
+      assigned_by nil
+    end
+
+    factory :board_grant_effectuation_task do
+      type BoardGrantEffectuationTask.name
+      appeal { create(:appeal) }
       assigned_by nil
     end
   end

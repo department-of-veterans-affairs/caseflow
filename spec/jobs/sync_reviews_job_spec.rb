@@ -119,5 +119,16 @@ describe SyncReviewsJob do
         end
       end
     end
+
+    context "when there are decision documents that need to be reprocessed" do
+      let!(:decision_document_already_processed) { create(:decision_document, :processed) }
+      let!(:decision_document_needs_reprocessing) { create(:decision_document, :requires_processing) }
+
+      it "starts jobs to reprocess them" do
+        expect do
+          SyncReviewsJob.perform_now
+        end.to have_enqueued_job(ProcessDecisionDocumentJob).with(decision_document_needs_reprocessing).exactly(:once)
+      end
+    end
   end
 end

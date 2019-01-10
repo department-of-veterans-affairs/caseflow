@@ -5,6 +5,7 @@
 class HearingDay < ApplicationRecord
   acts_as_paranoid
   belongs_to :judge, class_name: "User"
+  validates :regional_office, absence: true, if: :central_office?
 
   HEARING_TYPES = {
     video: "V",
@@ -15,6 +16,14 @@ class HearingDay < ApplicationRecord
   # rubocop:disable Style/SymbolProc
   after_update { |hearing_day| hearing_day.update_children_records }
   # rubocop:enable Style/SymbolProc
+
+  def central_office?
+    hearing_type == HEARING_TYPES[:central]
+  end
+
+  def hearing_date
+    try(:scheduled_for) || super
+  end
 
   def update_children_records
     hearings = if hearing_type == HEARING_TYPES[:central]
@@ -112,6 +121,7 @@ class HearingDay < ApplicationRecord
           .fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)
 
         next unless scheduled_hearings.length < total_slots && !hearing_day[:lock]
+
         enriched_hearing_days << hearing_day.slice(:id, :hearing_date, :hearing_type, :room)
         enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] = total_slots
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = scheduled_hearings

@@ -7,6 +7,7 @@ class VACOLS::Mail < VACOLS::Record
 
   def outstanding?
     return false if mlcompdate
+
     !%w[02 13].include?(mltype)
   end
 

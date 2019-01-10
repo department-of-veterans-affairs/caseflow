@@ -30,6 +30,8 @@ import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
 import HearingDayAddModal from '../components/HearingDayAddModal';
 import _ from 'lodash';
+import { onRegionalOfficeChange } from '../../components/common/actions';
+import moment from 'moment';
 
 const dateFormatString = 'YYYY-MM-DD';
 
@@ -131,21 +133,24 @@ export class ListScheduleContainer extends React.Component {
   ]);
 
   openModal = () => {
-    this.setState({ showModalAlert: false });
-    this.setState({ modalOpen: true });
-    this.setState({ serverError: false });
-    this.setState({ noRoomsAvailable: false });
+    this.setState({ showModalAlert: false,
+      modalOpen: true,
+      serverError: false,
+      noRoomsAvailable: false });
     this.props.onSelectedHearingDayChange('');
     this.props.selectHearingType('');
-    this.props.selectVlj('');
-    this.props.selectHearingCoordinator('');
+    this.props.onRegionalOfficeChange('');
+    this.props.selectVlj({ label: '',
+      value: '' });
+    this.props.selectHearingCoordinator({ label: '',
+      value: '' });
     this.props.setNotes('');
-    this.props.onAssignHearingRoom(false);
+    this.props.onAssignHearingRoom(true);
   }
 
   closeModal = () => {
-    this.setState({ modalOpen: false });
-    this.setState({ showModalAlert: true });
+    this.setState({ modalOpen: false,
+      showModalAlert: true });
 
     let data = {
       hearing_type: this.props.hearingType.value,
@@ -153,10 +158,12 @@ export class ListScheduleContainer extends React.Component {
       judge_id: this.props.vlj.value,
       bva_poc: this.props.coordinator.label,
       notes: this.props.notes,
-      assign_room: !this.props.roomNotRequired
+      assign_room: this.props.roomRequired
     };
 
-    if (this.props.selectedRegionalOffice && this.props.selectedRegionalOffice.value !== '') {
+    if (this.props.selectedRegionalOffice &&
+        this.props.selectedRegionalOffice.value !== '' &&
+        this.props.hearingType.value !== 'C') {
       data.regional_office = this.props.selectedRegionalOffice.value;
     }
 
@@ -165,8 +172,9 @@ export class ListScheduleContainer extends React.Component {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
         const newHearings = Object.assign({}, this.props.hearingSchedule);
+        const hearingsLength = Object.keys(newHearings).length;
 
-        newHearings[newHearings.size] = resp.hearing;
+        newHearings[hearingsLength] = resp.hearing;
 
         this.props.onReceiveHearingSchedule(newHearings);
 
@@ -198,7 +206,12 @@ export class ListScheduleContainer extends React.Component {
       return `You have successfully removed Hearing Day ${formatDateStr(this.props.successfulHearingDayDelete)}`;
     }
 
+    if (['Saturday', 'Sunday'].includes(moment(this.props.selectedHearingDay).format('dddd'))) {
+      return `The Hearing day you created for ${formatDateStr(this.props.selectedHearingDay)} is a Saturday or Sunday.`;
+    }
+
     return `You have successfully added Hearing Day ${formatDateStr(this.props.selectedHearingDay)}`;
+
   };
 
   getAlertMessage = () => {
@@ -214,6 +227,10 @@ export class ListScheduleContainer extends React.Component {
       return '';
     }
 
+    if (['Saturday', 'Sunday'].includes(moment(this.props.selectedHearingDay).format('dddd'))) {
+      return 'If this was done in error, please remove hearing day from Hearing Schedule.';
+    }
+
     return <p>To add Veterans to this date, click Schedule Veterans</p>;
   };
 
@@ -224,6 +241,10 @@ export class ListScheduleContainer extends React.Component {
 
     if (this.state.noRoomsAvailable) {
       return 'error';
+    }
+
+    if (['Saturday', 'Sunday'].includes(moment(this.props.selectedHearingDay).format('dddd'))) {
+      return 'warning';
     }
 
     return 'success';
@@ -278,7 +299,7 @@ const mapStateToProps = (state) => ({
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   notes: state.hearingSchedule.notes,
-  roomNotRequired: state.hearingSchedule.roomNotRequired,
+  roomRequired: state.hearingSchedule.roomRequired,
   successfulHearingDayDelete: state.hearingSchedule.successfulHearingDayDelete
 });
 
@@ -292,6 +313,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   selectHearingCoordinator,
   setNotes,
   onAssignHearingRoom,
+  onRegionalOfficeChange,
   onReceiveJudges,
   onReceiveCoordinators,
   onResetDeleteSuccessful

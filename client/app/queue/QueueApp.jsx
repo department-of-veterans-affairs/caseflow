@@ -7,6 +7,7 @@ import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
 
 import {
+  setCanEditAod,
   setFeatureToggles,
   setUserRole,
   setUserCssId,
@@ -25,7 +26,7 @@ import QueueLoadingScreen from './QueueLoadingScreen';
 import CaseDetailsLoadingScreen from './CaseDetailsLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
-import JudgeReviewTaskListView from './JudgeReviewTaskListView';
+import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
 import JudgeAssignTaskListView from './JudgeAssignTaskListView';
 import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
@@ -35,6 +36,7 @@ import AssignHearingModal from './components/AssignHearingModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
+import CreateMailTaskDialog from './CreateMailTaskDialog';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -68,9 +70,11 @@ type Props = {|
   reviewActionType: string,
   userIsVsoEmployee?: boolean,
   caseSearchHomePage?: boolean,
+  canEditAod: Boolean,
   featureToggles: Object,
   organizations: Array<Object>,
   // Action creators
+  setCanEditAod: typeof setCanEditAod,
   setFeatureToggles: typeof setFeatureToggles,
   setUserRole: typeof setUserRole,
   setUserCssId: typeof setUserCssId,
@@ -81,6 +85,7 @@ type Props = {|
 
 class QueueApp extends React.PureComponent<Props> {
   componentDidMount = () => {
+    this.props.setCanEditAod(this.props.canEditAod);
     this.props.setFeatureToggles(this.props.featureToggles);
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
@@ -97,7 +102,7 @@ class QueueApp extends React.PureComponent<Props> {
     if (userRole === USER_ROLE_TYPES.attorney) {
       return <AttorneyTaskListView />;
     } else if (userRole === USER_ROLE_TYPES.judge) {
-      return <JudgeReviewTaskListView {...this.props} />;
+      return <JudgeDecisionReviewTaskListView {...this.props} />;
     }
 
     return <ColocatedTaskListView />;
@@ -114,7 +119,7 @@ class QueueApp extends React.PureComponent<Props> {
   routedJudgeQueueList = (label) => ({ match }) => <QueueLoadingScreen {...this.propsForQueueLoadingScreen()}>
     {label === 'assign' ?
       <JudgeAssignTaskListView {...this.props} match={match} /> :
-      <JudgeReviewTaskListView {...this.props} />}
+      <JudgeDecisionReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
   routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId} />;
@@ -191,6 +196,8 @@ class QueueApp extends React.PureComponent<Props> {
   routedAssignToSingleTeam = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
 
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
+
+  routedCreateMailTask = (props) => <CreateMailTaskDialog {...props.match.params} />;
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
@@ -288,7 +295,7 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedAssignToSingleTeam} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
-            render={this.routedAssignToTeam} />
+            render={this.routedCreateMailTask} />
           <Route
             path={'/queue/appeals/:appealId/tasks/:taskId/' +
               `(${TASK_ACTIONS.ASSIGN_TO_PERSON.value}|${TASK_ACTIONS.RETURN_TO_JUDGE.value})`}
@@ -419,6 +426,7 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setCanEditAod,
   setFeatureToggles,
   setUserRole,
   setUserCssId,

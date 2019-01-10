@@ -40,6 +40,55 @@ describe Appeal do
     end
   end
 
+  context "#contestable_issues" do
+    subject { appeal.contestable_issues }
+
+    let(:veteran_file_number) { "64205050" }
+
+    let!(:veteran) do
+      Generators::Veteran.build(
+        file_number: veteran_file_number,
+        first_name: "Ed",
+        last_name: "Merica",
+        participant_id: "55443322"
+      )
+    end
+
+    let(:receipt_date) { Time.zone.today }
+    let(:appeal) do
+      create(:appeal, veteran: veteran, receipt_date: receipt_date)
+    end
+
+    let(:another_review) do
+      create(:higher_level_review, veteran_file_number: veteran_file_number, receipt_date: receipt_date)
+    end
+
+    let!(:past_decision_issue) do
+      create(:decision_issue,
+             decision_review: another_review,
+             profile_date: receipt_date - 1.day,
+             benefit_type: another_review.benefit_type,
+             decision_text: "something decided in the past",
+             description: "past issue",
+             participant_id: veteran.participant_id)
+    end
+
+    let!(:future_decision_issue) do
+      create(:decision_issue,
+             decision_review: another_review,
+             profile_date: receipt_date + 1.day,
+             benefit_type: another_review.benefit_type,
+             decision_text: "something was decided in the future",
+             description: "future issue",
+             participant_id: veteran.participant_id)
+    end
+
+    it "does not return Decision Issues in the future" do
+      expect(subject.count).to eq(1)
+      expect(subject.first.decision_issue_id).to eq(past_decision_issue.id)
+    end
+  end
+
   context "async logic scopes" do
     let!(:appeal_requiring_processing) do
       create(:appeal).tap(&:submit_for_processing!)
@@ -99,33 +148,6 @@ describe Appeal do
 
   context "#establish!" do
     it { is_expected.to_not be_nil }
-  end
-
-  context "#special_issues" do
-    let(:appeal) { create(:appeal) }
-    let(:vacols_id) { nil }
-    let!(:request_issue) do
-      create(:request_issue, review_request: appeal, vacols_id: vacols_id)
-    end
-
-    subject { appeal.reload.special_issues }
-
-    context "no special conditions" do
-      it "is empty" do
-        expect(subject).to eq []
-      end
-    end
-
-    context "VACOLS opt-in" do
-      let(:vacols_id) { "something" }
-      let!(:legacy_opt_in) do
-        create(:legacy_issue_optin, request_issue: request_issue)
-      end
-
-      it "includes VACOLS opt-in" do
-        expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
-      end
-    end
   end
 
   context "#every_request_issue_has_decision" do
@@ -194,6 +216,7 @@ describe Appeal do
   context "#find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
+
       let(:appeal) do
         create(:appeal, veteran_file_number: veteran_file_number)
       end
@@ -211,7 +234,8 @@ describe Appeal do
     end
 
     context "with a legacy appeal" do
-      let(:vacols_case) { create(:case) }
+      let(:vacols_issue) { create(:case_issue) }
+      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
       let(:legacy_appeal) do
         create(:legacy_appeal, vacols_case: vacols_case)
       end
@@ -426,6 +450,42 @@ describe Appeal do
 
       subject { appeal.tasks_for_timeline.first }
       it { is_expected.to eq task2 }
+    end
+  end
+
+  context ".active?" do
+    subject { appeal.active? }
+
+    context "when there are no tasks for an appeal" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+
+      it "should indicate the appeal is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when there are only completed tasks for an appeal" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+
+      before do
+        FactoryBot.create_list(:task, 6, :completed, appeal: appeal)
+      end
+
+      it "should indicate the appeal is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when there are incomplete tasks for an appeal" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+
+      before do
+        FactoryBot.create_list(:task, 3, :in_progress, appeal: appeal)
+      end
+
+      it "should indicate the appeal is active" do
+        expect(subject).to eq(false)
+      end
     end
   end
 end

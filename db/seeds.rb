@@ -57,6 +57,7 @@ class SeedDB
     create_vso_user
     create_org_queue_users
     create_qr_user
+    create_aod_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
@@ -116,13 +117,20 @@ class SeedDB
     qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
     OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
 
-    # Create two QR tasks. One assigned to the organization and one assigned to both the organization and a QR user.
+    # Create QR tasks; one assigned just to the QR org and three assigned both to the org and a QR user.
     create_task_at_quality_review
-    create_task_at_quality_review(qr_user)
+    create_task_at_quality_review(qr_user, "Jane Michael", "Joan Ly")
+    create_task_at_quality_review(qr_user, "Cosette Zepeda", "Lian Arroyo")
+    create_task_at_quality_review(qr_user, "Huilen Concepcion", "Ilva Urrutia")
+  end
+
+  def create_aod_user
+    u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "AOD team member")
+    OrganizationsUser.add_user_to_organization(u, AodTeam.singleton)
   end
 
   def create_mail_team_user
-    u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Jolly D. Postman")
+    u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Mail team member")
     OrganizationsUser.add_user_to_organization(u, MailTeam.singleton)
   end
 
@@ -280,11 +288,20 @@ class SeedDB
 
   def create_higher_level_review_tasks
     6.times do
+      veteran = FactoryBot.create(:veteran)
+      epe = FactoryBot.create(:end_product_establishment, veteran_file_number: veteran.file_number)
       higher_level_review = FactoryBot.create(
         :higher_level_review,
-        request_issues: FactoryBot.create_list(:request_issue, 3),
-        veteran_file_number: FactoryBot.create(:veteran).file_number
+        end_product_establishments: [epe],
+        veteran_file_number: veteran.file_number
       )
+      3.times do
+        FactoryBot.create(:request_issue,
+                          :nonrating,
+                          end_product_establishment: epe,
+                          veteran_participant_id: veteran.participant_id,
+                          review_request: higher_level_review)
+      end
       FactoryBot.create(:higher_level_review_task,
                         assigned_to: Organization.find_by(name: "National Cemetery Association"),
                         appeal: higher_level_review)
@@ -355,7 +372,7 @@ class SeedDB
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
-      veteran_file_number: "231439628S",
+      veteran_file_number: "231439628",
       docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
@@ -453,22 +470,24 @@ class SeedDB
     )
   end
 
-  def create_task_at_quality_review(qr_user = nil)
+  def create_task_at_quality_review(qr_user = nil, judge_name = nil, attorney_name = nil)
     root_task = FactoryBot.create(:root_task)
     appeal = root_task.appeal
 
-    judge = FactoryBot.create(:user)
+    judge = FactoryBot.create(:user, station_id: 101)
+    judge.update!(full_name: judge_name) if judge_name
     FactoryBot.create(:staff, :judge_role, user: judge)
     judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
 
-    atty = FactoryBot.create(:user)
+    atty = FactoryBot.create(:user, station_id: 101)
+    atty.update!(full_name: attorney_name) if attorney_name
     FactoryBot.create(:staff, :attorney_role, user: atty)
     atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
     atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
 
     # Happens in CaseReviewConcern.update_task_and_issue_dispositions()
-    atty_task.mark_as_complete!
-    judge_task.mark_as_complete!
+    atty_task.update!(status: Constants.TASK_STATUSES.completed)
+    judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
     qr_org_task = QualityReviewTask.create_from_root_task(root_task)
 

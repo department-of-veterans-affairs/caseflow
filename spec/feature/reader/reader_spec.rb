@@ -114,7 +114,8 @@ RSpec.feature "Reader" do
   end
 
   let(:documents) { [] }
-
+  let(:file_number) { "123456789" }
+  let!(:ama_appeal) { Appeal.create(veteran_file_number: file_number) }
   let!(:appeal) do
     Generators::LegacyAppealV2.create(documents: documents)
   end
@@ -138,7 +139,8 @@ RSpec.feature "Reader" do
             Generators::Tag.create(text: "New Tag1"),
             Generators::Tag.create(text: "New Tag2")
           ],
-          description: Generators::Random.word_characters(50)
+          description: Generators::Random.word_characters(50),
+          file_number: file_number
         ),
         Generators::Document.create(
           filename: "My Form 9",
@@ -235,19 +237,41 @@ RSpec.feature "Reader" do
       end
 
       context "When both document source manifest retrieval times are set" do
-        scenario "Both times display on the page" do
+        scenario "Both times display on the page and there are no document alerts" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
           expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
           expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
+          expect(page).to_not have_css(".section--document-list .usa-alert")
+        end
+      end
+
+      context "When VVA manifest retrieval time is older, but within the eFolder cache limit" do
+        let(:vva_fetched_ts) { Time.zone.now - 2.hours }
+        scenario "Both times display on the page and there are no document alerts" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+          expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
+          expect(page).to_not have_css(".section--document-list .usa-alert")
+        end
+      end
+
+      context "When VVA manifest retrieval time is olde and outside of the eFolder cache limit" do
+        let(:vva_fetched_ts) { Time.zone.now - 4.hours }
+        scenario "Both times display on the page and a warning alert is shown" do
+          visit "/reader/appeal/#{appeal.vacols_id}/documents"
+          expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
+          expect(find("#vva-manifest-retrieved-at").text).to have_content(vva_ts_string)
+          expect(find(".section--document-list .usa-alert-warning").text).to have_content("4 hours ago")
         end
       end
 
       context "When VVA manifest retrieval time is nil" do
         let(:vva_fetched_ts) { nil }
-        scenario "Only VBMS time displays on the page" do
+        scenario "Only VBMS time displays on the page and error alert is shown" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
           expect(find("#vbms-manifest-retrieved-at").text).to have_content(vbms_ts_string)
           expect(page).to_not have_css("#vva-manifest-retrieved-at")
+          expect(page).to have_css(".section--document-list .usa-alert-error")
         end
       end
 
@@ -449,7 +473,7 @@ RSpec.feature "Reader" do
       expect(find("#procedural", visible: false).checked?).to be false
     end
 
-    scenario "Add, edit, and delete comments" do
+    scenario "Add, edit, share, and delete comments" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       expect(page).to have_content("Caseflow> Reader")
 
@@ -479,6 +503,15 @@ RSpec.feature "Reader" do
 
       # Expect comment to be in database
       expect(documents[0].reload.annotations.first.comment).to eq("FooBar")
+
+      # Share the comment
+      click_on "Share"
+
+      # Expect there to be a link to this comment in the modal
+      expect(page).to have_content("#{current_url}?annotation=1")
+
+      # Close the share modal
+      click_on "Close"
 
       # Delete the comment
       click_on "Delete"
@@ -737,6 +770,15 @@ RSpec.feature "Reader" do
 
         # This filter is the blue highlight around the comment icon
         find("g[filter=\"url(##{id})\"]")
+      end
+
+      scenario "Follow comment deep link" do
+        annotation = documents[1].annotations[0]
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[1].id}?annotation=#{annotation.id}"
+
+        expect(page).to have_content(annotation.comment)
+        expect(page).to have_css(".page")
+        expect_in_viewport("commentIcon-container-#{annotation.id}")
       end
 
       scenario "Scrolling pages changes page numbers" do

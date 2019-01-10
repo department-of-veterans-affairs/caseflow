@@ -14,6 +14,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "sync_reviews" => SyncReviewsJob,
     "take_docket_snapshot" => TakeDocketSnapshotJob,
     "task_timer_job" => TaskTimerJob
+    "fetch_hearing_locations_for_veteran_job" => FetchHearingLocationsForVeteransJob
   }.freeze
 
   def create
@@ -23,10 +24,10 @@ class Api::V1::JobsController < Api::ApplicationController
 
     job = job.perform_later
     Rails.logger.info("Pushing: #{job} job_id: #{job.job_id} to queue: #{job.queue_name}")
-    render json: { success: true, job_id: job.job_id }, status: 200
+    render json: { success: true, job_id: job.job_id }, status: :ok
   end
 
   def unrecognized_job
-    render json: { error_code: "Unable to start unrecognized job" }, status: 422
+    render json: { error_code: "Unable to start unrecognized job" }, status: :unprocessable_entity
   end
 end

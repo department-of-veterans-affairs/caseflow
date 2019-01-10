@@ -2,10 +2,15 @@ class AttorneyLegacyTask < LegacyTask
   def available_actions(role)
     return [] if role != "attorney"
 
+    # AttorneyLegacyTasks are drawn from the VACOLS.BRIEFF table but should not be actionable unless there is a case
+    # assignment in the VACOLS.DECASS table. task_id is created using the created_at field from the VACOLS.DECASS table
+    # so we use the absence of this value to indicate that there is no case assignment and return no actions.
+    return [] unless task_id
+
     actions = [
       {
         label: COPY::ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
-        value: "draft_decision/dispositions"
+        value: "draft_decision/special_issues"
       },
       {
         label: COPY::ATTORNEY_CHECKOUT_OMO_LABEL,

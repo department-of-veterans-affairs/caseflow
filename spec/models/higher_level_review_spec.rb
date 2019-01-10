@@ -16,6 +16,7 @@ describe HigherLevelReview do
   let(:same_office) { nil }
   let(:legacy_opt_in_approved) { false }
   let(:veteran_is_not_claimant) { false }
+  let(:profile_date) { receipt_date - 1 }
 
   let(:higher_level_review) do
     HigherLevelReview.new(
@@ -29,36 +30,35 @@ describe HigherLevelReview do
     )
   end
 
-  context "#special_issues" do
-    let(:vacols_id) { nil }
-    let!(:request_issue) do
-      create(:request_issue, review_request: higher_level_review, vacols_id: vacols_id)
-    end
+  context "#issue_code" do
+    let(:rating) { nil }
+    subject { higher_level_review.issue_code(rating: rating) }
 
-    subject { higher_level_review.special_issues }
+    context "for a rating issue" do
+      let(:rating) { true }
+      it "returns the rating end product code" do
+        expect(subject).to eq("030HLRR")
+      end
 
-    context "no special conditions" do
-      it "is empty" do
-        expect(subject).to eq []
+      context "when benefit type is pension" do
+        let(:benefit_type) { "pension" }
+        it "returns the rating pension end product code" do
+          expect(subject).to eq("030HLRRPMC")
+        end
       end
     end
 
-    context "VACOLS opt-in" do
-      let(:vacols_id) { "something" }
-      let!(:legacy_opt_in) do
-        create(:legacy_issue_optin, request_issue: request_issue)
+    context "for a nonrating issue" do
+      let(:rating) { false }
+      it "returns the nonrating end product code" do
+        expect(subject).to eq("030HLRNR")
       end
 
-      it "includes VACOLS opt-in" do
-        expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
-      end
-    end
-
-    context "same office" do
-      let(:same_office) { true }
-
-      it "includes same office" do
-        expect(subject).to include(code: "SSR", narrative: "Same Station Review")
+      context "when benefit type is pension" do
+        let(:benefit_type) { "pension" }
+        it "returns the nonrating pension end product code" do
+          expect(subject).to eq("030HLRNRPMC")
+        end
       end
     end
   end
@@ -213,11 +213,13 @@ describe HigherLevelReview do
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_PMR,
-                 rating_issue_reference_id: "rating1"),
+                 rating_issue_reference_id: "rating1",
+                 profile_date: profile_date),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
-                 rating_issue_reference_id: "rating2"),
+                 rating_issue_reference_id: "rating2",
+                 profile_date: profile_date),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: "not a dta error")
@@ -249,26 +251,42 @@ describe HigherLevelReview do
         first_dta_request_issue = RequestIssue.find_by(
           review_request: supplemental_claim,
           contested_decision_issue_id: decision_issues.first.id,
-          rating_issue_reference_id: "rating1",
-          rating_issue_profile_date: decision_issues.first.profile_date,
+          contested_rating_issue_reference_id: "rating1",
+          contested_rating_issue_profile_date: decision_issues.first.profile_date.to_s,
+          contested_issue_description: decision_issues.first.description,
           issue_category: decision_issues.first.issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.first.approx_decision_date
         )
 
         expect(first_dta_request_issue).to_not be_nil
+        expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDER")
 
         second_dta_request_issue = RequestIssue.find_by(
           review_request: supplemental_claim,
           contested_decision_issue_id: decision_issues.second.id,
-          rating_issue_reference_id: "rating2",
-          rating_issue_profile_date: decision_issues.second.profile_date,
+          contested_rating_issue_reference_id: "rating2",
+          contested_rating_issue_profile_date: decision_issues.second.profile_date.to_s,
+          contested_issue_description: decision_issues.first.description,
           issue_category: decision_issues.second.issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.second.approx_decision_date
         )
 
         expect(second_dta_request_issue).to_not be_nil
+        expect(second_dta_request_issue.end_product_establishment.code).to eq("040HDER")
+      end
+
+      context "when benefit type is pension" do
+        let(:benefit_type) { "pension" }
+
+        it "creates end product establishment with pension ep code" do
+          subject
+
+          first_dta_request_issue = RequestIssue.find_by(contested_rating_issue_reference_id: "rating1")
+
+          expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDERPMC")
+        end
       end
     end
 

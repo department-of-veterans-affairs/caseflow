@@ -1,4 +1,8 @@
 describe BvaDispatchTask do
+  before do
+    Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
+  end
+
   describe ".create_and_assign" do
     context "when no root_task passed as argument" do
       it "throws an error" do
@@ -47,29 +51,46 @@ describe BvaDispatchTask do
         file: file,
         redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
     end
+
     before do
       allow(BvaDispatchTask).to receive(:list_of_assignees).and_return([user.css_id])
+      FeatureToggle.enable!(:decision_document_upload)
     end
+
+    after { FeatureToggle.disable!(:decision_document_upload) }
 
     context "when single BvaDispatchTask exists for user and appeal combination" do
       before { BvaDispatchTask.create_and_assign(root_task) }
 
-      it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
-        expect(Caseflow::Fakes::S3Service).to receive(:store_file)
-          .with("decisions/" + root_task.appeal.external_id + ".pdf", /PDF/)
-        allow(VBMSService).to receive(:upload_document_to_vbms)
-        BvaDispatchTask.outcode(root_task.appeal, params, user)
-        tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
-        expect(tasks.length).to eq(1)
-        task = tasks[0]
-        expect(task.status).to eq("completed")
-        expect(task.parent.status).to eq("completed")
-        expect(task.root_task.status).to eq("completed")
-        decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
-        expect(decision_document).to_not eq nil
-        expect(VBMSService).to have_received(:upload_document_to_vbms).with(root_task.appeal, decision_document)
-        expect(decision_document.document_type).to eq "BVA Decision"
-        expect(decision_document.source).to eq "BVA"
+      context "when :decision_document_upload feature is enabled" do
+        it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
+          expect do
+            BvaDispatchTask.outcode(root_task.appeal, params, user)
+          end.to have_enqueued_job(ProcessDecisionDocumentJob).exactly(:once)
+
+          tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
+          expect(tasks.length).to eq(1)
+          task = tasks[0]
+          expect(task.status).to eq("completed")
+          expect(task.parent.status).to eq("completed")
+          expect(task.root_task.status).to eq("completed")
+
+          decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
+          expect(decision_document).to_not eq nil
+          expect(decision_document.document_type).to eq "BVA Decision"
+          expect(decision_document.source).to eq "BVA"
+          expect(decision_document.submitted_at).to_not be_nil
+        end
+      end
+
+      context "when :decision_document_upload is disabled" do
+        before { FeatureToggle.disable!(:decision_document_upload) }
+
+        it "should not start a ProcessDecisionDocumentJob job" do
+          expect do
+            BvaDispatchTask.outcode(root_task.appeal, params, user)
+          end.to_not have_enqueued_job(ProcessDecisionDocumentJob)
+        end
       end
     end
 

@@ -12,6 +12,7 @@ class LegacyTasksController < ApplicationController
   def index
     current_role = (params[:role] || user.vacols_roles.first).try(:downcase)
     return invalid_role_error unless ROLES.include?(current_role)
+
     respond_to do |format|
       format.html do
         render "queue/index"
@@ -19,7 +20,7 @@ class LegacyTasksController < ApplicationController
       format.json do
         MetricsService.record("VACOLS: Get all tasks with appeals for #{params[:user_id]}",
                               name: "LegacyTasksController.index") do
-          tasks, _appeals = LegacyWorkQueue.tasks_with_appeals(user, current_role)
+          tasks = LegacyWorkQueue.tasks_for_user(user)
           render json: {
             tasks: json_tasks(tasks, current_role)
           }
@@ -37,12 +38,13 @@ class LegacyTasksController < ApplicationController
     task = JudgeCaseAssignmentToAttorney.create(legacy_task_params)
 
     return invalid_record_error(task) unless task.valid?
+
     render json: {
       task: json_task(AttorneyLegacyTask.from_vacols(
                         task.last_case_assignment,
                         LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
                         task.assigned_to
-      ))
+                      ))
     }
   end
 
@@ -57,7 +59,7 @@ class LegacyTasksController < ApplicationController
                         VACOLS::CaseAssignment.latest_task_for_appeal(appeal.vacols_id),
                         appeal,
                         legacy_task_params[:assigned_to]
-      ))
+                      ))
     }
   end
 
@@ -65,12 +67,13 @@ class LegacyTasksController < ApplicationController
     task = JudgeCaseAssignmentToAttorney.update(legacy_task_params.merge(task_id: params[:id]))
 
     return invalid_record_error(task) unless task.valid?
+
     render json: {
       task: json_task(AttorneyLegacyTask.from_vacols(
                         task.last_case_assignment,
                         LegacyAppeal.find_or_create_by_vacols_id(task.vacols_id),
                         task.assigned_to
-      ))
+                      ))
     }
   end
 
