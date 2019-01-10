@@ -3,8 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
   appealWithDetailSelector,
-  nonRootActionableTasksForAppeal,
-  getAllTasksForAppeal
+  nonRootActionableTasksForAppeal
 } from './selectors';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
@@ -74,8 +73,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
-    tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId }),
-    allTasks: getAllTasksForAppeal(state, { appealId: ownProps.appealId })
+    tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };
 
