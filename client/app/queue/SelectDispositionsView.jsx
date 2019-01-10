@@ -13,6 +13,7 @@ import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
 import ContestedIssues, { contestedIssueStyling } from './components/ContestedIssues';
 import COPY from '../../COPY.json';
+import { COLORS } from '../constants/AppConstants';
 
 import {
   setDecisionOptions,
@@ -27,12 +28,18 @@ import {
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
+import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import uuid from 'uuid';
 
 const connectedIssueDiv = css({
   display: 'flex',
   justifyContent: 'space-between',
   marginBottom: '10px'
+});
+
+const exampleDiv = css({
+  color: COLORS.GREY,
+  fontStyle: 'Italic'
 });
 
 class SelectDispositionsView extends React.PureComponent {
@@ -247,21 +254,6 @@ class SelectDispositionsView extends React.PureComponent {
           </React.Fragment>
         }
 
-        <h3>{COPY.DECISION_ISSUE_MODAL_DESCRIPTION}</h3>
-        <TextareaField
-          errorMessage={highlightModal && !decisionIssue.description ? 'This field is required' : null}
-          label={COPY.DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE}
-          name="Text Box"
-          onChange={(issueDescription) => {
-            this.setState({
-              decisionIssue: {
-                ...decisionIssue,
-                description: issueDescription
-              }
-            });
-          }}
-          value={decisionIssue.description}
-        />
         <h3>{COPY.DECISION_ISSUE_MODAL_DISPOSITION}</h3>
         <SelectIssueDispositionDropdown
           highlight={highlightModal}
@@ -278,6 +270,36 @@ class SelectDispositionsView extends React.PureComponent {
           noStyling
         />
         <br />
+        <h3>{COPY.DECISION_ISSUE_MODAL_DESCRIPTION}</h3>
+        <TextareaField
+          errorMessage={highlightModal && !decisionIssue.description ? 'This field is required' : null}
+          label={COPY.DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE}
+          name="Text Box"
+          onChange={(issueDescription) => {
+            this.setState({
+              decisionIssue: {
+                ...decisionIssue,
+                description: issueDescription
+              }
+            });
+          }}
+          value={decisionIssue.description}
+        />
+        <h3>{COPY.DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE}</h3>
+        <SearchableDropdown
+          name="Diagnostic code"
+          placeholder={COPY.DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE}
+          hideLabel
+          value={decisionIssue.diagnostic_code}
+          options={_.map(Object.keys(DIAGNOSTIC_CODE_DESCRIPTIONS), (key) => ({ label: key,
+            value: key }))}
+          onChange={(diagnosticCode) => this.setState({
+            decisionIssue: {
+              ...decisionIssue,
+              diagnostic_code: diagnosticCode.value
+            }
+          })}
+        />
         <h3>{COPY.DECISION_ISSUE_MODAL_BENEFIT_TYPE}</h3>
         <SearchableDropdown
           name="Benefit type"
@@ -293,7 +315,8 @@ class SelectDispositionsView extends React.PureComponent {
             }
           })}
         />
-        <p>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</p>
+        <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
+        <p {...exampleDiv}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE}</h3>
         <SearchableDropdown
           name="Issues"
