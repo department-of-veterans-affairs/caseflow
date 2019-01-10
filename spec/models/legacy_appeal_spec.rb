@@ -426,11 +426,21 @@ describe LegacyAppeal do
       create(:case, documents: documents)
     end
 
-    subject { appeal.number_of_documents_from_caseflow }
+    context "Number of documents from vbms" do
+      subject { appeal.number_of_documents }
 
-    it "should return number of documents" do
-      documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
-      expect(subject).to eq 3
+      it "should return number of documents" do
+        expect(subject).to eq 3
+      end
+    end
+
+    context "Number of documents from caseflow" do
+      subject { appeal.number_of_documents_from_caseflow }
+
+      it "should return number of documents" do
+        documents.first { |document| document.update(file_number: appeal.sanitized_vbms_id) }
+        expect(subject).to eq 3
+      end
     end
   end
 
