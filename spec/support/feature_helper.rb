@@ -11,12 +11,22 @@ module FeatureHelper
     end
   end
 
+  def dropdown_selected_match?(selected_value, container = page)
+    container.find(".Select-control").find(".Select-value").text == selected_value
+  end
+
   def generate_words(n_words)
     Array.new(n_words).map do
       word_length = [rand(12), 3].max
       generate_text(word_length)
     end.join(" ")
   end
+
+  def step(_title)
+    yield
+  end
+
+  def xstep(_title); end
 
   private
 
