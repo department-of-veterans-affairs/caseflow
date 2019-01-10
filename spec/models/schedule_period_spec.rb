@@ -26,7 +26,7 @@ describe SchedulePeriod do
 
       expect(assignments.count).to eq(total_allocation_days)
       expect(assignments[0].key?(:hearing_type)).to be_truthy
-      expect(assignments[0].key?(:hearing_date)).to be_truthy
+      expect(assignments[0].key?(:scheduled_for)).to be_truthy
       expect(assignments[0].key?(:room)).to be_truthy
       expect(assignments[0].key?(:regional_office)).to be_truthy
     end

@@ -32,12 +32,6 @@ class HigherLevelReview < ClaimReview
     )
   end
 
-  def special_issues
-    specials = super
-    specials << { code: "SSR", narrative: "Same Station Review" } if same_office
-    specials
-  end
-
   def issue_code(rating: true)
     issue_code_type = rating ? :rating : :nonrating
     issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"

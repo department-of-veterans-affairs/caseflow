@@ -154,7 +154,7 @@ export class ListScheduleContainer extends React.Component {
 
     let data = {
       hearing_type: this.props.hearingType.value,
-      hearing_date: this.props.selectedHearingDay,
+      scheduled_for: this.props.selectedHearingDay,
       judge_id: this.props.vlj.value,
       bva_poc: this.props.coordinator.label,
       notes: this.props.notes,
