@@ -16,7 +16,7 @@ export default class TabWindow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: 0,
+      currentPage: this.props.defaultPage || 0,
       disabled: false
     };
   }
@@ -97,5 +97,6 @@ TabWindow.propTypes = {
     icon: PropTypes.obj,
     label: PropTypes.node.isRequired,
     page: PropTypes.node.isRequired
-  }))
+  })),
+  defaultPage: PropTypes.number
 };

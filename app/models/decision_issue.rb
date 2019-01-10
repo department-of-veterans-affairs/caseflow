@@ -38,6 +38,15 @@ class DecisionIssue < ApplicationRecord
     request_issues.none?(&:nonrating?)
   end
 
+  def ui_hash
+    {
+      id: id,
+      requestIssueId: request_issues&.first&.id,
+      description: description,
+      disposition: disposition
+    }
+  end
+
   private
 
   def calculate_and_set_description

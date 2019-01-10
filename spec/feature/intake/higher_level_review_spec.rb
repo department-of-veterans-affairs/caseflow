@@ -547,11 +547,6 @@ feature "Higher-Level Review" do
   end
 
   context "Add / Remove Issues page" do
-    def check_row(label, text)
-      row = find("tr", text: label)
-      expect(row).to have_text(text)
-    end
-
     let(:higher_level_review_reference_id) { "hlr123" }
     let(:supplemental_claim_reference_id) { "sc123" }
     let(:supplemental_claim_contention_reference_id) { 5678 }
