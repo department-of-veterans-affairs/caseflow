@@ -227,6 +227,16 @@ class Task < ApplicationRecord
     }
   end
 
+  def assign_to_privacy_team_data
+    org = PrivacyTeam.singleton
+
+    {
+      selected: org,
+      options: [{ label: org.name, value: org.id }],
+      type: GenericTask.name
+    }
+  end
+
   def add_admin_action_data
     {
       selected: nil,
