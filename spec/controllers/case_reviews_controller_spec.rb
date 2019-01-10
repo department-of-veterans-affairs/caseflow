@@ -195,6 +195,11 @@ RSpec.describe CaseReviewsController, type: :controller do
         let(:root_task) { create(:root_task) }
         let(:task) { create(:ama_judge_task, assigned_to: judge, parent: root_task) }
 
+        before do
+          # Add somebody to the BVA dispatch team so automatic task assignment for AMA cases succeeds.
+          OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        end
+
         context "when all parameters are present to send to sign a decision" do
           let(:params) do
             {
@@ -235,8 +240,11 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
 
+            # When a judge completes judge checkout we create either a QR or dispatch task.
             quality_review_task = QualityReviewTask.find_by(parent_id: root_task.id)
-            expect(quality_review_task.assigned_to).to eq(QualityReview.singleton)
+            expect(quality_review_task.assigned_to).to eq(QualityReview.singleton) if quality_review_task
+            dispatch_task = BvaDispatchTask.find_by(parent_id: root_task.id)
+            expect(dispatch_task.assigned_to).to eq(BvaDispatch.singleton) if dispatch_task
           end
 
           context "When case is being QRed" do
