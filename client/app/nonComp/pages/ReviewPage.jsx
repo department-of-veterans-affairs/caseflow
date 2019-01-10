@@ -3,10 +3,21 @@ import { connect } from 'react-redux';
 
 import NonCompTabs from '../components/NonCompTabs';
 import Button from '../../components/Button';
+import { SuccessAlert } from '../components/Alerts';
+import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 
 class NonCompReviewsPage extends React.PureComponent {
   render = () => {
+    let successAlert = null;
+
+    if (this.props.decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.SUCCEED) {
+      successAlert = <SuccessAlert successCode="decisionIssueUpdateSucceeded"
+        veteranName={this.props.decisionIssuesStatus.veteranName}
+      />;
+    }
+
     return <div>
+      { successAlert }
       <h1>{this.props.businessLine}</h1>
       <div className="usa-grid-full">
         <div className="usa-width-two-thirds">
@@ -30,7 +41,8 @@ class NonCompReviewsPage extends React.PureComponent {
 
 const ReviewPage = connect(
   (state) => ({
-    businessLine: state.businessLine
+    businessLine: state.businessLine,
+    decisionIssuesStatus: state.decisionIssuesStatus
   })
 )(NonCompReviewsPage);
 

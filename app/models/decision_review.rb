@@ -101,6 +101,7 @@ class DecisionReview < ApplicationRecord
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash),
+      decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
       editIssuesUrl: caseflow_only_edit_issues_url
@@ -170,16 +171,6 @@ class DecisionReview < ApplicationRecord
     end
   end
 
-  def vacols_optin_special_issue
-    { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O }
-  end
-
-  def special_issues
-    [].tap do |specials|
-      specials << vacols_optin_special_issue if request_issues.any?(&:legacy_issue_optin)
-    end
-  end
-
   def process_legacy_issues!
     LegacyOptinManager.new(decision_review: self).process!
   end
@@ -208,6 +199,14 @@ class DecisionReview < ApplicationRecord
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
   def serializer_class
     ::WorkQueue::DecisionReviewSerializer
+  end
+
+  def create_decision_issues_for_tasks(decision_issue_params, decision_date)
+    decision_issue_params.each do |decision_issue_param|
+      decision_issue_param[:decision_date] = decision_date
+      request_issues.find_by(id: decision_issue_param[:request_issue_id])
+        .create_decision_issue_from_params(decision_issue_param)
+    end
   end
 
   private
