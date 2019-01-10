@@ -19,7 +19,7 @@ import TaskRows from './components/TaskRows';
 
 const grayLine = css({
   width: '5px',
-  minHeight: '50px',
+  minHeight: '70px',
   background: COLORS.GREY_LIGHT,
   margin: 'auto'
 });
@@ -90,12 +90,6 @@ class CaseTimeline extends React.PureComponent {
       appeal
     } = this.props;
 
-    //console.log('--CaseTimeline--');
-    //console.log(this);
-    //console.log(this.props);
-    //console.log(this.props.appeal);
-    //console.log(this.props.appeal.timeline);
-
     return <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
       <table>
@@ -110,33 +104,10 @@ class CaseTimeline extends React.PureComponent {
   }
 }
 
-/*const mapStateToProps = (state: State, ownProps: Params) => {
-  return {
-    tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId }),
-    allTasks: getAllTasksForAppeal(state, { appealId: ownProps.appealId }),
-    completedTasks: completeTasksSelector(state, { appealId: ownProps.appealId }),
-    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId })[0]
-  };
-};
-
-export default connect(mapStateToProps)(CaseTimeline);
-
-CaseTimeline.propTypes = {
-  appeal: PropTypes.object.isRequired
-};*/
-
 const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
-    allTasks: getAllTasksForAppeal(state, { appealId: ownProps.appeal.externalId }),
-    completedTasks: allCompleteTasksForAppeal(state, { appealId: ownProps.appeal.externalId }),
-    //tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appeal.externalId }),
-
-
-    /*tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId }),
-    allTasks: getAllTasksForAppeal(state, { appealId: ownProps.appealId }),
-    completedTasks: completeTasksSelector(state, { appealId: ownProps.appealId }),
-    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId })[0]*/
+    completedTasks: allCompleteTasksForAppeal(state, { appealId: ownProps.appeal.externalId })
   };
 };
 

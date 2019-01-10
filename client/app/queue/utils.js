@@ -264,6 +264,7 @@ export const prepareAppealForStore =
         status: appeal.attributes.status,
         timeline: appeal.attributes.timeline,
         decisionDate: appeal.attributes.decision_date,
+        receiptDate: appeal.attributes.receipt_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,
         regionalOffice: appeal.attributes.regional_office,

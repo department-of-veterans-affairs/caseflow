@@ -10,7 +10,7 @@ import { GrayDot, GreenCheckmark } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import type { State } from '../types/state';
 import { taskIsOnHold } from '../utils';
-import { rootTasksForAppeal, getAllTasksForAppeal } from '../selectors';
+import { getAllTasksForAppeal } from '../selectors';
 import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
@@ -24,6 +24,8 @@ export const grayLineStyling = css({
   position: 'absolute',
   top: '25px',
   left: '45%',
+  top: '39px',
+  left: '49.5%',
   bottom: 0
 });
 
@@ -50,6 +52,19 @@ const taskInfoWithIconContainer = css({
   position: 'relative',
   verticalAlign: 'top',
   width: '45px'
+});
+
+const tableCellWithIcon = css({
+  textAlign: 'center',
+  border: 'none',
+  padding: 0
+});
+
+const tableCell = css({
+  border: 'none',
+  verticalAlign: 'top',
+  padding: '3px',
+  '& > dd': { textTransform: 'uppercase' }
 });
 
 type Params = {|
@@ -180,47 +195,57 @@ class TaskRows extends React.PureComponent {
       taskList
     } = this.props;
 
-    //console.log('---TaskRows---');
-    //console.log(this.props);
-    //console.log(taskList);
-
     return taskList.map((task, index) =>
-      <tr key={task.uniqueId}>
-        <td {...taskTimeContainerStyling}>
-          <CaseDetailsDescriptionList>
-            { this.assignedOnListItem(task) }
-            { this.dueDateListItem(task) }
-            { this.daysWaitingListItem(task) }
-          </CaseDetailsDescriptionList>
-        </td>
-        <td {...taskInfoWithIconContainer}>{ task.completedOn ? <GreenCheckmark /> : <GrayDot /> }
-          { (index + 1 < taskList.length) && <div {...grayLineStyling} /> }
-        </td>
-        <td {...taskInformationContainerStyling}>
-          <CaseDetailsDescriptionList>
-            { this.assignedToListItem(task) }
-            { this.assignedByListItem(task) }
-            { this.taskLabelListItem(task) }
-            { this.taskInstructionsListItem(task) }
-          </CaseDetailsDescriptionList>
-        </td>
-        { !taskList[0].completedOn && <td {...taskActionsContainerStyling}>
-          { this.showActionsListItem(task, appeal) }
-        </td> }
-      </tr>
+      <React.Fragment>
+        { taskList[0].completedOn && <tr>
+            <td {...taskTimeContainerStyling}></td>
+            <td {...taskInfoWithIconContainer}><GrayDot /><div {...grayLineStyling} {...css({ top: '25px' })} /></td>
+            <td {...taskInformationContainerStyling}>
+              { appeal.decisionDate ? COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING } <br />
+            </td>
+          </tr>
+        }
+        <tr key={task.uniqueId}>
+          <td {...taskTimeContainerStyling}>
+            <CaseDetailsDescriptionList>
+              { this.assignedOnListItem(task) }
+              { this.dueDateListItem(task) }
+              { this.daysWaitingListItem(task) }
+            </CaseDetailsDescriptionList>
+          </td>
+          <td {...taskInfoWithIconContainer}>{ task.completedOn ? <GreenCheckmark /> : <GrayDot /> }
+            { (index < taskList.length) && taskList[0].completedOn && <div {...grayLineStyling} /> }
+          </td>
+          <td {...taskInformationContainerStyling}>
+            <CaseDetailsDescriptionList>
+              { this.assignedToListItem(task) }
+              { this.assignedByListItem(task) }
+              { this.taskLabelListItem(task) }
+              { this.taskInstructionsListItem(task) }
+            </CaseDetailsDescriptionList>
+          </td>
+          { !taskList[0].completedOn && <td {...taskActionsContainerStyling}>
+            { this.showActionsListItem(task, appeal) }
+          </td> }
+        </tr>
+        { taskList[0].completedOn && <tr>
+            <td {...taskTimeContainerStyling}>
+              { appeal.receiptDate ? moment(appeal.receiptDate).format('MM/DD/YYYY') : null }
+            </td>
+            <td {...taskInfoWithIconContainer}>{ task.completedOn ? <GreenCheckmark /> : <GrayDot /> } </td>
+            <td {...taskInformationContainerStyling}>
+              { appeal.receiptDate ? COPY.CASE_TIMELINE_NOD_RECEIVED : COPY.CASE_TIMELINE_NOD_PENDING } <br />
+            </td>
+          </tr>
+        }
+      </React.Fragment>
     )
   }
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
 
-  /*console.log('--TRs mapStateToProps--');
-  console.log(state);
-  console.log(ownProps.appealId);
-  console.log(rootTasksForAppeal(state, { appealId: ownProps.appealId })[0]);*/
-
   return {
-    rootTask: rootTasksForAppeal(state, { appealId: ownProps.appealId })[0],
     allTasks: getAllTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };

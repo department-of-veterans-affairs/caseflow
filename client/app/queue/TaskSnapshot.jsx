@@ -63,39 +63,11 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
     const tasks = this.props.tasks;
     const taskLength = tasks.length;
-    /*console.log('--TaskSnapshot--')
-    console.log(this.props)*/
 
     if (taskLength) {
       sectionBody = <table {...tableStyling}>
         <tbody>
           { <TaskRows appeal={appeal} taskList={tasks} /> }
-          { /* tasks.map((task, index) =>
-            <tr key={task.uniqueId}>
-              <td {...taskTimeContainerStyling}>
-                <CaseDetailsDescriptionList>
-                  { this.assignedOnListItem(task) }
-                  { this.dueDateListItem(task) }
-                  { this.daysWaitingListItem(task) }
-                </CaseDetailsDescriptionList>
-              </td>
-              <td {...taskInfoWithIconContainer}><GrayDot />
-                { (index + 1 < taskLength) && <div {...grayLineStyling} /> }
-              </td>
-              <td {...taskInformationContainerStyling}>
-                <CaseDetailsDescriptionList>
-                  { this.assignedToListItem(task) }
-                  { this.assignedByListItem(task) }
-                  { this.taskLabelListItem(task) }
-                  { this.taskInstructionsListItem(task) }
-                </CaseDetailsDescriptionList>
-              </td>
-              <td {...taskActionsContainerStyling}>
-                { this.showActionsListItem(task, appeal) }
-              </td>
-            </tr>
-          )*/
-          }
         </tbody>
       </table>;
     }
@@ -114,10 +86,6 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { userRole } = state.ui;
-  /*console.log('--TS mapStateToProps--');
-  console.log(state);
-  console.log(ownProps.appealId);
-  console.log(getAllTasksForAppeal(state, { appealId: ownProps.appealId })[0]);*/
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
