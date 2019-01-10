@@ -41,6 +41,10 @@ class ClaimReview < DecisionReview
     "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
+  def eligible_for_serialized_ratings?
+    processed_in_vbms?
+  end
+
   def issue_code(*)
     fail Caseflow::Error::MustImplementInSubclass
   end
@@ -49,7 +53,7 @@ class ClaimReview < DecisionReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      if effectuated_in_caseflow?
+      if processed_in_caseflow?
         issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       else
         issue.update!(
@@ -75,7 +79,7 @@ class ClaimReview < DecisionReview
   def establish!
     attempted!
 
-    if effectuated_in_caseflow? && end_product_establishments.any?
+    if processed_in_caseflow? && end_product_establishments.any?
       fail NoEndProductsRequired, message: "Non-comp decision reviews should not have End Products"
     end
 

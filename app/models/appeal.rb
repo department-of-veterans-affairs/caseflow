@@ -102,6 +102,10 @@ class Appeal < DecisionReview
     tasks.map(&:attorney_case_reviews).flatten
   end
 
+  def eligible_for_serialized_ratings?
+    true
+  end
+
   def every_request_issue_has_decision?
     eligible_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end

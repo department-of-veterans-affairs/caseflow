@@ -2,7 +2,7 @@
 # Some are represented as contentions on an EP in VBMS. Others are tracked via Caseflow tasks.
 
 class BoardGrantEffectuation < ApplicationRecord
-  include Benefitable
+  include HasBusinessLine
 
   belongs_to :appeal
   belongs_to :granted_decision_issue, class_name: "DecisionIssue"
@@ -35,7 +35,7 @@ class BoardGrantEffectuation < ApplicationRecord
       decision_document: granted_decision_issue.decision_review.decision_document
     )
 
-    if effectuated_in_vbms?
+    if processed_in_vbms?
       self.end_product_establishment = find_or_build_end_product_establishment
     else
       find_or_build_effectuation_task
@@ -91,7 +91,7 @@ class BoardGrantEffectuation < ApplicationRecord
   end
 
   def end_product_code
-    return unless effectuated_in_vbms?
+    return unless processed_in_vbms?
 
     issue_code_type = granted_decision_issue.rating? ? :rating : :nonrating
     issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"

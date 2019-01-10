@@ -1,7 +1,7 @@
 class DecisionReview < ApplicationRecord
   include CachedAttributes
   include Asyncable
-  include Benefitable
+  include HasBusinessLine
 
   validate :validate_receipt_date
 
@@ -57,9 +57,13 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def eligible_for_serialized_ratings?
+    fail Caseflow::Error::MustImplementInSubclass
+  end
+
   def serialized_ratings
     return unless receipt_date
-    return unless benefit_type_requires_payee_code? || is_a?(Appeal)
+    return unless eligible_for_serialized_ratings?
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
@@ -181,7 +185,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def contestable_issues
-    return contestable_issues_from_decision_issues if effectuated_in_caseflow?
+    return contestable_issues_from_decision_issues if processed_in_caseflow?
 
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
   end
