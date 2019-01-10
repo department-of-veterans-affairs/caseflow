@@ -167,7 +167,7 @@ describe RampRefiling do
           expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
             veteran_file_number: "64205555",
             claim_id: "testtest",
-            contention_descriptions: %w[Arm Arm Leg],
+            contentions: [{ description: "Arm" }, { description: "Arm" }, { description: "Leg" }],
             user: user
           )
         end
@@ -182,7 +182,7 @@ describe RampRefiling do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: "64205555",
           claim_id: "1337",
-          contention_descriptions: %w[Arm Arm Leg],
+          contentions: [{ description: "Arm" }, { description: "Arm" }, { description: "Leg" }],
           user: user
         )
 
