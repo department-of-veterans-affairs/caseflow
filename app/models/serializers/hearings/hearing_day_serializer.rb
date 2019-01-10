@@ -1,7 +1,7 @@
 class Hearings::HearingDaySerializer < ActiveModel::Serializer
   attributes :hearing_pkseq,
              :hearing_type,
-             :hearing_date,
+             :scheduled_for,
              :room,
              :folder_nr,
              :board_member,
