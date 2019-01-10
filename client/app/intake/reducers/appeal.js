@@ -31,8 +31,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     veteranIsNotClaimant: {
       $set: serverIntake.veteran_is_not_claimant
     },
-    nonComp: {
-      $set: serverIntake.nonComp
+    processedInCaseflow: {
+      $set: serverIntake.processed_in_caseflow
     },
     claimant: {
       $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null

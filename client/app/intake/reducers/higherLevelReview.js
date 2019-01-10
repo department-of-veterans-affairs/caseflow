@@ -43,8 +43,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     payeeCode: {
       $set: serverIntake.payeeCode
     },
-    nonComp: {
-      $set: serverIntake.nonComp
+    processedInCaseflow: {
+      $set: serverIntake.processed_in_caseflow
     },
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved

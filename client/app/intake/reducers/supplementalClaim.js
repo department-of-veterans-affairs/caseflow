@@ -28,8 +28,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     benefitType: {
       $set: serverIntake.benefit_type
     },
-    nonComp: {
-      $set: serverIntake.nonComp
+    processedInCaseflow: {
+      $set: serverIntake.processed_in_caseflow
     },
     veteranIsNotClaimant: {
       $set: serverIntake.veteran_is_not_claimant
