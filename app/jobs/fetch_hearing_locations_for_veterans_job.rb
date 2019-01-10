@@ -3,7 +3,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   application_attr :hearing_schedule
 
   def veterans
-    Veteran.where(file_number: file_numbers)
+    @veterans ||= Veteran.where(file_number: file_numbers)
       .left_outer_joins(:available_hearing_locations)
       .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.month.ago)
       .limit(500)
@@ -16,8 +16,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def missing_veteran_file_numbers
-    existing_veteran_file_numbers = veterans.pluck(:file_number)
-    (file_numbers - existing_veteran_file_numbers)[0..(500 - existing_veteran_file_numbers.length)]
+    existing_veteran_file_numbers = Veteran.where(file_number: file_numbers).pluck(:file_number)
+    file_numbers - existing_veteran_file_numbers
   end
 
   def create_missing_veterans
