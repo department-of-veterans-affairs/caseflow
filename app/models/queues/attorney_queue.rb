@@ -12,6 +12,7 @@ class AttorneyQueue
       # Attorneys can assign multiple admin actions per appeal, we assume a case is still on hold
       # if not all admin actions are completed
       next if value.map(&:status).uniq == [Constants.TASK_STATUSES.completed]
+
       result << value.each do |record|
         record.placed_on_hold_at = record.assigned_at
         record.status = Constants.TASK_STATUSES.on_hold

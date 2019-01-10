@@ -10,6 +10,7 @@ class LegacyDocket
     counts_by_priority_and_readiness.inject(0) do |sum, row|
       next sum unless (priority.nil? || (priority ? 1 : 0) == row["priority"]) &&
                       (ready.nil? || (ready ? 1 : 0) == row["ready"])
+
       sum + row["n"]
     end
   end

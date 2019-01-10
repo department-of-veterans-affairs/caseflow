@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190103200519) do
+ActiveRecord::Schema.define(version: 20190107210543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,6 +105,20 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "task_id"
+  end
+
+  create_table "available_hearing_locations", force: :cascade do |t|
+    t.string "veteran_file_number", null: false
+    t.float "distance"
+    t.string "facility_id"
+    t.string "name"
+    t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "zip_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
   create_table "board_grant_effectuations", force: :cascade do |t|
@@ -227,6 +241,7 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.integer "decision_review_id"
     t.string "benefit_type"
     t.date "end_product_last_action_date"
+    t.string "diagnostic_code"
     t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
   end
 
@@ -450,6 +465,21 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.index ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true
   end
 
+  create_table "hearings", force: :cascade do |t|
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
+    t.integer "hearing_day_id", null: false
+    t.integer "appeal_id", null: false
+    t.integer "judge_id"
+    t.boolean "evidence_window_waived"
+    t.boolean "transcript_requested"
+    t.string "notes"
+    t.string "disposition"
+    t.string "witness"
+    t.string "military_service"
+    t.boolean "prepped"
+    t.text "summary"
+  end
+
   create_table "higher_level_reviews", force: :cascade do |t|
     t.string "veteran_file_number", null: false
     t.date "receipt_date"
@@ -462,6 +492,7 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -706,11 +737,21 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.string "vacols_id"
     t.integer "vacols_sequence_id"
     t.datetime "created_at"
-    t.string "benefit_type"
+    t.string "benefit_type", null: false
     t.integer "contested_decision_issue_id"
     t.string "veteran_participant_id"
+    t.string "decision_review_type"
+    t.bigint "decision_review_id"
+    t.string "contested_rating_issue_reference_id"
+    t.string "contested_rating_issue_profile_date"
+    t.string "contested_rating_issue_diagnostic_code"
+    t.string "contested_issue_description"
+    t.string "nonrating_issue_description"
+    t.string "unidentified_issue_text"
     t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
+    t.index ["contested_rating_issue_reference_id"], name: "index_request_issues_on_contested_rating_issue_reference_id"
+    t.index ["decision_review_type", "decision_review_id"], name: "index_request_issues_on_decision_review_columns"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
@@ -786,6 +827,7 @@ ActiveRecord::Schema.define(version: 20190103200519) do
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 

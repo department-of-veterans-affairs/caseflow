@@ -19,12 +19,6 @@ class AppealsController < ApplicationController
     end
   end
 
-  def ready_for_hearing_schedule
-    ro = HearingDayMapper.validate_regional_office(params[:ro])
-
-    render json: json_appeals(AppealRepository.appeals_ready_for_hearing_schedule(ro))
-  end
-
   def document_count
     render json: { document_count: appeal.number_of_documents_from_caseflow }
   rescue StandardError => e
@@ -34,7 +28,7 @@ class AppealsController < ApplicationController
   def new_documents
     render json: { new_documents: appeal.new_documents_for_user(current_user) }
   rescue StandardError => e
-    return handle_non_critical_error("new_documents", e)
+    handle_non_critical_error("new_documents", e)
   end
 
   def power_of_attorney
@@ -83,10 +77,11 @@ class AppealsController < ApplicationController
   def update
     if request_issues_update.perform!
       render json: {
-        requestIssues: appeal.request_issues.map(&:ui_hash)
+        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
       }
     else
-      render json: { error_code: request_issues_update.error_code }, status: 422
+      render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
     end
   end
 
@@ -154,7 +149,7 @@ class AppealsController < ApplicationController
         "title": "Access to Veteran file prohibited",
         "detail": "User is prohibited from accessing files associated with provided Veteran ID"
       ]
-    }, status: 403
+    }, status: :forbidden
   end
 
   def file_number_not_found_error
@@ -163,7 +158,7 @@ class AppealsController < ApplicationController
         "title": "Must include Veteran ID",
         "detail": "Veteran ID should be included as HTTP_VETERAN_ID element of request headers"
       ]
-    }, status: 400
+    }, status: :bad_request
   end
 
   def json_appeals(appeals)

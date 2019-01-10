@@ -288,11 +288,20 @@ class SeedDB
 
   def create_higher_level_review_tasks
     6.times do
+      veteran = FactoryBot.create(:veteran)
+      epe = FactoryBot.create(:end_product_establishment, veteran_file_number: veteran.file_number)
       higher_level_review = FactoryBot.create(
         :higher_level_review,
-        request_issues: FactoryBot.create_list(:request_issue, 3),
-        veteran_file_number: FactoryBot.create(:veteran).file_number
+        end_product_establishments: [epe],
+        veteran_file_number: veteran.file_number
       )
+      3.times do
+        FactoryBot.create(:request_issue,
+                          :nonrating,
+                          end_product_establishment: epe,
+                          veteran_participant_id: veteran.participant_id,
+                          review_request: higher_level_review)
+      end
       FactoryBot.create(:higher_level_review_task,
                         assigned_to: Organization.find_by(name: "National Cemetery Association"),
                         appeal: higher_level_review)
@@ -363,7 +372,7 @@ class SeedDB
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
-      veteran_file_number: "231439628S",
+      veteran_file_number: "231439628",
       docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )

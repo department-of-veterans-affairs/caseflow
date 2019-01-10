@@ -82,25 +82,6 @@ RSpec.describe AppealsController, type: :controller do
     end
   end
 
-  describe "GET cases_to_schedule/:ro" do
-    let!(:vacols_case) do
-      create(
-        :case,
-        folder: create(:folder, tinum: "docket-number"),
-        bfregoff: "RO04",
-        bfcurloc: "57",
-        bfhr: "2",
-        bfdocind: "V"
-      )
-    end
-
-    it "gets veterans ready for hearing schedule" do
-      get :ready_for_hearing_schedule, params: { ro: "RO04" }
-      expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["data"].size).to be(1)
-    end
-  end
-
   describe "GET cases/:id" do
     let(:ssn) { Generators::Random.unique_ssn }
     let(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }

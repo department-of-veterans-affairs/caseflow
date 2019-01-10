@@ -5,6 +5,7 @@ FactoryBot.define do
     end
 
     sequence(:veteran_file_number, 500_000_000)
+    docket_type "evidence_submission"
 
     transient do
       veteran do
@@ -24,6 +25,10 @@ FactoryBot.define do
         issue.review_request = appeal
         issue.save
       end
+    end
+
+    trait :hearing_docket do
+      docket_type "hearing"
     end
 
     trait :advanced_on_docket_due_to_age do
@@ -61,6 +66,13 @@ FactoryBot.define do
         create(:advance_on_docket_motion, person: claimant.person, granted: true)
         create(:advance_on_docket_motion, person: claimant.person, granted: false)
         [claimant]
+      end
+    end
+
+    trait :outcoded do
+      after(:create) do |appeal, _evaluator|
+        appeal.create_tasks_on_intake_success!
+        appeal.root_task.update!(status: Constants.TASK_STATUSES.completed)
       end
     end
 

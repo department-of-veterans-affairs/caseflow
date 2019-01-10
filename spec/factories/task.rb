@@ -116,5 +116,11 @@ FactoryBot.define do
       appeal { create(:higher_level_review) }
       assigned_by nil
     end
+
+    factory :board_grant_effectuation_task do
+      type BoardGrantEffectuationTask.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
   end
 end

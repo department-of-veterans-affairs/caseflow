@@ -28,7 +28,7 @@ class RampElectionIntake < Intake
 
   def review!(request_params)
     ramp_election.start_review!
-    ramp_election.update_attributes(request_params.permit(:receipt_date, :option_selected))
+    ramp_election.update(request_params.permit(:receipt_date, :option_selected))
   end
 
   def review_errors
@@ -37,6 +37,7 @@ class RampElectionIntake < Intake
 
   def complete!(_request_params)
     return if complete? || pending?
+
     start_completion!
 
     if existing_ramp_election_active?
@@ -54,7 +55,7 @@ class RampElectionIntake < Intake
   end
 
   def cancel_detail!
-    detail.update_attributes!(
+    detail.update!(
       receipt_date: nil,
       option_selected: nil
     )
@@ -118,7 +119,7 @@ class RampElectionIntake < Intake
   end
 
   def active_veteran_appeals
-    @veteran_appeals ||= LegacyAppeal.fetch_appeals_by_file_number(veteran_file_number).select(&:active?)
+    @active_veteran_appeals ||= LegacyAppeal.fetch_appeals_by_file_number(veteran_file_number).select(&:active?)
   end
 
   def validate_detail_on_start
@@ -134,7 +135,7 @@ class RampElectionIntake < Intake
   end
 
   def new_intake_ramp_election
-    @ramp_election_on_create ||= matching_ramp_election_with_notice_date || veteran_ramp_elections.build
+    @new_intake_ramp_election ||= matching_ramp_election_with_notice_date || veteran_ramp_elections.build
   end
 
   def existing_ramp_election

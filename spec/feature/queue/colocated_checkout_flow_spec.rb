@@ -33,6 +33,7 @@ RSpec.feature "Colocated checkout flows" do
       FactoryBot.create(
         :colocated_task,
         appeal: appeal,
+        assigned_at: nil,
         assigned_to: colocated_user,
         assigned_by: attorney_user,
         action: "pending_scanning_vbms"
