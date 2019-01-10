@@ -141,6 +141,10 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
+  def click_intake_nonrating_category_dropdown
+    safe_click ".dropdown-issue-category .Select-placeholder"
+  end
+
   def click_intake_add_issue
     safe_click "#button-add-issue"
   end
