@@ -47,6 +47,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def perform
+    RequestStore.store[:current_user] = User.system_user
     create_missing_veterans
 
     veterans.each do |veteran|
@@ -87,11 +88,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: facility_ids
     )
 
-    if distances.empty?
-      msg = "VADotGovServices returned regional offices for VeteranId: #{veteran.id}."
-      fail Caseflow::Error::FetchHearingLocationsJobError, code: 500, message: msg
-    end
-
     closest_ro_index = RegionalOffice::CITIES.values.find_index { |ro| ro[:facility_locator_id] == distances[0][:id] }
     closest_ro = RegionalOffice::CITIES.keys[closest_ro_index]
     veteran.update(closest_regional_office: closest_ro)
@@ -112,8 +108,11 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
                    "PI"
                  when "VI", "VQ", "PR"
                    "PR"
-                 else
+                 when "US"
                    va_dot_gov_address[:state_code]
+                 else
+                   msg = "#{va_dot_gov_address[:country_code]} is not a valid country code."
+                   fail Caseflow::Error::FetchHearingLocationsJobError, code: 500, message: msg
                  end
 
     return state_code if valid_states.include?(state_code)
