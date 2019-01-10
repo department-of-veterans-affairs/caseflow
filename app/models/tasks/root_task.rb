@@ -35,8 +35,6 @@ class RootTask < GenericTask
       end
     end
 
-    private
-
     def create_vso_subtask!(appeal, parent)
       appeal.vsos.map do |vso_organization|
         InformalHearingPresentationTask.create!(
@@ -46,6 +44,9 @@ class RootTask < GenericTask
         )
       end
     end
+
+    private
+
 
     def create_evidence_submission_task!(appeal, parent)
       EvidenceSubmissionWindowTask.create!(
