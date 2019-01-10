@@ -10,7 +10,7 @@ class Hearings::WorksheetsController < HearingsController
   end
 
   def show
-    HearingView.find_or_create_by(hearing_id: hearing.id, user_id: current_user.id).touch
+    HearingView.find_or_create_by(hearing: hearing, user_id: current_user.id).touch
 
     respond_to do |format|
       format.html { render template: "hearings/index" }

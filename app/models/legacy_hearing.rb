@@ -17,7 +17,7 @@ class LegacyHearing < ApplicationRecord
 
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
-  has_many :hearing_views, foreign_key: :hearing_id
+  has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
 
   # this is used to cache appeal stream for hearings
@@ -26,6 +26,10 @@ class LegacyHearing < ApplicationRecord
 
   CO_HEARING = "Central".freeze
   VIDEO_HEARING = "Video".freeze
+
+  def hearing_type
+    "Legacy"
+  end
 
   def judge
     user
