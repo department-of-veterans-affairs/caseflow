@@ -109,8 +109,9 @@ RSpec.feature "Search" do
           end
 
           it "shows a supplemental claim and that it's 'tracked in caseflow'" do
-            expect(find(".cf-other-reviews-table > tbody")).to
-            have_content(COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE)
+            expect(find(".cf-other-reviews-table > tbody")).to have_content(
+              COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE
+            )
           end
         end
       end
