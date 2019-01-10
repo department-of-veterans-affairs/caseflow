@@ -191,6 +191,16 @@ describe ClaimReview do
       expect(serialized_ratings.first[:issues]).to include(hash_including(timely: true), hash_including(timely: true))
       expect(serialized_ratings.last[:issues]).to include(hash_including(timely: false), hash_including(timely: false))
     end
+
+    context "benefit type is not compensation or pension" do
+      before do
+        subject.update!(benefit_type: "education")
+      end
+
+      it "returns nil" do
+        expect(subject.serialized_ratings).to be_nil
+      end
+    end
   end
 
   context "#processed_in_caseflow?" do

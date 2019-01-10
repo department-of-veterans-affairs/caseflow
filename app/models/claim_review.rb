@@ -43,10 +43,6 @@ class ClaimReview < DecisionReview
     "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
-  def eligible_for_serialized_ratings?
-    processed_in_vbms?
-  end
-
   def issue_code(*)
     fail Caseflow::Error::MustImplementInSubclass
   end
@@ -137,6 +133,10 @@ class ClaimReview < DecisionReview
   end
 
   private
+
+  def eligible_for_serialized_ratings?
+    processed_in_vbms?
+  end
 
   def informal_conference?
     false

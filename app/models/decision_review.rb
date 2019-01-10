@@ -56,10 +56,6 @@ class DecisionReview < ApplicationRecord
     end
   end
 
-  def eligible_for_serialized_ratings?
-    fail Caseflow::Error::MustImplementInSubclass
-  end
-
   def serialized_ratings
     return unless receipt_date
     return unless eligible_for_serialized_ratings?
@@ -210,6 +206,10 @@ class DecisionReview < ApplicationRecord
   end
 
   private
+
+  def eligible_for_serialized_ratings?
+    fail Caseflow::Error::MustImplementInSubclass
+  end
 
   def cached_rating_issues
     cached_serialized_ratings.inject([]) do |result, rating_hash|

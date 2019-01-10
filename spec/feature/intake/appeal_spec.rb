@@ -695,14 +695,28 @@ feature "Appeal Intake" do
 
     expect(page).to have_content("Description for Accrued")
 
+    click_intake_add_issue
+    click_intake_no_matching_issues
+    add_intake_nonrating_issue(
+      benefit_type: "Vocational Rehab. & Employment",
+      category: "Basic Eligibility",
+      description: "Description for basic eligibility",
+      date: profile_date.strftime("%D")
+    )
+
+    expect(page).to have_content("Description for basic eligibility")
+
     click_intake_finish
 
     expect(page).to have_content("Intake completed")
 
-    request_issue = intake.reload.detail.request_issues.first
+    intake.reload
 
-    expect(request_issue.description).to eq("Accrued - Description for Accrued")
-    expect(request_issue.benefit_type).to eq("education")
+    education_request_issue = intake.detail.request_issues.find { |ri| ri.benefit_type == "education" }
+    voc_rehab_request_issue = intake.detail.request_issues.find { |ri| ri.benefit_type == "voc_rehab" }
+
+    expect(education_request_issue.description).to eq("Accrued - Description for Accrued")
+    expect(voc_rehab_request_issue.description).to eq("Basic Eligibility - Description for basic eligibility")
   end
 
   context "with active legacy appeal" do

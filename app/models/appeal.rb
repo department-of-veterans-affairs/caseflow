@@ -102,20 +102,15 @@ class Appeal < DecisionReview
     tasks.map(&:attorney_case_reviews).flatten
   end
 
-  # we always want to show ratings on intake
-  def eligible_for_serialized_ratings?
-    true
-  end
-
   # the processed_in_* logic is per-RequestIssue for Appeals,
-  # so we always say "true" at this level and allow each RequestIssue
+  # so we always say "false" at this level and allow each RequestIssue
   # to further specify.
   def processed_in_caseflow?
-    true
+    false
   end
 
   def processed_in_vbms?
-    true
+    false
   end
 
   def every_request_issue_has_decision?
@@ -310,6 +305,11 @@ class Appeal < DecisionReview
 
   def bgs
     BGSService.new
+  end
+
+  # we always want to show ratings on intake
+  def eligible_for_serialized_ratings?
+    true
   end
 
   def contestable_decision_issues
