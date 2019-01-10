@@ -1,7 +1,6 @@
 class DecisionReview < ApplicationRecord
   include CachedAttributes
   include Asyncable
-  include HasBusinessLine
 
   validate :validate_receipt_date
 

@@ -106,6 +106,10 @@ class Appeal < DecisionReview
     true
   end
 
+  def processed_in_caseflow?
+    true # actually per-request-issue so logic is further down
+  end
+
   def every_request_issue_has_decision?
     eligible_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end
@@ -211,11 +215,7 @@ class Appeal < DecisionReview
   end
 
   def benefit_type
-    fail "Multiple benefit_types possible"
-  end
-
-  def benefit_type_requires_payee_code?
-    false
+    fail "benefit_type on Appeal is set per RequestIssue"
   end
 
   def create_issues!(new_issues)
