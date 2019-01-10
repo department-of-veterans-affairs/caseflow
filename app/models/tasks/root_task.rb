@@ -72,6 +72,8 @@ class RootTask < GenericTask
         else
           create_vso_subtask!(appeal, distribution_task)
         end
+
+        # TODO: if appeal is ready for distribution, track the time it became ready
       end
     end
   end
