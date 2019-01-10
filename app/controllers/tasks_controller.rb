@@ -60,6 +60,8 @@ class TasksController < ApplicationController
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }
+  rescue ActiveRecord::RecordInvalid => error
+    render json: { errors: [title: error.class.to_s, detail: error.message] }, status: :bad_request
   end
 
   # To update attorney task

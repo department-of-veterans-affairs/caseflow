@@ -325,7 +325,7 @@ RSpec.describe TasksController, type: :controller do
 
         it "should fail assigned_by validation" do
           post :create, params: { tasks: params }
-          expect(response.status).to eq(400)
+          expect(response.status).to eq 400
         end
       end
 
