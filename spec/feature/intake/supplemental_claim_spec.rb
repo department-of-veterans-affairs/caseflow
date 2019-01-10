@@ -324,7 +324,6 @@ feature "Supplemental Claim Intake" do
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
-      description: "PTSD denied",
       decision_date: nil,
       rating_issue_associated_at: Time.zone.now
     )
@@ -417,11 +416,6 @@ feature "Supplemental Claim Intake" do
   end
 
   context "Add / Remove Issues page" do
-    def check_row(label, text)
-      row = find("tr", text: label)
-      expect(row).to have_text(text)
-    end
-
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old1234" }
     let(:active_epe) { create(:end_product_establishment, :active) }
@@ -481,8 +475,7 @@ feature "Supplemental Claim Intake" do
         :request_issue,
         end_product_establishment: active_epe,
         contested_rating_issue_reference_id: duplicate_reference_id,
-        contested_issue_description: "Old injury",
-        description: "Old injury"
+        contested_issue_description: "Old injury"
       )
     end
 
@@ -644,7 +637,6 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
                contested_rating_issue_reference_id: "xyz123",
-               description: "Left knee granted 2",
                contested_issue_description: "Left knee granted 2",
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note"
@@ -653,7 +645,6 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
                issue_category: "Active Duty Adjustments",
-               description: "Description for Active Duty Adjustments",
                nonrating_issue_description: "Description for Active Duty Adjustments",
                decision_date: 1.month.ago.to_date,
                end_product_establishment_id: non_rating_end_product_establishment.id
@@ -661,7 +652,6 @@ feature "Supplemental Claim Intake" do
 
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
-               description: "This is an unidentified issue",
                unidentified_issue_text: "This is an unidentified issue",
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id
@@ -670,7 +660,6 @@ feature "Supplemental Claim Intake" do
       # Issues before AMA
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
-               description: "Non-RAMP Issue before AMA Activation",
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
                end_product_establishment_id: end_product_establishment.id,
                ineligible_reason: :before_ama
@@ -678,7 +667,6 @@ feature "Supplemental Claim Intake" do
 
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
-               description: "Issue before AMA Activation from RAMP",
                contested_issue_description: "Issue before AMA Activation from RAMP",
                ineligible_reason: nil,
                ramp_claim_id: "ramp_claim_id",
@@ -687,7 +675,6 @@ feature "Supplemental Claim Intake" do
 
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
-               description: "A nonrating issue before AMA",
                nonrating_issue_description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
                end_product_establishment_id: non_rating_end_product_establishment.id
@@ -883,7 +870,6 @@ feature "Supplemental Claim Intake" do
           )
 
           expect(RequestIssue.find_by(
-                   description: "Left knee granted",
                    contested_issue_description: "Left knee granted",
                    ineligible_reason: :legacy_appeal_not_eligible,
                    vacols_id: "vacols2",
@@ -920,7 +906,6 @@ feature "Supplemental Claim Intake" do
           )
 
           expect(RequestIssue.find_by(
-                   description: "Left knee granted",
                    contested_issue_description: "Left knee granted",
                    ineligible_reason: :legacy_issue_not_withdrawn,
                    vacols_id: "vacols1",

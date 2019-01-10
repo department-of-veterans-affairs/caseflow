@@ -18,13 +18,15 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'Completed tasks',
       page: <TaskTableTab
         key="completed"
-        predefinedColumns={{ includeCompletedDate: true }}
+        predefinedColumns={{ includeCompletedDate: true,
+          defaultSortIdx: 3 }}
         tasks={this.props.completedTasks} />
     }];
 
     return <TabWindow
       name="tasks-organization-queue"
       tabs={tabs}
+      defaultPage={this.props.currentTab}
     />;
   }
 }
@@ -110,7 +112,8 @@ class TaskTableTab extends React.PureComponent {
 const NonCompTabs = connect(
   (state) => ({
     inProgressTasks: state.inProgressTasks,
-    completedTasks: state.completedTasks
+    completedTasks: state.completedTasks,
+    currentTab: state.currentTab
   })
 )(NonCompTabsUnconnected);
 
