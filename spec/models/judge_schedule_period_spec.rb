@@ -26,7 +26,7 @@ describe JudgeSchedulePeriod do
       expect(subject.count).to eq(3)
       expect(subject[0].key?(:id)).to be_truthy
       expect(subject[0].key?(:hearing_type)).to be_truthy
-      expect(subject[0].key?(:hearing_date)).to be_truthy
+      expect(subject[0].key?(:scheduled_for)).to be_truthy
       expect(subject[0].key?(:room)).to be_truthy
       expect(subject[0].key?(:regional_office)).to be_truthy
       expect(subject[0].key?(:judge_id)).to be_truthy
@@ -38,7 +38,7 @@ describe JudgeSchedulePeriod do
     let!(:hearing_days) do
       get_every_nth_date_between(single_nonavail_date_judge_schedule_period.start_date,
                                  single_nonavail_date_judge_schedule_period.end_date, 4).map do |date|
-        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
+        create(:hearing_day, hearing_type: "V", scheduled_for: date, regional_office: "RO13", room: 4)
       end
     end
 
@@ -104,10 +104,20 @@ describe JudgeSchedulePeriod do
 
   context "A judge with a lot of non-availability days still gets as many hearings as possible" do
     let!(:hearing_days) do
-      get_every_nth_date_between(one_month_many_noavail_judge_schedule_period.start_date,
-                                 one_month_many_noavail_judge_schedule_period.end_date, 4).map do |date|
-        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
-      end
+      [
+        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 7, 22, 9, 0, 0, "+0"),
+                              folder_nr: "VIDEO RO13", room: 4),
+        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 7, 29, 9, 0, 0, "+0"),
+                              folder_nr: "VIDEO RO13", room: 4),
+        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 8, 1, 9, 0, 0, "+0"),
+                              folder_nr: "VIDEO RO13", room: 4),
+        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 8, 6, 9, 0, 0, "+0"),
+                              folder_nr: "VIDEO RO13", room: 4),
+        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 8, 13, 9, 0, 0, "+0"),
+                              folder_nr: "VIDEO RO13", room: 4),
+        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 8, 17, 9, 0, 0, "+0"),
+                              folder_nr: "VIDEO RO13", room: 4)
+      ]
     end
 
     subject { one_month_many_noavail_judge_schedule_period.algorithm_assignments }
