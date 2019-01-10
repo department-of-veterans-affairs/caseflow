@@ -94,10 +94,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.decision_date
   end
 
-  attribute :form9_date do
-    object.receipt_date
-  end
-
   attribute :receipt_date do
     object.receipt_date
   end
