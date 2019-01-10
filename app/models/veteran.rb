@@ -115,9 +115,7 @@ class Veteran < ApplicationRecord
   end
 
   def accessible?
-    bgs.fetch_veteran_info(file_number)
-  rescue BGS::ShareError
-    false
+    bgs.can_access?(file_number)
   end
 
   def relationships

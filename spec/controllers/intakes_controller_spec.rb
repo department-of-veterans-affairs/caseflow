@@ -23,7 +23,7 @@ RSpec.describe IntakesController do
     end
   end
 
-  describe "#complete" do
+  describe "#complete", focus: true do
     # TODO: this is just testing the current implementation; should make this more behavioral
     it "should call complete! and return a 200" do
       intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
