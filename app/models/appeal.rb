@@ -6,6 +6,7 @@ class Appeal < DecisionReview
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
+  has_many :remand_supplemental_claims, as: :decision_review_remanded
 
   has_one :special_issue_list
 
@@ -290,6 +291,12 @@ class Appeal < DecisionReview
 
   def root_task
     RootTask.find_by(appeal_id: id)
+  end
+
+  def create_remand_supplemental_claims!
+    decision_issues.remanded.each(&:find_or_create_remand_supplemental_claim!)
+    remand_supplemental_claims.each(&:create_remand_issues!)
+    remand_supplemental_claims.each(&:start_processing_job!)
   end
 
   private

@@ -55,6 +55,7 @@ class HigherLevelReview < ClaimReview
 
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
 
+    # dta_supplemental_claim.start_processing_job!
     if run_async?
       DecisionReviewProcessJob.perform_later(dta_supplemental_claim)
     else
