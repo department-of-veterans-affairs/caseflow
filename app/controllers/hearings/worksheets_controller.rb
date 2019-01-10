@@ -26,7 +26,9 @@ class Hearings::WorksheetsController < HearingsController
 
   def update
     hearing.update!(worksheet_params)
-    hearing.class.repository.update_vacols_hearing!(hearing.vacols_record, worksheet_params)
+    if hearing.is_a?(LegacyHearing)
+      LegacyHearing.repository.update_vacols_hearing!(hearing.vacols_record, worksheet_params)
+    end
     render json: { worksheet: hearing_worksheet }
   end
 

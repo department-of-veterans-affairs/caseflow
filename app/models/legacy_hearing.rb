@@ -27,6 +27,10 @@ class LegacyHearing < ApplicationRecord
   CO_HEARING = "Central".freeze
   VIDEO_HEARING = "Video".freeze
 
+  def judge
+    user
+  end
+
   def venue
     self.class.venues[venue_key]
   end
@@ -133,7 +137,7 @@ class LegacyHearing < ApplicationRecord
 
   delegate \
     :veteran_age, \
-    :veteran_sex, \
+    :veteran_gender, \
     :vbms_id, \
     :number_of_documents, \
     :number_of_documents_after_certification, \
@@ -161,7 +165,6 @@ class LegacyHearing < ApplicationRecord
         :regional_office_name,
         :regional_office_timezone,
         :venue,
-        :veteran_name,
         :veteran_mi_formatted,
         :appellant_last_first_mi,
         :appellant_mi_formatted,
@@ -194,8 +197,8 @@ class LegacyHearing < ApplicationRecord
     nil
   end
 
-  def fetch_veteran_sex
-    veteran_sex
+  def fetch_veteran_gender
+    veteran_gender
   rescue Module::DelegationError
     nil
   end
@@ -203,7 +206,7 @@ class LegacyHearing < ApplicationRecord
   def to_hash_for_worksheet(current_user_id)
     serializable_hash(
       methods: [:appeal_id,
-                :user,
+                :judge,
                 :summary,
                 :appeal_vacols_id,
                 :appeals_ready_for_hearing,
@@ -212,13 +215,12 @@ class LegacyHearing < ApplicationRecord
                 :appellant_state,
                 :military_service,
                 :appellant_mi_formatted,
-                :veteran_mi_formatted,
                 :veteran_fi_last_formatted,
                 :sanitized_vbms_id]
     ).merge(
       to_hash(current_user_id)
     ).merge(
-      veteran_sex: fetch_veteran_sex,
+      veteran_gender: fetch_veteran_gender,
       veteran_age: fetch_veteran_age
     )
   end

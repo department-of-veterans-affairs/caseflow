@@ -176,6 +176,7 @@ class Appeal < DecisionReview
            :zip,
            :gender,
            :date_of_birth,
+           :age,
            :country, to: :veteran, prefix: true
 
   def regional_office
