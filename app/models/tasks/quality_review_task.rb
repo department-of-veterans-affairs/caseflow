@@ -12,7 +12,7 @@ class QualityReviewTask < GenericTask
     create!(assigned_to: QualityReview.singleton, parent_id: root_task.id, appeal: root_task.appeal)
   end
 
-  def update_parent_status
+  def on_complete
     # QualityReviewTasks may be assigned to organizations or individuals. However, for each appeal that goes through
     # quality review the a task assigned to the organization will exist (even if there is none assigned to an
     # individual). To prevent creating duplicate BvaDispatchTasks only create one for the organization task.
