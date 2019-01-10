@@ -15,6 +15,7 @@ import type {
   Tasks,
   BasicAppeals,
   AppealDetails,
+  ClaimReviews,
   User
 } from './types/models';
 
@@ -37,6 +38,15 @@ export const onReceiveAppealDetails = (
   payload: {
     appeals,
     appealDetails
+  }
+});
+
+export const onReceiveClaimReviewDetails = (
+  { claimReviews }: { claimReviews: ClaimReviews }
+) => ({
+  type: ACTIONS.RECEIVE_CLAIM_REVIEW_DETAILS,
+  payload: {
+    claimReviews
   }
 });
 
