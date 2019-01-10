@@ -32,7 +32,12 @@ class CaseReviewsController < ApplicationController
               !record.is_a?(JudgeCaseReview) ||
               record.task.parent.is_a?(QualityReviewTask)
 
-    QualityReviewTask.create_from_root_task(record.task.root_task)
+    root_task = record.task.root_task
+    if QualityReviewCaseSelector.select_case_for_quality_review?
+      QualityReviewTask.create_from_root_task(root_task)
+    else
+      BvaDispatchTask.create_and_assign(root_task)
+    end
   end
 
   def case_review_class
