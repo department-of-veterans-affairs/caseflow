@@ -58,6 +58,7 @@ class Hearing < ApplicationRecord
         :scheduled_for,
         :veteran_age,
         :veteran_gender
-      ])
+      ]
+    )
   end
 end

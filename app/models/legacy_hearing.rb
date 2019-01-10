@@ -165,6 +165,7 @@ class LegacyHearing < ApplicationRecord
         :regional_office_name,
         :regional_office_timezone,
         :venue,
+        :veteran_name,
         :veteran_mi_formatted,
         :appellant_last_first_mi,
         :appellant_mi_formatted,
