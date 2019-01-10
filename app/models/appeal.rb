@@ -51,7 +51,7 @@ class Appeal < DecisionReview
 
   def number_of_documents_from_caseflow
     count = Document.where(file_number: veteran_file_number).size
-    count != 0 ? count : number_of_documents
+    (count != 0) ? count : number_of_documents
   end
 
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
