@@ -193,7 +193,7 @@ describe ClaimReview do
     end
   end
 
-  context "#effectuated_in_caseflow?" do
+  context "#processed_in_caseflow?" do
     let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
 
     subject { claim_review.effectuated_in_caseflow? }
