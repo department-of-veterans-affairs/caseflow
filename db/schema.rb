@@ -463,7 +463,7 @@ ActiveRecord::Schema.define(version: 20190110220936) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "hearing_type"
-    t.index ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true
+    t.index ["hearing_id", "user_id", "hearing_type"], name: "index_hearing_views_on_hearing_id_and_user_id_and_hearing_type", unique: true
   end
 
   create_table "hearings", force: :cascade do |t|

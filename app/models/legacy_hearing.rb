@@ -27,10 +27,6 @@ class LegacyHearing < ApplicationRecord
   CO_HEARING = "Central".freeze
   VIDEO_HEARING = "Video".freeze
 
-  def hearing_type
-    "Legacy"
-  end
-
   def judge
     user
   end
