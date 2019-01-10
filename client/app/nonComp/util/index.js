@@ -1,5 +1,7 @@
-import { FORM_TYPES } from '../../intake/constants';
 import _ from 'lodash';
+
+import { FORM_TYPES } from '../../intake/constants';
+import { formatDateStringForApi } from '../../util/DateUtil';
 
 export const formatTasks = (serverTasks) => {
   return (serverTasks || []).map((task) => {
@@ -14,4 +16,40 @@ export const formatTasks = (serverTasks) => {
 
 export const longFormNameFromShort = (shortFormName) => {
   return _.find(FORM_TYPES, { shortName: shortFormName }).name;
+};
+
+export const formatDecisionIssuesFromRequestIssues = (requestIssues) => {
+  return requestIssues.map((requestIssue) => {
+    let formmatedDecisionIssue = {
+      request_issue_id: requestIssue.id,
+      disposition: requestIssue.decisionIssue.disposition
+    };
+
+    if (!_.isEmpty(requestIssue.decisionIssue.description)) {
+      formmatedDecisionIssue.description = requestIssue.decisionIssue.description;
+    }
+
+    return formmatedDecisionIssue;
+  });
+};
+
+export const formatRequestIssuesWithDecisionIssues = (requestIssues, decisionIssues) => {
+  return requestIssues.map((requestIssue) => {
+    const foundDecisionIssue = decisionIssues.find((decisionIssue) =>
+      decisionIssue.requestIssueId === requestIssue.id) || {};
+
+    return {
+      decisionIssue: foundDecisionIssue,
+      ...requestIssue
+    };
+  });
+};
+
+export const buildDispositionSubmission = (decisionIssues, decisionDate) => {
+  return { data:
+    {
+      decision_issues: decisionIssues,
+      decision_date: formatDateStringForApi(decisionDate)
+    }
+  };
 };
