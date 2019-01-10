@@ -40,7 +40,7 @@ describe EvidenceSubmissionWindowTask do
       .with([participant_id_with_no_vso]).and_return({})
   end
 
-  context "on complete" do 
+  context "on complete" do
     it "creates an ihp task if the appeal has a vso" do
       RootTask.create_root_and_sub_tasks!(appeal)
       expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq(0)
