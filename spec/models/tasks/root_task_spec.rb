@@ -88,45 +88,14 @@ describe RootTask do
       after do
         FeatureToggle.disable!(:ama_auto_case_distribution)
       end
-
-      context "when it has no vso representation" do
-        let(:appeal) do
-          create(:appeal, docket_type: "evidence_submission", claimants: [
-                   create(:claimant, participant_id: participant_id_with_no_vso)
-                 ])
-        end
+      let(:appeal) do
+        create(:appeal, docket_type: "evidence_submission", claimants: [
+                 create(:claimant, participant_id: participant_id_with_no_vso)
+               ])
         it "blocks distribution" do
           RootTask.create_root_and_sub_tasks!(appeal)
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
           expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
-        end
-      end
-
-      context "when it has an ihp-writing vso" do
-        let(:appeal) do
-          create(:appeal, docket_type: "evidence_submission", claimants: [
-                   create(:claimant, participant_id: participant_id_with_pva),
-                   create(:claimant, participant_id: participant_id_with_aml)
-                 ])
-        end
-
-        it "blocks distribution" do
-          RootTask.create_root_and_sub_tasks!(appeal)
-          expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
-        end
-
-        it "requires a hearing presentation before distribution" do
-          RootTask.create_root_and_sub_tasks!(appeal)
-          expect(InformalHearingPresentationTask.find_by(appeal: appeal).status).to eq("on_hold")
-          expect(InformalHearingPresentationTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
-        end
-
-        it "requires an evidence submission window before the informal hearing presentation" do
-          RootTask.create_root_and_sub_tasks!(appeal)
-          expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).status).to eq("assigned")
-          expect(EvidenceSubmissionWindowTask.find_by(
-            appeal: appeal
-          ).parent.class.name).to eq("InformalHearingPresentationTask")
         end
       end
     end

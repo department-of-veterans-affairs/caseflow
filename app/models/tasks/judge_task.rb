@@ -79,7 +79,6 @@ class JudgeTask < Task
 
     task.children.all? { |t| !t.is_a?(JudgeTask) && t.completed? }
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.list_of_assignees
     Constants::RampJudges::USERS[Rails.current_env]

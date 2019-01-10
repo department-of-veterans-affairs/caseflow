@@ -35,8 +35,6 @@ class RootTask < GenericTask
       end
     end
 
-    private
-
     def create_vso_subtask!(appeal, parent)
       appeal.vsos.map do |vso_organization|
         InformalHearingPresentationTask.create!(
@@ -46,6 +44,8 @@ class RootTask < GenericTask
         )
       end
     end
+
+    private
 
     def create_evidence_submission_task!(appeal, parent)
       EvidenceSubmissionWindowTask.create!(
@@ -66,17 +66,12 @@ class RootTask < GenericTask
     def create_subtasks!(appeal, parent)
       transaction do
         distribution_task = create_distribution_task!(appeal, parent)
-        current_parent = distribution_task
 
-        if appeal.needs_ihp?
-          vso_tasks = create_vso_subtask!(appeal, current_parent)
-          # TODO: when or if there are more than one vso, vso tasks
-          # should expire at the same time. which one should be the
-          # blocking parent of evidence submission tasks?
-          current_parent = vso_tasks.first
+        if appeal.evidence_submission_docket?
+          create_evidence_submission_task!(appeal, distribution_task)
+        else
+          create_vso_subtask!(appeal, distribution_task)
         end
-
-        create_evidence_submission_task!(appeal, current_parent) if appeal.evidence_submission_docket?
       end
     end
   end
