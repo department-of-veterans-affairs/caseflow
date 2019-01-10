@@ -146,17 +146,17 @@ class ClaimReview < DecisionReview
 
   def search_table_ui_hash
     {
-      caseflow_veteran_id: veteran&.id,
+      caseflow_veteran_id: claim_veteran&.id,
       claim_id: id,
       veteran_file_number: veteran_file_number,
-      veteran_full_name: veteran&.name&.formatted(:readable_full),
+      veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
       end_products: end_product_establishments,
       claimant_names: claimants.map(&:name),
       review_type: self.class.to_s.underscore
     }
   end
 
-  def veteran
+  def claim_veteran
     Veteran.find_by(file_number: veteran_file_number)
   end
 

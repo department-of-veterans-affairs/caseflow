@@ -663,12 +663,12 @@ describe ClaimReview do
     end
   end
 
-  describe "#veteran" do
+  describe "#claim_veteran" do
     let!(:veteran) { create(:veteran) }
     let!(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
 
     it "returns the veteran" do
-      expect(hlr.veteran).to eq(veteran)
+      expect(hlr.claim_veteran).to eq(veteran)
     end
   end
 end
