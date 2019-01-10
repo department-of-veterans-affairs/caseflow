@@ -231,6 +231,10 @@ feature "Supplemental Claim Intake" do
     )
     expect(page).to have_content("Contention: Active Duty Adjustments - Description for Active Duty Adjustments")
 
+    intake.detail.reload
+
+    expect(intake.detail.end_product_establishments.count).to eq(2)
+
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
@@ -251,10 +255,9 @@ feature "Supplemental Claim Intake" do
       user: current_user
     )
 
-    ratings_end_product_establishment = EndProductEstablishment.find_by(
-      source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_CODES[:rating]
-    )
+    ratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
+      epe.code == SupplementalClaim::END_PRODUCT_CODES[:rating]
+    end
 
     expect(ratings_end_product_establishment).to have_attributes(
       claimant_participant_id: "5382910293",
@@ -280,10 +283,9 @@ feature "Supplemental Claim Intake" do
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
     )
-    nonratings_end_product_establishment = EndProductEstablishment.find_by(
-      source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_CODES[:nonrating]
-    )
+    nonratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
+      epe.code == SupplementalClaim::END_PRODUCT_CODES[:nonrating]
+    end
 
     expect(nonratings_end_product_establishment).to have_attributes(
       claimant_participant_id: "5382910293",
@@ -752,6 +754,7 @@ feature "Supplemental Claim Intake" do
             description: "I am a description",
             date: "10/25/2017"
           )
+
           expect(page).to_not have_content("Establish EP")
           expect(page).to have_content("Establish Supplemental Claim")
           expect(page).to_not have_content("Claimant")

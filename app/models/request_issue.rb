@@ -144,7 +144,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def set_default_attributes
-    self.benefit_type ||= "compensation" # matches default value in db
+    self.benefit_type ||= "compensation" # must match default value in db
   end
 
   def status_active?

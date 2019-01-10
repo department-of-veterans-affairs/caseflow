@@ -196,7 +196,7 @@ describe ClaimReview do
   context "#processed_in_caseflow?" do
     let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
 
-    subject { claim_review.effectuated_in_caseflow? }
+    subject { claim_review.processed_in_caseflow? }
 
     context "when benefit_type is compensation" do
       let(:benefit_type) { "compensation" }

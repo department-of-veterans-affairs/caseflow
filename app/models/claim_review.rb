@@ -82,7 +82,7 @@ class ClaimReview < DecisionReview
     attempted!
 
     if processed_in_caseflow? && end_product_establishments.any?
-      fail NoEndProductsRequired, message: "Non-comp decision reviews should not have End Products"
+      fail NoEndProductsRequired, message: "Decision reviews processed in Caseflow should not have End Products"
     end
 
     end_product_establishments.each do |end_product_establishment|
