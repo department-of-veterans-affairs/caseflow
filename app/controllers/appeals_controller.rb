@@ -22,7 +22,7 @@ class AppealsController < ApplicationController
   def document_count
     render json: { document_count: appeal.number_of_documents_from_caseflow }
   rescue StandardError => e
-    return handle_non_critical_error("document_count", e)
+    handle_non_critical_error("document_count", e)
   end
 
   def new_documents
