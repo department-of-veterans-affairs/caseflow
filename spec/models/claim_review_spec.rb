@@ -321,8 +321,7 @@ describe ClaimReview do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.last.reference_id,
-          contention_descriptions: array_including("another decision text", "decision text"),
-          special_issues: [],
+          contentions: array_including({ description: "another decision text" }, description: "decision text"),
           user: user
         )
 
@@ -388,8 +387,7 @@ describe ClaimReview do
             expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
               veteran_file_number: veteran_file_number,
               claim_id: claim_review.end_product_establishments.last.reference_id,
-              contention_descriptions: ["another decision text"],
-              special_issues: [],
+              contentions: [{ description: "another decision text" }],
               user: user
             )
 
@@ -588,8 +586,7 @@ describe ClaimReview do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
-          contention_descriptions: ["decision text"],
-          special_issues: [],
+          contentions: [{ description: "decision text" }],
           user: user
         )
 
@@ -622,8 +619,7 @@ describe ClaimReview do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
-          contention_descriptions: ["surgery - Issue text"],
-          special_issues: [],
+          contentions: [{ description: "surgery - Issue text" }],
           user: user
         )
 

@@ -829,23 +829,19 @@ feature "Higher Level Review Edit issues" do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran.file_number,
         claim_id: rating_epe.reference_id,
-        contention_descriptions: array_including(
-          RequestIssue::UNIDENTIFIED_ISSUE_MSG,
-          "Left knee granted",
-          "Issue before AMA Activation from RAMP",
-          "PTSD denied" # remove and create, both
+        contentions: array_including(
+          { description: RequestIssue::UNIDENTIFIED_ISSUE_MSG },
+          { description: "Left knee granted" },
+          { description: "Issue before AMA Activation from RAMP" },
+          description: "PTSD denied"
         ),
-        special_issues: [],
         user: current_user
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran.file_number,
         claim_id: nonrating_epe.reference_id,
-        contention_descriptions: [
-          "Active Duty Adjustments - Description for Active Duty Adjustments"
-        ],
-        special_issues: [],
+        contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
         user: current_user
       )
     end
@@ -932,8 +928,7 @@ feature "Higher Level Review Edit issues" do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: veteran.file_number,
         claim_id: rating_ep_claim_id,
-        contention_descriptions: ["Left knee granted"],
-        special_issues: [],
+        contentions: [{ description: "Left knee granted" }],
         user: current_user
       )
       expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(

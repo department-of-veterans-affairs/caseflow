@@ -12,12 +12,16 @@ describe RequestIssue do
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
   let(:contested_decision_issue_id) { nil }
+  let(:same_office) { false }
+  let(:vacols_id) { nil }
+  let(:vacols_sequence_id) { nil }
 
   let(:review) do
     create(
       :higher_level_review,
       veteran_file_number: veteran.file_number,
-      legacy_opt_in_approved: legacy_opt_in_approved
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      same_office: same_office
     )
   end
 
@@ -56,7 +60,9 @@ describe RequestIssue do
       decision_sync_processed_at: decision_sync_processed_at,
       end_product_establishment: end_product_establishment,
       contention_reference_id: contention_reference_id,
-      contested_decision_issue_id: contested_decision_issue_id
+      contested_decision_issue_id: contested_decision_issue_id,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id
     )
   end
 
@@ -150,6 +156,30 @@ describe RequestIssue do
 
       it "ignores request issues" do
         expect(RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)).to be_nil
+      end
+    end
+  end
+
+  context "#special_issues" do
+    subject { rating_request_issue.special_issues }
+
+    context "when the HLR has same office selected" do
+      let(:same_office) { true }
+
+      it "includes the same office special issue" do
+        expect(subject).to eq([{ code: "SSR", narrative: "Same Station Review" }])
+      end
+
+      context "when there is a vacols issue opted in" do
+        let(:vacols_id) { "1" }
+        let(:vacols_sequence_id) { 1 }
+
+        it "includes the same office special issue" do
+          expect(subject).to eq([
+                                  { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O },
+                                  { code: "SSR", narrative: "Same Station Review" }
+                                ])
+        end
       end
     end
   end
