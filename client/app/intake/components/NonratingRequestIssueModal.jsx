@@ -43,9 +43,9 @@ class NonratingRequestIssueModal extends React.Component {
     };
   }
 
-  benefitTypeOnChange = (value) => {
+  benefitTypeOnChange = (benType) => {
     this.setState({
-      benefitType: value
+      benefitType: benType.value
     });
   }
 
@@ -221,7 +221,7 @@ class NonratingRequestIssueModal extends React.Component {
     let benefitTypeElement = '';
 
     if (formType === 'appeal') {
-      benefitTypeElement = <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} />;
+      benefitTypeElement = <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown />;
     }
 
     return <div className="intake-add-issues">
