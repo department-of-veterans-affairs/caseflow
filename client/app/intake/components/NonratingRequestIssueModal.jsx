@@ -45,7 +45,8 @@ class NonratingRequestIssueModal extends React.Component {
 
   benefitTypeOnChange = (benType) => {
     this.setState({
-      benefitType: benType.value
+      benefitType: benType.value,
+      category: ''
     });
   }
 
