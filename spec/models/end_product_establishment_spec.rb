@@ -688,7 +688,7 @@ describe EndProductEstablishment do
           subject
 
           expect(SupplementalClaim.find_by(
-                   is_dta_error: true,
+                   decision_review_remanded: source,
                    veteran_file_number: source.veteran_file_number
                  )).to_not be_nil
         end
@@ -699,7 +699,7 @@ describe EndProductEstablishment do
 
         it "does nothing" do
           subject
-          expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
+          expect(SupplementalClaim.find_by(decision_review_remanded: source)).to be_nil
         end
       end
     end
@@ -709,7 +709,7 @@ describe EndProductEstablishment do
 
       it "does nothing" do
         subject
-        expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
+        expect(SupplementalClaim.find_by(decision_review_remanded: source)).to be_nil
       end
     end
   end

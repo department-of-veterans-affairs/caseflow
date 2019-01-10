@@ -31,11 +31,11 @@ describe HigherLevelReview do
   end
 
   context "#issue_code" do
-    let(:rating) { nil }
-    subject { higher_level_review.issue_code(rating: rating) }
+    let(:issue) { nil }
+    subject { higher_level_review.issue_code(issue) }
 
     context "for a rating issue" do
-      let(:rating) { true }
+      let(:issue) { create(:request_issue, :rating) }
       it "returns the rating end product code" do
         expect(subject).to eq("030HLRR")
       end
@@ -49,7 +49,7 @@ describe HigherLevelReview do
     end
 
     context "for a nonrating issue" do
-      let(:rating) { false }
+      let(:issue) { create(:request_issue, :nonrating) }
       it "returns the nonrating end product code" do
         expect(subject).to eq("030HLRNR")
       end
@@ -278,7 +278,7 @@ describe HigherLevelReview do
       it "creates a supplemental claim and request issues" do
         subject
         supplemental_claim = SupplementalClaim.find_by(
-          is_dta_error: true,
+          decision_review_remanded: higher_level_review,
           veteran_file_number: higher_level_review.veteran_file_number,
           receipt_date: Time.zone.now.to_date,
           benefit_type: higher_level_review.benefit_type,
@@ -335,7 +335,7 @@ describe HigherLevelReview do
       it "does nothing" do
         subject
 
-        expect(SupplementalClaim.where(is_dta_error: true).empty?).to eq(true)
+        expect(SupplementalClaim.where.not(decision_review_remanded: nil).empty?).to eq(true)
         expect(RequestIssue.all.empty?).to eq(true)
       end
     end

@@ -28,11 +28,11 @@ describe SupplementalClaim do
   end
 
   context "#issue_code" do
-    let(:rating) { nil }
-    subject { supplemental_claim.issue_code(rating: rating) }
+    let(:issue) { nil }
+    subject { supplemental_claim.issue_code(issue) }
 
     context "for a rating issue" do
-      let(:rating) { true }
+      let(:issue) { create(:request_issue, :rating) }
       it "returns the rating end product code" do
         expect(subject).to eq("040SCR")
       end
@@ -44,7 +44,7 @@ describe SupplementalClaim do
         end
 
         context "when it is from a dta error" do
-          let(:is_dta_error) { true }
+          let(:decision_review_remanded) { create(:higher_level_review) }
 
           it "returns the rating pension dta error end product code" do
             expect(subject).to eq("040HDERPMC")
@@ -54,7 +54,7 @@ describe SupplementalClaim do
     end
 
     context "for a nonrating issue" do
-      let(:rating) { false }
+      let(:issue) { create(:request_issue, :nonrating) }
       it "returns the nonrating end product code" do
         expect(subject).to eq("040SCNR")
       end
@@ -66,7 +66,7 @@ describe SupplementalClaim do
         end
 
         context "when it is from a dta error" do
-          let(:is_dta_error) { true }
+          let(:decision_review_remanded) { create(:higher_level_review) }
 
           it "returns the nonrating pension dta error end product code" do
             expect(subject).to eq("040HDENRPMC")
@@ -183,7 +183,7 @@ describe SupplementalClaim do
     let(:decision_review_remanded) { create(:appeal) }
     let(:benefit_type) { "education" }
 
-    let!(:decision_issue_not_remanded) do 
+    let!(:decision_issue_not_remanded) do
       create(
         :decision_issue,
         disposition: "allowed",

@@ -83,7 +83,7 @@ feature "Supplemental Claim Edit issues" do
     )
   end
 
-  let(:is_dta_error) { false }
+  let(:decision_review_remanded) { nil }
   let(:benefit_type) { "compensation" }
 
   let!(:supplemental_claim) do
@@ -91,7 +91,7 @@ feature "Supplemental Claim Edit issues" do
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
       benefit_type: benefit_type,
-      is_dta_error: is_dta_error,
+      decision_review_remanded: decision_review_remanded,
       veteran_is_not_claimant: true
     )
   end
@@ -147,7 +147,7 @@ feature "Supplemental Claim Edit issues" do
     end
 
     context "when it is created due to a DTA error" do
-      let(:is_dta_error) { true }
+      let(:decision_review_remanded) { create(:higher_level_review) }
 
       it "cannot be edited" do
         nonrating_dta_claim_id = EndProductEstablishment.find_by(
@@ -220,7 +220,7 @@ feature "Supplemental Claim Edit issues" do
     end
 
     context "when it is created due to a DTA error" do
-      let(:is_dta_error) { true }
+      let(:decision_review_remanded) { create(:higher_level_review) }
 
       it "cannot be edited" do
         rating_dta_claim_id = EndProductEstablishment.find_by(

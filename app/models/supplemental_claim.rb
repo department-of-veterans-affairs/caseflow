@@ -6,8 +6,12 @@ class SupplementalClaim < ClaimReview
     pension_nonrating: "040SCNRPMC",
     dta_rating: "040HDER",
     dta_nonrating: "040HDENR",
-    pension_dta_rating: "040HDERPMC",
-    pension_dta_nonrating: "040HDENRPMC"
+    dta_pension_rating: "040HDERPMC",
+    dta_pension_nonrating: "040HDENRPMC",
+    dta_board: "040BDE",
+    imo_dta_board: "040BDEIMO",
+    pension_dta_board: "040BDEPMC",
+    pension_imo_dta_board: "040BDEIMOPMC"
   }.freeze
 
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
@@ -17,15 +21,20 @@ class SupplementalClaim < ClaimReview
   def ui_hash
     super.merge(
       formType: "supplemental_claim",
-      isDtaError: is_dta_error
+      isDtaError: decision_review_remanded?
     )
   end
 
   def issue_code(rating: true)
-    issue_code_type = rating ? :rating : :nonrating
-    issue_code_type = "dta_#{issue_code_type}".to_sym if is_dta_error?
-    issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
-    END_PRODUCT_CODES[issue_code_type]
+    if decision_review_remanded? && decision_review_remanded.is_a?(Appeal)
+      issue_code_type = :board
+    else
+      issue_code_type = rating ? :rating : :nonrating
+    end
+    
+      issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
+      issue_code_type = "dta_#{issue_code_type}".to_sym if decision_review_remanded?
+      END_PRODUCT_CODES[issue_code_type]
   end
 
   def start_processing_job!
@@ -43,11 +52,11 @@ class SupplementalClaim < ClaimReview
   private
 
   def end_product_created_by
-    is_dta_error? ? User.system_user : intake_processed_by
+    decision_review_remanded? ? User.system_user : intake_processed_by
   end
 
   def end_product_station
-    is_dta_error? ? "397" : super
+    decision_review_remanded? ? "397" : super
   end
 
   def new_end_product_establishment(ep_code)

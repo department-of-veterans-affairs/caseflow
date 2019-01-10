@@ -1,4 +1,6 @@
 class HigherLevelReview < ClaimReview
+  has_one :remand_supplemental_claim, as: :decision_review_remanded
+
   with_options if: :saving_review do
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
@@ -38,8 +40,8 @@ class HigherLevelReview < ClaimReview
     specials
   end
 
-  def issue_code(rating: true)
-    issue_code_type = rating ? :rating : :nonrating
+  def issue_code(issue)
+    issue_code_type = (issue.rating? || issue.is_unidentified?) ? :rating : :nonrating
     issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
     END_PRODUCT_CODES[issue_code_type]
   end
@@ -54,13 +56,7 @@ class HigherLevelReview < ClaimReview
     return if dta_issues_needing_follow_up.empty?
 
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
-
-    # dta_supplemental_claim.start_processing_job!
-    if run_async?
-      DecisionReviewProcessJob.perform_later(dta_supplemental_claim)
-    else
-      DecisionReviewProcessJob.perform_now(dta_supplemental_claim)
-    end
+    dta_supplemental_claim.start_processing_job!
   end
 
   def dta_issues_needing_follow_up
@@ -71,7 +67,7 @@ class HigherLevelReview < ClaimReview
     @dta_supplemental_claim ||= SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
       receipt_date: Time.zone.now.to_date,
-      is_dta_error: true,
+      decision_review_remanded: self,
       benefit_type: benefit_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
