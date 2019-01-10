@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :legacy_hearing do
-    date { Time.zone.today }
+    scheduled_for { Time.zone.today }
 
     transient do
-      case_hearing { create(:case_hearing, user: user, hearing_date: date) }
+      case_hearing { create(:case_hearing, user: user, hearing_date: scheduled_for) }
     end
 
     appeal do

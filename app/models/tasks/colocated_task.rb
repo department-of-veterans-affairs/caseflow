@@ -1,6 +1,5 @@
 class ColocatedTask < Task
   validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
-  validate :assigned_by_role_is_valid
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :on_hold_duration_is_set, on: :update
@@ -92,10 +91,6 @@ class ColocatedTask < Task
 
   def all_tasks_completed_for_appeal?
     appeal.tasks.where(type: ColocatedTask.name).map(&:status).uniq == [Constants.TASK_STATUSES.completed]
-  end
-
-  def assigned_by_role_is_valid
-    errors.add(:assigned_by, "has to be an attorney") if assigned_by && !assigned_by.attorney_in_vacols?
   end
 
   def on_hold_duration_is_set

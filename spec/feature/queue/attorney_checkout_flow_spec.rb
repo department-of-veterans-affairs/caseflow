@@ -143,6 +143,12 @@ RSpec.feature "Attorney checkout flow" do
         )
       end
 
+      before do
+        # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
+        # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+      end
+
       scenario "submits draft decision with new issue format" do
         visit "/queue"
         click_on "(#{appeal.veteran_file_number})"
