@@ -271,6 +271,17 @@ class RequestIssue < ApplicationRecord
     decision_issues.delete_all
   end
 
+  def create_decision_issue_from_params(decision_issue_param)
+    decision_issues.create!(
+      participant_id: review_request.veteran.participant_id,
+      disposition: decision_issue_param[:disposition],
+      description: decision_issue_param[:description],
+      decision_review: review_request,
+      benefit_type: benefit_type,
+      promulgation_date: decision_issue_param[:decision_date]
+    )
+  end
+
   private
 
   # The contested_rating_issue_profile_date is used as an identifier to retrieve the
