@@ -26,6 +26,8 @@ module Caseflow::Error
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
 
+  class FetchHearingLocationsJobError < SerializableError; end
+
   class ActionForbiddenError < SerializableError
     def initialize(args)
       @code = args[:code] || 403
