@@ -303,6 +303,17 @@ describe Task do
       expect(task.reload.status).to eq("on_hold")
     end
 
+    context "the task is attached to a legacy appeal" do
+      let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: create(:case)) }
+
+      it "the parent task is 'on hold'" do
+        expect(task.status).to eq("assigned")
+        new_task = subject
+        expect(new_task.parent_id).to eq(task.id)
+        expect(task.reload.status).to eq("on_hold")
+      end
+    end
+
     context "when the instructions field is a string" do
       let(:instructions_text) { "instructions for this task" }
       let(:params) do
@@ -311,6 +322,14 @@ describe Task do
 
       it "should transform it into an array of strings" do
         expect(subject.instructions).to eq([instructions_text])
+      end
+    end
+
+    context "the params are incomplete" do
+      let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: "Task" } }
+
+      it "raises an error" do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Appeal can't be blank/)
       end
     end
   end
@@ -322,7 +341,7 @@ describe Task do
       class AutoAssignOrg < Organization
         attr_accessor :assignee
 
-        def next_assignee(_task_class)
+        def next_assignee(_options = {})
           assignee
         end
       end
