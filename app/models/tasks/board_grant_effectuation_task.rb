@@ -10,4 +10,8 @@ class BoardGrantEffectuationTask < DecisionReviewTask
   def ui_hash
     serializer_class.new(self).as_json
   end
+
+  def complete!
+    update!(status: Constants.TASK_STATUSES.completed, completed_at: Time.zone.now)
+  end
 end

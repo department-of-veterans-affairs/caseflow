@@ -27,29 +27,16 @@ export const nonCompReducer = (state = mapDataToInitialState(), action) => {
       }
     });
   case ACTIONS.TASK_UPDATE_DECISION_ISSUES_SUCCEED: {
-    // update inprogress task to completed
-    const completedIndex = _.findIndex(state.inProgressTasks, (item) => item.id === action.payload.completedTaskId);
-    let updatedInProgressTasks = state.inProgressTasks;
-    let updatedCompletedTasks = state.completedTasks;
-
-    if (completedIndex !== -1) {
-      updatedInProgressTasks = [
-        ...state.inProgressTasks.slice(0, completedIndex),
-        ...state.inProgressTasks.slice(completedIndex + 1)];
-
-      updatedCompletedTasks = [state.inProgressTasks[completedIndex]].concat(updatedCompletedTasks);
-    }
-
     return update(state, {
       decisionIssuesStatus: {
         update: {
           $set: DECISION_ISSUE_UPDATE_STATUS.SUCCEED
         },
-        veteranName: { $set: action.payload.veteran.name },
+        claimantName: { $set: action.payload.claimant },
         errorCode: { $set: null }
       },
-      inProgressTasks: { $set: updatedInProgressTasks },
-      completedTasks: { $set: updatedCompletedTasks }
+      inProgressTasks: { $set: action.payload.inProgressTasks },
+      completedTasks: { $set: action.payload.completedTasks }
     });
   }
   case ACTIONS.TASK_UPDATE_DECISION_ISSUES_FAIL:

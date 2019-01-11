@@ -1,6 +1,6 @@
 require "rails_helper"
 
-feature "NonComp Dispositions Page" do
+feature "NonComp Dispositions Task Page" do
   before do
     FeatureToggle.enable!(:decision_reviews)
   end

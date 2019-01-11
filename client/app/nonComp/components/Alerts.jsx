@@ -22,7 +22,7 @@ export class SuccessAlert extends React.PureComponent {
     const successObject = {
       decisionIssueUpdateSucceeded: {
         title: 'Decision Completed',
-        body: `You successfully added dispositions for ${this.props.veteranName}.`
+        body: `You successfully added dispositions for ${this.props.claimantName}.`
       }
     }[this.props.successCode];
 

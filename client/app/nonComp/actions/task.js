@@ -1,9 +1,10 @@
 import ApiUtil from '../../util/ApiUtil';
 import { ACTIONS } from '../constants';
+import { formatTasks } from '../util';
 
 const analytics = true;
 
-export const taskUpdateDecisionIssues = (taskId, businessLine, data, veteran) => (dispatch) => {
+export const completeTask = (taskId, businessLine, data, claimant) => (dispatch) => {
   dispatch({
     type: ACTIONS.TASK_UPDATE_DECISION_ISSUES_START,
     meta: { analytics }
@@ -11,12 +12,16 @@ export const taskUpdateDecisionIssues = (taskId, businessLine, data, veteran) =>
 
   return ApiUtil.put(`/decision_reviews/${businessLine}/tasks/${taskId}`, data, 'decision-issues-update').
     then(
-      () => {
+      (response) => {
+        const responseObject = JSON.parse(response.text);
+
         dispatch({
           type: ACTIONS.TASK_UPDATE_DECISION_ISSUES_SUCCEED,
           payload: {
-            veteran,
-            completedTaskId: taskId
+            claimant,
+            completedTaskId: taskId,
+            inProgressTasks: formatTasks(responseObject["in_progress_tasks"]),
+            completedTasks: formatTasks(responseObject["completed_tasks"]),
           },
           meta: { analytics }
         });
