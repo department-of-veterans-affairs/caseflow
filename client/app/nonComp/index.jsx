@@ -9,7 +9,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 
 import ReviewPage from './pages/ReviewPage';
-import DispositionPage from './pages/DispositionPage';
+import TaskPage from './pages/TaskPage';
 import { nonCompReducer, mapDataToInitialState } from './reducers';
 
 class NonComp extends React.PureComponent {
@@ -38,7 +38,7 @@ class NonComp extends React.PureComponent {
                     exact
                     path="/:businessLineSlug/tasks/:taskId"
                     title="Dispositions | Caseflow"
-                    component={DispositionPage} />
+                    component={TaskPage} />
                   <PageRoute
                     exact
                     path="/:businessLineSlug"

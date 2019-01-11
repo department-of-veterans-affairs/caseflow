@@ -95,7 +95,7 @@ class TaskTableTab extends React.PureComponent {
       <div className="section-hearings-list">
         <TaskTableUnconnected
           {...this.state.predefinedColumns}
-          getKeyForRow={(row, object) => object.appeal.id}
+          getKeyForRow={(row, object) => object.id}
           customColumns={[claimantColumn(), veteranParticipantIdColumn(),
             decisionReviewTypeColumn(
               this.onReviewTypeSearch,
