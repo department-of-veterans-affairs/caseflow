@@ -27,6 +27,8 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
           "iso3Code": "USA"
         },
         "addressLine1": "8633 Union Pl",
+        "addressLine2": "",
+        "addressLine3": "",
         "city": "Manassas Park",
         "zipCode5": "20111",
         "zipCode4": "2434"
