@@ -13,7 +13,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "sync_intake" => SyncIntakeJob,
     "sync_reviews" => SyncReviewsJob,
     "take_docket_snapshot" => TakeDocketSnapshotJob,
-    "task_timer_job" => TaskTimerJob
+    "task_timer_job" => TaskTimerJob,
     "fetch_hearing_locations_for_veteran_job" => FetchHearingLocationsForVeteransJob
   }.freeze
 

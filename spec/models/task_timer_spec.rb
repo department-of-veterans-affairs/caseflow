@@ -4,7 +4,7 @@ describe TaskTimer do
       expect(TaskTimer.requires_processing.count).to eq 0
 
       task = create(:generic_task, :on_hold)
-      task_timer = TaskTimer.create!(task: task, submitted_at: Time.zone.now + 24.hours)
+      TaskTimer.create!(task: task, submitted_at: Time.zone.now + 24.hours)
 
       expect(TaskTimer.requires_processing.count).to eq 0
 
