@@ -49,7 +49,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     let!(:hearing_day) do
       create(
         :hearing_day,
-        hearing_type: "V",
+        request_type: "V",
         hearing_date: Time.zone.today + 160,
         regional_office: "RO39"
       )

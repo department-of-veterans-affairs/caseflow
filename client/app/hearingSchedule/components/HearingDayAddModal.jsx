@@ -13,7 +13,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 import { bindActionCreators } from 'redux';
 import { onSelectedHearingDayChange,
-  selectHearingType,
+  selectRequestType,
   selectVlj,
   selectHearingCoordinator,
   setNotes,
@@ -46,7 +46,7 @@ const statusMsgDetailStyle = css({
   color: '#e31c3d'
 });
 
-const hearingTypeOptions = [
+const requestTypeOptions = [
   { label: 'Video',
     value: 'V' },
   { label: 'Central',
@@ -95,7 +95,7 @@ class HearingDayAddModal extends React.Component {
       errorMessages.push('Please make sure you have entered a Hearing Date');
     }
 
-    if (this.props.hearingType === '') {
+    if (this.props.requestType === '') {
       this.setState({ typeError: true });
       errorMessages.push('Please make sure you have entered a Hearing Type');
     }
@@ -153,8 +153,8 @@ class HearingDayAddModal extends React.Component {
     this.resetErrorState();
   };
 
-  onHearingTypeChange = (value) => {
-    this.props.selectHearingType(value);
+  onRequestTypeChange = (value) => {
+    this.props.selectRequestType(value);
     this.resetErrorState();
 
     switch (value.value) {
@@ -214,13 +214,13 @@ class HearingDayAddModal extends React.Component {
           type="date"
         />
         <SearchableDropdown
-          name="hearingType"
+          name="requestType"
           label="Select Hearing Type"
           strongLabel
           errorMessage={(!this.state.dateError && this.state.typeError) ? this.getDateTypeErrorMessages() : null}
-          value={this.props.hearingType}
-          onChange={this.onHearingTypeChange}
-          options={hearingTypeOptions} />
+          value={this.props.requestType}
+          onChange={this.onRequestTypeChange}
+          options={requestTypeOptions} />
         {this.state.videoSelected &&
         <RoSelectorDropdown
           label="Select Regional Office (RO)"
@@ -293,7 +293,7 @@ const mapStateToProps = (state) => ({
   selectedRegionalOffice: state.components.selectedRegionalOffice,
   regionalOffices: state.components.regionalOffices,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
-  hearingType: state.hearingSchedule.hearingType,
+  requestType: state.hearingSchedule.requestType,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   notes: state.hearingSchedule.notes,
@@ -305,7 +305,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onSelectedHearingDayChange,
   onRegionalOfficeChange,
-  selectHearingType,
+  selectRequestType,
   selectVlj,
   selectHearingCoordinator,
   setNotes,

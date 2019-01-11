@@ -116,7 +116,7 @@ class ListSchedule extends React.Component {
       map((hearingDay) => ({
         scheduledFor: <Link to={`/schedule/docket/${hearingDay.id}`}>
           {moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}</Link>,
-        hearingType: hearingDay.hearingType,
+        requestType: hearingDay.requestType,
         regionalOffice: hearingDay.regionalOffice,
         room: hearingDay.room,
         vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
@@ -125,7 +125,7 @@ class ListSchedule extends React.Component {
 
   getHearingScheduleColumns = (hearingScheduleRows) => {
 
-    const uniqueHearingTypes = populateFilterDropDowns(hearingScheduleRows, 'hearingType');
+    const uniqueRequestTypes = populateFilterDropDowns(hearingScheduleRows, 'requestType');
     const uniqueVljs = populateFilterDropDowns(hearingScheduleRows, 'vlj');
     const uniqueLocations = populateFilterDropDowns(hearingScheduleRows, 'regionalOffice');
 
@@ -142,9 +142,9 @@ class ListSchedule extends React.Component {
         header: 'Type',
         cellClass: 'type-column',
         align: 'left',
-        valueName: 'hearingType',
+        valueName: 'requestType',
         label: 'Filter by type',
-        getFilterValues: uniqueHearingTypes,
+        getFilterValues: uniqueRequestTypes,
         isDropdownFilterOpen: this.props.filterTypeIsOpen,
         anyFiltersAreSet: false,
         toggleDropdownFilterVisiblity: this.props.toggleTypeFilterVisibility,
@@ -191,7 +191,7 @@ class ListSchedule extends React.Component {
   };
 
   setTypeSelectedValue = (value) => {
-    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'hearingType', value));
+    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'requestType', value));
     this.setState({
       filteredByList: this.state.filteredByList.concat(['Hearing Type'])
     });
@@ -280,7 +280,7 @@ class ListSchedule extends React.Component {
 ListSchedule.propTypes = {
   hearingSchedule: PropTypes.shape({
     scheduledFor: PropTypes.string,
-    hearingType: PropTypes.string,
+    requestType: PropTypes.string,
     regionalOffice: PropTypes.string,
     room: PropTypes.string,
     judgeId: PropTypes.string,
