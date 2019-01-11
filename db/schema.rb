@@ -442,7 +442,7 @@ ActiveRecord::Schema.define(version: 20190107210543) do
   end
 
   create_table "hearing_days", force: :cascade do |t|
-    t.date "hearing_date", null: false
+    t.date "scheduled_for", null: false
     t.string "hearing_type", null: false
     t.string "regional_office"
     t.integer "judge_id"

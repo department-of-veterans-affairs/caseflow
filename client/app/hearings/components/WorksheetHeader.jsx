@@ -118,9 +118,9 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>DATE</h5>
-          <div className="cf-hearings-headers">{moment(worksheet.date).format('ddd l')}</div>
+          <div className="cf-hearings-headers">{moment(worksheet.scheduled_for).format('ddd l')}</div>
         </div>
-        {worksheet.date && new Date(worksheet.date) < new Date() &&
+        {worksheet.scheduled_for && new Date(worksheet.scheduled_for) < new Date() &&
           <div className="cf-hearings-worksheet-data-cell">
             <h5>HEARING DISPOSITION</h5>
             <div className={classNames('cf-hearings-headers', dispositionClassNames)}>

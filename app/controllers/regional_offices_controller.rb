@@ -20,7 +20,7 @@ class RegionalOfficesController < ApplicationController
       hearing_days: hearing_days.map do |day|
         {
           hearing_id: day[:id],
-          hearing_date: day[:hearing_date],
+          scheduled_for: day[:scheduled_for],
           hearing_type: day[:hearing_type],
           room: day[:room],
           total_slots: day[:total_slots]

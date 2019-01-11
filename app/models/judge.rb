@@ -27,7 +27,7 @@ class Judge
 
   def upcoming_hearings_on(date, is_fetching_issues = false)
     upcoming_hearings(is_fetching_issues).select do |hearing|
-      hearing.date.between?(date.beginning_of_day, date.end_of_day)
+      hearing.scheduled_for.between?(date.beginning_of_day, date.end_of_day)
     end
   end
 
@@ -38,11 +38,12 @@ class Judge
   private
 
   def upcoming_hearings_grouped_by_date
-    upcoming_hearings.group_by { |h| h.date.strftime("%F") }
+    upcoming_hearings.group_by { |h| h.scheduled_for.strftime("%F") }
   end
 
   def upcoming_hearings(is_fetching_issues = false)
-    HearingRepository.fetch_hearings_for_judge(user.css_id, is_fetching_issues).sort_by(&:date)
+    HearingRepository.fetch_hearings_for_judge(user.css_id, is_fetching_issues).sort_by(&:scheduled_for) +
+      Hearing.joins(:judge).where(users: { css_id: user.css_id }).sort_by(&:scheduled_for)
   end
 
   def get_dockets_slots(dockets)
@@ -56,7 +57,11 @@ class Judge
     # as they key
     dockets.map do |date, docket|
       record = ro_staff_hash[docket.regional_office_key]
-      [date, (HearingDayRepository.slots_based_on_type(staff: record, type: docket.type, date: docket.date) if record)]
+      [date, (if record
+                HearingDayRepository.slots_based_on_type(staff: record,
+                                                         type: docket.type,
+                                                         date: docket.scheduled_for)
+              end)]
     end.to_h
   end
 
