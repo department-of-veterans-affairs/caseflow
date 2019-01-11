@@ -255,7 +255,7 @@ RSpec.feature "Search" do
       end
 
       it "clicking on docket number sends us to the case details page" do
-        find("a", text: /\A#{appeal.docket_number}\z/).click
+        find("a", exact_text: appeal.docket_number).click
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
         expect(page).not_to have_content "Select an action"
       end
