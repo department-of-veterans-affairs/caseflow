@@ -281,9 +281,7 @@ class Task < ApplicationRecord
 
   def set_assigned_at_and_update_parent_status
     self.assigned_at = created_at unless assigned_at
-    if ama? && parent
-      parent.update(status: :on_hold)
-    end
+    parent&.update(status: :on_hold)
   end
 
   def set_timestamps
