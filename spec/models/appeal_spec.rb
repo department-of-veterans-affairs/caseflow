@@ -32,17 +32,17 @@ describe Appeal do
   context "#create_remand_supplemental_claims!" do
     subject { appeal.create_remand_supplemental_claims! }
 
-    let!(:remanded_decision_issue) do 
+    let!(:remanded_decision_issue) do
       create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "compensation")
     end
 
-    let!(:remanded_decision_issue_processed_in_caseflow) do 
+    let!(:remanded_decision_issue_processed_in_caseflow) do
       create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca")
     end
 
     let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
 
-    it "creates supplemental claim, request issues, and starts processing", focus: true do
+    it "creates supplemental claim, request issues, and starts processing" do
       subject
 
       remanded_supplemental_claims = SupplementalClaim.where(decision_review_remanded: appeal)

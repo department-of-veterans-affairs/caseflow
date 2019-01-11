@@ -223,8 +223,7 @@ describe HigherLevelReview do
                  disposition: HigherLevelReview::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
                  profile_date: profile_date,
-                 benefit_type: benefit_type
-                 ),
+                 benefit_type: benefit_type),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
