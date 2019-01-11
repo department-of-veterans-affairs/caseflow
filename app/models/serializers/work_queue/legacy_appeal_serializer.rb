@@ -84,4 +84,12 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
       state: object.regional_office.state
     }
   end
+
+  attribute :document_id do
+    latest_attorney_case_review&.document_id
+  end
+
+  def latest_attorney_case_review
+    VACOLS::CaseAssignment.latest_task_for_appeal(object.vacols_id)
+  end
 end
