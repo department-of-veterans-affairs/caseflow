@@ -107,18 +107,18 @@ describe Organization do
 
   describe ".next_assignee" do
     let(:org) { FactoryBot.create(:organization) }
-    let(:task_class) { nil }
+    let(:appeal) { nil }
 
-    subject { org.next_assignee(task_class) }
+    subject { org.next_assignee(appeal: appeal) }
 
-    context "when no task type is specified" do
+    context "when no appeal is specified" do
       it "should return nil" do
         expect(subject).to eq(nil)
       end
     end
 
-    context "when task type is specified" do
-      let(:task_class) { GenericTask }
+    context "when appeal is specified" do
+      let(:appeal) { FactoryBot.create(:appeal) }
       it "should return nil" do
         expect(subject).to eq(nil)
       end
@@ -127,21 +127,11 @@ describe Organization do
 
   describe ".automatically_assign_to_member?" do
     let(:org) { FactoryBot.create(:organization) }
-    let(:task_class) { nil }
 
-    subject { org.automatically_assign_to_member?(task_class) }
+    subject { org.automatically_assign_to_member? }
 
-    context "when no task type is specified" do
-      it "should return false" do
-        expect(subject).to eq(false)
-      end
-    end
-
-    context "when task type is specified" do
-      let(:task_class) { GenericTask }
-      it "should return false" do
-        expect(subject).to eq(false)
-      end
+    it "should return false" do
+      expect(subject).to eq(false)
     end
   end
 end
