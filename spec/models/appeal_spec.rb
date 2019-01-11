@@ -40,6 +40,53 @@ describe Appeal do
     end
   end
 
+  context "#new_documents_from_caseflow" do
+    before do
+      documents.each { |document| document.update(file_number: appeal.veteran_file_number) }
+    end
+
+    let(:user) { create(:user) }
+
+    let!(:documents) do
+      [
+        create(:document, received_at: 5.days.ago),
+        create(:document, received_at: 5.days.ago)
+      ]
+    end
+
+    let!(:appeal) { create(:appeal) }
+
+    subject { appeal.new_documents_from_caseflow(user) }
+
+    context "when appeal has no appeal view" do
+      it "should return all documents" do
+        expect(subject).to eq(documents)
+      end
+    end
+
+    context "when appeal has an appeal view newer than documents" do
+      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
+
+      it "should return no documents" do
+        expect(subject).to eq([])
+      end
+
+      context "when one document is missing a received at date" do
+        it "should return no documents" do
+          documents[0].update(received_at: nil)
+          expect(subject).to eq([])
+        end
+      end
+
+      context "when one document is newer than the appeal view date" do
+        it "should return the newer document" do
+          documents[0].update(received_at: -2.days.ago)
+          expect(subject).to eq([documents[0]])
+        end
+      end
+    end
+  end
+
   context "#contestable_issues" do
     subject { appeal.contestable_issues }
 
