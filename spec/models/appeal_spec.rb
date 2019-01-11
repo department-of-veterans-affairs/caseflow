@@ -437,7 +437,6 @@ describe Appeal do
                          parent_id: task2.id)
       end
 
-      subject { appeal.tasks_for_timeline.first }
       it { is_expected.to eq task3 }
     end
     context "when there are completed organization tasks without child tasks" do
@@ -448,7 +447,6 @@ describe Appeal do
         create(:qr_task, appeal: appeal, status: Constants.TASK_STATUSES.completed, assigned_to_type: "Organization")
       end
 
-      subject { appeal.tasks_for_timeline.first }
       it { is_expected.to eq task2 }
     end
   end
