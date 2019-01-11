@@ -66,9 +66,9 @@ class HearingDayDropdown extends React.Component {
 
     _.forEach(this.props.hearingDays, (day) => {
       hearingDayOptions.push({
-        label: formatDateStr(day.hearingDate),
+        label: formatDateStr(day.scheduledFor),
         value: { ...day,
-          hearingDate: formatDateStr(day.hearingDate, 'YYYY-MM-DD', 'YYYY-MM-DD') }
+          hearingDate: formatDateStr(day.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD') }
       });
     });
 
@@ -76,7 +76,7 @@ class HearingDayDropdown extends React.Component {
       hearingDayOptions.push(...this.props.staticOptions);
     }
 
-    return hearingDayOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
+    return hearingDayOptions.sort((d1, d2) => new Date(d1.value.scheduledFor) - new Date(d2.value.scheduledFor));
   };
 
   render() {

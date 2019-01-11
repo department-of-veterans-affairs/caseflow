@@ -128,21 +128,6 @@ describe ColocatedTask do
       end
     end
 
-    context "when assigned by is not an attorney" do
-      let(:judge) { FactoryBot.create(:user) }
-
-      before do
-        FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
-      end
-
-      subject { ColocatedTask.create_many_from_params([{ assigned_by: judge, action: :aoj, appeal: appeal_1 }], judge) }
-
-      it "does not create a co-located task" do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Assigned by has to be an attorney/)
-        expect(ColocatedTask.all.count).to eq 0
-      end
-    end
-
     context "when action is not valid" do
       subject do
         ColocatedTask.create_many_from_params([{ assigned_by: attorney, action: :test, appeal: appeal_1 }], attorney)

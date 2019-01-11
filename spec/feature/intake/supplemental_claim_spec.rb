@@ -293,15 +293,13 @@ feature "Supplemental Claim Intake" do
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
       claim_id: ratings_end_product_establishment.reference_id,
-      contention_descriptions: ["PTSD denied"],
-      special_issues: [],
+      contentions: [{ description: "PTSD denied" }],
       user: current_user
     )
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
       claim_id: nonratings_end_product_establishment.reference_id,
-      contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
-      special_issues: [],
+      contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
       user: current_user
     )
 
@@ -690,13 +688,13 @@ feature "Supplemental Claim Intake" do
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
-          contention_descriptions: array_including("Old injury")
+          contentions: array_including(description: "Old injury")
         )
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
-          contention_descriptions: array_including("Left knee granted 2", "Really old injury")
+          contentions: array_including({ description: "Left knee granted 2" }, description: "Really old injury")
         )
       )
     end

@@ -163,6 +163,18 @@ export type Appeal = AppealDetail & BasicAppeal;
 
 export type Appeals = { [string]: Appeal };
 
+export type ClaimReview = {
+  caseflowVeteranId: string,
+  claimId: number,
+  claimantNames: ?Array<string>,
+  endProducts: ?Array<Object>,
+  reviewType: string,
+  veteranFileNumber: string,
+  veteranFullName: string
+};
+
+export type ClaimReviews = { [string]: ClaimReview };
+
 export type Attorneys = {
   data?: Array<User>,
   error?: Object

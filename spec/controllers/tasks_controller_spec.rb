@@ -313,22 +313,6 @@ RSpec.describe TasksController, type: :controller do
         FeatureToggle.disable!(:attorney_assignment_to_colocated)
       end
 
-      context "when current user is a judge" do
-        let(:role) { :judge_role }
-        let(:params) do
-          [{
-            "external_id": appeal.vacols_id,
-            "action": "address_verification",
-            "type": ColocatedTask.name
-          }]
-        end
-
-        it "should fail assigned_by validation" do
-          post :create, params: { tasks: params }
-          expect(response.status).to eq 400
-        end
-      end
-
       context "when current user is an attorney" do
         let(:role) { :attorney_role }
 
