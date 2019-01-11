@@ -90,7 +90,7 @@ class Task < ApplicationRecord
     parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
     verify_user_can_create!(user, parent_task)
     params = modify_params(params)
-    create(params)
+    create!(params)
   end
 
   def self.modify_params(params)
@@ -286,16 +286,16 @@ class Task < ApplicationRecord
 
   private
 
-  def create_and_auto_assign_child_task
+  def create_and_auto_assign_child_task(options = {})
     dup.tap do |child_task|
-      child_task.assigned_to = assigned_to.next_assignee(self.class)
+      child_task.assigned_to = assigned_to.next_assignee(**options)
       child_task.parent = self
       child_task.save!
     end
   end
 
   def automatically_assign_org_task?
-    assigned_to.is_a?(Organization) && assigned_to.automatically_assign_to_member?(self.class)
+    assigned_to.is_a?(Organization) && assigned_to.automatically_assign_to_member?
   end
 
   def update_parent_status
@@ -327,9 +327,7 @@ class Task < ApplicationRecord
   end
 
   def put_parent_on_hold
-    if ama? && parent
-      parent.update(status: :on_hold)
-    end
+    parent&.update(status: :on_hold)
   end
 
   def set_timestamps

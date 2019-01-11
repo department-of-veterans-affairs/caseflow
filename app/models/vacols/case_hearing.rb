@@ -44,7 +44,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     staff_id: :mduser,
     room: :room,
     scheduled_for: :hearing_date,
-    hearing_type: :hearing_type,
+    request_type: :hearing_type,
     judge_id: :board_member,
     folder_nr: :folder_nr,
     board_member: :board_member,

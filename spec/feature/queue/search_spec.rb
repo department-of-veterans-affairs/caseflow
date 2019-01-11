@@ -47,7 +47,7 @@ RSpec.feature "Search" do
         end
 
         it "does not show the HLR / SCs table" do
-          expect(page).to_not have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+          expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_EMPTY_TEXT)
         end
       end
 
@@ -255,7 +255,7 @@ RSpec.feature "Search" do
       end
 
       it "clicking on docket number sends us to the case details page" do
-        click_on appeal.docket_number
+        find("a", exact_text: appeal.docket_number).click
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
         expect(page).not_to have_content "Select an action"
       end
