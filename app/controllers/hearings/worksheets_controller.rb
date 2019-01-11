@@ -10,7 +10,7 @@ class Hearings::WorksheetsController < HearingsController
   end
 
   def show
-    HearingView.find_or_create_by(hearing_id: hearing.id, user_id: current_user.id).touch
+    HearingView.find_or_create_by(hearing: hearing, user_id: current_user.id).touch
 
     respond_to do |format|
       format.html { render template: "hearings/index" }
@@ -26,7 +26,9 @@ class Hearings::WorksheetsController < HearingsController
 
   def update
     hearing.update!(worksheet_params)
-    hearing.class.repository.update_vacols_hearing!(hearing.vacols_record, worksheet_params)
+    if hearing.is_a?(LegacyHearing)
+      LegacyHearing.repository.update_vacols_hearing!(hearing.vacols_record, worksheet_params)
+    end
     render json: { worksheet: hearing_worksheet }
   end
 

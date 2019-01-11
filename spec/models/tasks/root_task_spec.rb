@@ -2,6 +2,7 @@ describe RootTask do
   context ".create_root_and_sub_tasks!" do
     let(:participant_id_with_pva) { "1234" }
     let(:participant_id_with_aml) { "5678" }
+    let(:participant_id_with_no_vso) { "9999" }
 
     let(:appeal) do
       create(:appeal, claimants: [
@@ -27,6 +28,8 @@ describe RootTask do
             participant_id: "2452415"
           }
         )
+      allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+        .with([participant_id_with_no_vso]).and_return({})
     end
 
     let!(:pva) do
@@ -36,6 +39,65 @@ describe RootTask do
         url: "paralyzed-veterans-of-america",
         participant_id: "2452383"
       )
+    end
+
+    context "when a direct docket appeal is created" do
+      before do
+        FeatureToggle.enable!(:ama_auto_case_distribution)
+      end
+      after do
+        FeatureToggle.disable!(:ama_auto_case_distribution)
+      end
+      context "when it has no vso representation" do
+        let(:appeal) do
+          create(:appeal, docket_type: "direct_docket", claimants: [
+                   create(:claimant, participant_id: participant_id_with_no_vso)
+                 ])
+        end
+        it "is ready for distribution immediately" do
+          RootTask.create_root_and_sub_tasks!(appeal)
+          expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
+        end
+      end
+
+      context "when it has an ihp-writing vso" do
+        let(:appeal) do
+          create(:appeal, docket_type: "direct_docket", claimants: [
+                   create(:claimant, participant_id: participant_id_with_pva),
+                   create(:claimant, participant_id: participant_id_with_aml)
+                 ])
+        end
+
+        it "blocks distribution" do
+          RootTask.create_root_and_sub_tasks!(appeal)
+          expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
+        end
+
+        it "requires an informal hearing presentation" do
+          RootTask.create_root_and_sub_tasks!(appeal)
+          expect(InformalHearingPresentationTask.find_by(appeal: appeal).status).to eq("assigned")
+          expect(InformalHearingPresentationTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+        end
+      end
+    end
+
+    context "when an evidence submission docket appeal is created" do
+      before do
+        FeatureToggle.enable!(:ama_auto_case_distribution)
+      end
+      after do
+        FeatureToggle.disable!(:ama_auto_case_distribution)
+      end
+      let(:appeal) do
+        create(:appeal, docket_type: "evidence_submission", claimants: [
+                 create(:claimant, participant_id: participant_id_with_no_vso)
+               ])
+        it "blocks distribution" do
+          RootTask.create_root_and_sub_tasks!(appeal)
+          expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
+          expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+        end
+      end
     end
 
     context "when VSOs exist in our organization table" do
