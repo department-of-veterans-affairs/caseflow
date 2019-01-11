@@ -25,12 +25,6 @@ class HigherLevelReview < ClaimReview
     )
   end
 
-  def special_issues
-    specials = super
-    specials << { code: "SSR", narrative: "Same Station Review" } if same_office
-    specials
-  end
-
   def on_decision_issues_sync_processed(_end_product_establishment)
     create_dta_supplemental_claim
   end

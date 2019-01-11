@@ -106,7 +106,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>VLJ</h5>
-          <div className="cf-hearings-headers">{worksheet.user ? worksheet.user.full_name : ''}</div>
+          <div className="cf-hearings-headers">{worksheet.judge ? worksheet.judge.full_name : ''}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>HEARING TYPE</h5>
@@ -118,9 +118,9 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>DATE</h5>
-          <div className="cf-hearings-headers">{moment(worksheet.date).format('ddd l')}</div>
+          <div className="cf-hearings-headers">{moment(worksheet.scheduled_for).format('ddd l')}</div>
         </div>
-        {worksheet.date && new Date(worksheet.date) < new Date() &&
+        {worksheet.scheduled_for && new Date(worksheet.scheduled_for) < new Date() &&
           <div className="cf-hearings-worksheet-data-cell">
             <h5>HEARING DISPOSITION</h5>
             <div className={classNames('cf-hearings-headers', dispositionClassNames)}>
@@ -166,7 +166,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>GENDER</h5>
-          <div className="cf-hearings-headers">{getVeteranGender(worksheet.veteran_sex)}</div>
+          <div className="cf-hearings-headers">{getVeteranGender(worksheet.veteran_gender)}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell" />
         <div className="cf-hearings-worksheet-data-cell">

@@ -171,16 +171,6 @@ class DecisionReview < ApplicationRecord
     end
   end
 
-  def vacols_optin_special_issue
-    { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O }
-  end
-
-  def special_issues
-    [].tap do |specials|
-      specials << vacols_optin_special_issue if request_issues.any?(&:legacy_issue_optin)
-    end
-  end
-
   def process_legacy_issues!
     LegacyOptinManager.new(decision_review: self).process!
   end

@@ -505,8 +505,7 @@ feature "Supplemental Claim Edit issues" do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: veteran.file_number,
         claim_id: rating_ep_claim_id,
-        contention_descriptions: ["Left knee granted"],
-        special_issues: [],
+        contentions: [{ description: "Left knee granted" }],
         user: current_user
       )
       expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(

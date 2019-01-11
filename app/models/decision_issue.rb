@@ -50,7 +50,8 @@ class DecisionIssue < ApplicationRecord
       id: id,
       requestIssueId: request_issues&.first&.id,
       description: description,
-      disposition: disposition
+      disposition: disposition,
+      promulgationDate: promulgation_date
     }
   end
 

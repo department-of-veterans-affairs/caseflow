@@ -10,7 +10,7 @@ module HearingMapper
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
       {
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_info[:date]),
+        scheduled_for: VacolsHelper.format_datetime_with_utc_timezone(hearing_info[:scheduled_for]),
         notes: notes_to_vacols_format(hearing_info[:notes]),
         disposition: disposition_to_vacols_format(hearing_info[:disposition], hearing_info.keys),
         hold_open: hold_open_to_vacols_format(hearing_info[:hold_open]),
@@ -23,7 +23,7 @@ module HearingMapper
         bva_poc: hearing_info[:bva_poc],
         judge_id: hearing_info[:judge_id]
       }.select do |k, _v|
-        hearing_info.keys.map(&:to_sym).include?(k) || (k.to_sym == :hearing_date && hearing_info[:date])
+        hearing_info.keys.map(&:to_sym).include?(k) || (k.to_sym == :scheduled_for && hearing_info[:date])
         # only send updates to key/values that are passed
       end
     end
@@ -31,7 +31,7 @@ module HearingMapper
     def bfha_vacols_code(hearing_record)
       case hearing_record.hearing_disp
       when "H"
-        code_based_on_hearing_type(hearing_record.hearing_type.to_sym)
+        code_based_on_request_type(hearing_record.hearing_type.to_sym)
       when "P"
         nil
       when "C"
@@ -60,7 +60,7 @@ module HearingMapper
 
     private
 
-    def code_based_on_hearing_type(type)
+    def code_based_on_request_type(type)
       return "1" if type == :C
       return "2" if type == :T
       return "6" if type == :V

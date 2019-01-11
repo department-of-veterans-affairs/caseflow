@@ -4,8 +4,8 @@ module HearingDayMapper
 
   COLUMN_NAME_REVERSE_MAP = {
     hearing_pkseq: :id,
-    hearing_type: :hearing_type,
-    hearing_date: :hearing_date,
+    hearing_type: :request_type,
+    hearing_date: :scheduled_for,
     folder_nr: :regional_office,
     room: :room,
     board_member: :judge_id,
@@ -25,8 +25,8 @@ module HearingDayMapper
     def hearing_day_field_validations(hearing_info)
       {
         hearing_pkseq: hearing_info[:hearing_pkseq],
-        hearing_type: translate_hearing_type(hearing_info[:hearing_type]),
-        hearing_date: hearing_info[:hearing_date],
+        request_type: translate_request_type(hearing_info[:request_type]),
+        scheduled_for: hearing_info[:scheduled_for],
         room: hearing_info[:room],
         regional_office: validate_regional_office(hearing_info[:regional_office]),
         judge_id: hearing_info[:judge_id],
@@ -39,15 +39,15 @@ module HearingDayMapper
       }.select { |k, _v| hearing_info.keys.map(&:to_sym).include? k }
     end
 
-    def translate_hearing_type(hearing_type)
-      return if hearing_type.nil?
+    def translate_request_type(request_type)
+      return if request_type.nil?
 
-      (hearing_type.length > 1) ? HearingDay::HEARING_TYPES[hearing_type.to_sym] : hearing_type
+      (request_type.length > 1) ? HearingDay::REQUEST_TYPES[request_type.to_sym] : request_type
     end
 
     def validate_regional_office(regional_office)
       return if regional_office.nil?
-      return regional_office if regional_office == HearingDay::HEARING_TYPES[:central]
+      return regional_office if regional_office == HearingDay::REQUEST_TYPES[:central]
 
       ro = begin
         RegionalOffice.find!(regional_office)
@@ -78,8 +78,8 @@ module HearingDayMapper
       HearingRooms.find!(room_nbr).label
     end
 
-    def label_for_type(hearing_type)
-      HearingDay::HEARING_TYPES.key(hearing_type).to_s.capitalize
+    def label_for_type(request_type)
+      HearingDay::REQUEST_TYPES.key(request_type).to_s.capitalize
     end
   end
 end

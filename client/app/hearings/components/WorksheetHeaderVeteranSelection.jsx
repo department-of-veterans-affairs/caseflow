@@ -41,7 +41,7 @@ const selectVeteranStyling = css({
 class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   componentDidMount() {
-    this.date = moment(this.props.worksheet.date).format('YYYY-MM-DD');
+    this.date = moment(this.props.worksheet.scheduled_for).format('YYYY-MM-DD');
     this.props.getDailyDocket(null, this.date);
   }
 

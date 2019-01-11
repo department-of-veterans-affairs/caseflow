@@ -85,7 +85,7 @@ RSpec.feature "Case details" do
 
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
         expect(page).to have_content("Type: #{hearing_preference}")
-        expect(page).to have_content("Date: #{hearing.date.strftime('%-m/%-d/%y')}")
+        expect(page).to have_content("Date: #{hearing.scheduled_for.strftime('%-m/%-d/%y')}")
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
       end
 
@@ -119,7 +119,7 @@ RSpec.feature "Case details" do
 
     context "when appeal has a single hearing with a HearingView" do
       let!(:case_hearings) { [FactoryBot.build(:case_hearing, :disposition_held, user: judge_user)] }
-      before { HearingView.create(hearing_id: hearing.id, user_id: attorney_user.id).touch }
+      before { HearingView.create(hearing: hearing, user_id: attorney_user.id).touch }
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
@@ -358,7 +358,7 @@ RSpec.feature "Case details" do
 
       # Wait for page to load some known content before testing for expected content.
       expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-
+      expect(page).to_not have_button "Edit"
       expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
     end

@@ -304,11 +304,11 @@ describe HearingSchedule::AssignJudgesToHearingDays do
           judge_count[hearing_day[:judge_id]] ||= 0
           judge_count[hearing_day[:judge_id]] += 1
 
-          type = is_co ? HearingDay::HEARING_TYPES[:central] : HearingDay::HEARING_TYPES[:video]
+          type = is_co ? HearingDay::REQUEST_TYPES[:central] : HearingDay::REQUEST_TYPES[:video]
           ro = is_co ? nil : expected_day.folder_nr.split(" ")[1]
 
           expect(expected_day).to_not be_nil
-          expect(hearing_day[:hearing_type]).to eq(type)
+          expect(hearing_day[:request_type]).to eq(type)
           expect(hearing_day[:hearing_date]).to eq(expected_day.hearing_date.to_date)
           expect(hearing_day[:room]).to eq(expected_day.room)
           expect(hearing_day[:regional_office]).to eq(ro)

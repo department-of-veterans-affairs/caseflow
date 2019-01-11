@@ -19,7 +19,7 @@ const tableStyling = css({
 });
 
 /* eslint-disable id-length */
-const HEARING_TYPE_LABELS = {
+const REQUEST_TYPE_LABELS = {
   V: 'Video',
   C: 'Central',
   T: 'Travel'
@@ -168,8 +168,8 @@ export default class ReviewAssignments extends React.Component {
     }
 
     const hearingAssignmentRows = _.map(this.props.schedulePeriod.hearingDays, (hearingDay) => ({
-      date: formatDateStr(hearingDay.hearingDate),
-      type: HEARING_TYPE_LABELS[hearingDay.hearingType],
+      date: formatDateStr(hearingDay.scheduledFor),
+      type: REQUEST_TYPE_LABELS[hearingDay.requestType],
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.room,
       judge: hearingDay.judgeName

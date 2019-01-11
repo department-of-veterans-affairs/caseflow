@@ -6,7 +6,7 @@ class LegacyHearing < ApplicationRecord
 
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
-  vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition
+  vacols_attr_accessor :scheduled_for, :type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :representative
@@ -17,7 +17,7 @@ class LegacyHearing < ApplicationRecord
 
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
-  has_many :hearing_views, foreign_key: :hearing_id
+  has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
 
   # this is used to cache appeal stream for hearings
@@ -26,6 +26,10 @@ class LegacyHearing < ApplicationRecord
 
   CO_HEARING = "Central".freeze
   VIDEO_HEARING = "Video".freeze
+
+  def judge
+    user
+  end
 
   def venue
     self.class.venues[venue_key]
@@ -52,7 +56,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def scheduled_pending?
-    date && !closed?
+    scheduled_for && !closed?
   end
 
   def held_open?
@@ -62,11 +66,11 @@ class LegacyHearing < ApplicationRecord
   def hold_release_date
     return unless held_open?
 
-    date.to_date + hold_open.days
+    scheduled_for.to_date + hold_open.days
   end
 
   def no_show_excuse_letter_due_date
-    date.to_date + 15.days
+    scheduled_for.to_date + 15.days
   end
 
   def active_appeal_streams
@@ -97,7 +101,7 @@ class LegacyHearing < ApplicationRecord
   # rubocop:disable Metrics/MethodLength
   def vacols_attributes
     {
-      date: date,
+      scheduled_for: scheduled_for,
       type: type,
       venue_key: venue_key,
       vacols_record: vacols_record,
@@ -133,7 +137,7 @@ class LegacyHearing < ApplicationRecord
 
   delegate \
     :veteran_age, \
-    :veteran_sex, \
+    :veteran_gender, \
     :vbms_id, \
     :number_of_documents, \
     :number_of_documents_after_certification, \
@@ -147,7 +151,7 @@ class LegacyHearing < ApplicationRecord
   def to_hash(current_user_id)
     serializable_hash(
       methods: [
-        :date,
+        :scheduled_for,
         :request_type,
         :disposition,
         :aod,
@@ -194,8 +198,8 @@ class LegacyHearing < ApplicationRecord
     nil
   end
 
-  def fetch_veteran_sex
-    veteran_sex
+  def fetch_veteran_gender
+    veteran_gender
   rescue Module::DelegationError
     nil
   end
@@ -203,7 +207,7 @@ class LegacyHearing < ApplicationRecord
   def to_hash_for_worksheet(current_user_id)
     serializable_hash(
       methods: [:appeal_id,
-                :user,
+                :judge,
                 :summary,
                 :appeal_vacols_id,
                 :appeals_ready_for_hearing,
@@ -212,13 +216,12 @@ class LegacyHearing < ApplicationRecord
                 :appellant_state,
                 :military_service,
                 :appellant_mi_formatted,
-                :veteran_mi_formatted,
                 :veteran_fi_last_formatted,
                 :sanitized_vbms_id]
     ).merge(
       to_hash(current_user_id)
     ).merge(
-      veteran_sex: fetch_veteran_sex,
+      veteran_gender: fetch_veteran_gender,
       veteran_age: fetch_veteran_age
     )
   end

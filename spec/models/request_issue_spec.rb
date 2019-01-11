@@ -13,12 +13,16 @@ describe RequestIssue do
   let(:legacy_opt_in_approved) { false }
   let(:contested_decision_issue_id) { nil }
   let(:benefit_type) { "compensation" }
+  let(:same_office) { false }
+  let(:vacols_id) { nil }
+  let(:vacols_sequence_id) { nil }
 
   let(:review) do
     create(
       :higher_level_review,
       veteran_file_number: veteran.file_number,
-      legacy_opt_in_approved: legacy_opt_in_approved
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      same_office: same_office
     )
   end
 
@@ -58,7 +62,9 @@ describe RequestIssue do
       end_product_establishment: end_product_establishment,
       contention_reference_id: contention_reference_id,
       contested_decision_issue_id: contested_decision_issue_id,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id
     )
   end
 

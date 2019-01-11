@@ -7,20 +7,36 @@ class AppealsController < ApplicationController
   skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
 
   def index
-    get_appeals_for_file_number(request.headers["HTTP_VETERAN_ID"]) && return
+    respond_to do |format|
+      format.html { render template: "queue/index" }
+      format.json do
+        veteran_file_number = request.headers["HTTP_VETERAN_ID"]
+        file_number_not_found_error && return unless veteran_file_number
+
+        render json: {
+          appeals: get_appeals_for_file_number(veteran_file_number),
+          claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
+        }
+      end
+    end
   end
 
   def show_case_list
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        return get_appeals_for_file_number(Veteran.find(params[:caseflow_veteran_id]).file_number)
+        caseflow_veteran_id = params[:caseflow_veteran_id]
+        veteran_file_number = Veteran.find(caseflow_veteran_id).file_number
+        render json: {
+          appeals: get_appeals_for_file_number(veteran_file_number),
+          claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
+        }
       end
     end
   end
 
   def document_count
-    render json: { document_count: appeal.number_of_documents }
+    render json: { document_count: appeal.number_of_documents_from_caseflow }
   rescue StandardError => e
     handle_non_critical_error("document_count", e)
   end
@@ -100,8 +116,6 @@ class AppealsController < ApplicationController
   end
 
   def get_appeals_for_file_number(file_number)
-    return file_number_not_found_error unless file_number
-
     return get_vso_appeals_for_file_number(file_number) if current_user.vso_employee?
 
     MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
@@ -116,9 +130,7 @@ class AppealsController < ApplicationController
       end
       # rubocop:enable Lint/HandleExceptions
 
-      render json: {
-        appeals: json_appeals(appeals)[:data]
-      }
+      json_appeals(appeals)[:data]
     end
   end
 
@@ -137,9 +149,8 @@ class AppealsController < ApplicationController
                 else
                   []
                 end
-      render json: {
-        appeals: json_appeals(appeals)[:data]
-      }
+
+      json_appeals(appeals)[:data]
     end
   end
 

@@ -105,7 +105,7 @@ export class DailyDocketContainer extends React.Component {
         offset: moment.tz('America/New_York').format('Z')
       };
     }
-    const timeObject = moment(hearing.date);
+    const timeObject = moment(hearing.scheduledFor);
 
     return {
       // eslint-disable-next-line id-length
@@ -125,14 +125,14 @@ export class DailyDocketContainer extends React.Component {
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
       master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
         time } : null,
-      date: hearing.editedTime ? moment(hearing.date).set(time) : hearing.date
+      scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
     };
   };
 
   saveHearing = (hearing) => {
     const formattedHearing = this.formatHearing(hearing);
 
-    ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing: formattedHearing } }).
+    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: { hearing: formattedHearing } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
@@ -255,7 +255,7 @@ export class DailyDocketContainer extends React.Component {
         then((response) => {
           const editedHearingDay = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-          editedHearingDay.hearingType = this.props.dailyDocket.hearingType;
+          editedHearingDay.requestType = this.props.dailyDocket.requestType;
 
           this.props.onReceiveDailyDocket(editedHearingDay, this.props.hearings, this.props.hearingDayOptions);
         }, () => {

@@ -1,5 +1,4 @@
 require "rails_helper"
-# rubocop:disable Style/FormatString
 
 RSpec.feature "Search" do
   let(:attorney_user) { FactoryBot.create(:user) }
@@ -22,7 +21,7 @@ RSpec.feature "Search" do
       end
 
       it "page displays invalid Veteran ID message" do
-        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
+        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
       it "searching in search bar works" do
@@ -36,6 +35,85 @@ RSpec.feature "Search" do
       it "clicking on the x in the search bar returns browser to queue list page" do
         click_on "button-clear-search"
         expect(page).to_not have_content("1 case found for")
+      end
+    end
+
+    context "higher level reviews and supplemental claims" do
+      context "when a claim has no higher level review and/or supplemental claims" do
+        before do
+          visit "/search"
+          fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+          click_on "Search"
+        end
+
+        it "does not show the HLR / SCs table" do
+          expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_EMPTY_TEXT)
+        end
+      end
+
+      context "when a claim has a higher level review and/or supplemental claim" do
+        let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
+        let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
+        let!(:eligible_request_issue) { create(:request_issue, review_request: higher_level_review) }
+
+        before do
+          visit "/search"
+          fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+          click_on "Search"
+        end
+
+        context "has a higher level review" do
+          it "shows the HLR / SCs table" do
+            expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+          end
+
+          it "shows a higher level review" do
+            expect(find(".cf-other-reviews-table > tbody")).to have_content("Higher Level Review")
+          end
+
+          context "and has no end products" do
+            it "shows no end products" do
+              expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+              expect(find(".cf-other-reviews-table > tbody")).to have_content(COPY::OTHER_REVIEWS_TABLE_NO_EPS_NOTE)
+            end
+          end
+
+          context "and has end products" do
+            let!(:end_product_establishment_1) do
+              create(
+                :end_product_establishment,
+                source: higher_level_review,
+                veteran_file_number: appeal.veteran_file_number,
+                synced_status: "CAN"
+              )
+            end
+            let!(:end_product_establishment_2) do
+              create(
+                :end_product_establishment,
+                source: higher_level_review,
+                veteran_file_number: appeal.veteran_file_number,
+                synced_status: "CLR"
+              )
+            end
+
+            it "shows the end product status" do
+              expect(find(".cf-other-reviews-table > tbody")).to have_content("Cancelled")
+              expect(find(".cf-other-reviews-table > tbody")).to have_content("Cleared")
+            end
+          end
+        end
+
+        context "has a supplemental claim" do
+          it "shows the HLR / SCs table" do
+            expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+          end
+
+          it "shows a supplemental claim and that it's 'tracked in caseflow'" do
+            expect(find(".cf-other-reviews-table > tbody")).to have_content(
+              COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE
+            )
+          end
+        end
       end
     end
 
@@ -89,7 +167,7 @@ RSpec.feature "Search" do
         end
 
         it "table does not display a column for a badge if no cases have hearings" do
-          docket_column_header = page.find(:xpath, "//thead/tr/th[1]/span")
+          docket_column_header = find("table.cf-case-list-table > thead > tr > th:first-child > span")
           expect(docket_column_header).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
         end
       end
@@ -104,7 +182,7 @@ RSpec.feature "Search" do
 
       it "page displays no cases found message" do
         expect(page).to have_content(
-          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
+          format(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
         )
       end
 
@@ -131,7 +209,7 @@ RSpec.feature "Search" do
       end
 
       it "displays error message on same page" do
-        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
+        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
       end
 
       it "searching in search bar produces another error" do
@@ -139,7 +217,7 @@ RSpec.feature "Search" do
         click_on "Search"
 
         expect(page).to have_content(
-          sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
+          format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
         )
       end
     end
@@ -177,7 +255,7 @@ RSpec.feature "Search" do
       end
 
       it "clicking on docket number sends us to the case details page" do
-        click_on appeal.docket_number
+        find("a", exact_text: appeal.docket_number).click
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
         expect(page).not_to have_content "Select an action"
       end
@@ -221,7 +299,7 @@ RSpec.feature "Search" do
       end
 
       it "page displays invalid Veteran ID message" do
-        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
+        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
       it "searching in search bar works" do
@@ -248,7 +326,7 @@ RSpec.feature "Search" do
 
       it "page displays no cases found message" do
         expect(page).to have_content(
-          sprintf(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
+          format(COPY::CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, veteran_with_no_appeals.file_number)
         )
       end
 
@@ -280,14 +358,14 @@ RSpec.feature "Search" do
       end
 
       it "displays error message" do
-        expect(page).to have_content(sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
+        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
       end
 
       it "searching in search bar works" do
         fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
         click_on "Search"
         expect(page).to have_content(
-          sprintf(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
+          format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
         )
       end
 
@@ -321,5 +399,3 @@ RSpec.feature "Search" do
     end
   end
 end
-
-# rubocop:enable Style/FormatString

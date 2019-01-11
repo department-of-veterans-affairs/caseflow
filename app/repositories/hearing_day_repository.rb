@@ -8,8 +8,8 @@ class HearingDayRepository
     end
 
     # Query Operations
-    def find_hearing_day(hearing_type, hearing_key)
-      if hearing_type.nil? || hearing_type == "V" || hearing_type == "C"
+    def find_hearing_day(request_type, hearing_key)
+      if request_type.nil? || request_type == "V" || request_type == "C"
         VACOLS::CaseHearing.find_hearing_day(hearing_key)
       else
         tbyear, tbtrip, tbleg = hearing_key.split("-")
@@ -23,13 +23,13 @@ class HearingDayRepository
         result << to_canonical_hash(hearing)
       end
       removed_children_records = video_and_co.reject do |hearing_day|
-        hearing_day[:hearing_type] == "C" && hearing_day[:hearing_date] > HearingDay::CASEFLOW_CO_PARENT_DATE
+        hearing_day[:request_type] == "C" && hearing_day[:scheduled_for] > HearingDay::CASEFLOW_CO_PARENT_DATE
       end
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
       [removed_children_records.uniq do |hearing_day|
-        [hearing_day[:hearing_date].to_date,
+        [hearing_day[:scheduled_for].to_date,
          hearing_day[:room],
-         hearing_day[:hearing_type]]
+         hearing_day[:request_type]]
       end, travel_board]
     end
 
@@ -40,7 +40,7 @@ class HearingDayRepository
         result << to_canonical_hash(hearing)
       end
       travel_board = []
-      [video_and_co.uniq { |hearing_day| [hearing_day[:hearing_date].to_date, hearing_day[:room]] }, travel_board]
+      [video_and_co.uniq { |hearing_day| [hearing_day[:scheduled_for].to_date, hearing_day[:room]] }, travel_board]
     end
 
     def load_days_for_regional_office(regional_office, start_date, end_date)
@@ -57,11 +57,11 @@ class HearingDayRepository
     # STAFF.STC4 is the Video limit
     def slots_based_on_type(staff:, type:, date:)
       case type
-      when HearingDay::HEARING_TYPES[:central]
+      when HearingDay::REQUEST_TYPES[:central]
         11
-      when HearingDay::HEARING_TYPES[:video]
+      when HearingDay::REQUEST_TYPES[:video]
         staff.stc4
-      when HearingDay::HEARING_TYPES[:travel]
+      when HearingDay::REQUEST_TYPES[:travel]
         (date.monday? || date.friday?) ? staff.stc2 : staff.stc3
       end
     end
@@ -69,8 +69,8 @@ class HearingDayRepository
     def fetch_hearing_day_slots(regional_office_record, hearing_day)
       # returns the total slots for the hearing day's regional office.
       slots_from_vacols = slots_based_on_type(staff: regional_office_record,
-                                              type: hearing_day[:hearing_type],
-                                              date: hearing_day[:hearing_date])
+                                              type: hearing_day[:request_type],
+                                              date: hearing_day[:scheduled_for])
       slots_from_vacols || HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(hearing_day[:regional_office])]
     end
 
