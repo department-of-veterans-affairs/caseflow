@@ -501,8 +501,7 @@ RSpec.feature "AmaQueue" do
 
       click_on veteran_full_name
 
-      expect(page).to have_content("Decision signed by judge")
-
+      expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
       find(".Select-control", text: "Select an action").click
       find("div", class: "Select-option", text: "Mark task complete").click
 

@@ -8,9 +8,7 @@ import COPY from '../../../COPY.json';
 import { DateString } from '../../util/DateUtil';
 import { GrayDot, GreenCheckmark } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
-import type { State } from '../types/state';
 import { taskIsOnHold } from '../utils';
-import { getAllTasksForAppeal } from '../selectors';
 import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
@@ -46,10 +44,6 @@ const taskInfoWithIconContainer = css({
   verticalAlign: 'top',
   width: '45px'
 });
-
-type Params = {|
-  appealId: string
-|};
 
 class TaskRows extends React.PureComponent {
   constructor(props) {
@@ -156,6 +150,7 @@ class TaskRows extends React.PureComponent {
       <Button
         linkStyling
         styling={css({ padding: '0' })}
+        id={task.uniqueId}
         name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
           COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
         onClick={this.toggleTaskInstructionsVisibility} />
@@ -168,6 +163,18 @@ class TaskRows extends React.PureComponent {
   }
 
   showActionsSection = (task) => (task && !this.props.hideDropdown);
+
+  getTitle = (task) => {
+    let title = '';
+
+    if (task.type === 'AttorneyTask') {
+      title = COPY.CASE_TIMELINE_ATTORNEY_TASK;
+    } else if (task.type === 'JudgeTask') {
+      title = COPY.CASE_TIMELINE_JUDGE_TASK;
+    }
+
+    return title;
+  }
 
   render = () => {
     const {
@@ -199,6 +206,7 @@ class TaskRows extends React.PureComponent {
           </td>
           <td {...taskInformationContainerStyling}>
             <CaseDetailsDescriptionList>
+              { timeline && this.getTitle(task) }
               { this.assignedToListItem(task) }
               { this.assignedByListItem(task) }
               { this.taskLabelListItem(task) }
@@ -233,10 +241,9 @@ class TaskRows extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = () => {
 
   return {
-    allTasks: getAllTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };
 
