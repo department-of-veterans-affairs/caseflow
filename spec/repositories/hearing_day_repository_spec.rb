@@ -33,8 +33,8 @@ describe HearingDayRepository do
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
     let(:hearing_day) do
       { regional_office: "RO04",
-        hearing_date: Date.new(2018, 9, 20),
-        hearing_type: HearingDay::REQUEST_TYPES[:video] }
+        scheduled_for: Date.new(2018, 9, 20),
+        request_type: HearingDay::REQUEST_TYPES[:video] }
     end
     it {
       is_expected.to eq(4)
