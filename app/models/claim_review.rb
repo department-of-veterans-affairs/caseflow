@@ -59,10 +59,8 @@ class ClaimReview < DecisionReview
     request_issues.reload
   end
 
-  def create_decision_review_task!
-    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
-
-    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
+  def create_decision_review_task_if_required!
+    create_decision_review_task! if caseflow_only?
   end
 
   def business_line
@@ -126,6 +124,12 @@ class ClaimReview < DecisionReview
   end
 
   private
+
+  def create_decision_review_task!
+    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+
+    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
+  end
 
   def informal_conference?
     false

@@ -221,6 +221,43 @@ describe ClaimReview do
     end
   end
 
+  context "#create_decision_review_task_if_required!" do
+    subject { claim_review.create_decision_review_task_if_required! }
+
+    context "when processed in caseflow" do
+      let(:benefit_type) { "vha" }
+
+      it "creates a decision review task" do
+        expect { subject }.to change(DecisionReviewTask, :count).by(1)
+
+        expect(DecisionReviewTask.last).to have_attributes(
+          appeal: claim_review,
+          assigned_at: Time.zone.now,
+          assigned_to: BusinessLine.find_by(url: "vha")
+        )
+      end
+
+      context "when a task already exists" do
+        before do
+          claim_review.create_decision_review_task_if_required!
+          claim_review.reload
+        end
+
+        it "does nothing" do
+          expect { subject }.to_not change(DecisionReviewTask, :count)
+        end
+      end
+    end
+
+    context "when processed in VBMS" do
+      let(:benefit_type) { "compensation" }
+
+      it "does nothing" do
+        expect { subject }.to_not change(DecisionReviewTask, :count)
+      end
+    end
+  end
+
   context "#create_issues!" do
     before { claim_review.save! }
     subject { claim_review.create_issues!(issues) }

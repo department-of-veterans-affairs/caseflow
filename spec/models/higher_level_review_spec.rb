@@ -222,14 +222,18 @@ describe HigherLevelReview do
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
-                 profile_date: profile_date),
+                 profile_date: profile_date,
+                 benefit_type: benefit_type
+                 ),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
                  rating_issue_reference_id: "rating2",
-                 profile_date: profile_date),
+                 profile_date: profile_date,
+                 benefit_type: benefit_type),
           create(:decision_issue,
                  decision_review: higher_level_review,
+                 benefit_type: benefit_type,
                  disposition: "not a dta error")
         ]
       end
@@ -243,7 +247,8 @@ describe HigherLevelReview do
       end
 
       it "creates a supplemental claim and request issues" do
-        subject
+        expect { subject }.to_not change(DecisionReviewTask, :count)
+
         supplemental_claim = SupplementalClaim.find_by(
           decision_review_remanded: higher_level_review,
           veteran_file_number: higher_level_review.veteran_file_number,
@@ -289,11 +294,19 @@ describe HigherLevelReview do
         let(:benefit_type) { "pension" }
 
         it "creates end product establishment with pension ep code" do
-          subject
+          expect { subject }.to_not change(DecisionReviewTask, :count)
 
           first_dta_request_issue = RequestIssue.find_by(contested_rating_issue_reference_id: "rating1")
 
           expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDERPMC")
+        end
+      end
+
+      context "when benefit type is processed in caseflow" do
+        let(:benefit_type) { "voc_rehab" }
+
+        it "creates DecisionReviewTask" do
+          expect { subject }.to change(DecisionReviewTask, :count).by(1)
         end
       end
     end

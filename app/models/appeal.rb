@@ -296,6 +296,7 @@ class Appeal < DecisionReview
   def create_remand_supplemental_claims!
     decision_issues.remanded.each(&:find_or_create_remand_supplemental_claim!)
     remand_supplemental_claims.each(&:create_remand_issues!)
+    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
     remand_supplemental_claims.each(&:start_processing_job!)
   end
 
