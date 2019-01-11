@@ -235,9 +235,8 @@ describe HearingDay do
     context "When there are multiple hearings and multiple days" do
       let!(:second_hearing_today) do
         create(:case_hearing, vdkey: hearing.vdkey, folder_nr: create(
-            :legacy_appeal, :with_veteran, vacols_case: create(:case)
-          ).vacols_id
-        )
+          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        ).vacols_id)
       end
       let!(:hearing_tomorrow) do
         create(

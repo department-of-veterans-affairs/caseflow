@@ -27,11 +27,7 @@ class HearingDay < ApplicationRecord
 
   def update_children_records
     hearings = if hearing_type == HEARING_TYPES[:central]
-<<<<<<< HEAD
-                 HearingRepository.fetch_co_hearings_for_date(hearing_date)
-=======
-                 HearingRepository.fetch_co_hearings_for_parent(scheduled_for)
->>>>>>> c3ebb9dbf6532043fa17550bf9c2a2d5a5a78b37
+                 HearingRepository.fetch_co_hearings_for_date(scheduled_for)
                else
                  HearingRepository.fetch_video_hearings_for_parent(id)
                end
@@ -113,36 +109,15 @@ class HearingDay < ApplicationRecord
       regional_office_keys = total_video_and_co.map { |hearing_day| hearing_day[:regional_office] }
       regional_office_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
 
-      # We need to associate all of the hearing days from postgres with all of the
-      # hearings from VACOLS. For efficiency we make one call to VACOLS and then
-      # create a hash of the results using either their ids or hearing dates as keys
-      # depending on if it's a video or CO hearing.
-      symbol_to_group_by = nil
+      hearing_days_to_array_of_days_and_hearings(
+        total_video_and_co, regional_office.nil? || regional_office == "C"
+      ).map do |value|
+        hearing_day = value[:hearing_day]
 
-      all_hearings_for_days = if regional_office.nil? || regional_office == "C"
-        symbol_to_group_by = :scheduled_for
-
-        HearingRepository.fetch_co_hearings_for_dates(
-          total_video_and_co.map { |hearing| hearing[symbol_to_group_by]}
+        scheduled_hearings = filter_non_scheduled_hearings(value[:hearings] || [])
+        total_slots = HearingDayRepository.fetch_hearing_day_slots(
+          regional_office_hash[hearing_day[:regional_office]], hearing_day
         )
-      else
-        symbol_to_group_by = :id
-
-        HearingRepository.fetch_video_hearings_for_parents(
-          total_video_and_co.map { |hearing| hearing[symbol_to_group_by]}
-        )
-      end
-
-      # Group the hearing days with the same keys as the hearings
-      grouped_hearing_days = total_video_and_co.group_by do |hearing_day|
-        hearing_day[symbol_to_group_by].to_s
-      end
-
-      grouped_hearing_days.keys.map do |key|
-        hearing_day = grouped_hearing_days[key][0]
-
-        scheduled_hearings = filter_non_scheduled_hearings(all_hearings_for_days[key] || [])
-        total_slots = HearingDayRepository.fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)
 
         return nil if scheduled_hearings.length >= total_slots || hearing_day[:lock]
 
@@ -174,6 +149,38 @@ class HearingDay < ApplicationRecord
     end
 
     private
+
+    def hearing_days_to_array_of_days_and_hearings(total_video_and_co, is_video_hearing)
+      # We need to associate all of the hearing days from postgres with all of the
+      # hearings from VACOLS. For efficiency we make one call to VACOLS and then
+      # create a hash of the results using either their ids or hearing dates as keys
+      # depending on if it's a video or CO hearing.
+      symbol_to_group_by = nil
+
+      all_hearings_for_days = if is_video_hearing
+                                symbol_to_group_by = :scheduled_for
+
+                                HearingRepository.fetch_co_hearings_for_dates(
+                                  total_video_and_co.map { |hearing| hearing[symbol_to_group_by] }
+                                )
+                              else
+                                symbol_to_group_by = :id
+
+                                HearingRepository.fetch_video_hearings_for_parents(
+                                  total_video_and_co.map { |hearing| hearing[symbol_to_group_by] }
+                                )
+                              end
+
+      # Group the hearing days with the same keys as the hearings
+      grouped_hearing_days = total_video_and_co.group_by do |hearing_day|
+        hearing_day[symbol_to_group_by].to_s
+      end
+
+      grouped_hearing_days.merge(all_hearings_for_days) do |_key, day, hearings|
+        # There should only be one day, so we take the first value in our day array
+        { hearing_day: day[0], hearings: hearings }
+      end.values
+    end
 
     def enrich_with_judge_names(hearing_days)
       hearing_days_hash = []

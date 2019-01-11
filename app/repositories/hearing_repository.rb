@@ -42,7 +42,7 @@ class HearingRepository
       # hearing_date.to_time.to_date.to_s to avoid timezone issues and make it consistent
       # with how the date is stored in the HearingDay table.
       VACOLS::CaseHearing.co_hearings_for_master_records(parent_hearing_dates)
-        .group_by { |record| record.hearing_date.to_time.to_date.to_s }.transform_values do |value|
+        .group_by { |record| record.hearing_date.utc.to_date.to_s }.transform_values do |value|
         hearings_for(value)
       end
     end
