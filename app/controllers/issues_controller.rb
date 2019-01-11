@@ -3,11 +3,10 @@ class IssuesController < ApplicationController
 
   rescue_from ActiveRecord::RecordInvalid do |e|
     Rails.logger.error "IssuesController failed: #{e.message}"
-    Raven.capture_exception(e)
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: :bad_request
   end
 
-  rescue_from Caseflow::Error::UserRepositoryError do |e|
+  rescue_from Caseflow::Error::VacolsRepositoryError do |e|
     handle_non_critical_error("issues", e)
   end
 

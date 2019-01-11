@@ -11,6 +11,10 @@ RSpec.describe IssuesController, type: :controller do
     ))
   end
 
+  before do
+    allow(Raven).to receive(:capture_exception)
+  end
+
   describe "POST appeals/:appeal_id/issues" do
     context "when all parameters are present" do
       let(:params) do
@@ -84,7 +88,8 @@ RSpec.describe IssuesController, type: :controller do
         post :create, params: { appeal_id: appeal.vacols_id, issues: params }
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
-        expect(error["title"]).to eq "Caseflow::Error::IssueRepositoryError"
+        expect(Raven).to_not receive(:capture_exception)
+        expect(error["title"]).to include "Combination of VACOLS Issue codes is invalid"
         expect(error["detail"]).to include "Combination of VACOLS Issue codes is invalid"
       end
     end
@@ -171,7 +176,8 @@ RSpec.describe IssuesController, type: :controller do
         post :update, params: { appeal_id: appeal.vacols_id, vacols_sequence_id: case_issue.issseq, issues: params }
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
-        expect(error["title"]).to eq "Caseflow::Error::IssueRepositoryError"
+        expect(Raven).to_not receive(:capture_exception)
+        expect(error["title"]).to include "Combination of VACOLS Issue codes is invalid"
         expect(error["detail"]).to include "Combination of VACOLS Issue codes is invalid"
       end
     end
@@ -211,7 +217,8 @@ RSpec.describe IssuesController, type: :controller do
         post :destroy, params: { appeal_id: appeal.vacols_id, vacols_sequence_id: case_issue.issseq + 1 }
         expect(response.status).to eq 400
         error = JSON.parse(response.body)["errors"].first
-        expect(error["title"]).to eq "Caseflow::Error::IssueRepositoryError"
+        expect(Raven).to_not receive(:capture_exception)
+        expect(error["title"]).to include "Cannot find issue"
         expect(error["detail"]).to include "Cannot find issue"
       end
     end
