@@ -11,7 +11,7 @@ class BoardGrantEffectuationTask < DecisionReviewTask
     serializer_class.new(self).as_json
   end
 
-  def complete!
+  def complete_with_payload!(_decision_issue_params, _decision_date)
     update!(status: Constants.TASK_STATUSES.completed, completed_at: Time.zone.now)
   end
 end
