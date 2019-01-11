@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190107210543) do
+ActiveRecord::Schema.define(version: 20190110162001) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -728,23 +728,23 @@ ActiveRecord::Schema.define(version: 20190107210543) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
+    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
-    t.string "ineligible_reason"
     t.string "vacols_id"
     t.integer "vacols_sequence_id"
     t.datetime "created_at"
     t.string "benefit_type", null: false
     t.integer "contested_decision_issue_id"
     t.string "veteran_participant_id"
+    t.string "contested_rating_issue_diagnostic_code"
     t.string "decision_review_type"
     t.bigint "decision_review_id"
     t.string "contested_rating_issue_reference_id"
     t.string "contested_rating_issue_profile_date"
-    t.string "contested_rating_issue_diagnostic_code"
     t.string "contested_issue_description"
     t.string "nonrating_issue_description"
     t.string "unidentified_issue_text"
@@ -910,6 +910,7 @@ ActiveRecord::Schema.define(version: 20190107210543) do
     t.string "last_name"
     t.string "middle_name"
     t.string "name_suffix"
+    t.string "closest_regional_office"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
   end
 
