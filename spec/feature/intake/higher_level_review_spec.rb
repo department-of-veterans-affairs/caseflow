@@ -1150,7 +1150,12 @@ feature "Higher-Level Review" do
           expect(page).to have_content("Establish Higher-Level Review")
 
           click_intake_finish
-          expect(page).to have_content("Intake completed")
+
+          # should redirect to tasks review page
+          binding.pry
+          expect(page).to have_content("Reviews needing action")
+          expect(current_path).to eq("/decision_reviews/education")
+
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
                    review_request: hlr,

@@ -122,6 +122,14 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     default:
     }
 
+    console.log('completedReview.processedInCaseflow', completedReview.processedInCaseflow);
+
+    if (completedReview.processedInCaseflow) {
+      return <Redirect to="/foobar" />
+    }
+
+    console.log(this.props);
+
     return <div><StatusMessage
       title="Intake completed"
       type="success"

@@ -40,7 +40,11 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
-    render json: intake.ui_hash(ama_enabled?)
+    if intake.detail.respond_to?(:processed_in_caseflow?) && intake.detail.processed_in_caseflow?
+      render json: { redirect_to: intake.detail.business_line.tasks_url }
+    else
+      render json: intake.ui_hash(ama_enabled?)
+    end
   rescue Caseflow::Error::DuplicateEp => error
     render json: {
       error_code: error.error_code,

@@ -87,5 +87,16 @@ RSpec.describe IntakesController do
         allow_any_instance_of(Intake).to receive(:ui_hash).with(false)
       end
     end
+
+    context "when intaking a processed_in_caseflow AMA HLR/SC" do
+      it "should return a JSON payload with a redirect_to path" do
+        intake = create(:intake, user: current_user, detail: create(:higher_level_review, benefit_type: "education"))
+
+        post :complete, params: { id: intake.id }
+        resp = JSON.parse(response.body, symbolize_names: true)
+
+        expect(resp).to eq(redirect_to: "/decision_reviews/education")
+      end
+    end
   end
 end
