@@ -147,7 +147,7 @@ class LegacyAppeal < ApplicationRecord
 
   def new_documents_from_caseflow(user)
     caseflow_documents = Document.where(file_number: veteran_file_number)
-    return new_documents_for_user(user) if caseflow_documents.size == 0
+    return new_documents_for_user(user) if caseflow_documents.empty?
 
     appeal_view = appeal_views.find_by(user: user)
     return caseflow_documents if !appeal_view
