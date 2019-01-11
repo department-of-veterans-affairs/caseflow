@@ -145,6 +145,20 @@ class LegacyAppeal < ApplicationRecord
     (count != 0) ? count : number_of_documents
   end
 
+  def new_documents_from_caseflow(user)
+    caseflow_documents = Document.where(file_number: veteran_file_number)
+    return new_documents_for_user(user) if caseflow_documents.size == 0
+
+    appeal_view = appeal_views.find_by(user: user)
+    return caseflow_documents if !appeal_view
+
+    caseflow_documents.select do |doc|
+      next if doc.received_at.nil?
+
+      doc.received_at > appeal_view.last_viewed_at
+    end
+  end
+
   def number_of_documents_after_certification
     return 0 unless certification_date
 

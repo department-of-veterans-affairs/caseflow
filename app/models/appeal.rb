@@ -56,6 +56,20 @@ class Appeal < DecisionReview
     (count != 0) ? count : number_of_documents
   end
 
+  def new_documents_from_caseflow(user)
+    caseflow_documents = Document.where(file_number: veteran_file_number)
+    return new_documents_for_user(user) if caseflow_documents.size == 0
+
+    appeal_view = appeal_views.find_by(user: user)
+    return caseflow_documents if !appeal_view
+
+    caseflow_documents.select do |doc|
+      next if doc.received_at.nil?
+
+      doc.received_at > appeal_view.last_viewed_at
+    end
+  end
+
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
       find_by_uuid!(id)
