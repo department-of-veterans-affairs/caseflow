@@ -38,7 +38,7 @@ describe JudgeSchedulePeriod do
     let!(:hearing_days) do
       get_every_nth_date_between(single_nonavail_date_judge_schedule_period.start_date,
                                  single_nonavail_date_judge_schedule_period.end_date, 4).map do |date|
-        create(:hearing_day, hearing_type: "V", scheduled_for: date, regional_office: "RO13", room: 4)
+        create(:hearing_day, request_type: "V", scheduled_for: date, regional_office: "RO13", room: 4)
       end
     end
 
