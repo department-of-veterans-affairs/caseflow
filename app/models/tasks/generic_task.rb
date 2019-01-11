@@ -1,6 +1,5 @@
 class GenericTask < Task
   before_create :verify_org_task_unique
-  after_create ->(task) { task.parent&.when_child_task_created }
 
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
   # task active at a time for a single appeal.
@@ -15,10 +14,6 @@ class GenericTask < Task
         assignee_type: assigned_to.class.name
       )
     end
-  end
-
-  def when_child_task_created
-    update!(status: Constants.TASK_STATUSES.on_hold) unless on_hold?
   end
 
   # rubocop:disable Metrics/MethodLength

@@ -182,12 +182,6 @@ class Appeal < DecisionReview
     nil
   end
 
-  def needs_ihp?
-    # TODO: filter to only ihp-writing vsos
-    # e.g. for hearing appeals it should only be PVA.
-    vsos.present?
-  end
-
   def advanced_on_docket
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
