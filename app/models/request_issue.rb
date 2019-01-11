@@ -42,16 +42,6 @@ class RequestIssue < ApplicationRecord
 
   END_PRODUCT_CODES = {
     original: {
-      pension: {
-        supplemental_claim: {
-          rating: "040SCRPMC",
-          nonrating: "040SCNRPMC"
-        },
-        higher_level_review: {
-          rating: "030HLRRPMC",
-          nonrating: "030HLRNRPMC"
-        }
-      },
       compensation: {
         supplemental_claim: {
           rating: "040SCR",
@@ -61,19 +51,19 @@ class RequestIssue < ApplicationRecord
           rating: "030HLRR",
           nonrating: "030HLRNR"
         }
+      },
+      pension: {
+        supplemental_claim: {
+          rating: "040SCRPMC",
+          nonrating: "040SCNRPMC"
+        },
+        higher_level_review: {
+          rating: "030HLRRPMC",
+          nonrating: "030HLRNRPMC"
+        }
       }
     },
     dta: {
-      pension: {
-        appeal: {
-          imo: "040BDEIMOPMC",
-          not_imo: "040BDEPMC"
-        },
-        claim_review: {
-          rating: "040HDERPMC",
-          nonrating: "040HDENRPMC"
-        }
-      },
       compensation: {
         appeal: {
           imo: "040BDEIMO",
@@ -82,6 +72,16 @@ class RequestIssue < ApplicationRecord
         claim_review: {
           rating: "040HDER",
           nonrating: "040HDENR"
+        }
+      },
+      pension: {
+        appeal: {
+          imo: "040BDEIMOPMC",
+          not_imo: "040BDEPMC"
+        },
+        claim_review: {
+          rating: "040HDERPMC",
+          nonrating: "040HDENRPMC"
         }
       }
     }
@@ -512,7 +512,12 @@ class RequestIssue < ApplicationRecord
   end
 
   def original_end_product_code
-    choose_original_end_product_code(END_PRODUCT_CODES[:original][benefit_type.to_sym])
+    choose_original_end_product_code(END_PRODUCT_CODES[:original][temp_find_benefit_type.to_sym])
+  end
+
+  # TODO: use request issue benefit type once it's populated for request issues on build
+  def temp_find_benefit_type
+    benefit_type || review_request.benefit_type
   end
 
   def choose_original_end_product_code(end_product_codes)
@@ -520,7 +525,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def dta_end_product_code
-    choose_dta_end_product_code(END_PRODUCT_CODES[:dta][benefit_type.to_sym])
+    choose_dta_end_product_code(END_PRODUCT_CODES[:dta][temp_find_benefit_type.to_sym])
   end
 
   def choose_dta_end_product_code(end_product_codes)

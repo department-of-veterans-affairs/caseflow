@@ -165,7 +165,7 @@ describe RequestIssue do
         let(:benefit_type) { "pension" }
 
         context "when decision review is a higher level review" do
-          let(:review) { create(:higher_level_review)}
+          let(:review) { create(:higher_level_review) }
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -179,7 +179,7 @@ describe RequestIssue do
         end
 
         context "when decision review is a supplemental claim" do
-          let(:review) { create(:supplemental_claim, decision_review_remanded: nil)}
+          let(:review) { create(:supplemental_claim, decision_review_remanded: nil) }
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -197,7 +197,7 @@ describe RequestIssue do
         let(:benefit_type) { "compensation" }
 
         context "when decision review is a higher level review" do
-          let(:review) { create(:higher_level_review)}
+          let(:review) { create(:higher_level_review) }
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -211,7 +211,7 @@ describe RequestIssue do
         end
 
         context "when decision review is a supplemental claim" do
-          let(:review) { create(:supplemental_claim, decision_review_remanded: nil)}
+          let(:review) { create(:supplemental_claim, decision_review_remanded: nil) }
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -228,28 +228,28 @@ describe RequestIssue do
 
     context "when on remand (dta) decision review" do
       let(:decision_review_remanded) { nil }
-      let(:review) { create(:supplemental_claim, decision_review_remanded: decision_review_remanded)}
+      let(:review) { create(:supplemental_claim, decision_review_remanded: decision_review_remanded) }
 
       context "when benefit type is pension" do
         let(:benefit_type) { "pension" }
 
         context "when decision review remanded is an Appeal" do
-          let(:decision_review_remanded) { create(:appeal)}
+          let(:decision_review_remanded) { create(:appeal) }
           let(:request_issue) { rating_request_issue }
 
           context "when imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue, :imo).id}
+            let(:contested_decision_issue_id) { create(:decision_issue, :imo).id }
             it { is_expected.to eq "040BDEIMOPMC" }
           end
 
           context "when not imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue).id}
+            let(:contested_decision_issue_id) { create(:decision_issue).id }
             it { is_expected.to eq "040BDEPMC" }
           end
         end
 
         context "when decision review remanded is a claim review" do
-          let(:decision_review_remanded) { create(:higher_level_review)}
+          let(:decision_review_remanded) { create(:higher_level_review) }
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -267,22 +267,22 @@ describe RequestIssue do
         let(:benefit_type) { "compensation" }
 
         context "when decision review remanded is an Appeal" do
-          let(:decision_review_remanded) { create(:appeal)}
+          let(:decision_review_remanded) { create(:appeal) }
           let(:request_issue) { rating_request_issue }
 
           context "when imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue, :imo).id}
+            let(:contested_decision_issue_id) { create(:decision_issue, :imo).id }
             it { is_expected.to eq "040BDEIMO" }
           end
 
           context "when not imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue).id}
+            let(:contested_decision_issue_id) { create(:decision_issue).id }
             it { is_expected.to eq "040BDE" }
           end
         end
 
         context "when decision review remanded is a claim review" do
-          let(:decision_review_remanded) { create(:higher_level_review)}
+          let(:decision_review_remanded) { create(:higher_level_review) }
 
           context "when rating" do
             let(:request_issue) { rating_request_issue }
@@ -879,7 +879,7 @@ describe RequestIssue do
     end
 
     context "when it hasn't been processed" do
-      let(:ep_code) { HigherLevelReview::END_PRODUCT_CODES[:rating] }
+      let(:ep_code) { "030HLRR" }
       let(:end_product_establishment) do
         create(:end_product_establishment,
                :cleared,
@@ -953,7 +953,7 @@ describe RequestIssue do
       context "with nonrating ep" do
         let(:request_issue) { nonrating_request_issue }
 
-        let(:ep_code) { HigherLevelReview::END_PRODUCT_CODES[:nonrating] }
+        let(:ep_code) { "030HLRNR" }
 
         let!(:contention) do
           Generators::Contention.build(

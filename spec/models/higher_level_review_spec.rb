@@ -30,39 +30,6 @@ describe HigherLevelReview do
     )
   end
 
-  context "#issue_code" do
-    let(:issue) { nil }
-    subject { higher_level_review.issue_code(issue) }
-
-    context "for a rating issue" do
-      let(:issue) { create(:request_issue, :rating) }
-      it "returns the rating end product code" do
-        expect(subject).to eq("030HLRR")
-      end
-
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        it "returns the rating pension end product code" do
-          expect(subject).to eq("030HLRRPMC")
-        end
-      end
-    end
-
-    context "for a nonrating issue" do
-      let(:issue) { create(:request_issue, :nonrating) }
-      it "returns the nonrating end product code" do
-        expect(subject).to eq("030HLRNR")
-      end
-
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        it "returns the nonrating pension end product code" do
-          expect(subject).to eq("030HLRNRPMC")
-        end
-      end
-    end
-  end
-
   context "#special_issues" do
     let(:vacols_id) { nil }
     let(:vacols_sequence_id) { nil }

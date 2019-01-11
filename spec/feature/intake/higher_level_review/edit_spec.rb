@@ -802,12 +802,12 @@ feature "Higher Level Review Edit issues" do
 
       rating_epe = EndProductEstablishment.find_by!(
         source: higher_level_review,
-        code: HigherLevelReview::END_PRODUCT_CODES[:rating]
+        code: "030HLRR"
       )
 
       nonrating_epe = EndProductEstablishment.find_by!(
         source: higher_level_review,
-        code: HigherLevelReview::END_PRODUCT_CODES[:nonrating]
+        code: "030HLRNR"
       )
 
       # expect the remove/re-add to create a new RequestIssue for same RatingIssue

@@ -111,9 +111,9 @@ describe DecisionDocument do
       end
 
       context "when remanded issues" do
-        let!(:remanded_issue) {
+        let!(:remanded_issue) do
           create(:decision_issue, decision_review: decision_document.appeal, disposition: "remanded")
-        }
+        end
 
         it "creates remand supplemental claim" do
           subject

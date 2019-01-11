@@ -279,7 +279,7 @@ feature "Higher-Level Review" do
           date: higher_level_review.receipt_date.to_date,
           end_product_modifier: "033",
           end_product_label: "Higher-Level Review Rating",
-          end_product_code: HigherLevelReview::END_PRODUCT_CODES[:rating],
+          end_product_code: "030HLRR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false,
           claimant_participant_id: "5382910292"
@@ -291,7 +291,7 @@ feature "Higher-Level Review" do
 
     ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: HigherLevelReview::END_PRODUCT_CODES[:rating]
+      code: "030HLRR"
     )
 
     expect(ratings_end_product_establishment).to have_attributes(
@@ -310,7 +310,7 @@ feature "Higher-Level Review" do
         date: higher_level_review.receipt_date.to_date,
         end_product_modifier: "032",
         end_product_label: "Higher-Level Review Nonrating",
-        end_product_code: HigherLevelReview::END_PRODUCT_CODES[:nonrating],
+        end_product_code: "030HLRNR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false
       ),
@@ -320,7 +320,7 @@ feature "Higher-Level Review" do
 
     nonratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: HigherLevelReview::END_PRODUCT_CODES[:nonrating]
+      code: "030HLRNR"
     )
 
     expect(nonratings_end_product_establishment).to have_attributes(
@@ -351,6 +351,8 @@ feature "Higher-Level Review" do
     rating_request_issue = higher_level_review.request_issues.find_by(
       contested_issue_description: "PTSD denied"
     )
+
+    expect(rating_request_issue).to have_attributes(benefit_type: "compensation")
 
     expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
       claim_id: ratings_end_product_establishment.reference_id,

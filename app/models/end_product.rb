@@ -21,7 +21,6 @@ class EndProduct
     "040HDENR" => "Supplemental Claim Nonrating DTA",
     "040HDERPMC" => "PMC HLR DTA Error - Rating",
     "040HDENRPMC" => "PMC HLR DTA Error - Non-Rating",
-    "040BDEIMOPMC" => "PMC Board DTA Error - w/IMO",
     "040BDE" => "Board DTA Error",
     "040BDEIMO" => "Board DTA Error with IMO",
     "040BDEPMC" => "PMC Board DTA Error",

@@ -6,24 +6,8 @@ class SupplementalClaim < ClaimReview
   def ui_hash
     super.merge(
       formType: "supplemental_claim",
-      isDtaError: decision_review_remanded
+      isDtaError: decision_review_remanded?
     )
-  end
-
-  def issue_code(rating: true)
-    issue_code_type = rating ? :rating : :nonrating
-    issue_code_type = "dta_#{issue_code_type}".to_sym if decision_review_remanded?
-    issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
-    END_PRODUCT_CODES[issue_code_type]
-    # if decision_review_remanded? && decision_review_remanded.is_a?(Appeal)
-    #   issue_code_type = :board
-    # else
-    #   issue_code_type = rating ? :rating : :nonrating
-    # end
-      #
-      # issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
-      # issue_code_type = "dta_#{issue_code_type}".to_sym if decision_review_remanded?
-      # END_PRODUCT_CODES[issue_code_type]
   end
 
   def start_processing_job!
@@ -41,7 +25,7 @@ class SupplementalClaim < ClaimReview
   def decision_review_remanded?
     !!decision_review_remanded
   end
-  
+
   private
 
   def end_product_created_by
@@ -81,9 +65,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def remanded_decision_issues_needing_request_issues
-    remanded_decision_issues.select do |decision_issue|
-      !decision_issue.contesting_request_issue
-    end
+    remanded_decision_issues.reject(&:contesting_request_issue)
   end
 
   def remanded_decision_issues

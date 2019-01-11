@@ -27,55 +27,6 @@ describe SupplementalClaim do
     )
   end
 
-  context "#issue_code" do
-    let(:issue) { nil }
-    subject { supplemental_claim.issue_code(issue) }
-
-    context "for a rating issue" do
-      let(:issue) { create(:request_issue, :rating) }
-      it "returns the rating end product code" do
-        expect(subject).to eq("040SCR")
-      end
-
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        it "returns the rating pension end product code" do
-          expect(subject).to eq("040SCRPMC")
-        end
-
-        context "when it is from a dta error" do
-          let(:decision_review_remanded) { create(:higher_level_review) }
-
-          it "returns the rating pension dta error end product code" do
-            expect(subject).to eq("040HDERPMC")
-          end
-        end
-      end
-    end
-
-    context "for a nonrating issue" do
-      let(:issue) { create(:request_issue, :nonrating) }
-      it "returns the nonrating end product code" do
-        expect(subject).to eq("040SCNR")
-      end
-
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        it "returns the nonrating pension end product code" do
-          expect(subject).to eq("040SCNRPMC")
-        end
-
-        context "when it is from a dta error" do
-          let(:decision_review_remanded) { create(:higher_level_review) }
-
-          it "returns the nonrating pension dta error end product code" do
-            expect(subject).to eq("040HDENRPMC")
-          end
-        end
-      end
-    end
-  end
-
   context "#special_issues" do
     let(:vacols_id) { nil }
     let(:vacols_sequence_id) { nil }
@@ -221,7 +172,7 @@ describe SupplementalClaim do
         contested_rating_issue_reference_id: decision_issue_needing_remand.rating_issue_reference_id,
         contested_rating_issue_profile_date: decision_issue_needing_remand.profile_date,
         contested_issue_description: decision_issue_needing_remand.description,
-        benefit_type: benefit_type,
+        benefit_type: benefit_type
       )
     end
 

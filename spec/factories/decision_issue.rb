@@ -23,7 +23,7 @@ FactoryBot.define do
     end
 
     trait :imo do
-      remand_reasons {[ create(:ama_remand_reason, code: "advisory_medical_opinion") ]}
+      remand_reasons { [create(:ama_remand_reason, code: "advisory_medical_opinion")] }
     end
 
     after(:create) do |decision_issue, evaluator|

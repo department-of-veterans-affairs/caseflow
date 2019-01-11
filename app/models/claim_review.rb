@@ -41,10 +41,6 @@ class ClaimReview < DecisionReview
     "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
-  def issue_code(*)
-    fail Caseflow::Error::MustImplementInSubclass
-  end
-
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
@@ -109,16 +105,6 @@ class ClaimReview < DecisionReview
     end_product_establishments.map(&:modifier).reject(&:nil?)
   end
 
-  def rating_end_product_establishment
-    @rating_end_product_establishment ||= end_product_establishments.find_by(
-      code: self.class::END_PRODUCT_CODES[:rating]
-    )
-  end
-
-  def end_product_description
-    rating_end_product_establishment&.description
-  end
-
   def end_product_base_modifier
     valid_modifiers.first
   end
@@ -150,7 +136,9 @@ class ClaimReview < DecisionReview
   end
 
   def end_product_establishment_for_issue(issue)
-    end_product_establishments.find_by(code: issue.end_product_code) || new_end_product_establishment(issue.end_product_code)
+    end_product_establishments.find_by(
+      code: issue.end_product_code) || new_end_product_establishment(issue.end_product_code
+      )
   end
 
   def matching_request_issue(contention_id)

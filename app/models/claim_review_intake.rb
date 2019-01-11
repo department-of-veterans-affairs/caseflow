@@ -5,8 +5,7 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   def ui_hash(ama_enabled)
     super.merge(
-      benefit_type: detail.benefit_type,
-      end_product_description: detail.end_product_description
+      benefit_type: detail.benefit_type
     )
   end
 

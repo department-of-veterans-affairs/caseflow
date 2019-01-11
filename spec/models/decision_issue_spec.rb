@@ -5,7 +5,6 @@ describe DecisionIssue do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
 
-
   let(:decision_issue) do
     create(
       :decision_issue,
@@ -141,9 +140,9 @@ describe DecisionIssue do
       end
 
       it "does not create a new supplemental claim" do
-        expect {
+        expect do
           expect(subject).to eq(matching_supplemental_claim)
-        }.to_not change(SupplementalClaim, :count)
+        end.to_not change(SupplementalClaim, :count)
       end
     end
 
