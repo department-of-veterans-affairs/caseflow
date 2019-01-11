@@ -78,21 +78,40 @@ describe DecisionReviewsController, type: :controller do
 
   describe "#update" do
     let(:veteran) { create(:veteran) }
-    let(:task) { create(:higher_level_review_task).becomes(DecisionReviewTask) }
-    let!(:request_issues) do
-      [
-        create(:request_issue, :rating, review_request: task.appeal),
-        create(:request_issue, :nonrating, review_request: task.appeal)
-      ]
+    let(:decision_date) { "2018-10-1" }
+
+    before do
+      OrganizationsUser.add_user_to_organization(user, non_comp_org)
+      task.appeal.update!(veteran_file_number: veteran.file_number)
     end
 
-    context "user is in org" do
-      before do
-        OrganizationsUser.add_user_to_organization(user, non_comp_org)
-        task.appeal.update!(veteran_file_number: veteran.file_number)
+    context "with board grant effectuation task" do
+      let(:task) do
+        create(:board_grant_effectuation_task, assigned_to: non_comp_org)
+          .becomes(BoardGrantEffectuationTask)
       end
 
-      let(:decision_date) { "2018-10-1" }
+      it "marks task as completed" do
+        put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
+
+        expect(response.status).to eq(200)
+        response_data = JSON.parse(response.body)
+        expect(response_data["in_progress_tasks"]).to eq([])
+        expect(response_data["completed_tasks"].length).to eq(1)
+        task.reload
+        expect(task.status).to eq("completed")
+        expect(task.completed_at).to eq(Time.zone.now)
+      end
+    end
+
+    context "with decision review task" do
+      let(:task) { create(:higher_level_review_task, assigned_to: non_comp_org).becomes(DecisionReviewTask) }
+      let!(:request_issues) do
+        [
+          create(:request_issue, :rating, review_request: task.appeal),
+          create(:request_issue, :nonrating, review_request: task.appeal)
+        ]
+      end
 
       it "creates decision issues for each request issue" do
         put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id,
@@ -112,7 +131,11 @@ describe DecisionReviewsController, type: :controller do
 
         datetime = Date.parse(decision_date).to_datetime
 
-        expect(response.status).to eq(201)
+        expect(response.status).to eq(200)
+        response_data = JSON.parse(response.body)
+        expect(response_data["in_progress_tasks"]).to eq([])
+        expect(response_data["completed_tasks"].length).to eq(1)
+
         task.reload
         expect(task.appeal.decision_issues.length).to eq(2)
         expect(task.appeal.decision_issues.find_by(

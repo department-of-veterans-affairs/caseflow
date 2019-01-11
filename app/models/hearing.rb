@@ -7,7 +7,7 @@ class Hearing < ApplicationRecord
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   delegate :scheduled_for, to: :hearing_day
-  delegate :hearing_type, to: :hearing_day
+  delegate :request_type, to: :hearing_day
   delegate :veteran_name, to: :appeal
   delegate :veteran_age, to: :appeal
   delegate :veteran_gender, to: :appeal
@@ -34,12 +34,8 @@ class Hearing < ApplicationRecord
     "Winston-Salem, NC"
   end
 
-  def request_type
-    hearing_type
-  end
-
   def type
-    hearing_type
+    request_type
   end
   #:nocov:
 
