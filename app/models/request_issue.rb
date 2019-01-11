@@ -232,6 +232,10 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def contested_benefit_type
+    contested_rating_issue&.benefit_type
+  end
+
   def previous_request_issue
     contested_decision_issue&.request_issues&.first
   end

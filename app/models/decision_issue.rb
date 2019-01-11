@@ -39,11 +39,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def finalized?
-    if appeal?
-      decision_review.outcoded?
-    else
-      disposition.present?
-    end
+    appeal? ? decision_review.outcoded? : disposition.present?
   end
 
   def ui_hash

@@ -161,6 +161,15 @@ module IntakeHelpers
     safe_click "#button-submit-update"
   end
 
+  def click_intake_confirm
+    safe_click ".confirm"
+  end
+
+  def click_edit_submit_and_confirm
+    click_edit_submit
+    click_intake_confirm
+  end
+
   def click_intake_no_matching_issues
     safe_click ".no-matching-issues"
   end
@@ -417,8 +426,7 @@ module IntakeHelpers
     #     .duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Higher-Level Review")
     # )
 
-    safe_click("#button-submit-update")
-    safe_click ".confirm"
+    click_edit_submit_and_confirm
     expect(page).to have_current_path("/#{page_url}/confirmation")
 
     visit page_url
@@ -468,7 +476,7 @@ module IntakeHelpers
     click_intake_add_issue
     add_intake_rating_issue("Issue with legacy issue not withdrawn")
 
-    safe_click("#button-submit-update")
+    click_edit_submit
     expect(page).to have_content("has been processed")
 
     first_not_modified_request_issue = RequestIssue.find_by(
