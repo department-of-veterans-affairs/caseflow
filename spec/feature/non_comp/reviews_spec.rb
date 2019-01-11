@@ -67,7 +67,7 @@ feature "NonComp Reviews Queue" do
 
       click_on "Completed tasks"
       expect(page).to have_content("Higher-Level Review", count: 2)
-      expect(page).to have_content("Date Sent")
+      expect(page).to have_content("Date Completed")
 
       # ordered by completed_at descending
       expect(page).to have_content(

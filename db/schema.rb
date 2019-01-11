@@ -729,12 +729,12 @@ ActiveRecord::Schema.define(version: 20190111000717) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
+    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
-    t.string "ineligible_reason"
     t.string "vacols_id"
     t.integer "vacols_sequence_id"
     t.datetime "created_at"
@@ -911,6 +911,7 @@ ActiveRecord::Schema.define(version: 20190111000717) do
     t.string "last_name"
     t.string "middle_name"
     t.string "name_suffix"
+    t.string "closest_regional_office"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
   end
 

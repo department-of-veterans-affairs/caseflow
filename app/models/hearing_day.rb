@@ -21,8 +21,8 @@ class HearingDay < ApplicationRecord
     request_type == REQUEST_TYPES[:central]
   end
 
-  def hearing_date
-    try(:scheduled_for) || super
+  def hearing_type
+    try(:request_type) || super
   end
 
   def update_children_records
