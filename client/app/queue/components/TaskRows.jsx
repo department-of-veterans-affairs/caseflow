@@ -166,10 +166,11 @@ class TaskRows extends React.PureComponent {
 
   getTitle = (task) => {
     let title = '';
+    const judgeTasks = ['JudgeTask', 'JudgeAssignTask', 'JudgeDecisionReviewTask', 'JudgeQualityReviewTask'];
 
     if (task.type === 'AttorneyTask') {
       title = COPY.CASE_TIMELINE_ATTORNEY_TASK;
-    } else if (task.type === 'JudgeTask') {
+    } else if (judgeTasks.includes(task.type)) {
       title = COPY.CASE_TIMELINE_JUDGE_TASK;
     }
 
