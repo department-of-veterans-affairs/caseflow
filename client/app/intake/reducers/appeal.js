@@ -31,8 +31,10 @@ const updateFromServerIntake = (state, serverIntake) => {
     veteranIsNotClaimant: {
       $set: serverIntake.veteran_is_not_claimant
     },
+
+    // TODO do we need this at all?
     processedInCaseflow: {
-      $set: true // TODO do we need this at all?
+      $set: true
     },
     claimant: {
       $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null

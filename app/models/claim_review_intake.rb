@@ -7,7 +7,7 @@ class ClaimReviewIntake < DecisionReviewIntake
     super.merge(
       benefit_type: detail.benefit_type,
       end_product_description: detail.end_product_description,
-      processed_in_caseflow: detail.processed_in_caseflow?,
+      processed_in_caseflow: detail.processed_in_caseflow?
     )
   end
 
