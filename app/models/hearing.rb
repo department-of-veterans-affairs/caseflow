@@ -34,10 +34,6 @@ class Hearing < ApplicationRecord
     "Winston-Salem, NC"
   end
 
-  def request_type
-    hearing_type
-  end
-
   def type
     request_type
   end
