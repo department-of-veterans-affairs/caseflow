@@ -61,11 +61,13 @@ class DecisionReviewsController < ApplicationController
 
   def decision_date
     return if task.is_a? BoardGrantEffectuationTask
+
     Date.parse(params.require("decision_date")).to_datetime
   end
 
   def decision_issue_params
     return if task.is_a? BoardGrantEffectuationTask
+
     params.require("decision_issues").map do |decision_issue_param|
       decision_issue_param.permit(:request_issue_id, :disposition, :description)
     end

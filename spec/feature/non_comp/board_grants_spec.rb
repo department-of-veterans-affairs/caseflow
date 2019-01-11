@@ -92,7 +92,7 @@ feature "NonComp Board Grant Task Page" do
     scenario "Shows an error when something goes wrong" do
       visit dispositions_url
 
-      expect_any_instance_of(BoardGrantEffectuationTask).to receive(:complete!).and_throw("Error!")
+      expect_any_instance_of(BoardGrantEffectuationTask).to receive(:complete_with_payload!).and_throw("Error!")
       submit_form
 
       expect(page).to have_content("Something went wrong")
