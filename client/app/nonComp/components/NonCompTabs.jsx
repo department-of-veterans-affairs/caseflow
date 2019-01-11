@@ -12,7 +12,8 @@ class NonCompTabsUnconnected extends React.PureComponent {
       label: 'In progress tasks',
       page: <TaskTableTab
         key="inprogress"
-        predefinedColumns={{ includeDaysWaiting: true }}
+        predefinedColumns={{ includeDaysWaiting: true,
+          defaultSortIdx: 3 }}
         tasks={this.props.inProgressTasks} />
     }, {
       label: 'Completed tasks',
