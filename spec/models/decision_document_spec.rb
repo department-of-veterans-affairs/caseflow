@@ -92,7 +92,7 @@ describe DecisionDocument do
         )
       end
 
-      context "when no granted issues" do
+      context "when no granted or remanded issues" do
         it "uploads document and does not create effectuations" do
           subject
 
@@ -106,6 +106,18 @@ describe DecisionDocument do
 
           expect(decision_document.attempted_at).to eq(Time.zone.now)
           expect(decision_document.processed_at).to eq(Time.zone.now)
+          expect(SupplementalClaim.find_by(decision_review_remanded: decision_document.appeal)).to be_nil
+        end
+      end
+
+      context "when remanded issues" do
+        let!(:remanded_issue) {
+          create(:decision_issue, decision_review: decision_document.appeal, disposition: "remanded")
+        }
+
+        it "creates remand supplemental claim" do
+          subject
+          expect(SupplementalClaim.find_by(decision_review_remanded: decision_document.appeal)).to_not be_nil
         end
       end
 

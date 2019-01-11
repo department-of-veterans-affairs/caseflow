@@ -58,6 +58,10 @@ class DecisionIssue < ApplicationRecord
     find_remand_supplemental_claim || create_remand_supplemental_claim!
   end
 
+  def imo?
+    remand_reasons.map(&:code).include?("advisory_medical_opinion")
+  end
+
   private
 
   def calculate_and_set_description

@@ -150,8 +150,7 @@ class ClaimReview < DecisionReview
   end
 
   def end_product_establishment_for_issue(issue)
-    ep_code = issue_code(issue)
-    end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
+    end_product_establishments.find_by(code: issue.end_product_code) || new_end_product_establishment(issue.end_product_code)
   end
 
   def matching_request_issue(contention_id)

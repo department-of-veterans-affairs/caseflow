@@ -6,7 +6,7 @@ class Appeal < DecisionReview
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
-  has_many :remand_supplemental_claims, as: :decision_review_remanded
+  has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
 

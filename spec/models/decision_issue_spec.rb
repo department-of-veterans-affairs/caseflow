@@ -127,8 +127,8 @@ describe DecisionIssue do
     end
   end
 
-  context "#find_or_create_remand_supplemental_claim!", focus: true do
-    subject { decision_issue.find_or_create_remand_supplemental_claim! } 
+  context "#find_or_create_remand_supplemental_claim!" do
+    subject { decision_issue.find_or_create_remand_supplemental_claim! }
 
     context "when supplemental claim already exists matching decision issue" do
       let!(:matching_supplemental_claim) do

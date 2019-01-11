@@ -22,6 +22,10 @@ FactoryBot.define do
       request_issues { [create(:request_issue, :rating)] }
     end
 
+    trait :imo do
+      remand_reasons {[ create(:ama_remand_reason, code: "advisory_medical_opinion") ]}
+    end
+
     after(:create) do |decision_issue, evaluator|
       if evaluator.request_issues
         decision_issue.request_issues << evaluator.request_issues

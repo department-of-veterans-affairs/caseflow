@@ -40,6 +40,53 @@ class RequestIssue < ApplicationRecord
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
+  END_PRODUCT_CODES = {
+    original: {
+      pension: {
+        supplemental_claim: {
+          rating: "040SCRPMC",
+          nonrating: "040SCNRPMC"
+        },
+        higher_level_review: {
+          rating: "030HLRRPMC",
+          nonrating: "030HLRNRPMC"
+        }
+      },
+      compensation: {
+        supplemental_claim: {
+          rating: "040SCR",
+          nonrating: "040SCNR"
+        },
+        higher_level_review: {
+          rating: "030HLRR",
+          nonrating: "030HLRNR"
+        }
+      }
+    },
+    dta: {
+      pension: {
+        appeal: {
+          imo: "040BDEIMOPMC",
+          not_imo: "040BDEPMC"
+        },
+        claim_review: {
+          rating: "040HDERPMC",
+          nonrating: "040HDENRPMC"
+        }
+      },
+      compensation: {
+        appeal: {
+          imo: "040BDEIMO",
+          not_imo: "040BDE"
+        },
+        claim_review: {
+          rating: "040HDER",
+          nonrating: "040HDENR"
+        }
+      }
+    }
+  }.freeze
+
   class << self
     def submitted_at_column
       :decision_sync_submitted_at
@@ -138,6 +185,10 @@ class RequestIssue < ApplicationRecord
       }
     end
     # rubocop:enable Metrics/MethodLength
+  end
+
+  def end_product_code
+    remanded? ? dta_end_product_code : original_end_product_code
   end
 
   def status_active?
@@ -458,6 +509,30 @@ class RequestIssue < ApplicationRecord
     return unless contested_decision_issue_id
 
     add_duplicate_issue_error(self.class.find_active_by_contested_decision_id(contested_decision_issue_id))
+  end
+
+  def original_end_product_code
+    choose_original_end_product_code(END_PRODUCT_CODES[:original][benefit_type.to_sym])
+  end
+
+  def choose_original_end_product_code(end_product_codes)
+    end_product_codes[review_request_type.underscore.to_sym][rating? ? :rating : :nonrating]
+  end
+
+  def dta_end_product_code
+    choose_dta_end_product_code(END_PRODUCT_CODES[:dta][benefit_type.to_sym])
+  end
+
+  def choose_dta_end_product_code(end_product_codes)
+    if review_request.decision_review_remanded.is_a?(Appeal)
+      end_product_codes[:appeal][contested_decision_issue.imo? ? :imo : :not_imo]
+    else
+      end_product_codes[:claim_review][rating? ? :rating : :nonrating]
+    end
+  end
+
+  def remanded?
+    review_request.try(:decision_review_remanded?)
   end
 
   def add_duplicate_issue_error(existing_request_issue)

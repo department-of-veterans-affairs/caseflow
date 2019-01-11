@@ -280,7 +280,6 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def associate_rating_request_issues!
-    # TODO fix this use of issue_code
     return if code != source.issue_code(rating: true)
     return if unassociated_rating_request_issues.count == 0
 

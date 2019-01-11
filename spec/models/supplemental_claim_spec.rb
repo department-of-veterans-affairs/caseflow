@@ -177,7 +177,7 @@ describe SupplementalClaim do
     end
   end
 
-  context "create_remand_issues!", focus: true do
+  context "create_remand_issues!" do
     subject { supplemental_claim.create_remand_issues! }
 
     let(:decision_review_remanded) { create(:appeal) }
