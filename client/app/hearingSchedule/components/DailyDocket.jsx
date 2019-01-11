@@ -18,6 +18,7 @@ import StatusMessage from '../../components/StatusMessage';
 import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
+import { crossSymbolHtml, pencilSymbol } from '../../components/RenderFunctions';
 
 const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
@@ -128,13 +129,13 @@ export default class DailyDocket extends React.Component {
 
   getHearingTime = (hearing) => {
     if (hearing.requestType === 'Central') {
-      return <div>{getTime(hearing.date)} <br />
+      return <div>{getTime(hearing.scheduledFor)} <br />
         {hearing.regionalOfficeName}
       </div>;
     }
 
-    return <div>{getTime(hearing.date)} /<br />
-      {getTimeInDifferentTimeZone(hearing.date, hearing.regionalOfficeTimezone)} <br />
+    return <div>{getTime(hearing.scheduledFor)} /<br />
+      {getTimeInDifferentTimeZone(hearing.scheduledFor, hearing.regionalOfficeTimezone)} <br />
       {hearing.regionalOfficeName}
     </div>;
   };
@@ -160,17 +161,17 @@ export default class DailyDocket extends React.Component {
 
   getHearingDateOptions = () => {
     return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
-      label: this.getHearingDate(hearingDayOption.hearingDate),
+      label: this.getHearingDate(hearingDayOption.scheduledFor),
       value: hearingDayOption.id
     }));
   };
 
  getHearingDateOptions = (hearing) => {
-   const hearings = [{ label: this.getHearingDate(hearing.date),
+   const hearings = [{ label: this.getHearingDate(hearing.scheduledFor),
      value: hearing.id }];
 
    const hearingDayoptions = _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
-     label: this.getHearingDate(hearingDayOption.hearingDate),
+     label: this.getHearingDate(hearingDayOption.scheduledFor),
      value: hearingDayOption.id
    }));
 
@@ -230,7 +231,7 @@ export default class DailyDocket extends React.Component {
     <RadioField
       name={`hearingTime${hearing.id}`}
       options={this.getHearingTimeOptions(hearing, readOnly)}
-      value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.date, timezone)}
+      value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
       onChange={this.onHearingTimeUpdate(hearing.id)}
       hideLabel /></div>;
   };
@@ -289,7 +290,7 @@ export default class DailyDocket extends React.Component {
   getRemoveHearingDayMessage = () => {
     return 'Once the hearing day is removed, users will no longer be able to ' +
       `schedule Veterans for this ${this.props.dailyDocket.hearingType} hearing day on ` +
-      `${moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')}.`;
+      `${moment(this.props.dailyDocket.scheduledFor).format('ddd M/DD/YYYY')}.`;
   };
 
   getDisplayLockModalTitle = () => {
@@ -392,19 +393,19 @@ export default class DailyDocket extends React.Component {
         type="error"
         styling={alertStyling}
         title={` Unable to delete Hearing Day
-                ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')} in Caseflow.`}
+                ${moment(this.props.dailyDocket.scheduledFor).format('M/DD/YYYY')} in Caseflow.`}
         message="Please delete the hearing day through VACOLS" />}
 
       { this.props.onErrorHearingDayLock && <Alert
         type="error"
         styling={alertStyling}
-        title={`VACOLS Hearing Day ${moment(this.props.dailyDocket.hearingDate).format('M/DD/YYYY')}
+        title={`VACOLS Hearing Day ${moment(this.props.dailyDocket.scheduledFor).format('M/DD/YYYY')}
            cannot be locked in Caseflow.`}
         message="VACOLS Hearing Day cannot be locked"
       />}
 
       <div className="cf-push-left">
-        <h1>Daily Docket ({moment(this.props.dailyDocket.hearingDate).format('ddd M/DD/YYYY')})</h1> <br />
+        <h1>Daily Docket ({moment(this.props.dailyDocket.scheduledFor).format('ddd M/DD/YYYY')})</h1> <br />
         <div {...backLinkStyling}>
           <Link
             linkStyling to="/schedule" >&lt; Back to schedule</Link>&nbsp;&nbsp;
@@ -412,18 +413,22 @@ export default class DailyDocket extends React.Component {
             {...editLinkStyling}
             linkStyling
             onClick={this.props.openModal} >
-            Edit Hearing Day
+            <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+            <span {...css({ marginRight: '5px',
+              marginLeft: '20px' })}>Edit Hearing Day</span>
           </Button>&nbsp;&nbsp;
           <Button
             linkStyling
             onClick={this.props.onDisplayLockModal} >
-            {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
+            <span {...css({ marginRight: '5px' })}>
+              {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
+            </span>
           </Button>&nbsp;&nbsp;
           { _.isEmpty(this.props.hearings) && this.props.userRoleBuild &&
           <Button
             linkStyling
             onClick={this.props.onClickRemoveHearingDay} >
-            Remove Hearing Day
+            {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
           </Button>
           }
           {this.props.notes &&

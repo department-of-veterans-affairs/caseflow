@@ -85,7 +85,7 @@ RSpec.feature "Case details" do
 
         hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
         expect(page).to have_content("Type: #{hearing_preference}")
-        expect(page).to have_content("Date: #{hearing.date.strftime('%-m/%-d/%y')}")
+        expect(page).to have_content("Date: #{hearing.scheduled_for.strftime('%-m/%-d/%y')}")
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
       end
 
@@ -125,7 +125,7 @@ RSpec.feature "Case details" do
         visit "/queue"
         page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
-        worksheet_link = page.find("a[href='/hearings/#{hearing.id}/worksheet/print?keep_open=true']")
+        worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
         expect(worksheet_link.text).to eq("View Hearing Worksheet")
       end
     end
@@ -311,8 +311,7 @@ RSpec.feature "Case details" do
         build_list(
           :request_issue,
           eligible_issue_cnt,
-          contested_issue_description: "Knee pain",
-          description: "Knee pain"
+          contested_issue_description: "Knee pain"
         ),
         build_list(
           :request_issue,
@@ -510,7 +509,6 @@ RSpec.feature "Case details" do
             :request_issue,
             review_request_id: appeal.id,
             contested_issue_description: issue_description,
-            description: issue_description,
             review_request_type: "Appeal"
           )
         end
@@ -519,7 +517,6 @@ RSpec.feature "Case details" do
             :request_issue,
             review_request_id: appeal.id,
             contested_issue_description: issue_description2,
-            description: issue_description2,
             review_request_type: "Appeal"
           )
         end

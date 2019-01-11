@@ -45,8 +45,7 @@ describe HigherLevelReviewIntake do
         contested_rating_issue_profile_date: Time.zone.local(2018, 4, 5),
         contested_rating_issue_reference_id: "issue1",
         contested_issue_description: "description",
-        contention_reference_id: "1234",
-        description: "description"
+        contention_reference_id: "1234"
       )
     end
 
@@ -242,8 +241,7 @@ describe HigherLevelReviewIntake do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
-        contention_descriptions: ["decision text"],
-        special_issues: [],
+        contentions: [{ description: "decision text" }],
         user: user
       )
 

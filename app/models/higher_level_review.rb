@@ -32,12 +32,6 @@ class HigherLevelReview < ClaimReview
     )
   end
 
-  def special_issues
-    specials = super
-    specials << { code: "SSR", narrative: "Same Station Review" } if same_office
-    specials
-  end
-
   def issue_code(rating: true)
     issue_code_type = rating ? :rating : :nonrating
     issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
@@ -92,7 +86,6 @@ class HigherLevelReview < ClaimReview
         # parent_request_issue_id: dta_issue.id, delete this from table
         rating_issue_reference_id: dta_decision_issue.rating_issue_reference_id,
         rating_issue_profile_date: dta_decision_issue.profile_date.to_s,
-        description: dta_decision_issue.description,
         contested_rating_issue_reference_id: dta_decision_issue.rating_issue_reference_id,
         contested_rating_issue_profile_date: dta_decision_issue.profile_date,
         contested_issue_description: dta_decision_issue.description,

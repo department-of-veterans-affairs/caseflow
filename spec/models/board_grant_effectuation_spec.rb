@@ -64,8 +64,31 @@ describe BoardGrantEffectuation do
       let(:benefit_type) { "insurance" }
       let(:rating_or_nonrating) { :nonrating }
 
-      it "does not create end product establishment" do
-        expect(subject.end_product_establishment).to be_nil
+      context "when a task doesn't exist yet" do
+        it "creates a task and not an end product establishment" do
+          expect(subject.end_product_establishment).to be_nil
+          expect(BoardGrantEffectuationTask.find_by(appeal: decision_document.appeal)).to have_attributes(
+            assigned_to: BusinessLine.find_by(url: benefit_type)
+          )
+        end
+      end
+
+      context "when a task already exists" do
+        let(:task) do
+          create(
+            :board_grant_effectuation_task,
+            appeal: decision_document.appeal,
+            assigned_to: BusinessLine.find_by(url: benefit_type)
+          )
+        end
+
+        it "does not create a new task" do
+          expect(subject.end_product_establishment).to be_nil
+          expect(BoardGrantEffectuationTask.where(
+            appeal: decision_document.appeal,
+            assigned_to: BusinessLine.find_by(url: benefit_type)
+          ).count).to eq(1)
+        end
       end
     end
 

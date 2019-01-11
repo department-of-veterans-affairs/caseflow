@@ -46,7 +46,6 @@ describe SupplementalClaimIntake do
         contested_rating_issue_reference_id: "issue1",
         contested_rating_issue_profile_date: Time.zone.local(2018, 4, 5),
         contested_issue_description: "description",
-        description: "description",
         contention_reference_id: "1234"
       )
     end
@@ -251,8 +250,7 @@ describe SupplementalClaimIntake do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
-        contention_descriptions: ["decision text"],
-        special_issues: [],
+        contentions: [{ description: "decision text" }],
         user: user
       )
 
@@ -266,7 +264,6 @@ describe SupplementalClaimIntake do
       expect(intake.detail.request_issues.count).to eq 1
       expect(intake.detail.request_issues.first).to have_attributes(
         contested_rating_issue_reference_id: "reference-id",
-        description: "decision text",
         contested_issue_description: "decision text",
         rating_issue_associated_at: Time.zone.now
       )

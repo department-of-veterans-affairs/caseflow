@@ -32,8 +32,7 @@ describe ClaimReview do
       review_request: claim_review,
       contested_rating_issue_reference_id: "reference-id",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-      contested_issue_description: "decision text",
-      description: "decision text"
+      contested_issue_description: "decision text"
     )
   end
 
@@ -43,8 +42,7 @@ describe ClaimReview do
       review_request: claim_review,
       contested_rating_issue_reference_id: "reference-id2",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-      contested_issue_description: "another decision text",
-      description: "another decision text"
+      contested_issue_description: "another decision text"
     )
   end
 
@@ -52,7 +50,6 @@ describe ClaimReview do
     build(
       :request_issue,
       review_request: claim_review,
-      description: "Issue text",
       nonrating_issue_description: "Issue text",
       issue_category: "surgery",
       decision_date: 4.days.ago.to_date
@@ -64,7 +61,6 @@ describe ClaimReview do
       :request_issue,
       review_request: claim_review,
       nonrating_issue_description: "some other issue",
-      description: "some other issue",
       issue_category: "something",
       decision_date: 3.days.ago.to_date
     )
@@ -78,6 +74,13 @@ describe ClaimReview do
       informal_conference: informal_conference,
       same_office: same_office,
       benefit_type: benefit_type
+    )
+  end
+
+  let!(:supplemental_claim) do
+    create(
+      :supplemental_claim,
+      veteran_file_number: veteran_file_number
     )
   end
 
@@ -318,8 +321,7 @@ describe ClaimReview do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.last.reference_id,
-          contention_descriptions: array_including("another decision text", "decision text"),
-          special_issues: [],
+          contentions: array_including({ description: "another decision text" }, description: "decision text"),
           user: user
         )
 
@@ -385,8 +387,7 @@ describe ClaimReview do
             expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
               veteran_file_number: veteran_file_number,
               claim_id: claim_review.end_product_establishments.last.reference_id,
-              contention_descriptions: ["another decision text"],
-              special_issues: [],
+              contentions: [{ description: "another decision text" }],
               user: user
             )
 
@@ -585,8 +586,7 @@ describe ClaimReview do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
-          contention_descriptions: ["decision text"],
-          special_issues: [],
+          contentions: [{ description: "decision text" }],
           user: user
         )
 
@@ -619,8 +619,7 @@ describe ClaimReview do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
-          contention_descriptions: ["surgery - Issue text"],
-          special_issues: [],
+          contentions: [{ description: "surgery - Issue text" }],
           user: user
         )
 
@@ -643,6 +642,29 @@ describe ClaimReview do
       hlr.end_product_establishments.first.update!(reference_id: "abc123")
 
       expect(HigherLevelReview.find_by_uuid_or_reference_id!("abc123")).to eq(hlr)
+    end
+  end
+
+  describe "#find_all_by_file_number" do
+    it "finds higher level reviews and supplemental claims" do
+      expect(ClaimReview.find_all_by_file_number(veteran_file_number).length).to eq(2)
+    end
+  end
+
+  describe "#search_table_ui_hash" do
+    it "returns review type" do
+      expect([*supplemental_claim].map(&:search_table_ui_hash)).to include(hash_including(
+                                                                             review_type: "supplemental_claim"
+                                                                           ))
+    end
+  end
+
+  describe "#claim_veteran" do
+    let!(:veteran) { create(:veteran) }
+    let!(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+
+    it "returns the veteran" do
+      expect(hlr.claim_veteran).to eq(veteran)
     end
   end
 end

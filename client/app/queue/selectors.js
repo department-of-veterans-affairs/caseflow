@@ -15,6 +15,8 @@ import type {
   Task,
   Tasks,
   TaskWithAppeal,
+  ClaimReview,
+  ClaimReviews,
   Appeal,
   Appeals,
   BasicAppeals,
@@ -47,6 +49,7 @@ const getTaskUniqueId = (state: State, props: Object): string => props.taskId;
 const getCaseflowVeteranId = (state: State, props: Object): ?string => props.caseflowVeteranId;
 const getModals = (state: State): UiStateModals => state.ui.modals;
 const getNewDocsForAppeal = (state: State): NewDocsForAppeal => state.queue.newDocsForAppeal;
+const getClaimReviews = (state: State): ClaimReviews => state.queue.claimReviews;
 
 const incompleteTasksSelector = (tasks: Tasks | Array<Task>) =>
   _.filter(tasks, (task) => task.status !== TASK_STATUSES.completed);
@@ -98,6 +101,11 @@ export const appealsWithDetailsSelector = createSelector(
   }
 );
 
+export const claimReviewsSelector = createSelector(
+  [getClaimReviews],
+  (claimReviews: ClaimReviews) => claimReviews
+);
+
 export const appealWithDetailSelector = createSelector(
   [appealsWithDetailsSelector, getAppealId],
   (appeals: Appeals, appealId: string) => appeals[appealId]
@@ -142,6 +150,13 @@ export const appealsByCaseflowVeteranId = createSelector(
       appeal.caseflowVeteranId.toString() === caseflowVeteranId.toString())
 );
 
+export const claimReviewsByCaseflowVeteranId = createSelector(
+  [claimReviewsSelector, getCaseflowVeteranId],
+  (claimReviews: ClaimReviews, caseflowVeteranId: ?string) =>
+    _.filter(claimReviews, (claimReview: ClaimReview) => claimReview.caseflowVeteranId && caseflowVeteranId &&
+      claimReview.caseflowVeteranId.toString() === caseflowVeteranId.toString())
+);
+
 export const tasksByAssigneeCssIdSelector = createSelector(
   [tasksWithAppealSelector, getUserCssId],
   (tasks: Array<TaskWithAppeal>, cssId: string) =>
@@ -171,6 +186,14 @@ export const completeTasksByAssigneeCssIdSelector = createSelector(
 
 export const actionableTasksForAppeal = createSelector(
   [getTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.availableActions.length)
+);
+
+export const rootTasksForAppeal = createSelector(
+  [actionableTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.type === 'RootTask')
+);
+
+export const nonRootActionableTasksForAppeal = createSelector(
+  [actionableTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.type !== 'RootTask')
 );
 
 export const newTasksByAssigneeCssIdSelector = createSelector(

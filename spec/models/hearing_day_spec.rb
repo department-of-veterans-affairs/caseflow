@@ -20,13 +20,13 @@ describe HearingDay do
     context "add a hearing with only required attributes - VACOLS" do
       let(:hearing_hash) do
         { hearing_type: "C",
-          hearing_date: test_hearing_date_vacols,
+          scheduled_for: test_hearing_date_vacols,
           room: "1" }
       end
 
       it "creates hearing with required attributes" do
         expect(hearing[:hearing_type]).to eq "C"
-        expect(hearing[:hearing_date].strftime("%Y-%m-%d"))
+        expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
           .to eq test_hearing_date_vacols.strftime("%Y-%m-%d")
         expect(hearing[:room]).to eq "1"
       end
@@ -35,13 +35,13 @@ describe HearingDay do
     context "add a hearing with only required attributes - Caseflow" do
       let(:hearing_hash) do
         { hearing_type: "C",
-          hearing_date: test_hearing_date_caseflow,
+          scheduled_for: test_hearing_date_caseflow,
           room: "1" }
       end
 
       it "creates hearing with required attributes" do
         expect(hearing[:hearing_type]).to eq "C"
-        expect(hearing[:hearing_date].strftime("%Y-%m-%d"))
+        expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d")
         expect(hearing[:room]).to eq "1"
       end
@@ -50,14 +50,14 @@ describe HearingDay do
     context "add a video hearing - Caseflow" do
       let(:hearing_hash) do
         { hearing_type: "C",
-          hearing_date: test_hearing_date_caseflow,
+          scheduled_for: test_hearing_date_caseflow,
           regional_office: "RO89",
           room: "5" }
       end
 
       it "creates a video hearing" do
         expect(hearing[:hearing_type]).to eq "C"
-        expect(hearing[:hearing_date].strftime("%Y-%m-%d %H:%M:%S"))
+        expect(hearing[:scheduled_for].strftime("%Y-%m-%d %H:%M:%S"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d %H:%M:%S")
         expect(hearing[:regional_office]).to eq "RO89"
         expect(hearing[:room]).to eq "5"
@@ -69,7 +69,7 @@ describe HearingDay do
     let(:hearing_day) { create(:hearing_day, hearing_type: "V") }
     let(:hearing_hash) do
       { hearing_type: "V",
-        hearing_date: Date.new(2019, 12, 7),
+        scheduled_for: Date.new(2019, 12, 7),
         regional_office: "RO89",
         room: "5",
         lock: true }
@@ -79,7 +79,7 @@ describe HearingDay do
       HearingDay.find(hearing_day.id).update!(hearing_hash)
       updated_hearing_day = HearingDay.find(hearing_day.id).reload
       expect(updated_hearing_day.hearing_type).to eql("V")
-      expect(updated_hearing_day.hearing_date).to eql(Date.new(2019, 12, 7))
+      expect(updated_hearing_day.scheduled_for).to eql(Date.new(2019, 12, 7))
       expect(updated_hearing_day.regional_office).to eql("RO89")
       expect(updated_hearing_day.room).to eql("5")
       expect(updated_hearing_day.lock).to eql(true)
@@ -275,7 +275,7 @@ describe HearingDay do
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
     let!(:hearing_day) { create(:hearing_day) }
     let(:hearing) do
-      create(:case_hearing, hearing_type: "C", folder_nr: appeal.vacols_id, hearing_date: hearing_day.hearing_date)
+      create(:case_hearing, hearing_type: "C", folder_nr: appeal.vacols_id, hearing_date: hearing_day.scheduled_for)
     end
 
     context "get parent and children structure" do

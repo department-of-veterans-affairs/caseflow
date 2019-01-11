@@ -88,18 +88,16 @@ class HearingRepository
 
     def slot_new_hearing(parent_record_id, time, appeal)
       hearing_day = HearingDay.find_hearing_day(nil, parent_record_id)
+      hearing_datetime = hearing_day[:scheduled_for].to_datetime.change(
+        hour: time["h"].to_i,
+        minute: time["m"].to_i,
+        offset: time["offset"]
+      )
 
       if hearing_day[:hearing_type] == "C"
-        update_co_hearing(
-          hearing_day[:hearing_date].to_datetime.change(
-            hour: time["h"].to_i,
-            minute: time["m"],
-            offset: time["offset"]
-          ),
-          appeal
-        )
+        update_co_hearing(hearing_datetime, appeal)
       else
-        create_child_video_hearing(parent_record_id, hearing_day[:hearing_date], appeal)
+        create_child_video_hearing(parent_record_id, hearing_datetime, appeal)
       end
     end
 
@@ -117,7 +115,7 @@ class HearingRepository
     end
 
     def create_child_co_hearing(hearing_date_str, appeal)
-      hearing_day = HearingDay.find_by(hearing_type: "C", hearing_date: hearing_date_str.to_date)
+      hearing_day = HearingDay.find_by(hearing_type: "C", scheduled_for: hearing_date_str.to_date)
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
@@ -226,7 +224,7 @@ class HearingRepository
       values = MasterRecordHelper.values_based_on_type(vacols_record)
       # Travel Board master records have a date range, so we create a master record for each day
       values[:dates].inject([]) do |result, date|
-        result << Hearings::MasterRecord.new(date: VacolsHelper.normalize_vacols_datetime(date),
+        result << Hearings::MasterRecord.new(scheduled_for: VacolsHelper.normalize_vacols_datetime(date),
                                              type: values[:type],
                                              master_record: true,
                                              regional_office_key: values[:ro])
@@ -272,7 +270,7 @@ class HearingRepository
         room: vacols_record.room,
         regional_office_key: ro,
         type: type,
-        date: date,
+        scheduled_for: date,
         master_record: false
       }
     end

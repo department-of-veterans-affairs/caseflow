@@ -2,8 +2,14 @@ import { SEARCH_ERROR_FOR } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from './actionTypes';
 import _ from 'lodash';
-import { onReceiveAppealDetails } from '../QueueActions';
-import { prepareAppealForStore } from '../utils';
+import {
+  onReceiveAppealDetails,
+  onReceiveClaimReviewDetails
+} from '../QueueActions';
+import {
+  prepareAppealForStore,
+  prepareClaimReviewForStore
+} from '../utils';
 
 export const clearCaseListSearch = () => ({
   type: Constants.CLEAR_CASE_LIST_SEARCH
@@ -52,6 +58,13 @@ export const onReceiveAppealsUsingVeteranId = (appeals) => (dispatch) => {
   });
 };
 
+export const onReceiveClaimReviewsUsingVeteranId = (claimReviews) => (dispatch) => {
+  dispatch(onReceiveClaimReviewDetails(prepareClaimReviewForStore(claimReviews)));
+  dispatch({
+    type: Constants.RECEIVED_CLAIM_REVIEWS_USING_VETERAN_ID_SUCCESS
+  });
+};
+
 export const fetchAppealUsingVeteranIdFailed = (searchQuery) => ({
   type: Constants.SEARCH_RESULTED_IN_ERROR,
   payload: {
@@ -90,14 +103,22 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
       headers: { 'veteran-id': veteranId }
     }).
       then((response) => {
-        const returnedObject = JSON.parse(response.text);
+        let isResponseEmpty;
+        const returnedObject = (response.text) ? JSON.parse(response.text) : null;
 
-        if (_.size(returnedObject.appeals) === 0) {
+        if (returnedObject) {
+          isResponseEmpty = _.size(returnedObject.appeals) === 0 &&
+            _.size(returnedObject.claim_reviews) === 0;
+        }
+
+        if (!returnedObject || isResponseEmpty) {
           dispatch(fetchedNoAppealsUsingVeteranId(veteranId));
 
           return reject();
         }
+
         dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
+        dispatch(onReceiveClaimReviewsUsingVeteranId(returnedObject.claim_reviews));
 
         // Expect all of the appeals will be for the same Caseflow Veteran ID so we pull off the first for the URL.
         const caseflowVeteranId = returnedObject.appeals[0].attributes.caseflow_veteran_id;

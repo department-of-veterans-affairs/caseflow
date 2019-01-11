@@ -21,9 +21,17 @@ class HearingDay < ApplicationRecord
     hearing_type == HEARING_TYPES[:central]
   end
 
+  def hearing_date
+    try(:scheduled_for) || super
+  end
+
   def update_children_records
     hearings = if hearing_type == HEARING_TYPES[:central]
+<<<<<<< HEAD
                  HearingRepository.fetch_co_hearings_for_date(hearing_date)
+=======
+                 HearingRepository.fetch_co_hearings_for_parent(scheduled_for)
+>>>>>>> c3ebb9dbf6532043fa17550bf9c2a2d5a5a78b37
                else
                  HearingRepository.fetch_video_hearings_for_parent(id)
                end
@@ -51,14 +59,14 @@ class HearingDay < ApplicationRecord
 
   class << self
     def create_hearing_day(hearing_hash)
-      hearing_date = hearing_hash[:hearing_date]
-      hearing_date = if hearing_date.is_a?(DateTime) | hearing_date.is_a?(Date)
-                       hearing_date
-                     else
-                       Time.zone.parse(hearing_date).to_datetime
-                     end
+      scheduled_for = hearing_hash[:scheduled_for]
+      scheduled_for = if scheduled_for.is_a?(DateTime) | scheduled_for.is_a?(Date)
+                        scheduled_for
+                      else
+                        Time.zone.parse(scheduled_for).to_datetime
+                      end
       comparison_date = (hearing_hash[:hearing_type] == "C") ? CASEFLOW_CO_PARENT_DATE : CASEFLOW_V_PARENT_DATE
-      if hearing_date > comparison_date
+      if scheduled_for > comparison_date
         hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
         create(hearing_hash).to_hash
       else
@@ -81,14 +89,14 @@ class HearingDay < ApplicationRecord
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
-        cf_video_and_co = where("DATE(hearing_date) between ? and ?", start_date, end_date).each_with_object([])
+        cf_video_and_co = where("DATE(scheduled_for) between ? and ?", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
       elsif regional_office == HEARING_TYPES[:central]
-        cf_video_and_co = where("hearing_type = ? and DATE(hearing_date) between ? and ?",
+        cf_video_and_co = where("hearing_type = ? and DATE(scheduled_for) between ? and ?",
                                 "C", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
       else
-        cf_video_and_co = where("regional_office = ? and DATE(hearing_date) between ? and ?",
+        cf_video_and_co = where("regional_office = ? and DATE(scheduled_for) between ? and ?",
                                 regional_office, start_date, end_date).each_with_object([])
         video_and_co, travel_board =
           HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
@@ -112,7 +120,7 @@ class HearingDay < ApplicationRecord
       symbol_to_group_by = nil
 
       all_hearings_for_days = if regional_office.nil? || regional_office == "C"
-        symbol_to_group_by = :hearing_date
+        symbol_to_group_by = :scheduled_for
 
         HearingRepository.fetch_co_hearings_for_dates(
           total_video_and_co.map { |hearing| hearing[symbol_to_group_by]}
@@ -125,7 +133,7 @@ class HearingDay < ApplicationRecord
         )
       end
 
-
+      # Group the hearing days with the same keys as the hearings
       grouped_hearing_days = total_video_and_co.group_by do |hearing_day|
         hearing_day[symbol_to_group_by].to_s
       end
@@ -138,7 +146,7 @@ class HearingDay < ApplicationRecord
 
         return nil if scheduled_hearings.length >= total_slots || hearing_day[:lock]
 
-        hearing_day.slice(:id, :hearing_date, :hearing_type, :room).tap do |day|
+        hearing_day.slice(:id, :scheduled_for, :hearing_type, :room).tap do |day|
           day[:hearings] = scheduled_hearings
           day[:total_slots] = total_slots
         end

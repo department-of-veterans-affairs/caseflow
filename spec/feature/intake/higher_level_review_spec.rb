@@ -332,8 +332,7 @@ feature "Higher-Level Review" do
       hash_including(
         veteran_file_number: veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
-        contention_descriptions: ["PTSD denied"],
-        special_issues: [],
+        contentions: [{ description: "PTSD denied" }],
         user: current_user
       )
     )
@@ -342,14 +341,12 @@ feature "Higher-Level Review" do
       hash_including(
         veteran_file_number: veteran_file_number,
         claim_id: nonratings_end_product_establishment.reference_id,
-        contention_descriptions: ["Active Duty Adjustments - Description for Active Duty Adjustments"],
-        special_issues: [],
+        contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments" }],
         user: current_user
       )
     )
 
     rating_request_issue = higher_level_review.request_issues.find_by(
-      description: "PTSD denied",
       contested_issue_description: "PTSD denied"
     )
 
@@ -393,7 +390,6 @@ feature "Higher-Level Review" do
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
-      description: "PTSD denied",
       decision_date: nil,
       rating_issue_associated_at: Time.zone.now
     )
@@ -403,7 +399,6 @@ feature "Higher-Level Review" do
       contested_rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
-      description: "Description for Active Duty Adjustments",
       decision_date: 1.month.ago.to_date
     )
 
@@ -478,8 +473,8 @@ feature "Higher-Level Review" do
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
       veteran_file_number: veteran_file_number,
       claim_id: special_issue_reference_id,
-      contention_descriptions: ["PTSD denied"],
-      special_issues: [{ code: "SSR", narrative: "Same Station Review" }],
+      contentions: [{ description: "PTSD denied",
+                      special_issues: [{ code: "SSR", narrative: "Same Station Review" }] }],
       user: current_user
     )
   end
@@ -552,11 +547,6 @@ feature "Higher-Level Review" do
   end
 
   context "Add / Remove Issues page" do
-    def check_row(label, text)
-      row = find("tr", text: label)
-      expect(row).to have_text(text)
-    end
-
     let(:higher_level_review_reference_id) { "hlr123" }
     let(:supplemental_claim_reference_id) { "sc123" }
     let(:supplemental_claim_contention_reference_id) { 5678 }
@@ -630,8 +620,7 @@ feature "Higher-Level Review" do
         :request_issue,
         end_product_establishment: active_epe,
         contested_rating_issue_reference_id: duplicate_reference_id,
-        contested_issue_description: "Old injury",
-        description: "Old injury"
+        contested_issue_description: "Old injury"
       )
     end
 
@@ -892,7 +881,6 @@ feature "Higher-Level Review" do
                review_request: higher_level_review,
                contested_decision_issue_id: decision_issue.id,
                contested_issue_description: "supplemental claim decision issue",
-               description: "supplemental claim decision issue",
                end_product_establishment_id: end_product_establishment.id,
                notes: "decision issue with note",
                benefit_type: "compensation"
@@ -902,7 +890,6 @@ feature "Higher-Level Review" do
                review_request: higher_level_review,
                contested_rating_issue_reference_id: "xyz123",
                contested_issue_description: "Left knee granted 2",
-               description: "Left knee granted 2",
                end_product_establishment_id: end_product_establishment.id,
                notes: "I am an issue note",
                benefit_type: "compensation"
@@ -910,7 +897,6 @@ feature "Higher-Level Review" do
 
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
-               description: "Really old injury",
                contested_issue_description: "Really old injury",
                end_product_establishment_id: end_product_establishment.id,
                untimely_exemption: false,
@@ -922,7 +908,6 @@ feature "Higher-Level Review" do
         review_request: higher_level_review,
         issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "Description for Active Duty Adjustments",
-        description: "Description for Active Duty Adjustments",
         decision_date: 1.month.ago,
         end_product_establishment_id: non_rating_end_product_establishment.id,
         benefit_type: "compensation"
@@ -934,7 +919,6 @@ feature "Higher-Level Review" do
         review_request: higher_level_review,
         issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "Another Description for Active Duty Adjustments",
-        description: "Another Description for Active Duty Adjustments",
         benefit_type: "compensation"
       )
 
@@ -945,7 +929,6 @@ feature "Higher-Level Review" do
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                unidentified_issue_text: "This is an unidentified issue",
-               description: "This is an unidentified issue",
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id,
                benefit_type: "compensation"
@@ -955,7 +938,6 @@ feature "Higher-Level Review" do
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
-               description: "Non-RAMP Issue before AMA Activation",
                end_product_establishment_id: end_product_establishment.id,
                ineligible_reason: :before_ama,
                benefit_type: "compensation"
@@ -964,7 +946,6 @@ feature "Higher-Level Review" do
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                contested_issue_description: "Issue before AMA Activation from RAMP",
-               description: "Issue before AMA Activation from RAMP",
                ineligible_reason: nil,
                ramp_claim_id: "ramp_claim_id",
                end_product_establishment_id: end_product_establishment.id,
@@ -974,7 +955,6 @@ feature "Higher-Level Review" do
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                nonrating_issue_description: "A nonrating issue before AMA",
-               description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
                end_product_establishment_id: non_rating_end_product_establishment.id,
                benefit_type: "compensation"
@@ -1001,13 +981,17 @@ feature "Higher-Level Review" do
 
       expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
-          contention_descriptions: array_including("Old injury", "Really old injury", "Already reviewed injury")
+          contentions: array_including(
+            { description: "Old injury" },
+            { description: "Really old injury" },
+            description: "Already reviewed injury"
+          )
         )
       )
 
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
-          contention_descriptions: array_including("Left knee granted 2")
+          contentions: array_including(description: "Left knee granted 2")
         )
       )
     end
@@ -1097,7 +1081,6 @@ feature "Higher-Level Review" do
                                     ineligible_due_to: active_nonrating_request_issue.id,
                                     ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
                                     nonrating_issue_description: active_nonrating_request_issue.description,
-                                    description: active_nonrating_request_issue.description,
                                     decision_date: active_nonrating_request_issue.decision_date)).to_not be_nil
       end
     end
@@ -1283,7 +1266,6 @@ feature "Higher-Level Review" do
           )
 
           expect(RequestIssue.find_by(
-                   description: "Left knee granted",
                    contested_issue_description: "Left knee granted",
                    ineligible_reason: :legacy_appeal_not_eligible,
                    vacols_id: "vacols2",
@@ -1333,7 +1315,6 @@ feature "Higher-Level Review" do
           )
 
           expect(RequestIssue.find_by(
-                   description: "Left knee granted",
                    contested_issue_description: "Left knee granted",
                    ineligible_reason: :legacy_issue_not_withdrawn,
                    vacols_id: "vacols1",

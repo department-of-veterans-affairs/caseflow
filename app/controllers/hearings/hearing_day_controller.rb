@@ -95,7 +95,7 @@ class Hearings::HearingDayController < HearingScheduleController
       }
     elsif hearing_day[:hearing_type] == "C"
       {
-        hearings: HearingRepository.fetch_co_hearings_for_date(hearing_day[:hearing_date]),
+        hearings: HearingRepository.fetch_co_hearings_for_date(hearing_day[:scheduled_for]),
         regional_office: "C"
       }
     else
@@ -120,7 +120,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def create_params
     params.permit(:hearing_type,
-                  :hearing_date,
+                  :scheduled_for,
                   :room,
                   :judge_id,
                   :regional_office,
@@ -230,14 +230,14 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def select_co_available_room
-    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date], hearing_type: params[:hearing_type])
+    hearing_count_by_room = HearingDay.where(scheduled_for: params[:scheduled_for], hearing_type: params[:hearing_type])
       .group(:room).count
     room_count = hearing_count_by_room["2"]
     "2" unless !(room_count.nil? || room_count == 0)
   end
 
   def select_video_available_room
-    hearing_count_by_room = HearingDay.where(hearing_date: params[:hearing_date], hearing_type: params[:hearing_type])
+    hearing_count_by_room = HearingDay.where(scheduled_for: params[:scheduled_for], hearing_type: params[:hearing_type])
       .group(:room).count
     available_room = nil
     (1..HearingRooms::ROOMS.size).each do |hearing_room|

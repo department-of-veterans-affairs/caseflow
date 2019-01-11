@@ -441,7 +441,7 @@ ActiveRecord::Schema.define(version: 20190107210543) do
   end
 
   create_table "hearing_days", force: :cascade do |t|
-    t.date "hearing_date", null: false
+    t.date "scheduled_for", null: false
     t.string "hearing_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
@@ -728,12 +728,12 @@ ActiveRecord::Schema.define(version: 20190107210543) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
-    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
+    t.string "ineligible_reason"
     t.string "vacols_id"
     t.integer "vacols_sequence_id"
     t.datetime "created_at"

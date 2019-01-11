@@ -43,7 +43,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     representative_name: :repname,
     staff_id: :mduser,
     room: :room,
-    hearing_date: :hearing_date,
+    scheduled_for: :hearing_date,
     hearing_type: :hearing_type,
     judge_id: :board_member,
     folder_nr: :folder_nr,
