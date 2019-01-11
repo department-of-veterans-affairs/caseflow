@@ -1,5 +1,6 @@
 class RequestIssue < ApplicationRecord
   include Asyncable
+  include HasBusinessLine
 
   belongs_to :review_request, polymorphic: true
   belongs_to :decision_review, polymorphic: true
