@@ -8,9 +8,9 @@ class ColocatedTaskDistributor < RoundRobinTaskDistributor
     open_assignee = options.dig(:appeal)
       &.tasks
       &.where&.not(status: Constants.TASK_STATUSES.completed)
-      &.where(assigned_to_type: "User")
-      &.find_by(assigned_to_id: User.where(css_id: list_of_assignees).map(&:id))
+      &.find_by(assigned_to: User.where(css_id: list_of_assignees))
       &.assigned_to
+
     open_assignee || super()
   end
 end
