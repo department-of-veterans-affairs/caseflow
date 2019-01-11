@@ -155,7 +155,7 @@ class ClaimReview < DecisionReview
 
   private
 
-  def eligible_for_serialized_ratings?
+  def can_contest_rating_issues?
     processed_in_vbms?
   end
 

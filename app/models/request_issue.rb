@@ -28,8 +28,6 @@ class RequestIssue < ApplicationRecord
     legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
   }
 
-  after_initialize :set_default_attributes
-
   # TEMPORARY CODE: used to keep decision_review and review_request in sync
   before_save :copy_review_request_to_decision_review
   before_save :set_contested_rating_issue_profile_date
@@ -142,10 +140,6 @@ class RequestIssue < ApplicationRecord
       }
     end
     # rubocop:enable Metrics/MethodLength
-  end
-
-  def set_default_attributes
-    self.benefit_type ||= "compensation" # must match default value in db
   end
 
   def status_active?

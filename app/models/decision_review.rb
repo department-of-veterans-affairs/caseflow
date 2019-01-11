@@ -58,7 +58,7 @@ class DecisionReview < ApplicationRecord
 
   def serialized_ratings
     return unless receipt_date
-    return unless eligible_for_serialized_ratings?
+    return unless can_contest_rating_issues?
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
@@ -180,7 +180,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def contestable_issues
-    return contestable_issues_from_decision_issues if processed_in_caseflow?
+    return contestable_issues_from_decision_issues unless can_contest_rating_issues?
 
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
   end
@@ -207,7 +207,7 @@ class DecisionReview < ApplicationRecord
 
   private
 
-  def eligible_for_serialized_ratings?
+  def can_contest_rating_issues?
     fail Caseflow::Error::MustImplementInSubclass
   end
 

@@ -109,17 +109,6 @@ class Appeal < DecisionReview
     tasks.map(&:attorney_case_reviews).flatten
   end
 
-  # the processed_in_* logic is per-RequestIssue for Appeals,
-  # so we always say "false" at this level and allow each RequestIssue
-  # to further specify.
-  def processed_in_caseflow?
-    false
-  end
-
-  def processed_in_vbms?
-    false
-  end
-
   def every_request_issue_has_decision?
     eligible_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
   end
@@ -316,7 +305,7 @@ class Appeal < DecisionReview
   end
 
   # we always want to show ratings on intake
-  def eligible_for_serialized_ratings?
+  def can_contest_rating_issues?
     true
   end
 
