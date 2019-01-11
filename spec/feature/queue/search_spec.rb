@@ -47,7 +47,7 @@ RSpec.feature "Search" do
         end
 
         it "does not show the HLR / SCs table" do
-          expect(page).to_not have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+          expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_EMPTY_TEXT)
         end
       end
 
