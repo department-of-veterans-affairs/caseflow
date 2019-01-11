@@ -6,7 +6,7 @@ class Hearing < ApplicationRecord
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   delegate :scheduled_for, to: :hearing_day
-  delegate :hearing_type, to: :hearing_day
+  delegate :request_type, to: :hearing_day
 
   def self.find_hearing_by_uuid_or_vacols_id(id)
     if UUID_REGEX.match?(id)
@@ -31,7 +31,7 @@ class Hearing < ApplicationRecord
   end
 
   def type
-    hearing_type
+    request_type
   end
   #:nocov:
 

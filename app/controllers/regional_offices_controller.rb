@@ -21,7 +21,7 @@ class RegionalOfficesController < ApplicationController
         {
           hearing_id: day[:id],
           scheduled_for: day[:scheduled_for],
-          hearing_type: day[:hearing_type],
+          request_type: day[:request_type],
           room: day[:room],
           total_slots: day[:total_slots]
         }

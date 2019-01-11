@@ -9,7 +9,7 @@ import {
   onViewEndDateChange,
   onReceiveHearingSchedule,
   onSelectedHearingDayChange,
-  selectHearingType,
+  selectRequestType,
   selectVlj,
   selectHearingCoordinator,
   setNotes,
@@ -138,7 +138,7 @@ export class ListScheduleContainer extends React.Component {
       serverError: false,
       noRoomsAvailable: false });
     this.props.onSelectedHearingDayChange('');
-    this.props.selectHearingType('');
+    this.props.selectRequestType('');
     this.props.onRegionalOfficeChange('');
     this.props.selectVlj({ label: '',
       value: '' });
@@ -153,7 +153,7 @@ export class ListScheduleContainer extends React.Component {
       showModalAlert: true });
 
     let data = {
-      hearing_type: this.props.hearingType.value,
+      request_type: this.props.requestType.value,
       scheduled_for: this.props.selectedHearingDay,
       judge_id: this.props.vlj.value,
       bva_poc: this.props.coordinator.label,
@@ -163,7 +163,7 @@ export class ListScheduleContainer extends React.Component {
 
     if (this.props.selectedRegionalOffice &&
         this.props.selectedRegionalOffice.value !== '' &&
-        this.props.hearingType.value !== 'C') {
+        this.props.requestType.value !== 'C') {
       data.regional_office = this.props.selectedRegionalOffice.value;
     }
 
@@ -295,7 +295,7 @@ const mapStateToProps = (state) => ({
   endDate: state.hearingSchedule.viewEndDate,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
   selectedRegionalOffice: state.components.selectedRegionalOffice,
-  hearingType: state.hearingSchedule.hearingType,
+  requestType: state.hearingSchedule.requestType,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   notes: state.hearingSchedule.notes,
@@ -308,7 +308,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onViewEndDateChange,
   onReceiveHearingSchedule,
   onSelectedHearingDayChange,
-  selectHearingType,
+  selectRequestType,
   selectVlj,
   selectHearingCoordinator,
   setNotes,

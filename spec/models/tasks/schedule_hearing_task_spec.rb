@@ -171,7 +171,7 @@ describe ScheduleHearingTask do
   end
 
   describe "A Central Office hearing should be updated with vacols_id and appeal placed in location 36" do
-    let!(:hearing) { FactoryBot.create(:case_hearing, hearing_type: "C", hearing_date: test_hearing_date_vacols) }
+    let!(:hearing) { FactoryBot.create(:case_hearing, request_type: "C", hearing_date: test_hearing_date_vacols) }
     let!(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
     let!(:params) do
       {

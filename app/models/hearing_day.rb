@@ -7,7 +7,7 @@ class HearingDay < ApplicationRecord
   belongs_to :judge, class_name: "User"
   validates :regional_office, absence: true, if: :central_office?
 
-  HEARING_TYPES = {
+  REQUEST_TYPES = {
     video: "V",
     travel: "T",
     central: "C"
@@ -18,7 +18,7 @@ class HearingDay < ApplicationRecord
   # rubocop:enable Style/SymbolProc
 
   def central_office?
-    hearing_type == HEARING_TYPES[:central]
+    request_type == REQUEST_TYPES[:central]
   end
 
   def hearing_date
@@ -26,7 +26,7 @@ class HearingDay < ApplicationRecord
   end
 
   def update_children_records
-    hearings = if hearing_type == HEARING_TYPES[:central]
+    hearings = if request_type == REQUEST_TYPES[:central]
                  HearingRepository.fetch_co_hearings_for_parent(scheduled_for)
                else
                  HearingRepository.fetch_video_hearings_for_parent(id)
@@ -60,7 +60,7 @@ class HearingDay < ApplicationRecord
                       else
                         Time.zone.parse(scheduled_for).to_datetime
                       end
-      comparison_date = (hearing_hash[:hearing_type] == "C") ? CASEFLOW_CO_PARENT_DATE : CASEFLOW_V_PARENT_DATE
+      comparison_date = (hearing_hash[:request_type] == "C") ? CASEFLOW_CO_PARENT_DATE : CASEFLOW_V_PARENT_DATE
       if scheduled_for > comparison_date
         hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
         create(hearing_hash).to_hash
@@ -86,8 +86,8 @@ class HearingDay < ApplicationRecord
       if regional_office.nil?
         cf_video_and_co = where("DATE(scheduled_for) between ? and ?", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
-      elsif regional_office == HEARING_TYPES[:central]
-        cf_video_and_co = where("hearing_type = ? and DATE(scheduled_for) between ? and ?",
+      elsif regional_office == REQUEST_TYPES[:central]
+        cf_video_and_co = where("request_type = ? and DATE(scheduled_for) between ? and ?",
                                 "C", start_date, end_date).each_with_object([])
         video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
       else
@@ -122,7 +122,7 @@ class HearingDay < ApplicationRecord
 
         next unless scheduled_hearings.length < total_slots && !hearing_day[:lock]
 
-        enriched_hearing_days << hearing_day.slice(:id, :scheduled_for, :hearing_type, :room)
+        enriched_hearing_days << hearing_day.slice(:id, :scheduled_for, :request_type, :room)
         enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] = total_slots
         enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = scheduled_hearings
       end
@@ -132,7 +132,7 @@ class HearingDay < ApplicationRecord
     def filter_non_scheduled_hearings(hearings)
       filtered_hearings = []
       hearings.each do |hearing|
-        if hearing.vacols_record.hearing_type == HEARING_TYPES[:central]
+        if hearing.vacols_record.hearing_type == REQUEST_TYPES[:central]
           if !hearing.vacols_record.folder_nr.nil?
             filtered_hearings << hearing
           end
@@ -143,10 +143,10 @@ class HearingDay < ApplicationRecord
       filtered_hearings
     end
 
-    def find_hearing_day(hearing_type, hearing_key)
+    def find_hearing_day(request_type, hearing_key)
       find(hearing_key)
     rescue ActiveRecord::RecordNotFound
-      HearingDayRepository.find_hearing_day(hearing_type, hearing_key)
+      HearingDayRepository.find_hearing_day(request_type, hearing_key)
     end
 
     private
