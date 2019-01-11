@@ -39,7 +39,7 @@ class HearingRepository
 
     def fetch_co_hearings_for_dates(parent_hearing_dates)
       # Get hash of hearings grouped by their hearing day date string. Note we do
-      # hearing_date.to_time.to_date.to_s to avoid timezone issues and make it consistent
+      # hearing_date.utc.to_date.to_s to avoid timezone issues and make it consistent
       # with how the date is stored in the HearingDay table.
       VACOLS::CaseHearing.co_hearings_for_master_records(parent_hearing_dates)
         .group_by { |record| record.hearing_date.utc.to_date.to_s }.transform_values do |value|
