@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190110220936) do
+ActiveRecord::Schema.define(version: 20190111000717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -442,7 +442,7 @@ ActiveRecord::Schema.define(version: 20190110220936) do
 
   create_table "hearing_days", force: :cascade do |t|
     t.date "scheduled_for", null: false
-    t.string "hearing_type", null: false
+    t.string "request_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
     t.string "room", null: false
