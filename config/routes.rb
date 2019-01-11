@@ -207,6 +207,7 @@ Rails.application.routes.draw do
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
+  patch '/case_reviews/:id', to: 'case_reviews#update'
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"
