@@ -105,6 +105,10 @@ class HearingDay < ApplicationRecord
       regional_office_keys = total_video_and_co.map { |hearing_day| hearing_day[:regional_office] }
       regional_office_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
 
+      # We need to associate all of the hearing days from postgres with all of the
+      # hearings from VACOLS. For efficiency we make one call to VACOLS and then
+      # create a hash of the results using either their ids or hearing dates as keys
+      # depending on if it's a video or CO hearing.
       symbol_to_group_by = nil
 
       all_hearings_for_days = if regional_office.nil? || regional_office == "C"
@@ -121,12 +125,13 @@ class HearingDay < ApplicationRecord
         )
       end
 
-      grouped_all_hearings_for_days = total_video_and_co.group_by do |hearing_day|
+
+      grouped_hearing_days = total_video_and_co.group_by do |hearing_day|
         hearing_day[symbol_to_group_by].to_s
       end
 
-      grouped_all_hearings_for_days.keys.map do |key|
-        hearing_day = grouped_all_hearings_for_days[key][0]
+      grouped_hearing_days.keys.map do |key|
+        hearing_day = grouped_hearing_days[key][0]
 
         scheduled_hearings = filter_non_scheduled_hearings(all_hearings_for_days[key] || [])
         total_slots = HearingDayRepository.fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)

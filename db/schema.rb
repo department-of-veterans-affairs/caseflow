@@ -113,6 +113,9 @@ ActiveRecord::Schema.define(version: 20190107210543) do
     t.string "facility_id"
     t.string "name"
     t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "zip_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
@@ -737,11 +740,11 @@ ActiveRecord::Schema.define(version: 20190107210543) do
     t.string "benefit_type", null: false
     t.integer "contested_decision_issue_id"
     t.string "veteran_participant_id"
-    t.string "contested_rating_issue_diagnostic_code"
     t.string "decision_review_type"
     t.bigint "decision_review_id"
     t.string "contested_rating_issue_reference_id"
     t.string "contested_rating_issue_profile_date"
+    t.string "contested_rating_issue_diagnostic_code"
     t.string "contested_issue_description"
     t.string "nonrating_issue_description"
     t.string "unidentified_issue_text"

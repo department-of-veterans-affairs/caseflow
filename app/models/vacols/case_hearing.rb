@@ -68,8 +68,8 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_schedule_days.find_by(hearing_pkseq: hearing_pkseq).includes(brieff: [:representative])
     end
 
-    def video_hearings_for_master_records(parent_hearings_pkseq)
-      select_hearings.where(vdkey: parent_hearings_pkseq)
+    def video_hearings_for_master_records(parent_hearings_pkseqs)
+      select_hearings.where(vdkey: parent_hearings_pkseqs)
     end
 
     def co_hearings_for_master_records(parent_hearing_dates)
