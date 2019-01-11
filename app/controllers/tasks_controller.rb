@@ -55,11 +55,11 @@ class TasksController < ApplicationController
 
     tasks = task_class.create_many_from_params(create_params, current_user)
 
-    tasks.each { |task| return invalid_record_error(task) unless task.valid? }
-
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }
+  rescue ActiveRecord::RecordInvalid => error
+    invalid_record_error(error.record)
   end
 
   # To update attorney task
