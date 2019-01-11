@@ -3,11 +3,11 @@ class Hearings::MasterRecord
   include AppealConcern
   include HearingConcern
 
-  attr_accessor :date, :type, :regional_office_key, :master_record, :user_id
+  attr_accessor :scheduled_for, :type, :regional_office_key, :master_record, :user_id
 
   def to_hash
     {
-      date: date,
+      scheduled_for: scheduled_for,
       request_type: request_type,
       master_record: master_record,
       regional_office_name: regional_office_name

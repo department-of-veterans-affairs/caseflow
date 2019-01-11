@@ -168,7 +168,7 @@ export default class ReviewAssignments extends React.Component {
     }
 
     const hearingAssignmentRows = _.map(this.props.schedulePeriod.hearingDays, (hearingDay) => ({
-      date: formatDateStr(hearingDay.hearingDate),
+      date: formatDateStr(hearingDay.scheduledFor),
       type: HEARING_TYPE_LABELS[hearingDay.hearingType],
       regionalOffice: hearingDay.regionalOffice,
       room: hearingDay.room,

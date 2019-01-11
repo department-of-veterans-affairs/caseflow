@@ -16,10 +16,17 @@ import {
 } from '../constants/AppConstants';
 import CaseListSearch from './CaseListSearch';
 import CaseListTable from './CaseListTable';
+import OtherReviewsTable from './OtherReviewsTable';
 import { fullWidth } from './constants';
 
-import { onReceiveAppealsUsingVeteranId } from './CaseList/CaseListActions';
-import { appealsByCaseflowVeteranId } from './selectors';
+import {
+  onReceiveAppealsUsingVeteranId,
+  onReceiveClaimReviewsUsingVeteranId
+} from './CaseList/CaseListActions';
+import {
+  appealsByCaseflowVeteranId,
+  claimReviewsByCaseflowVeteranId
+} from './selectors';
 
 import COPY from '../../COPY.json';
 
@@ -43,6 +50,7 @@ class CaseListView extends React.PureComponent {
         const returnedObject = JSON.parse(response.text);
 
         this.props.onReceiveAppealsUsingVeteranId(returnedObject.appeals);
+        this.props.onReceiveClaimReviewsUsingVeteranId(returnedObject.claim_reviews);
       });
   };
 
@@ -73,7 +81,12 @@ class CaseListView extends React.PureComponent {
       {this.searchPageHeading()}
       <br /><br />
       <h2 className="cf-push-left" {...fullWidth}>{heading}</h2>
+
+      <h3 className="cf-push-left" {...fullWidth}>{COPY.CASE_LIST_TABLE_TITLE}</h3>
       <CaseListTable appeals={this.props.appeals} />
+
+      <h3 className="cf-push-left" {...fullWidth}>{COPY.OTHER_REVIEWS_TABLE_TITLE}</h3>
+      <OtherReviewsTable reviews={this.props.claimReviews} />
     </div>;
   }
 
@@ -106,12 +119,16 @@ CaseListView.defaultProps = {
   caseflowVeteranId: ''
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  appeals: appealsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId })
-});
+const mapStateToProps = (state, ownProps) => {
+  return {
+    appeals: appealsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId }),
+    claimReviews: claimReviewsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId })
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveAppealsUsingVeteranId
+  onReceiveAppealsUsingVeteranId,
+  onReceiveClaimReviewsUsingVeteranId
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseListView);
