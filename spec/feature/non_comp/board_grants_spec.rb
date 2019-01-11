@@ -11,7 +11,7 @@ feature "NonComp Board Grant Task Page" do
   end
 
   def submit_form
-    find('label[for=isEffectuated]').click
+    find("label[for=isEffectuated]").click
     click_on "Complete"
   end
 
@@ -22,24 +22,23 @@ feature "NonComp Board Grant Task Page" do
 
   let(:appeal) do
     create(:appeal,
-      veteran: veteran
-    )
+           veteran: veteran)
   end
 
-  let(:dispositions) { ["allowed", "allowed", "denied"]}
+  let(:dispositions) { %w[allowed allowed denied] }
 
   let!(:request_issues) do
     3.times do |index|
       request_issue = create(:request_issue,
-             :nonrating,
-             veteran_participant_id: veteran.participant_id,
-             review_request: appeal)
+                             :nonrating,
+                             veteran_participant_id: veteran.participant_id,
+                             review_request: appeal)
 
-      request_issue.create_decision_issue_from_params({
+      request_issue.create_decision_issue_from_params(
         disposition: dispositions[index],
         description: "disposition #{index}",
         decision_date: prior_date
-      })
+      )
     end
   end
 

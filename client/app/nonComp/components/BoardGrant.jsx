@@ -1,12 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import Button from '../../components/Button';
 import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import Checkbox from '../../components/Checkbox';
 import { formatDate } from '../../util/DateUtil';
-import { formatRequestIssuesWithDecisionIssues} from '../util';
+import { formatRequestIssuesWithDecisionIssues } from '../util';
 
 class BoardGrantIssue extends React.PureComponent {
   render = () => {
@@ -45,7 +44,7 @@ class BoardGrantUnconnected extends React.PureComponent {
     };
   }
 
-  handleEffectuatedClick = (value) => {
+  handleEffectuatedClick = () => {
     this.setState({ isEffectuated: !this.state.isEffectuated });
   }
 
@@ -59,11 +58,12 @@ class BoardGrantUnconnected extends React.PureComponent {
       decisionIssuesStatus,
       businessLineUrl
     } = this.props;
-    console.log("appeal.decisionIssues", appeal.decisionIssues);
 
-    const requestIssuesWithDecisionIssues = formatRequestIssuesWithDecisionIssues(appeal.requestIssues, appeal.decisionIssues).filter((requestIssue) => 
-      requestIssue.decisionIssue.disposition === 'allowed'
-    );
+    const requestIssuesWithDecisionIssues = formatRequestIssuesWithDecisionIssues(
+      appeal.requestIssues, appeal.decisionIssues).
+      filter((requestIssue) =>
+        requestIssue.decisionIssue.disposition === 'allowed'
+      );
 
     return <div>
       <div className="cf-decisions">
@@ -75,7 +75,7 @@ class BoardGrantUnconnected extends React.PureComponent {
         <div className="cf-decision-list">
           {
             requestIssuesWithDecisionIssues.map((issue, index) => {
-              return <BoardGrantIssue key={`issue-${index}`} issue={issue} index={index}/>;
+              return <BoardGrantIssue key={`issue-${index}`} issue={issue} index={index} />;
             })
           }
         </div>
@@ -87,7 +87,7 @@ class BoardGrantUnconnected extends React.PureComponent {
             onChange={this.handleEffectuatedClick}
             value={this.state.isEffectuated}
             name="isEffectuated"
-            label="I certify these benefits have been effectuated."/>
+            label="I certify these benefits have been effectuated." />
         </div>
       </div>
       <div className="cf-txt-r">

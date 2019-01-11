@@ -4,9 +4,9 @@ import { bindActionCreators } from 'redux';
 
 import BoardGrant from '../components/BoardGrant';
 import Disposition from '../components/Disposition';
-import { DISPOSITION_OPTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
+import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import { formatDate } from '../../util/DateUtil';
-import { longFormNameFromKey } from '../util'; 
+import { longFormNameFromKey } from '../util';
 import { completeTask, taskUpdateDefaultPage } from '../actions/task';
 import { ErrorAlert } from '../components/Alerts';
 
@@ -26,7 +26,6 @@ class TaskPageUnconnected extends React.PureComponent {
     const {
       appeal,
       businessLine,
-      businessLineUrl,
       task,
       decisionIssuesStatus
     } = this.props;
@@ -38,10 +37,11 @@ class TaskPageUnconnected extends React.PureComponent {
     }
 
     let detailedTaskView = null;
-    if (task.type === "Board Grant") {
-      detailedTaskView = <BoardGrant handleSave={this.handleSave}/>;
+
+    if (task.type === 'Board Grant') {
+      detailedTaskView = <BoardGrant handleSave={this.handleSave} />;
     } else {
-      detailedTaskView = <Disposition handleSave={this.handleSave}/>;
+      detailedTaskView = <Disposition handleSave={this.handleSave} />;
     }
 
     return <div>
@@ -87,7 +87,7 @@ class TaskPageUnconnected extends React.PureComponent {
   }
 }
 
-const TaskPage= connect(
+const TaskPage = connect(
   (state) => ({
     appeal: state.appeal,
     businessLine: state.businessLine,

@@ -1,7 +1,6 @@
 import { formatTasks } from '../util';
 import { ACTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import { update } from '../../util/ReducerUtil';
-import _ from 'lodash';
 
 export const mapDataToInitialState = function(props = {}) {
   const { serverNonComp } = props;

@@ -86,16 +86,19 @@ describe DecisionReviewsController, type: :controller do
     end
 
     context "with board grant effectuation task" do
-      let(:task) { create(:board_grant_effectuation_task, assigned_to: non_comp_org).becomes(BoardGrantEffectuationTask) }
+      let(:task) do
+        create(:board_grant_effectuation_task, assigned_to: non_comp_org)
+          .becomes(BoardGrantEffectuationTask)
+      end
 
       it "marks task as completed" do
-        put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id}
+        put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
 
         expect(response.status).to eq(200)
         response_data = JSON.parse(response.body)
         expect(response_data["in_progress_tasks"]).to eq([])
         expect(response_data["completed_tasks"].length).to eq(1)
-
+        task.reload
         expect(task.status).to eq("completed")
         expect(task.completed_at).to eq(Time.zone.now)
       end

@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { formatDate } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
@@ -131,9 +130,7 @@ class NonCompDispositions extends React.PureComponent {
   render = () => {
     const {
       appeal,
-      businessLine,
       businessLineUrl,
-      task,
       decisionIssuesStatus
     } = this.props;
 
@@ -189,9 +186,7 @@ class NonCompDispositions extends React.PureComponent {
 const Dispositions = connect(
   (state) => ({
     appeal: state.appeal,
-    businessLine: state.businessLine,
     businessLineUrl: state.businessLineUrl,
-    task: state.task,
     decisionIssuesStatus: state.decisionIssuesStatus
   })
 )(NonCompDispositions);

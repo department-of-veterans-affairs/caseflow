@@ -22,7 +22,7 @@ class DecisionReviewsController < ApplicationController
     if task
       if complete_task!
         business_line.tasks.reload
-        render json: { in_progress_tasks: in_progress_tasks, completed_tasks: completed_tasks}, status: :ok
+        render json: { in_progress_tasks: in_progress_tasks, completed_tasks: completed_tasks }, status: :ok
       else
         render json: { error_code: task.error_code }, status: :bad_request
       end

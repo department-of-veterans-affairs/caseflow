@@ -20,8 +20,8 @@ export const completeTask = (taskId, businessLine, data, claimant) => (dispatch)
           payload: {
             claimant,
             completedTaskId: taskId,
-            inProgressTasks: formatTasks(responseObject["in_progress_tasks"]),
-            completedTasks: formatTasks(responseObject["completed_tasks"]),
+            inProgressTasks: formatTasks(responseObject.in_progress_tasks),
+            completedTasks: formatTasks(responseObject.completed_tasks)
           },
           meta: { analytics }
         });
