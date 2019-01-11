@@ -74,12 +74,8 @@ class ColocatedTask < Task
 
   private
 
-  def create_and_auto_assign_child_task
-    dup.tap do |child_task|
-      child_task.assigned_to = assigned_to.next_assignee(self.class, appeal)
-      child_task.parent = self
-      child_task.save!
-    end
+  def create_and_auto_assign_child_task(_options = {})
+    super(appeal: appeal)
   end
 
   def update_location_in_vacols

@@ -330,7 +330,7 @@ describe Task do
       class AutoAssignOrg < Organization
         attr_accessor :assignee
 
-        def next_assignee(_task_class)
+        def next_assignee(_options = {})
           assignee
         end
       end

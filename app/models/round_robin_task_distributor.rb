@@ -30,7 +30,7 @@ class RoundRobinTaskDistributor
     list_of_assignees[next_assignee_index]
   end
 
-  def next_assignee
+  def next_assignee(_options = {})
     User.find_by_css_id_or_create_with_default_station_id(next_assignee_css_id)
   end
 end

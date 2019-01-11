@@ -33,7 +33,11 @@ describe ColocatedTaskDistributor do
 
       before do
         iterations.times do
-          FactoryBot.create(:task, appeal: appeal, assigned_to: colocated_task_distributor.next_assignee(Task, appeal))
+          FactoryBot.create(
+            :task,
+            appeal: appeal,
+            assigned_to: colocated_task_distributor.next_assignee(appeal: appeal)
+          )
         end
       end
 
