@@ -27,6 +27,10 @@ export default class ErrorAlert extends React.PureComponent {
           </Fragment>
         )
       },
+      claimant_with_fiduciary: {
+        title: 'VBMS does not currently support claim establishment of claimants with a fiduciary.',
+        body: 'A workaround is to remove the fiduciary in VBMS, retry this intake, then readd the fiduciary.'
+      },
       default: {
         title: 'Something went wrong',
         body: 'Please try again. If the problem persists, please contact Caseflow support.'

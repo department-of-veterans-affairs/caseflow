@@ -40,12 +40,23 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
+    fail VBMS::HTTPError.new(nil, '<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"><env:Header/><env:Body><env:Fault><faultcode>env:Server</faultcode><faultstring>Claim creation failed. System error. GUID: 2dd5a89d-f325-4e54-8d67-8f63d6d4baa2</faultstring><detail><ns4:serviceException xmlns:ns4="http://vbms.vba.va.gov/external/ClaimService/v4" xmlns:ns3="http://vbms.vba.va.gov/cdm/participant/v4" xmlns:ns1="http://vbms.vba.va.gov/cdm/common/v4" xmlns:ns0="http://vbms.vba.va.gov/cdm/claim/v4"><ns4:exception>VBMS does not currently support claim establishment of claimants with a fiduciary. Please establish this claim in an appropriate source system.</ns4:exception><ns4:message>Claim creation failed. System error.</ns4:message></ns4:serviceException></detail></env:Fault></env:Body></env:Envelope>')
+
     render json: intake.ui_hash(ama_enabled?)
   rescue Caseflow::Error::DuplicateEp => error
     render json: {
       error_code: error.error_code,
       error_data: intake.detail.end_product_base_modifier
     }, status: :bad_request
+  rescue VBMS::HTTPError => error
+    Raven.capture_exception(error)
+    message = error.try(:body).to_s
+    if message.match?("does not currently support claim establishment of claimants with a fiduciary")
+      render json: {
+        error_code: :claimant_with_fiduciary,
+        error_data: nil
+      }, status: :bad_request
+    end
   end
 
   def error
