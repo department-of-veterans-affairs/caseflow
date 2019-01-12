@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
 import Checkbox from './Checkbox';
-// import update from 'immutability-helper';
 
 const listStyling = css({
   paddingBottom: 0,
