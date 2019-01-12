@@ -176,10 +176,10 @@ class HearingDay < ApplicationRecord
         hearing_day[symbol_to_group_by].to_s
       end
 
-      grouped_hearing_days.merge(all_hearings_for_days) do |_key, day, hearings|
+      grouped_hearing_days.map do |key, day|
         # There should only be one day, so we take the first value in our day array
-        { hearing_day: day[0], hearings: hearings }
-      end.values
+        { hearing_day: day[0], hearings: all_hearings_for_days[key] }
+      end
     end
 
     def enrich_with_judge_names(hearing_days)
