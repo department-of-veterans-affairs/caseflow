@@ -233,16 +233,22 @@ describe HearingDay do
     end
 
     context "When there are multiple hearings and multiple days" do
-      let!(:second_hearing_today) do
-        create(:case_hearing, vdkey: hearing.vdkey, folder_nr: create(
+      let(:appeal_today) do
+        create(
           :legacy_appeal, :with_veteran, vacols_case: create(:case)
-        ).vacols_id)
+        )
+      end
+      let!(:second_hearing_today) do
+        create(:case_hearing, vdkey: hearing.vdkey, folder_nr: appeal_today.vacols_id)
+      end
+      let(:appeal_tomorrow) do
+        create(
+          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        )
       end
       let!(:hearing_tomorrow) do
         create(
-          :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: create(
-            :legacy_appeal, :with_veteran, vacols_case: create(:case)
-          ).vacols_id
+          :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: appeal_tomorrow.vacols_id
         )
       end
 
@@ -252,9 +258,8 @@ describe HearingDay do
         expect(subject[1][:request_type]).to eq "V"
         expect(subject[1][:hearings][0][:appeal_id]).to eq appeal.id
         expect(subject[1][:hearings][0][:hearing_disp]).to eq nil
-        expect(subject[1][:hearings][0][:appeal_id]).to eq appeal.id
-        expect(subject[1][:hearings][0][:hearing_disp]).to eq nil
-        expect(subject[0][:hearings][0][:appeal_id].to_s).to eq hearing_tomorrow.folder_nr
+        expect(subject[1][:hearings][1][:appeal_id]).to eq appeal_today.id
+        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal_tomorrow.id
       end
     end
   end
