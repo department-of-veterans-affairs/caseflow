@@ -27,7 +27,7 @@ const createFilterDropdown = (values) => {
   });
 };
 
-export const decisionReviewTypeColumn = (onFilter, isFilterOpen, onFilterToggle) => {
+export const decisionReviewTypeColumn = (onFilter, isFilterOpen, onFilterToggle, checkSelectedValue) => {
   return {
     header: 'Type',
     align: 'left',
@@ -41,6 +41,8 @@ export const decisionReviewTypeColumn = (onFilter, isFilterOpen, onFilterToggle)
     isDropdownFilterOpen: isFilterOpen,
     toggleDropdownFilterVisiblity: onFilterToggle,
     setSelectedValue: onFilter,
+    useCheckbox: true,
+    checkSelectedValue: checkSelectedValue,
     // order determines where this column displays
     // make it -1 so this column is always last
     order: -1
