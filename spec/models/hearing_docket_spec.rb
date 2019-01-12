@@ -15,7 +15,7 @@ describe HearingDocket do
   let(:docket) do
     HearingDocket.new(
       scheduled_for: 7.days.from_now,
-      type: :video,
+      request_type: "V",
       regional_office_names: [hearing.regional_office_name],
       regional_office_key: "RO31",
       hearings: [
@@ -55,7 +55,7 @@ describe HearingDocket do
       expect(subject[:scheduled_for]).to eq(docket.scheduled_for)
       expect(subject[:master_record]).to eq(docket.master_record)
       expect(subject[:hearings_count]).to eq(docket.hearings_count)
-      expect(subject[:type]).to eq(:video)
+      expect(subject[:readable_request_type]).to eq("Video")
       expect(subject[:regional_office_names]).to eq(docket.regional_office_names)
       expect(subject[:slots]).to eq 9
     end

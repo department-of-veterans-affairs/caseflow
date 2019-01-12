@@ -135,45 +135,40 @@ export class DailyDocket extends React.PureComponent {
   });
 
  getAppellantInformation = (hearing) => {
-   let appellantDisplay;
-
-   if (_.isEmpty(hearing.appellant_mi_formatted) ||
-     hearing.appellant_mi_formatted === hearing.veteran_mi_formatted) {
-     appellantDisplay = <div><b>{hearing.veteran_mi_formatted}</b><br />
+   if (hearing.appellant_first_name && hearing.appellant_last_name) {
+     return <div>
+      <span><b>{`${hearing.appellant_first_name} ${hearing.appellant_last_name}`}</b><br />
+         {`${hearing.veteran_first_name} ${hearing.veteran_last_name}`} (Veteran)</span><br />
        <ViewableItemLink
-         boldCondition={!hearing.viewed_by_current_user}
-         onOpen={this.setHearingViewed(hearing.id)}
-         linkProps={{
-           to: `/hearings/${hearing.external_id}/worksheet`,
-           target: '_blank'
-         }}>
-         {hearing.vbms_id}
+           boldCondition={!hearing.viewed_by_current_user}
+           onOpen={this.setHearingViewed(hearing.id)}
+           linkProps={{
+               to: `/hearings/${hearing.external_id}/worksheet`,
+               target: '_blank'
+           }}>
+           {hearing.vbms_id}
        </ViewableItemLink>
        <span {...issueCountStyling}>
-         {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
-       </span>
+       {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
+     </span>
      </div>;
    } else {
-     appellantDisplay = <div>
-       <span><b>{hearing.appellant_mi_formatted}</b><br />
-         {hearing.veteran_mi_formatted} (Veteran)</span><br />
+     return <div><b>{`${hearing.veteran_first_name} ${hearing.veteran_last_name}`}</b><br />
        <ViewableItemLink
-         boldCondition={!hearing.viewed_by_current_user}
-         onOpen={this.setHearingViewed(hearing.id)}
-         linkProps={{
-           to: `/hearings/${hearing.external_id}/worksheet`,
-           target: '_blank'
-         }}>
-         {hearing.vbms_id}
+           boldCondition={!hearing.viewed_by_current_user}
+           onOpen={this.setHearingViewed(hearing.id)}
+           linkProps={{
+               to: `/hearings/${hearing.external_id}/worksheet`,
+               target: '_blank'
+           }}>
+           {hearing.vbms_id}
        </ViewableItemLink>
        <span {...issueCountStyling}>
-         {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
-       </span>
+       {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
+     </span>
      </div>;
    }
-
-   return appellantDisplay;
- }
+ };
 
 getRoTime = (hearing) => {
   if (hearing.request_type === 'Central') {
@@ -345,7 +340,7 @@ getAodDropdown = (hearing) => {
           </div>
           <div className="meta">
             <div>{moment(docket[0].scheduled_for).format('ddd l')}</div>
-            <div>Hearing Type: {docket[0].request_type}</div>
+            <div>Hearing Type: {docket[0].readable_request_type}</div>
           </div>
         </div>
 

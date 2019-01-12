@@ -107,8 +107,7 @@ RSpec.feature "Case details" do
         page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
         hearing = appeal.hearings.first
-        hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
-        expect(page).to have_content("Type: #{hearing_preference}")
+        expect(page).to have_content("Type: #{hearing.readable_request_type}")
 
         expect(page).to have_content("Disposition: Cancelled")
 

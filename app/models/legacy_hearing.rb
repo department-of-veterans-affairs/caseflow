@@ -39,7 +39,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def location
-    (type == :central) ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
+    (request_type == "C") ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
   end
 
   def closed?

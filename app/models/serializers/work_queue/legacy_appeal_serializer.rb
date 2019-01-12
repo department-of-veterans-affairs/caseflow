@@ -22,7 +22,7 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
         # we should check `hearing.hearing_views.map(&:user_id).include? judge.css_id`
         viewed_by_judge: !hearing.hearing_views.empty?,
         date: hearing.scheduled_for,
-        type: hearing.type,
+        type: hearing.readable_request_type,
         external_id: hearing.external_id,
         disposition: hearing.disposition
       }
