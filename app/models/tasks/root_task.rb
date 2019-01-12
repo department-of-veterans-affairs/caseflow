@@ -28,19 +28,50 @@ class RootTask < GenericTask
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
-      create_vso_subtask!(appeal, root_task)
+      if FeatureToggle.enabled?(:ama_auto_case_distribution)
+        create_subtasks!(appeal, root_task)
+      else
+        create_vso_subtask!(appeal, root_task)
+      end
+    end
+
+    def create_vso_subtask!(appeal, parent)
+      appeal.vsos.map do |vso_organization|
+        InformalHearingPresentationTask.create!(
+          appeal: appeal,
+          parent: parent,
+          assigned_to: vso_organization
+        )
+      end
     end
 
     private
 
-    def create_vso_subtask!(appeal, parent)
-      appeal.vsos.each do |vso_organization|
-        InformalHearingPresentationTask.create(
-          appeal: appeal,
-          parent: parent,
-          status: Constants.TASK_STATUSES.in_progress,
-          assigned_to: vso_organization
-        )
+    def create_evidence_submission_task!(appeal, parent)
+      EvidenceSubmissionWindowTask.create!(
+        appeal: appeal,
+        parent: parent,
+        assigned_to: MailTeam.singleton
+      )
+    end
+
+    def create_distribution_task!(appeal, parent)
+      DistributionTask.create!(
+        appeal: appeal,
+        parent: parent,
+        assigned_to: Bva.singleton
+      )
+    end
+
+    def create_subtasks!(appeal, parent)
+      transaction do
+        distribution_task = create_distribution_task!(appeal, parent)
+
+        if appeal.evidence_submission_docket?
+          create_evidence_submission_task!(appeal, distribution_task)
+        else
+          create_vso_subtask!(appeal, distribution_task)
+        end
       end
     end
   end

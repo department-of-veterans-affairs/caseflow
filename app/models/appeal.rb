@@ -6,6 +6,7 @@ class Appeal < DecisionReview
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
+  has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
 
@@ -46,8 +47,15 @@ class Appeal < DecisionReview
     )
   end
 
-  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at,
+  delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :new_documents_for_user, :manifest_vva_fetched_at, to: :document_fetcher
+
+  # Number of documents stored locally via nightly RetrieveDocumentsForReaderJob.
+  # Fall back to count from VBMS if no local documents are found.
+  def number_of_documents_from_caseflow
+    count = Document.where(file_number: veteran_file_number).size
+    (count != 0) ? count : number_of_documents
+  end
 
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
@@ -176,6 +184,7 @@ class Appeal < DecisionReview
            :zip,
            :gender,
            :date_of_birth,
+           :age,
            :country, to: :veteran, prefix: true
 
   def regional_office
@@ -290,6 +299,13 @@ class Appeal < DecisionReview
 
   def root_task
     RootTask.find_by(appeal_id: id)
+  end
+
+  def create_remand_supplemental_claims!
+    decision_issues.remanded.each(&:find_or_create_remand_supplemental_claim!)
+    remand_supplemental_claims.each(&:create_remand_issues!)
+    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
+    remand_supplemental_claims.each(&:start_processing_job!)
   end
 
   private

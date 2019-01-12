@@ -88,12 +88,12 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def fetch_hearings(hearing_day, id)
-    if hearing_day[:hearing_type] == "V"
+    if hearing_day[:request_type] == "V"
       {
         hearings: HearingRepository.fetch_video_hearings_for_parent(id),
         regional_office: hearing_day[:regional_office]
       }
-    elsif hearing_day[:hearing_type] == "C"
+    elsif hearing_day[:request_type] == "C"
       {
         hearings: HearingRepository.fetch_co_hearings_for_date(hearing_day[:scheduled_for]),
         regional_office: "C"
@@ -110,7 +110,7 @@ class Hearings::HearingDayController < HearingScheduleController
     params.permit(:judge_id,
                   :regional_office,
                   :hearing_key,
-                  :hearing_type,
+                  :request_type,
                   :room,
                   :bva_poc,
                   :notes,
@@ -119,7 +119,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def create_params
-    params.permit(:hearing_type,
+    params.permit(:request_type,
                   :scheduled_for,
                   :room,
                   :judge_id,
@@ -173,7 +173,7 @@ class Hearings::HearingDayController < HearingScheduleController
                        HearingDayMapper.label_for_room(v)
                      elsif k == "regional_office" && !v.nil?
                        HearingDayMapper.city_for_regional_office(v)
-                     elsif k == "hearing_type"
+                     elsif k == "request_type"
                        HearingDayMapper.label_for_type(v)
                      else
                        v
@@ -214,7 +214,7 @@ class Hearings::HearingDayController < HearingScheduleController
     return true unless params.key?(:assign_room)
 
     # Coming from Add Hearing Day modal and room required
-    available_room = if params[:hearing_type] == HearingDay::HEARING_TYPES[:central]
+    available_room = if params[:request_type] == HearingDay::REQUEST_TYPES[:central]
                        select_co_available_room
                      else
                        select_video_available_room
@@ -230,14 +230,14 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def select_co_available_room
-    hearing_count_by_room = HearingDay.where(scheduled_for: params[:scheduled_for], hearing_type: params[:hearing_type])
+    hearing_count_by_room = HearingDay.where(scheduled_for: params[:scheduled_for], request_type: params[:request_type])
       .group(:room).count
     room_count = hearing_count_by_room["2"]
     "2" unless !(room_count.nil? || room_count == 0)
   end
 
   def select_video_available_room
-    hearing_count_by_room = HearingDay.where(scheduled_for: params[:scheduled_for], hearing_type: params[:hearing_type])
+    hearing_count_by_room = HearingDay.where(scheduled_for: params[:scheduled_for], request_type: params[:request_type])
       .group(:room).count
     available_room = nil
     (1..HearingRooms::ROOMS.size).each do |hearing_room|

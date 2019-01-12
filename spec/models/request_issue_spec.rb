@@ -12,6 +12,7 @@ describe RequestIssue do
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
   let(:contested_decision_issue_id) { nil }
+  let(:benefit_type) { "compensation" }
   let(:same_office) { false }
   let(:vacols_id) { nil }
   let(:vacols_sequence_id) { nil }
@@ -61,6 +62,7 @@ describe RequestIssue do
       end_product_establishment: end_product_establishment,
       contention_reference_id: contention_reference_id,
       contested_decision_issue_id: contested_decision_issue_id,
+      benefit_type: benefit_type,
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id
     )
@@ -76,7 +78,8 @@ describe RequestIssue do
       decision_date: 1.day.ago,
       decision_sync_processed_at: decision_sync_processed_at,
       end_product_establishment: end_product_establishment,
-      contention_reference_id: contention_reference_id
+      contention_reference_id: contention_reference_id,
+      benefit_type: benefit_type
     )
   end
 
@@ -160,25 +163,142 @@ describe RequestIssue do
     end
   end
 
-  context "#special_issues" do
-    subject { rating_request_issue.special_issues }
+  context "#end_product_code" do
+    subject { request_issue.end_product_code }
 
-    context "when the HLR has same office selected" do
-      let(:same_office) { true }
+    context "when on original decision review" do
+      context "when benefit type is pension" do
+        let(:benefit_type) { "pension" }
 
-      it "includes the same office special issue" do
-        expect(subject).to eq([{ code: "SSR", narrative: "Same Station Review" }])
+        context "when decision review is a higher level review" do
+          let(:review) { create(:higher_level_review) }
+
+          context "when rating" do
+            let(:request_issue) { rating_request_issue }
+            it { is_expected.to eq "030HLRRPMC" }
+          end
+
+          context "when nonrating" do
+            let(:request_issue) { nonrating_request_issue }
+            it { is_expected.to eq "030HLRNRPMC" }
+          end
+        end
+
+        context "when decision review is a supplemental claim" do
+          let(:review) { create(:supplemental_claim, decision_review_remanded: nil) }
+
+          context "when rating" do
+            let(:request_issue) { rating_request_issue }
+            it { is_expected.to eq "040SCRPMC" }
+          end
+
+          context "when nonrating" do
+            let(:request_issue) { nonrating_request_issue }
+            it { is_expected.to eq "040SCNRPMC" }
+          end
+        end
       end
 
-      context "when there is a vacols issue opted in" do
-        let(:vacols_id) { "1" }
-        let(:vacols_sequence_id) { 1 }
+      context "when benefit type is compensation" do
+        let(:benefit_type) { "compensation" }
 
-        it "includes the same office special issue" do
-          expect(subject).to eq([
-                                  { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O },
-                                  { code: "SSR", narrative: "Same Station Review" }
-                                ])
+        context "when decision review is a higher level review" do
+          let(:review) { create(:higher_level_review) }
+
+          context "when rating" do
+            let(:request_issue) { rating_request_issue }
+            it { is_expected.to eq "030HLRR" }
+          end
+
+          context "when nonrating" do
+            let(:request_issue) { nonrating_request_issue }
+            it { is_expected.to eq "030HLRNR" }
+          end
+        end
+
+        context "when decision review is a supplemental claim" do
+          let(:review) { create(:supplemental_claim, decision_review_remanded: nil) }
+
+          context "when rating" do
+            let(:request_issue) { rating_request_issue }
+            it { is_expected.to eq "040SCR" }
+          end
+
+          context "when nonrating" do
+            let(:request_issue) { nonrating_request_issue }
+            it { is_expected.to eq "040SCNR" }
+          end
+        end
+      end
+    end
+
+    context "when on remand (dta) decision review" do
+      let(:decision_review_remanded) { nil }
+      let(:review) { create(:supplemental_claim, decision_review_remanded: decision_review_remanded) }
+
+      context "when benefit type is pension" do
+        let(:benefit_type) { "pension" }
+
+        context "when decision review remanded is an Appeal" do
+          let(:decision_review_remanded) { create(:appeal) }
+          let(:request_issue) { rating_request_issue }
+
+          context "when imo" do
+            let(:contested_decision_issue_id) { create(:decision_issue, :imo).id }
+            it { is_expected.to eq "040BDEIMOPMC" }
+          end
+
+          context "when not imo" do
+            let(:contested_decision_issue_id) { create(:decision_issue).id }
+            it { is_expected.to eq "040BDEPMC" }
+          end
+        end
+
+        context "when decision review remanded is a claim review" do
+          let(:decision_review_remanded) { create(:higher_level_review) }
+
+          context "when rating" do
+            let(:request_issue) { rating_request_issue }
+            it { is_expected.to eq "040HDERPMC" }
+          end
+
+          context "when nonrating" do
+            let(:request_issue) { nonrating_request_issue }
+            it { is_expected.to eq "040HDENRPMC" }
+          end
+        end
+      end
+
+      context "when benefit type is compensation" do
+        let(:benefit_type) { "compensation" }
+
+        context "when decision review remanded is an Appeal" do
+          let(:decision_review_remanded) { create(:appeal) }
+          let(:request_issue) { rating_request_issue }
+
+          context "when imo" do
+            let(:contested_decision_issue_id) { create(:decision_issue, :imo).id }
+            it { is_expected.to eq "040BDEIMO" }
+          end
+
+          context "when not imo" do
+            let(:contested_decision_issue_id) { create(:decision_issue).id }
+            it { is_expected.to eq "040BDE" }
+          end
+        end
+
+        context "when decision review remanded is a claim review" do
+          let(:decision_review_remanded) { create(:higher_level_review) }
+
+          context "when rating" do
+            let(:request_issue) { rating_request_issue }
+            it { is_expected.to eq "040HDER" }
+          end
+
+          context "when nonrating" do
+            let(:request_issue) { nonrating_request_issue }
+            it { is_expected.to eq "040HDENR" }
+          end
         end
       end
     end
@@ -765,7 +885,7 @@ describe RequestIssue do
     end
 
     context "when it hasn't been processed" do
-      let(:ep_code) { HigherLevelReview::END_PRODUCT_CODES[:rating] }
+      let(:ep_code) { "030HLRR" }
       let(:end_product_establishment) do
         create(:end_product_establishment,
                :cleared,
@@ -816,6 +936,7 @@ describe RequestIssue do
               expect(rating_request_issue.decision_issues.first).to have_attributes(
                 participant_id: veteran.participant_id,
                 disposition: "allowed",
+                description: "allowed: #{request_issue.description}",
                 decision_review_type: "HigherLevelReview",
                 decision_review_id: review.id,
                 benefit_type: "compensation",
@@ -839,7 +960,7 @@ describe RequestIssue do
       context "with nonrating ep" do
         let(:request_issue) { nonrating_request_issue }
 
-        let(:ep_code) { HigherLevelReview::END_PRODUCT_CODES[:nonrating] }
+        let(:ep_code) { "030HLRNR" }
 
         let!(:contention) do
           Generators::Contention.build(

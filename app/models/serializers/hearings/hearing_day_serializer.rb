@@ -1,6 +1,6 @@
 class Hearings::HearingDaySerializer < ActiveModel::Serializer
   attributes :hearing_pkseq,
-             :hearing_type,
+             :request_type,
              :scheduled_for,
              :room,
              :folder_nr,
@@ -18,7 +18,7 @@ class Hearings::HearingDaySerializer < ActiveModel::Serializer
       elsif k.to_s == "regional_office" && !v.nil?
         ro = v[6, v.length]
         result[k] = HearingDayMapper.city_for_regional_office(ro)
-      elsif k.to_s == "hearing_type"
+      elsif k.to_s == "request_type"
         result[k] = HearingDayMapper.label_for_type(v)
       elsif k.to_s == "hearing_date"
         result[k] = VacolsHelper.normalize_vacols_datetime(v)

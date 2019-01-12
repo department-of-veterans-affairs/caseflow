@@ -302,7 +302,7 @@ class AppealRepository
 
   # rubocop:disable Metrics/AbcSize
   def self.appeals_ready_for_hearing_schedule(regional_office)
-    if regional_office == HearingDay::HEARING_TYPES[:central]
+    if regional_office == HearingDay::REQUEST_TYPES[:central]
       return appeals_ready_for_co_hearing_schedule
     end
 
