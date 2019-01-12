@@ -246,7 +246,7 @@ feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "042",
         end_product_label: "Supplemental Claim Rating",
-        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:rating],
+        end_product_code: "040SCR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -275,7 +275,7 @@ feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Nonrating",
-        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:nonrating],
+        end_product_code: "040SCNR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -283,6 +283,7 @@ feature "Supplemental Claim Intake" do
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
     )
+    
     nonratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
       epe.code == SupplementalClaim::END_PRODUCT_CODES[:nonrating]
     end

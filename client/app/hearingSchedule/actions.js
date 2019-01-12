@@ -236,10 +236,10 @@ export const toggleVljFilterVisibility = () => ({
   type: ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN
 });
 
-export const selectHearingType = (hearingType) => ({
-  type: ACTIONS.SELECT_HEARING_TYPE,
+export const selectRequestType = (requestType) => ({
+  type: ACTIONS.SELECT_REQUEST_TYPE,
   payload: {
-    hearingType
+    requestType
   }
 });
 

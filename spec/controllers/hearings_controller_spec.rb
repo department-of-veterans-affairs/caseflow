@@ -28,7 +28,7 @@ RSpec.describe HearingsController, type: :controller do
       let(:scheduled_for) { Date.new(2019, 4, 2) }
       let(:hearing_day) do
         HearingDay.create_hearing_day(
-          hearing_type: "C",
+          request_type: "C",
           scheduled_for: scheduled_for,
           room: "123",
           judge_id: "456"
