@@ -288,6 +288,12 @@ class RequestIssue < ApplicationRecord
     contested_rating_issue&.benefit_type
   end
 
+  def guess_benefit_type
+    return "unidentified" if is_unidentified
+
+    "unknown"
+  end
+
   def previous_request_issue
     contested_decision_issue&.request_issues&.first
   end
