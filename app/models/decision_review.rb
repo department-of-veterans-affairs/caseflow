@@ -56,13 +56,9 @@ class DecisionReview < ApplicationRecord
     end
   end
 
-  def caseflow_only?
-    !ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
-  end
-
   def serialized_ratings
     return unless receipt_date
-    return if caseflow_only?
+    return unless can_contest_rating_issues?
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
@@ -184,7 +180,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def contestable_issues
-    return contestable_issues_from_decision_issues if caseflow_only?
+    return contestable_issues_from_decision_issues unless can_contest_rating_issues?
 
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
   end
@@ -210,6 +206,10 @@ class DecisionReview < ApplicationRecord
   end
 
   private
+
+  def can_contest_rating_issues?
+    fail Caseflow::Error::MustImplementInSubclass
+  end
 
   def cached_rating_issues
     cached_serialized_ratings.inject([]) do |result, rating_hash|
@@ -237,9 +237,8 @@ class DecisionReview < ApplicationRecord
     return [] unless receipt_date
 
     DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+      .select(&:finalized?)
       .select do |issue|
-        next if issue.decision_review.is_a?(Appeal) && !issue.decision_review.outcoded?
-
         issue.approx_decision_date && issue.approx_decision_date < receipt_date
       end
   end

@@ -41,6 +41,7 @@ class UntimelyExemptionModal extends React.Component {
         isRating: false,
         untimelyExemption: this.state.untimelyExemption,
         untimelyExemptionNotes: this.state.untimelyExemptionNotes,
+        benefitType: currentIssue.benefitType,
         category: currentIssue.category,
         description: currentIssue.description,
         decisionDate: currentIssue.decisionDate,
