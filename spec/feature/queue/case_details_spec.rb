@@ -83,8 +83,7 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content("Select an action")
 
-        hearing_preference = hearing.type.to_s.split("_").map(&:capitalize).join(" ")
-        expect(page).to have_content("Type: #{hearing_preference}")
+        expect(page).to have_content("Type: #{hearing.readable_request_type}")
         expect(page).to have_content("Date: #{hearing.scheduled_for.strftime('%-m/%-d/%y')}")
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
       end

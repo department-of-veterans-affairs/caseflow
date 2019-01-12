@@ -4,8 +4,8 @@ class HearingDocket
   include ActiveModel::Serializers::JSON
 
   attr_writer :slots
-  attr_accessor :scheduled_for, :readable_request_type, :request_type, :regional_office_names, :hearings, :user, :regional_office_key
-  attr_accessor :master_record, :hearings_count
+  attr_accessor :scheduled_for, :readable_request_type, :request_type, :regional_office_names, :hearings, :user
+  attr_accessor :master_record, :hearings_count, :regional_office_key
 
   SLOTS_BY_TIMEZONE = {
     "America/New_York" => 11,

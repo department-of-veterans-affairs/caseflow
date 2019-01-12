@@ -137,37 +137,38 @@ export class DailyDocket extends React.PureComponent {
  getAppellantInformation = (hearing) => {
    if (hearing.appellant_first_name && hearing.appellant_last_name) {
      return <div>
-      <span><b>{`${hearing.appellant_first_name} ${hearing.appellant_last_name}`}</b><br />
+       <span><b>{`${hearing.appellant_first_name} ${hearing.appellant_last_name}`}</b><br />
          {`${hearing.veteran_first_name} ${hearing.veteran_last_name}`} (Veteran)</span><br />
        <ViewableItemLink
-           boldCondition={!hearing.viewed_by_current_user}
-           onOpen={this.setHearingViewed(hearing.id)}
-           linkProps={{
-               to: `/hearings/${hearing.external_id}/worksheet`,
-               target: '_blank'
-           }}>
-           {hearing.vbms_id}
+         boldCondition={!hearing.viewed_by_current_user}
+         onOpen={this.setHearingViewed(hearing.id)}
+         linkProps={{
+           to: `/hearings/${hearing.external_id}/worksheet`,
+           target: '_blank'
+         }}>
+         {hearing.vbms_id}
        </ViewableItemLink>
        <span {...issueCountStyling}>
-       {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
-     </span>
-     </div>;
-   } else {
-     return <div><b>{`${hearing.veteran_first_name} ${hearing.veteran_last_name}`}</b><br />
-       <ViewableItemLink
-           boldCondition={!hearing.viewed_by_current_user}
-           onOpen={this.setHearingViewed(hearing.id)}
-           linkProps={{
-               to: `/hearings/${hearing.external_id}/worksheet`,
-               target: '_blank'
-           }}>
-           {hearing.vbms_id}
-       </ViewableItemLink>
-       <span {...issueCountStyling}>
-       {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
-     </span>
+         {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
+       </span>
      </div>;
    }
+
+   return <div><b>{`${hearing.veteran_first_name} ${hearing.veteran_last_name}`}</b><br />
+     <ViewableItemLink
+       boldCondition={!hearing.viewed_by_current_user}
+       onOpen={this.setHearingViewed(hearing.id)}
+       linkProps={{
+         to: `/hearings/${hearing.external_id}/worksheet`,
+         target: '_blank'
+       }}>
+       {hearing.vbms_id}
+     </ViewableItemLink>
+     <span {...issueCountStyling}>
+       {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
+     </span>
+   </div>;
+
  };
 
 getRoTime = (hearing) => {

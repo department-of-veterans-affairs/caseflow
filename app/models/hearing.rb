@@ -56,6 +56,10 @@ class Hearing < ApplicationRecord
   def type
     request_type
   end
+
+  def current_issue_count
+    1
+  end
   #:nocov:
 
   def external_id
@@ -69,7 +73,8 @@ class Hearing < ApplicationRecord
     end
   end
 
-  def to_hash_for_worksheet(_current_user_id)
+  # rubocop:disable Metrics/MethodLength
+  def to_hash(_current_user_id)
     serializable_hash(
       methods: [
         :external_id,
@@ -89,8 +94,14 @@ class Hearing < ApplicationRecord
         :veteran_file_number,
         :docket_number,
         :docket_name,
-        :military_service
+        :military_service,
+        :current_issue_count
       ]
     )
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def to_hash_for_worksheet(current_user_id)
+    to_hash(current_user_id)
   end
 end
