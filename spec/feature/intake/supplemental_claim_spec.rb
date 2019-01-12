@@ -256,7 +256,7 @@ feature "Supplemental Claim Intake" do
     )
 
     ratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
-      epe.code == SupplementalClaim::END_PRODUCT_CODES[:rating]
+      epe.code == "040SCR"
     end
 
     expect(ratings_end_product_establishment).to have_attributes(
@@ -285,7 +285,7 @@ feature "Supplemental Claim Intake" do
     )
 
     nonratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
-      epe.code == SupplementalClaim::END_PRODUCT_CODES[:nonrating]
+      epe.code == "040SCNR"
     end
 
     expect(nonratings_end_product_establishment).to have_attributes(
