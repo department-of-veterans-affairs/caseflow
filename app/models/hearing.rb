@@ -21,12 +21,22 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :external_id, to: :appeal, prefix: true
 
+  HEARING_TYPES = {
+    V: "Video",
+    T: "Travel",
+    C: "Central"
+  }.freeze
+
   def self.find_hearing_by_uuid_or_vacols_id(id)
     if UUID_REGEX.match?(id)
       find_by_uuid!(id)
     else
       LegacyHearing.find_by!(vacols_id: id)
     end
+  end
+
+  def readable_request_type
+    HEARING_TYPES[request_type.to_sym]
   end
 
   def master_record
@@ -70,7 +80,7 @@ class Hearing < ApplicationRecord
         :appellant_city,
         :appellant_state,
         :regional_office_name,
-        :request_type,
+        :readable_request_type,
         :judge,
         :scheduled_for,
         :veteran_age,

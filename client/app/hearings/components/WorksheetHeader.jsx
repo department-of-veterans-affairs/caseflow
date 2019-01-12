@@ -117,7 +117,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>HEARING TYPE</h4>
-          <div className="cf-hearings-headers">{worksheet.request_type}</div>
+          <div className="cf-hearings-headers">{worksheet.readable_request_type}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>REGIONAL OFFICE</h4>

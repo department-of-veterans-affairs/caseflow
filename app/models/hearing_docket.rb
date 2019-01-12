@@ -4,7 +4,7 @@ class HearingDocket
   include ActiveModel::Serializers::JSON
 
   attr_writer :slots
-  attr_accessor :scheduled_for, :type, :regional_office_names, :hearings, :user, :regional_office_key
+  attr_accessor :scheduled_for, :readable_request_type, :request_type, :regional_office_names, :hearings, :user, :regional_office_key
   attr_accessor :master_record, :hearings_count
 
   SLOTS_BY_TIMEZONE = {
@@ -39,7 +39,7 @@ class HearingDocket
   def attributes
     {
       scheduled_for: scheduled_for,
-      type: type,
+      readable_request_type: readable_request_type,
       master_record: master_record,
       hearings_count: hearings_count
     }
@@ -49,7 +49,7 @@ class HearingDocket
     def from_hearings(hearings)
       new(
         scheduled_for: hearings.min_by(&:scheduled_for).scheduled_for,
-        type: hearings.first.type,
+        readable_request_type: hearings.first.readable_request_type,
         hearings: hearings,
         regional_office_names: hearings.map(&:regional_office_name).uniq,
         regional_office_key: hearings.first.regional_office_key,

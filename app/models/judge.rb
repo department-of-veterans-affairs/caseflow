@@ -59,7 +59,7 @@ class Judge
       record = ro_staff_hash[docket.regional_office_key]
       [date, (if record
                 HearingDayRepository.slots_based_on_type(staff: record,
-                                                         type: docket.type,
+                                                         type: docket.request_type,
                                                          date: docket.scheduled_for)
               end)]
     end.to_h

@@ -1,9 +1,12 @@
 class Hearings::MasterRecord
   include ActiveModel::Model
   include AppealConcern
-  include HearingConcern
 
-  attr_accessor :scheduled_for, :type, :regional_office_key, :master_record, :user_id
+  attr_accessor :scheduled_for, :request_type, :regional_office_key, :master_record, :user_id
+
+  def readable_request_type
+    "Travel"
+  end
 
   def to_hash
     {
