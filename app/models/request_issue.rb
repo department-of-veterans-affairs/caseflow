@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
   include Asyncable
 
@@ -10,7 +11,7 @@ class RequestIssue < ApplicationRecord
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   has_one :legacy_issue_optin
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
-  belongs_to :contested_decision_issue, class_name: "DecisionIssue", foreign_key: "contested_decision_issue_id"
+  belongs_to :contested_decision_issue, class_name: "DecisionIssue"
 
   # enum is symbol, but validates requires a string
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
@@ -39,6 +40,53 @@ class RequestIssue < ApplicationRecord
   end
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
+
+  END_PRODUCT_CODES = {
+    original: {
+      compensation: {
+        supplemental_claim: {
+          rating: "040SCR",
+          nonrating: "040SCNR"
+        },
+        higher_level_review: {
+          rating: "030HLRR",
+          nonrating: "030HLRNR"
+        }
+      },
+      pension: {
+        supplemental_claim: {
+          rating: "040SCRPMC",
+          nonrating: "040SCNRPMC"
+        },
+        higher_level_review: {
+          rating: "030HLRRPMC",
+          nonrating: "030HLRNRPMC"
+        }
+      }
+    },
+    dta: {
+      compensation: {
+        appeal: {
+          imo: "040BDEIMO",
+          not_imo: "040BDE"
+        },
+        claim_review: {
+          rating: "040HDER",
+          nonrating: "040HDENR"
+        }
+      },
+      pension: {
+        appeal: {
+          imo: "040BDEIMOPMC",
+          not_imo: "040BDEPMC"
+        },
+        claim_review: {
+          rating: "040HDERPMC",
+          nonrating: "040HDENRPMC"
+        }
+      }
+    }
+  }.freeze
 
   class << self
     def submitted_at_column
@@ -138,6 +186,10 @@ class RequestIssue < ApplicationRecord
       }
     end
     # rubocop:enable Metrics/MethodLength
+  end
+
+  def end_product_code
+    remanded? ? dta_end_product_code : original_end_product_code
   end
 
   def status_active?
@@ -468,6 +520,35 @@ class RequestIssue < ApplicationRecord
     add_duplicate_issue_error(self.class.find_active_by_contested_decision_id(contested_decision_issue_id))
   end
 
+  def original_end_product_code
+    choose_original_end_product_code(END_PRODUCT_CODES[:original][temp_find_benefit_type.to_sym])
+  end
+
+  # TODO: use request issue benefit type once it's populated for request issues on build
+  def temp_find_benefit_type
+    benefit_type || review_request.benefit_type
+  end
+
+  def choose_original_end_product_code(end_product_codes)
+    end_product_codes[review_request_type.underscore.to_sym][(rating? || is_unidentified?) ? :rating : :nonrating]
+  end
+
+  def dta_end_product_code
+    choose_dta_end_product_code(END_PRODUCT_CODES[:dta][temp_find_benefit_type.to_sym])
+  end
+
+  def choose_dta_end_product_code(end_product_codes)
+    if review_request.decision_review_remanded.is_a?(Appeal)
+      end_product_codes[:appeal][contested_decision_issue.imo? ? :imo : :not_imo]
+    else
+      end_product_codes[:claim_review][rating? ? :rating : :nonrating]
+    end
+  end
+
+  def remanded?
+    review_request.try(:decision_review_remanded?)
+  end
+
   def add_duplicate_issue_error(existing_request_issue)
     if existing_request_issue && existing_request_issue.review_request != review_request
       self.ineligible_reason = :duplicate_of_rating_issue_in_active_review
@@ -502,3 +583,4 @@ class RequestIssue < ApplicationRecord
     self.decision_review = review_request
   end
 end
+# rubocop:enable Metrics/ClassLength

@@ -823,12 +823,14 @@ ActiveRecord::Schema.define(version: 20190111000717) do
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
-    t.boolean "is_dta_error"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
+    t.string "decision_review_remanded_type"
+    t.bigint "decision_review_remanded_id"
+    t.index ["decision_review_remanded_type", "decision_review_remanded_id"], name: "index_decision_issues_on_decision_review_remanded"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
