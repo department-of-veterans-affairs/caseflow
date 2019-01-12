@@ -136,7 +136,7 @@ feature "Supplemental Claim Edit issues" do
         issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
         contention_reference_id: "1234",
-        benefit_type: "compensation",
+        benefit_type: benefit_type,
         decision_date: 1.month.ago
       )
     end
@@ -207,7 +207,7 @@ feature "Supplemental Claim Edit issues" do
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
         review_request: supplemental_claim,
-        benefit_type: "compensation",
+        benefit_type: benefit_type,
         contested_issue_description: "PTSD denied"
       )
     end

@@ -42,7 +42,7 @@ describe DecisionIssue do
         it "sets description" do
           subject
 
-          expect(decision_issue).to have_attributes(description: "test disposition: req desc")
+          expect(decision_issue).to have_attributes(description: "allowed: req desc")
         end
       end
     end
