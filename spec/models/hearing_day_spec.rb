@@ -249,7 +249,7 @@ describe HearingDay do
       it "returns hearings are mapped to days" do
         expect(subject.size).to eq 2
         expect(subject[1][:hearings].size).to eq 2
-        expect(subject[1][:hearing_type]).to eq "V"
+        expect(subject[1][:request_type]).to eq "V"
         expect(subject[1][:hearings][0][:appeal_id]).to eq appeal.id
         expect(subject[1][:hearings][0][:hearing_disp]).to eq nil
         expect(subject[1][:hearings][0][:appeal_id]).to eq appeal.id

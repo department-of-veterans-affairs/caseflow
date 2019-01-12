@@ -12,7 +12,10 @@ class HearingDay < ApplicationRecord
     travel: "T",
     central: "C"
   }.freeze
-  after_update(&:update_children_records)
+
+  # rubocop:disable Style/SymbolProc
+  after_update { |hearing_day| hearing_day.update_children_records }
+  # rubocop:enable Style/SymbolProc
 
   def central_office?
     request_type == REQUEST_TYPES[:central]
@@ -23,7 +26,7 @@ class HearingDay < ApplicationRecord
   end
 
   def update_children_records
-    hearings = if request_type == HEARING_TYPES[:central]
+    hearings = if request_type == REQUEST_TYPES[:central]
                  HearingRepository.fetch_co_hearings_for_date(scheduled_for)
                else
                  HearingRepository.fetch_video_hearings_for_parent(id)
