@@ -810,7 +810,7 @@ describe RequestIssue do
               )
             end
 
-            it "creates decision issues based on contention disposition", focus: true do
+            it "creates decision issues based on contention disposition" do
               subject
               expect(rating_request_issue.decision_issues.count).to eq(1)
               expect(rating_request_issue.decision_issues.first).to have_attributes(
