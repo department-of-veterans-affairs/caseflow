@@ -95,7 +95,7 @@ class Hearings::HearingDayController < HearingScheduleController
       }
     elsif hearing_day[:request_type] == "C"
       {
-        hearings: HearingRepository.fetch_co_hearings_for_parent(hearing_day[:scheduled_for]),
+        hearings: HearingRepository.fetch_co_hearings_for_date(hearing_day[:scheduled_for]),
         regional_office: "C"
       }
     else

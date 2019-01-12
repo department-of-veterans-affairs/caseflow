@@ -217,18 +217,49 @@ describe HearingDay do
       create(:case_hearing, :disposition_postponed, folder_nr: appeal2.vacols_id, vdkey: parent_hearing.hearing_pkseq)
     end
 
-    context "get video hearings neither postponed or cancelled" do
-      subject do
-        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
-                                                     hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
-      end
+    subject do
+      HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
+                                                   hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
+    end
 
+    context "get video hearings neither postponed or cancelled" do
       it "returns nested hash structure" do
         expect(subject.size).to eq 1
         expect(subject[0][:hearings].size).to eq 1
         expect(subject[0][:request_type]).to eq "V"
         expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
         expect(subject[0][:hearings][0][:hearing_disp]).to eq nil
+      end
+    end
+
+    context "When there are multiple hearings and multiple days" do
+      let(:appeal_today) do
+        create(
+          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        )
+      end
+      let!(:second_hearing_today) do
+        create(:case_hearing, vdkey: hearing.vdkey, folder_nr: appeal_today.vacols_id)
+      end
+      let(:appeal_tomorrow) do
+        create(
+          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        )
+      end
+      let!(:hearing_tomorrow) do
+        create(
+          :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: appeal_tomorrow.vacols_id
+        )
+      end
+
+      it "returns hearings are mapped to days" do
+        expect(subject.size).to eq 2
+        expect(subject[1][:hearings].size).to eq 2
+        expect(subject[1][:request_type]).to eq "V"
+        expect(subject[1][:hearings][0][:appeal_id]).to eq appeal.id
+        expect(subject[1][:hearings][0][:hearing_disp]).to eq nil
+        expect(subject[1][:hearings][1][:appeal_id]).to eq appeal_today.id
+        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal_tomorrow.id
       end
     end
   end
