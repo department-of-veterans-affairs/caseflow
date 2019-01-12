@@ -67,10 +67,7 @@ class WorksheetHeader extends React.PureComponent {
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
 
   render() {
-    const {
-      appellant,
-      worksheet
-    } = this.props;
+    const { worksheet } = this.props;
 
     let olderVeteran = worksheet.veteran_age > 74;
 
@@ -90,6 +87,15 @@ class WorksheetHeader extends React.PureComponent {
 
     let negativeDispositionOptions = ['no_show', 'postponed', 'cancelled'];
 
+    const getAppellantName = () => {
+      if (worksheet.appellant_first_name && worksheet.appellant_last_name) {
+        return `${worksheet.appellant_last_name}, ${worksheet.appellant_first_name}`;
+      }
+
+      return `${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`;
+
+    };
+
     const negativeDispositions = negativeDispositionOptions.includes(worksheet.disposition);
 
     const dispositionClassNames = classNames({ 'cf-red-text': negativeDispositions });
@@ -103,22 +109,22 @@ class WorksheetHeader extends React.PureComponent {
     return <div>
       <div className="cf-hearings-worksheet-data">
         <div className="title">
-          <h1>{worksheet.veteran_mi_formatted}'s Hearing Worksheet</h1>
+          <h1>{`${worksheet.veteran_first_name} ${worksheet.veteran_last_name}`}'s Hearing Worksheet</h1>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>VLJ</h5>
+          <h4>VLJ</h4>
           <div className="cf-hearings-headers">{worksheet.judge ? worksheet.judge.full_name : ''}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>HEARING TYPE</h5>
+          <h4>HEARING TYPE</h4>
           <div className="cf-hearings-headers">{worksheet.request_type}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>REGIONAL OFFICE</h5>
+          <h4>REGIONAL OFFICE</h4>
           <div className="cf-hearings-headers">{worksheet.regional_office_name}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>DATE</h5>
+          <h4>DATE</h4>
           <div className="cf-hearings-headers">{moment(worksheet.scheduled_for).format('ddd l')}</div>
         </div>
         {worksheet.scheduled_for && new Date(worksheet.scheduled_for) < new Date() &&
@@ -134,12 +140,14 @@ class WorksheetHeader extends React.PureComponent {
       <div className="cf-hearings-worksheet-data">
         <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>VETERAN NAME</h5>
-          <div className="cf-hearings-headers"><b>{worksheet.veteran_mi_formatted}</b></div>
+          <h4>VETERAN NAME</h4>
+          <div className="cf-hearings-headers"><b>
+            {`${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`}
+          </b></div>
         </div>
 
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>VETERAN ID</h5>
+          <h4>VETERAN ID</h4>
           {!this.props.print &&
           <div {...copyButtonStyling}>
             <Tooltip text="Click to copy to clipboard">
@@ -161,32 +169,31 @@ class WorksheetHeader extends React.PureComponent {
           }
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>DOCKET</h5>
+          <h4>DOCKET</h4>
           <div>
             <DocketTypeBadge name={worksheet.docket_name} number={worksheet.docket_number} />
             {worksheet.docket_number}
           </div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>AGE</h5>
+          <h4>AGE</h4>
           <div className={classNames('cf-hearings-headers', veteranClassNames)}>{worksheet.veteran_age}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>GENDER</h5>
+          <h4>GENDER</h4>
           <div className="cf-hearings-headers">{getVeteranGender(worksheet.veteran_gender)}</div>
         </div>
-        <div className="cf-hearings-worksheet-data-cell" />
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>APPELLANT NAME</h5>
-          <div className="cf-hearings-headers">{appellant}</div>
+          <h4>APPELLANT NAME</h4>
+          <div className="cf-hearings-headers">{getAppellantName()}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>CITY/STATE</h5>
+          <h4>CITY/STATE</h4>
           <div className="cf-hearings-headers">{worksheet.appellant_city && worksheet.appellant_state ?
             `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>REPRESENTATIVE</h5>
+          <h4>REPRESENTATIVE</h4>
           <div className="cf-hearings-headers">{worksheet.representative}</div>
         </div>
       </div>

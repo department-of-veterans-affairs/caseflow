@@ -187,6 +187,9 @@ class Appeal < DecisionReview
            :age,
            :country, to: :veteran, prefix: true
 
+  delegate :city,
+           :state, to: :appellant, prefix: true
+
   def regional_office
     nil
   end

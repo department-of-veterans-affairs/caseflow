@@ -165,11 +165,10 @@ class LegacyHearing < ApplicationRecord
         :regional_office_name,
         :regional_office_timezone,
         :venue,
-        :veteran_name,
-        :veteran_mi_formatted,
-        :appellant_last_first_mi,
-        :appellant_mi_formatted,
-        :veteran_fi_last_formatted,
+        :veteran_first_name,
+        :veteran_last_name,
+        :appellant_first_name,
+        :appellant_last_name,
         :vbms_id,
         :current_issue_count,
         :prepped,
@@ -181,7 +180,7 @@ class LegacyHearing < ApplicationRecord
         :appellant_state,
         :appellant_zip,
         :readable_location,
-        :appeal_vacols_id,
+        :appeal_external_id,
         :external_id
       ],
       except: [:military_service, :vacols_id]
@@ -209,14 +208,9 @@ class LegacyHearing < ApplicationRecord
       methods: [:appeal_id,
                 :judge,
                 :summary,
-                :appeal_external_id,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
-                :appellant_city,
-                :appellant_state,
                 :military_service,
-                :appellant_mi_formatted,
-                :veteran_fi_last_formatted,
                 :veteran_file_number]
     ).merge(
       to_hash(current_user_id)

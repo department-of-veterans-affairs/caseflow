@@ -8,7 +8,12 @@ class Hearing < ApplicationRecord
 
   delegate :scheduled_for, to: :hearing_day
   delegate :request_type, to: :hearing_day
-  delegate :veteran_name, to: :appeal
+  delegate :veteran_first_name, to: :appeal
+  delegate :veteran_last_name, to: :appeal
+  delegate :appellant_first_name, to: :appeal
+  delegate :appellant_last_name, to: :appeal
+  delegate :appellant_city, to: :appeal
+  delegate :appellant_state, to: :appeal
   delegate :veteran_age, to: :appeal
   delegate :veteran_gender, to: :appeal
   delegate :veteran_file_number, to: :appeal
@@ -47,11 +52,23 @@ class Hearing < ApplicationRecord
     uuid
   end
 
+  def military_service
+    super || begin
+      update(military_service: appeal.veteran.periods_of_service.join("\n")) if persisted? && appeal.veteran
+      super
+    end
+  end
+
   def to_hash_for_worksheet(_current_user_id)
     serializable_hash(
       methods: [
         :external_id,
-        :veteran_name,
+        :veteran_first_name,
+        :veteran_last_name,
+        :appellant_first_name,
+        :appellant_last_name,
+        :appellant_city,
+        :appellant_state,
         :regional_office_name,
         :request_type,
         :judge,
@@ -61,7 +78,8 @@ class Hearing < ApplicationRecord
         :appeal_external_id,
         :veteran_file_number,
         :docket_number,
-        :docket_name
+        :docket_name,
+        :military_service
       ]
     )
   end
