@@ -46,10 +46,6 @@ class ClaimReview < DecisionReview
     "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
-  def issue_code(*)
-    fail Caseflow::Error::MustImplementInSubclass
-  end
-
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
@@ -68,10 +64,8 @@ class ClaimReview < DecisionReview
     request_issues.reload
   end
 
-  def create_decision_review_task!
-    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
-
-    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
+  def create_decision_review_task_if_required!
+    create_decision_review_task! if caseflow_only?
   end
 
   def business_line
@@ -114,16 +108,6 @@ class ClaimReview < DecisionReview
     end_product_establishments.map(&:modifier).reject(&:nil?)
   end
 
-  def rating_end_product_establishment
-    @rating_end_product_establishment ||= end_product_establishments.find_by(
-      code: self.class::END_PRODUCT_CODES[:rating]
-    )
-  end
-
-  def end_product_description
-    rating_end_product_establishment&.description
-  end
-
   def end_product_base_modifier
     valid_modifiers.first
   end
@@ -162,6 +146,12 @@ class ClaimReview < DecisionReview
 
   private
 
+  def create_decision_review_task!
+    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+
+    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
+  end
+
   def informal_conference?
     false
   end
@@ -171,8 +161,9 @@ class ClaimReview < DecisionReview
   end
 
   def end_product_establishment_for_issue(issue)
-    ep_code = issue_code(rating: (issue.rating? || issue.is_unidentified?))
-    end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
+    end_product_establishments.find_by(
+      code: issue.end_product_code
+    ) || new_end_product_establishment(issue.end_product_code)
   end
 
   def matching_request_issue(contention_id)

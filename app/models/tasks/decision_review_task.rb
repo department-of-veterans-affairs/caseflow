@@ -13,7 +13,7 @@ class DecisionReviewTask < GenericTask
     serializer_class.new(self).as_json
   end
 
-  def complete!(decision_issue_params, decision_date)
+  def complete_with_payload!(decision_issue_params, decision_date)
     return false unless validate(decision_issue_params)
 
     transaction do

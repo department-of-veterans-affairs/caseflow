@@ -110,7 +110,7 @@ describe EndProductEstablishment do
             predischarge: false,
             claim_type: "Claim",
             end_product_modifier: "031",
-            end_product_code: HigherLevelReview::END_PRODUCT_CODES[:rating],
+            end_product_code: "030HLRR",
             end_product_label: "Higher-Level Review Rating",
             station_of_jurisdiction: "397",
             date: 2.days.ago.to_date,
@@ -138,7 +138,7 @@ describe EndProductEstablishment do
               predischarge: false,
               claim_type: "Claim",
               end_product_modifier: "032",
-              end_product_code: HigherLevelReview::END_PRODUCT_CODES[:rating],
+              end_product_code: "030HLRR",
               end_product_label: "Higher-Level Review Rating",
               station_of_jurisdiction: "397",
               date: 2.days.ago.to_date,
@@ -194,7 +194,7 @@ describe EndProductEstablishment do
             date: 2.days.ago.to_date,
             end_product_modifier: "030",
             end_product_label: "Higher-Level Review Rating",
-            end_product_code: HigherLevelReview::END_PRODUCT_CODES[:rating],
+            end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false
           },
@@ -705,7 +705,7 @@ describe EndProductEstablishment do
           subject
 
           expect(SupplementalClaim.find_by(
-                   is_dta_error: true,
+                   decision_review_remanded: source,
                    veteran_file_number: source.veteran_file_number
                  )).to_not be_nil
         end
@@ -716,7 +716,7 @@ describe EndProductEstablishment do
 
         it "does nothing" do
           subject
-          expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
+          expect(SupplementalClaim.find_by(decision_review_remanded: source)).to be_nil
         end
       end
     end
@@ -726,7 +726,7 @@ describe EndProductEstablishment do
 
       it "does nothing" do
         subject
-        expect(SupplementalClaim.find_by(is_dta_error: true)).to be_nil
+        expect(SupplementalClaim.find_by(decision_review_remanded: source)).to be_nil
       end
     end
   end

@@ -20,8 +20,9 @@ class DecisionReviewsController < ApplicationController
 
   def update
     if task
-      if task.complete!(decision_issue_params, decision_date)
-        render json: { decisionIssues: task.appeal.decision_issues }, status: :created
+      if task.complete_with_payload!(decision_issue_params, decision_date)
+        business_line.tasks.reload
+        render json: { in_progress_tasks: in_progress_tasks, completed_tasks: completed_tasks }, status: :ok
       else
         render json: { error_code: task.error_code }, status: :bad_request
       end
@@ -59,10 +60,14 @@ class DecisionReviewsController < ApplicationController
   private
 
   def decision_date
+    return if task.is_a? BoardGrantEffectuationTask
+
     Date.parse(params.require("decision_date")).to_datetime
   end
 
   def decision_issue_params
+    return if task.is_a? BoardGrantEffectuationTask
+
     params.require("decision_issues").map do |decision_issue_param|
       decision_issue_param.permit(:request_issue_id, :disposition, :description)
     end

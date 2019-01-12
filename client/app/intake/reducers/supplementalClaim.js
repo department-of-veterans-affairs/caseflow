@@ -61,9 +61,6 @@ const updateFromServerIntake = (state, serverIntake) => {
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
     },
-    endProductDescription: {
-      $set: serverIntake.end_product_description
-    },
     relationships: {
       $set: formatRelationships(serverIntake.relationships)
     }
@@ -93,7 +90,6 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     isStarted: false,
     isReviewed: false,
     isComplete: false,
-    endProductDescription: null,
     issueCount: 0,
     nonRatingRequestIssues: { },
     contestableIssues: { },
