@@ -310,8 +310,13 @@ describe Intake do
       let!(:veteran) do
         Generators::Veteran.build(
           file_number: "64205050",
-          country: nil,
           address_line1: nil,
+          address_line2: nil,
+          address_line3: nil,
+          zip_code: nil,
+          state: nil,
+          city: nil,
+          country: nil,
           date_of_death: Time.zone.today
         )
       end
