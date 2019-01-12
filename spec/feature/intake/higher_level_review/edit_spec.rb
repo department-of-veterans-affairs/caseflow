@@ -835,7 +835,7 @@ feature "Higher Level Review Edit issues" do
           { description: RequestIssue::UNIDENTIFIED_ISSUE_MSG },
           { description: "Left knee granted" },
           { description: "Issue before AMA Activation from RAMP" },
-          { description: "PTSD denied" }
+          description: "PTSD denied"
         ),
         user: current_user
       )

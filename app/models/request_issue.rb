@@ -583,4 +583,3 @@ class RequestIssue < ApplicationRecord
   end
 end
 # rubocop:enable Metrics/ClassLength
-
