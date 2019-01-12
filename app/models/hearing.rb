@@ -11,6 +11,10 @@ class Hearing < ApplicationRecord
   delegate :veteran_name, to: :appeal
   delegate :veteran_age, to: :appeal
   delegate :veteran_gender, to: :appeal
+  delegate :veteran_file_number, to: :appeal
+  delegate :docket_number, to: :appeal
+  delegate :docket_name, to: :appeal
+  delegate :external_id, to: :appeal, prefix: true
 
   def self.find_hearing_by_uuid_or_vacols_id(id)
     if UUID_REGEX.match?(id)
@@ -53,7 +57,11 @@ class Hearing < ApplicationRecord
         :judge,
         :scheduled_for,
         :veteran_age,
-        :veteran_gender
+        :veteran_gender,
+        :appeal_external_id,
+        :veteran_file_number,
+        :docket_number,
+        :docket_name
       ]
     )
   end

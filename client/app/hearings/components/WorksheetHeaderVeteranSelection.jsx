@@ -30,7 +30,7 @@ const hearingPreppedStyling = css({
 });
 
 const containerStyling = css({
-  width: '70%',
+  width: '60%',
   display: 'flex'
 });
 
@@ -39,7 +39,7 @@ const selectVeteranStyling = css({
 });
 
 const buttonHeaderStyling = css({
-  width: '30%',
+  width: '40%',
   display: 'flex'
 });
 
@@ -121,14 +121,14 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       <div className="cf-push-right" {...buttonHeaderStyling} >
         <Link
           name="view-case-detail"
-          href={`/queue/appeals/${worksheet.appeal_vacols_id}`}
+          href={`/queue/appeals/${worksheet.appeal_external_id}`}
           button="primary"
           target="_blank">
          View case details</Link>
         <Link
           name="review-claims-folder"
           onClick={this.onClickReviewClaimsFolder}
-          href={`${getReaderLink(worksheet.appeal_vacols_id)}?category=case_summary`}
+          href={`${getReaderLink(worksheet.appeal_external_id)}?category=case_summary`}
           button="primary"
           target="_blank">
         Review claims folder</Link>

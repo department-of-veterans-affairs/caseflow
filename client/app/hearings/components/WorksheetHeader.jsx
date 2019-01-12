@@ -11,6 +11,7 @@ import { css } from 'glamor';
 import _ from 'lodash';
 import { DISPOSITION_OPTIONS } from '../constants/constants';
 import Tooltip from '../../components/Tooltip';
+import DocketTypeBadge from '../../components/DocketTypeBadge';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
@@ -142,11 +143,11 @@ class WorksheetHeader extends React.PureComponent {
           {!this.props.print &&
           <div {...copyButtonStyling}>
             <Tooltip text="Click to copy to clipboard">
-              <CopyToClipboard text={worksheet.sanitized_vbms_id}>
+              <CopyToClipboard text={worksheet.veteran_file_number}>
                 <button
                   name="Copy Veteran ID"
                   className={['usa-button-secondary cf-copy-to-clipboard']}>
-                  {worksheet.sanitized_vbms_id}
+                  {worksheet.veteran_file_number}
                   <ClipboardIcon />
                 </button>
               </CopyToClipboard>
@@ -155,11 +156,17 @@ class WorksheetHeader extends React.PureComponent {
           }
           {this.props.print &&
          <div className="cf-hearings-headers">
-           {worksheet.sanitized_vbms_id}
+           {worksheet.veteran_file_number}
          </div>
           }
         </div>
-
+        <div className="cf-hearings-worksheet-data-cell">
+          <h5>DOCKET</h5>
+          <div>
+            <DocketTypeBadge name={worksheet.docket_name} number={worksheet.docket_number} />
+            {worksheet.docket_number}
+          </div>
+        </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h5>AGE</h5>
           <div className={classNames('cf-hearings-headers', veteranClassNames)}>{worksheet.veteran_age}</div>
@@ -179,7 +186,7 @@ class WorksheetHeader extends React.PureComponent {
             `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h5>REPRESENTATIVE ORG.</h5>
+          <h5>REPRESENTATIVE</h5>
           <div className="cf-hearings-headers">{worksheet.representative}</div>
         </div>
       </div>

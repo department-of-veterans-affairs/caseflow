@@ -142,11 +142,11 @@ class LegacyHearing < ApplicationRecord
     :number_of_documents, \
     :number_of_documents_after_certification, \
     :veteran,  \
-    :sanitized_vbms_id, \
+    :veteran_file_number, \
     :docket_name,
     to: :appeal, allow_nil: true
 
-  delegate :vacols_id, to: :appeal, prefix: true
+  delegate :external_id, to: :appeal, prefix: true
 
   def to_hash(current_user_id)
     serializable_hash(
@@ -209,7 +209,7 @@ class LegacyHearing < ApplicationRecord
       methods: [:appeal_id,
                 :judge,
                 :summary,
-                :appeal_vacols_id,
+                :appeal_external_id,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
                 :appellant_city,
@@ -217,7 +217,7 @@ class LegacyHearing < ApplicationRecord
                 :military_service,
                 :appellant_mi_formatted,
                 :veteran_fi_last_formatted,
-                :sanitized_vbms_id]
+                :veteran_file_number]
     ).merge(
       to_hash(current_user_id)
     ).merge(
