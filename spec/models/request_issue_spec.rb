@@ -816,7 +816,7 @@ describe RequestIssue do
               expect(rating_request_issue.decision_issues.first).to have_attributes(
                 participant_id: veteran.participant_id,
                 disposition: "allowed",
-                description: "allowed: #{request_issue.description}"
+                description: "allowed: #{request_issue.description}",
                 decision_review_type: "HigherLevelReview",
                 decision_review_id: review.id,
                 benefit_type: "compensation",
