@@ -20,12 +20,13 @@ const listStyling = css({
   paddingLeft: 0
 });
 const listItemStyling = css({
-  padding: '1px',
+  padding: '1px'
 });
 
 class ListItemPickerCheckbox extends React.PureComponent {
   onClick = (isChecked, event) => {
     const value = event.target.name;
+
     this.props.setSelectedValue(value);
   };
 

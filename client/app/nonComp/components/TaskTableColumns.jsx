@@ -42,7 +42,7 @@ export const decisionReviewTypeColumn = (onFilter, isFilterOpen, onFilterToggle,
     toggleDropdownFilterVisiblity: onFilterToggle,
     setSelectedValue: onFilter,
     useCheckbox: true,
-    checkSelectedValue: checkSelectedValue,
+    checkSelectedValue,
     // order determines where this column displays
     // make it -1 so this column is always last
     order: -1
