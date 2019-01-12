@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
   include Asyncable
 
@@ -528,7 +529,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def choose_original_end_product_code(end_product_codes)
-    end_product_codes[review_request_type.underscore.to_sym][rating? ? :rating : :nonrating]
+    end_product_codes[review_request_type.underscore.to_sym][(rating? || is_unidentified?) ? :rating : :nonrating]
   end
 
   def dta_end_product_code
@@ -581,3 +582,5 @@ class RequestIssue < ApplicationRecord
     self.decision_review = review_request
   end
 end
+# rubocop:enable Metrics/ClassLength
+
