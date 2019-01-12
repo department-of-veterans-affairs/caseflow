@@ -306,6 +306,18 @@ describe Intake do
       end
     end
 
+    context "When Veteran is deceased and missing address" do
+      let!(:veteran) do
+        Generators::Veteran.build(
+          file_number: "64205050",
+          country: nil,
+          address_line1: nil,
+          date_of_death: Time.zone.today
+        )
+      end
+      it { is_expected.to be_truthy }
+    end
+
     context "veteran_file_number has fewer than 8 digits" do
       let(:veteran_file_number) { "1234567" }
 
