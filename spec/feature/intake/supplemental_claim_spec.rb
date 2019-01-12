@@ -283,7 +283,7 @@ feature "Supplemental Claim Intake" do
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
     )
-    
+
     nonratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
       epe.code == SupplementalClaim::END_PRODUCT_CODES[:nonrating]
     end

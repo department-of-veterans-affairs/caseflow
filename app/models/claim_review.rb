@@ -142,7 +142,7 @@ class ClaimReview < DecisionReview
   def can_contest_rating_issues?
     processed_in_vbms?
   end
-  
+
   def create_decision_review_task!
     return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
 
