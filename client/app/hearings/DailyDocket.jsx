@@ -6,6 +6,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { CATEGORIES, ACTIONS } from './analytics';
 import { orderTheDocket } from './util/index';
 import Table from '../components/Table';
+import { pencilSymbol } from '../components/RenderFunctions';
 import SearchableDropdown from '../components/SearchableDropdown';
 import { getTime, getTimeInDifferentTimeZone, getDate } from '../util/DateUtil';
 import {
@@ -232,6 +233,9 @@ export class DailyDocket extends React.PureComponent {
           target: '_blank'
         }}>
         Edit VLJ Hearing Worksheet
+        <span {...css({ position: 'absolute' })}>
+          {pencilSymbol()}
+        </span>
       </ViewableItemLink>
     </div>;
   };
