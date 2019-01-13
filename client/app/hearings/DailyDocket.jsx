@@ -10,7 +10,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import { getTime, getTimeInDifferentTimeZone, getDate } from '../util/DateUtil';
 import {
   setNotes, setDisposition, setHoldOpen, setAod, setTranscriptRequested, setHearingViewed,
-  setHearingPrepped
+  setHearingPrepped, setEvidenceWindowWaived
 } from './actions/Dockets';
 import { css } from 'glamor';
 import _ from 'lodash';
@@ -20,6 +20,7 @@ import { DISPOSITION_OPTIONS } from './constants/constants';
 import Checkbox from '../components/Checkbox';
 import ViewableItemLink from '../components/ViewableItemLink';
 import Textarea from 'react-textarea-autosize';
+import DocketTypeBadge from '../components/DocketTypeBadge';
 
 const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
@@ -121,6 +122,10 @@ export class DailyDocket extends React.PureComponent {
     this.props.setTranscriptRequested(hearingId, value, hearingDate);
   }
 
+  setEvidenceWindowWaived = (hearingId, hearingDate) => (value) => {
+    this.props.setEvidenceWindowWaived(hearingId, value, hearingDate);
+  }
+
   setNotes = (hearingId, hearingDate) => (event) => {
     this.props.setNotes(hearingId, event.target.value, hearingDate);
   }
@@ -139,15 +144,15 @@ export class DailyDocket extends React.PureComponent {
      return <div>
        <span><b>{`${hearing.appellant_first_name} ${hearing.appellant_last_name}`}</b><br />
          {`${hearing.veteran_first_name} ${hearing.veteran_last_name}`} (Veteran)</span><br />
-       <ViewableItemLink
-         boldCondition={!hearing.viewed_by_current_user}
-         onOpen={this.setHearingViewed(hearing.id)}
-         linkProps={{
-           to: `/hearings/${hearing.external_id}/worksheet`,
-           target: '_blank'
-         }}>
-         {hearing.vbms_id}
-       </ViewableItemLink>
+       <Link
+         to={`/queue/appeals/${hearing.appeal_external_id}`}
+         name={hearing.veteran_file_number} >
+         {hearing.veteran_file_number}
+       </Link>
+       <div>
+         <DocketTypeBadge name={hearing.docket_name} number={hearing.docket_number} />
+         {hearing.docket_number}
+       </div>
        <span {...issueCountStyling}>
          {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
        </span>
@@ -155,15 +160,15 @@ export class DailyDocket extends React.PureComponent {
    }
 
    return <div><b>{`${hearing.veteran_first_name} ${hearing.veteran_last_name}`}</b><br />
-     <ViewableItemLink
-       boldCondition={!hearing.viewed_by_current_user}
-       onOpen={this.setHearingViewed(hearing.id)}
-       linkProps={{
-         to: `/hearings/${hearing.external_id}/worksheet`,
-         target: '_blank'
-       }}>
-       {hearing.vbms_id}
-     </ViewableItemLink>
+     <Link
+       to={`/queue/appeals/${hearing.appeal_external_id}`}
+       name={hearing.veteran_file_number} >
+       {hearing.veteran_file_number}
+     </Link>
+     <div>
+       <DocketTypeBadge name={hearing.docket_name} number={hearing.docket_number} />
+       {hearing.docket_number}
+     </div>
      <span {...issueCountStyling}>
        {hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'Issue' : 'Issues' }
      </span>
@@ -171,113 +176,150 @@ export class DailyDocket extends React.PureComponent {
 
  };
 
-getRoTime = (hearing) => {
-  if (hearing.request_type === 'Central') {
-    return <div>{getTime(hearing.scheduled_for)} <br />
-      {hearing.regional_office_name}
+  getRoTime = (hearing) => {
+    if (hearing.request_type === 'Central') {
+      return <div>{getTime(hearing.scheduled_for)} <br />
+        {hearing.regional_office_name}
+      </div>;
+    }
+
+    return <div>{getTime(hearing.scheduled_for)} /<br />
+      {getTimeInDifferentTimeZone(hearing.scheduled_for, hearing.regional_office_timezone)} <br />
+      <span>{hearing.regional_office_name}</span>
     </div>;
-  }
+  };
 
-  return <div>{getTime(hearing.scheduled_for)} /<br />
-    {getTimeInDifferentTimeZone(hearing.scheduled_for, hearing.regional_office_timezone)} <br />
-    <span>{hearing.regional_office_name}</span>
-  </div>;
-};
+  getPrepCheckBox = (hearing) => {
+    return <Checkbox
+      id={`${hearing.id}-prep`}
+      onChange={this.preppedOnChange(hearing.id, getDate(hearing.scheduled_for))}
+      key={`${hearing.id}`}
+      value={hearing.prepped || false}
+      name={`${hearing.id}-prep`}
+      hideLabel
+      {...preppedCheckboxStyling}
+    />;
+  };
 
-getPrepCheckBox = (hearing) => {
-  return <Checkbox
-    id={`${hearing.id}-prep`}
-    onChange={this.preppedOnChange(hearing.id, getDate(hearing.scheduled_for))}
-    key={`${hearing.id}`}
-    value={hearing.prepped || false}
-    name={`${hearing.id}-prep`}
-    hideLabel
-    {...preppedCheckboxStyling}
-  />;
-};
+  getWaiveEvidenceCheckbox = (hearing) => {
+    return <div>
+      <h3>Waive 90 Day Evidence Hold</h3>
+      <Checkbox
+        label="Yes, Waive 90 Day Hold"
+        name={`${hearing.id}.evidence_window_waived`}
+        value={hearing.evidence_window_waived || false}
+        onChange={this.setEvidenceWindowWaived(hearing.id, getDate(hearing.scheduled_for))}
+      />
+    </div>;
+  };
 
-getTranscriptRequested = (hearing) => {
-  return <Checkbox
-    label="Transcript Requested"
-    name={`${hearing.id}.transcript_requested`}
-    value={hearing.transcript_requested || false}
-    onChange={this.setTranscriptRequested(hearing.id, getDate(hearing.scheduled_for))}
-  />;
-};
+  getTranscriptRequested = (hearing) => {
+    return <div>
+      {(hearing.docket_name === 'hearing') ? this.getWaiveEvidenceCheckbox(hearing) : null }
+      <h3>Copy Requested by Appellant/Rep</h3>
+      <Checkbox
+        label="Transcript Requested"
+        name={`${hearing.id}.transcript_requested`}
+        value={hearing.transcript_requested || false}
+        onChange={this.setTranscriptRequested(hearing.id, getDate(hearing.scheduled_for))}
+      />
+      <h3>Hearing Prep Worksheet</h3>
+      <ViewableItemLink
+        boldCondition={!hearing.viewed_by_current_user}
+        onOpen={this.setHearingViewed(hearing.id)}
+        linkProps={{
+          to: `/hearings/${hearing.external_id}/worksheet`,
+          target: '_blank'
+        }}>
+        Edit VLJ Hearing Worksheet
+      </ViewableItemLink>
+    </div>;
+  };
 
-getDispositionDropdown = (hearing) => {
-  return <SearchableDropdown
-    label="Disposition"
-    name={`${hearing.id}-disposition`}
-    options={DISPOSITION_OPTIONS}
-    onChange={this.setDisposition(hearing.id, getDate(hearing.scheduled_for))}
-    value={hearing.disposition}
-    searchable={false}
-  />;
-};
+  getDispositionDropdown = (hearing) => {
+    return <SearchableDropdown
+      label="Disposition"
+      name={`${hearing.id}-disposition`}
+      options={DISPOSITION_OPTIONS}
+      onChange={this.setDisposition(hearing.id, getDate(hearing.scheduled_for))}
+      value={hearing.disposition}
+      searchable={false}
+    />;
+  };
 
-getHoldOpenDropdown = (hearing) => {
-  return <SearchableDropdown
-    label="Hold Open"
-    name={`${hearing.id}-hold_open`}
-    options={holdOptions(getDate(hearing.scheduled_for))}
-    onChange={this.setHoldOpen(hearing.id, getDate(hearing.scheduled_for))}
-    value={hearing.hold_open}
-    searchable={false}
-  />;
-};
+  getHoldOpenDropdown = (hearing) => {
+    if (hearing.docket_name === 'hearing') {
+      return null;
+    }
 
-getAodDropdown = (hearing) => {
-  return <SearchableDropdown
-    label="AOD"
-    name={`${hearing.id}-aod`}
-    options={aodOptions}
-    onChange={this.setAod(hearing.id, getDate(hearing.scheduled_for))}
-    value={hearing.aod}
-    searchable={false}
-  />;
-}
+    return <SearchableDropdown
+      label="Hold Open"
+      name={`${hearing.id}-hold_open`}
+      options={holdOptions(getDate(hearing.scheduled_for))}
+      onChange={this.setHoldOpen(hearing.id, getDate(hearing.scheduled_for))}
+      value={hearing.hold_open}
+      searchable={false}
+    />;
+  };
 
- getNotesField = (hearing) => {
-   return <span>
-     <label htmlFor={`${hearing.id}.notes`} aria-label="notes">Notes</label>
-     <div>
-       <Textarea
-         id={`${hearing.id}.notes`}
-         value={hearing.notes || ''}
-         name="Notes"
-         onChange={this.setNotes(hearing.id, getDate(hearing.scheduled_for))}
-       />
-     </div>
-   </span>;
- };
+  getAodDropdown = (hearing) => {
+    return <SearchableDropdown
+      label="AOD"
+      name={`${hearing.id}-aod`}
+      options={aodOptions}
+      onChange={this.setAod(hearing.id, getDate(hearing.scheduled_for))}
+      value={hearing.aod}
+      searchable={false}
+    />;
+  };
 
-  getDailyDocketRows = (hearing) => {
+  getNotesField = (hearing) => {
+    return <span>
+      <label htmlFor={`${hearing.id}.notes`} aria-label="notes">Notes</label>
+      <div>
+        <Textarea
+          id={`${hearing.id}.notes`}
+          value={hearing.notes || ''}
+          name="Notes"
+          onChange={this.setNotes(hearing.id, getDate(hearing.scheduled_for))}
+        />
+      </div>
+    </span>;
+  };
+
+  getDailyDocketRow = (hearing, count) => {
+    return [{
+      number: <b>{count}.</b>,
+      prep: this.getPrepCheckBox(hearing),
+      hearingTime: this.getRoTime(hearing),
+      appellantInformation: this.getAppellantInformation(hearing),
+      representative: <span>{hearing.representative}<br />{hearing.representative_name}</span>,
+      disposition: this.getDispositionDropdown(hearing),
+      holdOpen: this.getHoldOpenDropdown(hearing),
+      aod: this.getAodDropdown(hearing)
+    },
+    {
+      number: null,
+      prep: null,
+      hearingTime: null,
+      appellantInformation: this.getNotesField(hearing),
+      representative: null,
+      disposition: this.getTranscriptRequested(hearing),
+      hearingHoldOpen: null,
+      aod: null
+    }];
+  };
+
+  getDailyDocketRows = (hearings) => {
     let dailyDocketRows = [];
     let count = 0;
 
-    _.forEach(hearing, (hearings) => {
+    _.forEach(hearings, (hearing) => {
       count += 1;
-      dailyDocketRows.push({
-        number: <b>{count}.</b>,
-        prep: this.getPrepCheckBox(hearings),
-        hearingTime: this.getRoTime(hearings),
-        appellantInformation: this.getAppellantInformation(hearings),
-        representative: <span>{hearings.representative}<br />{hearings.representative_name}</span>,
-        disposition: this.getDispositionDropdown(hearings),
-        holdOpen: this.getHoldOpenDropdown(hearings),
-        aod: this.getAodDropdown(hearings)
-      },
-      {
-        number: null,
-        prep: null,
-        hearingTime: null,
-        appellantInformation: this.getNotesField(hearings),
-        representative: null,
-        disposition: this.getTranscriptRequested(hearings),
-        hearingHoldOpen: null,
-        aod: null
-      });
+
+      const dailyDocketRow = this.getDailyDocketRow(hearing, count);
+
+      dailyDocketRows.push(dailyDocketRow[0], dailyDocketRow[1]);
     });
 
     return dailyDocketRows;
@@ -316,17 +358,19 @@ getAodDropdown = (hearing) => {
       {
         header: 'Actions',
         align: 'left',
-        valueName: 'disposition'
-      },
-      {
-        header: '',
-        align: 'left',
-        valueName: 'holdOpen'
+        valueName: 'disposition',
+        span: (row) => row.representative ? 1 : 2
       },
       {
         header: '',
         align: 'left',
         valueName: 'aod'
+      },
+      {
+        header: '',
+        align: 'left',
+        valueName: 'holdOpen',
+        span: (row) => row.representative ? 1 : 0
       }
     ];
 
@@ -336,13 +380,13 @@ getAodDropdown = (hearing) => {
       <AppSegment extraClassNames="cf-hearings" noMarginTop filledBackground>
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
-            <h1>Daily Docket</h1>
+            <h1>Daily Docket ({moment(docket[0].scheduled_for).format('ddd l')})</h1>
             <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
           </div>
-          <div className="meta">
-            <div>{moment(docket[0].scheduled_for).format('ddd l')}</div>
-            <div>Hearing Type: {docket[0].readable_request_type}</div>
-          </div>
+          <span className="cf-push-right">
+            VLJ: {docket[0].judge ? docket[0].judge.full_name : null}<br />
+            Hearing Type: {docket[0].readable_request_type}<br />
+          </span>
         </div>
 
         <div {...noMarginStyling}>
@@ -371,6 +415,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAod,
   setHearingViewed,
   setTranscriptRequested,
+  setEvidenceWindowWaived,
   setHearingPrepped
 }, dispatch);
 

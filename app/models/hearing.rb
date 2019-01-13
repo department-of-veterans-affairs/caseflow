@@ -6,7 +6,6 @@ class Hearing < ApplicationRecord
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
-  delegate :scheduled_for, to: :hearing_day
   delegate :request_type, to: :hearing_day
   delegate :veteran_first_name, to: :appeal
   delegate :veteran_last_name, to: :appeal
@@ -43,6 +42,17 @@ class Hearing < ApplicationRecord
     false
   end
 
+  def scheduled_for
+    DateTime.new.in_time_zone(regional_office_timezone).change(
+      year: hearing_day.scheduled_for.year,
+      month: hearing_day.scheduled_for.month,
+      day: hearing_day.scheduled_for.day,
+      hour: scheduled_time.hour,
+      min: scheduled_time.min,
+      sec: scheduled_time.sec
+    )
+  end
+
   #:nocov:
   # This is all fake data that will be refactored in a future PR.
   def regional_office_key
@@ -51,6 +61,10 @@ class Hearing < ApplicationRecord
 
   def regional_office_name
     "Winston-Salem, NC"
+  end
+
+  def regional_office_timezone
+    "America/New_York"
   end
 
   def type
@@ -85,6 +99,7 @@ class Hearing < ApplicationRecord
         :appellant_city,
         :appellant_state,
         :regional_office_name,
+        :regional_office_timezone,
         :readable_request_type,
         :judge,
         :scheduled_for,

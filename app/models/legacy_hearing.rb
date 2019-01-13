@@ -184,7 +184,8 @@ class LegacyHearing < ApplicationRecord
         :appellant_zip,
         :readable_location,
         :appeal_external_id,
-        :external_id
+        :external_id,
+        :veteran_file_number
       ],
       except: [:military_service, :vacols_id]
     ).merge(
@@ -213,8 +214,7 @@ class LegacyHearing < ApplicationRecord
                 :summary,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
-                :military_service,
-                :veteran_file_number]
+                :military_service]
     ).merge(
       to_hash(current_user_id)
     ).merge(
