@@ -169,7 +169,7 @@ class Fakes::VBMSService
 
     # return fake list of contentions
     contentions.map do |contention|
-      Generators::Contention.build(text: contention[:description], claim_id: claim_id)
+      Generators::Contention.build(text: contention[:description].slice(0, 255), claim_id: claim_id)
     end
   end
 
