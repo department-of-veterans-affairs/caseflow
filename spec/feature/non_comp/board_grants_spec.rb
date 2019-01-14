@@ -86,6 +86,13 @@ feature "NonComp Board Grant Task Page" do
     in_progress_task.reload
     expect(in_progress_task.status).to eq("completed")
     expect(in_progress_task.completed_at).to eq(Time.zone.now)
+
+    # click on completed task and verify that it is not editable
+    click_link "Tom Brady"
+    expect(page).to have_content("Board Grants")
+    expect(page).to have_current_path("/#{dispositions_url}")
+    expect(page).to have_css("[id='isEffectuated'][disabled]", visible: false)
+    expect(page).to have_button("Complete", disabled: true)
   end
 
   context "when there is an error saving" do

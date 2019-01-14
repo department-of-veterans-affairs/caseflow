@@ -18,6 +18,15 @@ feature "NonComp Dispositions Task Page" do
     find("#disposition-issue-#{num}").send_keys :enter
   end
 
+  def find_disabled_disposition(num, disposition, description = nil)
+    expect(page).to have_field(type: 'textarea', with: description, disabled: true)
+
+    within(".dropdown-disposition-issue-#{num}") do
+      expect(find("span[class='Select-value-label']", text: disposition)).to_not be_nil
+    end
+    expect(page).to have_css("[id='disposition-issue-#{num}'][aria-readonly='true']")
+  end
+
   context "with an existing organization" do
     let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
 
@@ -49,9 +58,9 @@ feature "NonComp Dispositions Task Page" do
       create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org)
     end
 
-    let!(:completed_task) do
-      create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org)
-    end
+    # let!(:completed_task) do
+    #   create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org)
+    # end
 
     let(:business_line_url) { "decision_reviews/nco" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
@@ -102,6 +111,17 @@ feature "NonComp Dispositions Task Page" do
       expect(hlr.decision_issues.find_by(disposition: "Granted", description: nil)).to_not be_nil
       expect(hlr.decision_issues.find_by(disposition: "Granted", description: "test description")).to_not be_nil
       expect(hlr.decision_issues.find_by(disposition: "Denied", description: "denied")).to_not be_nil
+
+      # verify that going to the completed task does not allow edits
+      click_link "Bob Smith"
+
+      expect(page).to have_content("Review each issue and assign the appropriate dispositions")
+      expect(page).to have_current_path("/#{dispositions_url}")
+      expect(page).to have_button("Complete", disabled: true)
+
+      find_disabled_disposition(0, "Granted")
+      find_disabled_disposition(1, "Granted", "test description")
+      find_disabled_disposition(2, "Denied", "denied")
     end
 
     context "when there is an error saving" do

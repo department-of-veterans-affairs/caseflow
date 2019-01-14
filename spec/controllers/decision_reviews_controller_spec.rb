@@ -102,6 +102,13 @@ describe DecisionReviewsController, type: :controller do
         expect(task.status).to eq("completed")
         expect(task.completed_at).to eq(Time.zone.now)
       end
+
+      it "returns 400 when the task has already been completed" do
+        task.update!(status: "completed")
+
+        put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
+        expect(response.status).to eq(400)
+      end
     end
 
     context "with decision review task" do
@@ -162,6 +169,27 @@ describe DecisionReviewsController, type: :controller do
                                  }
                                ],
                                decision_date: decision_date }
+
+        expect(response.status).to eq(400)
+      end
+
+      it "returns 400 when the task has already been completed" do
+        task.update!(status: "completed")
+
+        put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id,
+          decision_issues: [
+           {
+             request_issue_id: request_issues.first.id,
+             disposition: "Granted",
+             description: "a rating note"
+           },
+           {
+             request_issue_id: request_issues.second.id,
+             disposition: "Denied",
+             description: "a nonrating note"
+           }
+          ],
+          decision_date: decision_date }
 
         expect(response.status).to eq(400)
       end
