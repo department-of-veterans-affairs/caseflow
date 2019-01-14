@@ -40,7 +40,7 @@ class BoardGrantUnconnected extends React.PureComponent {
     super(props);
 
     this.state = {
-      isEffectuated: false
+      isEffectuated: Boolean(this.props.task.completed_at)
     };
   }
 
@@ -56,7 +56,8 @@ class BoardGrantUnconnected extends React.PureComponent {
     const {
       appeal,
       decisionIssuesStatus,
-      businessLineUrl
+      businessLineUrl,
+      task
     } = this.props;
 
     const requestIssuesWithDecisionIssues = formatRequestIssuesWithDecisionIssues(
@@ -86,6 +87,7 @@ class BoardGrantUnconnected extends React.PureComponent {
             vertical
             onChange={this.handleEffectuatedClick}
             value={this.state.isEffectuated}
+            disabled={Boolean(task.completed_at)}
             name="isEffectuated"
             label="I certify these benefits have been effectuated." />
         </div>
@@ -95,7 +97,7 @@ class BoardGrantUnconnected extends React.PureComponent {
         <Button className="usa-button"
           name="submit-update"
           loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
-          disabled={!this.state.isEffectuated} onClick={this.handleSave}>Complete</Button>
+          disabled={!this.state.isEffectuated || Boolean(task.completed_at)} onClick={this.handleSave}>Complete</Button>
       </div>
     </div>;
   }

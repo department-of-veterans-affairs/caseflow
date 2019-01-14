@@ -43,7 +43,8 @@ class NonCompDecisionIssue extends React.PureComponent {
   render = () => {
     const {
       issue,
-      index
+      index,
+      disabled
     } = this.props;
     let issueDate = formatDate(issue.rating_issue_profile_date || issue.decision_date);
 
@@ -61,10 +62,12 @@ class NonCompDecisionIssue extends React.PureComponent {
             label={`description-issue-${index}`}
             hideLabel
             value={this.props.decisionDescription}
+            disabled={disabled}
             onChange={this.handleDescriptionChange} />
         </div>
         <div className="usa-width-one-third cf-disposition">
           <SearchableDropdown
+            readOnly={disabled}
             name={`disposition-issue-${index}`}
             label={`disposition-issue-${index}`}
             hideLabel
@@ -131,7 +134,8 @@ class NonCompDispositions extends React.PureComponent {
     const {
       appeal,
       businessLineUrl,
-      decisionIssuesStatus
+      decisionIssuesStatus,
+      task
     } = this.props;
 
     return <div>
@@ -155,6 +159,7 @@ class NonCompDispositions extends React.PureComponent {
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
                 decisionDescription={issue.decisionIssue.description}
                 decisionDisposition={issue.decisionIssue.disposition}
+                disabled={Boolean(task.completed_at)}
               />;
             })
           }
@@ -177,7 +182,7 @@ class NonCompDispositions extends React.PureComponent {
         <Button className="usa-button"
           name="submit-update"
           loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
-          disabled={!this.state.isFilledOut} onClick={this.handleSave}>Complete</Button>
+          disabled={!this.state.isFilledOut || Boolean(task.completed_at)} onClick={this.handleSave}>Complete</Button>
       </div>
     </div>;
   }
@@ -186,6 +191,7 @@ class NonCompDispositions extends React.PureComponent {
 const Dispositions = connect(
   (state) => ({
     appeal: state.appeal,
+    task: state.task,
     businessLineUrl: state.businessLineUrl,
     decisionIssuesStatus: state.decisionIssuesStatus
   })
