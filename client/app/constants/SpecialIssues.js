@@ -49,7 +49,7 @@ const SPECIAL_ISSUES = [
     section: 'residence'
   },
   {
-    display: 'Foreign pension, DIC - Mexico, Central and South America, Caribbean',
+    display: 'DIC/Pension for appellant in Mexico, Central or South America or the Caribbean',
     specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericaCaribb',
     stationOfJurisdiction: null,
     snakeCase: 'foreign_pension_dic_mexico_central_and_south_america_caribb',
@@ -57,10 +57,12 @@ const SPECIAL_ISSUES = [
       emailAddress: ['AppealsPMC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
       regionalOffice: 'RO83'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'dicOrPension'
   },
   {
-    display: 'Foreign pension, DIC - all other foreign countries',
+    display: 'DIC/Pension for appellant in any foreign country outside of Mexico, Central' +
+      'or South America, or the Caribbean',
     specialIssue: 'foreignPensionDicAllOtherForeignCountries',
     stationOfJurisdiction: null,
     snakeCase: 'foreign_pension_dic_all_other_foreign_countries',
@@ -68,7 +70,8 @@ const SPECIAL_ISSUES = [
       emailAddess: 'PMC',
       regionalOffice: 'PMC'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'dicOrPension'
   },
   {
     display: 'Hearing - including travel board & video conference',
@@ -151,7 +154,7 @@ const SPECIAL_ISSUES = [
     section: 'issuesOnAppeal'
   },
   {
-    display: 'Pension - United States',
+    display: 'Pension for appellant in United States',
     specialIssue: 'pensionUnitedStates',
     stationOfJurisdiction: null,
     snakeCase: 'pension_united_states',
@@ -159,7 +162,20 @@ const SPECIAL_ISSUES = [
       emailAddress: 'PMC',
       regionalOffice: 'PMC'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'dicOrPension'
+  },
+  {
+    display: 'DIC for appellant in United States',
+    specialIssue: 'dicUnitedStates',
+    stationOfJurisdiction: null,
+    snakeCase: 'DIC_united_states',
+    unhandled: {
+      emailAddress: 'PMC',
+      regionalOffice: 'PMC'
+    },
+    nonCompensation: true,
+    section: 'dicOrPension'
   },
   {
     display: 'Has a private Attorney or Agent',
