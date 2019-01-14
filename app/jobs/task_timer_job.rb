@@ -2,12 +2,19 @@ class TaskTimerJob < CaseflowJob
   queue_as :low_priority
   application_attr :queue
 
-  def perform(_task_timer)
+  def perform
     RequestStore.store[:application] = "queue"
     RequestStore.store[:current_user] = User.system_user
 
-    TaskTimer.requires_processing.each do |_task_timer|
-      TaskTimer.task.when_timer_ends
+    TaskTimer.lock.requires_processing.includes(:task).each do |task_timer|
+      process(task_timer)
     end
+  end
+
+  def process(task_timer)
+    # the reload creates an N+1 query situation
+    return if task_timer.reload.processed?
+    task_timer.task.when_timer_ends
+    task_timer.processed!
   end
 end
