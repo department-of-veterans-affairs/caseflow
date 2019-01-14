@@ -40,7 +40,7 @@ describe AppealRepository do
       bfddec: 1.day.ago,
       correspondent: correspondent_record,
       folder: folder_record,
-      issues: [{
+      case_issues: [{
         issdesc: "Issue Description",
         issdc: "1",
         issprog: "Issue Program"
@@ -136,7 +136,8 @@ describe AppealRepository do
         OpenStruct.new(
           correspondent: correspondent_record,
           folder: folder_record,
-          bfha: "3"
+          bfha: "3",
+          case_issues: []
         )
       end
 
@@ -148,7 +149,8 @@ describe AppealRepository do
         OpenStruct.new(
           correspondent: correspondent_record,
           folder: folder_record,
-          bfha: nil
+          bfha: nil,
+          case_issues: []
         )
       end
 
@@ -173,7 +175,8 @@ describe AppealRepository do
         OpenStruct.new(
           correspondent: correspondent_record,
           folder: folder_record,
-          bfac: "7"
+          bfac: "7",
+          case_issues: []
         )
       end
 

@@ -289,7 +289,7 @@ export default class DailyDocket extends React.Component {
 
   getRemoveHearingDayMessage = () => {
     return 'Once the hearing day is removed, users will no longer be able to ' +
-      `schedule Veterans for this ${this.props.dailyDocket.hearingType} hearing day on ` +
+      `schedule Veterans for this ${this.props.dailyDocket.requestType} hearing day on ` +
       `${moment(this.props.dailyDocket.scheduledFor).format('ddd M/DD/YYYY')}.`;
   };
 
@@ -442,7 +442,7 @@ export default class DailyDocket extends React.Component {
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
         Coordinator: {this.props.dailyDocket.bvaPoc} <br />
-        Hearing type: {this.props.dailyDocket.hearingType} <br />
+        Hearing type: {this.props.dailyDocket.requestType} <br />
         Room number: {this.props.dailyDocket.room}
       </span>
       <div {...noMarginStyling}>

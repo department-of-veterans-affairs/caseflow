@@ -255,7 +255,7 @@ export class DailyDocketContainer extends React.Component {
         then((response) => {
           const editedHearingDay = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-          editedHearingDay.hearingType = this.props.dailyDocket.hearingType;
+          editedHearingDay.requestType = this.props.dailyDocket.requestType;
 
           this.props.onReceiveDailyDocket(editedHearingDay, this.props.hearings, this.props.hearingDayOptions);
         }, () => {

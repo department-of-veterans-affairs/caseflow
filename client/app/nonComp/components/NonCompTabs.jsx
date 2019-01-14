@@ -41,7 +41,8 @@ class TaskTableTab extends React.PureComponent {
       predefinedColumns: this.props.predefinedColumns,
       shownTasks: this.props.tasks,
       searchText: '',
-      isReviewFilterOpen: false
+      isReviewFilterOpen: false,
+      reviewFilterBy: null
     };
   }
 
@@ -66,17 +67,23 @@ class TaskTableTab extends React.PureComponent {
     if (reviewType === 'Clear category filter') {
       this.setState({ shownTasks: this.state.allTasks,
         searchText: '',
-        isReviewFilterOpen: false });
+        isReviewFilterOpen: false,
+        reviewFilterBy: reviewType });
     } else {
       const filteredTasks = this.state.allTasks.filter((task) => task.type === reviewType);
 
       this.setState({ shownTasks: filteredTasks,
-        isReviewFilterOpen: false });
+        isReviewFilterOpen: false,
+        reviewFilterBy: reviewType });
     }
   }
 
   onReviewFilterToggle = () => {
     this.setState({ isReviewFilterOpen: !this.state.isReviewFilterOpen });
+  }
+
+  checkSelectedValue = (value) => {
+    return value === this.state.reviewFilterBy;
   }
 
   render = () => {
@@ -95,12 +102,13 @@ class TaskTableTab extends React.PureComponent {
       <div className="section-hearings-list">
         <TaskTableUnconnected
           {...this.state.predefinedColumns}
-          getKeyForRow={(row, object) => object.appeal.id}
+          getKeyForRow={(row, object) => object.id}
           customColumns={[claimantColumn(), veteranParticipantIdColumn(),
             decisionReviewTypeColumn(
               this.onReviewTypeSearch,
               this.state.isReviewFilterOpen,
-              this.onReviewFilterToggle)
+              this.onReviewFilterToggle,
+              this.checkSelectedValue)
           ]}
           includeIssueCount
           tasks={this.state.shownTasks}

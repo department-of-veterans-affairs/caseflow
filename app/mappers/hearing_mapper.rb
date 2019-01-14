@@ -31,7 +31,7 @@ module HearingMapper
     def bfha_vacols_code(hearing_record)
       case hearing_record.hearing_disp
       when "H"
-        code_based_on_hearing_type(hearing_record.hearing_type.to_sym)
+        code_based_on_request_type(hearing_record.hearing_type.to_sym)
       when "P"
         nil
       when "C"
@@ -60,7 +60,7 @@ module HearingMapper
 
     private
 
-    def code_based_on_hearing_type(type)
+    def code_based_on_request_type(type)
       return "1" if type == :C
       return "2" if type == :T
       return "6" if type == :V
