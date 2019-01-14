@@ -35,6 +35,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
   }
   // TODO: 
   // 1. verify that new values are persisted in redux and sent to the backend properly.
+  // 2. italicize first word
   goToNextStep = () => {
     const {
       appeal,
