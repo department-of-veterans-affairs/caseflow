@@ -46,6 +46,7 @@ export type Issue = {
   readjudication: Boolean,
   remand_reasons: Array<Object>,
   benefit_type?: string,
+  diagnostic_code?: string,
   description?: string
 };
 

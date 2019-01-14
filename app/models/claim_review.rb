@@ -2,6 +2,8 @@
 # higher level review as defined in the Appeals Modernization Act of 2017
 
 class ClaimReview < DecisionReview
+  include HasBusinessLine
+
   has_many :end_product_establishments, as: :source
   has_one :intake, as: :detail
 
@@ -46,15 +48,11 @@ class ClaimReview < DecisionReview
     "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
-  def issue_code(*)
-    fail Caseflow::Error::MustImplementInSubclass
-  end
-
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      if caseflow_only?
+      if processed_in_caseflow?
         issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       else
         issue.update!(
@@ -68,19 +66,8 @@ class ClaimReview < DecisionReview
     request_issues.reload
   end
 
-  def create_decision_review_task!
-    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
-
-    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
-  end
-
-  def business_line
-    return unless caseflow_only?
-
-    business_line_name = Constants::BENEFIT_TYPES[benefit_type]
-    fail "No such business line: #{benefit_type}" unless business_line_name
-
-    @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
+  def create_decision_review_task_if_required!
+    create_decision_review_task! if processed_in_caseflow?
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -89,8 +76,8 @@ class ClaimReview < DecisionReview
   def establish!
     attempted!
 
-    if caseflow_only? && end_product_establishments.any?
-      fail NoEndProductsRequired, message: "Non-comp decision reviews should not have End Products"
+    if processed_in_caseflow? && end_product_establishments.any?
+      fail NoEndProductsRequired, message: "Decision reviews processed in Caseflow should not have End Products"
     end
 
     end_product_establishments.each do |end_product_establishment|
@@ -112,16 +99,6 @@ class ClaimReview < DecisionReview
 
   def invalid_modifiers
     end_product_establishments.map(&:modifier).reject(&:nil?)
-  end
-
-  def rating_end_product_establishment
-    @rating_end_product_establishment ||= end_product_establishments.find_by(
-      code: self.class::END_PRODUCT_CODES[:rating]
-    )
-  end
-
-  def end_product_description
-    rating_end_product_establishment&.description
   end
 
   def end_product_base_modifier
@@ -162,6 +139,16 @@ class ClaimReview < DecisionReview
 
   private
 
+  def can_contest_rating_issues?
+    processed_in_vbms?
+  end
+
+  def create_decision_review_task!
+    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+
+    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
+  end
+
   def informal_conference?
     false
   end
@@ -171,8 +158,9 @@ class ClaimReview < DecisionReview
   end
 
   def end_product_establishment_for_issue(issue)
-    ep_code = issue_code(rating: (issue.rating? || issue.is_unidentified?))
-    end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
+    end_product_establishments.find_by(
+      code: issue.end_product_code
+    ) || new_end_product_establishment(issue.end_product_code)
   end
 
   def matching_request_issue(contention_id)

@@ -67,6 +67,9 @@ export const validNonratingRequestIssue = (issue) => {
   if (!decisionDate) {
     return false;
   }
+  if (!issue.benefitType) {
+    return false;
+  }
 
   // If we've gotten to here, that means we've got all necessary parts for a nonRatingRequestIssue to count
   return true;
@@ -92,6 +95,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       return {
         id: String(issue.id),
         isRating: false,
+        benefitType: issue.benefit_type,
         category: issue.category,
         decisionIssueId: issue.contested_decision_issue_id,
         description: issue.description,
@@ -213,6 +217,7 @@ const formatNonratingRequestIssues = (state) => {
     return {
       request_issue_id: issue.id,
       contested_decision_issue_id: issue.decisionIssueId,
+      benefit_type: issue.benefitType,
       issue_category: issue.category,
       decision_text: issue.description,
       decision_date: formatDateStringForApi(issue.decisionDate),
@@ -337,6 +342,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
     return {
       referenceId: issue.id,
       text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
+      benefitType: issue.benefitType,
       date: formatDate(issue.decisionDate),
       timely: issue.timely,
       beforeAma: decisionDate < amaActivationDate,

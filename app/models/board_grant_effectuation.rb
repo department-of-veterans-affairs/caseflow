@@ -2,6 +2,8 @@
 # Some are represented as contentions on an EP in VBMS. Others are tracked via Caseflow tasks.
 
 class BoardGrantEffectuation < ApplicationRecord
+  include HasBusinessLine
+
   belongs_to :appeal
   belongs_to :granted_decision_issue, class_name: "DecisionIssue"
   belongs_to :decision_document
@@ -27,27 +29,17 @@ class BoardGrantEffectuation < ApplicationRecord
     granted_decision_issue.benefit_type
   end
 
-  def effectuated_in_vbms?
-    ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(benefit_type)
-  end
-
   def hydrate_from_granted_decision_issue
     assign_attributes(
       appeal: granted_decision_issue.decision_review,
       decision_document: granted_decision_issue.decision_review.decision_document
     )
 
-    if effectuated_in_vbms?
+    if processed_in_vbms?
       self.end_product_establishment = find_or_build_end_product_establishment
     else
       find_or_build_effectuation_task
     end
-  end
-
-  # TODO: Refactor with ClaimReview business_line in a concern
-  def business_line
-    business_line_name = Constants::BENEFIT_TYPES[benefit_type]
-    @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
   end
 
   def find_or_build_effectuation_task
@@ -99,7 +91,7 @@ class BoardGrantEffectuation < ApplicationRecord
   end
 
   def end_product_code
-    return unless effectuated_in_vbms?
+    return unless processed_in_vbms?
 
     issue_code_type = granted_decision_issue.rating? ? :rating : :nonrating
     issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"

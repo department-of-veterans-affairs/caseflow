@@ -32,7 +32,8 @@ describe ClaimReview do
       review_request: claim_review,
       contested_rating_issue_reference_id: "reference-id",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-      contested_issue_description: "decision text"
+      contested_issue_description: "decision text",
+      benefit_type: benefit_type
     )
   end
 
@@ -42,7 +43,8 @@ describe ClaimReview do
       review_request: claim_review,
       contested_rating_issue_reference_id: "reference-id2",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-      contested_issue_description: "another decision text"
+      contested_issue_description: "another decision text",
+      benefit_type: benefit_type
     )
   end
 
@@ -52,7 +54,8 @@ describe ClaimReview do
       review_request: claim_review,
       nonrating_issue_description: "Issue text",
       issue_category: "surgery",
-      decision_date: 4.days.ago.to_date
+      decision_date: 4.days.ago.to_date,
+      benefit_type: benefit_type
     )
   end
 
@@ -62,7 +65,8 @@ describe ClaimReview do
       review_request: claim_review,
       nonrating_issue_description: "some other issue",
       issue_category: "something",
-      decision_date: 3.days.ago.to_date
+      decision_date: 3.days.ago.to_date,
+      benefit_type: benefit_type
     )
   end
 
@@ -198,12 +202,22 @@ describe ClaimReview do
       expect(serialized_ratings.first[:issues]).to include(hash_including(timely: true), hash_including(timely: true))
       expect(serialized_ratings.last[:issues]).to include(hash_including(timely: false), hash_including(timely: false))
     end
+
+    context "benefit type is not compensation or pension" do
+      before do
+        subject.update!(benefit_type: "education")
+      end
+
+      it "returns nil" do
+        expect(subject.serialized_ratings).to be_nil
+      end
+    end
   end
 
-  context "#caseflow_only?" do
+  context "#processed_in_caseflow?" do
     let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
 
-    subject { claim_review.caseflow_only? }
+    subject { claim_review.processed_in_caseflow? }
 
     context "when benefit_type is compensation" do
       let(:benefit_type) { "compensation" }
@@ -221,6 +235,43 @@ describe ClaimReview do
       let(:benefit_type) { "foobar" }
 
       it { is_expected.to be_truthy }
+    end
+  end
+
+  context "#create_decision_review_task_if_required!" do
+    subject { claim_review.create_decision_review_task_if_required! }
+
+    context "when processed in caseflow" do
+      let(:benefit_type) { "vha" }
+
+      it "creates a decision review task" do
+        expect { subject }.to change(DecisionReviewTask, :count).by(1)
+
+        expect(DecisionReviewTask.last).to have_attributes(
+          appeal: claim_review,
+          assigned_at: Time.zone.now,
+          assigned_to: BusinessLine.find_by(url: "vha")
+        )
+      end
+
+      context "when a task already exists" do
+        before do
+          claim_review.create_decision_review_task_if_required!
+          claim_review.reload
+        end
+
+        it "does nothing" do
+          expect { subject }.to_not change(DecisionReviewTask, :count)
+        end
+      end
+    end
+
+    context "when processed in VBMS" do
+      let(:benefit_type) { "compensation" }
+
+      it "does nothing" do
+        expect { subject }.to_not change(DecisionReviewTask, :count)
+      end
     end
   end
 

@@ -79,6 +79,7 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
+      benefitType: args.benefitType,
       category: args.category,
       description: args.description,
       decisionDate: args.decisionDate,
