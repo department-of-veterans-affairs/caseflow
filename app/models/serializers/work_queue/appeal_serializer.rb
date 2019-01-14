@@ -92,7 +92,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.decision_date
   end
 
-  attribute :receipt_date do
+  attribute :nod_date do
     object.receipt_date
   end
 

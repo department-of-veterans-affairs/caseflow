@@ -25,6 +25,8 @@ export const grayLineStyling = css({
   bottom: 0
 });
 
+const grayLineTimelineStyling  = css(grayLineStyling, { left: '9%' });
+
 const taskContainerStyling = css({
   border: 'none',
   verticalAlign: 'top',
@@ -35,6 +37,8 @@ const taskContainerStyling = css({
 const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
 const taskInformationContainerStyling = css(taskContainerStyling, { width: '25%' });
 const taskActionsContainerStyling = css(taskContainerStyling, { width: '50%' });
+const taskTimeTimelineContainerStyling = css(taskContainerStyling, { width: '30%' });
+const taskInformationTimelineContainerStyling = css(taskInformationContainerStyling, { align: 'left'});
 
 const taskInfoWithIconContainer = css({
   textAlign: 'center',
@@ -42,8 +46,10 @@ const taskInfoWithIconContainer = css({
   padding: '0 10px 10px',
   position: 'relative',
   verticalAlign: 'top',
-  width: '45px'
+  width: '15px'
 });
+
+const taskInfoWithIconTimelineContainer  = css(taskInfoWithIconContainer, { textAlign: 'left', paddingLeft: '17px' });
 
 class TaskRows extends React.PureComponent {
   constructor(props) {
@@ -165,13 +171,12 @@ class TaskRows extends React.PureComponent {
   showActionsSection = (task) => (task && !this.props.hideDropdown);
 
   getTitle = (task) => {
-    let title = '';
-    const judgeTasks = ['JudgeTask', 'JudgeAssignTask', 'JudgeDecisionReviewTask', 'JudgeQualityReviewTask'];
-
+    let title = ''
+    let judgeTasks = ['JudgeTask', 'JudgeAssignTask', 'JudgeDecisionReviewTask', 'JudgeQualityReviewTask']
     if (task.type === 'AttorneyTask') {
-      title = COPY.CASE_TIMELINE_ATTORNEY_TASK;
+      title = COPY.CASE_TIMELINE_ATTORNEY_TASK
     } else if (judgeTasks.includes(task.type)) {
-      title = COPY.CASE_TIMELINE_JUDGE_TASK;
+      title = COPY.CASE_TIMELINE_JUDGE_TASK
     }
 
     return title;
@@ -186,59 +191,61 @@ class TaskRows extends React.PureComponent {
 
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
-        <td {...taskTimeContainerStyling}></td>
-        <td {...taskInfoWithIconContainer}><GrayDot /><div {...grayLineStyling} {...css({ top: '25px' })} /></td>
-        <td {...taskInformationContainerStyling}>
+        <td {...taskTimeTimelineContainerStyling}></td>
+        <td {...taskInfoWithIconTimelineContainer}><GrayDot /><div {...grayLineTimelineStyling} {...css({ top: '25px' })} /></td>
+        <td {...taskInformationTimelineContainerStyling}>
           { appeal.decisionDate ? COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
           } <br />
         </td>
       </tr> }
       { taskList.map((task, index) =>
-        <tr key={task.uniqueId}>
-          <td {...taskTimeContainerStyling}>
-            <CaseDetailsDescriptionList>
-              { this.assignedOnListItem(task) }
-              { this.dueDateListItem(task) }
-              { this.daysWaitingListItem(task) }
-            </CaseDetailsDescriptionList>
-          </td>
-          <td {...taskInfoWithIconContainer}>{ task.completedOn ? <GreenCheckmark /> : <GrayDot /> }
-            { (index < taskList.length) && taskList[0].completedOn && <div {...grayLineStyling} /> }
-          </td>
-          <td {...taskInformationContainerStyling}>
-            <CaseDetailsDescriptionList>
-              { timeline && this.getTitle(task) }
-              { this.assignedToListItem(task) }
-              { this.assignedByListItem(task) }
-              { this.taskLabelListItem(task) }
-              { this.taskInstructionsListItem(task) }
-            </CaseDetailsDescriptionList>
-          </td>
-          { !timeline && <td {...taskActionsContainerStyling}>
-            { this.showActionsListItem(task, appeal) }
-          </td> }
-        </tr>
+          <tr key={task.uniqueId}>
+            <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
+              <CaseDetailsDescriptionList>
+                { this.assignedOnListItem(task) }
+                { this.dueDateListItem(task) }
+                { this.daysWaitingListItem(task) }
+              </CaseDetailsDescriptionList>
+            </td>
+            <td {...taskInfoWithIconContainer}  className={timeline ? taskInfoWithIconTimelineContainer : ''}>
+                { <div {...css({ marginLeft: '-5px' })} >{task.completedOn ? <GreenCheckmark /> : <GrayDot />}</div> }
+              { (index < taskList.length) && taskList[0].completedOn && <div {...grayLineStyling}
+              className={timeline ? grayLineTimelineStyling : ''} /> }
+            </td>
+            <td {...taskInformationContainerStyling}>
+              <CaseDetailsDescriptionList>
+                { timeline && this.getTitle(task) }
+                { this.assignedToListItem(task) }
+                { this.assignedByListItem(task) }
+                { this.taskLabelListItem(task) }
+                { this.taskInstructionsListItem(task) }
+              </CaseDetailsDescriptionList>
+            </td>
+            { !timeline && <td {...taskActionsContainerStyling}>
+              { this.showActionsListItem(task, appeal) }
+            </td> }
+          </tr>
       ) }
       { timeline && appeal.isLegacyAppeal && <tr>
         <td {...taskTimeContainerStyling}>
           { appeal.form9Date ? moment(appeal.form9Date).format('MM/DD/YYYY') : null }
         </td>
         <td {...taskInfoWithIconContainer}>{ appeal.form9Date ? <GreenCheckmark /> : <GrayDot /> }
-          <div {...grayLineStyling} /></td>
+        <div {...grayLineStyling} /></td>
         <td {...taskInformationContainerStyling}>
           { appeal.form9Date ? COPY.CASE_TIMELINE_FORM_9_RECEIVED : COPY.CASE_TIMELINE_FORM_9_PENDING}
         </td>
       </tr> }
       { timeline && <tr>
-        <td {...taskTimeContainerStyling}>
+        <td {...taskTimeTimelineContainerStyling}>
           { appeal.receiptDate ? moment(appeal.receiptDate).format('MM/DD/YYYY') : null }
         </td>
-        <td {...taskInfoWithIconContainer}>{ appeal.receiptDate ? <GreenCheckmark /> : <GrayDot /> } </td>
+        <td {...taskInfoWithIconTimelineContainer}>{ appeal.receiptDate ? <GreenCheckmark /> : <GrayDot /> } </td>
         <td {...taskInformationContainerStyling}>
           { appeal.receiptDate ? COPY.CASE_TIMELINE_NOD_RECEIVED : COPY.CASE_TIMELINE_NOD_PENDING } <br />
         </td>
       </tr> }
-    </React.Fragment>;
+    </React.Fragment>
   }
 }
 
@@ -247,5 +254,6 @@ const mapStateToProps = () => {
   return {
   };
 };
+
 
 export default (withRouter(connect(mapStateToProps, null)(TaskRows)): React.ComponentType<>);
