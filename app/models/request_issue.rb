@@ -1,6 +1,7 @@
 # rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
   include Asyncable
+  include HasBusinessLine
 
   belongs_to :review_request, polymorphic: true
   belongs_to :decision_review, polymorphic: true
@@ -173,6 +174,7 @@ class RequestIssue < ApplicationRecord
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
+        benefit_type: data[:benefit_type],
         notes: data[:notes],
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],
@@ -280,6 +282,16 @@ class RequestIssue < ApplicationRecord
       contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
       contested_rating_issue_ui_hash ? RatingIssue.deserialize(contested_rating_issue_ui_hash) : nil
     end
+  end
+
+  def contested_benefit_type
+    contested_rating_issue&.benefit_type
+  end
+
+  def guess_benefit_type
+    return "unidentified" if is_unidentified
+
+    "unknown"
   end
 
   def previous_request_issue

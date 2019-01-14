@@ -37,7 +37,7 @@ feature "Nonrating Request Issue Modal" do
     visit "/intake"
     click_intake_continue
     click_intake_add_issue
-    safe_click ".Select-placeholder"
+    click_intake_nonrating_category_dropdown
     expect(page).to have_content(included_category)
     expect(page).to_not have_content(excluded_category)
     add_intake_nonrating_issue(

@@ -20,11 +20,31 @@ class HearingRepository
     end
 
     def fetch_video_hearings_for_parent(parent_hearing_pkseq)
-      hearings_for(VACOLS::CaseHearing.video_hearings_for_master_record(parent_hearing_pkseq))
+      # Implemented by call the array version of this method
+      fetch_video_hearings_for_parents([parent_hearing_pkseq]).values.first || []
     end
 
-    def fetch_co_hearings_for_parent(parent_hearing_date)
-      hearings_for(VACOLS::CaseHearing.co_hearings_for_master_record(parent_hearing_date))
+    def fetch_video_hearings_for_parents(parent_hearings_pkseq)
+      # Get hash of hearings grouped by their hearing day ids
+      VACOLS::CaseHearing.video_hearings_for_master_records(parent_hearings_pkseq)
+        .group_by { |record| record.vdkey.to_s }.transform_values do |value|
+        hearings_for(value)
+      end
+    end
+
+    def fetch_co_hearings_for_date(parent_hearing_date)
+      # Implemented by call the array version of this method
+      fetch_co_hearings_for_dates([parent_hearing_date]).values.first || []
+    end
+
+    def fetch_co_hearings_for_dates(parent_hearing_dates)
+      # Get hash of hearings grouped by their hearing day date string. Note we do
+      # hearing_date.utc.to_date.to_s to avoid timezone issues and make it consistent
+      # with how the date is stored in the HearingDay table.
+      VACOLS::CaseHearing.co_hearings_for_master_records(parent_hearing_dates)
+        .group_by { |record| record.hearing_date.utc.to_date.to_s }.transform_values do |value|
+        hearings_for(value)
+      end
     end
 
     def load_issues(hearings)
@@ -174,7 +194,7 @@ class HearingRepository
     def hearings_for(case_hearings)
       vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact
 
-      fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids)
+      fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids).includes(:appeal, :user)
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
       case_hearings.map do |vacols_record|

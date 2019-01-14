@@ -202,12 +202,22 @@ describe ClaimReview do
       expect(serialized_ratings.first[:issues]).to include(hash_including(timely: true), hash_including(timely: true))
       expect(serialized_ratings.last[:issues]).to include(hash_including(timely: false), hash_including(timely: false))
     end
+
+    context "benefit type is not compensation or pension" do
+      before do
+        subject.update!(benefit_type: "education")
+      end
+
+      it "returns nil" do
+        expect(subject.serialized_ratings).to be_nil
+      end
+    end
   end
 
-  context "#caseflow_only?" do
+  context "#processed_in_caseflow?" do
     let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
 
-    subject { claim_review.caseflow_only? }
+    subject { claim_review.processed_in_caseflow? }
 
     context "when benefit_type is compensation" do
       let(:benefit_type) { "compensation" }

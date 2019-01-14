@@ -158,7 +158,7 @@ describe DecisionReview do
         create(:decision_issue,
                decision_review: appeal,
                profile_date: profile_date,
-               benefit_type: appeal.benefit_type,
+               benefit_type: "compensation",
                decision_text: "my appeal isn't outcoded yet",
                description: "active appeal issue",
                participant_id: veteran.participant_id)
@@ -168,7 +168,7 @@ describe DecisionReview do
         create(:decision_issue,
                decision_review: outcoded_appeal,
                profile_date: profile_date,
-               benefit_type: appeal.benefit_type,
+               benefit_type: "compensation",
                decision_text: "my appeal is outcoded",
                description: "completed appeal issue",
                participant_id: veteran.participant_id)

@@ -3,6 +3,8 @@ class DecisionIssue < ApplicationRecord
                           if: :appeal?
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) },
                            if: :appeal?
+  validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
+                              if: :appeal?, allow_nil: true
   validates :description, presence: true, if: :appeal?
   has_many :request_decision_issues, dependent: :destroy
   has_many :request_issues, through: :request_decision_issues
@@ -43,6 +45,10 @@ class DecisionIssue < ApplicationRecord
   # the entire decision issue gets set to nonrating
   def rating?
     request_issues.none?(&:nonrating?)
+  end
+
+  def finalized?
+    appeal? ? decision_review.outcoded? : disposition.present?
   end
 
   def ui_hash

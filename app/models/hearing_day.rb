@@ -23,10 +23,11 @@ class HearingDay < ApplicationRecord
 
   def update_children_records
     hearings = if request_type == REQUEST_TYPES[:central]
-                 HearingRepository.fetch_co_hearings_for_parent(scheduled_for)
+                 HearingRepository.fetch_co_hearings_for_date(scheduled_for)
                else
                  HearingRepository.fetch_video_hearings_for_parent(id)
                end
+
     hearings.each do |hearing|
       hearing.update_caseflow_and_vacols(
         room: room,
@@ -104,25 +105,25 @@ class HearingDay < ApplicationRecord
       regional_office_keys = total_video_and_co.map { |hearing_day| hearing_day[:regional_office] }
       regional_office_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
 
-      enriched_hearing_days = []
-      total_video_and_co.each do |hearing_day|
-        hearings = if hearing_day[:regional_office].nil?
-                     HearingRepository.fetch_co_hearings_for_parent(hearing_day[:scheduled_for])
-                   else
-                     HearingRepository.fetch_video_hearings_for_parent(hearing_day[:id])
-                   end
+      hearing_days_to_array_of_days_and_hearings(
+        total_video_and_co, regional_office.nil? || regional_office == "C"
+      ).map do |value|
+        hearing_day = value[:hearing_day]
 
-        scheduled_hearings = filter_non_scheduled_hearings(hearings)
-        total_slots = HearingDayRepository
-          .fetch_hearing_day_slots(regional_office_hash[hearing_day[:regional_office]], hearing_day)
+        scheduled_hearings = filter_non_scheduled_hearings(value[:hearings] || [])
+        total_slots = HearingDayRepository.fetch_hearing_day_slots(
+          regional_office_hash[hearing_day[:regional_office]], hearing_day
+        )
 
-        next unless scheduled_hearings.length < total_slots && !hearing_day[:lock]
-
-        enriched_hearing_days << hearing_day.slice(:id, :scheduled_for, :request_type, :room)
-        enriched_hearing_days[enriched_hearing_days.length - 1][:total_slots] = total_slots
-        enriched_hearing_days[enriched_hearing_days.length - 1][:hearings] = scheduled_hearings
-      end
-      enriched_hearing_days
+        if scheduled_hearings.length >= total_slots || hearing_day[:lock]
+          nil
+        else
+          hearing_day.slice(:id, :scheduled_for, :request_type, :room).tap do |day|
+            day[:hearings] = scheduled_hearings
+            day[:total_slots] = total_slots
+          end
+        end
+      end.compact
     end
 
     def filter_non_scheduled_hearings(hearings)
@@ -146,6 +147,38 @@ class HearingDay < ApplicationRecord
     end
 
     private
+
+    def hearing_days_to_array_of_days_and_hearings(total_video_and_co, is_video_hearing)
+      # We need to associate all of the hearing days from postgres with all of the
+      # hearings from VACOLS. For efficiency we make one call to VACOLS and then
+      # create a hash of the results using either their ids or hearing dates as keys
+      # depending on if it's a video or CO hearing.
+      symbol_to_group_by = nil
+
+      all_hearings_for_days = if is_video_hearing
+                                symbol_to_group_by = :scheduled_for
+
+                                HearingRepository.fetch_co_hearings_for_dates(
+                                  total_video_and_co.map { |hearing| hearing[symbol_to_group_by] }
+                                )
+                              else
+                                symbol_to_group_by = :id
+
+                                HearingRepository.fetch_video_hearings_for_parents(
+                                  total_video_and_co.map { |hearing| hearing[symbol_to_group_by] }
+                                )
+                              end
+
+      # Group the hearing days with the same keys as the hearings
+      grouped_hearing_days = total_video_and_co.group_by do |hearing_day|
+        hearing_day[symbol_to_group_by].to_s
+      end
+
+      grouped_hearing_days.map do |key, day|
+        # There should only be one day, so we take the first value in our day array
+        { hearing_day: day[0], hearings: all_hearings_for_days[key] }
+      end
+    end
 
     def enrich_with_judge_names(hearing_days)
       hearing_days_hash = []

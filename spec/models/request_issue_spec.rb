@@ -499,6 +499,12 @@ describe RequestIssue do
     end
   end
 
+  context "#contested_benefit_type" do
+    it "returns the benefit_type of the contested_rating_issue" do
+      expect(rating_request_issue.contested_benefit_type).to eq "compensation"
+    end
+  end
+
   context "#previous_request_issue" do
     let(:previous_higher_level_review) { create(:higher_level_review, receipt_date: review.receipt_date - 10.days) }
 
