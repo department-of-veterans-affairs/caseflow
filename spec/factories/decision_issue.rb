@@ -3,6 +3,7 @@ FactoryBot.define do
     sequence(:participant_id, 500_000_000)
     disposition "allowed"
     benefit_type "compensation"
+    diagnostic_code "9999"
 
     description { decision_review.is_a?(Appeal) ? "description" : nil }
 
