@@ -76,7 +76,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
         {this.getPageNote()}
       </p>
       {error && <Alert type="error" title={error.title} message={error.detail} />}
-      <div {...flexContainer}>
+      <div {...flexContainer} className="special-options">
         <div {...flexColumn}>
           <CheckboxGroup
             label={<h3>About the appellant: </h3>}
