@@ -2,6 +2,8 @@
 # higher level review as defined in the Appeals Modernization Act of 2017
 
 class ClaimReview < DecisionReview
+  include HasBusinessLine
+
   has_many :end_product_establishments, as: :source
   has_one :intake, as: :detail
 
@@ -50,7 +52,7 @@ class ClaimReview < DecisionReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      if caseflow_only?
+      if processed_in_caseflow?
         issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       else
         issue.update!(
@@ -65,16 +67,7 @@ class ClaimReview < DecisionReview
   end
 
   def create_decision_review_task_if_required!
-    create_decision_review_task! if caseflow_only?
-  end
-
-  def business_line
-    return unless caseflow_only?
-
-    business_line_name = Constants::BENEFIT_TYPES[benefit_type]
-    fail "No such business line: #{benefit_type}" unless business_line_name
-
-    @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
+    create_decision_review_task! if processed_in_caseflow?
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -83,8 +76,8 @@ class ClaimReview < DecisionReview
   def establish!
     attempted!
 
-    if caseflow_only? && end_product_establishments.any?
-      fail NoEndProductsRequired, message: "Non-comp decision reviews should not have End Products"
+    if processed_in_caseflow? && end_product_establishments.any?
+      fail NoEndProductsRequired, message: "Decision reviews processed in Caseflow should not have End Products"
     end
 
     end_product_establishments.each do |end_product_establishment|
@@ -145,6 +138,10 @@ class ClaimReview < DecisionReview
   end
 
   private
+
+  def can_contest_rating_issues?
+    processed_in_vbms?
+  end
 
   def create_decision_review_task!
     return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?

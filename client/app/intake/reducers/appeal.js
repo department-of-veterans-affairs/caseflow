@@ -31,8 +31,10 @@ const updateFromServerIntake = (state, serverIntake) => {
     veteranIsNotClaimant: {
       $set: serverIntake.veteran_is_not_claimant
     },
-    nonComp: {
-      $set: serverIntake.nonComp
+
+    // TODO do we need this at all?
+    processedInCaseflow: {
+      $set: true
     },
     claimant: {
       $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
@@ -307,6 +309,16 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         [action.payload.issueId]: {
           decisionDate: {
             $set: action.payload.decisionDate
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_BENEFIT_TYPE:
+    return update(state, {
+      nonRatingRequestIssues: {
+        [action.payload.issueId]: {
+          benefitType: {
+            $set: action.payload.benefitType
           }
         }
       }

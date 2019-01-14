@@ -78,10 +78,7 @@ class LegacyOptInModal extends React.Component {
       });
     } else {
       this.props.addNonratingRequestIssue({
-        category: currentIssue.category,
-        description: currentIssue.description,
-        decisionDate: currentIssue.decisionDate,
-        timely: true,
+        ...currentIssue,
         vacolsId: this.state.vacolsId,
         vacolsSequenceId: this.state.vacolsSequenceId,
         eligibleForSocOptIn: this.state.eligibleForSocOptIn
