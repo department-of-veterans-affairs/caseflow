@@ -109,9 +109,11 @@ class HearingDay < ApplicationRecord
       regional_office_keys = total_video_and_co.map { |hearing_day| hearing_day[:regional_office] }
       regional_office_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
 
-      hearing_days_to_array_of_days_and_hearings(
+      hold = hearing_days_to_array_of_days_and_hearings(
         total_video_and_co, regional_office.nil? || regional_office == "C"
-      ).map do |value|
+      )
+
+      hold.map do |value|
         hearing_day = value[:hearing_day]
 
         scheduled_hearings = filter_non_scheduled_hearings(value[:hearings] || [])
@@ -119,11 +121,13 @@ class HearingDay < ApplicationRecord
           regional_office_hash[hearing_day[:regional_office]], hearing_day
         )
 
-        return nil if scheduled_hearings.length >= total_slots || hearing_day[:lock]
-
-        hearing_day.slice(:id, :scheduled_for, :request_type, :room).tap do |day|
-          day[:hearings] = scheduled_hearings
-          day[:total_slots] = total_slots
+        if scheduled_hearings.length >= total_slots || hearing_day[:lock]
+          nil
+        else
+          hearing_day.slice(:id, :scheduled_for, :request_type, :room).tap do |day|
+            day[:hearings] = scheduled_hearings
+            day[:total_slots] = total_slots
+          end
         end
       end.compact
     end
