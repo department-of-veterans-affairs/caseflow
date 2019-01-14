@@ -95,7 +95,7 @@ RSpec.feature "ColocatedTask" do
 
       # Attempt to put the task on hold.
       find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: COPY::COLOCATED_ACTION_PLACE_HOLD).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.PLACE_HOLD.to_h[:label]).click
 
       # Redirected to place task on hold page.
       expect(page).to have_content(
