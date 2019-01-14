@@ -117,8 +117,7 @@ class NonCompDispositions extends React.PureComponent {
     const newRequestIssues = update(this.state.requestIssues,
       { [requestIssueIndex]: { decisionIssue: { disposition: { $set: value } } } });
 
-    this.setState({ requestIssues: newRequestIssues });
-    this.checkFormFilledOut();
+    this.setState({ requestIssues: newRequestIssues }, this.checkFormFilledOut);
   }
 
   onDecisionIssueDescriptionChange = (requestIssueIndex, value) => {
