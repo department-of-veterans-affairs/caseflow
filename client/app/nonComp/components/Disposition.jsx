@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import update from 'immutability-helper';
 
 import { formatDate } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
@@ -113,17 +114,17 @@ class NonCompDispositions extends React.PureComponent {
   }
 
   onDecisionIssueDispositionChange = (requestIssueIndex, value) => {
-    let newRequestIssues = this.state.requestIssues;
+    const newRequestIssues = update(this.state.requestIssues,
+      { [requestIssueIndex]: { decisionIssue: { disposition: { $set: value } } } });
 
-    newRequestIssues[requestIssueIndex].decisionIssue.disposition = value;
     this.setState({ requestIssues: newRequestIssues });
     this.checkFormFilledOut();
   }
 
   onDecisionIssueDescriptionChange = (requestIssueIndex, value) => {
-    let newRequestIssues = this.state.requestIssues;
+    const newRequestIssues = update(this.state.requestIssues,
+      { [requestIssueIndex]: { decisionIssue: { description: { $set: value } } } });
 
-    newRequestIssues[requestIssueIndex].decisionIssue.description = value;
     this.setState({ requestIssues: newRequestIssues });
   }
 
