@@ -82,6 +82,12 @@ class RatingIssue
     @decision_issue ||= DecisionIssue.find_by(participant_id: participant_id, rating_issue_reference_id: reference_id)
   end
 
+  def benefit_type
+    # TODO: https://github.com/department-of-veterans-affairs/caseflow/issues/8619
+    # figure this out from VBMS response attributes. Could also be "pension"
+    "compensation"
+  end
+
   def ramp_claim_id
     associated_ramp_ep&.claim_id
   end

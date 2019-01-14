@@ -69,6 +69,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_tasks do
+      after(:create) do |appeal, _evaluator|
+        appeal.create_tasks_on_intake_success!
+      end
+    end
+
     trait :outcoded do
       after(:create) do |appeal, _evaluator|
         appeal.create_tasks_on_intake_success!

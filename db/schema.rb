@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190110220936) do
+ActiveRecord::Schema.define(version: 20190111000717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -442,7 +442,7 @@ ActiveRecord::Schema.define(version: 20190110220936) do
 
   create_table "hearing_days", force: :cascade do |t|
     t.date "scheduled_for", null: false
-    t.string "hearing_type", null: false
+    t.string "request_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
     t.string "room", null: false
@@ -823,12 +823,14 @@ ActiveRecord::Schema.define(version: 20190110220936) do
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
-    t.boolean "is_dta_error"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
+    t.string "decision_review_remanded_type"
+    t.bigint "decision_review_remanded_id"
+    t.index ["decision_review_remanded_type", "decision_review_remanded_id"], name: "index_decision_issues_on_decision_review_remanded"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 

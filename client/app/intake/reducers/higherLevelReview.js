@@ -43,8 +43,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     payeeCode: {
       $set: serverIntake.payeeCode
     },
-    nonComp: {
-      $set: serverIntake.nonComp
+    processedInCaseflow: {
+      $set: serverIntake.processed_in_caseflow
     },
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
@@ -66,9 +66,6 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
-    },
-    endProductDescription: {
-      $set: serverIntake.end_product_description
     },
     relationships: {
       $set: formatRelationships(serverIntake.relationships)
@@ -103,7 +100,6 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     isStarted: false,
     isReviewed: false,
     isComplete: false,
-    endProductDescription: null,
     issueCount: 0,
     nonRatingRequestIssues: { },
     contestableIssues: { },

@@ -20,7 +20,7 @@ class FinishNextButton extends React.PureComponent {
   }
 
   buttonText = () => {
-    if (this.props.supplementalClaim.nonComp) {
+    if (this.props.supplementalClaim.processedInCaseflow) {
       return `Establish ${FORM_TYPES.SUPPLEMENTAL_CLAIM.shortName}`;
     }
 

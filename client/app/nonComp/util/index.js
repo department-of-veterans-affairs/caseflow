@@ -14,8 +14,8 @@ export const formatTasks = (serverTasks) => {
   });
 };
 
-export const longFormNameFromShort = (shortFormName) => {
-  return _.find(FORM_TYPES, { shortName: shortFormName }).name;
+export const longFormNameFromKey = (formNameKey) => {
+  return _.find(FORM_TYPES, { key: formNameKey }).name;
 };
 
 export const formatDecisionIssuesFromRequestIssues = (requestIssues) => {

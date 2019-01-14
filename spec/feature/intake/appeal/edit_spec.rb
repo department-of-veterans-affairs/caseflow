@@ -193,8 +193,8 @@ feature "Appeal Edit issues" do
         date: "04/26/2018"
       )
 
-      safe_click("#button-submit-update")
-      safe_click ".confirm"
+      click_edit_submit_and_confirm
+
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
       request_issue_update = RequestIssuesUpdate.where(review: appeal).last
