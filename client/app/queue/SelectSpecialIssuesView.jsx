@@ -11,7 +11,6 @@ import decisionViewBase from './components/DecisionViewBase';
 import Alert from '../components/Alert';
 import { css } from 'glamor';
 import CheckboxGroup from '../components/CheckboxGroup';
-import SPECIAL_ISSUES from '../constants/SpecialIssues';
 import specialIssueFilters from '../constants/SpecialIssueFilters';
 import COPY from '../../COPY.json';
 import ApiUtil from '../util/ApiUtil';
@@ -58,7 +57,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
       specialIssueFilters.issuesOnAppealSection(),
       specialIssueFilters.dicOrPensionSection()];
 
-    // format the section the way the CheckBoxGroup expects it, and sort according ot the mock
+    // format the section the way the CheckBoxGroup expects it, and sort according to the mock
     sections = sections.map((section) => {
       return section.sort((previous, next) => {
         return previous.sectionOrder - next.sectionOrder;

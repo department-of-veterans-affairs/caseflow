@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SPECIAL_ISSUES = [
+const QUEUE_SPECIAL_ISSUES = [
   {
     display: 'Contaminated Water at Camp LeJeune',
     specialIssue: 'contaminatedWaterAtCampLejeune',
@@ -9,7 +9,9 @@ const SPECIAL_ISSUES = [
       location: 'Louisville, KY'
     },
     snakeCase: 'contaminated_water_at_camp_lejeune',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal',
+    sectionOrder: 4
   },
   {
     display: 'DIC - death, or accrued benefits - United States',
@@ -23,8 +25,8 @@ const SPECIAL_ISSUES = [
     nonCompensation: true
   },
   {
-    display: 'Education - GI Bill, dependents educational assistance, ' +
-      'scholarship, transfer of entitlement',
+    display: 'Education (GI Bill, Dependents Educational Assistance, ' +
+      'scholarship or transfer of entitlement)',
     specialIssue: 'educationGiBillDependentsEducationalAssistanceScholarship' +
       'TransferOfEntitlement',
     stationOfJurisdiction: null,
@@ -33,20 +35,24 @@ const SPECIAL_ISSUES = [
       emailAddress: 'education',
       regionalOffice: 'education'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType',
+    sectionOrder: 1
   },
   {
-    display: 'Foreign claim - compensation claims, dual claims, appeals',
+    display: 'Other foreign country',
     specialIssue: 'foreignClaimCompensationClaimsDualClaimsAppeals',
     stationOfJurisdiction: {
       key: '311',
       location: 'Pittsburgh, PA'
     },
     snakeCase: 'foreign_claim_compensation_claims_dual_claims_appeals',
-    unhandled: null
+    unhandled: null,
+    section: 'residence',
+    sectionOrder: 4
   },
   {
-    display: 'Foreign pension, DIC - Mexico, Central and South America, Caribbean',
+    display: 'DIC/Pension for appellant in Mexico, Central or South America or the Caribbean',
     specialIssue: 'foreignPensionDicMexicoCentralAndSouthAmericaCaribb',
     stationOfJurisdiction: null,
     snakeCase: 'foreign_pension_dic_mexico_central_and_south_america_caribb',
@@ -54,10 +60,13 @@ const SPECIAL_ISSUES = [
       emailAddress: ['AppealsPMC.VAVBASPL@va.gov', 'Hillary.Hernandez@va.gov'],
       regionalOffice: 'RO83'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'dicOrPension',
+    sectionOrder: 2
   },
   {
-    display: 'Foreign pension, DIC - all other foreign countries',
+    display: 'DIC/Pension for appellant in any foreign country outside of Mexico, Central' +
+      'or South America, or the Caribbean',
     specialIssue: 'foreignPensionDicAllOtherForeignCountries',
     stationOfJurisdiction: null,
     snakeCase: 'foreign_pension_dic_all_other_foreign_countries',
@@ -65,7 +74,9 @@ const SPECIAL_ISSUES = [
       emailAddess: 'PMC',
       regionalOffice: 'PMC'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'dicOrPension',
+    sectionOrder: 3
   },
   {
     display: 'Hearing - including travel board & video conference',
@@ -76,7 +87,7 @@ const SPECIAL_ISSUES = [
     nonCompensation: true
   },
   {
-    display: 'Home Loan Guaranty',
+    display: 'Home loan guaranty',
     specialIssue: 'homeLoanGuaranty',
     stationOfJurisdiction: null,
     snakeCase: 'home_loan_guaranty',
@@ -84,14 +95,18 @@ const SPECIAL_ISSUES = [
       emailAddress: ['jennifer.Tillery@va.gov'],
       regionalOffice: 'RO88'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType',
+    sectionOrder: 2
   },
   {
-    display: 'Incarcerated Veterans',
+    display: 'Incarcerated',
     specialIssue: 'incarceratedVeterans',
     stationOfJurisdiction: 'regional',
     snakeCase: 'incarcerated_veterans',
-    unhandled: null
+    unhandled: null,
+    section: 'about',
+    sectionOrder: 2
   },
   {
     display: 'Insurance',
@@ -102,7 +117,9 @@ const SPECIAL_ISSUES = [
       emailAddress: ['nancy.encarnado@va.gov'],
       regionalOffice: 'RO80'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType',
+    sectionOrder: 3
   },
   {
     display: 'Manlincon Compliance',
@@ -111,7 +128,9 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: 'regional',
     snakeCase: 'manlincon_compliance',
     unhandled: null,
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'issuesOnAppeal',
+    sectionOrder: 6
   },
   {
     display: 'Mustard Gas',
@@ -121,7 +140,9 @@ const SPECIAL_ISSUES = [
       location: 'Muskogee, OK'
     },
     snakeCase: 'mustard_gas',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal',
+    sectionOrder: 3
   },
   {
     display: 'National Cemetery Administration',
@@ -132,17 +153,21 @@ const SPECIAL_ISSUES = [
       emailAddress: ['richard.byersII@va.gov'],
       regionalOffice: 'RO98'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType',
+    sectionOrder: 4
   },
   {
-    display: 'Non-rating issue',
+    display: 'Non-rating issue (issue doesn\'t require a rating)',
     specialIssue: 'nonratingIssue',
     stationOfJurisdiction: 'regional',
     snakeCase: 'nonrating_issue',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal',
+    sectionOrder: 1
   },
   {
-    display: 'Pension - United States',
+    display: 'Pension for appellant in United States',
     specialIssue: 'pensionUnitedStates',
     stationOfJurisdiction: null,
     snakeCase: 'pension_united_states',
@@ -150,21 +175,40 @@ const SPECIAL_ISSUES = [
       emailAddress: 'PMC',
       regionalOffice: 'PMC'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'dicOrPension',
+    sectionOrder: 4
   },
   {
-    display: 'Private Attorney or Agent',
+    display: 'DIC for appellant in United States',
+    specialIssue: 'dicUnitedStates',
+    stationOfJurisdiction: null,
+    snakeCase: 'DIC_united_states',
+    unhandled: {
+      emailAddress: 'PMC',
+      regionalOffice: 'PMC'
+    },
+    nonCompensation: true,
+    section: 'dicOrPension',
+    sectionOrder: 1
+  },
+  {
+    display: 'Has a private Attorney or Agent',
     specialIssue: 'privateAttorneyOrAgent',
     stationOfJurisdiction: null,
     snakeCase: 'private_attorney_or_agent',
-    unhandled: null
+    unhandled: null,
+    section: 'about',
+    sectionOrder: 1
   },
   {
     display: 'Radiation',
     specialIssue: 'radiation',
     stationOfJurisdiction: 'regional',
     snakeCase: 'radiation',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal',
+    sectionOrder: 7
   },
   {
     display: 'Rice Compliance',
@@ -172,17 +216,21 @@ const SPECIAL_ISSUES = [
     specialIssue: 'riceCompliance',
     stationOfJurisdiction: 'regional',
     snakeCase: 'rice_compliance',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal',
+    sectionOrder: 5
   },
   {
-    display: 'Spina Bifida',
+    display: 'Spina bifida (chapter 18)',
     specialIssue: 'spinaBifida',
     stationOfJurisdiction: 'regional',
     snakeCase: 'spina_bifida',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal',
+    sectionOrder: 2
   },
   {
-    display: 'U.S. Territory claim - American Samoa, Guam, Northern ' +
+    display: 'American Samoa, Guam, Northern ' +
       'Mariana Islands (Rota, Saipan & Tinian)',
     specialIssue: 'usTerritoryClaimAmericanSamoaGuamNorthern' +
       'MarianaIslandsRotaSaipanTinian',
@@ -191,30 +239,36 @@ const SPECIAL_ISSUES = [
       location: 'Honolulu, HI'
     },
     snakeCase: 'us_territory_claim_american_samoa_guam_northern_mariana_isla',
-    unhandled: null
+    unhandled: null,
+    section: 'residence',
+    sectionOrder: 1
   },
   {
-    display: 'U.S. Territory claim - Philippines',
+    display: 'Philippines',
     specialIssue: 'usTerritoryClaimPhilippines',
     stationOfJurisdiction: {
       key: '358',
       location: 'Manila, Philippines'
     },
     snakeCase: 'us_territory_claim_philippines',
-    unhandled: null
+    unhandled: null,
+    section: 'residence',
+    sectionOrder: 2
   },
   {
-    display: 'U.S. Territory claim - Puerto Rico and Virgin Islands',
+    display: 'Puerto Rico or Virgin Islands',
     specialIssue: 'usTerritoryClaimPuertoRicoAndVirginIslands',
     stationOfJurisdiction: {
       key: '355',
       location: 'San Juan, Puerto Rico'
     },
     snakeCase: 'us_territory_claim_puerto_rico_and_virgin_islands',
-    unhandled: null
+    unhandled: null,
+    section: 'residence',
+    sectionOrder: 3
   },
   {
-    display: 'VAMC',
+    display: 'Veterans Administration Medical Center (VAMC)',
     specialIssue: 'vamc',
     stationOfJurisdiction: null,
     snakeCase: 'vamc',
@@ -222,17 +276,21 @@ const SPECIAL_ISSUES = [
       emailAddress: ['Travis.Richardson@va.gov'],
       regionalOffice: 'RO99'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType',
+    sectionOrder: 4
   },
   {
-    display: 'Vocational Rehab',
+    display: 'Vocational Rehabilitation and Employment (VR&E)',
     specialIssue: 'vocationalRehab',
     snakeCase: 'vocational_rehab',
     stationOfJurisdiction: 'regional',
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType',
+    sectionOrder: 5
   },
   {
-    display: 'Waiver of Overpayment',
+    display: 'Waiver of overpayment',
     specialIssue: 'waiverOfOverpayment',
     stationOfJurisdiction: null,
     snakeCase: 'waiver_of_overpayment',
@@ -240,8 +298,23 @@ const SPECIAL_ISSUES = [
       emailAddress: 'COWC',
       regionalOffice: 'COWC'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'issuesOnAppeal',
+    sectionOrder: 8
+  },
+  {
+    display: 'Committee on Waivers and Compromises',
+    specialIssue: 'committeeOnWaiversAndCompromises',
+    stationOfJurisdiction: null,
+    snakeCase: 'committee_on_waivers_and_compromises',
+    unhandled: {
+      emailAddress: 'COWC',
+      regionalOffice: 'COWC'
+    },
+    nonCompensation: true,
+    section: 'issuesOnAppeal',
+    sectionOrder: 9
   }
 ];
 
-export default SPECIAL_ISSUES;
+export default QUEUE_SPECIAL_ISSUES;
