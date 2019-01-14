@@ -10,7 +10,8 @@ const SPECIAL_ISSUES = [
     },
     snakeCase: 'contaminated_water_at_camp_lejeune',
     unhandled: null,
-    section: 'issuesOnAppeal'
+    section: 'issuesOnAppeal',
+    sectionOrder: 4
   },
   {
     display: 'DIC - death, or accrued benefits - United States',
@@ -35,7 +36,8 @@ const SPECIAL_ISSUES = [
       regionalOffice: 'education'
     },
     nonCompensation: true,
-    section: 'benefitType'
+    section: 'benefitType',
+    sectionOrder: 1
   },
   {
     display: 'Other foreign country',
@@ -46,7 +48,8 @@ const SPECIAL_ISSUES = [
     },
     snakeCase: 'foreign_claim_compensation_claims_dual_claims_appeals',
     unhandled: null,
-    section: 'residence'
+    section: 'residence',
+    sectionOrder: 4
   },
   {
     display: 'DIC/Pension for appellant in Mexico, Central or South America or the Caribbean',
@@ -58,7 +61,8 @@ const SPECIAL_ISSUES = [
       regionalOffice: 'RO83'
     },
     nonCompensation: true,
-    section: 'dicOrPension'
+    section: 'dicOrPension',
+    sectionOrder: 2
   },
   {
     display: 'DIC/Pension for appellant in any foreign country outside of Mexico, Central' +
@@ -71,7 +75,8 @@ const SPECIAL_ISSUES = [
       regionalOffice: 'PMC'
     },
     nonCompensation: true,
-    section: 'dicOrPension'
+    section: 'dicOrPension',
+    sectionOrder: 3
   },
   {
     display: 'Hearing - including travel board & video conference',
@@ -91,7 +96,8 @@ const SPECIAL_ISSUES = [
       regionalOffice: 'RO88'
     },
     nonCompensation: true,
-    section: 'benefitType'
+    section: 'benefitType',
+    sectionOrder: 2
   },
   {
     display: 'Incarcerated',
@@ -99,7 +105,8 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: 'regional',
     snakeCase: 'incarcerated_veterans',
     unhandled: null,
-    section: 'about'
+    section: 'about',
+    sectionOrder: 2
   },
   {
     display: 'Insurance',
@@ -111,7 +118,8 @@ const SPECIAL_ISSUES = [
       regionalOffice: 'RO80'
     },
     nonCompensation: true,
-    section: 'benefitType'
+    section: 'benefitType',
+    sectionOrder: 3
   },
   {
     display: 'Manlincon Compliance',
@@ -121,7 +129,8 @@ const SPECIAL_ISSUES = [
     snakeCase: 'manlincon_compliance',
     unhandled: null,
     nonCompensation: true,
-    section: 'issuesOnAppeal'
+    section: 'issuesOnAppeal',
+    sectionOrder: 6
   },
   {
     display: 'Mustard Gas',
@@ -132,7 +141,8 @@ const SPECIAL_ISSUES = [
     },
     snakeCase: 'mustard_gas',
     unhandled: null,
-    section: 'issuesOnAppeal'
+    section: 'issuesOnAppeal',
+    sectionOrder: 3
   },
   {
     display: 'National Cemetery Administration',
@@ -144,7 +154,8 @@ const SPECIAL_ISSUES = [
       regionalOffice: 'RO98'
     },
     nonCompensation: true,
-    section: 'benefitType'
+    section: 'benefitType',
+    sectionOrder: 4
   },
   {
     display: 'Non-rating issue (issue doesn\'t require a rating)',
@@ -152,7 +163,8 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: 'regional',
     snakeCase: 'nonrating_issue',
     unhandled: null,
-    section: 'issuesOnAppeal'
+    section: 'issuesOnAppeal',
+    sectionOrder: 1
   },
   {
     display: 'Pension for appellant in United States',
@@ -164,7 +176,8 @@ const SPECIAL_ISSUES = [
       regionalOffice: 'PMC'
     },
     nonCompensation: true,
-    section: 'dicOrPension'
+    section: 'dicOrPension',
+    sectionOrder: 4
   },
   {
     display: 'DIC for appellant in United States',
@@ -176,7 +189,8 @@ const SPECIAL_ISSUES = [
       regionalOffice: 'PMC'
     },
     nonCompensation: true,
-    section: 'dicOrPension'
+    section: 'dicOrPension',
+    sectionOrder: 1
   },
   {
     display: 'Has a private Attorney or Agent',
@@ -184,7 +198,8 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: null,
     snakeCase: 'private_attorney_or_agent',
     unhandled: null,
-    section: 'about'
+    section: 'about',
+    sectionOrder: 1
   },
   {
     display: 'Radiation',
@@ -192,7 +207,8 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: 'regional',
     snakeCase: 'radiation',
     unhandled: null,
-    section: 'issuesOnAppeal'
+    section: 'issuesOnAppeal',
+    sectionOrder: 7
   },
   {
     display: 'Rice Compliance',
@@ -201,7 +217,8 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: 'regional',
     snakeCase: 'rice_compliance',
     unhandled: null,
-    section: 'issuesOnAppeal'
+    section: 'issuesOnAppeal',
+    sectionOrder: 5
   },
   {
     display: 'Spina bifida (chapter 18)',
@@ -209,7 +226,8 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: 'regional',
     snakeCase: 'spina_bifida',
     unhandled: null,
-    section: 'issuesOnAppeal'
+    section: 'issuesOnAppeal',
+    sectionOrder: 2
   },
   {
     display: 'American Samoa, Guam, Northern ' +
@@ -222,7 +240,8 @@ const SPECIAL_ISSUES = [
     },
     snakeCase: 'us_territory_claim_american_samoa_guam_northern_mariana_isla',
     unhandled: null,
-    section: 'residence'
+    section: 'residence',
+    sectionOrder: 1
   },
   {
     display: 'Philippines',
@@ -233,7 +252,8 @@ const SPECIAL_ISSUES = [
     },
     snakeCase: 'us_territory_claim_philippines',
     unhandled: null,
-    section: 'residence'
+    section: 'residence',
+    sectionOrder: 2
   },
   {
     display: 'Puerto Rico or Virgin Islands',
@@ -244,7 +264,8 @@ const SPECIAL_ISSUES = [
     },
     snakeCase: 'us_territory_claim_puerto_rico_and_virgin_islands',
     unhandled: null,
-    section: 'residence'
+    section: 'residence',
+    sectionOrder: 3
   },
   {
     display: 'Veterans Administration Medical Center (VAMC)',
@@ -256,7 +277,8 @@ const SPECIAL_ISSUES = [
       regionalOffice: 'RO99'
     },
     nonCompensation: true,
-    section: 'benefitType'
+    section: 'benefitType',
+    sectionOrder: 4
   },
   {
     display: 'Vocational Rehabilitation and Employment (VR&E)',
@@ -264,7 +286,8 @@ const SPECIAL_ISSUES = [
     snakeCase: 'vocational_rehab',
     stationOfJurisdiction: 'regional',
     nonCompensation: true,
-    section: 'benefitType'
+    section: 'benefitType',
+    sectionOrder: 5
   },
   {
     display: 'Waiver of overpayment',
@@ -276,7 +299,8 @@ const SPECIAL_ISSUES = [
       regionalOffice: 'COWC'
     },
     nonCompensation: true,
-    section: 'issuesOnAppeal'
+    section: 'issuesOnAppeal',
+    sectionOrder: 8
   },
   {
     display: 'Committee on Waivers and Compromises',
@@ -288,7 +312,8 @@ const SPECIAL_ISSUES = [
       regionalOffice: 'COWC'
     },
     nonCompensation: true,
-    section: 'issuesOnAppeal'
+    section: 'issuesOnAppeal',
+    sectionOrder: 9
   }
 ];
 

@@ -12,6 +12,7 @@ import Alert from '../components/Alert';
 import { css } from 'glamor';
 import CheckboxGroup from '../components/CheckboxGroup';
 import SPECIAL_ISSUES from '../constants/SpecialIssues';
+import specialIssueFilters from '../constants/SpecialIssueFilters';
 import COPY from '../../COPY.json';
 import ApiUtil from '../util/ApiUtil';
 const flexContainer = css({
@@ -34,7 +35,6 @@ class SelectSpecialIssuesView extends React.PureComponent {
   }
   // TODO: 
   // 1. verify that new values are persisted in redux and sent to the backend properly.
-  // 2. CSS issues
   goToNextStep = () => {
     const {
       appeal,
@@ -49,13 +49,20 @@ class SelectSpecialIssuesView extends React.PureComponent {
     const {
       error
     } = this.props;
-    let aboutSection = SPECIAL_ISSUES.filter((issue) => issue.section === 'about');
-    let residenceSection = SPECIAL_ISSUES.filter((issue) => issue.section === 'residence');
-    let benefitTypeSection = SPECIAL_ISSUES.filter((issue) => issue.section === 'benefitType');
-    let issuesOnAppealSection = SPECIAL_ISSUES.filter((issue) => issue.section === 'issuesOnAppeal');
-    let dicOrPensionSection = SPECIAL_ISSUES.filter((issue) => issue.section === 'dicOrPension');
-    let sections = [aboutSection, residenceSection, benefitTypeSection, issuesOnAppealSection, dicOrPensionSection];
 
+    let sections = [
+      specialIssueFilters.aboutSection(),
+      specialIssueFilters.residenceSection(),
+      specialIssueFilters.benefitTypeSection(),
+      specialIssueFilters.issuesOnAppealSection(),
+      specialIssueFilters.dicOrPensionSection()];
+
+    sections = sections.map((section) => {
+      return section.sort((previous, next) => {
+        return previous.sectionOrder - next.sectionOrder;
+      });
+    });
+    // format the section the way the CheckBoxGroup expects it
     sections = sections.map((section) => {
       return section.map((issue) => {
         return {
@@ -66,7 +73,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
     });
 
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
-    [aboutSection, residenceSection, benefitTypeSection, issuesOnAppealSection, dicOrPensionSection] = sections;
+    const [aboutSection, residenceSection, benefitTypeSection, issuesOnAppealSection, dicOrPensionSection] = sections;
 
     return <React.Fragment>
       <h1>
