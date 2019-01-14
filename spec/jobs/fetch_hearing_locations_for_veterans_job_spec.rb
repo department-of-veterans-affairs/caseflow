@@ -41,6 +41,21 @@ describe FetchHearingLocationsForVeteransJob do
         expect(AvailableHearingLocations.first.distance).to eq 11.11
       end
 
+      context "when closest_regional_office has to be fetched and only one RO is in veteran's state" do
+        it "only fetches RO distance once" do
+          expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response).once
+          FetchHearingLocationsForVeteransJob.perform_now
+        end
+      end
+
+      context "when veteran closest_regional_office is defined" do
+        let(:veteran) { create(:veteran, file_number: bfcorlid_file_number, closest_regional_office: "RO14") }
+        it "fetches RO distance twice" do
+          allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response).twice
+          FetchHearingLocationsForVeteransJob.perform_now
+        end
+      end
+
       context "when there is an existing available_hearing_location" do
         let(:existing_location) do
           create(:available_hearing_locations, veteran_file_number: bfcorlid_file_number, distance: 22.22)

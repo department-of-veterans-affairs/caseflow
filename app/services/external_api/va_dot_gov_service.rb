@@ -74,11 +74,11 @@ class ExternalApi::VADotGovService
     end
 
     def facilities_endpoint
-      "va_facilities/v0/facilities"
+      "services/va_facilities/v0/facilities"
     end
 
     def address_validation_endpoint
-      "address_validation/v1/validate"
+      "services/address_validation/v1/validate"
     end
 
     # rubocop:disable Metrics/ParameterLists
@@ -110,9 +110,9 @@ class ExternalApi::VADotGovService
         long: resp_body["geocode"]["longitude"],
         city: resp_body["address"]["city"],
         full_address: full_address(
-          address_1: resp_body["address"]["address_line1"],
-          address_2: resp_body["address"]["address_line2"],
-          address_3: resp_body["address"]["address_line3"]
+          address_1: resp_body["address"]["addressLine1"],
+          address_2: resp_body["address"]["addressLine2"],
+          address_3: resp_body["address"]["addressLine3"]
         ),
         country_code: resp_body["address"]["country"]["fipsCode"],
         state_code: resp_body["address"]["stateProvince"]["code"],
@@ -135,6 +135,9 @@ class ExternalApi::VADotGovService
           address_2: attrs["address"]["physical"]["address_2"],
           address_3: attrs["address"]["physical"]["address_3"]
         ),
+        city: attrs["address"]["physical"]["city"],
+        state: attrs["address"]["physical"]["state"],
+        zip_code: attrs["address"]["physical"]["zip"],
         lat: attrs["lat"],
         long: attrs["long"],
         distance: dist
