@@ -1,5 +1,5 @@
 describe TaskTimerJob do
-  class SomeTimedTask < GenericTask
+  class TimedTask < GenericTask
     include TimeableTask
 
     def when_timer_ends; end
@@ -7,11 +7,6 @@ describe TaskTimerJob do
     def self.timer_delay
       1.day
     end
-  end
-  class AnotherTimedTask < GenericTask
-    include TimeableTask
-
-    def when_timer_ends; end
   end
 
   before do
@@ -23,7 +18,8 @@ describe TaskTimerJob do
   end
 
   it "processes jobs only if they aren't already processed" do
-    timer = SomeTimedTask.create!(appeal: create(:appeal), assigned_to: Bva.singleton)
+    task = TimedTask.create!(appeal: create(:appeal), assigned_to: Bva.singleton)
+    timer = TaskTimer.find_by(task: task)
 
     Timecop.travel(Time.zone.now + 1.day)
     TaskTimerJob.perform_now
