@@ -7,22 +7,10 @@ class AttorneyLegacyTask < LegacyTask
     # so we use the absence of this value to indicate that there is no case assignment and return no actions.
     return [] unless task_id
 
-    actions = [
-      {
-        label: COPY::ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
-        value: "draft_decision/special_issues"
-      },
-      {
-        label: COPY::ATTORNEY_CHECKOUT_OMO_LABEL,
-        value: "omo_request/submit"
-      }
-    ]
+    actions = [Constants.TASK_ACTIONS.REVIEW_DECISION.to_h, Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h]
 
     if FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: assigned_to)
-      actions.push(
-        label: COPY::ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL,
-        value: "colocated_task"
-      )
+      actions.push(Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h)
     end
 
     actions

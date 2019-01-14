@@ -288,24 +288,26 @@ class QueueApp extends React.PureComponent<Props> {
             path="/queue/appeals/:appealId/modal/advanced_on_docket_motion"
             render={this.routedAdvancedOnDocketMotion} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_TEAM.value}`}
-            render={this.routedAssignToTeam} />
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_ATTORNEY.value}`}
+            render={this.routedAssignToAttorney} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PERSON.value}`}
+            render={this.routedAssignToUser} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value}`}
             render={this.routedAssignToSingleTeam} />
           <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_TEAM.value}`}
+            render={this.routedAssignToTeam} />
+          <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
             render={this.routedCreateMailTask} />
-          <Route
-            path={'/queue/appeals/:appealId/tasks/:taskId/' +
-              `(${TASK_ACTIONS.ASSIGN_TO_PERSON.value}|${TASK_ACTIONS.RETURN_TO_JUDGE.value})`}
-            render={this.routedAssignToUser} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
             render={this.routedReassignToUser} />
           <Route
-            path="/queue/appeals/:appealId/tasks/:taskId/modal/assign_to_attorney"
-            render={this.routedAssignToAttorney} />
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RETURN_TO_JUDGE.value}`}
+            render={this.routedAssignToUser} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
