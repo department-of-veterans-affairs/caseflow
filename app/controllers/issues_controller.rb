@@ -10,7 +10,7 @@ class IssuesController < ApplicationController
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: :bad_request
   end
 
-  rescue_from *VACOLS_REPOSITORY_EXCEPTIONS do |e|
+  rescue_from(*VACOLS_REPOSITORY_EXCEPTIONS) do |e|
     handle_non_critical_error("issues", e)
   end
 
