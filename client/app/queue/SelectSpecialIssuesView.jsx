@@ -35,7 +35,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
   }
   // TODO: 
   // 1. verify that new values are persisted in redux and sent to the backend properly.
-  // 2. italicize first word
+  // 2. italicize first word in specific labels
   goToNextStep = () => {
     const {
       appeal,
@@ -58,14 +58,11 @@ class SelectSpecialIssuesView extends React.PureComponent {
       specialIssueFilters.issuesOnAppealSection(),
       specialIssueFilters.dicOrPensionSection()];
 
+    // format the section the way the CheckBoxGroup expects it, and sort according ot the mock
     sections = sections.map((section) => {
       return section.sort((previous, next) => {
         return previous.sectionOrder - next.sectionOrder;
-      });
-    });
-    // format the section the way the CheckBoxGroup expects it
-    sections = sections.map((section) => {
-      return section.map((issue) => {
+      }).map((issue) => {
         return {
           id: issue.snakeCase,
           label: issue.display
