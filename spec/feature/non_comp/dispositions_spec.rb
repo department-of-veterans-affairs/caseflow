@@ -19,7 +19,7 @@ feature "NonComp Dispositions Task Page" do
   end
 
   def find_disabled_disposition(num, disposition, description = nil)
-    expect(page).to have_field(type: 'textarea', with: description, disabled: true)
+    expect(page).to have_field(type: "textarea", with: description, disabled: true)
 
     within(".dropdown-disposition-issue-#{num}") do
       expect(find("span[class='Select-value-label']", text: disposition)).to_not be_nil
@@ -57,10 +57,6 @@ feature "NonComp Dispositions Task Page" do
     let!(:in_progress_task) do
       create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org)
     end
-
-    # let!(:completed_task) do
-    #   create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org)
-    # end
 
     let(:business_line_url) { "decision_reviews/nco" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
