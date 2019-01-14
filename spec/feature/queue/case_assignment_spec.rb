@@ -130,7 +130,7 @@ RSpec.feature "Case Assignment flows" do
 
       visit "/queue"
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 1))
-      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 3))
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 2))
     end
   end
 end
