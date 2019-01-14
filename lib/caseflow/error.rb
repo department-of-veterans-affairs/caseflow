@@ -179,6 +179,8 @@ module Caseflow::Error
     end
   end
 
+  class MissingTimerMethod < StandardError; end
+
   class DuplicateEp < EstablishClaimFailedInVBMS; end
   class LongAddress < EstablishClaimFailedInVBMS; end
 
