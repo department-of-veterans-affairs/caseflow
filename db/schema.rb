@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190111000717) do
+ActiveRecord::Schema.define(version: 20190114225909) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,6 +127,10 @@ ActiveRecord::Schema.define(version: 20190111000717) do
     t.bigint "end_product_establishment_id"
     t.string "contention_reference_id"
     t.bigint "decision_document_id"
+    t.datetime "decision_sync_submitted_at"
+    t.datetime "decision_sync_attempted_at"
+    t.datetime "decision_sync_processed_at"
+    t.string "decision_sync_error"
     t.index ["appeal_id"], name: "index_board_grant_effectuations_on_appeal_id"
     t.index ["decision_document_id"], name: "index_board_grant_effectuations_on_decision_document_id"
     t.index ["end_product_establishment_id"], name: "index_board_grant_effectuations_on_end_product_establishment_id"

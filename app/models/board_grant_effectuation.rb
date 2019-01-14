@@ -19,6 +19,39 @@ class BoardGrantEffectuation < ApplicationRecord
     pension_nonrating: "030BGNRPMC"
   }.freeze
 
+  class << self
+    # We don't need to retry these as frequently
+    def processing_retry_interval
+      12.hours
+    end
+
+    def submitted_at_column
+      :decision_sync_submitted_at
+    end
+
+    def attempted_at_column
+      :decision_sync_attempted_at
+    end
+
+    def processed_at_column
+      :decision_sync_processed_at
+    end
+
+    def error_column
+      :decision_sync_error
+    end
+  end
+
+  def sync_decision_issues!
+    return if processed?
+
+    attempted!
+    # if the associated_rating for the end_product_establishment isn't there, return and don't set processed
+    # find rating issue with a matching contention_reference_id in the rating
+    # update the granted_decision_issue with values from found rating_issue
+    # if no rating found, that's okay?
+  end
+
   def contention_text
     granted_decision_issue.description
   end

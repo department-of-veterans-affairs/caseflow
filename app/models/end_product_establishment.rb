@@ -327,7 +327,10 @@ class EndProductEstablishment < ApplicationRecord
 
   def sync_decision_issues!
     contention_records.each do |record|
-      record.submit_for_processing!
+      # It seems to take at least a day for the associated rating to show up in BGS
+      # after the EP is cleared. We don't want to tax the BGS ratings endpoint, so
+      # we're going to wait a day before we start looking.
+      record.submit_for_processing!(delay: 1.day)
 
       DecisionIssueSyncJob.perform_later(record)
     end
