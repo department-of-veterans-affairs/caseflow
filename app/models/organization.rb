@@ -22,12 +22,12 @@ class Organization < ApplicationRecord
     true
   end
 
-  def next_assignee(_task_class)
+  def next_assignee(_options = {})
     nil
   end
 
-  def automatically_assign_to_member?(task_class)
-    !!next_assignee(task_class)
+  def automatically_assign_to_member?
+    !!next_assignee
   end
 
   def selectable_in_queue?

@@ -61,6 +61,13 @@ export const formatRadioOptions = (options) => {
   });
 };
 
+export const formatSearchableDropdownOptions = (options) => {
+  return _.map(options, (value, key) => {
+    return { value: key,
+      label: value };
+  });
+};
+
 export const prepareReviewData = (intakeData, intakeType) => {
   switch (intakeType) {
   case 'appeal':

@@ -4,11 +4,11 @@ class RoundRobinTaskDistributor
   attr_accessor :list_of_assignees, :task_class
 
   def latest_task
-    task_class.where(assigned_to_type: User.name).order("created_at").last
+    task_class.where(assigned_to_type: User.name).max_by(&:created_at)
   end
 
   def last_assignee_css_id
-    latest_task ? latest_task.assigned_to.css_id : nil
+    latest_task&.assigned_to&.css_id
   end
 
   def last_assignee_index
@@ -30,7 +30,7 @@ class RoundRobinTaskDistributor
     list_of_assignees[next_assignee_index]
   end
 
-  def next_assignee
+  def next_assignee(_options = {})
     User.find_by_css_id_or_create_with_default_station_id(next_assignee_css_id)
   end
 end

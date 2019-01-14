@@ -3,13 +3,6 @@ class HigherLevelReview < ClaimReview
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
-  END_PRODUCT_CODES = {
-    rating: "030HLRR",
-    nonrating: "030HLRNR",
-    pension_rating: "030HLRRPMC",
-    pension_nonrating: "030HLRNRPMC"
-  }.freeze
-
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
 
   # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
@@ -32,12 +25,6 @@ class HigherLevelReview < ClaimReview
     )
   end
 
-  def issue_code(rating: true)
-    issue_code_type = rating ? :rating : :nonrating
-    issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
-    END_PRODUCT_CODES[issue_code_type]
-  end
-
   def on_decision_issues_sync_processed(_end_product_establishment)
     create_dta_supplemental_claim
   end
@@ -48,12 +35,8 @@ class HigherLevelReview < ClaimReview
     return if dta_issues_needing_follow_up.empty?
 
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
-
-    if run_async?
-      DecisionReviewProcessJob.perform_later(dta_supplemental_claim)
-    else
-      DecisionReviewProcessJob.perform_now(dta_supplemental_claim)
-    end
+    dta_supplemental_claim.create_decision_review_task_if_required!
+    dta_supplemental_claim.start_processing_job!
   end
 
   def dta_issues_needing_follow_up
@@ -64,7 +47,7 @@ class HigherLevelReview < ClaimReview
     @dta_supplemental_claim ||= SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
       receipt_date: Time.zone.now.to_date,
-      is_dta_error: true,
+      decision_review_remanded: self,
       benefit_type: benefit_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant

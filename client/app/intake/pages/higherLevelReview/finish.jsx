@@ -20,7 +20,7 @@ class FinishNextButton extends React.PureComponent {
   }
 
   buttonText = () => {
-    if (this.props.higherLevelReview.nonComp) {
+    if (this.props.higherLevelReview.processedInCaseflow) {
       return `Establish ${FORM_TYPES.HIGHER_LEVEL_REVIEW.shortName}`;
     }
 

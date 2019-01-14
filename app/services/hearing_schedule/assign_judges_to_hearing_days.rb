@@ -105,7 +105,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def judge_already_assigned_to_co?(judge_id)
     @assigned_hearing_days.any? do |day|
-      day[:hearing_type] == HearingDay::HEARING_TYPES[:central] && day[:judge_id] == judge_id
+      day[:request_type] == HearingDay::REQUEST_TYPES[:central] && day[:judge_id] == judge_id
     end
   end
 
@@ -157,11 +157,11 @@ class HearingSchedule::AssignJudgesToHearingDays
     end
   end
 
-  def get_hearing_type(is_central_hearing)
+  def get_request_type(is_central_hearing)
     if is_central_hearing
-      HearingDay::HEARING_TYPES[:central]
+      HearingDay::REQUEST_TYPES[:central]
     else
-      HearingDay::HEARING_TYPES[:video]
+      HearingDay::REQUEST_TYPES[:video]
     end
   end
 
@@ -198,7 +198,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def co_hearing_day?(hearing_day)
-    hearing_day.hearing_type == "C"
+    hearing_day.request_type == "C"
   end
 
   def valid_co_day?(day)

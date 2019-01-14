@@ -267,10 +267,10 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       $toggle: ['filterVljIsOpen']
     });
-  case ACTIONS.SELECT_HEARING_TYPE:
+  case ACTIONS.SELECT_REQUEST_TYPE:
     return update(state, {
-      hearingType: {
-        $set: action.payload.hearingType
+      requestType: {
+        $set: action.payload.requestType
       }
     });
   case ACTIONS.SELECT_VLJ:

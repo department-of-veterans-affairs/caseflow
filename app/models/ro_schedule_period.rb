@@ -42,7 +42,7 @@ class RoSchedulePeriod < SchedulePeriod
         dates.each do |date, rooms|
           rooms.each do |room|
             acc << HearingDayMapper.hearing_day_field_validations(
-              hearing_type: :video,
+              request_type: :video,
               scheduled_for: Time.use_zone("Eastern Time (US & Canada)") do
                 Time.zone.local(date.year, date.month, date.day, 8, 30, 0).to_datetime
               end,

@@ -6,7 +6,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   def ui_hash(ama_enabled)
     super.merge(
       benefit_type: detail.benefit_type,
-      end_product_description: detail.end_product_description
+      processed_in_caseflow: detail.processed_in_caseflow?
     )
   end
 
@@ -41,7 +41,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   def complete!(request_params)
     super(request_params) do
       detail.submit_for_processing!
-      detail.create_decision_review_task! if detail.caseflow_only?
+      detail.create_decision_review_task_if_required!
       if run_async?
         DecisionReviewProcessJob.perform_later(detail)
       else

@@ -6,7 +6,7 @@ describe AppealIntake do
   let(:veteran_file_number) { "64205555" }
   let(:user) { Generators::User.build }
   let(:detail) { nil }
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
   let(:completed_at) { nil }
 
   let(:intake) do
@@ -18,12 +18,25 @@ describe AppealIntake do
     )
   end
 
+  let(:profile_date) { Time.zone.local(2018, 9, 15) }
+
+  let!(:rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: profile_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "reference-id", decision_text: "Left knee granted" }
+      ]
+    )
+  end
+
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
     let(:detail) do
       Appeal.create!(
-        veteran_file_number: "64205555",
+        veteran_file_number: veteran_file_number,
         receipt_date: 3.days.ago
       )
     end
@@ -159,13 +172,14 @@ describe AppealIntake do
         },
         { decision_text: "nonrating request issue decision text",
           issue_category: "test issue category",
+          benefit_type: "compensation",
           decision_date: "2018-12-25" }
       ]
     end
 
     let(:detail) do
       Appeal.create!(
-        veteran_file_number: "64205555",
+        veteran_file_number: veteran_file_number,
         receipt_date: 3.days.ago,
         legacy_opt_in_approved: legacy_opt_in_approved
       )
@@ -203,7 +217,7 @@ describe AppealIntake do
         [
           {
             profile_date: "2018-04-30",
-            reference_id: "reference-id",
+            rating_issue_reference_id: "reference-id",
             decision_text: "decision text",
             vacols_id: legacy_appeal.vacols_id,
             vacols_sequence_id: vacols_issue.issseq
