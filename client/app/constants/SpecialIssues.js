@@ -9,7 +9,8 @@ const SPECIAL_ISSUES = [
       location: 'Louisville, KY'
     },
     snakeCase: 'contaminated_water_at_camp_lejeune',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal'
   },
   {
     display: 'DIC - death, or accrued benefits - United States',
@@ -23,8 +24,8 @@ const SPECIAL_ISSUES = [
     nonCompensation: true
   },
   {
-    display: 'Education - GI Bill, dependents educational assistance, ' +
-      'scholarship, transfer of entitlement',
+    display: 'Education (GI Bill, Dependents Educational Assistance, ' +
+      'scholarship or transfer of entitlement)',
     specialIssue: 'educationGiBillDependentsEducationalAssistanceScholarship' +
       'TransferOfEntitlement',
     stationOfJurisdiction: null,
@@ -33,17 +34,19 @@ const SPECIAL_ISSUES = [
       emailAddress: 'education',
       regionalOffice: 'education'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType'
   },
   {
-    display: 'Foreign claim - compensation claims, dual claims, appeals',
+    display: 'Other foreign country',
     specialIssue: 'foreignClaimCompensationClaimsDualClaimsAppeals',
     stationOfJurisdiction: {
       key: '311',
       location: 'Pittsburgh, PA'
     },
     snakeCase: 'foreign_claim_compensation_claims_dual_claims_appeals',
-    unhandled: null
+    unhandled: null,
+    section: 'residence'
   },
   {
     display: 'Foreign pension, DIC - Mexico, Central and South America, Caribbean',
@@ -76,7 +79,7 @@ const SPECIAL_ISSUES = [
     nonCompensation: true
   },
   {
-    display: 'Home Loan Guaranty',
+    display: 'Home loan guaranty',
     specialIssue: 'homeLoanGuaranty',
     stationOfJurisdiction: null,
     snakeCase: 'home_loan_guaranty',
@@ -84,7 +87,8 @@ const SPECIAL_ISSUES = [
       emailAddress: ['jennifer.Tillery@va.gov'],
       regionalOffice: 'RO88'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType'
   },
   {
     display: 'Incarcerated Veterans',
@@ -102,7 +106,8 @@ const SPECIAL_ISSUES = [
       emailAddress: ['nancy.encarnado@va.gov'],
       regionalOffice: 'RO80'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType'
   },
   {
     display: 'Manlincon Compliance',
@@ -111,7 +116,8 @@ const SPECIAL_ISSUES = [
     stationOfJurisdiction: 'regional',
     snakeCase: 'manlincon_compliance',
     unhandled: null,
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'issuesOnAppeal'
   },
   {
     display: 'Mustard Gas',
@@ -121,7 +127,8 @@ const SPECIAL_ISSUES = [
       location: 'Muskogee, OK'
     },
     snakeCase: 'mustard_gas',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal'
   },
   {
     display: 'National Cemetery Administration',
@@ -132,14 +139,16 @@ const SPECIAL_ISSUES = [
       emailAddress: ['richard.byersII@va.gov'],
       regionalOffice: 'RO98'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType'
   },
   {
-    display: 'Non-rating issue',
+    display: 'Non-rating issue (issue doesn\'t require a rating)',
     specialIssue: 'nonratingIssue',
     stationOfJurisdiction: 'regional',
     snakeCase: 'nonrating_issue',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal'
   },
   {
     display: 'Pension - United States',
@@ -153,18 +162,20 @@ const SPECIAL_ISSUES = [
     nonCompensation: true
   },
   {
-    display: 'Private Attorney or Agent',
+    display: 'Has a private Attorney or Agent',
     specialIssue: 'privateAttorneyOrAgent',
     stationOfJurisdiction: null,
     snakeCase: 'private_attorney_or_agent',
-    unhandled: null
+    unhandled: null,
+    section: 'about'
   },
   {
     display: 'Radiation',
     specialIssue: 'radiation',
     stationOfJurisdiction: 'regional',
     snakeCase: 'radiation',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal'
   },
   {
     display: 'Rice Compliance',
@@ -172,17 +183,19 @@ const SPECIAL_ISSUES = [
     specialIssue: 'riceCompliance',
     stationOfJurisdiction: 'regional',
     snakeCase: 'rice_compliance',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal'
   },
   {
-    display: 'Spina Bifida',
+    display: 'Spina bifida (chapter 18)',
     specialIssue: 'spinaBifida',
     stationOfJurisdiction: 'regional',
     snakeCase: 'spina_bifida',
-    unhandled: null
+    unhandled: null,
+    section: 'issuesOnAppeal'
   },
   {
-    display: 'U.S. Territory claim - American Samoa, Guam, Northern ' +
+    display: 'American Samoa, Guam, Northern ' +
       'Mariana Islands (Rota, Saipan & Tinian)',
     specialIssue: 'usTerritoryClaimAmericanSamoaGuamNorthern' +
       'MarianaIslandsRotaSaipanTinian',
@@ -191,30 +204,33 @@ const SPECIAL_ISSUES = [
       location: 'Honolulu, HI'
     },
     snakeCase: 'us_territory_claim_american_samoa_guam_northern_mariana_isla',
-    unhandled: null
+    unhandled: null,
+    section: 'residence'
   },
   {
-    display: 'U.S. Territory claim - Philippines',
+    display: 'Philippines',
     specialIssue: 'usTerritoryClaimPhilippines',
     stationOfJurisdiction: {
       key: '358',
       location: 'Manila, Philippines'
     },
     snakeCase: 'us_territory_claim_philippines',
-    unhandled: null
+    unhandled: null,
+    section: 'residence'
   },
   {
-    display: 'U.S. Territory claim - Puerto Rico and Virgin Islands',
+    display: 'Puerto Rico or Virgin Islands',
     specialIssue: 'usTerritoryClaimPuertoRicoAndVirginIslands',
     stationOfJurisdiction: {
       key: '355',
       location: 'San Juan, Puerto Rico'
     },
     snakeCase: 'us_territory_claim_puerto_rico_and_virgin_islands',
-    unhandled: null
+    unhandled: null,
+    section: 'residence'
   },
   {
-    display: 'VAMC',
+    display: 'Veterans Administration Medical Center (VAMC)',
     specialIssue: 'vamc',
     stationOfJurisdiction: null,
     snakeCase: 'vamc',
@@ -222,17 +238,19 @@ const SPECIAL_ISSUES = [
       emailAddress: ['Travis.Richardson@va.gov'],
       regionalOffice: 'RO99'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType'
   },
   {
-    display: 'Vocational Rehab',
+    display: 'Vocational Rehabilitation and Employment (VR&E)',
     specialIssue: 'vocationalRehab',
     snakeCase: 'vocational_rehab',
     stationOfJurisdiction: 'regional',
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'benefitType'
   },
   {
-    display: 'Waiver of Overpayment',
+    display: 'Waiver of overpayment',
     specialIssue: 'waiverOfOverpayment',
     stationOfJurisdiction: null,
     snakeCase: 'waiver_of_overpayment',
@@ -240,7 +258,20 @@ const SPECIAL_ISSUES = [
       emailAddress: 'COWC',
       regionalOffice: 'COWC'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    section: 'issuesOnAppeal'
+  },
+  {
+    display: 'Committee on Waivers and Compromises',
+    specialIssue: 'committeeOnWaiversAndCompromises',
+    stationOfJurisdiction: null,
+    snakeCase: 'committee_on_waivers_and_compromises',
+    unhandled: {
+      emailAddress: 'COWC',
+      regionalOffice: 'COWC'
+    },
+    nonCompensation: true,
+    section: 'issuesOnAppeal'
   }
 ];
 

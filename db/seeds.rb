@@ -481,7 +481,8 @@ class SeedDB
       description: "nonrating description",
       contention_reference_id: "1234",
       ineligible_reason: nil,
-      decision_date: Date.new(2018, 5, 1)
+      decision_date: Date.new(2018, 5, 1),
+      benefit_type: "compensation"
     )
 
     untimely_request_issue = RequestIssue.create!(
@@ -490,7 +491,8 @@ class SeedDB
       description: "nonrating description",
       contention_reference_id: "12345",
       decision_date: Date.new(2018, 5, 1),
-      ineligible_reason: :untimely
+      ineligible_reason: :untimely,
+      benefit_type: "compensation"
     )
 
     higher_level_review.create_issues!([

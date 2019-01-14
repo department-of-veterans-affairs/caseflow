@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -35,6 +36,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
   };
 
   render = () => {
+    console.log('in this render function')
     const {
       specialIssues,
       appeal,
