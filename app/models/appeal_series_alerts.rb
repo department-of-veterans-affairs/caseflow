@@ -38,7 +38,7 @@ class AppealSeriesAlerts
         type: :scheduled_hearing,
         details: {
           date: hearing.scheduled_for.to_date,
-          type: hearing.request_type,
+          type: hearing.readable_request_type,
           location: hearing.location
         }
       }
