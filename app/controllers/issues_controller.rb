@@ -1,12 +1,16 @@
 class IssuesController < ApplicationController
   before_action :validate_access_to_task
 
+  VACOLS_REPOSITORY_EXCEPTIONS = [
+    Caseflow::Error::UserRepositoryError, Caseflow::Error::IssueRepositoryError
+  ].freeze
+
   rescue_from ActiveRecord::RecordInvalid do |e|
     Rails.logger.error "IssuesController failed: #{e.message}"
     render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: :bad_request
   end
 
-  rescue_from Caseflow::Error::VacolsRepositoryError do |e|
+  rescue_from *VACOLS_REPOSITORY_EXCEPTIONS do |e|
     handle_non_critical_error("issues", e)
   end
 
