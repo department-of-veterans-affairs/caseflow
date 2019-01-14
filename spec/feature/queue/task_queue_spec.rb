@@ -127,7 +127,7 @@ RSpec.feature "Task queue" do
 
       # Marking the task as complete correctly changes the task's status in the database.
       find(".Select-control", text: "Select an action…").click
-      find("div", class: "Select-option", text: "Mark task complete").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
       find("button", text: "Mark complete").click
 
@@ -265,7 +265,7 @@ RSpec.feature "Task queue" do
         visit("/queue/appeals/#{appeal.external_id}")
 
         find(".Select-control", text: "Select an action…").click
-        find("div", class: "Select-option", text: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h[:label]).click
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))

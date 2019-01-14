@@ -292,6 +292,10 @@ describe Task do
     before do
       FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+      allow_any_instance_of(Task)
+        .to receive(:available_actions_unwrapper)
+        .with(attorney)
+        .and_return([{ data: { type: Task.name } }])
     end
 
     subject { Task.create_from_params(params, attorney) }
