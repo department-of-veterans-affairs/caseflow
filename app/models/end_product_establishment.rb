@@ -326,10 +326,10 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync_decision_issues!
-    request_issues.each do |request_issue|
-      request_issue.submit_for_processing!
+    contention_records.each do |record|
+      record.submit_for_processing!
 
-      DecisionIssueSyncJob.perform_later(request_issue)
+      DecisionIssueSyncJob.perform_later(record)
     end
   end
 
