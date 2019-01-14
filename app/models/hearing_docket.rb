@@ -28,9 +28,9 @@ class HearingDocket
   end
 
   def slots
-    ro_staff = VACOLS::Staff.where(stafkey: regional_office_key)
+    ro_staff = VACOLS::Staff.find_by(stafkey: regional_office_key)
     @slots ||= HearingDayRepository.slots_based_on_type(
-      staff: ro_staff[0],
+      staff: ro_staff,
       type: request_type,
       date: scheduled_for
     ) || SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
@@ -39,7 +39,7 @@ class HearingDocket
   def attributes
     {
       scheduled_for: scheduled_for,
-      readable_request_type: readable_request_type,
+      request_type: request_type,
       master_record: master_record,
       hearings_count: hearings_count
     }

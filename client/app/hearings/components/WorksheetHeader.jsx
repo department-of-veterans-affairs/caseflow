@@ -194,7 +194,9 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>REPRESENTATIVE</h4>
-          <div className="cf-hearings-headers">{worksheet.representative}</div>
+          <div className="cf-hearings-headers">
+            {worksheet.appeal_representative_name ? worksheet.appeal_representative_name : worksheet.representative}
+          </div>
         </div>
       </div>
 

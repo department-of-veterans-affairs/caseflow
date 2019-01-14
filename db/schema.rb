@@ -480,7 +480,7 @@ ActiveRecord::Schema.define(version: 20190113170514) do
     t.boolean "prepped"
     t.text "summary"
     t.time "scheduled_time"
-    t.string "representative"
+    t.string "representative_name"
   end
 
   create_table "higher_level_reviews", force: :cascade do |t|

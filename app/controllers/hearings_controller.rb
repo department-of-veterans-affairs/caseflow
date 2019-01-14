@@ -68,7 +68,6 @@ class HearingsController < ApplicationController
                                      :hold_open,
                                      :aod,
                                      :transcript_requested,
-                                     :add_on,
                                      :prepped,
                                      :scheduled_for)
   end
@@ -77,9 +76,7 @@ class HearingsController < ApplicationController
     params.require("hearing").permit(:notes,
                                      :disposition,
                                      :hold_open,
-                                     :aod,
                                      :transcript_requested,
-                                     :add_on,
                                      :prepped,
                                      :scheduled_time,
                                      :evidence_window_waived)

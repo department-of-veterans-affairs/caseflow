@@ -18,7 +18,7 @@ class Hearing < ApplicationRecord
   delegate :veteran_file_number, to: :appeal
   delegate :docket_number, to: :appeal
   delegate :docket_name, to: :appeal
-  delegate :representative_name, to: :appeal
+  delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
 
   HEARING_TYPES = {
@@ -68,10 +68,6 @@ class Hearing < ApplicationRecord
     "America/New_York"
   end
 
-  def type
-    request_type
-  end
-
   def current_issue_count
     1
   end
@@ -112,8 +108,7 @@ class Hearing < ApplicationRecord
         :docket_name,
         :military_service,
         :current_issue_count,
-        :representative,
-        :representative_name
+        :appeal_representative_name
       ]
     )
   end

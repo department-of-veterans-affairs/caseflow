@@ -291,13 +291,20 @@ export class DailyDocket extends React.PureComponent {
     </span>;
   };
 
+  getRepresentative = (hearing) => {
+    return <span>
+      {hearing.appeal_representative_name ? hearing.appeal_representative_name : hearing.representative}<br />
+      {hearing.representative_name}
+    </span>;
+  }
+
   getDailyDocketRow = (hearing, count) => {
     return [{
       number: <b>{count}.</b>,
       prep: this.getPrepCheckBox(hearing),
       hearingTime: this.getRoTime(hearing),
       appellantInformation: this.getAppellantInformation(hearing),
-      representative: <span>{hearing.representative}<br />{hearing.representative_name}</span>,
+      representative: this.getRepresentative(hearing),
       disposition: this.getDispositionDropdown(hearing),
       holdOpen: this.getHoldOpenDropdown(hearing),
       aod: this.getAodDropdown(hearing)

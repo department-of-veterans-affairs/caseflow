@@ -114,17 +114,6 @@ export class HearingWorksheet extends React.PureComponent {
 
   onSummaryChange = (value) => this.props.onSummaryChange(value);
 
-  getLegacyHearingWorksheet = () => {
-    return <div>
-      <HearingWorksheetDocs {...this.props} />
-      <HearingWorksheetStream {...this.props} print={this.props.print} />
-    </div>;
-  };
-
-  getHearingWorksheet = () => {
-    return <div></div>;
-  };
-
   render() {
     let { worksheet, worksheetIssues, fetchingWorksheet } = this.props;
 
@@ -134,7 +123,8 @@ export class HearingWorksheet extends React.PureComponent {
 
     const firstWorksheetPage = <div className="cf-hearings-first-page">
       {worksheetHeader}
-      {this.props.worksheet.docket_name === 'hearing' ? this.getHearingWorksheet() : this.getLegacyHearingWorksheet()}
+      <HearingWorksheetDocs {...this.props} />
+      <HearingWorksheetStream {...this.props} print={this.props.print} />
       {this.props.print &&
         <WorksheetFooter
           veteranName={this.props.worksheet.veteran_fi_last_formatted}

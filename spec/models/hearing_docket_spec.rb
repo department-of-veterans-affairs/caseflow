@@ -24,6 +24,8 @@ describe HearingDocket do
     )
   end
 
+  let!(:staff) { create(:staff, stafkey: "RO31", stc2: 2, stc3: 3, stc4: 4) }
+
   context ".from_hearings" do
     subject { HearingDocket.from_hearings(hearings) }
 
@@ -43,7 +45,7 @@ describe HearingDocket do
     subject { docket.slots }
 
     context "should use the default number of slots for the regional office" do
-      it { is_expected.to eq 9 }
+      it { is_expected.to eq 4 }
     end
   end
 
@@ -55,9 +57,9 @@ describe HearingDocket do
       expect(subject[:scheduled_for]).to eq(docket.scheduled_for)
       expect(subject[:master_record]).to eq(docket.master_record)
       expect(subject[:hearings_count]).to eq(docket.hearings_count)
-      expect(subject[:readable_request_type]).to eq("Video")
+      expect(subject[:request_type]).to eq(docket.request_type)
       expect(subject[:regional_office_names]).to eq(docket.regional_office_names)
-      expect(subject[:slots]).to eq 9
+      expect(subject[:slots]).to eq 4
     end
   end
 
