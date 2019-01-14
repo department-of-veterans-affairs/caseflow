@@ -210,7 +210,7 @@ describe HigherLevelReview do
         supplemental_claim = SupplementalClaim.find_by(
           decision_review_remanded: higher_level_review,
           veteran_file_number: higher_level_review.veteran_file_number,
-          receipt_date: Time.zone.now.to_date,
+          receipt_date: decision_issues.first.approx_decision_date,
           benefit_type: higher_level_review.benefit_type,
           legacy_opt_in_approved: higher_level_review.legacy_opt_in_approved,
           veteran_is_not_claimant: higher_level_review.veteran_is_not_claimant

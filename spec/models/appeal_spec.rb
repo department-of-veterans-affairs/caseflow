@@ -33,11 +33,18 @@ describe Appeal do
     subject { appeal.create_remand_supplemental_claims! }
 
     let!(:remanded_decision_issue) do
-      create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "compensation")
+      create(
+        :decision_issue,
+        decision_review: appeal,
+        disposition: "remanded",
+        benefit_type: "compensation",
+        end_product_last_action_date: 10.days.ago.to_date)
     end
 
     let!(:remanded_decision_issue_processed_in_caseflow) do
-      create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca")
+      create(
+        :decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca", profile_date: 5.days.ago
+      )
     end
 
     let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
@@ -62,7 +69,7 @@ describe Appeal do
 
       caseflow_remand = remanded_supplemental_claims.find_by(benefit_type: "nca")
       expect(caseflow_remand).to have_attributes(
-        receipt_date: remanded_decision_issue.approx_decision_date
+        receipt_date: remanded_decision_issue_processed_in_caseflow.approx_decision_date
       )
       expect(caseflow_remand.request_issues.count).to eq(1)
       expect(caseflow_remand.request_issues.first).to have_attributes(
