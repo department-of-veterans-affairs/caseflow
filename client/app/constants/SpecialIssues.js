@@ -94,11 +94,12 @@ const SPECIAL_ISSUES = [
     section: 'benefitType'
   },
   {
-    display: 'Incarcerated Veterans',
+    display: 'Incarcerated',
     specialIssue: 'incarceratedVeterans',
     stationOfJurisdiction: 'regional',
     snakeCase: 'incarcerated_veterans',
-    unhandled: null
+    unhandled: null,
+    section: 'about'
   },
   {
     display: 'Insurance',
