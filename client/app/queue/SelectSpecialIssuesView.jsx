@@ -34,7 +34,6 @@ class SelectSpecialIssuesView extends React.PureComponent {
   }
   // TODO: 
   // 1. verify that new values are persisted in redux and sent to the backend properly.
-  // 2. italicize first word in specific labels
   goToNextStep = () => {
     const {
       appeal,
@@ -62,9 +61,12 @@ class SelectSpecialIssuesView extends React.PureComponent {
       return section.sort((previous, next) => {
         return previous.sectionOrder - next.sectionOrder;
       }).map((issue) => {
+        // this handles italics
+        const label = issue.node;
+
         return {
           id: issue.snakeCase,
-          label: issue.display
+          label: label || issue.display
         };
       });
     });
