@@ -73,7 +73,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def co_hearings_for_master_records(parent_hearing_dates)
-      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) = ?",
+      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) IN (?)",
                             "C", "%VIDEO%", parent_hearing_dates.map(&:to_date))
     end
 

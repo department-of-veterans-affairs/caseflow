@@ -41,7 +41,7 @@ module IssueMapper
 
       if issue_attrs.slice(:issprog, :isscode, :isslev1, :isslev2, :isslev3).size != 5
         msg = "All keys must be present: program, issue, level_1, level_2, level_3"
-        fail Caseflow::Error::IssueRepositoryError, msg
+        fail Caseflow::Error::IssueRepositoryError, message: msg
       end
 
       if IssueRepository.find_issue_reference(program: issue_attrs[:issprog],
@@ -49,7 +49,8 @@ module IssueMapper
                                               level_1: issue_attrs[:isslev1],
                                               level_2: issue_attrs[:isslev2],
                                               level_3: issue_attrs[:isslev3]).size != 1
-        fail Caseflow::Error::IssueRepositoryError, "Combination of VACOLS Issue codes is invalid: #{issue_attrs}"
+        msg = "Combination of VACOLS Issue codes is invalid: #{issue_attrs}"
+        fail Caseflow::Error::IssueRepositoryError, message: msg
       end
     end
 
@@ -71,7 +72,8 @@ module IssueMapper
 
       unless ALLOWED_DISPOSITION_CODES.include? disposition
         readable_disposition = Constants::VACOLS_DISPOSITIONS_BY_ID[disposition]
-        fail Caseflow::Error::IssueRepositoryError, "Not allowed disposition: #{readable_disposition} (#{disposition})"
+        msg = "Not allowed disposition: #{readable_disposition} (#{disposition})"
+        fail Caseflow::Error::IssueRepositoryError, message: msg
       end
       disposition
     end

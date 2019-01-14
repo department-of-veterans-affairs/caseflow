@@ -77,9 +77,11 @@ RSpec.describe CaseReviewsController, type: :controller do
                 "note": "something",
                 "issues": [{ "description": "wonderful life",
                              "benefit_type": "pension",
+                             "diagnostic_code": "5001",
                              "request_issue_ids": [request_issue1.id, request_issue3.id] },
                            { "disposition": "remanded", "description": "great moments",
                              "benefit_type": "vha",
+                             "diagnostic_code": "5001",
                              "request_issue_ids": [request_issue2.id],
                              "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
               }
@@ -108,9 +110,11 @@ RSpec.describe CaseReviewsController, type: :controller do
                 "note": "something",
                 "issues": [{ "disposition": "allowed", "description": "wonderful life",
                              "benefit_type": "pension",
+                             "diagnostic_code": "5001",
                              "request_issue_ids": [request_issue3.id] },
                            { "disposition": "remanded", "description": "great moments",
                              "benefit_type": "vha",
+                             "diagnostic_code": "5001",
                              "request_issue_ids": [request_issue2.id],
                              "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
               }
@@ -138,9 +142,11 @@ RSpec.describe CaseReviewsController, type: :controller do
                 "note": "something",
                 "issues": [{ "disposition": "allowed", "description": "wonderful life",
                              "benefit_type": "pension",
+                             "diagnostic_code": "5001",
                              "request_issue_ids": [request_issue1.id, request_issue3.id] },
                            { "disposition": "remanded", "description": "great moments",
                              "benefit_type": "vha",
+                             "diagnostic_code": "5002",
                              "request_issue_ids": [request_issue2.id],
                              "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
               }
@@ -167,10 +173,12 @@ RSpec.describe CaseReviewsController, type: :controller do
               expect(request_issue3.decision_issues.first.disposition).to eq "allowed"
               expect(request_issue3.decision_issues.first.description).to eq "wonderful life"
               expect(request_issue3.decision_issues.first.benefit_type).to eq "pension"
+              expect(request_issue3.decision_issues.first.diagnostic_code).to eq "5001"
 
               expect(request_issue2.decision_issues.first.disposition).to eq "remanded"
               expect(request_issue2.decision_issues.first.description).to eq "great moments"
               expect(request_issue2.decision_issues.first.benefit_type).to eq "vha"
+              expect(request_issue2.decision_issues.first.diagnostic_code).to eq "5002"
               expect(request_issue2.decision_issues.first.remand_reasons.size).to eq 1
               expect(request_issue2.decision_issues.first.remand_reasons.first.code).to eq "va_records"
               expect(request_issue2.decision_issues.first.remand_reasons.first.post_aoj).to eq true
