@@ -85,15 +85,15 @@ class GenericTask < Task
 
   class << self
     def create_from_params(params, user)
-      parent = Task.find(params[:parent_id])
-      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent.assigned_to_id == params[:assigned_to_id] &&
-                                                           parent.assigned_to_type == params[:assigned_to_type]
+      parent_task = Task.find(params[:parent_id])
+      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
+                                                           parent_task.assigned_to_type == params[:assigned_to_type]
 
-      parent.verify_user_can_update!(user)
+      verify_user_can_create!(user, parent_task)
 
       params = modify_params(params)
-      child = create_child_task(parent, user, params)
-      parent.update!(status: params[:status]) if params[:status]
+      child = create_child_task(parent_task, user, params)
+      parent_task.update!(status: params[:status]) if params[:status]
       child
     end
 

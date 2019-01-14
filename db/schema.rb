@@ -848,6 +848,17 @@ ActiveRecord::Schema.define(version: 20190111000717) do
     t.index ["task_id"], name: "index_task_business_payloads_on_task_id"
   end
 
+  create_table "task_timers", force: :cascade do |t|
+    t.bigint "task_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "submitted_at"
+    t.datetime "attempted_at"
+    t.datetime "processed_at"
+    t.string "error"
+    t.index ["task_id"], name: "index_task_timers_on_task_id"
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.integer "appeal_id", null: false
     t.string "status", default: "assigned"

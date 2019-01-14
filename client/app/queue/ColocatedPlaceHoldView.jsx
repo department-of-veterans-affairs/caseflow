@@ -65,7 +65,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
   }
 
   validateForm = () => {
-    if (!COLOCATED_HOLD_DURATIONS.includes(this.state.hold)) {
+    if (!COLOCATED_HOLD_DURATIONS.includes(this.state.hold) || this.state.instructions === '') {
       return false;
     }
     if (Number(this.state.hold)) {
@@ -139,11 +139,11 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
       <h4 {...marginTop(3)}>{COPY.COLOCATED_ACTION_PLACE_HOLD_COPY}</h4>
       <div className={errorClass} {...marginTop(1)}>
         <SearchableDropdown
-          name="Select number of days"
+          name={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
           searchable={false}
           hideLabel
           errorMessage={highlightFormItems && !this.state.hold ? 'Choose one' : null}
-          placeholder="Select number of days"
+          placeholder={COPY.COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL}
           value={this.state.hold}
           onChange={(option) => option && this.setState({ hold: option.value })}
           options={COLOCATED_HOLD_DURATIONS.map((value) => ({
@@ -168,6 +168,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
       <TextareaField
         label="Notes:"
         name="instructions"
+        errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
         value={this.state.instructions}
         onChange={(instructions) => this.setState({ instructions })}
         styling={marginTop(2)} />

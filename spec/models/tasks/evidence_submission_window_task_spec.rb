@@ -55,4 +55,20 @@ describe EvidenceSubmissionWindowTask do
       expect(DistributionTask.find_by(appeal: appeal_no_vso).status).to eq("assigned")
     end
   end
+
+  context "timer_delay" do
+    let(:task) do
+      EvidenceSubmissionWindowTask.create!(appeal: create(:appeal), assigned_to: Bva.singleton)
+    end
+
+    it "is marked as complete and vso tasks are created in 90 days" do
+      TaskTimerJob.perform_now
+      expect(task.reload.status).to eq("assigned")
+
+      Timecop.travel(Time.zone.now + 90.days) do
+        TaskTimerJob.perform_now
+        expect(task.reload.status).to eq("completed")
+      end
+    end
+  end
 end
