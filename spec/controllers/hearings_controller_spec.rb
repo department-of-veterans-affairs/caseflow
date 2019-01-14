@@ -9,7 +9,6 @@ RSpec.describe HearingsController, type: :controller do
                  hold_open: 30,
                  transcript_requested: false,
                  aod: :granted,
-                 add_on: true,
                  disposition: :held,
                  prepped: true }
       patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
@@ -20,7 +19,6 @@ RSpec.describe HearingsController, type: :controller do
       expect(response_body["transcript_requested"]).to eq false
       expect(response_body["aod"]).to eq "granted"
       expect(response_body["disposition"]).to eq "held"
-      expect(response_body["add_on"]).to eq true
       expect(response_body["prepped"]).to eq true
     end
 

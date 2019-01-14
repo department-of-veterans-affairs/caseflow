@@ -41,7 +41,8 @@ class HearingDocket
       scheduled_for: scheduled_for,
       request_type: request_type,
       master_record: master_record,
-      hearings_count: hearings_count
+      hearings_count: hearings_count,
+      readable_request_type: readable_request_type
     }
   end
 
