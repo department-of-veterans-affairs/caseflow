@@ -6,8 +6,11 @@ class TaskTimerJob < CaseflowJob
     RequestStore.store[:application] = "queue"
     RequestStore.store[:current_user] = User.system_user
 
-    TaskTimer.lock.requires_processing.includes(:task).each do |task_timer|
-      process(task_timer)
+    TaskTimer.transaction do
+      TaskTimer.requires_processing.includes(:task).each do |task_timer|
+        task_timer.lock!
+        process(task_timer)
+      end
     end
   end
 
