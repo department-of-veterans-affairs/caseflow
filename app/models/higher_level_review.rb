@@ -46,7 +46,7 @@ class HigherLevelReview < ClaimReview
   def dta_supplemental_claim
     @dta_supplemental_claim ||= SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
-      receipt_date: Time.zone.now.to_date,
+      receipt_date: dta_issues_needing_follow_up.first.approx_decision_date,
       decision_review_remanded: self,
       benefit_type: benefit_type,
       legacy_opt_in_approved: legacy_opt_in_approved,

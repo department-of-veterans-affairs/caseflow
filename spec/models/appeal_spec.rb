@@ -50,7 +50,9 @@ describe Appeal do
       expect(remanded_supplemental_claims.count).to eq(2)
 
       vbms_remand = remanded_supplemental_claims.find_by(benefit_type: "compensation")
-      expect(vbms_remand).to_not be_nil
+      expect(vbms_remand).to have_attributes(
+        receipt_date: remanded_decision_issue.approx_decision_date
+      )
       expect(vbms_remand.request_issues.count).to eq(1)
       expect(vbms_remand.request_issues.first).to have_attributes(
         contested_decision_issue: remanded_decision_issue
@@ -59,7 +61,9 @@ describe Appeal do
       expect(vbms_remand.tasks).to be_empty
 
       caseflow_remand = remanded_supplemental_claims.find_by(benefit_type: "nca")
-      expect(caseflow_remand).to_not be_nil
+      expect(caseflow_remand).to have_attributes(
+        receipt_date: remanded_decision_issue.approx_decision_date
+      )
       expect(caseflow_remand.request_issues.count).to eq(1)
       expect(caseflow_remand.request_issues.first).to have_attributes(
         contested_decision_issue: remanded_decision_issue_processed_in_caseflow

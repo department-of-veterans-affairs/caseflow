@@ -111,9 +111,7 @@ class DecisionIssue < ApplicationRecord
       benefit_type: benefit_type,
       legacy_opt_in_approved: decision_review.legacy_opt_in_approved,
       veteran_is_not_claimant: decision_review.veteran_is_not_claimant,
-
-      # TODO: Should receipt date be set to something else? or nothing at all?
-      receipt_date: Time.zone.now.to_date
+      receipt_date: approx_decision_date
     ).tap do |sc|
       sc.create_claimants!(
         participant_id: decision_review.claimant_participant_id,
