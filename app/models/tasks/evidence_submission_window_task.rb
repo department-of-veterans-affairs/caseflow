@@ -3,7 +3,7 @@ class EvidenceSubmissionWindowTask < GenericTask
   after_update :create_vso_subtask, if: :status_changed_to_completed_and_has_parent?
 
   def when_timer_ends
-    mark_as_complete!
+    update!(status: :completed)
   end
 
   def create_vso_subtask
