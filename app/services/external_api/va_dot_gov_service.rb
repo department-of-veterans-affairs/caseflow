@@ -74,11 +74,11 @@ class ExternalApi::VADotGovService
     end
 
     def facilities_endpoint
-      "va_facilities/v0/facilities"
+      "services/va_facilities/v0/facilities"
     end
 
     def address_validation_endpoint
-      "address_validation/v1/validate"
+      "services/address_validation/v1/validate"
     end
 
     # rubocop:disable Metrics/ParameterLists
@@ -172,16 +172,16 @@ class ExternalApi::VADotGovService
       request.body = body.to_json unless body.nil?
       request.headers = headers.merge(apikey: ENV["VA_DOT_GOV_API_KEY"])
 
-      MetricsService.record("api.va.gov #{method.to_s.upcase} request to #{url}",
-                            service: :va_dot_gov,
-                            name: endpoint) do
+      # MetricsService.record("api.va.gov #{method.to_s.upcase} request to #{url}",
+      #                       service: :va_dot_gov,
+      #                       name: endpoint) do
         case method
         when :get
           HTTPI.get(request)
         when :post
           HTTPI.post(request)
         end
-      end
+      # end
     end
 
     def check_for_error(response_body:, code:)
