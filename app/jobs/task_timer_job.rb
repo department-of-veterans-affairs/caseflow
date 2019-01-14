@@ -14,6 +14,7 @@ class TaskTimerJob < CaseflowJob
   def process(task_timer)
     # the reload creates an N+1 query situation
     return if task_timer.reload.processed?
+
     task_timer.task.when_timer_ends
     task_timer.processed!
   end

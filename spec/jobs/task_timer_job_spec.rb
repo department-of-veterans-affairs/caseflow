@@ -36,5 +36,3 @@ describe TaskTimerJob do
     expect(timer.reload.processed_at).to eq(processed_at)
   end
 end
-
-
