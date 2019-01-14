@@ -127,8 +127,9 @@ RSpec.feature "Attorney checkout flow" do
 
       let(:decision_issue_disposition) { "Remanded" }
       let(:benefit_type) { "Education" }
-      let(:diagnostic_code) { "5678" }
+      let(:diagnostic_code) { "5000" }
       let(:old_benefit_type) { Constants::BENEFIT_TYPES[appeal.request_issues.first.benefit_type] }
+      let(:new_diagnostic_code) { "5003" }
 
       let!(:appeal) do
         FactoryBot.create(
@@ -186,6 +187,9 @@ RSpec.feature "Attorney checkout flow" do
 
         find(".Select-control", text: old_benefit_type).click
         find("div", class: "Select-option", text: benefit_type).click
+
+        find(".Select-control", text: diagnostic_code).click
+        find("div", class: "Select-option", text: new_diagnostic_code).click
 
         click_on "Save"
 
@@ -282,6 +286,7 @@ RSpec.feature "Attorney checkout flow" do
         expect(appeal.decision_issues.count).to eq 3
         expect(appeal.request_decision_issues.count).to eq(4)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
+        expect(appeal.decision_issues.first.diagnostic_code).to eq(new_diagnostic_code)
         expect(appeal.decision_issues.first.disposition).to eq("remanded")
         expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
 
@@ -291,7 +296,9 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
         expect(appeal.decision_issues.second.disposition).to eq("remanded")
+        expect(appeal.decision_issues.second.diagnostic_code).to eq(diagnostic_code)
         expect(appeal.decision_issues.third.disposition).to eq("allowed")
+        expect(appeal.decision_issues.third.diagnostic_code).to eq(diagnostic_code)
         expect(appeal.decision_issues.last.request_issues.count).to eq(2)
 
         # Switch to the judge and ensure they can update decision issues
