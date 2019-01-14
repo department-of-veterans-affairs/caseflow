@@ -38,7 +38,8 @@ describe Appeal do
         decision_review: appeal,
         disposition: "remanded",
         benefit_type: "compensation",
-        end_product_last_action_date: 10.days.ago.to_date)
+        end_product_last_action_date: 10.days.ago.to_date
+      )
     end
 
     let!(:remanded_decision_issue_processed_in_caseflow) do
