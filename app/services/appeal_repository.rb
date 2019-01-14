@@ -212,7 +212,7 @@ class AppealRepository
       private_attorney_or_agent: case_record.bfso == "T",
       docket_number: folder_record.tinum || "Missing Docket Number",
       docket_date: case_record.bfd19,
-      number_of_issues: case_record.case_issues.count
+      number_of_issues: case_record.case_issues.length
     )
 
     appeal
