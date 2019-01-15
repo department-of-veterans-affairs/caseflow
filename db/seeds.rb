@@ -482,13 +482,8 @@ class SeedDB
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
       ineligible_reason: nil,
-<<<<<<< HEAD
-      decision_date: Date.new(2018, 5, 1),
-      benefit_type: "compensation"
-=======
       benefit_type: "compensation",
       decision_date: Date.new(2018, 5, 1)
->>>>>>> 5f7528760a857e37a9be79e85f7dd5c343e31626
     )
 
     untimely_request_issue = RequestIssue.create!(
@@ -497,13 +492,8 @@ class SeedDB
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "12345",
       decision_date: Date.new(2018, 5, 1),
-<<<<<<< HEAD
-      ineligible_reason: :untimely,
-      benefit_type: "compensation"
-=======
       benefit_type: "compensation",
       ineligible_reason: :untimely
->>>>>>> 5f7528760a857e37a9be79e85f7dd5c343e31626
     )
 
     higher_level_review.create_issues!([
