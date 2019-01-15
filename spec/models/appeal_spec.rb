@@ -1,6 +1,7 @@
 describe Appeal do
+  let!(:appeal) { create(:appeal) }
+
   context "priority and non-priority appeals" do
-    let!(:appeal) { create(:appeal) }
     let!(:aod_age_appeal) { create(:appeal, :advanced_on_docket_due_to_age) }
     let!(:aod_motion_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
     let!(:denied_aod_motion_appeal) { create(:appeal, :denied_advance_on_docket) }
@@ -25,6 +26,71 @@ describe Appeal do
         expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
         expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
       end
+    end
+  end
+
+  context "ready appeals" do
+    let!(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
+    let!(:hearing_appeal) { create(:appeal, docket_type: "hearing") }
+    let!(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
+
+    before do
+      FeatureToggle.enable!(:ama_auto_case_distribution)
+    end
+    after do
+      FeatureToggle.disable!(:ama_auto_case_distribution)
+    end
+    subject { Appeal.ready_for_distribution }
+
+    it "returns appeals" do
+      [direct_review_appeal, evidence_submission_appeal, hearing_appeal].each do |appeal|
+        RootTask.create_root_and_sub_tasks!(appeal)
+      end
+
+      expect(subject.include?(direct_review_appeal)).to eq(true)
+      expect(subject.include?(evidence_submission_appeal)).to eq(false)
+      # TODO: support hearing appeals
+      # expect(subject.include?(hearing_appeal)).to eq(false)
+    end
+  end
+
+  context "#create_remand_supplemental_claims!" do
+    subject { appeal.create_remand_supplemental_claims! }
+
+    let!(:remanded_decision_issue) do
+      create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "compensation")
+    end
+
+    let!(:remanded_decision_issue_processed_in_caseflow) do
+      create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca")
+    end
+
+    let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
+
+    it "creates supplemental claim, request issues, and starts processing" do
+      subject
+
+      remanded_supplemental_claims = SupplementalClaim.where(decision_review_remanded: appeal)
+
+      expect(remanded_supplemental_claims.count).to eq(2)
+
+      vbms_remand = remanded_supplemental_claims.find_by(benefit_type: "compensation")
+      expect(vbms_remand).to_not be_nil
+      expect(vbms_remand.request_issues.count).to eq(1)
+      expect(vbms_remand.request_issues.first).to have_attributes(
+        contested_decision_issue: remanded_decision_issue
+      )
+      expect(vbms_remand.end_product_establishments.first).to be_committed
+      expect(vbms_remand.tasks).to be_empty
+
+      caseflow_remand = remanded_supplemental_claims.find_by(benefit_type: "nca")
+      expect(caseflow_remand).to_not be_nil
+      expect(caseflow_remand.request_issues.count).to eq(1)
+      expect(caseflow_remand.request_issues.first).to have_attributes(
+        contested_decision_issue: remanded_decision_issue_processed_in_caseflow
+      )
+      expect(caseflow_remand.end_product_establishments).to be_empty
+      expect(caseflow_remand.tasks.first).to have_attributes(assigned_to: BusinessLine.find_by(url: "nca"))
     end
   end
 

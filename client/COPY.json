@@ -26,7 +26,7 @@
   "CASE_LIST_TABLE_SELECT_COLUMN_TITLE": "Select",
   "CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
   "CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE": "Days on Hold",
-  "CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE": "Date Sent",
+  "CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE": "Date Completed",
   "CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE": "Sent to",
   "CASE_LIST_TABLE_TASKS_COLUMN_TITLE": "Task(s)",
   "CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL": "Assigned to you",
@@ -57,7 +57,8 @@
   "TASK_SNAPSHOT_TASK_DUE_DATE_LABEL": "Due",
   "TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL": "VLJ",
   "TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL": "Attorney",
-  "TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Document ID",
+  "TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL": "Decision Document ID",
+  "TASK_SNAPSHOT_EDIT_DOCUMENT_ID_MODAL_TITLE": "Edit document ID",
   "TASK_SNAPSHOT_TASK_TYPE_LABEL": "Task",
   "TASK_SNAPSHOT_TASK_FROM_LABEL": "Assigned by",
   "TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL": "Task instructions",
@@ -124,9 +125,6 @@
 
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_VHA": "OMO - VHA",
   "ATTORNEY_CHECKOUT_OMO_CASE_REVIEW_WORK_PRODUCT_IME": "OMO - IME",
-  "ATTORNEY_CHECKOUT_OMO_LABEL": "Medical Request Ready for Review",
-  "ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL": "Decision ready for review",
-  "ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL": "Add admin action",
 
   "REMAND_REASONS_SCREEN_SUBHEAD_LABEL": "Please %s the appropriate remand reason(s) for all the remand dispositions.",
   "LEGACY_REMAND_REASON_POST_AOJ_LABEL_BEFORE": "Before certification",
@@ -154,9 +152,6 @@
   "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_LABEL": "Additional Comments",
   "JUDGE_EVALUATE_DECISION_ADDITIONAL_FACTORS_SUBHEAD": "Share more details about your evaluation",
   "BEAAM_QUEUE_TABLE_TITLE": "List of BEAAM Appeals",
-
-  "JUDGE_CHECKOUT_OMO_LABEL": "Assign OMO",
-  "JUDGE_CHECKOUT_DISPATCH_LABEL": "Ready for Dispatch",
 
   "JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE": "You have successfully submitted an OMO for %s.",
   "JUDGE_QUEUE_TABLE_SUCCESS_MESSAGE_DETAIL": "If you need to make any changes, please manage this case in DAS.",
@@ -237,7 +232,6 @@
   "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please email your administration action team.",
 
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
-  "COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY": "Send back to attorney",
 
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to %s",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_SUBHEAD": "Select the team you'd like to send this administrative action to",
@@ -245,7 +239,6 @@
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_CONFIRMATION": "%s's case has been sent to the %s team.",
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_BUTTON": "Send case",
 
-  "COLOCATED_ACTION_PLACE_HOLD": "Place hold",
   "COLOCATED_ACTION_PLACE_HOLD_HEAD": "Place %s's case (%s) on hold",
   "COLOCATED_ACTION_PLACE_HOLD_COPY": "Select the total number of days for the hold",
   "COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY": "Enter a custom number of days for the hold",
@@ -253,6 +246,7 @@
   "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION": "%s's case has been placed on hold for %s days.",
   "COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION_DETAIL": "When the hold has been completed, the case will be automatically moved to the Pending Action tab.",
   "COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY": "Place case on hold",
+  "COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL": "Select number of days",
 
   "MODAL_CANCEL_ATTORNEY_CHECKOUT_PROMPT": "Are you sure you want to cancel?",
   "MODAL_CANCEL_ATTORNEY_CHECKOUT": "All changes made to this page will be lost, except for the adding, editing, and deleting of issues.",
@@ -293,7 +287,9 @@
   "DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE": "Ex: Entitlement to a 10% rating for arthritis of the right knee is granted",
   "DECISION_ISSUE_MODAL_DISPOSITION": "Disposition",
   "DECISION_ISSUE_MODAL_BENEFIT_TYPE": "Benefit type",
+  "DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE": "Diagnostic code",
   "DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION": "Do you want to add this decision to other issues on appeal? This could occur when you determine that two or more issues should receive a single decision.",
+  "DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE": "Ex: Service connection for restless leg syndrome (right) and Service connection for restless leg syndrome (left) should be Service connection for restless leg syndrome (bilateral).",
   "DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE": "Issues",
   "DECISION_ISSUE_PAGE_TITLE": "Add decisions",
   "DECISION_ISSUE_PAGE_EXPLANATION": "Add decisions to each issue the Veteran is appealing. Any decisions you add must be connected to at least one issue on appeal. This helps Caseflow gather metrics on BVA decisions and meet AMA reporting requirements.",

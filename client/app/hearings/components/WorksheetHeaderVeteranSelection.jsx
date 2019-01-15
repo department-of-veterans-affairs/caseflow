@@ -38,6 +38,11 @@ const selectVeteranStyling = css({
   width: '350px'
 });
 
+const buttonHeaderStyling = css({
+  width: '30%',
+  display: 'flex'
+});
+
 class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   componentDidMount() {
@@ -113,7 +118,13 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           disabled={docketNotLoaded}
         />
       </div>
-      <div className="cf-push-right">
+      <div className="cf-push-right" {...buttonHeaderStyling} >
+        <Link
+          name="view-case-detail"
+          href={`/queue/appeals/${worksheet.appeal_vacols_id}`}
+          button="primary"
+          target="_blank">
+         View case details</Link>
         <Link
           name="review-claims-folder"
           onClick={this.onClickReviewClaimsFolder}
@@ -122,7 +133,6 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           target="_blank">
         Review claims folder</Link>
       </div>
-
     </span>;
   }
 }

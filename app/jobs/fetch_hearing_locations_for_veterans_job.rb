@@ -109,7 +109,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   def valid_states
     @valid_states ||= RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }.pluck(:state)
   end
-
+  
   def create_available_location_by_file_number(file_number, facility:)
     AvailableHearingLocations.where(veteran_file_number: file_number).destroy_all
     AvailableHearingLocations.create(

@@ -8,6 +8,7 @@ import {
   toggleUntimelyExemptionModal,
   toggleLegacyOptInModal
 } from '../actions/addIssues';
+import BenefitType from '../components/BenefitType';
 import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -31,6 +32,7 @@ class NonratingRequestIssueModal extends React.Component {
     super(props);
 
     this.state = {
+      benefitType: props.intakeData.benefitType,
       category: '',
       description: '',
       decisionDate: '',
@@ -39,6 +41,13 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason: null,
       reviewRequestTitle: null
     };
+  }
+
+  benefitTypeOnChange = (benType) => {
+    this.setState({
+      benefitType: benType.value,
+      category: ''
+    });
   }
 
   categoryOnChange = (value) => {
@@ -100,9 +109,9 @@ class NonratingRequestIssueModal extends React.Component {
     return 'Add this issue';
   }
 
-  requiresUntimelyExemption = () => {
+  isTimely = () => {
     if (this.props.formType === 'supplemental_claim') {
-      return false;
+      return true;
     }
 
     const ONE_YEAR_PLUS_MS = 1000 * 60 * 60 * 24 * 372;
@@ -111,55 +120,53 @@ class NonratingRequestIssueModal extends React.Component {
     // we assume the timezone of the browser for all these.
     let decisionDate = new Date(this.state.decisionDate);
     let receiptDate = new Date(this.props.intakeData.receiptDate);
-    let isTimely = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
+    let lessThanOneYear = (receiptDate - decisionDate) <= ONE_YEAR_PLUS_MS;
 
-    return !isTimely;
+    return lessThanOneYear;
   }
 
   onAddIssue = () => {
     const currentIssue = {
+      benefitType: this.state.benefitType,
       category: this.state.category.value,
       description: this.state.description,
       decisionDate: this.state.decisionDate,
       ineligibleDueToId: this.state.ineligibleDueToId,
       ineligibleReason: this.state.ineligibleReason,
       reviewRequestTitle: this.state.reviewRequestTitle,
-      isRating: false
+      isRating: false,
+      timely: this.isTimely()
     };
 
     if (this.hasLegacyAppeals()) {
       this.props.toggleLegacyOptInModal({
         currentIssue,
         notes: null });
-    } else if (this.requiresUntimelyExemption()) {
-      currentIssue.timely = false;
+    } else if (currentIssue.timely === false) {
       this.props.toggleUntimelyExemptionModal({
         currentIssue,
         notes: null
       });
     } else {
-      this.props.addNonratingRequestIssue({
-        category: this.state.category.value,
-        description: this.state.description,
-        decisionDate: this.state.decisionDate,
-        ineligibleDueToId: this.state.ineligibleDueToId,
-        ineligibleReason: this.state.ineligibleReason,
-        reviewRequestTitle: this.state.reviewRequestTitle,
-        timely: true
-      });
+      this.props.addNonratingRequestIssue(currentIssue);
       this.props.closeHandler();
     }
   }
 
   render() {
     let {
+      formType,
       intakeData,
       closeHandler
     } = this.props;
 
-    const { category, description, decisionDate, selectedNonratingIssueId } = this.state;
+    const { benefitType, category, description, decisionDate, selectedNonratingIssueId } = this.state;
     const issueNumber = (intakeData.addedIssues || []).length + 1;
-    const requiredFieldsMissing = !description || !category || !decisionDate;
+    let requiredFieldsMissing = !description || !category || !decisionDate;
+
+    if (formType === 'appeal' && !benefitType) {
+      requiredFieldsMissing = true;
+    }
 
     let nonratingRequestIssueOptions = intakeData.activeNonratingRequestIssues.filter((issue) => {
       return category && issue.category === category.value;
@@ -212,6 +219,12 @@ class NonratingRequestIssueModal extends React.Component {
       </React.Fragment>;
     }
 
+    let benefitTypeElement = '';
+
+    if (formType === 'appeal') {
+      benefitTypeElement = <BenefitType value={benefitType} onChange={this.benefitTypeOnChange} asDropdown />;
+    }
+
     return <div className="intake-add-issues">
       <Modal
         buttons={[
@@ -238,12 +251,13 @@ class NonratingRequestIssueModal extends React.Component {
             Does issue {issueNumber} match any of these issue categories?
           </h2>
           <div className="add-nonrating-request-issue">
+            {benefitTypeElement}
             <SearchableDropdown
               name="issue-category"
               label="Issue category"
               strongLabel
               placeholder="Select or enter..."
-              options={nonratingRequestIssueCategories(intakeData.benefitType)}
+              options={nonratingRequestIssueCategories(benefitType)}
               value={category}
               onChange={this.categoryOnChange} />
           </div>

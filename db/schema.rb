@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190110162001) do
+
+ActiveRecord::Schema.define(version: 20190111000717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -442,7 +443,7 @@ ActiveRecord::Schema.define(version: 20190110162001) do
 
   create_table "hearing_days", force: :cascade do |t|
     t.date "scheduled_for", null: false
-    t.string "hearing_type", null: false
+    t.string "request_type", null: false
     t.string "regional_office"
     t.integer "judge_id"
     t.string "room", null: false
@@ -462,7 +463,8 @@ ActiveRecord::Schema.define(version: 20190110162001) do
     t.integer "user_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.index ["hearing_id", "user_id"], name: "index_hearing_views_on_hearing_id_and_user_id", unique: true
+    t.string "hearing_type"
+    t.index ["hearing_id", "user_id", "hearing_type"], name: "index_hearing_views_on_hearing_id_and_user_id_and_hearing_type", unique: true
   end
 
   create_table "hearings", force: :cascade do |t|
@@ -822,12 +824,14 @@ ActiveRecord::Schema.define(version: 20190110162001) do
     t.datetime "establishment_submitted_at"
     t.datetime "establishment_processed_at"
     t.string "benefit_type"
-    t.boolean "is_dta_error"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
     t.boolean "legacy_opt_in_approved"
     t.boolean "veteran_is_not_claimant"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
+    t.string "decision_review_remanded_type"
+    t.bigint "decision_review_remanded_id"
+    t.index ["decision_review_remanded_type", "decision_review_remanded_id"], name: "index_decision_issues_on_decision_review_remanded"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 
@@ -843,6 +847,17 @@ ActiveRecord::Schema.define(version: 20190110162001) do
     t.string "description", null: false
     t.json "values", default: {}, null: false
     t.index ["task_id"], name: "index_task_business_payloads_on_task_id"
+  end
+
+  create_table "task_timers", force: :cascade do |t|
+    t.bigint "task_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "submitted_at"
+    t.datetime "attempted_at"
+    t.datetime "processed_at"
+    t.string "error"
+    t.index ["task_id"], name: "index_task_timers_on_task_id"
   end
 
   create_table "tasks", force: :cascade do |t|

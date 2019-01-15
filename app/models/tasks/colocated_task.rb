@@ -11,55 +11,38 @@ class ColocatedTask < Task
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
-        assignee = Colocated.singleton.next_assignee(self)
-        records = params_array.map do |params|
-          team_task = create_from_params(
-            params.merge(assigned_to: Colocated.singleton, status: Constants.TASK_STATUSES.on_hold), user
-          )
-          individual_task = create_from_params(params.merge(assigned_to: assignee, parent: team_task), user)
+        team_tasks = super(params_array.map { |p| p.merge(assigned_to: Colocated.singleton) }, user)
 
-          [team_task, individual_task]
-        end.flatten
+        all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten
 
-        individual_task = records.select { |r| r.assigned_to.is_a?(User) }.first
-        if records.map(&:valid?).uniq == [true] && individual_task.legacy?
-          AppealRepository.update_location!(individual_task.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        all_tasks.map(&:appeal).uniq.each do |appeal|
+          if appeal.is_a? LegacyAppeal
+            AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+          end
         end
 
-        records
+        all_tasks
       end
     end
 
-    private
-
-    def list_of_assignees
-      Colocated.singleton.non_admins.sort_by(&:id).pluck(:css_id)
+    def verify_user_can_create!(user, parent)
+      if parent
+        super(user, parent)
+      elsif !(user.attorney_in_vacols? || user.judge_in_vacols?)
+        fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
+      end
     end
   end
 
-  def automatically_assign_org_task?
-    false
-  end
-
   def available_actions(_user)
-    actions = [
-      {
-        label: COPY::COLOCATED_ACTION_PLACE_HOLD,
-        value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
-      },
-      Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h
-    ]
+    actions = [Constants.TASK_ACTIONS.PLACE_HOLD.to_h, Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h]
 
     if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
-      actions.unshift(
-        label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
-        value: "modal/send_colocated_task"
-      )
+      send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
+      send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
+      actions.unshift(send_to_team)
     else
-      actions.unshift(
-        label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
-        value: "modal/mark_task_complete"
-      )
+      actions.unshift(Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h)
     end
 
     actions
@@ -71,17 +54,11 @@ class ColocatedTask < Task
     true
   end
 
-  def assign_to_privacy_team_data
-    org = PrivacyTeam.singleton
-
-    {
-      selected: org,
-      options: [{ label: org.name, value: org.id }],
-      type: GenericTask.name
-    }
-  end
-
   private
+
+  def create_and_auto_assign_child_task(_options = {})
+    super(appeal: appeal)
+  end
 
   def update_location_in_vacols
     if saved_change_to_status? &&

@@ -29,6 +29,8 @@ module Caseflow::Error
 
   class FetchHearingLocationsJobError < SerializableError; end
 
+  class FetchHearingLocationsJobError < SerializableError; end
+
   class ActionForbiddenError < SerializableError
     def initialize(args)
       @code = args[:code] || 403
@@ -180,6 +182,8 @@ module Caseflow::Error
     end
   end
 
+  class MissingTimerMethod < StandardError; end
+
   class DuplicateEp < EstablishClaimFailedInVBMS; end
   class LongAddress < EstablishClaimFailedInVBMS; end
 
@@ -194,7 +198,15 @@ module Caseflow::Error
       @message = args[:message]
     end
   end
-  class IssueRepositoryError < VacolsRepositoryError; end
+  class IssueRepositoryError < VacolsRepositoryError
+    include Caseflow::Error::ErrorSerializer
+    attr_accessor :code, :message
+
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
   class RemandReasonRepositoryError < VacolsRepositoryError; end
   class QueueRepositoryError < VacolsRepositoryError; end
   class MissingRequiredFieldError < VacolsRepositoryError; end

@@ -292,6 +292,10 @@ describe Task do
     before do
       FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+      allow_any_instance_of(Task)
+        .to receive(:available_actions_unwrapper)
+        .with(attorney)
+        .and_return([{ data: { type: Task.name } }])
     end
 
     subject { Task.create_from_params(params, attorney) }
@@ -301,6 +305,17 @@ describe Task do
       new_task = subject
       expect(new_task.parent_id).to eq(task.id)
       expect(task.reload.status).to eq("on_hold")
+    end
+
+    context "the task is attached to a legacy appeal" do
+      let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: create(:case)) }
+
+      it "the parent task is 'on hold'" do
+        expect(task.status).to eq("assigned")
+        new_task = subject
+        expect(new_task.parent_id).to eq(task.id)
+        expect(task.reload.status).to eq("on_hold")
+      end
     end
 
     context "when the instructions field is a string" do
@@ -313,6 +328,14 @@ describe Task do
         expect(subject.instructions).to eq([instructions_text])
       end
     end
+
+    context "the params are incomplete" do
+      let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: "Task" } }
+
+      it "raises an error" do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Appeal can't be blank/)
+      end
+    end
   end
 
   describe ".create_and_auto_assign_child_task" do
@@ -322,7 +345,7 @@ describe Task do
       class AutoAssignOrg < Organization
         attr_accessor :assignee
 
-        def next_assignee(_task_class)
+        def next_assignee(_options = {})
           assignee
         end
       end

@@ -49,6 +49,7 @@ module IssueUpdater
         disposition: issue_attrs[:disposition],
         description: issue_attrs[:description],
         benefit_type: issue_attrs[:benefit_type],
+        diagnostic_code: issue_attrs[:diagnostic_code],
         participant_id: appeal.veteran.participant_id,
         decision_review: appeal
       )

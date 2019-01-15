@@ -678,6 +678,47 @@ feature "Appeal Intake" do
     expect(intake).to be_canceled
   end
 
+  scenario "adding nonrating issue with non-comp benefit type" do
+    _, intake = start_appeal(veteran)
+    visit "/intake/add_issues"
+
+    expect(page).to have_content("Add / Remove Issues")
+
+    click_intake_add_issue
+    click_intake_no_matching_issues
+    add_intake_nonrating_issue(
+      benefit_type: "Education",
+      category: "Accrued",
+      description: "Description for Accrued",
+      date: profile_date.strftime("%D")
+    )
+
+    expect(page).to have_content("Description for Accrued")
+
+    click_intake_add_issue
+    click_intake_no_matching_issues
+    add_intake_nonrating_issue(
+      benefit_type: "Vocational Rehab. & Employment",
+      category: "Basic Eligibility",
+      description: "Description for basic eligibility",
+      date: profile_date.strftime("%D")
+    )
+
+    expect(page).to have_content("Description for basic eligibility")
+
+    click_intake_finish
+
+    expect(page).to have_content("Intake completed")
+
+    intake.reload
+
+    education_request_issue = intake.detail.request_issues.find { |ri| ri.benefit_type == "education" }
+    voc_rehab_request_issue = intake.detail.request_issues.find { |ri| ri.benefit_type == "voc_rehab" }
+
+    expect(education_request_issue.description).to eq("Accrued - Description for Accrued")
+    expect(voc_rehab_request_issue.description).to eq("Basic Eligibility - Description for basic eligibility")
+  end
+
   context "with active legacy appeal" do
     before do
       setup_legacy_opt_in_appeals(veteran.file_number)
@@ -725,7 +766,6 @@ feature "Appeal Intake" do
         expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
         add_intake_rating_issue("None of these match")
-        add_untimely_exemption_response("Yes")
 
         expect(page).to have_content("Description for Active Duty Adjustments")
 

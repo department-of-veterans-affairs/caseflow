@@ -40,6 +40,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :location_code
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
+  vacols_attr_accessor :number_of_issues
 
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
@@ -135,8 +136,15 @@ class LegacyAppeal < ApplicationRecord
     )
   end
 
-  delegate :documents, :number_of_documents, :new_documents_for_user,
+  delegate :documents, :new_documents_for_user, :number_of_documents,
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
+
+  # Number of documents stored locally via nightly RetrieveDocumentsForReaderJob.
+  # Fall back to count from VBMS if no local documents are found.
+  def number_of_documents_from_caseflow
+    count = Document.where(file_number: veteran_file_number).size
+    (count != 0) ? count : number_of_documents
+  end
 
   def number_of_documents_after_certification
     return 0 unless certification_date
@@ -176,10 +184,6 @@ class LegacyAppeal < ApplicationRecord
     return unless decided_by_bva?
 
     (decision_date + 120.days).to_date
-  end
-
-  def number_of_issues
-    issues.length
   end
 
   def appellant_is_not_veteran
@@ -573,10 +577,6 @@ class LegacyAppeal < ApplicationRecord
   attr_writer :issues
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
-  end
-
-  def issue_count
-    issues.count
   end
 
   # a list of issues with undecided dispositions (see queue/utils.getUndecidedIssues)

@@ -50,6 +50,7 @@ RSpec.feature "AmaQueue" do
 
     let(:poa_name) { "Test POA" }
     let(:veteran_participant_id) { "600085544" }
+    let(:file_numbers) { Array.new(3) { Random.rand(999_999_999).to_s } }
     let!(:appeals) do
       [
         create(
@@ -59,22 +60,23 @@ RSpec.feature "AmaQueue" do
             :veteran,
             participant_id: veteran_participant_id,
             first_name: "Pal",
-            bgs_veteran_record: { first_name: "Pal" }
+            bgs_veteran_record: { first_name: "Pal" },
+            file_number: file_numbers[0]
           ),
-          documents: create_list(:document, 5),
+          documents: create_list(:document, 5, file_number: file_numbers[0]),
           request_issues: build_list(:request_issue, 3, contested_issue_description: "Knee pain")
         ),
         create(
           :appeal,
-          veteran: create(:veteran),
-          documents: create_list(:document, 4),
+          veteran: create(:veteran, file_number: file_numbers[1]),
+          documents: create_list(:document, 4, file_number: file_numbers[1]),
           request_issues: build_list(:request_issue, 2, contested_issue_description: "PTSD")
         ),
         create(
           :appeal,
           number_of_claimants: 1,
-          veteran: create(:veteran),
-          documents: create_list(:document, 3),
+          veteran: create(:veteran, file_number: file_numbers[2]),
+          documents: create_list(:document, 3, file_number: file_numbers[2]),
           request_issues: build_list(:request_issue, 1, contested_issue_description: "Tinnitus")
         )
       ]
@@ -221,7 +223,7 @@ RSpec.feature "AmaQueue" do
         click_on "Pal Smith"
 
         find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: "Assign to person").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
         find(".Select-control", text: "Select a user").click
         find("div", class: "Select-option", text: other_user.full_name).click
@@ -237,7 +239,7 @@ RSpec.feature "AmaQueue" do
         click_on "Pal Smith"
 
         find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: "Re-assign to person").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
 
         find(".Select-control", text: "Select a user").click
         find("div", class: "Select-option", text: user.full_name).click
@@ -260,7 +262,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content(existing_instruction)
 
         find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: "Assign to team").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]).click
 
         find(".Select-control", text: "Select a team").click
         find("div", class: "Select-option", text: other_organization.name).click
@@ -396,7 +398,7 @@ RSpec.feature "AmaQueue" do
       click_on veteran_full_name
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Assign to person").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
       find(".Select-control", text: "Select a user").click
       find("div", class: "Select-option", text: qr_user.full_name).click
@@ -414,7 +416,7 @@ RSpec.feature "AmaQueue" do
       click_on veteran_full_name
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Return to judge").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.RETURN_TO_JUDGE.to_h[:label]).click
 
       fill_in "taskInstructions", with: qr_instructions
 
@@ -432,7 +434,7 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content(qr_instructions)
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Assign to attorney").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h[:label]).click
 
       find(".Select-control", text: "Select a user").click
       find("div", class: "Select-option", text: "Other").click
@@ -451,7 +453,7 @@ RSpec.feature "AmaQueue" do
       click_on veteran_full_name
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Decision ready for review").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_DECISION.to_h[:label]).click
 
       expect(page).to have_content("Select special issues (optional)")
 
@@ -486,7 +488,7 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content(qr_instructions)
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Mark task complete").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
       expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
 
@@ -504,7 +506,7 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content("Decision signed by judge")
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Mark task complete").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
       expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
 
