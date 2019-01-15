@@ -22,8 +22,8 @@ class BoardGrantEffectuation < ApplicationRecord
 
   class << self
     # We don't need to retry these as frequently
-    def processing_retry_interval
-      12.hours
+    def processing_retry_interval_hours
+      12
     end
 
     def submitted_at_column

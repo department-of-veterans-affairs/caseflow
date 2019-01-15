@@ -19,8 +19,8 @@ module Asyncable
     REQUIRES_PROCESSING_WINDOW_DAYS = 4
     DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
 
-    def processing_retry_interval
-      DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS.hours
+    def processing_retry_interval_hours
+      DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
     end
 
     def submitted_at_column
@@ -52,7 +52,7 @@ module Asyncable
     end
 
     def previously_attempted_ready_for_retry
-      where(arel_table[attempted_at_column].lt(processing_retry_interval.ago))
+      where(arel_table[attempted_at_column].lt(processing_retry_interval_hours.hours.ago))
     end
 
     def attemptable
