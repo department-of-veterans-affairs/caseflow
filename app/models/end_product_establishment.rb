@@ -272,7 +272,7 @@ class EndProductEstablishment < ApplicationRecord
   def search_table_ui_hash
     {
       code: code,
-      modifier: modifier,
+      modifier: modifier || '',
       synced_status: synced_status,
       last_synced_at: last_synced_at
     }
