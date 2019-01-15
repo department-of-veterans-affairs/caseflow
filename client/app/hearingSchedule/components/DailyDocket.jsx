@@ -82,6 +82,8 @@ const notesTitleStyling = css({
   marginTop: '15px'
 });
 
+const radioButtonStyling = css({marginTop: '25px'});
+
 export default class DailyDocket extends React.Component {
 
   onHearingNotesUpdate = (hearingId) => (notes) => this.props.onHearingNotesUpdate(hearingId, notes);
@@ -201,7 +203,13 @@ export default class DailyDocket extends React.Component {
           displayText: '1:00',
           value: '13:00',
           disabled: readOnly
-        }
+        },
+        {
+        displayText: 'Other',
+        value: 'other',
+        disabled: readOnly
+
+      }
       ];
     }
 
@@ -215,6 +223,12 @@ export default class DailyDocket extends React.Component {
         displayText: '12:30',
         value: '12:30',
         disabled: readOnly
+      },
+      {
+        displayText: 'Other',
+        value: 'other',
+        disabled: readOnly
+
       }
     ];
   };
@@ -228,12 +242,21 @@ export default class DailyDocket extends React.Component {
       value={hearing.editedDate ? hearing.editedDate : hearing.id}
       onChange={this.onHearingDateUpdate(hearing.id)}
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'} />
+    <div {...radioButtonStyling}>
     <RadioField
-      name={`hearingTime${hearing.id}`}
+      name= "Time"
       options={this.getHearingTimeOptions(hearing, readOnly)}
       value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
       onChange={this.onHearingTimeUpdate(hearing.id)}
-      hideLabel /></div>;
+      strongLabel/>
+      <SearchableDropdown
+      name="optionalTime"
+      placeholder="Select a time"
+      options={this.getHearingTimeOptions(hearing, readOnly)}
+      value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
+      onChange={this.onHearingTimeUpdate(hearing.id)}
+      hideLabel/></div>
+      </div>;
   };
 
   getNotesField = (hearing) => {
