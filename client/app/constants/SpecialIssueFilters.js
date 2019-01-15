@@ -1,5 +1,4 @@
 import SPECIAL_ISSUES from './SpecialIssues';
-import QUEUE_SPECIAL_ISSUES from './QueueSpecialIssues';
 
 const specialIssueFilters = {
 
@@ -29,23 +28,23 @@ const specialIssueFilters = {
   },
 
   aboutSection() {
-    return QUEUE_SPECIAL_ISSUES.filter((issue) => issue.section === 'about');
+    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'about');
   },
 
   residenceSection() {
-    return QUEUE_SPECIAL_ISSUES.filter((issue) => issue.section === 'residence');
+    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'residence');
   },
 
   benefitTypeSection () {
-    return QUEUE_SPECIAL_ISSUES.filter((issue) => issue.section === 'benefitType');
+    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'benefitType');
   },
 
   issuesOnAppealSection () {
-    return QUEUE_SPECIAL_ISSUES.filter((issue) => issue.section === 'issuesOnAppeal');
+    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'issuesOnAppeal');
   },
 
   dicOrPensionSection () {
-    return QUEUE_SPECIAL_ISSUES.filter((issue) => issue.section === 'dicOrPension');
+    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'dicOrPension');
   }
 
 };

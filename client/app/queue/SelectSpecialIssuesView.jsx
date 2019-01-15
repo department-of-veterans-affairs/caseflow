@@ -57,14 +57,11 @@ class SelectSpecialIssuesView extends React.PureComponent {
     // format the section the way the CheckBoxGroup expects it, and sort according to the mock
     sections = sections.map((section) => {
       return section.sort((previous, next) => {
-        return previous.sectionOrder - next.sectionOrder;
+        return previous.queueSectionOrder - next.queueSectionOrder;
       }).map((issue) => {
-        // this handles italics
-        const label = issue.node;
-
         return {
           id: issue.snakeCase,
-          label: label || issue.display
+          label: issue.node || issue.queueDisplay || issue.display
         };
       });
     });
