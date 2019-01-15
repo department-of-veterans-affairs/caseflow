@@ -490,33 +490,6 @@ describe Appeal do
     end
   end
 
-  context ".tasks_for_timeline" do
-    context "when there are completed organization tasks with completed child tasks assigned to people" do
-      let(:judge) { create(:user) }
-      let(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
-      let!(:task2) do
-        create(:qr_task, appeal: appeal, status: Constants.TASK_STATUSES.completed, assigned_to_type: "Organization")
-      end
-      let!(:task3) do
-        create(:qr_task, assigned_to: judge, appeal: appeal, status: Constants.TASK_STATUSES.completed,
-                         parent_id: task2.id)
-      end
-
-      it { is_expected.to eq task3 }
-    end
-    context "when there are completed organization tasks without child tasks" do
-      let(:judge) { create(:user) }
-      let(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
-      let!(:task2) do
-        create(:qr_task, appeal: appeal, status: Constants.TASK_STATUSES.completed, assigned_to_type: "Organization")
-      end
-
-      it { is_expected.to eq task2 }
-    end
-  end
-
   context ".active?" do
     subject { appeal.active? }
 

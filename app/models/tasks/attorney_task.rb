@@ -16,6 +16,10 @@ class AttorneyTask < Task
     [Constants.TASK_ACTIONS.REVIEW_DECISION.to_h, Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
   end
 
+  def timeline_title
+    COPY::CASE_TIMELINE_ATTORNEY_TASK
+  end
+
   private
 
   def parent_attorney_child_count

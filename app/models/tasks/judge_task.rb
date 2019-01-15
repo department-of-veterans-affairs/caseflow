@@ -9,6 +9,10 @@ class JudgeTask < Task
     assigned_to == user
   end
 
+  def timeline_title
+    COPY::CASE_TIMELINE_JUDGE_TASK
+  end
+
   def previous_task
     fail Caseflow::Error::TooManyChildTasks, task_id: id if children_attorney_tasks.length > 1
 
