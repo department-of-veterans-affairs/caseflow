@@ -390,10 +390,10 @@ export default class DailyDocket extends React.Component {
         </Modal>
       </div>}
       { this.props.saveSuccessful && <Alert
-          type="success"
-          styling={alertStyling}
-          title={`You have successfully updated ${this.getAppellantName(this.props.saveSuccessful)}'s hearing.`}
-        />
+        type="success"
+        styling={alertStyling}
+        title={`You have successfully updated ${this.getAppellantName(this.props.saveSuccessful)}'s hearing.`}
+      />
       }
       { this.props.displayLockSuccessMessage && <Alert
         type="success"
