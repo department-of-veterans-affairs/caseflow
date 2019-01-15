@@ -309,8 +309,7 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(page).to have_content "Correct issues"
         expect(page).to have_content("Added to 2 issues", count: 2)
-        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label).click
+        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
 
         # Skip the special issues page
         click_on "Continue"

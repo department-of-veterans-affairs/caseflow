@@ -51,8 +51,7 @@ RSpec.feature "Judge checkout flow" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
 
-      find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label).click
+      click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
 
       # Special Issues screen
       click_on "Continue"
@@ -118,8 +117,7 @@ RSpec.feature "Judge checkout flow" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
-        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label).click
+        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
 
         click_label "vamc"
 
@@ -129,8 +127,7 @@ RSpec.feature "Judge checkout flow" do
         click_on "Cancel"
         click_on "Yes, cancel"
 
-        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label).click
+        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
 
         # Vamc should still be checked
         expect(page).to have_field("vamc", checked: true, visible: false)
@@ -175,8 +172,7 @@ RSpec.feature "Judge checkout flow" do
       scenario "completes assign to omo checkout flow" do
         visit "/queue/appeals/#{appeal.vacols_id}"
 
-        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_OMO.label).click
+        click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_OMO.label)
 
         expect(page).to have_content("Evaluate Decision")
 
