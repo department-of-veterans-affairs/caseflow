@@ -630,7 +630,7 @@ RSpec.feature "AmaQueue" do
         click_on veteran_full_name
 
         find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.RETURN_TO_ATTORNEY.to_h[:label]).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h[:label]).click
 
         find(".Select-control", text: "Select a user").click
         find("div", class: "Select-option", text: "Other").click

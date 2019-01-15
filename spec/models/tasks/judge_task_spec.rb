@@ -58,7 +58,7 @@ describe JudgeTask do
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
               Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h,
-              Constants.TASK_ACTIONS.RETURN_TO_ATTORNEY.to_h
+              Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action) }
           )
         end

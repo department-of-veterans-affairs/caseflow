@@ -49,7 +49,7 @@ RSpec.feature "ColocatedTask" do
 
       # Return case to attorney.
       find(".Select-control", text: "Select an action…").click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h[:label]).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
       find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
       # Redirected to personal queue page. Return to attorney succeeds.
