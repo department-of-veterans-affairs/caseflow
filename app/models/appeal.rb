@@ -3,6 +3,7 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
+  has_many :hearings
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
@@ -38,6 +39,12 @@ class Appeal < DecisionReview
       .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
   }
   # rubocop:enable Metrics/LineLength
+
+  scope :ready_for_distribution, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) = ?", "DistributionTask", "assigned", 1)
+  }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
@@ -186,6 +193,9 @@ class Appeal < DecisionReview
            :date_of_birth,
            :age,
            :country, to: :veteran, prefix: true
+
+  delegate :city,
+           :state, to: :appellant, prefix: true
 
   def regional_office
     nil
