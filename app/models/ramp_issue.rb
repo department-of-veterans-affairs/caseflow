@@ -13,7 +13,7 @@ class RampIssue < ApplicationRecord
   end
 
   def contention_text
-    description && description.slice(0,255)
+    description&.slice(0, 255)
   end
 
   def ui_hash

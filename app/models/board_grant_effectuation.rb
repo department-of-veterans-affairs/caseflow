@@ -20,7 +20,7 @@ class BoardGrantEffectuation < ApplicationRecord
   }.freeze
 
   def contention_text
-    granted_decision_issue.description
+    granted_decision_issue.description&.slice(0, 255)
   end
 
   private

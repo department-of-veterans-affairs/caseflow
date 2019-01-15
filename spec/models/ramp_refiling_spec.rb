@@ -174,7 +174,7 @@ describe RampRefiling do
               { description: "Arm" },
               { description: "Arm" },
               { description: "Leg" },
-              { description: ("Long Description" * 20).slice(0,255)}
+              { description: ("Long Description" * 20).slice(0, 255) }
             ],
             user: user
           )
@@ -194,7 +194,7 @@ describe RampRefiling do
             { description: "Arm" },
             { description: "Arm" },
             { description: "Leg" },
-            { description: ("Long Description" * 20).slice(0,255)}
+            { description: ("Long Description" * 20).slice(0, 255) }
           ],
           user: user
         )
