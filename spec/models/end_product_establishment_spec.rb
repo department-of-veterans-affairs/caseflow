@@ -671,7 +671,12 @@ describe EndProductEstablishment do
   end
 
   context "#sync_decision_issues!" do
+    include ActiveJob::TestHelper
     subject { end_product_establishment.sync_decision_issues! }
+
+    after do
+      clear_enqueued_jobs
+    end
 
     context "when the end product establishment has request issues" do
       let!(:request_issues) do
@@ -705,6 +710,7 @@ describe EndProductEstablishment do
     context "when the end product establishment has effectuations" do
       let(:source) { create(:decision_document) }
       let!(:granted_decision_issue) { create(:decision_issue, disposition: "allowed", decision_review: source.appeal) }
+
       let!(:board_grant_effectuation) do
         BoardGrantEffectuation.create(
           granted_decision_issue: granted_decision_issue,
@@ -712,7 +718,7 @@ describe EndProductEstablishment do
         )
       end
 
-      it "submits each request issue and starts decision sync job" do
+      it "submits each effectuation and starts decision sync job" do
         subject
 
         expect(board_grant_effectuation.reload.decision_sync_submitted_at).to_not be_nil

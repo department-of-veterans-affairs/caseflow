@@ -89,7 +89,7 @@ describe BoardGrantEffectuation do
       context "when a matching rating issue is not found" do
         let(:contention_reference_id) { "not_found" }
 
-        it "attempts sync but doesn't finish processing" do
+        it "is processed but does not update granted decision issue" do
           subject
           expect(board_grant_effectuation).to be_attempted
           expect(granted_decision_issue).to have_attributes(
