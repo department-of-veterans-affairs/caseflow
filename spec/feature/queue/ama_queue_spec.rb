@@ -223,7 +223,7 @@ RSpec.feature "AmaQueue" do
         click_on "Pal Smith"
 
         find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: "Assign to person").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
         find(".Select-control", text: "Select a user").click
         find("div", class: "Select-option", text: other_user.full_name).click
@@ -239,7 +239,7 @@ RSpec.feature "AmaQueue" do
         click_on "Pal Smith"
 
         find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: "Re-assign to person").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
 
         find(".Select-control", text: "Select a user").click
         find("div", class: "Select-option", text: user.full_name).click
@@ -262,7 +262,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content(existing_instruction)
 
         find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: "Assign to team").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]).click
 
         find(".Select-control", text: "Select a team").click
         find("div", class: "Select-option", text: other_organization.name).click
@@ -398,7 +398,7 @@ RSpec.feature "AmaQueue" do
       click_on veteran_full_name
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Assign to person").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
       find(".Select-control", text: "Select a user").click
       find("div", class: "Select-option", text: qr_user.full_name).click
@@ -416,7 +416,7 @@ RSpec.feature "AmaQueue" do
       click_on veteran_full_name
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Return to judge").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.RETURN_TO_JUDGE.to_h[:label]).click
 
       fill_in "taskInstructions", with: qr_instructions
 
@@ -434,7 +434,7 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content(qr_instructions)
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Assign to attorney").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h[:label]).click
 
       find(".Select-control", text: "Select a user").click
       find("div", class: "Select-option", text: "Other").click
@@ -453,7 +453,7 @@ RSpec.feature "AmaQueue" do
       click_on veteran_full_name
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Decision ready for review").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_DECISION.to_h[:label]).click
 
       expect(page).to have_content("Select special issues (optional)")
 
@@ -488,7 +488,7 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content(qr_instructions)
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Mark task complete").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
       expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
 
@@ -505,7 +505,7 @@ RSpec.feature "AmaQueue" do
 
       expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Mark task complete").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
       expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
 

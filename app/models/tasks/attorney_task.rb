@@ -8,23 +8,12 @@ class AttorneyTask < Task
 
   def available_actions(user)
     if parent.is_a?(JudgeTask) && parent.assigned_to == user
-      return [
-        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
-      ]
+      return [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
     end
 
     return [] if assigned_to != user
 
-    [
-      {
-        label: COPY::ATTORNEY_CHECKOUT_DRAFT_DECISION_LABEL,
-        value: "draft_decision/special_issues"
-      },
-      {
-        label: COPY::ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL,
-        value: "colocated_task"
-      }
-    ]
+    [Constants.TASK_ACTIONS.REVIEW_DECISION.to_h, Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
   end
 
   private
