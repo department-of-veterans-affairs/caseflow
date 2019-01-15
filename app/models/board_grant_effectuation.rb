@@ -3,6 +3,7 @@
 
 class BoardGrantEffectuation < ApplicationRecord
   include HasBusinessLine
+  include Asyncable
 
   belongs_to :appeal
   belongs_to :granted_decision_issue, class_name: "DecisionIssue"
@@ -44,12 +45,10 @@ class BoardGrantEffectuation < ApplicationRecord
 
   def sync_decision_issues!
     return if processed?
-
     attempted!
-    # if the associated_rating for the end_product_establishment isn't there, return and don't set processed
-    # find rating issue with a matching contention_reference_id in the rating
-    # update the granted_decision_issue with values from found rating_issue
-    # if no rating found, that's okay?
+    return unless end_product_establishment.associated_rating
+    update_from_matching_rating_issue!
+    processed!
   end
 
   def contention_text
@@ -57,6 +56,23 @@ class BoardGrantEffectuation < ApplicationRecord
   end
 
   private
+
+  def matching_rating_issue
+    return unless end_product_establishment.associated_rating
+    @matching_rating_issue ||
+      end_product_establishment.associated_rating.issues.find { |i| i.contention_reference_id == contention_reference_id }
+  end
+
+  def update_from_matching_rating_issue!
+    return unless matching_rating_issue
+
+    granted_decision_issue.update!(
+      promulgation_date: matching_rating_issue.promulgation_date,
+      profile_date: matching_rating_issue.profile_date,
+      decision_text: matching_rating_issue.decision_text,
+      rating_issue_reference_id: matching_rating_issue.reference_id
+    )
+  end
 
   def benefit_type
     granted_decision_issue.benefit_type
@@ -69,7 +85,7 @@ class BoardGrantEffectuation < ApplicationRecord
     )
 
     if processed_in_vbms?
-      self.end_product_establishment = find_or_build_end_product_establishment
+      self.end_product_establishment ||= find_or_build_end_product_establishment
     else
       find_or_build_effectuation_task
     end
