@@ -138,6 +138,20 @@ class NonCompDispositions extends React.PureComponent {
       task
     } = this.props;
 
+    let completeDiv = null;
+
+    if (!Boolean(task.completed_at)){
+      completeDiv = <React.Fragment>
+        <div className="cf-txt-r">
+          <a className="cf-cancel-link" href={`/decision_reviews/${businessLineUrl}`}>Cancel</a>
+          <Button className="usa-button"
+            name="submit-update"
+            loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
+            disabled={!this.state.isFilledOut} onClick={this.handleSave}>Complete</Button>
+        </div>
+      </React.Fragment>;
+    }
+
     return <div>
       <div className="cf-decisions">
         <div className="usa-grid-full">
@@ -173,17 +187,12 @@ class NonCompDispositions extends React.PureComponent {
               name="decision-date"
               value={this.state.decisionDate}
               onChange={this.handleDecisionDate}
+              readOnly={Boolean(task.completed_at)}
             />
           </InlineForm>
         </div>
       </div>
-      <div className="cf-txt-r">
-        <a className="cf-cancel-link" href={`/decision_reviews/${businessLineUrl}`}>Cancel</a>
-        <Button className="usa-button"
-          name="submit-update"
-          loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
-          disabled={!this.state.isFilledOut || Boolean(task.completed_at)} onClick={this.handleSave}>Complete</Button>
-      </div>
+      { completeDiv }
     </div>;
   }
 }

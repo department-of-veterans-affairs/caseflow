@@ -110,10 +110,9 @@ feature "NonComp Dispositions Task Page" do
 
       # verify that going to the completed task does not allow edits
       click_link "Bob Smith"
-
       expect(page).to have_content("Review each issue and assign the appropriate dispositions")
       expect(page).to have_current_path("/#{dispositions_url}")
-      expect(page).to have_button("Complete", disabled: true)
+      expect(page).not_to have_button("Complete")
 
       find_disabled_disposition(0, "Granted")
       find_disabled_disposition(1, "Granted", "test description")

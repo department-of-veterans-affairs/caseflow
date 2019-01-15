@@ -60,6 +60,31 @@ class BoardGrantUnconnected extends React.PureComponent {
       task
     } = this.props;
 
+    let completeDiv = null;
+
+    if (!Boolean(task.completed_at)){
+      completeDiv = <React.Fragment>
+        <div className="cf-gray-box">
+          <div className="cf-decision-date">
+            <Checkbox
+              vertical
+              onChange={this.handleEffectuatedClick}
+              value={this.state.isEffectuated}
+              disabled={Boolean(task.completed_at)}
+              name="isEffectuated"
+              label="I certify these benefits have been effectuated." />
+          </div>
+        </div>
+        <div className="cf-txt-r">
+          <a className="cf-cancel-link" href={`/decision_reviews/${businessLineUrl}`}>Cancel</a>
+          <Button className="usa-button"
+            name="submit-update"
+            loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
+            disabled={!this.state.isEffectuated} onClick={this.handleSave}>Complete</Button>
+        </div>
+      </React.Fragment>
+    }
+
     const requestIssuesWithDecisionIssues = formatRequestIssuesWithDecisionIssues(
       appeal.requestIssues, appeal.decisionIssues).
       filter((requestIssue) =>
@@ -81,24 +106,7 @@ class BoardGrantUnconnected extends React.PureComponent {
           }
         </div>
       </div>
-      <div className="cf-gray-box">
-        <div className="cf-decision-date">
-          <Checkbox
-            vertical
-            onChange={this.handleEffectuatedClick}
-            value={this.state.isEffectuated}
-            disabled={Boolean(task.completed_at)}
-            name="isEffectuated"
-            label="I certify these benefits have been effectuated." />
-        </div>
-      </div>
-      <div className="cf-txt-r">
-        <a className="cf-cancel-link" href={`/decision_reviews/${businessLineUrl}`}>Cancel</a>
-        <Button className="usa-button"
-          name="submit-update"
-          loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
-          disabled={!this.state.isEffectuated || Boolean(task.completed_at)} onClick={this.handleSave}>Complete</Button>
-      </div>
+      { completeDiv }
     </div>;
   }
 }

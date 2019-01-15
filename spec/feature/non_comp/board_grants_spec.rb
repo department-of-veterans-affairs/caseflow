@@ -91,8 +91,8 @@ feature "NonComp Board Grant Task Page" do
     click_link "Tom Brady"
     expect(page).to have_content("Board Grants")
     expect(page).to have_current_path("/#{dispositions_url}")
-    expect(page).to have_css("[id='isEffectuated'][disabled]", visible: false)
-    expect(page).to have_button("Complete", disabled: true)
+    expect(page).not_to have_css("[id='isEffectuated'][disabled]")
+    expect(page).not_to have_button("Complete")
   end
 
   context "when there is an error saving" do
