@@ -173,6 +173,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.SET_TRANSCRIPT_REQUESTED:
     return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
 
+  case Constants.SET_EVIDENCE_WINDOW_WAIVED:
+    return newHearingState(state, action, { evidence_window_waived: { $set: action.payload.evidenceWindowWaived } });
+
   case Constants.SET_ISSUE_NOTES:
     return newHearingIssueState(state, action, { notes: { $set: action.payload.notes } });
 

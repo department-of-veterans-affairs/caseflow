@@ -225,7 +225,7 @@ class HearingRepository
       # Travel Board master records have a date range, so we create a master record for each day
       values[:dates].inject([]) do |result, date|
         result << Hearings::MasterRecord.new(scheduled_for: VacolsHelper.normalize_vacols_datetime(date),
-                                             type: values[:type],
+                                             request_type: values[:request_type],
                                              master_record: true,
                                              regional_office_key: values[:ro])
         result
@@ -236,10 +236,9 @@ class HearingRepository
     def vacols_attributes(vacols_record)
       # use venue location on the hearing if it exists
       ro = vacols_record.hearing_venue || vacols_record.bfregoff
-      type = VACOLS::CaseHearing::HEARING_TYPES[vacols_record.hearing_type.to_sym]
       date = HearingMapper.datetime_based_on_type(datetime: vacols_record.hearing_date,
                                                   regional_office_key: ro,
-                                                  type: type)
+                                                  type: vacols_record.hearing_type)
       {
         vacols_record: vacols_record,
         appeal_vacols_id: vacols_record.folder_nr,
@@ -269,7 +268,7 @@ class HearingRepository
         appellant_last_name: vacols_record.sspare1,
         room: vacols_record.room,
         regional_office_key: ro,
-        type: type,
+        request_type: vacols_record.hearing_type,
         scheduled_for: date,
         master_record: false
       }
