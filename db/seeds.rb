@@ -140,10 +140,11 @@ class SeedDB
 
     3.times do
       root = FactoryBot.create(:root_task)
+      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       FactoryBot.create_list(
         :request_issue,
         [3, 4, 5].sample,
-        contested_issue_description: "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011",
+        contested_issue_description: description,
         notes: "Pain disorder with 100\% evaluation per examination",
         review_request: root.appeal
       )
