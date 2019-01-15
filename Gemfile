@@ -58,12 +58,12 @@ gem "sentry-raven"
 gem "shoryuken", "3.1.11"
 gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
 gem "stringex", require: false
+# catch problematic migrations at development/test time
+gem "strong_migrations"
 # execjs runtime
 gem "therubyracer", platforms: :ruby
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
-# catch problematic migrations at development/test time
-gem "zero_downtime_migrations"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB

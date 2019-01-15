@@ -573,15 +573,14 @@ class SeedDB
   def create_colocated_legacy_tasks(attorney, colocated_user)
     [
       { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
-      { vacols_id: "2226048", trait: :in_progress },
+      { vacols_id: "2226048", trait: nil, additional: { action: "translation" } },
       { vacols_id: "2249056", trait: :in_progress },
       { vacols_id: "2306397", trait: :on_hold }
     ].each do |attrs|
       org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
-                        status: Constants.TASK_STATUSES.on_hold,
                         assigned_by: attorney,
                         assigned_to: Colocated.singleton }.merge(attrs[:additional] || {})
-      org_task = FactoryBot.create(:colocated_task, org_task_args)
+      org_task = FactoryBot.create(:colocated_task, :on_hold, org_task_args)
 
       personal_task_args = org_task_args.merge(
         parent: org_task,

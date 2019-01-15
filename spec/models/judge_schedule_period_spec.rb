@@ -170,25 +170,4 @@ describe JudgeSchedulePeriod do
       expect(judge_860 + judge_861).to eq(hearing_days.count * 2)
     end
   end
-
-  context "One judge is assigned to central office hearings each Wednesday" do
-    let!(:hearing_days) do
-      get_unique_dates_between(one_week_one_judge_schedule_period.start_date,
-                               one_week_one_judge_schedule_period.end_date, 5).map do |date|
-        create(:case_hearing, hearing_type: "C", hearing_date: date, room: 1)
-        create(:case_hearing, hearing_type: "C", hearing_date: date, room: 1)
-        create(:case_hearing, hearing_type: "C", hearing_date: date, room: 1)
-        create(:case_hearing, hearing_type: "C", hearing_date: date, room: 3)
-        create(:case_hearing, hearing_type: "C", hearing_date: date, room: 3)
-      end
-    end
-
-    subject { one_week_one_judge_schedule_period.algorithm_assignments }
-    it "verify assigned date is a Wednesday", skip: "This is a flaky test." do
-      expect(subject.count).to eq(3)
-      expect(subject[0][:hearing_date].wednesday?).to be_truthy
-      expect(subject[1][:hearing_date].wednesday?).to be_truthy
-      expect(subject[2][:hearing_date].wednesday?).to be_truthy
-    end
-  end
 end
