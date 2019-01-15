@@ -269,6 +269,14 @@ class Task < ApplicationRecord
     }
   end
 
+  def return_to_attorney_data
+    {
+      selected: nil,
+      options: nil,
+      type: AttorneyRewriteTask.name
+    }
+  end
+
   def timeline_title
     "#{type} completed"
   end
