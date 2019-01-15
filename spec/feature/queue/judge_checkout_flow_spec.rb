@@ -51,11 +51,8 @@ RSpec.feature "Judge checkout flow" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
 
-      click_dropdown(index: 0) do
-        visible_options = page.find_all(".Select-option")
-        expect(visible_options.length).to eq 1
-        expect(visible_options.first.text).to eq Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h[:label]
-      end
+      find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label).click
 
       # Special Issues screen
       click_on "Continue"
@@ -121,11 +118,8 @@ RSpec.feature "Judge checkout flow" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
-        click_dropdown(index: 0) do
-          visible_options = page.find_all(".Select-option")
-          expect(visible_options.length).to eq 1
-          expect(visible_options.first.text).to eq Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h[:label]
-        end
+        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label).click
 
         click_label "vamc"
 
@@ -180,11 +174,8 @@ RSpec.feature "Judge checkout flow" do
       scenario "completes assign to omo checkout flow" do
         visit "/queue/appeals/#{appeal.vacols_id}"
 
-        click_dropdown(index: 0) do
-          visible_options = page.find_all(".Select-option")
-          expect(visible_options.length).to eq 1
-          expect(visible_options.first.text).to eq Constants.TASK_ACTIONS.ASSIGN_OMO.to_h[:label]
-        end
+        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_OMO.label).click
 
         expect(page).to have_content("Evaluate Decision")
 
