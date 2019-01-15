@@ -11,12 +11,12 @@ describe BoardGrantEffectuation do
       granted_decision_issue: granted_decision_issue,
       decision_sync_processed_at: processed_at,
       contention_reference_id: contention_reference_id
-      )
+    )
   end
 
-  let(:end_product_establishment) {
+  let(:end_product_establishment) do
     board_grant_effectuation.end_product_establishment
-  }
+  end
 
   let(:rating_or_nonrating) { :rating }
   let(:benefit_type) { "compensation" }
@@ -34,6 +34,7 @@ describe BoardGrantEffectuation do
 
   context "#sync_decision_issues!" do
     subject { board_grant_effectuation.sync_decision_issues! }
+    before { end_product_establishment.update!(established_at: 3.months.ago) }
 
     let(:associated_claims) { nil }
 
@@ -43,8 +44,8 @@ describe BoardGrantEffectuation do
         promulgation_date: 15.days.ago,
         profile_date: 20.days.ago,
         issues: [
-          { reference_id: "rating_ref_id1", decision_text: "PTSD denied", contention_reference_id: "contention_ref_id" },
-          { reference_id: "rating_ref_id2", decision_text: "Left leg", contention_reference_id: "contention_ref_id2" }
+          { reference_id: "ref_id1", decision_text: "PTSD denied", contention_reference_id: "contention_ref_id" },
+          { reference_id: "ref_id2", decision_text: "Left leg", contention_reference_id: "contention_ref_id2" }
         ],
         associated_claims: associated_claims
       )
@@ -67,7 +68,7 @@ describe BoardGrantEffectuation do
     end
 
     context "when there is an associated rating" do
-      before { end_product_establishment.update!(established_at: 3.months.ago, reference_id: "ep_ref_id") }
+      before { end_product_establishment.update!(reference_id: "ep_ref_id") }
       let(:associated_claims) { [{ clm_id:  "ep_ref_id", bnft_clm_tc: "ep_code" }] }
 
       context "when a matching rating issue is found" do
@@ -79,7 +80,7 @@ describe BoardGrantEffectuation do
             promulgation_date: rating.promulgation_date,
             profile_date: rating.profile_date,
             decision_text: "PTSD denied",
-            rating_issue_reference_id: "rating_ref_id1"
+            rating_issue_reference_id: "ref_id1"
           )
           expect(board_grant_effectuation).to be_processed
         end
@@ -105,19 +106,6 @@ describe BoardGrantEffectuation do
 
   context ".create" do
     subject { BoardGrantEffectuation.create(granted_decision_issue: granted_decision_issue) }
-
-    let!(:granted_decision_issue) do
-      FactoryBot.create(
-        :decision_issue,
-        rating_or_nonrating,
-        disposition: "allowed",
-        decision_review: decision_document.appeal,
-        benefit_type: benefit_type
-      )
-    end
-
-    let(:rating_or_nonrating) { :rating }
-    let(:benefit_type) { "compensation" }
 
     it do
       is_expected.to have_attributes(

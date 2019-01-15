@@ -85,6 +85,18 @@ describe SyncReviewsJob do
       end
     end
 
+    context "when there are effectuations awaiting processing" do
+      let!(:pending_effectuation) { create(:board_grant_effectuation).tap(&:submit_for_processing!) }
+      let!(:effectuation) { create(:board_grant_effectuation) }
+
+      it "ignores effectuations that are not flagged" do
+        expect(DecisionIssueSyncJob).to_not receive(:perform_later).with(effectuation)
+        expect(DecisionIssueSyncJob).to receive(:perform_later).with(pending_effectuation)
+
+        SyncReviewsJob.perform_now("limit" => 2)
+      end
+    end
+
     it "prioritizes never synced ramp elections" do
       expect(EndProductSyncJob).to receive(:perform_later).once.with(end_product_establishment_never_synced.id)
       SyncReviewsJob.perform_now("limit" => 1)

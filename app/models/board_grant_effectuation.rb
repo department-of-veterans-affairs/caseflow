@@ -45,8 +45,10 @@ class BoardGrantEffectuation < ApplicationRecord
 
   def sync_decision_issues!
     return if processed?
+
     attempted!
-    return unless end_product_establishment.associated_rating
+    return unless associated_rating
+
     update_from_matching_rating_issue!
     processed!
   end
@@ -57,10 +59,15 @@ class BoardGrantEffectuation < ApplicationRecord
 
   private
 
+  def associated_rating
+    end_product_establishment.associated_rating
+  end
+
   def matching_rating_issue
-    return unless end_product_establishment.associated_rating
+    return unless associated_rating
+
     @matching_rating_issue ||
-      end_product_establishment.associated_rating.issues.find { |i| i.contention_reference_id == contention_reference_id }
+      associated_rating.issues.find { |i| i.contention_reference_id == contention_reference_id }
   end
 
   def update_from_matching_rating_issue!
