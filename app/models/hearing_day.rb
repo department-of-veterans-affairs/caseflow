@@ -21,10 +21,6 @@ class HearingDay < ApplicationRecord
     request_type == REQUEST_TYPES[:central]
   end
 
-  def hearing_type
-    try(:request_type) || super
-  end
-
   def update_children_records
     hearings = if request_type == REQUEST_TYPES[:central]
                  HearingRepository.fetch_co_hearings_for_date(scheduled_for)

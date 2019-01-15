@@ -94,7 +94,11 @@ export class HearingWorksheet extends React.PureComponent {
     }
   }
 
-  getWorksheetTitle = () => `${this.props.worksheet.veteran_fi_last_formatted}'s ${document.title}`;
+  getWorksheetTitle = () => {
+    const { worksheet } = this.props;
+
+    return `${worksheet.veteran_first_name[0]}. ${worksheet.veteran_last_name}'s ${document.title}`;
+  };
 
   save = (worksheet, worksheetIssues) => () => {
     this.props.saveWorksheet(worksheet);
@@ -112,12 +116,9 @@ export class HearingWorksheet extends React.PureComponent {
 
   render() {
     let { worksheet, worksheetIssues, fetchingWorksheet } = this.props;
-    const appellant = worksheet.appellant_mi_formatted ?
-      worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
     const worksheetHeader = <WorksheetHeader
       print={this.props.print}
-      appellant={appellant}
     />;
 
     const firstWorksheetPage = <div className="cf-hearings-first-page">
