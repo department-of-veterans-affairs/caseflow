@@ -59,13 +59,6 @@ const tabBodyStyling = css({
 
 export class Dockets extends React.Component {
 
-  getType = (type) => {
-    const capitalizeFirstChar = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
-
-    return (type === 'central') ? 'Central' :
-      capitalizeFirstChar(type);
-  }
-
   getKeyForRow = (index) => {
     return index;
   }
@@ -134,7 +127,7 @@ export class Dockets extends React.Component {
       return {
         date: this.linkToDailyDocket(docket),
         start_time: getDateTime(this.getDocketDateTime(docket)),
-        type: this.getType(docket.type),
+        type: docket.readable_request_type,
         regional_office: this.getRegionalOffice(docket),
         slots: docket.slots,
         scheduled: this.getScheduledCount(docket)
