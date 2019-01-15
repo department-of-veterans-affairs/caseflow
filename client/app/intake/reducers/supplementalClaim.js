@@ -242,7 +242,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
   case ACTIONS.COMPLETE_INTAKE_SUCCEED:
     return updateFromServerIntake(update(state, {
       redirectTo: {
-        $set: action.payload.intake.serverIntake.redirect_to
+        $set: action.payload.intake.serverIntake ? action.payload.intake.serverIntake.redirect_to : null
       },
       isComplete: {
         $set: true

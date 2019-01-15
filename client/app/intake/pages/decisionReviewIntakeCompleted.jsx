@@ -122,7 +122,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     default:
     }
 
-    if (completedReview.processedInCaseflow) {
+    if (completedReview.processedInCaseflow && formType !== 'appeal') {
       // we do not use Redirect because state no longer matters,
       // and because we are likely not in a relative URL path any more.
       window.location = completedReview.redirectTo;

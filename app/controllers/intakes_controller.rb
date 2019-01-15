@@ -40,7 +40,8 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
-    if intake.detail.respond_to?(:processed_in_caseflow?) && intake.detail.processed_in_caseflow?
+    if intake.detail.try(:processed_in_caseflow?)
+      flash.notice success_message
       render json: { serverIntake: { redirect_to: intake.detail.business_line.tasks_url } }
     else
       render json: intake.ui_hash(ama_enabled?)
@@ -103,5 +104,11 @@ class IntakesController < ApplicationController
     # param could be file number or SSN. Make sure we return file number.
     veteran = Veteran.find_by_file_number_or_ssn(params[:file_number])
     veteran ? veteran.file_number : params[:file_number]
+  end
+
+  def success_message
+    claimant_name = intake.detail.veteran_full_name
+    claimant_name = intake.detail.claimants.first.try(:name) if intake.detail.veteran_is_not_claimant
+    "#{claimant_name} (Veteran SSN: #{intake.detail.veteran.ssn}) #{intake.detail.review_title} has been processed."
   end
 end
