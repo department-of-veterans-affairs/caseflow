@@ -10,7 +10,7 @@ describe LegacyHearing do
       scheduled_for: scheduled_for,
       disposition: disposition,
       hold_open: hold_open,
-      type: type
+      request_type: request_type
     )
   end
 
@@ -20,14 +20,14 @@ describe LegacyHearing do
       scheduled_for: scheduled_for,
       disposition: disposition,
       hold_open: hold_open,
-      type: type
+      request_type: request_type
     )
   end
 
   let(:scheduled_for) { 1.day.ago }
   let(:disposition) { nil }
   let(:hold_open) { nil }
-  let(:type) { :video }
+  let(:request_type) { "V" }
 
   context "#location" do
     subject { hearing.location }
@@ -35,7 +35,7 @@ describe LegacyHearing do
     it { is_expected.to eq("Baltimore regional office") }
 
     context "when it's a central office hearing" do
-      let(:type) { :central }
+      let(:request_type) { "C" }
 
       it { is_expected.to eq("Board of Veterans' Appeals in Washington, DC") }
     end
@@ -159,7 +159,8 @@ describe LegacyHearing do
         expect(subject["appellant_state"]).to eq(appeal.appellant_state)
         expect(subject["veteran_age"]).to eq(appeal.veteran_age)
         expect(subject["veteran_gender"]).to eq(appeal.veteran_gender)
-        expect(subject["veteran_name"]).to eq(hearing.veteran_name)
+        expect(subject["veteran_first_name"]).to eq(hearing.veteran_first_name)
+        expect(subject["veteran_last_name"]).to eq(hearing.veteran_last_name)
         expect(subject["appellant_last_first_mi"]).to eq(hearing.appellant_last_first_mi)
         expect(subject["cached_number_of_documents"]).to eq 3
       end

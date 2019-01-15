@@ -27,7 +27,7 @@ class Judge
 
   def upcoming_hearings_on(date, is_fetching_issues = false)
     upcoming_hearings(is_fetching_issues).select do |hearing|
-      hearing.scheduled_for.between?(date.beginning_of_day, date.end_of_day)
+      hearing.scheduled_for.between?(date.beginning_of_day, date.end_of_day) || hearing.scheduled_for.to_date == date
     end
   end
 
@@ -59,7 +59,7 @@ class Judge
       record = ro_staff_hash[docket.regional_office_key]
       [date, (if record
                 HearingDayRepository.slots_based_on_type(staff: record,
-                                                         type: docket.type,
+                                                         type: docket.request_type,
                                                          date: docket.scheduled_for)
               end)]
     end.to_h

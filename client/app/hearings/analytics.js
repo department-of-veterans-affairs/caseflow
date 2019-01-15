@@ -19,6 +19,7 @@ export const ACTIONS = {
   DISPOSITION_SELECTED: 'disposition-selected',
   AOD_SELECTED: 'aod-selected',
   TRANSCRIPT_REQUESTED: 'transcript-requested',
+  EVIDENCE_WINDOW_WAIVED: 'evidence-window-waived',
 
   // hearing worksheet
   OPEN_PAST_ISSUES_TAB: 'open-past-issues-tab',
