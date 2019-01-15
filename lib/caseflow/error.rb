@@ -25,6 +25,7 @@ module Caseflow::Error
   class VaDotGovAPIError < SerializableError; end
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
+  class VaDotGovLimitError < VaDotGovAPIError; end
 
   class FetchHearingLocationsJobError < SerializableError; end
 

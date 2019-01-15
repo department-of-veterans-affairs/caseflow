@@ -12,7 +12,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def file_numbers
-    # TODO: will ned an AMA equivalent of this query
+    # TODO: will need an AMA equivalent of this query
     @file_numbers ||= VACOLS::Case.where(bfcurloc: 57).pluck(:bfcorlid).map do |bfcorlid|
       LegacyAppeal.veteran_file_number_from_bfcorlid(bfcorlid)
     end
@@ -56,21 +56,30 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     create_missing_veterans
 
     veterans.each do |veteran|
-      va_dot_gov_address = VADotGovService.validate_address(
-        address_line1: veteran.address_line1,
-        address_line2: veteran.address_line2,
-        address_line3: veteran.address_line3,
-        city: veteran.city,
-        state: veteran.state,
-        country: veteran.country,
-        zip_code: veteran.zip_code
-      )
+      begin
+        va_dot_gov_address = validate_veteran_address(veteran)
+      rescue Caseflow::Error::VaDotGovLimitError
+        sleep 60
+        va_dot_gov_address = validate_veteran_address(veteran)
+      end
 
       create_available_locations_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
     end
   end
 
   private
+
+  def validate_veteran_address(veteran)
+    VADotGovService.validate_address(
+      address_line1: veteran.address_line1,
+      address_line2: veteran.address_line2,
+      address_line3: veteran.address_line3,
+      city: veteran.city,
+      state: veteran.state,
+      country: veteran.country,
+      zip_code: veteran.zip_code
+    )
+  end
 
   def facility_ids_for_ro(regional_office_id)
     RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||

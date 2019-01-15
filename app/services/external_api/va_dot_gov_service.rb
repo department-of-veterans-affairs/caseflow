@@ -29,7 +29,6 @@ class ExternalApi::VADotGovService
       end
 
       track_pages(page)
-
       facility_results
     end
 
@@ -122,7 +121,7 @@ class ExternalApi::VADotGovService
 
     def facility_json(facility, distance)
       attrs = facility["attributes"]
-      dist = distance["distance"] if distance
+      dist = distance["distance"] || distance[:distance] if distance
 
       {
         id: facility["id"],
@@ -146,7 +145,7 @@ class ExternalApi::VADotGovService
 
     def fetch_facilities_with_ids(query:, ids:)
       response = send_va_dot_gov_request(
-        query: query,
+        query: { page: query[:page], ids: ids },
         endpoint: facilities_endpoint
       )
       resp_body = JSON.parse(response.body)
@@ -154,17 +153,43 @@ class ExternalApi::VADotGovService
       check_for_error(response_body: resp_body, code: response.code)
 
       facilities = resp_body["data"]
-      distances = resp_body["meta"]["distances"]
       has_next = !resp_body["links"]["next"].nil?
-      selected_facilities = facilities.select { |facility| ids.include? facility["id"] }
 
-      facilities_result = selected_facilities.map do |selected|
-        distance = distances.find { |dist| dist["id"] == selected["id"] }
-        facility_json(selected, distance)
+      facilities_result = facilities.map do |facility|
+        distance = {
+          distance: calculate_distance_in_miles(
+            lat1: query[:lat], long1: query[:long],
+            lat2: facility["attributes"]["lat"], long2: facility["attributes"]["long"]
+          )
+        }
+
+        facility_json(facility, distance)
       end
 
       { facilities: facilities_result, has_next: has_next }
     end
+
+    # def fetch_facilities_with_ids(query:, ids:)
+    #   response = send_va_dot_gov_request(
+    #     query: query,
+    #     endpoint: facilities_endpoint
+    #   )
+    #   resp_body = JSON.parse(response.body)
+    #
+    #   check_for_error(response_body: resp_body, code: response.code)
+    #
+    #   facilities = resp_body["data"]
+    #   distances = resp_body["meta"]["distances"]
+    #   has_next = !resp_body["links"]["next"].nil?
+    #   selected_facilities = facilities.select { |facility| ids.include? facility["id"] }
+    #
+    #   facilities_result = selected_facilities.map do |selected|
+    #     distance = distances.find { |dist| dist["id"] == selected["id"] }
+    #     facility_json(selected, distance)
+    #   end
+    #
+    #   { facilities: facilities_result, has_next: has_next }
+    # end
 
     def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
       url = URI.escape(base_url + endpoint)
@@ -190,6 +215,8 @@ class ExternalApi::VADotGovService
     def check_for_error(response_body:, code:)
       case code
       when 200 # rubocop:disable Lint/EmptyWhen
+      when 429
+        fail Caseflow::Error::VaDotGovLimitError, code: code, message: response_body
       when 400
         fail Caseflow::Error::VaDotGovRequestError, code: code, message: response_body
       when 500
@@ -211,6 +238,25 @@ class ExternalApi::VADotGovService
         }
       )
     end
+
+    def calculate_distance_in_miles(lat1:, long1:, lat2:, long2:)
+      # https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
+      earth_radius = 6371
+      lat_rad = deg2rad(lat2 - lat1)
+      long_rad = deg2rad(long2 - long1)
+      a = Math.sin(lat_rad / 2) * Math.sin(lat_rad / 2) +
+          Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+          Math.sin(long_rad / 2) * Math.sin(long_rad / 2)
+      c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+      km = earth_radius * c
+      km * 0.621371
+    end
+
+    def deg2rad(deg)
+      deg * (Math::PI / 180)
+    end
+
     # :nocov:
   end
 end
