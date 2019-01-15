@@ -534,4 +534,119 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content("#{veteran_full_name}'s case has been marked complete")
     end
   end
+
+  context "Judge has a case to assign to an attorney" do
+    let(:veteran_first_name) { "Monica" }
+    let(:veteran_last_name) { "Valencia" }
+    let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
+    let!(:veteran) { FactoryBot.create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
+
+    let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Anna Juarez") }
+    let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
+
+    let(:attorney_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Steven Ahr") }
+    let!(:attorney_staff) { FactoryBot.create(:staff, :attorney_role, user: attorney_user) }
+
+    let!(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let!(:judge_task) do
+      FactoryBot.create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :assigned)
+    end
+
+    before do
+      ["Elaine Abitong", "Byron Acero", "Jan Antonioni"].each do |attorney_name|
+        FactoryBot.create(
+          :staff,
+          :attorney_role,
+          user: FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: attorney_name)
+        )
+      end
+
+      User.authenticate!(user: judge_user)
+    end
+
+    it "judge is able to return report to attorney for corrections" do
+      step "judge reviews case and assigns a task to an attorney" do
+        User.authenticate!(user: judge_user)
+
+        visit "/queue"
+
+        click_on COPY::SWITCH_TO_ASSIGN_MODE_LINK_LABEL
+
+        click_on veteran_full_name
+
+        find(".Select-control", text: "Select an action").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h[:label]).click
+
+        find(".Select-control", text: "Select a user").click
+        find("div", class: "Select-option", text: "Other").click
+
+        find(".Select-control", text: "Select a user").click
+        first("div", class: "Select-option", text: attorney_user.full_name).click
+        click_on "Submit"
+
+        expect(page).to have_content("Assigned 1 case")
+      end
+
+      step "attorney completes task and returns the case to the judge" do
+        User.authenticate!(user: attorney_user)
+
+        visit "/queue"
+
+        click_on veteran_full_name
+
+        find(".Select-control", text: "Select an action").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_DECISION.to_h[:label]).click
+
+        expect(page).to have_content("Select special issues (optional)")
+
+        click_on "Continue"
+
+        expect(page).to have_content("Select Dispositions")
+
+        click_on "Continue"
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+
+        fill_in "Document ID:", with: "1234"
+        click_on "Select a judge"
+        find(".Select-control", text: "Select a judge…").click
+        first("div", class: "Select-option", text: judge_user.full_name).click
+        fill_in "notes", with: "all done"
+
+        click_on "Continue"
+
+        expect(page).to have_content(
+          "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
+          "sent to #{judge_user.full_name} for review."
+        )
+      end
+
+      step "judge returns case to attorney for corrections" do
+        User.authenticate!(user: judge_user)
+
+        visit "/queue"
+
+        click_on veteran_full_name
+
+        find(".Select-control", text: "Select an action").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.RETURN_TO_ATTORNEY.to_h[:label]).click
+
+        find(".Select-control", text: "Select a user").click
+        find("div", class: "Select-option", text: "Other").click
+
+        expect(dropdown_selected_match?(attorney_user.full_name, find(".cf-modal-body"))).to be_truthy
+
+        find(".Select-control", text: "Select a user").click
+        first("div", class: "Select-option", text: attorney_user.full_name).click
+        click_on "Submit"
+
+        expect(page).to have_content("Returned 1 case to #{attorney_user.full_name}")
+      end
+
+      step "attorney corrects case and returns it to the judge" do
+        User.authenticate!(user: attorney_user)
+      end
+    end
+  end
 end
