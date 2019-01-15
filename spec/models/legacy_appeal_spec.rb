@@ -439,8 +439,8 @@ describe LegacyAppeal do
 
     let!(:documents) do
       [
-        create(:document, received_at: 5.days.ago),
-        create(:document, received_at: 5.days.ago)
+        create(:document, upload_date: 5.days.ago),
+        create(:document, upload_date: 5.days.ago)
       ]
     end
 
@@ -464,14 +464,14 @@ describe LegacyAppeal do
 
       context "when one document is missing a received at date" do
         it "should return no documents" do
-          documents[0].update(received_at: nil)
+          documents[0].update(upload_date: nil)
           expect(subject).to eq([])
         end
       end
 
       context "when one document is newer than the appeal view date" do
         it "should return the newer document" do
-          documents[0].update(received_at: -2.days.ago)
+          documents[0].update(upload_date: -2.days.ago)
           expect(subject).to eq([documents[0]])
         end
       end

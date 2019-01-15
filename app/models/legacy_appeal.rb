@@ -153,9 +153,9 @@ class LegacyAppeal < ApplicationRecord
     return caseflow_documents if !appeal_view
 
     caseflow_documents.select do |doc|
-      next if doc.received_at.nil?
+      next if doc.upload_date.nil?
 
-      doc.received_at > appeal_view.last_viewed_at
+      doc.upload_date > appeal_view.last_viewed_at
     end
   end
 
