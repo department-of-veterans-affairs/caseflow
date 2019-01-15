@@ -14,17 +14,6 @@ const QUEUE_SPECIAL_ISSUES = [
     sectionOrder: 4
   },
   {
-    display: 'DIC - death, or accrued benefits - United States',
-    specialIssue: 'dicDeathOrAccruedBenefitsUnitedStates',
-    stationOfJurisdiction: null,
-    snakeCase: 'dic_death_or_accrued_benefits_united_states',
-    unhandled: {
-      emailAddress: 'PMC',
-      regionalOffice: 'PMC'
-    },
-    nonCompensation: true
-  },
-  {
     display: 'Education (GI Bill, Dependents Educational Assistance, ' +
       'scholarship or transfer of entitlement)',
     specialIssue: 'educationGiBillDependentsEducationalAssistanceScholarship' +
@@ -77,14 +66,6 @@ const QUEUE_SPECIAL_ISSUES = [
     nonCompensation: true,
     section: 'dicOrPension',
     sectionOrder: 3
-  },
-  {
-    display: 'Hearing - including travel board & video conference',
-    specialIssue: 'hearingIncludingTravelBoardVideoConference',
-    stationOfJurisdiction: 'regional',
-    snakeCase: 'hearing_including_travel_board_video_conference',
-    unhandled: null,
-    nonCompensation: true
   },
   {
     display: 'Home loan guaranty',
