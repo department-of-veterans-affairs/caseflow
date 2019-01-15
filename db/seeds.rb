@@ -140,10 +140,11 @@ class SeedDB
 
     3.times do
       root = FactoryBot.create(:root_task)
+      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       FactoryBot.create_list(
         :request_issue,
         [3, 4, 5].sample,
-        description: "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011",
+        contested_issue_description: description,
         notes: "Pain disorder with 100\% evaluation per examination",
         review_request: root.appeal
       )
@@ -320,68 +321,68 @@ class SeedDB
       ],
       veteran_file_number: "701305078",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "783740847",
       docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "963360019",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 2, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 2, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "604969679",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "228081153",
       docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "152003980",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "375273128",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "682007349",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 5, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 5, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "231439628",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "975191063",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 8, contested_issue_description: description, notes: notes)
     )
 
     LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
@@ -478,21 +479,31 @@ class SeedDB
     eligible_request_issue = RequestIssue.create!(
       review_request: higher_level_review,
       issue_category: "Military Retired Pay",
-      description: "nonrating description",
+      nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
       ineligible_reason: nil,
+<<<<<<< HEAD
       decision_date: Date.new(2018, 5, 1),
       benefit_type: "compensation"
+=======
+      benefit_type: "compensation",
+      decision_date: Date.new(2018, 5, 1)
+>>>>>>> 5f7528760a857e37a9be79e85f7dd5c343e31626
     )
 
     untimely_request_issue = RequestIssue.create!(
       review_request: higher_level_review,
       issue_category: "Active Duty Adjustments",
-      description: "nonrating description",
+      nonrating_issue_description: "nonrating description",
       contention_reference_id: "12345",
       decision_date: Date.new(2018, 5, 1),
+<<<<<<< HEAD
       ineligible_reason: :untimely,
       benefit_type: "compensation"
+=======
+      benefit_type: "compensation",
+      ineligible_reason: :untimely
+>>>>>>> 5f7528760a857e37a9be79e85f7dd5c343e31626
     )
 
     higher_level_review.create_issues!([

@@ -54,10 +54,16 @@ describe JudgeTask do
 
   describe ".create_from_params" do
     context "creating a JudgeQualityReviewTask from a QualityReviewTask" do
-      let(:qr_task) { FactoryBot.create(:qr_task) }
+      let(:judge_task) { FactoryBot.create(:ama_judge_task, parent: FactoryBot.create(:root_task), assigned_to: judge) }
+      let(:qr_user) { create(:user) }
+      let(:qr_task) { FactoryBot.create(:qr_task, assigned_to: qr_user, parent: judge_task) }
       let(:params) { { assigned_to: judge, appeal: qr_task.appeal, parent_id: qr_task.id } }
 
-      subject { JudgeQualityReviewTask.create_from_params(params, attorney) }
+      subject { JudgeQualityReviewTask.create_from_params(params, qr_user) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
+      end
 
       it "the parent task should change to an 'on hold' status" do
         expect(qr_task.status).to eq("assigned")
