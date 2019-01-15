@@ -53,11 +53,12 @@ describe JudgeTask do
       context "in the review phase" do
         let(:subject_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
 
-        it "should return the dispatch action" do
+        it "returns the dispatch action" do
           expect(subject).to eq(
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-              Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h
+              Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h,
+              Constants.TASK_ACTIONS.RETURN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action) }
           )
         end
