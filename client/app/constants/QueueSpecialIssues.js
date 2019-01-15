@@ -183,7 +183,7 @@ const QUEUE_SPECIAL_ISSUES = [
     display: 'DIC for appellant in United States',
     specialIssue: 'dicUnitedStates',
     stationOfJurisdiction: null,
-    snakeCase: 'DIC_united_states',
+    snakeCase: 'dic_united_states',
     unhandled: {
       emailAddress: 'PMC',
       regionalOffice: 'PMC'

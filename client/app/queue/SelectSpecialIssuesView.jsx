@@ -32,8 +32,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
       [event.target.id]: document.getElementById(event.target.id).checked
     });
   }
-  // TODO: 
-  // 1. verify that new values are persisted in redux and sent to the backend properly.
+
   goToNextStep = () => {
     const {
       appeal,
