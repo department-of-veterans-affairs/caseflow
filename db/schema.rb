@@ -483,6 +483,8 @@ ActiveRecord::Schema.define(version: 20190114225909) do
     t.string "military_service"
     t.boolean "prepped"
     t.text "summary"
+    t.time "scheduled_time"
+    t.string "representative_name"
   end
 
   create_table "higher_level_reviews", force: :cascade do |t|
@@ -733,12 +735,12 @@ ActiveRecord::Schema.define(version: 20190114225909) do
     t.bigint "ineligible_due_to_id"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
-    t.string "ineligible_reason"
     t.string "ramp_claim_id"
     t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
     t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
+    t.string "ineligible_reason"
     t.string "vacols_id"
     t.integer "vacols_sequence_id"
     t.datetime "created_at"
@@ -850,6 +852,17 @@ ActiveRecord::Schema.define(version: 20190114225909) do
     t.string "description", null: false
     t.json "values", default: {}, null: false
     t.index ["task_id"], name: "index_task_business_payloads_on_task_id"
+  end
+
+  create_table "task_timers", force: :cascade do |t|
+    t.bigint "task_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "submitted_at"
+    t.datetime "attempted_at"
+    t.datetime "processed_at"
+    t.string "error"
+    t.index ["task_id"], name: "index_task_timers_on_task_id"
   end
 
   create_table "tasks", force: :cascade do |t|
