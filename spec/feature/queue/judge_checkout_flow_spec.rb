@@ -129,7 +129,8 @@ RSpec.feature "Judge checkout flow" do
         click_on "Cancel"
         click_on "Yes, cancel"
 
-        click_dropdown(index: 0)
+        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label).click
 
         # Vamc should still be checked
         expect(page).to have_field("vamc", checked: true, visible: false)
