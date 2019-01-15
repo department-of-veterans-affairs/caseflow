@@ -110,8 +110,18 @@ export default class DailyDocket extends React.Component {
     return _.filter(this.props.hearings, (hearing) => !this.previouslyScheduled(hearing));
   };
 
+  getAppellantName = (hearing) => {
+    let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName } = hearing;
+
+    if (appellantFirstName && appellantLastName) {
+      return `${appellantFirstName} ${appellantLastName}`;
+    }
+
+    return `${veteranFirstName} ${veteranLastName}`;
+  };
+
   getAppellantInformation = (hearing) => {
-    const appellantName = hearing.appellantMiFormatted || hearing.veteranMiFormatted;
+    const appellantName = this.getAppellantName(hearing);
 
     return <div><b>{appellantName}</b><br />
       <b><Link
@@ -380,10 +390,11 @@ export default class DailyDocket extends React.Component {
         </Modal>
       </div>}
       { this.props.saveSuccessful && <Alert
-        type="success"
-        styling={alertStyling}
-        title={`You have successfully updated ${this.props.saveSuccessful.appellantMiFormatted ||
-          this.props.saveSuccessful.veteranMiFormatted}'s hearing.`} /> }
+          type="success"
+          styling={alertStyling}
+          title={`You have successfully updated ${this.getAppellantName(this.props.saveSuccessful)}'s hearing.`}
+        />
+      }
       { this.props.displayLockSuccessMessage && <Alert
         type="success"
         styling={alertStyling}
