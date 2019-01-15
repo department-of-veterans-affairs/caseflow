@@ -2,7 +2,7 @@ import React from 'react';
 
 const QUEUE_SPECIAL_ISSUES = [
   {
-    display: 'Contaminated Water at Camp LeJeune',
+    display: 'Contaminated water at Camp LeJeune',
     specialIssue: 'contaminatedWaterAtCampLejeune',
     stationOfJurisdiction: {
       key: '327',
@@ -14,7 +14,7 @@ const QUEUE_SPECIAL_ISSUES = [
     sectionOrder: 4
   },
   {
-    display: 'Education (GI Bill, Dependents Educational Assistance, ' +
+    display: 'Education (GI Bill, Dependents\' Educational Assistance, ' +
       'scholarship or transfer of entitlement)',
     specialIssue: 'educationGiBillDependentsEducationalAssistanceScholarship' +
       'TransferOfEntitlement',
@@ -55,7 +55,7 @@ const QUEUE_SPECIAL_ISSUES = [
   },
   {
     display: 'DIC/Pension for appellant in any foreign country outside of Mexico, Central' +
-      'or South America, or the Caribbean',
+      ' or South America, or the Caribbean',
     specialIssue: 'foreignPensionDicAllOtherForeignCountries',
     stationOfJurisdiction: null,
     snakeCase: 'foreign_pension_dic_all_other_foreign_countries',
@@ -212,7 +212,7 @@ const QUEUE_SPECIAL_ISSUES = [
   },
   {
     display: 'American Samoa, Guam, Northern ' +
-      'Mariana Islands (Rota, Saipan & Tinian)',
+      'Mariana Islands (Rota, Saipan and Tinian)',
     specialIssue: 'usTerritoryClaimAmericanSamoaGuamNorthern' +
       'MarianaIslandsRotaSaipanTinian',
     stationOfJurisdiction: {
