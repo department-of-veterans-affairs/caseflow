@@ -21,5 +21,4 @@ module DocumentConcern
       doc.upload_date > appeal_view.last_viewed_at
     end
   end
-
 end

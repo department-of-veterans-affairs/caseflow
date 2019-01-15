@@ -50,7 +50,6 @@ class Appeal < DecisionReview
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :new_documents_for_user, :manifest_vva_fetched_at, to: :document_fetcher
 
-
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
       find_by_uuid!(id)
