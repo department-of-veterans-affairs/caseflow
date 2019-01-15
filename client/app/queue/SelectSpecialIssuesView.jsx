@@ -117,7 +117,6 @@ class SelectSpecialIssuesView extends React.PureComponent {
           />
         </div>
       </div>
-      {/* </div> */}
     </React.Fragment>;
   };
 }
