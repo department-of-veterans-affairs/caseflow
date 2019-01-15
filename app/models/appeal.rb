@@ -3,6 +3,7 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
+  has_many :hearings
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
@@ -192,6 +193,9 @@ class Appeal < DecisionReview
            :date_of_birth,
            :age,
            :country, to: :veteran, prefix: true
+
+  delegate :city,
+           :state, to: :appellant, prefix: true
 
   def regional_office
     nil
