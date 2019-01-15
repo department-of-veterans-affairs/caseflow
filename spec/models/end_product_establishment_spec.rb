@@ -671,8 +671,9 @@ describe EndProductEstablishment do
   end
 
   context "#sync_decision_issues!" do
-    include ActiveJob::TestHelper
     subject { end_product_establishment.sync_decision_issues! }
+
+    include ActiveJob::TestHelper
 
     after do
       clear_enqueued_jobs

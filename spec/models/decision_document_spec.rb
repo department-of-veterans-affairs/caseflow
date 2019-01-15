@@ -67,6 +67,12 @@ describe DecisionDocument do
   context "#on_sync" do
     subject { decision_document.on_sync(end_product_establishment) }
 
+    include ActiveJob::TestHelper
+
+    after do
+      clear_enqueued_jobs
+    end
+
     let(:board_grant_effectuation) do
       BoardGrantEffectuation.create(
         granted_decision_issue: granted_decision_issue
