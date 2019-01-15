@@ -1,5 +1,6 @@
 class Appeal < DecisionReview
   include Taskable
+  include DocumentConcern
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -49,26 +50,6 @@ class Appeal < DecisionReview
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :new_documents_for_user, :manifest_vva_fetched_at, to: :document_fetcher
 
-  # Number of documents stored locally via nightly RetrieveDocumentsForReaderJob.
-  # Fall back to count from VBMS if no local documents are found.
-  def number_of_documents_from_caseflow
-    count = Document.where(file_number: veteran_file_number).size
-    (count != 0) ? count : number_of_documents
-  end
-
-  def new_documents_from_caseflow(user)
-    caseflow_documents = Document.where(file_number: veteran_file_number)
-    return new_documents_for_user(user) if caseflow_documents.empty?
-
-    appeal_view = appeal_views.find_by(user: user)
-    return caseflow_documents if !appeal_view
-
-    caseflow_documents.select do |doc|
-      next if doc.upload_date.nil?
-
-      doc.upload_date > appeal_view.last_viewed_at
-    end
-  end
 
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
