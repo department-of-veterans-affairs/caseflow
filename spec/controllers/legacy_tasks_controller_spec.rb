@@ -148,7 +148,8 @@ RSpec.describe LegacyTasksController, type: :controller do
           }
           error_msg = "Case is already assigned"
           allow(QueueRepository).to receive(:assign_case_to_attorney!).and_raise(
-            Caseflow::Error::LegacyCaseAlreadyAssignedError.new(message: error_msg))
+            Caseflow::Error::LegacyCaseAlreadyAssignedError.new(message: error_msg)
+          )
           post :create, params: { tasks: params }
           expect(response.status).to eq 400
           expect(Raven).to_not receive(:capture_exception)
