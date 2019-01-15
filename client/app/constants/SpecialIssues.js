@@ -66,7 +66,7 @@ const SPECIAL_ISSUES = [
     },
     nonCompensation: true,
     queueSection: 'dicOrPension',
-    queueSectionOrder: 2
+    queueSectionOrder: 1
   },
   {
     display: 'Foreign pension, DIC - all other foreign countries',
@@ -81,7 +81,7 @@ const SPECIAL_ISSUES = [
     },
     nonCompensation: true,
     queueSection: 'dicOrPension',
-    queueSectionOrder: 3
+    queueSectionOrder: 2
   },
   {
     display: 'Hearing - including travel board & video conference',
@@ -185,20 +185,7 @@ const SPECIAL_ISSUES = [
     },
     nonCompensation: true,
     queueSection: 'dicOrPension',
-    queueSectionOrder: 4
-  },
-  {
-    display: 'DIC for appellant in United States',
-    specialIssue: 'dicUnitedStates',
-    stationOfJurisdiction: null,
-    snakeCase: 'dic_united_states',
-    unhandled: {
-      emailAddress: 'PMC',
-      regionalOffice: 'PMC'
-    },
-    nonCompensation: true,
-    queueSection: 'dicOrPension',
-    queueSectionOrder: 1
+    queueSectionOrder: 3
   },
   {
     display: 'Private Attorney or Agent',
@@ -317,19 +304,6 @@ const SPECIAL_ISSUES = [
     nonCompensation: true,
     queueSection: 'issuesOnAppeal',
     queueSectionOrder: 8
-  },
-  {
-    display: 'Committee on Waivers and Compromises',
-    specialIssue: 'committeeOnWaiversAndCompromises',
-    stationOfJurisdiction: null,
-    snakeCase: 'committee_on_waivers_and_compromises',
-    unhandled: {
-      emailAddress: 'COWC',
-      regionalOffice: 'COWC'
-    },
-    nonCompensation: true,
-    queueSection: 'issuesOnAppeal',
-    queueSectionOrder: 9
   }
 ];
 
