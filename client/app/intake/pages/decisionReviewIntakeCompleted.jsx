@@ -122,13 +122,13 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     default:
     }
 
-    console.log('completedReview.processedInCaseflow', completedReview.processedInCaseflow);
-
     if (completedReview.processedInCaseflow) {
-      return <Redirect to="/foobar" />
-    }
+      // we do not use Redirect because state no longer matters,
+      // and because we are likely not in a relative URL path any more.
+      window.location = completedReview.redirectTo;
 
-    console.log(this.props);
+      return false;
+    }
 
     return <div><StatusMessage
       title="Intake completed"

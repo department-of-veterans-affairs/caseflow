@@ -95,7 +95,7 @@ RSpec.describe IntakesController do
         post :complete, params: { id: intake.id }
         resp = JSON.parse(response.body, symbolize_names: true)
 
-        expect(resp).to eq(redirect_to: "/decision_reviews/education")
+        expect(resp[:serverIntake]).to eq(redirect_to: "/decision_reviews/education")
       end
     end
   end

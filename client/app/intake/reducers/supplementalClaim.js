@@ -96,6 +96,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
+    redirectTo: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -240,6 +241,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
     });
   case ACTIONS.COMPLETE_INTAKE_SUCCEED:
     return updateFromServerIntake(update(state, {
+      redirectTo: {
+        $set: action.payload.intake.serverIntake.redirect_to
+      },
       isComplete: {
         $set: true
       },

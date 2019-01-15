@@ -41,7 +41,7 @@ class IntakesController < ApplicationController
   def complete
     intake.complete!(params)
     if intake.detail.respond_to?(:processed_in_caseflow?) && intake.detail.processed_in_caseflow?
-      render json: { redirect_to: intake.detail.business_line.tasks_url }
+      render json: { serverIntake: { redirect_to: intake.detail.business_line.tasks_url } }
     else
       render json: intake.ui_hash(ama_enabled?)
     end
