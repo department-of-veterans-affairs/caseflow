@@ -37,7 +37,18 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :hearings do
-    []
+    object.hearings.map do |hearing|
+      {
+        held_by: hearing.judge.present? ? hearing.judge.full_name : "",
+        # this assumes only the assigned judge will view the hearing worksheet. otherwise,
+        # we should check `hearing.hearing_views.map(&:user_id).include? judge.css_id`
+        viewed_by_judge: !hearing.hearing_views.empty?,
+        date: hearing.scheduled_for,
+        type: hearing.readable_request_type,
+        external_id: hearing.external_id,
+        disposition: hearing.disposition
+      }
+    end
   end
 
   attribute :location_code do

@@ -21,10 +21,6 @@ class HearingDay < ApplicationRecord
     request_type == REQUEST_TYPES[:central]
   end
 
-  def hearing_type
-    try(:request_type) || super
-  end
-
   def update_children_records
     hearings = if request_type == REQUEST_TYPES[:central]
                  HearingRepository.fetch_co_hearings_for_date(scheduled_for)
@@ -119,11 +115,13 @@ class HearingDay < ApplicationRecord
           regional_office_hash[hearing_day[:regional_office]], hearing_day
         )
 
-        return nil if scheduled_hearings.length >= total_slots || hearing_day[:lock]
-
-        hearing_day.slice(:id, :scheduled_for, :request_type, :room).tap do |day|
-          day[:hearings] = scheduled_hearings
-          day[:total_slots] = total_slots
+        if scheduled_hearings.length >= total_slots || hearing_day[:lock]
+          nil
+        else
+          hearing_day.slice(:id, :scheduled_for, :request_type, :room).tap do |day|
+            day[:hearings] = scheduled_hearings
+            day[:total_slots] = total_slots
+          end
         end
       end.compact
     end

@@ -9,11 +9,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
   has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr, class_name: "Case"
 
-  HEARING_TYPES = {
-    V: :video,
-    T: :travel,
-    C: :central
-  }.freeze
+  HEARING_TYPES = %w[V T C].freeze
 
   HEARING_DISPOSITIONS = {
     H: :held,
@@ -73,7 +69,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def co_hearings_for_master_records(parent_hearing_dates)
-      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) = ?",
+      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) IN (?)",
                             "C", "%VIDEO%", parent_hearing_dates.map(&:to_date))
     end
 
@@ -160,7 +156,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
         .joins("left outer join vacols.folder on folder.ticknum = brieff.bfkey")
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
-        .where(hearing_type: HEARING_TYPES.keys)
+        .where(hearing_type: HEARING_TYPES)
     end
 
     def select_schedule_days

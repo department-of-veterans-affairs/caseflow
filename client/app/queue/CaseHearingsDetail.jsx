@@ -46,7 +46,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
   getHearingAttrs = (hearing: Hearing): Array<Object> => {
     return [{
       label: 'Type',
-      value: StringUtil.snakeCaseToCapitalized(hearing.type)
+      value: hearing.type
     },
     {
       label: 'Disposition',
