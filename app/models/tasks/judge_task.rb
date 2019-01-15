@@ -1,6 +1,8 @@
 class JudgeTask < Task
   include RoundRobinAssigner
 
+  BEAAM_CASES = [25,26,27,28,29,30,31,32,33,34,36,37,38,39,40,41,42,43,44,45,46,50,51,53]
+
   def available_actions(_user)
     []
   end
@@ -66,6 +68,7 @@ class JudgeTask < Task
   def self.eligible_for_assignment?(task)
     return false if task.completed?
     return false if task.appeal.nil?
+    return false if BEAAM_CASES.include?(task.appeal.id)
     return false if task.appeal.class == LegacyAppeal
     return false if task.appeal.docket_name.nil?
     # Hearing cases will not be processed until February 2019
