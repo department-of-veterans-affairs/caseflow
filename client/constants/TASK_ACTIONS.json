@@ -15,5 +15,6 @@
     "SCHEDULE_VETERAN": { "label": "Schedule Veteran", "value": "modal/schedule_veteran", "func": "schedule_veteran_data" },
     "SEND_BACK_TO_ATTORNEY": { "label": "Send back to attorney", "value": "modal/mark_task_complete" },
     "SEND_TO_TEAM": { "label": "Send to team", "value": "modal/send_colocated_task" },
+    "SEND_TO_TRANSLATION": { "label": "Assign to Translation team", "value": "modal/assign_to_translation_team", "func": "assign_to_translation_team_data" },
     "SUBMIT_OMO_REQUEST_FOR_REVIEW": { "label": "Medical Request Ready for Review", "value": "omo_request/submit" }
 }

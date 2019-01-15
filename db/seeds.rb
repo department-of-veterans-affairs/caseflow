@@ -537,7 +537,7 @@ class SeedDB
     FactoryBot.create(:attorney_case_review, task_id: child.id)
   end
 
-  def create_task_at_colocated(appeal, judge, attorney, colocated_user)
+  def create_task_at_colocated(appeal, judge, attorney, colocated_user, task_attributes = {})
     parent = FactoryBot.create(
       :ama_judge_task,
       :on_hold,
@@ -546,7 +546,7 @@ class SeedDB
       parent: create_root_task(appeal)
     )
 
-    child = FactoryBot.create(
+    atty_task = FactoryBot.create(
       :ama_attorney_task,
       :on_hold,
       assigned_to: attorney,
@@ -555,19 +555,42 @@ class SeedDB
       appeal: appeal
     )
 
-    org_task = FactoryBot.create(:ama_colocated_task,
-                                 appeal: appeal,
-                                 parent: child,
-                                 assigned_by: attorney,
-                                 assigned_to: Colocated.singleton)
-
-    FactoryBot.create(:ama_colocated_task,
-                      appeal: appeal,
-                      parent: org_task,
-                      action: org_task.action,
-                      instructions: org_task.instructions,
+    org_task_args = { appeal: appeal,
+                      parent: atty_task,
                       assigned_by: attorney,
-                      assigned_to: colocated_user)
+                      assigned_to: Colocated.singleton }.merge(task_attributes)
+    org_task = FactoryBot.create(:ama_colocated_task, :on_hold, org_task_args)
+
+    personal_task_args = org_task_args.merge(
+      parent: org_task,
+      action: org_task.action,
+      instructions: org_task.instructions,
+      assigned_to: colocated_user
+    )
+    FactoryBot.create(:ama_colocated_task, personal_task_args)
+  end
+
+  def create_colocated_legacy_tasks(attorney, colocated_user)
+    [
+      { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
+      { vacols_id: "2226048", trait: :in_progress },
+      { vacols_id: "2249056", trait: :in_progress },
+      { vacols_id: "2306397", trait: :on_hold }
+    ].each do |attrs|
+      org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
+                        status: Constants.TASK_STATUSES.on_hold,
+                        assigned_by: attorney,
+                        assigned_to: Colocated.singleton }.merge(attrs[:additional] || {})
+      org_task = FactoryBot.create(:colocated_task, org_task_args)
+
+      personal_task_args = org_task_args.merge(
+        parent: org_task,
+        action: org_task.action,
+        instructions: org_task.instructions,
+        assigned_to: colocated_user
+      )
+      FactoryBot.create(*[:colocated_task, attrs[:trait]].compact, personal_task_args)
+    end
   end
 
   def create_task_at_attorney_review(appeal, judge, attorney)
@@ -622,29 +645,6 @@ class SeedDB
     end
   end
 
-  def create_colocated_legacy_tasks(attorney, colocated_user)
-    [
-      { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
-      { vacols_id: "2226048", trait: :in_progress },
-      { vacols_id: "2249056", trait: :in_progress },
-      { vacols_id: "2306397", trait: :on_hold }
-    ].each do |attrs|
-      org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
-                        status: Constants.TASK_STATUSES.on_hold,
-                        assigned_by: attorney,
-                        assigned_to: Colocated.singleton }.merge(attrs[:additional] || {})
-      org_task = FactoryBot.create(:colocated_task, org_task_args)
-
-      personal_task_args = org_task_args.merge(
-        parent: org_task,
-        action: org_task.action,
-        instructions: org_task.instructions,
-        assigned_to: colocated_user
-      )
-      FactoryBot.create(*[:colocated_task, attrs[:trait]].compact, personal_task_args)
-    end
-  end
-
   def create_tasks
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
@@ -658,6 +658,7 @@ class SeedDB
     create_task_at_judge_review(@ama_appeals[4], judge, attorney)
     create_task_at_judge_review(@ama_appeals[5], judge, attorney)
     create_task_at_colocated(@ama_appeals[6], judge, attorney, colocated)
+    create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, colocated, action: "translation")
     create_task_at_attorney_review(@ama_appeals[7], judge, attorney)
     create_task_at_attorney_review(@ama_appeals[8], judge, attorney)
 
