@@ -30,7 +30,7 @@ RSpec.describe HearingsController, type: :controller do
                    transcript_requested: false,
                    disposition: :held,
                    prepped: true,
-                   evidence_window_waived: true}
+                   evidence_window_waived: true }
         patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
