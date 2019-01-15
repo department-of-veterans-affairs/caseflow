@@ -64,12 +64,22 @@ class RootTask < GenericTask
       )
     end
 
+    def create_hearing_tasks!(appeal, parent)
+      ScheduleHearingTask.create!(
+        appeal: appeal,
+        parent: parent,
+        assigned_to: HearingsManagement.singleton
+      )
+    end
+
     def create_subtasks!(appeal, parent)
       transaction do
         distribution_task = create_distribution_task!(appeal, parent)
 
         if appeal.evidence_submission_docket?
           create_evidence_submission_task!(appeal, distribution_task)
+        elsif appeal.hearing_docket?
+          create_hearing_tasks!(appeal, distribution_task)
         else
           vso_tasks = create_vso_subtask!(appeal, distribution_task)
           # If the appeal is direct docket and there are no ihp tasks,
