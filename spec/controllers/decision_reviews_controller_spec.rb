@@ -87,7 +87,7 @@ describe DecisionReviewsController, type: :controller do
 
     context "with board grant effectuation task" do
       let(:task) do
-        create(:board_grant_effectuation_task, assigned_to: non_comp_org)
+        create(:board_grant_effectuation_task, status: "in_progress", assigned_to: non_comp_org)
           .becomes(BoardGrantEffectuationTask)
       end
 
@@ -112,7 +112,11 @@ describe DecisionReviewsController, type: :controller do
     end
 
     context "with decision review task" do
-      let(:task) { create(:higher_level_review_task, assigned_to: non_comp_org).becomes(DecisionReviewTask) }
+      let(:task) do
+        create(:higher_level_review_task, status: "in_progress", assigned_to: non_comp_org)
+          .becomes(DecisionReviewTask)
+      end
+
       let!(:request_issues) do
         [
           create(:request_issue, :rating, review_request: task.appeal),
