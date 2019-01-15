@@ -262,6 +262,32 @@ describe HearingDay do
         expect(subject[0][:hearings][0][:appeal_id]).to eq appeal_tomorrow.id
       end
     end
+
+    context "When there are hearing days that are filled up" do
+      before do
+        allow(HearingDayRepository).to receive(:fetch_hearing_day_slots).and_return(1, 5)
+      end
+
+      let(:appeal_today) do
+        create(
+          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        )
+      end
+      let(:appeal_tomorrow) do
+        create(
+          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        )
+      end
+      let!(:hearing_tomorrow) do
+        create(
+          :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: appeal_tomorrow.vacols_id
+        )
+      end
+
+      it "only returns hearing days that are not full" do
+        expect(subject.size).to eq 1
+      end
+    end
   end
 
   context "Central Office parent and child rows for a date range" do
