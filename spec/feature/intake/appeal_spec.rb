@@ -279,6 +279,26 @@ feature "Appeal Intake" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
   end
 
+  scenario "intake can still be completed when NilRatingProfileListError is thrown" do
+    mock_nil_bgs_response
+    start_appeal(veteran_no_ratings)
+
+    visit "/intake"
+    click_intake_continue
+    click_intake_add_issue
+
+    # expect the rating modal to be skipped
+    expect(page).to have_content("Does issue 1 match any of these issue categories?")
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "04/19/2018"
+    )
+
+    click_intake_finish
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+  end
+
   context "Veteran has no ratings" do
     scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
       start_appeal(veteran_no_ratings)

@@ -266,6 +266,10 @@ class DecisionReview < ApplicationRecord
     return [] unless veteran
 
     veteran.ratings.reject { |rating| rating.issues.empty? }
+
+    # return empty list when there are no ratings
+  rescue Rating::NilRatingProfileListError
+    []
   end
 
   def ratings_cache_key

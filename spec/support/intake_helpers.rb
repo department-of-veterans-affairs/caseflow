@@ -381,6 +381,11 @@ module IntakeHelpers
     expect(row).to have_text(text)
   end
 
+  def mock_nil_bgs_response
+    allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range)
+      .and_return({rating_profile_list: {rating_profile: nil} })
+  end
+
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def verify_decision_issues_can_be_added_and_removed(page_url,
