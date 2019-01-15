@@ -237,7 +237,7 @@ class AppealSeries < ApplicationRecord
 
       {
         date: hearing.scheduled_for.to_date,
-        type: hearing.readable_request_type,
+        type: hearing.readable_request_type.downcase.to_sym,
         location: hearing.location
       }
     when :pending_hearing_scheduling

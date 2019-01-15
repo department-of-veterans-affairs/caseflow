@@ -71,7 +71,7 @@ describe AppealSeriesAlerts do
         alert = alerts.find { |a| a[:type] == :scheduled_hearing }
         expect(alert).to_not be_nil
         expect(alert[:details][:date]).to eq(1.day.from_now.to_date)
-        expect(alert[:details][:type]).to eq("Video")
+        expect(alert[:details][:type]).to eq(:video)
         expect(alert[:details][:location]).to eq("Baltimore regional office")
       end
     end
