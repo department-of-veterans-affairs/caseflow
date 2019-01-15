@@ -1,5 +1,5 @@
 class JudgeQualityReviewTask < JudgeTask
-  def additional_actions(_user)
+  def additional_available_actions(_user)
     [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h, Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]
   end
 

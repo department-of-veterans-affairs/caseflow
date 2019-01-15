@@ -2,14 +2,14 @@ class JudgeTask < Task
   include RoundRobinAssigner
 
   def available_actions(user)
-    additional_actions(user).unshift(Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h)
+    additional_available_actions(user).unshift(Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h)
   end
 
   def actions_available?(user)
     assigned_to == user
   end
 
-  def additional_actions(_user)
+  def additional_available_actions(_user)
     fail Caseflow::Error::MustImplementInSubclass
   end
 
