@@ -39,6 +39,12 @@ class Appeal < DecisionReview
   }
   # rubocop:enable Metrics/LineLength
 
+  scope :ready_for_distribution, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) = ?", "DistributionTask", "assigned", 1)
+  }
+
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
   def document_fetcher

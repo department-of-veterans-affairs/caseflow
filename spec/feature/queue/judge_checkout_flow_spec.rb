@@ -54,7 +54,7 @@ RSpec.feature "Judge checkout flow" do
       click_dropdown(index: 0) do
         visible_options = page.find_all(".Select-option")
         expect(visible_options.length).to eq 1
-        expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
+        expect(visible_options.first.text).to eq Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h[:label]
       end
 
       # Special Issues screen
@@ -124,7 +124,7 @@ RSpec.feature "Judge checkout flow" do
         click_dropdown(index: 0) do
           visible_options = page.find_all(".Select-option")
           expect(visible_options.length).to eq 1
-          expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_DISPATCH_LABEL
+          expect(visible_options.first.text).to eq Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h[:label]
         end
 
         click_label "vamc"
@@ -183,7 +183,7 @@ RSpec.feature "Judge checkout flow" do
         click_dropdown(index: 0) do
           visible_options = page.find_all(".Select-option")
           expect(visible_options.length).to eq 1
-          expect(visible_options.first.text).to eq COPY::JUDGE_CHECKOUT_OMO_LABEL
+          expect(visible_options.first.text).to eq Constants.TASK_ACTIONS.ASSIGN_OMO.to_h[:label]
         end
 
         expect(page).to have_content("Evaluate Decision")
