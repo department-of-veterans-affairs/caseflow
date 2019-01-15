@@ -180,19 +180,6 @@ class TaskRows extends React.PureComponent {
 
   showActionsSection = (task) => (task && !this.props.hideDropdown);
 
-  getTitle = (task) => {
-    let title = '';
-    const judgeTasks = ['JudgeTask', 'JudgeAssignTask', 'JudgeDecisionReviewTask', 'JudgeQualityReviewTask'];
-
-    if (task.type === 'AttorneyTask') {
-      title = COPY.CASE_TIMELINE_ATTORNEY_TASK;
-    } else if (judgeTasks.includes(task.type)) {
-      title = COPY.CASE_TIMELINE_JUDGE_TASK;
-    }
-
-    return title;
-  }
-
   render = () => {
     const {
       appeal,
@@ -226,7 +213,7 @@ class TaskRows extends React.PureComponent {
           </td>
           <td {...taskInformationContainerStyling}>
             <CaseDetailsDescriptionList>
-              { timeline && this.getTitle(task) }
+              { timeline && task.timeline_title }
               { this.assignedToListItem(task) }
               { this.assignedByListItem(task) }
               { this.taskLabelListItem(task) }
