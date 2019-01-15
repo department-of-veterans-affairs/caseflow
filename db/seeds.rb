@@ -477,6 +477,7 @@ class SeedDB
 
     eligible_request_issue = RequestIssue.create!(
       review_request: higher_level_review,
+      benefit_type: "compensation",
       issue_category: "Military Retired Pay",
       description: "nonrating description",
       contention_reference_id: "1234",
@@ -486,6 +487,7 @@ class SeedDB
 
     untimely_request_issue = RequestIssue.create!(
       review_request: higher_level_review,
+      benefit_type: "compensation",
       issue_category: "Active Duty Adjustments",
       description: "nonrating description",
       contention_reference_id: "12345",
