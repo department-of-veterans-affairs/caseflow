@@ -62,7 +62,7 @@ class BoardGrantUnconnected extends React.PureComponent {
 
     let completeDiv = null;
 
-    if (!Boolean(task.completed_at)){
+    if (!task.completed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-gray-box">
           <div className="cf-decision-date">
@@ -82,7 +82,7 @@ class BoardGrantUnconnected extends React.PureComponent {
             loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
             disabled={!this.state.isEffectuated} onClick={this.handleSave}>Complete</Button>
         </div>
-      </React.Fragment>
+      </React.Fragment>;
     }
 
     const requestIssuesWithDecisionIssues = formatRequestIssuesWithDecisionIssues(

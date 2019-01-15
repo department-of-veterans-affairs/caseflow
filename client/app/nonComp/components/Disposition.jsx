@@ -140,7 +140,7 @@ class NonCompDispositions extends React.PureComponent {
 
     let completeDiv = null;
 
-    if (!Boolean(task.completed_at)){
+    if (!task.completed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-txt-r">
           <a className="cf-cancel-link" href={`/decision_reviews/${businessLineUrl}`}>Cancel</a>
