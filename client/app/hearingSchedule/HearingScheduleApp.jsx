@@ -12,6 +12,7 @@ import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer'
 import ListScheduleContainer from './containers/ListScheduleContainer';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
+import HearingDetailsContainer from './containers/DetailsContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
 export default class HearingScheduleApp extends React.PureComponent {
@@ -42,6 +43,7 @@ export default class HearingScheduleApp extends React.PureComponent {
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.userPermissionProps()} />;
   routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
   routeForDailyDocket = () => <DailyDocketContainer {...this.userPermissionProps()} />;
+  routeForHearingDetails = () => <HearingDetailsContainer {...this.props} />;
 
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
@@ -68,6 +70,12 @@ export default class HearingScheduleApp extends React.PureComponent {
             path="/schedule/docket/:hearingDayId"
             title="Daily Docket"
             render={this.routeForDailyDocket}
+          />
+          <PageRoute
+            exact
+            path="/schedule/:hearingId/details"
+            title="Hearing Details"
+            render={this.routeForHearingDetails}
           />
           <PageRoute
             exact
