@@ -250,7 +250,11 @@ class ExternalApi::VADotGovService
       c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 
       km = earth_radius * c
-      km * 0.621371
+      km2miles(km)
+    end
+
+    def km2miles(kilom)
+      (kilom * 0.621371 * 100.0).round / 100.0
     end
 
     def deg2rad(deg)
