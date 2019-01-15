@@ -1,5 +1,6 @@
 import React from 'react';
 import Alert from '../../components/Alert';
+import _ from 'lodash';
 
 export class ErrorAlert extends React.PureComponent {
   render() {
@@ -29,5 +30,21 @@ export class SuccessAlert extends React.PureComponent {
     return <Alert title={successObject.title} type="success" lowerMargin>
       {successObject.body}
     </Alert>;
+  }
+}
+
+export class FlashAlerts extends React.PureComponent {
+  render() {
+    if (!this.props.flash) {
+      return <div></div>;
+    }
+
+    let alerts = _.map(this.props.flash, (flash, idx) => {
+      if (flash[0] === 'notice') {
+        return <Alert key={idx} title="Success!" type="success" lowerMargin>{flash[1]}</Alert>;
+      }
+    });
+
+    return <div>{alerts}</div>;
   }
 }
