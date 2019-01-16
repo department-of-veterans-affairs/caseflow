@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe DecisionIssue do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -13,10 +11,14 @@ describe DecisionIssue do
       decision_text: decision_text,
       description: description,
       request_issues: request_issues,
-      benefit_type: "compensation"
+      benefit_type: "compensation",
+      profile_date: profile_date,
+      end_product_last_action_date: end_product_last_action_date
     )
   end
 
+  let(:profile_date) { 20.days.ago }
+  let(:end_product_last_action_date) { nil }
   let(:request_issues) { [] }
   let(:description) { "description" }
   let(:disposition) { "allowed" }
@@ -119,10 +121,6 @@ describe DecisionIssue do
     let(:profile_date) { nil }
     let(:end_product_last_action_date) { nil }
 
-    let(:decision_issue) do
-      build(:decision_issue, profile_date: profile_date, end_product_last_action_date: end_product_last_action_date)
-    end
-
     context "when there is no profile date" do
       it "returns nil" do
         expect(subject).to be_nil
@@ -166,48 +164,63 @@ describe DecisionIssue do
   context "#find_or_create_remand_supplemental_claim!" do
     subject { decision_issue.find_or_create_remand_supplemental_claim! }
 
-    context "when supplemental claim already exists matching decision issue" do
-      let!(:matching_supplemental_claim) do
-        create(
-          :supplemental_claim,
-          veteran_file_number: decision_review.veteran_file_number,
-          decision_review_remanded: decision_review,
-          benefit_type: "compensation"
-        )
-      end
+    context "when approx_decision_date is nil" do
+      let(:profile_date) { nil }
+      let(:end_product_last_action_date) { nil }
 
-      it "does not create a new supplemental claim" do
-        expect do
-          expect(subject).to eq(matching_supplemental_claim)
-        end.to_not change(SupplementalClaim, :count)
+      it "throws an error" do
+        expect { subject }.to raise_error(
+          StandardError, "approx_decision_date is required to create a DTA Supplemental Claim"
+        )
       end
     end
 
-    context "when no supplemental claim matches decision issue" do
-      let(:decision_review) { create(:appeal, number_of_claimants: 1) }
+    context "when there is an approx_decision_date" do
+      let(:profile_date) { 20.days.ago }
 
-      # Test that this supplemental claim does not match
-      let!(:another_supplemental_claim) do
-        create(
-          :supplemental_claim,
-          veteran_file_number: decision_review.veteran_file_number,
-          decision_review_remanded: decision_review,
-          benefit_type: "insurance"
-        )
+      context "when supplemental claim already exists matching decision issue" do
+        let!(:matching_supplemental_claim) do
+          create(
+            :supplemental_claim,
+            veteran_file_number: decision_review.veteran_file_number,
+            decision_review_remanded: decision_review,
+            benefit_type: "compensation"
+          )
+        end
+
+        it "does not create a new supplemental claim" do
+          expect do
+            expect(subject).to eq(matching_supplemental_claim)
+          end.to_not change(SupplementalClaim, :count)
+        end
       end
 
-      it "creates a new supplemental claim" do
-        expect(subject).to have_attributes(
-          veteran_file_number: decision_review.veteran_file_number,
-          decision_review_remanded: decision_review,
-          benefit_type: "compensation"
-        )
+      context "when no supplemental claim matches decision issue" do
+        let(:decision_review) { create(:appeal, number_of_claimants: 1) }
 
-        expect(subject.claimants.count).to eq(1)
-        expect(subject.claimants.first).to have_attributes(
-          participant_id: decision_review.claimant_participant_id,
-          payee_code: "00"
-        )
+        # Test that this supplemental claim does not match
+        let!(:another_supplemental_claim) do
+          create(
+            :supplemental_claim,
+            veteran_file_number: decision_review.veteran_file_number,
+            decision_review_remanded: decision_review,
+            benefit_type: "insurance"
+          )
+        end
+
+        it "creates a new supplemental claim" do
+          expect(subject).to have_attributes(
+            veteran_file_number: decision_review.veteran_file_number,
+            decision_review_remanded: decision_review,
+            benefit_type: "compensation"
+          )
+
+          expect(subject.claimants.count).to eq(1)
+          expect(subject.claimants.first).to have_attributes(
+            participant_id: decision_review.claimant_participant_id,
+            payee_code: "00"
+          )
+        end
       end
     end
   end
