@@ -74,6 +74,7 @@ describe('QueueLoadingScreen', () => {
         },
         // eslint-disable-next-line no-undefined
         availableActions: undefined,
+        // eslint-disable-next-line no-undefined
         timeline_title: undefined,
         // eslint-disable-next-line no-undefined
         taskBusinessPayloads: undefined,
