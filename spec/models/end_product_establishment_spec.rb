@@ -756,7 +756,8 @@ describe EndProductEstablishment do
           create(:decision_issue,
                  decision_review: source,
                  disposition: HigherLevelReview::DTA_ERROR_PMR,
-                 rating_issue_reference_id: "rating1")
+                 rating_issue_reference_id: "rating1",
+                 end_product_last_action_date: 5.days.ago.to_date)
         end
 
         it "creates a supplemental claim if dta errors exist" do

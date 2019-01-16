@@ -156,12 +156,35 @@ describe DecisionDocument do
 
       context "when remanded issues" do
         let!(:remanded_issue) do
-          create(:decision_issue, decision_review: decision_document.appeal, disposition: "remanded")
+          create(
+            :decision_issue,
+            decision_review: decision_document.appeal,
+            disposition: "remanded",
+            profile_date: 5.days.ago
+          )
         end
 
         it "creates remand supplemental claim" do
           subject
           expect(SupplementalClaim.find_by(decision_review_remanded: decision_document.appeal)).to_not be_nil
+        end
+      end
+
+      context "when remanded issue without approx_decision_date" do
+        let!(:remanded_issue) do
+          create(
+            :decision_issue,
+            decision_review: decision_document.appeal,
+            disposition: "remanded",
+            profile_date: nil,
+            end_product_last_action_date: nil
+          )
+        end
+
+        it "throws an error" do
+          expect { subject }.to raise_error(
+            StandardError, "approx_decision_date is required to create a DTA Supplemental Claim"
+          )
         end
       end
 
