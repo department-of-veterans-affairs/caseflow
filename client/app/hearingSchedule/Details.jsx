@@ -89,7 +89,6 @@ class HearingDetails extends React.Component {
   }
 
   updateHearing = (update) => {
-    console.log(update);
     this.setState({
       hearing: {
         ...this.state.hearing,
@@ -321,7 +320,7 @@ class HearingDetails extends React.Component {
               label="Copy Sent to Appellant/Rep"
               strongLabel
               value={this.state.transcription.copySentDate}
-              onChage={(copySentDate) => this.updateTranscription({ copySentDate })}
+              onChange={(copySentDate) => this.updateTranscription({ copySentDate })}
             />
           </div>
 
