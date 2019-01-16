@@ -228,7 +228,7 @@ class RequestIssue < ApplicationRecord
   def contention_text
     return UNIDENTIFIED_ISSUE_MSG if is_unidentified?
 
-    description
+    Contention.new(description).text
   end
 
   def review_title
