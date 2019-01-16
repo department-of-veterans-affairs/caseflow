@@ -1,9 +1,15 @@
 module FeatureHelper
   def click_dropdown(options = {}, container = page)
-    options = { index: nil, text: nil }.merge(options)
-    dropdown = container.find(".Select-control")
+    options = { prompt: nil, index: nil, text: nil }.merge(options)
+    dropdown = if options[:prompt].present?
+                 container.find(".Select-control", text: options[:prompt])
+               else
+                 container.find(".Select-control")
+               end
+
     dropdown.click
     yield if block_given?
+
     if options[:text].present?
       dropdown.sibling(".Select-menu-outer").find("div .Select-option", text: options[:text]).click
     elsif options[:index].present?
