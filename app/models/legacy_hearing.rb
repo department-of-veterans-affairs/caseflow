@@ -1,12 +1,11 @@
 class LegacyHearing < ApplicationRecord
   include CachedAttributes
   include AssociatedVacolsModel
-  include HearingConcern
   include AppealConcern
 
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
-  vacols_attr_accessor :scheduled_for, :type, :venue_key, :vacols_record, :disposition
+  vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :representative
@@ -40,7 +39,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def location
-    (type == :central) ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
+    (request_type == "C") ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
   end
 
   def closed?
@@ -98,6 +97,10 @@ class LegacyHearing < ApplicationRecord
     regional_office_name
   end
 
+  def readable_request_type
+    Hearing::HEARING_TYPES[request_type.to_sym]
+  end
+
   # rubocop:disable Metrics/MethodLength
   def vacols_attributes
     {
@@ -142,17 +145,17 @@ class LegacyHearing < ApplicationRecord
     :number_of_documents, \
     :number_of_documents_after_certification, \
     :veteran,  \
-    :sanitized_vbms_id, \
+    :veteran_file_number, \
     :docket_name,
     to: :appeal, allow_nil: true
 
-  delegate :vacols_id, to: :appeal, prefix: true
+  delegate :external_id, to: :appeal, prefix: true
 
   def to_hash(current_user_id)
     serializable_hash(
       methods: [
         :scheduled_for,
-        :request_type,
+        :readable_request_type,
         :disposition,
         :aod,
         :transcript_requested,
@@ -165,11 +168,10 @@ class LegacyHearing < ApplicationRecord
         :regional_office_name,
         :regional_office_timezone,
         :venue,
-        :veteran_name,
-        :veteran_mi_formatted,
-        :appellant_last_first_mi,
-        :appellant_mi_formatted,
-        :veteran_fi_last_formatted,
+        :veteran_first_name,
+        :veteran_last_name,
+        :appellant_first_name,
+        :appellant_last_name,
         :vbms_id,
         :current_issue_count,
         :prepped,
@@ -181,8 +183,9 @@ class LegacyHearing < ApplicationRecord
         :appellant_state,
         :appellant_zip,
         :readable_location,
-        :appeal_vacols_id,
-        :external_id
+        :appeal_external_id,
+        :external_id,
+        :veteran_file_number
       ],
       except: [:military_service, :vacols_id]
     ).merge(
@@ -209,15 +212,9 @@ class LegacyHearing < ApplicationRecord
       methods: [:appeal_id,
                 :judge,
                 :summary,
-                :appeal_vacols_id,
                 :appeals_ready_for_hearing,
                 :cached_number_of_documents,
-                :appellant_city,
-                :appellant_state,
-                :military_service,
-                :appellant_mi_formatted,
-                :veteran_fi_last_formatted,
-                :sanitized_vbms_id]
+                :military_service]
     ).merge(
       to_hash(current_user_id)
     ).merge(

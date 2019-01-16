@@ -266,6 +266,7 @@
   "ASSIGN_TO_TEAM_DROPDOWN": "Select a team",
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
+  "ASSIGN_TASK_SUCCESS_MESSAGE": "Task assigned to %s",
 
   "CREATE_MAIL_TASK_TITLE": "Create new mail task",
   "MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL": "Select correspondence type",

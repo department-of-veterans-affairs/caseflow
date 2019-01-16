@@ -29,6 +29,31 @@ describe Appeal do
     end
   end
 
+  context "ready appeals" do
+    let!(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
+    let!(:hearing_appeal) { create(:appeal, docket_type: "hearing") }
+    let!(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
+
+    before do
+      FeatureToggle.enable!(:ama_auto_case_distribution)
+    end
+    after do
+      FeatureToggle.disable!(:ama_auto_case_distribution)
+    end
+    subject { Appeal.ready_for_distribution }
+
+    it "returns appeals" do
+      [direct_review_appeal, evidence_submission_appeal, hearing_appeal].each do |appeal|
+        RootTask.create_root_and_sub_tasks!(appeal)
+      end
+
+      expect(subject.include?(direct_review_appeal)).to eq(true)
+      expect(subject.include?(evidence_submission_appeal)).to eq(false)
+      # TODO: support hearing appeals
+      # expect(subject.include?(hearing_appeal)).to eq(false)
+    end
+  end
+
   context "#create_remand_supplemental_claims!" do
     subject { appeal.create_remand_supplemental_claims! }
 
