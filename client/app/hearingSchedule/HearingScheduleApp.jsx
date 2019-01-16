@@ -43,7 +43,7 @@ export default class HearingScheduleApp extends React.PureComponent {
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.userPermissionProps()} />;
   routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
   routeForDailyDocket = () => <DailyDocketContainer {...this.userPermissionProps()} />;
-  routeForHearingDetails = () => <HearingDetailsContainer {...this.props} />;
+  routeForHearingDetails = ({ match: { params } }) => <HearingDetailsContainer hearingId={params.hearingId} />;
 
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
@@ -61,6 +61,12 @@ export default class HearingScheduleApp extends React.PureComponent {
         <div className="cf-wide-app">
           <PageRoute
             exact
+            path="/:hearingId/details"
+            title="Hearing Details"
+            render={this.routeForHearingDetails}
+          />
+          <PageRoute
+            exact
             path="/schedule"
             title="Scheduled Hearings"
             render={this.routeForListScheduleContainer}
@@ -70,12 +76,6 @@ export default class HearingScheduleApp extends React.PureComponent {
             path="/schedule/docket/:hearingDayId"
             title="Daily Docket"
             render={this.routeForDailyDocket}
-          />
-          <PageRoute
-            exact
-            path="/schedule/:hearingId/details"
-            title="Hearing Details"
-            render={this.routeForHearingDetails}
           />
           <PageRoute
             exact

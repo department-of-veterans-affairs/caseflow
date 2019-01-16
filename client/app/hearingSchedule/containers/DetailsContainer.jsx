@@ -16,25 +16,30 @@ class HearingDetailsContainer extends React.Component {
       loading: false
     };
   }
+
+  componentDidMount() {
+    this.getHearing();
+  }
+
   getHearing = () => {
     const { hearingId } = this.props;
     const { hearings } = this.state;
-    const hearing = _.find(hearings, (_hearing) => _hearing.id === hearingId);
+    const hearing = _.find(hearings, (_hearing) => _hearing.externalId === hearingId);
 
     if (hearing) {
       this.setState({ hearing });
     } else {
       this.setState({ loading: true });
-      ApiUtil.get('/hearing/hearings/:id/worksheet').then((resp) => {
+      ApiUtil.get(`/hearings/worksheets/${hearingId}.json`).then((resp) => {
         this.setState({
-          hearing: JSON.parse(resp.data),
+          hearing: ApiUtil.convertToCamelCase(resp.body),
           loading: false
         });
       });
     }
   }
   render() {
-    console.log(this.props);
+
     if (this.state.hearing) {
       return <HearingDetails hearing={this.state.hearing} />;
     }
