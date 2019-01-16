@@ -35,19 +35,14 @@ class ScheduleHearingTask < GenericTask
     verify_user_can_update!(current_user)
 
     task_payloads = params.delete(:business_payloads)
-    hearing_date = task_payloads[:values][:hearing_date]
-    new_date = Time.use_zone("Eastern Time (US & Canada)") do
-      Time.zone.parse(hearing_date)
+    
+    hearing_date = Time.use_zone("Eastern Time (US & Canada)") do
+      Time.zone.parse(task_payloads[:values][:hearing_date])
     end
-    task_payloads[:values][:hearing_date] = new_date
+    hearing_day_id = task_payloads[:values][:hearing_pkseq]
+    hearing_type = task_payloads[:values][:hearing_type]
 
-    if !task_business_payloads.empty?
-      task_business_payloads.update(task_payloads)
-    else
-      task_business_payloads.create(task_payloads)
-    end
-
-    update_hearing if params[:status] == Constants.TASK_STATUSES.completed
+    update_hearing(hearing_day_id, hearing_date, hearing_type) if params[:status] == Constants.TASK_STATUSES.completed
 
     super(params, current_user)
   end
@@ -72,19 +67,18 @@ class ScheduleHearingTask < GenericTask
 
   private
 
-  def update_hearing
-    hearing_pkseq = task_business_payloads[0].values["hearing_pkseq"]
-    hearing_type = task_business_payloads[0].values["hearing_type"]
-    hearing_date = Time.zone.parse(task_business_payloads[0].values["hearing_date"])
+  def update_hearing(hearing_day_id, hearing_date, hearing_type)
     hearing_date_str = "#{hearing_date.year}-#{hearing_date.month}-#{hearing_date.day} " \
                        "#{format('%##d', hearing_date.hour)}:#{format('%##d', hearing_date.min)}:00"
 
     if hearing_type == LegacyHearing::CO_HEARING
       HearingRepository.update_co_hearing(hearing_date_str, appeal)
     else
-      HearingRepository.create_child_video_hearing(hearing_pkseq, hearing_date, appeal)
+      HearingRepository.create_child_video_hearing(hearing_day_id, hearing_date, appeal)
     end
 
-    AppealRepository.update_location!(appeal, location_based_on_hearing_type(hearing_type))
+    if appeal.is_a?(LegacyAppeal)
+      AppealRepository.update_location!(appeal, location_based_on_hearing_type(hearing_type))
+    end
   end
 end

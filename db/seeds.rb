@@ -404,6 +404,15 @@ class SeedDB
       request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
     )
 
+    user = User.find_by(css_id: "BVATWARNER")
+    HearingDay.create(
+      regional_office: "RO17",
+      request_type: "V",
+      scheduled_for: 5.days.from_now,
+      room: "001",
+      created_by: user,
+      updated_by: user
+    )
     Veteran.where(file_number: %w[808415990 992190636]).update_all(closest_regional_office: "RO17")
 
     LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
