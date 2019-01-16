@@ -171,6 +171,24 @@ describe EndProductEstablishment do
       end
     end
 
+    context "when existing EP has status CLR or CAN" do
+      before do
+        %w[030 031 032].each do |modifier|
+          Generators::EndProduct.build(
+            veteran_file_number: "12341234",
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: %w[CLR CAN].sample }
+          )
+        end
+      end
+
+      it "considers those EP modifiers as open" do
+        subject
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          hash_including(claim_hash: hash_including(benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH))
+        )
+      end
+    end
+
     context "when all goes well" do
       it "creates end product and sets reference_id" do
         subject
