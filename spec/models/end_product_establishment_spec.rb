@@ -96,7 +96,7 @@ describe EndProductEstablishment do
     context "when eps with a valid modifiers already exist" do
       let!(:past_created_ep) do
         Generators::EndProduct.build(
-          veteran_file_number: "12341234",
+          veteran_file_number: veteran_file_number,
           bgs_attrs: { end_product_type_code: "030" }
         )
       end
@@ -160,7 +160,7 @@ describe EndProductEstablishment do
       before do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
-            veteran_file_number: "12341234",
+            veteran_file_number: veteran_file_number,
             bgs_attrs: { end_product_type_code: modifier }
           )
         end
@@ -175,7 +175,7 @@ describe EndProductEstablishment do
       before do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
-            veteran_file_number: "12341234",
+            veteran_file_number: veteran_file_number,
             bgs_attrs: { end_product_type_code: modifier, status_type_code: %w[CLR CAN].sample }
           )
         end
@@ -184,7 +184,7 @@ describe EndProductEstablishment do
       it "considers those EP modifiers as open" do
         subject
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-          hash_including(claim_hash: hash_including(benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH))
+          hash_including(veteran_hash: veteran.reload.to_vbms_hash)
         )
       end
     end
