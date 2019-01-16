@@ -179,7 +179,7 @@ describe Appeal do
     let!(:appeal_recently_attempted) do
       create(
         :appeal,
-        establishment_attempted_at: (Appeal::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+        establishment_attempted_at: (Appeal.processing_retry_interval_hours - 1).hours.ago
       )
     end
 
