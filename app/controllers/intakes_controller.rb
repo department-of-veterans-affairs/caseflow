@@ -40,7 +40,12 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
-    render json: intake.ui_hash(ama_enabled?)
+    if intake.detail.try(:processed_in_caseflow?)
+      flash[:success] = success_message
+      render json: { serverIntake: { redirect_to: intake.detail.business_line.tasks_url } }
+    else
+      render json: intake.ui_hash(ama_enabled?)
+    end
   rescue Caseflow::Error::DuplicateEp => error
     render json: {
       error_code: error.error_code,
@@ -99,5 +104,12 @@ class IntakesController < ApplicationController
     # param could be file number or SSN. Make sure we return file number.
     veteran = Veteran.find_by_file_number_or_ssn(params[:file_number])
     veteran ? veteran.file_number : params[:file_number]
+  end
+
+  def success_message
+    detail = intake.detail
+    claimant_name = detail.veteran_full_name
+    claimant_name = detail.claimants.first.try(:name) if detail.veteran_is_not_claimant
+    "#{claimant_name} (Veteran SSN: #{detail.veteran.ssn}) #{detail.class.review_title} has been processed."
   end
 end
