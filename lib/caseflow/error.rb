@@ -86,6 +86,15 @@ module Caseflow::Error
     end
   end
 
+  class LegacyCaseAlreadyAssignedError < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
+
   class BvaDispatchDoubleOutcode < SerializableError
     attr_accessor :task_id, :appeal_id
 
@@ -178,6 +187,8 @@ module Caseflow::Error
       end
     end
   end
+
+  class MissingTimerMethod < StandardError; end
 
   class DuplicateEp < EstablishClaimFailedInVBMS; end
   class LongAddress < EstablishClaimFailedInVBMS; end

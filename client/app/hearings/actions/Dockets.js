@@ -170,6 +170,22 @@ export const setTranscriptRequested = (hearingId, transcriptRequested, date) => 
   }
 });
 
+export const setEvidenceWindowWaived = (hearingId, evidenceWindowWaived, date) => ({
+  type: Constants.SET_EVIDENCE_WINDOW_WAIVED,
+  payload: {
+    hearingId,
+    evidenceWindowWaived,
+    date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.EVIDENCE_WINDOW_WAIVED,
+      label: evidenceWindowWaived ? 'checked' : 'unchecked'
+    }
+  }
+});
+
 export const onMilitaryServiceChange = (militaryService) => ({
   type: Constants.SET_MILITARY_SERVICE,
   payload: {

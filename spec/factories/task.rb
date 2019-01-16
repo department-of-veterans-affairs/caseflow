@@ -41,15 +41,37 @@ FactoryBot.define do
 
     factory :colocated_task do
       type ColocatedTask.name
-      action { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
-      instructions ["poa is missing"]
-    end
 
-    factory :ama_colocated_task do
-      type ColocatedTask.name
-      action { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
-      instructions ["poa is missing"]
-      appeal { create(:appeal) }
+      factory :ama_colocated_task do
+        appeal { create(:appeal) }
+      end
+
+      after(:build) do |task|
+        # rubocop:disable Metrics/LineLength
+        example_instructions = {
+          ihp: "Hello.  It appears that the VSO has not reviewed this case and has not provided an IHP.  ",
+          poa_clarification: "We received some correspondence from the Veteran's attorney in November indicating the attorney  wants to withdraw from representation of the Veteran.  I don't see any paperwork from the Veteran appointing a new rep or otherwise acknowledging the withdraw of the old one.  Please contact the Veteran to clarify if they have current representation.  If the Veteran no longer wishes the current representative to act on his behalf, please get that in writing.    ",
+          hearing_clarification: "A March statement filed by the Veteran indicates that they desired a 'Televideo conference hearing' for all their appeals.  No hearing was scheduled.  Please clarify whether the Veteran still desires a Board hearing, and, if so, please reroute as necessary to schedule one.   Thanks!",
+          aoj: "Please clarify whether the Veteran desires AOJ review of any evidence, to include VA treatment records dated through June, submitted since an April statement of the case.  Thank you!",
+          extension: "The Veteran's POA submitted a letter requesting a 90 day extension.  Please send letter granting the extension.",
+          missing_hearing_transcripts: "Good evening, could you please return this to the hearing branch as the hearing was just held and the transcripts are not yet available. Thank you.",
+          unaccredited_rep: "Unaccredited rep",
+          foia: "The Veteran's representative submitted FOIA request in December of last year, which was acknowledged the same month. To date, there has been no response provided.  Please follow up on the FOIA request.",
+          retired_vlj: "VLJ Snuffy conducted the hearing in June. Since they are now retired, the Veteran needs to be provided notice of this and an opportunity to request hearing before another VLJ.",
+          arneson: "email was sent re Arneson letter/ the Veteran needing to be offered a third hearing.",
+          new_rep_arguments: "The Veteran recently switched to a new POA. Please determine if the new POA will provide new arguments for the issues on appeal.",
+          pending_scanning_vbms: "There is a pending scanning banner in VBMS indicating documents from November are pending scanning.  The last documents uploaded to the file are from October.  Please hold the case in abeyance for 2 weeks to allow the documents to be uploaded and the PSB to clear.",
+          address_verification: "VACOLS and Caseflow lists two different addresses for the Veteran. From reviewing the recent documents in the file, it appears that the address in Caseflow is the most recent address. Please verify the Veteran's current address and update VACOLS if warranted.",
+          schedule_hearing: "The Veteran has requested a Board hearing as to all appealed issues.  To date, no Board hearing has been scheduled. ",
+          missing_records: "The Veteran had a Board Video Conference Hearing in September with Judge  Snuffy. The Hearing transcripts are not of record. ",
+          translation: "There are multiple document files that still require translation from Spanish to English. The files in Spanish have been marked in Caseflow. Please have these documents translated. Thank you!",
+          other: "Please request a waiver of AOJ consideration for new evidence"
+        }
+        # rubocop:enable Metrics/LineLength
+
+        action = task.action || Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample
+        task.update!(action: action, instructions: [example_instructions[action.to_sym]]) if task.instructions.empty?
+      end
     end
 
     factory :ama_judge_task, class: JudgeAssignTask do

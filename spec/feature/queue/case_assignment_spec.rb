@@ -42,7 +42,7 @@ RSpec.feature "Case Assignment flows" do
       # step "navigates to the 'submit admin action' page"
       visit "/queue"
       click_on "#{appeals[0].veteran_full_name} (#{appeals[0].sanitized_vbms_id})"
-      click_dropdown(text: COPY::ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL)
+      click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
 
       expect(page).to have_content(COPY::ADD_COLOCATED_TASK_SUBHEAD)
 
@@ -68,7 +68,7 @@ RSpec.feature "Case Assignment flows" do
 
       # step "navigates again to the 'submit admin action' page"
       click_on "#{appeals[1].veteran_full_name} (#{appeals[1].sanitized_vbms_id})"
-      click_dropdown(text: COPY::ATTORNEY_CHECKOUT_ADD_ADMIN_ACTION_LABEL)
+      click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
 
       expect(page).to have_content(COPY::ADD_COLOCATED_TASK_SUBHEAD)
 
@@ -130,7 +130,7 @@ RSpec.feature "Case Assignment flows" do
 
       visit "/queue"
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 1))
-      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 3))
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 2))
     end
   end
 end
