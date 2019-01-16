@@ -3,6 +3,7 @@
 
 class BoardGrantEffectuation < ApplicationRecord
   include HasBusinessLine
+  include Asyncable
 
   belongs_to :appeal
   belongs_to :granted_decision_issue, class_name: "DecisionIssue"
@@ -21,7 +22,62 @@ class BoardGrantEffectuation < ApplicationRecord
 
   delegate :contention_text, to: :granted_decision_issue
 
+  class << self
+    # We don't need to retry these as frequently
+    def processing_retry_interval_hours
+      12
+    end
+
+    def submitted_at_column
+      :decision_sync_submitted_at
+    end
+
+    def attempted_at_column
+      :decision_sync_attempted_at
+    end
+
+    def processed_at_column
+      :decision_sync_processed_at
+    end
+
+    def error_column
+      :decision_sync_error
+    end
+  end
+
+  def sync_decision_issues!
+    return if processed?
+
+    attempted!
+    return unless associated_rating
+
+    update_from_matching_rating_issue!
+    processed!
+  end
+
   private
+
+  def associated_rating
+    end_product_establishment.associated_rating
+  end
+
+  def matching_rating_issue
+    return unless associated_rating
+
+    @matching_rating_issue ||
+      associated_rating.issues.find { |i| i.contention_reference_id == contention_reference_id }
+  end
+
+  def update_from_matching_rating_issue!
+    return unless matching_rating_issue
+
+    granted_decision_issue.update!(
+      promulgation_date: matching_rating_issue.promulgation_date,
+      profile_date: matching_rating_issue.profile_date,
+      decision_text: matching_rating_issue.decision_text,
+      rating_issue_reference_id: matching_rating_issue.reference_id
+    )
+  end
 
   def benefit_type
     granted_decision_issue.benefit_type
@@ -34,7 +90,7 @@ class BoardGrantEffectuation < ApplicationRecord
     )
 
     if processed_in_vbms?
-      self.end_product_establishment = find_or_build_end_product_establishment
+      self.end_product_establishment ||= find_or_build_end_product_establishment
     else
       find_or_build_effectuation_task
     end
