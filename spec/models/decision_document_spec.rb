@@ -145,6 +145,7 @@ describe DecisionDocument do
           FactoryBot.create(
             :decision_issue,
             :rating,
+            description: "i am a long description" * 20,
             disposition: "allowed",
             decision_review: decision_document.appeal
           )
@@ -188,12 +189,14 @@ describe DecisionDocument do
             user: User.system_user
           )
 
+          expect(another_granted_issue.contention_text.length).to eq(255)
+
           expect(VBMSService).to have_received(:create_contentions!).once.with(
             veteran_file_number: decision_document.appeal.veteran_file_number,
             claim_id: decision_document.end_product_establishments.last.reference_id,
             contentions: array_including(
-              { description: granted_issue.description },
-              description: another_granted_issue.description
+              { description: granted_issue.contention_text },
+              description: another_granted_issue.contention_text
             ),
             user: User.system_user
           )

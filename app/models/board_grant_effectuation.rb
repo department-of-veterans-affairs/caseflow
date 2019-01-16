@@ -19,9 +19,7 @@ class BoardGrantEffectuation < ApplicationRecord
     pension_nonrating: "030BGNRPMC"
   }.freeze
 
-  def contention_text
-    granted_decision_issue.description&.slice(0, 255)
-  end
+  delegate :contention_text, to: :granted_decision_issue
 
   private
 
