@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Hearing Schedule", type: :request do
+  before do
+    Timecop.freeze(Time.utc(2019, 1, 1, 0, 0, 0))
+  end
+
   let!(:user) do
     User.authenticate!(roles: ["Build HearSched"])
   end
