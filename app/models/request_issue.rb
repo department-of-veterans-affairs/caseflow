@@ -499,9 +499,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def should_check_for_before_ama?
-    return false if is_unidentified || ramp_claim_id || vacols_id
-
-    true
+    !is_unidentified && !ramp_claim_id && !vacols_id
   end
 
   def check_for_legacy_issue_not_withdrawn!
