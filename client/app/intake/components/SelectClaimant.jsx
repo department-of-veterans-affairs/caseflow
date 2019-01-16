@@ -32,9 +32,15 @@ export default class SelectClaimant extends React.PureComponent {
     const hasRelationships = relationships.length > 0;
     let showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
-    const claimantLabel = 'Please select the claimant listed on the form. ' +
-    'If you do not see the claimant in the options below, add them in VBMS, ' +
-    'then refresh this page.';
+    const claimantTextStart = 'Please select the claimant listed on the form. ' +
+    'If you do not see the claimant in the options below, and you have access, ' +
+    'please add the claimant to the Corporate Database to continue processing this intake. ' +
+    'If you do not have access, please ';
+    const email = React.createElement(
+      'a', { href: 'mailto:jennifer.umberhind@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database' }, 'email'
+    );
+    const claimantTextEnd = ' for assistance.';
+    const claimantLabel = React.createElement('p', { id: 'claimantLabel' }, claimantTextStart, email, claimantTextEnd);
 
     const claimantOptions = () => {
       return <div className="cf-claimant-options">
@@ -78,8 +84,10 @@ export default class SelectClaimant extends React.PureComponent {
 
       { showClaimants && hasRelationships && claimantOptions() }
       { showClaimants && !hasRelationships && <p className="cf-red-text">
-        The Veteran has no relationships in our records. You can add the relationship
-        in VBMS and refresh this page.
+        This Veteran currently has no known relationships. If you have access, please add the claimant to the
+        Corporate Database to continue processing this intake. If you do not have access, please
+        <a href="mailto:jennifer.umberhind@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database"> email </a>
+        for assistance.
       </p> }
 
     </div>;
