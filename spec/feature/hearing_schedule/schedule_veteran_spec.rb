@@ -19,8 +19,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       )
     end
 
-    scenario "Schedule Veteran for central hearing",
-             skip: "This test passes on local but fails intermittently on circle" do
+    scenario "Schedule Veteran for central hearing" do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(index: 7)
@@ -28,8 +27,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       appeal_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       appeal_link.click
       expect(page).not_to have_content("loading to VACOLS.", wait: 30)
-      expect(page).to have_content("Select an action", wait: 30)
-      click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
+      expect(page).to have_content("Currently active tasks", wait: 30)
+      find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
       expect(page).to have_content("Time")
       radio_link = find(".cf-form-radio-option", match: :first)
       radio_link.click
@@ -50,7 +49,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       create(
         :hearing_day,
         request_type: "V",
-        hearing_date: Time.zone.today + 160,
+        scheduled_for: Time.zone.today + 160,
         regional_office: "RO39"
       )
     end
@@ -64,8 +63,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       )
     end
 
-    scenario "Schedule Veteran for video",
-             skip: "This test passes on local but fails intermittently on circle" do
+    scenario "Schedule Veteran for video" do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(index: 12)
@@ -73,8 +71,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       appeal_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       appeal_link.click
       expect(page).not_to have_content("loading to VACOLS.", wait: 30)
-      expect(page).to have_content("Select an action", wait: 30)
-      click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
+      expect(page).to have_content("Currently active tasks", wait: 30)
+      find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
       expect(page).to have_content("Time")
       radio_link = find(".cf-form-radio-option", match: :first)
       radio_link.click
