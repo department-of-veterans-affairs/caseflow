@@ -52,66 +52,85 @@ RSpec.feature "Search" do
       end
 
       context "when a claim has a higher level review and/or supplemental claim" do
-        let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
-        let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
-        let!(:eligible_request_issue) { create(:request_issue, review_request: higher_level_review) }
 
-        before do
-          visit "/search"
-          fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
-          click_on "Search"
-        end
+        context "and it has no appeals" do
+          let!(:veteran) { FactoryBot.create(:veteran) }
+          let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
 
-        context "has a higher level review" do
-          it "shows the HLR / SCs table" do
+          before do
+            visit "/search"
+            fill_in "searchBarEmptyList", with: higher_level_review.veteran_file_number
+            click_on "Search"
+          end
+
+          it "should show the HLR / SCs table" do
+            expect(page).to have_content(COPY::CASE_LIST_TABLE_EMPTY_TEXT)
             expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
           end
+        end
 
-          it "shows a higher level review" do
-            expect(find(".cf-other-reviews-table > tbody")).to have_content("Higher Level Review")
+        context "and it also has appeals" do
+          let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
+          let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
+          let!(:eligible_request_issue) { create(:request_issue, review_request: higher_level_review) }
+
+          before do
+            visit "/search"
+            fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+            click_on "Search"
           end
 
-          context "and has no end products" do
-            it "shows no end products" do
+          context "has a higher level review" do
+            it "shows the HLR / SCs table" do
               expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
-              expect(find(".cf-other-reviews-table > tbody")).to have_content(COPY::OTHER_REVIEWS_TABLE_NO_EPS_NOTE)
+            end
+
+            it "shows a higher level review" do
+              expect(find(".cf-other-reviews-table > tbody")).to have_content("Higher Level Review")
+            end
+
+            context "and has no end products" do
+              it "shows no end products" do
+                expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+                expect(find(".cf-other-reviews-table > tbody")).to have_content(COPY::OTHER_REVIEWS_TABLE_NO_EPS_NOTE)
+              end
+            end
+
+            context "and has end products" do
+              let!(:end_product_establishment_1) do
+                create(
+                  :end_product_establishment,
+                  source: higher_level_review,
+                  veteran_file_number: appeal.veteran_file_number,
+                  synced_status: "CAN"
+                )
+              end
+              let!(:end_product_establishment_2) do
+                create(
+                  :end_product_establishment,
+                  source: higher_level_review,
+                  veteran_file_number: appeal.veteran_file_number,
+                  synced_status: "CLR"
+                )
+              end
+
+              it "shows the end product status" do
+                expect(find(".cf-other-reviews-table > tbody")).to have_content("Cancelled")
+                expect(find(".cf-other-reviews-table > tbody")).to have_content("Cleared")
+              end
             end
           end
 
-          context "and has end products" do
-            let!(:end_product_establishment_1) do
-              create(
-                :end_product_establishment,
-                source: higher_level_review,
-                veteran_file_number: appeal.veteran_file_number,
-                synced_status: "CAN"
+          context "has a supplemental claim" do
+            it "shows the HLR / SCs table" do
+              expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
+            end
+
+            it "shows a supplemental claim and that it's 'tracked in caseflow'" do
+              expect(find(".cf-other-reviews-table > tbody")).to have_content(
+                COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE
               )
             end
-            let!(:end_product_establishment_2) do
-              create(
-                :end_product_establishment,
-                source: higher_level_review,
-                veteran_file_number: appeal.veteran_file_number,
-                synced_status: "CLR"
-              )
-            end
-
-            it "shows the end product status" do
-              expect(find(".cf-other-reviews-table > tbody")).to have_content("Cancelled")
-              expect(find(".cf-other-reviews-table > tbody")).to have_content("Cleared")
-            end
-          end
-        end
-
-        context "has a supplemental claim" do
-          it "shows the HLR / SCs table" do
-            expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
-          end
-
-          it "shows a supplemental claim and that it's 'tracked in caseflow'" do
-            expect(find(".cf-other-reviews-table > tbody")).to have_content(
-              COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE
-            )
           end
         end
       end
