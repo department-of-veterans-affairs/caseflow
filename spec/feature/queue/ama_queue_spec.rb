@@ -436,7 +436,7 @@ RSpec.feature "AmaQueue" do
       find(".Select-control", text: "Select an action").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.RETURN_TO_JUDGE.to_h[:label]).click
 
-      expect(dropdown_selected_match?(judge_user.full_name, find(".cf-modal-body"))).to be_truthy
+      expect(dropdown_selected_value(find(".cf-modal-body"))).to eq judge_user.full_name
       fill_in "taskInstructions", with: qr_instructions
 
       click_on "Submit"
@@ -565,7 +565,7 @@ RSpec.feature "AmaQueue" do
       User.authenticate!(user: judge_user)
     end
 
-    it "judge is able to return report to attorney for corrections" do
+    it "judge can return report to attorney for corrections" do
       step "judge reviews case and assigns a task to an attorney" do
         User.authenticate!(user: judge_user)
 
@@ -575,14 +575,12 @@ RSpec.feature "AmaQueue" do
 
         click_on veteran_full_name
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h[:label]).click
+        click_dropdown(prompt: "Select an action", text: "Assign to attorney")
 
-        find(".Select-control", text: "Select a user").click
-        find("div", class: "Select-option", text: "Other").click
+        click_dropdown(prompt: "Select a user", text: "Other")
 
-        find(".Select-control", text: "Select a user").click
-        first("div", class: "Select-option", text: attorney_user.full_name).click
+        click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+
         click_on "Submit"
 
         expect(page).to have_content("Assigned 1 case")
@@ -595,10 +593,10 @@ RSpec.feature "AmaQueue" do
 
         click_on veteran_full_name
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_DECISION.to_h[:label]).click
+        click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
         expect(page).to have_content("Select special issues (optional)")
+        click_label "riceCompliance"
 
         click_on "Continue"
 
@@ -610,8 +608,7 @@ RSpec.feature "AmaQueue" do
 
         fill_in "Document ID:", with: "1234"
         click_on "Select a judge"
-        find(".Select-control", text: "Select a judge…").click
-        first("div", class: "Select-option", text: judge_user.full_name).click
+        click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
         fill_in "notes", with: "all done"
 
         click_on "Continue"
@@ -629,16 +626,12 @@ RSpec.feature "AmaQueue" do
 
         click_on veteran_full_name
 
-        find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h[:label]).click
+        click_dropdown(prompt: "Select an action", text: "Return to attorney")
 
-        find(".Select-control", text: "Select a user").click
-        find("div", class: "Select-option", text: "Other").click
+        click_dropdown(prompt: "Select a user", text: "Other")
 
-        expect(dropdown_selected_match?(attorney_user.full_name, find(".cf-modal-body"))).to be_truthy
+        expect(dropdown_selected_value(find(".cf-modal-body .dropdown-Other"))).to eq attorney_user.full_name
 
-        find(".Select-control", text: "Select a user").click
-        first("div", class: "Select-option", text: attorney_user.full_name).click
         click_on "Submit"
 
         expect(page).to have_content("Returned 1 case to #{attorney_user.full_name}")
