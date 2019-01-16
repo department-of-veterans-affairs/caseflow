@@ -252,7 +252,6 @@ export default class AssignHearings extends React.Component {
         summary="scheduled-hearings-table"
         slowReRendersAreOk
       />;
-
     };
 
     const scheduleableAmaVeterans = () => {
