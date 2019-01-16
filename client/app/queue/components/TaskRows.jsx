@@ -48,13 +48,15 @@ const taskTimeContainerStyling = css(taskContainerStyling, { width: '20%' });
 const taskInformationContainerStyling = css(taskContainerStyling, { width: '25%' });
 const taskActionsContainerStyling = css(taskContainerStyling, { width: '50%' });
 const taskTimeTimelineContainerStyling = css(taskContainerStyling, { width: '40%' });
-const taskInformationTimelineContainerStyling = css(taskInformationContainerStyling, { align: 'left',
-  width: '50%' });
+const taskInformationTimelineContainerStyling =
+  css(taskInformationContainerStyling, { align: 'left',
+    width: '50%',
+    maxWidth: '230px' });
 const taskInfoWithIconTimelineContainer =
-      css(taskInfoWithIconContainer, { textAlign: 'left',
-        marginLeft: '5px',
-        width: '10%',
-        paddingLeft: '0px' });
+  css(taskInfoWithIconContainer, { textAlign: 'left',
+    marginLeft: '5px',
+    width: '10%',
+    paddingLeft: '0px' });
 const greyDotStyling = css({ paddingLeft: '6px' });
 
 class TaskRows extends React.PureComponent {
@@ -211,7 +213,8 @@ class TaskRows extends React.PureComponent {
             { (index < taskList.length) && taskList[0].completedOn && <div {...grayLineStyling}
               className={timeline ? grayLineTimelineStyling : ''} /> }
           </td>
-          <td {...taskInformationContainerStyling}>
+          <td {...taskInformationContainerStyling}
+            className={timeline ? taskInformationTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>
               { timeline && task.timeline_title }
               { this.assignedToListItem(task) }
