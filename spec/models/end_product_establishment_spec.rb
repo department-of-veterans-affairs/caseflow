@@ -688,6 +688,64 @@ describe EndProductEstablishment do
     end
   end
 
+  context "#sync_decision_issues!" do
+    subject { end_product_establishment.sync_decision_issues! }
+
+    include ActiveJob::TestHelper
+
+    after do
+      clear_enqueued_jobs
+    end
+
+    context "when the end product establishment has request issues" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            review_request: source,
+            decision_sync_submitted_at: nil
+          ),
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            review_request: source,
+            decision_sync_submitted_at: nil
+          )
+        ]
+      end
+
+      it "submits each request issue and starts decision sync job" do
+        subject
+
+        expect(request_issues.first.reload.decision_sync_submitted_at).to_not be_nil
+        expect(request_issues.second.reload.decision_sync_submitted_at).to_not be_nil
+
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.first)
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.second)
+      end
+    end
+
+    context "when the end product establishment has effectuations" do
+      let(:source) { create(:decision_document) }
+      let!(:granted_decision_issue) { create(:decision_issue, disposition: "allowed", decision_review: source.appeal) }
+
+      let!(:board_grant_effectuation) do
+        BoardGrantEffectuation.create(
+          granted_decision_issue: granted_decision_issue,
+          end_product_establishment: end_product_establishment
+        )
+      end
+
+      it "submits each effectuation and starts decision sync job" do
+        subject
+
+        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to_not be_nil
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(board_grant_effectuation)
+      end
+    end
+  end
+
   context "#on_decision_issue_sync_processed" do
     subject { end_product_establishment.on_decision_issue_sync_processed }
     let(:processed_at) { Time.zone.now }
