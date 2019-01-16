@@ -7,3 +7,5 @@ require File.expand_path("config/application", __dir__)
 Dir[Rails.root.join("lib/tasks/support/**/*.rb")].each { |f| require f }
 
 Rails.application.load_tasks
+
+task "db:schema:dump": "strong_migrations:alphabetize_columns"
