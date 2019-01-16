@@ -55,8 +55,11 @@ class Hearings::HearingDayController < HearingScheduleController
                                                                      Time.zone.today.beginning_of_day + 182.days,
                                                                      regional_office)
     enriched_hearings.each do |hearing_day|
-      if HearingDay.find(hearing_day[:id])
+      begin
+        HearingDay.find(hearing_day[:id])
         hearing_day[:hearings] = hearing_day[:hearings] + HearingDay.find(hearing_day[:id]).hearings
+      rescue ActiveRecord::RecordNotFound
+        # Don't do anything... This is hacky!
       end
 
       hearing_day[:hearings] = hearing_day[:hearings].map { |hearing| hearing.to_hash(current_user.id) }
