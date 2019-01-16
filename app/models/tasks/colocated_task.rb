@@ -34,6 +34,7 @@ class ColocatedTask < Task
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
   def available_actions(_user)
     actions = [Constants.TASK_ACTIONS.PLACE_HOLD.to_h, Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h]
 
@@ -45,8 +46,13 @@ class ColocatedTask < Task
       actions.unshift(Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h)
     end
 
+    if action == "translation" && appeal.is_a?(Appeal)
+      actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
+    end
+
     actions
   end
+  # rubocop:enable Metrics/AbcSize
 
   def actions_available?(user)
     return false if completed? || assigned_to != user
