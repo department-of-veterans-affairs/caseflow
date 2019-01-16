@@ -775,6 +775,7 @@ feature "Supplemental Claim Intake" do
           # should redirect to tasks review page
           expect(page).to have_content("Reviews needing action")
           expect(current_path).to eq("/decision_reviews/education")
+          expect(page).to have_content("Success!")
 
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(

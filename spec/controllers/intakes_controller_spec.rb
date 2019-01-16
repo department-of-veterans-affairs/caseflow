@@ -102,6 +102,7 @@ RSpec.describe IntakesController do
         resp = JSON.parse(response.body, symbolize_names: true)
 
         expect(resp[:serverIntake]).to eq(redirect_to: "/decision_reviews/education")
+        expect(flash[:success]).to be_present
       end
     end
   end

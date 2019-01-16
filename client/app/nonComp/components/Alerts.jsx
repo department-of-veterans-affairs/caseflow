@@ -1,6 +1,5 @@
 import React from 'react';
 import Alert from '../../components/Alert';
-import _ from 'lodash';
 
 export class ErrorAlert extends React.PureComponent {
   render() {
@@ -35,16 +34,20 @@ export class SuccessAlert extends React.PureComponent {
 
 export class FlashAlerts extends React.PureComponent {
   render() {
-    if (!this.props.flash) {
-      return <div></div>;
-    }
+    let alerts = this.props.flash.map((flash, idx) => {
+      let flashMsg;
 
-    let alerts = _.map(this.props.flash, (flash, idx) => {
-      if (flash[0] === 'notice') {
-        return <Alert key={idx} title="Success!" type="success" lowerMargin>{flash[1]}</Alert>;
+      if (flash[0] === 'success') {
+        flashMsg = <Alert key={idx} title="Success!" type="success" lowerMargin>{flash[1]}</Alert>;
+      } else if (flash[0] === 'notice') {
+        flashMsg = <Alert key={idx} title="Note" type="info" lowerMargin>{flash[1]}</Alert>;
+      } else if (flash[0] === 'error') {
+        flashMsg = <Alert key={idx} title="Error" type="error" lowerMargin>{flash[1]}</Alert>;
       }
+
+      return flashMsg;
     });
 
-    return <div>{alerts}</div>;
+    return <div className="cf-flash-messages">{alerts}</div>;
   }
 }

@@ -34,7 +34,7 @@ class NonComp extends React.PureComponent {
             defaultUrl="/">
             <AppFrame>
               <AppSegment filledBackground>
-                <div className="flash-messages"><FlashAlerts flash={this.props.flash} /></div>
+                {this.props.flash && <FlashAlerts flash={this.props.flash} />}
                 <div>
                   <PageRoute
                     exact
