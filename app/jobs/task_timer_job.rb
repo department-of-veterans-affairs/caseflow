@@ -13,8 +13,9 @@ class TaskTimerJob < CaseflowJob
   end
 
   def process(task_timer)
-    TaskTimer.transaction do
-      task_timer.lock!
+    # Calling ".with_lock" will block the current thread until no other threads have a lock on the row.
+    task_timer.with_lock do
+      # Reloading after we acquire a lock will ensure that we don't double-process jobs.
       return if task_timer.reload.processed?
 
       task_timer.task.when_timer_ends
