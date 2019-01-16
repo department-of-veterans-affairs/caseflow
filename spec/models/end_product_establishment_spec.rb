@@ -96,7 +96,7 @@ describe EndProductEstablishment do
     context "when eps with a valid modifiers already exist" do
       let!(:past_created_ep) do
         Generators::EndProduct.build(
-          veteran_file_number: "12341234",
+          veteran_file_number: veteran_file_number,
           bgs_attrs: { end_product_type_code: "030" }
         )
       end
@@ -160,7 +160,7 @@ describe EndProductEstablishment do
       before do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
-            veteran_file_number: "12341234",
+            veteran_file_number: veteran_file_number,
             bgs_attrs: { end_product_type_code: modifier }
           )
         end
@@ -168,6 +168,24 @@ describe EndProductEstablishment do
 
       it "returns NoAvailableModifiers error" do
         expect { subject }.to raise_error(EndProductEstablishment::NoAvailableModifiers)
+      end
+    end
+
+    context "when existing EP has status CLR or CAN" do
+      before do
+        %w[030 031 032].each do |modifier|
+          Generators::EndProduct.build(
+            veteran_file_number: veteran_file_number,
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: %w[CLR CAN].sample }
+          )
+        end
+      end
+
+      it "considers those EP modifiers as open" do
+        subject
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          hash_including(veteran_hash: veteran.reload.to_vbms_hash)
+        )
       end
     end
 
@@ -252,7 +270,7 @@ describe EndProductEstablishment do
           review_request: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-          contested_issue_description: "this is a big decision"
+          contested_issue_description: "description too long for bgs" * 20
         ),
         create(
           :request_issue,
@@ -277,6 +295,7 @@ describe EndProductEstablishment do
     it "creates contentions and saves them to objects" do
       subject
 
+      expect(contentions.second[:description].length).to eq(255)
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
@@ -307,7 +326,7 @@ describe EndProductEstablishment do
             description: "more decisionz",
             special_issues: array_including(
               { code: "SSR", narrative: "Same Station Review" },
-              code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
+              code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
             )
           ),
           user: current_user
@@ -670,6 +689,64 @@ describe EndProductEstablishment do
     end
   end
 
+  context "#sync_decision_issues!" do
+    subject { end_product_establishment.sync_decision_issues! }
+
+    include ActiveJob::TestHelper
+
+    after do
+      clear_enqueued_jobs
+    end
+
+    context "when the end product establishment has request issues" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            review_request: source,
+            decision_sync_submitted_at: nil
+          ),
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            review_request: source,
+            decision_sync_submitted_at: nil
+          )
+        ]
+      end
+
+      it "submits each request issue and starts decision sync job" do
+        subject
+
+        expect(request_issues.first.reload.decision_sync_submitted_at).to_not be_nil
+        expect(request_issues.second.reload.decision_sync_submitted_at).to_not be_nil
+
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.first)
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.second)
+      end
+    end
+
+    context "when the end product establishment has effectuations" do
+      let(:source) { create(:decision_document) }
+      let!(:granted_decision_issue) { create(:decision_issue, disposition: "allowed", decision_review: source.appeal) }
+
+      let!(:board_grant_effectuation) do
+        BoardGrantEffectuation.create(
+          granted_decision_issue: granted_decision_issue,
+          end_product_establishment: end_product_establishment
+        )
+      end
+
+      it "submits each effectuation and starts decision sync job" do
+        subject
+
+        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to_not be_nil
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(board_grant_effectuation)
+      end
+    end
+  end
+
   context "#on_decision_issue_sync_processed" do
     subject { end_product_establishment.on_decision_issue_sync_processed }
     let(:processed_at) { Time.zone.now }
@@ -698,7 +775,8 @@ describe EndProductEstablishment do
           create(:decision_issue,
                  decision_review: source,
                  disposition: HigherLevelReview::DTA_ERROR_PMR,
-                 rating_issue_reference_id: "rating1")
+                 rating_issue_reference_id: "rating1",
+                 end_product_last_action_date: 5.days.ago.to_date)
         end
 
         it "creates a supplemental claim if dta errors exist" do
