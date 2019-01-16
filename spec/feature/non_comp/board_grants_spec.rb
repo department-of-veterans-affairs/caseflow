@@ -67,9 +67,7 @@ feature "NonComp Board Grant Task Page" do
     expect(page).to have_button("Complete", disabled: true)
     expect(page).to have_content("Non-Comp Org")
     expect(page).to have_content("Decision")
-    # appeals automatically get 1 claimant, which defaluts to Tom Brody due to the way
-    # fakes/bgs_service is set up.
-    expect(page).to have_content("Tom Brady")
+    expect(page).to have_content(veteran.name)
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
 
     # expect to have the two granted decision issues

@@ -8,7 +8,7 @@ class MailTask < GenericTask
     end
 
     def create_from_params(params, user)
-      verify_user_can_create!(user)
+      verify_user_can_create!(user, Task.find(params[:parent_id]))
 
       root_task = RootTask.find(params[:parent_id])
 
@@ -23,12 +23,6 @@ class MailTask < GenericTask
 
         params = modify_params(params)
         create_child_task(mail_task, user, params)
-      end
-    end
-
-    def verify_user_can_create!(user)
-      unless MailTeam.singleton.user_has_access?(user)
-        fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot create a mail task"
       end
     end
 

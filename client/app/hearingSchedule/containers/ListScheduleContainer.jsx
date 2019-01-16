@@ -50,9 +50,7 @@ export class ListScheduleContainer extends React.Component {
     this.state = {
       dateRangeKey: `${props.startDate}->${props.endDate}`,
       modalOpen: false,
-      showModalAlert: false,
-      serverError: false,
-      noRoomsAvailable: false
+      showModalAlert: false
     };
   }
 
@@ -146,47 +144,13 @@ export class ListScheduleContainer extends React.Component {
       value: '' });
     this.props.setNotes('');
     this.props.onAssignHearingRoom(true);
-  }
+  };
 
   closeModal = () => {
-    this.setState({ modalOpen: false,
-      showModalAlert: true });
-
-    let data = {
-      request_type: this.props.requestType.value,
-      scheduled_for: this.props.selectedHearingDay,
-      judge_id: this.props.vlj.value,
-      bva_poc: this.props.coordinator.label,
-      notes: this.props.notes,
-      assign_room: this.props.roomRequired
-    };
-
-    if (this.props.selectedRegionalOffice &&
-        this.props.selectedRegionalOffice.value !== '' &&
-        this.props.requestType.value !== 'C') {
-      data.regional_office = this.props.selectedRegionalOffice.value;
-    }
-
-    ApiUtil.post('/hearings/hearing_day.json', { data }).
-      then((response) => {
-        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-
-        const newHearings = Object.assign({}, this.props.hearingSchedule);
-        const hearingsLength = Object.keys(newHearings).length;
-
-        newHearings[hearingsLength] = resp.hearing;
-
-        this.props.onReceiveHearingSchedule(newHearings);
-
-      }, (error) => {
-        if (error.response.body && error.response.body.errors &&
-          error.response.body.errors[0].title === 'No rooms available') {
-          this.setState({ noRoomsAvailable: true });
-        } else {
-          // All other server errors
-          this.setState({ serverError: true });
-        }
-      });
+    this.setState({
+      modalOpen: false,
+      showModalAlert: true
+    });
   };
 
   cancelModal = () => {
@@ -194,14 +158,6 @@ export class ListScheduleContainer extends React.Component {
   };
 
   getAlertTitle = () => {
-    if (this.state.serverError) {
-      return 'An Error Occurred';
-    }
-
-    if (this.state.noRoomsAvailable) {
-      return `No Rooms Available for Hearing Day ${formatDateStr(this.props.selectedHearingDay)}`;
-    }
-
     if (this.props.successfulHearingDayDelete) {
       return `You have successfully removed Hearing Day ${formatDateStr(this.props.successfulHearingDayDelete)}`;
     }
@@ -215,14 +171,6 @@ export class ListScheduleContainer extends React.Component {
   };
 
   getAlertMessage = () => {
-    if (this.state.serverError) {
-      return 'You are unable to complete this action.';
-    }
-
-    if (this.state.noRoomsAvailable) {
-      return 'All hearing rooms are taken for the date you selected.';
-    }
-
     if (this.props.successfulHearingDayDelete) {
       return '';
     }
@@ -235,20 +183,12 @@ export class ListScheduleContainer extends React.Component {
   };
 
   getAlertType = () => {
-    if (this.state.serverError) {
-      return 'error';
-    }
-
-    if (this.state.noRoomsAvailable) {
-      return 'error';
-    }
-
     if (['Saturday', 'Sunday'].includes(moment(this.props.selectedHearingDay).format('dddd'))) {
       return 'warning';
     }
 
     return 'success';
-  }
+  };
 
   showAlert = () => {
     return this.state.showModalAlert;

@@ -127,7 +127,7 @@ RSpec.feature "Task queue" do
 
       # Marking the task as complete correctly changes the task's status in the database.
       find(".Select-control", text: "Select an action…").click
-      find("div", class: "Select-option", text: "Mark task complete").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
       find("button", text: "Mark complete").click
 
@@ -265,7 +265,7 @@ RSpec.feature "Task queue" do
         visit("/queue/appeals/#{appeal.external_id}")
 
         find(".Select-control", text: "Select an action…").click
-        find("div", class: "Select-option", text: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h[:label]).click
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
@@ -323,6 +323,9 @@ RSpec.feature "Task queue" do
 
       before do
         visit("/queue/appeals/#{appeal.external_id}")
+
+        # Add a user to the Colocated team so the task assignment will suceed.
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
       end
 
       it "should display an option to mark task complete" do
@@ -335,6 +338,22 @@ RSpec.feature "Task queue" do
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
         expect(judge_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
+      end
+
+      it "should be able to be sent to VLJ support staff" do
+        # On case details page select the "Add admin action" option
+        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
+
+        # On case details page fill in the admin action
+        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        click_dropdown(text: action)
+        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
+
+        # Expect to see a success message and have the task in the database
+        expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
+        expect(judge_task.children.length).to eq(1)
+        expect(judge_task.children.first).to be_a(ColocatedTask)
       end
     end
 

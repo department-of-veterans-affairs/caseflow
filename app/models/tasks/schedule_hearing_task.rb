@@ -1,14 +1,14 @@
 class ScheduleHearingTask < GenericTask
   class << self
-    def create_from_params(params, current_user)
-      root_task = RootTask.find_or_create_by!(appeal: params[:appeal])
-      params[:parent_id] = root_task.id
-
-      task_payloads = params.delete(:business_payloads)
-      child_task = super(params, current_user)
-      child_task.task_business_payloads.create(task_payloads) if task_payloads
-
-      child_task
+    def create_if_eligible(appeal)
+      if appeal.is_a?(LegacyAppeal) && appeal.case_record.bfcurloc == "57"
+        ScheduleHearingTask.find_or_create_by!(appeal: appeal) do |task|
+          task.update(
+            assigned_to: HearingsManagement.singleton,
+            parent: RootTask.find_or_create_by!(appeal: appeal)
+          )
+        end
+      end
     end
   end
 
@@ -28,25 +28,9 @@ class ScheduleHearingTask < GenericTask
       task_business_payloads.create(task_payloads)
     end
 
+    update_hearing if params[:status] == Constants.TASK_STATUSES.completed
+
     super(params, current_user)
-  end
-
-  def update_parent_status
-    hearing_pkseq = task_business_payloads[0].values["hearing_pkseq"]
-    hearing_type = task_business_payloads[0].values["hearing_type"]
-    hearing_date = Time.zone.parse(task_business_payloads[0].values["hearing_date"])
-    hearing_date_str = "#{hearing_date.year}-#{hearing_date.month}-#{hearing_date.day} " \
-                       "#{format('%##d', hearing_date.hour)}:#{format('%##d', hearing_date.min)}:00"
-
-    if hearing_type == LegacyHearing::CO_HEARING
-      HearingRepository.update_co_hearing(hearing_date_str, appeal)
-    else
-      HearingRepository.create_child_video_hearing(hearing_pkseq, hearing_date, appeal)
-    end
-
-    AppealRepository.update_location!(appeal, location_based_on_hearing_type(hearing_type))
-
-    super
   end
 
   def location_based_on_hearing_type(hearing_type)
@@ -65,5 +49,23 @@ class ScheduleHearingTask < GenericTask
     end
 
     []
+  end
+
+  private
+
+  def update_hearing
+    hearing_pkseq = task_business_payloads[0].values["hearing_pkseq"]
+    hearing_type = task_business_payloads[0].values["hearing_type"]
+    hearing_date = Time.zone.parse(task_business_payloads[0].values["hearing_date"])
+    hearing_date_str = "#{hearing_date.year}-#{hearing_date.month}-#{hearing_date.day} " \
+                       "#{format('%##d', hearing_date.hour)}:#{format('%##d', hearing_date.min)}:00"
+
+    if hearing_type == LegacyHearing::CO_HEARING
+      HearingRepository.update_co_hearing(hearing_date_str, appeal)
+    else
+      HearingRepository.create_child_video_hearing(hearing_pkseq, hearing_date, appeal)
+    end
+
+    AppealRepository.update_location!(appeal, location_based_on_hearing_type(hearing_type))
   end
 end

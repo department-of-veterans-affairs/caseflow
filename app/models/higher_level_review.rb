@@ -3,7 +3,7 @@ class HigherLevelReview < ClaimReview
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
-  END_PRODUCT_MODIFIERS = %w[030 031 032 033 033 035 036 037 038 039].freeze
+  END_PRODUCT_MODIFIERS = %w[030 031 032 033 034 035 036 037 038 039].freeze
 
   # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
   # The characters an encoding is precise so don't change these unless you know they match VBMS values.
@@ -44,9 +44,13 @@ class HigherLevelReview < ClaimReview
   end
 
   def dta_supplemental_claim
+    unless dta_issues_needing_follow_up.first.approx_decision_date
+      fail "approx_decision_date is required to create a DTA Supplemental Claim"
+    end
+
     @dta_supplemental_claim ||= SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
-      receipt_date: Time.zone.now.to_date,
+      receipt_date: dta_issues_needing_follow_up.first.approx_decision_date,
       decision_review_remanded: self,
       benefit_type: benefit_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
