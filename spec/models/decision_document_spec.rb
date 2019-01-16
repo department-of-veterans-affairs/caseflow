@@ -64,6 +64,50 @@ describe DecisionDocument do
     end
   end
 
+  context "#on_sync" do
+    subject { decision_document.on_sync(end_product_establishment) }
+
+    include ActiveJob::TestHelper
+
+    after do
+      clear_enqueued_jobs
+    end
+
+    let(:board_grant_effectuation) do
+      BoardGrantEffectuation.create(
+        granted_decision_issue: granted_decision_issue
+      )
+    end
+
+    let(:end_product_establishment) { board_grant_effectuation.end_product_establishment }
+
+    let!(:granted_decision_issue) do
+      FactoryBot.create(
+        :decision_issue,
+        :rating,
+        disposition: "allowed",
+        decision_review: decision_document.appeal
+      )
+    end
+
+    context "when end product is not cleared" do
+      before { end_product_establishment.update!(synced_status: "PEND") }
+      it "does nothing" do
+        subject
+        expect(board_grant_effectuation).to_not be_attempted
+      end
+    end
+
+    context "when end product is cleared" do
+      before { end_product_establishment.update!(synced_status: "CLR") }
+      it "submits the effectuation for processing and enqueues DecisionIssueSyncJob" do
+        subject
+        expect(board_grant_effectuation.reload).to be_submitted
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(board_grant_effectuation)
+      end
+    end
+  end
+
   context "#process!" do
     subject { decision_document.process! }
 
