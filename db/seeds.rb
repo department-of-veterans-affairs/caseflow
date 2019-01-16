@@ -757,7 +757,10 @@ class SeedDB
     FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
   end
 
-  def create_ama_hearings
+  def create_ama_hearing_appeals
+    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+    notes = "Pain disorder with 100\% evaluation per examination"
+
     FeatureToggle.enable!(:ama_auto_case_distribution)
 
     @ama_appeals << FactoryBot.create(
@@ -807,7 +810,7 @@ class SeedDB
 
     create_higher_level_reviews_and_supplemental_claims
 
-    create_ama_hearings
+    create_ama_hearing_appeals
 
     return if Rails.env.development?
 
