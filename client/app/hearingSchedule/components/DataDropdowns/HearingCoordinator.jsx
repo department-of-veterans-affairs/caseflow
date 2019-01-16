@@ -50,7 +50,11 @@ class HearingCoordinatorDropdown extends React.Component {
       return null;
     }
 
-    return _.find(options, (opt) => opt.value === value);
+    if (typeof (value) === 'string') {
+      return _.find(options, (opt) => opt.value === value);
+    }
+
+    return value;
   }
 
   render() {
