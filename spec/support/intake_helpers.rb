@@ -381,9 +381,9 @@ module IntakeHelpers
     expect(row).to have_text(text)
   end
 
-  def mock_nil_bgs_response
+  def mock_backfilled_rating_response
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range)
-      .and_return({rating_profile_list: {rating_profile: nil} })
+      .and_return({rating_profile_list: {rating_profile: nil}, reject_reason: "Converted or Backfilled Rating - no promulgated ratings found" })
   end
 
   # rubocop:disable Metrics/MethodLength

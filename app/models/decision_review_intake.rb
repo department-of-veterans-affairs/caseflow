@@ -12,6 +12,9 @@ class DecisionReviewIntake < Intake
       activeNonratingRequestIssues: detail.active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: detail.contestable_issues.map(&:serialize)
     )
+    rescue Rating::NilRatingProfileListError, Rating::LockedRatingError
+      cancel!(reason: "system_error")
+      raise
   end
 
   def cancel_detail!

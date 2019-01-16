@@ -268,7 +268,7 @@ class DecisionReview < ApplicationRecord
     veteran.ratings.reject { |rating| rating.issues.empty? }
 
     # return empty list when there are no ratings
-  rescue Rating::NilRatingProfileListError
+  rescue Rating::BackfilledRatingError
     []
   end
 
