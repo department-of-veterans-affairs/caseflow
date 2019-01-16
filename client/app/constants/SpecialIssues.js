@@ -2,7 +2,8 @@ import React from 'react';
 
 const SPECIAL_ISSUES = [
   {
-    display: 'Contaminated water at Camp LeJeune',
+    display: 'Contaminated Water at Camp LeJeune',
+    queueDisplay: 'Contaminated water at Camp LeJeune',
     specialIssue: 'contaminatedWaterAtCampLejeune',
     stationOfJurisdiction: {
       key: '327',
@@ -15,6 +16,7 @@ const SPECIAL_ISSUES = [
   },
   {
     display: 'DIC - death, or accrued benefits - United States',
+    queueDisplay: 'DIC for appellant in the United States',
     specialIssue: 'dicDeathOrAccruedBenefitsUnitedStates',
     stationOfJurisdiction: null,
     snakeCase: 'dic_death_or_accrued_benefits_united_states',
@@ -22,7 +24,9 @@ const SPECIAL_ISSUES = [
       emailAddress: 'PMC',
       regionalOffice: 'PMC'
     },
-    nonCompensation: true
+    nonCompensation: true,
+    queueSection: 'dicOrPension',
+    queueSectionOrder: 1
   },
   {
     display: 'Education - GI Bill, dependents educational assistance, ' +
@@ -66,7 +70,7 @@ const SPECIAL_ISSUES = [
     },
     nonCompensation: true,
     queueSection: 'dicOrPension',
-    queueSectionOrder: 1
+    queueSectionOrder: 2
   },
   {
     display: 'Foreign pension, DIC - all other foreign countries',
@@ -81,7 +85,7 @@ const SPECIAL_ISSUES = [
     },
     nonCompensation: true,
     queueSection: 'dicOrPension',
-    queueSectionOrder: 2
+    queueSectionOrder: 3
   },
   {
     display: 'Hearing - including travel board & video conference',
@@ -185,7 +189,7 @@ const SPECIAL_ISSUES = [
     },
     nonCompensation: true,
     queueSection: 'dicOrPension',
-    queueSectionOrder: 3
+    queueSectionOrder: 4
   },
   {
     display: 'Private Attorney or Agent',

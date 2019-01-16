@@ -80,19 +80,19 @@ class SelectSpecialIssuesView extends React.PureComponent {
       <div {...flexContainer} className="special-options">
         <div {...flexColumn}>
           <CheckboxGroup
-            label={<h3>About the appellant: </h3>}
+            label={<h3>{COPY.SPECIAL_ISSUES_ABOUT_SECTION}</h3>}
             name="About the appellant"
             options={aboutSection}
             onChange={this.onChangeSpecialIssue}
           />
           <CheckboxGroup
-            label={<h3>Appellant resides in: </h3>}
+            label={<h3>{COPY.SPECIAL_ISSUES_RESIDENCE_SECTION}</h3>}
             name="Residence"
             options={residenceSection}
             onChange={this.onChangeSpecialIssue}
           />
           <CheckboxGroup
-            label={<h3>Benefit Types: </h3>}
+            label={<h3>{COPY.SPECIAL_ISSUES_BENEFIT_TYPE_SECTION}</h3>}
             name="Benefit Types"
             options={benefitTypeSection}
             onChange={this.onChangeSpecialIssue}
@@ -101,13 +101,13 @@ class SelectSpecialIssuesView extends React.PureComponent {
         <div {...flexColumn}>
           <CheckboxGroup
             styling={css({ marginTop: 0 })}
-            label={<h3> Issues on Appeal: </h3>}
+            label={<h3> {COPY.SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION}</h3>}
             name="Issues on Appeal"
             options={issuesOnAppealSection}
             onChange={this.onChangeSpecialIssue}
           />
           <CheckboxGroup
-            label={<h3>Dependency and Indemnity Compensation (DIC) or Pension: </h3>}
+            label={<h3>{COPY.SPECIAL_ISSUES_DIC_OR_PENSION_SECTION} </h3>}
             name="DIC or Pension"
             options={dicOrPensionSection}
             onChange={this.onChangeSpecialIssue}
