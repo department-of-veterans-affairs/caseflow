@@ -182,7 +182,7 @@ feature "Higher-Level Review" do
     click_intake_continue
 
     expect(page).to have_content(
-      "add them in VBMS, then refresh this page. Please select an option."
+      "If you do not see the claimant in the options below, and you have access, "
     )
     expect(page).to have_content(
       "What is the payee code for this claimant? Please select an option."
