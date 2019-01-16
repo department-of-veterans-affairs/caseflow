@@ -326,7 +326,7 @@ describe EndProductEstablishment do
             description: "more decisionz",
             special_issues: array_including(
               { code: "SSR", narrative: "Same Station Review" },
-              code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
+              code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
             )
           ),
           user: current_user
