@@ -8,7 +8,6 @@ import { css } from 'glamor';
 import Table from '../components/Table';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
 
-import { DateString } from '../util/DateUtil';
 import COPY from '../../COPY.json';
 import CLAIM_REVIEW_TEXT from '../../constants/CLAIM_REVIEW_TEXT.json';
 import EP_STATUSES from '../../constants/EP_STATUSES.json';
@@ -113,22 +112,6 @@ class CaseListTable extends React.PureComponent {
         }
 
         return '';
-      }
-    },
-    {
-      header: COPY.OTHER_REVIEWS_TABLE_DECISION_DATE_COLUMN_TITLE,
-      valueFunction: (review) => {
-        if (review.endProducts && review.endProducts.length > 1) {
-          return review.endProducts.map((endProduct, i) => {
-            return <SubdividedTableRow rowNumber={i}>
-              {endProduct.last_synced_at && <DateString date={endProduct.last_synced_at} />}
-            </SubdividedTableRow>;
-          });
-        } else if (review.endProducts && review.endProducts.length === 1) {
-          if (review.endProducts[0].last_synced_at) {
-            return <DateString date={review.endProducts[0].last_synced_at} />;
-          }
-        }
       }
     }
   ];
