@@ -136,6 +136,28 @@ RSpec.describe LegacyTasksController, type: :controller do
         end
       end
 
+      context "when case is already assigned" do
+        before do
+          allow(Raven).to receive(:capture_exception)
+        end
+
+        it "should be not successful" do
+          params = {
+            "appeal_id": @appeal.id,
+            "assigned_to_id": attorney.id
+          }
+          error_msg = "Case is already assigned"
+          allow(QueueRepository).to receive(:assign_case_to_attorney!).and_raise(
+            Caseflow::Error::LegacyCaseAlreadyAssignedError.new(message: error_msg)
+          )
+          post :create, params: { tasks: params }
+          expect(response.status).to eq 400
+          expect(Raven).to_not receive(:capture_exception)
+          response_body = JSON.parse(response.body)
+          expect(response_body["errors"].first["detail"]).to eq error_msg
+        end
+      end
+
       context "when attorney is not found" do
         let(:params) do
           {

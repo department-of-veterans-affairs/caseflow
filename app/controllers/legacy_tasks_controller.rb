@@ -5,6 +5,10 @@ class LegacyTasksController < ApplicationController
 
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
+  rescue_from Caseflow::Error::LegacyCaseAlreadyAssignedError do |e|
+    handle_non_critical_error("legacy_tasks", e)
+  end
+
   def set_application
     RequestStore.store[:application] = "queue"
   end

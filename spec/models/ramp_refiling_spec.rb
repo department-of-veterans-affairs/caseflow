@@ -116,7 +116,8 @@ describe RampRefiling do
         [
           ramp_refiling.issues.create!(description: "Leg"),
           ramp_refiling.issues.create!(description: "Arm"),
-          ramp_refiling.issues.create!(description: "Arm") # intentional duplicate
+          ramp_refiling.issues.create!(description: "Arm"), # intentional duplicate
+          ramp_refiling.issues.create!(description: "Long Description" * 20)
         ]
       end
       let(:modifier) { RampReview::END_PRODUCT_DATA_BY_OPTION[option_selected][:modifier] }
@@ -128,6 +129,7 @@ describe RampRefiling do
           user: user
         )
       end
+
       context "when an issue is not created in VBMS" do
         # Issues with the description "FAIL ME" are configured to fail in Fakes::VBMSService
         let!(:issue_to_fail) do
@@ -140,6 +142,7 @@ describe RampRefiling do
           # Even though there was a failure, we should still save the contention ids that were created
           expect(issues.first.reload.contention_reference_id).to_not be_nil
           expect(issues.second.reload.contention_reference_id).to_not be_nil
+          expect(issues.third.reload.contention_reference_id).to_not be_nil
           expect(issue_to_fail.reload.contention_reference_id).to be_nil
 
           # When the contention fails the End Product Establishment should not be committed
@@ -167,7 +170,12 @@ describe RampRefiling do
           expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
             veteran_file_number: "64205555",
             claim_id: "testtest",
-            contentions: [{ description: "Arm" }, { description: "Arm" }, { description: "Leg" }],
+            contentions: [
+              { description: "Arm" },
+              { description: "Arm" },
+              { description: "Leg" },
+              { description: "#{('Long Description' * 20).slice(0, 252)}..." }
+            ],
             user: user
           )
         end
@@ -182,14 +190,19 @@ describe RampRefiling do
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: "64205555",
           claim_id: "1337",
-          contentions: [{ description: "Arm" }, { description: "Arm" }, { description: "Leg" }],
+          contentions: [
+            { description: "Arm" },
+            { description: "Arm" },
+            { description: "Leg" },
+            { description: "#{('Long Description' * 20).slice(0, 252)}..." }
+          ],
           user: user
         )
 
         expect(issues.first.reload.contention_reference_id).to_not be_nil
         expect(ramp_refiling.end_product_establishment.committed_at).to eq(Time.zone.now)
         expect(ramp_refiling.establishment_processed_at).to eq(Time.zone.now)
-        expect(ramp_refiling.end_product_establishment.contentions.count).to eq(3)
+        expect(ramp_refiling.end_product_establishment.contentions.count).to eq(4)
       end
     end
   end

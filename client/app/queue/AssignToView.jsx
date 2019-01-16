@@ -115,7 +115,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       }
     };
 
-    const successMsg = { title: `Task assigned to ${this.getAssignee()}` };
+    const successMsg = { title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
 
     if (isReassignAction) {
       return this.reassignTask();

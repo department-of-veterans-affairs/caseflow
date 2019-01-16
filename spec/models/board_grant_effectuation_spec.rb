@@ -3,23 +3,109 @@ describe BoardGrantEffectuation do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
 
+  let!(:veteran) { decision_document.appeal.veteran }
   let(:decision_document) { create(:decision_document) }
+  let(:contention_reference_id) { nil }
+  let(:board_grant_effectuation) do
+    BoardGrantEffectuation.create(
+      granted_decision_issue: granted_decision_issue,
+      decision_sync_processed_at: processed_at,
+      contention_reference_id: contention_reference_id
+    )
+  end
 
-  context ".create" do
-    subject { BoardGrantEffectuation.create(granted_decision_issue: granted_decision_issue) }
+  let(:end_product_establishment) do
+    board_grant_effectuation.end_product_establishment
+  end
 
-    let!(:granted_decision_issue) do
-      FactoryBot.create(
-        :decision_issue,
-        rating_or_nonrating,
-        disposition: "allowed",
-        decision_review: decision_document.appeal,
-        benefit_type: benefit_type
+  let(:rating_or_nonrating) { :rating }
+  let(:benefit_type) { "compensation" }
+  let(:processed_at) { nil }
+
+  let!(:granted_decision_issue) do
+    FactoryBot.create(
+      :decision_issue,
+      rating_or_nonrating,
+      disposition: "allowed",
+      decision_review: decision_document.appeal,
+      benefit_type: benefit_type
+    )
+  end
+
+  context "#sync_decision_issues!" do
+    subject { board_grant_effectuation.sync_decision_issues! }
+    before { end_product_establishment.update!(established_at: 3.months.ago) }
+
+    let(:associated_claims) { nil }
+
+    let!(:rating) do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: 15.days.ago,
+        profile_date: 20.days.ago,
+        issues: [
+          { reference_id: "ref_id1", decision_text: "PTSD denied", contention_reference_id: "contention_ref_id" },
+          { reference_id: "ref_id2", decision_text: "Left leg", contention_reference_id: "contention_ref_id2" }
+        ],
+        associated_claims: associated_claims
       )
     end
 
-    let(:rating_or_nonrating) { :rating }
-    let(:benefit_type) { "compensation" }
+    context "when the decision issue is already processed" do
+      let(:processed_at) { 1.day.ago }
+      it "does nothing" do
+        subject
+        expect(board_grant_effectuation.decision_sync_attempted_at).to be_nil
+      end
+    end
+
+    context "when there is no associated rating on the end product" do
+      it "attempts sync but does not finish processing" do
+        subject
+        expect(board_grant_effectuation).to be_attempted
+        expect(board_grant_effectuation).to_not be_processed
+      end
+    end
+
+    context "when there is an associated rating" do
+      before { end_product_establishment.update!(reference_id: "ep_ref_id") }
+      let(:associated_claims) { [{ clm_id:  "ep_ref_id", bnft_clm_tc: "ep_code" }] }
+
+      context "when a matching rating issue is found" do
+        let(:contention_reference_id) { "contention_ref_id" }
+
+        it "Updates the granted decision issue" do
+          subject
+          expect(granted_decision_issue).to have_attributes(
+            promulgation_date: rating.promulgation_date,
+            profile_date: rating.profile_date,
+            decision_text: "PTSD denied",
+            rating_issue_reference_id: "ref_id1"
+          )
+          expect(board_grant_effectuation).to be_processed
+        end
+      end
+
+      context "when a matching rating issue is not found" do
+        let(:contention_reference_id) { "not_found" }
+
+        it "is processed but does not update granted decision issue" do
+          subject
+          expect(board_grant_effectuation).to be_attempted
+          expect(granted_decision_issue).to have_attributes(
+            promulgation_date: nil,
+            profile_date: nil,
+            decision_text: nil,
+            rating_issue_reference_id: nil
+          )
+          expect(board_grant_effectuation).to be_processed
+        end
+      end
+    end
+  end
+
+  context ".create" do
+    subject { BoardGrantEffectuation.create(granted_decision_issue: granted_decision_issue) }
 
     it do
       is_expected.to have_attributes(
