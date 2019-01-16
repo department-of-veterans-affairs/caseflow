@@ -165,7 +165,7 @@ export default class AssignHearings extends React.Component {
 
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
-      externalId: hearing.appealVacolsId,
+      externalId: hearing.appealExternalId,
       caseDetails: this.appellantName(hearing),
       type: renderAppealType({
         caseType: hearing.appealType,
