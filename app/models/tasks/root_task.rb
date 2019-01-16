@@ -76,7 +76,6 @@ class RootTask < GenericTask
           # then it is initially ready for distribution.
           distribution_task.ready_for_distribution! if vso_tasks.empty?
         end
-        # TODO: if appeal is ready for distribution, track the time it became ready
       end
     end
   end
