@@ -20,6 +20,8 @@ class BoardGrantEffectuation < ApplicationRecord
     pension_nonrating: "030BGNRPMC"
   }.freeze
 
+  delegate :contention_text, to: :granted_decision_issue
+
   class << self
     # We don't need to retry these as frequently
     def processing_retry_interval_hours
@@ -51,10 +53,6 @@ class BoardGrantEffectuation < ApplicationRecord
 
     update_from_matching_rating_issue!
     processed!
-  end
-
-  def contention_text
-    granted_decision_issue.description
   end
 
   private

@@ -270,7 +270,7 @@ describe EndProductEstablishment do
           review_request: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-          contested_issue_description: "this is a big decision"
+          contested_issue_description: "description too long for bgs" * 20
         ),
         create(
           :request_issue,
@@ -295,6 +295,7 @@ describe EndProductEstablishment do
     it "creates contentions and saves them to objects" do
       subject
 
+      expect(contentions.second[:description].length).to eq(255)
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
