@@ -59,9 +59,11 @@ class HearingDetails extends React.Component {
   constructor(props) {
     super(props);
 
+    const { hearing } = this.props;
+
     this.state = {
       hearing: {
-        vlj: null,
+        vlj: hearing.judge.judgeCssId,
         hearingCoordinator: null,
         room: null,
         waiveEvidenceHold: null,
@@ -164,7 +166,7 @@ class HearingDetails extends React.Component {
       vbmsId
     } = this.props.hearing;
 
-    console.log(this.state);
+    console.log(this.props.hearing);
 
     return (
       <AppSegment filledBackground>
