@@ -56,7 +56,6 @@ class BoardGrantUnconnected extends React.PureComponent {
     const {
       appeal,
       decisionIssuesStatus,
-      businessLineUrl,
       task
     } = this.props;
 
@@ -115,7 +114,6 @@ const BoardGrant = connect(
   (state) => ({
     appeal: state.appeal,
     businessLine: state.businessLine,
-    businessLineUrl: state.businessLineUrl,
     task: state.task,
     decisionIssuesStatus: state.decisionIssuesStatus
   })

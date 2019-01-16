@@ -133,7 +133,6 @@ class NonCompDispositions extends React.PureComponent {
   render = () => {
     const {
       appeal,
-      businessLineUrl,
       decisionIssuesStatus,
       task
     } = this.props;
@@ -201,7 +200,6 @@ const Dispositions = connect(
   (state) => ({
     appeal: state.appeal,
     task: state.task,
-    businessLineUrl: state.businessLineUrl,
     decisionIssuesStatus: state.decisionIssuesStatus
   })
 )(NonCompDispositions);
