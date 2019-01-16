@@ -50,6 +50,9 @@ class SyncReviewsJob < CaseflowJob
     RequestIssue.requires_processing.limit(limit).each do |request_issue|
       DecisionIssueSyncJob.perform_later(request_issue)
     end
+    BoardGrantEffectuation.requires_processing.limit(limit).each do |effectuation|
+      DecisionIssueSyncJob.perform_later(effectuation)
+    end
   end
 
   def reprocess_decision_documents(limit)
