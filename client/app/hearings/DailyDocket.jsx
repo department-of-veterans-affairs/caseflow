@@ -148,7 +148,7 @@ export class DailyDocket extends React.PureComponent {
          {`${hearing.veteran_first_name} ${hearing.veteran_last_name}`} (Veteran)</span><br />
        <NonRouterLink
          href={`/queue/appeals/${hearing.appeal_external_id}`}
-         target='_blank'
+         target="_blank"
          name={hearing.veteran_file_number} >
          {hearing.veteran_file_number}
        </NonRouterLink>
@@ -165,7 +165,7 @@ export class DailyDocket extends React.PureComponent {
    return <div><b>{`${hearing.veteran_first_name} ${hearing.veteran_last_name}`}</b><br />
      <NonRouterLink
        href={`/queue/appeals/${hearing.appeal_external_id}`}
-       target='_blank'
+       target="_blank"
        name={hearing.veteran_file_number} >
        {hearing.veteran_file_number}
      </NonRouterLink>
