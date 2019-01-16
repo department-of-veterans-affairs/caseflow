@@ -1,53 +1,41 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { css } from 'glamor';
-
-import { GrayDot, GreenCheckmark } from '../components/RenderFunctions';
-import moment from 'moment';
-import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
+import { connect } from 'react-redux';
+import type { State } from './types/state';
+import { allCompleteTasksForAppeal, allTasksForTimeline } from './selectors';
 import COPY from '../../COPY.json';
+import TaskRows from './components/TaskRows';
 
-const grayLine = css({
-  width: '5px',
-  minHeight: '50px',
-  background: COLORS.GREY_LIGHT,
-  margin: 'auto'
-});
+type Params = {|
+  appealId: string
+|};
 
-const tableCellWithIcon = css({
-  textAlign: 'center',
-  border: 'none',
-  padding: 0
-});
+class CaseTimeline extends React.PureComponent {
+  render = () => {
+    const {
+      appeal
+    } = this.props;
 
-const tableCell = css({
-  border: 'none',
-  verticalAlign: 'top',
-  padding: '3px'
-});
+    /*console.log('--Timeline--');
+    console.log(this.props.completedTasks);
+    console.log(this.props.timelineTasks);*/
 
-const getEventRow = ({ title, date }, lastRow) => {
-  const formattedDate = date ? moment(date).format('MM/DD/YYYY') : null;
-  const eventImage = date ? <GreenCheckmark /> : <GrayDot />;
+    return <React.Fragment>
+      {COPY.CASE_TIMELINE_HEADER}
+      <table>
+        <tbody>
+          { <TaskRows appeal={appeal} taskList={this.props.timelineTasks} timeline /> }
+        </tbody>
+      </table>
+    </React.Fragment>;
+  }
+}
 
-  return <tr key={title}>
-    <td {...tableCell}>{formattedDate}</td>
-    <td {...tableCellWithIcon}>{eventImage}{!lastRow && <div {...grayLine} />}</td>
-    <td {...tableCell}>{title}</td>
-  </tr>;
-};
+const mapStateToProps = (state: State, ownProps: Params) => {
 
-export const CaseTimeline = ({ appeal }) => {
-  return <React.Fragment>
-    {COPY.CASE_TIMELINE_HEADER}
-    <table>
-      <tbody>
-        {appeal.timeline.map((event, index) => {
-          return getEventRow(event, index === appeal.timeline.length - 1);
-        })}
-      </tbody>
-    </table>
-  </React.Fragment>;
+  return {
+    completedTasks: allCompleteTasksForAppeal(state, { appealId: ownProps.appeal.externalId }),
+    timelineTasks: allTasksForTimeline(state, { appealId: ownProps.appeal.externalId })
+  };
 };
 
 CaseTimeline.propTypes = {
