@@ -93,6 +93,17 @@ feature "Supplemental Claim Intake" do
     )
   end
 
+  let!(:before_ama_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 10.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
+      ]
+    )
+  end
+
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -444,17 +455,6 @@ feature "Supplemental Claim Intake" do
             decision_text: "Really old injury" }
         ],
         associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-      )
-    end
-
-    let!(:before_ama_rating) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: DecisionReview.ama_activation_date - 5.days,
-        profile_date: DecisionReview.ama_activation_date - 10.days,
-        issues: [
-          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-        ]
       )
     end
 
@@ -866,6 +866,17 @@ feature "Supplemental Claim Intake" do
           add_intake_rating_issue("None of these match")
 
           expect(page).to have_content("Description for Active Duty Adjustments")
+
+          # add before_ama ratings
+          click_intake_add_issue
+          add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+          add_intake_rating_issue("limitation of thigh motion (extension)")
+          add_untimely_exemption_response("Yes")
+
+          expect(page).to have_content("Non-RAMP Issue before AMA Activation")
+          expect(page).to_not have_content(
+            "Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
+          )
 
           # add eligible legacy issue
           click_intake_add_issue
