@@ -22,7 +22,8 @@ class ScheduleHearingTask < GenericTask
       end
 
       # Get all tasks associated with AMA appeals and the regional_office
-      appeal_tasks = ScheduleHearingTask.where(appeal_type: Appeal.name).joins("INNER JOIN appeals ON appeals.id = appeal_id")
+      appeal_tasks = ScheduleHearingTask.where(appeal_type: Appeal.name)
+        .joins("INNER JOIN appeals ON appeals.id = appeal_id")
         .joins("INNER JOIN veterans ON appeals.veteran_file_number = veterans.file_number")
         .where("veterans.closest_regional_office = ?", regional_office)
 
