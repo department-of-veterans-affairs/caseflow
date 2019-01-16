@@ -228,7 +228,7 @@ class RequestIssue < ApplicationRecord
   def contention_text
     return UNIDENTIFIED_ISSUE_MSG if is_unidentified?
 
-    description
+    Contention.new(description).text
   end
 
   def review_title
@@ -241,7 +241,7 @@ class RequestIssue < ApplicationRecord
 
   def special_issues
     specials = []
-    specials << { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
+    specials << { code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
     specials << { code: "SSR", narrative: "Same Station Review" } if decision_review.try(:same_office)
     return specials unless specials.empty?
   end
