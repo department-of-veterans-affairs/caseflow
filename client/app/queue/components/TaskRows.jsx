@@ -58,6 +58,7 @@ const taskInfoWithIconTimelineContainer =
     width: '10%',
     paddingLeft: '0px' });
 const greyDotStyling = css({ paddingLeft: '6px' });
+const greyDotTimelineStyling = css({ padding: '5px 0px 0px 5px' });
 
 class TaskRows extends React.PureComponent {
   constructor(props) {
@@ -208,9 +209,9 @@ class TaskRows extends React.PureComponent {
               { this.daysWaitingListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
-          <td {...taskInfoWithIconContainer} className={timeline ? taskInfoWithIconTimelineContainer : ''}>
+          <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',task.completedOn ? '' : greyDotTimelineStyling].join(' ')} >
             { task.completedOn ? <GreenCheckmark /> : <GrayDot /> }
-            { (index < taskList.length) && taskList[0].completedOn && <div {...grayLineStyling}
+            { (index < taskList.length-1) && <div {...grayLineStyling}
               className={timeline ? grayLineTimelineStyling : ''} /> }
           </td>
           <td {...taskInformationContainerStyling}
