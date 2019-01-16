@@ -44,6 +44,10 @@ class HigherLevelReview < ClaimReview
   end
 
   def dta_supplemental_claim
+    unless dta_issues_needing_follow_up.first.approx_decision_date
+      fail "approx_decision_date is required to create a DTA Supplemental Claim"
+    end
+
     @dta_supplemental_claim ||= SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
       receipt_date: dta_issues_needing_follow_up.first.approx_decision_date,

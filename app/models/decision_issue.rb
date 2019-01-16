@@ -105,6 +105,9 @@ class DecisionIssue < ApplicationRecord
   end
 
   def create_remand_supplemental_claim!
+    # Checking our assumption that approx_decision_date will always be populated for Decision Issues
+    fail "approx_decision_date is required to create a DTA Supplemental Claim" unless approx_decision_date
+
     SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
       decision_review_remanded: decision_review,

@@ -126,6 +126,24 @@ describe DecisionDocument do
         end
       end
 
+      context "when remanded issue without approx_decision_date" do
+        let!(:remanded_issue) do
+          create(
+            :decision_issue,
+            decision_review: decision_document.appeal,
+            disposition: "remanded",
+            profile_date: nil,
+            end_product_last_action_date: nil
+          )
+        end
+
+        it "throws an error" do
+          expect { subject }.to raise_error(
+            StandardError, "approx_decision_date is required to create a DTA Supplemental Claim"
+          )
+        end
+      end
+
       it "uploads document" do
         subject
 
