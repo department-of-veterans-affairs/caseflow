@@ -13,6 +13,10 @@ FactoryBot.define do
       end
     end
 
+    transient do
+      intook false
+    end
+
     uuid do
       SecureRandom.uuid
     end
@@ -96,6 +100,8 @@ FactoryBot.define do
     end
 
     after(:create) do |appeal, evaluator|
+      appeal.create_tasks_on_intake_success! if evaluator.intook
+
       if !appeal.claimants.empty?
         appeal.claimants.each do |claimant|
           claimant.review_request = appeal

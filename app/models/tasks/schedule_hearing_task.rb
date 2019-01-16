@@ -10,6 +10,24 @@ class ScheduleHearingTask < GenericTask
 
       child_task
     end
+
+    def tasks_for_ro(regional_office)
+      # Get all legacy tasks for this RO
+      legacy_appeal_tasks = AppealRepository.appeals_ready_for_hearing_schedule(regional_office).map do |appeal|
+        ScheduleHearingTask.new(
+          appeal: appeal,
+          status: Constants.TASK_STATUSES.in_progress.to_sym,
+          assigned_to: HearingsManagement.singleton
+        )
+      end
+
+      # Get all tasks associated with AMA appeals and the regional_office
+      appeal_tasks = ScheduleHearingTask.where(appeal_type: Appeal.name).joins("INNER JOIN appeals ON appeals.id = appeal_id")
+        .joins("INNER JOIN veterans ON appeals.veteran_file_number = veterans.file_number")
+        .where("veterans.closest_regional_office = ?", regional_office)
+
+      legacy_appeal_tasks + appeal_tasks
+    end
   end
 
   def update_from_params(params, current_user)

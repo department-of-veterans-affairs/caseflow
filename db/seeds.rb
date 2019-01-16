@@ -384,6 +384,27 @@ class SeedDB
       request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
     )
 
+    FeatureToggle.enable!(:ama_auto_case_distribution)
+
+    @ama_appeals << FactoryBot.create(
+      :appeal,
+      number_of_claimants: 1,
+      veteran_file_number: "808415990",
+      docket_type: "hearing",
+      intook: true,
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+    )
+    @ama_appeals << FactoryBot.create(
+      :appeal,
+      number_of_claimants: 1,
+      veteran_file_number: "992190636",
+      docket_type: "hearing",
+      intook: true,
+      request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
+    )
+
+    Veteran.where(file_number: %w[808415990 992190636]).update_all(closest_regional_office: "RO17")
+
     LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
     LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
     LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
@@ -479,6 +500,7 @@ class SeedDB
       review_request: higher_level_review,
       issue_category: "Military Retired Pay",
       description: "nonrating description",
+      benefit_type: "compensation",
       contention_reference_id: "1234",
       ineligible_reason: nil,
       decision_date: Date.new(2018, 5, 1)
@@ -488,6 +510,7 @@ class SeedDB
       review_request: higher_level_review,
       issue_category: "Active Duty Adjustments",
       description: "nonrating description",
+      benefit_type: "compensation",
       contention_reference_id: "12345",
       decision_date: Date.new(2018, 5, 1),
       ineligible_reason: :untimely

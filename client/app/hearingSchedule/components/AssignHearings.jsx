@@ -27,12 +27,12 @@ const roSelectionStyling = css({ marginTop: '10px' });
 export default class AssignHearings extends React.Component {
 
   amaAppeal = (appeal) => {
-    return appeal.type === 'appeals';
+    return appeal.attributes.appealType === 'Appeal';
   };
 
-  getAmaAppeals = _.filter(this.props.appealsReadyForHearing, (appeal) => this.amaAppeal(appeal));
+  getAmaAppeals = () => _.filter(this.props.appealsReadyForHearing, (appeal) => this.amaAppeal(appeal));
 
-  getLegacyAppeals = _.filter(this.props.appealsReadyForHearing, (appeal) => !this.amaAppeal(appeal));
+  getLegacyAppeals = () => _.filter(this.props.appealsReadyForHearing, (appeal) => !this.amaAppeal(appeal));
 
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
@@ -236,7 +236,7 @@ export default class AssignHearings extends React.Component {
     const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no schedulable veterans</span>;
 
     const scheduleableLegacyVeterans = () => {
-      if (_.isEmpty(this.getLegacyAppeals)) {
+      if (_.isEmpty(this.getLegacyAppeals())) {
         return <div>
           <StatusMessage
             title= {veteranNotAssignedTitle}
@@ -249,7 +249,7 @@ export default class AssignHearings extends React.Component {
 
       return <Table
         columns={tabWindowColumns}
-        rowObjects={this.tableAssignHearingsRows(this.getLegacyAppeals)}
+        rowObjects={this.tableAssignHearingsRows(this.getLegacyAppeals())}
         summary="scheduled-hearings-table"
         slowReRendersAreOk
       />;
@@ -257,7 +257,7 @@ export default class AssignHearings extends React.Component {
     };
 
     const scheduleableAmaVeterans = () => {
-      if (_.isEmpty(this.getAmaAppeals)) {
+      if (_.isEmpty(this.getAmaAppeals())) {
         return <div>
           <StatusMessage
             title= {veteranNotAssignedTitle}
@@ -270,7 +270,7 @@ export default class AssignHearings extends React.Component {
 
       return <Table
         columns={tabWindowColumns}
-        rowObjects={this.tableAssignHearingsRows(this.getAmaAppeals)}
+        rowObjects={this.tableAssignHearingsRows(this.getAmaAppeals())}
         summary="scheduled-hearings-table"
         slowReRendersAreOk
       />;
