@@ -109,7 +109,7 @@ feature "NonComp Dispositions Task Page" do
       expect(hlr.decision_issues.find_by(disposition: "Denied", description: "denied")).to_not be_nil
 
       # verify that going to the completed task does not allow edits
-      click_link "Bob Smith"
+      click_link veteran.name.to_s
       expect(page).to have_content("Review each issue and assign the appropriate dispositions")
       expect(page).to have_current_path("/#{dispositions_url}")
       expect(page).not_to have_button("Complete")
