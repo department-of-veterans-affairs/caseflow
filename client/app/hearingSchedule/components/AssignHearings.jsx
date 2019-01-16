@@ -98,16 +98,15 @@ export default class AssignHearings extends React.Component {
   };
 
   appellantName = (hearingDay) => {
-    let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName, vbmsId } = hearingDay;
+    let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName, veteranFileNumber } = hearingDay;
 
     if (appellantFirstName && appellantLastName) {
-      return `${appellantFirstName} ${appellantLastName} | ${vbmsId}`;
+      return `${appellantFirstName} ${appellantLastName} | ${veteranFileNumber}`;
     } else if (veteranFirstName && veteranLastName) {
-      return `${veteranFirstName} ${veteranLastName} | ${vbmsId}`;
+      return `${veteranFirstName} ${veteranLastName} | ${veteranFileNumber}`;
     }
 
-    return `${vbmsId}`;
-
+    return `${veteranFileNumber}`;
   };
 
   getAppealLocation = (appeal) => {
@@ -167,7 +166,7 @@ export default class AssignHearings extends React.Component {
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
       externalId: hearing.appealVacolsId,
-      caseDetails: `${hearing.appellantMiFormatted || hearing.veteranMiFormatted} | ${hearing.vbmsId}`,
+      caseDetails: this.appellantName(hearing),
       type: renderAppealType({
         caseType: hearing.appealType,
         isAdvancedOnDocket: hearing.aod

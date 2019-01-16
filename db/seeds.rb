@@ -140,10 +140,11 @@ class SeedDB
 
     3.times do
       root = FactoryBot.create(:root_task)
+      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       FactoryBot.create_list(
         :request_issue,
         [3, 4, 5].sample,
-        description: "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011",
+        contested_issue_description: description,
         notes: "Pain disorder with 100\% evaluation per examination",
         review_request: root.appeal
       )
@@ -320,68 +321,68 @@ class SeedDB
       ],
       veteran_file_number: "701305078",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "783740847",
       docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       veteran_file_number: "963360019",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 2, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 2, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "604969679",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "228081153",
       docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "152003980",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "375273128",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "682007349",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 5, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 5, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "231439628",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
       number_of_claimants: 1,
       veteran_file_number: "975191063",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 8, contested_issue_description: description, notes: notes)
     )
 
     FeatureToggle.enable!(:ama_auto_case_distribution)
@@ -499,20 +500,20 @@ class SeedDB
     eligible_request_issue = RequestIssue.create!(
       review_request: higher_level_review,
       issue_category: "Military Retired Pay",
-      description: "nonrating description",
-      benefit_type: "compensation",
+      nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
       ineligible_reason: nil,
+      benefit_type: "compensation",
       decision_date: Date.new(2018, 5, 1)
     )
 
     untimely_request_issue = RequestIssue.create!(
       review_request: higher_level_review,
       issue_category: "Active Duty Adjustments",
-      description: "nonrating description",
-      benefit_type: "compensation",
+      nonrating_issue_description: "nonrating description",
       contention_reference_id: "12345",
       decision_date: Date.new(2018, 5, 1),
+      benefit_type: "compensation",
       ineligible_reason: :untimely
     )
 
@@ -557,7 +558,7 @@ class SeedDB
     FactoryBot.create(:attorney_case_review, task_id: child.id)
   end
 
-  def create_task_at_colocated(appeal, judge, attorney, colocated_user)
+  def create_task_at_colocated(appeal, judge, attorney, colocated_user, task_attributes = {})
     parent = FactoryBot.create(
       :ama_judge_task,
       :on_hold,
@@ -566,7 +567,7 @@ class SeedDB
       parent: create_root_task(appeal)
     )
 
-    child = FactoryBot.create(
+    atty_task = FactoryBot.create(
       :ama_attorney_task,
       :on_hold,
       assigned_to: attorney,
@@ -575,19 +576,41 @@ class SeedDB
       appeal: appeal
     )
 
-    org_task = FactoryBot.create(:ama_colocated_task,
-                                 appeal: appeal,
-                                 parent: child,
-                                 assigned_by: attorney,
-                                 assigned_to: Colocated.singleton)
-
-    FactoryBot.create(:ama_colocated_task,
-                      appeal: appeal,
-                      parent: org_task,
-                      action: org_task.action,
-                      instructions: org_task.instructions,
+    org_task_args = { appeal: appeal,
+                      parent: atty_task,
                       assigned_by: attorney,
-                      assigned_to: colocated_user)
+                      assigned_to: Colocated.singleton }.merge(task_attributes)
+    org_task = FactoryBot.create(:ama_colocated_task, :on_hold, org_task_args)
+
+    personal_task_args = org_task_args.merge(
+      parent: org_task,
+      action: org_task.action,
+      instructions: org_task.instructions,
+      assigned_to: colocated_user
+    )
+    FactoryBot.create(:ama_colocated_task, personal_task_args)
+  end
+
+  def create_colocated_legacy_tasks(attorney, colocated_user)
+    [
+      { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
+      { vacols_id: "2226048", trait: nil, additional: { action: "translation" } },
+      { vacols_id: "2249056", trait: :in_progress },
+      { vacols_id: "2306397", trait: :on_hold }
+    ].each do |attrs|
+      org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
+                        assigned_by: attorney,
+                        assigned_to: Colocated.singleton }.merge(attrs[:additional] || {})
+      org_task = FactoryBot.create(:colocated_task, :on_hold, org_task_args)
+
+      personal_task_args = org_task_args.merge(
+        parent: org_task,
+        action: org_task.action,
+        instructions: org_task.instructions,
+        assigned_to: colocated_user
+      )
+      FactoryBot.create(*[:colocated_task, attrs[:trait]].compact, personal_task_args)
+    end
   end
 
   def create_task_at_attorney_review(appeal, judge, attorney)
@@ -642,29 +665,6 @@ class SeedDB
     end
   end
 
-  def create_colocated_legacy_tasks(attorney, colocated_user)
-    [
-      { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
-      { vacols_id: "2226048", trait: :in_progress },
-      { vacols_id: "2249056", trait: :in_progress },
-      { vacols_id: "2306397", trait: :on_hold }
-    ].each do |attrs|
-      org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
-                        status: Constants.TASK_STATUSES.on_hold,
-                        assigned_by: attorney,
-                        assigned_to: Colocated.singleton }.merge(attrs[:additional] || {})
-      org_task = FactoryBot.create(:colocated_task, org_task_args)
-
-      personal_task_args = org_task_args.merge(
-        parent: org_task,
-        action: org_task.action,
-        instructions: org_task.instructions,
-        assigned_to: colocated_user
-      )
-      FactoryBot.create(*[:colocated_task, attrs[:trait]].compact, personal_task_args)
-    end
-  end
-
   def create_tasks
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
@@ -678,6 +678,7 @@ class SeedDB
     create_task_at_judge_review(@ama_appeals[4], judge, attorney)
     create_task_at_judge_review(@ama_appeals[5], judge, attorney)
     create_task_at_colocated(@ama_appeals[6], judge, attorney, colocated)
+    create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, colocated, action: "translation")
     create_task_at_attorney_review(@ama_appeals[7], judge, attorney)
     create_task_at_attorney_review(@ama_appeals[8], judge, attorney)
 
