@@ -15,7 +15,7 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import Modal from '../../components/Modal';
 import StatusMessage from '../../components/StatusMessage';
-import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
+import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone, getTimeIncrement } from '../../util/DateUtil';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { crossSymbolHtml, pencilSymbol } from '../../components/RenderFunctions';
@@ -171,12 +171,12 @@ export default class DailyDocket extends React.Component {
     return moment(date).format('MM/DD/YYYY');
   };
 
-  getHearingDateOptions = () => {
-    return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
-      label: this.getHearingDate(hearingDayOption.scheduledFor),
-      value: hearingDayOption.id
-    }));
-  };
+  // getHearingDateOptions = () => {
+  //   return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
+  //     label: this.getHearingDate(hearingDayOption.scheduledFor),
+  //     value: hearingDayOption.id
+  //   }));
+  // };
 
  getHearingDateOptions = (hearing) => {
    const hearings = [{ label: this.getHearingDate(hearing.scheduledFor),
@@ -238,9 +238,13 @@ export default class DailyDocket extends React.Component {
         displayText: 'Other',
         value: 'other',
         disabled: readOnly
-
       }
     ];
+  };
+
+  getHearingOptionsTime = (hearing) => {
+    return [{ label: hearing.optionalTime,
+      value: hearing.optionalTime }];
   };
 
   getHearingDayDropdown = (hearing, readOnly) => {
@@ -262,9 +266,10 @@ export default class DailyDocket extends React.Component {
       <SearchableDropdown
       name="optionalTime"
       placeholder="Select a time"
-      options={this.getHearingTimeOptions(hearing, readOnly)}
-      value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
-      onChange={this.onHearingTimeUpdate(hearing.id)}
+      options={this.getHearingOptionsTime(hearing)}
+      value={hearing.optionalTime}
+      // onChange={this.onHearingTimeUpdate(hearing.id)}
+      // readOnly
       hideLabel/></div>
       </div>;
   };

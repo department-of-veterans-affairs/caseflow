@@ -130,3 +130,4 @@ export const getTimeInDifferentTimeZone = (date, timeZone) => {
 export const getDate = (date) => {
   return moment(date).format('YYYY-MM-DD');
 };
+

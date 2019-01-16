@@ -101,6 +101,14 @@ class LegacyHearing < ApplicationRecord
     Hearing::HEARING_TYPES[request_type.to_sym]
   end
 
+  def optional_time
+    time = "8:30"
+    date = Time.parse(time) + 30.minutes
+    if readable_request_type == "Central"
+      return date.to_formatted_s(:time)
+    end
+  end
+
   # rubocop:disable Metrics/MethodLength
   def vacols_attributes
     {
@@ -185,7 +193,8 @@ class LegacyHearing < ApplicationRecord
         :readable_location,
         :appeal_external_id,
         :external_id,
-        :veteran_file_number
+        :veteran_file_number,
+        :optional_time
       ],
       except: [:military_service, :vacols_id]
     ).merge(
