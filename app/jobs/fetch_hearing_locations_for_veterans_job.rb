@@ -29,16 +29,23 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  def find_or_update_ro_for_veteran(veteran, va_dot_gov_address:)
-    if veteran.closest_regional_office.nil?
-      fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
-    else
-      { closest_regional_office: veteran.closest_regional_office, facility: nil }
-    end
+  def fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address:)
+    state_code = get_state_code(va_dot_gov_address)
+    facility_ids = ro_facility_ids_for_state(state_code)
+
+    distances = VADotGovService.get_distance(
+      lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: facility_ids
+    )
+
+    closest_ro_index = RegionalOffice::CITIES.values.find_index { |ro| ro[:facility_locator_id] == distances[0][:id] }
+    closest_ro = RegionalOffice::CITIES.keys[closest_ro_index]
+    veteran.update(closest_regional_office: closest_ro)
+
+    { closest_regional_office: closest_ro, facility: distances[0] }
   end
 
   def create_available_locations_for_veteran(veteran, va_dot_gov_address:)
-    ro = find_or_update_ro_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
+    ro = fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
     facility_ids = facility_ids_for_ro(ro[:closest_regional_office])
 
     if !ro[:facility].nil? && facility_ids.length == 1
@@ -89,21 +96,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   def ro_facility_ids_for_state(state_code)
     RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? || ro[:state] != state_code }
       .pluck(:facility_locator_id)
-  end
-
-  def fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address:)
-    state_code = get_state_code(va_dot_gov_address)
-    facility_ids = ro_facility_ids_for_state(state_code)
-
-    distances = VADotGovService.get_distance(
-      lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: facility_ids
-    )
-
-    closest_ro_index = RegionalOffice::CITIES.values.find_index { |ro| ro[:facility_locator_id] == distances[0][:id] }
-    closest_ro = RegionalOffice::CITIES.keys[closest_ro_index]
-    veteran.update(closest_regional_office: closest_ro)
-
-    { closest_regional_office: closest_ro, facility: distances[0] }
   end
 
   def valid_states

@@ -169,28 +169,6 @@ class ExternalApi::VADotGovService
       { facilities: facilities_result, has_next: has_next }
     end
 
-    # def fetch_facilities_with_ids(query:, ids:)
-    #   response = send_va_dot_gov_request(
-    #     query: query,
-    #     endpoint: facilities_endpoint
-    #   )
-    #   resp_body = JSON.parse(response.body)
-    #
-    #   check_for_error(response_body: resp_body, code: response.code)
-    #
-    #   facilities = resp_body["data"]
-    #   distances = resp_body["meta"]["distances"]
-    #   has_next = !resp_body["links"]["next"].nil?
-    #   selected_facilities = facilities.select { |facility| ids.include? facility["id"] }
-    #
-    #   facilities_result = selected_facilities.map do |selected|
-    #     distance = distances.find { |dist| dist["id"] == selected["id"] }
-    #     facility_json(selected, distance)
-    #   end
-    #
-    #   { facilities: facilities_result, has_next: has_next }
-    # end
-
     def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
       url = URI.escape(base_url + endpoint)
       request = HTTPI::Request.new(url)
