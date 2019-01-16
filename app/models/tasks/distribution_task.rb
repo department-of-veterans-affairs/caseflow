@@ -5,7 +5,7 @@ class DistributionTask < GenericTask
   # to signal that cases are ready for assignment to judges.
   def update_status_if_children_tasks_are_complete
     if children.any? && children.all? { |t| t.status == Constants.TASK_STATUSES.completed }
-      ready_for_distribution!      
+      ready_for_distribution!
     end
   end
 
