@@ -26,7 +26,7 @@ class JudgeDropdown extends React.Component {
     ApiUtil.get('/users?role=Judge').then((resp) => {
       const judgeOptions = _.values(ApiUtil.convertToCamelCase(resp.body.judges)).map((judge) => ({
         label: judge.fullName,
-        value: judge.id
+        value: judge.cssId
       }));
 
       judgeOptions.sort((first, second) => (first.label - second.label));
