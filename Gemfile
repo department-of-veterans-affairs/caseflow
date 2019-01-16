@@ -13,7 +13,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8dde00d67b7c629e4b871f8dcb3617bfe989b3db"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "4c32edb3b6a1e56a1d52fcc1610827e1c13dbe88"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "3b9edeeaebe3e6a49bb27e8d08486ed8b3959db4"
 gem "dogstatsd-ruby"
 gem "holidays", "~> 6.4"
 # Use jquery as the JavaScript library
