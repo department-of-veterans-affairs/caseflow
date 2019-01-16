@@ -10,13 +10,10 @@ class JudgeLegacyTask < LegacyTask
   def available_actions(role)
     return [] if role != "judge"
 
-    if action.eql? "review"
-      [review_action]
-    else
-      [
-        Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
-      ]
-    end
+    [
+      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+      action.eql?("review") ? review_action : Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+    ]
   end
 
   def timeline_title
