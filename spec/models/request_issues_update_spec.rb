@@ -463,7 +463,7 @@ describe RequestIssuesUpdate do
     let!(:riu_recently_attempted) do
       create(
         :request_issues_update,
-        attempted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+        attempted_at: (RequestIssuesUpdate.processing_retry_interval_hours - 1).hours.ago
       )
     end
 

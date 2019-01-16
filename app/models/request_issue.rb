@@ -90,6 +90,11 @@ class RequestIssue < ApplicationRecord
   }.freeze
 
   class << self
+    # We don't need to retry these as frequently
+    def processing_retry_interval_hours
+      12
+    end
+
     def submitted_at_column
       :decision_sync_submitted_at
     end
@@ -223,7 +228,7 @@ class RequestIssue < ApplicationRecord
   def contention_text
     return UNIDENTIFIED_ISSUE_MSG if is_unidentified?
 
-    description
+    Contention.new(description).text
   end
 
   def review_title

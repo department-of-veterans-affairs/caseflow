@@ -252,7 +252,7 @@ describe EndProductEstablishment do
           review_request: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-          contested_issue_description: "this is a big decision"
+          contested_issue_description: "description too long for bgs" * 20
         ),
         create(
           :request_issue,
@@ -277,6 +277,7 @@ describe EndProductEstablishment do
     it "creates contentions and saves them to objects" do
       subject
 
+      expect(contentions.second[:description].length).to eq(255)
       expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
@@ -666,6 +667,64 @@ describe EndProductEstablishment do
         let(:promulgation_date) { end_product_establishment.established_at - 1.day }
 
         it { is_expected.to eq(nil) }
+      end
+    end
+  end
+
+  context "#sync_decision_issues!" do
+    subject { end_product_establishment.sync_decision_issues! }
+
+    include ActiveJob::TestHelper
+
+    after do
+      clear_enqueued_jobs
+    end
+
+    context "when the end product establishment has request issues" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            review_request: source,
+            decision_sync_submitted_at: nil
+          ),
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            review_request: source,
+            decision_sync_submitted_at: nil
+          )
+        ]
+      end
+
+      it "submits each request issue and starts decision sync job" do
+        subject
+
+        expect(request_issues.first.reload.decision_sync_submitted_at).to_not be_nil
+        expect(request_issues.second.reload.decision_sync_submitted_at).to_not be_nil
+
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.first)
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.second)
+      end
+    end
+
+    context "when the end product establishment has effectuations" do
+      let(:source) { create(:decision_document) }
+      let!(:granted_decision_issue) { create(:decision_issue, disposition: "allowed", decision_review: source.appeal) }
+
+      let!(:board_grant_effectuation) do
+        BoardGrantEffectuation.create(
+          granted_decision_issue: granted_decision_issue,
+          end_product_establishment: end_product_establishment
+        )
+      end
+
+      it "submits each effectuation and starts decision sync job" do
+        subject
+
+        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to_not be_nil
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(board_grant_effectuation)
       end
     end
   end
