@@ -11,8 +11,10 @@ module FeatureHelper
     end
   end
 
-  def dropdown_selected_match?(selected_value, container = page)
-    container.find(".Select-control").find(".Select-value").text == selected_value
+  def dropdown_selected_value(container = page)
+    container&.find(".Select-control .Select-value")&.text
+  rescue Capybara::ElementNotFound
+    ""
   end
 
   def generate_words(n_words)
