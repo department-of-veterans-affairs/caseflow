@@ -76,7 +76,7 @@ class BoardGrantUnconnected extends React.PureComponent {
           </div>
         </div>
         <div className="cf-txt-r">
-          <a className="cf-cancel-link" href={`/decision_reviews/${businessLineUrl}`}>Cancel</a>
+          <a className="cf-cancel-link" href={`${task.tasks_url}`}>Cancel</a>
           <Button className="usa-button"
             name="submit-update"
             loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
