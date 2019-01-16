@@ -5,6 +5,7 @@
 class HearingDay < ApplicationRecord
   acts_as_paranoid
   belongs_to :judge, class_name: "User"
+  has_many :hearings
   validates :regional_office, absence: true, if: :central_office?
 
   REQUEST_TYPES = {
