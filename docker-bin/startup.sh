@@ -23,8 +23,6 @@ export ORACLE_HOME=/opt/oracle/instantclient_12_2
 echo "Starting Appeals App"
 date
 
-sleep 30
-
 echo "Waiting for Vacols to be ready"
 rake local:vacols:wait_for_connection
 
@@ -34,14 +32,14 @@ rake db:setup
 echo "Seeding Facols and Caseflow App"
 rake local:vacols:seed
 
-echo "Enabling Feature Flags"
-bundle exec rails runner scripts/enable_features_dev.rb
-
 echo "Migrating the database"
 rails db:migrate
 
 echo "Seeding local caseflow database"
 rake db:seed
+
+echo "Enabling Feature Flags"
+bundle exec rails runner scripts/enable_features_dev.rb
 
 echo "Starting Caseflow App RoR"
 rails server --binding 0.0.0.0 -p 3000

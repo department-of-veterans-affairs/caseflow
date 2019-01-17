@@ -1,6 +1,18 @@
 version: '3'
 services:
 
+  appeals-localstack-aws:
+    container_name: localstack
+    image: localstack/localstack:latest
+    ports:
+      - "4561-4583:4561-4583"
+      - "8082:${PORT_WEB_UI-8080}"
+    environment:
+      - SERVICES=sqs
+    volumes:
+      - ./local/sqs/conf:/conf
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+
   vacols-db-development:
     build: ./local/vacols/.
     container_name: VACOLS_DB-development
@@ -14,12 +26,16 @@ services:
       - "u02_development:/u02"
     ports:
       - "1522:1521"
+    depends_on:
+      - appeals-localstack-aws
 
   appeals-redis:
     container_name: appeals-redis
     image: redis:2.8.23
     ports:
       - "6379:6379"
+    depends_on:
+      - vacols-db-development
 
   appeals-postgres:
     image: postgres:9.3.14
@@ -30,18 +46,9 @@ services:
       - "postgresdata:/var/lib/postgresql/data"
     environment:
      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - appeals-redis
 
-  appeals-localstack-aws:
-    container_name: localstack
-    image: localstack/localstack:latest
-    ports:
-      - "4561-4583:4561-4583"
-      - "8082:${PORT_WEB_UI-8080}"
-    environment:
-      - SERVICES=sqs
-    volumes:
-      - ./local/sqs/conf:/conf
-      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
 
   # private docker registry and you need to have permissions to use it
   appeals-app:
@@ -53,6 +60,8 @@ services:
       - appeals-redis
       - appeals-postgres
       - vacols-db-development
+      - appeals-localstack-aws
+    command: /bin/bash -c "./docker-bi"
 
   appeals-web:
     image: nginx
@@ -64,7 +73,6 @@ services:
     depends_on:
       - appeals-app
     command: /bin/bash -c "exec nginx -g 'daemon off;'"
-
 
 volumes:
   postgresdata:
