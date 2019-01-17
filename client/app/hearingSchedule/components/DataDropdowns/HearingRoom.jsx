@@ -36,7 +36,7 @@ export default class HearingRoomDropdown extends React.Component {
 HearingRoomDropdown.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.number,
   onChange: PropTypes.func.isRequired,
   readOnly: PropTypes.bool
 };
