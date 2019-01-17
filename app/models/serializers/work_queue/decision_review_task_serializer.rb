@@ -8,7 +8,7 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
   end
 
   def claimant_name
-    if decision_review.claimants.any?
+    if decision_review.veteran_is_not_claimant
       # TODO: support multiple?
       decision_review.claimants.first.try(:name)
     else
@@ -35,6 +35,10 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
       isLegacyAppeal: false,
       issueCount: decision_review.request_issues.count
     }
+  end
+
+  attribute :tasks_url do
+    task.assigned_to.tasks_url
   end
 
   attribute :id

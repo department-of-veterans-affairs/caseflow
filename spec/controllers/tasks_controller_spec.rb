@@ -589,8 +589,8 @@ RSpec.describe TasksController, type: :controller do
         response_body = JSON.parse(response.body)
         expect(response_body["tasks"].length).to eq 2
 
-        task = response_body["tasks"][0]
-        expect(task["type"]).to eq "colocated_tasks"
+        task = response_body["tasks"].find { |t| t["type"] == "colocated_tasks" }
+        expect(task).to_not be_nil
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
       end

@@ -7,6 +7,7 @@ import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
+import { FlashAlerts } from './components/Alerts';
 
 import ReviewPage from './pages/ReviewPage';
 import TaskPage from './pages/TaskPage';
@@ -33,6 +34,7 @@ class NonComp extends React.PureComponent {
             defaultUrl="/">
             <AppFrame>
               <AppSegment filledBackground>
+                {this.props.flash && <FlashAlerts flash={this.props.flash} />}
                 <div>
                   <PageRoute
                     exact
