@@ -107,6 +107,7 @@ class Hearing < ApplicationRecord
         :veteran_file_number,
         :evidence_window_waived,
         :bva_poc,
+        :room,
         :transcription,
         :docket_number,
         :docket_name,

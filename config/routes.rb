@@ -139,7 +139,7 @@ Rails.application.routes.draw do
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
 
-  resources :hearings, only: [:update]
+  resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"
 

@@ -4,14 +4,12 @@ class HearingsController < ApplicationController
   before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
   before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
 
+  def show
+    render json: hearing.to_hash(current_user.id)
+  end
+
   def update
-    if params["hearing"]["master_record_updated"]
-      HearingRepository.slot_new_hearing(
-        params["hearing"]["master_record_updated"]["id"],
-        params["hearing"]["master_record_updated"]["time"],
-        hearing.appeal
-      )
-    end
+    slot_new_hearing
 
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(update_params_legacy)
@@ -19,6 +17,7 @@ class HearingsController < ApplicationController
       HearingRepository.load_vacols_data(hearing)
     else
       hearing.update!(update_params)
+      update_transcription if params["transcription"]
     end
 
     render json: hearing.to_hash(current_user.id)
@@ -33,6 +32,20 @@ class HearingsController < ApplicationController
   end
 
   private
+
+  def slot_new_hearing
+    if params["hearing"]["master_record_updated"]
+      HearingRepository.slot_new_hearing(
+        params["hearing"]["master_record_updated"]["id"],
+        params["hearing"]["master_record_updated"]["time"],
+        hearing.appeal
+      )
+    end
+  end
+
+  def update_transcription
+    Transcription.find_or_initialize_by(hearing: hearing).update(update_transcription_params)
+  end
 
   def check_hearing_prep_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("hearing_prep_out_of_service")
@@ -79,6 +92,24 @@ class HearingsController < ApplicationController
                                      :transcript_requested,
                                      :prepped,
                                      :scheduled_time,
+                                     :judge_id,
+                                     :room,
+                                     :bva_poc,
                                      :evidence_window_waived)
+  end
+
+  def update_transcription_params
+    params.require("transcription").permit(
+      :copy_requested,
+      :copy_sent_date,
+      :expected_return_date,
+      :problem_notice_sent_date,
+      :problem_type,
+      :requested_remedy,
+      :sent_to_transcriber_date,
+      :task_number,
+      :transcriber,
+      :uploaded_to_vbms_date
+    )
   end
 end
