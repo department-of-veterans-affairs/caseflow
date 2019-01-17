@@ -96,13 +96,19 @@ class CaseListTable extends React.PureComponent {
     return columns;
   }
 
-  render = () => <Table
-    className="cf-case-list-table"
-    columns={this.getColumns}
-    rowObjects={this.props.appeals}
-    getKeyForRow={this.getKeyForRow}
-    styling={this.props.styling}
-  />
+  render = () => {
+    if (this.props.appeals.length === 0) {
+      return <p>{COPY.CASE_LIST_TABLE_EMPTY_TEXT}</p>;
+    }
+
+    return <Table
+      className="cf-case-list-table"
+      columns={this.getColumns}
+      rowObjects={this.props.appeals}
+      getKeyForRow={this.getKeyForRow}
+      styling={this.props.styling}
+    />;
+  }
 }
 
 CaseListTable.propTypes = {

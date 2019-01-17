@@ -1,7 +1,8 @@
 describe WorkQueue::DecisionReviewTaskSerializer do
   let(:veteran) { create(:veteran) }
   let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
-  let(:task) { create(:higher_level_review_task, appeal: hlr).becomes(DecisionReviewTask) }
+  let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+  let(:task) { create(:higher_level_review_task, appeal: hlr, assigned_to: non_comp_org).becomes(DecisionReviewTask) }
 
   subject { described_class.new(task) }
 
@@ -13,6 +14,7 @@ describe WorkQueue::DecisionReviewTaskSerializer do
                                     assigned_on: task.assigned_at,
                                     completed_at: task.completed_at,
                                     started_at: task.started_at,
+                                    tasks_url: "/decision_reviews/nco",
                                     id: task.id,
                                     created_at: task.created_at,
                                     type: "Higher-Level Review")
