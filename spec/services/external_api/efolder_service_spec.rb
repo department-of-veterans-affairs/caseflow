@@ -96,6 +96,7 @@ describe ExternalApi::EfolderService do
               type_id: "97",
               external_document_id: expected_document1.vbms_document_id,
               received_at: expected_received_at1,
+              upload_date: expected_received_at1,
               series_id: expected_document1.series_id
             },
             {
@@ -103,6 +104,7 @@ describe ExternalApi::EfolderService do
               type_id: "73",
               external_document_id: expected_document2.vbms_document_id,
               received_at: expected_received_at2,
+              upload_date: expected_received_at2,
               series_id: expected_document2.series_id
             }
           ]
@@ -134,10 +136,10 @@ describe ExternalApi::EfolderService do
         let(:expected_received_at1) { Faker::Date.backward }
         let(:expected_received_at2) { Faker::Date.backward }
         let(:expected_document1) do
-          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id)
+          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id, upload_date: expected_received_at1)
         end
         let(:expected_document2) do
-          Generators::Document.build(type: "NOD", filename: nil, file_number: appeal.sanitized_vbms_id)
+          Generators::Document.build(type: "NOD", filename: nil, file_number: appeal.sanitized_vbms_id, upload_date: expected_received_at2)
         end
 
         it "returns an array with all Document objects" do
@@ -172,6 +174,7 @@ describe ExternalApi::EfolderService do
               type_id: "97",
               external_document_id: expected_document1.vbms_document_id,
               received_at: expected_received_at1,
+              upload_date: expected_received_at1,
               series_id: expected_document1.series_id
             }
           ]
@@ -205,7 +208,7 @@ describe ExternalApi::EfolderService do
         let(:expected_received_at1) { Faker::Date.backward }
 
         let(:expected_document1) do
-          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id)
+          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id, upload_date: expected_received_at1)
         end
 
         it "should make another request if pending status" do
