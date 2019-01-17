@@ -261,7 +261,7 @@ class HearingDetails extends React.Component {
 
     this.state = {
       hearing: {
-        vlj: hearing.judge.judgeCssId,
+        vlj: hearing.judge ? hearing.judge.judgeCssId : null,
         coordinator: null,
         room: null,
         waiveEvidenceHold: false,
