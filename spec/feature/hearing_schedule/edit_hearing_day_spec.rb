@@ -6,13 +6,13 @@ RSpec.feature "Edit a Hearing Day" do
     User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
   end
 
+  let!(:hearings_user) do
+    create(:hearings_management)
+  end
+
   let!(:judge) do
     create(:user, css_id: "BVAAABSHIRE", full_name: "Judge Abshire")
     create(:staff, :judge_role, sdomainid: "BVAAABSHIRE", snamel: "Abshire", snamef: "Judge")
-  end
-
-  let!(:hearings_user) do
-    create(:hearings_management)
   end
 
   let!(:hearing_day) do
