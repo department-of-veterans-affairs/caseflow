@@ -35,6 +35,7 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL": "Switch views",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
+  "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
 
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
   "OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE": "EP Code(s)",
@@ -271,6 +272,7 @@
   "ASSIGN_TO_TEAM_DROPDOWN": "Select a team",
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
+  "ASSIGN_TASK_SUCCESS_MESSAGE": "Task assigned to %s",
 
   "CREATE_MAIL_TASK_TITLE": "Create new mail task",
   "MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL": "Select correspondence type",

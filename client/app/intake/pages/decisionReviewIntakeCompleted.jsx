@@ -9,6 +9,8 @@ import _ from 'lodash';
 import Alert from '../../components/Alert';
 import { legacyIssue } from '../util/issues';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
+import SmallLoader from '../../components/SmallLoader';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -120,6 +122,14 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     case INTAKE_STATES.REVIEWED:
       return <Redirect to={PAGE_PATHS.FINISH} />;
     default:
+    }
+
+    if (completedReview.processedInCaseflow && formType !== 'appeal') {
+      // we do not use Redirect because state no longer matters,
+      // and because we are likely not in a relative URL path any more.
+      window.location = completedReview.redirectTo;
+
+      return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
     return <div><StatusMessage

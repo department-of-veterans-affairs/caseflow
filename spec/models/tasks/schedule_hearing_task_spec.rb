@@ -62,64 +62,6 @@ describe ScheduleHearingTask do
     end
   end
 
-  describe "Add a schedule hearing task without a pre-existing Root Task" do
-    let(:params) do
-      {
-        type: ScheduleHearingTask.name,
-        action: "Assign Hearing",
-        appeal: appeal,
-        assigned_to_type: "User",
-        assigned_to_id: hearings_user.id
-      }
-    end
-
-    it "should create a root task and a task of type ScheduleHearingTask" do
-      hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
-      parent_task = RootTask.find_by(appeal_id: appeal.id)
-
-      expect(hearing_task.type).to eq(ScheduleHearingTask.name)
-      expect(hearing_task.appeal_type).to eq(LegacyAppeal.name)
-      expect(hearing_task.status).to eq("assigned")
-      expect(hearing_task.parent_id).to eq(parent_task.id)
-      expect(parent_task.appeal_type).to eq(LegacyAppeal.name)
-    end
-  end
-
-  describe "Add a schedule hearing task with a business payload" do
-    let(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
-    let(:params) do
-      {
-        type: ScheduleHearingTask.name,
-        action: "Assign Hearing",
-        appeal: appeal,
-        assigned_to_type: "User",
-        assigned_to_id: hearings_user.id,
-        parent_id: root_task.id,
-        business_payloads: {
-          description: "test",
-          values: {
-            "regional_office": "RO17",
-            "hearing_date": "2018-10-25",
-            "hearing_time": "8:00"
-          }
-        }
-      }
-    end
-
-    it "should create a task of type ScheduleHearingTask" do
-      hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
-
-      expect(hearing_task.type).to eq(ScheduleHearingTask.name)
-      expect(hearing_task.appeal_type).to eq(LegacyAppeal.name)
-      expect(hearing_task.status).to eq("assigned")
-      expect(hearing_task.task_business_payloads.size).to eq 1
-      expect(hearing_task.task_business_payloads[0].description).to eq("test")
-      expect(hearing_task.task_business_payloads[0].values["regional_office"]).to eq("RO17")
-      expect(hearing_task.task_business_payloads[0].values["hearing_date"]).to eq("2018-10-25")
-      expect(hearing_task.task_business_payloads[0].values["hearing_time"]).to eq("8:00")
-    end
-  end
-
   describe "Add and update a schedule hearing task with a new business payload" do
     let(:hearing) { FactoryBot.create(:case_hearing) }
     let(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
@@ -171,7 +113,12 @@ describe ScheduleHearingTask do
   end
 
   describe "A Central Office hearing should be updated with vacols_id and appeal placed in location 36" do
-    let!(:hearing) { FactoryBot.create(:case_hearing, hearing_type: "C", hearing_date: test_hearing_date_vacols) }
+    let!(:hearing) do
+      FactoryBot.create(:case_hearing,
+                        hearing_type: "C",
+                        hearing_date: test_hearing_date_vacols,
+                        folder_nr: nil)
+    end
     let!(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
     let!(:params) do
       {

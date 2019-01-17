@@ -31,7 +31,7 @@ class SubdividedTableRow extends React.PureComponent {
   }
 }
 
-class CaseListTable extends React.PureComponent {
+class OtherReviewsTable extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = { styling: {} };
@@ -148,7 +148,7 @@ class CaseListTable extends React.PureComponent {
   }
 }
 
-CaseListTable.propTypes = {
+OtherReviewsTable.propTypes = {
   reviews: PropTypes.arrayOf(PropTypes.object).isRequired,
   veteranName: PropTypes.string,
   styling: PropTypes.object
@@ -163,4 +163,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearCaseListSearch
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(CaseListTable);
+export default connect(mapStateToProps, mapDispatchToProps)(OtherReviewsTable);

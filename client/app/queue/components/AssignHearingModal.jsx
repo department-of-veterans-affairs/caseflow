@@ -97,8 +97,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     if (hearingDay.hearingTime) {
       this.props.onHearingTimeChange(hearingDay.hearingTime);
     }
-
-    this.addScheduleHearingTask();
   }
 
   submit = () => {
@@ -133,37 +131,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     }
 
     return true;
-  }
-
-  addScheduleHearingTask = () => {
-    const {
-      scheduleHearingTask, appeal, userId, setLoading
-    } = this.props;
-
-    if (!scheduleHearingTask) {
-      const payload = {
-        data: {
-          tasks: [
-            {
-              type: 'ScheduleHearingTask',
-              external_id: appeal.externalId,
-              assigned_to_type: 'User',
-              assigned_to_id: userId
-            }
-          ]
-        }
-      };
-
-      setLoading(true);
-
-      return ApiUtil.post('/tasks', payload).then((response) => {
-        const resp = JSON.parse(response.text);
-
-        this.props.onReceiveAmaTasks(resp.tasks.data);
-
-        setLoading(false);
-      });
-    }
   }
 
   completeScheduleHearingTask = () => {

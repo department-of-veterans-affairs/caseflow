@@ -25,6 +25,9 @@ module Caseflow::Error
   class VaDotGovAPIError < SerializableError; end
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
+  class VaDotGovLimitError < VaDotGovAPIError; end
+
+  class FetchHearingLocationsJobError < SerializableError; end
 
   class FetchHearingLocationsJobError < SerializableError; end
 
@@ -78,6 +81,15 @@ module Caseflow::Error
   end
 
   class AttorneyJudgeCheckoutError < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
+
+  class LegacyCaseAlreadyAssignedError < SerializableError
     attr_accessor :code, :message
 
     def initialize(args)
