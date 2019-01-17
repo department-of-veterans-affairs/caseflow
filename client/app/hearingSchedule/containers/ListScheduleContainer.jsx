@@ -57,7 +57,7 @@ export class ListScheduleContainer extends React.Component {
   componentDidMount = () => {
     this.props.onSelectedHearingDayChange('');
     this.setState({ showModalAlert: false });
-  }
+  };
 
   componentWillUnmount = () => {
     this.props.onResetDeleteSuccessful();
