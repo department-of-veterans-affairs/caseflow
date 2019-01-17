@@ -196,7 +196,7 @@ class HearingDay < ApplicationRecord
       end
 
       grouped_hearing_days.map do |key, day|
-        hearings = day[0].is_a?(HearingDay) ? day[0].hearings : vacols_hearings_for_days[key]
+        hearings = (vacols_hearings_for_days[key] || []) + (day[0].is_a?(HearingDay) ? day[0].hearings : [])
 
         # There should only be one day, so we take the first value in our day array
         {
