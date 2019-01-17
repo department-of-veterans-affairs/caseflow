@@ -116,7 +116,7 @@ class HearingDay < ApplicationRecord
       }
     end
 
-    def load_days_with_open_hearing_slots(start_date, end_date, regional_office = nil)
+    def hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil)
       hearing_days = load_days(start_date, end_date, regional_office)
 
       total_video_and_co = hearing_days[:caseflow_hearings] + hearing_days[:vacols_hearings]
@@ -140,7 +140,7 @@ class HearingDay < ApplicationRecord
           nil
         else
           HearingDay.to_hash(hearing_day).slice(:id, :scheduled_for, :request_type, :room).tap do |day|
-            day[:hearings] = scheduled_hearings
+            day[:hearings] = scheduled_hearings.map { |hearing| hearing.to_hash(RequestStore.store[:current_user].id) }
             day[:total_slots] = total_slots
           end
         end
@@ -148,17 +148,17 @@ class HearingDay < ApplicationRecord
     end
 
     def filter_non_scheduled_hearings(hearings)
-      filtered_hearings = []
-      hearings.each do |hearing|
-        if hearing.vacols_record.hearing_type == REQUEST_TYPES[:central]
-          if !hearing.vacols_record.folder_nr.nil?
-            filtered_hearings << hearing
+      hearings.select do |hearing|
+        if hearing[:vacols_record].nil?
+          true
+        else
+          if hearing[:vacols_record].hearing_type == REQUEST_TYPES[:central]
+            !hearing[:vacols_record].folder_nr.nil?
+          else
+            hearing[:vacols_record].hearing_disp != "P" && hearing[:vacols_record].hearing_disp != "C"
           end
-        elsif hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
-          filtered_hearings << hearing
         end
       end
-      filtered_hearings
     end
 
     def find_hearing_day(request_type, hearing_key)
@@ -196,10 +196,13 @@ class HearingDay < ApplicationRecord
       end
 
       grouped_hearing_days.map do |key, day|
-        caseflow_hearings = day[0].is_a?(HearingDay) ? day[0].hearings : []
+        hearings = day[0].is_a?(HearingDay) ? day[0].hearings : vacols_hearings_for_days[key]
 
         # There should only be one day, so we take the first value in our day array
-        { hearing_day: day[0], hearings: (vacols_hearings_for_days[key] + caseflow_hearings) }
+        {
+          hearing_day: day[0],
+          hearings: hearings
+        }
       end
     end
 

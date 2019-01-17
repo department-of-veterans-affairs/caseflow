@@ -196,7 +196,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
     return regional_office_match[1] if regional_office_match
 
-    "C"
+    nil
   end
 
   private

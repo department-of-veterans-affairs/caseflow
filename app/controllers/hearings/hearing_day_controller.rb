@@ -26,11 +26,11 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def show
     hearing_day = HearingDay.find_hearing_day(nil, params[:id])
-    hearing_day_hash = HearingDayRepository.to_canonical_hash(hearing_day)
+    hearing_day_hash = HearingDay.to_hash(hearing_day)
 
     hearings, regional_office = fetch_hearings(hearing_day_hash, params[:id]).values_at(:hearings, :regional_office)
 
-    hearing_day_options = HearingDay.load_days_with_open_hearing_slots(
+    hearing_day_options = HearingDay.hearing_days_with_hearings_hash(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 365.days,
       regional_office
@@ -51,13 +51,13 @@ class Hearings::HearingDayController < HearingScheduleController
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    hearing_days_with_hearings = HearingDay.load_days_with_open_hearing_slots(
+    hearing_days_with_hearings = HearingDay.hearing_days_with_hearings_hash(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
       regional_office
     )
 
-    render json: { hearing_days: json_hearings(HearingDay.to_hash(hearing_days_with_hearings)) }
+    render json: { hearing_days: json_hearings(hearing_days_with_hearings) }
   end
 
   # Create a hearing schedule day
