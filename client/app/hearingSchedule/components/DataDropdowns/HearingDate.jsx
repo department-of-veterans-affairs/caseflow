@@ -48,13 +48,14 @@ class HearingDateDropdown extends React.Component {
   }
 
   render() {
-    const { name, label, onChange } = this.props;
+    const { name, label, onChange, readOnly } = this.props;
 
     return (
       <SearchableDropdown
         name={name}
         label={label}
         strongLabel
+        readOnly={readOnly}
         value={this.getSelectedOption()}
         onChange={(option) => onChange(option.value)}
         options={this.props.hearingDates.options} />
@@ -67,7 +68,8 @@ HearingDateDropdown.propTypes = {
   label: PropTypes.string,
   regionalOffice: PropTypes.string.isRequired,
   value: PropTypes.string,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  readOnly: PropTypes.bool
 };
 
 HearingDateDropdown.defaultProps = {

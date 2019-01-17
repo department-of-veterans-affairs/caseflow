@@ -18,13 +18,14 @@ export default class HearingRoomDropdown extends React.Component {
   }
 
   render() {
-    const { name, label, onChange } = this.props;
+    const { name, label, onChange, readOnly } = this.props;
 
     return (
       <SearchableDropdown
         name={name}
         label={label}
         strongLabel
+        readOnly={readOnly}
         value={this.getSelectedOption()}
         onChange={(option) => onChange(option.value)}
         options={HEARING_ROOM_OPTIONS} />
@@ -36,7 +37,8 @@ HearingRoomDropdown.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
   value: PropTypes.string,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  readOnly: PropTypes.bool
 };
 
 HearingRoomDropdown.defaultProps = {

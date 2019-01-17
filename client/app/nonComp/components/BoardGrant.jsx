@@ -40,7 +40,7 @@ class BoardGrantUnconnected extends React.PureComponent {
     super(props);
 
     this.state = {
-      isEffectuated: false
+      isEffectuated: Boolean(this.props.task.completed_at)
     };
   }
 
@@ -56,8 +56,33 @@ class BoardGrantUnconnected extends React.PureComponent {
     const {
       appeal,
       decisionIssuesStatus,
-      businessLineUrl
+      task
     } = this.props;
+
+    let completeDiv = null;
+
+    if (!task.completed_at) {
+      completeDiv = <React.Fragment>
+        <div className="cf-gray-box">
+          <div className="cf-decision-date">
+            <Checkbox
+              vertical
+              onChange={this.handleEffectuatedClick}
+              value={this.state.isEffectuated}
+              disabled={Boolean(task.completed_at)}
+              name="isEffectuated"
+              label="I certify these benefits have been effectuated." />
+          </div>
+        </div>
+        <div className="cf-txt-r">
+          <a className="cf-cancel-link" href={`${task.tasks_url}`}>Cancel</a>
+          <Button className="usa-button"
+            name="submit-update"
+            loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
+            disabled={!this.state.isEffectuated} onClick={this.handleSave}>Complete</Button>
+        </div>
+      </React.Fragment>;
+    }
 
     const requestIssuesWithDecisionIssues = formatRequestIssuesWithDecisionIssues(
       appeal.requestIssues, appeal.decisionIssues).
@@ -80,23 +105,7 @@ class BoardGrantUnconnected extends React.PureComponent {
           }
         </div>
       </div>
-      <div className="cf-gray-box">
-        <div className="cf-decision-date">
-          <Checkbox
-            vertical
-            onChange={this.handleEffectuatedClick}
-            value={this.state.isEffectuated}
-            name="isEffectuated"
-            label="I certify these benefits have been effectuated." />
-        </div>
-      </div>
-      <div className="cf-txt-r">
-        <a className="cf-cancel-link" href={`/decision_reviews/${businessLineUrl}`}>Cancel</a>
-        <Button className="usa-button"
-          name="submit-update"
-          loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
-          disabled={!this.state.isEffectuated} onClick={this.handleSave}>Complete</Button>
-      </div>
+      { completeDiv }
     </div>;
   }
 }
@@ -105,7 +114,6 @@ const BoardGrant = connect(
   (state) => ({
     appeal: state.appeal,
     businessLine: state.businessLine,
-    businessLineUrl: state.businessLineUrl,
     task: state.task,
     decisionIssuesStatus: state.decisionIssuesStatus
   })
