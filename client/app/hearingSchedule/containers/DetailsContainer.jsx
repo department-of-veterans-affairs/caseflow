@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import ApiUtil from '../../util/ApiUtil';
 
-import HearingDetails from '../Details';
+import HearingDetails from '../components/Details';
 
 class HearingDetailsContainer extends React.Component {
   constructor(props) {
@@ -21,6 +21,10 @@ class HearingDetailsContainer extends React.Component {
     this.getHearing();
   }
 
+  goBack = () => {
+    this.props.history.goBack();
+  }
+
   getHearing = () => {
     const { hearingId } = this.props;
     const { hearings } = this.state;
@@ -30,7 +34,7 @@ class HearingDetailsContainer extends React.Component {
       this.setState({ hearing });
     } else {
       this.setState({ loading: true });
-      ApiUtil.get(`/hearings/worksheets/${hearingId}.json`).then((resp) => {
+      ApiUtil.get(`/hearings/${hearingId}`).then((resp) => {
         this.setState({
           hearing: ApiUtil.convertToCamelCase(resp.body),
           loading: false
@@ -41,7 +45,7 @@ class HearingDetailsContainer extends React.Component {
   render() {
 
     if (this.state.hearing) {
-      return <HearingDetails hearing={this.state.hearing} />;
+      return <HearingDetails hearing={this.state.hearing} goBack={this.goBack} />;
     }
 
     return null;
