@@ -110,7 +110,7 @@ class HearingDayAddModal extends React.Component {
       errorMessages.push('Please make sure you have entered a Hearing Type');
     }
 
-    if (this.state.videoSelected && !this.props.selectedRegionalOffice) {
+    if (this.state.videoSelected && !this.props.selectedRegionalOffice.value) {
       this.setState({ roError: true });
       roErrorMessages.push('Please make sure you select a Regional Office');
     }
