@@ -103,7 +103,7 @@ RSpec.feature "Hearings" do
     scenario "Legacy daily docket saves to the backend" do
       visit "/hearings/dockets/2024-10-05"
       expect(page).to have_content("Daily Docket")
-      fill_in "2.notes", with: "This is a note about the hearing!"
+      fill_in "Notes", with: "This is a note about the hearing!"
       find(".checkbox-wrapper-2-prep").find(".cf-form-checkbox").click
       find(".dropdown-2-disposition").click
       find("#react-select-2--option-1").click
