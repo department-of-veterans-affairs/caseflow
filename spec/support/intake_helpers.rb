@@ -110,6 +110,14 @@ module IntakeHelpers
   # rubocop: enable Metrics/MethodLength
   # rubocop: enable Metrics/ParameterLists
 
+  def start_claim_review(claim_review_type)
+    if claim_review_type == :supplemental_claim
+      start_supplemental_claim(create(:veteran))
+    else
+      start_higher_level_review(create(:veteran), informal_conference: true)
+    end
+  end
+
   def setup_intake_flags
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)

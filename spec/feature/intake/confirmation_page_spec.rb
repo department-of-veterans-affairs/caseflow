@@ -14,11 +14,7 @@ feature "Intake Confirmation Page" do
       [:higher_level_review, :supplemental_claim].each do |claim_review_type|
         describe "given a #{claim_review_type}" do
           it "does not show edit in VBMS or tracked item if there is no End Product" do
-            if claim_review_type == :supplemental_claim
-              start_supplemental_claim(create(:veteran))
-            else
-              start_higher_level_review(create(:veteran), informal_conference: true)
-            end
+            start_claim_review(claim_review_type)
 
             visit "/intake"
             click_intake_continue
@@ -34,11 +30,7 @@ feature "Intake Confirmation Page" do
           end
 
           it "shows EP related content if there is an end product created" do
-            if claim_review_type == :supplemental_claim
-              start_supplemental_claim(create(:veteran))
-            else
-              start_higher_level_review(create(:veteran), informal_conference: true)
-            end
+            start_claim_review(claim_review_type)
 
             visit "/intake"
             click_intake_continue
