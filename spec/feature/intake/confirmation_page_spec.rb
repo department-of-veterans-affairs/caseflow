@@ -30,6 +30,7 @@ feature "Intake Confirmation Page" do
             expect(page).to have_content("Intake completed")
             expect(page).to_not have_content("If you need to edit this, go to VBMS claim details")
             expect(page).to_not have_content("Informal Conference Tracked Item")
+            expect(page).to have_content("Edit the notice letter to reflect the status of requested issues")
           end
 
           it "shows EP related content if there is an end product created" do
@@ -49,6 +50,7 @@ feature "Intake Confirmation Page" do
             expect(page).to have_content("Nonrating EP is being established")
             expect(page).to have_content("If you need to edit this, go to VBMS claim details")
             expect(page).to have_content("Tracked Item") if claim_review_type == :higher_level_review
+            expect(page).to have_content("Edit the notice letter to reflect the status of requested issues")
           end
         end
       end

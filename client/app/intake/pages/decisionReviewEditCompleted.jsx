@@ -30,10 +30,11 @@ const leadMessageList = ({ veteran, formName, requestIssues }) => {
         'If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.'
       );
     }
-    leadMessageArr.push(
-      <strong>Edit the notice letter to reflect the status of requested issues.</strong>
-    );
   }
+
+  leadMessageArr.push(
+    <strong>Edit the notice letter to reflect the status of requested issues.</strong>
+  );
 
   return leadMessageArr;
 };
