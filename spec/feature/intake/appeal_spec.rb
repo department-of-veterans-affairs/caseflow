@@ -74,6 +74,17 @@ feature "Appeal Intake" do
     )
   end
 
+  let!(:before_ama_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 11.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
+      ]
+    )
+  end
+
   let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
 
   it "cancels an intake in progress when there is a NilRatingProfileListError" do
@@ -350,15 +361,6 @@ feature "Appeal Intake" do
           reference_id: "ramp_ref_id" }
       ],
       associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-    )
-
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 11.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
     )
 
     epe = create(:end_product_establishment, :active)
@@ -788,6 +790,16 @@ feature "Appeal Intake" do
         add_intake_rating_issue("None of these match")
 
         expect(page).to have_content("Description for Active Duty Adjustments")
+
+        # add before_ama ratings
+        click_intake_add_issue
+        add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+        add_intake_rating_issue("limitation of thigh motion (extension)")
+
+        expect(page).to have_content("Non-RAMP Issue before AMA Activation")
+        expect(page).to_not have_content(
+          "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        )
 
         # add eligible legacy issue
         click_intake_add_issue

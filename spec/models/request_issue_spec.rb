@@ -865,9 +865,22 @@ describe RequestIssue do
       context "rating issue is from a RAMP decision" do
         let(:ramp_claim_id) { "ramp_claim_id" }
 
-        it "does not flag rating issues before AMA from a RAMP decision" do
+        it "does not flag rating issues before AMA" do
           rating_request_issue.contested_rating_issue_reference_id = "ramp_ref_id"
+
           rating_request_issue.validate_eligibility!
+
+          expect(rating_request_issue.ineligible_reason).to be_nil
+        end
+      end
+
+      context "rating issue is from a VACOLS legacy opt-in" do
+        it "does not flag rating issues before AMA" do
+          rating_request_issue.review_request.legacy_opt_in_approved = true
+          rating_request_issue.vacols_id = "something"
+
+          rating_request_issue.validate_eligibility!
+
           expect(rating_request_issue.ineligible_reason).to be_nil
         end
       end
