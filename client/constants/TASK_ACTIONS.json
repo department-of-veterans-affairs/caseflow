@@ -8,7 +8,7 @@
     "COLOCATED_RETURN_TO_ATTORNEY": { "label": "Send back to attorney", "value": "modal/mark_task_complete" },
     "CREATE_MAIL_TASK": { "label": "Create mail task", "value": "modal/create_mail_task", "func": "mail_assign_to_organization_data" },
     "JUDGE_CHECKOUT": { "label": "Ready for Dispatch", "value": "dispatch_decision/special_issues" },
-    "JUDGE_RETURN_TO_ATTORNEY": { "label": "Return to attorney", "value": "modal/assign_to_attorney", "func": "return_to_attorney_data" },
+    "JUDGE_RETURN_TO_ATTORNEY": { "label": "Return to attorney", "value": "modal/return_to_attorney", "func": "return_to_attorney_data" },
     "MARK_COMPLETE": { "label": "Mark task complete", "value": "modal/mark_task_complete" },
     "PLACE_HOLD": { "label": "Place hold", "value": "place_hold" },
     "REASSIGN_TO_PERSON": { "label": "Re-assign to person", "value": "modal/reassign_to_person", "func": "assign_to_user_data" },

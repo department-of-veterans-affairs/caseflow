@@ -333,6 +333,39 @@ export const setSelectionOfTaskOfUser =
     }
   });
 
+export const returnCaseToAttorney = ({
+  tasks, assigneeId, previousAssigneeId
+}: {
+  tasks: Array<Task>, assigneeId: string, previousAssigneeId: string
+}) => (dispatch: Dispatch) => Promise.all(tasks.map((oldTask) => {
+
+  const url = '/tasks';
+  const params = {
+    data: {
+      tasks: [{
+        type: 'AttorneyRewriteTask',
+        external_id: oldTask.externalAppealId,
+        parent_id: oldTask.taskId,
+        assigned_to_id: assigneeId
+      }]
+    }
+  };
+
+  return ApiUtil.post(url, params).
+    then((resp) => resp.body).
+    then((resp) => {
+      dispatch(onReceiveAmaTasks(
+        resp.tasks.data
+      ));
+
+      dispatch(setSelectionOfTaskOfUser({
+        userId: previousAssigneeId,
+        taskId: oldTask.uniqueId,
+        selected: false
+      }));
+    });
+}));
+
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId
 }: {
