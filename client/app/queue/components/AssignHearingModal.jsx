@@ -173,8 +173,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         } else {
           this.props.showErrorMessage({
             title: 'No Hearing Day',
-            detail: 'Until April 1 hearing days for AMA appeals need to be created manually. ' +
-                    'Please contact the Hearing Schedule Team for assistance.'
+            detail: 'Until April 1st hearing days for AMA appeals need to be created manually. ' +
+                    'Please contact the Caseflow Team for assistance.'
           });
         }
       });

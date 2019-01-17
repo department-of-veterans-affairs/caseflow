@@ -190,6 +190,15 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
   end
 
+  def regional_office
+    # Hearing days have the regional office in the folder_nr
+    regional_office_match = /VIDEO (RO\d*)/.match(folder_nr)
+
+    return regional_office_match[1] if regional_office_match
+
+    "C"
+  end
+
   private
 
   def current_user_css_id

@@ -151,7 +151,8 @@ class HearingRepository
         Hearing.create!(
           appeal: appeal,
           hearing_day_id: hearing_day.id,
-          judge_id: hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil,
+          room: hearing.room,
+          judge_id: hearing_day.judge.id,
           scheduled_time: hearing_date
         )
       end
@@ -176,7 +177,8 @@ class HearingRepository
         Hearing.create!(
           appeal: appeal,
           hearing_day_id: hearing_day.id,
-          judge_id: hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil,
+          room: hearing.room,
+          judge_id: hearing_day.judge.id,
           scheduled_time: hearing_date
         )
       end

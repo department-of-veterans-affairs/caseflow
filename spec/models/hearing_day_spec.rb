@@ -120,7 +120,7 @@ describe HearingDay do
   end
 
   context "load Video days for a range date" do
-    let(:hearings) do
+    let!(:hearings) do
       [create(:case_hearing),
        create(:case_hearing)]
     end
@@ -128,7 +128,7 @@ describe HearingDay do
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "RO13") }
 
     it "gets hearings for a date range" do
-      expect(subject.size).to eq 2
+      expect(subject[:vacols_hearings].size).to eq 2
     end
   end
 
@@ -141,9 +141,8 @@ describe HearingDay do
 
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "C") }
 
-    it "gets hearings for a date range" do
-      hearings
-      expect(subject.size).to eq 2
+    it "shouldn't load any since we're past HearingDay::CASEFLOW_CO_PARENT_DATE" do
+      expect(subject[:vacols_hearings].size).to eq 0
     end
   end
 

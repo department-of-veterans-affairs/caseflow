@@ -7,7 +7,7 @@ class Hearings::HearingDayController < HearingScheduleController
     end_date = validate_end_date(params[:end_date])
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    video_and_co, travel_board = HearingDay.load_days(start_date, end_date, regional_office)
+    hearings = HearingDay.load_days(start_date, end_date, regional_office)
 
     respond_to do |format|
       format.html do
@@ -15,8 +15,8 @@ class Hearings::HearingDayController < HearingScheduleController
       end
       format.json do
         render json: {
-          hearings: json_hearings(video_and_co),
-          tbhearings: json_tb_hearings(travel_board),
+          hearings: json_hearings(HearingDay.array_to_hash(hearings[:vacols_hearings] + hearings[:caseflow_hearings])),
+          tbhearings: json_tb_hearings(hearings[:travel_board]),
           startDate: start_date,
           endDate: end_date
         }
@@ -51,21 +51,13 @@ class Hearings::HearingDayController < HearingScheduleController
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    enriched_hearings = HearingDay.load_days_with_open_hearing_slots(Time.zone.today.beginning_of_day,
-                                                                     Time.zone.today.beginning_of_day + 182.days,
-                                                                     regional_office)
-    enriched_hearings.each do |hearing_day|
-      begin
-        HearingDay.find(hearing_day[:id])
-        hearing_day[:hearings] = hearing_day[:hearings] + HearingDay.find(hearing_day[:id]).hearings
-      rescue ActiveRecord::RecordNotFound
-        # Don't do anything... This is hacky!
-      end
+    hearing_days_with_hearings = HearingDay.load_days_with_open_hearing_slots(
+      Time.zone.today.beginning_of_day,
+      Time.zone.today.beginning_of_day + 182.days,
+      regional_office
+    )
 
-      hearing_day[:hearings] = hearing_day[:hearings].map { |hearing| hearing.to_hash(current_user.id) }
-    end
-
-    render json: { hearing_days: json_hearings(enriched_hearings) }
+    render json: { hearing_days: json_hearings(HearingDay.to_hash(hearing_days_with_hearings)) }
   end
 
   # Create a hearing schedule day

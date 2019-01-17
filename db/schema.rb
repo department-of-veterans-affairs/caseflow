@@ -109,15 +109,12 @@ ActiveRecord::Schema.define(version: 20190114225909) do
 
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address"
-    t.string "city"
     t.datetime "created_at", null: false
     t.float "distance"
     t.string "facility_id"
     t.string "name"
-    t.string "state"
     t.datetime "updated_at", null: false
     t.string "veteran_file_number", null: false
-    t.string "zip_code"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
@@ -125,10 +122,10 @@ ActiveRecord::Schema.define(version: 20190114225909) do
     t.bigint "appeal_id", null: false
     t.string "contention_reference_id"
     t.bigint "decision_document_id"
-    t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
-    t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
+    t.datetime "decision_sync_processed_at"
+    t.datetime "decision_sync_submitted_at"
     t.bigint "end_product_establishment_id"
     t.bigint "granted_decision_issue_id", null: false
     t.index ["appeal_id"], name: "index_board_grant_effectuations_on_appeal_id"
