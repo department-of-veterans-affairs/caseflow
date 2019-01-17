@@ -24,7 +24,7 @@ export default class HearingRoomDropdown extends React.Component {
       <SearchableDropdown
         name={name}
         label={label}
-        strongLabels
+        strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
         onChange={(option) => onChange(option.value, option.label)}
