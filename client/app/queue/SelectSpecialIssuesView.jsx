@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -52,15 +53,18 @@ class SelectSpecialIssuesView extends React.PureComponent {
     const { specialIssues } = this.props;
 
     if (specialIssues.appeal_type === 'LegacyAppeal') {
-      return this.renderLegacySpecialIssues();
+      console.log('getting in if');
+      console.log(specialIssues);
+      console.log('******');
+
+      return this.renderLegacySpecialIssues(specialIssues);
     }
 
-    return this.renderNonLegacySpecialIssues();
+    return this.renderNonLegacySpecialIssues(specialIssues);
 
   }
-  renderNonLegacySpecialIssues = () => {
+  renderNonLegacySpecialIssues = (specialIssues) => {
     const {
-      specialIssues,
       appeal,
       error
     } = this.props;
@@ -93,10 +97,9 @@ class SelectSpecialIssuesView extends React.PureComponent {
     </React.Fragment>;
 
   }
-  renderLegacySpecialIssues = () => {
+  renderLegacySpecialIssues = (specialIssues) => {
     const {
-      error,
-      specialIssues
+      error
     } = this.props;
     let sections = [
       specialIssueFilters.aboutSection(),
@@ -135,21 +138,21 @@ class SelectSpecialIssuesView extends React.PureComponent {
             name="About the appellant"
             options={aboutSection}
             values={specialIssues}
-            onChange={this.onChangeSpecialIssue}
+            onChange={this.onChangeLegacySpecialIssue}
           />
           <CheckboxGroup
             label={<h3>{COPY.SPECIAL_ISSUES_RESIDENCE_SECTION}</h3>}
             name="Residence"
             options={residenceSection}
             values={specialIssues}
-            onChange={this.onChangeSpecialIssue}
+            onChange={this.onChangeLegacySpecialIssue}
           />
           <CheckboxGroup
             label={<h3>{COPY.SPECIAL_ISSUES_BENEFIT_TYPE_SECTION}</h3>}
             name="Benefit Types"
             options={benefitTypeSection}
             values={specialIssues}
-            onChange={this.onChangeSpecialIssue}
+            onChange={this.onChangeLegacySpecialIssue}
           />
         </div>
         <div {...flexColumn}>
@@ -159,14 +162,14 @@ class SelectSpecialIssuesView extends React.PureComponent {
             name="Issues on Appeal"
             options={issuesOnAppealSection}
             values={specialIssues}
-            onChange={this.onChangeSpecialIssue}
+            onChange={this.onChangeLegacySpecialIssue}
           />
           <CheckboxGroup
             label={<h3>{COPY.SPECIAL_ISSUES_DIC_OR_PENSION_SECTION} </h3>}
             name="DIC or Pension"
             options={dicOrPensionSection}
             values={specialIssues}
-            onChange={this.onChangeSpecialIssue}
+            onChange={this.onChangeLegacySpecialIssue}
           />
         </div>
       </div>
