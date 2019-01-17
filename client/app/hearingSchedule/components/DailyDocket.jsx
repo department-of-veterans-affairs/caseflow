@@ -15,8 +15,8 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import Modal from '../../components/Modal';
 import StatusMessage from '../../components/StatusMessage';
-import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone, getTimeIncrement } from '../../util/DateUtil';
-import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
+import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
+import { DISPOSITION_OPTIONS, TIME_OPTIONS } from '../../hearings/constants/constants';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { crossSymbolHtml, pencilSymbol } from '../../components/RenderFunctions';
 
@@ -82,7 +82,7 @@ const notesTitleStyling = css({
   marginTop: '15px'
 });
 
-const radioButtonStyling = css({marginTop: '25px'});
+const radioButtonStyling = css({ marginTop: '25px' });
 
 export default class DailyDocket extends React.Component {
 
@@ -171,12 +171,12 @@ export default class DailyDocket extends React.Component {
     return moment(date).format('MM/DD/YYYY');
   };
 
-  // getHearingDateOptions = () => {
-  //   return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
-  //     label: this.getHearingDate(hearingDayOption.scheduledFor),
-  //     value: hearingDayOption.id
-  //   }));
-  // };
+  getHearingDateOptions = () => {
+    return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
+      label: this.getHearingDate(hearingDayOption.scheduledFor),
+      value: hearingDayOption.id
+    }));
+  };
 
  getHearingDateOptions = (hearing) => {
    const hearings = [{ label: this.getHearingDate(hearing.scheduledFor),
@@ -215,11 +215,11 @@ export default class DailyDocket extends React.Component {
           disabled: readOnly
         },
         {
-        displayText: 'Other',
-        value: 'other',
-        disabled: readOnly
+          displayText: 'Other',
+          value: 'other',
+          disabled: readOnly
 
-      }
+        }
       ];
     }
 
@@ -242,10 +242,11 @@ export default class DailyDocket extends React.Component {
     ];
   };
 
-  getHearingOptionsTime = (hearing) => {
-    return [{ label: hearing.optionalTime,
-      value: hearing.optionalTime }];
-  };
+  getHearingDetails = (hearing) => {
+    if (hearing.readableRequestType) {
+      return TIME_OPTIONS;
+    }
+  }
 
   getHearingDayDropdown = (hearing, readOnly) => {
     const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
@@ -257,21 +258,21 @@ export default class DailyDocket extends React.Component {
       onChange={this.onHearingDateUpdate(hearing.id)}
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'} />
     <div {...radioButtonStyling}>
-    <RadioField
-      name= "Time"
-      options={this.getHearingTimeOptions(hearing, readOnly)}
-      value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
-      onChange={this.onHearingTimeUpdate(hearing.id)}
-      strongLabel/>
+      <RadioField
+        name= "Time"
+        options={this.getHearingTimeOptions(hearing, readOnly)}
+        value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
+        onChange={this.onHearingTimeUpdate(hearing.id)}
+        strongLabel />
       <SearchableDropdown
-      name="optionalTime"
-      placeholder="Select a time"
-      options={this.getHearingOptionsTime(hearing)}
-      value={hearing.optionalTime}
-      // onChange={this.onHearingTimeUpdate(hearing.id)}
-      // readOnly
-      hideLabel/></div>
-      </div>;
+        name="optionalTime"
+        placeholder="Select a time"
+        options={TIME_OPTIONS}
+        value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
+        onChange={this.onHearingTimeUpdate(hearing.id)}
+        // readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
+        hideLabel /></div>
+    </div>;
   };
 
   getNotesField = (hearing) => {

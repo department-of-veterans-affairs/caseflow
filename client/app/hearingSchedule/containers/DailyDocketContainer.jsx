@@ -140,6 +140,51 @@ export class DailyDocketContainer extends React.Component {
       });
   };
 
+  getOptionalTime = (hearing) => {
+    if (hearing.editedOptinalTime) {
+      return {
+        // eslint-disable-next-line id-length
+        h: hearing.editedOptinalTime.value.split(':')[0],
+        // eslint-disable-next-line id-length
+        m: hearing.editedOptinalTime.value.split(':')[1],
+        offset: moment.tz('America/New_York').format('Z')
+      };
+    }
+    const timeObject = moment(hearing.scheduledFor);
+
+    return {
+      // eslint-disable-next-line id-length
+      h: timeObject.hours(),
+      // eslint-disable-next-line id-length
+      m: timeObject.minutes(),
+      offset: timeObject.format('Z')
+    };
+
+  }
+
+  // optionalHearingTime = (hearing) => {
+  //   const time = this.getOptionalTime(hearing);
+
+  //   return {
+  //     disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
+  //     notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
+  //     master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
+  //       time } : null,
+  //     scheduled_for: hearing.editedOptinalTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
+  //   };
+  // };
+
+  // saveOptionalHearing = (hearing) => {
+  //   const formattedHearing = this.optionalHearingTime(hearing);
+
+  //   ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: { hearing: formattedHearing } }).
+  //     then((response) => {
+  //       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+  //       this.props.onReceiveSavedHearing(resp);
+  //     });
+  // };
+
   loadActiveJudges = () => {
     let requestUrl = '/users?role=Judge';
 
