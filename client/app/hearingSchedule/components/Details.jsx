@@ -179,7 +179,8 @@ export default class HearingDetails extends React.Component {
           <h2>Transcription Problem</h2>
           <TranscriptionProblem
             transcription={transcription}
-            set={this.setTranscription} />
+            set={this.setTranscription}
+            readOnly={disabled} />
           <div className="cf-help-divider" />
 
           <h2>Transcription Request</h2>
