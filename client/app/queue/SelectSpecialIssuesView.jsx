@@ -53,10 +53,6 @@ class SelectSpecialIssuesView extends React.PureComponent {
     const { specialIssues } = this.props;
 
     if (specialIssues.appeal_type === 'LegacyAppeal') {
-      console.log('getting in if');
-      console.log(specialIssues);
-      console.log('******');
-
       return this.renderLegacySpecialIssues(specialIssues);
     }
 
