@@ -149,7 +149,7 @@ describe ExternalApi::EfolderService do
             filename: nil,
             file_number: appeal.sanitized_vbms_id,
             upload_date: expected_received_at2
-            )
+          )
         end
 
         it "returns an array with all Document objects" do

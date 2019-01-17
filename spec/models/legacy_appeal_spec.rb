@@ -451,7 +451,7 @@ describe LegacyAppeal do
 
     context "when appeal has no appeal view" do
       it "should return all documents" do
-        expect(subject).to eq(documents)
+        expect(subject.map(&:to_hash)).to eq(documents.map(&:to_hash))
       end
     end
 
@@ -472,7 +472,7 @@ describe LegacyAppeal do
       context "when one document is newer than the appeal view date" do
         it "should return the newer document" do
           documents[0].update(upload_date: -2.days.ago)
-          expect(subject).to eq([documents[0]])
+          expect(subject.map(&:to_hash)).to eq([documents[0].to_hash])
         end
       end
     end
