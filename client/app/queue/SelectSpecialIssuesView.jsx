@@ -13,6 +13,8 @@ import CheckboxGroup from '../components/CheckboxGroup';
 import specialIssueFilters from '../constants/SpecialIssueFilters';
 import COPY from '../../COPY.json';
 import ApiUtil from '../util/ApiUtil';
+import Checkbox from '../components/Checkbox';
+import SPECIAL_ISSUES from '../constants/SpecialIssues';
 const flexContainer = css({
   display: 'flex',
   justifyContent: 'space-between'
@@ -26,12 +28,16 @@ const flexColumn = css({
 class SelectSpecialIssuesView extends React.PureComponent {
   getPageName = () => COPY.SPECIAL_ISSUES_PAGE_TITLE;
   getPageNote = () => COPY.SPECIAL_ISSUES_PAGE_NOTE;
-  onChangeSpecialIssue = (event) => {
+  onChangeSpecialIssue = (issue) => (value) => {
+      this.props.setSpecialIssues({
+        [issue.snakeCase]: value
+      });
+  }
+  onChangeLegacySpecialIssue = (event) => {
     this.props.setSpecialIssues({
       [event.target.id]: document.getElementById(event.target.id).checked
     });
   }
-
   goToNextStep = () => {
     const {
       appeal,
@@ -42,7 +48,50 @@ class SelectSpecialIssuesView extends React.PureComponent {
 
     this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, null);
   };
-  render = () => {
+  render() {
+    const {specialIssues} = this.props;
+    if (specialIssues.appeal_type === "LegacyAppeal") {
+      return this.renderLegacySpecialIssues();
+    } else {
+      return this.renderNonLegacySpecialIssues();
+    }
+  }
+  renderNonLegacySpecialIssues = () => {
+      const {
+        specialIssues,
+        appeal,
+        error
+      } = this.props;
+  
+      const specialIssueCheckboxes = SPECIAL_ISSUES.map((issue) => {
+        if (issue.nonCompensation && !appeal.isLegacyAppeal) {
+          return null;
+        }
+  
+        return <Checkbox
+          key={issue.specialIssue}
+          label={issue.display}
+          name={issue.specialIssue}
+          value={specialIssues[issue.snakeCase]}
+          onChange={this.onChangeSpecialIssue(issue)}
+        />;
+      });
+  
+      return <React.Fragment>
+        <h1>
+          {this.getPageName()}
+        </h1>
+        <p>
+          {this.getPageNote()}
+        </p>
+        {error && <Alert type="error" title={error.title} message={error.detail} />}
+        <div className="cf-multiple-columns">
+          {specialIssueCheckboxes}
+        </div>
+      </React.Fragment>;
+    
+  }
+  renderLegacySpecialIssues = () => {
     const {
       error,
       specialIssues
