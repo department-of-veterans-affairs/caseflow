@@ -268,7 +268,8 @@ class DecisionReview < ApplicationRecord
     veteran.ratings.reject { |rating| rating.issues.empty? }
 
     # return empty list when there are no ratings
-  rescue Rating::BackfilledRatingError
+  rescue Rating::BackfilledRatingError => e
+    Raven.capture_exception(e)
     []
   end
 
