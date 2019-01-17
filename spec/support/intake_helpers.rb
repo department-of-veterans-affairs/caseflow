@@ -8,13 +8,15 @@ module IntakeHelpers
     claim_participant_id: nil,
     legacy_opt_in_approved: false,
     veteran_is_not_claimant: false,
-    benefit_type: "compensation"
+    benefit_type: "compensation",
+    informal_conference: false
   )
 
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      informal_conference: false, same_office: false,
+      informal_conference: informal_conference,
+      same_office: false,
       benefit_type: benefit_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
@@ -107,6 +109,14 @@ module IntakeHelpers
   end
   # rubocop: enable Metrics/MethodLength
   # rubocop: enable Metrics/ParameterLists
+
+  def start_claim_review(claim_review_type)
+    if claim_review_type == :supplemental_claim
+      start_supplemental_claim(create(:veteran))
+    else
+      start_higher_level_review(create(:veteran), informal_conference: true)
+    end
+  end
 
   def setup_intake_flags
     FeatureToggle.enable!(:intake)
@@ -468,7 +478,7 @@ module IntakeHelpers
       decision_review,
       contested_decision_issues
     )
-    # verify that not modifying a request issue contenting a decision issue
+    # verify that not modifying a request issue contesting a decision issue
     # does not result in readding
 
     visit page_url
