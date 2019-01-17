@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { css } from 'glamor';
 
 import CopyTextButton from '../components/CopyTextButton';
@@ -9,7 +9,7 @@ import DetailsOverview from './components/DetailsOverview';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import * as DateUtil from '../util/DateUtil';
-import ApiUtil from '../util/ApiUtil';
+// import ApiUtil from '../util/ApiUtil';
 
 import {
   JudgeDropdown,
@@ -24,22 +24,19 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import DateSelector from '../components/DateSelector';
 import RadioField from '../components/RadioField';
 
-const inlineRow = css({
+const row = css({
+  marginLeft: '-15px',
+  marginRight: '-15px',
   '& > *': {
     display: 'inline-block',
-    paddingRight: '25px',
+    paddingRight: '15px',
+    paddingLeft: '15px',
     verticalAlign: 'middle',
     margin: 0
   }
 });
 
-const inputFix = css({
-  '& .question-label': {
-    marginBottom: '2rem !important'
-  }
-});
-
-const inlineRowThirds = css({
+const rowThirds = css({
   marginTop: '30px',
   marginBottom: '30px',
   marginLeft: '-15px',
@@ -54,6 +51,207 @@ const inlineRowThirds = css({
   }
 });
 
+const inputFix = css({
+  '& .question-label': {
+    marginBottom: '2rem !important'
+  }
+});
+
+const Overview = ({
+  hearing: {
+    scheduledFor, docketNumber, regionalOfficeName,
+    readableLocation, disposition, readableRequestType,
+    aod }
+}) => (
+  <DetailsOverview columns={[
+    {
+      label: 'Hearing Date',
+      value: DateUtil.formatDate(scheduledFor)
+    },
+    {
+      label: 'Docket Number',
+      value: docketNumber
+    },
+    {
+      label: 'Regional office',
+      value: regionalOfficeName
+    },
+    {
+      label: 'Hearing Location',
+      value: readableLocation
+    },
+    {
+      label: 'Disposition',
+      value: disposition
+    },
+    {
+      label: 'Type',
+      value: readableRequestType
+    },
+    {
+      label: 'AOD Status',
+      value: aod
+    }
+  ]} />
+);
+
+const Details = ({
+  hearing: { vlj, room, waiveEvidenceHold, notes, coordinator },
+  set
+}) => (
+  <React.Fragment>
+    <div {...rowThirds}>
+      <JudgeDropdown
+        value={vlj}
+        onChange={(val) => set('vlj', val)}
+      />
+    </div>
+    <div {...rowThirds}>
+      <HearingRoomDropdown
+        value={room}
+        onChange={(val) => set('room', val)}
+      />
+      <HearingCoordinatorDropdown
+        value={coordinator}
+        onChange={(val) => set('coordinator', val)}
+      />
+      <div>
+        <strong>Waive 90 Day Evidence Hold</strong>
+        <Checkbox
+          label="Yes, Waive 90 Day Evidence Hold"
+          name="waiveEvidenceHold"
+          value={waiveEvidenceHold}
+          onChange={(val) => set('waiveEvidenceHold', val)}
+        />
+      </div>
+    </div>
+    <TextareaField
+      name="Notes"
+      strongLabel
+      styling={css({
+        display: 'block',
+        maxWidth: '100%'
+      })}
+      value={notes || ''}
+      onChange={(val) => set('notes', val)}
+    />
+  </React.Fragment>
+);
+
+const TranscriptionDetails = ({
+  transcription: { taskNumber, transcriber, sentToTranscriberDate, expectedReturnDate, uploadedToVbmsDate },
+  set
+}) => (
+  <React.Fragment>
+    <div {...rowThirds}>
+      <TextField
+        name="taskNumber"
+        label="Task #"
+        strongLabel
+        value={taskNumber}
+        onChange={(val) => set('taskNumber', val)}
+      />
+      <SearchableDropdown
+        name="transcriber"
+        label="Transcriber"
+        strongLabel
+        value={transcriber}
+        onChange={(val) => set('transcriber', val)}
+      />
+    </div>
+    <div {...rowThirds}>
+      <DateSelector
+        name="sentToTranscriberDate"
+        label="Sent to Transcriber"
+        strongLabel
+        value={sentToTranscriberDate}
+        onChange={(val) => set('sentToTranscriberDate', val)}
+      />
+      <DateSelector
+        name="expectedReturnDate"
+        label="Expected Return Date"
+        strongLabel
+        value={expectedReturnDate}
+        onChange={(val) => set('expectedReturnDate', val)}
+      />
+      <DateSelector
+        name="uploadedToVbmsDate"
+        label="Transcript Uploaded to VBMS"
+        strongLabel
+        value={uploadedToVbmsDate}
+        onChange={(val) => set('uploadedToVbmsDate', val)}
+      />
+    </div>
+  </React.Fragment>
+);
+
+const TranscriptionProblem = ({
+  transcription: { problemType, problemNoticeSentDate, requestedRemedy },
+  set
+}) => (
+  <div {...rowThirds}>
+    <SearchableDropdown
+      name="problemType"
+      label="Transcription Problem Type"
+      strongLabel
+      value={problemType}
+      onChange={(val) => set('problemType', val)}
+    />
+    <DateSelector
+      name="problemNoticeSentDate"
+      label="Problem Notice Sent"
+      strongLabel
+      value={problemNoticeSentDate}
+      onChange={(val) => set('problemNoticeSentDate', val)}
+    />
+    <RadioField
+      name="requestedRemedy"
+      label="Requested Remedy"
+      strongLabel
+      options={[
+        {
+          value: 'Proceed without transcript',
+          displayText: 'Proceeed without transcript'
+        },
+        {
+          value: 'Proceed with partial transcript',
+          displayText: 'Process with partial transcript'
+        },
+        {
+          value: 'New hearing',
+          displayText: 'New hearing'
+        }
+      ]}
+      value={requestedRemedy}
+      onChange={(val) => set('requestedRemedy', val)}
+    />
+  </div>
+);
+
+const TranscriptionRequest = ({
+  transcription: { copyRequested, copySentDate },
+  set
+}) => (
+  <div {...rowThirds}>
+    <div>
+      <strong>Copy Requested by Appellant/Rep</strong>
+      <Checkbox
+        name="copyRequested"
+        label="Yes, Transcript Requested"
+        value={copyRequested}
+        onChange={(val) => set('copyRequested', val)}
+      />
+    </div>
+    <DateSelector
+      name="copySentDate"
+      label="Copy Sent to Appellant/Rep"
+      strongLabel
+      value={copySentDate}
+      onChange={(val) => set('copySentDate', val)}
+    />
+  </div>
+);
+
 class HearingDetails extends React.Component {
 
   constructor(props) {
@@ -64,7 +262,7 @@ class HearingDetails extends React.Component {
     this.state = {
       hearing: {
         vlj: hearing.judge.judgeCssId,
-        hearingCoordinator: null,
+        coordinator: null,
         room: null,
         waiveEvidenceHold: false,
         notes: null
@@ -80,7 +278,7 @@ class HearingDetails extends React.Component {
         problemType: null,
         problemNoticeSentDate: null,
         requestedRemedy: null,
-        // Transcript Requests
+        // Transcript Request
         copyRequested: false,
         copySentDate: null
       },
@@ -89,77 +287,33 @@ class HearingDetails extends React.Component {
     };
   }
 
-  updateHearing = (update) => {
+  setHearing = (key, value) => {
     this.setState({
       hearing: {
         ...this.state.hearing,
-        ...update
+        [key]: value
       },
       updated: true
     });
   }
 
-  updateTranscription = (update) => {
+  setTranscription = (key, value) => {
     this.setState({
       transcription: {
         ...this.state.transcription,
-        ...update
+        [key]: value
       },
       updated: true
     });
   }
 
-  goBack = () => {
-
-  }
-
-  submit = () => {
-
-  }
-
-  overviewColumns = () => {
-
-    const {
-      scheduledFor,
-      docketNumber,
-      regionalOfficeName,
-      readableLocation,
-      disposition,
-      readableRequestType,
-      aod
-    } = this.props.hearing;
-
-    return [
-      {
-        label: 'Hearing Date',
-        value: DateUtil.formatDate(scheduledFor)
-      },
-      {
-        label: 'Docket Number',
-        value: docketNumber
-      },
-      {
-        label: 'Regional office',
-        value: regionalOfficeName
-      },
-      {
-        label: 'Hearing Location',
-        value: readableLocation
-      },
-      {
-        label: 'Disposition',
-        value: disposition
-      },
-      {
-        label: 'Type',
-        value: readableRequestType
-      },
-      {
-        label: 'AOD Status',
-        value: aod
-      }
-    ];
-  }
+  // goBack = () => {
+  //
+  // }
+  //
+  // submit = () => {
+  //
+  // }
 
   render() {
     const {
@@ -168,167 +322,34 @@ class HearingDetails extends React.Component {
       vbmsId
     } = this.props.hearing;
 
-    console.log(this.props.hearing);
-    console.log(this.state);
-
     return (
       <AppSegment filledBackground>
         <div {...inputFix}>
-          <div {...inlineRow}>
+          <div {...row}>
             <h1 className="cf-margin-bottom-0">{`${veteranFirstName} ${veteranLastName}`}</h1>
             <div>Veteran ID: <CopyTextButton text={vbmsId} /></div>
           </div>
 
-          <div className="cf-help-divider"></div>
+          <div className="cf-help-divider" />
 
           <h2>Hearing Details</h2>
-          <DetailsOverview columns={this.overviewColumns()} />
+          <Overview hearing={this.props.hearing} />
+          <div className="cf-help-divider" />
 
-          <div className="cf-help-divider"></div>
-
-          <div {...inlineRowThirds}>
-            <JudgeDropdown
-              value={this.state.hearing.vlj}
-              onChange={(vlj) => this.updateHearing({ vlj })}
-            />
-          </div>
-          <div {...inlineRowThirds}>
-            <HearingRoomDropdown
-              value={this.state.hearing.room}
-              onChange={(room) => this.updateHearing({ room })}
-            />
-            <HearingCoordinatorDropdown
-              value={this.state.hearing.coordinator}
-              onChange={(coordinator) => this.updateHearing({ coordinator })}
-            />
-            <div>
-              <strong>Waive 90 Day Evidence Hold</strong>
-              <Checkbox
-                label="Yes, Waive 90 Day Evidence Hold"
-                name="waiveEvidenceHold"
-                value={this.state.hearing.waiveEvidenceHold}
-                onChange={(waiveEvidenceHold) => this.updateHearing({ waiveEvidenceHold })}
-              />
-            </div>
-          </div>
-          <TextareaField
-            name="Notes"
-            strongLabel
-            styling={css({
-              display: 'block',
-              maxWidth: '100%'
-            })}
-            value={this.state.hearing.notes || ''}
-            onChange={(notes) => this.updateHearing({ notes })}
-          />
-
-          <div className="cf-help-divider"></div>
+          <Details hearing={this.state.hearing} set={this.setHearing} />
+          <div className="cf-help-divider" />
 
           <h2>Transcription Details</h2>
-          <div {...inlineRowThirds}>
-            <TextField
-              name="taskNumber"
-              label="Task #"
-              strongLabel
-              value={this.state.transcription.taskNumber}
-              onChange={(taskNumber) => this.updateTranscription({ taskNumber })}
-            />
-            <SearchableDropdown
-              name="transcriber"
-              label="Transcriber"
-              strongLabel
-              value={this.state.transcription.transcriber}
-              onChange={(transcriber) => this.updateTranscription({ transcriber })}
-            />
-          </div>
-          <div {...inlineRowThirds}>
-            <DateSelector
-              name="sentToTranscriberDate"
-              label="Sent to Transcriber"
-              strongLabel
-              value={this.state.transcription.sentToTranscriberDate}
-              onChange={(sentToTranscriberDate) => this.updateTranscription({ sentToTranscriberDate })}
-            />
-            <DateSelector
-              name="expectedReturnDate"
-              label="Expected Return Date"
-              strongLabel
-              value={this.state.transcription.expectedReturnDate}
-              onChange={(expectedReturnDate) => this.updateTranscription({ expectedReturnDate })}
-            />
-            <DateSelector
-              name="uploadedToVbmsDate"
-              label="Transcript Uploaded to VBMS"
-              strongLabel
-              value={this.state.transcription.uploadedToVbmsDate}
-              onChange={(uploadedToVbmsDate) => this.updateTranscription({ uploadedToVbmsDate })}
-            />
-          </div>
-
-          <div className="cf-help-divider"></div>
+          <TranscriptionDetails transcription={this.state.transcription} set={this.setTranscription} />
+          <div className="cf-help-divider" />
 
           <h2>Transcription Problem</h2>
-          <div {...inlineRowThirds}>
-            <SearchableDropdown
-              name="problemType"
-              label="Transcription Problem Type"
-              strongLabel
-              value={this.state.transcription.problemType}
-              onChange={(problemType) => this.updateTranscription({ problemType })}
-            />
-            <DateSelector
-              name="problemNoticeSentDate"
-              label="Problem Notice Sent"
-              strongLabel
-              value={this.state.transcription.problemNoticeSentDate}
-              onChange={(problemNoticeSentDate) => this.updateTranscription({ problemNoticeSentDate })}
-            />
-            <RadioField
-              name="requestedRemedy"
-              label="Requested Remedy"
-              strongLabel
-              options={[
-                {
-                  value: 'Proceed without transcript',
-                  displayText: 'Proceeed without transcript'
-                },
-                {
-                  value: 'Proceed with partial transcript',
-                  displayText: 'Process with partial transcript'
-                },
-                {
-                  value: 'New hearing',
-                  displayText: 'New hearing'
-                }
-              ]}
-              value={this.state.transcription.requestedRemedy}
-              onChange={(requestedRemedy) => this.updateTranscription({ requestedRemedy })}
-            />
-          </div>
-
-          <div className="cf-help-divider"></div>
+          <TranscriptionProblem transcription={this.state.transcription} set={this.setTranscription} />
+          <div className="cf-help-divider" />
 
           <h2>Transcription Request</h2>
-          <div {...inlineRowThirds}>
-            <div>
-              <strong>Copy Requested by Appellant/Rep</strong>
-              <Checkbox
-                name="copyRequested"
-                label="Yes, Transcript Requested"
-                value={this.state.transcription.copyRequested}
-                onChange={(copyRequested) => this.updateTranscription({ copyRequested })}
-              />
-            </div>
-            <DateSelector
-              name="copySentDate"
-              label="Copy Sent to Appellant/Rep"
-              strongLabel
-              value={this.state.transcription.copySentDate}
-              onChange={(copySentDate) => this.updateTranscription({ copySentDate })}
-            />
-          </div>
-
-          <div className="cf-help-divider"></div>
+          <TranscriptionRequest transcription={this.state.transcription} set={this.setTranscription} />
+          <div className="cf-help-divider" />
 
           <div>
             <a
