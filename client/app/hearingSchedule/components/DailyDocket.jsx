@@ -127,7 +127,7 @@ export default class DailyDocket extends React.Component {
 
     return <div><b>{appellantName}</b><br />
       <b><Link
-        href={`/queue/appeals/${hearing.appealVacolsId}`}
+        href={`/queue/appeals/${hearing.appealExternalId}`}
         name={hearing.vbmsId} >
         {hearing.vbmsId}
       </Link></b><br />
