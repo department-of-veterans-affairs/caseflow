@@ -136,10 +136,20 @@ describe ExternalApi::EfolderService do
         let(:expected_received_at1) { Faker::Date.backward }
         let(:expected_received_at2) { Faker::Date.backward }
         let(:expected_document1) do
-          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id, upload_date: expected_received_at1)
+          Generators::Document.build(
+            type: "SSOC",
+            filename: nil,
+            file_number: appeal.sanitized_vbms_id,
+            upload_date: expected_received_at1
+          )
         end
         let(:expected_document2) do
-          Generators::Document.build(type: "NOD", filename: nil, file_number: appeal.sanitized_vbms_id, upload_date: expected_received_at2)
+          Generators::Document.build(
+            type: "NOD",
+            filename: nil,
+            file_number: appeal.sanitized_vbms_id,
+            upload_date: expected_received_at2
+            )
         end
 
         it "returns an array with all Document objects" do
@@ -208,7 +218,12 @@ describe ExternalApi::EfolderService do
         let(:expected_received_at1) { Faker::Date.backward }
 
         let(:expected_document1) do
-          Generators::Document.build(type: "SSOC", filename: nil, file_number: appeal.sanitized_vbms_id, upload_date: expected_received_at1)
+          Generators::Document.build(
+            type: "SSOC",
+            filename: nil,
+            file_number: appeal.sanitized_vbms_id,
+            upload_date: expected_received_at1
+          )
         end
 
         it "should make another request if pending status" do
