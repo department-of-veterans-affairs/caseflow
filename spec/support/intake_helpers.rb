@@ -462,7 +462,7 @@ module IntakeHelpers
       decision_review,
       contested_decision_issues
     )
-    # verify that not modifying a request issue contenting a decision issue
+    # verify that not modifying a request issue contesting a decision issue
     # does not result in readding
 
     visit page_url
