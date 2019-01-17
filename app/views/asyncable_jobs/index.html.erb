@@ -1,5 +1,5 @@
 <% content_for :full_page_content do %>
-  <%= react_component("AsyncableJobs", props: {
+  <%= react_component("asyncableJobs", props: {
     userDisplayName: current_user.display_name,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
@@ -7,7 +7,8 @@
     flash: flash,
     serverJobs: {
       jobs: jobs.map(&:asyncable_ui_hash),
-      fetchedAt: Time.zone.now
+      fetchedAt: Time.zone.now,
+      asyncableJobKlass: allowed_params[:asyncable_job_klass]
     }
   }) %>
 <% end %>
