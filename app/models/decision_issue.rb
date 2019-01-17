@@ -69,6 +69,10 @@ class DecisionIssue < ApplicationRecord
     remand_reasons.map(&:code).include?("advisory_medical_opinion")
   end
 
+  def contention_text
+    Contention.new(description).text
+  end
+
   private
 
   def calculate_and_set_description

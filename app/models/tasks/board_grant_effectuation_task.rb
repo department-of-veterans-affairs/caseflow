@@ -12,6 +12,18 @@ class BoardGrantEffectuationTask < DecisionReviewTask
   end
 
   def complete_with_payload!(_decision_issue_params, _decision_date)
+    return false unless validate_task
+
     update!(status: Constants.TASK_STATUSES.completed, completed_at: Time.zone.now)
+  end
+
+  private
+
+  def validate_task
+    if !in_progress?
+      @error_code = :task_not_in_progress
+    end
+
+    !@error_code
   end
 end

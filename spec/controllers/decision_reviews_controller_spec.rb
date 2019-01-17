@@ -87,7 +87,7 @@ describe DecisionReviewsController, type: :controller do
 
     context "with board grant effectuation task" do
       let(:task) do
-        create(:board_grant_effectuation_task, assigned_to: non_comp_org)
+        create(:board_grant_effectuation_task, status: "in_progress", assigned_to: non_comp_org)
           .becomes(BoardGrantEffectuationTask)
       end
 
@@ -102,10 +102,21 @@ describe DecisionReviewsController, type: :controller do
         expect(task.status).to eq("completed")
         expect(task.completed_at).to eq(Time.zone.now)
       end
+
+      it "returns 400 when the task has already been completed" do
+        task.update!(status: "completed")
+
+        put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id }
+        expect(response.status).to eq(400)
+      end
     end
 
     context "with decision review task" do
-      let(:task) { create(:higher_level_review_task, assigned_to: non_comp_org).becomes(DecisionReviewTask) }
+      let(:task) do
+        create(:higher_level_review_task, status: "in_progress", assigned_to: non_comp_org)
+          .becomes(DecisionReviewTask)
+      end
+
       let!(:request_issues) do
         [
           create(:request_issue, :rating, review_request: task.appeal),
@@ -159,6 +170,27 @@ describe DecisionReviewsController, type: :controller do
                                    request_issue_id: request_issues.first.id,
                                    disposition: "Granted",
                                    description: "a rating note"
+                                 }
+                               ],
+                               decision_date: decision_date }
+
+        expect(response.status).to eq(400)
+      end
+
+      it "returns 400 when the task has already been completed" do
+        task.update!(status: "completed")
+
+        put :update, params: { decision_review_business_line_slug: non_comp_org.url, task_id: task.id,
+                               decision_issues: [
+                                 {
+                                   request_issue_id: request_issues.first.id,
+                                   disposition: "Granted",
+                                   description: "a rating note"
+                                 },
+                                 {
+                                   request_issue_id: request_issues.second.id,
+                                   disposition: "Denied",
+                                   description: "a nonrating note"
                                  }
                                ],
                                decision_date: decision_date }
