@@ -7,7 +7,11 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import { fullWidth } from '../../queue/constants';
-import SearchableDropdown from '../../components/SearchableDropdown';
+import {
+  HearingRoomDropdown,
+  JudgeDropdown,
+  HearingCoordinatorDropdown
+} from '../../components/DataDropdowns';
 import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
 import { bindActionCreators } from 'redux';
@@ -126,32 +130,24 @@ class HearingDayEditModal extends React.Component {
           strongLabel
           value={this.state.modifyCoordinator}
           onChange={this.onModifyCoordinator} />
-        <SearchableDropdown
+        <HearingRoomDropdown
           name="room"
           label="Select Room"
-          strongLabel
           readOnly={!this.state.modifyRoom}
           value={this.props.hearingRoom}
           onChange={this.onRoomChange}
-          options={this.formatRoomOptions()}
           placeholder="Select..." />
-        <SearchableDropdown
-          name="vlj"
+        <JudgeDropdown
           label="Select VLJ"
-          strongLabel
           readOnly={!this.state.modifyVlj}
           value={this.props.vlj}
           onChange={this.onVljChange}
-          options={this.props.activeJudges}
           placeholder="Select..." />
-        <SearchableDropdown
-          name="coordinator"
+        <HearingCoordinatorDropdown
           label="Select Hearing Coordinator"
-          strongLabel
           readOnly={!this.state.modifyCoordinator}
           value={this.props.coordinator}
           onChange={this.onCoordinatorChange}
-          options={this.props.activeCoordinators}
           placeholder="Select..." />
         <TextareaField
           name="Notes"
@@ -164,7 +160,8 @@ class HearingDayEditModal extends React.Component {
   };
 
   render() {
-
+    console.log(this.props);
+    
     return <AppSegment filledBackground>
       <div className="cf-modal-scroll">
         <Modal
@@ -192,9 +189,7 @@ const mapStateToProps = (state) => ({
   hearingRoom: state.hearingSchedule.hearingRoom,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
-  notes: state.hearingSchedule.notes,
-  activeJudges: state.hearingSchedule.activeJudges,
-  activeCoordinators: state.hearingSchedule.activeCoordinators
+  notes: state.hearingSchedule.notes
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

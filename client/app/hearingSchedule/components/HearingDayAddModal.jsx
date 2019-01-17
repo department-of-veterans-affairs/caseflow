@@ -7,7 +7,11 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import { fullWidth } from '../../queue/constants';
-import RoSelectorDropdown from '../../components/RoSelectorDropdown';
+import {
+  RegionalOfficeDropdown,
+  HearingCoordinatorDropdown,
+  JudgeDropdown
+} from '../../components/DataDropdowns';
 import DateSelector from '../../components/DateSelector';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
@@ -141,9 +145,9 @@ class HearingDayAddModal extends React.Component {
     };
 
     if (this.props.selectedRegionalOffice &&
-      this.props.selectedRegionalOffice.value !== '' &&
+      this.props.selectedRegionalOffice !== '' &&
       this.props.requestType.value !== 'C') {
-      data.regional_office = this.props.selectedRegionalOffice.value;
+      data.regional_office = this.props.selectedRegionalOffice;
     }
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
@@ -293,9 +297,8 @@ class HearingDayAddModal extends React.Component {
           onChange={this.onRequestTypeChange}
           options={requestTypeOptions} />
         {this.state.videoSelected &&
-        <RoSelectorDropdown
+        <RegionalOfficeDropdown
           label="Select Regional Office (RO)"
-          strongLabel
           errorMessage={this.state.roError ? this.getRoErrorMessages() : null}
           onChange={this.onRegionalOfficeChange}
           value={this.props.selectedRegionalOffice}
@@ -303,20 +306,14 @@ class HearingDayAddModal extends React.Component {
         }
         {(this.state.videoSelected || this.state.centralOfficeSelected) &&
         <React.Fragment>
-          <SearchableDropdown
-            name="vlj"
+          <JudgeDropdown
             label="Select VLJ (Optional)"
-            strongLabel
             value={this.props.vlj}
-            onChange={this.onVljChange}
-            options={this.props.activeJudges} />
-          <SearchableDropdown
-            name="coordinator"
+            onChange={this.onVljChange} />
+          <HearingCoordinatorDropdown
             label="Select Hearing Coordinator (Optional)"
-            strongLabel
             value={this.props.coordinator}
-            onChange={this.onCoordinatorChange}
-            options={this.props.activeCoordinators} />
+            onChange={this.onCoordinatorChange} />
         </React.Fragment>
         }
         <TextareaField
@@ -369,9 +366,7 @@ const mapStateToProps = (state) => ({
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   notes: state.hearingSchedule.notes,
-  roomRequired: state.hearingSchedule.roomRequired,
-  activeJudges: state.hearingSchedule.activeJudges,
-  activeCoordinators: state.hearingSchedule.activeCoordinators
+  roomRequired: state.hearingSchedule.roomRequired
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

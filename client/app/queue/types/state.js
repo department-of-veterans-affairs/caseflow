@@ -106,7 +106,7 @@ export type CommonComponentState = {|
   selectedRegionalOffice: { label: string, value: string },
   selectedHearingDate: string,
   selectedHearingTime: string,
-  selectedHearingDay: Object
+  selectedHearingDay: string
 |};
 
 export type State = {
