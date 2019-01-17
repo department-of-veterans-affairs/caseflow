@@ -96,7 +96,8 @@ const SPECIAL_ISSUES = [
     nonCompensation: true
   },
   {
-    display: 'Home Loan guaranty',
+    display: 'Home Loan Guaranty',
+    queueDisplay: 'Home Loan guaranty',
     specialIssue: 'homeLoanGuaranty',
     stationOfJurisdiction: null,
     snakeCase: 'home_loan_guaranty',
@@ -297,7 +298,8 @@ const SPECIAL_ISSUES = [
     queueSectionOrder: 5
   },
   {
-    display: 'Waiver of overpayment',
+    display: 'Waiver of Overpayment',
+    queueDisplay: 'Waiver of overpayment',
     specialIssue: 'waiverOfOverpayment',
     stationOfJurisdiction: null,
     snakeCase: 'waiver_of_overpayment',
