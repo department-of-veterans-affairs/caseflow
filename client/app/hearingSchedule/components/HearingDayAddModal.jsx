@@ -115,6 +115,11 @@ class HearingDayAddModal extends React.Component {
       roErrorMessages.push('Please make sure you select a Regional Office');
     }
 
+    if (this.state.videoSelected && this.videoHearingDateNotValid(this.props.selectedHearingDay)) {
+      this.setState({ dateError: true });
+      errorMessages.push('Video hearing days cannot be scheduled for prior than April 1st through Caseflow.');
+    }
+
     if (errorMessages.length > 0) {
       this.setState({ errorMessages });
     }
@@ -128,6 +133,12 @@ class HearingDayAddModal extends React.Component {
     }
 
     this.persistHearingDay();
+  };
+
+  videoHearingDateNotValid = (hearingDate) => {
+    const integerDate = parseInt(hearingDate.split('-').join(''), 10);
+
+    return integerDate < 20190401;
   };
 
   persistHearingDay = () => {
@@ -260,7 +271,7 @@ class HearingDayAddModal extends React.Component {
 
   showAlert = () => {
     return this.state.serverError || this.state.noRoomsAvailable;
-  }
+  };
 
   modalMessage = () => {
     return <React.Fragment>
