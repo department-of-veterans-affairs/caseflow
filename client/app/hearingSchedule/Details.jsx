@@ -66,7 +66,7 @@ class HearingDetails extends React.Component {
         vlj: hearing.judge.judgeCssId,
         hearingCoordinator: null,
         room: null,
-        waiveEvidenceHold: null,
+        waiveEvidenceHold: false,
         notes: null
       },
       transcription: {
@@ -81,9 +81,10 @@ class HearingDetails extends React.Component {
         problemNoticeSentDate: null,
         requestedRemedy: null,
         // Transcript Requests
-        copyRequested: null,
+        copyRequested: false,
         copySentDate: null
       },
+      updated: false,
       loading: false
     };
   }
@@ -93,7 +94,8 @@ class HearingDetails extends React.Component {
       hearing: {
         ...this.state.hearing,
         ...update
-      }
+      },
+      updated: true
     });
   }
 
@@ -102,7 +104,8 @@ class HearingDetails extends React.Component {
       transcription: {
         ...this.state.transcription,
         ...update
-      }
+      },
+      updated: true
     });
   }
 
@@ -120,7 +123,7 @@ class HearingDetails extends React.Component {
       scheduledFor,
       docketNumber,
       regionalOfficeName,
-      //  hearing_location,
+      readableLocation,
       disposition,
       readableRequestType,
       aod
@@ -141,7 +144,7 @@ class HearingDetails extends React.Component {
       },
       {
         label: 'Hearing Location',
-        value: ' '
+        value: readableLocation
       },
       {
         label: 'Disposition',
@@ -166,6 +169,7 @@ class HearingDetails extends React.Component {
     } = this.props.hearing;
 
     console.log(this.props.hearing);
+    console.log(this.state);
 
     return (
       <AppSegment filledBackground>
@@ -214,7 +218,7 @@ class HearingDetails extends React.Component {
               display: 'block',
               maxWidth: '100%'
             })}
-            value={this.state.hearing.notes}
+            value={this.state.hearing.notes || ''}
             onChange={(notes) => this.updateHearing({ notes })}
           />
 

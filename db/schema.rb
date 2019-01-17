@@ -125,10 +125,10 @@ ActiveRecord::Schema.define(version: 20190114225909) do
     t.bigint "appeal_id", null: false
     t.string "contention_reference_id"
     t.bigint "decision_document_id"
-    t.datetime "decision_sync_submitted_at"
     t.datetime "decision_sync_attempted_at"
-    t.datetime "decision_sync_processed_at"
     t.string "decision_sync_error"
+    t.datetime "decision_sync_processed_at"
+    t.datetime "decision_sync_submitted_at"
     t.bigint "end_product_establishment_id"
     t.bigint "granted_decision_issue_id", null: false
     t.index ["appeal_id"], name: "index_board_grant_effectuations_on_appeal_id"
