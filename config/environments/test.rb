@@ -57,7 +57,12 @@ Rails.application.configure do
   end
 
   # Send logs to stdout
-  config.logger = Logger.new(STDOUT)
+  #config.logger = Logger.new(STDOUT)
+
+  unless ENV['RAILS_ENABLE_TEST_LOG']
+    config.logger = Logger.new(nil)
+    config.log_level = :error
+  end
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
