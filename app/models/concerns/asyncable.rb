@@ -5,10 +5,10 @@
 # This becomes necessary when a Job has multiple external service calls, each of
 # which may fail and cause retries beyond the "normal" retry window.
 # See ClaimReview and RequestIssuesUpdate e.g.
-
-# rubocop:disable Metrics/ModuleLength
 module Asyncable
   extend ActiveSupport::Concern
+
+  include RunAsyncable
 
   # class methods to scope queries based on class-defined columns
   # we expect 4 column types:
@@ -74,10 +74,6 @@ module Asyncable
         .where(arel_table[submitted_at_column].lteq(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
         .order_by_oldest_submitted
     end
-
-    def run_async?
-      !Rails.env.development? && !Rails.env.test?
-    end
   end
 
   def submit_for_processing!(delay: 0)
@@ -141,11 +137,4 @@ module Asyncable
       error: self[self.class.error_column]
     }
   end
-
-  private
-
-  def run_async?
-    self.class.run_async?
-  end
 end
-# rubocop:enable Metrics/ModuleLength
