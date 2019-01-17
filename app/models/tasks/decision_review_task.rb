@@ -14,7 +14,7 @@ class DecisionReviewTask < GenericTask
   end
 
   def complete_with_payload!(decision_issue_params, decision_date)
-    return false unless validate(decision_issue_params)
+    return false unless validate_task(decision_issue_params)
 
     transaction do
       appeal.create_decision_issues_for_tasks(decision_issue_params, decision_date)
@@ -26,8 +26,10 @@ class DecisionReviewTask < GenericTask
 
   private
 
-  def validate(decision_issue_params)
-    if !validate_decision_issue_per_request_issue(decision_issue_params)
+  def validate_task(decision_issue_params)
+    if !in_progress?
+      @error_code = :task_not_in_progress
+    elsif !validate_decision_issue_per_request_issue(decision_issue_params)
       @error_code = :invalid_decision_issue_per_request_issue
     end
 
