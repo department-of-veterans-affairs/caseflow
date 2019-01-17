@@ -38,7 +38,7 @@ describe FetchHearingLocationsForVeteransJob do
       it "creates an available hearing location" do
         FetchHearingLocationsForVeteransJob.perform_now
         expect(AvailableHearingLocations.count).to eq 1
-        # expect(AvailableHearingLocations.first.distance).to eq 11.11
+        expect(AvailableHearingLocations.first.distance).to eq 11.11
       end
 
       context "when closest_regional_office has to be fetched and only one RO/AHL is in veteran's state" do
@@ -78,7 +78,7 @@ describe FetchHearingLocationsForVeteransJob do
           expect(AvailableHearingLocations.where(distance: 22.22, veteran_file_number: bfcorlid_file_number))
             .to be_empty
           expect(AvailableHearingLocations.count).to eq 1
-          # expect(AvailableHearingLocations.first.distance).to eq 11.11
+          expect(AvailableHearingLocations.first.distance).to eq 11.11
         end
       end
     end
