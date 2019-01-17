@@ -160,8 +160,6 @@ class HearingDayEditModal extends React.Component {
   };
 
   render() {
-    console.log(this.props);
-    
     return <AppSegment filledBackground>
       <div className="cf-modal-scroll">
         <Modal

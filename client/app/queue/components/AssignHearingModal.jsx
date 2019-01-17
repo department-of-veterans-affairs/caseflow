@@ -49,7 +49,7 @@ type Params = {|
 type Props = Params & {|
   // From state
   savePending: boolean,
-  selectedRegionalOffice: Object,
+  selectedRegionalOffice: string,
   scheduleHearingTask: Object,
   openHearing: Object,
   history: Object,
@@ -75,11 +75,6 @@ type Props = Params & {|
 type LocalState = {|
   timeOptions: Array<Object>
 |}
-
-const centralOfficeStaticEntry = [{
-  label: 'Central',
-  value: 'C'
-}];
 
 class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
@@ -149,7 +144,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           business_payloads: {
             description: 'Update Task',
             values: {
-              regional_office_value: selectedRegionalOffice.value,
+              regional_office_value: selectedRegionalOffice,
               hearing_pkseq: selectedHearingDay.hearingId,
               hearing_type: this.getHearingType(),
               hearing_date: this.formatHearingDate()
