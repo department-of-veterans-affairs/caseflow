@@ -1,9 +1,6 @@
 feature "NonComp Reviews Queue" do
   before do
     FeatureToggle.enable!(:decision_reviews)
-
-    # freeze the local time so that our date math is predictable.
-    Timecop.freeze(Time.new(2019, 1, 7, 20, 55, 0).in_time_zone)
   end
 
   after do
@@ -14,27 +11,48 @@ feature "NonComp Reviews Queue" do
     let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
     let(:user) { create(:default_user) }
 
-    let(:veteran) { create(:veteran) }
-    let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
-    let(:appeal) { create(:appeal, veteran: veteran) }
+    let(:veteran_a) { create(:veteran, first_name: "Aaa") }
+    let(:veteran_b) { create(:veteran, first_name: "Bbb") }
+    let(:veteran_c) { create(:veteran, first_name: "Ccc") }
+    let(:hlr_a) { create(:higher_level_review, veteran_file_number: veteran_a.file_number) }
+    let(:hlr_b) { create(:higher_level_review, veteran_file_number: veteran_b.file_number) }
+    let(:appeal) { create(:appeal, veteran: veteran_c) }
 
     let(:today) { Time.zone.now }
     let(:last_week) { Time.zone.now - 7.days }
 
     let!(:in_progress_tasks) do
       [
-        create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org, assigned_at: last_week),
-        create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org, assigned_at: today),
-        create(
-          :board_grant_effectuation_task, :in_progress, appeal: appeal, assigned_to: non_comp_org, assigned_at: today
-        )
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: hlr_a,
+               assigned_to: non_comp_org,
+               assigned_at: last_week),
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: hlr_b,
+               assigned_to: non_comp_org,
+               assigned_at: today),
+        create(:board_grant_effectuation_task,
+               :in_progress,
+               appeal: appeal,
+               assigned_to: non_comp_org,
+               assigned_at: today)
       ]
     end
 
     let!(:completed_tasks) do
       [
-        create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org, completed_at: last_week),
-        create(:higher_level_review_task, :completed, appeal: hlr, assigned_to: non_comp_org, completed_at: today)
+        create(:higher_level_review_task,
+               :completed,
+               appeal: hlr_a,
+               assigned_to: non_comp_org,
+               completed_at: last_week),
+        create(:higher_level_review_task,
+               :completed,
+               appeal: hlr_b,
+               assigned_to: non_comp_org,
+               completed_at: today)
       ]
     end
 
@@ -53,17 +71,18 @@ feature "NonComp Reviews Queue" do
       expect(page).to have_content("Days Waiting")
       expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Board Grant")
-      expect(page).to have_content("Bob Smith", count: 2)
-      expect(page).to have_content(veteran.participant_id, count: 3)
+      expect(page).to have_content(veteran_a.name)
+      expect(page).to have_content(veteran_b.name)
+      expect(page).to have_content(veteran_c.name)
+      expect(page).to have_content(veteran_a.participant_id)
+      expect(page).to have_content(veteran_b.participant_id)
+      expect(page).to have_content(veteran_c.participant_id)
 
       # ordered by assigned_at descending
-      # this funky regex is due to how the momentjs lib does date math and rounding.
-      # since we can't control the time/zone of the browser, only here in the specs with Timecop,
-      # we allow for a range of "days" like [01] or [678]
 
-      # expect(page).to have_content(
-      # /#{veteran.name} 5\d+ 0 [01] Higher-Level Review #{veteran.name} 5\d+ 0 [678]/
-      # )
+      expect(page).to have_content(
+        /#{veteran_b.name} .+? #{veteran_c.name} .+? #{veteran_a.name}/
+      )
 
       click_on "Completed tasks"
       expect(page).to have_content("Higher-Level Review", count: 2)
@@ -71,7 +90,7 @@ feature "NonComp Reviews Queue" do
 
       # ordered by completed_at descending
       expect(page).to have_content(
-        /#{today.strftime("%D")} Higher-Level Review #{veteran.name} 5\d+ 0 #{last_week.strftime("%D")}/
+        /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review #{veteran_a.name} 5\d+ 0 [\d\/]+/
       )
     end
 

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import NonRouterLink from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { CATEGORIES, ACTIONS } from './analytics';
 import { orderTheDocket } from './util/index';
@@ -145,11 +146,12 @@ export class DailyDocket extends React.PureComponent {
      return <div>
        <span><b>{`${hearing.appellant_first_name} ${hearing.appellant_last_name}`}</b><br />
          {`${hearing.veteran_first_name} ${hearing.veteran_last_name}`} (Veteran)</span><br />
-       <Link
-         to={`/queue/appeals/${hearing.appeal_external_id}`}
+       <NonRouterLink
+         href={`/queue/appeals/${hearing.appeal_external_id}`}
+         target="_blank"
          name={hearing.veteran_file_number} >
          {hearing.veteran_file_number}
-       </Link>
+       </NonRouterLink>
        <div>
          <DocketTypeBadge name={hearing.docket_name} number={hearing.docket_number} />
          {hearing.docket_number}
@@ -161,11 +163,12 @@ export class DailyDocket extends React.PureComponent {
    }
 
    return <div><b>{`${hearing.veteran_first_name} ${hearing.veteran_last_name}`}</b><br />
-     <Link
-       to={`/queue/appeals/${hearing.appeal_external_id}`}
+     <NonRouterLink
+       href={`/queue/appeals/${hearing.appeal_external_id}`}
+       target="_blank"
        name={hearing.veteran_file_number} >
        {hearing.veteran_file_number}
-     </Link>
+     </NonRouterLink>
      <div>
        <DocketTypeBadge name={hearing.docket_name} number={hearing.docket_number} />
        {hearing.docket_number}

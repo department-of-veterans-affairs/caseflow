@@ -12,6 +12,10 @@ class RampIssue < ApplicationRecord
     self.description = contention.text
   end
 
+  def contention_text
+    Contention.new(description).text
+  end
+
   def ui_hash
     { id: id, description: description }
   end
