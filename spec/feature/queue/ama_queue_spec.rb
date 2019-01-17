@@ -548,7 +548,17 @@ RSpec.feature "AmaQueue" do
     let(:attorney_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Steven Ahr") }
     let!(:attorney_staff) { FactoryBot.create(:staff, :attorney_role, user: attorney_user) }
 
-    let!(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+    let!(:appeal) do
+      FactoryBot.create(
+        :appeal,
+        veteran_file_number: veteran.file_number,
+        number_of_claimants: 1,
+        request_issues: [
+          FactoryBot.create(:request_issue, contested_issue_description: "Tinnitus", notes: "Tinnitus note"),
+          FactoryBot.create(:request_issue, contested_issue_description: "Knee pain", notes: "Knee pain note")
+        ]
+      )
+    end
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let!(:judge_task) do
       FactoryBot.create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :assigned)
@@ -577,7 +587,6 @@ RSpec.feature "AmaQueue" do
         click_on veteran_full_name
 
         click_dropdown(prompt: "Select an action", text: "Assign to attorney")
-        click_dropdown(prompt: "Select a user", text: "Other")
         click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
 
         click_on "Submit"
@@ -598,7 +607,13 @@ RSpec.feature "AmaQueue" do
         click_on "Continue"
 
         expect(page).to have_content("Select Dispositions")
-        # XXX: interact with dispositions
+        click_dropdown({ prompt: "Select disposition", text: "Allowed" }, find("#table-row-0"))
+        click_dropdown({ prompt: "Select disposition", text: "Remanded" }, find("#table-row-1"))
+        click_on "Continue"
+
+        expect(page).to have_content("Select Remand Reasons")
+        find_field("Legally inadequate notice", visible: false).sibling("label").click
+        find_field("Post AOJ", visible: false).sibling("label").click
         click_on "Continue"
 
         expect(page).to have_content("Submit Draft Decision for Review")
@@ -627,13 +642,42 @@ RSpec.feature "AmaQueue" do
 
         click_on "Submit"
 
-        # expect(page).to have_content("Returned 1 case to #{attorney_user.full_name}")
-        expect(page).to have_content("Assigned 1 case")
+        expect(page).to have_content("Returned 1 case")
       end
 
       step "attorney corrects case and returns it to the judge" do
         User.authenticate!(user: attorney_user)
         visit "/queue"
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Decision ready for review")
+
+        expect(page).to have_content("Select special issues (optional)")
+        expect(page).to have_field("riceCompliance", checked: true, visible: false)
+        click_on "Continue"
+
+        expect(page).to have_content("Select Dispositions")
+        expect(dropdown_selected_value(find("#table-row-0"))).to eq "Allowed"
+        expect(dropdown_selected_value(find("#table-row-1"))).to eq "Remanded"
+        click_on "Continue"
+
+        expect(page).to have_content("Select Remand Reasons")
+        expect(find_field("Legally inadequate notice", visible: false)).to be_checked
+        expect(find_field("Post AOJ", visible: false)).to be_checked
+        click_on "Continue"
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+
+        fill_in "Document ID:", with: "12345"
+        click_on "Select a judge"
+        click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
+        fill_in "notes", with: "corrections made"
+        click_on "Continue"
+
+        expect(page).to have_content(
+          "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
+          "sent to #{judge_user.full_name} for review."
+        )
       end
     end
   end
