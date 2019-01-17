@@ -75,7 +75,7 @@ const SPECIAL_ISSUES = [
   {
     display: 'Foreign pension, DIC - all other foreign countries',
     queueDisplay: 'DIC/Pension for appellant in any foreign country outside of Mexico, Central' +
-    ' or South America, or the Caribbean',
+    ' or South America or the Caribbean',
     specialIssue: 'foreignPensionDicAllOtherForeignCountries',
     stationOfJurisdiction: null,
     snakeCase: 'foreign_pension_dic_all_other_foreign_countries',
@@ -97,7 +97,7 @@ const SPECIAL_ISSUES = [
   },
   {
     display: 'Home Loan Guaranty',
-    queueDisplay: 'Home Loan guaranty',
+    queueDisplay: 'Home loan guaranty',
     specialIssue: 'homeLoanGuaranty',
     stationOfJurisdiction: null,
     snakeCase: 'home_loan_guaranty',
@@ -194,7 +194,7 @@ const SPECIAL_ISSUES = [
   },
   {
     display: 'Private Attorney or Agent',
-    queueDisplay: 'Has a private Attorney or Agent',
+    queueDisplay: 'Has a private attorney or agent',
     specialIssue: 'privateAttorneyOrAgent',
     stationOfJurisdiction: null,
     snakeCase: 'private_attorney_or_agent',
