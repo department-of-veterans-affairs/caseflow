@@ -23,6 +23,8 @@ export ORACLE_HOME=/opt/oracle/instantclient_12_2
 echo "Starting Appeals App"
 date
 
+sleep 30
+
 echo "Waiting for Vacols to be ready"
 rake local:vacols:wait_for_connection
 
