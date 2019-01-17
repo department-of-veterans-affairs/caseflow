@@ -89,6 +89,21 @@ RSpec.feature "Intake Edit Confirmation" do
             expect(page).to have_current_path("/#{edit_path}/confirmation")
             expect(page).to have_content("There is still an unidentified issue")
           end
+
+          it "does not say edit in VBMS if there are no end products" do
+            visit edit_path
+            click_intake_add_issue
+            click_intake_no_matching_issues
+            add_intake_nonrating_issue(date: (decision_review.receipt_date - 2.years).strftime("%m/%d/%Y"))
+            add_untimely_exemption_response("Yes") if claim_review_type == :higher_level_review
+            click_remove_intake_issue(1)
+            click_remove_issue_confirmation
+            click_edit_submit
+
+            expect(page).to have_current_path("/#{edit_path}/confirmation")
+            expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being canceled")
+            expect(page).to_not have_content("If you need to edit this, go to VBMS claim details")
+          end
         end
       end
     end
@@ -108,6 +123,22 @@ RSpec.feature "Intake Edit Confirmation" do
 
         expect(page).to have_current_path("/#{edit_path}/confirmation")
         expect(page).to have_content("Informal Conference Tracked Item")
+      end
+
+      it "does not show informal conference request if there are no end products" do
+        decision_review.update!(informal_conference: true)
+
+        visit edit_path
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(date: (decision_review.receipt_date - 2.years).strftime("%m/%d/%Y"))
+        add_untimely_exemption_response("Yes")
+        click_remove_intake_issue(1)
+        click_remove_issue_confirmation
+        click_edit_submit
+
+        expect(page).to have_current_path("/#{edit_path}/confirmation")
+        expect(page).to_not have_content("Informal Conference Tracked Item")
       end
     end
 
