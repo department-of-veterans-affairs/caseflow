@@ -35,26 +35,14 @@ class HearingCoordinatorDropdown extends React.Component {
     });
   }
 
-  componentDidUpdate() {
-    const { hearingCoordinators: { options }, value, onChange } = this.props;
-
-    if (options && typeof (value) === 'string') {
-      onChange(this.getValue());
-    }
-  }
-
-  getValue = () => {
+  getSelectedOption = () => {
     const { value, hearingCoordinators: { options } } = this.props;
 
-    if (!value) {
-      return null;
-    }
-
-    if (typeof (value) === 'string') {
-      return _.find(options, (opt) => opt.value === value);
-    }
-
-    return value;
+    return _.find(options, (opt) => opt.value === value) ||
+      {
+        value: null,
+        label: null
+      };
   }
 
   render() {
@@ -65,8 +53,8 @@ class HearingCoordinatorDropdown extends React.Component {
         name={name}
         label={label}
         strongLabel
-        value={this.getValue()}
-        onChange={onChange}
+        value={this.getSelectedOption()}
+        onChange={(option) => onChange(option.value)}
         options={this.props.hearingCoordinators.options} />
     );
   }
@@ -75,7 +63,7 @@ class HearingCoordinatorDropdown extends React.Component {
 HearingCoordinatorDropdown.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
-  value: PropTypes.object,
+  value: PropTypes.string,
   onChange: PropTypes.func.isRequired
 };
 

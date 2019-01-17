@@ -37,26 +37,14 @@ class HearingDateDropdown extends React.Component {
     });
   }
 
-  componentDidUpdate() {
-    const { hearingDates: { options }, value, onChange } = this.props;
-
-    if (options && typeof (value) === 'string') {
-      onChange(this.getValue());
-    }
-  }
-
-  getValue = () => {
+  getSelectedOption = () => {
     const { value, hearingDates: { options } } = this.props;
 
-    if (!value) {
-      return null;
-    }
-
-    if (typeof (value) === 'string') {
-      return _.find(options, (opt) => opt.value === value);
-    }
-
-    return value;
+    return _.find(options, (opt) => opt.value === value) ||
+      {
+        value: null,
+        label: null
+      };
   }
 
   render() {
@@ -67,8 +55,8 @@ class HearingDateDropdown extends React.Component {
         name={name}
         label={label}
         strongLabel
-        value={this.getValue()}
-        onChange={onChange}
+        value={this.getSelectedOption()}
+        onChange={(option) => onChange(option.value)}
         options={this.props.hearingDates.options} />
     );
   }
@@ -78,10 +66,7 @@ HearingDateDropdown.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
   regionalOffice: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object
-  ]),
+  value: PropTypes.string,
   onChange: PropTypes.func.isRequired
 };
 
