@@ -2,6 +2,7 @@ import React from 'react';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import { BOOLEAN_RADIO_OPTIONS, DECEASED_PAYEE_CODES, LIVING_PAYEE_CODES } from '../constants';
+import COPY from '../../../COPY.json';
 
 export default class SelectClaimant extends React.PureComponent {
   handlePayeeCodeChange(event) {
@@ -32,15 +33,16 @@ export default class SelectClaimant extends React.PureComponent {
     const hasRelationships = relationships.length > 0;
     let showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
-    const claimantTextStart = 'Please select the claimant listed on the form. ' +
-    'If you do not see the claimant in the options below, and you have access, ' +
-    'please add the claimant to the Corporate Database to continue processing this intake. ' +
-    'If you do not have access, please ';
     const email = React.createElement(
       'a', { href: 'mailto:jennifer.umberhind@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database' }, 'email'
     );
-    const claimantTextEnd = ' for assistance.';
-    const claimantLabel = React.createElement('p', { id: 'claimantLabel' }, claimantTextStart, email, claimantTextEnd);
+    const claimantLabel = React.createElement(
+      'p', { id: 'claimantLabel' }, COPY.CLAIMANT_NOT_FOUND_START, email, COPY.CLAIMANT_NOT_FOUND_END
+    );
+    const noClaimantsCopy = React.createElement(
+      'p', { id: 'noClaimants',
+        className: 'cf-red-text' }, COPY.NO_RELATIONSHIPS, email, COPY.CLAIMANT_NOT_FOUND_END
+    );
 
     const claimantOptions = () => {
       return <div className="cf-claimant-options">
@@ -83,12 +85,7 @@ export default class SelectClaimant extends React.PureComponent {
       />
 
       { showClaimants && hasRelationships && claimantOptions() }
-      { showClaimants && !hasRelationships && <p className="cf-red-text">
-        This Veteran currently has no known relationships. If you have access, please add the claimant to the
-        Corporate Database to continue processing this intake. If you do not have access, please
-        <a href="mailto:jennifer.umberhind@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database"> email </a>
-        for assistance.
-      </p> }
+      { showClaimants && !hasRelationships && noClaimantsCopy }
 
     </div>;
   }
