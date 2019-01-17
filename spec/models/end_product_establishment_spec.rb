@@ -96,7 +96,7 @@ describe EndProductEstablishment do
     context "when eps with a valid modifiers already exist" do
       let!(:past_created_ep) do
         Generators::EndProduct.build(
-          veteran_file_number: "12341234",
+          veteran_file_number: veteran_file_number,
           bgs_attrs: { end_product_type_code: "030" }
         )
       end
@@ -160,7 +160,7 @@ describe EndProductEstablishment do
       before do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
-            veteran_file_number: "12341234",
+            veteran_file_number: veteran_file_number,
             bgs_attrs: { end_product_type_code: modifier }
           )
         end
@@ -168,6 +168,24 @@ describe EndProductEstablishment do
 
       it "returns NoAvailableModifiers error" do
         expect { subject }.to raise_error(EndProductEstablishment::NoAvailableModifiers)
+      end
+    end
+
+    context "when existing EP has status CLR or CAN" do
+      before do
+        %w[030 031 032].each do |modifier|
+          Generators::EndProduct.build(
+            veteran_file_number: veteran_file_number,
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: %w[CLR CAN].sample }
+          )
+        end
+      end
+
+      it "considers those EP modifiers as open" do
+        subject
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          hash_including(veteran_hash: veteran.reload.to_vbms_hash)
+        )
       end
     end
 
@@ -308,7 +326,7 @@ describe EndProductEstablishment do
             description: "more decisionz",
             special_issues: array_including(
               { code: "SSR", narrative: "Same Station Review" },
-              code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
+              code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
             )
           ),
           user: current_user

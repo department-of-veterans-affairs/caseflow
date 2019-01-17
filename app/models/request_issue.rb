@@ -241,7 +241,7 @@ class RequestIssue < ApplicationRecord
 
   def special_issues
     specials = []
-    specials << { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
+    specials << { code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
     specials << { code: "SSR", narrative: "Same Station Review" } if decision_review.try(:same_office)
     return specials unless specials.empty?
   end
@@ -491,13 +491,15 @@ class RequestIssue < ApplicationRecord
   # rubocop:enable Metrics/PerceivedComplexity
 
   def check_for_before_ama!
-    return unless eligible?
-    return if is_unidentified
-    return if ramp_claim_id
+    return unless eligible? && should_check_for_before_ama?
 
     if decision_or_promulgation_date && decision_or_promulgation_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
     end
+  end
+
+  def should_check_for_before_ama?
+    !is_unidentified && !ramp_claim_id && !vacols_id
   end
 
   def check_for_legacy_issue_not_withdrawn!
