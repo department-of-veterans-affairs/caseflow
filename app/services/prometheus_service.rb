@@ -20,8 +20,7 @@ class PrometheusService
 
     def va_dot_gov_request_latency
       @va_dot_gov_request_latency ||=
-        find_or_register_gauge_and_summary(:counter,
-                                           :va_dot_gov_request_latency,
+        find_or_register_gauge_and_summary(:va_dot_gov_request_latency,
                                            "latency of completed api.va.gov requests")
     end
 

@@ -1,7 +1,7 @@
 require "rails_helper"
 require "faker"
 
-describe FetchHearingLocationsForVeteransJob do
+describe FetchHearingLocationsForVeteransJob, focus: true do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
   context "when there is a case in location 57 *without* an associated veteran" do

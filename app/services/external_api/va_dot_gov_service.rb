@@ -10,8 +10,7 @@ class ExternalApi::VADotGovService
 
       until remaining_ids.empty?
         results = fetch_facilities_with_ids(
-          query: { lat: lat, long: long, page: page },
-          ids: remaining_ids
+          query: { lat: lat, long: long, page: page, ids: remaining_ids }
         )
 
         remaining_ids -= results[:facilities].pluck(:id)
@@ -143,9 +142,9 @@ class ExternalApi::VADotGovService
       }
     end
 
-    def fetch_facilities_with_ids(query:, ids:)
+    def fetch_facilities_with_ids(query:)
       response = send_va_dot_gov_request(
-        query: { page: query[:page], ids: ids },
+        query: query,
         endpoint: facilities_endpoint
       )
       resp_body = JSON.parse(response.body)
@@ -153,15 +152,11 @@ class ExternalApi::VADotGovService
       check_for_error(response_body: resp_body, code: response.code)
 
       facilities = resp_body["data"]
+      distances = resp_body["meta"]["distances"]
       has_next = !resp_body["links"]["next"].nil?
 
       facilities_result = facilities.map do |facility|
-        distance = {
-          distance: calculate_distance_in_miles(
-            lat1: query[:lat], long1: query[:long],
-            lat2: facility["attributes"]["lat"], long2: facility["attributes"]["long"]
-          )
-        }
+        distance = distances.find { |dist| dist["id"] == facility["id"] }
 
         facility_json(facility, distance)
       end
@@ -216,29 +211,6 @@ class ExternalApi::VADotGovService
         }
       )
     end
-
-    def calculate_distance_in_miles(lat1:, long1:, lat2:, long2:)
-      # https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
-      earth_radius = 6371
-      lat_rad = deg2rad(lat2 - lat1)
-      long_rad = deg2rad(long2 - long1)
-      a = Math.sin(lat_rad / 2) * Math.sin(lat_rad / 2) +
-          Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-          Math.sin(long_rad / 2) * Math.sin(long_rad / 2)
-      c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-
-      km = earth_radius * c
-      km2miles(km)
-    end
-
-    def km2miles(kilom)
-      (kilom * 0.621371 * 100.0).round / 100.0
-    end
-
-    def deg2rad(deg)
-      deg * (Math::PI / 180)
-    end
-
     # :nocov:
   end
 end

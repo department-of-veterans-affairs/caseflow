@@ -112,7 +112,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       address: facility[:address],
       city: facility[:city],
       state: facility[:state],
-      zip_code: facility[:zip_code]
+      zip_code: facility[:zip_code],
+      classification: facility[:classification],
+      facility_type: facility[:facility_type]
     )
   end
 
