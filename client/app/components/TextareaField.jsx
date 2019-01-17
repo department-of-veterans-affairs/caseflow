@@ -21,7 +21,8 @@ export default class TextareaField extends React.Component {
       type,
       value,
       styling,
-      textAreaStyling
+      textAreaStyling,
+      disabled
     } = this.props;
 
     const className = 'cf-form-textarea' +
@@ -56,6 +57,7 @@ export default class TextareaField extends React.Component {
         type={type}
         value={value}
         maxLength={maxlength}
+        disabled={disabled}
       />
       { characterLimitCount !== null && <p>
         <i>{characterLimitCount} {pluralize('character', characterLimitCount)} left</i>
@@ -63,6 +65,10 @@ export default class TextareaField extends React.Component {
     </div>;
   }
 }
+
+TextareaField.defaultProps = {
+  disabled: false
+};
 
 TextareaField.propTypes = {
   hideLabel: PropTypes.bool,
@@ -76,5 +82,6 @@ TextareaField.propTypes = {
   type: PropTypes.string,
   errorMessage: PropTypes.string,
   value: PropTypes.string,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  disabled: PropTypes.bool
 };

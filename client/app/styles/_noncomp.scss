@@ -59,6 +59,10 @@
     .cf-disposition {
       margin-top: 1.7rem;
     }
+
+    textarea:disabled {
+      background-color: $color-gray-lighter;
+    }
   }
 }
 
