@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190114225909) do
+ActiveRecord::Schema.define(version: 20190117151019) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,9 +110,11 @@ ActiveRecord::Schema.define(version: 20190114225909) do
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address"
     t.string "city"
+    t.string "classification"
     t.datetime "created_at", null: false
     t.float "distance"
     t.string "facility_id"
+    t.string "facility_type"
     t.string "name"
     t.string "state"
     t.datetime "updated_at", null: false
@@ -472,6 +474,7 @@ ActiveRecord::Schema.define(version: 20190114225909) do
 
   create_table "hearings", force: :cascade do |t|
     t.integer "appeal_id", null: false
+    t.string "bva_poc"
     t.string "disposition"
     t.boolean "evidence_window_waived"
     t.integer "hearing_day_id", null: false
@@ -480,6 +483,7 @@ ActiveRecord::Schema.define(version: 20190114225909) do
     t.string "notes"
     t.boolean "prepped"
     t.string "representative_name"
+    t.string "room"
     t.time "scheduled_time"
     t.text "summary"
     t.boolean "transcript_requested"
@@ -892,6 +896,21 @@ ActiveRecord::Schema.define(version: 20190114225909) do
     t.datetime "updated_at", null: false
     t.integer "user_count"
     t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true
+  end
+
+  create_table "transcriptions", force: :cascade do |t|
+    t.boolean "copy_requested"
+    t.date "copy_sent_date"
+    t.date "expected_return_date"
+    t.bigint "hearing_id"
+    t.date "problem_notice_sent_date"
+    t.string "problem_type"
+    t.string "requested_remedy"
+    t.date "sent_to_transcriber_date"
+    t.string "task_number"
+    t.string "transcriber"
+    t.date "uploaded_to_vbms_date"
+    t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
   end
 
   create_table "user_quotas", id: :serial, force: :cascade do |t|
