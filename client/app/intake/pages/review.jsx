@@ -79,8 +79,8 @@ class ReviewNextButton extends React.PureComponent {
         this.handleClick(selectedForm, intakeData);
       }}
       loading={intakeData ? intakeData.requestStatus.submitReview === REQUEST_STATE.IN_PROGRESS : true}
-      disabled={formType === 'ramp_refiling' ?
-        toggleIneligibleError(intakeData.hasInvalidOption, intakeData.optionSelected) : needsRelationships}
+      disabled={!intakeData.receiptDate || (formType === 'ramp_refiling' ?
+        toggleIneligibleError(intakeData.hasInvalidOption, intakeData.optionSelected) : needsRelationships)}
     >
       Continue to next step
     </Button>;

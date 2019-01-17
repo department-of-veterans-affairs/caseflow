@@ -37,7 +37,7 @@ export const getReceiptDateError = (responseErrorCodes, state) => (
 );
 
 export const toggleIneligibleError = (hasInvalidOption, selectedOption) => (
-  hasInvalidOption && Boolean(selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW.key ||
+  Boolean(hasInvalidOption) && Boolean(selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW.key ||
     selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW_WITH_HEARING.key)
 );
 
