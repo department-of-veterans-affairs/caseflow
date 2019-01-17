@@ -49,11 +49,13 @@ class SelectSpecialIssuesView extends React.PureComponent {
     this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, null);
   };
   render() {
-    const {specialIssues} = this.props;
-    if (specialIssues.appeal_type === "LegacyAppeal") {
+    const { specialIssues } = this.props;
+
+    if (specialIssues.appeal_type === 'LegacyAppeal') {
       return this.renderLegacySpecialIssues();
-    } 
-      return this.renderNonLegacySpecialIssues();
+    }
+    
+    return this.renderNonLegacySpecialIssues();
     
   }
   renderNonLegacySpecialIssues = () => {
