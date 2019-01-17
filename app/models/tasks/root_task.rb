@@ -74,9 +74,8 @@ class RootTask < GenericTask
           vso_tasks = create_vso_subtask!(appeal, distribution_task)
           # If the appeal is direct docket and there are no ihp tasks,
           # then it is initially ready for distribution.
-          distribution_task.update(status: "assigned") if vso_tasks.empty?
+          distribution_task.ready_for_distribution! if vso_tasks.empty?
         end
-        # TODO: if appeal is ready for distribution, track the time it became ready
       end
     end
   end
