@@ -7,38 +7,26 @@ import _ from 'lodash';
 
 export default class HearingRoomDropdown extends React.Component {
 
-  componentDidUpdate() {
-    const { value, onChange } = this.props;
+  getSelectedOption = () => {
+    const { value } = this.props;
 
-    if (typeof (value) === 'string') {
-      onChange(this.getValue());
-    }
-  }
-
-  getValue = () => {
-    const { value, options } = this.props;
-
-    if (!value) {
-      return null;
-    }
-
-    if (typeof (value) === 'string') {
-      return _.find(options, (opt) => opt.value === value);
-    }
-
-    return value;
+    return _.find(HEARING_ROOM_OPTIONS, (opt) => opt.value === value) ||
+      {
+        value: null,
+        label: null
+      };
   }
 
   render() {
-    const { name, label, onChange, value } = this.props;
+    const { name, label, onChange } = this.props;
 
     return (
       <SearchableDropdown
         name={name}
         label={label}
         strongLabel
-        value={value}
-        onChange={onChange}
+        value={this.getSelectedOption()}
+        onChange={(option) => onChange(option.value)}
         options={HEARING_ROOM_OPTIONS} />
     );
   }
@@ -47,7 +35,7 @@ export default class HearingRoomDropdown extends React.Component {
 HearingRoomDropdown.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
-  value: PropTypes.object,
+  value: PropTypes.string,
   onChange: PropTypes.func.isRequired
 };
 

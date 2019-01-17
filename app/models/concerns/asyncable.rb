@@ -17,7 +17,11 @@ module Asyncable
   # These column names can be overridden in consuming classes as needed.
   class_methods do
     REQUIRES_PROCESSING_WINDOW_DAYS = 4
-    REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
+    DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
+
+    def processing_retry_interval_hours
+      DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
+    end
 
     def submitted_at_column
       :submitted_at
@@ -48,7 +52,7 @@ module Asyncable
     end
 
     def previously_attempted_ready_for_retry
-      where(arel_table[attempted_at_column].lt(REQUIRES_PROCESSING_RETRY_WINDOW_HOURS.hours.ago))
+      where(arel_table[attempted_at_column].lt(processing_retry_interval_hours.hours.ago))
     end
 
     def attemptable

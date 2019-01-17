@@ -35,39 +35,27 @@ class JudgeDropdown extends React.Component {
     });
   }
 
-  componentDidUpdate() {
-    const { judges: { options }, value, onChange } = this.props;
-
-    if (options && typeof (value) === 'string') {
-      onChange(this.getValue());
-    }
-  }
-
-  getValue = () => {
+  getSelectedOption = () => {
     const { value, judges: { options } } = this.props;
 
-    if (!value) {
-      return null;
-    }
-
-    if (typeof (value) === 'string') {
-      return _.find(options, (opt) => opt.value === value);
-    }
-
-    return value;
+    return _.find(options, (opt) => opt.value === value) ||
+      {
+        value: null,
+        label: null
+      };
   }
 
   render() {
-    const { name, label, onChange } = this.props;
+    const { name, label, onChange, judges: { options } } = this.props;
 
     return (
       <SearchableDropdown
         name={name}
         label={label}
         strongLabel
-        value={this.getValue()}
-        onChange={onChange}
-        options={this.props.judges.options} />
+        value={this.getSelectedOption()}
+        onChange={(option) => onChange(option.value)}
+        options={options} />
     );
   }
 }
@@ -75,10 +63,7 @@ class JudgeDropdown extends React.Component {
 JudgeDropdown.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object
-  ]),
+  value: PropTypes.string,
   onChange: PropTypes.func.isRequired
 };
 
