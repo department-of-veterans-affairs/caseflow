@@ -49,6 +49,8 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
             }
           }
         });
+
+        throw error;
       }
     );
 };
