@@ -34,7 +34,7 @@ export default class SelectClaimant extends React.PureComponent {
     let showClaimants = ['true', true].includes(veteranIsNotClaimant);
 
     const email = React.createElement(
-      'a', { href: 'mailto:jennifer.umberhind@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database' }, 'email'
+      'a', { href: 'mailto:VACaseflowOps@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database' }, 'email'
     );
     const claimantLabel = React.createElement(
       'p', { id: 'claimantLabel' }, COPY.CLAIMANT_NOT_FOUND_START, email, COPY.CLAIMANT_NOT_FOUND_END
