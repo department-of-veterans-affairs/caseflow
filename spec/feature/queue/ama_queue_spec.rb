@@ -543,6 +543,7 @@ RSpec.feature "AmaQueue" do
 
     let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Anna Juarez") }
     let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
+    let!(:judgeteam) { JudgeTeam.create_for_judge(judge_user) }
 
     let(:attorney_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Steven Ahr") }
     let!(:attorney_staff) { FactoryBot.create(:staff, :attorney_role, user: attorney_user) }
@@ -562,13 +563,13 @@ RSpec.feature "AmaQueue" do
         )
       end
 
+      OrganizationsUser.add_user_to_organization(attorney_user, judgeteam)
+
       User.authenticate!(user: judge_user)
     end
 
     it "judge can return report to attorney for corrections" do
       step "judge reviews case and assigns a task to an attorney" do
-        User.authenticate!(user: judge_user)
-
         visit "/queue"
 
         click_on COPY::SWITCH_TO_ASSIGN_MODE_LINK_LABEL
@@ -576,9 +577,7 @@ RSpec.feature "AmaQueue" do
         click_on veteran_full_name
 
         click_dropdown(prompt: "Select an action", text: "Assign to attorney")
-
         click_dropdown(prompt: "Select a user", text: "Other")
-
         click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
 
         click_on "Submit"
@@ -588,7 +587,6 @@ RSpec.feature "AmaQueue" do
 
       step "attorney completes task and returns the case to the judge" do
         User.authenticate!(user: attorney_user)
-
         visit "/queue"
 
         click_on veteran_full_name
@@ -597,20 +595,18 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content("Select special issues (optional)")
         click_label "riceCompliance"
-
         click_on "Continue"
 
         expect(page).to have_content("Select Dispositions")
-
+        # XXX: interact with dispositions
         click_on "Continue"
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
-        fill_in "Document ID:", with: "1234"
+        fill_in "Document ID:", with: "12345"
         click_on "Select a judge"
         click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
         fill_in "notes", with: "all done"
-
         click_on "Continue"
 
         expect(page).to have_content(
@@ -621,24 +617,23 @@ RSpec.feature "AmaQueue" do
 
       step "judge returns case to attorney for corrections" do
         User.authenticate!(user: judge_user)
-
         visit "/queue"
 
         click_on veteran_full_name
 
         click_dropdown(prompt: "Select an action", text: "Return to attorney")
-
-        click_dropdown(prompt: "Select a user", text: "Other")
-
-        expect(dropdown_selected_value(find(".cf-modal-body .dropdown-Other"))).to eq attorney_user.full_name
+        click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+        # expect(dropdown_selected_value(find(".cf-modal-body .dropdown-Other"))).to eq attorney_user.full_name
 
         click_on "Submit"
 
-        expect(page).to have_content("Returned 1 case to #{attorney_user.full_name}")
+        # expect(page).to have_content("Returned 1 case to #{attorney_user.full_name}")
+        expect(page).to have_content("Assigned 1 case")
       end
 
       step "attorney corrects case and returns it to the judge" do
         User.authenticate!(user: attorney_user)
+        visit "/queue"
       end
     end
   end
