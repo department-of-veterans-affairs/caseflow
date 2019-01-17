@@ -44,9 +44,9 @@ class SelectSpecialIssuesView extends React.PureComponent {
   };
   render = () => {
     const {
-      error
+      error,
+      specialIssues
     } = this.props;
-
     let sections = [
       specialIssueFilters.aboutSection(),
       specialIssueFilters.residenceSection(),
@@ -83,18 +83,21 @@ class SelectSpecialIssuesView extends React.PureComponent {
             label={<h3>{COPY.SPECIAL_ISSUES_ABOUT_SECTION}</h3>}
             name="About the appellant"
             options={aboutSection}
+            values={specialIssues}
             onChange={this.onChangeSpecialIssue}
           />
           <CheckboxGroup
             label={<h3>{COPY.SPECIAL_ISSUES_RESIDENCE_SECTION}</h3>}
             name="Residence"
             options={residenceSection}
+            values={specialIssues}
             onChange={this.onChangeSpecialIssue}
           />
           <CheckboxGroup
             label={<h3>{COPY.SPECIAL_ISSUES_BENEFIT_TYPE_SECTION}</h3>}
             name="Benefit Types"
             options={benefitTypeSection}
+            values={specialIssues}
             onChange={this.onChangeSpecialIssue}
           />
         </div>
@@ -104,12 +107,14 @@ class SelectSpecialIssuesView extends React.PureComponent {
             label={<h3> {COPY.SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION}</h3>}
             name="Issues on Appeal"
             options={issuesOnAppealSection}
+            values={specialIssues}
             onChange={this.onChangeSpecialIssue}
           />
           <CheckboxGroup
             label={<h3>{COPY.SPECIAL_ISSUES_DIC_OR_PENSION_SECTION} </h3>}
             name="DIC or Pension"
             options={dicOrPensionSection}
+            values={specialIssues}
             onChange={this.onChangeSpecialIssue}
           />
         </div>
