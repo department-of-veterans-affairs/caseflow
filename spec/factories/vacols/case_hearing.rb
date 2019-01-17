@@ -3,6 +3,7 @@ FactoryBot.define do
     hearing_type "V"
     hearing_date { Time.zone.today }
     room 1
+    folder_nr { create(:case).bfkey }
 
     transient do
       user nil
