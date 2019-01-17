@@ -49,8 +49,8 @@ describe Appeal do
 
     let!(:documents) do
       [
-        create(:document, upload_date: 5.days.ago),
-        create(:document, upload_date: 5.days.ago)
+        Generators::Document.create(upload_date: 5.days.ago),
+        Generators::Document.create(upload_date: 5.days.ago)
       ]
     end
 
@@ -60,7 +60,7 @@ describe Appeal do
 
     context "when appeal has no appeal view" do
       it "should return all documents" do
-        expect(subject.map(&:to_hash)).to eq(documents.map(&:to_hash))
+        expect(subject).to eq(documents)
       end
     end
 
@@ -81,7 +81,7 @@ describe Appeal do
       context "when one document is newer than the appeal view date" do
         it "should return the newer document" do
           documents[0].update(upload_date: -2.days.ago)
-          expect(subject.map(&:to_hash)).to eq([documents[0].to_hash])
+          expect(subject).to eq([documents[0]])
         end
       end
     end
