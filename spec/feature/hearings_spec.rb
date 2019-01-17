@@ -102,7 +102,7 @@ RSpec.feature "Hearings" do
 
     scenario "Legacy daily docket saves to the backend" do
       visit "/hearings/dockets/2024-10-05"
-
+      expect(page).to have_content("Daily Docket")
       fill_in "2.notes", with: "This is a note about the hearing!"
       find(".checkbox-wrapper-2-prep").find(".cf-form-checkbox").click
       find(".dropdown-2-disposition").click
@@ -112,6 +112,7 @@ RSpec.feature "Hearings" do
       find(".dropdown-2-hold_open").click
       find("#react-select-4--option-2").click
       find("label", text: "Transcript Requested").click
+
       visit "/hearings/dockets/2024-10-05"
       expect(page).to have_content("This is a note about the hearing!")
       expect(page).to have_content("No Show")
@@ -123,18 +124,16 @@ RSpec.feature "Hearings" do
 
     scenario "AMA daily docket saves to the backend" do
       visit "/hearings/dockets/2019-03-02"
+      expect(page).to have_content("Daily Docket")
       fill_in "1.notes", with: "This is a note about the hearing!"
       find(".checkbox-wrapper-1-prep").find(".cf-form-checkbox").click
       find(".dropdown-1-disposition").click
-      find("#react-select-2--option-1").click
-
-      find("label", text: "Transcript Requested", match: :first).click
-      find("label", text: "Yes, Waive 90 Day Hold", match: :first).click
+      find("#react-select-5--option-1").click
+      find("label", text: "Yes, Waive 90 Day Hold").click
 
       visit "/hearings/dockets/2019-03-02"
       expect(page).to have_content("This is a note about the hearing!")
       expect(page).to have_content("No Show")
-      expect(find_field("1.transcript_requested", visible: false)).to be_checked
       expect(find_field("1.evidence_window_waived", visible: false)).to be_checked
       expect(find_field("1-prep", visible: false)).to be_checked
     end
