@@ -559,6 +559,26 @@ feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
+  scenario "intake can still be completed when ratings are backfilled" do
+    mock_backfilled_rating_response
+    start_higher_level_review(veteran_no_ratings)
+
+    visit "/intake"
+    click_intake_continue
+    click_intake_add_issue
+
+    # expect the rating modal to be skipped
+    expect(page).to have_content("Does issue 1 match any of these issue categories?")
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "04/19/2018"
+    )
+
+    click_intake_finish
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+  end
+
   context "Add / Remove Issues page" do
     let(:higher_level_review_reference_id) { "hlr123" }
     let(:supplemental_claim_reference_id) { "sc123" }
