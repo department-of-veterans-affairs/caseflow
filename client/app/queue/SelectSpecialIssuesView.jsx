@@ -29,9 +29,9 @@ class SelectSpecialIssuesView extends React.PureComponent {
   getPageName = () => COPY.SPECIAL_ISSUES_PAGE_TITLE;
   getPageNote = () => COPY.SPECIAL_ISSUES_PAGE_NOTE;
   onChangeSpecialIssue = (issue) => (value) => {
-      this.props.setSpecialIssues({
-        [issue.snakeCase]: value
-      });
+    this.props.setSpecialIssues({
+      [issue.snakeCase]: value
+    });
   }
   onChangeLegacySpecialIssue = (event) => {
     this.props.setSpecialIssues({
@@ -52,44 +52,44 @@ class SelectSpecialIssuesView extends React.PureComponent {
     const {specialIssues} = this.props;
     if (specialIssues.appeal_type === "LegacyAppeal") {
       return this.renderLegacySpecialIssues();
-    } else {
+    } 
       return this.renderNonLegacySpecialIssues();
-    }
+    
   }
   renderNonLegacySpecialIssues = () => {
-      const {
-        specialIssues,
-        appeal,
-        error
-      } = this.props;
-  
-      const specialIssueCheckboxes = SPECIAL_ISSUES.map((issue) => {
-        if (issue.nonCompensation && !appeal.isLegacyAppeal) {
-          return null;
-        }
-  
-        return <Checkbox
-          key={issue.specialIssue}
-          label={issue.display}
-          name={issue.specialIssue}
-          value={specialIssues[issue.snakeCase]}
-          onChange={this.onChangeSpecialIssue(issue)}
-        />;
-      });
-  
-      return <React.Fragment>
-        <h1>
-          {this.getPageName()}
-        </h1>
-        <p>
-          {this.getPageNote()}
-        </p>
-        {error && <Alert type="error" title={error.title} message={error.detail} />}
-        <div className="cf-multiple-columns">
-          {specialIssueCheckboxes}
-        </div>
-      </React.Fragment>;
-    
+    const {
+      specialIssues,
+      appeal,
+      error
+    } = this.props;
+
+    const specialIssueCheckboxes = SPECIAL_ISSUES.map((issue) => {
+      if (issue.nonCompensation && !appeal.isLegacyAppeal) {
+        return null;
+      }
+
+      return <Checkbox
+        key={issue.specialIssue}
+        label={issue.display}
+        name={issue.specialIssue}
+        value={specialIssues[issue.snakeCase]}
+        onChange={this.onChangeSpecialIssue(issue)}
+      />;
+    });
+
+    return <React.Fragment>
+      <h1>
+        {this.getPageName()}
+      </h1>
+      <p>
+        {this.getPageNote()}
+      </p>
+      {error && <Alert type="error" title={error.title} message={error.detail} />}
+      <div className="cf-multiple-columns">
+        {specialIssueCheckboxes}
+      </div>
+    </React.Fragment>;
+
   }
   renderLegacySpecialIssues = () => {
     const {
