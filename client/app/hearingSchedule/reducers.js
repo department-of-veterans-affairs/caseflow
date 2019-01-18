@@ -8,6 +8,7 @@ import commonComponentsReducer from '../components/common/reducers';
 import caseListReducer from '../queue/CaseList/CaseListReducer';
 import { workQueueReducer } from '../queue/reducers';
 import uiReducer from '../queue/uiReducer/uiReducer';
+import hearingDropdownDataReducer from './components/DataDropdowns/reducers';
 
 export const initialState = {};
 const hearingScheduleReducer = (state = initialState, action = {}) => {
@@ -386,7 +387,8 @@ const combinedReducer = combineReducers({
   ui: uiReducer,
   caseList: caseListReducer,
   queue: workQueueReducer,
-  components: commonComponentsReducer
+  components: commonComponentsReducer,
+  hearingDropdownData: hearingDropdownDataReducer
 });
 
 export default timeFunction(
