@@ -162,29 +162,6 @@ export class DailyDocketContainer extends React.Component {
 
   }
 
-  // optionalHearingTime = (hearing) => {
-  //   const time = this.getOptionalTime(hearing);
-
-  //   return {
-  //     disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
-  //     notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-  //     master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
-  //       time } : null,
-  //     scheduled_for: hearing.editedOptinalTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
-  //   };
-  // };
-
-  // saveOptionalHearing = (hearing) => {
-  //   const formattedHearing = this.optionalHearingTime(hearing);
-
-  //   ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: { hearing: formattedHearing } }).
-  //     then((response) => {
-  //       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-
-  //       this.props.onReceiveSavedHearing(resp);
-  //     });
-  // };
-
   loadActiveJudges = () => {
     let requestUrl = '/users?role=Judge';
 
