@@ -90,7 +90,8 @@ feature "Higher Level Review Edit issues" do
       informal_conference: false,
       same_office: false,
       benefit_type: "compensation",
-      veteran_is_not_claimant: true
+      veteran_is_not_claimant: true,
+      legacy_opt_in_approved: true
     )
   end
 
@@ -258,6 +259,19 @@ feature "Higher Level Review Edit issues" do
       )
     end
 
+    let!(:ri_legacy_issue_eligible) do
+      RequestIssue.create!(
+        contested_rating_issue_reference_id: "before_ama_ref_id",
+        contested_rating_issue_profile_date: rating_before_ama.profile_date,
+        review_request: higher_level_review,
+        contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
+        contention_reference_id: "12345678",
+        vacols_id: "vacols1",
+        benefit_type: "compensation",
+        vacols_sequence_id: "2"
+      )
+    end
+
     let(:ep_claim_id) do
       EndProductEstablishment.find_by(
         source: higher_level_review,
@@ -305,12 +319,15 @@ feature "Higher Level Review Edit issues" do
       expect(page).to have_content(
         "#{ri_legacy_issue_ineligible.contention_text} #{ineligible.legacy_appeal_not_eligible}"
       )
+      expect(page).to have_content(
+        "#{ri_legacy_issue_eligible.contention_text} Decision date:"
+      )
     end
 
     it "re-applies eligibility check on remove/re-add of ineligible issue" do
       visit "higher_level_reviews/#{ep_claim_id}/edit"
 
-      expect(page).to have_content("8 issues")
+      expect(page).to have_content("9 issues")
 
       # remove and re-add each ineligible issue. when re-added, it should always be issue 8.
       # excludes ineligible legacy opt in issue because it requires the HLR to have that option selected
