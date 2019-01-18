@@ -272,7 +272,7 @@ class Task < ApplicationRecord
   def return_to_attorney_data
     judge_task = root_task.children.find { |t| t.is_a?(JudgeTask) }
     judge = judge_task&.assigned_to
-    assignee = judge_task.children.select { |t| t.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+    assignee = judge_task&.children&.select { |t| t.is_a?(AttorneyTask) }&.max_by(&:created_at)&.assigned_to
     attorneys = JudgeTeam.for_judge(judge)&.attorneys || []
     {
       selected: assignee,

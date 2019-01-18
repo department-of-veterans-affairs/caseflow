@@ -370,7 +370,15 @@ RSpec.feature "Task queue" do
     end
 
     context "judge user's queue table view" do
-      let!(:caseflow_review_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge_user) }
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let!(:caseflow_review_task) do
+        FactoryBot.create(
+          :ama_judge_decision_review_task,
+          assigned_to: judge_user,
+          parent: root_task,
+          appeal: root_task.appeal
+        )
+      end
       let!(:legacy_review_task) do
         FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, :assigned, user: judge_user))
       end
