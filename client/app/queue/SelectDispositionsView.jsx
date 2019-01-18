@@ -228,7 +228,7 @@ class SelectDispositionsView extends React.PureComponent {
     },
     { classNames: ['usa-button', 'usa-button-primary'],
       name: 'Yes, delete decision',
-      onClick: this.deleteAddedDecision
+      onClick: this.deleteDecision
     }
   ];
 
