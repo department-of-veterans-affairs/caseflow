@@ -68,7 +68,8 @@ export default class ContestedIssues extends React.PureComponent {
   decisionIssues = (requestIssue) => {
     const {
       decisionIssues,
-      openDecisionHandler
+      openDecisionHandler,
+      openDeleteAddedDecisionHandler
     } = this.props;
 
     return decisionIssues.filter((decisionIssue) => {
@@ -81,20 +82,27 @@ export default class ContestedIssues extends React.PureComponent {
         <div {...decisionIssueDiv}>
           <div {...flexContainer}>
             Decision
-            {openDecisionHandler && <span>
-              <Button
-                name="Delete"
-                id={`delete-issue-${requestIssue.id}-${decisionIssue.id}`}
-                onClick={openDecisionHandler(requestIssue.id, decisionIssue)}
-                classNames={['cf-btn-link']}
-              />
-              <Button
-                name="Edit"
-                id={`edit-issue-${requestIssue.id}-${decisionIssue.id}`}
-                onClick={openDecisionHandler(requestIssue.id, decisionIssue)}
-                classNames={['cf-btn-link']}
-              />
-            </span>}
+            <div>
+              {
+                openDeleteAddedDecisionHandler && <span>
+                  <Button
+                    name="Delete"
+                    id={`delete-issue-${requestIssue.id}-${decisionIssue.id}`}
+                    onClick={() => {
+                      openDeleteAddedDecisionHandler(requestIssue.id, decisionIssue);
+                    }}
+                    classNames={['cf-btn-link']}
+                  />
+                </span>}
+              {openDecisionHandler && <span>
+                <Button
+                  name="Edit"
+                  id={`edit-issue-${requestIssue.id}-${decisionIssue.id}`}
+                  onClick={openDecisionHandler(requestIssue.id, decisionIssue)}
+                  classNames={['cf-btn-link']}
+                />
+              </span>}
+            </div>
           </div>
           <div {...verticalSpaceDiv} {...flexContainer}>
             <span {...descriptionSpan}>
