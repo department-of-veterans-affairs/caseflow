@@ -59,8 +59,8 @@ RSpec.feature "Build Hearing Schedule" do
         expect(page).to have_content("You have successfully assigned judges to hearings")
         hearing_days = HearingDay.load_days(Date.new(2018, 4, 1), Date.new(2018, 4, 30))
 
-        vlj_ids_count = hearing_days[:vacols_hearings].count { |hearing_day| hearing_day.board_member } +
-          hearing_days[:caseflow_hearings].count { |hearing_day| hearing_day.judge_id }
+        vlj_ids_count = hearing_days[:vacols_hearings].count(&:board_member) +
+                        hearing_days[:caseflow_hearings].count(&:judge_id)
 
         expect(vlj_ids_count).to eq(2)
       end

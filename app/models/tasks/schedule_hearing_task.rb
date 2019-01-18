@@ -37,7 +37,7 @@ class ScheduleHearingTask < GenericTask
     verify_user_can_update!(current_user)
 
     task_payloads = params.delete(:business_payloads)
-    
+
     hearing_date = Time.use_zone("Eastern Time (US & Canada)") do
       Time.zone.parse(task_payloads[:values][:hearing_date])
     end

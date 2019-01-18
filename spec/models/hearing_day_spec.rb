@@ -169,7 +169,7 @@ describe HearingDay do
     context "get parent and children structure" do
       subject do
         HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                     hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
+                                                   hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
       end
 
       it "returns nested hash structure" do
@@ -218,7 +218,7 @@ describe HearingDay do
 
     subject do
       HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                   hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
+                                                 hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
     end
 
     context "get video hearings neither postponed or cancelled" do
@@ -310,7 +310,7 @@ describe HearingDay do
     context "get parent and children structure" do
       subject do
         HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                     hearing.hearing_date.beginning_of_day + 10, "C")
+                                                   hearing.hearing_date.beginning_of_day + 10, "C")
       end
 
       it "returns nested hash structure" do

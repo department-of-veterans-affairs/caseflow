@@ -118,28 +118,25 @@ class HearingDay < ApplicationRecord
 
     def hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
       hearing_days = load_days(start_date, end_date, regional_office)
-
       total_video_and_co = hearing_days[:caseflow_hearings] + hearing_days[:vacols_hearings]
 
       # fetching all the RO keys of the dockets
-      regional_office_keys = total_video_and_co.map { |hearing_day| hearing_day.regional_office }
+      regional_office_keys = total_video_and_co.map(&:regional_office)
       regional_office_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
 
       hearing_days_to_array_of_days_and_hearings(
         total_video_and_co, regional_office.nil? || regional_office == "C"
       ).map do |value|
-        hearing_day = value[:hearing_day]
-
         scheduled_hearings = filter_non_scheduled_hearings(value[:hearings] || [])
 
         total_slots = HearingDayRepository.fetch_hearing_day_slots(
-          regional_office_hash[hearing_day.regional_office], hearing_day
+          regional_office_hash[value[:hearing_day].regional_office], value[:hearing_day]
         )
 
-        if scheduled_hearings.length >= total_slots || hearing_day[:lock]
+        if scheduled_hearings.length >= total_slots || value[:hearing_day][:lock]
           nil
         else
-          HearingDay.to_hash(hearing_day).slice(:id, :scheduled_for, :request_type, :room).tap do |day|
+          HearingDay.to_hash(value[:hearing_day]).slice(:id, :scheduled_for, :request_type, :room).tap do |day|
             day[:hearings] = scheduled_hearings.map { |hearing| hearing.to_hash(current_user_id) }
             day[:total_slots] = total_slots
           end
@@ -151,12 +148,10 @@ class HearingDay < ApplicationRecord
       hearings.select do |hearing|
         if hearing.is_a?(Hearing)
           true
+        elsif hearing.request_type == REQUEST_TYPES[:central]
+          !hearing.vacols_record.folder_nr.nil?
         else
-          if hearing.request_type == REQUEST_TYPES[:central]
-            !hearing.vacols_record.folder_nr.nil?
-          else
-            hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
-          end
+          hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
         end
       end
     end
@@ -177,18 +172,18 @@ class HearingDay < ApplicationRecord
       symbol_to_group_by = nil
 
       vacols_hearings_for_days = if is_video_hearing
-                                symbol_to_group_by = :scheduled_for
+                                   symbol_to_group_by = :scheduled_for
 
-                                HearingRepository.fetch_co_hearings_for_dates(
-                                  total_video_and_co.map { |hearing_day| hearing_day[symbol_to_group_by] }
-                                )
-                              else
-                                symbol_to_group_by = :id
+                                   HearingRepository.fetch_co_hearings_for_dates(
+                                     total_video_and_co.map { |hearing_day| hearing_day[symbol_to_group_by] }
+                                   )
+                                 else
+                                   symbol_to_group_by = :id
 
-                                HearingRepository.fetch_video_hearings_for_parents(
-                                  total_video_and_co.map { |hearing_day| hearing_day[symbol_to_group_by] }
-                                )
-                              end
+                                   HearingRepository.fetch_video_hearings_for_parents(
+                                     total_video_and_co.map { |hearing_day| hearing_day[symbol_to_group_by] }
+                                   )
+                                 end
 
       # Group the hearing days with the same keys as the hearings
       grouped_hearing_days = total_video_and_co.group_by do |hearing_day|
@@ -199,10 +194,7 @@ class HearingDay < ApplicationRecord
         hearings = (vacols_hearings_for_days[key] || []) + (day[0].is_a?(HearingDay) ? day[0].hearings : [])
 
         # There should only be one day, so we take the first value in our day array
-        {
-          hearing_day: day[0],
-          hearings: hearings
-        }
+        { hearing_day: day[0], hearings: hearings }
       end
     end
 

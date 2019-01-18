@@ -36,7 +36,7 @@ class Hearings::HearingDayController < HearingScheduleController
     )
 
     if hearing_day.is_a?(HearingDay)
-      hearings = hearings + hearing_day.hearings
+      hearings += hearing_day.hearings
     end
 
     render json: {
@@ -73,7 +73,6 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def update
-    binding.pry
     hearing_day.update!(update_params)
     render json: hearing_day.to_hash
   end

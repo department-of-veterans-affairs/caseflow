@@ -102,16 +102,7 @@ class HearingRepository
     end
 
     def update_co_hearing(hearing_date_str, appeal)
-      if hearing_date_str.to_date > HearingDay::CASEFLOW_CO_PARENT_DATE || appeal.is_a?(Appeal)
-        return create_child_co_hearing(hearing_date_str, appeal)
-      end
-
-      # Get the next open slot for that hearing date and time.
-      hearing = VACOLS::CaseHearing.find_by(hearing_date: hearing_date_str, folder_nr: nil)
-      fail NoOpenSlots, message: "No available slots for this hearing day." if hearing.nil?
-
-      loaded_hearing = VACOLS::CaseHearing.load_hearing(hearing.hearing_pkseq)
-      HearingRepository.update_vacols_hearing!(loaded_hearing, folder_nr: appeal.vacols_id)
+      create_child_co_hearing(hearing_date_str, appeal)
     end
 
     def create_child_co_hearing(hearing_date_str, appeal)
@@ -137,33 +128,23 @@ class HearingRepository
 
       hearing = VACOLS::CaseHearing.find(hearing_pkseq)
 
-      if (appeal.is_a?(LegacyAppeal))
-        VACOLS::CaseHearing.create_child_hearing!(
-          folder_nr: appeal.vacols_id,
-          hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
-          vdkey: hearing.hearing_pkseq,
-          hearing_type: "V",
-          room: hearing.room,
-          board_member: hearing.board_member,
-          vdbvapoc: hearing.vdbvapoc
-        )
-      else
-        Hearing.create!(
-          appeal: appeal,
-          hearing_day_id: hearing_day.id,
-          room: hearing.room,
-          judge_id: hearing_day.judge.id,
-          scheduled_time: hearing_date
-        )
-      end
+      VACOLS::CaseHearing.create_child_hearing!(
+        folder_nr: appeal.vacols_id,
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
+        vdkey: hearing.hearing_pkseq,
+        hearing_type: "V",
+        room: hearing.room,
+        board_member: hearing.board_member,
+        vdbvapoc: hearing.vdbvapoc
+      )
     end
 
+    # rubocop:disable Metrics/MethodLength
     def create_caseflow_child_video_hearing(id, hearing_date, appeal)
       hearing_day = HearingDay.find(id)
-
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
-      if (appeal.is_a?(LegacyAppeal))
+      if appeal.is_a?(LegacyAppeal)
         VACOLS::CaseHearing.create_child_hearing!(
           folder_nr: appeal.vacols_id,
           hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
@@ -178,11 +159,12 @@ class HearingRepository
           appeal: appeal,
           hearing_day_id: hearing_day.id,
           room: hearing.room,
-          judge_id: hearing_day.judge.id,
+          judge_id: hearing_day.judge.try(:id),
           scheduled_time: hearing_date
         )
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def load_vacols_data(hearing)
       vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",

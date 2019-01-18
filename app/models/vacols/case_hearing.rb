@@ -177,7 +177,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
   end
 
-  def schedule_for
+  def scheduled_for
     hearing_date
   end
 
