@@ -36,7 +36,6 @@ import {
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
-import HEARING_ROOMS_LIST from '../../../constants/HEARING_ROOMS_LIST.json';
 
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
@@ -158,15 +157,6 @@ export class DailyDocketContainer extends React.Component {
   openModal = () => {
     this.setState({ showModalAlert: false,
       modalOpen: true });
-
-    // find labels in options before passing values to modal
-    const room = _.findKey(HEARING_ROOMS_LIST, { label: this.props.dailyDocket.room });
-
-    this.props.selectHearingRoom(parseInt(room, 10));
-    this.props.selectVlj(parseInt(this.props.dailyDocket.judgeId, 10));
-    this.props.selectHearingCoordinator(this.props.dailyDocket.bvaPoc);
-    this.props.setNotes(this.props.dailyDocket.notes);
-    this.props.onHearingDayModified(false);
   };
 
   closeModal = () => {
@@ -178,15 +168,15 @@ export class DailyDocketContainer extends React.Component {
       let data = { id: this.props.dailyDocket.id };
 
       if (this.props.hearingRoom) {
-        data.room = this.props.hearingRoom;
+        data.room = this.props.hearingRoom.value;
       }
 
       if (this.props.vlj) {
-        data.judge_id = this.props.vlj;
+        data.judge_id = this.props.vlj.value;
       }
 
       if (this.props.coordinator) {
-        data.bva_poc = this.props.coordinator;
+        data.bva_poc = this.props.coordinator.label;
       }
 
       if (this.props.notes) {

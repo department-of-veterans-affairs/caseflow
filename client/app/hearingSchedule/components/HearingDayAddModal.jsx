@@ -67,11 +67,6 @@ const titleStyling = css({
   padding: 0
 });
 
-const centralOfficeStaticEntry = [{
-  label: 'Central',
-  value: 'C'
-}];
-
 class HearingDayAddModal extends React.Component {
   constructor(props) {
     super(props);
@@ -156,9 +151,9 @@ class HearingDayAddModal extends React.Component {
     };
 
     if (this.props.selectedRegionalOffice &&
-      this.props.selectedRegionalOffice !== '' &&
+      this.props.selectedRegionalOffice.value !== '' &&
       this.props.requestType.value !== 'C') {
-      data.regional_office = this.props.selectedRegionalOffice;
+      data.regional_office = this.props.selectedRegionalOffice.value;
     }
 
     ApiUtil.post('/hearings/hearing_day.json', { data }).
@@ -311,20 +306,30 @@ class HearingDayAddModal extends React.Component {
         <RegionalOfficeDropdown
           label="Select Regional Office (RO)"
           errorMessage={this.state.roError ? this.getRoErrorMessages() : null}
-          onChange={this.onRegionalOfficeChange}
-          value={this.props.selectedRegionalOffice}
-          staticOptions={centralOfficeStaticEntry} />
+          onChange={(value, label) => this.onRegionalOfficeChange({
+            value,
+            label
+          })}
+          value={this.props.selectedRegionalOffice.value} />
         }
         {(this.state.videoSelected || this.state.centralOfficeSelected) &&
         <React.Fragment>
           <JudgeDropdown
+            name="vlj"
             label="Select VLJ (Optional)"
-            value={this.props.vlj}
-            onChange={this.onVljChange} />
+            value={this.props.vlj.value}
+            onChange={(value, label) => this.onVljChange({
+              value,
+              label
+            })} />
           <HearingCoordinatorDropdown
+            name="coordinator"
             label="Select Hearing Coordinator (Optional)"
-            value={this.props.coordinator}
-            onChange={this.onCoordinatorChange} />
+            value={this.props.coordinator.value}
+            onChange={(value, label) => this.onCoordinatorChange({
+              value,
+              label
+            })} />
         </React.Fragment>
         }
         <TextareaField
@@ -370,12 +375,12 @@ HearingDayAddModal.propTypes = {
 
 const mapStateToProps = (state) => ({
   hearingSchedule: state.hearingSchedule.hearingSchedule,
-  selectedRegionalOffice: state.components.selectedRegionalOffice,
+  selectedRegionalOffice: state.components.selectedRegionalOffice || {},
   regionalOffices: state.components.regionalOffices,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
   requestType: state.hearingSchedule.requestType,
-  vlj: state.hearingSchedule.vlj,
-  coordinator: state.hearingSchedule.coordinator,
+  vlj: state.hearingSchedule.vlj || {},
+  coordinator: state.hearingSchedule.coordinator || {},
   notes: state.hearingSchedule.notes,
   roomRequired: state.hearingSchedule.roomRequired
 });

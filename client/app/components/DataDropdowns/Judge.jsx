@@ -26,7 +26,7 @@ class JudgeDropdown extends React.Component {
     ApiUtil.get('/users?role=Judge').then((resp) => {
       const judgeOptions = _.values(ApiUtil.convertToCamelCase(resp.body.judges)).map((judge) => ({
         label: judge.fullName,
-        value: judge.id
+        value: judge.id.toString()
       }));
 
       judgeOptions.sort((first, second) => (first.label - second.label));
@@ -66,7 +66,7 @@ class JudgeDropdown extends React.Component {
 JudgeDropdown.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
-  value: PropTypes.number,
+  value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   readOnly: PropTypes.bool,
   placeholder: PropTypes.string,
