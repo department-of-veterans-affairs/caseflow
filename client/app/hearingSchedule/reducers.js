@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { timeFunction } from '../util/PerfDebug';
 import { ACTIONS } from './constants';
 import { update } from '../util/ReducerUtil';
@@ -7,9 +8,9 @@ import commonComponentsReducer from '../components/common/reducers';
 import caseListReducer from '../queue/CaseList/CaseListReducer';
 import { workQueueReducer } from '../queue/reducers';
 import uiReducer from '../queue/uiReducer/uiReducer';
+import hearingDropdownDataReducer from './components/DataDropdowns/reducers';
 
 export const initialState = {};
-
 const hearingScheduleReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_HEARING_SCHEDULE:
@@ -393,13 +394,13 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return state;
   }
 };
-
 const combinedReducer = combineReducers({
   hearingSchedule: hearingScheduleReducer,
   ui: uiReducer,
   caseList: caseListReducer,
   queue: workQueueReducer,
-  components: commonComponentsReducer
+  components: commonComponentsReducer,
+  hearingDropdownData: hearingDropdownDataReducer
 });
 
 export default timeFunction(
