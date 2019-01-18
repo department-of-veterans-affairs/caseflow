@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { onReceiveDropdownData, onFetchDropdownData } from './actions';
-import ApiUtil from '../../../util/ApiUtil';
+import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
+import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
 
-import SearchableDropdown from '../../../components/SearchableDropdown';
+import SearchableDropdown from '../SearchableDropdown';
 
 class JudgeDropdown extends React.Component {
 
@@ -26,7 +26,7 @@ class JudgeDropdown extends React.Component {
     ApiUtil.get('/users?role=Judge').then((resp) => {
       const judgeOptions = _.values(ApiUtil.convertToCamelCase(resp.body.judges)).map((judge) => ({
         label: judge.fullName,
-        value: judge.cssId
+        value: judge.id.toString()
       }));
 
       judgeOptions.sort((first, second) => (first.label - second.label));
@@ -46,7 +46,7 @@ class JudgeDropdown extends React.Component {
   }
 
   render() {
-    const { name, label, onChange, judges: { options }, readOnly } = this.props;
+    const { name, label, onChange, judges: { options }, readOnly, errorMessage, placeholder } = this.props;
 
     return (
       <SearchableDropdown
@@ -55,8 +55,10 @@ class JudgeDropdown extends React.Component {
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value)}
-        options={options} />
+        onChange={(option) => onChange(option.value, option.label)}
+        options={options}
+        errorMessage={errorMessage}
+        placeholder={placeholder} />
     );
   }
 }
@@ -66,7 +68,9 @@ JudgeDropdown.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
+  placeholder: PropTypes.string,
+  errorMessage: PropTypes.string
 };
 
 JudgeDropdown.defaultProps = {
@@ -75,10 +79,10 @@ JudgeDropdown.defaultProps = {
 };
 
 const mapStateToProps = (state) => ({
-  judges: {
-    options: state.hearingDropdownData.judges.options,
-    isFetching: state.hearingDropdownData.judges.isFetching
-  }
+  judges: state.components.dropdowns.judges ? {
+    options: state.components.dropdowns.judges.options,
+    isFetching: state.components.dropdowns.judges.isFetching
+  } : {}
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

@@ -2,7 +2,7 @@ import { HEARING_ROOM_OPTIONS } from './constants';
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import SearchableDropdown from '../../../components/SearchableDropdown';
+import SearchableDropdown from '../SearchableDropdown';
 import _ from 'lodash';
 
 export default class HearingRoomDropdown extends React.Component {
@@ -18,7 +18,7 @@ export default class HearingRoomDropdown extends React.Component {
   }
 
   render() {
-    const { name, label, onChange, readOnly } = this.props;
+    const { name, label, onChange, readOnly, errorMessage, placeholder } = this.props;
 
     return (
       <SearchableDropdown
@@ -27,8 +27,10 @@ export default class HearingRoomDropdown extends React.Component {
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value)}
-        options={HEARING_ROOM_OPTIONS} />
+        onChange={(option) => onChange(option.value, option.label)}
+        options={HEARING_ROOM_OPTIONS}
+        errorMessage={errorMessage}
+        placeholder={placeholder} />
     );
   }
 }
@@ -38,7 +40,9 @@ HearingRoomDropdown.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
+  placeholder: PropTypes.string,
+  errorMessage: PropTypes.string
 };
 
 HearingRoomDropdown.defaultProps = {
