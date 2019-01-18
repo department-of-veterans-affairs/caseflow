@@ -30,7 +30,8 @@ export default class ReaderLink extends React.PureComponent {
       appealId,
       appeal,
       docCountWithinLink,
-      docCountBelowLink
+      docCountBelowLink,
+      endpoint
     } = this.props;
     const linkProps = {};
 
@@ -51,11 +52,11 @@ export default class ReaderLink extends React.PureComponent {
 
     return <React.Fragment>
       <Link {...linkProps} onClick={this.readerLinkAnalytics}>
-          View { docCountWithinLink && <AppealDocumentCount appeal={appeal} /> } docs
+          View { docCountWithinLink && <AppealDocumentCount appeal={appeal} endpoint={this.props.endpoint} /> } docs
         <span {...newFileIconStyling}><NewFile externalAppealId={appeal.externalId} /></span></Link>
       { docCountBelowLink &&
             <div {...documentCountSizeStyling}>
-              <AppealDocumentCount loadingText appeal={appeal} />
+              <AppealDocumentCount loadingText appeal={appeal} endpoint={this.props.endpoint} />
             </div>
       }
     </React.Fragment>;
@@ -69,7 +70,8 @@ ReaderLink.propTypes = {
   docCountBelowLink: PropTypes.bool,
   redirectUrl: PropTypes.string,
   taskType: PropTypes.string,
-  appealId: PropTypes.string.isRequired
+  appealId: PropTypes.string.isRequired,
+  endpoint: PropTypes.oneOf(['from_efolder', 'from_caseflow']).isRequired
 };
 
 ReaderLink.defaultProps = {

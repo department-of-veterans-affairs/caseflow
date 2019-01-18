@@ -29,7 +29,7 @@ class AppealDocumentCount extends React.PureComponent {
         timeout: { response: 5 * 60 * 1000 }
       };
 
-      ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
+      ApiUtil.get(`/appeals/${this.props.externalId}/document_count_${this.props.endpoint}`, requestOptions).then((response) => {
         const resp = JSON.parse(response.text);
 
         this.props.setAppealDocCount(this.props.externalId, resp.document_count);
@@ -54,7 +54,8 @@ class AppealDocumentCount extends React.PureComponent {
 
 AppealDocumentCount.propTypes = {
   appeal: PropTypes.object.isRequired,
-  loadingText: PropTypes.bool
+  loadingText: PropTypes.bool,
+  endpoint: PropTypes.oneOf(['from_efolder', 'from_caseflow']).isRequired
 };
 
 const mapStateToProps = (state, ownProps) => {
