@@ -28,27 +28,11 @@ class AsyncableJobsController < ApplicationController
   end
 
   def jobs
-    @jobs ||= gather_jobs
+    @jobs ||= AsyncableJobs.new.jobs
   end
 
   def job
     @job ||= allowed_params[:asyncable_job_klass].constantize.find(allowed_params[:id])
-  end
-
-  # TODO: how to support paging when coallescing so many different models?
-  def gather_jobs
-    expired_jobs = []
-    asyncable_models.each do |klass|
-      expired_jobs << klass.expired_without_processing
-    end
-    expired_jobs.flatten.sort_by(&:submitted_at_dtim)
-  end
-
-  def asyncable_models
-    ActiveRecord::Base.descendants.select { |c| c.included_modules.include?(Asyncable) }
-      .reject(&:abstract_class?)
-      .map(&:name)
-      .map(&:constantize)
   end
 
   def set_application
