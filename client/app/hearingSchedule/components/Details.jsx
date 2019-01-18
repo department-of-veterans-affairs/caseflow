@@ -11,13 +11,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
-import {
-  Overview,
-  Details,
-  TranscriptionDetails,
-  TranscriptionRequest,
-  TranscriptionProblem
-} from './DetailsSections';
+import DetailsSections, { Overview, LegacyWarning } from './DetailsSections';
 
 const row = css({
   marginLeft: '-15px',
@@ -68,7 +62,8 @@ export default class HearingDetails extends React.Component {
         copyRequested: transcription.copyRequested || false,
         copySentDate: DateUtil.formatDateStr(transcription.copySentDate)
       },
-      disabled: hearing.docketName !== 'hearing',
+      disabled: false,
+      isLegacy: hearing.docketName !== 'hearing',
       updated: false,
       loading: false,
       success: false,
@@ -147,7 +142,7 @@ export default class HearingDetails extends React.Component {
       vbmsId
     } = this.props.hearing;
 
-    const { transcription, hearing, disabled, success, error } = this.state;
+    const { transcription, hearing, disabled, success, error, isLegacy } = this.state;
 
     return (
       <AppSegment filledBackground>
@@ -168,38 +163,19 @@ export default class HearingDetails extends React.Component {
           </div>
 
           <div className="cf-help-divider" />
-
           <h2>Hearing Details</h2>
           <Overview hearing={this.props.hearing} />
           <div className="cf-help-divider" />
 
-          <Details
-            hearing={hearing}
-            set={this.setHearing}
-            readOnly={disabled} />
-          <div className="cf-help-divider" />
-
-          <h2>Transcription Details</h2>
-          <TranscriptionDetails
-            transcription={transcription}
-            set={this.setTranscription}
-            readOnly={disabled} />
-          <div className="cf-help-divider" />
-
-          <h2>Transcription Problem</h2>
-          <TranscriptionProblem
-            transcription={transcription}
-            set={this.setTranscription}
-            readOnly={disabled} />
-          <div className="cf-help-divider" />
-
-          <h2>Transcription Request</h2>
-          <TranscriptionRequest
-            transcription={transcription}
-            set={this.setTranscription}
-            readOnly={disabled} />
-          <div className="cf-help-divider" />
-
+          {!isLegacy &&
+            <DetailsSections
+              setTranscription={this.setTranscription}
+              setHearing={this.setHearing}
+              transcription={transcription}
+              hearing={hearing}
+              disabled={disabled} />}
+          {isLegacy &&
+            <LegacyWarning />}
           <div>
             <a
               className="button-link"

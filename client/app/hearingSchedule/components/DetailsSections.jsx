@@ -77,7 +77,7 @@ export const Overview = ({
   ]} />
 );
 
-export const Details = ({
+const Details = ({
   hearing: { judgeId, room, evidenceWindowWaived, notes, bvaPoc },
   set, readOnly
 }) => (
@@ -125,7 +125,7 @@ export const Details = ({
   </React.Fragment>
 );
 
-export const TranscriptionDetails = ({
+const TranscriptionDetails = ({
   transcription: { taskNumber, transcriber, sentToTranscriberDate, expectedReturnDate, uploadedToVbmsDate },
   set, readOnly
 }) => (
@@ -195,7 +195,7 @@ export const TranscriptionDetails = ({
   </React.Fragment>
 );
 
-export const TranscriptionProblem = ({
+const TranscriptionProblem = ({
   transcription: { problemType, problemNoticeSentDate, requestedRemedy },
   set, readOnly
 }) => (
@@ -270,7 +270,7 @@ export const TranscriptionProblem = ({
   </div>
 );
 
-export const TranscriptionRequest = ({
+const TranscriptionRequest = ({
   transcription: { copyRequested, copySentDate },
   set, readOnly
 }) => (
@@ -295,3 +295,46 @@ export const TranscriptionRequest = ({
     />
   </div>
 );
+
+export const LegacyWarning = () => (
+  <div {...css({
+    textAlign: 'center',
+    marginTop: '4rem'
+  })}>
+    <h1>This is a Legacy Case Hearing</h1>
+    <p>To view or edit details for this hearing access VACOLS</p>
+  </div>
+);
+
+const Sections = ({ transcription, hearing, disabled, setHearing, setTranscription }) => (
+  <React.Fragment>
+    <Details
+      hearing={hearing}
+      set={setHearing}
+      readOnly={disabled} />
+    <div className="cf-help-divider" />
+
+    <h2>Transcription Details</h2>
+    <TranscriptionDetails
+      transcription={transcription}
+      set={setTranscription}
+      readOnly={disabled} />
+    <div className="cf-help-divider" />
+
+    <h2>Transcription Problem</h2>
+    <TranscriptionProblem
+      transcription={transcription}
+      set={setTranscription}
+      readOnly={disabled} />
+    <div className="cf-help-divider" />
+
+    <h2>Transcription Request</h2>
+    <TranscriptionRequest
+      transcription={transcription}
+      set={setTranscription}
+      readOnly={disabled} />
+    <div className="cf-help-divider" />
+  </React.Fragment>
+);
+
+export default Sections;
