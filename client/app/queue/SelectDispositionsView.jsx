@@ -213,13 +213,6 @@ class SelectDispositionsView extends React.PureComponent {
       }
     ];
 
-    if (editingExistingIssue) {
-      modalButtons.push({ classNames: ['usa-button', 'usa-button-secondary'],
-        name: 'Delete decision',
-        onClick: this.deleteDecision
-      });
-    }
-
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
     });
