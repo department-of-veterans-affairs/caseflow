@@ -60,7 +60,7 @@ describe Appeal do
 
     context "when appeal has no appeal view" do
       it "should return all documents" do
-        expect(subject).to eq(documents)
+        expect(subject).to match_array(documents)
       end
     end
 
