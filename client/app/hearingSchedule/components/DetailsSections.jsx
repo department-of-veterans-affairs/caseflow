@@ -6,7 +6,7 @@ import {
   JudgeDropdown,
   HearingCoordinatorDropdown,
   HearingRoomDropdown
-} from './DataDropdowns/index';
+} from '../../components/DataDropdowns/index';
 import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
 import TextField from '../../components/TextField';
