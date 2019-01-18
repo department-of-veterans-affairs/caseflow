@@ -186,15 +186,6 @@ class Hearings::HearingDayController < HearingScheduleController
     end
   end
 
-  def json_tb_hearings(tbhearings)
-    json_hash = ActiveModelSerializers::SerializableResource.new(
-      tbhearings,
-      each_serializer: ::Hearings::TravelBoardScheduleSerializer
-    ).as_json
-
-    format_for_client(json_hash)
-  end
-
   def format_for_client(json_hash)
     if json_hash[:data].is_a?(Array)
       hearing_array = []

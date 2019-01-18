@@ -139,6 +139,7 @@ class HearingRepository
         vdbvapoc: hearing.vdbvapoc
       )
     end
+
     def create_caseflow_child_video_hearing(id, hearing_date, appeal)
       hearing_day = HearingDay.find(id)
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
@@ -162,7 +163,6 @@ class HearingRepository
         )
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     def load_vacols_data(hearing)
       vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
