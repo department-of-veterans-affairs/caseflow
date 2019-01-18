@@ -1,4 +1,7 @@
 // @flow
+/* eslint no-mixed-spaces-and-tabs: 0*/
+/* eslint no-tabs: 0*/
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -296,15 +299,14 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   setSelectedTime = (val) => {
+  	const selectedTime = _.isString(val) ? val : val.value;
+
   	if (val === 'Other') {
-  	 this.setState({ selectedTime: 'Other' });
-  		this.props.onHearingTimeChange(null); 
-
+  	  this.setState({ selectedTime: 'Other' });
+  	  this.props.onHearingTimeChange(null);
   	} else {
-  		const selectedTime = _.isString(val) ? val : val.value;
-
-  		this.setState({ selectedTime });
-  		this.props.onHearingTimeChange(selectedTime);
+  	  this.setState({ selectedTime });
+  	  this.props.onHearingTimeChange(selectedTime);
   	}
   }
 
