@@ -222,13 +222,11 @@ class QueueApp extends React.PureComponent<Props> {
   propsForQueueLoadingScreen = () => {
     const {
       userId,
-      userCssId,
       userRole
     } = this.props;
 
     return {
       userId,
-      userCssId,
       userRole
     };
   }

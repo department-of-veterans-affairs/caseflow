@@ -8,8 +8,7 @@ export type User = {
   email: ?string,
   roles: Array<string>,
   selected_regional_office: ?string,
-  display_name: string,
-  judge_css_id: ?string
+  display_name: string
 };
 
 export type Judges = { [string]: User };
