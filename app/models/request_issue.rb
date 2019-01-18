@@ -1,5 +1,7 @@
+# rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
   include Asyncable
+  include HasBusinessLine
 
   belongs_to :review_request, polymorphic: true
   belongs_to :decision_review, polymorphic: true
@@ -10,7 +12,7 @@ class RequestIssue < ApplicationRecord
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   has_one :legacy_issue_optin
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
-  belongs_to :contested_decision_issue, class_name: "DecisionIssue", foreign_key: "contested_decision_issue_id"
+  belongs_to :contested_decision_issue, class_name: "DecisionIssue"
 
   # enum is symbol, but validates requires a string
   validates :ineligible_reason, exclusion: { in: ["untimely"] }, if: proc { |reqi| reqi.untimely_exemption }
@@ -40,7 +42,59 @@ class RequestIssue < ApplicationRecord
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
+  END_PRODUCT_CODES = {
+    original: {
+      compensation: {
+        supplemental_claim: {
+          rating: "040SCR",
+          nonrating: "040SCNR"
+        },
+        higher_level_review: {
+          rating: "030HLRR",
+          nonrating: "030HLRNR"
+        }
+      },
+      pension: {
+        supplemental_claim: {
+          rating: "040SCRPMC",
+          nonrating: "040SCNRPMC"
+        },
+        higher_level_review: {
+          rating: "030HLRRPMC",
+          nonrating: "030HLRNRPMC"
+        }
+      }
+    },
+    dta: {
+      compensation: {
+        appeal: {
+          imo: "040BDEIMO",
+          not_imo: "040BDE"
+        },
+        claim_review: {
+          rating: "040HDER",
+          nonrating: "040HDENR"
+        }
+      },
+      pension: {
+        appeal: {
+          imo: "040BDEIMOPMC",
+          not_imo: "040BDEPMC"
+        },
+        claim_review: {
+          rating: "040HDERPMC",
+          nonrating: "040HDENRPMC"
+        }
+      }
+    }
+  }.freeze
+
   class << self
+    # We don't need to retry these as frequently
+    def processing_retry_interval_hours
+      12
+    end
+
     def submitted_at_column
       :decision_sync_submitted_at
     end
@@ -125,6 +179,7 @@ class RequestIssue < ApplicationRecord
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
+        benefit_type: data[:benefit_type],
         notes: data[:notes],
         is_unidentified: data[:is_unidentified],
         untimely_exemption: data[:untimely_exemption],
@@ -138,6 +193,10 @@ class RequestIssue < ApplicationRecord
       }
     end
     # rubocop:enable Metrics/MethodLength
+  end
+
+  def end_product_code
+    remanded? ? dta_end_product_code : original_end_product_code
   end
 
   def status_active?
@@ -169,7 +228,7 @@ class RequestIssue < ApplicationRecord
   def contention_text
     return UNIDENTIFIED_ISSUE_MSG if is_unidentified?
 
-    description
+    Contention.new(description).text
   end
 
   def review_title
@@ -182,7 +241,7 @@ class RequestIssue < ApplicationRecord
 
   def special_issues
     specials = []
-    specials << { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
+    specials << { code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
     specials << { code: "SSR", narrative: "Same Station Review" } if decision_review.try(:same_office)
     return specials unless specials.empty?
   end
@@ -228,6 +287,16 @@ class RequestIssue < ApplicationRecord
       contested_rating_issue_ui_hash = fetch_contested_rating_issue_ui_hash
       contested_rating_issue_ui_hash ? RatingIssue.deserialize(contested_rating_issue_ui_hash) : nil
     end
+  end
+
+  def contested_benefit_type
+    contested_rating_issue&.benefit_type
+  end
+
+  def guess_benefit_type
+    return "unidentified" if is_unidentified
+
+    "unknown"
   end
 
   def previous_request_issue
@@ -348,6 +417,7 @@ class RequestIssue < ApplicationRecord
       decision_issues.create!(
         participant_id: review_request.veteran.participant_id,
         disposition: contention_disposition.disposition,
+        description: "#{contention_disposition.disposition}: #{description}",
         decision_review: review_request,
         benefit_type: benefit_type,
         end_product_last_action_date: end_product_establishment.result.last_action_date
@@ -421,13 +491,15 @@ class RequestIssue < ApplicationRecord
   # rubocop:enable Metrics/PerceivedComplexity
 
   def check_for_before_ama!
-    return unless eligible?
-    return if is_unidentified
-    return if ramp_claim_id
+    return unless eligible? && should_check_for_before_ama?
 
     if decision_or_promulgation_date && decision_or_promulgation_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
     end
+  end
+
+  def should_check_for_before_ama?
+    !is_unidentified && !ramp_claim_id && !vacols_id
   end
 
   def check_for_legacy_issue_not_withdrawn!
@@ -467,6 +539,35 @@ class RequestIssue < ApplicationRecord
     add_duplicate_issue_error(self.class.find_active_by_contested_decision_id(contested_decision_issue_id))
   end
 
+  def original_end_product_code
+    choose_original_end_product_code(END_PRODUCT_CODES[:original][temp_find_benefit_type.to_sym])
+  end
+
+  # TODO: use request issue benefit type once it's populated for request issues on build
+  def temp_find_benefit_type
+    benefit_type || review_request.benefit_type
+  end
+
+  def choose_original_end_product_code(end_product_codes)
+    end_product_codes[review_request_type.underscore.to_sym][(rating? || is_unidentified?) ? :rating : :nonrating]
+  end
+
+  def dta_end_product_code
+    choose_dta_end_product_code(END_PRODUCT_CODES[:dta][temp_find_benefit_type.to_sym])
+  end
+
+  def choose_dta_end_product_code(end_product_codes)
+    if review_request.decision_review_remanded.is_a?(Appeal)
+      end_product_codes[:appeal][contested_decision_issue.imo? ? :imo : :not_imo]
+    else
+      end_product_codes[:claim_review][rating? ? :rating : :nonrating]
+    end
+  end
+
+  def remanded?
+    review_request.try(:decision_review_remanded?)
+  end
+
   def add_duplicate_issue_error(existing_request_issue)
     if existing_request_issue && existing_request_issue.review_request != review_request
       self.ineligible_reason = :duplicate_of_rating_issue_in_active_review
@@ -501,3 +602,4 @@ class RequestIssue < ApplicationRecord
     self.decision_review = review_request
   end
 end
+# rubocop:enable Metrics/ClassLength

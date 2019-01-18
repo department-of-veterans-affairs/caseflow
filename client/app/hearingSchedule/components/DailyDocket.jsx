@@ -110,12 +110,22 @@ export default class DailyDocket extends React.Component {
     return _.filter(this.props.hearings, (hearing) => !this.previouslyScheduled(hearing));
   };
 
+  getAppellantName = (hearing) => {
+    let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName } = hearing;
+
+    if (appellantFirstName && appellantLastName) {
+      return `${appellantFirstName} ${appellantLastName}`;
+    }
+
+    return `${veteranFirstName} ${veteranLastName}`;
+  };
+
   getAppellantInformation = (hearing) => {
-    const appellantName = hearing.appellantMiFormatted || hearing.veteranMiFormatted;
+    const appellantName = this.getAppellantName(hearing);
 
     return <div><b>{appellantName}</b><br />
       <b><Link
-        href={`/queue/appeals/${hearing.appealVacolsId}`}
+        href={`/queue/appeals/${hearing.appealExternalId}`}
         name={hearing.vbmsId} >
         {hearing.vbmsId}
       </Link></b><br />
@@ -223,7 +233,8 @@ export default class DailyDocket extends React.Component {
     const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
 
     return <div><SearchableDropdown
-      name="Hearing Day"
+      name="HearingDay"
+      label="Hearing Day"
       options={this.getHearingDateOptions(hearing)}
       value={hearing.editedDate ? hearing.editedDate : hearing.id}
       onChange={this.onHearingDateUpdate(hearing.id)}
@@ -289,7 +300,7 @@ export default class DailyDocket extends React.Component {
 
   getRemoveHearingDayMessage = () => {
     return 'Once the hearing day is removed, users will no longer be able to ' +
-      `schedule Veterans for this ${this.props.dailyDocket.hearingType} hearing day on ` +
+      `schedule Veterans for this ${this.props.dailyDocket.requestType} hearing day on ` +
       `${moment(this.props.dailyDocket.scheduledFor).format('ddd M/DD/YYYY')}.`;
   };
 
@@ -382,8 +393,9 @@ export default class DailyDocket extends React.Component {
       { this.props.saveSuccessful && <Alert
         type="success"
         styling={alertStyling}
-        title={`You have successfully updated ${this.props.saveSuccessful.appellantMiFormatted ||
-          this.props.saveSuccessful.veteranMiFormatted}'s hearing.`} /> }
+        title={`You have successfully updated ${this.getAppellantName(this.props.saveSuccessful)}'s hearing.`}
+      />
+      }
       { this.props.displayLockSuccessMessage && <Alert
         type="success"
         styling={alertStyling}
@@ -442,7 +454,7 @@ export default class DailyDocket extends React.Component {
       <span className="cf-push-right">
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
         Coordinator: {this.props.dailyDocket.bvaPoc} <br />
-        Hearing type: {this.props.dailyDocket.hearingType} <br />
+        Hearing type: {this.props.dailyDocket.requestType} <br />
         Room number: {this.props.dailyDocket.room}
       </span>
       <div {...noMarginStyling}>

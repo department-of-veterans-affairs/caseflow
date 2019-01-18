@@ -59,7 +59,8 @@ class RootTask < GenericTask
       DistributionTask.create!(
         appeal: appeal,
         parent: parent,
-        assigned_to: Bva.singleton
+        assigned_to: Bva.singleton,
+        status: "on_hold"
       )
     end
 
@@ -70,7 +71,10 @@ class RootTask < GenericTask
         if appeal.evidence_submission_docket?
           create_evidence_submission_task!(appeal, distribution_task)
         else
-          create_vso_subtask!(appeal, distribution_task)
+          vso_tasks = create_vso_subtask!(appeal, distribution_task)
+          # If the appeal is direct docket and there are no ihp tasks,
+          # then it is initially ready for distribution.
+          distribution_task.ready_for_distribution! if vso_tasks.empty?
         end
       end
     end

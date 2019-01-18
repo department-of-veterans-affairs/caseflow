@@ -3,20 +3,29 @@ class DecisionIssue < ApplicationRecord
                           if: :appeal?
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) },
                            if: :appeal?
+  validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
+                              if: :appeal?, allow_nil: true
   validates :description, presence: true, if: :appeal?
   has_many :request_decision_issues, dependent: :destroy
   has_many :request_issues, through: :request_decision_issues
   has_many :remand_reasons, dependent: :destroy
   belongs_to :decision_review, polymorphic: true
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
+  has_one :contesting_request_issue, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
 
   # Attorneys will be entering in a description of the decision manually for appeals
   before_save :calculate_and_set_description, unless: :appeal?
 
-  def self.granted
-    # TODO: "allowed" is the disposition for BVA grants, not necessarily the disposition for granted HLRs and SCs
-    #       we need to add that
-    where(disposition: "allowed")
+  class << self
+    # TODO: These scopes are based only off of Caseflow dispositions, not VBMS dispositions. We probably want
+    # to add those, or assess some sort of conversion
+    def granted
+      where(disposition: "allowed")
+    end
+
+    def remanded
+      where(disposition: "remanded")
+    end
   end
 
   def approx_decision_date
@@ -38,13 +47,30 @@ class DecisionIssue < ApplicationRecord
     request_issues.none?(&:nonrating?)
   end
 
+  def finalized?
+    appeal? ? decision_review.outcoded? : disposition.present?
+  end
+
   def ui_hash
     {
       id: id,
       requestIssueId: request_issues&.first&.id,
       description: description,
-      disposition: disposition
+      disposition: disposition,
+      promulgationDate: promulgation_date
     }
+  end
+
+  def find_or_create_remand_supplemental_claim!
+    find_remand_supplemental_claim || create_remand_supplemental_claim!
+  end
+
+  def imo?
+    remand_reasons.map(&:code).include?("advisory_medical_opinion")
+  end
+
+  def contention_text
+    Contention.new(description).text
   end
 
   private
@@ -66,7 +92,41 @@ class DecisionIssue < ApplicationRecord
     request_issues.first
   end
 
+  def veteran_file_number
+    decision_review.veteran_file_number
+  end
+
   def appeal?
     decision_review_type == Appeal.to_s
+  end
+
+  def find_remand_supplemental_claim
+    SupplementalClaim.find_by(
+      veteran_file_number: veteran_file_number,
+      decision_review_remanded: decision_review,
+      benefit_type: benefit_type
+    )
+  end
+
+  def create_remand_supplemental_claim!
+    # Checking our assumption that approx_decision_date will always be populated for Decision Issues
+    fail "approx_decision_date is required to create a DTA Supplemental Claim" unless approx_decision_date
+
+    SupplementalClaim.create!(
+      veteran_file_number: veteran_file_number,
+      decision_review_remanded: decision_review,
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: decision_review.legacy_opt_in_approved,
+      veteran_is_not_claimant: decision_review.veteran_is_not_claimant,
+      receipt_date: approx_decision_date
+    ).tap do |sc|
+      sc.create_claimants!(
+        participant_id: decision_review.claimant_participant_id,
+
+        # We have to make payee code "00" for now because intake assistants at
+        # the board do not enter payee codes for claimants :(
+        payee_code: "00"
+      )
+    end
   end
 end

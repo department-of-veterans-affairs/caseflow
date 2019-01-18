@@ -9,11 +9,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   has_one :staff, foreign_key: :sattyid, primary_key: :board_member
   has_one :brieff, foreign_key: :bfkey, primary_key: :folder_nr, class_name: "Case"
 
-  HEARING_TYPES = {
-    V: :video,
-    T: :travel,
-    C: :central
-  }.freeze
+  HEARING_TYPES = %w[V T C].freeze
 
   HEARING_DISPOSITIONS = {
     H: :held,
@@ -44,7 +40,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     staff_id: :mduser,
     room: :room,
     scheduled_for: :hearing_date,
-    hearing_type: :hearing_type,
+    request_type: :hearing_type,
     judge_id: :board_member,
     folder_nr: :folder_nr,
     board_member: :board_member,
@@ -65,16 +61,16 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def find_hearing_day(hearing_pkseq)
-      select_schedule_days.find_by(hearing_pkseq: hearing_pkseq)
+      select_schedule_days.includes(brieff: [:representative]).find_by(hearing_pkseq: hearing_pkseq)
     end
 
-    def video_hearings_for_master_record(parent_hearing_pkseq)
-      select_hearings.where(vdkey: parent_hearing_pkseq)
+    def video_hearings_for_master_records(parent_hearings_pkseqs)
+      select_hearings.where(vdkey: parent_hearings_pkseqs)
     end
 
-    def co_hearings_for_master_record(parent_hearing_date)
-      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) = ?",
-                            "C", "%VIDEO%", parent_hearing_date.to_date)
+    def co_hearings_for_master_records(parent_hearing_dates)
+      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) IN (?)",
+                            "C", "%VIDEO%", parent_hearing_dates.map(&:to_date))
     end
 
     def for_appeal(appeal_vacols_id)
@@ -160,7 +156,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
         .joins("left outer join vacols.folder on folder.ticknum = brieff.bfkey")
         .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
-        .where(hearing_type: HEARING_TYPES.keys)
+        .where(hearing_type: HEARING_TYPES)
     end
 
     def select_schedule_days

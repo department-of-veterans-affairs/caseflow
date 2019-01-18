@@ -28,8 +28,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       appeal_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       appeal_link.click
       expect(page).not_to have_content("loading to VACOLS.", wait: 30)
-      expect(page).to have_content("Select an action", wait: 30)
-      click_dropdown(index: 0)
+      expect(page).to have_content("Currently active tasks", wait: 30)
+      click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
       radio_link = find(".cf-form-radio-option", match: :first)
       radio_link.click
@@ -49,8 +49,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     let!(:hearing_day) do
       create(
         :hearing_day,
-        hearing_type: "V",
-        hearing_date: Time.zone.today + 160,
+        request_type: "V",
+        scheduled_for: Time.zone.today + 160,
         regional_office: "RO39"
       )
     end
@@ -73,8 +73,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       appeal_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       appeal_link.click
       expect(page).not_to have_content("loading to VACOLS.", wait: 30)
-      expect(page).to have_content("Select an action", wait: 30)
-      click_dropdown(index: 0)
+      expect(page).to have_content("Currently active tasks", wait: 30)
+      click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
       radio_link = find(".cf-form-radio-option", match: :first)
       radio_link.click

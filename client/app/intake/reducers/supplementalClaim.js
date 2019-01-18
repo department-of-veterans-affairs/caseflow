@@ -28,8 +28,8 @@ const updateFromServerIntake = (state, serverIntake) => {
     benefitType: {
       $set: serverIntake.benefit_type
     },
-    nonComp: {
-      $set: serverIntake.nonComp
+    processedInCaseflow: {
+      $set: serverIntake.processed_in_caseflow
     },
     veteranIsNotClaimant: {
       $set: serverIntake.veteran_is_not_claimant
@@ -61,9 +61,6 @@ const updateFromServerIntake = (state, serverIntake) => {
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
     },
-    endProductDescription: {
-      $set: serverIntake.end_product_description
-    },
     relationships: {
       $set: formatRelationships(serverIntake.relationships)
     }
@@ -93,13 +90,13 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     isStarted: false,
     isReviewed: false,
     isComplete: false,
-    endProductDescription: null,
     issueCount: 0,
     nonRatingRequestIssues: { },
     contestableIssues: { },
     reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
+    redirectTo: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -244,6 +241,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
     });
   case ACTIONS.COMPLETE_INTAKE_SUCCEED:
     return updateFromServerIntake(update(state, {
+      redirectTo: {
+        $set: action.payload.intake.serverIntake ? action.payload.intake.serverIntake.redirect_to : null
+      },
       isComplete: {
         $set: true
       },

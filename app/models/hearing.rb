@@ -6,11 +6,26 @@ class Hearing < ApplicationRecord
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
-  delegate :scheduled_for, to: :hearing_day
-  delegate :hearing_type, to: :hearing_day
-  delegate :veteran_name, to: :appeal
+  delegate :request_type, to: :hearing_day
+  delegate :veteran_first_name, to: :appeal
+  delegate :veteran_last_name, to: :appeal
+  delegate :appellant_first_name, to: :appeal
+  delegate :appellant_last_name, to: :appeal
+  delegate :appellant_city, to: :appeal
+  delegate :appellant_state, to: :appeal
   delegate :veteran_age, to: :appeal
   delegate :veteran_gender, to: :appeal
+  delegate :veteran_file_number, to: :appeal
+  delegate :docket_number, to: :appeal
+  delegate :docket_name, to: :appeal
+  delegate :representative_name, to: :appeal, prefix: true
+  delegate :external_id, to: :appeal, prefix: true
+
+  HEARING_TYPES = {
+    V: "Video",
+    T: "Travel",
+    C: "Central"
+  }.freeze
 
   def self.find_hearing_by_uuid_or_vacols_id(id)
     if UUID_REGEX.match?(id)
@@ -20,8 +35,23 @@ class Hearing < ApplicationRecord
     end
   end
 
+  def readable_request_type
+    HEARING_TYPES[request_type.to_sym]
+  end
+
   def master_record
     false
+  end
+
+  def scheduled_for
+    DateTime.new.in_time_zone(regional_office_timezone).change(
+      year: hearing_day.scheduled_for.year,
+      month: hearing_day.scheduled_for.month,
+      day: hearing_day.scheduled_for.day,
+      hour: scheduled_time.hour,
+      min: scheduled_time.min,
+      sec: scheduled_time.sec
+    )
   end
 
   #:nocov:
@@ -34,12 +64,12 @@ class Hearing < ApplicationRecord
     "Winston-Salem, NC"
   end
 
-  def request_type
-    hearing_type
+  def regional_office_timezone
+    "America/New_York"
   end
 
-  def type
-    hearing_type
+  def current_issue_count
+    1
   end
   #:nocov:
 
@@ -47,18 +77,44 @@ class Hearing < ApplicationRecord
     uuid
   end
 
-  def to_hash_for_worksheet(_current_user_id)
+  def military_service
+    super || begin
+      update(military_service: appeal.veteran.periods_of_service.join("\n")) if persisted? && appeal.veteran
+      super
+    end
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def to_hash(_current_user_id)
     serializable_hash(
       methods: [
         :external_id,
-        :veteran_name,
+        :veteran_first_name,
+        :veteran_last_name,
+        :appellant_first_name,
+        :appellant_last_name,
+        :appellant_city,
+        :appellant_state,
         :regional_office_name,
-        :request_type,
+        :regional_office_timezone,
+        :readable_request_type,
         :judge,
         :scheduled_for,
         :veteran_age,
-        :veteran_gender
+        :veteran_gender,
+        :appeal_external_id,
+        :veteran_file_number,
+        :docket_number,
+        :docket_name,
+        :military_service,
+        :current_issue_count,
+        :appeal_representative_name
       ]
     )
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def to_hash_for_worksheet(current_user_id)
+    to_hash(current_user_id)
   end
 end

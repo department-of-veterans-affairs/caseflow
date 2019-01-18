@@ -25,7 +25,12 @@ describe JudgeTask do
     context "the task is assigned to the current user" do
       context "in the assign phase" do
         it "should return the assignment action" do
-          expect(subject).to eq([subject_task.build_action_hash(Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h)])
+          expect(subject).to eq(
+            [
+              Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+              Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+            ].map { |action| subject_task.build_action_hash(action) }
+          )
         end
 
         context "the task was assigned from Quality Review" do
@@ -34,9 +39,10 @@ describe JudgeTask do
           it "should return the assignment and mark complete actions" do
             expect(subject).to eq(
               [
-                subject_task.build_action_hash(Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h),
-                subject_task.build_action_hash(Constants.TASK_ACTIONS.MARK_COMPLETE.to_h)
-              ]
+                Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+                Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
+                Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+              ].map { |action| subject_task.build_action_hash(action) }
             )
           end
         end
@@ -46,7 +52,12 @@ describe JudgeTask do
         let(:subject_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
 
         it "should return the dispatch action" do
-          expect(subject).to eq([subject_task.build_action_hash(Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h)])
+          expect(subject).to eq(
+            [
+              Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+              Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h
+            ].map { |action| subject_task.build_action_hash(action) }
+          )
         end
       end
     end
@@ -54,10 +65,16 @@ describe JudgeTask do
 
   describe ".create_from_params" do
     context "creating a JudgeQualityReviewTask from a QualityReviewTask" do
-      let(:qr_task) { FactoryBot.create(:qr_task) }
+      let(:judge_task) { FactoryBot.create(:ama_judge_task, parent: FactoryBot.create(:root_task), assigned_to: judge) }
+      let(:qr_user) { create(:user) }
+      let(:qr_task) { FactoryBot.create(:qr_task, assigned_to: qr_user, parent: judge_task) }
       let(:params) { { assigned_to: judge, appeal: qr_task.appeal, parent_id: qr_task.id } }
 
-      subject { JudgeQualityReviewTask.create_from_params(params, attorney) }
+      subject { JudgeQualityReviewTask.create_from_params(params, qr_user) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
+      end
 
       it "the parent task should change to an 'on hold' status" do
         expect(qr_task.status).to eq("assigned")

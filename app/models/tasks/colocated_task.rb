@@ -24,51 +24,40 @@ class ColocatedTask < Task
         all_tasks
       end
     end
+
+    def verify_user_can_create!(user, parent)
+      if parent
+        super(user, parent)
+      elsif !(user.attorney_in_vacols? || user.judge_in_vacols?)
+        fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
+      end
+    end
   end
 
-  def set_assigned_at_and_update_parent_status
-    self.assigned_at = created_at unless assigned_at
-    parent&.update(status: :on_hold)
-  end
-
+  # rubocop:disable Metrics/AbcSize
   def available_actions(_user)
-    actions = [
-      {
-        label: COPY::COLOCATED_ACTION_PLACE_HOLD,
-        value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
-      },
-      Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h
-    ]
+    actions = [Constants.TASK_ACTIONS.PLACE_HOLD.to_h, Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h]
 
     if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
-      actions.unshift(
-        label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
-        value: "modal/send_colocated_task"
-      )
+      send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
+      send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
+      actions.unshift(send_to_team)
     else
-      actions.unshift(
-        label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
-        value: "modal/mark_task_complete"
-      )
+      actions.unshift(Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h)
+    end
+
+    if action == "translation" && appeal.is_a?(Appeal)
+      actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
     end
 
     actions
   end
+  # rubocop:enable Metrics/AbcSize
 
   def actions_available?(user)
     return false if completed? || assigned_to != user
 
     true
-  end
-
-  def assign_to_privacy_team_data
-    org = PrivacyTeam.singleton
-
-    {
-      selected: org,
-      options: [{ label: org.name, value: org.id }],
-      type: GenericTask.name
-    }
   end
 
   private

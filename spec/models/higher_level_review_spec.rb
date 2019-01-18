@@ -30,39 +30,6 @@ describe HigherLevelReview do
     )
   end
 
-  context "#issue_code" do
-    let(:rating) { nil }
-    subject { higher_level_review.issue_code(rating: rating) }
-
-    context "for a rating issue" do
-      let(:rating) { true }
-      it "returns the rating end product code" do
-        expect(subject).to eq("030HLRR")
-      end
-
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        it "returns the rating pension end product code" do
-          expect(subject).to eq("030HLRRPMC")
-        end
-      end
-    end
-
-    context "for a nonrating issue" do
-      let(:rating) { false }
-      it "returns the nonrating end product code" do
-        expect(subject).to eq("030HLRNR")
-      end
-
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        it "returns the nonrating pension end product code" do
-          expect(subject).to eq("030HLRNRPMC")
-        end
-      end
-    end
-  end
-
   context "#valid?" do
     subject { higher_level_review.valid? }
 
@@ -214,14 +181,17 @@ describe HigherLevelReview do
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
-                 profile_date: profile_date),
+                 profile_date: profile_date,
+                 benefit_type: benefit_type),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
                  rating_issue_reference_id: "rating2",
-                 profile_date: profile_date),
+                 profile_date: profile_date,
+                 benefit_type: benefit_type),
           create(:decision_issue,
                  decision_review: higher_level_review,
+                 benefit_type: benefit_type,
                  disposition: "not a dta error")
         ]
       end
@@ -234,12 +204,23 @@ describe HigherLevelReview do
         )
       end
 
+      context "when there is no approx_decision_date" do
+        let(:profile_date) { nil }
+
+        it "throws an error" do
+          expect { subject }.to raise_error(
+            StandardError, "approx_decision_date is required to create a DTA Supplemental Claim"
+          )
+        end
+      end
+
       it "creates a supplemental claim and request issues" do
-        subject
+        expect { subject }.to_not change(DecisionReviewTask, :count)
+
         supplemental_claim = SupplementalClaim.find_by(
-          is_dta_error: true,
+          decision_review_remanded: higher_level_review,
           veteran_file_number: higher_level_review.veteran_file_number,
-          receipt_date: Time.zone.now.to_date,
+          receipt_date: decision_issues.first.approx_decision_date,
           benefit_type: higher_level_review.benefit_type,
           legacy_opt_in_approved: higher_level_review.legacy_opt_in_approved,
           veteran_is_not_claimant: higher_level_review.veteran_is_not_claimant
@@ -281,11 +262,19 @@ describe HigherLevelReview do
         let(:benefit_type) { "pension" }
 
         it "creates end product establishment with pension ep code" do
-          subject
+          expect { subject }.to_not change(DecisionReviewTask, :count)
 
           first_dta_request_issue = RequestIssue.find_by(contested_rating_issue_reference_id: "rating1")
 
           expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDERPMC")
+        end
+      end
+
+      context "when benefit type is processed in caseflow" do
+        let(:benefit_type) { "voc_rehab" }
+
+        it "creates DecisionReviewTask" do
+          expect { subject }.to change(DecisionReviewTask, :count).by(1)
         end
       end
     end
@@ -294,7 +283,7 @@ describe HigherLevelReview do
       it "does nothing" do
         subject
 
-        expect(SupplementalClaim.where(is_dta_error: true).empty?).to eq(true)
+        expect(SupplementalClaim.where.not(decision_review_remanded: nil).empty?).to eq(true)
         expect(RequestIssue.all.empty?).to eq(true)
       end
     end

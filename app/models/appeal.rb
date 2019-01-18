@@ -4,9 +4,11 @@ class Appeal < DecisionReview
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
+  has_many :hearings
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
+  has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
 
@@ -38,6 +40,12 @@ class Appeal < DecisionReview
       .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
   }
   # rubocop:enable Metrics/LineLength
+
+  scope :ready_for_distribution, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) = ?", "DistributionTask", "assigned", 1)
+  }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
@@ -180,6 +188,9 @@ class Appeal < DecisionReview
            :age,
            :country, to: :veteran, prefix: true
 
+  delegate :city,
+           :state, to: :appellant, prefix: true
+
   def regional_office
     nil
   end
@@ -209,14 +220,14 @@ class Appeal < DecisionReview
   end
 
   def benefit_type
-    # temporary until ticket for appeals benefit type by issue is implemented
-    # https://github.com/department-of-veterans-affairs/caseflow/issues/5882
-    "compensation"
+    fail "benefit_type on Appeal is set per RequestIssue"
   end
 
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
+      issue.benefit_type ||= issue.contested_benefit_type || issue.guess_benefit_type
+      issue.veteran_participant_id = veteran.participant_id
+      issue.save!
       issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
     request_issues.reload
@@ -294,9 +305,31 @@ class Appeal < DecisionReview
     RootTask.find_by(appeal_id: id)
   end
 
+  def create_remand_supplemental_claims!
+    decision_issues.remanded.each(&:find_or_create_remand_supplemental_claim!)
+    remand_supplemental_claims.each(&:create_remand_issues!)
+    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
+    remand_supplemental_claims.each(&:start_processing_job!)
+  end
+
   private
 
   def bgs
     BGSService.new
+  end
+
+  # we always want to show ratings on intake
+  def can_contest_rating_issues?
+    true
+  end
+
+  def contestable_decision_issues
+    return [] unless receipt_date
+
+    DecisionIssue.where(participant_id: veteran.participant_id)
+      .select(&:finalized?)
+      .select do |issue|
+        issue.approx_decision_date && issue.approx_decision_date < receipt_date
+      end
   end
 end

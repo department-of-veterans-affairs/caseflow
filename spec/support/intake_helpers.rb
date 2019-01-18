@@ -8,13 +8,15 @@ module IntakeHelpers
     claim_participant_id: nil,
     legacy_opt_in_approved: false,
     veteran_is_not_claimant: false,
-    benefit_type: "compensation"
+    benefit_type: "compensation",
+    informal_conference: false
   )
 
     higher_level_review = HigherLevelReview.create!(
       veteran_file_number: test_veteran.file_number,
       receipt_date: receipt_date,
-      informal_conference: false, same_office: false,
+      informal_conference: informal_conference,
+      same_office: false,
       benefit_type: benefit_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
@@ -108,6 +110,14 @@ module IntakeHelpers
   # rubocop: enable Metrics/MethodLength
   # rubocop: enable Metrics/ParameterLists
 
+  def start_claim_review(claim_review_type)
+    if claim_review_type == :supplemental_claim
+      start_supplemental_claim(create(:veteran))
+    else
+      start_higher_level_review(create(:veteran), informal_conference: true)
+    end
+  end
+
   def setup_intake_flags
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
@@ -141,6 +151,10 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
+  def click_intake_nonrating_category_dropdown
+    safe_click ".dropdown-issue-category .Select-placeholder"
+  end
+
   def click_intake_add_issue
     safe_click "#button-add-issue"
   end
@@ -155,6 +169,15 @@ module IntakeHelpers
 
   def click_edit_submit
     safe_click "#button-submit-update"
+  end
+
+  def click_intake_confirm
+    safe_click ".confirm"
+  end
+
+  def click_edit_submit_and_confirm
+    click_edit_submit
+    click_intake_confirm
   end
 
   def click_intake_no_matching_issues
@@ -173,6 +196,7 @@ module IntakeHelpers
   end
 
   def add_intake_nonrating_issue(
+    benefit_type: "Compensation",
     category: "Active Duty Adjustments",
     description: "Some description",
     date: "01/01/2016",
@@ -181,6 +205,14 @@ module IntakeHelpers
     add_button_text = legacy_issues ? "Next" : "Add this issue"
     expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
     expect(page).to have_button(add_button_text, disabled: true)
+
+    # has_css will wait 5 seconds by default, and we want an instant decision.
+    # we can trust the modal is rendered because of the expect() calls above.
+    if page.has_css?("#issue-benefit-type", wait: 0)
+      fill_in "Benefit type", with: benefit_type
+      find("#issue-benefit-type").send_keys :enter
+    end
+
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: description
@@ -359,6 +391,12 @@ module IntakeHelpers
     expect(row).to have_text(text)
   end
 
+  def mock_backfilled_rating_response
+    allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range)
+      .and_return(rating_profile_list: { rating_profile: nil },
+                  reject_reason: "Converted or Backfilled Rating - no promulgated ratings found")
+  end
+
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def verify_decision_issues_can_be_added_and_removed(page_url,
@@ -404,8 +442,7 @@ module IntakeHelpers
     #     .duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Higher-Level Review")
     # )
 
-    safe_click("#button-submit-update")
-    safe_click ".confirm"
+    click_edit_submit_and_confirm
     expect(page).to have_current_path("/#{page_url}/confirmation")
 
     visit page_url
@@ -441,7 +478,7 @@ module IntakeHelpers
       decision_review,
       contested_decision_issues
     )
-    # verify that not modifying a request issue contenting a decision issue
+    # verify that not modifying a request issue contesting a decision issue
     # does not result in readding
 
     visit page_url
@@ -455,7 +492,7 @@ module IntakeHelpers
     click_intake_add_issue
     add_intake_rating_issue("Issue with legacy issue not withdrawn")
 
-    safe_click("#button-submit-update")
+    click_edit_submit
     expect(page).to have_content("has been processed")
 
     first_not_modified_request_issue = RequestIssue.find_by(

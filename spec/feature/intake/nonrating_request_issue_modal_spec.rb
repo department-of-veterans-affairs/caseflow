@@ -17,7 +17,7 @@ feature "Nonrating Request Issue Modal" do
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
   end
-  # rubocop: disable Metrics/MethodLength
+
   def test_issue_categories(decision_review_type:, benefit_type:, included_category:, excluded_category:)
     case decision_review_type
     when "higher_level_review"
@@ -34,10 +34,14 @@ feature "Nonrating Request Issue Modal" do
       start_appeal(veteran)
     end
 
+    visit_and_test_categories(included_category, excluded_category, benefit_type)
+  end
+
+  def visit_and_test_categories(included_category, excluded_category, benefit_type)
     visit "/intake"
     click_intake_continue
     click_intake_add_issue
-    safe_click ".Select-placeholder"
+    click_intake_nonrating_category_dropdown
     expect(page).to have_content(included_category)
     expect(page).to_not have_content(excluded_category)
     add_intake_nonrating_issue(
@@ -46,12 +50,16 @@ feature "Nonrating Request Issue Modal" do
       date: "04/19/2018"
     )
     click_intake_finish
-    expect(page).to have_content("Intake completed")
+
+    expect(page).to have_content("Intake completed") if %w[compensation pension].include?(benefit_type)
+
+    # hesitate just a little so non-comp background tasks can finish.
+    sleep 1
+
     expect(RequestIssue.find_by(
              issue_category: included_category
            )).to_not be_nil
   end
-  # rubocop: enable Metrics/MethodLength
 
   context "when it is a claim review" do
     it "Shows the correct issue categories by benefit type" do

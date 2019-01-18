@@ -9,31 +9,39 @@ import _ from 'lodash';
 import Alert from '../../components/Alert';
 import { legacyIssue } from '../util/issues';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
+import SmallLoader from '../../components/SmallLoader';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
+  const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
-  if (unidentifiedIssues.length === 0) {
-    return [
-      `${veteran.name}'s (ID #${veteran.fileNumber}) ` +
-        `Request for ${formName} has been processed. ` +
-        'If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.',
-      <strong>Edit the notice letter to reflect the status of requested issues.</strong>
-    ];
+  const leadMessageArr = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`];
+
+  if (eligibleRequestIssues.length !== 0) {
+    if (unidentifiedIssues.length > 0) {
+      leadMessageArr.push(
+        <Alert type="warning">
+          <h2>Unidentified issue</h2>
+          <p>There is still an unidentified issue that needs to be resolved before sending the notice
+          letter. To edit, go to VBMS claim details and click the “Edit in Caseflow” button.</p>
+          {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
+            Unidentified issue: no issue matched for requested "{ri.description}"
+          </p>)}
+        </Alert>
+      );
+    } else {
+      leadMessageArr.push(
+        'If you need to edit this, go to VBMS claim details and click the “Edit in Caseflow” button.'
+      );
+    }
   }
 
-  return [
-    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`,
-    <Alert type="warning">
-      <h2>Unidentified issue</h2>
-      <p>There is still an unidentified issue that needs to be resolved before sending the notice
-      letter. To edit, go to VBMS claim details and click the “Edit in Caseflow” button.</p>
-      {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
-        Unidentified issue: no issue matched for requested "{ri.description}"
-      </p>)}
-    </Alert>,
+  leadMessageArr.push(
     <strong>Edit the notice letter to reflect the status of requested issues.</strong>
-  ];
+  );
+
+  return leadMessageArr;
 };
 
 const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
@@ -73,7 +81,7 @@ const getChecklistItems = (formType, requestIssues, isInformalConferenceRequeste
     </Fragment>);
   }
 
-  if (isInformalConferenceRequested) {
+  if (eligibleRequestIssues.length > 0 && isInformalConferenceRequested) {
     checklist.push('Informal Conference Tracked Item');
   }
 
@@ -120,6 +128,14 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     case INTAKE_STATES.REVIEWED:
       return <Redirect to={PAGE_PATHS.FINISH} />;
     default:
+    }
+
+    if (completedReview.processedInCaseflow && formType !== 'appeal') {
+      // we do not use Redirect because state no longer matters,
+      // and because we are likely not in a relative URL path any more.
+      window.location = completedReview.redirectTo;
+
+      return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
     return <div><StatusMessage

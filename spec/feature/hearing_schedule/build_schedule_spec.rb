@@ -34,8 +34,8 @@ RSpec.feature "Build Hearing Schedule" do
       before do
         create(:staff, sattyid: "860", snamef: "Stuart", snamel: "Huels")
         create(:staff, sattyid: "861", snamef: "Doris", snamel: "Lamphere")
-        create(:hearing_day, hearing_type: "C", scheduled_for: Date.new(2018, 4, 2))
-        create(:hearing_day, hearing_type: "C", scheduled_for: Date.new(2018, 4, 20))
+        create(:hearing_day, request_type: "C", scheduled_for: Date.new(2018, 4, 2))
+        create(:hearing_day, request_type: "C", scheduled_for: Date.new(2018, 4, 20))
       end
 
       let!(:current_user) do

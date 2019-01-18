@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import update from 'immutability-helper';
 
 import { formatDate } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
@@ -9,13 +9,11 @@ import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 
-import { ErrorAlert } from '../components/Alerts';
 import { DISPOSITION_OPTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
-import { longFormNameFromShort,
+import {
   formatDecisionIssuesFromRequestIssues,
   formatRequestIssuesWithDecisionIssues,
   buildDispositionSubmission } from '../util';
-import { taskUpdateDecisionIssues, taskUpdateDefaultPage } from '../actions/task';
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -46,7 +44,8 @@ class NonCompDecisionIssue extends React.PureComponent {
   render = () => {
     const {
       issue,
-      index
+      index,
+      disabled
     } = this.props;
     let issueDate = formatDate(issue.rating_issue_profile_date || issue.decision_date);
 
@@ -64,10 +63,12 @@ class NonCompDecisionIssue extends React.PureComponent {
             label={`description-issue-${index}`}
             hideLabel
             value={this.props.decisionDescription}
+            disabled={disabled}
             onChange={this.handleDescriptionChange} />
         </div>
         <div className="usa-width-one-third cf-disposition">
           <SearchableDropdown
+            readOnly={disabled}
             name={`disposition-issue-${index}`}
             label={`disposition-issue-${index}`}
             hideLabel
@@ -81,7 +82,7 @@ class NonCompDecisionIssue extends React.PureComponent {
   }
 }
 
-class NonCompDispositionsPage extends React.PureComponent {
+class NonCompDispositions extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -101,17 +102,10 @@ class NonCompDispositionsPage extends React.PureComponent {
   }
 
   handleSave = () => {
-    const successHandler = () => {
-      // update to the completed tab
-      this.props.taskUpdateDefaultPage(1);
-      this.props.history.push(`/${this.props.businessLineUrl}`);
-    };
-
     const decisionIssues = formatDecisionIssuesFromRequestIssues(this.state.requestIssues);
     const dispositionData = buildDispositionSubmission(decisionIssues, this.state.decisionDate);
 
-    this.props.taskUpdateDecisionIssues(this.props.task.id, this.props.businessLineUrl,
-      dispositionData, this.props.appeal.veteran).then(successHandler.bind(this));
+    this.props.handleSave(dispositionData);
   }
 
   checkFormFilledOut = () => {
@@ -123,73 +117,41 @@ class NonCompDispositionsPage extends React.PureComponent {
   }
 
   onDecisionIssueDispositionChange = (requestIssueIndex, value) => {
-    let newRequestIssues = this.state.requestIssues;
+    const newRequestIssues = update(this.state.requestIssues,
+      { [requestIssueIndex]: { decisionIssue: { disposition: { $set: value } } } });
 
-    newRequestIssues[requestIssueIndex].decisionIssue.disposition = value;
-    this.setState({ requestIssues: newRequestIssues });
-    this.checkFormFilledOut();
+    this.setState({ requestIssues: newRequestIssues }, this.checkFormFilledOut);
   }
 
   onDecisionIssueDescriptionChange = (requestIssueIndex, value) => {
-    let newRequestIssues = this.state.requestIssues;
+    const newRequestIssues = update(this.state.requestIssues,
+      { [requestIssueIndex]: { decisionIssue: { description: { $set: value } } } });
 
-    newRequestIssues[requestIssueIndex].decisionIssue.description = value;
     this.setState({ requestIssues: newRequestIssues });
   }
 
   render = () => {
     const {
       appeal,
-      businessLine,
-      businessLineUrl,
-      task,
-      decisionIssuesStatus
+      decisionIssuesStatus,
+      task
     } = this.props;
 
-    let errorAlert = null;
+    let completeDiv = null;
 
-    if (decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.FAIL) {
-      errorAlert = <ErrorAlert errorCode="decisionIssueUpdateFailed" />;
+    if (!task.completed_at) {
+      completeDiv = <React.Fragment>
+        <div className="cf-txt-r">
+          <a className="cf-cancel-link" href={`${task.tasks_url}`}>Cancel</a>
+          <Button className="usa-button"
+            name="submit-update"
+            loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
+            disabled={!this.state.isFilledOut} onClick={this.handleSave}>Complete</Button>
+        </div>
+      </React.Fragment>;
     }
 
     return <div>
-      { errorAlert }
-      <h1>{businessLine}</h1>
-      <div className="cf-review-details cf-gray-box">
-        <div className="usa-grid-full">
-          <div className="usa-width-one-half">
-            <span className="cf-claimant-name">{task.claimant.name}</span>
-            <strong className="cf-relationship">Relationship to Veteran</strong> {task.claimant.relationship}
-          </div>
-          <div className="usa-width-one-half cf-txt-r pad-top">
-            <span className="cf-intake-date"><strong>Intake date</strong> {formatDate(task.created_at)}</span>
-            <span>Veteran ID: {appeal.veteran.fileNumber}</span>
-          </div>
-        </div>
-        <div className="usa-grid-full row-two">
-          <div className="usa-width-one-half">
-            { appeal.veteranIsNotClaimant ? `Veteran Name ${appeal.veteran.name}` : '\u00a0' }
-          </div>
-          <div className="usa-width-one-half cf-txt-r">
-            <div>SSN: {appeal.veteran.ssn || '[unknown]'}</div>
-          </div>
-        </div>
-        <hr />
-        <div className="usa-grid-full">
-          <div className="usa-width-two-thirds">
-            <div className="cf-form-details">
-              <div><strong>Form being processed</strong> {longFormNameFromShort(task.type)}</div>
-              <div><strong>Informal conference requested</strong> {appeal.informalConference ? 'Yes' : 'No'}</div>
-              <div><strong>Review by same office requested</strong> {appeal.sameOffice ? 'Yes' : 'No'}</div>
-            </div>
-          </div>
-          <div className="usa-width-one-third">
-            <div className="cf-receipt-date cf-txt-r">
-              <div><strong>Form receipt date</strong> {formatDate(appeal.receiptDate)}</div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div className="cf-decisions">
         <div className="usa-grid-full">
           <div className="usa-width-one-half">
@@ -210,6 +172,7 @@ class NonCompDispositionsPage extends React.PureComponent {
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
                 decisionDescription={issue.decisionIssue.description}
                 decisionDisposition={issue.decisionIssue.disposition}
+                disabled={Boolean(task.completed_at)}
               />;
             })
           }
@@ -223,33 +186,22 @@ class NonCompDispositionsPage extends React.PureComponent {
               name="decision-date"
               value={this.state.decisionDate}
               onChange={this.handleDecisionDate}
+              readOnly={Boolean(task.completed_at)}
             />
           </InlineForm>
         </div>
       </div>
-      <div className="cf-txt-r">
-        <a className="cf-cancel-link" href={`/decision_reviews/${businessLineUrl}`}>Cancel</a>
-        <Button className="usa-button"
-          name="submit-update"
-          loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
-          disabled={!this.state.isFilledOut} onClick={this.handleSave}>Complete</Button>
-      </div>
+      { completeDiv }
     </div>;
   }
 }
 
-const DispositionPage = connect(
+const Dispositions = connect(
   (state) => ({
     appeal: state.appeal,
-    businessLine: state.businessLine,
-    businessLineUrl: state.businessLineUrl,
     task: state.task,
     decisionIssuesStatus: state.decisionIssuesStatus
-  }),
-  (dispatch) => bindActionCreators({
-    taskUpdateDecisionIssues,
-    taskUpdateDefaultPage
-  }, dispatch)
-)(NonCompDispositionsPage);
+  })
+)(NonCompDispositions);
 
-export default DispositionPage;
+export default Dispositions;

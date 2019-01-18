@@ -45,6 +45,7 @@ class DecisionDocument < ApplicationRecord
     if FeatureToggle.enabled?(:create_board_grant_effectuations)
       create_board_grant_effectuations!
       process_board_grant_effectuations!
+      appeal.create_remand_supplemental_claims!
     end
 
     processed!
@@ -56,6 +57,12 @@ class DecisionDocument < ApplicationRecord
   # Used by EndProductEstablishment to determine what modifier to use for the effectuation EPs
   def valid_modifiers
     HigherLevelReview::END_PRODUCT_MODIFIERS
+  end
+
+  # The decision document is the source for all board grant eps, so we define this method
+  # to be called any time a corresponding board grant end product change statuses.
+  def on_sync(end_product_establishment)
+    end_product_establishment.sync_decision_issues! if end_product_establishment.status_cleared?
   end
 
   private

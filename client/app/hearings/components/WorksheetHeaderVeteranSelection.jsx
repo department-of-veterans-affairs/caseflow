@@ -30,12 +30,17 @@ const hearingPreppedStyling = css({
 });
 
 const containerStyling = css({
-  width: '70%',
+  width: '60%',
   display: 'flex'
 });
 
 const selectVeteranStyling = css({
   width: '350px'
+});
+
+const buttonHeaderStyling = css({
+  width: '40%',
+  display: 'flex'
 });
 
 class WorksheetHeaderVeteranSelection extends React.PureComponent {
@@ -55,8 +60,9 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   getOptionLabel = (hearing) => (
     <div>
-      {hearing.veteran_fi_last_formatted}  ({hearing.current_issue_count} {hearing.current_issue_count === 1 ?
-        'issue' : 'issues'}){'  '}{hearing.prepped ? <FoundIcon /> : ''}
+      {`${hearing.veteran_first_name[0]}. ${hearing.veteran_last_name} `}
+      ({hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'issue' : 'issues'})
+      {'  '}{hearing.prepped ? <FoundIcon /> : ''}
     </div>
   );
 
@@ -113,16 +119,21 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
           disabled={docketNotLoaded}
         />
       </div>
-      <div className="cf-push-right">
+      <div className="cf-push-right" {...buttonHeaderStyling} >
+        <Link
+          name="view-case-detail"
+          href={`/queue/appeals/${worksheet.appeal_external_id}`}
+          button="primary"
+          target="_blank">
+         View case details</Link>
         <Link
           name="review-claims-folder"
           onClick={this.onClickReviewClaimsFolder}
-          href={`${getReaderLink(worksheet.appeal_vacols_id)}?category=case_summary`}
+          href={`${getReaderLink(worksheet.appeal_external_id)}?category=case_summary`}
           button="primary"
           target="_blank">
         Review claims folder</Link>
       </div>
-
     </span>;
   }
 }

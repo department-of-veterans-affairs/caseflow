@@ -93,6 +93,17 @@ feature "Supplemental Claim Intake" do
     )
   end
 
+  let!(:before_ama_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 10.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
+      ]
+    )
+  end
+
   it "Creates an end product" do
     # Testing two relationships, tests 1 relationship in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -231,6 +242,10 @@ feature "Supplemental Claim Intake" do
     )
     expect(page).to have_content("Contention: Active Duty Adjustments - Description for Active Duty Adjustments")
 
+    intake.detail.reload
+
+    expect(intake.detail.end_product_establishments.count).to eq(2)
+
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
@@ -242,7 +257,7 @@ feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "042",
         end_product_label: "Supplemental Claim Rating",
-        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:rating],
+        end_product_code: "040SCR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -251,10 +266,9 @@ feature "Supplemental Claim Intake" do
       user: current_user
     )
 
-    ratings_end_product_establishment = EndProductEstablishment.find_by(
-      source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_CODES[:rating]
-    )
+    ratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
+      epe.code == "040SCR"
+    end
 
     expect(ratings_end_product_establishment).to have_attributes(
       claimant_participant_id: "5382910293",
@@ -272,7 +286,7 @@ feature "Supplemental Claim Intake" do
         date: supplemental_claim.receipt_date.to_date,
         end_product_modifier: "041",
         end_product_label: "Supplemental Claim Nonrating",
-        end_product_code: SupplementalClaim::END_PRODUCT_CODES[:nonrating],
+        end_product_code: "040SCNR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293"
@@ -280,10 +294,10 @@ feature "Supplemental Claim Intake" do
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
     )
-    nonratings_end_product_establishment = EndProductEstablishment.find_by(
-      source: intake.detail,
-      code: SupplementalClaim::END_PRODUCT_CODES[:nonrating]
-    )
+
+    nonratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
+      epe.code == "040SCNR"
+    end
 
     expect(nonratings_end_product_establishment).to have_attributes(
       claimant_participant_id: "5382910293",
@@ -441,17 +455,6 @@ feature "Supplemental Claim Intake" do
             decision_text: "Really old injury" }
         ],
         associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-      )
-    end
-
-    let!(:before_ama_rating) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: DecisionReview.ama_activation_date - 5.days,
-        profile_date: DecisionReview.ama_activation_date - 10.days,
-        issues: [
-          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-        ]
       )
     end
 
@@ -735,6 +738,16 @@ feature "Supplemental Claim Intake" do
       end
 
       context "no contestable issues present" do
+        before do
+          education_org = create(:business_line, name: "Education", url: "education")
+          OrganizationsUser.add_user_to_organization(current_user, education_org)
+          FeatureToggle.enable!(:decision_reviews)
+        end
+
+        after do
+          FeatureToggle.disable!(:decision_reviews)
+        end
+
         scenario "no rating issues show on first Add Issues modal" do
           sc, = start_supplemental_claim(veteran, is_comp: false)
 
@@ -752,13 +765,17 @@ feature "Supplemental Claim Intake" do
             description: "I am a description",
             date: "10/25/2017"
           )
+
           expect(page).to_not have_content("Establish EP")
           expect(page).to have_content("Establish Supplemental Claim")
           expect(page).to_not have_content("Claimant")
 
           click_intake_finish
 
-          expect(page).to have_content("Intake completed")
+          # should redirect to tasks review page
+          expect(page).to have_content("Reviews needing action")
+          expect(current_path).to eq("/decision_reviews/education")
+          expect(page).to have_content("Success!")
 
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
@@ -847,9 +864,19 @@ feature "Supplemental Claim Intake" do
           expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
           add_intake_rating_issue("None of these match")
-          add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Description for Active Duty Adjustments")
+
+          # add before_ama ratings
+          click_intake_add_issue
+          add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+          add_intake_rating_issue("limitation of thigh motion (extension)")
+          add_untimely_exemption_response("Yes")
+
+          expect(page).to have_content("Non-RAMP Issue before AMA Activation")
+          expect(page).to_not have_content(
+            "Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
+          )
 
           # add eligible legacy issue
           click_intake_add_issue

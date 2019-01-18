@@ -74,6 +74,17 @@ feature "Appeal Intake" do
     )
   end
 
+  let!(:before_ama_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 11.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
+      ]
+    )
+  end
+
   let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
 
   it "cancels an intake in progress when there is a NilRatingProfileListError" do
@@ -279,6 +290,26 @@ feature "Appeal Intake" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
   end
 
+  scenario "intake can still be completed when ratings are backfilled" do
+    mock_backfilled_rating_response
+    start_appeal(veteran_no_ratings)
+
+    visit "/intake"
+    click_intake_continue
+    click_intake_add_issue
+
+    # expect the rating modal to be skipped
+    expect(page).to have_content("Does issue 1 match any of these issue categories?")
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "04/19/2018"
+    )
+
+    click_intake_finish
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+  end
+
   context "Veteran has no ratings" do
     scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
       start_appeal(veteran_no_ratings)
@@ -330,15 +361,6 @@ feature "Appeal Intake" do
           reference_id: "ramp_ref_id" }
       ],
       associated_claims: { bnft_clm_tc: "683SCRRRAMP", clm_id: "ramp_claim_id" }
-    )
-
-    Generators::Rating.build(
-      participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 11.days,
-      issues: [
-        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
-      ]
     )
 
     epe = create(:end_product_establishment, :active)
@@ -678,6 +700,47 @@ feature "Appeal Intake" do
     expect(intake).to be_canceled
   end
 
+  scenario "adding nonrating issue with non-comp benefit type" do
+    _, intake = start_appeal(veteran)
+    visit "/intake/add_issues"
+
+    expect(page).to have_content("Add / Remove Issues")
+
+    click_intake_add_issue
+    click_intake_no_matching_issues
+    add_intake_nonrating_issue(
+      benefit_type: "Education",
+      category: "Accrued",
+      description: "Description for Accrued",
+      date: profile_date.strftime("%D")
+    )
+
+    expect(page).to have_content("Description for Accrued")
+
+    click_intake_add_issue
+    click_intake_no_matching_issues
+    add_intake_nonrating_issue(
+      benefit_type: "Vocational Rehab. & Employment",
+      category: "Basic Eligibility",
+      description: "Description for basic eligibility",
+      date: profile_date.strftime("%D")
+    )
+
+    expect(page).to have_content("Description for basic eligibility")
+
+    click_intake_finish
+
+    expect(page).to have_content("Intake completed")
+
+    intake.reload
+
+    education_request_issue = intake.detail.request_issues.find { |ri| ri.benefit_type == "education" }
+    voc_rehab_request_issue = intake.detail.request_issues.find { |ri| ri.benefit_type == "voc_rehab" }
+
+    expect(education_request_issue.description).to eq("Accrued - Description for Accrued")
+    expect(voc_rehab_request_issue.description).to eq("Basic Eligibility - Description for basic eligibility")
+  end
+
   context "with active legacy appeal" do
     before do
       setup_legacy_opt_in_appeals(veteran.file_number)
@@ -725,9 +788,18 @@ feature "Appeal Intake" do
         expect(page).to have_content("Does issue 3 match any of these VACOLS issues?")
 
         add_intake_rating_issue("None of these match")
-        add_untimely_exemption_response("Yes")
 
         expect(page).to have_content("Description for Active Duty Adjustments")
+
+        # add before_ama ratings
+        click_intake_add_issue
+        add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+        add_intake_rating_issue("limitation of thigh motion (extension)")
+
+        expect(page).to have_content("Non-RAMP Issue before AMA Activation")
+        expect(page).to_not have_content(
+          "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+        )
 
         # add eligible legacy issue
         click_intake_add_issue

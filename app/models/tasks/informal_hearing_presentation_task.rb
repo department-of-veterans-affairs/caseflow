@@ -1,4 +1,8 @@
 class InformalHearingPresentationTask < GenericTask
+  # TODO: figure out how long IHP tasks will take to expire,
+  # then make them timeable
+  # include TimeableTask
+
   def available_actions(user)
     if assigned_to == user
       return [
