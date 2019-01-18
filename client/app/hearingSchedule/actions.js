@@ -278,20 +278,6 @@ export const onHearingDayModified = (hearingDayModified) => ({
   }
 });
 
-export const onReceiveJudges = (activeJudges) => ({
-  type: ACTIONS.RECEIVE_JUDGES,
-  payload: {
-    activeJudges
-  }
-});
-
-export const onReceiveCoordinators = (activeCoordinators) => ({
-  type: ACTIONS.RECEIVE_COORDINATORS,
-  payload: {
-    activeCoordinators
-  }
-});
-
 export const onClickRemoveHearingDay = () => ({
   type: ACTIONS.ON_CLICK_REMOVE_HEARING_DAY
 });
