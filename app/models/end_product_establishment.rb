@@ -272,7 +272,7 @@ class EndProductEstablishment < ApplicationRecord
   def search_table_ui_hash
     {
       code: code,
-      modifier: modifier || '',
+      modifier: modifier || "",
       synced_status: synced_status,
       last_synced_at: last_synced_at
     }
@@ -347,6 +347,14 @@ class EndProductEstablishment < ApplicationRecord
     if decision_issues_sync_complete?
       source.on_decision_issues_sync_processed(self)
     end
+  end
+
+  def status
+    return result(cached: true).status_type if committed?
+
+    source.try(:establishment_error) ?
+      COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED :
+      COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
   end
 
   private

@@ -124,17 +124,35 @@ class ClaimReview < DecisionReview
   def search_table_ui_hash
     {
       caseflow_veteran_id: claim_veteran&.id,
-      claim_id: id,
-      veteran_file_number: veteran_file_number,
-      veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
-      end_products: end_product_establishments,
       claimant_names: claimants.map(&:name),
-      review_type: self.class.to_s.underscore
+      claim_id: id,
+      # end_products: end_product_establishments,
+      end_product_status: search_table_statuses,
+      establishment_error: establishment_error,
+      review_type: self.class.to_s.underscore,
+      veteran_file_number: veteran_file_number,
+      veteran_full_name: claim_veteran&.name&.formatted(:readable_full)
     }
   end
 
   def claim_veteran
     Veteran.find_by(file_number: veteran_file_number)
+  end
+
+  # return an array of hashes that have ep code and status
+  # if processed_in_caseflow
+  #    [ {ep_code: "Processed in Caseflow"
+  #    status: ""}]
+  # else
+  #   end_product_establishments.map ...
+  # if it's processed in caseflow, there are no end product establishsments
+  def search_table_statuses
+    return [{
+      ep_code: "Processed in Caseflow",
+      status: "",
+    }] if processed_in_caseflow? # eventually this is a link
+
+    end_product_establishments.map(&:status)
   end
 
   private

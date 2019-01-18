@@ -291,6 +291,7 @@ export const prepareClaimReviewForStore = (claimReviews: Array<Object>) => {
       claimantNames: claimReview.claimant_names,
       claimId: claimReview.claim_id,
       endProducts: claimReview.end_products,
+      establishmentError: claimReview.establishment_error,
       reviewType: claimReview.review_type,
       veteranFileNumber: claimReview.veteran_file_number,
       veteranFullName: claimReview.veteran_full_name

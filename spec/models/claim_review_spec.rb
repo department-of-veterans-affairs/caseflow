@@ -710,6 +710,12 @@ describe ClaimReview do
     end
   end
 
+  describe "#search_table_statuses" do
+    subject { claim_review.search_table_statuses }
+
+
+  end
+
   describe "#claim_veteran" do
     let!(:veteran) { create(:veteran) }
     let!(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
