@@ -71,7 +71,8 @@ export default class HearingDetails extends React.Component {
       disabled: false,
       updated: false,
       loading: false,
-      success: false
+      success: false,
+      error: false
     };
   }
 
@@ -130,7 +131,13 @@ export default class HearingDetails extends React.Component {
         loading: false,
         success: true
       });
-    });
+    }).
+      catch((error) => {
+        this.setState({
+          loading: false,
+          error: error.message
+        });
+      });
   }
 
   render() {
@@ -140,9 +147,7 @@ export default class HearingDetails extends React.Component {
       vbmsId
     } = this.props.hearing;
 
-    const { transcription, hearing, disabled, success } = this.state;
-
-    console.log(this.props.hearing);
+    const { transcription, hearing, disabled, success, error } = this.state;
 
     return (
       <AppSegment filledBackground>
@@ -150,6 +155,10 @@ export default class HearingDetails extends React.Component {
         {success &&
           <div {...css({ marginBottom: '4rem' })}>
             <Alert type="success" title="Hearing Successfully Updated" />
+          </div>
+        }{error &&
+          <div {...css({ marginBottom: '4rem' })}>
+            <Alert type="error" title="There was an error updating hearing" />
           </div>
         }
         <div {...inputFix}>

@@ -71,7 +71,7 @@ export const Overview = ({
     },
     {
       label: 'AOD Status',
-      value: aod
+      value: aod || 'None'
     }
   ]} />
 );
@@ -144,6 +144,20 @@ export const TranscriptionDetails = ({
         strongLabel
         readOnly={readOnly}
         value={transcriber}
+        options={[
+          {
+            label: 'Genesis Government Solutions, Inc.',
+            value: 'Genesis Government Solutions, Inc.'
+          },
+          {
+            label: 'Jamison Professional Services',
+            value: 'Jamison Professional Services'
+          },
+          {
+            label: 'The Ravens Group, Inc.',
+            value: 'The Ravens Group, Inc.'
+          }
+        ]}
         onChange={(val) => set('transcriber', val)}
       />
     </div>
@@ -187,6 +201,24 @@ export const TranscriptionProblem = ({
       strongLabel
       readOnly={readOnly}
       value={problemType}
+      options={[
+        {
+          label: 'No audio',
+          value: 'No audio'
+        },
+        {
+          label: 'Poor Audio Quality',
+          value: 'Poor Audio Quality'
+        },
+        {
+          label: 'Incomplete Hearing',
+          value: 'Incomplete Hearing'
+        },
+        {
+          label: 'Other (see notes)',
+          value: 'Other (see notes)'
+        }
+      ]}
       onChange={(val) => set('problemType', val)}
     />
     <DateSelector
@@ -203,6 +235,10 @@ export const TranscriptionProblem = ({
       strongLabel
       readOnly={readOnly}
       options={[
+        {
+          value: null,
+          displayText: ''
+        },
         {
           value: 'Proceed without transcript',
           displayText: 'Proceeed without transcript'
