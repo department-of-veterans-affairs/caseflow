@@ -5,7 +5,7 @@ class RatingIssue
   include ActiveModel::Model
 
   attr_accessor :reference_id, :decision_text, :profile_date, :associated_end_products,
-                :promulgation_date, :participant_id, :rba_contentions_data
+                :promulgation_date, :participant_id, :rba_contentions_data, :disability_code
 
   attr_writer :contention_reference_id
 
@@ -18,7 +18,8 @@ class RatingIssue
         decision_text: bgs_data[:decn_txt],
         associated_end_products: rating.associated_end_products,
         promulgation_date: rating.promulgation_date,
-        participant_id: rating.participant_id
+        participant_id: rating.participant_id,
+        disability_code: bgs_data[:disability_code]
       )
     end
 
@@ -30,7 +31,8 @@ class RatingIssue
         associated_end_products: deserialize_end_products(serialized_hash),
         promulgation_date: serialized_hash[:promulgation_date],
         profile_date: serialized_hash[:profile_date],
-        rba_contentions_data: serialized_hash[:rba_contentions_data]
+        rba_contentions_data: serialized_hash[:rba_contentions_data],
+        disability_code: serialized_hash[:disability_code]
       )
     end
 
@@ -66,7 +68,8 @@ class RatingIssue
       ramp_claim_id: ramp_claim_id,
       title_of_active_review: title_of_active_review,
       rba_contentions_data: rba_contentions_data,
-      associated_end_products: associated_end_products.map(&:serialize)
+      associated_end_products: associated_end_products.map(&:serialize),
+      disability_code: disability_code
     }
   end
 
