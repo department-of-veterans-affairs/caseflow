@@ -77,7 +77,7 @@ RSpec.feature "Add a Hearing Day" do
       expect(page).to have_content("Select Hearing Coordinator (Optional)")
     end
 
-    scenario "Fill out all fields and confirm to save", focus: true do
+    scenario "Fill out all fields and confirm to save" do
       visit "hearings/schedule"
       expect(page).to have_content("Welcome to Hearing Schedule!")
       find("button", text: "Add Hearing Date").click
