@@ -51,7 +51,9 @@ describe JudgeTask do
       end
 
       context "in the review phase" do
-        let(:subject_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
+        let(:subject_task) do
+          FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge, parent: FactoryBot.create(:root_task))
+        end
 
         it "returns the dispatch action" do
           expect(subject).to eq(
