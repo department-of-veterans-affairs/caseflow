@@ -21,11 +21,13 @@ describe AsyncableJobsController, type: :controller do
       let!(:hlr) do
         create(:higher_level_review,
                establishment_submitted_at: 7.days.ago,
+               establishment_attempted_at: 7.days.ago,
                veteran_file_number: veteran.file_number)
       end
       let!(:sc) do
         create(:supplemental_claim,
                establishment_submitted_at: 7.days.ago,
+               establishment_attempted_at: 7.days.ago,
                veteran_file_number: veteran.file_number)
       end
 

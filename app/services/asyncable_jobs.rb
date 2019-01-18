@@ -1,9 +1,10 @@
 class AsyncableJobs
-  attr_accessor :jobs
+  attr_accessor :jobs, :models
 
   def initialize(page: 1)
     @page = page
     @jobs = gather_jobs
+    @models = asyncable_models
   end
 
   private

@@ -22,13 +22,17 @@ class AsyncableJobsController < ApplicationController
 
   def asyncable_job_klass
     klass = allowed_params[:asyncable_job_klass].constantize
-    fail ActiveRecord::RecordNotFound unless asyncable_models.include?(klass)
+    fail ActiveRecord::RecordNotFound unless asyncable_jobs.models.include?(klass)
 
     klass
   end
 
+  def asyncable_jobs
+    @asyncable_jobs ||= AsyncableJobs.new
+  end
+
   def jobs
-    @jobs ||= AsyncableJobs.new.jobs
+    @jobs ||= asyncable_jobs.jobs
   end
 
   def job
