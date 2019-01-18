@@ -95,14 +95,10 @@ class HearingRepository
       )
 
       if hearing_day[:request_type] == "C"
-        update_co_hearing(hearing_datetime, appeal)
+        create_child_co_hearing(hearing_datetime, appeal)
       else
         create_child_video_hearing(parent_record_id, hearing_datetime, appeal)
       end
-    end
-
-    def update_co_hearing(hearing_date_str, appeal)
-      create_child_co_hearing(hearing_date_str, appeal)
     end
 
     def create_child_co_hearing(hearing_date_str, appeal)

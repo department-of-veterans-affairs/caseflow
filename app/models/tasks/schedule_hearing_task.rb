@@ -74,7 +74,7 @@ class ScheduleHearingTask < GenericTask
                        "#{format('%##d', hearing_date.hour)}:#{format('%##d', hearing_date.min)}:00"
 
     if hearing_type == LegacyHearing::CO_HEARING
-      HearingRepository.update_co_hearing(hearing_date_str, appeal)
+      HearingRepository.create_child_co_hearing(hearing_date_str, appeal)
     else
       HearingRepository.create_child_video_hearing(hearing_day_id, hearing_date, appeal)
     end
