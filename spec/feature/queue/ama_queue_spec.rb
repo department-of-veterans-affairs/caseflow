@@ -564,13 +564,16 @@ RSpec.feature "AmaQueue" do
       FactoryBot.create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :assigned)
     end
 
+    let(:document_id) { "5551212" }
+
     before do
       ["Elaine Abitong", "Byron Acero", "Jan Antonioni"].each do |attorney_name|
-        FactoryBot.create(
+        another_attorney_on_the_team = FactoryBot.create(
           :staff,
           :attorney_role,
           user: FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: attorney_name)
         )
+        OrganizationsUser.add_user_to_organization(another_attorney_on_the_team, judgeteam)
       end
 
       OrganizationsUser.add_user_to_organization(attorney_user, judgeteam)
@@ -637,12 +640,12 @@ RSpec.feature "AmaQueue" do
         click_on veteran_full_name
 
         click_dropdown(prompt: "Select an action", text: "Return to attorney")
-        click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
-        # expect(dropdown_selected_value(find(".cf-modal-body .dropdown-Other"))).to eq attorney_user.full_name
+        expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
+        fill_in "taskInstructions", with: "Please fix this"
 
         click_on "Submit"
 
-        expect(page).to have_content("Returned 1 case")
+        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
       end
 
       step "attorney corrects case and returns it to the judge" do
@@ -668,7 +671,7 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
-        fill_in "Document ID:", with: "12345"
+        fill_in "Document ID:", with: document_id
         click_on "Select a judge"
         click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
         fill_in "notes", with: "corrections made"
@@ -678,6 +681,14 @@ RSpec.feature "AmaQueue" do
           "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
           "sent to #{judge_user.full_name} for review."
         )
+      end
+
+      step "judge sees the case in their queue" do
+        User.authenticate!(user: judge_user)
+        visit "/queue"
+
+        expect(page).to have_content veteran_full_name
+        expect(page).to have_content document_id
       end
     end
   end
