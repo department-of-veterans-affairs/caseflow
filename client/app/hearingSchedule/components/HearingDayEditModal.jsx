@@ -7,7 +7,11 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import { fullWidth } from '../../queue/constants';
-import SearchableDropdown from '../../components/SearchableDropdown';
+import {
+  HearingRoomDropdown,
+  JudgeDropdown,
+  HearingCoordinatorDropdown
+} from '../../components/DataDropdowns';
 import Checkbox from '../../components/Checkbox';
 import TextareaField from '../../components/TextareaField';
 import { bindActionCreators } from 'redux';
@@ -18,6 +22,7 @@ import { selectHearingCoordinator,
   onHearingDayModified
 } from '../actions';
 import HEARING_ROOMS_LIST from '../../../constants/HEARING_ROOMS_LIST.json';
+import _ from 'lodash';
 
 const notesFieldStyling = css({
   height: '100px',
@@ -37,12 +42,20 @@ class HearingDayEditModal extends React.Component {
 
   componentWillMount = () => {
     // find labels in options before passing values to modal
+    this.initialState();
     if (this.props.dailyDocket.roomInfo) {
       const roomInfo = this.props.dailyDocket.roomInfo.split(' ');
 
       this.props.selectHearingRoom(roomInfo[0]);
     }
   };
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.activeJudges !== this.props.activeJudges ||
+        prevProps.activeCoordinators !== this.props.activeCoordinators) {
+      this.initialState();
+    }
+  }
 
   formatRoomOptions = () => {
     const roomOptions = [
@@ -105,6 +118,21 @@ class HearingDayEditModal extends React.Component {
     this.props.onHearingDayModified(true);
   }
 
+  initialState = () => {
+    // find labels in options before passing values to modal
+    const room = _.findKey(HEARING_ROOMS_LIST, { label: this.props.dailyDocket.room }) || this.props.dailyDocket.room;
+    const roomOption = { label: HEARING_ROOMS_LIST[room.toString()].label,
+      value: room.toString() };
+    const judge = _.find(this.props.activeJudges, { value: this.props.dailyDocket.judgeId.toString() });
+    const coordinator = _.find(this.props.activeCoordinators, { label: this.props.dailyDocket.bvaPoc });
+
+    this.props.selectHearingRoom(roomOption);
+    this.props.selectVlj(judge);
+    this.props.selectHearingCoordinator(coordinator);
+    this.props.setNotes(this.props.dailyDocket.notes);
+    this.props.onHearingDayModified(false);
+  }
+
   modalMessage = () => {
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
@@ -126,32 +154,33 @@ class HearingDayEditModal extends React.Component {
           strongLabel
           value={this.state.modifyCoordinator}
           onChange={this.onModifyCoordinator} />
-        <SearchableDropdown
+        <HearingRoomDropdown
           name="room"
           label="Select Room"
-          strongLabel
           readOnly={!this.state.modifyRoom}
-          value={this.props.hearingRoom}
-          onChange={this.onRoomChange}
-          options={this.formatRoomOptions()}
+          value={this.props.hearingRoom.value}
+          onChange={(value, label) => this.onRoomChange({
+            value,
+            label
+          })}
           placeholder="Select..." />
-        <SearchableDropdown
-          name="vlj"
+        <JudgeDropdown
           label="Select VLJ"
-          strongLabel
           readOnly={!this.state.modifyVlj}
-          value={this.props.vlj}
-          onChange={this.onVljChange}
-          options={this.props.activeJudges}
+          value={this.props.vlj.value}
+          onChange={(value, label) => this.onVljChange({
+            value,
+            label
+          })}
           placeholder="Select..." />
-        <SearchableDropdown
-          name="coordinator"
+        <HearingCoordinatorDropdown
           label="Select Hearing Coordinator"
-          strongLabel
           readOnly={!this.state.modifyCoordinator}
-          value={this.props.coordinator}
-          onChange={this.onCoordinatorChange}
-          options={this.props.activeCoordinators}
+          value={this.props.coordinator.value}
+          onChange={(value, label) => this.onCoordinatorChange({
+            value,
+            label
+          })}
           placeholder="Select..." />
         <TextareaField
           name="Notes"
@@ -164,7 +193,6 @@ class HearingDayEditModal extends React.Component {
   };
 
   render() {
-
     return <AppSegment filledBackground>
       <div className="cf-modal-scroll">
         <Modal
@@ -189,12 +217,12 @@ HearingDayEditModal.propTypes = {
 
 const mapStateToProps = (state) => ({
   dailyDocket: state.hearingSchedule.dailyDocket,
-  hearingRoom: state.hearingSchedule.hearingRoom,
-  vlj: state.hearingSchedule.vlj,
-  coordinator: state.hearingSchedule.coordinator,
-  notes: state.hearingSchedule.notes,
-  activeJudges: state.hearingSchedule.activeJudges,
-  activeCoordinators: state.hearingSchedule.activeCoordinators
+  hearingRoom: state.hearingSchedule.hearingRoom || {},
+  vlj: state.hearingSchedule.vlj || {},
+  coordinator: state.hearingSchedule.coordinator || {},
+  activeJudges: state.components.dropdowns.judges.options,
+  activeCoordinators: state.components.dropdowns.hearingCoordinators.options,
+  notes: state.hearingSchedule.notes
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
