@@ -1,5 +1,7 @@
 import React from 'react';
 import { css } from 'glamor';
+import { Link } from 'react-router-dom';
+
 import * as DateUtil from '../../util/DateUtil';
 
 import {
@@ -13,6 +15,7 @@ import TextField from '../../components/TextField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import DateSelector from '../../components/DateSelector';
 import RadioField from '../../components/RadioField';
+import DocketTypeBadge from '../../components/DocketTypeBadge';
 
 import DetailsOverview from './DetailsOverview';
 
@@ -33,18 +36,22 @@ const rowThirds = css({
 
 export const Overview = ({
   hearing: {
-    scheduledFor, docketNumber, regionalOfficeName,
-    readableLocation, disposition, readableRequestType,
+    scheduledFor, docketName, docketNumber, regionalOfficeName,
+    readableLocation, disposition, readableRequestType, hearingDayId,
     aod }
 }) => (
   <DetailsOverview columns={[
     {
       label: 'Hearing Date',
-      value: DateUtil.formatDateStr(scheduledFor)
+      value: <Link to={`/schedule/docket/${hearingDayId}`}>
+        <strong>{DateUtil.formatDateStr(scheduledFor)}</strong>
+      </Link>
     },
     {
       label: 'Docket Number',
-      value: docketNumber
+      value: <span>
+        <DocketTypeBadge name={docketName} number={docketNumber} />{docketNumber}
+      </span>
     },
     {
       label: 'Regional office',

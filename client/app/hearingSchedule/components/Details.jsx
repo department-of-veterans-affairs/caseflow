@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-// import { Link } from 'react-router-dom';
 import { css } from 'glamor';
 
 import CopyTextButton from '../../components/CopyTextButton';
@@ -49,9 +48,9 @@ export default class HearingDetails extends React.Component {
     this.state = {
       hearing: {
         bvaPoc: hearing.bvaPoc,
-        judgeId: hearing.judgeId,
-        evidenceWindowWaived: hearing.evidenceWindowWaived,
-        room: parseInt(hearing.room, 10),
+        judgeId: hearing.judgeId ? hearing.judgeId.toString() : null,
+        evidenceWindowWaived: hearing.evidenceWindowWaived || false,
+        room: hearing.room,
         notes: hearing.notes
       },
       transcription: {
@@ -142,6 +141,8 @@ export default class HearingDetails extends React.Component {
     } = this.props.hearing;
 
     const { transcription, hearing, disabled, success } = this.state;
+
+    console.log(this.props.hearing);
 
     return (
       <AppSegment filledBackground>
