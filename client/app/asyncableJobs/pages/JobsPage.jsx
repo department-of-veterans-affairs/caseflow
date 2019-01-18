@@ -126,7 +126,7 @@ class AsyncableJobsPage extends React.PureComponent {
         align: 'right',
         valueFunction: (job) => {
           return <Button
-            id={`job-${job.id}`}
+            id={`job-${job.klass}-${job.id}`}
             loading={this.state.jobsRestarting[job.id]}
             loadingText="Restarting..."
             onClick={() => {
