@@ -83,17 +83,16 @@ export default class ContestedIssues extends React.PureComponent {
           <div {...flexContainer}>
             Decision
             <div>
-              {
-                openDeleteAddedDecisionHandler && <span>
-                  <Button
-                    name="Delete"
-                    id={`delete-issue-${requestIssue.id}-${decisionIssue.id}`}
-                    onClick={() => {
-                      openDeleteAddedDecisionHandler(requestIssue.id, decisionIssue);
-                    }}
-                    classNames={['cf-btn-link']}
-                  />
-                </span>}
+              {openDeleteAddedDecisionHandler && <span>
+                <Button
+                  name="Delete"
+                  id={`delete-issue-${requestIssue.id}-${decisionIssue.id}`}
+                  onClick={() => {
+                    openDeleteAddedDecisionHandler(requestIssue.id, decisionIssue);
+                  }}
+                  classNames={['cf-btn-link']}
+                />
+              </span>}
               {openDecisionHandler && <span>
                 <Button
                   name="Edit"
