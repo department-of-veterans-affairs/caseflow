@@ -297,7 +297,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   setSelectedTime = (val) => {
   	if (val === 'Other') {
-  	return this.setState({ selectedTime: 'Other' });
+  	 this.setState({ selectedTime: 'Other' });
   		this.props.onHearingTimeChange(null); 
 
   	} else {
