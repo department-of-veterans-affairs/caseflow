@@ -218,7 +218,6 @@ export default class DailyDocket extends React.Component {
           displayText: 'Other',
           value: 'other',
           disabled: readOnly
-
         }
       ];
     }
@@ -242,12 +241,6 @@ export default class DailyDocket extends React.Component {
     ];
   };
 
-  getHearingDetails = (hearing) => {
-    if (hearing.readableRequestType) {
-      return TIME_OPTIONS;
-    }
-  }
-
   getHearingDayDropdown = (hearing, readOnly) => {
     const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
 
@@ -259,7 +252,8 @@ export default class DailyDocket extends React.Component {
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'} />
     <div {...radioButtonStyling}>
       <RadioField
-        name= "Time"
+        name= "time"
+        label= "Time"
         options={this.getHearingTimeOptions(hearing, readOnly)}
         value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
         onChange={this.onHearingTimeUpdate(hearing.id)}
@@ -270,7 +264,6 @@ export default class DailyDocket extends React.Component {
         options={TIME_OPTIONS}
         value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
         onChange={this.onHearingTimeUpdate(hearing.id)}
-        // readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
         hideLabel /></div>
     </div>;
   };

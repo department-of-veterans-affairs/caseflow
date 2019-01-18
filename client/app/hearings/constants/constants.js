@@ -98,6 +98,4 @@ export const TIME_OPTIONS = [{ value: '8:30',
 { value: '4:00',
   label: '4:00' },
 { value: '4:30',
-  label: '4:30' },
-{ value: '5:00',
-  label: '5:00' }];
+  label: '4:30' }];

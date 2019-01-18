@@ -34,7 +34,8 @@ import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
 import { prepareAppealForStore } from '../utils';
 import _ from 'lodash';
 import type { Appeal, Task } from '../types/models';
-import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants/constants';
+import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING, TIME_OPTIONS } from '../../hearings/constants/constants';
+import SearchableDropdown from '../../components/SearchableDropdown';
 
 type Params = {|
   task: Task,
@@ -200,6 +201,17 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   }
 
+  getOtherTimeOptions = () => {
+    const { appeal: { sanitizedHearingRequestType } } = this.props;
+
+    if (sanitizedHearingRequestType) {
+      return [
+        { displayText: 'Other',
+          value: 'other' }
+      ];
+    }
+  }
+
   getRO = () => {
     const { appeal, hearingDay } = this.props;
     const { sanitizedHearingRequestType } = appeal;
@@ -280,16 +292,17 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       hearingDate: hearingDay.hearingDate,
       regionalOffice: this.getRO()
     };
-  }
+  };
 
   render = () => {
     const {
       selectedHearingDay, selectedRegionalOffice,
-      selectedHearingTime, openHearing
+      selectedHearingTime, openHearing, value
     } = this.props;
 
     const initVals = this.getInitialValues();
     const timeOptions = this.getTimeOptions();
+    const otherTimeOptions = this.getOtherTimeOptions();
 
     if (openHearing) {
       return null;
@@ -312,7 +325,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           readOnly={false}
           changePrompt
         />}
-
         <RadioField
           name="time"
           label="Time"
@@ -320,6 +332,20 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           options={timeOptions}
           onChange={this.props.onHearingTimeChange}
           value={selectedHearingTime || initVals.hearingTime} />
+        <RadioField
+          name="other"
+          label="OTHER"
+          options={otherTimeOptions}
+          onChange={this.props.onHearingTimeChange}
+          value={selectedHearingTime || initVals.hearingTime}
+          hideLabel />
+        <SearchableDropdown
+          name="optionalTime"
+          placeholder="Select a time"
+          options={TIME_OPTIONS}
+          value={selectedHearingTime || initVals.hearingTime}
+          onChange={this.props.onHearingTimeChange}
+          hideLabel />
       </div>
     </React.Fragment>;
   }
