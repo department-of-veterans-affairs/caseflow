@@ -2,16 +2,26 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { onReceiveDropdownData, onFetchDropdownData } from './actions';
-import ApiUtil from '../../../util/ApiUtil';
+import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
+import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
 
-import SearchableDropdown from '../../../components/SearchableDropdown';
+import SearchableDropdown from '../SearchableDropdown';
 
 class RegionalOfficeDropdown extends React.Component {
 
   componentDidMount() {
     setTimeout(this.getRegionalOffices, 0);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { regionalOffices: { options }, validateValueOnMount, onChange } = this.props;
+
+    if (!_.isEqual(prevProps.regionalOffices.options, options) && validateValueOnMount) {
+      const option = this.getSelectedOption();
+
+      onChange(option.value, option.label);
+    }
   }
 
   getRegionalOffices = () => {
@@ -30,7 +40,7 @@ class RegionalOfficeDropdown extends React.Component {
 
       _.forEach(resp.regionalOffices, (value, key) => {
         regionalOfficeOptions.push({
-          label: `${value.city}, ${value.state}`,
+          label: value.state === 'DC' ? 'Central' : `${value.city}, ${value.state}`,
           value: key
         });
       });
@@ -52,7 +62,7 @@ class RegionalOfficeDropdown extends React.Component {
   }
 
   render() {
-    const { name, label, onChange, regionalOffices: { options }, readOnly } = this.props;
+    const { name, label, onChange, regionalOffices: { options }, readOnly, errorMessage, placeholder } = this.props;
 
     return (
       <SearchableDropdown
@@ -61,8 +71,10 @@ class RegionalOfficeDropdown extends React.Component {
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value)}
-        options={options} />
+        onChange={(option) => onChange(option.value, option.label)}
+        options={options}
+        errorMessage={errorMessage}
+        placeholder={placeholder} />
     );
   }
 }
@@ -72,7 +84,11 @@ RegionalOfficeDropdown.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
+  placeholder: PropTypes.string,
+  errorMessage: PropTypes.string,
+  // run onChange when dropdown mounts
+  validateValueOnMount: PropTypes.bool
 };
 
 RegionalOfficeDropdown.defaultProps = {
@@ -81,10 +97,10 @@ RegionalOfficeDropdown.defaultProps = {
 };
 
 const mapStateToProps = (state) => ({
-  regionalOffices: {
-    options: state.hearingDropdownData.regionalOffices.options,
-    isFetching: state.hearingDropdownData.regionalOffices.isFetching
-  }
+  regionalOffices: state.components.dropdowns.regionalOffices ? {
+    options: state.components.dropdowns.regionalOffices.options,
+    isFetching: state.components.dropdowns.regionalOffices.isFetching
+  } : {}
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
