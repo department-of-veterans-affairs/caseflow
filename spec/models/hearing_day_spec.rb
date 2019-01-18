@@ -176,7 +176,7 @@ describe HearingDay do
         expect(subject.size).to eq 1
         expect(subject[0][:hearings].size).to eq 1
         expect(subject[0][:request_type]).to eq "V"
-        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
       end
     end
   end
@@ -226,8 +226,8 @@ describe HearingDay do
         expect(subject.size).to eq 1
         expect(subject[0][:hearings].size).to eq 1
         expect(subject[0][:request_type]).to eq "V"
-        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
-        expect(subject[0][:hearings][0][:hearing_disp]).to eq nil
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
+        expect(subject[0][:hearings][0]["hearing_disp"]).to eq nil
       end
     end
 
@@ -255,10 +255,10 @@ describe HearingDay do
         expect(subject.size).to eq 2
         expect(subject[1][:hearings].size).to eq 2
         expect(subject[1][:request_type]).to eq "V"
-        expect(subject[1][:hearings][0][:appeal_id]).to eq appeal.id
-        expect(subject[1][:hearings][0][:hearing_disp]).to eq nil
-        expect(subject[1][:hearings][1][:appeal_id]).to eq appeal_today.id
-        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal_tomorrow.id
+        expect(subject[1][:hearings][0]["appeal_id"]).to eq appeal.id
+        expect(subject[1][:hearings][0]["hearing_disp"]).to eq nil
+        expect(subject[1][:hearings][1]["appeal_id"]).to eq appeal_today.id
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal_tomorrow.id
       end
     end
 
@@ -317,7 +317,7 @@ describe HearingDay do
         expect(subject.size).to eq 1
         expect(subject[0][:hearings].size).to eq 1
         expect(subject[0][:request_type]).to eq "C"
-        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
       end
     end
   end

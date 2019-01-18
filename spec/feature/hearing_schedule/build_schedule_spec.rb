@@ -23,9 +23,9 @@ RSpec.feature "Build Hearing Schedule" do
       click_on "Confirm upload"
       expect(page).not_to have_content("We are uploading to VACOLS.", wait: 30)
       expect(page).to have_content("You have successfully assigned hearings between 01/01/2018 and 05/31/2018")
-      hearing_day_count = HearingDay.load_days(Date.new(2018, 1, 1), Date.new(2018, 5, 31)).flatten
-        .select do |hearing_day|
-        hearing_day.key?(:regional_office) && hearing_day[:regional_office].start_with?("R")
+      hearing_days = HearingDay.load_days(Date.new(2018, 1, 1), Date.new(2018, 5, 31))
+      hearing_day_count = (hearing_days[:vacols_hearings] + hearing_days[:caseflow_hearings]).select do |hearing_day|
+        hearing_day.regional_office.start_with?("R")
       end.count
       expect(hearing_day_count).to eq(allocation_count)
     end
@@ -57,10 +57,11 @@ RSpec.feature "Build Hearing Schedule" do
         click_on "Confirm upload"
         expect(page).not_to have_content("We are uploading to VACOLS.", wait: 15)
         expect(page).to have_content("You have successfully assigned judges to hearings")
-        vlj_ids_count = HearingDay.load_days(Date.new(2018, 4, 1), Date.new(2018, 4, 30)).flatten
-          .select do |hearing_day|
-          hearing_day.key?(:judge_id) && !hearing_day[:judge_id].nil?
-        end.count
+        hearing_days = HearingDay.load_days(Date.new(2018, 4, 1), Date.new(2018, 4, 30))
+
+        vlj_ids_count = hearing_days[:vacols_hearings].count { |hearing_day| hearing_day.board_member } +
+          hearing_days[:caseflow_hearings].count { |hearing_day| hearing_day.judge_id }
+
         expect(vlj_ids_count).to eq(2)
       end
     end

@@ -177,6 +177,18 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
   end
 
+  def schedule_for
+    hearing_date
+  end
+
+  def request_type
+    hearing_type
+  end
+
+  def judge_id
+    board_member
+  end
+
   def master_record_type
     return :video if folder_nr.match?(/VIDEO/)
   end

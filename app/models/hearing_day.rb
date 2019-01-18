@@ -38,7 +38,7 @@ class HearingDay < ApplicationRecord
     end
   end
 
-  def caseflow_hearing_to_hash
+  def to_hash
     as_json.each_with_object({}) do |(k, v), result|
       result[k.to_sym] = v
     end.merge(judge_first_name: judge ? judge.full_name.split(" ").first : nil,
@@ -53,7 +53,7 @@ class HearingDay < ApplicationRecord
   class << self
     def to_hash(hearing_day)
       if hearing_day.is_a?(HearingDay)
-        hearing_day.caseflow_hearing_to_hash
+        hearing_day.to_hash
       else
         HearingDayRepository.to_hash(hearing_day)
       end
@@ -75,7 +75,7 @@ class HearingDay < ApplicationRecord
       comparison_date = (hearing_hash[:request_type] == "C") ? CASEFLOW_CO_PARENT_DATE : CASEFLOW_V_PARENT_DATE
       if scheduled_for > comparison_date
         hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
-        create(hearing_hash).caseflow_hearing_to_hash
+        create(hearing_hash).to_hash
       else
         HearingDayRepository.create_vacols_hearing!(hearing_hash)
       end
@@ -97,26 +97,25 @@ class HearingDay < ApplicationRecord
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
         cf_video_and_co = where("DATE(scheduled_for) between ? and ?", start_date, end_date)
-        video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
+        video_and_co, _travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
       elsif regional_office == REQUEST_TYPES[:central]
         cf_video_and_co = where("request_type = ? and DATE(scheduled_for) between ? and ?",
                                 "C", start_date, end_date)
-        video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
+        video_and_co, _travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
       else
         cf_video_and_co = where("regional_office = ? and DATE(scheduled_for) between ? and ?",
                                 regional_office, start_date, end_date)
-        video_and_co, travel_board =
+        video_and_co, _travel_board =
           HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
       end
 
       {
         caseflow_hearings: cf_video_and_co,
-        vacols_hearings: video_and_co,
-        travel_board_hearings: travel_board
+        vacols_hearings: video_and_co
       }
     end
 
-    def hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil)
+    def hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
       hearing_days = load_days(start_date, end_date, regional_office)
 
       total_video_and_co = hearing_days[:caseflow_hearings] + hearing_days[:vacols_hearings]
@@ -140,7 +139,7 @@ class HearingDay < ApplicationRecord
           nil
         else
           HearingDay.to_hash(hearing_day).slice(:id, :scheduled_for, :request_type, :room).tap do |day|
-            day[:hearings] = scheduled_hearings.map { |hearing| hearing.to_hash(RequestStore.store[:current_user].id) }
+            day[:hearings] = scheduled_hearings.map { |hearing| hearing.to_hash(current_user_id) }
             day[:total_slots] = total_slots
           end
         end
@@ -149,13 +148,13 @@ class HearingDay < ApplicationRecord
 
     def filter_non_scheduled_hearings(hearings)
       hearings.select do |hearing|
-        if hearing[:vacols_record].nil?
+        if hearing.is_a?(Hearing)
           true
         else
-          if hearing[:vacols_record].hearing_type == REQUEST_TYPES[:central]
-            !hearing[:vacols_record].folder_nr.nil?
+          if hearing.request_type == REQUEST_TYPES[:central]
+            !hearing.vacols_record.folder_nr.nil?
           else
-            hearing[:vacols_record].hearing_disp != "P" && hearing[:vacols_record].hearing_disp != "C"
+            hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
           end
         end
       end

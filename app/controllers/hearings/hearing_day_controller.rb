@@ -16,7 +16,6 @@ class Hearings::HearingDayController < HearingScheduleController
       format.json do
         render json: {
           hearings: json_hearings(HearingDay.array_to_hash(hearings[:vacols_hearings] + hearings[:caseflow_hearings])),
-          tbhearings: json_tb_hearings(hearings[:travel_board]),
           startDate: start_date,
           endDate: end_date
         }
@@ -54,7 +53,8 @@ class Hearings::HearingDayController < HearingScheduleController
     hearing_days_with_hearings = HearingDay.hearing_days_with_hearings_hash(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
-      regional_office
+      regional_office,
+      current_user.id
     )
 
     render json: { hearing_days: json_hearings(hearing_days_with_hearings) }
@@ -73,6 +73,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def update
+    binding.pry
     hearing_day.update!(update_params)
     render json: hearing_day.to_hash
   end
