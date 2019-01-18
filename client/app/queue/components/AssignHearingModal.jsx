@@ -334,7 +334,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           value={selectedHearingTime || initVals.hearingTime} />
         <RadioField
           name="other"
-          label="OTHER"
+          label="OtherOptionalTime"
           options={otherTimeOptions}
           onChange={this.props.onHearingTimeChange}
           value={selectedHearingTime || initVals.hearingTime}
