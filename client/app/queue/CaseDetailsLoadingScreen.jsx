@@ -15,7 +15,6 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 type Params = {|
   userId: number,
-  userCssId: string,
   userRole: string,
   appealId: string,
   children: React.Node
@@ -71,7 +70,7 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
   };
 
   loadAttorneysOfJudge = () => {
-    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`).
+    return ApiUtil.get(`/users?role=Attorney&judge_id=${this.props.userId}`).
       then(
         (resp) => {
           this.props.setAttorneysOfJudge(resp.body.attorneys);
