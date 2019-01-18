@@ -267,7 +267,7 @@ class SelectDispositionsView extends React.PureComponent {
         closeHandler={this.handleModalClose}
         title = "Delete decision">
         {COPY.DECISION_ISSUE_CONFIRM_DELETE}
-        {toDeleteHasConnectedIssue && COPY.DECISION_ISSUE_WITH_CONNECTED_ISSUES}
+        {toDeleteHasConnectedIssue && COPY.DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES}
 
       </Modal>}
       { openRequestIssueId && <Modal
