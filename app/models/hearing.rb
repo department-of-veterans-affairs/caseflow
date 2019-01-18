@@ -98,6 +98,7 @@ class Hearing < ApplicationRecord
         :regional_office_name,
         :regional_office_timezone,
         :readable_request_type,
+        :judge,
         :scheduled_for,
         :veteran_age,
         :veteran_gender,
@@ -114,8 +115,6 @@ class Hearing < ApplicationRecord
   # rubocop:enable Metrics/MethodLength
 
   def to_hash_for_worksheet(current_user_id)
-    serializable_hash(
-      methods: [:judge]
-    ).merge(to_hash(current_user_id))
+    to_hash(current_user_id)
   end
 end

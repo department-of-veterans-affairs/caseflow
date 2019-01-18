@@ -250,15 +250,21 @@ describe HearingDay do
           :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: appeal_tomorrow.vacols_id
         )
       end
+      let!(:ama_hearing_day) do
+        create(:hearing_day, request_type: :video, scheduled_for: Time.zone.now, regional_office: staff.stafkey)
+      end
+      let!(:ama_appeal) { create(:appeal) }
+      let!(:ama_hearing) { create(:hearing, hearing_day: ama_hearing_day, appeal: ama_appeal) }
 
       it "returns hearings are mapped to days" do
-        expect(subject.size).to eq 2
-        expect(subject[1][:hearings].size).to eq 2
-        expect(subject[1][:request_type]).to eq "V"
-        expect(subject[1][:hearings][0]["appeal_id"]).to eq appeal.id
-        expect(subject[1][:hearings][0]["hearing_disp"]).to eq nil
-        expect(subject[1][:hearings][1]["appeal_id"]).to eq appeal_today.id
-        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal_tomorrow.id
+        expect(subject.size).to eq 3
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq ama_appeal.id
+        expect(subject[2][:hearings].size).to eq 2
+        expect(subject[2][:request_type]).to eq "V"
+        expect(subject[2][:hearings][0]["appeal_id"]).to eq appeal.id
+        expect(subject[2][:hearings][0]["hearing_disp"]).to eq nil
+        expect(subject[2][:hearings][1]["appeal_id"]).to eq appeal_today.id
+        expect(subject[1][:hearings][0]["appeal_id"]).to eq appeal_tomorrow.id
       end
     end
 
