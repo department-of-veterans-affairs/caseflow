@@ -196,7 +196,7 @@ export class DailyDocketContainer extends React.Component {
   deleteHearingDay = () => {
     ApiUtil.delete(`/hearings/hearing_day/${this.props.dailyDocket.id}`).
       then(() => {
-        this.props.onSuccessfulHearingDayDelete(this.props.dailyDocket.hearingDate);
+        this.props.onSuccessfulHearingDayDelete(this.props.dailyDocket.scheduledFor);
         this.props.history.push('/schedule');
       }, (err) => {
         this.props.handleDailyDocketServerError(err);
