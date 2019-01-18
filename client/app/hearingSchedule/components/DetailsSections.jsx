@@ -147,6 +147,10 @@ export const TranscriptionDetails = ({
         value={transcriber}
         options={[
           {
+            label: '',
+            value: null
+          },
+          {
             label: 'Genesis Government Solutions, Inc.',
             value: 'Genesis Government Solutions, Inc.'
           },
