@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -247,8 +246,8 @@ class SelectDispositionsView extends React.PureComponent {
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
     });
-
-    const toDeleteHasConnectedIssue = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete).length > 0;
+    const connectedIssues = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete);
+    const toDeleteHasConnectedIssue = connectedIssues.length > 0;
 
     return <React.Fragment>
       <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
@@ -267,8 +266,8 @@ class SelectDispositionsView extends React.PureComponent {
         buttons = {this.deleteAddedDecisionModalButtons}
         closeHandler={this.handleModalClose}
         title = "Delete decision">
-        Are you sure you want to delete this decision?
-        {toDeleteHasConnectedIssue && " Deleting this decision will also remove it from other issues you've added it to."}
+        {COPY.DECISION_ISSUE_CONFIRM_DELETE}
+        {toDeleteHasConnectedIssue && COPY.DECISION_ISSUE_WITH_CONNECTED_ISSUES}
 
       </Modal>}
       { openRequestIssueId && <Modal
