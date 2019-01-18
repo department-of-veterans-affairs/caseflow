@@ -145,7 +145,7 @@ class HearingDayAddModal extends React.Component {
       request_type: this.props.requestType.value,
       scheduled_for: this.props.selectedHearingDay,
       judge_id: this.props.vlj.value,
-      bva_poc: this.props.coordinator.label,
+      bva_poc: this.props.coordinator.value,
       notes: this.props.notes,
       assign_room: this.props.roomRequired
     };

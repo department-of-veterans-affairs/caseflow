@@ -26,7 +26,7 @@ class HearingCoordinatorDropdown extends React.Component {
     ApiUtil.get('/users?role=HearingCoordinator').then((resp) => {
       const coordinatorOptions = _.values(ApiUtil.convertToCamelCase(resp.body.coordinators)).map((coor) => ({
         label: coor.fullName,
-        value: coor.cssId
+        value: coor.fullName
       }));
 
       coordinatorOptions.sort((first, second) => (first.label - second.label));

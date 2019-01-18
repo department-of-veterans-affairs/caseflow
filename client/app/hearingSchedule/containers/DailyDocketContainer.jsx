@@ -176,7 +176,7 @@ export class DailyDocketContainer extends React.Component {
       }
 
       if (this.props.coordinator) {
-        data.bva_poc = this.props.coordinator.label;
+        data.bva_poc = this.props.coordinator.value;
       }
 
       if (this.props.notes) {
