@@ -1,7 +1,7 @@
 class RegionalOfficesController < ApplicationController
   def index
     render json: {
-      regional_offices: RegionalOffice.ros_with_hearings
+      regional_offices: RegionalOffice.ros_with_hearings << RegionalOffice::CITIES["C"]
     }
   end
 

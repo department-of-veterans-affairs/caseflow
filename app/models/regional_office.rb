@@ -182,7 +182,7 @@ class RegionalOffice
     city: "Washington",
     state: "DC",
     timezone: "America/New_York",
-    hold_hearings: true,
+    hold_hearings: false,
     facility_locator_id: "vba_372",
     alternate_locations: nil },
     "RO15" =>
