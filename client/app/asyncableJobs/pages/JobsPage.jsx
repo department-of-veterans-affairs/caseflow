@@ -5,6 +5,8 @@ import moment from 'moment';
 import Button from '../../components/Button';
 import Table from '../../components/Table';
 
+const DATE_TIME_FORMAT = 'ddd MMM DD HH:mm:ss YYYY';
+
 class AsyncableJobsPage extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -16,10 +18,10 @@ class AsyncableJobsPage extends React.PureComponent {
 
   restartJob = (job, rowNumber) => {
     console.log('restart', job, rowNumber, this);
-    let jobsRestarted = {...this.state.jobsRestarted};
-    jobsRestarted[job.id] = true
-    this.setState({jobsRestarted});
-    job.submitted_at = 'restarted';
+    let jobsRestarted = { ...this.state.jobsRestarted };
+    jobsRestarted[job.id] = true;
+    this.setState({ jobsRestarted });
+    job.submitted_at = 'restarted'; // TODO in ajax onSuccess
   }
 
   getButtonClassNames = (job, rowNumber) => {
@@ -28,7 +30,7 @@ class AsyncableJobsPage extends React.PureComponent {
     if (this.state.jobsRestarted[job.id]) {
       classNames.push('usa-button-disabled');
     }
-    
+
     return classNames;
   }
 
@@ -49,7 +51,7 @@ class AsyncableJobsPage extends React.PureComponent {
             return job.submitted_at;
           }
 
-          return moment(job.submitted_at).format('YYYY-MM-DD HH:mm:ss a');
+          return moment(job.submitted_at).format(DATE_TIME_FORMAT);
         }
       },
       {
@@ -59,7 +61,7 @@ class AsyncableJobsPage extends React.PureComponent {
             return 'never';
           }
 
-          return moment(job.attempted_at).format('YYYY-MM-DD HH:mm:ss a');
+          return moment(job.attempted_at).format(DATE_TIME_FORMAT);
         }
       },
       {
@@ -71,18 +73,21 @@ class AsyncableJobsPage extends React.PureComponent {
         align: 'right',
         valueFunction: (job, rowNumber) => {
           return <Button
-                   id={`job-${job.id}`}
-                   ref={btn => { this.btn = btn; }}
-                   onClick={() => { this.restartJob(job, rowNumber) }}
-                   classNames={this.getButtonClassNames(job, rowNumber)}
-                   >Restart</Button>
+            id={`job-${job.id}`}
+            loading={this.state.jobsRestarted[job.id]}
+            loadingText="Restarting..."
+            onClick={() => {
+              this.restartJob(job, rowNumber);
+            }}
+            classNames={this.getButtonClassNames(job, rowNumber)}
+          >Restart</Button>;
         }
       }
     ];
 
     return <div className="cf-asyncable-jobs-table">
       <h1>{this.props.asyncableJobsKlass}</h1>
-      <h3>{moment(this.props.fetchedAt).format('YYYY-MM-DD HH:mm:ss a')}</h3>
+      <div><strong>Last updated:</strong> {moment(this.props.fetchedAt).format(DATE_TIME_FORMAT)}</div>
       <Table columns={columns} rowObjects={rowObjects} slowReRendersAreOk />
     </div>;
   }
