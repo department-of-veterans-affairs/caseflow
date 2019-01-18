@@ -215,11 +215,6 @@ class SelectDispositionsView extends React.PureComponent {
       onClick: this.saveDecision
     }
   ];
-  deleteAddedDecision = (event) => {
-    console.log('delete being called');
-    console.log(event.target);
-    console.log('*****');
-  }
 
   deleteAddedDecisionModalButtons = [
     { classNames: ['cf-modal-link', 'cf-btn-link'],
@@ -253,15 +248,7 @@ class SelectDispositionsView extends React.PureComponent {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
     });
 
-    console.log(decisionIssue, 'the decision issue');
-    console.log(connectedRequestIssues, 'the connected request issues');
-    console.log(appeal.issues);
-    console.log(this.state.requestIdToDelete);
-
     const toDeleteHasConnectedIssue = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete).length > 0;
-
-    console.log(this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete));
-    console.log(toDeleteHasConnectedIssue);
 
     return <React.Fragment>
       <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
