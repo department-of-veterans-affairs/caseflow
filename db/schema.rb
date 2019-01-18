@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190114225909) do
+ActiveRecord::Schema.define(version: 20190117054954) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,9 +110,11 @@ ActiveRecord::Schema.define(version: 20190114225909) do
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address"
     t.string "city"
+    t.string "classification"
     t.datetime "created_at", null: false
     t.float "distance"
     t.string "facility_id"
+    t.string "facility_type"
     t.string "name"
     t.string "state"
     t.datetime "updated_at", null: false
