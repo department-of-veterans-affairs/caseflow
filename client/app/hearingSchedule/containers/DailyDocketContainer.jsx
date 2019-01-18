@@ -8,7 +8,6 @@ import DailyDocket from '../components/DailyDocket';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
-import { namePartToSortBy } from '../utils';
 import {
   onReceiveDailyDocket,
   onReceiveSavedHearing,
@@ -23,8 +22,6 @@ import {
   selectHearingCoordinator,
   setNotes,
   onHearingDayModified,
-  onReceiveJudges,
-  onReceiveCoordinators,
   onClickRemoveHearingDay,
   onCancelRemoveHearingDay,
   onSuccessfulHearingDayDelete,
@@ -39,12 +36,6 @@ import {
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
-import HEARING_ROOMS_LIST from '../../../constants/HEARING_ROOMS_LIST.json';
-
-const emptyValueEntry = {
-  label: '',
-  value: ''
-};
 
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
@@ -140,50 +131,6 @@ export class DailyDocketContainer extends React.Component {
       });
   };
 
-  loadActiveJudges = () => {
-    let requestUrl = '/users?role=Judge';
-
-    return ApiUtil.get(requestUrl).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-
-      const sortedJudges = _.sortBy(resp.judges, (judge) => namePartToSortBy(judge.fullName), 'asc');
-
-      let activeJudges = [];
-
-      _.forEach(sortedJudges, (value) => {
-        activeJudges.push({
-          label: value.fullName,
-          value: value.id
-        });
-      });
-
-      activeJudges.unshift(emptyValueEntry);
-      this.props.onReceiveJudges(activeJudges);
-    });
-
-  };
-
-  loadActiveCoordinators = () => {
-    let requestUrl = '/users?role=HearingCoordinator';
-
-    return ApiUtil.get(requestUrl).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-
-      let activeCoordinators = [];
-
-      _.forEach(resp.coordinators, (value) => {
-        activeCoordinators.push({
-          label: value.fullName,
-          value: value.cssId
-        });
-      });
-
-      activeCoordinators = _.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc');
-      activeCoordinators.unshift(emptyValueEntry);
-      this.props.onReceiveCoordinators(activeCoordinators);
-    });
-  };
-
   updateLockHearingDay = (lock) => () => {
     ApiUtil.patch(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { data: { lock } }).
       then(() => {
@@ -204,27 +151,12 @@ export class DailyDocketContainer extends React.Component {
   };
 
   createHearingPromise = () => Promise.all([
-    this.loadHearingDay(),
-    this.loadActiveJudges(),
-    this.loadActiveCoordinators()
+    this.loadHearingDay()
   ]);
 
   openModal = () => {
     this.setState({ showModalAlert: false,
       modalOpen: true });
-
-    // find labels in options before passing values to modal
-    const room = _.findKey(HEARING_ROOMS_LIST, { label: this.props.dailyDocket.room });
-    const roomOption = { label: HEARING_ROOMS_LIST[room].label,
-      value: room };
-    const judge = _.find(this.props.activeJudges, { value: parseInt(this.props.dailyDocket.judgeId, 10) });
-    const coordinator = _.find(this.props.activeCoordinators, { label: this.props.dailyDocket.bvaPoc });
-
-    this.props.selectHearingRoom(roomOption);
-    this.props.selectVlj(judge);
-    this.props.selectHearingCoordinator(coordinator);
-    this.props.setNotes(this.props.dailyDocket.notes);
-    this.props.onHearingDayModified(false);
   };
 
   closeModal = () => {
@@ -244,7 +176,7 @@ export class DailyDocketContainer extends React.Component {
       }
 
       if (this.props.coordinator) {
-        data.bva_poc = this.props.coordinator.label;
+        data.bva_poc = this.props.coordinator.value;
       }
 
       if (this.props.notes) {
@@ -360,8 +292,6 @@ const mapStateToProps = (state) => ({
   hearingRoom: state.hearingSchedule.hearingRoom,
   notes: state.hearingSchedule.notes,
   hearingDayModified: state.hearingSchedule.hearingDayModified,
-  activeJudges: state.hearingSchedule.activeJudges,
-  activeCoordinators: state.hearingSchedule.activeCoordinators,
   displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal,
   displayLockModal: state.hearingSchedule.displayLockModal,
   displayLockSuccessMessage: state.hearingSchedule.displayLockSuccessMessage,
@@ -383,8 +313,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   selectHearingCoordinator,
   setNotes,
   onHearingDayModified,
-  onReceiveJudges,
-  onReceiveCoordinators,
   onClickRemoveHearingDay,
   onCancelRemoveHearingDay,
   onSuccessfulHearingDayDelete,

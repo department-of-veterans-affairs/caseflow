@@ -92,11 +92,32 @@ describe RootTask do
         create(:appeal, docket_type: "evidence_submission", claimants: [
                  create(:claimant, participant_id: participant_id_with_no_vso)
                ])
-        it "blocks distribution" do
-          RootTask.create_root_and_sub_tasks!(appeal)
-          expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
-          expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
-        end
+      end
+
+      it "blocks distribution" do
+        RootTask.create_root_and_sub_tasks!(appeal)
+        expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
+        expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+      end
+    end
+
+    context "when a hearing docket appeal is created" do
+      before do
+        FeatureToggle.enable!(:ama_auto_case_distribution)
+      end
+      after do
+        FeatureToggle.disable!(:ama_auto_case_distribution)
+      end
+      let(:appeal) do
+        create(:appeal, docket_type: "hearing", claimants: [
+                 create(:claimant, participant_id: participant_id_with_no_vso)
+               ])
+      end
+
+      it "blocks distribution with schedule hearing task" do
+        RootTask.create_root_and_sub_tasks!(appeal)
+        expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
+        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
       end
     end
 
