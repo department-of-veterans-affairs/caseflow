@@ -17,8 +17,17 @@ describe AsyncableJobsController, type: :controller do
 
     context "user is Admin Intake" do
       let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
-      let!(:hlr) { create(:higher_level_review, establishment_submitted_at: 7.days.ago) }
-      let!(:sc) { create(:supplemental_claim, establishment_submitted_at: 7.days.ago) }
+      let(:veteran) { create(:veteran) }
+      let!(:hlr) do
+        create(:higher_level_review,
+               establishment_submitted_at: 7.days.ago,
+               veteran_file_number: veteran.file_number)
+      end
+      let!(:sc) do
+        create(:supplemental_claim,
+               establishment_submitted_at: 7.days.ago,
+               veteran_file_number: veteran.file_number)
+      end
 
       context "no asyncable klass specified" do
         render_views
