@@ -147,7 +147,7 @@ class HearingDay < ApplicationRecord
     def filter_non_scheduled_hearings(hearings)
       hearings.select do |hearing|
         if hearing.is_a?(Hearing)
-          !([:postponed, :canceled].include?(hearing.disposition))
+          ![:postponed, :canceled].include?(hearing.disposition)
         elsif hearing.request_type == REQUEST_TYPES[:central]
           !hearing.vacols_record.folder_nr.nil?
         else
