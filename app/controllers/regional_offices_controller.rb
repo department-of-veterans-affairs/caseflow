@@ -10,7 +10,7 @@ class RegionalOfficesController < ApplicationController
   def open_hearing_dates
     ro = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    hearing_days = HearingDay.load_days_with_open_hearing_slots(
+    hearing_days = HearingDay.hearing_days_with_hearings_hash(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
       ro
