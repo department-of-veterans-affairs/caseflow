@@ -7,7 +7,7 @@ ENV CASEFLOW git nodejs yarn
 
 # Environment (system) variables
 ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
-    ORACLE_HOME="/opt/oracle/instantclient_12_2" \ 
+    ORACLE_HOME="/opt/oracle/instantclient_12_2" \
     LANG="AMERICAN_AMERICA.US7ASCII" \
     RAILS_ENV="development" \
     PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
@@ -24,7 +24,7 @@ RUN apt -y update && \
     apt -y upgrade && \
     apt install -y ${BUILD} && \
     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \ 
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt -y update && \
     curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
     apt install -y ${CASEFLOW} &&  \
@@ -43,4 +43,4 @@ RUN bundle install && \
     rm -rf docker-bin
 
 # Run the app
-CMD ["/bin/bash", "/caseflow/docker-bin/startup.sh"]
+ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
