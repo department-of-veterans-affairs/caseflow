@@ -123,7 +123,7 @@ class HearingDayEditModal extends React.Component {
     const room = _.findKey(HEARING_ROOMS_LIST, { label: this.props.dailyDocket.room }) || this.props.dailyDocket.room;
     const roomOption = { label: HEARING_ROOMS_LIST[room.toString()].label,
       value: room.toString() };
-    const judge = _.find(this.props.activeJudges, { value: this.props.dailyDocket.judgeId.toString() });
+    const judge = _.find(this.props.activeJudges, { value: (this.props.dailyDocket.judgeId || '').toString() });
     const coordinator = _.find(this.props.activeCoordinators, { label: this.props.dailyDocket.bvaPoc });
 
     this.props.selectHearingRoom(roomOption);
