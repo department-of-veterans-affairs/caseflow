@@ -110,6 +110,7 @@ class HearingRepository
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
+
       VACOLS::CaseHearing.create_child_hearing!(
         folder_nr: appeal.vacols_id,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date_str),
@@ -138,8 +139,6 @@ class HearingRepository
         vdbvapoc: hearing.vdbvapoc
       )
     end
-
-    # rubocop:disable Metrics/MethodLength
     def create_caseflow_child_video_hearing(id, hearing_date, appeal)
       hearing_day = HearingDay.find(id)
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock

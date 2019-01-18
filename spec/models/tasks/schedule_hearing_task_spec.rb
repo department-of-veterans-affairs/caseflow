@@ -109,11 +109,8 @@ describe ScheduleHearingTask do
   end
 
   describe "A Central Office hearing should be updated with vacols_id and appeal placed in location 36" do
-    let!(:hearing) do
-      FactoryBot.create(:case_hearing,
-                        hearing_type: "C",
-                        hearing_date: test_hearing_date_vacols,
-                        folder_nr: nil)
+    let!(:hearing_day) do
+      create(:hearing_day, scheduled_for: test_hearing_date_vacols)
     end
     let!(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
     let!(:params) do
@@ -151,10 +148,10 @@ describe ScheduleHearingTask do
     it "should create a task of type ScheduleHearingTask" do
       hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
       hearing_task.update_from_params(update_params, hearings_user)
-      updated_hearing = VACOLS::CaseHearing.find(hearing.hearing_pkseq)
+      updated_hearing = VACOLS::CaseHearing.first
 
       expect(updated_hearing.folder_nr).to eq(appeal.vacols_id)
-      expect(updated_hearing.hearing_date).to eq(hearing.hearing_date)
+      expect(updated_hearing.hearing_date.to_date).to eq(hearing_day.scheduled_for)
       expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing]
     end
   end
