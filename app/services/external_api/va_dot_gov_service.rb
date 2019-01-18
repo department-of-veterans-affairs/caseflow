@@ -10,8 +10,7 @@ class ExternalApi::VADotGovService
 
       until remaining_ids.empty?
         results = fetch_facilities_with_ids(
-          query: { lat: lat, long: long, page: page },
-          ids: remaining_ids
+          query: { lat: lat, long: long, page: page, ids: remaining_ids }
         )
 
         remaining_ids -= results[:facilities].pluck(:id)
@@ -29,7 +28,6 @@ class ExternalApi::VADotGovService
       end
 
       track_pages(page)
-
       facility_results
     end
 
@@ -74,11 +72,11 @@ class ExternalApi::VADotGovService
     end
 
     def facilities_endpoint
-      "va_facilities/v0/facilities"
+      "services/va_facilities/v0/facilities"
     end
 
     def address_validation_endpoint
-      "address_validation/v1/validate"
+      "services/address_validation/v1/validate"
     end
 
     # rubocop:disable Metrics/ParameterLists
@@ -110,9 +108,9 @@ class ExternalApi::VADotGovService
         long: resp_body["geocode"]["longitude"],
         city: resp_body["address"]["city"],
         full_address: full_address(
-          address_1: resp_body["address"]["address_line1"],
-          address_2: resp_body["address"]["address_line2"],
-          address_3: resp_body["address"]["address_line3"]
+          address_1: resp_body["address"]["addressLine1"],
+          address_2: resp_body["address"]["addressLine2"],
+          address_3: resp_body["address"]["addressLine3"]
         ),
         country_code: resp_body["address"]["country"]["fipsCode"],
         state_code: resp_body["address"]["stateProvince"]["code"],
@@ -122,7 +120,7 @@ class ExternalApi::VADotGovService
 
     def facility_json(facility, distance)
       attrs = facility["attributes"]
-      dist = distance["distance"] if distance
+      dist = distance["distance"] || distance[:distance] if distance
 
       {
         id: facility["id"],
@@ -135,13 +133,16 @@ class ExternalApi::VADotGovService
           address_2: attrs["address"]["physical"]["address_2"],
           address_3: attrs["address"]["physical"]["address_3"]
         ),
+        city: attrs["address"]["physical"]["city"],
+        state: attrs["address"]["physical"]["state"],
+        zip_code: attrs["address"]["physical"]["zip"],
         lat: attrs["lat"],
         long: attrs["long"],
         distance: dist
       }
     end
 
-    def fetch_facilities_with_ids(query:, ids:)
+    def fetch_facilities_with_ids(query:)
       response = send_va_dot_gov_request(
         query: query,
         endpoint: facilities_endpoint
@@ -153,11 +154,11 @@ class ExternalApi::VADotGovService
       facilities = resp_body["data"]
       distances = resp_body["meta"]["distances"]
       has_next = !resp_body["links"]["next"].nil?
-      selected_facilities = facilities.select { |facility| ids.include? facility["id"] }
 
-      facilities_result = selected_facilities.map do |selected|
-        distance = distances.find { |dist| dist["id"] == selected["id"] }
-        facility_json(selected, distance)
+      facilities_result = facilities.map do |facility|
+        distance = distances.find { |dist| dist["id"] == facility["id"] }
+
+        facility_json(facility, distance)
       end
 
       { facilities: facilities_result, has_next: has_next }
@@ -187,6 +188,8 @@ class ExternalApi::VADotGovService
     def check_for_error(response_body:, code:)
       case code
       when 200 # rubocop:disable Lint/EmptyWhen
+      when 429
+        fail Caseflow::Error::VaDotGovLimitError, code: code, message: response_body
       when 400
         fail Caseflow::Error::VaDotGovRequestError, code: code, message: response_body
       when 500

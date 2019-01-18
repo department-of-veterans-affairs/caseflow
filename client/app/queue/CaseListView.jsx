@@ -41,7 +41,7 @@ class CaseListView extends React.PureComponent {
   createLoadPromise = () => {
     const caseflowVeteranId = this.props.caseflowVeteranId;
 
-    if (this.props.appeals.length || !caseflowVeteranId) {
+    if (this.props.appeals.length || this.props.claimReviews.length || !caseflowVeteranId) {
       return Promise.resolve();
     }
 
@@ -61,9 +61,12 @@ class CaseListView extends React.PureComponent {
   </React.Fragment>;
 
   caseListTable = () => {
+    let heading;
     const appealsCount = this.props.appeals.length;
+    const claimReviewsCount = this.props.claimReviews.length;
+    const doesSearchHaveAnyResults = (appealsCount + claimReviewsCount > 0);
 
-    if (!appealsCount) {
+    if (!doesSearchHaveAnyResults) {
       return <div>
         {this.searchPageHeading()}
         <hr {...horizontalRuleStyling} />
@@ -73,9 +76,16 @@ class CaseListView extends React.PureComponent {
 
     // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
     // the same for all appeals in the list.
-    const firstAppeal = this.props.appeals[0];
-    const heading = `${appealsCount} ${pluralize('case', appealsCount)} found for
-        “${firstAppeal.veteranFullName} (${firstAppeal.veteranFileNumber})”`;
+    if (this.props.appeals.length > 0) {
+      const firstAppeal = this.props.appeals[0];
+
+      heading = `${appealsCount} ${pluralize('case', appealsCount)} found for
+          “${firstAppeal.veteranFullName} (${firstAppeal.veteranFileNumber})”`;
+    } else if (this.props.claimReviews.length > 0) {
+      const firstClaimReview = this.props.claimReviews[0];
+
+      heading = `No cases found for “${firstClaimReview.veteranFullName} (${firstClaimReview.veteranFileNumber})”`;
+    }
 
     return <div>
       {this.searchPageHeading()}
