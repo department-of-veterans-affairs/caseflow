@@ -258,13 +258,14 @@ export default class DailyDocket extends React.Component {
         value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
         onChange={this.onHearingTimeUpdate(hearing.id)}
         strongLabel />
-      <SearchableDropdown
+      {hearing.editedTime === 'other' && <SearchableDropdown
         name="optionalTime"
         placeholder="Select a time"
         options={TIME_OPTIONS}
         value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
         onChange={this.onHearingTimeUpdate(hearing.id)}
-        hideLabel /></div>
+        hideLabel />}</div>
+
     </div>;
   };
 

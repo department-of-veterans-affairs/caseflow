@@ -140,28 +140,6 @@ export class DailyDocketContainer extends React.Component {
       });
   };
 
-  getOptionalTime = (hearing) => {
-    if (hearing.editedOptinalTime) {
-      return {
-        // eslint-disable-next-line id-length
-        h: hearing.editedOptinalTime.value.split(':')[0],
-        // eslint-disable-next-line id-length
-        m: hearing.editedOptinalTime.value.split(':')[1],
-        offset: moment.tz('America/New_York').format('Z')
-      };
-    }
-    const timeObject = moment(hearing.scheduledFor);
-
-    return {
-      // eslint-disable-next-line id-length
-      h: timeObject.hours(),
-      // eslint-disable-next-line id-length
-      m: timeObject.minutes(),
-      offset: timeObject.format('Z')
-    };
-
-  }
-
   loadActiveJudges = () => {
     let requestUrl = '/users?role=Judge';
 
