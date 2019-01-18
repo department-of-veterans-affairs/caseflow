@@ -105,10 +105,6 @@ describe ScheduleHearingTask do
       expect(updated_task[0].type).to eq(ScheduleHearingTask.name)
       expect(updated_task[0].appeal_type).to eq(LegacyAppeal.name)
       expect(updated_task[0].status).to eq("completed")
-      expect(updated_task[0].task_business_payloads.size).to eq 1
-      expect(updated_task[0].task_business_payloads[0].description).to eq("Update")
-      expect(updated_task[0].task_business_payloads[0].values["regional_office_value"]).to eq("RO13")
-      expect(updated_task[0].task_business_payloads[0].values["hearing_date"]).to eq("2018-10-30T00:00:00.000-04:00")
     end
   end
 

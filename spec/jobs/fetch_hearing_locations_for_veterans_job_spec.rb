@@ -1,7 +1,7 @@
 require "rails_helper"
 require "faker"
 
-describe FetchHearingLocationsForVeteransJob, focus: true do
+describe FetchHearingLocationsForVeteransJob do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
   context "when there is a case in location 57 *without* an associated veteran" do
@@ -41,33 +41,6 @@ describe FetchHearingLocationsForVeteransJob, focus: true do
         expect(AvailableHearingLocations.first.distance).to eq 11.11
       end
 
-      context "when closest_regional_office has to be fetched and only one RO/AHL is in veteran's state" do
-        it "only fetches RO distance once" do
-          expect(MetricsService).to receive(:record).with(/GET/, any_args).once
-          FetchHearingLocationsForVeteransJob.perform_now
-          expect(AvailableHearingLocations.count).to eq 1
-        end
-      end
-
-      context "when veteran closest_regional_office is in state with multiple ROs/AHLs" do
-        let(:facility_ids) do
-          ohio_ro = RegionalOffice::CITIES["RO25"]
-          [ohio_ro[:facility_locator_id]] + ohio_ro[:alternate_locations]
-        end
-        let(:distance_response) do
-          HTTPI::Response.new(200, [], mock_distance_body(
-            data: facility_ids.map { |id| mock_data(id: id) },
-            distances: facility_ids.map { |id| mock_distance(id: id, distance: 1.1) }
-          ).to_json)
-        end
-        let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body(state: "OH").to_json) }
-        it "fetches RO distance twice" do
-          expect(MetricsService).to receive(:record).with(/GET/, any_args).twice
-          FetchHearingLocationsForVeteransJob.perform_now
-          expect(AvailableHearingLocations.count).to eq 1
-        end
-      end
-
       context "when there is an existing available_hearing_location" do
         let(:existing_location) do
           create(:available_hearing_locations, veteran_file_number: bfcorlid_file_number, distance: 22.22)
@@ -83,7 +56,7 @@ describe FetchHearingLocationsForVeteransJob, focus: true do
       end
     end
 
-    describe "#fetch_and_update_ro_for_veteran" do
+    describe "#find_or_update_ro_for_veteran" do
       let(:veteran) { create(:veteran, file_number: bfcorlid_file_number) }
       let(:veteran_state) { "VA" }
       let(:mock_va_dot_gov_address) do
@@ -125,8 +98,19 @@ describe FetchHearingLocationsForVeteransJob, focus: true do
       end
 
       it "updates veteran closest_regional_office with fetched RO within veteran's state" do
-        job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address)
+        job.find_or_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address)
         expect(Veteran.first.closest_regional_office).to eq expected_ro
+      end
+
+      context "when existing closest_regional_office is defined" do
+        let(:expected_ro) { "EXISTINGRO" }
+        let(:veteran) { create(:veteran, file_number: bfcorlid_file_number, closest_regional_office: expected_ro) }
+        let(:veteran_state) { "FM" }
+
+        it "the veteran's closest_regional_office does not update" do
+          job.find_or_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address)
+          expect(Veteran.first.closest_regional_office).to eq expected_ro
+        end
       end
 
       context "when veteran state is outside US territories" do
@@ -140,7 +124,7 @@ describe FetchHearingLocationsForVeteransJob, focus: true do
         end
 
         it "raises FetchHearingLocationsJobError" do
-          expect { job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
+          expect { job.find_or_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
             .to raise_error(Caseflow::Error::FetchHearingLocationsJobError)
             .with_message("#{mock_va_dot_gov_address[:state_code]} is not a valid state code.")
         end
@@ -157,7 +141,7 @@ describe FetchHearingLocationsForVeteransJob, focus: true do
         end
 
         it "raises FetchHearingLocationsJobError" do
-          expect { job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
+          expect { job.find_or_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
             .to raise_error(Caseflow::Error::FetchHearingLocationsJobError)
             .with_message(
               "#{mock_va_dot_gov_address[:country_code]} is not a valid country code."
@@ -174,7 +158,7 @@ describe FetchHearingLocationsForVeteransJob, focus: true do
         end
 
         it "raises VADotGovServiceError" do
-          expect { job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
+          expect { job.find_or_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
             .to raise_error(Caseflow::Error::VaDotGovAPIError)
         end
       end
@@ -203,10 +187,66 @@ describe FetchHearingLocationsForVeteransJob, focus: true do
           end
 
           it "closest_regional_office is in appropriate state" do
-            job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address)
+            job.find_or_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address)
             index = RegionalOffice::CITIES.values.find_index { |ro| ro[:state] == expected_state }
             expect(Veteran.first.closest_regional_office).to eq RegionalOffice::CITIES.keys[index]
           end
+        end
+      end
+    end
+
+    context "and a veteran with an available location defined more than a month ago exists" do
+      before do
+        create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "246810120S")
+        create(:veteran, file_number: "246810120")
+        create(:available_hearing_locations, veteran_file_number: "246810120", updated_at: 2.months.ago)
+      end
+
+      describe "#veterans" do
+        it "returns both veterans" do
+          job.create_missing_veterans
+          expect(job.veterans.count).to eq 2
+        end
+      end
+    end
+
+    context "and a veteran with an available location defined today" do
+      before do
+        create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "246810120S")
+        create(:veteran, file_number: "246810120")
+        create(:available_hearing_locations, veteran_file_number: "246810120")
+      end
+
+      describe "#veterans" do
+        it "returns one veteran" do
+          job.create_missing_veterans
+          expect(job.veterans.count).to eq 1
+          expect(job.veterans.first.file_number).to eq bfcorlid_file_number
+        end
+      end
+    end
+
+    context "and a case exists in a location other than 57" do
+      before do
+        create(:case, bfcurloc: 67, bfregoff: "RO10", bfcorlid: "987654321")
+      end
+
+      describe "#file_numbers" do
+        it "only returns file numbers from location 57" do
+          expect(job.file_numbers).to match_array [bfcorlid_file_number]
+        end
+      end
+    end
+
+    context "and an additional case exists in location 57 *with* an associated veteran" do
+      before do
+        create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "987654321")
+        create(:veteran, file_number: "987654321")
+      end
+
+      describe "#missing_veteran_file_numbers" do
+        it "returns list of file_numbers with no associated veteran" do
+          expect(job.missing_veteran_file_numbers).to match_array [bfcorlid_file_number]
         end
       end
     end
