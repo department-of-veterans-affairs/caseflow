@@ -237,7 +237,7 @@ export const TranscriptionProblem = ({
       options={[
         {
           value: null,
-          displayText: ''
+          displayText: 'None'
         },
         {
           value: 'Proceed without transcript',
