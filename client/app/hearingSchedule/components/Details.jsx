@@ -68,7 +68,7 @@ export default class HearingDetails extends React.Component {
         copyRequested: transcription.copyRequested || false,
         copySentDate: DateUtil.formatDateStr(transcription.copySentDate)
       },
-      disabled: false,
+      disabled: hearing.docketName !== 'hearing',
       updated: false,
       loading: false,
       success: false,
@@ -208,7 +208,7 @@ export default class HearingDetails extends React.Component {
             >Cancel</a>
             <Button
               name="Save"
-              disabled={!this.state.updated}
+              disabled={!this.state.updated || this.state.disabled}
               loading={this.state.loading}
               className="usa-button"
               onClick={this.submit}

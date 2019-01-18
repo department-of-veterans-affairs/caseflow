@@ -1,6 +1,7 @@
 import React from 'react';
 import { css } from 'glamor';
 import { Link } from 'react-router-dom';
+import _ from 'lodash';
 
 import * as DateUtil from '../../util/DateUtil';
 
@@ -104,7 +105,7 @@ export const Details = ({
         <Checkbox
           label="Yes, Waive 90 Day Evidence Hold"
           name="evidenceWindowWaived"
-          readOnly={readOnly}
+          disabled={readOnly}
           value={evidenceWindowWaived}
           onChange={(val) => set('evidenceWindowWaived', val)}
         />
@@ -117,7 +118,7 @@ export const Details = ({
         display: 'block',
         maxWidth: '100%'
       })}
-      readOnly={readOnly}
+      disabled={readOnly}
       value={notes || ''}
       onChange={(val) => set('notes', val)}
     />
@@ -158,7 +159,7 @@ export const TranscriptionDetails = ({
             value: 'The Ravens Group, Inc.'
           }
         ]}
-        onChange={(val) => set('transcriber', val)}
+        onChange={(val) => set('transcriber', val.value)}
       />
     </div>
     <div {...rowThirds}>
@@ -203,6 +204,10 @@ export const TranscriptionProblem = ({
       value={problemType}
       options={[
         {
+          label: '',
+          value: null
+        },
+        {
           label: 'No audio',
           value: 'No audio'
         },
@@ -219,13 +224,13 @@ export const TranscriptionProblem = ({
           value: 'Other (see notes)'
         }
       ]}
-      onChange={(val) => set('problemType', val)}
+      onChange={(val) => set('problemType', val.value)}
     />
     <DateSelector
       name="problemNoticeSentDate"
       label="Problem Notice Sent"
       strongLabel
-      readOnly={readOnly}
+      readOnly={readOnly || _.isEmpty(problemType)}
       value={problemNoticeSentDate}
       onChange={(val) => set('problemNoticeSentDate', val)}
     />
@@ -233,26 +238,29 @@ export const TranscriptionProblem = ({
       name="requestedRemedy"
       label="Requested Remedy"
       strongLabel
-      readOnly={readOnly}
       options={[
         {
-          value: null,
-          displayText: 'None'
+          value: '',
+          displayText: 'None',
+          disabled: readOnly || _.isEmpty(problemType)
         },
         {
           value: 'Proceed without transcript',
-          displayText: 'Proceeed without transcript'
+          displayText: 'Proceeed without transcript',
+          disabled: readOnly || _.isEmpty(problemType)
         },
         {
           value: 'Proceed with partial transcript',
-          displayText: 'Process with partial transcript'
+          displayText: 'Process with partial transcript',
+          disabled: readOnly || _.isEmpty(problemType)
         },
         {
           value: 'New hearing',
-          displayText: 'New hearing'
+          displayText: 'New hearing',
+          disabled: readOnly || _.isEmpty(problemType)
         }
       ]}
-      value={requestedRemedy}
+      value={requestedRemedy || ''}
       onChange={(val) => set('requestedRemedy', val)}
     />
   </div>
@@ -269,7 +277,7 @@ export const TranscriptionRequest = ({
         name="copyRequested"
         label="Yes, Transcript Requested"
         value={copyRequested}
-        readOnly={readOnly}
+        disabled={readOnly}
         onChange={(val) => set('copyRequested', val)}
       />
     </div>
