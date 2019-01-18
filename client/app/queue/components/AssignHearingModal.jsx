@@ -133,6 +133,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   completeScheduleHearingTask = () => {
 
     const {
+      appeal,
       scheduleHearingTask, history,
       selectedHearingDay, selectedRegionalOffice
     } = this.props;
@@ -160,11 +161,19 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         this.resetAppealDetails();
 
       }, () => {
-        this.props.showErrorMessage({
-          title: 'No Available Slots',
-          detail: 'Could not find any available slots for this regional office and hearing day combination. ' +
-                  'Please select a different date.'
-        });
+        if (appeal.isLegacyAppeal) {
+          this.props.showErrorMessage({
+            title: 'No Available Slots',
+            detail: 'Could not find any available slots for this regional office and hearing day combination. ' +
+                    'Please select a different date.'
+          });
+        } else {
+          this.props.showErrorMessage({
+            title: 'No Hearing Day',
+            detail: 'Until April 1st hearing days for AMA appeals need to be created manually. ' +
+                    'Please contact the Caseflow Team for assistance.'
+          });
+        }
       });
   }
 
