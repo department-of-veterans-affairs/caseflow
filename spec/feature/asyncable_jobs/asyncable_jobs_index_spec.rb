@@ -1,7 +1,13 @@
 feature "Asyncable Jobs index" do
   before do
-    Timecop.freeze(Time.zone.now)
+    Timecop.freeze(now)
   end
+
+  after do
+    Timecop.return
+  end
+
+  let(:now) { post_ramp_start_date }
 
   let!(:current_user) do
     User.authenticate!(roles: ["Admin Intake"])
@@ -51,7 +57,7 @@ feature "Asyncable Jobs index" do
       expect(page).to_not have_content(hlr.establishment_submitted_at.strftime(date_format))
       expect(page).to_not have_content("oops!")
 
-      expect(hlr.reload.establishment_submitted_at).to eq(Time.zone.now)
+      expect(hlr.reload.establishment_submitted_at).to eq(now)
     end
   end
 end
