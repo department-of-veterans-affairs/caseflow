@@ -4,7 +4,7 @@ echo "Building Caseflow Docker App.."
 # Create temp folders
 if [ ! -d oracle_libs ]; then
   echo "  Creating Oracle Libs folder"
-  mkdir ./oracle_libs 
+  mkdir ./oracle_libs
 fi
 
 echo "  Going into the Oracle Libs folder"
@@ -27,7 +27,7 @@ echo "  Checking if Instant Client has been downloaded"
 if [ ! -f instantclient-basic-linux.x64-12.2.0.1.0.zip ] || [ ! -f instantclient-sqlplus-linux.x64-12.2.0.1.0.zip ] || [ ! -f instantclient-sdk-linux.x64-12.2.0.1.0.zip ]; then
 
   echo "    Error: Couldn't download the files. Exiting"
-  exit 1
+  return 1
 
 fi
 

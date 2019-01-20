@@ -120,7 +120,7 @@ describe HearingDay do
   end
 
   context "load Video days for a range date" do
-    let(:hearings) do
+    let!(:hearings) do
       [create(:case_hearing),
        create(:case_hearing)]
     end
@@ -128,7 +128,7 @@ describe HearingDay do
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "RO13") }
 
     it "gets hearings for a date range" do
-      expect(subject.size).to eq 2
+      expect(subject[:vacols_hearings].size).to eq 2
     end
   end
 
@@ -141,9 +141,8 @@ describe HearingDay do
 
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "C") }
 
-    it "gets hearings for a date range" do
-      hearings
-      expect(subject.size).to eq 2
+    it "shouldn't load any since we're past HearingDay::CASEFLOW_CO_PARENT_DATE" do
+      expect(subject[:vacols_hearings].size).to eq 0
     end
   end
 
@@ -169,15 +168,15 @@ describe HearingDay do
 
     context "get parent and children structure" do
       subject do
-        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
-                                                     hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
+        HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                   hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
       end
 
       it "returns nested hash structure" do
         expect(subject.size).to eq 1
         expect(subject[0][:hearings].size).to eq 1
         expect(subject[0][:request_type]).to eq "V"
-        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
       end
     end
   end
@@ -218,8 +217,8 @@ describe HearingDay do
     end
 
     subject do
-      HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
-                                                   hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
+      HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                 hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
     end
 
     context "get video hearings neither postponed or cancelled" do
@@ -227,8 +226,8 @@ describe HearingDay do
         expect(subject.size).to eq 1
         expect(subject[0][:hearings].size).to eq 1
         expect(subject[0][:request_type]).to eq "V"
-        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
-        expect(subject[0][:hearings][0][:hearing_disp]).to eq nil
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
+        expect(subject[0][:hearings][0]["hearing_disp"]).to eq nil
       end
     end
 
@@ -251,15 +250,21 @@ describe HearingDay do
           :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: appeal_tomorrow.vacols_id
         )
       end
+      let!(:ama_hearing_day) do
+        create(:hearing_day, request_type: :video, scheduled_for: Time.zone.now, regional_office: staff.stafkey)
+      end
+      let!(:ama_appeal) { create(:appeal) }
+      let!(:ama_hearing) { create(:hearing, hearing_day: ama_hearing_day, appeal: ama_appeal) }
 
       it "returns hearings are mapped to days" do
-        expect(subject.size).to eq 2
-        expect(subject[1][:hearings].size).to eq 2
-        expect(subject[1][:request_type]).to eq "V"
-        expect(subject[1][:hearings][0][:appeal_id]).to eq appeal.id
-        expect(subject[1][:hearings][0][:hearing_disp]).to eq nil
-        expect(subject[1][:hearings][1][:appeal_id]).to eq appeal_today.id
-        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal_tomorrow.id
+        expect(subject.size).to eq 3
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq ama_appeal.id
+        expect(subject[2][:hearings].size).to eq 2
+        expect(subject[2][:request_type]).to eq "V"
+        expect(subject[2][:hearings][0]["appeal_id"]).to eq appeal.id
+        expect(subject[2][:hearings][0]["hearing_disp"]).to eq nil
+        expect(subject[2][:hearings][1]["appeal_id"]).to eq appeal_today.id
+        expect(subject[1][:hearings][0]["appeal_id"]).to eq appeal_tomorrow.id
       end
     end
 
@@ -310,15 +315,15 @@ describe HearingDay do
 
     context "get parent and children structure" do
       subject do
-        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
-                                                     hearing.hearing_date.beginning_of_day + 10, "C")
+        HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                   hearing.hearing_date.beginning_of_day + 10, "C")
       end
 
       it "returns nested hash structure" do
         expect(subject.size).to eq 1
         expect(subject[0][:hearings].size).to eq 1
         expect(subject[0][:request_type]).to eq "C"
-        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
       end
     end
   end

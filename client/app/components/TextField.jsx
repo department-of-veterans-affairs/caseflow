@@ -24,7 +24,8 @@ export default class TextField extends React.Component {
       onKeyPress,
       strongLabel,
       maxLength,
-      max
+      max,
+      autoComplete
     } = this.props;
 
     let textInputClass = className.concat(
@@ -75,6 +76,7 @@ export default class TextField extends React.Component {
           title={title}
           maxLength={maxLength}
           max={max}
+          autoComplete={autoComplete}
         />
       }
 

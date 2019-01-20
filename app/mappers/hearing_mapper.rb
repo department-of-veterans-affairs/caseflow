@@ -23,7 +23,7 @@ module HearingMapper
         bva_poc: hearing_info[:bva_poc],
         judge_id: hearing_info[:judge_id]
       }.select do |k, _v|
-        hearing_info.keys.map(&:to_sym).include?(k) || (k.to_sym == :scheduled_for && hearing_info[:date])
+        hearing_info.keys.map(&:to_sym).include?(k)
         # only send updates to key/values that are passed
       end
     end

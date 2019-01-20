@@ -105,15 +105,13 @@ describe ScheduleHearingTask do
       expect(updated_task[0].type).to eq(ScheduleHearingTask.name)
       expect(updated_task[0].appeal_type).to eq(LegacyAppeal.name)
       expect(updated_task[0].status).to eq("completed")
-      expect(updated_task[0].task_business_payloads.size).to eq 1
-      expect(updated_task[0].task_business_payloads[0].description).to eq("Update")
-      expect(updated_task[0].task_business_payloads[0].values["regional_office_value"]).to eq("RO13")
-      expect(updated_task[0].task_business_payloads[0].values["hearing_date"]).to eq("2018-10-30T00:00:00.000-04:00")
     end
   end
 
   describe "A Central Office hearing should be updated with vacols_id and appeal placed in location 36" do
-    let!(:hearing) { FactoryBot.create(:case_hearing, hearing_type: "C", hearing_date: test_hearing_date_vacols) }
+    let!(:hearing_day) do
+      create(:hearing_day, scheduled_for: test_hearing_date_vacols)
+    end
     let!(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
     let!(:params) do
       {
@@ -150,10 +148,10 @@ describe ScheduleHearingTask do
     it "should create a task of type ScheduleHearingTask" do
       hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
       hearing_task.update_from_params(update_params, hearings_user)
-      updated_hearing = VACOLS::CaseHearing.find(hearing.hearing_pkseq)
+      updated_hearing = VACOLS::CaseHearing.first
 
       expect(updated_hearing.folder_nr).to eq(appeal.vacols_id)
-      expect(updated_hearing.hearing_date).to eq(hearing.hearing_date)
+      expect(updated_hearing.hearing_date.to_date).to eq(hearing_day.scheduled_for)
       expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing]
     end
   end
@@ -204,6 +202,78 @@ describe ScheduleHearingTask do
       expect(created_hearing.hearing_date).to eq(hearing.hearing_date)
       expect(created_hearing.folder_nr).to eq(appeal.vacols_id)
       expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing]
+    end
+  end
+
+  context "#update_from_params" do
+    context "AMA appeal" do
+      let(:hearing_day) { create(:hearing_day) }
+      let(:appeal) { create(:appeal) }
+      let(:schedule_hearing_task) do
+        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user)
+      end
+      let(:update_params) do
+        {
+          status: "completed",
+          business_payloads: {
+            description: "Update",
+            values: {
+              "regional_office_value": hearing_day.regional_office,
+              "hearing_pkseq": hearing_day.id,
+              "hearing_date": "2018-11-02T09:00:00.000-04:00",
+              "hearing_type": "Video"
+            }
+          }
+        }
+      end
+
+      it "associates a caseflow hearing with the hearing day" do
+        schedule_hearing_task.update_from_params(update_params, hearings_user)
+
+        expect(Hearing.count).to eq(1)
+        expect(Hearing.first.hearing_day).to eq(hearing_day)
+        expect(Hearing.first.appeal).to eq(appeal)
+      end
+    end
+  end
+
+  context ".tasks_for_ro" do
+    let(:regional_office) { "RO17" }
+    let(:number_of_cases) { 10 }
+
+    context "when there are legacy cases" do
+      let!(:cases) do
+        create_list(:case, number_of_cases, bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V")
+      end
+
+      let!(:non_hearing_cases) do
+        create_list(:case, number_of_cases)
+      end
+
+      it "returns tasks for all relevant appeals in location 57" do
+        tasks = ScheduleHearingTask.tasks_for_ro(regional_office)
+
+        expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(cases.pluck(:bfkey))
+      end
+    end
+
+    context "when there are AMA ScheduleHearingTasks" do
+      let(:veteran_at_ro) { create(:veteran, closest_regional_office: regional_office) }
+      let(:appeal_for_veteran_at_ro) { create(:appeal, veteran: veteran_at_ro) }
+      let!(:hearing_task) { create(:schedule_hearing_task, appeal: appeal_for_veteran_at_ro) }
+
+      let(:veteran_at_different_ro) { create(:veteran, closest_regional_office: "RO04") }
+      let(:appeal_for_veteran_at_different_ro) { create(:appeal, veteran: veteran_at_different_ro) }
+      let!(:hearing_task_for_other_veteran) do
+        create(:schedule_hearing_task, appeal: appeal_for_veteran_at_different_ro)
+      end
+
+      it "returns tasks for all appeals associated with Veterans at regional office" do
+        tasks = ScheduleHearingTask.tasks_for_ro(regional_office)
+
+        expect(tasks.count).to eq(1)
+        expect(tasks[0].id).to eq(hearing_task.id)
+      end
     end
   end
 end
