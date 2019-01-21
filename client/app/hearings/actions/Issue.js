@@ -165,8 +165,8 @@ export const toggleIssueDeleteModal = (issueId, isShowingModal) => ({
 export const saveIssues = (worksheetIssues) => (dispatch) => {
   _.forEach(worksheetIssues, (issue) => {
     if (issue.edited) {
-      ApiUtil.patch(`/hearings/appeals/${issue.appeal_id}`, { data: { appeal: {
-        worksheet_issues_attributes: [issue] } } }).
+      ApiUtil.patch(`/hearings/worksheets/${issue.hearing.external_id}`, { data: { worksheet: {
+        hearing_issue_notes_attributes: [issue] } } }).
         then(() => {
           dispatch({ type: Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE,
             payload: { issueId: issue.id },

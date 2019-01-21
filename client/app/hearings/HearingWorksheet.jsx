@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
@@ -9,6 +8,7 @@ import AutoSave from '../components/AutoSave';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
 import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
+import ContestedIssues from '../queue/components/ContestedIssues';
 import { now } from './util/DateUtil';
 import { CATEGORIES, ACTIONS } from './analytics';
 import WorksheetFooter from './components/WorksheetFooter';
@@ -16,6 +16,7 @@ import LoadingScreen from '../components/LoadingScreen';
 import CFRichTextEditor from '../components/CFRichTextEditor';
 import DOMPurify from 'dompurify';
 import Button from '../components/Button';
+import ContentSection from '../components/ContentSection';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -118,7 +119,24 @@ export class HearingWorksheet extends React.PureComponent {
     return <div>
       <HearingWorksheetDocs {...this.props} />
       <HearingWorksheetStream {...this.props} print={this.props.print} />
-    </div>
+    </div>;
+  };
+
+  getHearingWorksheet = () => {
+    let worksheetIssuesArray = [];
+
+    _.forEach(this.props.worksheetIssues, (value) => {
+      worksheetIssuesArray.push(value);
+    });
+
+    return <ContentSection
+      header={<div>Issues</div>}
+      content={<ContestedIssues
+        requestIssues={worksheetIssuesArray}
+        decisionIssues={[]}
+        hearingWorksheet
+      />}
+    />;
   };
 
   render() {
@@ -130,7 +148,7 @@ export class HearingWorksheet extends React.PureComponent {
 
     const firstWorksheetPage = <div className="cf-hearings-first-page">
       {worksheetHeader}
-      {this.getLegacyHearingWorksheet()}
+      {this.props.worksheet.docket_name === 'hearing' ? this.getHearingWorksheet() : this.getLegacyHearingWorksheet()}
       {this.props.print &&
         <WorksheetFooter
           veteranName={this.props.worksheet.veteran_fi_last_formatted}

@@ -26,18 +26,18 @@ class HearingWorksheetPreImpressions extends PureComponent {
   render() {
     let { issue, print } = this.props;
 
-    return <div className="cf-hearings-worksheet-actions">
-      <Checkbox label="Re-Open" name={`${issue.id}-${issue.appeal_id}-chk_reopen`}
+    return <div className="cf-hearings-worksheet-issues">
+      <Checkbox label="Re-Open" name={`${issue.id}-${issue.appeal_id || issue.review_request_id}-chk_reopen`}
         onChange={this.onToggleReopen} value={issue.reopen} disabled={print} />
-      <Checkbox label="Allow" name={`${issue.id}-${issue.appeal_id}-chk_allow`}
+      <Checkbox label="Allow" name={`${issue.id}-${issue.appeal_id || issue.review_request_id}-chk_allow`}
         onChange={this.onToggleAllow} value={issue.allow} disabled={print} />
-      <Checkbox label="Deny" name={`${issue.id}-${issue.appeal_id}-chk_deny`}
+      <Checkbox label="Deny" name={`${issue.id}-${issue.appeal_id || issue.review_request_id}-chk_deny`}
         onChange={this.onToggleDeny} value={issue.deny} disabled={print} />
-      <Checkbox label="Remand" name={`${issue.id}-${issue.appeal_id}-chk_remand`}
+      <Checkbox label="Remand" name={`${issue.id}-${issue.appeal_id || issue.review_request_id}-chk_remand`}
         onChange={this.onToggleRemand} value={issue.remand} disabled={print} />
-      <Checkbox label="Dismiss" name={`${issue.id}-${issue.appeal_id}-chk_dismiss`}
+      <Checkbox label="Dismiss" name={`${issue.id}-${issue.appeal_id || issue.review_request_id}-chk_dismiss`}
         onChange={this.onToggleDismiss} value={issue.dismiss} disabled={print} />
-      <Checkbox label="OMO" name={`${issue.id}-${issue.appeal_id}-chk_omo`}
+      <Checkbox label="OMO" name={`${issue.id}-${issue.appeal_id || issue.review_request_id}-chk_omo`}
         onChange={this.onToggleOMO} value={issue.omo} disabled={print} />
     </div>;
   }

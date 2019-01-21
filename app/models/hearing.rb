@@ -3,6 +3,8 @@ class Hearing < ApplicationRecord
   belongs_to :appeal
   belongs_to :judge, class_name: "User"
   has_many :hearing_views, as: :hearing
+  has_many :hearing_issue_notes
+  accepts_nested_attributes_for :hearing_issue_notes
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
@@ -18,6 +20,8 @@ class Hearing < ApplicationRecord
   delegate :veteran_file_number, to: :appeal
   delegate :docket_number, to: :appeal
   delegate :docket_name, to: :appeal
+  delegate :request_issues, to: :appeal
+  delegate :decision_issues, to: :appeal
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
 
@@ -52,6 +56,13 @@ class Hearing < ApplicationRecord
       min: scheduled_time.min,
       sec: scheduled_time.sec
     )
+  end
+
+  def worksheet_issues
+    request_issues.map do |request_issue|
+      HearingIssueNote.select("*").joins(:request_issue)
+        .find_or_create_by(request_issue: request_issue, hearing: self).to_hash
+    end
   end
 
   #:nocov:
@@ -108,7 +119,8 @@ class Hearing < ApplicationRecord
         :docket_name,
         :military_service,
         :current_issue_count,
-        :appeal_representative_name
+        :appeal_representative_name,
+        :worksheet_issues
       ]
     )
   end
