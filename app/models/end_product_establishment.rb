@@ -97,6 +97,11 @@ class EndProductEstablishment < ApplicationRecord
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2935/
         TransientBGSSyncError.new(error, epe)
+      when /Connection reset by peer/
+        # Connection reset
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3036/
+        TransientBGSSyncError.new(error, epe)
       when /Unable to find SOAP operation: :find_benefit_claim/
         # Transient failure because a VBMS service is unavailable
         #
