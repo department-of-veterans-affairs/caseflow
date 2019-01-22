@@ -89,7 +89,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       availableActions: task.attributes.available_actions,
       taskBusinessPayloads: task.attributes.task_business_payloads,
       caseReviewId: task.attributes.attorney_case_review_id,
-      timeline_title: task.attributes.timeline_title
+      timelineTitle: task.attributes.timelineTitle
     };
 
     return acc;
@@ -160,7 +160,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       decisionPreparedBy: null,
       availableActions: task.attributes.available_actions,
       taskBusinessPayloads: task.attributes.task_business_payloads,
-      timeline_title: task.attributes.timeline_title
+      timelineTitle: task.attributes.timelineTitle
     };
   });
 
@@ -267,7 +267,6 @@ export const prepareAppealForStore =
         status: appeal.attributes.status,
         decisionDate: appeal.attributes.decision_date,
         form9Date: appeal.attributes.form9_date,
-        receiptDate: appeal.attributes.receipt_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,
         regionalOffice: appeal.attributes.regional_office,
