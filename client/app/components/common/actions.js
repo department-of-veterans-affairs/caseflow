@@ -49,3 +49,10 @@ export const onReceiveDropdownData = (dropdownName, data) => ({
     data
   }
 });
+
+export const onHearingOptionalTime = (optionalTime) => ({
+  type: ACTIONS.HEARING_OPTIONAL_TIME_CHANGE,
+  payload: {
+    optionalTime
+  }
+});

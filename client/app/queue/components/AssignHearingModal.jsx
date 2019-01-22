@@ -14,7 +14,8 @@ import {
   resetSuccessMessages,
   requestPatch
 } from '../uiReducer/uiActions';
-import { onRegionalOfficeChange, onHearingDayChange, onHearingTimeChange } from '../../components/common/actions';
+import { onRegionalOfficeChange, onHearingDayChange, onHearingTimeChange,
+  onHearingOptionalTime } from '../../components/common/actions';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
 import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
@@ -60,6 +61,8 @@ type Props = Params & {|
   hearingDay: Object,
   selectedHearingDay: Object,
   selectedHearingTime: string,
+  selectedOptionalTime: string,
+
   // Action creators
   showErrorMessage: typeof showErrorMessage,
   resetErrorMessages: typeof resetErrorMessages,
@@ -270,7 +273,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   formatHearingDate = () => {
-    const { selectedHearingDay, selectedHearingTime } = this.props;
+    const { selectedHearingDay, selectedHearingTime, selectedOptionalTime } = this.props;
 
     if (selectedHearingDay && !selectedHearingTime) {
       return new Date(selectedHearingDay.hearingDate);
@@ -287,11 +290,13 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     if (hour === 1) {
       hour += 12;
+
     }
     const minute = parseInt(timeParts[1].split(' ')[0], 10);
     const hearingDate = new Date(year, month, day, hour, minute);
 
     return hearingDate;
+
   };
 
   getInitialValues = () => {
@@ -314,12 +319,14 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   	  this.setState({ selectedTime });
   	  this.props.onHearingTimeChange(selectedTime);
   	}
+
+    return val;
   }
 
   render = () => {
     const {
       selectedHearingDay, selectedRegionalOffice,
-      selectedHearingTime, openHearing
+      selectedHearingTime, openHearing, selectedOptionalTime
     } = this.props;
 
     const initVals = this.getInitialValues();
@@ -354,8 +361,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           name="optionalTime"
           placeholder="Select a time"
           options={TIME_OPTIONS}
-          value={selectedHearingTime || initVals.hearingTime}
-          onChange={this.setSelectedTime}
+          value={selectedOptionalTime || initVals.hearingDate}
+          onChange={this.props.onHearingOptionalTime}
           hideLabel />}
       </div>
     </React.Fragment>;
@@ -377,7 +384,8 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
   regionalOfficeOptions: state.components.regionalOffices,
   hearingDay: state.ui.hearingDay,
   selectedHearingDay: state.components.selectedHearingDay,
-  selectedHearingTime: state.components.selectedHearingTime
+  selectedHearingTime: state.components.selectedHearingTime,
+  selectedOptionalTime: state.components.selectedOptionalTime
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -390,7 +398,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRegionalOfficeChange,
   onHearingDayChange,
   onHearingTimeChange,
-  onReceiveAppealDetails
+  onReceiveAppealDetails,
+  onHearingOptionalTime
 }, dispatch);
 
 export default (withRouter(

@@ -66,6 +66,12 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         $set: action.payload.hearingTime
       }
     });
+  case ACTIONS.HEARING_OPTIONAL_TIME_CHANGE:
+    return update(state, {
+      selectedOptionalTime: {
+        $set: action.payload.optionalTime
+      }
+    });
   case ACTIONS.FETCH_DROPDOWN_DATA:
   case ACTIONS.RECEIVE_DROPDOWN_DATA:
     return update(state, {
