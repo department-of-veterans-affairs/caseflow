@@ -29,8 +29,8 @@ class HigherLevelReview < ClaimReview
     create_dta_supplemental_claim
   end
 
-## needed for appeal status api
-    
+  # needed for appeal status api
+
   def review_status_id
     "HLR#{id}"
   end
@@ -52,7 +52,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def aoj
-    # neet to implement. add logic to return proper enum: - vba, vha, nca, other 
+    # need to implement. add logic to return proper enum: - vba, vha, nca, other
   end
 
   def program
@@ -64,7 +64,7 @@ class HigherLevelReview < ClaimReview
     when "nca"
       "burial"
     else
-      return benefit_type
+      benefit_type
     end
   end
 

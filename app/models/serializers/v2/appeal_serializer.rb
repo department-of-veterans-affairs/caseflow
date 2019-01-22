@@ -1,9 +1,8 @@
 class V2::AppealSerializer < ActiveModel::Serializer
-
   type :legacy_appeal
-  
+
   def id
-      object.vacols_id
+    object.vacols_id
   end
 
   attribute :vacols_ids, key: :appeal_ids
