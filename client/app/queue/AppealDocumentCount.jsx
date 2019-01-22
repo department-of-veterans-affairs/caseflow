@@ -19,7 +19,7 @@ class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
     const {
       appeal,
-      endpoint
+      cached
     } = this.props;
 
     if (appeal.isPaperCase) {
@@ -32,7 +32,9 @@ class AppealDocumentCount extends React.PureComponent {
         timeout: { response: 5 * 60 * 1000 }
       };
 
-      ApiUtil.get(`/appeals/${this.props.externalId}/document_count_${endpoint}`, requestOptions).then((response) => {
+      const endpoint = `document_count?cached=${cached === true}`;
+
+      ApiUtil.get(`/appeals/${this.props.externalId}/${endpoint}`, requestOptions).then((response) => {
         const resp = JSON.parse(response.text);
 
         this.props.setAppealDocCount(this.props.externalId, resp.document_count);
@@ -58,7 +60,7 @@ class AppealDocumentCount extends React.PureComponent {
 AppealDocumentCount.propTypes = {
   appeal: PropTypes.object.isRequired,
   loadingText: PropTypes.bool,
-  endpoint: PropTypes.oneOf(['from_efolder', 'from_caseflow']).isRequired
+  cached: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {

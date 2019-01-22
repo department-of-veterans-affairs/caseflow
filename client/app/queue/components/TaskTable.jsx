@@ -274,7 +274,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
           appeal={task.appeal}
-          endpoint="from_caseflow"
+          cached
           docCountBelowLink />;
       }
     } : null;

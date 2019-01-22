@@ -35,14 +35,12 @@ class AppealsController < ApplicationController
     end
   end
 
-  def document_count_from_caseflow
-    render json: { document_count: appeal.number_of_documents_from_caseflow }
-  rescue StandardError => e
-    handle_non_critical_error("document_count", e)
-  end
-
-  def document_count_from_efolder
-    render json: { document_count: appeal.number_of_documents }
+  def document_count
+    if params[:cached] == "true"
+      render json: { document_count: appeal.number_of_documents_from_caseflow }
+    else
+      render json: { document_count: appeal.number_of_documents }
+    end
   rescue StandardError => e
     handle_non_critical_error("document_count", e)
   end

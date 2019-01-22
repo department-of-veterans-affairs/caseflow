@@ -160,7 +160,6 @@ export class CaseTitleDetails extends React.PureComponent {
               redirectUrl={redirectUrl}
               appeal={appeal}
               taskType={taskType}
-              endpoint="from_efolder"
               docCountWithinLink />
           </div>
         </React.Fragment> }
