@@ -147,12 +147,14 @@ class ClaimReview < DecisionReview
   #   end_product_establishments.map ...
   # if it's processed in caseflow, there are no end product establishsments
   def search_table_statuses
-    return [{
-      ep_code: "Processed in Caseflow",
-      status: "",
-    }] if processed_in_caseflow? # eventually this is a link
-
-    end_product_establishments.map(&:status)
+    if processed_in_caseflow?
+      [{
+        ep_code: "Processed in Caseflow",
+        ep_status: ""
+      }] # eventually this is a link
+    else
+      end_product_establishments.map(&:status)
+    end
   end
 
   private

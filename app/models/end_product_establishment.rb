@@ -350,11 +350,27 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def status
-    return result(cached: true).status_type if committed?
+    if committed?
+      ep = result(cached: true)
+      code = ep.claim_type_code.to_s + ep.modifier.to_s
+      status = ep.status_type.to_s
+    else
+      code = ""
+      status = source.try(:establishment_error) ?
+        COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED :
+        COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
+    end
 
-    source.try(:establishment_error) ?
-      COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED :
-      COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
+    {
+      ep_code: code,
+      ep_status: status
+    }
+
+    # return result(cached: true).status_type if committed?
+
+    # source.try(:establishment_error) ?
+    #   COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED :
+    #   COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
   end
 
   private
