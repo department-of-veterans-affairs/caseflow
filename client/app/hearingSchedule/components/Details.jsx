@@ -60,7 +60,10 @@ class HearingDetails extends React.Component {
       judgeId: hearing.judgeId ? hearing.judgeId.toString() : null,
       evidenceWindowWaived: hearing.evidenceWindowWaived || false,
       room: hearing.room,
-      notes: hearing.notes
+      notes: hearing.notes,
+      // Transcription Request
+      transcriptRequested: hearing.transcriptRequested,
+      transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate)
     });
 
     this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, {
@@ -73,10 +76,7 @@ class HearingDetails extends React.Component {
       // Transcription Problem
       problemType: transcription.problemType,
       problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate),
-      requestedRemedy: transcription.requestedRemedy,
-      // Transcript Request
-      copyRequested: transcription.copyRequested || false,
-      copySentDate: DateUtil.formatDateStr(transcription.copySentDate)
+      requestedRemedy: transcription.requestedRemedy
     });
   }
 

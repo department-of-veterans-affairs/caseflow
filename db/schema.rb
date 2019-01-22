@@ -487,6 +487,7 @@ ActiveRecord::Schema.define(version: 20190117151019) do
     t.time "scheduled_time"
     t.text "summary"
     t.boolean "transcript_requested"
+    t.date "transcript_sent_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "witness"
   end
@@ -899,8 +900,6 @@ ActiveRecord::Schema.define(version: 20190117151019) do
   end
 
   create_table "transcriptions", force: :cascade do |t|
-    t.boolean "copy_requested"
-    t.date "copy_sent_date"
     t.date "expected_return_date"
     t.bigint "hearing_id"
     t.date "problem_notice_sent_date"

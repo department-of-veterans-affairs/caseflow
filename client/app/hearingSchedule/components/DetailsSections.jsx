@@ -271,7 +271,7 @@ const TranscriptionProblem = ({
 );
 
 const TranscriptionRequest = ({
-  transcription: { copyRequested, copySentDate },
+  hearing: { transcriptRequested, transcriptSentDate },
   set, readOnly
 }) => (
   <div {...rowThirds}>
@@ -280,9 +280,9 @@ const TranscriptionRequest = ({
       <Checkbox
         name="copyRequested"
         label="Yes, Transcript Requested"
-        value={copyRequested || false}
+        value={transcriptRequested || false}
         disabled={readOnly}
-        onChange={(val) => set('copyRequested', val)}
+        onChange={(val) => set('transcriptRequested', val)}
       />
     </div>
     <DateSelector
@@ -290,8 +290,8 @@ const TranscriptionRequest = ({
       label="Copy Sent to Appellant/Rep"
       strongLabel
       readOnly={readOnly}
-      value={copySentDate}
-      onChange={(val) => set('copySentDate', val)}
+      value={transcriptSentDate}
+      onChange={(val) => set('transcriptSentDate', val)}
     />
   </div>
 );
@@ -330,8 +330,8 @@ const Sections = ({ transcription, hearing, disabled, setHearing, setTranscripti
 
     <h2>Transcription Request</h2>
     <TranscriptionRequest
-      transcription={transcription}
-      set={setTranscription}
+      hearing={hearing}
+      set={setHearing}
       readOnly={disabled} />
     <div className="cf-help-divider" />
   </React.Fragment>

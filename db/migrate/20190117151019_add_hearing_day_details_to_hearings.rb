@@ -9,12 +9,11 @@ class AddHearingDayDetailsToHearings < ActiveRecord::Migration[5.1]
     t.string :problem_type
     t.date :problem_notice_sent_date
     t.string :requested_remedy
-    t.boolean :copy_requested
-    t.date :copy_sent_date
   end
 
   def change
     add_column :hearings, :bva_poc, :string
     add_column :hearings, :room, :string
+    add_column :hearings, :transcript_sent_date, :date
   end
 end

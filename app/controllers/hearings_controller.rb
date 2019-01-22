@@ -86,6 +86,7 @@ class HearingsController < ApplicationController
                                      :disposition,
                                      :hold_open,
                                      :transcript_requested,
+                                     :transcript_sent_date,
                                      :prepped,
                                      :scheduled_time,
                                      :judge_id,
@@ -93,7 +94,6 @@ class HearingsController < ApplicationController
                                      :bva_poc,
                                      :evidence_window_waived,
                                      transcription_attributes: [
-                                       :copy_requested, :copy_sent_date,
                                        :expected_return_date, :problem_notice_sent_date,
                                        :problem_type, :requested_remedy,
                                        :sent_to_transcriber_date, :task_number,
