@@ -6,8 +6,6 @@ class RetrieveDocumentsForReaderJob < ApplicationJob
 
   DEFAULT_USERS_LIMIT = 3
   def perform(args = {})
-    RequestStore.store[:application] = "reader"
-
     # specified limit of users we fetch for
     limit = args["limit"] || DEFAULT_USERS_LIMIT
     find_all_reader_users_by_documents_fetched_at(limit).each do |user|

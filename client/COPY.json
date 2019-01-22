@@ -35,6 +35,7 @@
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL": "Switch views",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL": "Your cases",
   "CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL": "%s team cases",
+  "CASE_LIST_TABLE_EMPTY_TEXT": "This Veteran has no appeals at this time.",
 
   "OTHER_REVIEWS_TABLE_TITLE": "Higher Level Reviews & Supplemental Claims",
   "OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE": "EP Code(s)",
@@ -254,6 +255,11 @@
 
   "SPECIAL_ISSUES_PAGE_TITLE": "Select special issues (optional)",
   "SPECIAL_ISSUES_PAGE_NOTE": "Select the special issues that pertain to this case. Cases with special issues are routed to specific groups who are in charge of adjusting the case.",
+  "SPECIAL_ISSUES_ABOUT_SECTION": "About the appellant: ",
+  "SPECIAL_ISSUES_RESIDENCE_SECTION": "Appellant resides in: ",
+  "SPECIAL_ISSUES_BENEFIT_TYPE_SECTION": "Benefit Types: ",
+  "SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION": "Issues on Appeal: ",
+  "SPECIAL_ISSUES_DIC_OR_PENSION_SECTION": "Dependency and Indemnity Compensation (DIC) or Pension: ",
 
   "ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE": "Update Advanced on Docket (AOD) Status",
   "ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN": "AOD Motion Disposition",
@@ -322,5 +328,9 @@
   "STATUS_INQUIRY_MAIL_TASK_LABEL": "Status inquiry",
   "VACATE_MOTION_MAIL_TASK_LABEL": "Motion to vacate",
 
-  "CORRECT_REQUEST_ISSUES_LINK": "Correct issues"
+  "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
+
+  "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please",
+  "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
+  "CLAIMANT_NOT_FOUND_END": " for assistance."
 }

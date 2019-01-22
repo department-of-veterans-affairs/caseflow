@@ -46,7 +46,7 @@ class CaseReviewsController < ApplicationController
     if QualityReviewCaseSelector.select_case_for_quality_review?
       QualityReviewTask.create_from_root_task(root_task)
     else
-      BvaDispatchTask.create_and_assign(root_task)
+      BvaDispatchTask.create_from_root_task(root_task)
     end
   end
 
