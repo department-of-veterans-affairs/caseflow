@@ -14,15 +14,18 @@ class HearingWorksheetAmaIssues extends PureComponent {
     let { issue } = this.props;
 
     return <div>
-      <Textarea aria-label="worksheetNotes"
-        name="worksheetNotes"
-        id={`${issue.id}-issue-worksheetNotes`}
-        value={issue.worksheet_notes || ''}
-        onChange={this.onEditWorksheetNotes}
-        minRows={2}
-        maxRows={8}
-        maxLength={300}
-      />
+      <label htmlFor={`${issue.id}-issue-worksheetNotes`}>Worksheet Notes</label>
+      <div>
+        <Textarea
+          name="worksheetNotes"
+          id={`${issue.id}-issue-worksheetNotes`}
+          value={issue.worksheet_notes || ''}
+          onChange={this.onEditWorksheetNotes}
+          minRows={2}
+          maxRows={8}
+          maxLength={300}
+        />
+      </div>
       <HearingWorksheetPreImpressions ama issue={issue} />
     </div>;
   }
