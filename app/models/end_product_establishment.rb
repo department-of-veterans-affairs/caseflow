@@ -109,6 +109,11 @@ class EndProductEstablishment < ApplicationRecord
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
         TransientBGSSyncError.new(error, epe)
+      when /Unable to parse SOAP message/
+        # I don't understand why this happens, but it's transient.
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3404/
+        TransientBGSSyncError.new(error, epe)
       else
         new(error, epe)
       end
