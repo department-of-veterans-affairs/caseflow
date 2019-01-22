@@ -1,8 +1,19 @@
 class V2::AppealSerializer < ActiveModel::Serializer
-  type :legacy_appeal
+
+  def type
+    if appeal_status_v3_enabled?
+      object.class.to_s.camelize(:lower)
+    else
+      :legacy_appeal
+    end
+  end
 
   def id
-    object.vacols_id
+    if appeal_status_v3_enabled?
+      object.review_status_id
+    else
+      object.vacols_id
+    end
   end
 
   attribute :vacols_ids, key: :appeal_ids
@@ -31,5 +42,9 @@ class V2::AppealSerializer < ActiveModel::Serializer
   # Stubbed attributes
   attribute :evidence do
     []
+  end
+
+  def appeal_status_v3_enabled?
+    FeatureToggle.enabled?(:api_appeal_status_v3)
   end
 end

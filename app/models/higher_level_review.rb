@@ -29,6 +29,69 @@ class HigherLevelReview < ClaimReview
     create_dta_supplemental_claim
   end
 
+## needed for appeal status api
+  def review_status_id
+    return "HLR#{id}"
+  end
+
+  def vacols_ids
+    #doesn't apply to HLRs
+    []
+  end
+
+  def incomplete
+    return false
+  end
+
+  def type_code
+    # TODO: add logic to return - original, post_remand, post_cavc_remand, reconsideration, cue
+  end
+
+  def active?
+    end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
+  end
+
+  def description
+    #need to impelement
+  end
+
+  def aod
+    #doesn't apply to HLRs
+  end
+
+  def location
+    #will this always be aoj?
+  end
+
+  def aoj
+    #add logic to return proper enum: - vba, vha, nca, other 
+  end
+
+  def program
+    #maps to benefit_type?
+  end
+
+  def status_hash
+    #add logic to return: hlr_received, hlr_dta_error, hlr_decision, hlr_closed
+  end
+
+  def alerts
+    #add logic to return alert enum
+  end
+
+  def docket_hash
+    #doesn't apply to HLRs
+  end
+
+  def issues
+    #get request and corresponding rating issue
+    []
+  end
+
+  def events
+    # hlr_request, hlr_decision, hlr_dta_error, or hlr_other_close
+  end
+
   private
 
   def create_dta_supplemental_claim
