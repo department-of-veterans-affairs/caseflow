@@ -116,5 +116,6 @@ class Hearing < ApplicationRecord
   def to_hash_for_worksheet(current_user_id)
     serializable_hash(
       methods: [:judge]
-    ).merge(to_hash(current_user_id))  end
+    ).merge(to_hash(current_user_id))
+  end
 end
