@@ -17,7 +17,10 @@ const documentCountStyling = css({
 
 class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
-    const appeal = this.props.appeal;
+    const {
+      appeal,
+      endpoint
+    } = this.props;
 
     if (appeal.isPaperCase) {
       return;
@@ -29,7 +32,7 @@ class AppealDocumentCount extends React.PureComponent {
         timeout: { response: 5 * 60 * 1000 }
       };
 
-      ApiUtil.get(`/appeals/${this.props.externalId}/document_count_${this.props.endpoint}`, requestOptions).then((response) => {
+      ApiUtil.get(`/appeals/${this.props.externalId}/document_count_${endpoint}`, requestOptions).then((response) => {
         const resp = JSON.parse(response.text);
 
         this.props.setAppealDocCount(this.props.externalId, resp.document_count);
