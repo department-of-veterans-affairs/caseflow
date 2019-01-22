@@ -123,17 +123,11 @@ export class HearingWorksheet extends React.PureComponent {
   };
 
   getHearingWorksheet = () => {
-    let worksheetIssuesArray = [];
-
-    _.forEach(this.props.worksheetIssues, (value) => {
-      worksheetIssuesArray.push(value);
-    });
-
     return <div className="cf-hearings-worksheet-data cf-hearings-worksheet-issues">
       <ContentSection
         header={<div>Issues</div>}
         content={<ContestedIssues
-          requestIssues={worksheetIssuesArray}
+          requestIssues={_.values(this.props.worksheetIssues)}
           decisionIssues={[]}
           hearingWorksheet
         />}
