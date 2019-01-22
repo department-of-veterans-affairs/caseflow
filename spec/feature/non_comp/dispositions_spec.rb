@@ -72,7 +72,7 @@ feature "NonComp Dispositions Task Page" do
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
       expect(page).to have_content(
-        "Prior decision date: #{hlr.request_issues[0].decision_date.strftime("%m/%d/%Y")}"
+        "Prior decision date: #{hlr.request_issues[0].decision_date.strftime('%m/%d/%Y')}"
       )
       expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     end
