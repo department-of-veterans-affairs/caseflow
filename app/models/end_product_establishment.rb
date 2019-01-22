@@ -71,6 +71,11 @@ class EndProductEstablishment < ApplicationRecord
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2910/
         TransientBGSSyncError.new(error, epe)
+      when /The Tuxedo service is down/
+        #  Similar to above, an outage of connection to BDN.
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2926/
+        TransientBGSSyncError.new(error, epe)
       when /Connection timed out - connect\(2\) for "bepprod.vba.va.gov" port 443/
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
         TransientBGSSyncError.new(error, epe)
@@ -92,6 +97,11 @@ class EndProductEstablishment < ApplicationRecord
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2935/
         TransientBGSSyncError.new(error, epe)
+      when /Connection reset by peer/
+        # Connection reset
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3036/
+        TransientBGSSyncError.new(error, epe)
       when /Unable to find SOAP operation: :find_benefit_claim/
         # Transient failure because a VBMS service is unavailable
         #
@@ -103,6 +113,11 @@ class EndProductEstablishment < ApplicationRecord
         #  "Error: 504 for url http://localhost:10001/BenefitClaimServiceBean/BenefitClaimWebService?WSDL"
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
+        TransientBGSSyncError.new(error, epe)
+      when /Unable to parse SOAP message/
+        # I don't understand why this happens, but it's transient.
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3404/
         TransientBGSSyncError.new(error, epe)
       else
         new(error, epe)
