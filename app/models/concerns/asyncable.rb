@@ -8,6 +8,8 @@
 module Asyncable
   extend ActiveSupport::Concern
 
+  include RunAsyncable
+
   # class methods to scope queries based on class-defined columns
   # we expect 4 column types:
   #  * submitted_at : make the job eligible to run
@@ -72,10 +74,6 @@ module Asyncable
         .where(arel_table[submitted_at_column].lteq(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
         .order_by_oldest_submitted
     end
-
-    def run_async?
-      !Rails.env.development? && !Rails.env.test?
-    end
   end
 
   def submit_for_processing!(delay: 0)
@@ -113,6 +111,10 @@ module Asyncable
     !!self[self.class.submitted_at_column]
   end
 
+  def sort_by_submitted_at
+    self[self.class.submitted_at_column] || Time.zone.now
+  end
+
   def clear_error!
     update!(self.class.error_column => nil)
   end
@@ -121,9 +123,19 @@ module Asyncable
     update!(self.class.error_column => err)
   end
 
-  private
+  def restart!
+    submit_for_processing!
+  end
 
-  def run_async?
-    self.class.run_async?
+  def asyncable_ui_hash
+    {
+      klass: self.class.to_s,
+      id: id,
+      submitted_at: self[self.class.submitted_at_column],
+      attempted_at: self[self.class.attempted_at_column],
+      processed_at: self[self.class.processed_at_column],
+      error: self[self.class.error_column],
+      veteran_file_number: veteran.file_number # TODO: this assumption may break
+    }
   end
 end
