@@ -14,6 +14,10 @@ export const formatDate = function(dateString) {
     return;
   }
 
+  if (!dateString.match(/([+-][0-2]\d:[0-5]\d|Z)/)) {
+    throw new Error('Passing timestamp string without timezone not allowed');
+  }
+
   let date = new Date(dateString);
   let month = StringUtil.leftPad(date.getMonth() + ZERO_INDEX_MONTH_OFFSET, 2, '0');
   let day = StringUtil.leftPad(date.getDate(), 2, '0');
