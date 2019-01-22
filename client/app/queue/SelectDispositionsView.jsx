@@ -71,6 +71,7 @@ class SelectDispositionsView extends React.PureComponent {
       userRole,
       appeal: { decisionIssues }
     } = this.props;
+
     let nextStep;
     const dispositions = decisionIssues.map((issue) => issue.disposition);
     const remandedIssues = _.some(dispositions, (disp) => [
@@ -234,6 +235,7 @@ class SelectDispositionsView extends React.PureComponent {
 
   render = () => {
     const { appeal, highlight } = this.props;
+
     const {
       highlightModal,
       decisionIssue,
@@ -255,6 +257,7 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
 
       <ContestedIssues
+        isAmaAppeal={!appeal.isLegacyAppeal}
         decisionIssues={appeal.decisionIssues}
         requestIssues={appeal.issues}
         openDecisionHandler={this.openDecisionHandler}
