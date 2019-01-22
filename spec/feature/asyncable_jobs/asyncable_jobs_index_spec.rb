@@ -59,5 +59,18 @@ feature "Asyncable Jobs index" do
 
       expect(hlr.reload.establishment_submitted_at).to eq(now)
     end
+
+    context "zero expired jobs" do
+      before do
+        hlr.restart!
+        sc.restart!
+      end
+
+      it "shows nice message" do
+        visit "/jobs"
+
+        expect(page).to have_content("Success! There are no pending jobs.")
+      end
+    end
   end
 end
