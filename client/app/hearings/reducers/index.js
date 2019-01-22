@@ -98,9 +98,14 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.POPULATE_WORKSHEET: {
     const worksheetAppeals = _.keyBy(action.payload.worksheet.appeals_ready_for_hearing, 'id');
-    const worksheetIssues = _(worksheetAppeals).flatMap('worksheet_issues').
+    let worksheetIssues = _(worksheetAppeals).flatMap('worksheet_issues').
       keyBy('id').
       value();
+
+    if (_.isEmpty(worksheetIssues)) {
+      worksheetIssues = _.keyBy(action.payload.worksheet.worksheet_issues, 'id');
+    }
+
     const worksheet = _.omit(action.payload.worksheet, ['appeals_ready_for_hearing']);
 
     return update(state, {
@@ -178,6 +183,9 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.SET_ISSUE_NOTES:
     return newHearingIssueState(state, action, { notes: { $set: action.payload.notes } });
+
+  case Constants.SET_WORKSHEET_ISSUE_NOTES:
+    return newHearingIssueState(state, action, { worksheet_notes: { $set: action.payload.notes } });
 
   case Constants.SET_ISSUE_DISPOSITION:
     return newHearingIssueState(state, action, { disposition: { $set: action.payload.disposition } });
