@@ -51,7 +51,7 @@ class SelectDispositionsView extends React.PureComponent {
       decisionIssue: null,
       editingExistingIssue: false,
       highlightModal: false,
-      deleteAddedDecision: null
+      deleteAddedDecisionIssue: null
     };
   }
 
@@ -105,9 +105,9 @@ class SelectDispositionsView extends React.PureComponent {
       return decisionIssues.some((decisionIssue) => decisionIssue.request_issue_ids.includes(issue.id));
     });
   }
-  openDeleteAddedDecisionHandler = (requestIdToDelete, decisionIssue) => {
+  openDeleteAddedDecisionIssueHandler = (requestIdToDelete, decisionIssue) => {
     this.setState({
-      deleteAddedDecision: true,
+      deleteAddedDecisionIssue: true,
       requestIdToDelete,
       decisionIssue
     });
@@ -130,7 +130,7 @@ class SelectDispositionsView extends React.PureComponent {
       openRequestIssueId: requestIssueId,
       decisionIssue: decisionIssue || newDecisionIssue,
       editingExistingIssue: Boolean(decisionIssue),
-      deleteAddedDecision: null
+      deleteAddedDecisionIssue: null
     });
   }
 
@@ -140,7 +140,7 @@ class SelectDispositionsView extends React.PureComponent {
       decisionIssue: null,
       editingExistingIssue: false,
       highlightModal: false,
-      deleteAddedDecision: null,
+      deleteAddedDecisionIssue: null,
       requestIdToDelete: null
     });
   }
@@ -215,7 +215,7 @@ class SelectDispositionsView extends React.PureComponent {
     }
   ];
 
-  deleteAddedDecisionModalButtons = [
+  deleteAddedDecisionIssueModalButtons = [
     { classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
       onClick: this.handleModalClose
@@ -239,7 +239,7 @@ class SelectDispositionsView extends React.PureComponent {
       decisionIssue,
       openRequestIssueId,
       editingExistingIssue,
-      deleteAddedDecision,
+      deleteAddedDecisionIssue,
       requestIdToDelete
     } = this.state;
 
@@ -258,17 +258,18 @@ class SelectDispositionsView extends React.PureComponent {
         decisionIssues={appeal.decisionIssues}
         requestIssues={appeal.issues}
         openDecisionHandler={this.openDecisionHandler}
-        openDeleteAddedDecisionHandler={this.openDeleteAddedDecisionHandler}
+        openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler}
         numbered
         highlight={highlight}
       />
-      { deleteAddedDecision && <Modal
-        buttons = {this.deleteAddedDecisionModalButtons}
+      { deleteAddedDecisionIssue && <Modal
+        buttons = {this.deleteAddedDecisionIssueModalButtons}
         closeHandler={this.handleModalClose}
         title = "Delete decision">
-        {COPY.DECISION_ISSUE_CONFIRM_DELETE}
-        {toDeleteHasConnectedIssue && COPY.DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES}
-
+        <span className="delete-decision-modal">
+          {COPY.DECISION_ISSUE_CONFIRM_DELETE}
+          {toDeleteHasConnectedIssue && COPY.DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES}
+        </span>
       </Modal>}
       { openRequestIssueId && <Modal
         buttons = {this.decisionModalButtons}
