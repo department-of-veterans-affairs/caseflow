@@ -399,7 +399,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def create_decision_issues
-    fail NilEndProductLastActionDate unless end_product_establishment.result.last_action_date
+    fail NilEndProductLastActionDate, id unless end_product_establishment.result.last_action_date
 
     if rating?
       return unless end_product_establishment.associated_rating
