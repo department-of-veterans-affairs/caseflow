@@ -17,6 +17,8 @@ const documentCountStyling = css({
 
 class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
+    this.props.setAppealDocCount(this.props.externalId, null);
+
     const {
       appeal,
       cached
@@ -26,22 +28,20 @@ class AppealDocumentCount extends React.PureComponent {
       return;
     }
 
-    if (!this.props.docCountForAppeal) {
-      const requestOptions = {
-        withCredentials: true,
-        timeout: { response: 5 * 60 * 1000 }
-      };
+    const requestOptions = {
+      withCredentials: true,
+      timeout: { response: 5 * 60 * 1000 }
+    };
 
-      const endpoint = `document_count?cached=${cached === true}`;
+    const endpoint = `document_count?cached=${cached || false}`;
 
-      ApiUtil.get(`/appeals/${this.props.externalId}/${endpoint}`, requestOptions).then((response) => {
-        const resp = JSON.parse(response.text);
+    ApiUtil.get(`/appeals/${this.props.externalId}/${endpoint}`, requestOptions).then((response) => {
+      const resp = JSON.parse(response.text);
 
-        this.props.setAppealDocCount(this.props.externalId, resp.document_count);
-      }, (error) => {
-        this.props.errorFetchingDocumentCount(this.props.externalId, error);
-      });
-    }
+      this.props.setAppealDocCount(this.props.externalId, resp.document_count);
+    }, (error) => {
+      this.props.errorFetchingDocumentCount(this.props.externalId, error);
+    });
   }
 
   render = () => {
