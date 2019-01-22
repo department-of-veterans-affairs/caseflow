@@ -181,6 +181,11 @@ Rails.application.routes.draw do
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
 
+  resources :asyncable_jobs, param: :klass, only: [] do
+    resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
+  end
+  match '/jobs' => 'asyncable_jobs#index', via: [:get]
+
   resources :users, only: [:index]
 
   get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
