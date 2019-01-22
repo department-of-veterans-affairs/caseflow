@@ -111,8 +111,8 @@ module Asyncable
     !!self[self.class.submitted_at_column]
   end
 
-  def asyncable_submitted_at
-    self[self.class.submitted_at_column]
+  def sort_by_submitted_at
+    self[self.class.submitted_at_column] || Time.zone.now
   end
 
   def clear_error!
