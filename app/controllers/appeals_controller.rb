@@ -2,7 +2,7 @@ class AppealsController < ApplicationController
   include Errors
 
   before_action :react_routed
-  before_action :set_application, only: [:document_count_from_efolder, :document_count_from_caseflow, :new_documents]
+  before_action :set_application, only: [:document_count, :new_documents]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
 
