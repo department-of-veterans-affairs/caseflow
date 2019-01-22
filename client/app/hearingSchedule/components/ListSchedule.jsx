@@ -109,13 +109,12 @@ class ListSchedule extends React.Component {
     this.setState({ dateRangeKey: `${this.props.startDate}->${this.props.endDate}` });
   }
 
-  getHearingScheduleRows = () => {
+  getHearingScheduleRows = (forCsv = false) => {
     const { hearingSchedule } = this.props;
 
     return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.scheduledFor, 'asc').
       map((hearingDay) => ({
-        scheduledFor: <Link to={`/schedule/docket/${hearingDay.id}`}>
-          {moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}</Link>,
+        scheduledFor: forCsv ? hearingDay.scheduledFor : <Link to={`/schedule/docket/${hearingDay.id}`}>{moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}</Link>,
         requestType: hearingDay.requestType,
         regionalOffice: hearingDay.regionalOffice,
         room: hearingDay.room,
@@ -215,7 +214,7 @@ class ListSchedule extends React.Component {
   };
 
   render() {
-    const hearingScheduleRows = this.getHearingScheduleRows();
+    const hearingScheduleRows = this.getHearingScheduleRows(false);
     const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
 
     return (
@@ -233,7 +232,7 @@ class ListSchedule extends React.Component {
             <Button
               classNames={['usa-button-secondary']}>
               <CSVLink
-                data={hearingScheduleRows}
+                data={this.getHearingScheduleRows(true)}
                 target="_blank"
                 filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
                 Download current view
