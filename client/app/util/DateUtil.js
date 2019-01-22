@@ -26,12 +26,6 @@ export const formatDate = function(dateString) {
   return `${month}/${day}/${year}`;
 };
 
-export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
-  return arrayOfDateStrings.map((dateString) => {
-    return formatDate(dateString);
-  }).join(', ');
-};
-
 // Date format YYYY-MM-DD
 export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => {
   if (!dateString) {
@@ -42,7 +36,7 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
 
   // attempt to Do the Right Thing
   if (typeof dateString === 'string' && dateFormat === 'YYYY-MM-DD') {
-    if (dateString.match(/^\d\d\/\d\d\/\d\d\d\d$/)) {
+    if (dateString.match(/^\d\d?\/\d\d?\/\d\d\d\d$/)) {
       dateStringFormat = 'MM/DD/YYYY';
     } else if (dateString.match(/^\d\d\d\d\//)) {
       dateStringFormat = 'YYYY/MM/DD';
@@ -50,6 +44,12 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
   }
 
   return moment(dateString, dateStringFormat).format(expectedFormat);
+};
+
+export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
+  return arrayOfDateStrings.map((dateString) => {
+    return formatDateStr(dateString);
+  }).join(', ');
 };
 
 export const DateString = ({ date, dateFormat = 'MM/DD/YY', inputFormat = 'YYYY-MM-DD', style }) => <span {...style}>
