@@ -25,7 +25,7 @@ const buttonDiv = css({
 
 const outerDiv = css({
   marginLeft: '50px',
-  marginTop: '10px'
+  marginTop: '5px'
 });
 
 const decisionIssueDiv = css({
@@ -47,7 +47,7 @@ const grayLine = css({
   minHeight: '20px',
   background: COLORS.GREY_LIGHT,
   marginLeft: '20px',
-  marginBottom: '10px'
+  marginBottom: '5px'
 });
 
 const flexContainer = css({

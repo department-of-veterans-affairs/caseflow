@@ -1,5 +1,6 @@
 class Dispatch::UserQuotasController < ApplicationController
   before_action :verify_manager_access
+  before_action :set_application
 
   def update
     user_quota.update!(user_quota_params)
@@ -10,6 +11,10 @@ class Dispatch::UserQuotasController < ApplicationController
   end
 
   private
+
+  def set_application
+    RequestStore.store[:application] = "dispatch"
+  end
 
   def user_quota_params
     { locked_task_count: params[:locked_task_count] }
