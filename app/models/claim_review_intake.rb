@@ -1,6 +1,4 @@
 class ClaimReviewIntake < DecisionReviewIntake
-  include Asyncable
-
   attr_reader :request_params
 
   def ui_hash(ama_enabled)
