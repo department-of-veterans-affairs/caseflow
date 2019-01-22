@@ -5,6 +5,7 @@ import Textarea from 'react-textarea-autosize';
 import { connect } from 'react-redux';
 import { onEditWorksheetNotes } from '../actions/Issue';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
+import Table from '../../components/Table';
 
 class HearingWorksheetAmaIssues extends PureComponent {
 
@@ -13,9 +14,22 @@ class HearingWorksheetAmaIssues extends PureComponent {
   render() {
     let { issue } = this.props;
 
-    return <div>
-      <label htmlFor={`${issue.id}-issue-worksheetNotes`}>Worksheet Notes</label>
-      <div>
+    const tableColumns = [
+      {
+          header: 'Hearing Worksheet Notes',
+          align: 'center',
+          valueName: 'worksheetNotes'
+      },
+      {
+          header: 'Preliminary Impressions',
+          align: 'left',
+          valueName: 'preliminaryImpressions'
+      }
+    ];
+
+    const tableRows = [{
+      worksheetNotes: <div><label visible={false} htmlFor={`${issue.id}-issue-worksheetNotes`}>Worksheet Notes</label>
+        <div>
         <Textarea
           name="worksheetNotes"
           id={`${issue.id}-issue-worksheetNotes`}
@@ -25,8 +39,17 @@ class HearingWorksheetAmaIssues extends PureComponent {
           maxRows={8}
           maxLength={300}
         />
-      </div>
-      <HearingWorksheetPreImpressions ama issue={issue} />
+        </div></div>,
+      preliminaryImpressions: <HearingWorksheetPreImpressions ama issue={issue} />
+    }];
+
+    return <div>
+      <Table
+        columns={tableColumns}
+        rowObjects={tableRows}
+        summary="issues"
+        slowReRendersAreOk
+      />
     </div>;
   }
 }

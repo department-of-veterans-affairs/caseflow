@@ -129,14 +129,16 @@ export class HearingWorksheet extends React.PureComponent {
       worksheetIssuesArray.push(value);
     });
 
-    return <ContentSection
-      header={<div>Issues</div>}
-      content={<ContestedIssues
-        requestIssues={worksheetIssuesArray}
-        decisionIssues={[]}
-        hearingWorksheet
-      />}
-    />;
+    return <div className="cf-hearings-worksheet-data cf-hearings-worksheet-issues">
+      <ContentSection
+        header={<div>Issues</div>}
+        content={<ContestedIssues
+          requestIssues={worksheetIssuesArray}
+          decisionIssues={[]}
+          hearingWorksheet
+        />}
+      />
+    </div>;
   };
 
   render() {
