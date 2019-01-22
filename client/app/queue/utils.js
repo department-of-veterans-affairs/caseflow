@@ -89,7 +89,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       availableActions: task.attributes.available_actions,
       taskBusinessPayloads: task.attributes.task_business_payloads,
       caseReviewId: task.attributes.attorney_case_review_id,
-      timelineTitle: task.attributes.timelineTitle
+      timelineTitle: task.attributes.timeline_title
     };
 
     return acc;
@@ -160,7 +160,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       decisionPreparedBy: null,
       availableActions: task.attributes.available_actions,
       taskBusinessPayloads: task.attributes.task_business_payloads,
-      timelineTitle: task.attributes.timelineTitle
+      timelineTitle: task.attributes.timeline_title
     };
   });
 
