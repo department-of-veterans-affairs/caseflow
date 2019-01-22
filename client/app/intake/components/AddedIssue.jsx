@@ -64,7 +64,7 @@ class AddedIssue extends React.PureComponent {
     } else if (issue.vacolsId) {
       if (!legacyOptInApproved) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn;
-      } else if (!issue.eligibleForSocOptIn) {
+      } else if (issue.eligibleForSocOptIn === false) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible;
       }
     } else if (issue.beforeAma) {

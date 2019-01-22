@@ -72,7 +72,10 @@ CheckboxGroup.propTypes = {
   options: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
-      label: PropTypes.string
+      label: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.node
+      ])
     })
   ).isRequired,
   onChange: PropTypes.func.isRequired,

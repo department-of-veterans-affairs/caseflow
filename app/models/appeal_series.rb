@@ -210,6 +210,8 @@ class AppealSeries < ApplicationRecord
       :ftr
     when "RAMP Opt-in"
       :ramp
+    when "AMA SOC/SSOC Opt-in"
+      :statutory_opt_in
     when "Dismissed, Death", "Advance Withdrawn Death of Veteran"
       :death
     when "Reconsideration by Letter"

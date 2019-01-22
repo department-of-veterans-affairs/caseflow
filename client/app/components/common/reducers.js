@@ -1,7 +1,38 @@
 import { ACTIONS } from './actionTypes';
 import { update } from '../../util/ReducerUtil';
 
-export const initialState = {};
+export const initialState = {
+  dropdowns: {
+    judges: {},
+    hearingCoordinators: {},
+    regionalOffices: {}
+  }
+};
+
+const dropdownsReducer = (state = {}, action = {}) => {
+  switch (action.type) {
+  case ACTIONS.FETCH_DROPDOWN_DATA:
+    return update(state, {
+      [action.payload.dropdownName]: {
+        $set: {
+          options: null,
+          isFetching: true
+        }
+      }
+    });
+  case ACTIONS.RECEIVE_DROPDOWN_DATA:
+    return update(state, {
+      [action.payload.dropdownName]: {
+        $set: {
+          options: action.payload.data,
+          isFetching: false
+        }
+      }
+    });
+  default:
+    return state;
+  }
+};
 
 const commonComponentsReducer = (state = initialState, action = {}) => {
   switch (action.type) {
@@ -33,6 +64,13 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
     return update(state, {
       selectedHearingTime: {
         $set: action.payload.hearingTime
+      }
+    });
+  case ACTIONS.FETCH_DROPDOWN_DATA:
+  case ACTIONS.RECEIVE_DROPDOWN_DATA:
+    return update(state, {
+      dropdowns: {
+        $set: dropdownsReducer(state.dropdowns, action)
       }
     });
   default:
