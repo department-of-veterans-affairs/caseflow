@@ -703,10 +703,18 @@ describe ClaimReview do
   end
 
   describe "#search_table_ui_hash" do
+    let!(:claimants) { [create(:claimant), create(:claimant)] }
+    let!(:appeal) { create(:appeal) }
+    let!(:sc) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number, claimants: claimants) }
+
     it "returns review type" do
-      expect([*supplemental_claim].map(&:search_table_ui_hash)).to include(hash_including(
-                                                                             review_type: "supplemental_claim"
-                                                                           ))
+      expect([*sc].map(&:search_table_ui_hash)).to include(hash_including(
+                                                             review_type: "supplemental_claim"
+                                                           ))
+    end
+
+    it "removes duplicate claimant names, if they exist" do
+      expect([*sc].map(&:search_table_ui_hash).first[:claimant_names].length).to eq(1)
     end
   end
 

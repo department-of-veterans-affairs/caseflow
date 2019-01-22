@@ -128,7 +128,7 @@ class ClaimReview < DecisionReview
       veteran_file_number: veteran_file_number,
       veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
       end_products: end_product_establishments,
-      claimant_names: claimants.map(&:name),
+      claimant_names: claimants.map(&:name).uniq,
       review_type: self.class.to_s.underscore
     }
   end
