@@ -2,10 +2,18 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import Textarea from 'react-textarea-autosize';
+import { css } from 'glamor';
 import { connect } from 'react-redux';
 import { onEditWorksheetNotes } from '../actions/Issue';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import Table from '../../components/Table';
+
+const tableRowStyling = css({
+  '& > tr': {
+    '& > td:nth-child(1)': { width: '50%' },
+    '& > td:nth-child(2)': { width: '50%' }
+  }
+});
 
 class HearingWorksheetAmaIssues extends PureComponent {
 
@@ -17,7 +25,7 @@ class HearingWorksheetAmaIssues extends PureComponent {
     const tableColumns = [
       {
         header: 'Hearing Worksheet Notes',
-        align: 'center',
+        align: 'left',
         valueName: 'worksheetNotes'
       },
       {
@@ -28,14 +36,15 @@ class HearingWorksheetAmaIssues extends PureComponent {
     ];
 
     const tableRows = [{
-      worksheetNotes: <div><label visible={false} htmlFor={`${issue.id}-issue-worksheetNotes`}>Worksheet Notes</label>
+      worksheetNotes: <div>
+        <label className="hidden-field" htmlFor={`${issue.id}-issue-worksheetNotes`}>Worksheet Notes</label>
         <div>
           <Textarea
             name="worksheetNotes"
             id={`${issue.id}-issue-worksheetNotes`}
             value={issue.worksheet_notes || ''}
             onChange={this.onEditWorksheetNotes}
-            minRows={2}
+            minRows={5}
             maxRows={8}
             maxLength={300}
           />
@@ -47,8 +56,10 @@ class HearingWorksheetAmaIssues extends PureComponent {
       <Table
         columns={tableColumns}
         rowObjects={tableRows}
+        bodyStyling={tableRowStyling}
         summary="issues"
         slowReRendersAreOk
+        borderless
       />
     </div>;
   }
