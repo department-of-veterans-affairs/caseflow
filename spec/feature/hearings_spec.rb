@@ -291,6 +291,22 @@ RSpec.feature "Hearings" do
         expect(page).to have_content("These are the notes being taken here")
         expect(page).to have_content("This is military service")
       end
+
+      scenario "Can save preliminary impressions for ama hearings" do
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        find("label", text: "Re-Open").click
+        find("label", text: "Remand").click
+        find("label", text: "Allow").click
+        find("label", text: "Dismiss").click
+        find("label", text: "Deny").click
+
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        expect(find_field("Re-Open", visible: false)).to be_checked
+        expect(find_field("Remand", visible: false)).to be_checked
+        expect(find_field("Allow", visible: false)).to be_checked
+        expect(find_field("Dismiss", visible: false)).to be_checked
+        expect(find_field("Deny", visible: false)).to be_checked
+      end
     end
   end
 end

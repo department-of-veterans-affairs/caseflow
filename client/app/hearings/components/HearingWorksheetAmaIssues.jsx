@@ -42,6 +42,7 @@ class HearingWorksheetAmaIssues extends PureComponent {
         </label>
         <div>
           <Textarea
+            aria-label="worksheetNotes"
             name="worksheetNotes"
             id={`${issue.id}-issue-worksheetNotes`}
             value={issue.worksheet_notes || ''}
