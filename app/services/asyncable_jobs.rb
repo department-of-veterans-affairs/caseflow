@@ -20,6 +20,6 @@ class AsyncableJobs
     models.each do |klass|
       expired_jobs << klass.previously_attempted_ready_for_retry
     end
-    expired_jobs.flatten.sort_by(&:submitted_at_dtim)
+    expired_jobs.flatten.sort_by(&:asyncable_submitted_at)
   end
 end

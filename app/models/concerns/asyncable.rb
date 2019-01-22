@@ -111,7 +111,7 @@ module Asyncable
     !!self[self.class.submitted_at_column]
   end
 
-  def submitted_at_dtim
+  def asyncable_submitted_at
     self[self.class.submitted_at_column]
   end
 
