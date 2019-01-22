@@ -32,8 +32,4 @@ class V2::AppealSerializer < ActiveModel::Serializer
   attribute :evidence do
     []
   end
-
-  def appeal_status_v3_enabled?
-    FeatureToggle.enabled?(:api_appeal_status_v3)
-  end
 end
