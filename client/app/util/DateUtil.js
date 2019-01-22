@@ -38,7 +38,18 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
     return;
   }
 
-  return moment(dateString, dateFormat).format(expectedFormat);
+  let dateStringFormat = dateFormat;
+
+  // attempt to Do the Right Thing
+  if (typeof dateString === 'string' && dateFormat === 'YYYY-MM-DD') {
+    if (dateString.match(/^\d\d\/\d\d\/\d\d\d\d$/)) {
+      dateStringFormat = 'MM/DD/YYYY';
+    } else if (dateString.match(/^\d\d\d\d\//)) {
+      dateStringFormat = 'YYYY/MM/DD';
+    }
+  }
+
+  return moment(dateString, dateStringFormat).format(expectedFormat);
 };
 
 export const DateString = ({ date, dateFormat = 'MM/DD/YY', inputFormat = 'YYYY-MM-DD', style }) => <span {...style}>
