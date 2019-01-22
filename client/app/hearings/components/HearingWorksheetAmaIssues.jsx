@@ -36,8 +36,10 @@ class HearingWorksheetAmaIssues extends PureComponent {
     ];
 
     const tableRows = [{
-      worksheetNotes: <div>
-        <label className="hidden-field" htmlFor={`${issue.id}-issue-worksheetNotes`}>Worksheet Notes</label>
+      worksheetNotes: <div className="cf-form-textarea">
+        <label className="cf-hearings-worksheet-desc-label" htmlFor={`${issue.id}-issue-worksheetNotes`}>
+          Worksheet Notes
+        </label>
         <div>
           <Textarea
             name="worksheetNotes"
