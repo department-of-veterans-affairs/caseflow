@@ -168,7 +168,7 @@ class RegionalOffice
     timezone: "America/New_York",
     hold_hearings: true,
     facility_locator_id: "vba_313",
-    alternate_locations: ["vba_372"] },
+    alternate_locations: nil },
     "RO14" =>
   { label: "Roanoke regional office",
     city: "Roanoke",
@@ -176,7 +176,7 @@ class RegionalOffice
     timezone: "America/New_York",
     hold_hearings: true,
     facility_locator_id: "vba_314",
-    alternate_locations: ["vba_372"] },
+    alternate_locations: nil },
     "C" =>
   { label: "Central",
     city: "Washington",

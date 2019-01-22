@@ -94,7 +94,12 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def ro_facility_ids_for_state(state_code)
-    RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? || ro[:state] != state_code }
+    filter_states = if %w[VA MD].include? state_code
+                      ["DC", state_code]
+                    else
+                      [state_code]
+                    end
+    RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? || !filter_states.include?(ro[:state]) }
       .pluck(:facility_locator_id)
   end
 
