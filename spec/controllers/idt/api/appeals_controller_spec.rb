@@ -484,7 +484,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     end
 
     before do
-      allow(BvaDispatchTask).to receive(:list_of_assignees).and_return([user.css_id])
+      OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
 
       key, t = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
@@ -498,7 +498,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
     context "when some params are missing" do
       let(:params) { { appeal_id: root_task.appeal.external_id } }
-      before { BvaDispatchTask.create_and_assign(root_task) }
+      before { BvaDispatchTask.create_from_root_task(root_task) }
 
       it "should throw an error" do
         post :outcode, params: params
@@ -510,7 +510,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
 
     context "when citation_number parameter fails validation" do
       let(:citation_number) { "INVALID" }
-      before { BvaDispatchTask.create_and_assign(root_task) }
+      before { BvaDispatchTask.create_from_root_task(root_task) }
 
       it "should throw an error" do
         post :outcode, params: params
@@ -521,7 +521,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     end
 
     context "when single BvaDispatchTask exists for user and appeal combination" do
-      before { BvaDispatchTask.create_and_assign(root_task) }
+      before { BvaDispatchTask.create_from_root_task(root_task) }
 
       it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
         post :outcode, params: params
@@ -540,9 +540,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       let(:task_count) { 4 }
       before do
         task_count.times do
-          personal_task = BvaDispatchTask.create_and_assign(root_task)
+          org_task = BvaDispatchTask.create_from_root_task(root_task)
           # Set status of org-level task to completed to avoid getting caught by GenericTask.verify_org_task_unique.
-          personal_task.parent.update!(status: Constants.TASK_STATUSES.completed)
+          org_task.update!(status: Constants.TASK_STATUSES.completed)
         end
       end
 
