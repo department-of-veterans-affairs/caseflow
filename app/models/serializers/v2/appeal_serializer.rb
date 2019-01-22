@@ -1,19 +1,9 @@
 class V2::AppealSerializer < ActiveModel::Serializer
 
-  def type
-    if appeal_status_v3_enabled?
-      object.class.to_s.camelize(:lower)
-    else
-      :legacy_appeal
-    end
-  end
-
+  type :legacy_appeal
+  
   def id
-    if appeal_status_v3_enabled?
-      object.review_status_id
-    else
       object.vacols_id
-    end
   end
 
   attribute :vacols_ids, key: :appeal_ids

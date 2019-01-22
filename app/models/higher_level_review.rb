@@ -30,21 +30,17 @@ class HigherLevelReview < ClaimReview
   end
 
 ## needed for appeal status api
+    
   def review_status_id
-    return "HLR#{id}"
+    "HLR#{id}"
   end
 
-  def vacols_ids
-    #doesn't apply to HLRs
-    []
+  def linked_review_ids
+    Array.wrap(review_status_id)
   end
 
   def incomplete
-    return false
-  end
-
-  def type_code
-    # TODO: add logic to return - original, post_remand, post_cavc_remand, reconsideration, cue
+    false
   end
 
   def active?
@@ -52,44 +48,41 @@ class HigherLevelReview < ClaimReview
   end
 
   def description
-    #need to impelement
-  end
-
-  def aod
-    #doesn't apply to HLRs
-  end
-
-  def location
-    #will this always be aoj?
+    # need to impelement
   end
 
   def aoj
-    #add logic to return proper enum: - vba, vha, nca, other 
+    # neet to implement. add logic to return proper enum: - vba, vha, nca, other 
   end
 
   def program
-    #maps to benefit_type?
+    case benefit_type
+    when "voc_rehab"
+      "vre"
+    when "vha"
+      "medical"
+    when "nca"
+      "burial"
+    else
+      return benefit_type
+    end
   end
 
   def status_hash
-    #add logic to return: hlr_received, hlr_dta_error, hlr_decision, hlr_closed
+    # need to implement. returns the details object for the status
   end
 
   def alerts
-    #add logic to return alert enum
-  end
-
-  def docket_hash
-    #doesn't apply to HLRs
+    # need to implement. add logic to return alert enum
   end
 
   def issues
-    #get request and corresponding rating issue
+    # need to implement. get request and corresponding rating issue
     []
   end
 
   def events
-    # hlr_request, hlr_decision, hlr_dta_error, or hlr_other_close
+    # need to implement. hlr_request, hlr_decision, hlr_dta_error, or hlr_other_close
   end
 
   private
