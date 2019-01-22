@@ -117,8 +117,6 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       informalConference,
       legacyAppeals
     } = completedReview;
-    const ineligibleRequestIssues = requestIssues.filter((ri) => ri.ineligibleReason);
-    const vacolsOptInIssues = requestIssues.filter((ri) => ri.vacolsId && !ri.ineligibleReason);
 
     switch (intakeStatus) {
     case INTAKE_STATES.NONE:
@@ -129,6 +127,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.FINISH} />;
     default:
     }
+
+    const ineligibleRequestIssues = requestIssues.filter((ri) => ri.ineligibleReason);
+    const vacolsOptInIssues = requestIssues.filter((ri) => ri.vacolsId && !ri.ineligibleReason);
 
     if (completedReview.processedInCaseflow && formType !== 'appeal') {
       // we do not use Redirect because state no longer matters,
