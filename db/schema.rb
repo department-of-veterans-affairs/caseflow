@@ -468,10 +468,10 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.boolean "deny", default: false
     t.boolean "dismiss", default: false
     t.bigint "hearing_id", null: false
-    t.string "notes"
     t.boolean "remand", default: false
     t.boolean "reopen", default: false
     t.bigint "request_issue_id", null: false
+    t.string "worksheet_notes"
     t.index ["hearing_id"], name: "index_hearing_issue_notes_on_hearing_id"
     t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
   end
@@ -955,6 +955,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.datetime "deleted_at"
     t.boolean "deny", default: false
     t.string "description"
+    t.boolean "dismiss", default: false
     t.string "disposition"
     t.boolean "from_vacols"
     t.string "notes"

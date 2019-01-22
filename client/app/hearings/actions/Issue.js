@@ -19,6 +19,14 @@ export const onIssueNotesChange = (notes, issueId) => ({
   }
 });
 
+export const onEditWorksheetNotes = (notes, issueId) => ({
+  type: Constants.SET_WORKSHEET_ISSUE_NOTES,
+  payload: {
+    notes,
+    issueId
+  }
+});
+
 export const onIssueDispositionChange = (disposition, issueId) => ({
   type: Constants.SET_ISSUE_DISPOSITION,
   payload: {
@@ -165,8 +173,16 @@ export const toggleIssueDeleteModal = (issueId, isShowingModal) => ({
 export const saveIssues = (worksheetIssues) => (dispatch) => {
   _.forEach(worksheetIssues, (issue) => {
     if (issue.edited) {
-      ApiUtil.patch(`/hearings/worksheets/${issue.hearing.external_id}`, { data: { worksheet: {
-        hearing_issue_notes_attributes: [issue] } } }).
+
+      let url = `/hearings/appeals/${issue.appeal_id}`;
+      let data = { appeal: { worksheet_issues_attributes: [issue] } };
+
+      if (issue.docket_name === 'hearing') {
+        url = `/hearings/worksheets/${issue.hearing.external_id}`;
+        data = { worksheet: { hearing_issue_notes_attributes: [issue] } };
+      }
+
+      ApiUtil.patch(url, { data }).
         then(() => {
           dispatch({ type: Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE,
             payload: { issueId: issue.id },

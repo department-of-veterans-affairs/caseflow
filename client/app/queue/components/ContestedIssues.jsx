@@ -5,7 +5,7 @@ import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
 import { LinkSymbol } from '../../components/RenderFunctions';
-import HearingWorksheetPreImpressions from '../../hearings/components/HearingWorksheetPreImpressions';
+import HearingWorksheetAmaIssues from '../../hearings/components/HearingWorksheetAmaIssues';
 
 const TEXT_INDENTATION = '10px';
 
@@ -167,7 +167,7 @@ export default class ContestedIssues extends React.PureComponent {
               </div>
             </React.Fragment>
           }
-          { hearingWorksheet && <HearingWorksheetPreImpressions issue={issue} /> }
+          { hearingWorksheet && <HearingWorksheetAmaIssues issue={issue} /> }
         </div>
       </li>;
     })}

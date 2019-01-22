@@ -24,7 +24,7 @@ class HearingWorksheetPreImpressions extends PureComponent {
     this.props.onToggleOMO(omo, this.props.issue.id);
 
   render() {
-    let { issue, print } = this.props;
+    let { issue, print, ama } = this.props;
 
     return <div className="cf-hearings-worksheet-issues">
       <Checkbox label="Re-Open" name={`${issue.id}-${issue.appeal_id || issue.review_request_id}-chk_reopen`}
@@ -37,8 +37,8 @@ class HearingWorksheetPreImpressions extends PureComponent {
         onChange={this.onToggleRemand} value={issue.remand} disabled={print} />
       <Checkbox label="Dismiss" name={`${issue.id}-${issue.appeal_id || issue.review_request_id}-chk_dismiss`}
         onChange={this.onToggleDismiss} value={issue.dismiss} disabled={print} />
-      <Checkbox label="OMO" name={`${issue.id}-${issue.appeal_id || issue.review_request_id}-chk_omo`}
-        onChange={this.onToggleOMO} value={issue.omo} disabled={print} />
+      { !ama && <Checkbox label="OMO" name={`${issue.id}-${issue.appeal_id || issue.review_request_id}-chk_omo`}
+        onChange={this.onToggleOMO} value={issue.omo} disabled={print} /> }
     </div>;
   }
 }
@@ -58,8 +58,8 @@ const mapStateToProps = (state) => ({
 
 HearingWorksheetPreImpressions.propTypes = {
   issue: PropTypes.object.isRequired,
-  appeal: PropTypes.object.isRequired,
-  print: PropTypes.bool
+  print: PropTypes.bool,
+  ama: PropTypes.bool
 };
 
 export default connect(

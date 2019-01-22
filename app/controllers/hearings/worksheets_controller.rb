@@ -41,7 +41,7 @@ class Hearings::WorksheetsController < HearingsController
                                        :prepped,
                                        :summary,
                                        hearing_issue_notes_attributes: [:id, :allow, :deny, :remand,
-                                                                        :dismiss, :reopen, :notes])
+                                                                        :dismiss, :reopen, :worksheet_notes])
   end
 
   def hearing_worksheet

@@ -3,7 +3,7 @@ class CreateHearingIssueNotes < ActiveRecord::Migration[5.1]
     create_table :hearing_issue_notes do |t|
       t.belongs_to :request_issue, null: false
       t.belongs_to :hearing, null: false
-      t.string     :notes
+      t.string     :worksheet_notes
       t.boolean    :remand, default: false
       t.boolean    :reopen, default: false
       t.boolean    :dismiss, default: false
