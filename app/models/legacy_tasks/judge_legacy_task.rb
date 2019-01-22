@@ -16,10 +16,6 @@ class JudgeLegacyTask < LegacyTask
     ]
   end
 
-  def timeline_title
-    COPY::CASE_TIMELINE_JUDGE_TASK
-  end
-
   def self.from_vacols(record, appeal, user_id)
     task = super
     task.action = record.reassigned_to_judge_date.present? ? "review" : "assign"

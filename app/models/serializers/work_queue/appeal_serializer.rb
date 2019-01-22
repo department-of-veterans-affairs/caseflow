@@ -2,6 +2,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
+  attribute :timeline
+
   attribute :issues do
     object.eligible_request_issues.map do |issue|
       {
@@ -101,10 +103,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :decision_date do
     object.decision_date
-  end
-
-  attribute :nod_date do
-    object.receipt_date
   end
 
   attribute :certification_date do
