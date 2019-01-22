@@ -8,7 +8,6 @@ import commonComponentsReducer from '../components/common/reducers';
 import caseListReducer from '../queue/CaseList/CaseListReducer';
 import { workQueueReducer } from '../queue/reducers';
 import uiReducer from '../queue/uiReducer/uiReducer';
-import hearingDropdownDataReducer from './components/DataDropdowns/reducers';
 
 export const initialState = {};
 const hearingScheduleReducer = (state = initialState, action = {}) => {
@@ -310,18 +309,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.hearingDayModified
       }
     });
-  case ACTIONS.RECEIVE_JUDGES:
-    return update(state, {
-      activeJudges: {
-        $set: action.payload.activeJudges
-      }
-    });
-  case ACTIONS.RECEIVE_COORDINATORS:
-    return update(state, {
-      activeCoordinators: {
-        $set: action.payload.activeCoordinators
-      }
-    });
   case ACTIONS.ON_CLICK_REMOVE_HEARING_DAY:
     return update(state, {
       displayRemoveHearingDayModal: {
@@ -399,8 +386,7 @@ const combinedReducer = combineReducers({
   ui: uiReducer,
   caseList: caseListReducer,
   queue: workQueueReducer,
-  components: commonComponentsReducer,
-  hearingDropdownData: hearingDropdownDataReducer
+  components: commonComponentsReducer
 });
 
 export default timeFunction(

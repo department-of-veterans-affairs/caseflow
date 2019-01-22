@@ -7,7 +7,11 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import { fullWidth } from '../../queue/constants';
-import RoSelectorDropdown from '../../components/RoSelectorDropdown';
+import {
+  RegionalOfficeDropdown,
+  HearingCoordinatorDropdown,
+  JudgeDropdown
+} from '../../components/DataDropdowns';
 import DateSelector from '../../components/DateSelector';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
@@ -62,11 +66,6 @@ const titleStyling = css({
   marginBottom: 0,
   padding: 0
 });
-
-const centralOfficeStaticEntry = [{
-  label: 'Central',
-  value: 'C'
-}];
 
 class HearingDayAddModal extends React.Component {
   constructor(props) {
@@ -146,7 +145,7 @@ class HearingDayAddModal extends React.Component {
       request_type: this.props.requestType.value,
       scheduled_for: this.props.selectedHearingDay,
       judge_id: this.props.vlj.value,
-      bva_poc: this.props.coordinator.label,
+      bva_poc: this.props.coordinator.value,
       notes: this.props.notes,
       assign_room: this.props.roomRequired
     };
@@ -304,30 +303,33 @@ class HearingDayAddModal extends React.Component {
           onChange={this.onRequestTypeChange}
           options={requestTypeOptions} />
         {this.state.videoSelected &&
-        <RoSelectorDropdown
+        <RegionalOfficeDropdown
           label="Select Regional Office (RO)"
-          strongLabel
           errorMessage={this.state.roError ? this.getRoErrorMessages() : null}
-          onChange={this.onRegionalOfficeChange}
-          value={this.props.selectedRegionalOffice}
-          staticOptions={centralOfficeStaticEntry} />
+          onChange={(value, label) => this.onRegionalOfficeChange({
+            value,
+            label
+          })}
+          value={this.props.selectedRegionalOffice.value} />
         }
         {(this.state.videoSelected || this.state.centralOfficeSelected) &&
         <React.Fragment>
-          <SearchableDropdown
+          <JudgeDropdown
             name="vlj"
             label="Select VLJ (Optional)"
-            strongLabel
-            value={this.props.vlj}
-            onChange={this.onVljChange}
-            options={this.props.activeJudges} />
-          <SearchableDropdown
+            value={this.props.vlj.value}
+            onChange={(value, label) => this.onVljChange({
+              value,
+              label
+            })} />
+          <HearingCoordinatorDropdown
             name="coordinator"
             label="Select Hearing Coordinator (Optional)"
-            strongLabel
-            value={this.props.coordinator}
-            onChange={this.onCoordinatorChange}
-            options={this.props.activeCoordinators} />
+            value={this.props.coordinator.value}
+            onChange={(value, label) => this.onCoordinatorChange({
+              value,
+              label
+            })} />
         </React.Fragment>
         }
         <TextareaField
@@ -373,16 +375,14 @@ HearingDayAddModal.propTypes = {
 
 const mapStateToProps = (state) => ({
   hearingSchedule: state.hearingSchedule.hearingSchedule,
-  selectedRegionalOffice: state.components.selectedRegionalOffice,
+  selectedRegionalOffice: state.components.selectedRegionalOffice || {},
   regionalOffices: state.components.regionalOffices,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
   requestType: state.hearingSchedule.requestType,
-  vlj: state.hearingSchedule.vlj,
-  coordinator: state.hearingSchedule.coordinator,
+  vlj: state.hearingSchedule.vlj || {},
+  coordinator: state.hearingSchedule.coordinator || {},
   notes: state.hearingSchedule.notes,
-  roomRequired: state.hearingSchedule.roomRequired,
-  activeJudges: state.hearingSchedule.activeJudges,
-  activeCoordinators: state.hearingSchedule.activeCoordinators
+  roomRequired: state.hearingSchedule.roomRequired
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
