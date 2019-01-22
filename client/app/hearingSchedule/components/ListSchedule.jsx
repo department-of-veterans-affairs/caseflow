@@ -24,10 +24,6 @@ const downloadButtonStyling = css({
   marginTop: '60px'
 });
 
-export const hearingSchedStyling = css({
-  marginTop: '50px'
-});
-
 const formatVljName = (lastName, firstName) => {
   if (lastName && firstName) {
     return `${lastName}, ${firstName}`;
@@ -114,7 +110,9 @@ class ListSchedule extends React.Component {
 
     return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.scheduledFor, 'asc').
       map((hearingDay) => ({
-        scheduledFor: forCsv ? hearingDay.scheduledFor : <Link to={`/schedule/docket/${hearingDay.id}`}>{moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}</Link>,
+        scheduledFor: forCsv ? hearingDay.scheduledFor : <Link to={`/schedule/docket/${hearingDay.id}`}>
+          {moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
+        </Link>,
         requestType: hearingDay.requestType,
         regionalOffice: hearingDay.regionalOffice,
         room: hearingDay.room,
