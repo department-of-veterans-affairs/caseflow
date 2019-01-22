@@ -13,16 +13,22 @@ describe AsyncableJobs do
              establishment_attempted_at: 7.days.ago,
              veteran_file_number: veteran.file_number)
     end
+    let!(:sc_not_submitted) do
+      create(:supplemental_claim,
+             establishment_attempted_at: 7.days.ago,
+             veteran_file_number: veteran.file_number)
+    end
 
     it "returns an Array of model instances that consume Asyncable concern" do
       expect(subject.jobs).to be_a(Array)
-      expect(subject.jobs.length).to eq(2)
+      expect(subject.jobs.length).to eq(3)
       expect(subject.jobs).to include(hlr)
       expect(subject.jobs).to include(sc)
+      expect(subject.jobs).to include(sc_not_submitted)
     end
 
     it "sorts by the submited_at column, descending order" do
-      expect(subject.jobs).to eq([hlr, sc])
+      expect(subject.jobs).to eq([hlr, sc, sc_not_submitted])
     end
   end
 
