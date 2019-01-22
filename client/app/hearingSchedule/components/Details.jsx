@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'glamor';
@@ -12,6 +14,7 @@ import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
 import DetailsSections, { Overview, LegacyWarning } from './DetailsSections';
+import { onChangeFormData } from '../../components/common/actions';
 
 const row = css({
   marginLeft: '-15px',
@@ -31,39 +34,16 @@ const inputFix = css({
   }
 });
 
-export default class HearingDetails extends React.Component {
+const HEARING_DETAILS_FORM_NAME = 'hearingDetails';
+const TRANSCRIPTION_DETAILS_FORM_NAME = 'transcriptionDetails';
 
+class HearingDetails extends React.Component {
   constructor(props) {
     super(props);
 
-    const { hearing } = this.props;
-    const transcription = hearing.transcription || {};
-
     this.state = {
-      hearing: {
-        bvaPoc: hearing.bvaPoc,
-        judgeId: hearing.judgeId ? hearing.judgeId.toString() : null,
-        evidenceWindowWaived: hearing.evidenceWindowWaived || false,
-        room: hearing.room,
-        notes: hearing.notes
-      },
-      transcription: {
-        // Transcription Details
-        taskNumber: transcription.taskNumber,
-        transcriber: transcription.transcriber,
-        sentToTranscriberDate: DateUtil.formatDateStr(transcription.sentToTranscriberDate),
-        expectedReturnDate: DateUtil.formatDateStr(transcription.expectedReturnDate),
-        uploadedToVbmsDate: DateUtil.formatDateStr(transcription.uploadedToVbmsDate),
-        // Transcription Problem
-        problemType: transcription.problemType,
-        problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate),
-        requestedRemedy: transcription.requestedRemedy,
-        // Transcript Request
-        copyRequested: transcription.copyRequested || false,
-        copySentDate: DateUtil.formatDateStr(transcription.copySentDate)
-      },
       disabled: false,
-      isLegacy: hearing.docketName !== 'hearing',
+      isLegacy: this.props.hearing.docketName !== 'hearing',
       updated: false,
       loading: false,
       success: false,
@@ -71,24 +51,43 @@ export default class HearingDetails extends React.Component {
     };
   }
 
-  setHearing = (key, value) => {
-    this.setState({
-      hearing: {
-        ...this.state.hearing,
-        [key]: value
-      },
-      updated: true
+  componentDidMount() {
+    const { hearing } = this.props;
+    const transcription = hearing.transcription || {};
+
+    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, {
+      bvaPoc: hearing.bvaPoc,
+      judgeId: hearing.judgeId ? hearing.judgeId.toString() : null,
+      evidenceWindowWaived: hearing.evidenceWindowWaived || false,
+      room: hearing.room,
+      notes: hearing.notes
+    });
+
+    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, {
+      // Transcription Details
+      taskNumber: transcription.taskNumber,
+      transcriber: transcription.transcriber,
+      sentToTranscriberDate: DateUtil.formatDateStr(transcription.sentToTranscriberDate),
+      expectedReturnDate: DateUtil.formatDateStr(transcription.expectedReturnDate),
+      uploadedToVbmsDate: DateUtil.formatDateStr(transcription.uploadedToVbmsDate),
+      // Transcription Problem
+      problemType: transcription.problemType,
+      problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate),
+      requestedRemedy: transcription.requestedRemedy,
+      // Transcript Request
+      copyRequested: transcription.copyRequested || false,
+      copySentDate: DateUtil.formatDateStr(transcription.copySentDate)
     });
   }
 
+  setHearing = (key, value) => {
+    this.props.onChangeFormData(HEARING_DETAILS_FORM_NAME, { [key]: value });
+    this.setState({ updated: true });
+  }
+
   setTranscription = (key, value) => {
-    this.setState({
-      transcription: {
-        ...this.state.transcription,
-        [key]: value
-      },
-      updated: true
-    });
+    this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, { [key]: value });
+    this.setState({ updated: true });
   }
 
   convertDatesForApi = (data) => {
@@ -104,16 +103,16 @@ export default class HearingDetails extends React.Component {
   }
 
   submit = () => {
-    const { hearing: { externalId } } = this.props;
-    const { updated, hearing, transcription } = this.state;
+    const { hearing: { externalId }, hearingDetailsForm, transcriptionDetailsForm } = this.props;
+    const { updated } = this.state;
 
     if (!updated) {
       return;
     }
 
     const data = {
-      hearing: this.convertDatesForApi(hearing),
-      transcription: this.convertDatesForApi(transcription)
+      hearing: this.convertDatesForApi(hearingDetailsForm),
+      transcription: this.convertDatesForApi(transcriptionDetailsForm)
     };
 
     this.setState({ loading: true });
@@ -142,7 +141,9 @@ export default class HearingDetails extends React.Component {
       vbmsId
     } = this.props.hearing;
 
-    const { transcription, hearing, disabled, success, error, isLegacy } = this.state;
+    const { hearingDetailsForm, transcriptionDetailsForm } = this.props;
+
+    const { disabled, success, error, isLegacy } = this.state;
 
     return (
       <AppSegment filledBackground>
@@ -171,8 +172,8 @@ export default class HearingDetails extends React.Component {
             <DetailsSections
               setTranscription={this.setTranscription}
               setHearing={this.setHearing}
-              transcription={transcription}
-              hearing={hearing}
+              transcription={transcriptionDetailsForm || {}}
+              hearing={hearingDetailsForm || {}}
               disabled={disabled} />}
           {isLegacy &&
             <LegacyWarning />}
@@ -201,3 +202,17 @@ HearingDetails.propTypes = {
   hearing: PropTypes.object.isRequired,
   goBack: PropTypes.func
 };
+
+const mapStateToProps = (state) => ({
+  hearingDetailsForm: state.components.forms[HEARING_DETAILS_FORM_NAME],
+  transcriptionDetailsForm: state.components.forms[TRANSCRIPTION_DETAILS_FORM_NAME]
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onChangeFormData
+}, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HearingDetails);

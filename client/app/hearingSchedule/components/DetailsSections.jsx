@@ -106,7 +106,7 @@ const Details = ({
           label="Yes, Waive 90 Day Evidence Hold"
           name="evidenceWindowWaived"
           disabled={readOnly}
-          value={evidenceWindowWaived}
+          value={evidenceWindowWaived || false}
           onChange={(val) => set('evidenceWindowWaived', val)}
         />
       </div>
@@ -280,7 +280,7 @@ const TranscriptionRequest = ({
       <Checkbox
         name="copyRequested"
         label="Yes, Transcript Requested"
-        value={copyRequested}
+        value={copyRequested || false}
         disabled={readOnly}
         onChange={(val) => set('copyRequested', val)}
       />
