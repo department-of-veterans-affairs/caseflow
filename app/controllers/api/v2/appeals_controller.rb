@@ -37,6 +37,10 @@ class Api::V2::AppealsController < Api::ApplicationController
     end
   end
 
+  def hlrs
+    @hlrs ||= HigherLevelReview.where(veteran_file_number: vbms_id)
+  end
+
   def vbms_id
     @vbms_id ||= fetch_vbms_id
   end
