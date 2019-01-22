@@ -37,6 +37,10 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
     }
   end
 
+  attribute :tasks_url do
+    task.assigned_to.tasks_url
+  end
+
   attribute :id
 
   attribute :created_at

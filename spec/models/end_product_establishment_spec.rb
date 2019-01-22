@@ -326,7 +326,7 @@ describe EndProductEstablishment do
             description: "more decisionz",
             special_issues: array_including(
               { code: "SSR", narrative: "Same Station Review" },
-              code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
+              code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O
             )
           ),
           user: current_user
@@ -806,6 +806,14 @@ describe EndProductEstablishment do
         subject
         expect(SupplementalClaim.find_by(decision_review_remanded: source)).to be_nil
       end
+    end
+  end
+
+  context "#search_table_ui_hash" do
+    it "sets a null modifier to empty string so it displays correctly" do
+      expect([*end_product_establishment].map(&:search_table_ui_hash)).to include(hash_including(
+                                                                                    modifier: ""
+                                                                                  ))
     end
   end
 end
