@@ -71,6 +71,11 @@ class EndProductEstablishment < ApplicationRecord
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2910/
         TransientBGSSyncError.new(error, epe)
+      when /The Tuxedo service is down/
+        #  Similar to above, an outage of connection to BDN.
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2926/
+        TransientBGSSyncError.new(error, epe)
       when /Connection timed out - connect\(2\) for "bepprod.vba.va.gov" port 443/
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
         TransientBGSSyncError.new(error, epe)
