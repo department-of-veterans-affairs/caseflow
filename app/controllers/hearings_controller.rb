@@ -16,8 +16,8 @@ class HearingsController < ApplicationController
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
       HearingRepository.load_vacols_data(hearing)
     else
+      Transcription.find_or_create_by(hearing: hearing)
       hearing.update!(update_params)
-      update_transcription if params["transcription"]
     end
 
     render json: hearing.to_hash(current_user.id)
@@ -41,10 +41,6 @@ class HearingsController < ApplicationController
         hearing.appeal
       )
     end
-  end
-
-  def update_transcription
-    Transcription.find_or_initialize_by(hearing: hearing).update(update_transcription_params)
   end
 
   def check_hearing_prep_out_of_service
@@ -95,21 +91,13 @@ class HearingsController < ApplicationController
                                      :judge_id,
                                      :room,
                                      :bva_poc,
-                                     :evidence_window_waived)
-  end
-
-  def update_transcription_params
-    params.require("transcription").permit(
-      :copy_requested,
-      :copy_sent_date,
-      :expected_return_date,
-      :problem_notice_sent_date,
-      :problem_type,
-      :requested_remedy,
-      :sent_to_transcriber_date,
-      :task_number,
-      :transcriber,
-      :uploaded_to_vbms_date
-    )
+                                     :evidence_window_waived,
+                                     transcription_attributes: [
+                                       :copy_requested, :copy_sent_date,
+                                       :expected_return_date, :problem_notice_sent_date,
+                                       :problem_type, :requested_remedy,
+                                       :sent_to_transcriber_date, :task_number,
+                                       :transcriber, :uploaded_to_vbms_date
+                                     ])
   end
 end

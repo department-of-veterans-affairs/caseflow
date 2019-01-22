@@ -22,6 +22,8 @@ class Hearing < ApplicationRecord
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
 
+  accepts_nested_attributes_for :transcription, allow_destroy: true
+
   HEARING_TYPES = {
     V: "Video",
     T: "Travel",

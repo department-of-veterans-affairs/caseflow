@@ -111,8 +111,10 @@ class HearingDetails extends React.Component {
     }
 
     const data = {
-      hearing: this.convertDatesForApi(hearingDetailsForm),
-      transcription: this.convertDatesForApi(transcriptionDetailsForm)
+      hearing: {
+        ...this.convertDatesForApi(hearingDetailsForm),
+        transcription_attributes: this.convertDatesForApi(transcriptionDetailsForm)
+      }
     };
 
     this.setState({ loading: true });
@@ -123,13 +125,15 @@ class HearingDetails extends React.Component {
       this.setState({
         updated: false,
         loading: false,
-        success: true
+        success: true,
+        error: false
       });
     }).
       catch((error) => {
         this.setState({
           loading: false,
-          error: error.message
+          error: error.message,
+          success: false
         });
       });
   }
@@ -183,14 +187,16 @@ class HearingDetails extends React.Component {
               onClick={this.props.goBack}
               style={{ float: 'left' }}
             >Cancel</a>
-            <Button
-              name="Save"
-              disabled={!this.state.updated || this.state.disabled}
-              loading={this.state.loading}
-              className="usa-button"
-              onClick={this.submit}
-              styling={css({ float: 'right' })}
-            />
+            <span {...css({ float: 'right' })}>
+              <Button
+                name="Save"
+                disabled={!this.state.updated || this.state.disabled}
+                loading={this.state.loading}
+                className="usa-button"
+                onClick={this.submit}
+                styling={css({ float: 'right' })}
+              />
+            </span>
           </div>
         </div>
       </AppSegment>
