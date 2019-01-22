@@ -16,29 +16,29 @@ class HearingWorksheetAmaIssues extends PureComponent {
 
     const tableColumns = [
       {
-          header: 'Hearing Worksheet Notes',
-          align: 'center',
-          valueName: 'worksheetNotes'
+        header: 'Hearing Worksheet Notes',
+        align: 'center',
+        valueName: 'worksheetNotes'
       },
       {
-          header: 'Preliminary Impressions',
-          align: 'left',
-          valueName: 'preliminaryImpressions'
+        header: 'Preliminary Impressions',
+        align: 'left',
+        valueName: 'preliminaryImpressions'
       }
     ];
 
     const tableRows = [{
       worksheetNotes: <div><label visible={false} htmlFor={`${issue.id}-issue-worksheetNotes`}>Worksheet Notes</label>
         <div>
-        <Textarea
-          name="worksheetNotes"
-          id={`${issue.id}-issue-worksheetNotes`}
-          value={issue.worksheet_notes || ''}
-          onChange={this.onEditWorksheetNotes}
-          minRows={2}
-          maxRows={8}
-          maxLength={300}
-        />
+          <Textarea
+            name="worksheetNotes"
+            id={`${issue.id}-issue-worksheetNotes`}
+            value={issue.worksheet_notes || ''}
+            onChange={this.onEditWorksheetNotes}
+            minRows={2}
+            maxRows={8}
+            maxLength={300}
+          />
         </div></div>,
       preliminaryImpressions: <HearingWorksheetPreImpressions ama issue={issue} />
     }];
