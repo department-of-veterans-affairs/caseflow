@@ -14,6 +14,8 @@ import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
+import { allTasksForTimeline } from '../selectors';
+import type { State } from './types/state';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -63,15 +65,23 @@ const greyDotTimelineStyling = css({ padding: '5px 0px 0px 5px' });
 class TaskRows extends React.PureComponent {
   constructor(props) {
     super(props);
+    let taskVisibiltyObj = {}
+    this.props.timelineTasks.forEach((task) => taskVisibiltyObj[task.uniqueId] = false)
+
     this.state = {
-      taskInstructionsIsVisible: false
+      taskInstructionsIsVisible: false,
+      taskInstructionsIsVisibleObj: taskVisibiltyObj
     };
   }
 
-  toggleTaskInstructionsVisibility = () => {
-    const prevState = this.state.taskInstructionsIsVisible;
-
+  toggleTaskInstructionsVisibility = (task) => {
+    let prevState = this.state.taskInstructionsIsVisible;
     this.setState({ taskInstructionsIsVisible: !prevState });
+
+    let previousState = this.state.taskInstructionsIsVisibleObj;
+    previousState[task.uniqueId] = !previousState[task.uniqueId];
+    this.setState({ taskInstructionsIsVisibleObj: previousState });
+    console.log(this.state.taskInstructionsIsVisibleObj);
   }
 
   daysSinceTaskAssignmentListItem = (task) => {
@@ -159,6 +169,8 @@ class TaskRows extends React.PureComponent {
     if (!task.instructions || !task.instructions.length > 0) {
       return null;
     }
+    console.log(task.uniqueId)
+    console.log(this.state.taskInstructionsIsVisibleObj[task.uniqueId])
 
     return <div>
       { this.state.taskInstructionsIsVisible &&
@@ -172,7 +184,7 @@ class TaskRows extends React.PureComponent {
         id={task.uniqueId}
         name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
           COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
-        onClick={this.toggleTaskInstructionsVisibility} />
+        onClick={() => this.toggleTaskInstructionsVisibility(task)} />
     </div>;
   }
 
@@ -189,6 +201,9 @@ class TaskRows extends React.PureComponent {
       taskList,
       timeline
     } = this.props;
+
+    console.log('--TaskRows--')
+    console.log(this)
 
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
@@ -209,7 +224,8 @@ class TaskRows extends React.PureComponent {
               { this.daysWaitingListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
-          <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',task.completedOn ? '' : greyDotTimelineStyling].join(' ')} >
+          <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
+            task.completedOn ? '' : greyDotTimelineStyling].join(' ')} >
             { task.completedOn ? <GreenCheckmark /> : <GrayDot /> }
             { (index < taskList.length-1) && <div {...grayLineStyling}
               className={timeline ? grayLineTimelineStyling : ''} /> }
@@ -254,9 +270,11 @@ class TaskRows extends React.PureComponent {
   }
 }
 
-const mapStateToProps = () => {
+//const mapStateToProps = () => {
+const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
+    timelineTasks: allTasksForTimeline(state, { appealId: ownProps.appeal.externalId })
   };
 };
 
