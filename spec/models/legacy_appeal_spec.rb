@@ -61,6 +61,20 @@ describe LegacyAppeal do
       expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
       expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
     end
+
+    context "receipt_date is nil" do
+      let(:receipt_date) { nil }
+
+      scenario "always returns false" do
+        allow(appeal).to receive(:active?).and_return(false)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(Time.zone.today)
+        allow(appeal).to receive(:nod_date).and_return(Time.zone.today)
+
+        expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
+    end
   end
 
   context "#documents_with_type" do
@@ -179,20 +193,6 @@ describe LegacyAppeal do
         expect(subject.first).to have_attributes(vacols_date: vacols_case.bfssoc1)
         expect(subject.last).to have_attributes(vacols_date: vacols_case.bfssoc2)
       end
-    end
-  end
-
-  context "#v1_events" do
-    subject { appeal.v1_events }
-
-    let(:vacols_case) do
-      create(:case_with_soc)
-    end
-
-    it "returns list of events sorted from oldest to newest by date" do
-      expect(subject.length > 1).to be_truthy
-      expect(subject.first.date.to_date).to eq(vacols_case.bfdnod)
-      expect(subject.first.type).to eq(:nod)
     end
   end
 
@@ -412,10 +412,21 @@ describe LegacyAppeal do
       create(:case, documents: documents)
     end
 
-    subject { appeal.number_of_documents }
+    context "Number of documents from vbms" do
+      subject { appeal.number_of_documents }
 
-    it "should return number of documents" do
-      expect(subject).to eq 3
+      it "should return number of documents" do
+        expect(subject).to eq 3
+      end
+    end
+
+    context "Number of documents from caseflow" do
+      subject { appeal.number_of_documents_from_caseflow }
+
+      it "should return number of documents" do
+        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
+        expect(subject).to eq 3
+      end
     end
   end
 
@@ -435,13 +446,17 @@ describe LegacyAppeal do
     context "when certification_date is nil" do
       let(:certification_date) { nil }
 
-      it { is_expected.to eq 0 }
+      it do
+        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
+        is_expected.to eq 0
+      end
     end
 
     context "when certification_date is set" do
       let(:certification_date) { 2.days.ago }
 
       it do
+        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
         is_expected.to eq 1
       end
     end
@@ -1789,25 +1804,6 @@ describe LegacyAppeal do
       it "includes issues in hash" do
         expect(subject["issues"]).to eq(issues.map(&:attributes))
       end
-    end
-  end
-
-  context ".for_api" do
-    subject { LegacyAppeal.for_api(vbms_id: bfcorlid) }
-    let(:bfcorlid) { "VBMS_ID" }
-    let(:case_with_form_9) { create(:case_with_form_9, :type_original, bfcorlid: bfcorlid) }
-    let!(:veteran_appeals) do
-      [
-        create(:case_with_soc, :type_original, bfcorlid: bfcorlid),
-        create(:case_with_soc, :type_reconsideration, bfcorlid: bfcorlid),
-        case_with_form_9,
-        create(:case, :type_original, bfcorlid: bfcorlid)
-      ]
-    end
-
-    it "returns filtered appeals with events only for veteran sorted by latest event date" do
-      expect(subject.length).to eq(2)
-      expect(subject.first.form9_date.to_date).to eq(case_with_form_9.bfd19)
     end
   end
 

@@ -10,7 +10,7 @@ module HearingMapper
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
       {
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_info[:date]),
+        scheduled_for: VacolsHelper.format_datetime_with_utc_timezone(hearing_info[:scheduled_for]),
         notes: notes_to_vacols_format(hearing_info[:notes]),
         disposition: disposition_to_vacols_format(hearing_info[:disposition], hearing_info.keys),
         hold_open: hold_open_to_vacols_format(hearing_info[:hold_open]),
@@ -23,7 +23,7 @@ module HearingMapper
         bva_poc: hearing_info[:bva_poc],
         judge_id: hearing_info[:judge_id]
       }.select do |k, _v|
-        hearing_info.keys.map(&:to_sym).include?(k) || (k.to_sym == :hearing_date && hearing_info[:date])
+        hearing_info.keys.map(&:to_sym).include?(k)
         # only send updates to key/values that are passed
       end
     end
@@ -31,7 +31,7 @@ module HearingMapper
     def bfha_vacols_code(hearing_record)
       case hearing_record.hearing_disp
       when "H"
-        code_based_on_hearing_type(hearing_record.hearing_type.to_sym)
+        code_based_on_request_type(hearing_record.hearing_type.to_sym)
       when "P"
         nil
       when "C"
@@ -47,7 +47,7 @@ module HearingMapper
     # asctime - returns a canonical string representation of time
     def datetime_based_on_type(datetime:, regional_office_key:, type:)
       datetime = VacolsHelper.normalize_vacols_datetime(datetime)
-      return datetime if type == :central_office
+      return datetime if type == "C"
 
       datetime.asctime.in_time_zone(timezone(regional_office_key)).in_time_zone("Eastern Time (US & Canada)")
     end
@@ -60,7 +60,7 @@ module HearingMapper
 
     private
 
-    def code_based_on_hearing_type(type)
+    def code_based_on_request_type(type)
       return "1" if type == :C
       return "2" if type == :T
       return "6" if type == :V
@@ -69,12 +69,14 @@ module HearingMapper
     def representative_name_to_vacols_format(value)
       return if value.nil?
       fail(InvalidRepresentativeNameError) if !value.is_a?(String)
+
       value[0, 25]
     end
 
     def notes_to_vacols_format(value)
       return if value.nil?
       fail(InvalidNotesError) if !value.is_a?(String)
+
       value[0, 100]
     end
 
@@ -82,29 +84,34 @@ module HearingMapper
       vacols_code = VACOLS::CaseHearing::HEARING_DISPOSITIONS.key(value.try(:to_sym))
       # disposition cannot be nil
       fail(InvalidDispositionError) if keys.include?(:disposition) && (value.blank? || vacols_code.blank?)
+
       vacols_code
     end
 
     def hold_open_to_vacols_format(value)
       fail(InvalidHoldOpenError) if !value.nil? && (!value.is_a?(Integer) || value < 0 || value > 90)
+
       value
     end
 
     def aod_to_vacols_format(value)
       vacols_code = VACOLS::CaseHearing::HEARING_AODS.key(value.try(:to_sym))
       fail(InvalidAodError) if !value.nil? && vacols_code.blank?
+
       vacols_code
     end
 
     def add_on_to_vacols_format(value)
       vacols_code = VACOLS::CaseHearing::BOOLEAN_MAP.key(value)
       fail(InvalidAddOnError) if value && vacols_code.blank?
+
       vacols_code
     end
 
     def transcript_requested_to_vacols_format(value)
       vacols_code = VACOLS::CaseHearing::BOOLEAN_MAP.key(value)
       fail(InvalidTranscriptRequestedError) if value && vacols_code.blank?
+
       vacols_code
     end
   end

@@ -19,14 +19,14 @@ describe HearingDay do
 
     context "add a hearing with only required attributes - VACOLS" do
       let(:hearing_hash) do
-        { hearing_type: "C",
-          hearing_date: test_hearing_date_vacols,
+        { request_type: "C",
+          scheduled_for: test_hearing_date_vacols,
           room: "1" }
       end
 
       it "creates hearing with required attributes" do
-        expect(hearing[:hearing_type]).to eq "C"
-        expect(hearing[:hearing_date].strftime("%Y-%m-%d"))
+        expect(hearing[:request_type]).to eq "C"
+        expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
           .to eq test_hearing_date_vacols.strftime("%Y-%m-%d")
         expect(hearing[:room]).to eq "1"
       end
@@ -34,47 +34,30 @@ describe HearingDay do
 
     context "add a hearing with only required attributes - Caseflow" do
       let(:hearing_hash) do
-        { hearing_type: "C",
-          hearing_date: test_hearing_date_caseflow,
+        { request_type: "C",
+          scheduled_for: test_hearing_date_caseflow,
           room: "1" }
       end
 
       it "creates hearing with required attributes" do
-        expect(hearing[:hearing_type]).to eq "C"
-        expect(hearing[:hearing_date].strftime("%Y-%m-%d"))
+        expect(hearing[:request_type]).to eq "C"
+        expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d")
         expect(hearing[:room]).to eq "1"
       end
     end
 
-    context "add a video hearing - VACOLS" do
-      let(:hearing_hash) do
-        { hearing_type: "C",
-          hearing_date: test_hearing_date_vacols,
-          regional_office: "RO89",
-          room: "5" }
-      end
-
-      it "creates a video hearing" do
-        expect(hearing[:hearing_type]).to eq "C"
-        expect(hearing[:hearing_date].strftime("%Y-%m-%d %H:%M:%S"))
-          .to eq test_hearing_date_vacols.strftime("%Y-%m-%d %H:%M:%S")
-        expect(hearing[:regional_office]).to eq "RO89"
-        expect(hearing[:room]).to eq "5"
-      end
-    end
-
     context "add a video hearing - Caseflow" do
       let(:hearing_hash) do
-        { hearing_type: "C",
-          hearing_date: test_hearing_date_caseflow,
+        { request_type: "C",
+          scheduled_for: test_hearing_date_caseflow,
           regional_office: "RO89",
           room: "5" }
       end
 
       it "creates a video hearing" do
-        expect(hearing[:hearing_type]).to eq "C"
-        expect(hearing[:hearing_date].strftime("%Y-%m-%d %H:%M:%S"))
+        expect(hearing[:request_type]).to eq "C"
+        expect(hearing[:scheduled_for].strftime("%Y-%m-%d %H:%M:%S"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d %H:%M:%S")
         expect(hearing[:regional_office]).to eq "RO89"
         expect(hearing[:room]).to eq "5"
@@ -83,10 +66,10 @@ describe HearingDay do
   end
 
   context "update hearing" do
-    let(:hearing_day) { create(:hearing_day, hearing_type: "V") }
+    let(:hearing_day) { create(:hearing_day, request_type: "V") }
     let(:hearing_hash) do
-      { hearing_type: "V",
-        hearing_date: Date.new(2019, 12, 7),
+      { request_type: "V",
+        scheduled_for: Date.new(2019, 12, 7),
         regional_office: "RO89",
         room: "5",
         lock: true }
@@ -95,8 +78,8 @@ describe HearingDay do
     it "updates attributes" do
       HearingDay.find(hearing_day.id).update!(hearing_hash)
       updated_hearing_day = HearingDay.find(hearing_day.id).reload
-      expect(updated_hearing_day.hearing_type).to eql("V")
-      expect(updated_hearing_day.hearing_date).to eql(Date.new(2019, 12, 7))
+      expect(updated_hearing_day.request_type).to eql("V")
+      expect(updated_hearing_day.scheduled_for).to eql(Date.new(2019, 12, 7))
       expect(updated_hearing_day.regional_office).to eql("RO89")
       expect(updated_hearing_day.room).to eql("5")
       expect(updated_hearing_day.lock).to eql(true)
@@ -137,7 +120,7 @@ describe HearingDay do
   end
 
   context "load Video days for a range date" do
-    let(:hearings) do
+    let!(:hearings) do
       [create(:case_hearing),
        create(:case_hearing)]
     end
@@ -145,7 +128,7 @@ describe HearingDay do
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "RO13") }
 
     it "gets hearings for a date range" do
-      expect(subject.size).to eq 2
+      expect(subject[:vacols_hearings].size).to eq 2
     end
   end
 
@@ -158,9 +141,8 @@ describe HearingDay do
 
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "C") }
 
-    it "gets hearings for a date range" do
-      hearings
-      expect(subject.size).to eq 2
+    it "shouldn't load any since we're past HearingDay::CASEFLOW_CO_PARENT_DATE" do
+      expect(subject[:vacols_hearings].size).to eq 0
     end
   end
 
@@ -186,15 +168,15 @@ describe HearingDay do
 
     context "get parent and children structure" do
       subject do
-        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
-                                                     hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
+        HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                   hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
       end
 
       it "returns nested hash structure" do
         expect(subject.size).to eq 1
         expect(subject[0][:hearings].size).to eq 1
-        expect(subject[0][:hearing_type]).to eq "V"
-        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
+        expect(subject[0][:request_type]).to eq "V"
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
       end
     end
   end
@@ -222,7 +204,6 @@ describe HearingDay do
     let(:vacols_case2) do
       create(
         :case,
-        folder: create(:folder),
         bfregoff: "RO13",
         bfcurloc: "57",
         bfdocind: "V"
@@ -235,18 +216,81 @@ describe HearingDay do
       create(:case_hearing, :disposition_postponed, folder_nr: appeal2.vacols_id, vdkey: parent_hearing.hearing_pkseq)
     end
 
-    context "get video hearings neither postponed or cancelled" do
-      subject do
-        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
-                                                     hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
-      end
+    subject do
+      HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                 hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
+    end
 
+    context "get video hearings neither postponed or cancelled" do
       it "returns nested hash structure" do
         expect(subject.size).to eq 1
         expect(subject[0][:hearings].size).to eq 1
-        expect(subject[0][:hearing_type]).to eq "V"
-        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
-        expect(subject[0][:hearings][0][:hearing_disp]).to eq nil
+        expect(subject[0][:request_type]).to eq "V"
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
+        expect(subject[0][:hearings][0]["hearing_disp"]).to eq nil
+      end
+    end
+
+    context "When there are multiple hearings and multiple days" do
+      let(:appeal_today) do
+        create(
+          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        )
+      end
+      let!(:second_hearing_today) do
+        create(:case_hearing, vdkey: hearing.vdkey, folder_nr: appeal_today.vacols_id)
+      end
+      let(:appeal_tomorrow) do
+        create(
+          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        )
+      end
+      let!(:hearing_tomorrow) do
+        create(
+          :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: appeal_tomorrow.vacols_id
+        )
+      end
+      let!(:ama_hearing_day) do
+        create(:hearing_day, request_type: :video, scheduled_for: Time.zone.now, regional_office: staff.stafkey)
+      end
+      let!(:ama_appeal) { create(:appeal) }
+      let!(:ama_hearing) { create(:hearing, hearing_day: ama_hearing_day, appeal: ama_appeal) }
+
+      it "returns hearings are mapped to days" do
+        expect(subject.size).to eq 3
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq ama_appeal.id
+        expect(subject[2][:hearings].size).to eq 2
+        expect(subject[2][:request_type]).to eq "V"
+        expect(subject[2][:hearings][0]["appeal_id"]).to eq appeal.id
+        expect(subject[2][:hearings][0]["hearing_disp"]).to eq nil
+        expect(subject[2][:hearings][1]["appeal_id"]).to eq appeal_today.id
+        expect(subject[1][:hearings][0]["appeal_id"]).to eq appeal_tomorrow.id
+      end
+    end
+
+    context "When there are hearing days that are filled up" do
+      before do
+        allow(HearingDayRepository).to receive(:fetch_hearing_day_slots).and_return(1, 5)
+      end
+
+      let(:appeal_today) do
+        create(
+          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        )
+      end
+      let(:appeal_tomorrow) do
+        create(
+          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        )
+      end
+      let!(:hearing_tomorrow) do
+        create(
+          :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: appeal_tomorrow.vacols_id
+        )
+      end
+
+      it "only returns hearing days that are not full" do
+        expect(subject.size).to eq 1
       end
     end
   end
@@ -264,57 +308,22 @@ describe HearingDay do
       create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
+    let!(:hearing_day) { create(:hearing_day) }
     let(:hearing) do
-      create(:case_hearing, hearing_type: "C", folder_nr: appeal.vacols_id)
+      create(:case_hearing, hearing_type: "C", folder_nr: appeal.vacols_id, hearing_date: hearing_day.scheduled_for)
     end
 
     context "get parent and children structure" do
       subject do
-        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
-                                                     hearing.hearing_date.beginning_of_day + 10, "C")
+        HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                   hearing.hearing_date.beginning_of_day + 10, "C")
       end
 
       it "returns nested hash structure" do
         expect(subject.size).to eq 1
         expect(subject[0][:hearings].size).to eq 1
-        expect(subject[0][:hearing_type]).to eq "C"
-        expect(subject[0][:hearings][0][:appeal_id]).to eq appeal.id
-      end
-    end
-  end
-
-  context "Central Office return only slots with folder_nr null (available)" do
-    let(:vacols_case) do
-      create(
-        :case,
-        folder: create(:folder, tinum: "docket-number"),
-        bfregoff: "RO04",
-        bfcurloc: "57"
-      )
-    end
-    let(:appeal) do
-      create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
-    end
-    let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
-    let!(:hearing) do
-      create(:case_hearing, hearing_type: "C", folder_nr: appeal.vacols_id)
-    end
-    let!(:hearing2) do
-      create(:case_hearing, hearing_type: "C")
-    end
-
-    context "get CO hearings with no veterans assigned to them" do
-      subject do
-        HearingDay.load_days_with_open_hearing_slots((hearing.hearing_date - 1).beginning_of_day,
-                                                     hearing.hearing_date.beginning_of_day + 10, "C")
-      end
-
-      it "returns nested hash structure" do
-        expect(subject.size).to eq 1
-        expect(subject[0][:hearings].size).to eq 1
-        expect(subject[0][:hearing_type]).to eq "C"
-        expect(subject[0][:hearings].size).to eq 1
-        expect(subject[0][:hearings][0][:vacols_id]).to eql(hearing.hearing_pkseq.to_s)
+        expect(subject[0][:request_type]).to eq "C"
+        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
       end
     end
   end

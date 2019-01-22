@@ -8,8 +8,7 @@ export type User = {
   email: ?string,
   roles: Array<string>,
   selected_regional_office: ?string,
-  display_name: string,
-  judge_css_id: ?string
+  display_name: string
 };
 
 export type Judges = { [string]: User };
@@ -45,6 +44,8 @@ export type Issue = {
   labels: Array<string>,
   readjudication: Boolean,
   remand_reasons: Array<Object>,
+  benefit_type?: string,
+  diagnostic_code?: string,
   description?: string
 };
 
@@ -104,7 +105,7 @@ export type Hearing = {
   viewedByJudge: boolean,
   date: string,
   type: string,
-  id: string,
+  externalId: string,
   disposition: string
 };
 
@@ -161,6 +162,18 @@ export type BasicAppeals = { [string]: BasicAppeal };
 export type Appeal = AppealDetail & BasicAppeal;
 
 export type Appeals = { [string]: Appeal };
+
+export type ClaimReview = {
+  caseflowVeteranId: string,
+  claimId: number,
+  claimantNames: ?Array<string>,
+  endProducts: ?Array<Object>,
+  reviewType: string,
+  veteranFileNumber: string,
+  veteranFullName: string
+};
+
+export type ClaimReviews = { [string]: ClaimReview };
 
 export type Attorneys = {
   data?: Array<User>,

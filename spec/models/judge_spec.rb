@@ -8,10 +8,12 @@ describe Judge do
     subject { Judge.new(user).upcoming_dockets }
 
     let(:user) { Generators::User.create }
-    let!(:hearing)            { create(:hearing, user: user, date: 1.day.from_now) }
-    let!(:hearing_same_date)  { create(:hearing, user: user, date: 1.day.from_now + 2.hours) }
-    let!(:hearing_later_date) { create(:hearing, user: user, date: 3.days.from_now) }
-    let!(:hearing_another_judge) { create(:hearing, user: Generators::User.create, date: 2.days.from_now) }
+    let!(:hearing)            { create(:legacy_hearing, user: user, scheduled_for: 1.day.from_now) }
+    let!(:hearing_same_date)  { create(:legacy_hearing, user: user, scheduled_for: 1.day.from_now + 2.hours) }
+    let!(:hearing_later_date) { create(:legacy_hearing, user: user, scheduled_for: 3.days.from_now) }
+    let!(:hearing_another_judge) do
+      create(:legacy_hearing, user: Generators::User.create, scheduled_for: 2.days.from_now)
+    end
 
     it "returns a hash of hearing dockets indexed by date" do
       keys = subject.keys.sort
@@ -29,8 +31,8 @@ describe Judge do
       keys = subject.keys.sort
 
       # to_date() normalizes on YYYY-MM-DD
-      first_dates = subject[keys.first].hearings.map { |hash| hash.date.to_date }
-      last_dates = subject[keys.last].hearings.map { |hash| hash.date.to_date }
+      first_dates = subject[keys.first].hearings.map { |hash| hash.scheduled_for.to_date }
+      last_dates = subject[keys.last].hearings.map { |hash| hash.scheduled_for.to_date }
 
       expect(first_dates).to all(eq(keys.first.to_date))
       expect(last_dates).to all(eq(keys.last.to_date))
@@ -72,7 +74,7 @@ describe Judge do
     let(:out_of_range_date) { date - 300.years }
     let!(:hearings) do
       [
-        create(:hearing, user: user, date: 1.hour.from_now)
+        create(:legacy_hearing, user: user, scheduled_for: 1.hour.from_now)
       ]
     end
 

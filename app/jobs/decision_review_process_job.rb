@@ -7,7 +7,6 @@ class DecisionReviewProcessJob < CaseflowJob
   def perform(decision_review)
     # restore whatever the user was when we finish, in case we are not running async (as during tests)
     current_user = RequestStore.store[:current_user]
-    RequestStore.store[:application] = "intake"
     RequestStore.store[:current_user] = User.system_user
 
     return_value = nil

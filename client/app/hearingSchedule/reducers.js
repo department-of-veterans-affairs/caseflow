@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { timeFunction } from '../util/PerfDebug';
 import { ACTIONS } from './constants';
 import { update } from '../util/ReducerUtil';
@@ -9,7 +10,6 @@ import { workQueueReducer } from '../queue/reducers';
 import uiReducer from '../queue/uiReducer/uiReducer';
 
 export const initialState = {};
-
 const hearingScheduleReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_HEARING_SCHEDULE:
@@ -68,10 +68,10 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.upcomingHearingDays
       }
     });
-  case ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING:
+  case ACTIONS.RECEIVE_APPEALS_READY_FOR_HEARING:
     return update(state, {
-      veteransReadyForHearing: {
-        $set: action.payload.veterans
+      appealsReadyForHearing: {
+        $set: action.payload.appeals
       }
     });
   case ACTIONS.HEARING_NOTES_UPDATE:
@@ -267,10 +267,10 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       $toggle: ['filterVljIsOpen']
     });
-  case ACTIONS.SELECT_HEARING_TYPE:
+  case ACTIONS.SELECT_REQUEST_TYPE:
     return update(state, {
-      hearingType: {
-        $set: action.payload.hearingType
+      requestType: {
+        $set: action.payload.requestType
       }
     });
   case ACTIONS.SELECT_VLJ:
@@ -299,26 +299,14 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.ASSIGN_HEARING_ROOM:
     return update(state, {
-      roomNotRequired: {
-        $set: action.payload.roomNotRequired
+      roomRequired: {
+        $set: action.payload.roomRequired
       }
     });
   case ACTIONS.HEARING_DAY_MODIFIED:
     return update(state, {
       hearingDayModified: {
         $set: action.payload.hearingDayModified
-      }
-    });
-  case ACTIONS.RECEIVE_JUDGES:
-    return update(state, {
-      activeJudges: {
-        $set: action.payload.activeJudges
-      }
-    });
-  case ACTIONS.RECEIVE_COORDINATORS:
-    return update(state, {
-      activeCoordinators: {
-        $set: action.payload.activeCoordinators
       }
     });
   case ACTIONS.ON_CLICK_REMOVE_HEARING_DAY:
@@ -346,6 +334,17 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
   case ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR:
     return update(state, {
       $unset: ['dailyDocketServerError']
+    });
+
+  case ACTIONS.HANDLE_LOCK_HEARING_SERVER_ERROR:
+    return update(state, {
+      onErrorHearingDayLock: { $set: true },
+      displayLockModal: { $set: false }
+    });
+
+  case ACTIONS.RESET_LOCK_HEARING_SERVER_ERROR:
+    return update(state, {
+      $unset: ['onErrorHearingDayLock']
     });
 
   case ACTIONS.RESET_DELETE_SUCCESSFUL:
@@ -382,7 +381,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return state;
   }
 };
-
 const combinedReducer = combineReducers({
   hearingSchedule: hearingScheduleReducer,
   ui: uiReducer,

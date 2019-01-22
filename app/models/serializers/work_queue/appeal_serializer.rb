@@ -6,34 +6,49 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :issues do
     object.eligible_request_issues.map do |issue|
-      # Hard code program for October 1st Pilot, we don't have all the info for how we'll
-      # break down request issues yet but all RAMP appeals will be 'compensation'
       {
         id: issue.id,
         disposition: issue.disposition,
-        program: "compensation",
+        program: issue.benefit_type,
         description: issue.description,
         notes: issue.notes,
+        diagnostic_code: issue.contested_rating_issue_diagnostic_code,
         remand_reasons: issue.remand_reasons
       }
     end
   end
 
   attribute :decision_issues do
-    object.decision_issues.map do |issue|
+    object.decision_issues.uniq.map do |issue|
       {
         id: issue.id,
         disposition: issue.disposition,
         description: issue.description,
-        benefit_type: "compensation",
+        benefit_type: issue.benefit_type,
         remand_reasons: issue.remand_reasons,
+        diagnostic_code: issue.diagnostic_code,
         request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
       }
     end
   end
 
+  attribute :can_edit_request_issues do
+    @instance_options[:user]&.can_edit_request_issues?(object)
+  end
+
   attribute :hearings do
-    []
+    object.hearings.map do |hearing|
+      {
+        held_by: hearing.judge.present? ? hearing.judge.full_name : "",
+        # this assumes only the assigned judge will view the hearing worksheet. otherwise,
+        # we should check `hearing.hearing_views.map(&:user_id).include? judge.css_id`
+        viewed_by_judge: !hearing.hearing_views.empty?,
+        date: hearing.scheduled_for,
+        type: hearing.readable_request_type,
+        external_id: hearing.external_id,
+        disposition: hearing.disposition
+      }
+    end
   end
 
   attribute :location_code do
@@ -103,5 +118,17 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :caseflow_veteran_id do
     object.veteran ? object.veteran.id : nil
+  end
+
+  attribute :document_id do
+    latest_attorney_case_review&.document_id
+  end
+
+  attribute :attorney_case_review_id do
+    latest_attorney_case_review&.id
+  end
+
+  def latest_attorney_case_review
+    AttorneyCaseReview.where(task_id: Task.where(appeal: object).pluck(:id)).order(:created_at).last
   end
 end

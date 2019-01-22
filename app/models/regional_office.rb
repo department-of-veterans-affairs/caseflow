@@ -152,7 +152,7 @@ class RegionalOffice
     timezone: "America/New_York",
     hold_hearings: true,
     facility_locator_id: "vba_310",
-    alternate_locations:     %w[vha_595 vba_460 vha_693 vha_542 vha_460HE] },
+    alternate_locations: %w[vha_595 vba_460 vha_693 vha_542 vha_460HE] },
     "RO11" =>
   { label: "Pittsburgh regional office",
     city: "Pittsburgh",
@@ -168,7 +168,7 @@ class RegionalOffice
     timezone: "America/New_York",
     hold_hearings: true,
     facility_locator_id: "vba_313",
-    alternate_locations: nil },
+    alternate_locations: ["vba_372"] },
     "RO14" =>
   { label: "Roanoke regional office",
     city: "Roanoke",
@@ -176,6 +176,14 @@ class RegionalOffice
     timezone: "America/New_York",
     hold_hearings: true,
     facility_locator_id: "vba_314",
+    alternate_locations: ["vba_372"] },
+    "C" =>
+  { label: "Central",
+    city: "Washington",
+    state: "DC",
+    timezone: "America/New_York",
+    hold_hearings: false,
+    facility_locator_id: "vba_372",
     alternate_locations: nil },
     "RO15" =>
   { label: "Huntington regional office",
@@ -272,28 +280,28 @@ class RegionalOffice
     timezone: "America/Kentucky/Louisville",
     hold_hearings: true,
     facility_locator_id: "vba_327",
-    alternate_locations:     %w[vba_315
-                                vba_320
-                                vha_596
-                                vba_325b
-                                vha_539
-                                vha_657GJ
-                                vha_596GC
-                                vha_596GB
-                                vha_596GA
-                                vha_657GL
-                                vha_626GJ
-                                vc_0701V
-                                vha_626GC
-                                vha_538GB
-                                vha_603GF
-                                vha_596GD
-                                vha_657GP
-                                vha_657GO
-                                vha_626GH
-                                vc_0719V
-                                vc_0701V
-                                vc_0719V] },
+    alternate_locations: %w[vba_315
+                            vba_320
+                            vha_596
+                            vba_325b
+                            vha_539
+                            vha_657GJ
+                            vha_596GC
+                            vha_596GB
+                            vha_596GA
+                            vha_657GL
+                            vha_626GJ
+                            vc_0701V
+                            vha_626GC
+                            vha_538GB
+                            vha_603GF
+                            vha_596GD
+                            vha_657GP
+                            vha_657GO
+                            vha_626GH
+                            vc_0719V
+                            vc_0701V
+                            vc_0719V] },
     "RO28" =>
   { label: "Chicago regional office",
     city: "Chicago",
@@ -317,26 +325,26 @@ class RegionalOffice
     timezone: "America/Chicago",
     hold_hearings: true,
     facility_locator_id: "vba_330",
-    alternate_locations:     %w[vba_335
-                                vha_607
-                                vha_676
-                                vha_585
-                                vha_676GA
-                                vha_618GM
-                                vha_676GD
-                                vha_676GC
-                                vha_607GE
-                                vha_607GD
-                                vha_607GC
-                                vha_695GD
-                                vha_695GA
-                                vha_695BY
-                                vha_618BY
-                                vha_676GE
-                                vha_556GD
-                                vha_618GH
-                                vha_585GC
-                                vha_618GE] },
+    alternate_locations: %w[vba_335
+                            vha_607
+                            vha_676
+                            vha_585
+                            vha_676GA
+                            vha_618GM
+                            vha_676GD
+                            vha_676GC
+                            vha_607GE
+                            vha_607GD
+                            vha_607GC
+                            vha_695GD
+                            vha_695GA
+                            vha_695BY
+                            vha_618BY
+                            vha_676GE
+                            vha_556GD
+                            vha_618GH
+                            vha_585GC
+                            vha_618GE] },
     "RO31" =>
   { label: "St. Louis regional office",
     city: "St. Louis",
@@ -352,13 +360,13 @@ class RegionalOffice
     timezone: "America/Chicago",
     hold_hearings: true,
     facility_locator_id: "vba_333",
-    alternate_locations:     %w[vha_636GF
-                                vha_438GC
-                                vha_636GJ
-                                vha_636GD
-                                vha_438GA
-                                vha_636GH
-                                vha_636] },
+    alternate_locations: %w[vha_636GF
+                            vha_438GC
+                            vha_636GJ
+                            vha_636GD
+                            vha_438GA
+                            vha_636GH
+                            vha_636] },
     "RO34" =>
   { label: "Lincoln regional office",
     city: "Lincoln",
@@ -462,13 +470,13 @@ class RegionalOffice
     timezone: "America/Los_Angeles",
     hold_hearings: true,
     facility_locator_id: "vba_346",
-    alternate_locations:     %w[vha_663GC
-                                vha_663GE
-                                vba_348
-                                vha_663GD
-                                vha_668
-                                vha_687
-                                vc_0523V] },
+    alternate_locations: %w[vha_663GC
+                            vha_663GE
+                            vba_348
+                            vha_663GD
+                            vha_668
+                            vha_687
+                            vc_0523V] },
     "RO47" =>
   { label: "Boise regional office",
     city: "Boise",
@@ -484,15 +492,15 @@ class RegionalOffice
     timezone: "America/Los_Angeles",
     hold_hearings: true,
     facility_locator_id: "vba_348",
-    alternate_locations:     %w[vba_347
-                                vha_653GB
-                                vha_648GA
-                                vha_692GA
-                                vha_687GC
-                                vha_653GA
-                                vha_653
-                                vba_346
-                                vha_692] },
+    alternate_locations: %w[vba_347
+                            vha_653GB
+                            vha_648GA
+                            vha_692GA
+                            vha_687GC
+                            vha_653GA
+                            vha_653
+                            vba_346
+                            vha_692] },
     "RO49" =>
   { label: "Waco regional office",
     city: "Waco",
@@ -556,13 +564,13 @@ class RegionalOffice
     timezone: "Pacific/Honolulu",
     hold_hearings: true,
     facility_locator_id: "vba_459",
-    alternate_locations:     %w[vc_0616V
-                                vba_459h
-                                vba_459i
-                                vc_0633V
-                                vc_0636V
-                                vc_0634V
-                                vha_459GH] },
+    alternate_locations: %w[vc_0616V
+                            vba_459h
+                            vba_459i
+                            vc_0633V
+                            vc_0636V
+                            vc_0634V
+                            vha_459GH] },
     "RO60" =>
   { label: "Wilmington regional office",
     city: "Wilmington",
@@ -980,6 +988,7 @@ class RegionalOffice
       result = RegionalOffice.new(key)
 
       fail NotFoundError unless result.valid?
+
       result
     end
 

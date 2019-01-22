@@ -65,7 +65,7 @@ RSpec.describe MasterRecordHelper, type: :helper do
     context "when a hearing is not a master record" do
       let(:vacols_record) do
         OpenStruct.new(
-          hearing_type: "T",
+          request_type: "T",
           master_record_type: nil,
           bfregoff: "RO36"
         )

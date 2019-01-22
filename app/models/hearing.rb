@@ -1,273 +1,120 @@
 class Hearing < ApplicationRecord
-  include CachedAttributes
-  include AssociatedVacolsModel
-  include HearingConcern
-  include AppealConcern
+  belongs_to :hearing_day
+  belongs_to :appeal
+  belongs_to :judge, class_name: "User"
+  has_many :hearing_views, as: :hearing
 
-  vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
-  vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
-  vacols_attr_accessor :date, :type, :venue_key, :vacols_record, :disposition
-  vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
-  vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
-  vacols_attr_accessor :representative_name, :representative
-  vacols_attr_accessor :regional_office_key, :master_record
-  vacols_attr_accessor :docket_number, :appeal_type, :appellant_address_line_1
-  vacols_attr_accessor :appellant_address_line_2, :appellant_city, :appellant_state
-  vacols_attr_accessor :appellant_zip, :appellant_country, :room, :bva_poc, :judge_id
+  UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
-  belongs_to :appeal, class_name: "LegacyAppeal"
-  belongs_to :user # the judge
-  has_many :hearing_views
-  has_many :appeal_stream_snapshots
+  delegate :request_type, to: :hearing_day
+  delegate :veteran_first_name, to: :appeal
+  delegate :veteran_last_name, to: :appeal
+  delegate :appellant_first_name, to: :appeal
+  delegate :appellant_last_name, to: :appeal
+  delegate :appellant_city, to: :appeal
+  delegate :appellant_state, to: :appeal
+  delegate :veteran_age, to: :appeal
+  delegate :veteran_gender, to: :appeal
+  delegate :veteran_file_number, to: :appeal
+  delegate :docket_number, to: :appeal
+  delegate :docket_name, to: :appeal
+  delegate :representative_name, to: :appeal, prefix: true
+  delegate :external_id, to: :appeal, prefix: true
 
-  # this is used to cache appeal stream for hearings
-  # when fetched intially.
-  has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
+  HEARING_TYPES = {
+    V: "Video",
+    T: "Travel",
+    C: "Central"
+  }.freeze
 
-  CO_HEARING = "Central".freeze
-  VIDEO_HEARING = "Video".freeze
-
-  def venue
-    self.class.venues[venue_key]
-  end
-
-  def location
-    (type == :central_office) ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
-  end
-
-  def closed?
-    !!disposition
-  end
-
-  def no_show?
-    disposition == :no_show
-  end
-
-  def held?
-    disposition == :held
-  end
-
-  def scheduled_pending?
-    date && !closed?
-  end
-
-  def held_open?
-    hold_open && hold_open > 0
-  end
-
-  def hold_release_date
-    return unless held_open?
-    date.to_date + hold_open.days
-  end
-
-  def no_show_excuse_letter_due_date
-    date.to_date + 15.days
-  end
-
-  def active_appeal_streams
-    return appeals if appeals.any?
-    appeals << self.class.repository.appeals_ready_for_hearing(appeal.vbms_id)
-  end
-
-  def update_caseflow_and_vacols(hearing_hash)
-    ActiveRecord::Base.multi_transaction do
-      self.class.repository.update_vacols_hearing!(vacols_record, hearing_hash)
-      update!(hearing_hash)
+  def self.find_hearing_by_uuid_or_vacols_id(id)
+    if UUID_REGEX.match?(id)
+      find_by_uuid!(id)
+    else
+      LegacyHearing.find_by!(vacols_id: id)
     end
+  end
+
+  def readable_request_type
+    HEARING_TYPES[request_type.to_sym]
+  end
+
+  def master_record
+    false
+  end
+
+  def scheduled_for
+    DateTime.new.in_time_zone(regional_office_timezone).change(
+      year: hearing_day.scheduled_for.year,
+      month: hearing_day.scheduled_for.month,
+      day: hearing_day.scheduled_for.day,
+      hour: scheduled_time.hour,
+      min: scheduled_time.min,
+      sec: scheduled_time.sec
+    )
+  end
+
+  #:nocov:
+  # This is all fake data that will be refactored in a future PR.
+  def regional_office_key
+    "RO19"
+  end
+
+  def regional_office_name
+    "Winston-Salem, NC"
   end
 
   def regional_office_timezone
-    HearingMapper.timezone(regional_office_key)
-  end
-
-  def readable_location
-    if request_type == Hearing::CO_HEARING
-      return "Washington DC"
-    end
-
-    regional_office_name
-  end
-
-  # rubocop:disable Metrics/MethodLength
-  def vacols_attributes
-    {
-      date: date,
-      type: type,
-      venue_key: venue_key,
-      vacols_record: vacols_record,
-      disposition: disposition,
-      aod: aod,
-      hold_open: hold_open,
-      transcript_requested: transcript_requested,
-      transcript_sent_date: transcript_sent_date,
-      notes: notes,
-      add_on: add_on,
-      representative: representative,
-      representative_name: representative_name,
-      regional_office_key: regional_office_key,
-      master_record: master_record,
-      veteran_first_name: veteran_first_name,
-      veteran_middle_initial: veteran_middle_initial,
-      veteran_last_name: veteran_last_name,
-      appellant_first_name: appellant_first_name,
-      appellant_middle_initial: appellant_middle_initial,
-      appellant_last_name: appellant_last_name,
-      appeal_vacols_id: appeal_vacols_id
-
-    }
-  end
-
-  cache_attribute :cached_number_of_documents do
-    begin
-      number_of_documents
-    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
-      nil
-    end
-  end
-
-  delegate \
-    :veteran_age, \
-    :veteran_sex, \
-    :vbms_id, \
-    :number_of_documents, \
-    :number_of_documents_after_certification, \
-    :veteran,  \
-    :sanitized_vbms_id, \
-    :docket_name,
-    to: :appeal, allow_nil: true
-
-  delegate :vacols_id, to: :appeal, prefix: true
-
-  def to_hash(current_user_id)
-    serializable_hash(
-      methods: [
-        :date,
-        :request_type,
-        :disposition,
-        :aod,
-        :transcript_requested,
-        :hold_open,
-        :notes,
-        :add_on,
-        :master_record,
-        :representative,
-        :representative_name,
-        :regional_office_name,
-        :regional_office_timezone,
-        :venue,
-        :veteran_name,
-        :veteran_mi_formatted,
-        :appellant_last_first_mi,
-        :appellant_mi_formatted,
-        :veteran_fi_last_formatted,
-        :vbms_id,
-        :current_issue_count,
-        :prepped,
-        :docket_number,
-        :docket_name,
-        :appeal_type,
-        :appellant_address_line_1,
-        :appellant_city,
-        :appellant_state,
-        :appellant_zip,
-        :readable_location,
-        :appeal_vacols_id
-      ],
-      except: :military_service
-    ).merge(
-      viewed_by_current_user: hearing_views.all.any? do |hearing_view|
-        hearing_view.user_id == current_user_id
-      end
-    )
-  end
-
-  def fetch_veteran_age
-    veteran_age
-  rescue Module::DelegationError
-    nil
-  end
-
-  def fetch_veteran_sex
-    veteran_sex
-  rescue Module::DelegationError
-    nil
-  end
-
-  def to_hash_for_worksheet(current_user_id)
-    serializable_hash(
-      methods: [:appeal_id,
-                :user,
-                :summary,
-                :appeal_vacols_id,
-                :appeals_ready_for_hearing,
-                :cached_number_of_documents,
-                :appellant_city,
-                :appellant_state,
-                :military_service,
-                :appellant_mi_formatted,
-                :veteran_mi_formatted,
-                :veteran_fi_last_formatted,
-                :sanitized_vbms_id]
-    ).merge(
-      to_hash(current_user_id)
-    ).merge(
-      veteran_sex: fetch_veteran_sex,
-      veteran_age: fetch_veteran_age
-    )
-  end
-
-  def appeals_ready_for_hearing
-    active_appeal_streams.map(&:attributes_for_hearing)
+    "America/New_York"
   end
 
   def current_issue_count
-    active_appeal_streams.map(&:worksheet_issues).flatten
-      .reject do |issue|
-        issue.deleted? || (issue.disposition && issue.disposition =~ /Remand/ && issue.from_vacols?)
-      end
-      .count
+    1
+  end
+  #:nocov:
+
+  def external_id
+    uuid
   end
 
-  # If we do not yet have the military_service saved in Caseflow's DB, then
-  # we want to fetch it from BGS, save it to the DB, then return it
   def military_service
     super || begin
-      update_attributes(military_service: veteran.periods_of_service.join("\n")) if persisted? && veteran
+      update(military_service: appeal.veteran.periods_of_service.join("\n")) if persisted? && appeal.veteran
       super
     end
   end
 
-  class << self
-    def venues
-      RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)
-    end
+  # rubocop:disable Metrics/MethodLength
+  def to_hash(_current_user_id)
+    serializable_hash(
+      methods: [
+        :external_id,
+        :veteran_first_name,
+        :veteran_last_name,
+        :appellant_first_name,
+        :appellant_last_name,
+        :appellant_city,
+        :appellant_state,
+        :regional_office_name,
+        :regional_office_timezone,
+        :readable_request_type,
+        :judge,
+        :scheduled_for,
+        :veteran_age,
+        :veteran_gender,
+        :appeal_external_id,
+        :veteran_file_number,
+        :docket_number,
+        :docket_name,
+        :military_service,
+        :current_issue_count,
+        :appeal_representative_name
+      ]
+    )
+  end
+  # rubocop:enable Metrics/MethodLength
 
-    def repository
-      HearingRepository
-    end
-
-    def user_nil_or_assigned_to_another_judge?(user, vacols_css_id)
-      user.nil? || (user.css_id != vacols_css_id)
-    end
-
-    def assign_or_create_from_vacols_record(vacols_record, fetched_hearing = nil)
-      transaction do
-        hearing = fetched_hearing ||
-                  find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq)
-
-        # update hearing if user is nil, it's likely when the record doesn't exist and is being created
-        # or if vacols record css is different from
-        # who it's assigned to in the db.
-        if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
-          hearing.update(
-            appeal: LegacyAppeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-            user: User.find_by(css_id: vacols_record.css_id)
-          )
-        end
-
-        hearing
-      end
-    end
+  def to_hash_for_worksheet(current_user_id)
+    to_hash(current_user_id)
   end
 end
-# rubocop:enable Metrics/MethodLength

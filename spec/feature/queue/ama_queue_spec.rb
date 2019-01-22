@@ -1,40 +1,35 @@
 require "rails_helper"
 
 RSpec.feature "AmaQueue" do
-  before do
-    Time.zone = "America/New_York"
-
-    Fakes::Initializer.load!
-    FeatureToggle.enable!(:queue_beaam_appeals)
-  end
-  after do
-    FeatureToggle.disable!(:queue_beaam_appeals)
-  end
-
-  let(:attorney_first_name) { "Robby" }
-  let(:attorney_last_name) { "McDobby" }
-  let!(:attorney_user) do
-    FactoryBot.create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}")
-  end
-
-  let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
-
-  let!(:vacols_atty) do
-    FactoryBot.create(
-      :staff,
-      :attorney_role,
-      sdomainid: attorney_user.css_id,
-      snamef: attorney_first_name,
-      snamel: attorney_last_name
-    )
-  end
-
-  let!(:user) do
-    User.authenticate!(user: attorney_user)
-  end
-
   context "loads appellant detail view" do
+    let(:attorney_first_name) { "Robby" }
+    let(:attorney_last_name) { "McDobby" }
+    let!(:attorney_user) do
+      FactoryBot.create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}")
+    end
+
+    let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+
+    let!(:vacols_atty) do
+      FactoryBot.create(
+        :staff,
+        :attorney_role,
+        sdomainid: attorney_user.css_id,
+        snamef: attorney_first_name,
+        snamel: attorney_last_name
+      )
+    end
+
+    let!(:user) do
+      User.authenticate!(user: attorney_user)
+    end
+
     before do
+      Time.zone = "America/New_York"
+
+      Fakes::Initializer.load!
+      FeatureToggle.enable!(:queue_beaam_appeals)
+
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
         appeals.first.claimants.first.participant_id => {
           representative_name: poa_name,
@@ -44,6 +39,10 @@ RSpec.feature "AmaQueue" do
       )
     end
 
+    after do
+      FeatureToggle.disable!(:queue_beaam_appeals)
+    end
+
     let(:poa_address) { "123 Poplar St." }
     let(:participant_id) { "600153863" }
     let!(:root_task) { create(:root_task) }
@@ -51,6 +50,7 @@ RSpec.feature "AmaQueue" do
 
     let(:poa_name) { "Test POA" }
     let(:veteran_participant_id) { "600085544" }
+    let(:file_numbers) { Array.new(3) { Random.rand(999_999_999).to_s } }
     let!(:appeals) do
       [
         create(
@@ -60,23 +60,24 @@ RSpec.feature "AmaQueue" do
             :veteran,
             participant_id: veteran_participant_id,
             first_name: "Pal",
-            bgs_veteran_record: { first_name: "Pal" }
+            bgs_veteran_record: { first_name: "Pal" },
+            file_number: file_numbers[0]
           ),
-          documents: create_list(:document, 5),
-          request_issues: build_list(:request_issue, 3, description: "Knee pain")
+          documents: create_list(:document, 5, file_number: file_numbers[0]),
+          request_issues: build_list(:request_issue, 3, contested_issue_description: "Knee pain")
         ),
         create(
           :appeal,
-          veteran: create(:veteran),
-          documents: create_list(:document, 4),
-          request_issues: build_list(:request_issue, 2, description: "PTSD")
+          veteran: create(:veteran, file_number: file_numbers[1]),
+          documents: create_list(:document, 4, file_number: file_numbers[1]),
+          request_issues: build_list(:request_issue, 2, contested_issue_description: "PTSD")
         ),
         create(
           :appeal,
           number_of_claimants: 1,
-          veteran: create(:veteran),
-          documents: create_list(:document, 3),
-          request_issues: build_list(:request_issue, 1, description: "Tinnitus")
+          veteran: create(:veteran, file_number: file_numbers[2]),
+          documents: create_list(:document, 3, file_number: file_numbers[2]),
+          request_issues: build_list(:request_issue, 1, contested_issue_description: "Tinnitus")
         )
       ]
     end
@@ -222,7 +223,7 @@ RSpec.feature "AmaQueue" do
         click_on "Pal Smith"
 
         find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: "Assign to person").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
         find(".Select-control", text: "Select a user").click
         find("div", class: "Select-option", text: other_user.full_name).click
@@ -238,7 +239,7 @@ RSpec.feature "AmaQueue" do
         click_on "Pal Smith"
 
         find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: "Re-assign to person").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
 
         find(".Select-control", text: "Select a user").click
         find("div", class: "Select-option", text: user.full_name).click
@@ -257,10 +258,11 @@ RSpec.feature "AmaQueue" do
 
         click_on "Pal Smith"
 
+        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content(existing_instruction)
 
         find(".Select-control", text: "Select an action").click
-        find("div", class: "Select-option", text: "Assign to team").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]).click
 
         find(".Select-control", text: "Select a team").click
         find("div", class: "Select-option", text: other_organization.name).click
@@ -345,19 +347,30 @@ RSpec.feature "AmaQueue" do
   end
 
   context "QR flow" do
-    let(:user_name) { "QR User" }
-    let!(:user) { FactoryBot.create(:user, roles: ["Reader"], full_name: user_name) }
+    let(:veteran_first_name) { "Marissa" }
+    let(:veteran_last_name) { "Jimenez" }
+    let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
+    let!(:veteran) { create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
+
+    let(:qr_user_name) { "QR User" }
+    let(:qr_user_name_short) { "Q. User" }
+    let!(:qr_user) { FactoryBot.create(:user, roles: ["Reader"], full_name: qr_user_name) }
 
     let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
     let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
 
+    let(:attorney_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Anna Attorney") }
+    let!(:attorney_staff) { FactoryBot.create(:staff, :attorney_role, user: attorney_user) }
+
     let!(:quality_review_organization) { QualityReview.singleton }
     let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
-    let!(:appeal) { create(:appeal) }
+    let!(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
 
-    let!(:quality_review_task) do
+    let!(:root_task) { create(:root_task) }
+    let!(:judge_task) { create(:ama_judge_task, parent: root_task, assigned_to: judge_user, status: :completed) }
+    let!(:qr_task) do
       create(
-        :quality_review_task,
+        :qr_task,
         :in_progress,
         assigned_to: quality_review_organization,
         assigned_by: judge_user,
@@ -366,54 +379,140 @@ RSpec.feature "AmaQueue" do
       )
     end
 
-    let!(:quality_review_instructions) { "Fix this case!" }
-    let!(:root_task) { create(:root_task) }
-
-    let!(:judge_task) { create(:ama_judge_task, parent: root_task, assigned_to: judge_user, status: :completed) }
+    let!(:qr_instructions) { "Fix this case!" }
 
     before do
-      OrganizationsUser.add_user_to_organization(user, quality_review_organization)
+      # Make sure the BvaDispatch team has members
+      OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
       # We expect all QR users to be attorneys. This matters because we serve different queue views on the frontend
       # to attorneys.
-      FactoryBot.create(:staff, user: user)
-      User.authenticate!(user: user)
+      FactoryBot.create(:staff, user: qr_user)
+      OrganizationsUser.add_user_to_organization(qr_user, quality_review_organization)
+      User.authenticate!(user: qr_user)
     end
 
     scenario "return case to judge" do
+      expect(QualityReviewTask.count).to eq 1
+      # step "QR user visits the quality review organization page and assigns the task to themself"
       visit quality_review_organization.path
-      click_on "Bob Smith"
+      click_on veteran_full_name
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Assign to person").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
       find(".Select-control", text: "Select a user").click
-      find("div", class: "Select-option", text: user.full_name).click
+      find("div", class: "Select-option", text: qr_user.full_name).click
 
       fill_in "taskInstructions", with: "Review the quality"
       click_on "Submit"
 
-      expect(page).to have_content("Task assigned to #{user_name}")
+      expect(page).to have_content("Task assigned to #{qr_user_name}")
 
+      expect(QualityReviewTask.count).to eq 2
+
+      # step "QR user returns the case to a judge"
       click_on "Caseflow"
 
-      click_on "Bob Smith"
+      click_on veteran_full_name
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: "Return to judge").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.RETURN_TO_JUDGE.to_h[:label]).click
 
-      fill_in "taskInstructions", with: quality_review_instructions
+      fill_in "taskInstructions", with: qr_instructions
 
       click_on "Submit"
       expect(page).to have_content("On hold (3)")
 
+      # step "judge reviews task and assigns a task to an attorney"
       User.authenticate!(user: judge_user)
 
       visit "/queue"
 
-      click_on "Switch to Assign Cases"
-      click_on "Bob Smith"
+      click_on veteran_full_name
 
-      expect(page).to have_content(quality_review_instructions)
+      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+      expect(page).to have_content(qr_instructions)
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h[:label]).click
+
+      find(".Select-control", text: "Select a user").click
+      find("div", class: "Select-option", text: "Other").click
+
+      find(".Select-control", text: "Select a user").click
+      first("div", class: "Select-option", text: attorney_user.full_name).click
+      click_on "Submit"
+
+      expect(page).to have_content("Assigned 1 case")
+
+      # step "attorney completes task and returns the case to the judge"
+      User.authenticate!(user: attorney_user)
+
+      visit "/queue"
+
+      click_on veteran_full_name
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_DECISION.to_h[:label]).click
+
+      expect(page).to have_content("Select special issues (optional)")
+
+      click_on "Continue"
+
+      expect(page).to have_content("Select Dispositions")
+
+      click_on "Continue"
+
+      expect(page).to have_content("Submit Draft Decision for Review")
+
+      fill_in "Document ID:", with: "1234"
+      click_on "Select a judge"
+      find(".Select-control", text: "Select a judge…").click
+      first("div", class: "Select-option", text: judge_user.full_name).click
+      fill_in "notes", with: "all done"
+
+      click_on "Continue"
+
+      expect(page).to have_content(
+        "Thank you for drafting #{veteran_full_name}'s decision. It's been sent to #{judge_user.full_name} for review."
+      )
+
+      # step "judge completes task"
+      User.authenticate!(user: judge_user)
+
+      visit "/queue"
+
+      click_on veteran_full_name
+
+      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+      expect(page).to have_content(qr_instructions)
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
+
+      expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
+
+      click_on "Mark complete"
+
+      expect(page).to have_content("#{veteran_full_name}'s case has been marked complete")
+
+      # step "QR reviews case"
+      User.authenticate!(user: qr_user)
+
+      visit "/queue"
+
+      click_on veteran_full_name
+
+      expect(page).to have_content("Decision signed by judge")
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
+
+      expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
+
+      click_on "Mark complete"
+
+      expect(page).to have_content("#{veteran_full_name}'s case has been marked complete")
     end
   end
 end

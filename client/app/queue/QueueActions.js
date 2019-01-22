@@ -15,6 +15,7 @@ import type {
   Tasks,
   BasicAppeals,
   AppealDetails,
+  ClaimReviews,
   User
 } from './types/models';
 
@@ -37,6 +38,15 @@ export const onReceiveAppealDetails = (
   payload: {
     appeals,
     appealDetails
+  }
+});
+
+export const onReceiveClaimReviewDetails = (
+  { claimReviews }: { claimReviews: ClaimReviews }
+) => ({
+  type: ACTIONS.RECEIVE_CLAIM_REVIEW_DETAILS,
+  payload: {
+    claimReviews
   }
 });
 
@@ -331,7 +341,7 @@ export const initialAssignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = '/tasks?role=Judge';
+    url = '/tasks';
     params = {
       data: {
         tasks: [{
@@ -390,7 +400,7 @@ export const reassignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = `/tasks/${oldTask.taskId}?role=Judge`;
+    url = `/tasks/${oldTask.taskId}`;
     params = {
       data: {
         task: {

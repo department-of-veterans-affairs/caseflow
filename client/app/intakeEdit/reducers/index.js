@@ -18,12 +18,15 @@ export const mapDataToInitialState = function(props = {}) {
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,
+    activeNonratingRequestIssues: formatRequestIssues(serverIntake.activeNonratingRequestIssues),
     addedIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
     originalIssues: formatRequestIssues(serverIntake.requestIssues, serverIntake.contestableIssues),
     requestStatus: {
       requestIssuesUpdate: REQUEST_STATE.NOT_STARTED
     },
-    requestIssuesUpdateErrorCode: null
+    requestIssuesUpdateErrorCode: null,
+    issuesAfter: null,
+    issuesBefore: null
   };
 };
 
@@ -44,7 +47,13 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
           $set: REQUEST_STATE.SUCCEEDED
         }
       },
-      requestIssuesUpdateErrorCode: { $set: null }
+      requestIssuesUpdateErrorCode: { $set: null },
+      issuesAfter: {
+        $set: formatRequestIssues(action.payload.issuesAfter)
+      },
+      issuesBefore: {
+        $set: formatRequestIssues(action.payload.issuesBefore)
+      }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_FAIL:
     return update(state, {

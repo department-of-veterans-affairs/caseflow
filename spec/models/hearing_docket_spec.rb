@@ -9,13 +9,13 @@ describe HearingDocket do
   end
 
   let!(:hearing) do
-    Generators::Hearing.create(appeal: appeal)
+    Generators::LegacyHearing.create(appeal: appeal)
   end
 
   let(:docket) do
     HearingDocket.new(
-      date: 7.days.from_now,
-      type: :video,
+      scheduled_for: 7.days.from_now,
+      request_type: "V",
       regional_office_names: [hearing.regional_office_name],
       regional_office_key: "RO31",
       hearings: [
@@ -24,15 +24,20 @@ describe HearingDocket do
     )
   end
 
+  let!(:staff) { create(:staff, stafkey: "RO31", stc2: 2, stc3: 3, stc4: 4) }
+
   context ".from_hearings" do
     subject { HearingDocket.from_hearings(hearings) }
 
     let(:hearings) do
-      [Generators::Hearing.create(date: 5.minutes.ago), Generators::Hearing.create(date: 10.minutes.ago)]
+      [
+        Generators::LegacyHearing.create(scheduled_for: 5.minutes.ago),
+        Generators::LegacyHearing.create(scheduled_for: 10.minutes.ago)
+      ]
     end
 
     it "returns the earliest date" do
-      expect(subject.date).to eq 10.minutes.ago
+      expect(subject.scheduled_for).to eq 10.minutes.ago
     end
   end
 
@@ -40,7 +45,7 @@ describe HearingDocket do
     subject { docket.slots }
 
     context "should use the default number of slots for the regional office" do
-      it { is_expected.to eq 9 }
+      it { is_expected.to eq 4 }
     end
   end
 
@@ -49,12 +54,12 @@ describe HearingDocket do
 
     it "returns a hash" do
       expect(subject.class).to eq(Hash)
-      expect(subject[:date]).to eq(docket.date)
+      expect(subject[:scheduled_for]).to eq(docket.scheduled_for)
       expect(subject[:master_record]).to eq(docket.master_record)
       expect(subject[:hearings_count]).to eq(docket.hearings_count)
-      expect(subject[:type]).to eq(:video)
+      expect(subject[:request_type]).to eq(docket.request_type)
       expect(subject[:regional_office_names]).to eq(docket.regional_office_names)
-      expect(subject[:slots]).to eq 9
+      expect(subject[:slots]).to eq 4
     end
   end
 

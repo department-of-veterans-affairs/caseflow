@@ -7,7 +7,7 @@
 # the current status of the EP when the EndProductEstablishment is synced.
 
 class EndProductEstablishment < ApplicationRecord
-  attr_accessor :valid_modifiers, :special_issues
+  attr_accessor :valid_modifiers
   # In decision reviews, we may create 2 end products at the same time. To avoid using
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   attr_writer :invalid_modifiers
@@ -42,8 +42,15 @@ class EndProductEstablishment < ApplicationRecord
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/MethodLength
     def self.from_bgs_error(error, epe)
-      case error.try(:body) || error.message
+      error_message = if error.try(:body)
+                        # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3124/
+                        error.body.encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
+                      else
+                        error.message
+                      end
+      case error_message
       when /WssVerification Exception - Security Verification Exception/
         # This occasionally happens when client/server timestamps get out of sync. Uncertain why this
         # happens or how to fix it - it only happens occasionally.
@@ -64,10 +71,36 @@ class EndProductEstablishment < ApplicationRecord
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2910/
         TransientBGSSyncError.new(error, epe)
-      when /Connection timed out - connect\(2\) for "bepprod.vba.va.gov" port 443/
-        # Transient timeouts to BGS because of connectivity issues
+      when /The Tuxedo service is down/
+        #  Similar to above, an outage of connection to BDN.
         #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2926/
+        TransientBGSSyncError.new(error, epe)
+      when /Connection timed out - connect\(2\) for "bepprod.vba.va.gov" port 443/
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
+        TransientBGSSyncError.new(error, epe)
+      when /Connection refused - connect\(2\) for "bepprod.vba.va.gov" port 443/
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3128/
+        TransientBGSSyncError.new(error, epe)
+      when /HTTP error \(504\): upstream request timeout/
+        # BGS timeout
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
+        TransientBGSSyncError.new(error, epe)
+      when /HTTPClient::KeepAliveDisconnected: Connection reset by peer/
+        # BGS kills connection
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3129/
+        TransientBGSSyncError.new(error, epe)
+      when /execution expired/
+        # Connection timeout
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2935/
+        TransientBGSSyncError.new(error, epe)
+      when /Connection reset by peer/
+        # Connection reset
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3036/
         TransientBGSSyncError.new(error, epe)
       when /Unable to find SOAP operation: :find_benefit_claim/
         # Transient failure because a VBMS service is unavailable
@@ -81,12 +114,18 @@ class EndProductEstablishment < ApplicationRecord
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
         TransientBGSSyncError.new(error, epe)
+      when /Unable to parse SOAP message/
+        # I don't understand why this happens, but it's transient.
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3404/
+        TransientBGSSyncError.new(error, epe)
       else
         new(error, epe)
       end
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength
   class TransientBGSSyncError < BGSSyncError; end
 
   class << self
@@ -131,27 +170,31 @@ class EndProductEstablishment < ApplicationRecord
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
   def create_contentions!
-    issues_without_contentions = request_issues_ready_for_contentions
-    return if issues_without_contentions.empty?
+    records_ready_for_contentions = calculate_records_ready_for_contentions
+    return if records_ready_for_contentions.empty?
 
     set_establishment_values_from_source
 
-    descriptions = issues_without_contentions.map(&:contention_text)
+    contentions = records_ready_for_contentions.map do |issue|
+      contention = { description: issue.contention_text }
+      issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
+      contention
+    end
 
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
 
     # We don't care about duplicate text; we just care that every request issue
     # has a contention.
-
-    create_contentions_in_vbms(descriptions).each do |contention|
-      issue = issues_without_contentions.find do |i|
-        i.contention_text == contention.text && i.contention_reference_id.nil?
+    create_contentions_in_vbms(contentions).each do |contention|
+      record = records_ready_for_contentions.find do |r|
+        r.contention_text == contention.text && r.contention_reference_id.nil?
       end
-      issue&.update!(contention_reference_id: contention.id)
+
+      record&.update!(contention_reference_id: contention.id)
     end
 
-    fail ContentionCreationFailed if issues_without_contentions.any? { |issue| issue.contention_reference_id.nil? }
+    fail ContentionCreationFailed if records_ready_for_contentions.any? { |r| r.contention_reference_id.nil? }
   end
 
   def remove_contention!(for_object)
@@ -231,6 +274,15 @@ class EndProductEstablishment < ApplicationRecord
     VBMSService.get_dispositions!(claim_id: reference_id)
   end
 
+  def search_table_ui_hash
+    {
+      code: code,
+      modifier: modifier || "",
+      synced_status: synced_status,
+      last_synced_at: last_synced_at
+    }
+  end
+
   def status_canceled?
     synced_status == CANCELED_STATUS
   end
@@ -246,8 +298,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def associate_rating_request_issues!
-    return if code != source.issue_code(rating: true)
-    return if unassociated_rating_request_issues.count == 0
+    return if unassociated_rating_request_issues.empty?
 
     VBMSService.associate_rating_request_issues!(
       claim_id: reference_id,
@@ -261,6 +312,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def generate_claimant_letter!
     return if doc_reference_id
+
     generate_claimant_letter_in_bgs.tap do |result|
       update!(doc_reference_id: result)
     end
@@ -268,6 +320,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def generate_tracked_item!
     return if development_item_reference_id
+
     generate_tracked_item_in_bgs.tap do |result|
       update!(development_item_reference_id: result)
     end
@@ -275,6 +328,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def request_issues
     return [] unless source.try(:request_issues)
+
     source.request_issues.select { |ri| ri.end_product_establishment == self }
   end
 
@@ -287,10 +341,13 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync_decision_issues!
-    request_issues.each do |request_issue|
-      request_issue.submit_for_processing!
+    contention_records.each do |record|
+      # It seems to take at least a day for the associated rating to show up in BGS
+      # after the EP is cleared. We don't want to tax the BGS ratings endpoint, so
+      # we're going to wait a day before we start looking.
+      record.submit_for_processing!(delay: 1.day)
 
-      DecisionIssueSyncJob.perform_later(request_issue)
+      DecisionIssueSyncJob.perform_later(record)
     end
   end
 
@@ -301,6 +358,20 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   private
+
+  # All records that create contentions should be an instance of ApplicationRecord with
+  # a contention_reference_id column, and contention_text method
+  # TODO: this can be refactored to ask the source instead of using a case statement
+  def calculate_records_ready_for_contentions
+    select_ready_for_contentions(contention_records)
+  end
+
+  def contention_records
+    case source
+    when ClaimReview then eligible_request_issues
+    when DecisionDocument then source.effectuations.where(end_product_establishment: self)
+    end
+  end
 
   def decision_issues_sync_complete?
     request_issues.all?(&:processed?)
@@ -334,13 +405,17 @@ class EndProductEstablishment < ApplicationRecord
     rating_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
   end
 
-  def request_issues_ready_for_contentions
-    request_issues.select { |ri| ri.contention_reference_id.nil? && ri.eligible? }
+  def eligible_request_issues
+    request_issues.select(&:eligible?)
+  end
+
+  def select_ready_for_contentions(records)
+    records.select { |r| r.contention_reference_id.nil? }
   end
 
   def rating_issue_contention_map(request_issues_to_associate)
     request_issues_to_associate.inject({}) do |contention_map, issue|
-      contention_map[issue.rating_issue_reference_id] = issue.contention_reference_id
+      contention_map[issue.contested_rating_issue_reference_id] = issue.contention_reference_id
       contention_map
     end
   end
@@ -397,11 +472,12 @@ class EndProductEstablishment < ApplicationRecord
     end
 
     fail EstablishedEndProductNotFound unless result
+
     result
   end
 
   def taken_modifiers
-    @taken_modifiers ||= veteran.end_products.map(&:modifier)
+    @taken_modifiers ||= veteran.end_products.select(&:active?).map(&:modifier)
   end
 
   def find_open_modifier
@@ -417,16 +493,16 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync_source!
-    return unless source && source.respond_to?(:on_sync)
+    return unless source&.respond_to?(:on_sync)
+
     source.on_sync(self)
   end
 
-  def create_contentions_in_vbms(descriptions)
+  def create_contentions_in_vbms(contentions)
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
       claim_id: reference_id,
-      contention_descriptions: descriptions,
-      special_issues: special_issues || [],
+      contentions: contentions,
       user: user
     )
   end
@@ -440,8 +516,7 @@ class EndProductEstablishment < ApplicationRecord
   def set_establishment_values_from_source
     self.attributes = {
       invalid_modifiers: source.respond_to?(:invalid_modifiers) && source.invalid_modifiers,
-      valid_modifiers: source.valid_modifiers,
-      special_issues: source.respond_to?(:special_issues) && source.special_issues
+      valid_modifiers: source.valid_modifiers
     }
   end
 

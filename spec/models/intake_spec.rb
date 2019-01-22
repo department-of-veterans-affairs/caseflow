@@ -11,7 +11,7 @@ describe Intake do
   class TestIntake < Intake
     def find_or_build_initial_detail
       # Just putting any ole database object here for testing
-      @detail ||= Generators::User.build
+      @find_or_build_initial_detail ||= Generators::User.build
     end
   end
 
@@ -304,6 +304,23 @@ describe Intake do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("veteran_not_valid")
       end
+    end
+
+    context "When Veteran is deceased and missing address" do
+      let!(:veteran) do
+        Generators::Veteran.build(
+          file_number: "64205050",
+          address_line1: nil,
+          address_line2: nil,
+          address_line3: nil,
+          zip_code: nil,
+          state: nil,
+          city: nil,
+          country: nil,
+          date_of_death: Time.zone.today
+        )
+      end
+      it { is_expected.to be_truthy }
     end
 
     context "veteran_file_number has fewer than 8 digits" do

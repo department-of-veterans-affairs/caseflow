@@ -6,7 +6,13 @@ describe DecisionReview do
 
   let(:participant_id) { "1234" }
   let(:veteran) { create(:veteran, participant_id: participant_id) }
-  let(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+  let(:higher_level_review) do
+    create(:higher_level_review, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
+  end
+
+  let(:supplemental_claim) do
+    create(:supplemental_claim, veteran_file_number: veteran.file_number, receipt_date: receipt_date)
+  end
 
   let(:receipt_date) { Time.zone.today }
 
@@ -58,14 +64,16 @@ describe DecisionReview do
              decision_text: "appeal decision issue",
              benefit_type: higher_level_review.benefit_type,
              profile_date: profile_date + 3.days,
+             description: "test",
              decision_review: appeal)
     ]
   end
 
   context "#contestable_issues" do
     subject { higher_level_review.contestable_issues }
+
     it "creates a list of contestable rating and decision issues" do
-      expect(subject.map(&:serialize)).to contain_exactly(
+      expect(subject.map(&:serialize)).to include(
         { # this rating issue got replaced with a decision issue
           ratingIssueReferenceId: "123",
           ratingIssueProfileDate: profile_date,
@@ -74,7 +82,7 @@ describe DecisionReview do
           description: "decision issue 1",
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: higher_level_review.id,
+          sourceReviewType: "HigherLevelReview",
           timely: true
         },
         {
@@ -85,7 +93,7 @@ describe DecisionReview do
           description: "rating issue 2",
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: nil,
+          sourceReviewType: nil,
           timely: true
         },
         {
@@ -96,7 +104,7 @@ describe DecisionReview do
           description: "decision issue 2",
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceHigherLevelReview: higher_level_review.id,
+          sourceReviewType: "HigherLevelReview",
           timely: true
         },
         ratingIssueReferenceId: nil,
@@ -106,9 +114,70 @@ describe DecisionReview do
         description: "decision issue 3",
         rampClaimId: nil,
         titleOfActiveReview: nil,
-        sourceHigherLevelReview: higher_level_review.id,
+        sourceReviewType: "HigherLevelReview",
         timely: true
       )
+    end
+
+    context "when an issue was decided in the future" do
+      let!(:future_decision_issue) do
+        create(:decision_issue,
+               decision_review: supplemental_claim,
+               profile_date: receipt_date + 1.day,
+               benefit_type: supplemental_claim.benefit_type,
+               decision_text: "something was decided in the future",
+               description: "future decision issue",
+               participant_id: veteran.participant_id)
+      end
+
+      let!(:future_rating) do
+        Generators::Rating.build(
+          issues: [
+            { reference_id: "321", decision_text: "future rating issue 1" },
+            { reference_id: "654", decision_text: "future rating issue 2" }
+          ],
+          promulgation_date: receipt_date + 1,
+          profile_date: receipt_date + 1,
+          participant_id: participant_id,
+          associated_claims: associated_claims
+        )
+      end
+
+      it "does not return Decision Issues in the future" do
+        expect(subject.map(&:serialize)).to include(hash_including(description: "decision issue 3"))
+        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future decision issue"))
+        expect(subject.map(&:serialize)).to include(hash_including(description: "rating issue 2"))
+        expect(subject.map(&:serialize)).to_not include(hash_including(description: "future rating issue 2"))
+      end
+    end
+
+    context "when the issue is from an Appeal that is not outcoded" do
+      let(:outcoded_appeal) { create(:appeal, :outcoded, veteran: veteran, receipt_date: receipt_date) }
+
+      let!(:active_appeal_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal,
+               profile_date: profile_date,
+               benefit_type: "compensation",
+               decision_text: "my appeal isn't outcoded yet",
+               description: "active appeal issue",
+               participant_id: veteran.participant_id)
+      end
+
+      let!(:outcoded_appeal_decision_issue) do
+        create(:decision_issue,
+               decision_review: outcoded_appeal,
+               profile_date: profile_date,
+               benefit_type: "compensation",
+               decision_text: "my appeal is outcoded",
+               description: "completed appeal issue",
+               participant_id: veteran.participant_id)
+      end
+
+      it "does not return the issue in contestable issues" do
+        expect(subject.map(&:serialize)).to include(hash_including(description: "completed appeal issue"))
+        expect(subject.map(&:serialize)).to_not include(hash_including(description: "active appeal issue"))
+      end
     end
   end
 end

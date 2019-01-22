@@ -1,4 +1,6 @@
 class DecisionReviewIntake < Intake
+  include RunAsyncable
+
   def ui_hash(ama_enabled)
     super.merge(
       receipt_date: detail.receipt_date,
@@ -9,9 +11,10 @@ class DecisionReviewIntake < Intake
       legacyAppeals: detail.serialized_legacy_appeals,
       ratings: detail.serialized_ratings,
       requestIssues: detail.request_issues.map(&:ui_hash),
+      activeNonratingRequestIssues: detail.active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: detail.contestable_issues.map(&:serialize)
     )
-  rescue Rating::NilRatingProfileListError
+  rescue Rating::NilRatingProfileListError, Rating::LockedRatingError
     cancel!(reason: "system_error")
     raise
   end

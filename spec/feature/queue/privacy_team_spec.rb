@@ -80,6 +80,7 @@ RSpec.feature "Privacy team tasks and queue" do
         click_on(appeal.veteran_file_number)
 
         # Case has task instructions.
+        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content(instructions_text)
       end
     end

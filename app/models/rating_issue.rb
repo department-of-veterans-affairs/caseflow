@@ -65,7 +65,6 @@ class RatingIssue
       contention_reference_id: contention_reference_id,
       ramp_claim_id: ramp_claim_id,
       title_of_active_review: title_of_active_review,
-      source_higher_level_review: source_higher_level_review,
       rba_contentions_data: rba_contentions_data,
       associated_end_products: associated_end_products.map(&:serialize)
     }
@@ -73,18 +72,20 @@ class RatingIssue
 
   def title_of_active_review
     return unless reference_id
-    request_issue = RequestIssue.find_active_by_rating_issue_reference_id(reference_id)
-    request_issue&.review_title
-  end
 
-  def source_higher_level_review
-    return unless reference_id
-    return unless source_request_issue
-    source_request_issue.review_request.is_a?(HigherLevelReview) ? source_request_issue.id : nil
+    request_issue = RequestIssue.find_active_by_contested_rating_issue_reference_id(reference_id)
+
+    request_issue&.review_title
   end
 
   def decision_issue
     @decision_issue ||= DecisionIssue.find_by(participant_id: participant_id, rating_issue_reference_id: reference_id)
+  end
+
+  def benefit_type
+    # TODO: https://github.com/department-of-veterans-affairs/caseflow/issues/8619
+    # figure this out from VBMS response attributes. Could also be "pension"
+    "compensation"
   end
 
   def ramp_claim_id
@@ -93,11 +94,13 @@ class RatingIssue
 
   def contention_reference_id
     return unless rba_contentions_data
+
     @contention_reference_id ||= rba_contentions_data.first.dig(:cntntn_id)
   end
 
   def source_request_issue
     return if contention_reference_id.nil?
+
     @source_request_issue ||= RequestIssue.unscoped.find_by(contention_reference_id: contention_reference_id)
   end
 

@@ -170,6 +170,22 @@ export const setTranscriptRequested = (hearingId, transcriptRequested, date) => 
   }
 });
 
+export const setEvidenceWindowWaived = (hearingId, evidenceWindowWaived, date) => ({
+  type: Constants.SET_EVIDENCE_WINDOW_WAIVED,
+  payload: {
+    hearingId,
+    evidenceWindowWaived,
+    date
+  },
+  meta: {
+    analytics: {
+      category: CATEGORIES.DAILY_DOCKET_PAGE,
+      action: ACTIONS.EVIDENCE_WINDOW_WAIVED,
+      label: evidenceWindowWaived ? 'checked' : 'unchecked'
+    }
+  }
+});
+
 export const onMilitaryServiceChange = (militaryService) => ({
   type: Constants.SET_MILITARY_SERVICE,
   payload: {
@@ -234,7 +250,7 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
   dispatch(toggleWorksheetSaving(true));
   dispatch(setWorksheetSaveFailedStatus(false));
 
-  ApiUtil.patch(`/hearings/worksheets/${worksheet.id}`, { data: { worksheet } }).
+  ApiUtil.patch(`/hearings/worksheets/${worksheet.external_id}`, { data: { worksheet } }).
     then(() => {
       dispatch({ type: Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE });
     },
@@ -309,7 +325,7 @@ export const saveDocket = (docket, date) => (dispatch) => () => {
 
   hearingsToSave.forEach((hearing) => {
     const promise = new Promise((resolve) => {
-      ApiUtil.patch(`/hearings/${hearing.id}`, { data: { hearing } }).
+      ApiUtil.patch(`/hearings/${hearing.external_id}`, { data: { hearing } }).
         then(() => {
           dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
             payload: { date,

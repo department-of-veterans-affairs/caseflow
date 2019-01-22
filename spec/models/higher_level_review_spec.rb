@@ -16,6 +16,7 @@ describe HigherLevelReview do
   let(:same_office) { nil }
   let(:legacy_opt_in_approved) { false }
   let(:veteran_is_not_claimant) { false }
+  let(:profile_date) { receipt_date - 1 }
 
   let(:higher_level_review) do
     HigherLevelReview.new(
@@ -27,40 +28,6 @@ describe HigherLevelReview do
       legacy_opt_in_approved: legacy_opt_in_approved,
       veteran_is_not_claimant: veteran_is_not_claimant
     )
-  end
-
-  context "#special_issues" do
-    let(:vacols_id) { nil }
-    let!(:request_issue) do
-      create(:request_issue, review_request: higher_level_review, vacols_id: vacols_id)
-    end
-
-    subject { higher_level_review.special_issues }
-
-    context "no special conditions" do
-      it "is empty" do
-        expect(subject).to eq []
-      end
-    end
-
-    context "VACOLS opt-in" do
-      let(:vacols_id) { "something" }
-      let!(:legacy_opt_in) do
-        create(:legacy_issue_optin, request_issue: request_issue)
-      end
-
-      it "includes VACOLS opt-in" do
-        expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
-      end
-    end
-
-    context "same office" do
-      let(:same_office) { true }
-
-      it "includes same office" do
-        expect(subject).to include(code: "SSR", narrative: "Same Station Review")
-      end
-    end
   end
 
   context "#valid?" do
@@ -213,13 +180,18 @@ describe HigherLevelReview do
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_PMR,
-                 rating_issue_reference_id: "rating1"),
+                 rating_issue_reference_id: "rating1",
+                 profile_date: profile_date,
+                 benefit_type: benefit_type),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
-                 rating_issue_reference_id: "rating2"),
+                 rating_issue_reference_id: "rating2",
+                 profile_date: profile_date,
+                 benefit_type: benefit_type),
           create(:decision_issue,
                  decision_review: higher_level_review,
+                 benefit_type: benefit_type,
                  disposition: "not a dta error")
         ]
       end
@@ -232,12 +204,23 @@ describe HigherLevelReview do
         )
       end
 
+      context "when there is no approx_decision_date" do
+        let(:profile_date) { nil }
+
+        it "throws an error" do
+          expect { subject }.to raise_error(
+            StandardError, "approx_decision_date is required to create a DTA Supplemental Claim"
+          )
+        end
+      end
+
       it "creates a supplemental claim and request issues" do
-        subject
+        expect { subject }.to_not change(DecisionReviewTask, :count)
+
         supplemental_claim = SupplementalClaim.find_by(
-          is_dta_error: true,
+          decision_review_remanded: higher_level_review,
           veteran_file_number: higher_level_review.veteran_file_number,
-          receipt_date: Time.zone.now.to_date,
+          receipt_date: decision_issues.first.approx_decision_date,
           benefit_type: higher_level_review.benefit_type,
           legacy_opt_in_approved: higher_level_review.legacy_opt_in_approved,
           veteran_is_not_claimant: higher_level_review.veteran_is_not_claimant
@@ -249,26 +232,50 @@ describe HigherLevelReview do
         first_dta_request_issue = RequestIssue.find_by(
           review_request: supplemental_claim,
           contested_decision_issue_id: decision_issues.first.id,
-          rating_issue_reference_id: "rating1",
-          rating_issue_profile_date: decision_issues.first.profile_date,
+          contested_rating_issue_reference_id: "rating1",
+          contested_rating_issue_profile_date: decision_issues.first.profile_date.to_s,
+          contested_issue_description: decision_issues.first.description,
           issue_category: decision_issues.first.issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.first.approx_decision_date
         )
 
         expect(first_dta_request_issue).to_not be_nil
+        expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDER")
 
         second_dta_request_issue = RequestIssue.find_by(
           review_request: supplemental_claim,
           contested_decision_issue_id: decision_issues.second.id,
-          rating_issue_reference_id: "rating2",
-          rating_issue_profile_date: decision_issues.second.profile_date,
+          contested_rating_issue_reference_id: "rating2",
+          contested_rating_issue_profile_date: decision_issues.second.profile_date.to_s,
+          contested_issue_description: decision_issues.first.description,
           issue_category: decision_issues.second.issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.second.approx_decision_date
         )
 
         expect(second_dta_request_issue).to_not be_nil
+        expect(second_dta_request_issue.end_product_establishment.code).to eq("040HDER")
+      end
+
+      context "when benefit type is pension" do
+        let(:benefit_type) { "pension" }
+
+        it "creates end product establishment with pension ep code" do
+          expect { subject }.to_not change(DecisionReviewTask, :count)
+
+          first_dta_request_issue = RequestIssue.find_by(contested_rating_issue_reference_id: "rating1")
+
+          expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDERPMC")
+        end
+      end
+
+      context "when benefit type is processed in caseflow" do
+        let(:benefit_type) { "voc_rehab" }
+
+        it "creates DecisionReviewTask" do
+          expect { subject }.to change(DecisionReviewTask, :count).by(1)
+        end
       end
     end
 
@@ -276,7 +283,7 @@ describe HigherLevelReview do
       it "does nothing" do
         subject
 
-        expect(SupplementalClaim.where(is_dta_error: true).empty?).to eq(true)
+        expect(SupplementalClaim.where.not(decision_review_remanded: nil).empty?).to eq(true)
         expect(RequestIssue.all.empty?).to eq(true)
       end
     end

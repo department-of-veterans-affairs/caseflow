@@ -12,7 +12,7 @@ RSpec.describe CaseReviewsController, type: :controller do
       let!(:judge_staff) { create(:staff, :judge_role, slogid: "CSF444", sdomainid: judge.css_id) }
       let!(:attorney_staff) { create(:staff, :attorney_role, slogid: "CSF555", sdomainid: attorney.css_id) }
 
-      let(:request_issue1) { create(:request_issue, review_request: task.appeal) }
+      let!(:request_issue1) { create(:request_issue, review_request: task.appeal) }
       let(:request_issue2) { create(:request_issue, review_request: task.appeal) }
       let(:request_issue3) { create(:request_issue, review_request: task.appeal) }
 
@@ -36,7 +36,8 @@ RSpec.describe CaseReviewsController, type: :controller do
               "overtime": true,
               "note": "something",
               "issues": [{ "disposition": "allowed", "id": request_issue1.id },
-                         { "disposition": "remanded", "id": request_issue2.id }]
+                         { "disposition": "remanded", "id": request_issue2.id,
+                           "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
             }
           end
           let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
@@ -57,68 +58,139 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
             expect(task.parent.reload.status).to eq "assigned"
-            expect(task.parent.type).to eq JudgeReviewTask.name
+            expect(task.parent.type).to eq JudgeDecisionReviewTask.name
 
             expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
           end
         end
 
-        context "when all parameters are present to create Draft Decision with new issue format" do
-          let(:params) do
-            {
-              "type": "AttorneyCaseReview",
-              "document_type": Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
-              "reviewing_judge_id": judge.id,
-              "work_product": "Decision",
-              "document_id": "123456789.1234",
-              "overtime": true,
-              "note": "something",
-              "issues": [{ "disposition": "allowed", "description": "wonderful life",
-                           "benefit_type": "pension",
-                           "request_issue_ids": [request_issue1.id, request_issue3.id] },
-                         { "disposition": "remanded", "description": "great moments",
-                           "benefit_type": "vha",
-                           "request_issue_ids": [request_issue2.id],
-                           "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
-            }
+        context "when new issue format" do
+          context "when missing dispositions" do
+            let(:params) do
+              {
+                "type": "AttorneyCaseReview",
+                "document_type": Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
+                "reviewing_judge_id": judge.id,
+                "work_product": "Decision",
+                "document_id": "123456789.1234",
+                "overtime": true,
+                "note": "something",
+                "issues": [{ "description": "wonderful life",
+                             "benefit_type": "pension",
+                             "diagnostic_code": "5001",
+                             "request_issue_ids": [request_issue1.id, request_issue3.id] },
+                           { "disposition": "remanded", "description": "great moments",
+                             "benefit_type": "vha",
+                             "diagnostic_code": "5001",
+                             "request_issue_ids": [request_issue2.id],
+                             "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
+              }
+            end
+
+            it "should not be successful" do
+              FeatureToggle.enable!(:ama_decision_issues)
+              post :complete, params: { task_id: task.id, tasks: params }
+              expect(response.status).to eq 400
+              response_body = JSON.parse(response.body)
+              msg = "Validation failed: Disposition is not included in the list"
+              expect(response_body["errors"].first["detail"]).to eq msg
+              FeatureToggle.disable!(:ama_decision_issues)
+            end
           end
-          let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
 
-          it "should be successful" do
-            FeatureToggle.enable!(:ama_decision_issues)
-            post :complete, params: { task_id: task.id, tasks: params }
-            expect(response.status).to eq 200
-            response_body = JSON.parse(response.body)
-            expect(response_body["task"]["document_id"]).to eq "123456789.1234"
-            expect(response_body["task"]["overtime"]).to eq true
-            expect(response_body["task"]["note"]).to eq "something"
-            expect(response_body.keys).to include "issues"
-            expect(request_issue1.reload.disposition).to eq nil
-            expect(request_issue2.reload.disposition).to eq nil
-            expect(request_issue3.reload.disposition).to eq nil
+          context "when not all request issues are sent" do
+            let(:params) do
+              {
+                "type": "AttorneyCaseReview",
+                "document_type": Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
+                "reviewing_judge_id": judge.id,
+                "work_product": "Decision",
+                "document_id": "123456789.1234",
+                "overtime": true,
+                "note": "something",
+                "issues": [{ "disposition": "allowed", "description": "wonderful life",
+                             "benefit_type": "pension",
+                             "diagnostic_code": "5001",
+                             "request_issue_ids": [request_issue3.id] },
+                           { "disposition": "remanded", "description": "great moments",
+                             "benefit_type": "vha",
+                             "diagnostic_code": "5001",
+                             "request_issue_ids": [request_issue2.id],
+                             "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
+              }
+            end
 
-            expect(DecisionIssue.count).to eq 2
-            expect(request_issue1.decision_issues.first.disposition).to eq "allowed"
-            expect(request_issue1.decision_issues.first.description).to eq "wonderful life"
-            expect(request_issue1.decision_issues.first.benefit_type).to eq "pension"
-            expect(request_issue3.decision_issues.first.disposition).to eq "allowed"
-            expect(request_issue3.decision_issues.first.description).to eq "wonderful life"
-            expect(request_issue3.decision_issues.first.benefit_type).to eq "pension"
+            it "should not be successful" do
+              FeatureToggle.enable!(:ama_decision_issues)
+              post :complete, params: { task_id: task.id, tasks: params }
+              expect(response.status).to eq 400
+              response_body = JSON.parse(response.body)
+              expect(response_body["errors"].first["detail"]).to eq "Not every request issue has a decision issue"
+              FeatureToggle.disable!(:ama_decision_issues)
+            end
+          end
 
-            expect(request_issue2.decision_issues.first.disposition).to eq "remanded"
-            expect(request_issue2.decision_issues.first.description).to eq "great moments"
-            expect(request_issue2.decision_issues.first.benefit_type).to eq "vha"
-            expect(request_issue2.decision_issues.first.remand_reasons.size).to eq 1
-            expect(request_issue2.decision_issues.first.remand_reasons.first.code).to eq "va_records"
-            expect(request_issue2.decision_issues.first.remand_reasons.first.post_aoj).to eq true
+          context "when all parameters are present" do
+            let(:params) do
+              {
+                "type": "AttorneyCaseReview",
+                "document_type": Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
+                "reviewing_judge_id": judge.id,
+                "work_product": "Decision",
+                "document_id": "123456789.1234",
+                "overtime": true,
+                "note": "something",
+                "issues": [{ "disposition": "allowed", "description": "wonderful life",
+                             "benefit_type": "pension",
+                             "diagnostic_code": "5001",
+                             "request_issue_ids": [request_issue1.id, request_issue3.id] },
+                           { "disposition": "remanded", "description": "great moments",
+                             "benefit_type": "vha",
+                             "diagnostic_code": "5002",
+                             "request_issue_ids": [request_issue2.id],
+                             "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
+              }
+            end
+            let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
 
-            expect(task.reload.status).to eq "completed"
-            expect(task.completed_at).to_not eq nil
-            expect(task.parent.reload.status).to eq "assigned"
-            expect(task.parent.type).to eq JudgeReviewTask.name
+            it "should be successful" do
+              FeatureToggle.enable!(:ama_decision_issues)
+              post :complete, params: { task_id: task.id, tasks: params }
+              expect(response.status).to eq 200
+              response_body = JSON.parse(response.body)
+              expect(response_body["task"]["document_id"]).to eq "123456789.1234"
+              expect(response_body["task"]["overtime"]).to eq true
+              expect(response_body["task"]["note"]).to eq "something"
+              expect(response_body.keys).to include "issues"
+              expect(request_issue1.reload.disposition).to eq nil
+              expect(request_issue2.reload.disposition).to eq nil
+              expect(request_issue3.reload.disposition).to eq nil
 
-            expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
-            FeatureToggle.disable!(:ama_decision_issues)
+              expect(DecisionIssue.count).to eq 2
+              expect(request_issue1.decision_issues.first.disposition).to eq "allowed"
+              expect(request_issue1.decision_issues.first.description).to eq "wonderful life"
+              expect(request_issue1.decision_issues.first.benefit_type).to eq "pension"
+              expect(request_issue3.decision_issues.first.disposition).to eq "allowed"
+              expect(request_issue3.decision_issues.first.description).to eq "wonderful life"
+              expect(request_issue3.decision_issues.first.benefit_type).to eq "pension"
+              expect(request_issue3.decision_issues.first.diagnostic_code).to eq "5001"
+
+              expect(request_issue2.decision_issues.first.disposition).to eq "remanded"
+              expect(request_issue2.decision_issues.first.description).to eq "great moments"
+              expect(request_issue2.decision_issues.first.benefit_type).to eq "vha"
+              expect(request_issue2.decision_issues.first.diagnostic_code).to eq "5002"
+              expect(request_issue2.decision_issues.first.remand_reasons.size).to eq 1
+              expect(request_issue2.decision_issues.first.remand_reasons.first.code).to eq "va_records"
+              expect(request_issue2.decision_issues.first.remand_reasons.first.post_aoj).to eq true
+
+              expect(task.reload.status).to eq "completed"
+              expect(task.completed_at).to_not eq nil
+              expect(task.parent.reload.status).to eq "assigned"
+              expect(task.parent.type).to eq JudgeDecisionReviewTask.name
+
+              expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
+              FeatureToggle.disable!(:ama_decision_issues)
+            end
           end
         end
       end
@@ -130,6 +202,11 @@ RSpec.describe CaseReviewsController, type: :controller do
 
         let(:root_task) { create(:root_task) }
         let(:task) { create(:ama_judge_task, assigned_to: judge, parent: root_task) }
+
+        before do
+          # Add somebody to the BVA dispatch team so automatic task assignment for AMA cases succeeds.
+          OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        end
 
         context "when all parameters are present to send to sign a decision" do
           let(:params) do
@@ -143,7 +220,8 @@ RSpec.describe CaseReviewsController, type: :controller do
               "factors_not_considered": %w[theory_contention relevant_records],
               "areas_for_improvement": ["process_violations"],
               "issues": [{ "disposition": "denied", "id": request_issue1.id },
-                         { "disposition": "remanded", "id": request_issue2.id }]
+                         { "disposition": "remanded", "id": request_issue2.id,
+                           "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
             }
           end
 
@@ -170,8 +248,11 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(task.reload.status).to eq "completed"
             expect(task.completed_at).to_not eq nil
 
+            # When a judge completes judge checkout we create either a QR or dispatch task.
             quality_review_task = QualityReviewTask.find_by(parent_id: root_task.id)
-            expect(quality_review_task.assigned_to).to eq(QualityReview.singleton)
+            expect(quality_review_task.assigned_to).to eq(QualityReview.singleton) if quality_review_task
+            dispatch_task = BvaDispatchTask.find_by(parent_id: root_task.id)
+            expect(dispatch_task.assigned_to).to eq(BvaDispatch.singleton) if dispatch_task
           end
 
           context "When case is being QRed" do
@@ -255,7 +336,8 @@ RSpec.describe CaseReviewsController, type: :controller do
               "document_id": "123456789.1234",
               "overtime": true,
               "note": "something",
-              "issues": [{ "disposition": "3", "id": vacols_issue_remanded.issseq },
+              "issues": [{ "disposition": "3", "id": vacols_issue_remanded.issseq,
+                           "remand_reasons": [{ "code": "AB", "post_aoj": true }] },
                          { "disposition": "1", "id": vacols_issue_allowed.issseq }]
             }
           end
@@ -362,7 +444,8 @@ RSpec.describe CaseReviewsController, type: :controller do
               "factors_not_considered": %w[theory_contention relevant_records],
               "areas_for_improvement": ["process_violations"],
               "issues": [{ "disposition": "1", "id": vacols_issue_remanded.issseq },
-                         { "disposition": "3", "id": vacols_issue_allowed.issseq }]
+                         { "disposition": "3", "id": vacols_issue_allowed.issseq,
+                           "remand_reasons": [{ "code": "AB", "post_aoj": true }] }]
             }
           end
 
@@ -378,12 +461,12 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["task"]["quality"]).to eq "meets_expectations"
             expect(response_body["task"]["comment"]).to eq "do this"
             expect(response_body.keys).to include "issues"
-            expect(response_body["issues"].select do |i|
-              i["vacols_sequence_id"] == vacols_issue_remanded.issseq
-            end.first["disposition"]).to eq "allowed"
-            expect(response_body["issues"].select do |i|
-              i["vacols_sequence_id"] == vacols_issue_allowed.issseq
-            end.first["disposition"]).to eq "remanded"
+            expect(VACOLS::CaseIssue.where(
+              isskey: vacols_case.bfkey, issseq: vacols_issue_remanded.issseq
+            ).first.issdc).to eq "1"
+            expect(VACOLS::CaseIssue.where(
+              isskey: vacols_case.bfkey, issseq: vacols_issue_allowed.issseq
+            ).first.issdc).to eq "3"
           end
         end
       end

@@ -58,7 +58,7 @@ class RampRefiling < RampReview
 
   def contention_descriptions_to_create
     @contention_descriptions_to_create ||=
-      issues.where(contention_reference_id: nil).order(:description).pluck(:description)
+      issues.where(contention_reference_id: nil).order(:description).map(&:contention_text)
   end
 
   # VBMS will return ALL contentions on a end product when you create contentions,
@@ -71,7 +71,7 @@ class RampRefiling < RampReview
       # the created contentions. Instead find the issue by matching text.
       create_contentions_in_vbms.each do |contention|
         matching_issue = issues.find do |issue|
-          issue.description == contention.text && issue.contention_reference_id.nil?
+          issue.contention_text == contention.text && issue.contention_reference_id.nil?
         end
         matching_issue&.update!(contention_reference_id: contention.id)
       end
@@ -92,7 +92,7 @@ class RampRefiling < RampReview
     VBMSService.create_contentions!(
       veteran_file_number: veteran_file_number,
       claim_id: end_product_establishment.reference_id,
-      contention_descriptions: contention_descriptions_to_create,
+      contentions: contention_descriptions_to_create.map { |desc| { "description": desc } },
       user: intake_processed_by
     )
   end

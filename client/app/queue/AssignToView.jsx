@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
+import { sprintf } from 'sprintf-js';
 
 import COPY from '../../COPY.json';
 
@@ -31,6 +32,7 @@ type Params = {|
   task: Task,
   isReassignAction: boolean,
   isTeamAssign: boolean,
+  returnToCaseDetails: boolean,
   assigneeAlreadySelected: boolean,
   history: Object
 |};
@@ -113,7 +115,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       }
     };
 
-    const successMsg = { title: `Task assigned to ${this.getAssignee()}` };
+    const successMsg = { title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
 
     if (isReassignAction) {
       return this.reassignTask();
@@ -219,9 +221,14 @@ const propsToText = (props) => {
   // I think the editModalBase higher order component is still calling this after all of the actions have run and the
   // task's available actions have been updated to reflect the updated status of the task.
   const action = props.task && props.task.availableActions.length > 0 ? selectedAction(props) : null;
+  const title = (props.assigneeAlreadySelected && action) ?
+    sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label) :
+    COPY.ASSIGN_TASK_TITLE;
+  const pathAfterSubmit = props.returnToCaseDetails ? `/queue/appeals/${props.appealId}` : '/queue';
 
   return {
-    title: props.assigneeAlreadySelected && action ? `Assign task to ${action.label}` : COPY.ASSIGN_TO_PAGE_TITLE
+    title,
+    pathAfterSubmit
   };
 };
 

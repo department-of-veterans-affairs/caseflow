@@ -2,7 +2,7 @@ class Dispatch::TasksController < ApplicationController
   class InvalidTaskClassError < StandardError; end
   class InvalidTaskStateError < StandardError; end
 
-  before_action :check_dispatch_out_of_service
+  before_action :check_dispatch_out_of_service, :set_application
   before_action :verify_admin_access, only: [:index]
 
   TASK_CLASSES = {
@@ -21,6 +21,10 @@ class Dispatch::TasksController < ApplicationController
 
   private
 
+  def set_application
+    RequestStore.store[:application] = "dispatch"
+  end
+
   def check_dispatch_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("dispatch_out_of_service")
   end
@@ -36,7 +40,8 @@ class Dispatch::TasksController < ApplicationController
 
   def verify_not_complete
     return true unless task.completed?
-    render json: { error_code: "task_already_completed" }, status: 422
+
+    render json: { error_code: "task_already_completed" }, status: :unprocessable_entity
   end
 
   def task_id

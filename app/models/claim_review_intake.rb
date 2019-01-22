@@ -1,12 +1,10 @@
 class ClaimReviewIntake < DecisionReviewIntake
-  include Asyncable
-
   attr_reader :request_params
 
   def ui_hash(ama_enabled)
     super.merge(
       benefit_type: detail.benefit_type,
-      end_product_description: detail.end_product_description
+      processed_in_caseflow: detail.processed_in_caseflow?
     )
   end
 
@@ -34,13 +32,14 @@ class ClaimReviewIntake < DecisionReviewIntake
     detail.errors[:payee_code] << payee_code_error if payee_code_error
     detail.errors[:claimant] << claimant_error if claimant_error
 
-    return false
+    false
     # we just swallow the exception otherwise, since we want the validation errors to return to client
   end
 
   def complete!(request_params)
     super(request_params) do
       detail.submit_for_processing!
+      detail.create_decision_review_task_if_required!
       if run_async?
         DecisionReviewProcessJob.perform_later(detail)
       else
@@ -72,6 +71,7 @@ class ClaimReviewIntake < DecisionReviewIntake
     # payee_code is only required for claim reviews where the veteran is
     # not the claimant and the benefit_type is compensation or pension
     return unless request_params[:veteran_is_not_claimant] == true
+
     ClaimantValidator::BENEFIT_TYPE_REQUIRES_PAYEE_CODE.include?(request_params[:benefit_type])
   end
 

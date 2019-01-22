@@ -9,13 +9,15 @@ import { onReceiveHearingDays } from './common/actions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import { formatDateStr } from '../util/DateUtil';
+import { loadingSymbolHtml } from './RenderFunctions';
 
 class HearingDayDropdown extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      editable: false
+      editable: false,
+      loading: false
     };
   }
 
@@ -23,10 +25,13 @@ class HearingDayDropdown extends React.Component {
 
     const { regionalOffice } = this.props;
 
+    this.setState({ loading: true });
+
     return ApiUtil.get(`/regional_offices/${regionalOffice}/open_hearing_dates.json`).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       this.props.onReceiveHearingDays(resp.hearingDays);
+      this.setState({ loading: false });
     });
 
   };
@@ -61,9 +66,9 @@ class HearingDayDropdown extends React.Component {
 
     _.forEach(this.props.hearingDays, (day) => {
       hearingDayOptions.push({
-        label: formatDateStr(day.hearingDate),
+        label: formatDateStr(day.scheduledFor),
         value: { ...day,
-          hearingDate: formatDateStr(day.hearingDate, 'YYYY-MM-DD', 'YYYY-MM-DD') }
+          hearingDate: formatDateStr(day.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD') }
       });
     });
 
@@ -71,14 +76,14 @@ class HearingDayDropdown extends React.Component {
       hearingDayOptions.push(...this.props.staticOptions);
     }
 
-    return hearingDayOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
+    return hearingDayOptions.sort((d1, d2) => new Date(d1.value.scheduledFor) - new Date(d2.value.scheduledFor));
   };
 
   render() {
     const { readOnly, onChange, placeholder } = this.props;
     const hearingDayOptions = this.hearingDayOptions();
 
-    if (!this.props.changePrompt || this.state.editable) {
+    if ((!this.props.changePrompt || this.state.editable) && !this.state.loading) {
       return (
         <SearchableDropdown
           name="hearing_date"
@@ -102,13 +107,15 @@ class HearingDayDropdown extends React.Component {
             width: '150px' }}>
             {this.getValue().label}
           </p>
-          <Button
+          {!this.state.loading && <Button
             name="Change"
             linkStyling
             onClick={() => {
               this.setState({ editable: true });
-            }} />
+            }} />}
+          {this.state.loading && loadingSymbolHtml('', '20px')}
         </InlineForm>
+
       </React.Fragment>
     );
   }

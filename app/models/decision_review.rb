@@ -1,6 +1,5 @@
 class DecisionReview < ApplicationRecord
   include CachedAttributes
-  include LegacyOptinable
   include Asyncable
 
   validate :validate_receipt_date
@@ -11,7 +10,9 @@ class DecisionReview < ApplicationRecord
 
   has_many :request_issues, as: :review_request
   has_many :claimants, as: :review_request
+  has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review
+  has_many :tasks, as: :appeal
 
   before_destroy :remove_issues!
 
@@ -57,6 +58,7 @@ class DecisionReview < ApplicationRecord
 
   def serialized_ratings
     return unless receipt_date
+    return unless can_contest_rating_issues?
 
     cached_serialized_ratings.each do |rating|
       rating[:issues].each do |rating_issue_hash|
@@ -67,12 +69,25 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def veteran_full_name
+    veteran&.name&.formatted(:readable_full)
+  end
+
+  def number_of_issues
+    request_issues.count
+  end
+
+  def external_id
+    id.to_s
+  end
+
   def ui_hash
     {
       veteran: {
         name: veteran&.name&.formatted(:readable_short),
         fileNumber: veteran_file_number,
-        formName: veteran&.name&.formatted(:form)
+        formName: veteran&.name&.formatted(:form),
+        ssn: veteran&.ssn
       },
       relationships: veteran&.relationships,
       claimant: claimant_participant_id,
@@ -82,12 +97,16 @@ class DecisionReview < ApplicationRecord
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
       requestIssues: request_issues.map(&:ui_hash),
-      contestableIssuesByDate: contestable_issues.map(&:serialize)
+      decisionIssues: decision_issues.map(&:ui_hash),
+      activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
+      contestableIssuesByDate: contestable_issues.map(&:serialize),
+      editIssuesUrl: caseflow_only_edit_issues_url
     }
   end
 
   def timely_issue?(decision_date)
     return true unless receipt_date && decision_date
+
     decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
   end
 
@@ -106,6 +125,7 @@ class DecisionReview < ApplicationRecord
 
   def claimant_participant_id
     return nil if claimants.empty?
+
     claimants.first.participant_id
   end
 
@@ -117,6 +137,7 @@ class DecisionReview < ApplicationRecord
 
   def payee_code
     return nil if claimants.empty?
+
     claimants.first.payee_code
   end
 
@@ -146,10 +167,8 @@ class DecisionReview < ApplicationRecord
     end
   end
 
-  def special_issues
-    [].tap do |specials|
-      specials << vacols_optin_special_issue if needs_vacols_optin_special_issue?
-    end
+  def process_legacy_issues!
+    LegacyOptinManager.new(decision_review: self).process!
   end
 
   def on_decision_issues_sync_processed(end_product_establishment)
@@ -160,15 +179,37 @@ class DecisionReview < ApplicationRecord
     # no-op
   end
 
-  def process_legacy_issues!
-    LegacyOptinManager.new(decision_review: self).process!
-  end
-
   def contestable_issues
+    return contestable_issues_from_decision_issues unless can_contest_rating_issues?
+
     contestable_issues_from_ratings + contestable_issues_from_decision_issues
   end
 
+  def active_nonrating_request_issues
+    @active_nonrating_request_issues ||= RequestIssue.nonrating
+      .where(veteran_participant_id: veteran.participant_id)
+      .where.not(id: request_issues.map(&:id))
+      .select(&:status_active?)
+  end
+
+  # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
+  def serializer_class
+    ::WorkQueue::DecisionReviewSerializer
+  end
+
+  def create_decision_issues_for_tasks(decision_issue_params, decision_date)
+    decision_issue_params.each do |decision_issue_param|
+      decision_issue_param[:decision_date] = decision_date
+      request_issues.find_by(id: decision_issue_param[:request_issue_id])
+        .create_decision_issue_from_params(decision_issue_param)
+    end
+  end
+
   private
+
+  def can_contest_rating_issues?
+    fail Caseflow::Error::MustImplementInSubclass
+  end
 
   def cached_rating_issues
     cached_serialized_ratings.inject([]) do |result, rating_hash|
@@ -177,7 +218,11 @@ class DecisionReview < ApplicationRecord
   end
 
   def unfiltered_contestable_issues_from_ratings
-    cached_rating_issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
+    return [] unless receipt_date
+
+    cached_rating_issues
+      .select { |issue| issue.profile_date && issue.profile_date.to_date < receipt_date }
+      .map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, self) }
   end
 
   def contestable_issues_from_ratings
@@ -186,6 +231,16 @@ class DecisionReview < ApplicationRecord
         contestable_issue.rating_issue_reference_id == potential_duplicate.rating_issue_reference_id
       end
     end
+  end
+
+  def contestable_decision_issues
+    return [] unless receipt_date
+
+    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+      .select(&:finalized?)
+      .select do |issue|
+        issue.approx_decision_date && issue.approx_decision_date < receipt_date
+      end
   end
 
   def contestable_issues_from_decision_issues
@@ -208,7 +263,14 @@ class DecisionReview < ApplicationRecord
   end
 
   def ratings_with_issues
+    return [] unless veteran
+
     veteran.ratings.reject { |rating| rating.issues.empty? }
+
+    # return empty list when there are no ratings
+  rescue Rating::BackfilledRatingError => e
+    Raven.capture_exception(e)
+    []
   end
 
   def ratings_cache_key
@@ -234,6 +296,7 @@ class DecisionReview < ApplicationRecord
 
   def validate_receipt_date
     return unless receipt_date
+
     validate_receipt_date_not_before_ama
     validate_receipt_date_not_in_future
   end

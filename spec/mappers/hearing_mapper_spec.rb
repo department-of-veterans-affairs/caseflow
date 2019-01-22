@@ -64,7 +64,7 @@ describe HearingMapper do
     let(:datetime) { Time.new(2013, 9, 5, 20, 0, 0, "-08:00") }
 
     context "when travel board" do
-      let(:type) { :travel }
+      let(:type) { "T" }
 
       it "uses a regional office timezone to set the zone" do
         expect(subject.day).to eq 5
@@ -74,7 +74,7 @@ describe HearingMapper do
     end
 
     context "when video" do
-      let(:type) { :video }
+      let(:type) { "V" }
 
       it "uses a regional office timezone to set the zone" do
         expect(subject.day).to eq 5
@@ -84,7 +84,7 @@ describe HearingMapper do
     end
 
     context "when central_office" do
-      let(:type) { :central_office }
+      let(:type) { "C" }
 
       it "does not use a regional office timezone" do
         expect(subject.day).to eq 6

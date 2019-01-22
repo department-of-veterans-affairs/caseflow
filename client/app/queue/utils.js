@@ -23,14 +23,14 @@ import type { NewDocsForAppeal } from './types/state';
 
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
-import VACOLS_DISPOSITIONS_BY_ID from '../../constants/VACOLS_DISPOSITIONS_BY_ID.json';
+import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 
 /**
  * For legacy attorney checkout flow, filter out already-decided issues. Undecided
- * VACOLS disposition IDs are all numerical (1-9), decided IDs are alphabetical (A-X).
+ * VACOLS disposition IDs are all numerical (1-9) or S, decided IDs are alphabetical (A-X).
  * Filter out disposition 9 because it is no longer used.
  *
  * @param {Array} issues
@@ -42,9 +42,7 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
     return true;
   }
 
-  const disposition = Number(issue.disposition);
-
-  if (disposition && disposition < 9 && issue.disposition in VACOLS_DISPOSITIONS_BY_ID) {
+  if (issue.disposition && issue.disposition in UNDECIDED_VACOLS_DISPOSITIONS_BY_ID) {
     return true;
   }
 });
@@ -89,7 +87,8 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       instructions: task.attributes.instructions,
       decisionPreparedBy,
       availableActions: task.attributes.available_actions,
-      taskBusinessPayloads: task.attributes.task_business_payloads
+      taskBusinessPayloads: task.attributes.task_business_payloads,
+      caseReviewId: task.attributes.attorney_case_review_id
     };
 
     return acc;
@@ -214,7 +213,7 @@ export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) =>
     viewedByJudge: hearing.viewed_by_judge,
     date: hearing.date,
     type: hearing.type,
-    id: hearing.id,
+    externalId: hearing.external_id,
     disposition: hearing.disposition
   }));
 
@@ -253,6 +252,7 @@ export const prepareAppealForStore =
         completedHearingOnPreviousAppeal: appeal.attributes['completed_hearing_on_previous_appeal?'],
         issues: prepareAppealIssuesForStore(appeal),
         decisionIssues: appeal.attributes.decision_issues,
+        canEditRequestIssues: appeal.attributes.can_edit_request_issues,
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,
@@ -268,7 +268,9 @@ export const prepareAppealForStore =
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,
         regionalOffice: appeal.attributes.regional_office,
-        caseflowVeteranId: appeal.attributes.caseflow_veteran_id
+        caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
+        documentID: appeal.attributes.document_id,
+        caseReviewId: appeal.attributes.attorney_case_review_id
       };
 
       return accumulator;
@@ -279,6 +281,28 @@ export const prepareAppealForStore =
       appealDetails: appealDetailsHash
     };
   };
+
+export const prepareClaimReviewForStore = (claimReviews: Array<Object>) => {
+  const claimReviewHash = claimReviews.reduce((accumulator, claimReview) => {
+    const key = `${claimReview.review_type}-${claimReview.claim_id}`;
+
+    accumulator[key] = {
+      caseflowVeteranId: claimReview.caseflow_veteran_id,
+      claimantNames: claimReview.claimant_names,
+      claimId: claimReview.claim_id,
+      endProducts: claimReview.end_products,
+      reviewType: claimReview.review_type,
+      veteranFileNumber: claimReview.veteran_file_number,
+      veteranFullName: claimReview.veteran_full_name
+    };
+
+    return accumulator;
+  }, {});
+
+  return {
+    claimReviews: claimReviewHash
+  };
+};
 
 export const renderAppealType = (appeal: BasicAppeal) => {
   const {

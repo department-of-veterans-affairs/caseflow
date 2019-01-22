@@ -14,6 +14,7 @@ import {
 import {
   dropdownStyling
 } from '../constants';
+import COPY from '../../../COPY.json';
 
 import type {
   State
@@ -64,8 +65,8 @@ class ActionsDropdown extends React.PureComponent<Props> {
     }
 
     return <SearchableDropdown
-      name={`start-checkout-flow-${this.props.appealId}`}
-      placeholder="Select an action&hellip;"
+      name={`start-checkout-flow-${this.props.appealId}-${this.props.task.uniqueId}`}
+      placeholder={COPY.TASK_ACTION_DROPDOWN_BOX_LABEL}
       options={this.props.task.availableActions}
       onChange={this.changeRoute}
       hideLabel

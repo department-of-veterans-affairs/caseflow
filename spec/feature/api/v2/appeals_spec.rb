@@ -251,6 +251,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].length).to eq(2)
 
       # check the attribtues on the first appeal
+      expect(json["data"].first["type"]).to eq("legacyAppeal")
       expect(json["data"].first["attributes"]["appealIds"].length).to eq(2)
       expect(json["data"].first["attributes"]["appealIds"]).to include("1234567")
       expect(json["data"].first["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
@@ -331,6 +332,7 @@ describe "Appeals API v2", type: :request do
       expect(json_notification_date).to eq((Time.zone.today - 12.months).to_formatted_s(:csv_date))
 
       # check the other attribtues on the last appeal
+      expect(json["data"].last["type"]).to eq("legacyAppeal")
       expect(json["data"].last["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
       expect(json["data"].last["attributes"]["active"]).to eq(true)
       expect(json["data"].last["attributes"]["incompleteHistory"]).to eq(false)

@@ -6,16 +6,16 @@ class SyncReviewsJob < CaseflowJob
   DEFAULT_EP_LIMIT = 100
 
   def perform(args = {})
-    RequestStore.store[:application] = "intake"
     RequestStore.store[:current_user] = User.system_user
 
     # specified limit of end products that will be synced
     limit = args["limit"] || DEFAULT_EP_LIMIT
 
     perform_end_product_syncs(limit)
-    perform_ramp_refiling_reprocessing
     perform_decision_review_processing(limit)
     perform_decision_rating_issues_syncs(limit)
+    reprocess_decision_documents(limit)
+    perform_ramp_refiling_reprocessing
   end
 
   private
@@ -31,7 +31,7 @@ class SyncReviewsJob < CaseflowJob
       ramp_refiling.create_end_product_and_contentions!
     rescue StandardError => e
       # Rescue and capture errors so they don't cause the job to stop
-      Raven.capture_exception(e)
+      Raven.capture_exception(e, extra: { ramp_refiling_id: ramp_refiling.id })
     end
   end
 
@@ -48,6 +48,15 @@ class SyncReviewsJob < CaseflowJob
   def perform_decision_rating_issues_syncs(limit)
     RequestIssue.requires_processing.limit(limit).each do |request_issue|
       DecisionIssueSyncJob.perform_later(request_issue)
+    end
+    BoardGrantEffectuation.requires_processing.limit(limit).each do |effectuation|
+      DecisionIssueSyncJob.perform_later(effectuation)
+    end
+  end
+
+  def reprocess_decision_documents(limit)
+    DecisionDocument.requires_processing.limit(limit).each do |decision_document|
+      ProcessDecisionDocumentJob.perform_later(decision_document)
     end
   end
 end

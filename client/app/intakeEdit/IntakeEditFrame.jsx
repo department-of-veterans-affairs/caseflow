@@ -8,6 +8,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from '../intake/constants';
 import { EditAddIssuesPage } from '../intake/pages/addIssues';
+import DecisionReviewEditCompletedPage from '../intake/pages/decisionReviewEditCompleted';
 import Message from './pages/message';
 import { css } from 'glamor';
 import EditButtons from './components/EditButtons';
@@ -18,7 +19,7 @@ const textAlignRightStyling = css({
 
 export default class IntakeEditFrame extends React.PureComponent {
   displayClearedEpMessage = (details) => {
-    return `Other end products associated with this ${details.formName} have already been decided, 
+    return `Other end products associated with this ${details.formName} have already been decided,
       so issues are no longer editable. If this is a problem, please contact Caseflow support.`;
   }
 
@@ -82,9 +83,7 @@ export default class IntakeEditFrame extends React.PureComponent {
                   exact
                   path={PAGE_PATHS.CONFIRMATION}
                   title="Edit Claim Issues | Caseflow Intake"
-                  component={() => {
-                    return <Message title="Edit Confirmed" displayMessage={this.displayConfirmationMessage} />;
-                  }} />
+                  component={DecisionReviewEditCompletedPage} />
                 <PageRoute
                   exact
                   path={PAGE_PATHS.DTA_CLAIM}

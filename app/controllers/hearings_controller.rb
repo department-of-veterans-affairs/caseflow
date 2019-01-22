@@ -13,9 +13,14 @@ class HearingsController < ApplicationController
       )
     end
 
-    hearing.update_caseflow_and_vacols(update_params)
-    # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
-    HearingRepository.load_vacols_data(hearing)
+    if hearing.is_a?(LegacyHearing)
+      hearing.update_caseflow_and_vacols(update_params_legacy)
+      # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
+      HearingRepository.load_vacols_data(hearing)
+    else
+      hearing.update!(update_params)
+    end
+
     render json: hearing.to_hash(current_user.id)
   end
 
@@ -34,10 +39,10 @@ class HearingsController < ApplicationController
   end
 
   def hearing
-    @hearing ||= Hearing.find(hearing_id)
+    @hearing ||= Hearing.find_hearing_by_uuid_or_vacols_id(hearing_external_id)
   end
 
-  def hearing_id
+  def hearing_external_id
     params[:id]
   end
 
@@ -57,14 +62,23 @@ class HearingsController < ApplicationController
     RequestStore.store[:application] = "hearings"
   end
 
-  def update_params
+  def update_params_legacy
     params.require("hearing").permit(:notes,
                                      :disposition,
                                      :hold_open,
                                      :aod,
                                      :transcript_requested,
-                                     :add_on,
                                      :prepped,
-                                     :date)
+                                     :scheduled_for)
+  end
+
+  def update_params
+    params.require("hearing").permit(:notes,
+                                     :disposition,
+                                     :hold_open,
+                                     :transcript_requested,
+                                     :prepped,
+                                     :scheduled_time,
+                                     :evidence_window_waived)
   end
 end

@@ -12,12 +12,15 @@ const clipboardButtonStyling = css({
   borderWidth: '1px',
   color: COLORS.GREY_DARK,
   padding: '0.75rem',
+  // Offset the additional padding so when this component appears in an unordered list of items its baseline matches.
+  margin: '-0.75rem 0',
   ':hover': {
     backgroundColor: 'transparent',
     color: COLORS.GREY_DARK,
     borderColor: COLORS.PRIMARY,
     borderBottomWidth: '1px'
   },
+  overflowWrap: 'break-word',
   '& > svg path': { fill: COLORS.GREY_LIGHT },
   '&:hover > svg path': { fill: COLORS.PRIMARY }
 });

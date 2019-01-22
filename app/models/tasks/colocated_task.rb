@@ -1,8 +1,5 @@
 class ColocatedTask < Task
-  include RoundRobinAssigner
-
   validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
-  validate :assigned_by_role_is_valid
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :on_hold_duration_is_set, on: :update
@@ -14,81 +11,60 @@ class ColocatedTask < Task
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
-        assignee = next_assignee
-        records = params_array.map do |params|
-          team_task = create_from_params(
-            params.merge(assigned_to: Colocated.singleton, status: Constants.TASK_STATUSES.on_hold), user
-          )
-          individual_task = create_from_params(params.merge(assigned_to: assignee, parent: team_task), user)
+        team_tasks = super(params_array.map { |p| p.merge(assigned_to: Colocated.singleton) }, user)
 
-          [team_task, individual_task]
-        end.flatten
+        all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten
 
-        individual_task = records.select { |r| r.assigned_to.is_a?(User) }.first
-        if records.map(&:valid?).uniq == [true] && individual_task.legacy?
-          AppealRepository.update_location!(individual_task.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+        all_tasks.map(&:appeal).uniq.each do |appeal|
+          if appeal.is_a? LegacyAppeal
+            AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+          end
         end
 
-        records
+        all_tasks
       end
     end
 
-    private
-
-    def list_of_assignees
-      Colocated.singleton.non_admins.sort_by(&:id).pluck(:css_id)
+    def verify_user_can_create!(user, parent)
+      if parent
+        super(user, parent)
+      elsif !(user.attorney_in_vacols? || user.judge_in_vacols?)
+        fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
+      end
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
   def available_actions(_user)
-    actions = [
-      {
-        label: COPY::COLOCATED_ACTION_PLACE_HOLD,
-        value: Constants::CO_LOCATED_ACTIONS["PLACE_HOLD"]
-      },
-      Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h
-    ]
+    actions = [Constants.TASK_ACTIONS.PLACE_HOLD.to_h, Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h]
 
     if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
-      actions.unshift(
-        label: format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action]),
-        value: "modal/send_colocated_task"
-      )
+      send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
+      send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
+      actions.unshift(send_to_team)
     else
-      actions.unshift(
-        label: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY,
-        value: "modal/mark_task_complete"
-      )
+      actions.unshift(Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h)
+    end
+
+    if action == "translation" && appeal.is_a?(Appeal)
+      actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
     end
 
     actions
   end
+  # rubocop:enable Metrics/AbcSize
 
   def actions_available?(user)
     return false if completed? || assigned_to != user
+
     true
   end
 
-  def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
-  end
-
-  def on_hold_expired?
-    return true if placed_on_hold_at && on_hold_duration && placed_on_hold_at + on_hold_duration.days < Time.zone.now
-    false
-  end
-
-  def assign_to_privacy_team_data
-    org = PrivacyTeam.singleton
-
-    {
-      selected: org,
-      options: [{ label: org.name, value: org.id }],
-      type: GenericTask.name
-    }
-  end
-
   private
+
+  def create_and_auto_assign_child_task(_options = {})
+    super(appeal: appeal)
+  end
 
   def update_location_in_vacols
     if saved_change_to_status? &&
@@ -110,10 +86,6 @@ class ColocatedTask < Task
 
   def all_tasks_completed_for_appeal?
     appeal.tasks.where(type: ColocatedTask.name).map(&:status).uniq == [Constants.TASK_STATUSES.completed]
-  end
-
-  def assigned_by_role_is_valid
-    errors.add(:assigned_by, "has to be an attorney") if assigned_by && !assigned_by.attorney_in_vacols?
   end
 
   def on_hold_duration_is_set

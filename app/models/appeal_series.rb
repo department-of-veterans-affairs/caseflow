@@ -125,6 +125,7 @@ class AppealSeries < ApplicationRecord
 
   def fetch_docket
     return unless active? && %w[original post_remand].include?(type_code) && form9_date && !aod
+
     DocketSnapshot.latest.docket_tracer_for_form9_date(form9_date)
   end
 
@@ -163,11 +164,13 @@ class AppealSeries < ApplicationRecord
     if latest_appeal.certification_date
       return :scheduled_hearing if latest_appeal.hearing_scheduled?
       return :pending_hearing_scheduling if latest_appeal.hearing_pending?
+
       return :on_docket
     end
 
     if latest_appeal.form9_date
       return :pending_certification_ssoc if !latest_appeal.ssoc_dates.empty?
+
       return :pending_certification
     end
 
@@ -207,6 +210,8 @@ class AppealSeries < ApplicationRecord
       :ftr
     when "RAMP Opt-in"
       :ramp
+    when "AMA SOC/SSOC Opt-in"
+      :statutory_opt_in
     when "Dismissed, Death", "Advance Withdrawn Death of Veteran"
       :death
     when "Reconsideration by Letter"
@@ -222,6 +227,7 @@ class AppealSeries < ApplicationRecord
   def disambiguate_status_remand
     post_decision_ssocs = latest_appeal.ssoc_dates.select { |ssoc| ssoc > latest_appeal.decision_date }
     return :remand_ssoc if !post_decision_ssocs.empty?
+
     :remand
   end
 
@@ -229,11 +235,11 @@ class AppealSeries < ApplicationRecord
   def details_for_status
     case status
     when :scheduled_hearing
-      hearing = latest_appeal.scheduled_hearings.sort_by(&:date).first
+      hearing = latest_appeal.scheduled_hearings.min_by(&:scheduled_for)
 
       {
-        date: hearing.date.to_date,
-        type: hearing.type,
+        date: hearing.scheduled_for.to_date,
+        type: hearing.readable_request_type.downcase,
         location: hearing.location
       }
     when :pending_hearing_scheduling

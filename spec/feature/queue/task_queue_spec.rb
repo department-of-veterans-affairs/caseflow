@@ -1,65 +1,50 @@
 require "rails_helper"
 
 RSpec.feature "Task queue" do
-  let(:attorney_user) { FactoryBot.create(:user) }
-  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+  context "attorney user with assigned tasks" do
+    let(:attorney_user) { FactoryBot.create(:user) }
 
-  let!(:simple_appeal) do
-    FactoryBot.create(
-      :legacy_appeal,
-      :with_veteran,
-      vacols_case: FactoryBot.create(:case, :assigned, user: attorney_user)
-    )
-  end
+    let!(:attorney_task) do
+      FactoryBot.create(
+        :ama_attorney_task,
+        :on_hold,
+        assigned_to: attorney_user
+      )
+    end
 
-  let!(:attorney_task) do
-    FactoryBot.create(
-      :ama_attorney_task,
-      :on_hold,
-      assigned_to: attorney_user
-    )
-  end
-
-  let!(:non_veteran_claimant_appeal) do
-    FactoryBot.create(
-      :legacy_appeal,
-      :with_veteran,
-      vacols_case: FactoryBot.create(
-        :case,
-        :assigned,
-        user: attorney_user,
-        correspondent: FactoryBot.create(
-          :correspondent,
-          appellant_first_name: "Not",
-          appellant_middle_initial: "D",
-          appellant_last_name: "Veteran"
+    let!(:paper_appeal) do
+      FactoryBot.create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: FactoryBot.create(
+          :case,
+          :assigned,
+          user: attorney_user,
+          folder: FactoryBot.build(:folder, :paper_case)
         )
       )
-    )
-  end
+    end
 
-  let!(:paper_appeal) do
-    FactoryBot.create(
-      :legacy_appeal,
-      :with_veteran,
-      vacols_case: FactoryBot.create(
-        :case,
-        :assigned,
-        user: attorney_user,
-        folder: FactoryBot.build(:folder, :paper_case)
-      )
-    )
-  end
+    let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
+    let(:attorney_on_hold_tasks) do
+      Task.where(status: :on_hold, assigned_to: attorney_user)
+    end
 
-  let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
-  let(:attorney_on_hold_tasks) do
-    Task.where(status: :on_hold, assigned_to: attorney_user)
-  end
-
-  context "attorney user with assigned tasks" do
     before do
       User.authenticate!(user: attorney_user)
       visit "/queue"
+    end
+
+    context "the on-hold task is attached to an appeal with documents" do
+      let!(:documents) { ["NOD", "BVA Decision", "SSOC"].map { |t| FactoryBot.build(:document, type: t) } }
+
+      before do
+        allow_any_instance_of(Appeal).to receive(:new_documents_for_user) { documents }
+      end
+
+      it "shows the correct number of tasks on hold" do
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
+      end
     end
 
     it "displays a table with a row for each case assigned to the attorney" do
@@ -97,6 +82,8 @@ RSpec.feature "Task queue" do
       find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length)).click
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
       expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_tasks.length)
+      appeal = attorney_task.appeal
+      expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
     end
 
     it "does not show queue switcher dropdown" do
@@ -136,11 +123,11 @@ RSpec.feature "Task queue" do
 
       case_details_link = page.find(:xpath, "//tbody/tr/td[1]/a")
       case_details_link.click
-      expect(page).to have_content(COPY::CASE_SNAPSHOT_ACTION_BOX_TITLE)
+      expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
 
       # Marking the task as complete correctly changes the task's status in the database.
       find(".Select-control", text: "Select an action…").click
-      find("div", class: "Select-option", text: "Mark task complete").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
       find("button", text: "Mark complete").click
 
@@ -150,41 +137,53 @@ RSpec.feature "Task queue" do
   end
 
   describe "Creating a mail task" do
-    context "when we are a member of the mail team" do
-      let!(:org) { FactoryBot.create(:organization) }
-      let(:appeal) { FactoryBot.create(:appeal) }
-      let!(:root_task) { RootTask.find(FactoryBot.create(:root_task, appeal: appeal).id) }
-      let(:mail_user) { FactoryBot.create(:user) }
+    let(:mail_user) { FactoryBot.create(:user) }
+    let(:mail_team) { MailTeam.singleton }
+    let(:appeal) { FactoryBot.create(:appeal) }
 
-      before do
-        User.authenticate!(user: mail_user)
-        allow_any_instance_of(MailTeam).to receive(:user_has_access?).with(mail_user).and_return(true)
-      end
+    before do
+      OrganizationsUser.add_user_to_organization(mail_user, mail_team)
+      User.authenticate!(user: mail_user)
+    end
+
+    context "when we are a member of the mail team and a root task exists for the appeal" do
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal).becomes(RootTask) }
+      let(:instructions) { "Some instructions for how to complete the task" }
 
       it "should allow us to assign a mail task to a user" do
         visit "/queue/appeals/#{appeal.uuid}"
 
-        find(".Select-control", text: "Select an action…").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CREATE_MAIL_TASK.label).click
+        find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
-        find(".Select-control", text: "Select a team").click
-        find("div", class: "Select-option", text: org.name).click
-        fill_in("taskInstructions", with: "note")
+        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find("div", class: "Select-option", text: COPY::FOIA_REQUEST_MAIL_TASK_LABEL).click
 
+        fill_in("taskInstructions", with: instructions)
         find("button", text: "Submit").click
 
-        expect(page).to have_content("Task assigned to #{org.name}")
+        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::FOIA_REQUEST_MAIL_TASK_LABEL)
+        expect(page).to have_content(success_msg)
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
 
         mail_task = root_task.children[0]
-        expect(mail_task.class).to eq(MailTask)
+        expect(mail_task.class).to eq(FoiaRequestMailTask)
         expect(mail_task.assigned_to).to eq(MailTeam.singleton)
         expect(mail_task.children.length).to eq(1)
 
-        generic_task = mail_task.children[0]
-        expect(generic_task.class).to eq(GenericTask)
-        expect(generic_task.assigned_to.class).to eq(org.class)
-        expect(generic_task.assigned_to.id).to eq(org.id)
-        expect(generic_task.children.length).to eq(0)
+        child_task = mail_task.children[0]
+        expect(child_task.class).to eq(FoiaRequestMailTask)
+        expect(child_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(child_task.children.length).to eq(0)
+      end
+    end
+
+    context "when there is no active root task for the appeal" do
+      let!(:root_task) { FactoryBot.create(:root_task, :completed, appeal: appeal) }
+
+      it "should allow us to assign a mail task to a user" do
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        expect(page).to_not have_content(COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
       end
     end
   end
@@ -266,7 +265,7 @@ RSpec.feature "Task queue" do
         visit("/queue/appeals/#{appeal.external_id}")
 
         find(".Select-control", text: "Select an action…").click
-        find("div", class: "Select-option", text: COPY::COLOCATED_ACTION_SEND_BACK_TO_ATTORNEY).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h[:label]).click
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
@@ -286,9 +285,14 @@ RSpec.feature "Task queue" do
   describe "JudgeTask" do
     let!(:judge_user) { FactoryBot.create(:user) }
     let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
 
     let!(:root_task) { FactoryBot.create(:root_task) }
-    let!(:appeal) { root_task.appeal }
+    let(:appeal) { root_task.appeal }
+
+    before do
+      User.authenticate!(user: judge_user)
+    end
 
     context "when it was created from a QualityReviewTask" do
       let!(:qr_team) { QualityReview.singleton }
@@ -315,11 +319,13 @@ RSpec.feature "Task queue" do
           assigned_by: qr_user
         }]
       end
-      let!(:judge_task) { JudgeAssignTask.create_many_from_params(judge_task_params, qr_user).first }
+      let!(:judge_task) { JudgeQualityReviewTask.create_many_from_params(judge_task_params, qr_user).first }
 
       before do
-        User.authenticate!(user: judge_user)
         visit("/queue/appeals/#{appeal.external_id}")
+
+        # Add a user to the Colocated team so the task assignment will suceed.
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
       end
 
       it "should display an option to mark task complete" do
@@ -333,18 +339,45 @@ RSpec.feature "Task queue" do
         expect(judge_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(qr_person_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
       end
+
+      it "should be able to be sent to VLJ support staff" do
+        # On case details page select the "Add admin action" option
+        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
+
+        # On case details page fill in the admin action
+        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        click_dropdown(text: action)
+        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
+
+        # Expect to see a success message and have the task in the database
+        expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
+        expect(judge_task.children.length).to eq(1)
+        expect(judge_task.children.first).to be_a(ColocatedTask)
+      end
     end
 
     context "when it was created through case distribution" do
       before do
         FactoryBot.create(:ama_judge_task, appeal: appeal, assigned_to: judge_user)
-        User.authenticate!(user: judge_user)
         visit("/queue/appeals/#{appeal.external_id}")
       end
 
       it "should not display an option to mark task complete" do
         find(".Select-control", text: "Select an action…").click
         expect(page).to_not have_content(Constants.TASK_ACTIONS.MARK_COMPLETE.label)
+      end
+    end
+
+    context "judge user's queue table view" do
+      let!(:caseflow_review_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge_user) }
+      let!(:legacy_review_task) do
+        FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, :assigned, user: judge_user))
+      end
+
+      it "should display both legacy and caseflow review tasks" do
+        visit("/queue")
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 2))
       end
     end
   end

@@ -99,7 +99,7 @@ describe Task do
     end
   end
 
-  context "#can_be_updated_by_user?" do
+  describe "#can_be_updated_by_user?" do
     subject { task.can_be_updated_by_user?(user) }
 
     context "when user is an assignee" do
@@ -132,7 +132,7 @@ describe Task do
     end
   end
 
-  context "#prepared_by_display_name" do
+  describe "#prepared_by_display_name" do
     let(:task) { create(:task, type: "Task") }
 
     context "when there is no attorney_case_review" do
@@ -153,7 +153,7 @@ describe Task do
     end
   end
 
-  context "#latest_attorney_case_review" do
+  describe "#latest_attorney_case_review" do
     let(:task) { create(:task, type: "Task") }
 
     context "when there is no sub task" do
@@ -278,6 +278,91 @@ describe Task do
           expect(e.user_id).to eq(user.id)
           expect(e.labels).to match_array(labels)
         end
+      end
+    end
+  end
+
+  describe "#create_from_params" do
+    let!(:judge) { FactoryBot.create(:user) }
+    let!(:attorney) { FactoryBot.create(:user) }
+    let!(:appeal) { FactoryBot.create(:appeal) }
+    let!(:task) { FactoryBot.create(:task, type: "Task", appeal: appeal) }
+    let(:params) { { assigned_to: judge, appeal: task.appeal, parent_id: task.id, type: "Task" } }
+
+    before do
+      FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
+      FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+      allow_any_instance_of(Task)
+        .to receive(:available_actions_unwrapper)
+        .with(attorney)
+        .and_return([{ data: { type: Task.name } }])
+    end
+
+    subject { Task.create_from_params(params, attorney) }
+
+    it "the parent task status should be 'on hold'" do
+      expect(task.status).to eq("assigned")
+      new_task = subject
+      expect(new_task.parent_id).to eq(task.id)
+      expect(task.reload.status).to eq("on_hold")
+    end
+
+    context "the task is attached to a legacy appeal" do
+      let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: create(:case)) }
+
+      it "the parent task is 'on hold'" do
+        expect(task.status).to eq("assigned")
+        new_task = subject
+        expect(new_task.parent_id).to eq(task.id)
+        expect(task.reload.status).to eq("on_hold")
+      end
+    end
+
+    context "when the instructions field is a string" do
+      let(:instructions_text) { "instructions for this task" }
+      let(:params) do
+        { assigned_to: judge, appeal: task.appeal, parent_id: task.id, type: "Task", instructions: instructions_text }
+      end
+
+      it "should transform it into an array of strings" do
+        expect(subject.instructions).to eq([instructions_text])
+      end
+    end
+
+    context "the params are incomplete" do
+      let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: "Task" } }
+
+      it "raises an error" do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Appeal can't be blank/)
+      end
+    end
+  end
+
+  describe ".create_and_auto_assign_child_task" do
+    subject { Task.create!(assigned_to: org, appeal: FactoryBot.create(:appeal), type: Task.name) }
+
+    context "when the task is assigned to an organization that automatically assigns tasks to its members" do
+      class AutoAssignOrg < Organization
+        attr_accessor :assignee
+
+        def next_assignee(_options = {})
+          assignee
+        end
+      end
+
+      let(:user) { FactoryBot.create(:user) }
+      let(:org) { AutoAssignOrg.create(assignee: user) }
+
+      it "should create a child task when a task assigned to the organization is created" do
+        expect(subject.children.length).to eq(1)
+      end
+    end
+
+    context "when the task is assigned to an organization that does not automatically assign tasks to its members" do
+      let(:org) { FactoryBot.create(:organization) }
+
+      it "should not create a child task when a task assigned to the organization is created" do
+        expect(subject.children).to eq([])
       end
     end
   end

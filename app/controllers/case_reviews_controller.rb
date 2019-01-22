@@ -25,6 +25,16 @@ class CaseReviewsController < ApplicationController
     render json: response
   end
 
+  def update
+    result = UpdateAttorneyCaseReview.new(
+      id: params[:id],
+      user_id: current_user.id,
+      document_id: params[:document_id]
+    ).call
+
+    render json: result.to_h, status: result.success? ? :ok : :bad_request
+  end
+
   private
 
   def create_quality_review_task(record)
@@ -32,7 +42,12 @@ class CaseReviewsController < ApplicationController
               !record.is_a?(JudgeCaseReview) ||
               record.task.parent.is_a?(QualityReviewTask)
 
-    QualityReviewTask.create_from_root_task(record.task.root_task)
+    root_task = record.task.root_task
+    if QualityReviewCaseSelector.select_case_for_quality_review?
+      QualityReviewTask.create_from_root_task(root_task)
+    else
+      BvaDispatchTask.create_from_root_task(root_task)
+    end
   end
 
   def case_review_class
@@ -45,7 +60,7 @@ class CaseReviewsController < ApplicationController
         "title": "Invalid Case Review Type Error",
         "detail": "Case review type is invalid, valid types: #{CASE_REVIEW_CLASSES.keys}"
       ]
-    }, status: 400
+    }, status: :bad_request
   end
 
   def complete_params
@@ -87,6 +102,7 @@ class CaseReviewsController < ApplicationController
       :description,
       :readjudication,
       :benefit_type,
+      :diagnostic_code,
       request_issue_ids: [],
       remand_reasons: [
         :code,

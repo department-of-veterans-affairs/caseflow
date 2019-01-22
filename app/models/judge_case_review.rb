@@ -1,5 +1,6 @@
 class JudgeCaseReview < ApplicationRecord
   include CaseReviewConcern
+  include IssueUpdater
 
   belongs_to :judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
@@ -33,6 +34,11 @@ class JudgeCaseReview < ApplicationRecord
     end
   end
 
+  def update_in_caseflow!
+    task.update!(status: Constants.TASK_STATUSES.completed)
+    update_issue_dispositions_in_caseflow!
+  end
+
   private
 
   def sign_decision_or_create_omo!
@@ -61,6 +67,7 @@ class JudgeCaseReview < ApplicationRecord
 
   def select_case_for_quality_review
     return if self.class.reached_monthly_limit_in_quality_reviews?
+
     # We are using 25 sided die to randomly select a case for quality review
     # https://github.com/department-of-veterans-affairs/caseflow/issues/6407
     update(location: :quality_review) if bva_dispatch? && rand < QUALITY_REVIEW_SELECTION_PROBABILITY
@@ -71,7 +78,7 @@ class JudgeCaseReview < ApplicationRecord
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         if record.valid?
-          record.legacy? ? record.update_in_vacols! : record.update_task_and_issue_dispositions
+          record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
         end
         record
       end

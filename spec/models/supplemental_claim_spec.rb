@@ -14,6 +14,7 @@ describe SupplementalClaim do
   let(:benefit_type) { nil }
   let(:legacy_opt_in_approved) { nil }
   let(:veteran_is_not_claimant) { false }
+  let(:decision_review_remanded) { nil }
 
   let(:supplemental_claim) do
     SupplementalClaim.new(
@@ -21,34 +22,9 @@ describe SupplementalClaim do
       receipt_date: receipt_date,
       benefit_type: benefit_type,
       legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: veteran_is_not_claimant
+      veteran_is_not_claimant: veteran_is_not_claimant,
+      decision_review_remanded: decision_review_remanded
     )
-  end
-
-  context "#special_issues" do
-    let(:vacols_id) { nil }
-    let!(:request_issue) do
-      create(:request_issue, review_request: supplemental_claim, vacols_id: vacols_id)
-    end
-
-    subject { supplemental_claim.special_issues }
-
-    context "no special conditions" do
-      it "is empty" do
-        expect(subject).to eq []
-      end
-    end
-
-    context "VACOLS opt-in" do
-      let(:vacols_id) { "something" }
-      let!(:legacy_opt_in) do
-        create(:legacy_issue_optin, request_issue: request_issue)
-      end
-
-      it "includes VACOLS opt-in" do
-        expect(subject).to include(code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O)
-      end
-    end
   end
 
   context "#valid?" do
@@ -116,6 +92,61 @@ describe SupplementalClaim do
           end
         end
       end
+    end
+  end
+
+  context "create_remand_issues!" do
+    subject { supplemental_claim.create_remand_issues! }
+
+    let(:decision_review_remanded) { create(:appeal) }
+    let(:benefit_type) { "education" }
+
+    let!(:decision_issue_not_remanded) do
+      create(
+        :decision_issue,
+        disposition: "allowed",
+        benefit_type: benefit_type,
+        decision_review: decision_review_remanded
+      )
+    end
+
+    let!(:decision_issue_benefit_type_not_matching) do
+      create(
+        :decision_issue,
+        disposition: "remanded",
+        benefit_type: "insurance",
+        decision_review: decision_review_remanded
+      )
+    end
+
+    let!(:decision_issue_needing_remand) do
+      create(
+        :decision_issue,
+        disposition: "remanded",
+        benefit_type: benefit_type,
+        decision_review: decision_review_remanded,
+        rating_issue_reference_id: "1234",
+        profile_date: Time.zone.today - 3.days,
+        description: "a description"
+      )
+    end
+
+    it "creates remand issues for appropriate decision issues" do
+      expect { subject }.to change(supplemental_claim.request_issues, :count).by(1)
+
+      expect(supplemental_claim.request_issues.last).to have_attributes(
+        contested_decision_issue_id: decision_issue_needing_remand.id,
+        contested_rating_issue_reference_id: decision_issue_needing_remand.rating_issue_reference_id,
+        contested_rating_issue_profile_date: decision_issue_needing_remand.profile_date,
+        contested_issue_description: decision_issue_needing_remand.description,
+        benefit_type: benefit_type
+      )
+    end
+
+    it "doesn't create duplicate remand issues" do
+      supplemental_claim.create_remand_issues!
+
+      expect { subject }.to_not change(supplemental_claim.request_issues, :count)
     end
   end
 end

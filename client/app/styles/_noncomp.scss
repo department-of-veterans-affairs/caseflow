@@ -1,0 +1,77 @@
+.cf-gray-box {
+  background-color: $color-gray-lightest;
+  border: 1px solid $color-gray-lighter;
+  padding: 2rem;
+  margin: 2rem -2rem;
+}
+
+.cf-review-details {
+  .cf-claimant-name {
+    font-weight: bold;
+    font-size: 2rem;
+    padding-right: 2rem;
+    border-right: 1px solid $color-gray-lighter;
+  }
+
+  .cf-relationship {
+    padding-left: 2rem;
+  }
+
+  .cf-intake-date {
+    padding-right: 2rem;
+  }
+
+  .pad-top {
+    padding-top: 4px;
+  }
+
+  hr {
+    margin: 2rem 0;
+  }
+
+  .cf-form-details {
+    div {
+      margin-bottom: 1rem;
+    }
+  }
+
+  .row-two {
+    margin: 1rem 0;
+  }
+}
+
+.cf-noncomp-search {
+  min-width: 300px;
+  margin-right: -40px;
+  margin-bottom: 20px;
+}
+
+.cf-decisions {
+  .cf-decision {
+    .cf-decision-details {
+      margin: 2rem 0;
+    }
+
+    hr {
+      margin: 3rem 0;
+    }
+
+    .cf-disposition {
+      margin-top: 1.7rem;
+    }
+
+    textarea:disabled {
+      background-color: $color-gray-lighter;
+    }
+  }
+}
+
+.cf-decision-date {
+  input {
+    width: auto;
+  }
+}
+
+.cf-cancel-link {
+  margin-right: 2rem;
+}

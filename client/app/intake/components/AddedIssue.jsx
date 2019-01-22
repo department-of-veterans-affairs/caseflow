@@ -41,10 +41,11 @@ class AddedIssue extends React.PureComponent {
       return { errorMsg,
         cssKlasses: cssKlassesWithError.concat(['issue-unidentified']) };
     }
-
-    if (issue.titleOfActiveReview) {
-      errorMsg = INELIGIBLE_REQUEST_ISSUES.duplicate_of_issue_in_active_review.replace(
-        '{review_title}', issue.titleOfActiveReview
+    if (issue.titleOfActiveReview ||
+      (issue.reviewRequestTitle && issue.ineligibleReason === 'duplicate_of_nonrating_issue_in_active_review')
+    ) {
+      errorMsg = INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.replace(
+        '{review_title}', issue.titleOfActiveReview || issue.reviewRequestTitle
       );
     } else if (issue.ineligibleReason) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
@@ -54,16 +55,20 @@ class AddedIssue extends React.PureComponent {
                !issue.vacolsId
     ) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.untimely;
-    } else if (issue.sourceHigherLevelReview && formType === 'higher_level_review') {
-      errorMsg = INELIGIBLE_REQUEST_ISSUES.previous_higher_level_review;
-    } else if (issue.beforeAma) {
-      errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
+    } else if (formType === 'higher_level_review' && issue.sourceReviewType === 'HigherLevelReview') {
+      errorMsg = INELIGIBLE_REQUEST_ISSUES.higher_level_review_to_higher_level_review;
+    } else if (formType === 'higher_level_review' && issue.sourceReviewType === 'Appeal') {
+      errorMsg = INELIGIBLE_REQUEST_ISSUES.appeal_to_higher_level_review;
+    } else if (formType === 'appeal' && issue.sourceReviewType === 'Appeal') {
+      errorMsg = INELIGIBLE_REQUEST_ISSUES.appeal_to_appeal;
     } else if (issue.vacolsId) {
       if (!legacyOptInApproved) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn;
-      } else if (!issue.eligibleForSocOptIn) {
+      } else if (issue.eligibleForSocOptIn === false) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible;
       }
+    } else if (issue.beforeAma) {
+      errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
     }
 
     if (errorMsg !== '') {

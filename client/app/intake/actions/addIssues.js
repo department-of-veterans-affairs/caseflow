@@ -61,7 +61,7 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
       titleOfActiveReview: currentIssue.titleOfActiveReview,
       description: currentIssue.description,
       timely: currentIssue.timely,
-      sourceHigherLevelReview: currentIssue.sourceHigherLevelReview,
+      sourceReviewType: currentIssue.sourceReviewType,
       rampClaimId: currentIssue.rampClaimId,
       promulgationDate: currentIssue.date,
       date: currentIssue.date,
@@ -79,6 +79,7 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
     payload: {
+      benefitType: args.benefitType,
       category: args.category,
       description: args.description,
       decisionDate: args.decisionDate,
@@ -88,7 +89,10 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
       isRating: false,
       vacolsId: args.vacolsId,
       vacolsSequenceId: args.vacolsSequenceId,
-      eligibleForSocOptIn: args.eligibleForSocOptIn
+      eligibleForSocOptIn: args.eligibleForSocOptIn,
+      ineligibleDueToId: args.ineligibleDueToId,
+      ineligibleReason: args.ineligibleReason,
+      reviewRequestTitle: args.reviewRequestTitle
     }
   });
 };

@@ -36,8 +36,8 @@ FactoryBot.define do
           evaluator.decass_count,
           evaluator.work_product,
           defolder: vacols_case.bfkey,
-          deadusr: slogid ? slogid : "TEST",
-          demdusr: assigner_slogid ? assigner_slogid : "ASSIGNER",
+          deadusr: slogid || "TEST",
+          demdusr: assigner_slogid || "ASSIGNER",
           dereceive: (evaluator.user&.vacols_roles&.include?("judge")) ? Time.zone.today : nil,
           dedocid: evaluator.document_id || nil,
           deatty: sattyid || "100"
@@ -186,6 +186,7 @@ FactoryBot.define do
 
     trait :status_remand do
       bfmpro "REM"
+      bfdc "3"
     end
 
     trait :status_complete do
@@ -226,10 +227,15 @@ FactoryBot.define do
 
     trait :video_hearing_requested do
       bfdocind "V"
+      bfcurloc "57"
+      bfhr "2"
+      bfac "7"
     end
 
     trait :central_office_hearing do
       bfhr "1"
+      bfcurloc "57"
+      bfac "7"
     end
 
     trait :travel_board_hearing do

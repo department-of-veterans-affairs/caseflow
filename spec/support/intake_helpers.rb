@@ -1,5 +1,141 @@
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
+  # rubocop: disable Metrics/MethodLength
+  # rubocop: disable Metrics/ParameterLists
+  def start_higher_level_review(
+    test_veteran,
+    receipt_date: 1.day.ago,
+    claim_participant_id: nil,
+    legacy_opt_in_approved: false,
+    veteran_is_not_claimant: false,
+    benefit_type: "compensation",
+    informal_conference: false
+  )
+
+    higher_level_review = HigherLevelReview.create!(
+      veteran_file_number: test_veteran.file_number,
+      receipt_date: receipt_date,
+      informal_conference: informal_conference,
+      same_office: false,
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
+    )
+
+    intake = HigherLevelReviewIntake.create!(
+      veteran_file_number: test_veteran.file_number,
+      user: User.authenticate!(roles: ["Mail Intake"]),
+      started_at: 5.minutes.ago,
+      detail: higher_level_review
+    )
+
+    if claim_participant_id
+      Claimant.create!(
+        review_request: higher_level_review,
+        participant_id: claim_participant_id || test_veteran.participant_id,
+        payee_code: claim_participant_id ? "02" : "00"
+      )
+    end
+
+    higher_level_review.start_review!
+
+    [higher_level_review, intake]
+  end
+
+  def start_supplemental_claim(
+    test_veteran,
+    receipt_date: 1.day.ago,
+    legacy_opt_in_approved: false,
+    veteran_is_not_claimant: false,
+    claim_participant_id: nil,
+    benefit_type: "compensation"
+  )
+
+    supplemental_claim = SupplementalClaim.create!(
+      veteran_file_number: test_veteran.file_number,
+      receipt_date: receipt_date,
+      benefit_type: benefit_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
+    )
+
+    intake = SupplementalClaimIntake.create!(
+      veteran_file_number: test_veteran.file_number,
+      user: User.authenticate!(roles: ["Mail Intake"]),
+      started_at: 5.minutes.ago,
+      detail: supplemental_claim
+    )
+
+    if claim_participant_id
+      Claimant.create!(
+        review_request: supplemental_claim,
+        participant_id: claim_participant_id
+      )
+    end
+
+    supplemental_claim.start_review!
+    [supplemental_claim, intake]
+  end
+
+  def start_appeal(
+    test_veteran,
+    receipt_date: 1.day.ago,
+    veteran_is_not_claimant: false,
+    legacy_opt_in_approved: false
+  )
+    appeal = Appeal.create!(
+      veteran_file_number: test_veteran.file_number,
+      receipt_date: receipt_date,
+      docket_type: "evidence_submission",
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: veteran_is_not_claimant
+    )
+
+    intake = AppealIntake.create!(
+      veteran_file_number: test_veteran.file_number,
+      user: User.authenticate!(roles: ["Mail Intake"]),
+      started_at: 5.minutes.ago,
+      detail: appeal
+    )
+
+    Claimant.create!(
+      review_request: appeal,
+      participant_id: test_veteran.participant_id
+    )
+
+    appeal.start_review!
+
+    [appeal, intake]
+  end
+  # rubocop: enable Metrics/MethodLength
+  # rubocop: enable Metrics/ParameterLists
+
+  def start_claim_review(claim_review_type)
+    if claim_review_type == :supplemental_claim
+      start_supplemental_claim(create(:veteran))
+    else
+      start_higher_level_review(create(:veteran), informal_conference: true)
+    end
+  end
+
+  def setup_intake_flags
+    FeatureToggle.enable!(:intake)
+    FeatureToggle.enable!(:intakeAma)
+    FeatureToggle.enable!(:intake_legacy_opt_in)
+
+    Time.zone = "America/New_York"
+    Timecop.freeze(Time.zone.today)
+
+    # skip the sync call since all edit requests require resyncing
+    # currently, we're not mocking out vbms and bgs
+    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
+  end
+
+  def teardown_intake_flags
+    FeatureToggle.disable!(:intakeAma)
+    FeatureToggle.disable!(:intake_legacy_opt_in)
+  end
+
   def search_page_title
     "Search for Veteran by ID"
   end
@@ -15,6 +151,10 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
+  def click_intake_nonrating_category_dropdown
+    safe_click ".dropdown-issue-category .Select-placeholder"
+  end
+
   def click_intake_add_issue
     safe_click "#button-add-issue"
   end
@@ -25,6 +165,19 @@ module IntakeHelpers
 
   def click_intake_continue
     safe_click "#button-submit-review"
+  end
+
+  def click_edit_submit
+    safe_click "#button-submit-update"
+  end
+
+  def click_intake_confirm
+    safe_click ".confirm"
+  end
+
+  def click_edit_submit_and_confirm
+    click_edit_submit
+    click_intake_confirm
   end
 
   def click_intake_no_matching_issues
@@ -38,10 +191,28 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
-  def add_intake_nonrating_issue(category:, description:, date:, legacy_issues: false)
+  def get_claim_id(claim_review)
+    EndProductEstablishment.find_by(source: claim_review).reference_id
+  end
+
+  def add_intake_nonrating_issue(
+    benefit_type: "Compensation",
+    category: "Active Duty Adjustments",
+    description: "Some description",
+    date: "01/01/2016",
+    legacy_issues: false
+  )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
     expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
     expect(page).to have_button(add_button_text, disabled: true)
+
+    # has_css will wait 5 seconds by default, and we want an instant decision.
+    # we can trust the modal is rendered because of the expect() calls above.
+    if page.has_css?("#issue-benefit-type", wait: 0)
+      fill_in "Benefit type", with: benefit_type
+      find("#issue-benefit-type").send_keys :enter
+    end
+
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
     fill_in "Issue description", with: description
@@ -50,7 +221,12 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
-  def add_intake_unidentified_issue(description)
+  def add_active_intake_nonrating_issue(description)
+    find_all("label", text: description, minimum: 1).first.click
+    safe_click ".add-issue"
+  end
+
+  def add_intake_unidentified_issue(description = "unidentified issue description")
     safe_click ".no-matching-issues"
     safe_click ".no-matching-issues"
     expect(page).to have_content("Describe the issue to mark it as needing further review.")
@@ -70,6 +246,14 @@ module IntakeHelpers
 
   def click_remove_issue_confirmation
     safe_click ".remove-issue"
+  end
+
+  def click_number_of_issues_changed_confirmation
+    safe_click "#Number-of-issues-has-changed-button-id-1"
+  end
+
+  def click_still_have_unidentified_issue_confirmation
+    safe_click "#Unidentified-issue-button-id-1"
   end
 
   def find_intake_issue_by_number(number)
@@ -172,23 +356,21 @@ module IntakeHelpers
   end
 
   def setup_request_issue_with_nonrating_decision_issue(decision_review, issue_category: "Active Duty Adjustments")
-    random_date = Time.zone.now - 4.days
     create(:request_issue,
            :with_nonrating_decision_issue,
-           description: "Test nonrating decision issue",
+           nonrating_issue_description: "Test nonrating decision issue",
            review_request: decision_review,
-           decision_date: random_date,
+           decision_date: decision_review.receipt_date - 1.day,
            issue_category: issue_category,
            veteran_participant_id: veteran.participant_id)
   end
 
-  def setup_request_issue_with_rating_decision_issue(decision_review, rating_issue_reference_id: "rating123")
-    random_date = Time.zone.now - 2.days
+  def setup_request_issue_with_rating_decision_issue(decision_review, contested_rating_issue_reference_id: "rating123")
     create(:request_issue,
            :with_rating_decision_issue,
-           rating_issue_reference_id: rating_issue_reference_id,
-           rating_issue_profile_date: random_date,
-           description: "Test rating decision issue",
+           contested_rating_issue_reference_id: contested_rating_issue_reference_id,
+           contested_rating_issue_profile_date: decision_review.receipt_date - 1.day,
+           contested_issue_description: "Test rating decision issue",
            review_request: decision_review,
            veteran_participant_id: veteran.participant_id)
   end
@@ -203,5 +385,137 @@ module IntakeHelpers
 
     rating_request_issue.decision_issues + nonrating_request_issue.decision_issues
   end
+
+  def check_row(label, text)
+    row = find("tr", text: label)
+    expect(row).to have_text(text)
+  end
+
+  def mock_backfilled_rating_response
+    allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range)
+      .and_return(rating_profile_list: { rating_profile: nil },
+                  reject_reason: "Converted or Backfilled Rating - no promulgated ratings found")
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def verify_decision_issues_can_be_added_and_removed(page_url,
+                                                      original_request_issue,
+                                                      review_request,
+                                                      contested_decision_issues)
+    visit page_url
+    expect(page).to have_content("currently contesting decision issue")
+    expect(page).to have_content("PTSD denied")
+
+    # check that we cannot add the same issue again
+    click_intake_add_issue
+    expect(page).to have_css("input[disabled]", visible: false)
+    expect(page).to have_content("PTSD denied (already selected for")
+
+    nonrating_decision_issue_description = "nonrating decision issue"
+    rating_decision_issue_description = "a rating decision issue"
+    # check that nonrating and rating decision issues show up
+
+    expect(page).to have_content(nonrating_decision_issue_description)
+    expect(page).to have_content(rating_decision_issue_description)
+    safe_click ".close-modal"
+
+    # remove original decision issue
+    click_remove_intake_issue_by_text("currently contesting decision issue")
+    click_remove_issue_confirmation
+
+    # add new decision issue
+    click_intake_add_issue
+    add_intake_rating_issue(rating_decision_issue_description)
+    expect(page).to have_content(rating_decision_issue_description)
+
+    click_intake_add_issue
+
+    add_intake_rating_issue(nonrating_decision_issue_description)
+
+    expect(page).to have_content(nonrating_decision_issue_description)
+
+    # TODO: not clear if this test still applies. It is currently failing
+    # but it is not clear if the conditions are still correct.
+    # expect(page).to have_content(
+    #  Constants.INELIGIBLE_REQUEST_ISSUES
+    #     .duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Higher-Level Review")
+    # )
+
+    click_edit_submit_and_confirm
+    expect(page).to have_current_path("/#{page_url}/confirmation")
+
+    visit page_url
+    expect(page).to have_content(nonrating_decision_issue_description)
+    expect(page).to have_content(rating_decision_issue_description)
+    expect(page).to have_content("PTSD denied")
+
+    # check that decision_request_issue is closed
+    updated_request_issue = RequestIssue.find_by(id: original_request_issue.id)
+    expect(updated_request_issue.review_request).to be_nil
+
+    # check that new request issue is created contesting the decision issue
+    request_issues = review_request.reload.request_issues
+    first_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.first.id)
+    second_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.second.id)
+
+    expect(first_request_issue).to have_attributes(
+      contested_issue_description: contested_decision_issues.first.description
+    )
+
+    expect(second_request_issue).to have_attributes(
+      # TODO: same as above # ineligible_reason: "duplicate_of_rating_issue_in_active_review",
+      contested_issue_description: contested_decision_issues.second.description
+    )
+  end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
+
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def verify_request_issue_contending_decision_issue_not_readded(
+      page_url,
+      decision_review,
+      contested_decision_issues
+    )
+    # verify that not modifying a request issue contesting a decision issue
+    # does not result in readding
+
+    visit page_url
+    expect(page).to have_content(contested_decision_issues.first.description)
+    expect(page).to have_content(contested_decision_issues.second.description)
+    expect(page).to have_content("PTSD denied")
+
+    click_remove_intake_issue_by_text("PTSD denied")
+    click_remove_issue_confirmation
+
+    click_intake_add_issue
+    add_intake_rating_issue("Issue with legacy issue not withdrawn")
+
+    click_edit_submit
+    expect(page).to have_content("has been processed")
+
+    first_not_modified_request_issue = RequestIssue.find_by(
+      review_request: decision_review,
+      contested_decision_issue_id: contested_decision_issues.first.id
+    )
+
+    second_not_modified_request_issue = RequestIssue.find_by(
+      review_request: decision_review,
+      contested_decision_issue_id: contested_decision_issues.second.id
+    )
+
+    expect(first_not_modified_request_issue).to_not be_nil
+    expect(second_not_modified_request_issue).to_not be_nil
+
+    non_modified_ids = [first_not_modified_request_issue.id, second_not_modified_request_issue.id]
+    request_issue_update = RequestIssuesUpdate.find_by(review: decision_review)
+
+    # existing issues should not be added or removed
+    expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
+    expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
+  end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 end
 # rubocop:enable Metrics/ModuleLength

@@ -22,6 +22,15 @@ module Caseflow::Error
   class EfolderAccessForbidden < EfolderError; end
   class ClientRequestError < EfolderError; end
 
+  class VaDotGovAPIError < SerializableError; end
+  class VaDotGovRequestError < VaDotGovAPIError; end
+  class VaDotGovServerError < VaDotGovAPIError; end
+  class VaDotGovLimitError < VaDotGovAPIError; end
+
+  class FetchHearingLocationsJobError < SerializableError; end
+
+  class FetchHearingLocationsJobError < SerializableError; end
+
   class ActionForbiddenError < SerializableError
     def initialize(args)
       @code = args[:code] || 403
@@ -61,6 +70,31 @@ module Caseflow::Error
       @code = args[:code] || 400
       @message = args[:message] || "Expected 1 BvaDispatchTask received #{@tasks.count} tasks for"\
                                    " appeal #{@appeal_id}, user #{@user_id}"
+    end
+  end
+
+  class RoundRobinTaskDistributorError < SerializableError
+    def initialize(args)
+      @code = args[:code] || 500
+      @message = args[:message] || "RoundRobinTaskDistributor error"
+    end
+  end
+
+  class AttorneyJudgeCheckoutError < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
+
+  class LegacyCaseAlreadyAssignedError < SerializableError
+    attr_accessor :code, :message
+
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
     end
   end
 
@@ -118,6 +152,13 @@ module Caseflow::Error
     end
   end
 
+  class MailRoutingError < SerializableError
+    def initialize
+      @code = 500
+      @message = "Appeal is not active at the Board. Send mail to appropriate Regional Office in mail portal"
+    end
+  end
+
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
   class InvalidSSN < StandardError; end
@@ -132,6 +173,7 @@ module Caseflow::Error
       @error_code = error_code
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def self.from_vbms_error(error)
       case error.body
       when /PIF is already in use/
@@ -144,14 +186,21 @@ module Caseflow::Error
         new("bgs_info_invalid")
       when /The maximum data length for AddressLine1/
         LongAddress.new("long_address")
+      when /VBMS does not currently support claim establishment of claimants with a fiduciary/
+        # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/
+        ClaimantWithFiduciary.new("claimant_with_fiduciary")
       else
         error
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
+
+  class MissingTimerMethod < StandardError; end
 
   class DuplicateEp < EstablishClaimFailedInVBMS; end
   class LongAddress < EstablishClaimFailedInVBMS; end
+  class ClaimantWithFiduciary < EstablishClaimFailedInVBMS; end
 
   class VacolsRepositoryError < StandardError; end
   class VacolsRecordNotFound < VacolsRepositoryError; end
@@ -164,7 +213,16 @@ module Caseflow::Error
       @message = args[:message]
     end
   end
-  class IssueRepositoryError < VacolsRepositoryError; end
+  class IssueRepositoryError < VacolsRepositoryError
+    include Caseflow::Error::ErrorSerializer
+    attr_accessor :code, :message
+
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
+  class RemandReasonRepositoryError < VacolsRepositoryError; end
   class QueueRepositoryError < VacolsRepositoryError; end
   class MissingRequiredFieldError < VacolsRepositoryError; end
 

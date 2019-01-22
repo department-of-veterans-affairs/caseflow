@@ -22,6 +22,7 @@ class Reader::DocumentsController < Reader::ApplicationController
     end
   rescue StandardError => e
     raise e unless e.class.method_defined? :serialize_response
+
     render e.serialize_response
   end
   # rubocop:enable Metrics/MethodLength

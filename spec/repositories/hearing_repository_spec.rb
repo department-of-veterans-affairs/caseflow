@@ -14,7 +14,7 @@ describe HearingRepository do
       }
     end
     let(:staff_record) { create(:staff) }
-    let(:hearing_day) { create(:hearing_day, hearing_date: Date.new(2019, 3, 2)) }
+    let(:hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 2)) }
 
     before do
       RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: staff_record.slogid)
@@ -31,7 +31,7 @@ describe HearingRepository do
   context ".set_vacols_values" do
     subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
     let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
-    let(:hearing) { Generators::Hearing.create }
+    let(:hearing) { Generators::LegacyHearing.create }
 
     let(:hearing_hash) do
       OpenStruct.new(
@@ -52,9 +52,9 @@ describe HearingRepository do
 
     it "assigns values properly" do
       expect(subject.venue[:city]).to eq("San Antonio")
-      expect(subject.type).to eq(:video)
+      expect(subject.request_type).to eq("V")
       expect(subject.vacols_record).to eq(hearing_hash)
-      expect(subject.date.class).to eq(ActiveSupport::TimeWithZone)
+      expect(subject.scheduled_for.class).to eq(ActiveSupport::TimeWithZone)
       expect(subject.disposition).to eq(:no_show)
       expect(subject.aod).to eq :filed
       expect(subject.transcript_requested).to eq nil

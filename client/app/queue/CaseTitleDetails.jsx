@@ -1,19 +1,28 @@
 import { css } from 'glamor';
 import React from 'react';
 import { connect } from 'react-redux';
+import Modal from '../components/Modal';
+import TextField from '../components/TextField';
+import Button from '../components/Button';
+import { bindActionCreators } from 'redux';
 
 import {
-  actionableTasksForAppeal,
   appealWithDetailSelector
 } from './selectors';
 import DocketTypeBadge from './../components/DocketTypeBadge';
 import CopyTextButton from '../components/CopyTextButton';
 import ReaderLink from './ReaderLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { pencilSymbol } from '../components/RenderFunctions';
 
 import COPY from '../../COPY.json';
 import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
+
+import {
+  requestPatch,
+  requestSave
+} from './uiReducer/uiActions';
 
 const editButton = css({
   float: 'right',
@@ -41,12 +50,12 @@ const listItemStyling = css({
   display: 'inline',
   float: 'left',
   padding: '0.5rem 1.5rem 0.5rem 0',
-  ':not(:first-child)': {
+  ':not(:last-child)': {
     '& > div': {
-      borderLeft: `1px solid ${COLORS.GREY_LIGHT}`
+      borderRight: `1px solid ${COLORS.GREY_LIGHT}`
     },
     '& > *': {
-      paddingLeft: '1.5rem'
+      paddingRight: '1.5rem'
     }
   },
   '& > h4': { textTransform: 'uppercase' }
@@ -57,6 +66,7 @@ const docketBadgeContainerStyle = css({
   borderStyle: 'solid',
   borderColor: COLORS.GREY_LIGHT,
   padding: '0.5rem 1rem 0.5rem 0.5rem',
+  margin: '-0.75rem 0',
   backgroundColor: COLORS.WHITE
 });
 
@@ -67,22 +77,77 @@ const CaseDetailTitleScaffolding = (props) => <div {...containingDivStyling}>
 </div>;
 
 export class CaseTitleDetails extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      showModal: false,
+      value: '',
+      showError: false,
+      documentIdError: ''
+    };
+  }
+
+  handleModalClose = () => {
+    this.setState({
+      showModal: !this.state.showModal,
+      highlightModal: false,
+      documentIdError: ''
+    });
+  }
+
+  changeButtonState = (value) => {
+    this.setState({
+      value
+    });
+  }
+
+  submitForm = (appealId) => () => {
+    const payload = {
+      data: {
+        document_id: this.state.value
+      }
+    };
+
+    this.props.requestPatch(`/case_reviews/${appealId}`, payload, { title: 'Document Id Saved!' }).
+      then(() => {
+        this.handleModalClose();
+      }).
+      catch((error) => {
+        const documentIdErrors = JSON.parse(error.message).errors.document_id;
+
+        const documentIdErrorText = documentIdErrors && documentIdErrors[0];
+
+        this.setState({
+          highlightModal: true,
+          documentIdError: documentIdErrorText,
+          value: ''
+        });
+      });
+  }
+
   render = () => {
     const {
       appeal,
       appealId,
       redirectUrl,
       taskType,
-      primaryTask,
       userIsVsoEmployee
     } = this.props;
 
+    const {
+      highlightModal,
+      documentIdError
+    } = this.state;
+
     return <CaseDetailTitleScaffolding>
       <React.Fragment>
-        <h4>{COPY.CASE_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</h4>
-        <span {...docketBadgeContainerStyle}>
-          <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
-        </span>
+        <h4>{COPY.TASK_SNAPSHOT_ABOUT_BOX_DOCKET_NUMBER_LABEL}</h4>
+        <div>
+          <span {...docketBadgeContainerStyle}>
+            <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />{appeal.docketNumber}
+          </span>
+        </div>
       </React.Fragment>
 
       { !userIsVsoEmployee &&
@@ -100,7 +165,7 @@ export class CaseTitleDetails extends React.PureComponent {
         </React.Fragment> }
 
       <React.Fragment>
-        <h4>{COPY.CASE_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</h4>
+        <h4>{COPY.TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL}</h4>
         <div>
           {renderLegacyAppealType({
             aod: appeal.isAdvancedOnDocket,
@@ -116,11 +181,54 @@ export class CaseTitleDetails extends React.PureComponent {
         </div>
       </React.Fragment>
 
-      { !userIsVsoEmployee && primaryTask && primaryTask.documentId &&
+      { !userIsVsoEmployee && appeal && appeal.documentID &&
         <React.Fragment>
-          <h4>{COPY.CASE_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
-          <div><CopyTextButton text={primaryTask.documentId} /></div>
+          <h4>{COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
+          <div><CopyTextButton text={this.state.value || appeal.documentID} />
+            { !appeal.isLegacyAppeal &&
+              <Button
+                linkStyling
+                onClick={this.handleModalClose} >
+                <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+                <span {...css({ marginRight: '5px',
+                  marginLeft: '20px' })}>Edit</span>
+              </Button>
+            }
+          </div>
+          { this.state.showModal && <Modal
+            buttons = {[
+              { classNames: ['cf-modal-link', 'cf-btn-link'],
+                name: 'Cancel',
+                onClick: this.handleModalClose
+              },
+              { classNames: ['usa-button'],
+                name: 'Save',
+                disabled: !this.state.value,
+                onClick: this.submitForm(appeal.caseReviewId)
+              }
+            ]}
+            closeHandler={this.handleModalClose}
+            title = {COPY.TASK_SNAPSHOT_EDIT_DOCUMENT_ID_MODAL_TITLE}>
+            <TextField
+              errorMessage={highlightModal ? documentIdError : null}
+              name={COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}
+              placeholder={appeal.documentID}
+              value={this.state.value}
+              onChange={this.changeButtonState}
+              required />
+
+          </Modal>}
         </React.Fragment> }
+
+      { !userIsVsoEmployee && appeal.assignedJudge && <React.Fragment>
+        <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL}</h4>
+        <div>{appeal.assignedJudge.full_name}</div>
+      </React.Fragment> }
+
+      { !userIsVsoEmployee && appeal.assignedAttorney && <React.Fragment>
+        <h4>{COPY.TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL}</h4>
+        <div>{appeal.assignedAttorney.full_name}</div>
+      </React.Fragment> }
     </CaseDetailTitleScaffolding>;
   };
 }
@@ -132,10 +240,14 @@ const mapStateToProps = (state, ownProps) => {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     featureToggles,
     userRole,
-    primaryTask: actionableTasksForAppeal(state, { appealId: ownProps.appealId })[0],
     canEditAod,
     userIsVsoEmployee: state.ui.userIsVsoEmployee
   };
 };
 
-export default connect(mapStateToProps)(CaseTitleDetails);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  requestSave,
+  requestPatch
+}, dispatch);
+
+export default (connect(mapStateToProps, mapDispatchToProps)(CaseTitleDetails));

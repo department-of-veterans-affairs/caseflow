@@ -18,7 +18,7 @@ class IntakesController < ApplicationController
       render json: {
         error_code: new_intake.error_code,
         error_data: new_intake.error_data
-      }, status: 422
+      }, status: :unprocessable_entity
     end
   end
 
@@ -31,21 +31,26 @@ class IntakesController < ApplicationController
     if intake.review!(params)
       render json: intake.ui_hash(ama_enabled?)
     else
-      render json: { error_codes: intake.review_errors }, status: 422
+      render json: { error_codes: intake.review_errors }, status: :unprocessable_entity
     end
   rescue StandardError => error
     Raven.capture_exception(error)
-    render json: { error_codes: { other: ["unknown_error"] } }, status: 500
+    render json: { error_codes: { other: ["unknown_error"] } }, status: :internal_server_error
   end
 
   def complete
     intake.complete!(params)
-    render json: intake.ui_hash(ama_enabled?)
+    if intake.detail.try(:processed_in_caseflow?)
+      flash[:success] = success_message
+      render json: { serverIntake: { redirect_to: intake.detail.business_line.tasks_url } }
+    else
+      render json: intake.ui_hash(ama_enabled?)
+    end
   rescue Caseflow::Error::DuplicateEp => error
     render json: {
       error_code: error.error_code,
       error_data: intake.detail.end_product_base_modifier
-    }, status: 400
+    }, status: :bad_request
   end
 
   def error
@@ -78,6 +83,7 @@ class IntakesController < ApplicationController
   # TODO: This could be moved to the model.
   def intake_in_progress
     return @intake_in_progress unless @intake_in_progress.nil?
+
     @intake_in_progress = Intake.in_progress.find_by(user: current_user) || false
   end
   helper_method :intake_in_progress
@@ -98,5 +104,12 @@ class IntakesController < ApplicationController
     # param could be file number or SSN. Make sure we return file number.
     veteran = Veteran.find_by_file_number_or_ssn(params[:file_number])
     veteran ? veteran.file_number : params[:file_number]
+  end
+
+  def success_message
+    detail = intake.detail
+    claimant_name = detail.veteran_full_name
+    claimant_name = detail.claimants.first.try(:name) if detail.veteran_is_not_claimant
+    "#{claimant_name} (Veteran SSN: #{detail.veteran.ssn}) #{detail.class.review_title} has been processed."
   end
 end
