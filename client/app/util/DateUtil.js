@@ -14,8 +14,8 @@ export const formatDate = function(dateString) {
     return;
   }
 
-  if (!dateString.match(/([+-][0-2]\d:[0-5]\d|Z)/)) {
-    throw new Error('Passing timestamp string without timezone not allowed');
+  if (typeof dateString === 'string' && !dateString.match(/([+-][0-2]\d:[0-5]\d|Z)$/)) {
+    throw new Error('Passing string without timezone -- try formatDateStr() instead');
   }
 
   let date = new Date(dateString);
