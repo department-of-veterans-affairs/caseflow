@@ -353,7 +353,7 @@ class EndProductEstablishment < ApplicationRecord
     if committed?
       ep = result(cached: true)
       code = ep.claim_type_code.to_s + ep.modifier.to_s
-      status = ep.status_type.to_s
+      status = ep.status_type&.to_s || status_type
     else
       code = ""
       status = source.try(:establishment_error) ?
@@ -365,15 +365,13 @@ class EndProductEstablishment < ApplicationRecord
       ep_code: code,
       ep_status: status
     }
-
-    # return result(cached: true).status_type if committed?
-
-    # source.try(:establishment_error) ?
-    #   COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED :
-    #   COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
   end
 
   private
+
+  def status_type
+    EndProduct::STATUSES[synced_status] || synced_status
+  end
 
   def decision_issues_sync_complete?
     request_issues.all?(&:processed?)
