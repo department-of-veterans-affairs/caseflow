@@ -30,6 +30,9 @@ describe AsyncableJobsController, type: :controller do
                establishment_attempted_at: 7.days.ago,
                veteran_file_number: veteran.file_number)
       end
+      let!(:riu) do
+        create(:request_issues_update, review: hlr, submitted_at: 7.days.ago, attempted_at: 7.days.ago)
+      end
 
       context "no asyncable klass specified" do
         render_views
@@ -40,6 +43,7 @@ describe AsyncableJobsController, type: :controller do
           expect(response.status).to eq 200
           expect(response.body).to match(/SupplementalClaim/)
           expect(response.body).to match(/HigherLevelReview/)
+          expect(response.body).to match(/RequestIssuesUpdate/)
         end
       end
 
