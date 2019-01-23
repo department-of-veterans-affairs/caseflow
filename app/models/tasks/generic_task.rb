@@ -112,11 +112,11 @@ class GenericTask < Task
       end
     end
 
-    def child_task_assignee(_parent, params)
+    def child_task_assignee(parent, params)
       if params[:assigned_to_id]
         Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
       else
-        _parent.assigned_to
+        parent.assigned_to
       end
     end
 
