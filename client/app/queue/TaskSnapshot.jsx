@@ -33,11 +33,6 @@ type Props = Params & {|
 
 export class TaskSnapshot extends React.PureComponent<Props> {
 
-  addedByNameListItem = (task) => {
-    return task.addedByName ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL}</dt>
-      <dd>{task.addedByName}</dd></div> : null;
-  }
-
   render = () => {
     const {
       appeal
