@@ -808,4 +808,12 @@ describe EndProductEstablishment do
       end
     end
   end
+
+  context "#search_table_ui_hash" do
+    it "sets a null modifier to empty string so it displays correctly" do
+      expect([*end_product_establishment].map(&:search_table_ui_hash)).to include(hash_including(
+                                                                                    modifier: ""
+                                                                                  ))
+    end
+  end
 end

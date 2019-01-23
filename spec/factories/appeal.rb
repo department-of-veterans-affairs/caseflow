@@ -112,5 +112,11 @@ FactoryBot.define do
         )]
       end
     end
+
+    factory :intaked_appeal do
+      after(:create) do |appeal, _evaluator|
+        appeal.create_tasks_on_intake_success!
+      end
+    end
   end
 end

@@ -7,7 +7,7 @@ class Hearings::HearingDayController < HearingScheduleController
     end_date = validate_end_date(params[:end_date])
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    video_and_co, travel_board = HearingDay.load_days(start_date, end_date, regional_office)
+    hearings = HearingDay.load_days(start_date, end_date, regional_office)
 
     respond_to do |format|
       format.html do
@@ -15,8 +15,7 @@ class Hearings::HearingDayController < HearingScheduleController
       end
       format.json do
         render json: {
-          hearings: json_hearings(video_and_co),
-          tbhearings: json_tb_hearings(travel_board),
+          hearings: json_hearings(HearingDay.array_to_hash(hearings[:vacols_hearings] + hearings[:caseflow_hearings])),
           startDate: start_date,
           endDate: end_date
         }
@@ -25,17 +24,23 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def show
-    hearing_day = HearingDayRepository.to_canonical_hash(HearingDay.find_hearing_day(nil, params[:id]))
-    hearings, regional_office = fetch_hearings(hearing_day, params[:id]).values_at(:hearings, :regional_office)
+    hearing_day = HearingDay.find_hearing_day(nil, params[:id])
+    hearing_day_hash = HearingDay.to_hash(hearing_day)
 
-    hearing_day_options = HearingDay.load_days_with_open_hearing_slots(
+    hearings, regional_office = fetch_hearings(hearing_day_hash, params[:id]).values_at(:hearings, :regional_office)
+
+    hearing_day_options = HearingDay.hearing_days_with_hearings_hash(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 365.days,
       regional_office
     )
 
+    if hearing_day.is_a?(HearingDay)
+      hearings += hearing_day.hearings
+    end
+
     render json: {
-      hearing_day: json_hearing(hearing_day).merge(
+      hearing_day: json_hearing(hearing_day_hash).merge(
         hearings: hearings.map { |hearing| hearing.to_hash(current_user.id) },
         hearing_day_options: hearing_day_options
       )
@@ -45,14 +50,14 @@ class Hearings::HearingDayController < HearingScheduleController
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    enriched_hearings = HearingDay.load_days_with_open_hearing_slots(Time.zone.today.beginning_of_day,
-                                                                     Time.zone.today.beginning_of_day + 182.days,
-                                                                     regional_office)
-    enriched_hearings.each do |hearing_day|
-      hearing_day[:hearings] = hearing_day[:hearings].map { |hearing| hearing.to_hash(current_user.id) }
-    end
+    hearing_days_with_hearings = HearingDay.hearing_days_with_hearings_hash(
+      Time.zone.today.beginning_of_day,
+      Time.zone.today.beginning_of_day + 182.days,
+      regional_office,
+      current_user.id
+    )
 
-    render json: { hearing_days: json_hearings(enriched_hearings) }
+    render json: { hearing_days: json_hearings(hearing_days_with_hearings) }
   end
 
   # Create a hearing schedule day
@@ -179,15 +184,6 @@ class Hearings::HearingDayController < HearingScheduleController
                        v
                      end
     end
-  end
-
-  def json_tb_hearings(tbhearings)
-    json_hash = ActiveModelSerializers::SerializableResource.new(
-      tbhearings,
-      each_serializer: ::Hearings::TravelBoardScheduleSerializer
-    ).as_json
-
-    format_for_client(json_hash)
   end
 
   def format_for_client(json_hash)

@@ -85,7 +85,7 @@ describe FetchHearingLocationsForVeteransJob do
 
     describe "#fetch_and_update_ro_for_veteran" do
       let(:veteran) { create(:veteran, file_number: bfcorlid_file_number) }
-      let(:veteran_state) { "VA" }
+      let(:veteran_state) { "NH" }
       let(:mock_va_dot_gov_address) do
         {
           lat: 0.0,
