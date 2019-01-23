@@ -102,6 +102,21 @@ export default class AssignHearingsTabs extends React.Component {
     }
   }
 
+  getLocationType = (location) => {
+    const { facilityType, classification } = location;
+
+    switch (facilityType) {
+    case 'vet_center':
+      return '(Vet Center)';
+    case 'health':
+      return '(VHA)';
+    case 'benefits':
+      return classification.indexOf('Regional') === -1 ? '(VBA)' : '(RO)';
+    default:
+      return null;
+    }
+  }
+
   getSuggestedHearingLocation = (location) => {
     if (!location) {
       return '';
@@ -110,7 +125,7 @@ export default class AssignHearingsTabs extends React.Component {
     const { city, state, distance, facilityType } = location;
 
     return <span>
-      <div>{`${city}, ${state} (${facilityType})`}</div>
+      <div>{`${city}, ${state} ${facilityType}`}</div>
       <div>{`Distance: ${distance} miles away`}</div>
     </span>;
   }
