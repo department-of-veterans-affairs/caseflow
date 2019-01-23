@@ -114,6 +114,19 @@ export default class AssignHearingsTabs extends React.Component {
     }
   }
 
+  getSuggestedHearingLocation = (appeal) => {
+    if (!appeal.attributes.suggestedHearingLocation) {
+      return '';
+    }
+
+    const { city, state, distance, facilityType } = appeal.attributes.suggestedHearingLocation;
+
+    return <span>
+      <div>{`${city}, ${state} (${facilityType})`}</div>
+      <div>{`Distance: ${distance} miles away`}</div>
+    </span>;
+  }
+
   availableVeteransRows = (appeals) => {
     return _.map(appeals, (appeal) => ({
       caseDetails: this.getCaseDetailsInformation(appeal),
@@ -122,7 +135,7 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: appeal.attributes.aod
       }),
       docketNumber: this.getAppealDocketTag(appeal),
-      location: this.getAppealLocation(appeal),
+      suggestLocation: this.getSuggestedHearingLocation(appeal),
       time: null,
       externalId: appeal.attributes.externalAppealId
     }));
@@ -137,7 +150,7 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: hearing.aod
       }),
       docketNumber: this.getHearingDocketTag(hearing),
-      location: hearing.readableLocation,
+      suggestedLocation: hearing.readableLocation,
       time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
     }));
   };
@@ -182,7 +195,7 @@ export default class AssignHearingsTabs extends React.Component {
     {
       header: 'Suggested Location',
       align: 'left',
-      valueName: 'location'
+      valueName: 'suggestLocation'
     },
     {
       header: 'Time',
