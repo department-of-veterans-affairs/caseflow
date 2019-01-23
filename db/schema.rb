@@ -478,6 +478,19 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.datetime "updated_at", null: false
     t.string "zip_code"
   end
+  
+  create_table "hearing_issue_notes", force: :cascade do |t|
+    t.boolean "allow", default: false
+    t.boolean "deny", default: false
+    t.boolean "dismiss", default: false
+    t.bigint "hearing_id", null: false
+    t.boolean "remand", default: false
+    t.boolean "reopen", default: false
+    t.bigint "request_issue_id", null: false
+    t.string "worksheet_notes"
+    t.index ["hearing_id"], name: "index_hearing_issue_notes_on_hearing_id"
+    t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
+  end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
@@ -743,6 +756,7 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.integer "contested_decision_issue_id"
     t.string "contested_issue_description"
     t.string "contested_rating_issue_diagnostic_code"
+    t.string "contested_rating_issue_disability_code"
     t.string "contested_rating_issue_profile_date"
     t.string "contested_rating_issue_reference_id"
     t.datetime "created_at"
