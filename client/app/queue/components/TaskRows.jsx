@@ -20,13 +20,16 @@ export const grayLineStyling = css({
   background: COLORS.GREY_LIGHT,
   margin: 'auto',
   position: 'absolute',
-  top: '39px',
+  top: '30px',
   left: '49.5%',
   bottom: 0
 });
 
 const grayLineTimelineStyling = css(grayLineStyling, { left: '9%',
-  marginLeft: '12px' });
+  marginLeft: '12px',
+  top: '39px' });
+
+const greyDotAndlineStyling = css({ top: '25px' });
 
 const taskContainerStyling = css({
   border: 'none',
@@ -51,13 +54,14 @@ const taskTimeTimelineContainerStyling = css(taskContainerStyling, { width: '40%
 const taskInformationTimelineContainerStyling =
   css(taskInformationContainerStyling, { align: 'left',
     width: '50%',
-    maxWidth: '250px' });
+    maxWidth: '235px' });
 const taskInfoWithIconTimelineContainer =
   css(taskInfoWithIconContainer, { textAlign: 'left',
     marginLeft: '5px',
     width: '10%',
     paddingLeft: '0px' });
 const greyDotStyling = css({ paddingLeft: '6px' });
+const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
 
 class TaskRows extends React.PureComponent {
   constructor(props) {
@@ -89,6 +93,10 @@ class TaskRows extends React.PureComponent {
   };
 
   assignedOnListItem = (task) => {
+    if (task.completedOn) {
+      return null;
+    }
+
     return task.assignedOn ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
       <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
@@ -104,10 +112,6 @@ class TaskRows extends React.PureComponent {
   }
 
   daysWaitingListItem = (task) => {
-    if (task.completedOn) {
-      return null;
-    }
-
     return taskIsOnHold(task) ? <div><dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
       <dd><OnHoldLabel task={task} /></dd></div> : this.daysSinceTaskAssignmentListItem(task);
   }
@@ -203,7 +207,7 @@ class TaskRows extends React.PureComponent {
         <td {...taskTimeTimelineContainerStyling}></td>
         <td {...taskInfoWithIconTimelineContainer} {...greyDotStyling}><GrayDot />
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
-            <div {...grayLineTimelineStyling}{...css({ top: '25px' })} />}</td>
+            <div {...grayLineTimelineStyling}{...css({ top: '25px !important' })} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
           { appeal.decisionDate ? COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
           } <br />
@@ -219,10 +223,12 @@ class TaskRows extends React.PureComponent {
               { this.daysWaitingListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
-          <td {...taskInfoWithIconContainer} className={timeline ? taskInfoWithIconTimelineContainer : ''}>
+          <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
+            task.completedOn ? '' : greyDotTimelineStyling].join(' ')}>
             { task.completedOn && timeline ? <GreenCheckmark /> : <GrayDot /> }
-            { ((index < taskList.length) && taskList[0].completedOn) &&
-              <div {...grayLineStyling} className={timeline ? grayLineTimelineStyling : ''} /> }
+            { (((index < taskList.length) && timeline) || (index < taskList.length - 1 && !timeline)) &&
+              <div {...grayLineStyling} className={[timeline ? grayLineTimelineStyling : '',
+                task.completedOn ? '' : greyDotAndlineStyling].join(' ')} /> }
           </td>
           <td {...taskInformationContainerStyling}
             className={timeline ? taskInformationTimelineContainerStyling : ''}>
@@ -234,9 +240,7 @@ class TaskRows extends React.PureComponent {
               { this.taskInstructionsListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
-          { !timeline && <td {...taskActionsContainerStyling}>
-            { this.showActionsListItem(task, appeal) }
-          </td> }
+          { !timeline && <td {...taskActionsContainerStyling}> { this.showActionsListItem(task, appeal) } </td> }
         </tr>
       ) }
       { timeline && appeal.isLegacyAppeal && <tr>
