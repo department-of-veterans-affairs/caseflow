@@ -122,7 +122,7 @@ class Fakes::BGSService
         end
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
-          bgs_attrs: { benefit_claim_id: in_active_review_reference_id, claimant_first_name: "BOB", claimant_last_name: "VANCE", payee_type_code: "10" }
+          bgs_attrs: { benefit_claim_id: in_active_review_reference_id }
         )
         previous_hlr = HigherLevelReview.find_or_create_by!(
           veteran_file_number: veteran.file_number,

@@ -56,11 +56,7 @@ export const formatRelationships = (relationships) => {
 };
 
 export const getDefaultPayeeCode = (state, claimant) => {
-  if (state.veteranIsNotClaimant) {
-    return _.find(state.relationships, { value: claimant }).defaultPayeeCode;
-  }
-
-  return '00';
+  return _.find(state.relationships, { value: claimant }).defaultPayeeCode;
 };
 
 export const formatRadioOptions = (options) => {
