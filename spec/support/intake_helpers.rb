@@ -425,9 +425,10 @@ module IntakeHelpers
 
     disabilities = issues.map.with_index do |_issue, i|
       {
-        dis_dt: String(promulgation_date.to_datetime),
+        dis_dt: promulgation_date.to_datetime,
         dis_sn: "rating#{i}",
         disability_evaluations: {
+          dis_dt: promulgation_date.to_datetime,
           dgnstc_tc: "disability_code#{i}"
         }
       }
