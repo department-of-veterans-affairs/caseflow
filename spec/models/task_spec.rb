@@ -216,6 +216,52 @@ describe Task do
     end
   end
 
+  describe "#return_to_attorney_data" do
+    let(:attorney) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Janet Avilez") }
+    let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+    let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let(:judge_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
+    let!(:attorney_task) do
+      FactoryBot.create(:ama_attorney_task, assigned_to: attorney, parent: judge_task, appeal: judge_task.appeal)
+    end
+
+    subject { judge_task.return_to_attorney_data }
+
+    context "there aren't any attorneys on the JudgeTeam" do
+      it "still shows the assigned attorney in selected and options" do
+        expect(subject[:selected]).to eq attorney
+        expect(subject[:options]).to eq [{ label: attorney.full_name, value: attorney.id }]
+      end
+    end
+
+    context "there are attorneys on the JudgeTeam" do
+      let(:attorney_names) { ["Jesse Abrecht", "Brenda Akery", "Crystal Andregg"] }
+
+      before do
+        OrganizationsUser.add_user_to_organization(attorney, judge_team)
+
+        attorney_names.each do |attorney_name|
+          another_attorney_on_the_team = FactoryBot.create(
+            :staff,
+            :attorney_role,
+            user: FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: attorney_name)
+          )
+          OrganizationsUser.add_user_to_organization(another_attorney_on_the_team, judge_team)
+        end
+      end
+
+      it "shows the assigned attorney in selected, and all attorneys in options" do
+        expect(subject[:selected]).to eq attorney
+        expect(judge_team.non_admins.count).to eq attorney_names.count + 1
+        judge_team.non_admins.each do |team_attorney|
+          expect(subject[:options]).to include(label: team_attorney.full_name, value: team_attorney.id)
+        end
+      end
+    end
+  end
+
   describe ".root_task" do
     context "when sub-sub-sub...task has a root task" do
       let(:root_task) { FactoryBot.create(:root_task) }
