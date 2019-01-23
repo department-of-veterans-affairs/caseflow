@@ -10,6 +10,8 @@ class AddLocationDataToHearings < ActiveRecord::Migration[5.1]
       t.string :city
       t.string :state
       t.string :zip_code
+      t.string :facility_type
+      t.string :classification
       t.timestamps
     end
   end

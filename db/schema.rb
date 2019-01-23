@@ -466,9 +466,11 @@ ActiveRecord::Schema.define(version: 20190122230514) do
   create_table "hearing_locations", force: :cascade do |t|
     t.string "address"
     t.string "city"
+    t.string "classification"
     t.datetime "created_at", null: false
     t.float "distance"
     t.string "facility_id"
+    t.string "facility_type"
     t.integer "hearing_id"
     t.string "hearing_type"
     t.string "name"

@@ -20,8 +20,6 @@ class Hearing < ApplicationRecord
   delegate :veteran_file_number, to: :appeal
   delegate :docket_number, to: :appeal
   delegate :docket_name, to: :appeal
-  delegate :closest_regional_office, to: :appeal
-  delegate :suggested_hearing_location, to: :appeal
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
 
@@ -111,7 +109,8 @@ class Hearing < ApplicationRecord
         :docket_name,
         :military_service,
         :current_issue_count,
-        :appeal_representative_name
+        :appeal_representative_name,
+        :location
       ]
     )
   end

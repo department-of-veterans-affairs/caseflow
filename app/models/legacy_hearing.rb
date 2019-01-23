@@ -184,6 +184,7 @@ class LegacyHearing < ApplicationRecord
         :appellant_city,
         :appellant_state,
         :appellant_zip,
+        :location,
         :readable_location,
         :appeal_external_id,
         :external_id,

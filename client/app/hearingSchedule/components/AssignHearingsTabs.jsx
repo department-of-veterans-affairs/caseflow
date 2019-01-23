@@ -75,18 +75,6 @@ export default class AssignHearingsTabs extends React.Component {
     return `${veteranFileNumber}`;
   };
 
-  getAppealLocation = (appeal) => {
-    if (this.props.selectedRegionalOffice === 'C') {
-      return 'Washington DC';
-    }
-
-    if (!appeal.attributes.regionalOffice) {
-      return null;
-    }
-
-    return `${appeal.attributes.regionalOffice.city}, ${appeal.attributes.regionalOffice.state}`;
-  };
-
   getCaseDetailsInformation = (appeal) => {
     if (appeal.attributes.appellantFullName) {
       return `${appeal.attributes.appellantFullName} | ${appeal.attributes.veteranFileNumber}`;
@@ -114,12 +102,12 @@ export default class AssignHearingsTabs extends React.Component {
     }
   }
 
-  getSuggestedHearingLocation = (appeal) => {
-    if (!appeal.attributes.suggestedHearingLocation) {
+  getSuggestedHearingLocation = (location) => {
+    if (!location) {
       return '';
     }
 
-    const { city, state, distance, facilityType } = appeal.attributes.suggestedHearingLocation;
+    const { city, state, distance, facilityType } = location;
 
     return <span>
       <div>{`${city}, ${state} (${facilityType})`}</div>
@@ -135,7 +123,7 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: appeal.attributes.aod
       }),
       docketNumber: this.getAppealDocketTag(appeal),
-      suggestLocation: this.getSuggestedHearingLocation(appeal),
+      suggestLocation: this.getSuggestedHearingLocation(appeal.attributes.suggestedHearingLocation),
       time: null,
       externalId: appeal.attributes.externalAppealId
     }));
@@ -150,7 +138,7 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: hearing.aod
       }),
       docketNumber: this.getHearingDocketTag(hearing),
-      suggestedLocation: hearing.readableLocation,
+      suggestLocation: this.getSuggestedHearingLocation(hearing.location),
       time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
     }));
   };
