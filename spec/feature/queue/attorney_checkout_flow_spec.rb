@@ -207,8 +207,6 @@ RSpec.feature "Attorney checkout flow" do
 
         click_on "Save"
 
-
-
         # Add a third decision issue that's allowed
         all("button", text: "+ Add decision", count: 2)[0].click
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
