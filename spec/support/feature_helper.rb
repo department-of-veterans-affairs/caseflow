@@ -30,11 +30,14 @@ module FeatureHelper
     end.join(" ")
   end
 
-  def step(_title)
+  def step(title)
+    puts "  __step: #{title}" if ENV["SHOW_STEPS"]
     yield
   end
 
-  def xstep(_title); end
+  def xstep(title)
+    puts "  __skipped step: #{title}" if ENV["SHOW_STEPS"]
+  end
 
   private
 
