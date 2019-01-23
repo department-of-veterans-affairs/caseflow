@@ -63,14 +63,14 @@ describe Rating do
         ],
         disabilities: [
           {
-            dis_dt: "2018-07-17T08:31:43.000-05:00",
+            dis_dt: promulgation_date - 2.days,
             dis_sn: "rating1",
             disability_evaluations: {
               dgnstc_tc: "original_code"
             }
           },
           {
-            dis_dt: "2019-07-17T08:31:43.000-05:00",
+            dis_dt: promulgation_date - 1.day,
             dis_sn: "rating1",
             disability_evaluations: {
               dgnstc_tc: "later_code"
