@@ -113,14 +113,13 @@ describe "Appeals API v2", type: :request do
 
     let!(:claim_review) do
       create(:higher_level_review,
-        veteran_file_number: veteran_file_number,
-        receipt_date: receipt_date,
-        informal_conference: informal_conference,
-        same_office: same_office,
-        benefit_type: benefit_type,
-        legacy_opt_in_approved: legacy_opt_in_approved,
-        veteran_is_not_claimant: veteran_is_not_claimant
-      )
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             informal_conference: informal_conference,
+             same_office: same_office,
+             benefit_type: benefit_type,
+             legacy_opt_in_approved: legacy_opt_in_approved,
+             veteran_is_not_claimant: veteran_is_not_claimant)
     end
 
     before do
@@ -370,12 +369,12 @@ describe "Appeals API v2", type: :request do
     end
 
     it "returns list of hlrs for veteran with SSN" do
-      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs, ssn|
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
         veteran_file_number
       end
 
       FeatureToggle.enable!(:api_appeal_status_v3)
-      
+
       headers = {
         "ssn": veteran_file_number,
         "Authorization": "Token token=#{api_key.key_string}"
@@ -384,7 +383,7 @@ describe "Appeals API v2", type: :request do
       get "/api/v2/appeals", headers: headers
 
       json = JSON.parse(response.body)
-      
+
       # test for the 200 status-code
       expect(response).to be_success
       # check to make sure the right amount of appeals are returned
