@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Table from '../../components/Table';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import * as Constants from '../../establishClaim/constants';
 
@@ -30,7 +30,7 @@ export class AssociatePage extends React.Component {
     {
       header: 'Decision Date',
       valueFunction: (endProduct) =>
-        formatDate(endProduct.claim_receive_date)
+        formatDateStr(endProduct.claim_receive_date)
     },
     {
       header: 'EP Code',

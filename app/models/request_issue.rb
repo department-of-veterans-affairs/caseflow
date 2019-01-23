@@ -181,6 +181,7 @@ class RequestIssue < ApplicationRecord
         rating_issue_reference_id: data[:rating_issue_reference_id],
         rating_issue_profile_date: data[:rating_issue_profile_date],
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
+        contested_rating_issue_disability_code: data[:rating_issue_disability_code],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
@@ -201,6 +202,8 @@ class RequestIssue < ApplicationRecord
     end
     # rubocop:enable Metrics/MethodLength
   end
+
+  delegate :veteran, to: :review_request
 
   def end_product_code
     remanded? ? dta_end_product_code : original_end_product_code
