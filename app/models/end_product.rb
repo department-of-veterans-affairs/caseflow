@@ -95,9 +95,9 @@ class EndProduct
     @benefit_type_code ||= Veteran::BENEFIT_TYPE_CODE_LIVE
   end
 
-  def payee_code
-    @payee_code ||= "00"
-  end
+  # def payee_code
+  #   @payee_code ||= "00"
+  # end
 
   def claimant_participant_id
     @claimant_participant_id ||= nil

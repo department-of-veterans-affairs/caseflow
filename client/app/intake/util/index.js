@@ -49,9 +49,18 @@ export const formatRelationships = (relationships) => {
 
     return {
       value: relationship.participant_id,
-      displayText: `${first} ${last}, ${type}`
+      displayText: `${first} ${last}, ${type}`,
+      defaultPayeeCode: relationship.default_payee_code
     };
   });
+};
+
+export const getDefaultPayeeCode = (state, claimant) => {
+  if (state.veteranIsNotClaimant) {
+    return _.find(state.relationships, { value: claimant }).defaultPayeeCode;
+  }
+
+  return '00';
 };
 
 export const formatRadioOptions = (options) => {

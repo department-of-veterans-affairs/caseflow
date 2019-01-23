@@ -124,6 +124,13 @@ class Veteran < ApplicationRecord
     @relationships ||= fetch_relationships
   end
 
+  def relationships_with_default_payee_codes
+    @relationships_with_default_payee_codes ||= relationships.each do |r|
+      eps = end_products.select { |ep| ep.claimant_first_name == r.first_name && ep.claimant_last_name == r.last_name }
+      eps && r.default_payee_code = eps.max_by(&:claim_date).try(:payee_code)
+    end
+  end
+
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
     @zip_code || (@address_line3 if (@address_line3 || "").match?(/(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/))

@@ -2,7 +2,7 @@ class Relationship
   include ActiveModel::Model
   include ActiveModel::Validations
 
-  attr_accessor :participant_id, :first_name, :last_name, :relationship_type
+  attr_accessor :participant_id, :first_name, :last_name, :relationship_type, :default_payee_code
 
   class << self
     def from_bgs_hash(hash)

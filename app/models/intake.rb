@@ -211,7 +211,7 @@ class Intake < ApplicationRecord
       veteran_form_name: veteran&.name&.formatted(:form),
       veteran_is_deceased: veteran&.deceased?,
       completed_at: completed_at,
-      relationships: ama_enabled && veteran && veteran.relationships
+      relationships: ama_enabled && veteran && veteran.relationships_with_default_payee_codes
     }
   end
 
