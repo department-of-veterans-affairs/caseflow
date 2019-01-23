@@ -261,12 +261,12 @@ class TaskRows extends React.PureComponent {
       </tr> }
       { timeline && <tr>
         <td {...taskTimeTimelineContainerStyling}>
-          { appeal.receiptDate ? moment(appeal.receiptDate).format('MM/DD/YYYY') : null }
+          { appeal.nodDate ? moment(appeal.nodDate).format('MM/DD/YYYY') : null }
         </td>
-        <td {...taskInfoWithIconTimelineContainer} className={appeal.receiptDate ? '' : greyDotStyling}>
-          { appeal.receiptDate ? <GreenCheckmark /> : <GrayDot /> }</td>
+        <td {...taskInfoWithIconTimelineContainer} className={appeal.nodDate ? '' : greyDotStyling}>
+          { appeal.nodDate ? <GreenCheckmark /> : <GrayDot /> }</td>
         <td {...taskInformationTimelineContainerStyling}>
-          { appeal.receiptDate ? COPY.CASE_TIMELINE_NOD_RECEIVED : COPY.CASE_TIMELINE_NOD_PENDING } <br />
+          { appeal.nodDate ? COPY.CASE_TIMELINE_NOD_RECEIVED : COPY.CASE_TIMELINE_NOD_PENDING } <br />
         </td>
       </tr> }
     </React.Fragment>;
