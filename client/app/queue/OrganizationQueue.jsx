@@ -100,6 +100,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 const TaskTableTab = ({ description, tasks }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
   <TaskTable
+    includeHearingBadge
     includeDetailsLink
     includeTask
     includeType

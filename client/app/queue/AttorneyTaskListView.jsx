@@ -163,6 +163,7 @@ export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListVie
 const TaskTableTab = ({ description, tasks }) => <React.Fragment>
   <p className="cf-margin-top-0" >{description}</p>
   <TaskTable
+    includeHearingBadge
     includeDetailsLink
     includeType
     includeDocketNumber

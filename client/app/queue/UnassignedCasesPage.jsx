@@ -71,6 +71,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
             onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
             selectedTasks={selectedTasks} />
           <TaskTable
+            includeHearingBadge
             includeSelect
             includeDetailsLink
             includeType
@@ -91,6 +92,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
                 onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
                 selectedTasks={selectedTasks} />
               <TaskTable
+                includeHearingBadge
                 includeSelect
                 includeDetailsLink
                 includeType
