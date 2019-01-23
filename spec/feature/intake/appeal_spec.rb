@@ -310,6 +310,26 @@ feature "Appeal Intake" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
   end
 
+  context "ratings with disabiliity codes" do
+    let(:disabiliity_receive_date) { receipt_date + 2.days }
+    let(:disability_profile_date) { profile_date - 1.day }
+    let!(:ratings_with_disability_codes) do
+      generate_ratings_with_disabilities(veteran,
+                                         disabiliity_receive_date,
+                                         disability_profile_date)
+    end
+
+    scenario "saves disability codes" do
+      appeal, = start_appeal(veteran)
+      visit "/intake"
+      click_intake_continue
+      save_and_check_request_issues_with_disability_codes(
+        Constants.INTAKE_FORM_NAMES.appeal,
+        appeal
+      )
+    end
+  end
+
   context "Veteran has no ratings" do
     scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
       start_appeal(veteran_no_ratings)
