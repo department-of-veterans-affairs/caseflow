@@ -402,11 +402,15 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def unassociated_rating_request_issues
-    rating_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
+    eligible_rating_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
   end
 
   def eligible_request_issues
     request_issues.select(&:eligible?)
+  end
+
+  def eligible_rating_request_issues
+    eligible_request_issues.select(&:rating?)
   end
 
   def select_ready_for_contentions(records)
