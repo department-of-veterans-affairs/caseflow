@@ -257,7 +257,6 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
 
       <ContestedIssues
-        isAmaAppeal={!appeal.isLegacyAppeal}
         decisionIssues={appeal.decisionIssues}
         requestIssues={appeal.issues}
         openDecisionHandler={this.openDecisionHandler}

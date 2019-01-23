@@ -83,7 +83,7 @@ export default class ContestedIssues extends React.PureComponent {
           <div {...flexContainer}>
             Decision
             <div>
-              {this.props.isAmaAppeal && openDeleteAddedDecisionIssueHandler && <span>
+              {openDeleteAddedDecisionIssueHandler && <span>
                 <Button
                   name="Delete"
                   id={`delete-issue-${requestIssue.id}-${decisionIssue.id}`}
