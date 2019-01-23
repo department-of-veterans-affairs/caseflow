@@ -5,6 +5,8 @@
 # This becomes necessary when a Job has multiple external service calls, each of
 # which may fail and cause retries beyond the "normal" retry window.
 # See ClaimReview and RequestIssuesUpdate e.g.
+
+# rubocop:disable Metrics/ModuleLength
 module Asyncable
   extend ActiveSupport::Concern
 
@@ -124,7 +126,12 @@ module Asyncable
   end
 
   def restart!
-    submit_for_processing!
+    update!(
+      self.class.submitted_at_column => Time.zone.now,
+      self.class.processed_at_column => nil,
+      self.class.attempted_at_column => nil,
+      self.class.error_column => nil
+    )
   end
 
   def asyncable_ui_hash
@@ -139,3 +146,4 @@ module Asyncable
     }
   end
 end
+# rubocop:enable Metrics/ModuleLength

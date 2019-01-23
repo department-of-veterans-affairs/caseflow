@@ -10,6 +10,7 @@ class RequestIssue < ApplicationRecord
   has_many :decision_issues, through: :request_decision_issues
   has_many :remand_reasons
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
+  has_many :hearing_issue_notes
   has_one :legacy_issue_optin
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
@@ -37,6 +38,12 @@ class RequestIssue < ApplicationRecord
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} cannot create decision issue " \
         "due to not having any matching rating issues or contentions")
+    end
+  end
+
+  class NilEndProductLastActionDate < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id}'s end_product is missing the last action date")
     end
   end
 
@@ -174,6 +181,7 @@ class RequestIssue < ApplicationRecord
         rating_issue_reference_id: data[:rating_issue_reference_id],
         rating_issue_profile_date: data[:rating_issue_profile_date],
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
+        contested_rating_issue_disability_code: data[:rating_issue_disability_code],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
@@ -393,6 +401,8 @@ class RequestIssue < ApplicationRecord
   end
 
   def create_decision_issues
+    fail NilEndProductLastActionDate, id unless end_product_establishment.result.last_action_date
+
     if rating?
       return unless end_product_establishment.associated_rating
 
