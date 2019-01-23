@@ -827,7 +827,7 @@ describe EndProductEstablishment do
       context "and there is a modifier, show the modifier" do
         let(:expected_result) do
           { ep_code: code,
-            ep_status: "" }
+            ep_status: nil }
         end
 
         it { is_expected.to eq expected_result }
@@ -836,7 +836,7 @@ describe EndProductEstablishment do
       context "if there is no modifier, show an empty string" do
         let(:expected_result) do
           { ep_code: code,
-            ep_status: "" }
+            ep_status: nil }
         end
 
         it { is_expected.to eq expected_result }
