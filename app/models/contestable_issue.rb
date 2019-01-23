@@ -3,7 +3,8 @@ class ContestableIssue
   include ActiveModel::Model
 
   attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id, :contesting_decision_review,
-                :decision_issue_id, :promulgation_date, :rating_issue_profile_date, :source_request_issue
+                :decision_issue_id, :promulgation_date, :rating_issue_profile_date, :source_request_issue,
+                :rating_issue_disability_code
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -14,7 +15,8 @@ class ContestableIssue
         description: rating_issue.decision_text,
         ramp_claim_id: rating_issue.ramp_claim_id,
         source_request_issue: rating_issue.source_request_issue,
-        contesting_decision_review: contesting_decision_review
+        contesting_decision_review: contesting_decision_review,
+        rating_issue_disability_code: rating_issue.disability_code
       )
     end
 
@@ -35,6 +37,7 @@ class ContestableIssue
     {
       ratingIssueReferenceId: rating_issue_reference_id,
       ratingIssueProfileDate: rating_issue_profile_date,
+      ratingIssueDisabilityCode: rating_issue_disability_code,
       decisionIssueId: decision_issue_id,
       date: date,
       description: description,
