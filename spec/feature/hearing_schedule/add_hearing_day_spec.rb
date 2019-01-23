@@ -61,7 +61,7 @@ RSpec.feature "Add a Hearing Day" do
       fill_in "coordinator", with: "Casimir R Funk"
       fill_in "Notes (Optional)", with: "Test notes."
       find("button", text: "Confirm").click
-      expect(page).to have_content("You have successfully added Hearing Day 01/15/2019")
+      expect(page).to have_content("You have successfully added Hearing Day 01/15/2019", wait: 30)
     end
   end
 
@@ -82,7 +82,7 @@ RSpec.feature "Add a Hearing Day" do
       expect(page).to have_content("Welcome to Hearing Schedule!")
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
-      fill_in "hearingDate", with: "01152019"
+      fill_in "hearingDate", with: "04152019"
       click_dropdown(index: "V", text: "Video")
       expect(page).to have_content("Select Regional Office (RO)", wait: 30)
       dropdowns = page.all(".Select-control")
@@ -92,7 +92,7 @@ RSpec.feature "Add a Hearing Day" do
       fill_in "coordinator", with: "Casimir R Funk"
       fill_in "Notes (Optional)", with: "Test notes."
       find("button", text: "Confirm").click
-      expect(page).to have_content("You have successfully added Hearing Day 01/15/2019")
+      expect(page).to have_content("You have successfully added Hearing Day 04/15/2019", wait: 30)
     end
 
     scenario "Leave Regional Office without a selection, expect error" do
@@ -100,7 +100,7 @@ RSpec.feature "Add a Hearing Day" do
       expect(page).to have_content("Welcome to Hearing Schedule!")
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
-      fill_in "hearingDate", with: "01152019"
+      fill_in "hearingDate", with: "04152019"
       click_dropdown(index: "V", text: "Video")
       expect(page).to have_content("Select Regional Office (RO)", wait: 30)
       fill_in "vlj", with: "Sallie L Anderson"

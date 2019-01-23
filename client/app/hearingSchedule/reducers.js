@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { timeFunction } from '../util/PerfDebug';
 import { ACTIONS } from './constants';
 import { update } from '../util/ReducerUtil';
@@ -9,7 +10,6 @@ import { workQueueReducer } from '../queue/reducers';
 import uiReducer from '../queue/uiReducer/uiReducer';
 
 export const initialState = {};
-
 const hearingScheduleReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_HEARING_SCHEDULE:
@@ -309,18 +309,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.hearingDayModified
       }
     });
-  case ACTIONS.RECEIVE_JUDGES:
-    return update(state, {
-      activeJudges: {
-        $set: action.payload.activeJudges
-      }
-    });
-  case ACTIONS.RECEIVE_COORDINATORS:
-    return update(state, {
-      activeCoordinators: {
-        $set: action.payload.activeCoordinators
-      }
-    });
   case ACTIONS.ON_CLICK_REMOVE_HEARING_DAY:
     return update(state, {
       displayRemoveHearingDayModal: {
@@ -393,7 +381,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return state;
   }
 };
-
 const combinedReducer = combineReducers({
   hearingSchedule: hearingScheduleReducer,
   ui: uiReducer,

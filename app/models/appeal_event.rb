@@ -26,6 +26,9 @@ class AppealEvent
     ramp: [
       "RAMP Opt-in"
     ],
+    statutory_opt_in: [
+      "AMA SOC/SSOC Opt-in"
+    ],
     death: [
       "Dismissed, Death",
       "Advance Withdrawn Death of Veteran"

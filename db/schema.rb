@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190117232830) do
+ActiveRecord::Schema.define(version: 20190118155859) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -461,6 +461,19 @@ ActiveRecord::Schema.define(version: 20190117232830) do
     t.datetime "updated_at", null: false
     t.string "updated_by", null: false
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
+  end
+
+  create_table "hearing_issue_notes", force: :cascade do |t|
+    t.boolean "allow", default: false
+    t.boolean "deny", default: false
+    t.boolean "dismiss", default: false
+    t.bigint "hearing_id", null: false
+    t.boolean "remand", default: false
+    t.boolean "reopen", default: false
+    t.bigint "request_issue_id", null: false
+    t.string "worksheet_notes"
+    t.index ["hearing_id"], name: "index_hearing_issue_notes_on_hearing_id"
+    t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|

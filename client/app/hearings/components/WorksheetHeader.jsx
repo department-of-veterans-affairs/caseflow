@@ -138,7 +138,7 @@ class WorksheetHeader extends React.PureComponent {
       </div>
 
       <div className="cf-hearings-worksheet-data">
-        <h2 className="cf-hearings-worksheet-header">Appellant/Veteran Information</h2>
+        <h2 className="cf-hearings-worksheet-header">Veteran/Appellant Information</h2>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>VETERAN NAME</h4>
           <div className="cf-hearings-headers"><b>
@@ -193,7 +193,7 @@ class WorksheetHeader extends React.PureComponent {
             `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>REPRESENTATIVE</h4>
+          <h4>POWER OF ATTORNEY</h4>
           <div className="cf-hearings-headers">
             {worksheet.appeal_representative_name ? worksheet.appeal_representative_name : worksheet.representative}
           </div>
