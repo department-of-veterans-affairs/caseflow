@@ -63,7 +63,6 @@ class ScheduleHearingTask < GenericTask
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
       return [
         Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h,
-        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
       ]
     end
