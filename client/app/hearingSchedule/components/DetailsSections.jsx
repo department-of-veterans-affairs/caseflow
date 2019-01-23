@@ -171,6 +171,7 @@ const TranscriptionDetails = ({
         name="sentToTranscriberDate"
         label="Sent to Transcriber"
         strongLabel
+        type="date"
         readOnly={readOnly}
         value={sentToTranscriberDate}
         onChange={(val) => set('sentToTranscriberDate', val)}
@@ -179,6 +180,7 @@ const TranscriptionDetails = ({
         name="expectedReturnDate"
         label="Expected Return Date"
         strongLabel
+        type="date"
         readOnly={readOnly}
         value={expectedReturnDate}
         onChange={(val) => set('expectedReturnDate', val)}
@@ -187,6 +189,7 @@ const TranscriptionDetails = ({
         name="uploadedToVbmsDate"
         label="Transcript Uploaded to VBMS"
         strongLabel
+        type="date"
         readOnly={readOnly}
         value={uploadedToVbmsDate}
         onChange={(val) => set('uploadedToVbmsDate', val)}
@@ -234,6 +237,7 @@ const TranscriptionProblem = ({
       name="problemNoticeSentDate"
       label="Problem Notice Sent"
       strongLabel
+      type="date"
       readOnly={readOnly || _.isEmpty(problemType)}
       value={problemNoticeSentDate}
       onChange={(val) => set('problemNoticeSentDate', val)}
@@ -289,6 +293,7 @@ const TranscriptionRequest = ({
       name="copySentDate"
       label="Copy Sent to Appellant/Rep"
       strongLabel
+      type="date"
       readOnly={readOnly}
       value={transcriptSentDate}
       onChange={(val) => set('transcriptSentDate', val)}
