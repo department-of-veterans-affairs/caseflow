@@ -101,6 +101,27 @@ describe "Appeals API v2", type: :request do
 
     let(:api_key) { ApiKey.create!(consumer_name: "Testington Roboterson") }
 
+    let(:veteran_file_number) { "111223333" }
+    let!(:veteran) { create(:veteran, file_number: veteran_file_number) }
+    let(:receipt_date) { nil }
+    let(:benefit_type) { "compensation" }
+    let(:informal_conference) { nil }
+    let(:same_office) { nil }
+    let(:legacy_opt_in_approved) { false }
+    let(:veteran_is_not_claimant) { false }
+    let(:profile_date) { receipt_date - 1 }
+
+    let!(:claim_review) do
+      create(:higher_level_review,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             informal_conference: informal_conference,
+             same_office: same_office,
+             benefit_type: benefit_type,
+             legacy_opt_in_approved: legacy_opt_in_approved,
+             veteran_is_not_claimant: veteran_is_not_claimant)
+    end
+
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs, ssn|
         ssn
@@ -345,6 +366,48 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["evidence"]).to eq([])
 
       expect(ApiView.count).to eq(1)
+    end
+
+    it "returns list of hlrs for veteran with SSN" do
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
+        veteran_file_number
+      end
+
+      FeatureToggle.enable!(:api_appeal_status_v3)
+
+      headers = {
+        "ssn": veteran_file_number,
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
+      get "/api/v2/appeals", headers: headers
+
+      json = JSON.parse(response.body)
+
+      # test for the 200 status-code
+      expect(response).to be_success
+      # check to make sure the right amount of appeals are returned
+      expect(json["data"].length).to eq(1)
+
+      # check the attribtues on the hlr
+      expect(json["data"].first["type"]).to eq("higherLevelReview")
+      expect(json["data"].first["attributes"]["appealIds"].length).to eq(1)
+      expect(json["data"].first["attributes"]["appealIds"].first).to include("HLR")
+      expect(json["data"].first["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
+      expect(json["data"].first["attributes"]["type"]).to be_nil
+      expect(json["data"].first["attributes"]["active"]).to eq(false)
+      expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
+      expect(json["data"].first["attributes"]["description"]).to be_nil
+      expect(json["data"].first["attributes"]["aod"]).to be_nil
+      expect(json["data"].first["attributes"]["location"]).to eq("aoj")
+      expect(json["data"].first["attributes"]["alerts"]).to be_nil
+      expect(json["data"].first["attributes"]["aoj"]).to be_nil
+      expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
+      expect(json["data"].first["attributes"]["docket"]).to be_nil
+      expect(json["data"].first["attributes"]["status"]).to be_nil
+      expect(json["data"].first["attributes"]["issues"].length).to eq(0)
+
+      FeatureToggle.disable!(:api_appeal_status_v3)
     end
   end
 end
