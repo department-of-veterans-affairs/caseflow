@@ -26,9 +26,10 @@ export const populateUpcomingHearings = (upcomingHearings) => ({
   }
 });
 
-export const populateDailyDocket = (dailyDocket, date) => ({
+export const populateDailyDocket = (hearingDay, dailyDocket, date) => ({
   type: Constants.POPULATE_DAILY_DOCKET,
   payload: {
+    hearingDay,
     dailyDocket,
     date
   }
@@ -273,7 +274,7 @@ export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
   if (!dailyDocket || !dailyDocket[date]) {
     ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
       then((response) => {
-        dispatch(populateDailyDocket(response.body, date));
+        dispatch(populateDailyDocket(response.body.hearingDay, response.body.dailyDocket, date));
       }, (err) => {
         dispatch(handleDocketServerError(err));
       });

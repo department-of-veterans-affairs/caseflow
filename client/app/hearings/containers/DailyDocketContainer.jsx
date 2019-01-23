@@ -65,6 +65,7 @@ export class DailyDocketContainer extends React.Component {
           veteran_law_judge={this.props.veteran_law_judge}
           date={this.props.date}
           docket={dailyDocket}
+          hearingDay={this.props.hearingDay}
         />
       </div>
     </div>;
@@ -73,6 +74,7 @@ export class DailyDocketContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   dailyDocket: state.dailyDocket,
+  hearingDay: state.hearingDay,
   docketServerError: state.docketServerError,
   docketIsSaving: state.docketIsSaving,
   docketTimeSaved: state.docketTimeSaved,

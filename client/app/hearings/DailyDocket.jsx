@@ -101,6 +101,10 @@ const aodOptions = [{ value: 'granted',
 { value: 'none',
   label: 'None' }];
 
+const notesTitleStyling = css({
+  marginTop: '15px'
+});
+
 const selectedValue = (selected) => selected ? selected.value : null;
 
 export class DailyDocket extends React.PureComponent {
@@ -394,12 +398,19 @@ export class DailyDocket extends React.PureComponent {
       <AppSegment extraClassNames="cf-hearings" noMarginTop filledBackground>
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
-            <h1>Daily Docket ({moment(docket[0].scheduled_for).format('ddd l')})</h1>
-            <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
+            <h1>Daily Docket ({moment(this.props.date).format('ddd l')})</h1>
+            {this.props.hearingDay.notes &&
+            <span {...notesTitleStyling}>
+              <br /><strong>Notes: </strong>
+              <br />{this.props.hearingDay.notes}
+          </span>
+            }
           </div>
           <span className="cf-push-right">
-            VLJ: {docket[0].judge ? docket[0].judge.full_name : null}<br />
-            Hearing Type: {docket[0].readable_request_type}<br />
+            VLJ: {this.props.veteran_law_judge.full_name}<br />
+            Coordinator: {this.props.hearingDay.coordinator}<br />
+            Hearing Type: {this.props.hearingDay.requestType}<br />
+            Room Number: {this.props.hearingDay.room}<br />
           </span>
         </div>
 

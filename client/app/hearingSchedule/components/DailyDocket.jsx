@@ -443,10 +443,10 @@ export default class DailyDocket extends React.Component {
             {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
           </Button>
           }
-          {this.props.notes &&
+          {this.props.dailyDocket.notes &&
           <span {...notesTitleStyling}>
             <br /><strong>Notes: </strong>
-            <br />{this.props.notes}
+            <br />{this.props.dailyDocket.notes}
           </span>
           }
         </div>

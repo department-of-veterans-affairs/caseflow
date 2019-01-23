@@ -13,12 +13,20 @@ class Hearings::DocketsController < HearingsController
     date = date_from_string(params[:docket_date])
     return not_found unless date && judge.docket?(date)
 
+    hearing_day = HearingDay.find_by(scheduled_for: date)
+
     respond_to do |format|
       format.html { render template: "hearings/index" }
       format.json do
-        render json: (judge.upcoming_hearings_on(date, is_fetching_issues: true).map do |hearing|
-                        hearing.to_hash(current_user.id)
-                      end)
+        render json: {
+          hearingDay: {requestType: HearingDayMapper.label_for_type(hearing_day.request_type),
+                       coordinator: hearing_day.bva_poc,
+                       room: hearing_day.room,
+                       notes: hearing_day.notes},
+          dailyDocket: judge.upcoming_hearings_on(date, is_fetching_issues: true).map do |hearing|
+                      hearing.to_hash(current_user.id)
+                    end
+        }
       end
     end
   end
