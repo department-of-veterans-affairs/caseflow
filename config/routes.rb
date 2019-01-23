@@ -147,7 +147,7 @@ Rails.application.routes.draw do
   get 'dispatch/help' => 'help#dispatch'
   get 'certification/help' => 'help#certification'
   get 'reader/help' => 'help#reader'
-  get 'hearings/help' => 'help#hearings'
+  get 'hearing_prep/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
   get 'queue/help' => 'help#queue'
 
