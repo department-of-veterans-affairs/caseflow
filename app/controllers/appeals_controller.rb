@@ -42,7 +42,7 @@ class AppealsController < ApplicationController
   end
 
   def new_documents
-    if params[:cached] == "true"
+    if params[:cached]
       render json: { new_documents: appeal.new_documents_from_caseflow(current_user) }
       return
     end
