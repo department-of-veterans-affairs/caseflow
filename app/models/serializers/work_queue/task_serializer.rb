@@ -63,6 +63,14 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.number_of_issues
   end
 
+  attribute :closest_regional_office do
+    object.appeal.veteran_closest_regional_office
+  end
+
+  attribute :suggested_hearing_location do
+    object.appeal.veteran_suggested_hearing_location
+  end
+
   attribute :previous_task do
     {
       assigned_at: object.previous_task.try(:assigned_at)
