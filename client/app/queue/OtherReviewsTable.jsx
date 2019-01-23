@@ -10,7 +10,6 @@ import { clearCaseListSearch } from './CaseList/CaseListActions';
 
 import COPY from '../../COPY.json';
 import CLAIM_REVIEW_TEXT from '../../constants/CLAIM_REVIEW_TEXT.json';
-import EP_STATUSES from '../../constants/EP_STATUSES.json';
 
 class SubdividedTableRow extends React.PureComponent {
   render = () => {
