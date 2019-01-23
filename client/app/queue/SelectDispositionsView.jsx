@@ -42,6 +42,10 @@ const exampleDiv = css({
   fontStyle: 'Italic'
 });
 
+const textAreaStyle = css({
+  maxWidth: '100%'
+});
+
 class SelectDispositionsView extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -276,7 +280,11 @@ class SelectDispositionsView extends React.PureComponent {
       { openRequestIssueId && <Modal
         buttons = {this.decisionModalButtons}
         closeHandler={this.handleModalClose}
-        title = {`${editingExistingIssue ? 'Edit' : 'Add'} decision`}>
+        title = {`${editingExistingIssue ? 'Edit' : 'Add'} decision`}
+        customStyles={css({
+          width: '800px'
+        })}
+      >
 
         <div {...contestedIssueStyling}>
           Contested Issue
@@ -312,6 +320,7 @@ class SelectDispositionsView extends React.PureComponent {
         <br />
         <h3>{COPY.DECISION_ISSUE_MODAL_DESCRIPTION}</h3>
         <TextareaField
+          styling={textAreaStyle}
           errorMessage={highlightModal && !decisionIssue.description ? 'This field is required' : null}
           label={COPY.DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE}
           name="Text Box"
