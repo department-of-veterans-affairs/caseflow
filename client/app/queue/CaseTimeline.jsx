@@ -42,6 +42,4 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   };
 };
 
-CaseTimeline.propTypes = {
-  appeal: PropTypes.object.isRequired
-};
+export default connect(mapStateToProps)(CaseTimeline);

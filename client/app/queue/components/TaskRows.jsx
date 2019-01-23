@@ -65,8 +65,9 @@ const greyDotTimelineStyling = css({ padding: '5px 0px 0px 5px' });
 class TaskRows extends React.PureComponent {
   constructor(props) {
     super(props);
-    let taskVisibiltyObj = {}
-    this.props.timelineTasks.forEach((task) => taskVisibiltyObj[task.uniqueId] = false)
+    const taskVisibiltyObj = {};
+
+    this.props.timelineTasks.forEach((task) => taskVisibiltyObj[task.uniqueId] = false);
 
     this.state = {
       taskInstructionsIsVisible: false,
@@ -75,10 +76,12 @@ class TaskRows extends React.PureComponent {
   }
 
   toggleTaskInstructionsVisibility = (task) => {
-    let prevState = this.state.taskInstructionsIsVisible;
+    const prevState = this.state.taskInstructionsIsVisible;
+
     this.setState({ taskInstructionsIsVisible: !prevState });
 
-    let previousState = this.state.taskInstructionsIsVisibleObj;
+    const previousState = this.state.taskInstructionsIsVisibleObj;
+
     previousState[task.uniqueId] = !previousState[task.uniqueId];
     this.setState({ taskInstructionsIsVisibleObj: previousState });
     console.log(this.state.taskInstructionsIsVisibleObj);
@@ -169,8 +172,8 @@ class TaskRows extends React.PureComponent {
     if (!task.instructions || !task.instructions.length > 0) {
       return null;
     }
-    console.log(task.uniqueId)
-    console.log(this.state.taskInstructionsIsVisibleObj[task.uniqueId])
+    console.log(task.uniqueId);
+    console.log(this.state.taskInstructionsIsVisibleObj[task.uniqueId]);
 
     return <div>
       { this.state.taskInstructionsIsVisible &&
@@ -202,8 +205,8 @@ class TaskRows extends React.PureComponent {
       timeline
     } = this.props;
 
-    console.log('--TaskRows--')
-    console.log(this)
+    console.log('--TaskRows--');
+    console.log(this);
 
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
@@ -227,7 +230,7 @@ class TaskRows extends React.PureComponent {
           <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
             task.completedOn ? '' : greyDotTimelineStyling].join(' ')} >
             { task.completedOn ? <GreenCheckmark /> : <GrayDot /> }
-            { (index < taskList.length-1) && <div {...grayLineStyling}
+            { (index < taskList.length - 1) && <div {...grayLineStyling}
               className={timeline ? grayLineTimelineStyling : ''} /> }
           </td>
           <td {...taskInformationContainerStyling}
@@ -270,7 +273,7 @@ class TaskRows extends React.PureComponent {
   }
 }
 
-//const mapStateToProps = () => {
+// const mapStateToProps = () => {
 const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {

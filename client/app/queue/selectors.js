@@ -119,6 +119,14 @@ export const getTasksForAppeal = createSelector(
   }
 );
 
+export const getAllTasksForAppeal = createSelector(
+  [getTasks, getAmaTasks, getAppealId],
+  (tasks: Tasks, amaTasks: Tasks, appealId: string) => {
+    return _.filter(tasks, (task) => task.externalAppealId === appealId).
+      concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId));
+  }
+);
+
 export const getUnassignedOrganizationalTasks = createSelector(
   [tasksWithAppealSelector],
   (tasks: Tasks) => _.filter(tasks, (task) => {
@@ -207,7 +215,7 @@ export const allTasksForTimeline = createSelector(
   [getAllTasksForAppeal, getAppealId],
   (tasks: Tasks, appealId: string) => {
     return _.filter(tasks, (task) => task.externalAppealId === appealId &&
-    (task.status === TASK_STATUSES.completed || !task.availableActions.length) );
+    (task.status === TASK_STATUSES.completed || !task.availableActions.length));
   }
 );
 
