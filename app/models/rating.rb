@@ -56,19 +56,23 @@ class Rating
   def create_disability_codes(rating_profile)
     return {} unless rating_profile[:disabilities]
 
-    rating_profile[:disabilities].reduce({}) do |disability_map, disability|
+    Array.wrap(rating_profile[:disabilities]).reduce({}) do |disability_map, disability|
       disability_time = disability[:dis_dt]
 
       if disability_map[disability[:dis_sn]].nil? ||
          disability_map[disability[:dis_sn]][:date] < disability_time
         disability_map[disability[:dis_sn]] = {
-          dgnstc_tc: disability[:disability_evaluations][:dgnstc_tc],
+          dgnstc_tc: get_diagnostic_code(disability[:disability_evaluations]),
           date: disability_time
         }
       end
 
       disability_map
     end
+  end
+
+  def get_diagnostic_code(disability_evaluations)
+    Array.wrap(disability_evaluations).max_by { |evaluation| evaluation[:dis_dt] }[:dgnstc_tc]
   end
 
   def associated_claims_data
