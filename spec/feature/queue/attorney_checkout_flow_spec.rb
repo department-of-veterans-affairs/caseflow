@@ -188,8 +188,8 @@ RSpec.feature "Attorney checkout flow" do
         find(".Select-control", text: old_benefit_type).click
         find("div", class: "Select-option", text: benefit_type).click
 
-        # find(".Select-control", text: diagnostic_code).click
-        # find("div", class: "Select-option", text: new_diagnostic_code).click
+        find(".Select-control", text: diagnostic_code).click
+        find("div", class: "Select-option", text: new_diagnostic_code).click
 
         click_on "Save"
 
@@ -206,6 +206,8 @@ RSpec.feature "Attorney checkout flow" do
         find("div", class: "Select-option", text: benefit_type).click
 
         click_on "Save"
+
+
 
         # Add a third decision issue that's allowed
         all("button", text: "+ Add decision", count: 2)[0].click
@@ -226,17 +228,47 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(page).to have_content("Added to 2 issues")
 
+
         # Test deleting a decision issue
         all("button", text: "Delete")[2].click
 
         expect(page).to have_content("Are you sure you want to delete this decision?")
 
         all("button", text: "Yes, delete decision", count: 1)[0].click
+      
+        expect(page.find_all(".decision-issue").count).to eq(2)
+
+        # Re add the third decision issue (that's allowed)
+        all("button", text: "+ Add decision", count: 2)[0].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: allowed_issue_tex
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Allowed").click
+
+        find(".Select-control", text: old_benefit_type).click
+        find("div", class: "Select-option", text: benefit_type).click
+
+        find(".Select-control", text: "Select issues").click
+        find("div", class: "Select-option", text: "Tinnitus").click
+
+        click_on "Save"
+
+        expect(page).to have_content("Added to 2 issues")
+        
+
+        # Test removing linked issue
+        all("button", text: "Edit", count: 4)[2].click
+
+        click_on "Remove"
+
+        click_on "Save"
 
         expect(page).to_not have_content("Added to 2 issues")
 
         # Re-add linked issue
-        all("button", text: "Edit", count: 2)[1].click
+        all("button", text: "Edit", count: 3)[2].click
 
         find(".Select-control", text: "Select issues").click
         find("div", class: "Select-option", text: "Tinnitus").click
@@ -283,10 +315,10 @@ RSpec.feature "Attorney checkout flow" do
         expect(page.current_path).to eq("/queue")
 
         # Two request issues are merged into 1 decision issue
-        expect(appeal.decision_issues.count).to eq 2
-        expect(appeal.request_decision_issues.count).to eq(3)
+        expect(appeal.decision_issues.count).to eq 3
+        expect(appeal.request_decision_issues.count).to eq(4)
         expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
-        expect(appeal.decision_issues.first.diagnostic_code).to eq("5000")
+        expect(appeal.decision_issues.first.diagnostic_code).to eq(new_diagnostic_code)
         expect(appeal.decision_issues.first.disposition).to eq("remanded")
         expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
 
@@ -297,6 +329,8 @@ RSpec.feature "Attorney checkout flow" do
         expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
         expect(appeal.decision_issues.second.disposition).to eq("remanded")
         expect(appeal.decision_issues.second.diagnostic_code).to eq(diagnostic_code)
+        expect(appeal.decision_issues.third.disposition).to eq("allowed")
+        expect(appeal.decision_issues.third.diagnostic_code).to eq(diagnostic_code)
         expect(appeal.decision_issues.last.request_issues.count).to eq(2)
 
         # Switch to the judge and ensure they can update decision issues
@@ -315,7 +349,7 @@ RSpec.feature "Attorney checkout flow" do
         expect(page).to have_content(decision_issue_text)
 
         # Update the decision issue
-        all("button", text: "Edit", count: 3)[0].click
+        all("button", text: "Edit", count: 4)[0].click
         fill_in "Text Box", with: updated_decision_issue_text
         click_on "Save"
         click_on "Continue"
@@ -341,8 +375,8 @@ RSpec.feature "Attorney checkout flow" do
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
         # Two request issues are merged into 1 decision issue
-        expect(appeal.decision_issues.count).to eq 2
-        expect(appeal.request_decision_issues.count).to eq(3)
+        expect(appeal.decision_issues.count).to eq 3
+        expect(appeal.request_decision_issues.count).to eq(4)
         # The decision issue should have the new content the judge added
         expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
 
@@ -352,7 +386,8 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
         expect(appeal.decision_issues.where(disposition: "remanded").count).to eq(2)
-        expect(appeal.request_issues.map { |issue| issue.decision_issues.count }).to match_array([2, 1])
+        expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(1)
+        expect(appeal.request_issues.map { |issue| issue.decision_issues.count }).to match_array([3, 1])
       end
     end
   end

@@ -77,7 +77,7 @@ export default class ContestedIssues extends React.PureComponent {
     }).map((decisionIssue) => {
       const linkedDecisionIssue = decisionIssue.request_issue_ids.length > 1;
 
-      return <div {...outerDiv} key={decisionIssue.id}>
+      return <div {...outerDiv} key={decisionIssue.id} className="decision-issue">
         <div {...grayLine} />
         <div {...decisionIssueDiv}>
           <div {...flexContainer}>
