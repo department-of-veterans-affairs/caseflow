@@ -3,7 +3,7 @@ class AsyncableJobsController < ApplicationController
 
   def index
     if allowed_params[:asyncable_job_klass]
-      @jobs = asyncable_job_klass.expired_without_processing
+      @jobs = asyncable_job_klass.potentially_stuck
     end
   end
 
