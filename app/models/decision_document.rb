@@ -14,6 +14,8 @@ class DecisionDocument < ApplicationRecord
 
   S3_SUB_BUCKET = "decisions".freeze
 
+  delegate :veteran, to: :appeal
+
   def document_type
     "BVA Decision"
   end

@@ -203,6 +203,8 @@ class RequestIssue < ApplicationRecord
     # rubocop:enable Metrics/MethodLength
   end
 
+  delegate :veteran, to: :review_request
+
   def end_product_code
     remanded? ? dta_end_product_code : original_end_product_code
   end

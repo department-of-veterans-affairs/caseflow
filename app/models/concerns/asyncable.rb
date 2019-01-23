@@ -142,7 +142,7 @@ module Asyncable
       attempted_at: self[self.class.attempted_at_column],
       processed_at: self[self.class.processed_at_column],
       error: self[self.class.error_column],
-      veteran_file_number: veteran.file_number # TODO: this assumption may break
+      veteran_file_number: veteran.file_number
     }
   end
 end
