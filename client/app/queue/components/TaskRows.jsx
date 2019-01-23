@@ -225,7 +225,6 @@ class TaskRows extends React.PureComponent {
               { this.assignedOnListItem(task) }
               { this.dueDateListItem(task) }
               { this.daysWaitingListItem(task) }
-              { `UniqueID: ${task.uniqueId}` }
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
