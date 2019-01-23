@@ -74,6 +74,17 @@ module Asyncable
     def expired_without_processing
       where(processed_at_column => nil)
         .where(arel_table[submitted_at_column].lteq(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
+    end
+
+    def attempted_without_being_submitted
+      where(arel_table[attempted_at_column].lteq(Time.zone.now)).where(submitted_at_column => nil)
+    end
+
+    def potentially_stuck
+      processable
+        .attemptable
+        .or(expired_without_processing)
+        .or(attempted_without_being_submitted)
         .order_by_oldest_submitted
     end
   end
@@ -142,7 +153,7 @@ module Asyncable
       attempted_at: self[self.class.attempted_at_column],
       processed_at: self[self.class.processed_at_column],
       error: self[self.class.error_column],
-      veteran_file_number: veteran.file_number
+      veteran_file_number: try(:veteran).try(:file_number)
     }
   end
 end
