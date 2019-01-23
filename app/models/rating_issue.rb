@@ -19,7 +19,7 @@ class RatingIssue
         associated_end_products: rating.associated_end_products,
         promulgation_date: rating.promulgation_date,
         participant_id: rating.participant_id,
-        disability_code: bgs_data[:disability_code]
+        disability_code: bgs_data[:dgnstc_tc]
       )
     end
 
