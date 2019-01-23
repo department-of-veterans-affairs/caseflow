@@ -40,11 +40,11 @@ feature "Asyncable Jobs index" do
   end
 
   describe "index page" do
-    it "shows only jobs that have failed at least once or look potentially stuck" do
+    it "shows jobs that look potentially stuck" do
       visit "/jobs"
 
       expect(page).to have_content(veteran.file_number)
-      expect(page).to_not have_content(veteran2.file_number)
+      expect(page).to have_content(veteran2.file_number)
     end
 
     it "shows 'unknown' when no veteran is associated" do
@@ -71,11 +71,9 @@ feature "Asyncable Jobs index" do
       expect(hlr.reload.establishment_submitted_at).to eq(now)
     end
 
-    context "zero expired jobs" do
+    context "zero unprocesed jobs" do
       before do
-        hlr.restart!
-        sc.restart!
-        request_issues_update.restart!
+        AsyncableJobs.new.jobs.each(&:processed!)
       end
 
       it "shows nice message" do

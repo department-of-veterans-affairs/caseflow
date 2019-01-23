@@ -31,16 +31,16 @@ describe AsyncableJobs do
 
     it "returns an Array of model instances that consume Asyncable concern" do
       expect(subject.jobs).to be_a(Array)
-      expect(subject.jobs.length).to eq(4)
+      expect(subject.jobs.length).to eq(5)
       expect(subject.jobs).to include(hlr)
       expect(subject.jobs).to include(sc)
       expect(subject.jobs).to include(sc_not_submitted)
       expect(subject.jobs).to include(sc_not_attempted_expired)
-      expect(subject.jobs).to_not include(sc_not_attempted)
+      expect(subject.jobs).to include(sc_not_attempted)
     end
 
     it "sorts by the submited_at column, descending order" do
-      expect(subject.jobs).to eq([sc_not_attempted_expired, hlr, sc, sc_not_submitted])
+      expect(subject.jobs).to eq([sc_not_attempted_expired, hlr, sc, sc_not_attempted, sc_not_submitted])
     end
   end
 

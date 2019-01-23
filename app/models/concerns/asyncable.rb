@@ -82,7 +82,7 @@ module Asyncable
 
     def potentially_stuck
       processable
-        .previously_attempted_ready_for_retry
+        .attemptable
         .or(expired_without_processing)
         .or(attempted_without_being_submitted)
         .order_by_oldest_submitted
