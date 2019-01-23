@@ -76,6 +76,16 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
         cssId: task.attributes.assigned_by.css_id,
         pgId: task.attributes.assigned_by.pg_id
       },
+      hearings: task.attributes.hearings.map((hearing) => {
+        return {
+          heldBy: hearing.held_by,
+          viewedByJudge: hearing.viewed_by_judge,
+          date: hearing.date,
+          type: hearing.type,
+          externalId: hearing.external_id,
+          disposition: hearing.disposition
+        };
+      }),
       taskId: task.id,
       label: task.attributes.label,
       documentId: task.attributes.document_id,

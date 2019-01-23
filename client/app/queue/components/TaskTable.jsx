@@ -85,7 +85,9 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseHearingColumn = () => {
     return this.props.includeHearingBadge ? {
       header: '',
-      valueFunction: (task: TaskWithAppeal) => <HearingBadge hearing={task.appeal.hearings[0]} />
+      valueFunction: (task: TaskWithAppeal) => {
+        return <HearingBadge hearing={task.hearings && task.hearings[0]} />;
+      }
     } : null;
   }
 
