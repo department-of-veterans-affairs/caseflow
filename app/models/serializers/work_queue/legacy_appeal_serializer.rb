@@ -3,6 +3,8 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :assigned_judge
   attribute :sanitized_hearing_request_type
 
+  attribute :timeline
+
   attribute :issues do
     object.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
@@ -62,8 +64,6 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :docket_number
   attribute :status
   attribute :decision_date
-  attribute :form9_date
-  attribute :nod_date
   attribute :certification_date
   attribute :paper_case do
     object.file_type.eql? "Paper"

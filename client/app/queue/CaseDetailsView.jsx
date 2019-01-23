@@ -19,7 +19,7 @@ import TaskSnapshot from './TaskSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
 import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
-import CaseTimeline from './CaseTimeline';
+import { CaseTimeline } from './CaseTimeline';
 import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
