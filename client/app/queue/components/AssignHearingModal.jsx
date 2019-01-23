@@ -114,6 +114,10 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     return this.completeScheduleHearingTask();
   };
 
+  onHearingOptionalTime= (value) => {
+    this.props.onHearingOptionalTime(value.value);
+  };
+
   validateForm = () => {
 
     if (this.props.openHearing) {
@@ -275,29 +279,24 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   formatHearingDate = () => {
     const { selectedHearingDay, selectedHearingTime, selectedOptionalTime } = this.props;
 
-    if (selectedHearingDay && !selectedHearingTime) {
+    if (!selectedHearingTime && !selectedOptionalTime) {
       return new Date(selectedHearingDay.hearingDate);
-    } else if (!selectedHearingTime || !selectedHearingDay) {
-      return null;
     }
+
+    const hearingTime = selectedHearingTime === 'other' ? selectedOptionalTime : selectedHearingTime;
 
     const dateParts = selectedHearingDay.hearingDate.split('-');
     const year = parseInt(dateParts[0], 10);
     const month = parseInt(dateParts[1], 10) - 1;
     const day = parseInt(dateParts[2], 10);
-    const timeParts = selectedHearingTime.split(':');
-    let hour = parseInt(timeParts[0], 10);
+    const timeParts = hearingTime.split(':');
+    const hour = parseInt(timeParts[0], 10);
 
-    if (hour === 1) {
-      hour += 12;
-
-    }
     const minute = parseInt(timeParts[1].split(' ')[0], 10);
     const hearingDate = new Date(year, month, day, hour, minute);
 
     return hearingDate;
-
-  };
+  }
 
   getInitialValues = () => {
     const { hearingDay } = this.props;
@@ -362,7 +361,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           placeholder="Select a time"
           options={TIME_OPTIONS}
           value={selectedOptionalTime || initVals.hearingDate}
-          onChange={this.props.onHearingOptionalTime}
+          onChange={this.onHearingOptionalTime}
           hideLabel />}
       </div>
     </React.Fragment>;
