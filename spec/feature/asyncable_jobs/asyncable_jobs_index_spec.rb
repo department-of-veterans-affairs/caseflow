@@ -32,16 +32,27 @@ feature "Asyncable Jobs index" do
   end
   let!(:pending_hlr) do
     create(:higher_level_review,
-           establishment_submitted_at: 6.days.ago,
+           establishment_submitted_at: 2.days.ago,
            veteran_file_number: veteran2.file_number)
+  end
+  let!(:request_issues_update) do
+    create(:request_issues_update, submitted_at: 6.days.ago)
   end
 
   describe "index page" do
-    it "shows only jobs that have failed at least once" do
+    it "shows only jobs that have failed at least once or look potentially stuck" do
       visit "/jobs"
 
       expect(page).to have_content(veteran.file_number)
       expect(page).to_not have_content(veteran2.file_number)
+    end
+
+    it "shows 'unknown' when no veteran is associated" do
+      allow_any_instance_of(RequestIssuesUpdate).to receive(:veteran).and_return(nil)
+
+      visit "/jobs"
+
+      expect(page).to have_content(/RequestIssuesUpdate Sat Dec 02 00:00:00 2017 never unknown Restart/)
     end
 
     it "allows user to restart job" do
@@ -64,6 +75,7 @@ feature "Asyncable Jobs index" do
       before do
         hlr.restart!
         sc.restart!
+        request_issues_update.restart!
       end
 
       it "shows nice message" do
