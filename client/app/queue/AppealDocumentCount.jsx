@@ -33,7 +33,7 @@ class AppealDocumentCount extends React.PureComponent {
       timeout: { response: 5 * 60 * 1000 }
     };
 
-    const endpoint = `document_count?cached=${cached || false}`;
+    const endpoint = `document_count${cached ? '?cached' : ''}`;
 
     ApiUtil.get(`/appeals/${this.props.externalId}/${endpoint}`, requestOptions).then((response) => {
       const resp = JSON.parse(response.text);

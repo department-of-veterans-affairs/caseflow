@@ -36,7 +36,7 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    if params[:cached] == "true"
+    if params[:cached]
       render json: { document_count: appeal.number_of_documents_from_caseflow }
       return
     end
