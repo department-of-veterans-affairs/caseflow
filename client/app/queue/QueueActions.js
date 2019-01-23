@@ -334,7 +334,7 @@ export const setSelectionOfTaskOfUser =
   });
 
 export const returnCaseToAttorney = ({
-  tasks, assigneeId, previousAssigneeId
+  tasks, assigneeId
 }: {
   tasks: Array<Task>, assigneeId: string, previousAssigneeId: string
 }) => (dispatch: Dispatch) => Promise.all(tasks.map((oldTask) => {
@@ -357,12 +357,6 @@ export const returnCaseToAttorney = ({
       dispatch(onReceiveAmaTasks(
         resp.tasks.data
       ));
-
-      dispatch(setSelectionOfTaskOfUser({
-        userId: previousAssigneeId,
-        taskId: oldTask.uniqueId,
-        selected: false
-      }));
     });
 }));
 
