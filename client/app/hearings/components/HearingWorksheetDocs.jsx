@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { formatDate, formatArrayOfDateStrings } from '../../util/DateUtil';
+import { formatDateStr, formatArrayOfDateStrings } from '../../util/DateUtil';
 import Accordion from '../../components/Accordion';
 import AccordionSection from '../../components/AccordionSection';
 import Table from '../../components/Table';
@@ -60,13 +60,13 @@ class HearingWorksheetDocs extends Component {
                     getKeyForRow = {(index) => index}
                     rowObjects={[
                       { name: <b>Prior BVA Decision</b>,
-                        value: formatDate(appeal.prior_bva_decision_date) },
+                        value: formatDateStr(appeal.prior_bva_decision_date) },
                       { name: <b>NOD</b>,
-                        value: formatDate(appeal.nod_date) },
+                        value: formatDateStr(appeal.nod_date) },
                       { name: <b>SOC</b>,
-                        value: formatDate(appeal.soc_date) },
+                        value: formatDateStr(appeal.soc_date) },
                       { name: <b>Form 9</b>,
-                        value: formatDate(appeal.form9_date) }
+                        value: formatDateStr(appeal.form9_date) }
                     ]}
                   />
                 </div>
@@ -79,7 +79,7 @@ class HearingWorksheetDocs extends Component {
                       { name: <b>SSOC</b>,
                         value: formatArrayOfDateStrings(appeal.ssoc_dates) },
                       { name: <b>Certification</b>,
-                        value: notCertified ? <span>Not certified</span> : formatDate(appeal.certification_date) },
+                        value: notCertified ? <span>Not certified</span> : formatDateStr(appeal.certification_date) },
                       { name: <b>Docs since Certification</b>,
                         value: appeal.cached_number_of_documents_after_certification }
                     ]}
