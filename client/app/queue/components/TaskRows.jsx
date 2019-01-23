@@ -221,7 +221,7 @@ class TaskRows extends React.PureComponent {
           </td>
           <td {...taskInfoWithIconContainer} className={timeline ? taskInfoWithIconTimelineContainer : ''}>
             { task.completedOn && timeline ? <GreenCheckmark /> : <GrayDot /> }
-            { ((index < taskList.length - 1) && taskList[0].completedOn) &&
+            { ((index < taskList.length) && taskList[0].completedOn) &&
               <div {...grayLineStyling} className={timeline ? grayLineTimelineStyling : ''} /> }
           </td>
           <td {...taskInformationContainerStyling}
@@ -254,7 +254,7 @@ class TaskRows extends React.PureComponent {
         <td {...taskTimeTimelineContainerStyling}>
           { moment(appeal.nodDate).format('MM/DD/YYYY') }
         </td>
-        <td {...taskInfoWithIconTimelineContainer} className={greyDotStyling}>
+        <td {...taskInfoWithIconTimelineContainer}>
           { <GreenCheckmark /> } </td>
         <td {...taskInformationTimelineContainerStyling}>
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
