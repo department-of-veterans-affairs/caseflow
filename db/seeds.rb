@@ -422,18 +422,6 @@ class SeedDB
       station: "397",
       benefit_type_code: "1",
       payee_code: "00",
-      synced_status: "LOL",
-      claimant_participant_id: veteran.participant_id
-    )
-
-    EndProductEstablishment.create!(
-      source: higher_level_review,
-      veteran_file_number: veteran.file_number,
-      claim_date: Time.zone.now - thirty_days_in_seconds,
-      code: ep_rating_code,
-      station: "397",
-      benefit_type_code: "1",
-      payee_code: "00",
       synced_status: "CAN",
       claimant_participant_id: veteran.participant_id
     )
@@ -485,6 +473,18 @@ class SeedDB
       payee_code: "00",
       synced_status: "CLR",
       last_synced_at: Time.zone.now - two_days_in_seconds,
+      claimant_participant_id: veteran.participant_id
+    )
+
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
+      code: ep_rating_code,
+      station: "397",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "LOL",
       claimant_participant_id: veteran.participant_id
     )
 

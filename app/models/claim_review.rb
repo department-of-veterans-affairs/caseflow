@@ -126,7 +126,6 @@ class ClaimReview < DecisionReview
       caseflow_veteran_id: claim_veteran&.id,
       claimant_names: claimants.map(&:name),
       claim_id: id,
-      # end_products: end_product_establishments,
       end_product_status: search_table_statuses,
       establishment_error: establishment_error,
       review_type: self.class.to_s.underscore,
@@ -139,13 +138,6 @@ class ClaimReview < DecisionReview
     Veteran.find_by(file_number: veteran_file_number)
   end
 
-  # return an array of hashes that have ep code and status
-  # if processed_in_caseflow
-  #    [ {ep_code: "Processed in Caseflow"
-  #    status: ""}]
-  # else
-  #   end_product_establishments.map ...
-  # if it's processed in caseflow, there are no end product establishsments
   def search_table_statuses
     if processed_in_caseflow?
       [{
