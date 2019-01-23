@@ -711,9 +711,37 @@ describe ClaimReview do
   end
 
   describe "#search_table_statuses" do
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
     subject { claim_review.search_table_statuses }
 
+    context "claim says 'Processed in Caseflow' if it is processed in Caseflow" do
+      let(:benefit_type) { "foobar" }
+      let!(:expected_result) do
+        [{
+          ep_code: "Processed in Caseflow",
+          ep_status: ""
+        }]
+      end
 
+      it { is_expected.to eq expected_result }
+    end
+
+    context "if it is not processed in Caseflow and there are no end products" do
+      let(:benefit_type) { "compensation" }
+
+      it { is_expected.to eq [] }
+    end
+
+    context "if it is not processed in Caseflow and there are end products" do
+      let(:benefit_type) { "compensation" }
+      let(:end_product_establishment) { create(:end_product_establishment, source: claim_review) }
+
+      before do
+        end_product_establishment.commit!
+      end
+
+      it { is_expected.to have_attributes(length: 1) }
+    end
   end
 
   describe "#claim_veteran" do
