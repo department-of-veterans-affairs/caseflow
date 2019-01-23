@@ -307,6 +307,7 @@ class AppealRepository
       return appeals_ready_for_co_hearing_schedule
     end
 
+    # do we need to not limit this to 30 for assign hearings page?
     cavc_cases = VACOLS::Case.joins(:folder)
       .where(bfregoff: regional_office, bfcurloc: "57", bfac: "7", bfdocind: "V", bfhr: "2")
       .order("folder.tinum").limit(30).includes(:correspondent, :case_issues, folder: [:outcoder])

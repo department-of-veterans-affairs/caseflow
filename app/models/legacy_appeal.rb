@@ -207,6 +207,8 @@ class LegacyAppeal < ApplicationRecord
            :country,
            :age,
            :sex,
+           :closest_regional_office,
+           :suggested_hearing_location,
            to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.

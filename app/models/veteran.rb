@@ -71,6 +71,10 @@ class Veteran < ApplicationRecord
     @end_products ||= fetch_end_products
   end
 
+  def suggested_hearing_location
+    @suggested_hearing_location ||= available_hearing_locations.first
+  end
+
   def periods_of_service
     return [] unless service
 

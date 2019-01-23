@@ -218,7 +218,7 @@ export default class AssignHearings extends React.Component {
         valueName: 'docketNumber'
       },
       {
-        header: 'Location',
+        header: 'Suggested Location',
         align: 'left',
         valueName: 'location'
       },
