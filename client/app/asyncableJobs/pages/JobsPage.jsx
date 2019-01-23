@@ -84,6 +84,10 @@ class AsyncableJobsPage extends React.PureComponent {
   render = () => {
     const rowObjects = this.props.jobs;
 
+    if (rowObjects.length === 0) {
+      return 'Success! There are no pending jobs.';
+    }
+
     const columns = [
       {
         header: 'Name',
