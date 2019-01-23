@@ -2,17 +2,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { onReceiveDropdownData, onFetchDropdownData } from './actions';
-import ApiUtil from '../../../util/ApiUtil';
+import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
+import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
-import { formatDateStr } from '../../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 
-import SearchableDropdown from '../../../components/SearchableDropdown';
+import SearchableDropdown from '../SearchableDropdown';
 
 class HearingDateDropdown extends React.Component {
 
   componentDidMount() {
     setTimeout(this.getHearingDates, 0);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { hearingDates: { options }, validateValueOnMount, onChange } = this.props;
+
+    if (!_.isEqual(prevProps.hearingDates.options, options) && validateValueOnMount) {
+      const option = this.getSelectedOption();
+
+      onChange(option.value, option.label);
+    }
   }
 
   getHearingDates = () => {
@@ -26,7 +36,7 @@ class HearingDateDropdown extends React.Component {
     this.props.onFetchDropdownData(name);
 
     return ApiUtil.get(`/regional_offices/${regionalOffice}/open_hearing_dates.json`).then((resp) => {
-      const hearingDateOptions = _.values(ApiUtil.convertToCamelCase(resp.body)).map((hearingDate) => ({
+      const hearingDateOptions = _.values(ApiUtil.convertToCamelCase(resp.body).hearingDays).map((hearingDate) => ({
         label: formatDateStr(hearingDate.scheduledFor),
         value: { ...hearingDate,
           hearingDate: formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD') }
@@ -40,7 +50,11 @@ class HearingDateDropdown extends React.Component {
   getSelectedOption = () => {
     const { value, hearingDates: { options } } = this.props;
 
-    return _.find(options, (opt) => opt.value === value) ||
+    const comparison = typeof (value) === 'string' ?
+      (opt) => opt.value.hearingDate === value :
+      (opt) => opt.value === value;
+
+    return _.find(options, comparison) ||
       {
         value: null,
         label: null
@@ -48,7 +62,7 @@ class HearingDateDropdown extends React.Component {
   }
 
   render() {
-    const { name, label, onChange, readOnly } = this.props;
+    const { name, label, onChange, readOnly, errorMessage, placeholder } = this.props;
 
     return (
       <SearchableDropdown
@@ -57,8 +71,10 @@ class HearingDateDropdown extends React.Component {
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value)}
-        options={this.props.hearingDates.options} />
+        onChange={(option) => onChange(option.value, option.label)}
+        options={this.props.hearingDates.options}
+        errorMessage={errorMessage}
+        placeholder={placeholder} />
     );
   }
 }
@@ -67,9 +83,15 @@ HearingDateDropdown.propTypes = {
   name: PropTypes.string,
   label: PropTypes.string,
   regionalOffice: PropTypes.string.isRequired,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   onChange: PropTypes.func.isRequired,
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
+  placeholder: PropTypes.string,
+  errorMessage: PropTypes.string,
+  validateValueOnMount: PropTypes.bool
 };
 
 HearingDateDropdown.defaultProps = {
@@ -78,9 +100,9 @@ HearingDateDropdown.defaultProps = {
 };
 
 const mapStateToProps = (state, props) => ({
-  hearingDates: state.hearingDropdownData[`hearingDatesFor${props.regionalOffice}`] ? {
-    options: state.hearingDropdownData[`hearingDatesFor${props.regionalOffice}`].options,
-    isFetching: state.hearingDropdownData[`hearingDatesFor${props.regionalOffice}`].isFetching
+  hearingDates: state.components.dropdowns[`hearingDatesFor${props.regionalOffice}`] ? {
+    options: state.components.dropdowns[`hearingDatesFor${props.regionalOffice}`].options,
+    isFetching: state.components.dropdowns[`hearingDatesFor${props.regionalOffice}`].isFetching
   } : {}
 });
 

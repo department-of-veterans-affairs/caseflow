@@ -50,7 +50,8 @@ class SelectDispositionsView extends React.PureComponent {
       openRequestIssueId: null,
       decisionIssue: null,
       editingExistingIssue: false,
-      highlightModal: false
+      highlightModal: false,
+      deleteAddedDecisionIssue: null
     };
   }
 
@@ -70,6 +71,7 @@ class SelectDispositionsView extends React.PureComponent {
       userRole,
       appeal: { decisionIssues }
     } = this.props;
+
     let nextStep;
     const dispositions = decisionIssues.map((issue) => issue.disposition);
     const remandedIssues = _.some(dispositions, (disp) => [
@@ -104,6 +106,13 @@ class SelectDispositionsView extends React.PureComponent {
       return decisionIssues.some((decisionIssue) => decisionIssue.request_issue_ids.includes(issue.id));
     });
   }
+  openDeleteAddedDecisionIssueHandler = (requestIdToDelete, decisionIssue) => {
+    this.setState({
+      deleteAddedDecisionIssue: true,
+      requestIdToDelete,
+      decisionIssue
+    });
+  }
 
   openDecisionHandler = (requestIssueId, decisionIssue) => () => {
     const benefitType = _.find(this.props.appeal.issues, (issue) => requestIssueId === issue.id).program;
@@ -121,7 +130,8 @@ class SelectDispositionsView extends React.PureComponent {
     this.setState({
       openRequestIssueId: requestIssueId,
       decisionIssue: decisionIssue || newDecisionIssue,
-      editingExistingIssue: Boolean(decisionIssue)
+      editingExistingIssue: Boolean(decisionIssue),
+      deleteAddedDecisionIssue: null
     });
   }
 
@@ -130,7 +140,9 @@ class SelectDispositionsView extends React.PureComponent {
       openRequestIssueId: null,
       decisionIssue: null,
       editingExistingIssue: false,
-      highlightModal: false
+      highlightModal: false,
+      deleteAddedDecisionIssue: null,
+      requestIdToDelete: null
     });
   }
 
@@ -193,36 +205,51 @@ class SelectDispositionsView extends React.PureComponent {
     });
   }
 
+  decisionModalButtons = [
+    { classNames: ['cf-modal-link', 'cf-btn-link'],
+      name: 'Close',
+      onClick: this.handleModalClose
+    },
+    { classNames: ['usa-button', 'usa-button-primary'],
+      name: 'Save',
+      onClick: this.saveDecision
+    }
+  ];
+
+  deleteAddedDecisionIssueModalButtons = [
+    { classNames: ['cf-modal-link', 'cf-btn-link'],
+      name: 'Cancel',
+      onClick: this.handleModalClose
+    },
+    { classNames: ['usa-button', 'usa-button-primary'],
+      name: 'Yes, delete decision',
+      onClick: this.deleteDecision
+    }
+  ];
+
+  connectedRequestIssuesWithoutCurrentId = (idsArray, idToFilter) => {
+    return idsArray.filter((issue) => {
+      return issue.id !== idToFilter;
+    });
+  }
+
   render = () => {
     const { appeal, highlight } = this.props;
+
     const {
       highlightModal,
       decisionIssue,
       openRequestIssueId,
-      editingExistingIssue
+      editingExistingIssue,
+      deleteAddedDecisionIssue,
+      requestIdToDelete
     } = this.state;
-
-    const modalButtons = [
-      { classNames: ['cf-modal-link', 'cf-btn-link'],
-        name: 'Close',
-        onClick: this.handleModalClose
-      },
-      { classNames: ['usa-button', 'usa-button-primary'],
-        name: 'Save',
-        onClick: this.saveDecision
-      }
-    ];
-
-    if (editingExistingIssue) {
-      modalButtons.push({ classNames: ['usa-button', 'usa-button-secondary'],
-        name: 'Delete decision',
-        onClick: this.deleteDecision
-      });
-    }
 
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
     });
+    const connectedIssues = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete);
+    const toDeleteHasConnectedIssue = connectedIssues.length > 0;
 
     return <React.Fragment>
       <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
@@ -233,11 +260,21 @@ class SelectDispositionsView extends React.PureComponent {
         decisionIssues={appeal.decisionIssues}
         requestIssues={appeal.issues}
         openDecisionHandler={this.openDecisionHandler}
+        openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler}
         numbered
         highlight={highlight}
       />
+      { deleteAddedDecisionIssue && <Modal
+        buttons = {this.deleteAddedDecisionIssueModalButtons}
+        closeHandler={this.handleModalClose}
+        title = "Delete decision">
+        <span className="delete-decision-modal">
+          {COPY.DECISION_ISSUE_CONFIRM_DELETE}
+          {toDeleteHasConnectedIssue && COPY.DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES}
+        </span>
+      </Modal>}
       { openRequestIssueId && <Modal
-        buttons = {modalButtons}
+        buttons = {this.decisionModalButtons}
         closeHandler={this.handleModalClose}
         title = {`${editingExistingIssue ? 'Edit' : 'Add'} decision`}>
 
@@ -343,24 +380,23 @@ class SelectDispositionsView extends React.PureComponent {
           })}
         />
         {
-          connectedRequestIssues.filter((issue) => {
-            return issue.id !== openRequestIssueId;
-          }).map((issue) =>
-            <div key={issue.id} {...connectedIssueDiv}>
-              <span>{issue.description}</span>
-              <Button
-                classNames={['cf-btn-link']}
-                onClick={() => this.setState({
-                  decisionIssue: {
-                    ...decisionIssue,
-                    request_issue_ids: decisionIssue.request_issue_ids.filter((id) => id !== issue.id)
-                  }
-                })}
-              >
+          this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, openRequestIssueId).
+            map((issue) =>
+              <div key={issue.id} {...connectedIssueDiv}>
+                <span>{issue.description}</span>
+                <Button
+                  classNames={['cf-btn-link']}
+                  onClick={() => this.setState({
+                    decisionIssue: {
+                      ...decisionIssue,
+                      request_issue_ids: decisionIssue.request_issue_ids.filter((id) => id !== issue.id)
+                    }
+                  })}
+                >
                 Remove
-              </Button>
-            </div>
-          )
+                </Button>
+              </div>
+            )
         }
       </Modal>}
     </React.Fragment>;

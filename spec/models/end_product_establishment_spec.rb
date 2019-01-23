@@ -335,6 +335,61 @@ describe EndProductEstablishment do
     end
   end
 
+  context "#associate_rating_request_issues!" do
+    before do
+      allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+    end
+
+    let(:reference_id) { "stevenasmith" }
+    let(:contention_ref_id) { 1234 }
+    let!(:contention) do
+      Generators::Contention.build(id: contention_ref_id, claim_id: reference_id, text: "Left knee")
+    end
+
+    subject { end_product_establishment.associate_rating_request_issues! }
+
+    context "request issue is ineligible" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            :rating,
+            end_product_establishment: end_product_establishment,
+            review_request: source,
+            ineligible_reason: :duplicate_of_rating_issue_in_active_review
+          )
+        ]
+      end
+
+      it "skips ineligible rating request issues" do
+        subject
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+      end
+    end
+
+    context "request issue is eligible" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            :rating,
+            end_product_establishment: end_product_establishment,
+            review_request: source,
+            contention_reference_id: contention_ref_id
+          )
+        ]
+      end
+
+      it "sends mapping of rating request issues to contentions" do
+        subject
+        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
+          claim_id: reference_id,
+          rating_issue_contention_map: { request_issues[0].contested_rating_issue_reference_id => contention_ref_id }
+        )
+      end
+    end
+  end
+
   context "#generate_claimant_letter!" do
     subject { end_product_establishment.generate_claimant_letter! }
 
@@ -806,6 +861,14 @@ describe EndProductEstablishment do
         subject
         expect(SupplementalClaim.find_by(decision_review_remanded: source)).to be_nil
       end
+    end
+  end
+
+  context "#search_table_ui_hash" do
+    it "sets a null modifier to empty string so it displays correctly" do
+      expect([*end_product_establishment].map(&:search_table_ui_hash)).to include(hash_including(
+                                                                                    modifier: ""
+                                                                                  ))
     end
   end
 end

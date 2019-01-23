@@ -5,7 +5,6 @@ class DecisionIssueSyncJob < CaseflowJob
   application_attr :intake
 
   def perform(request_issue_or_effectuation)
-    RequestStore.store[:application] = "intake"
     RequestStore.store[:current_user] = User.system_user
 
     begin

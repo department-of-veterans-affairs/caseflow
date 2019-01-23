@@ -13,8 +13,6 @@ import {
   selectVlj,
   selectHearingCoordinator,
   setNotes,
-  onReceiveJudges,
-  onReceiveCoordinators,
   onResetDeleteSuccessful,
   onAssignHearingRoom
 } from '../actions';
@@ -25,20 +23,13 @@ import Alert from '../../components/Alert';
 import COPY from '../../../COPY.json';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
-import { namePartToSortBy } from '../utils';
 import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
 import HearingDayAddModal from '../components/HearingDayAddModal';
-import _ from 'lodash';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import moment from 'moment';
 
 const dateFormatString = 'YYYY-MM-DD';
-
-const emptyValueEntry = {
-  label: '',
-  value: ''
-};
 
 const actionButtonsStyling = css({
   marginRight: '25px'
@@ -79,55 +70,8 @@ export class ListScheduleContainer extends React.Component {
     });
   };
 
-  loadActiveJudges = () => {
-    let requestUrl = '/users?role=Judge';
-
-    return ApiUtil.get(requestUrl).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-
-      const sortedJudges = _.sortBy(resp.judges, (judge) => namePartToSortBy(judge.fullName), 'asc');
-
-      let activeJudges = [];
-
-      _.forEach(sortedJudges, (value) => {
-        activeJudges.push({
-          label: value.fullName,
-          value: value.id
-        });
-      });
-
-      activeJudges.unshift(emptyValueEntry);
-      this.props.onReceiveJudges(activeJudges);
-    });
-
-  };
-
-  loadActiveCoordinators = () => {
-    let requestUrl = '/users?role=HearingCoordinator';
-
-    return ApiUtil.get(requestUrl).then((response) => {
-      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
-
-      let activeCoordinators = [];
-
-      _.forEach(resp.coordinators, (value) => {
-        activeCoordinators.push({
-          label: value.fullName,
-          value: value.cssId
-        });
-      });
-
-      activeCoordinators = _.orderBy(activeCoordinators, (coordinator) => coordinator.label, 'asc');
-      activeCoordinators.unshift(emptyValueEntry);
-      this.props.onReceiveCoordinators(activeCoordinators);
-    });
-
-  };
-
   createHearingPromise = () => Promise.all([
-    this.loadHearingSchedule(),
-    this.loadActiveJudges(),
-    this.loadActiveCoordinators()
+    this.loadHearingSchedule()
   ]);
 
   openModal = () => {
@@ -138,10 +82,8 @@ export class ListScheduleContainer extends React.Component {
     this.props.onSelectedHearingDayChange('');
     this.props.selectRequestType('');
     this.props.onRegionalOfficeChange('');
-    this.props.selectVlj({ label: '',
-      value: '' });
-    this.props.selectHearingCoordinator({ label: '',
-      value: '' });
+    this.props.selectVlj(null);
+    this.props.selectHearingCoordinator(null);
     this.props.setNotes('');
     this.props.onAssignHearingRoom(true);
   };
@@ -254,8 +196,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setNotes,
   onAssignHearingRoom,
   onRegionalOfficeChange,
-  onReceiveJudges,
-  onReceiveCoordinators,
   onResetDeleteSuccessful
 }, dispatch);
 
