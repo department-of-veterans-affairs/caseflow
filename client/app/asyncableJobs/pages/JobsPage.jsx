@@ -84,6 +84,10 @@ class AsyncableJobsPage extends React.PureComponent {
   render = () => {
     const rowObjects = this.props.jobs;
 
+    if (rowObjects.length === 0) {
+      return 'Success! There are no pending jobs.';
+    }
+
     const columns = [
       {
         header: 'Name',
@@ -119,7 +123,13 @@ class AsyncableJobsPage extends React.PureComponent {
       },
       {
         header: 'Veteran',
-        valueName: 'veteran_file_number'
+        valueFunction: (job) => {
+          if (!job.veteran_file_number) {
+            return 'unknown';
+          }
+
+          return job.veteran_file_number;
+        }
       },
       {
         header: 'Restart',
@@ -127,6 +137,7 @@ class AsyncableJobsPage extends React.PureComponent {
         valueFunction: (job) => {
           return <Button
             id={`job-${job.klass}-${job.id}`}
+            title={`${job.klass} ${job.id}`}
             loading={this.state.jobsRestarting[job.id]}
             loadingText="Restarting..."
             onClick={() => {

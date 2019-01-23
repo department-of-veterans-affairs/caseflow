@@ -5,6 +5,7 @@ import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
 import { LinkSymbol } from '../../components/RenderFunctions';
+import HearingWorksheetAmaIssues from '../../hearings/components/HearingWorksheetAmaIssues';
 
 const TEXT_INDENTATION = '10px';
 
@@ -68,7 +69,8 @@ export default class ContestedIssues extends React.PureComponent {
   decisionIssues = (requestIssue) => {
     const {
       decisionIssues,
-      openDecisionHandler
+      openDecisionHandler,
+      openDeleteAddedDecisionIssueHandler
     } = this.props;
 
     return decisionIssues.filter((decisionIssue) => {
@@ -76,19 +78,31 @@ export default class ContestedIssues extends React.PureComponent {
     }).map((decisionIssue) => {
       const linkedDecisionIssue = decisionIssue.request_issue_ids.length > 1;
 
-      return <div {...outerDiv} key={decisionIssue.id}>
+      return <div {...outerDiv} key={decisionIssue.id} className="decision-issue">
         <div {...grayLine} />
         <div {...decisionIssueDiv}>
           <div {...flexContainer}>
             Decision
-            {openDecisionHandler && <span>
-              <Button
-                name="Edit"
-                id={`edit-issue-${requestIssue.id}-${decisionIssue.id}`}
-                onClick={openDecisionHandler(requestIssue.id, decisionIssue)}
-                classNames={['cf-btn-link']}
-              />
-            </span>}
+            <div>
+              {openDeleteAddedDecisionIssueHandler && <span>
+                <Button
+                  name="Delete"
+                  id={`delete-issue-${requestIssue.id}-${decisionIssue.id}`}
+                  onClick={() => {
+                    openDeleteAddedDecisionIssueHandler(requestIssue.id, decisionIssue);
+                  }}
+                  classNames={['cf-btn-link']}
+                />
+              </span>}
+              {openDecisionHandler && <span>
+                <Button
+                  name="Edit"
+                  id={`edit-issue-${requestIssue.id}-${decisionIssue.id}`}
+                  onClick={openDecisionHandler(requestIssue.id, decisionIssue)}
+                  classNames={['cf-btn-link']}
+                />
+              </span>}
+            </div>
           </div>
           <div {...verticalSpaceDiv} {...flexContainer}>
             <span {...descriptionSpan}>
@@ -115,7 +129,8 @@ export default class ContestedIssues extends React.PureComponent {
       decisionIssues,
       highlight,
       openDecisionHandler,
-      numbered
+      numbered,
+      hearingWorksheet
     } = this.props;
 
     const listStyle = css({
@@ -165,6 +180,7 @@ export default class ContestedIssues extends React.PureComponent {
               </div>
             </React.Fragment>
           }
+          { hearingWorksheet && <HearingWorksheetAmaIssues issue={issue} /> }
         </div>
       </li>;
     })}

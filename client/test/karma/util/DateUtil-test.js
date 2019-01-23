@@ -4,7 +4,16 @@ import { formatDate, formatDateStr, doDatesMatch, formatArrayOfDateStrings } fro
 describe('DateUtil', () => {
   context('.formatDate', () => {
     it('returns a date formatted mm/dd/yyyy', () => {
-      expect(formatDate('1/2/2017')).to.eq('01/02/2017');
+      let date = new Date('1/2/2017');
+
+      expect(formatDate(date.toISOString())).to.eq('01/02/2017');
+    });
+    it('must be a ISO8601 string', () => {
+      let badISOString = function() {
+        formatDate('1/2/2017');
+      };
+
+      expect(badISOString).to.throw(Error);
     });
   });
 
@@ -17,6 +26,7 @@ describe('DateUtil', () => {
   context('.formatDateStr', () => {
     it('returns a date formatted mm/dd/yyyy', () => {
       expect(formatDateStr('2017-04-24')).to.eq('04/24/2017');
+      expect(formatDateStr('1/2/2017')).to.eq('01/02/2017');
     });
   });
 
