@@ -151,6 +151,26 @@ describe Rating do
         )
       end
     end
+
+    context "with no evaluation" do
+      let(:disabilities) do
+        {
+          dis_dt: promulgation_date - 2.days,
+          dis_sn: "rating1"
+        }
+      end
+
+      it "creates ratings without disability codes" do
+        expect(subject.count).to eq(2)
+        expect(subject.first).to have_attributes(
+          reference_id: "Issue1", decision_text: "Decision1", disability_code: nil
+        )
+
+        expect(subject.second).to have_attributes(
+          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+        )
+      end
+    end
   end
 
   context "#issues" do

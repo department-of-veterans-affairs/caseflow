@@ -72,7 +72,8 @@ class Rating
   end
 
   def get_diagnostic_code(disability_evaluations)
-    Array.wrap(disability_evaluations).max_by { |evaluation| evaluation[:dis_dt] }[:dgnstc_tc]
+    latest_evaluation = Array.wrap(disability_evaluations).max_by { |evaluation| evaluation[:dis_dt] } || {}
+    latest_evaluation.dig(:dgnstc_tc)
   end
 
   def associated_claims_data
