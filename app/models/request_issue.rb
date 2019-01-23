@@ -41,6 +41,12 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  class NilEndProductLastActionDate < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id}'s end_product is missing the last action date")
+    end
+  end
+
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
   END_PRODUCT_CODES = {
@@ -175,6 +181,7 @@ class RequestIssue < ApplicationRecord
         rating_issue_reference_id: data[:rating_issue_reference_id],
         rating_issue_profile_date: data[:rating_issue_profile_date],
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
+        contested_rating_issue_disability_code: data[:rating_issue_disability_code],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
@@ -394,6 +401,8 @@ class RequestIssue < ApplicationRecord
   end
 
   def create_decision_issues
+    fail NilEndProductLastActionDate, id unless end_product_establishment.result.last_action_date
+
     if rating?
       return unless end_product_establishment.associated_rating
 
