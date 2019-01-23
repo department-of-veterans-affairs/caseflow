@@ -273,6 +273,41 @@ RSpec.feature "Hearings" do
         expect(page).to have_content("You've viewed 0 out of 3 documents")
       end
     end
+
+    context "Worksheet for AMA hearings" do
+      let(:ama_hearing) { create(:hearing, judge: current_user) }
+      let!(:request_issue) { create(:request_issue, review_request_id: ama_hearing.id) }
+
+      scenario "Can save information for ama hearings" do
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        page.find(".public-DraftEditor-content").set("These are the notes being taken here")
+        fill_in "appellant-vet-rep-name", with: "This is a rep name"
+        fill_in "appellant-vet-witness", with: "This is a witness"
+        fill_in "worksheet-military-service", with: "This is military service"
+
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        expect(page).to have_content("This is a rep name")
+        expect(page).to have_content("This is a witness")
+        expect(page).to have_content("These are the notes being taken here")
+        expect(page).to have_content("This is military service")
+      end
+
+      scenario "Can save preliminary impressions for ama hearings" do
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        find("label", text: "Re-Open").click
+        find("label", text: "Remand").click
+        find("label", text: "Allow").click
+        find("label", text: "Dismiss").click
+        find("label", text: "Deny").click
+
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        expect(find_field("Re-Open", visible: false)).to be_checked
+        expect(find_field("Remand", visible: false)).to be_checked
+        expect(find_field("Allow", visible: false)).to be_checked
+        expect(find_field("Dismiss", visible: false)).to be_checked
+        expect(find_field("Deny", visible: false)).to be_checked
+      end
+    end
   end
 end
 

@@ -5,6 +5,7 @@ import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
 import { LinkSymbol } from '../../components/RenderFunctions';
+import HearingWorksheetAmaIssues from '../../hearings/components/HearingWorksheetAmaIssues';
 
 const TEXT_INDENTATION = '10px';
 
@@ -25,7 +26,7 @@ const buttonDiv = css({
 
 const outerDiv = css({
   marginLeft: '50px',
-  marginTop: '10px'
+  marginTop: '5px'
 });
 
 const decisionIssueDiv = css({
@@ -47,7 +48,7 @@ const grayLine = css({
   minHeight: '20px',
   background: COLORS.GREY_LIGHT,
   marginLeft: '20px',
-  marginBottom: '10px'
+  marginBottom: '5px'
 });
 
 const flexContainer = css({
@@ -115,7 +116,8 @@ export default class ContestedIssues extends React.PureComponent {
       decisionIssues,
       highlight,
       openDecisionHandler,
-      numbered
+      numbered,
+      hearingWorksheet
     } = this.props;
 
     const listStyle = css({
@@ -165,6 +167,7 @@ export default class ContestedIssues extends React.PureComponent {
               </div>
             </React.Fragment>
           }
+          { hearingWorksheet && <HearingWorksheetAmaIssues issue={issue} /> }
         </div>
       </li>;
     })}

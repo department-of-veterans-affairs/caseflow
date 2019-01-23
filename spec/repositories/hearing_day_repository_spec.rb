@@ -32,9 +32,12 @@ describe HearingDayRepository do
     subject { HearingDayRepository.fetch_hearing_day_slots(staff, hearing_day) }
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
     let(:hearing_day) do
-      { regional_office: "RO04",
-        scheduled_for: Date.new(2018, 9, 20),
-        request_type: HearingDay::REQUEST_TYPES[:video] }
+      create(
+        :case_hearing,
+        folder_nr: "VIDEO RO04",
+        hearing_date: Date.new(2018, 9, 20),
+        hearing_type: HearingDay::REQUEST_TYPES[:video]
+      )
     end
     it {
       is_expected.to eq(4)
