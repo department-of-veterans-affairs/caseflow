@@ -7,7 +7,7 @@ import {
   getReceiptDateError,
   getBlankOptionError,
   getPageError,
-  formatRelationships
+  formatRelationships,
   getDefaultPayeeCode
 } from '../util';
 import { update } from '../../util/ReducerUtil';
@@ -152,7 +152,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
     return update(state, {
       claimant: {
         $set: action.payload.claimant
-      }
+      },
       payeeCode: {
         $set: getDefaultPayeeCode(state, action.payload.claimant)
       }
