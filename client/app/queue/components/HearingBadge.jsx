@@ -30,7 +30,7 @@ const listStyling = css({
   }
 });
 
-const DocketTypeBadge = ({ hearing }) => {
+const HearingBadge = ({ hearing }) => {
   if (!hearing) {
     return null;
   }
@@ -53,4 +53,4 @@ const DocketTypeBadge = ({ hearing }) => {
   </div>;
 };
 
-export default DocketTypeBadge;
+export default HearingBadge;

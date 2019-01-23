@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
@@ -47,7 +47,7 @@ class NonCompDecisionIssue extends React.PureComponent {
       index,
       disabled
     } = this.props;
-    let issueDate = formatDate(issue.rating_issue_profile_date || issue.decision_date);
+    let issueDate = formatDateStr(issue.rating_issue_profile_date || issue.decision_date);
 
     return <div className="cf-decision">
       <hr />
@@ -86,7 +86,7 @@ class NonCompDispositions extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    let today = formatDate(new Date());
+    let today = formatDateStr(new Date());
 
     this.state = {
       requestIssues: formatRequestIssuesWithDecisionIssues(

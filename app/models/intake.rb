@@ -1,6 +1,4 @@
 class Intake < ApplicationRecord
-  include Asyncable
-
   class FormTypeNotSupported < StandardError; end
 
   belongs_to :user

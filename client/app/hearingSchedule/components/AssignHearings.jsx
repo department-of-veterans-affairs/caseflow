@@ -39,9 +39,11 @@ export default class AssignHearings extends React.Component {
   };
 
   room = (hearingDay) => {
-    if (this.props.selectedRegionalOffice.label === 'St. Petersburg, FL') {
+    // St. Petersburg, FL
+    if (this.props.selectedRegionalOffice === 'RO17') {
       return hearingDay.room;
-    } else if (this.props.selectedRegionalOffice.label === 'Winston-Salem, NC') {
+      // Winston-Salem, NC
+    } else if (this.props.selectedRegionalOffice === 'RO18') {
       return hearingDay.room;
     }
 
@@ -88,7 +90,7 @@ export default class AssignHearings extends React.Component {
 
   getHearingTime = (date, regionalOfficeTimezone) => {
 
-    if (this.props.selectedRegionalOffice.label === 'Central') {
+    if (this.props.selectedRegionalOffice === 'C') {
       return <div>{getTime(date)} </div>;
     }
 
@@ -110,7 +112,7 @@ export default class AssignHearings extends React.Component {
   };
 
   getAppealLocation = (appeal) => {
-    if (this.props.selectedRegionalOffice.value === 'C') {
+    if (this.props.selectedRegionalOffice === 'C') {
       return 'Washington DC';
     }
 
@@ -181,7 +183,6 @@ export default class AssignHearings extends React.Component {
 
     const { selectedHearingDay, selectedRegionalOffice } = this.props;
     const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
-    const SROVal = selectedRegionalOffice.value;
     const timer = () => {
       let time = getTime(selectedHearingDay.scheduledFor);
 
@@ -193,7 +194,7 @@ export default class AssignHearings extends React.Component {
       return time;
     };
 
-    const qry = `?hearingDate=${date}&regionalOffice=${SROVal}&hearingTime=${timer()}`;
+    const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}&hearingTime=${timer()}`;
 
     const tabWindowColumns = [
       {
@@ -325,7 +326,7 @@ export default class AssignHearings extends React.Component {
 
 AssignHearings.propTypes = {
   regionalOffices: PropTypes.object,
-  selectedRegionalOffice: PropTypes.object,
+  selectedRegionalOffice: PropTypes.string,
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
   selectedHearingDay: PropTypes.object,
