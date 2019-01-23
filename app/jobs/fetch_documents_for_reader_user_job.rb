@@ -31,7 +31,6 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
 
   def setup_debug_context(reader_user)
     current_user = reader_user.user
-    RequestStore.store[:application] = "reader"
     RequestStore.store[:current_user] = current_user
     Raven.extra_context(application: "reader")
     Raven.user_context(

@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { onReceiveDropdownData, onFetchDropdownData } from './actions';
-import ApiUtil from '../../../util/ApiUtil';
+import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
+import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
 
-import SearchableDropdown from '../../../components/SearchableDropdown';
+import SearchableDropdown from '../SearchableDropdown';
 
 class HearingCoordinatorDropdown extends React.Component {
 
@@ -26,7 +26,7 @@ class HearingCoordinatorDropdown extends React.Component {
     ApiUtil.get('/users?role=HearingCoordinator').then((resp) => {
       const coordinatorOptions = _.values(ApiUtil.convertToCamelCase(resp.body.coordinators)).map((coor) => ({
         label: coor.fullName,
-        value: coor.cssId
+        value: coor.fullName
       }));
 
       coordinatorOptions.sort((first, second) => (first.label - second.label));
@@ -46,7 +46,7 @@ class HearingCoordinatorDropdown extends React.Component {
   }
 
   render() {
-    const { name, label, onChange, readOnly } = this.props;
+    const { name, label, onChange, readOnly, errorMessage, placeholder } = this.props;
 
     return (
       <SearchableDropdown
@@ -55,8 +55,10 @@ class HearingCoordinatorDropdown extends React.Component {
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value)}
-        options={this.props.hearingCoordinators.options} />
+        onChange={(option) => onChange(option.value, option.label)}
+        options={this.props.hearingCoordinators.options}
+        errorMessage={errorMessage}
+        placeholder={placeholder} />
     );
   }
 }
@@ -66,7 +68,9 @@ HearingCoordinatorDropdown.propTypes = {
   label: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
+  placeholder: PropTypes.string,
+  errorMessage: PropTypes.string
 };
 
 HearingCoordinatorDropdown.defaultProps = {
@@ -75,10 +79,10 @@ HearingCoordinatorDropdown.defaultProps = {
 };
 
 const mapStateToProps = (state) => ({
-  hearingCoordinators: {
-    options: state.hearingDropdownData.hearingCoordinators.options,
-    isFetching: state.hearingDropdownData.hearingCoordinators.isFetching
-  }
+  hearingCoordinators: state.components.dropdowns.hearingCoordinators ? {
+    options: state.components.dropdowns.hearingCoordinators.options,
+    isFetching: state.components.dropdowns.hearingCoordinators.isFetching
+  } : {}
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

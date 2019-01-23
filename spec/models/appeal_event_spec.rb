@@ -106,8 +106,7 @@ describe AppealEvent do
 
     it "accounts for all active VACOLS dispositions" do
       expect(vacols_dispositions - event_dispositions).to match_array(
-        ["Designation of Record", "Stay", "AMA SOC/SSOC Opt-in",
-         "Motion to Vacate Denied"]
+        ["Designation of Record", "Stay", "Motion to Vacate Denied"]
       )
     end
   end
