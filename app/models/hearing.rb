@@ -3,6 +3,8 @@ class Hearing < ApplicationRecord
   belongs_to :appeal
   belongs_to :judge, class_name: "User"
   has_many :hearing_views, as: :hearing
+  has_one :hearing_location, as: :hearing
+  alias_attribute :location, :hearing_location
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 

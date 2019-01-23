@@ -463,6 +463,20 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
 
+  create_table "hearing_locations", force: :cascade do |t|
+    t.string "address"
+    t.string "city"
+    t.datetime "created_at", null: false
+    t.float "distance"
+    t.string "facility_id"
+    t.integer "hearing_id"
+    t.string "hearing_type"
+    t.string "name"
+    t.string "state"
+    t.datetime "updated_at", null: false
+    t.string "zip_code"
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "hearing_id", null: false
@@ -479,11 +493,9 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.boolean "evidence_window_waived"
     t.integer "hearing_day_id", null: false
     t.integer "judge_id"
-    t.string "location"
     t.string "military_service"
     t.string "notes"
     t.boolean "prepped"
-    t.string "regional_offce"
     t.string "representative_name"
     t.string "room"
     t.time "scheduled_time"
