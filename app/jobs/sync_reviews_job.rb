@@ -6,7 +6,6 @@ class SyncReviewsJob < CaseflowJob
   DEFAULT_EP_LIMIT = 100
 
   def perform(args = {})
-    RequestStore.store[:application] = "intake"
     RequestStore.store[:current_user] = User.system_user
 
     # specified limit of end products that will be synced
@@ -49,6 +48,9 @@ class SyncReviewsJob < CaseflowJob
   def perform_decision_rating_issues_syncs(limit)
     RequestIssue.requires_processing.limit(limit).each do |request_issue|
       DecisionIssueSyncJob.perform_later(request_issue)
+    end
+    BoardGrantEffectuation.requires_processing.limit(limit).each do |effectuation|
+      DecisionIssueSyncJob.perform_later(effectuation)
     end
   end
 

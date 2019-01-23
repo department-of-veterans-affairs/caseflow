@@ -189,12 +189,14 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def fetch_hearing_days_for_schedule_period
     hearing_days = HearingDay.load_days(@schedule_period.start_date, @schedule_period.end_date)
-    @video_co_hearing_days = filter_co_hearings(hearing_days[0].to_a).freeze
+    @video_co_hearing_days = filter_co_hearings(
+      (hearing_days[:vacols_hearings] + hearing_days[:caseflow_hearings])
+    ).freeze
 
     # raises an exception if hearing days have not already been allocated
     fail HearingDaysNotAllocated if @video_co_hearing_days.empty?
 
-    filter_travel_board_hearing_days(hearing_days[1])
+    filter_travel_board_hearing_days(hearing_days[:travel_board_hearings])
   end
 
   def co_hearing_day?(hearing_day)
@@ -211,7 +213,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def filter_co_hearings(video_co_hearing_days)
     video_co_hearing_days.map do |hearing_day|
-      day = OpenStruct.new(hearing_day)
+      day = OpenStruct.new(HearingDay.to_hash(hearing_day))
       day.scheduled_for = day.scheduled_for.to_date
 
       day if (valid_co_day?(day) || valid_ro_hearing_day?(day)) && !hearing_day_already_assigned(day)

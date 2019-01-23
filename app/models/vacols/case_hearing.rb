@@ -177,6 +177,18 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
   end
 
+  def scheduled_for
+    hearing_date
+  end
+
+  def request_type
+    hearing_type
+  end
+
+  def judge_id
+    board_member
+  end
+
   def master_record_type
     return :video if folder_nr.match?(/VIDEO/)
   end
@@ -188,6 +200,15 @@ class VACOLS::CaseHearing < VACOLS::Record
                           name: "update_hearing") do
       update(attrs.merge(mduser: self.class.current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
+  end
+
+  def regional_office
+    # Hearing days have the regional office in the folder_nr
+    regional_office_match = /VIDEO (RO\d*)/.match(folder_nr)
+
+    return regional_office_match[1] if regional_office_match
+
+    nil
   end
 
   private

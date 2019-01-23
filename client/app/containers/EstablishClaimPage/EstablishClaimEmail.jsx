@@ -10,7 +10,7 @@ import Button from '../../components/Button';
 import TextareaField from '../../components/TextareaField';
 import Alert from '../../components/Alert';
 import FormField from '../../util/FormField';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import { connect } from 'react-redux';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
@@ -41,7 +41,7 @@ export class EstablishClaimEmail extends BaseForm {
     }
 
     let email = 'The BVA Full Grant decision dated' +
-      ` ${formatDate(appeal.serialized_decision_date)}` +
+      ` ${formatDateStr(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name},` +
       ` ID #${appeal.sanitized_vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssue.join(', ')}` +

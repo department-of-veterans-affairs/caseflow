@@ -125,9 +125,9 @@ export default class DailyDocket extends React.Component {
 
     return <div><b>{appellantName}</b><br />
       <b><Link
-        href={`/queue/appeals/${hearing.appealVacolsId}`}
-        name={hearing.vbmsId} >
-        {hearing.vbmsId}
+        href={`/queue/appeals/${hearing.appealExternalId}`}
+        name={hearing.veteranFileNumber} >
+        {hearing.veteranFileNumber}
       </Link></b><br />
       <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
       {hearing.docketNumber}
@@ -233,7 +233,8 @@ export default class DailyDocket extends React.Component {
     const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
 
     return <div><SearchableDropdown
-      name="Hearing Day"
+      name="HearingDay"
+      label="Hearing Day"
       options={this.getHearingDateOptions(hearing)}
       value={hearing.editedDate ? hearing.editedDate : hearing.id}
       onChange={this.onHearingDateUpdate(hearing.id)}

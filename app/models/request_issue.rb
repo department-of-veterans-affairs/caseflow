@@ -10,6 +10,7 @@ class RequestIssue < ApplicationRecord
   has_many :decision_issues, through: :request_decision_issues
   has_many :remand_reasons
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
+  has_many :hearing_issue_notes
   has_one :legacy_issue_optin
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
@@ -37,6 +38,12 @@ class RequestIssue < ApplicationRecord
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} cannot create decision issue " \
         "due to not having any matching rating issues or contentions")
+    end
+  end
+
+  class NilEndProductLastActionDate < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id}'s end_product is missing the last action date")
     end
   end
 
@@ -90,6 +97,11 @@ class RequestIssue < ApplicationRecord
   }.freeze
 
   class << self
+    # We don't need to retry these as frequently
+    def processing_retry_interval_hours
+      12
+    end
+
     def submitted_at_column
       :decision_sync_submitted_at
     end
@@ -169,6 +181,7 @@ class RequestIssue < ApplicationRecord
         rating_issue_reference_id: data[:rating_issue_reference_id],
         rating_issue_profile_date: data[:rating_issue_profile_date],
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
+        contested_rating_issue_disability_code: data[:rating_issue_disability_code],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
@@ -189,6 +202,8 @@ class RequestIssue < ApplicationRecord
     end
     # rubocop:enable Metrics/MethodLength
   end
+
+  delegate :veteran, to: :review_request
 
   def end_product_code
     remanded? ? dta_end_product_code : original_end_product_code
@@ -223,7 +238,7 @@ class RequestIssue < ApplicationRecord
   def contention_text
     return UNIDENTIFIED_ISSUE_MSG if is_unidentified?
 
-    description
+    Contention.new(description).text
   end
 
   def review_title
@@ -236,7 +251,7 @@ class RequestIssue < ApplicationRecord
 
   def special_issues
     specials = []
-    specials << { code: "VO", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
+    specials << { code: "ASSOI", narrative: Constants.VACOLS_DISPOSITIONS_BY_ID.O } if legacy_issue_opted_in?
     specials << { code: "SSR", narrative: "Same Station Review" } if decision_review.try(:same_office)
     return specials unless specials.empty?
   end
@@ -388,6 +403,8 @@ class RequestIssue < ApplicationRecord
   end
 
   def create_decision_issues
+    fail NilEndProductLastActionDate, id unless end_product_establishment.result.last_action_date
+
     if rating?
       return unless end_product_establishment.associated_rating
 
@@ -486,13 +503,15 @@ class RequestIssue < ApplicationRecord
   # rubocop:enable Metrics/PerceivedComplexity
 
   def check_for_before_ama!
-    return unless eligible?
-    return if is_unidentified
-    return if ramp_claim_id
+    return unless eligible? && should_check_for_before_ama?
 
     if decision_or_promulgation_date && decision_or_promulgation_date < DecisionReview.ama_activation_date
       self.ineligible_reason = :before_ama
     end
+  end
+
+  def should_check_for_before_ama?
+    !is_unidentified && !ramp_claim_id && !vacols_id
   end
 
   def check_for_legacy_issue_not_withdrawn!

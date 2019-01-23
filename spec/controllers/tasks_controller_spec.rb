@@ -468,52 +468,6 @@ RSpec.describe TasksController, type: :controller do
             expect(response.status).to eq 404
           end
         end
-
-        context "when creating a Hearings Management task" do
-          let!(:hearings_user) do
-            create(:hearings_coordinator)
-          end
-          let(:params) do
-            [{
-              "type": ScheduleHearingTask.name,
-              "action": "Assign Hearing",
-              "external_id": appeal.vacols_id,
-              "assigned_to_type": "User",
-              "assigned_to_id": hearings_user.id,
-              "business_payloads": {
-                description: "test",
-                values: {
-                  "regional_office_value": "RO17",
-                  "hearing_date": "2018-10-25",
-                  "hearing_time": "8:00"
-                }
-              }
-            }]
-          end
-
-          before do
-            OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
-            User.authenticate!(user: hearings_user)
-          end
-
-          it "should be successful" do
-            post :create, params: { tasks: params }
-            expect(response.status).to eq 200
-            response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.size).to eq 1
-            expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-            expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
-            expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq hearings_user.id
-
-            payloads = response_body.first["attributes"]["task_business_payloads"]
-            expect(payloads.size).to eq 1
-            expect(payloads[0]["description"]).to eq("test")
-            expect(payloads[0]["values"].size).to eq 3
-            expect(payloads[0]["values"]["regional_office_value"]).to eq("RO17")
-            expect(payloads[0]["values"]["hearing_date"]).to eq("2018-10-25")
-            expect(payloads[0]["values"]["hearing_time"]).to eq("8:00")
-          end
-        end
       end
     end
   end
@@ -635,8 +589,8 @@ RSpec.describe TasksController, type: :controller do
         response_body = JSON.parse(response.body)
         expect(response_body["tasks"].length).to eq 2
 
-        task = response_body["tasks"][0]
-        expect(task["type"]).to eq "colocated_tasks"
+        task = response_body["tasks"].find { |t| t["type"] == "colocated_tasks" }
+        expect(task).to_not be_nil
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
       end

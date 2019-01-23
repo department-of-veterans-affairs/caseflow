@@ -51,11 +51,7 @@ RSpec.feature "Judge checkout flow" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
 
-      click_dropdown(index: 0) do
-        visible_options = page.find_all(".Select-option")
-        expect(visible_options.length).to eq 1
-        expect(visible_options.first.text).to eq Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h[:label]
-      end
+      click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
 
       # Special Issues screen
       click_on "Continue"
@@ -121,11 +117,7 @@ RSpec.feature "Judge checkout flow" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
-        click_dropdown(index: 0) do
-          visible_options = page.find_all(".Select-option")
-          expect(visible_options.length).to eq 1
-          expect(visible_options.first.text).to eq Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h[:label]
-        end
+        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
 
         click_label "vamc"
 
@@ -135,7 +127,7 @@ RSpec.feature "Judge checkout flow" do
         click_on "Cancel"
         click_on "Yes, cancel"
 
-        click_dropdown(index: 0)
+        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
 
         # Vamc should still be checked
         expect(page).to have_field("vamc", checked: true, visible: false)
@@ -180,11 +172,7 @@ RSpec.feature "Judge checkout flow" do
       scenario "completes assign to omo checkout flow" do
         visit "/queue/appeals/#{appeal.vacols_id}"
 
-        click_dropdown(index: 0) do
-          visible_options = page.find_all(".Select-option")
-          expect(visible_options.length).to eq 1
-          expect(visible_options.first.text).to eq Constants.TASK_ACTIONS.ASSIGN_OMO.to_h[:label]
-        end
+        click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_OMO.label)
 
         expect(page).to have_content("Evaluate Decision")
 

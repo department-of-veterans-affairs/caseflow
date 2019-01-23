@@ -71,6 +71,11 @@ class EndProductEstablishment < ApplicationRecord
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2910/
         TransientBGSSyncError.new(error, epe)
+      when /The Tuxedo service is down/
+        #  Similar to above, an outage of connection to BDN.
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2926/
+        TransientBGSSyncError.new(error, epe)
       when /Connection timed out - connect\(2\) for "bepprod.vba.va.gov" port 443/
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
         TransientBGSSyncError.new(error, epe)
@@ -92,6 +97,11 @@ class EndProductEstablishment < ApplicationRecord
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2935/
         TransientBGSSyncError.new(error, epe)
+      when /Connection reset by peer/
+        # Connection reset
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3036/
+        TransientBGSSyncError.new(error, epe)
       when /Unable to find SOAP operation: :find_benefit_claim/
         # Transient failure because a VBMS service is unavailable
         #
@@ -103,6 +113,11 @@ class EndProductEstablishment < ApplicationRecord
         #  "Error: 504 for url http://localhost:10001/BenefitClaimServiceBean/BenefitClaimWebService?WSDL"
         #
         # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
+        TransientBGSSyncError.new(error, epe)
+      when /Unable to parse SOAP message/
+        # I don't understand why this happens, but it's transient.
+        #
+        # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3404/
         TransientBGSSyncError.new(error, epe)
       else
         new(error, epe)
@@ -150,16 +165,6 @@ class EndProductEstablishment < ApplicationRecord
     end
   rescue VBMS::HTTPError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
-  end
-
-  # All records that create contentions should be an instance of ApplicationRecord with
-  # a contention_reference_id column, and contention_text method
-  # TODO: this can be refactored to ask the source instead of using a case statement
-  def calculate_records_ready_for_contentions
-    case source
-    when ClaimReview then request_issues_ready_for_contentions
-    when DecisionDocument then source.effectuations.where(end_product_establishment: self)
-    end
   end
 
   # VBMS will return ALL contentions on a end product when you create contentions,
@@ -336,10 +341,13 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync_decision_issues!
-    request_issues.each do |request_issue|
-      request_issue.submit_for_processing!
+    contention_records.each do |record|
+      # It seems to take at least a day for the associated rating to show up in BGS
+      # after the EP is cleared. We don't want to tax the BGS ratings endpoint, so
+      # we're going to wait a day before we start looking.
+      record.submit_for_processing!(delay: 1.day)
 
-      DecisionIssueSyncJob.perform_later(request_issue)
+      DecisionIssueSyncJob.perform_later(record)
     end
   end
 
@@ -371,6 +379,20 @@ class EndProductEstablishment < ApplicationRecord
 
   def status_type
     EndProduct::STATUSES[synced_status] || synced_status
+  end
+
+  # All records that create contentions should be an instance of ApplicationRecord with
+  # a contention_reference_id column, and contention_text method
+  # TODO: this can be refactored to ask the source instead of using a case statement
+  def calculate_records_ready_for_contentions
+    select_ready_for_contentions(contention_records)
+  end
+
+  def contention_records
+    case source
+    when ClaimReview then eligible_request_issues
+    when DecisionDocument then source.effectuations.where(end_product_establishment: self)
+    end
   end
 
   def decision_issues_sync_complete?
@@ -405,8 +427,12 @@ class EndProductEstablishment < ApplicationRecord
     rating_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
   end
 
-  def request_issues_ready_for_contentions
-    request_issues.select { |ri| ri.contention_reference_id.nil? && ri.eligible? }
+  def eligible_request_issues
+    request_issues.select(&:eligible?)
+  end
+
+  def select_ready_for_contentions(records)
+    records.select { |r| r.contention_reference_id.nil? }
   end
 
   def rating_issue_contention_map(request_issues_to_associate)
@@ -473,7 +499,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def taken_modifiers
-    @taken_modifiers ||= veteran.end_products.map(&:modifier)
+    @taken_modifiers ||= veteran.end_products.select(&:active?).map(&:modifier)
   end
 
   def find_open_modifier

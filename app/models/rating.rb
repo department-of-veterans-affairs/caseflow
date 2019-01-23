@@ -2,6 +2,8 @@ class Rating
   include ActiveModel::Model
 
   class NilRatingProfileListError < StandardError; end
+  class LockedRatingError < StandardError; end
+  class BackfilledRatingError < StandardError; end
 
   # WARNING: profile_date is a misnomer adopted from BGS terminology.
   # It is a datetime, not a date.
@@ -40,11 +42,34 @@ class Rating
     return [] if rating_profile[:rating_issues].nil?
 
     [rating_profile[:rating_issues]].flatten.map do |issue_data|
+      issue_data[:dgnstc_tc] = disability_codes(rating_profile).dig(issue_data[:dis_sn], :dgnstc_tc)
       RatingIssue.from_bgs_hash(self, issue_data)
     end
   end
 
   private
+
+  def disability_codes(rating_profile)
+    @disability_codes ||= create_disability_codes(rating_profile)
+  end
+
+  def create_disability_codes(rating_profile)
+    return {} unless rating_profile[:disabilities]
+
+    rating_profile[:disabilities].reduce({}) do |disability_map, disability|
+      disability_time = Time.find_zone("UTC").parse(disability[:dis_dt])
+
+      if disability_map[disability[:dis_sn]].nil? ||
+         disability_map[disability[:dis_sn]][:date] < disability_time
+        disability_map[disability[:dis_sn]] = {
+          dgnstc_tc: disability[:disability_evaluations][:dgnstc_tc],
+          date: disability_time
+        }
+      end
+
+      disability_map
+    end
+  end
 
   def associated_claims_data
     return [] if rating_profile[:associated_claims].nil?
@@ -106,7 +131,14 @@ class Rating
 
     def ratings_from_bgs_response(response)
       if response.dig(:rating_profile_list, :rating_profile).nil?
-        fail NilRatingProfileListError, message: response
+        reject_reason = response[:reject_reason] || ""
+        if reject_reason.include? "Locked Rating"
+          fail LockedRatingError, message: response
+        elsif reject_reason.include? "Converted or Backfilled Rating"
+          fail BackfilledRatingError, message: response
+        else
+          fail NilRatingProfileListError, message: response
+        end
       end
 
       # If only one rating is returned, we need to convert it to an array

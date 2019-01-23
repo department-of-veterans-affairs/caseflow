@@ -27,21 +27,23 @@ const roSelectionStyling = css({ marginTop: '10px' });
 export default class AssignHearings extends React.Component {
 
   amaAppeal = (appeal) => {
-    return appeal.type === 'appeals';
+    return appeal.attributes.appealType === 'Appeal';
   };
 
-  getAmaAppeals = _.filter(this.props.appealsReadyForHearing, (appeal) => this.amaAppeal(appeal));
+  getAmaAppeals = () => _.filter(this.props.appealsReadyForHearing, (appeal) => this.amaAppeal(appeal));
 
-  getLegacyAppeals = _.filter(this.props.appealsReadyForHearing, (appeal) => !this.amaAppeal(appeal));
+  getLegacyAppeals = () => _.filter(this.props.appealsReadyForHearing, (appeal) => !this.amaAppeal(appeal));
 
   onSelectedHearingDayChange = (hearingDay) => () => {
     this.props.onSelectedHearingDayChange(hearingDay);
   };
 
   room = (hearingDay) => {
-    if (this.props.selectedRegionalOffice.label === 'St. Petersburg, FL') {
+    // St. Petersburg, FL
+    if (this.props.selectedRegionalOffice === 'RO17') {
       return hearingDay.room;
-    } else if (this.props.selectedRegionalOffice.label === 'Winston-Salem, NC') {
+      // Winston-Salem, NC
+    } else if (this.props.selectedRegionalOffice === 'RO18') {
       return hearingDay.room;
     }
 
@@ -88,7 +90,7 @@ export default class AssignHearings extends React.Component {
 
   getHearingTime = (date, regionalOfficeTimezone) => {
 
-    if (this.props.selectedRegionalOffice.label === 'Central') {
+    if (this.props.selectedRegionalOffice === 'C') {
       return <div>{getTime(date)} </div>;
     }
 
@@ -110,7 +112,7 @@ export default class AssignHearings extends React.Component {
   };
 
   getAppealLocation = (appeal) => {
-    if (this.props.selectedRegionalOffice.value === 'C') {
+    if (this.props.selectedRegionalOffice === 'C') {
       return 'Washington DC';
     }
 
@@ -165,7 +167,7 @@ export default class AssignHearings extends React.Component {
 
   tableScheduledHearingsRows = (hearings) => {
     return _.map(hearings, (hearing) => ({
-      externalId: hearing.appealVacolsId,
+      externalId: hearing.appealExternalId,
       caseDetails: this.appellantName(hearing),
       type: renderAppealType({
         caseType: hearing.appealType,
@@ -181,7 +183,6 @@ export default class AssignHearings extends React.Component {
 
     const { selectedHearingDay, selectedRegionalOffice } = this.props;
     const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
-    const SROVal = selectedRegionalOffice.value;
     const timer = () => {
       let time = getTime(selectedHearingDay.scheduledFor);
 
@@ -193,7 +194,7 @@ export default class AssignHearings extends React.Component {
       return time;
     };
 
-    const qry = `?hearingDate=${date}&regionalOffice=${SROVal}&hearingTime=${timer()}`;
+    const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}&hearingTime=${timer()}`;
 
     const tabWindowColumns = [
       {
@@ -235,7 +236,7 @@ export default class AssignHearings extends React.Component {
     const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no schedulable veterans</span>;
 
     const scheduleableLegacyVeterans = () => {
-      if (_.isEmpty(this.getLegacyAppeals)) {
+      if (_.isEmpty(this.getLegacyAppeals())) {
         return <div>
           <StatusMessage
             title= {veteranNotAssignedTitle}
@@ -248,15 +249,14 @@ export default class AssignHearings extends React.Component {
 
       return <Table
         columns={tabWindowColumns}
-        rowObjects={this.tableAssignHearingsRows(this.getLegacyAppeals)}
+        rowObjects={this.tableAssignHearingsRows(this.getLegacyAppeals())}
         summary="scheduled-hearings-table"
         slowReRendersAreOk
       />;
-
     };
 
     const scheduleableAmaVeterans = () => {
-      if (_.isEmpty(this.getAmaAppeals)) {
+      if (_.isEmpty(this.getAmaAppeals())) {
         return <div>
           <StatusMessage
             title= {veteranNotAssignedTitle}
@@ -269,7 +269,7 @@ export default class AssignHearings extends React.Component {
 
       return <Table
         columns={tabWindowColumns}
-        rowObjects={this.tableAssignHearingsRows(this.getAmaAppeals)}
+        rowObjects={this.tableAssignHearingsRows(this.getAmaAppeals())}
         summary="scheduled-hearings-table"
         slowReRendersAreOk
       />;
@@ -326,7 +326,7 @@ export default class AssignHearings extends React.Component {
 
 AssignHearings.propTypes = {
   regionalOffices: PropTypes.object,
-  selectedRegionalOffice: PropTypes.object,
+  selectedRegionalOffice: PropTypes.string,
   upcomingHearingDays: PropTypes.object,
   onSelectedHearingDayChange: PropTypes.func,
   selectedHearingDay: PropTypes.object,

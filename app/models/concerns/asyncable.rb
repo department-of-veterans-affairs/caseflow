@@ -5,8 +5,12 @@
 # This becomes necessary when a Job has multiple external service calls, each of
 # which may fail and cause retries beyond the "normal" retry window.
 # See ClaimReview and RequestIssuesUpdate e.g.
+
+# rubocop:disable Metrics/ModuleLength
 module Asyncable
   extend ActiveSupport::Concern
+
+  include RunAsyncable
 
   # class methods to scope queries based on class-defined columns
   # we expect 4 column types:
@@ -17,7 +21,11 @@ module Asyncable
   # These column names can be overridden in consuming classes as needed.
   class_methods do
     REQUIRES_PROCESSING_WINDOW_DAYS = 4
-    REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
+    DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
+
+    def processing_retry_interval_hours
+      DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
+    end
 
     def submitted_at_column
       :submitted_at
@@ -48,7 +56,7 @@ module Asyncable
     end
 
     def previously_attempted_ready_for_retry
-      where(arel_table[attempted_at_column].lt(REQUIRES_PROCESSING_RETRY_WINDOW_HOURS.hours.ago))
+      where(arel_table[attempted_at_column].lt(processing_retry_interval_hours.hours.ago))
     end
 
     def attemptable
@@ -67,10 +75,6 @@ module Asyncable
       where(processed_at_column => nil)
         .where(arel_table[submitted_at_column].lteq(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
         .order_by_oldest_submitted
-    end
-
-    def run_async?
-      !Rails.env.development? && !Rails.env.test?
     end
   end
 
@@ -109,6 +113,10 @@ module Asyncable
     !!self[self.class.submitted_at_column]
   end
 
+  def sort_by_submitted_at
+    self[self.class.submitted_at_column] || Time.zone.now
+  end
+
   def clear_error!
     update!(self.class.error_column => nil)
   end
@@ -117,9 +125,25 @@ module Asyncable
     update!(self.class.error_column => err)
   end
 
-  private
+  def restart!
+    update!(
+      self.class.submitted_at_column => Time.zone.now,
+      self.class.processed_at_column => nil,
+      self.class.attempted_at_column => nil,
+      self.class.error_column => nil
+    )
+  end
 
-  def run_async?
-    self.class.run_async?
+  def asyncable_ui_hash
+    {
+      klass: self.class.to_s,
+      id: id,
+      submitted_at: self[self.class.submitted_at_column],
+      attempted_at: self[self.class.attempted_at_column],
+      processed_at: self[self.class.processed_at_column],
+      error: self[self.class.error_column],
+      veteran_file_number: veteran.file_number
+    }
   end
 end
+# rubocop:enable Metrics/ModuleLength

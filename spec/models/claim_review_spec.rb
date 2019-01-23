@@ -114,7 +114,7 @@ describe ClaimReview do
       create(
         :higher_level_review,
         receipt_date: receipt_date,
-        establishment_attempted_at: (ClaimReview::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+        establishment_attempted_at: (ClaimReview.processing_retry_interval_hours - 1).hours.ago
       )
     end
 

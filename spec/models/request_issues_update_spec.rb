@@ -100,6 +100,12 @@ describe RequestIssuesUpdate do
       review.request_issues.find { |issue| issue.contested_rating_issue_reference_id == "issue1" }.id
     end
 
+    context "#veteran" do
+      it "delegates to review" do
+        expect(request_issues_update.veteran).to eq(request_issues_update.review.veteran)
+      end
+    end
+
     context "#created_issues" do
       before do
         request_issues_update.perform!
@@ -463,7 +469,7 @@ describe RequestIssuesUpdate do
     let!(:riu_recently_attempted) do
       create(
         :request_issues_update,
-        attempted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_RETRY_WINDOW_HOURS - 1).hours.ago
+        attempted_at: (RequestIssuesUpdate.processing_retry_interval_hours - 1).hours.ago
       )
     end
 

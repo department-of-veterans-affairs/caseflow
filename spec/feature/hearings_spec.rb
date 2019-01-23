@@ -4,7 +4,7 @@ RSpec.feature "Hearings" do
   before do
     # Set the time zone to the current user's time zone for proper date conversion
     Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 1, 1, 13))
+    Timecop.freeze(Time.utc(2017, 12, 1, 13))
   end
 
   context "Hearings Prep" do
@@ -32,6 +32,12 @@ RSpec.feature "Hearings" do
              hearing_type: "C",
              hearing_date: 6.days.ago,
              folder_nr: create(:case).bfkey)
+      create(:hearing, judge: current_user)
+      create(:case_hearing,
+             board_member: vacols_staff.sattyid,
+             hearing_type: "C",
+             hearing_date: DateTime.new(2019, 3, 2, 9, 0, 0, "+0"),
+             folder_nr: create(:case).bfkey)
     end
 
     scenario "Shows upcoming dockets for upcoming day" do
@@ -43,26 +49,19 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("VLJ: Lauren Roth")
 
       # Verify dates
-      day1 = get_day(1)
-      day2 = get_day(2)
-
-      expect(day1 + 2500.days).to eql(day2)
+      expect(get_day(1).to_date).to eql Date.new(2019, 3, 2)
+      expect(get_day(2).to_date).to eql 2500.days.from_now.to_date
+      expect(get_day(3).to_date).to eql 5000.days.from_now.to_date
 
       # Verify docket types
-
-      docket1_type = get_type(1)
-      docket2_type = get_type(2)
-
-      expect(docket1_type).to eql("Central")
-      expect(docket2_type).to eql("Video")
+      expect(get_type(1)).to eql("Central")
+      expect(get_type(2)).to eql("Central")
+      expect(get_type(3)).to eql("Video")
 
       # Verify hearings count in each docket
-
-      docket1_hearings = get_hearings(1)
-      docket2_hearings = get_hearings(2)
-
-      expect(docket1_hearings).to eql("1")
-      expect(docket2_hearings).to eql("2")
+      expect(get_hearings(1)).to eql("2")
+      expect(get_hearings(2)).to eql("1")
+      expect(get_hearings(3)).to eql("2")
 
       # Validate help link
       find("#menu-trigger").click
@@ -76,16 +75,10 @@ RSpec.feature "Hearings" do
       click_on("dockets-tab-1")
 
       # Verify docket types
-
-      docket1_type = get_type(1)
-
-      expect(docket1_type).to eql("Video")
+      expect(get_type(1)).to eql("Video")
 
       # Verify hearings count in each docket
-
-      docket1_hearings = get_hearings(1)
-
-      expect(docket1_hearings).to eql("1")
+      expect(get_hearings(1)).to eql("1")
     end
 
     scenario "Upcoming docket days correctly handles master records" do
@@ -96,10 +89,10 @@ RSpec.feature "Hearings" do
     end
 
     scenario "Shows a daily docket" do
-      visit "/hearings/dockets/2030-09-10"
+      visit "/hearings/dockets/2031-08-10"
 
       expect(page).to have_content("Daily Docket")
-      expect(page).to have_content("9/10/2030")
+      expect(page).to have_content("8/10/2031")
       expect(page).to have_content("Hearing Type: Video")
       expect(page).to have_selector("tbody", 2)
 
@@ -107,25 +100,42 @@ RSpec.feature "Hearings" do
       expect(page).to have_content("Your Hearing Days")
     end
 
-    scenario "Daily docket saves to the backend", skip: "Test is flakey" do
-      visit "/hearings/dockets/2023-11-06"
-
-      fill_in "3.notes", with: "This is a note about the hearing!"
-      find(".cf-hearings-prepped").find(".cf-form-checkbox").click
-      find(".dropdown-3-disposition").click
+    scenario "Legacy daily docket saves to the backend", skip: "Failing on CircleCI" do
+      visit "/hearings/dockets/2024-10-05"
+      expect(page).to have_content("Daily Docket")
+      fill_in "Notes", with: "This is a note about the hearing!"
+      find(".checkbox-wrapper-2-prep").find(".cf-form-checkbox").click
+      find(".dropdown-2-disposition").click
       find("#react-select-2--option-1").click
-      find(".dropdown-3-hold_open").click
+      find(".dropdown-2-aod").click
       find("#react-select-3--option-2").click
-      find(".dropdown-3-aod").click
+      find(".dropdown-2-hold_open").click
       find("#react-select-4--option-2").click
       find("label", text: "Transcript Requested").click
-      visit "/hearings/dockets/2023-11-06"
+
+      visit "/hearings/dockets/2024-10-05"
       expect(page).to have_content("This is a note about the hearing!")
       expect(page).to have_content("No Show")
       expect(page).to have_content("60 days")
       expect(page).to have_content("None")
       expect(find_field("Transcript Requested", visible: false)).to be_checked
-      expect(find_field("3-prep", visible: false)).to be_checked
+      expect(find_field("2-prep", visible: false)).to be_checked
+    end
+
+    scenario "AMA daily docket saves to the backend" do
+      visit "/hearings/dockets/2019-03-02"
+      expect(page).to have_content("Daily Docket")
+      fill_in "1.notes", with: "This is a note about the hearing!"
+      find(".checkbox-wrapper-1-prep").find(".cf-form-checkbox").click
+      find(".dropdown-1-disposition").click
+      find("#react-select-5--option-1").click
+      find("label", text: "Yes, Waive 90 Day Hold").click
+
+      visit "/hearings/dockets/2019-03-02"
+      expect(page).to have_content("This is a note about the hearing!")
+      expect(page).to have_content("No Show")
+      expect(find_field("1.evidence_window_waived", visible: false)).to be_checked
+      expect(find_field("1-prep", visible: false)).to be_checked
     end
 
     scenario "Link on daily docket opens worksheet in new tab", skip: "Test is flakey" do
@@ -261,6 +271,41 @@ RSpec.feature "Hearings" do
       page.within_window new_window do
         visit link_href
         expect(page).to have_content("You've viewed 0 out of 3 documents")
+      end
+    end
+
+    context "Worksheet for AMA hearings" do
+      let(:ama_hearing) { create(:hearing, judge: current_user) }
+      let!(:request_issue) { create(:request_issue, review_request_id: ama_hearing.id) }
+
+      scenario "Can save information for ama hearings" do
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        page.find(".public-DraftEditor-content").set("These are the notes being taken here")
+        fill_in "appellant-vet-rep-name", with: "This is a rep name"
+        fill_in "appellant-vet-witness", with: "This is a witness"
+        fill_in "worksheet-military-service", with: "This is military service"
+
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        expect(page).to have_content("This is a rep name")
+        expect(page).to have_content("This is a witness")
+        expect(page).to have_content("These are the notes being taken here")
+        expect(page).to have_content("This is military service")
+      end
+
+      scenario "Can save preliminary impressions for ama hearings" do
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        find("label", text: "Re-Open").click
+        find("label", text: "Remand").click
+        find("label", text: "Allow").click
+        find("label", text: "Dismiss").click
+        find("label", text: "Deny").click
+
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        expect(find_field("Re-Open", visible: false)).to be_checked
+        expect(find_field("Remand", visible: false)).to be_checked
+        expect(find_field("Allow", visible: false)).to be_checked
+        expect(find_field("Dismiss", visible: false)).to be_checked
+        expect(find_field("Deny", visible: false)).to be_checked
       end
     end
   end
