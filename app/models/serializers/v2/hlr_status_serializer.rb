@@ -1,4 +1,4 @@
-class HLRStatusSerializer < V2::AppealSerializer
+class V2::HLRStatusSerializer < V2::AppealSerializer
   type :higher_level_review
 
   def id
@@ -14,6 +14,10 @@ class HLRStatusSerializer < V2::AppealSerializer
   attribute :location do
     # for HLR will always be aoj
     "aoj"
+  end
+
+  attribute :incomplete do
+    false
   end
 
   attribute :aod do
