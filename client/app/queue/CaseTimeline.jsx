@@ -15,14 +15,6 @@ class CaseTimeline extends React.PureComponent {
       appeal
     } = this.props;
 
-    console.log('--Timeline--');
-    console.log(this.props.completedTasks);
-    console.log(this.props.timelineTasks);
-
-    // Need to check on on_hold
-    // gray dot spacing
-    // double view-hide task instructions appearing
-
     return <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
       <table>

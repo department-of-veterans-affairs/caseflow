@@ -15,7 +15,7 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
 import { allTasksForTimeline } from '../selectors';
-import type { State } from './types/state';
+import type { State } from '../types/state';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -29,6 +29,8 @@ export const grayLineStyling = css({
 
 const grayLineTimelineStyling = css(grayLineStyling, { left: '9%',
   marginLeft: '12px' });
+
+const greyDotAndlineStyling = css({ top: '25px' });
 
 const taskContainerStyling = css({
   border: 'none',
@@ -60,7 +62,11 @@ const taskInfoWithIconTimelineContainer =
     width: '10%',
     paddingLeft: '0px' });
 const greyDotStyling = css({ paddingLeft: '6px' });
-const greyDotTimelineStyling = css({ padding: '5px 0px 0px 5px' });
+const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
+
+type Params = {|
+  appealId: string
+|};
 
 class TaskRows extends React.PureComponent {
   constructor(props) {
@@ -84,7 +90,6 @@ class TaskRows extends React.PureComponent {
 
     previousState[task.uniqueId] = !previousState[task.uniqueId];
     this.setState({ taskInstructionsIsVisibleObj: previousState });
-    console.log(this.state.taskInstructionsIsVisibleObj);
   }
 
   daysSinceTaskAssignmentListItem = (task) => {
@@ -162,9 +167,9 @@ class TaskRows extends React.PureComponent {
       return <br />;
     }
 
-    return <React.Fragment key={`${task.uniqueId}fragment`}>
-      {task.instructions.map((text) => <React.Fragment key={`${task.uniqueId}span`}>
-        <span key={`${task.uniqueId}instructions`}>{text}</span><br /></React.Fragment>)}
+    return <React.Fragment key={`${task.uniqueId} fragment`}>
+      {task.instructions.map((text) => <React.Fragment key={`${task.uniqueId} span`}>
+        <span key={`${task.uniqueId} instructions`}>{text}</span><br /></React.Fragment>)}
     </React.Fragment>;
   }
 
@@ -172,11 +177,9 @@ class TaskRows extends React.PureComponent {
     if (!task.instructions || !task.instructions.length > 0) {
       return null;
     }
-    console.log(task.uniqueId);
-    console.log(this.state.taskInstructionsIsVisibleObj[task.uniqueId]);
 
     return <div>
-      { this.state.taskInstructionsIsVisible &&
+      { this.state.taskInstructionsIsVisibleObj[task.uniqueId] &&
       <React.Fragment key={`${task.uniqueId}instructions_text`} >
         <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
         <dd>{this.taskInstructionsWithLineBreaks(task)}</dd>
@@ -185,7 +188,7 @@ class TaskRows extends React.PureComponent {
         linkStyling
         styling={css({ padding: '0' })}
         id={task.uniqueId}
-        name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
+        name={this.state.taskInstructionsIsVisibleObj[task.uniqueId] ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
           COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
         onClick={() => this.toggleTaskInstructionsVisibility(task)} />
     </div>;
@@ -205,9 +208,6 @@ class TaskRows extends React.PureComponent {
       timeline
     } = this.props;
 
-    console.log('--TaskRows--');
-    console.log(this);
-
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
         <td {...taskTimeTimelineContainerStyling}></td>
@@ -225,13 +225,15 @@ class TaskRows extends React.PureComponent {
               { this.assignedOnListItem(task) }
               { this.dueDateListItem(task) }
               { this.daysWaitingListItem(task) }
+              { `UniqueID: ${task.uniqueId}` }
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
             task.completedOn ? '' : greyDotTimelineStyling].join(' ')} >
             { task.completedOn ? <GreenCheckmark /> : <GrayDot /> }
-            { (index < taskList.length - 1) && <div {...grayLineStyling}
-              className={timeline ? grayLineTimelineStyling : ''} /> }
+            { (index < taskList.length) && <div {...grayLineStyling}
+              className={[timeline ? grayLineTimelineStyling : '',
+                task.completedOn ? '' : greyDotAndlineStyling].join(' ')} /> }
           </td>
           <td {...taskInformationContainerStyling}
             className={timeline ? taskInformationTimelineContainerStyling : ''}>
@@ -253,8 +255,7 @@ class TaskRows extends React.PureComponent {
           { appeal.form9Date ? moment(appeal.form9Date).format('MM/DD/YYYY') : null }
         </td>
         <td {...taskInfoWithIconTimelineContainer} className={appeal.form9Date ? '' : greyDotStyling}>
-          { appeal.form9Date ? <GreenCheckmark /> : <GrayDot /> }
-          <div {...grayLineTimelineStyling} /></td>
+          { appeal.form9Date ? <GreenCheckmark /> : <GrayDot /> } <div {...grayLineTimelineStyling} /></td>
         <td {...taskInformationTimelineContainerStyling}>
           { appeal.form9Date ? COPY.CASE_TIMELINE_FORM_9_RECEIVED : COPY.CASE_TIMELINE_FORM_9_PENDING}
         </td>
@@ -264,7 +265,7 @@ class TaskRows extends React.PureComponent {
           { appeal.receiptDate ? moment(appeal.receiptDate).format('MM/DD/YYYY') : null }
         </td>
         <td {...taskInfoWithIconTimelineContainer} className={appeal.receiptDate ? '' : greyDotStyling}>
-          { appeal.receiptDate ? <GreenCheckmark /> : <GrayDot /> } </td>
+          { appeal.receiptDate ? <GreenCheckmark /> : <GrayDot /> }</td>
         <td {...taskInformationTimelineContainerStyling}>
           { appeal.receiptDate ? COPY.CASE_TIMELINE_NOD_RECEIVED : COPY.CASE_TIMELINE_NOD_PENDING } <br />
         </td>
@@ -273,7 +274,6 @@ class TaskRows extends React.PureComponent {
   }
 }
 
-// const mapStateToProps = () => {
 const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
