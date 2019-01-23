@@ -24,7 +24,9 @@ type Props = Params & {|
 
 class NewFile extends React.Component<Props> {
   componentDidMount = () => {
-    this.props.getNewDocuments(this.props.externalId, this.props.cached);
+    if (!this.props.docsLoading) {
+      this.props.getNewDocuments(this.props.externalId, this.props.cached);
+    }
   }
 
   render = () => {
