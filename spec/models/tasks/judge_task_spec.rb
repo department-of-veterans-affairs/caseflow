@@ -146,10 +146,10 @@ describe JudgeTask do
     end
   end
 
-  describe ".assign_judge_tasks_for_root_tasks" do
+  describe ".create_many_from_root_tasks" do
     let!(:root_tasks) { [] }
 
-    subject { JudgeTask.assign_judge_tasks_for_root_tasks(root_tasks) }
+    subject { JudgeTask.create_many_from_root_tasks(root_tasks) }
 
     before do
       stub_const("Constants::RampJudges::USERS", test: [judge.css_id, judge2.css_id])
