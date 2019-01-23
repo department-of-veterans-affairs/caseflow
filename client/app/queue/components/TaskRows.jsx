@@ -51,7 +51,7 @@ const taskTimeTimelineContainerStyling = css(taskContainerStyling, { width: '40%
 const taskInformationTimelineContainerStyling =
   css(taskInformationContainerStyling, { align: 'left',
     width: '50%',
-    maxWidth: '230px' });
+    maxWidth: '250px' });
 const taskInfoWithIconTimelineContainer =
   css(taskInfoWithIconContainer, { textAlign: 'left',
     marginLeft: '5px',
