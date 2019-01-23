@@ -203,7 +203,16 @@ describe HigherLevelReviewIntake do
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago,
         legacy_opt_in_approved: legacy_opt_in_approved,
-        benefit_type: benefit_type
+        benefit_type: benefit_type,
+        veteran_is_not_claimant: false
+      )
+    end
+
+    let!(:claimant) do
+      Claimant.create!(
+        review_request: detail,
+        participant_id: veteran.participant_id,
+        payee_code: "00"
       )
     end
 
@@ -220,7 +229,7 @@ describe HigherLevelReviewIntake do
       expect(ratings_end_product_establishment.established_at).to eq(Time.zone.now)
 
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-        claim_hash: {
+        claim_hash: hash_including(
           benefit_type_code: "1",
           payee_code: "00",
           predischarge: false,
@@ -232,8 +241,8 @@ describe HigherLevelReviewIntake do
           end_product_code: "030HLRR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false,
-          claimant_participant_id: nil
-        },
+          claimant_participant_id: veteran.participant_id
+        ),
         veteran_hash: intake.veteran.to_vbms_hash,
         user: user
       )

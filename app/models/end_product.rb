@@ -95,10 +95,6 @@ class EndProduct
     @benefit_type_code ||= Veteran::BENEFIT_TYPE_CODE_LIVE
   end
 
-  # def payee_code
-  #   @payee_code ||= "00"
-  # end
-
   def claimant_participant_id
     @claimant_participant_id ||= nil
   end
@@ -245,7 +241,8 @@ class EndProduct
         modifier: hash[:end_product_modifier],
         suppress_acknowledgement_letter: hash[:suppress_acknowledgement_letter],
         gulf_war_registry: hash[:gulf_war_registry],
-        station_of_jurisdiction: hash[:station_of_jurisdiction]
+        station_of_jurisdiction: hash[:station_of_jurisdiction],
+        payee_code: hash[:payee_code] || "00"
       )
     end
 
