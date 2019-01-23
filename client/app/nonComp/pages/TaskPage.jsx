@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import BoardGrant from '../components/BoardGrant';
 import Disposition from '../components/Disposition';
 import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
-import { formatDate } from '../../util/DateUtil';
+import { formatDate, formatDateStr } from '../../util/DateUtil';
 import { longFormNameFromKey } from '../util';
 import { completeTask, taskUpdateDefaultPage } from '../actions/task';
 import { ErrorAlert } from '../components/Alerts';
@@ -77,7 +77,7 @@ class TaskPageUnconnected extends React.PureComponent {
           </div>
           <div className="usa-width-one-third">
             <div className="cf-receipt-date cf-txt-r">
-              <div><strong>Form receipt date</strong> {formatDate(appeal.receiptDate)}</div>
+              <div><strong>Form receipt date</strong> {formatDateStr(appeal.receiptDate)}</div>
             </div>
           </div>
         </div>
