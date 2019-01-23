@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Button from '../../components/Button';
 import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import Checkbox from '../../components/Checkbox';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import { formatRequestIssuesWithDecisionIssues } from '../util';
 
 class BoardGrantIssue extends React.PureComponent {
@@ -14,7 +14,7 @@ class BoardGrantIssue extends React.PureComponent {
       index
     } = this.props;
 
-    let issueDate = formatDate(issue.decisionIssue.promulgationDate);
+    let issueDate = formatDateStr(issue.decisionIssue.promulgationDate);
 
     return <div className="cf-decision">
       <hr />
