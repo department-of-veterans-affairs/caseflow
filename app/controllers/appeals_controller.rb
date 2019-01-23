@@ -36,11 +36,11 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    if params[:cached] && params[:cached] == "true"
+    if params[:cached] == "true"
       render json: { document_count: appeal.number_of_documents_from_caseflow }
-    else
-      render json: { document_count: appeal.number_of_documents }
+      return
     end
+    render json: { document_count: appeal.number_of_documents }
   rescue StandardError => e
     handle_non_critical_error("document_count", e)
   end
