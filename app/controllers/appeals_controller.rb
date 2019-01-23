@@ -42,7 +42,11 @@ class AppealsController < ApplicationController
   end
 
   def new_documents
-    render json: { new_documents: appeal.new_documents_from_caseflow(current_user) }
+    if params[:cached] == "true"
+      render json: { new_documents: appeal.new_documents_from_caseflow(current_user) }
+      return
+    end
+    render json: { new_documents: appeal.new_documents_for_user(current_user) }
   rescue StandardError => e
     handle_non_critical_error("new_documents", e)
   end

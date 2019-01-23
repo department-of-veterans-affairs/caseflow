@@ -9,10 +9,12 @@ import type { State } from '../types/state';
 import COPY from '../../../COPY.json';
 
 type Params = {|
-  externalAppealId: string
+  externalAppealId: string,
+  cached: ?boolean
 |};
 
 type Props = Params & {|
+  cached: ?boolean,
   externalId: string,
   docs: Array<Object>,
   docsLoading: ?boolean,
@@ -22,9 +24,7 @@ type Props = Params & {|
 
 class NewFile extends React.Component<Props> {
   componentDidMount = () => {
-    if (!this.props.docs && !this.props.docsLoading) {
-      this.props.getNewDocuments(this.props.externalId);
-    }
+    this.props.getNewDocuments(this.props.externalId, this.props.cached);
   }
 
   render = () => {
@@ -35,7 +35,6 @@ class NewFile extends React.Component<Props> {
     }
 
     return null;
-
   }
 }
 
@@ -43,6 +42,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   const documentObject = state.queue.newDocsForAppeal[ownProps.externalAppealId];
 
   return {
+    cached: ownProps.cached,
     externalId: ownProps.externalAppealId,
     docs: documentObject ? documentObject.docs : null,
     docsLoading: documentObject ? documentObject.loading : false,
