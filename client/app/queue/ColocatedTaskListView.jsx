@@ -25,6 +25,7 @@ import {
 
 import Alert from '../components/Alert';
 import TabWindow from '../components/TabWindow';
+import NewFileAll from './components/NewFileAll';
 
 import type { TaskWithAppeal } from './types/models';
 import type { State, UiStateMessage } from './types/state';
@@ -70,7 +71,8 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
       },
       {
         label: sprintf(COPY.COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE, numPendingTasks),
-        page: <PendingTasksTab />
+        page: <PendingTasksTab />,
+        icon: <NewFileIcon />
       },
       {
         label: sprintf(COPY.QUEUE_PAGE_ON_HOLD_TAB_TITLE, numOnHoldTasks),
@@ -109,6 +111,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView): React.ComponentType<Params>);
+
+const NewFileIcon = connect(
+  (state: State) => ({ tasks: pendingTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => <NewFileAll tasks={props.tasks} />);
 
 const NewTasksTab = connect(
   (state: State) => ({ tasks: newTasksByAssigneeCssIdSelector(state) }))(
