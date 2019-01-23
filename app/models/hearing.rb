@@ -4,6 +4,8 @@ class Hearing < ApplicationRecord
   belongs_to :judge, class_name: "User"
   has_one :transcription
   has_many :hearing_views, as: :hearing
+  has_many :hearing_issue_notes
+  accepts_nested_attributes_for :hearing_issue_notes
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
@@ -19,6 +21,8 @@ class Hearing < ApplicationRecord
   delegate :veteran_file_number, to: :appeal
   delegate :docket_number, to: :appeal
   delegate :docket_name, to: :appeal
+  delegate :request_issues, to: :appeal
+  delegate :decision_issues, to: :appeal
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
 
@@ -55,6 +59,13 @@ class Hearing < ApplicationRecord
       min: scheduled_time.min,
       sec: scheduled_time.sec
     )
+  end
+
+  def worksheet_issues
+    request_issues.map do |request_issue|
+      HearingIssueNote.select("*").joins(:request_issue)
+        .find_or_create_by(request_issue: request_issue, hearing: self).to_hash
+    end
   end
 
   #:nocov:
@@ -101,7 +112,6 @@ class Hearing < ApplicationRecord
         :regional_office_name,
         :regional_office_timezone,
         :readable_request_type,
-        :judge,
         :scheduled_for,
         :veteran_age,
         :veteran_gender,
@@ -115,13 +125,16 @@ class Hearing < ApplicationRecord
         :docket_name,
         :military_service,
         :current_issue_count,
-        :appeal_representative_name
+        :appeal_representative_name,
+        :worksheet_issues
       ]
     )
   end
   # rubocop:enable Metrics/MethodLength
 
   def to_hash_for_worksheet(current_user_id)
-    to_hash(current_user_id)
+    serializable_hash(
+      methods: [:judge]
+    ).merge(to_hash(current_user_id))
   end
 end

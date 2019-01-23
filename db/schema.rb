@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190117151019) do
+
+ActiveRecord::Schema.define(version: 20190118155859) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -463,6 +464,19 @@ ActiveRecord::Schema.define(version: 20190117151019) do
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
 
+  create_table "hearing_issue_notes", force: :cascade do |t|
+    t.boolean "allow", default: false
+    t.boolean "deny", default: false
+    t.boolean "dismiss", default: false
+    t.bigint "hearing_id", null: false
+    t.boolean "remand", default: false
+    t.boolean "reopen", default: false
+    t.bigint "request_issue_id", null: false
+    t.string "worksheet_notes"
+    t.index ["hearing_id"], name: "index_hearing_issue_notes_on_hearing_id"
+    t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "hearing_id", null: false
@@ -727,6 +741,7 @@ ActiveRecord::Schema.define(version: 20190117151019) do
     t.integer "contested_decision_issue_id"
     t.string "contested_issue_description"
     t.string "contested_rating_issue_diagnostic_code"
+    t.string "contested_rating_issue_disability_code"
     t.string "contested_rating_issue_profile_date"
     t.string "contested_rating_issue_reference_id"
     t.datetime "created_at"
