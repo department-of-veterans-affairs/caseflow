@@ -199,6 +199,7 @@ const formatRatingRequestIssues = (state) => {
         rating_issue_reference_id: issue.ratingIssueReferenceId,
         decision_text: issue.description,
         rating_issue_profile_date: issue.ratingIssueProfileDate,
+        rating_issue_disability_code: issue.ratingIssueDisabilityCode,
         notes: issue.notes,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
