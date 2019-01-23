@@ -1,0 +1,10 @@
+{
+    "verify_poa": "Verify power of attorney",
+    "incarcerated_veteran": "Veteran is incarcerated",
+    "contested_claimant": "Contested claimant issue",
+    "verify_address": "Verify Address",
+    "missing_forms": "Missing forms",
+    "foia_privacy_request": "FOIA/Privacy request",
+    "foreign_veteran": "Foreign Veteran case",
+    "other": "Other"
+}

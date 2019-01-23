@@ -12,6 +12,7 @@ class TasksController < ApplicationController
     JudgeAssignTask: JudgeAssignTask,
     JudgeQualityReviewTask: JudgeQualityReviewTask,
     ScheduleHearingTask: ScheduleHearingTask,
+    HearingAdminActionTask: HearingAdminActionTask,
     MailTask: MailTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze

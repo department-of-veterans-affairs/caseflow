@@ -36,15 +36,17 @@ class ScheduleHearingTask < GenericTask
   def update_from_params(params, current_user)
     verify_user_can_update!(current_user)
 
-    task_payloads = params.delete(:business_payloads)
+    if params[:status] == Constants.TASK_STATUSES.completed
+      task_payloads = params.delete(:business_payloads)
 
-    hearing_date = Time.use_zone("Eastern Time (US & Canada)") do
-      Time.zone.parse(task_payloads[:values][:hearing_date])
+      hearing_date = Time.use_zone("Eastern Time (US & Canada)") do
+        Time.zone.parse(task_payloads[:values][:hearing_date])
+      end
+      hearing_day_id = task_payloads[:values][:hearing_pkseq]
+      hearing_type = task_payloads[:values][:hearing_type]
+
+      update_hearing(hearing_day_id, hearing_date, hearing_type)
     end
-    hearing_day_id = task_payloads[:values][:hearing_pkseq]
-    hearing_type = task_payloads[:values][:hearing_type]
-
-    update_hearing(hearing_day_id, hearing_date, hearing_type) if params[:status] == Constants.TASK_STATUSES.completed
 
     super(params, current_user)
   end
@@ -60,11 +62,21 @@ class ScheduleHearingTask < GenericTask
   def available_actions(user)
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
       return [
-        Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h
+        Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
       ]
     end
 
     []
+  end
+
+  def add_admin_action_data
+    {
+      selected: nil,
+      options: Constants::HEARING_ADMIN_ACTIONS,
+      type: HearingAdminActionTask.name
+    }
   end
 
   private

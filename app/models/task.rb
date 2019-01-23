@@ -201,6 +201,14 @@ class Task < ApplicationRecord
     { options: MailTask.subclass_routing_options }
   end
 
+  def assign_to_self_data
+    {
+      selected: user,
+      options: users_to_options([user]),
+      type: type
+    }
+  end
+
   def assign_to_user_data
     users = if assigned_to.is_a?(Organization)
               assigned_to.users
@@ -256,7 +264,7 @@ class Task < ApplicationRecord
   def add_admin_action_data
     {
       selected: nil,
-      options: nil,
+      options: Constants::CO_LOCATED_ADMIN_ACTIONS,
       type: ColocatedTask.name
     }
   end
