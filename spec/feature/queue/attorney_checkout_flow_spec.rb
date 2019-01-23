@@ -226,14 +226,13 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(page).to have_content("Added to 2 issues")
 
-
         # Test deleting a decision issue
         all("button", text: "Delete")[2].click
 
         expect(page).to have_content("Are you sure you want to delete this decision?")
 
         all("button", text: "Yes, delete decision", count: 1)[0].click
-      
+
         expect(page.find_all(".decision-issue").count).to eq(2)
 
         # Re add the third decision issue (that's allowed)
@@ -254,7 +253,6 @@ RSpec.feature "Attorney checkout flow" do
         click_on "Save"
 
         expect(page).to have_content("Added to 2 issues")
-        
 
         # Test removing linked issue
         all("button", text: "Edit", count: 4)[2].click
