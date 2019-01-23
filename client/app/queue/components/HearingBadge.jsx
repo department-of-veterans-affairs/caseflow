@@ -31,7 +31,7 @@ const listStyling = css({
 });
 
 const HearingBadge = ({ hearing }) => {
-  if (!hearing) {
+  if (!hearing || hearing.disposition !== 'held') {
     return null;
   }
 
