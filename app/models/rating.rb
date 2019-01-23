@@ -54,13 +54,13 @@ class Rating
   end
 
   def create_disability_codes(rating_profile)
-    return [] unless rating_profile[:disabilities]
+    return {} unless rating_profile[:disabilities]
 
     rating_profile[:disabilities].reduce({}) do |disability_map, disability|
-      disability_time = Time.parse(disability[:dis_dt])
+      disability_time = Time.find_zone("UTC").parse(disability[:dis_dt])
 
-      if (disability_map[disability[:dis_sn]].nil? ||
-        disability_map[disability[:dis_sn]][:date] < disability_time)
+      if disability_map[disability[:dis_sn]].nil? ||
+         disability_map[disability[:dis_sn]][:date] < disability_time
         disability_map[disability[:dis_sn]] = {
           code: disability[:disability_evaluations][:dgnstc_tc],
           date: disability_time

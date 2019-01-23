@@ -43,57 +43,37 @@ describe Rating do
   end
 
   context "with disabilities" do
-    # todo: clean up test data setup
     let(:participant_id) { "disability_id" }
-
-    let(:issues) do
-      [
-        {
-          participant_id: participant_id,
-          reference_id: "Issue1",
-          decision_text: "Decision1",
-          promulgation_date: promulgation_date,
-          profile_date: profile_date,
-          contention_reference_id: nil,
-          ramp_claim_id: nil,
-          title_of_active_review: nil,
-          rba_contentions_data: [{ prfil_dt: profile_date, cntntn_id: nil }],
-          dis_sn: "rating1",
-        },
-        {
-          participant_id: participant_id,
-          reference_id: "Issue2",
-          decision_text: "Decision2",
-          promulgation_date: promulgation_date,
-          profile_date: profile_date,
-          contention_reference_id: nil,
-          ramp_claim_id: nil,
-          title_of_active_review: nil,
-          rba_contentions_data: [{ prfil_dt: profile_date, cntntn_id: nil }]
-        }
-      ]
-    end
-
     let(:rating) do
       Generators::Rating.build(
-        issues: issues,
         promulgation_date: promulgation_date,
         profile_date: profile_date,
         participant_id: participant_id,
         associated_claims: associated_claims,
+        issues: [
+          {
+            reference_id: "Issue1",
+            decision_text: "Decision1",
+            dis_sn: "rating1"
+          },
+          {
+            reference_id: "Issue2",
+            decision_text: "Decision2",
+          }
+        ],
         disabilities: [
           {
             dis_dt: "2018-07-17T08:31:43.000-05:00",
             dis_sn: "rating1",
             disability_evaluations: {
-              dgnstc_tc: "original_code",
+              dgnstc_tc: "original_code"
             }
           },
           {
             dis_dt: "2019-07-17T08:31:43.000-05:00",
             dis_sn: "rating1",
             disability_evaluations: {
-              dgnstc_tc: "later_code",
+              dgnstc_tc: "later_code"
             }
           }
         ]
@@ -101,7 +81,7 @@ describe Rating do
     end
     subject { rating.issues }
 
-    it "returns issues with ratings", :focus => true do
+    it "returns issues with ratings" do
       expect(subject.count).to eq(2)
 
       expect(subject.first).to have_attributes(
