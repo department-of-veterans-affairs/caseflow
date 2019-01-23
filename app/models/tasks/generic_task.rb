@@ -51,7 +51,7 @@ class GenericTask < Task
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    update!(status: params[:status]) if params[:status]
+    update!(params)
 
     [self]
   end
@@ -102,7 +102,6 @@ class GenericTask < Task
         parent.update!(status: Constants.TASK_STATUSES.on_hold)
 
         Task.create!(
-          action: params[:action],
           type: name,
           appeal: parent.appeal,
           assigned_by_id: child_assigned_by_id(parent, current_user),

@@ -119,7 +119,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
         return {
           label: action.actionLabel,
           instructions: action.instructions,
-          type: taskActionData(this.props).type,
+          type: taskActionData(this.props).type || action.actionLabel,
           external_id: appeal.externalId,
           parent_id: task.isLegacy ? null : task.taskId
         };
@@ -137,7 +137,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     const msgTitle = COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE;
     const msgSubject = pluralize(COPY.ADD_COLOCATED_TASK_CONFIRMATION_SUBJECT, this.state.adminActions.length);
     const msgActions = this.state.adminActions.map((action) =>
-      taskActionData(this.props).options[action.actionLabel]).join(', ');
+      taskActionData(this.props).options.find((option) => option.value === action.actionLabel)).join(', ');
     const msgDisplayCount = this.state.adminActions.length === 1 ? 'an' : this.state.adminActions.length;
     const successMsg = {
       title: sprintf(msgTitle, msgDisplayCount, msgSubject, msgActions),
@@ -166,10 +166,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
           errorMessage={highlightFormItems && !actionLabel ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
           placeholder="Select an action type"
-          options={_.map(taskActionData(this.props).options, (label: string, value: string) => ({
-            label,
-            value
-          }))}
+          options={taskActionData(this.props).options}
           onChange={(option) => option && this.updateAdminActionField(index, 'actionLabel', option.value)}
           value={actionLabel} />
       </div>
