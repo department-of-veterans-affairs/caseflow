@@ -17,26 +17,31 @@ const documentCountStyling = css({
 
 class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
-    const appeal = this.props.appeal;
+    this.props.setAppealDocCount(this.props.externalId, null);
+
+    const {
+      appeal,
+      cached
+    } = this.props;
 
     if (appeal.isPaperCase) {
       return;
     }
 
-    if (!this.props.docCountForAppeal) {
-      const requestOptions = {
-        withCredentials: true,
-        timeout: { response: 5 * 60 * 1000 }
-      };
+    const requestOptions = {
+      withCredentials: true,
+      timeout: { response: 5 * 60 * 1000 }
+    };
 
-      ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
-        const resp = JSON.parse(response.text);
+    const endpoint = `document_count${cached ? '?cached' : ''}`;
 
-        this.props.setAppealDocCount(this.props.externalId, resp.document_count);
-      }, (error) => {
-        this.props.errorFetchingDocumentCount(this.props.externalId, error);
-      });
-    }
+    ApiUtil.get(`/appeals/${this.props.externalId}/${endpoint}`, requestOptions).then((response) => {
+      const resp = JSON.parse(response.text);
+
+      this.props.setAppealDocCount(this.props.externalId, resp.document_count);
+    }, (error) => {
+      this.props.errorFetchingDocumentCount(this.props.externalId, error);
+    });
   }
 
   render = () => {
@@ -54,7 +59,8 @@ class AppealDocumentCount extends React.PureComponent {
 
 AppealDocumentCount.propTypes = {
   appeal: PropTypes.object.isRequired,
-  loadingText: PropTypes.bool
+  loadingText: PropTypes.bool,
+  cached: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {
