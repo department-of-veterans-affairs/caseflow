@@ -57,7 +57,7 @@ class Rating
     return {} unless rating_profile[:disabilities]
 
     rating_profile[:disabilities].reduce({}) do |disability_map, disability|
-      disability_time = Time.find_zone("UTC").parse(disability[:dis_dt])
+      disability_time = disability[:dis_dt]
 
       if disability_map[disability[:dis_sn]].nil? ||
          disability_map[disability[:dis_sn]][:date] < disability_time
