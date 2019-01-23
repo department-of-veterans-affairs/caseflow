@@ -58,7 +58,7 @@ describe Rating do
           },
           {
             reference_id: "Issue2",
-            decision_text: "Decision2",
+            decision_text: "Decision2"
           }
         ],
         disabilities: [

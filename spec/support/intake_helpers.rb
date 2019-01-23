@@ -397,6 +397,7 @@ module IntakeHelpers
                   reject_reason: "Converted or Backfilled Rating - no promulgated ratings found")
   end
 
+  # rubocop:disable Metrics/MethodLength
   def generate_ratings_with_disabilities(
     veteran,
     promulgation_date,
@@ -440,6 +441,7 @@ module IntakeHelpers
       disabilities: disabilities
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   def save_and_check_request_issues_with_disability_codes(form_name, decision_review)
     click_intake_add_issue
