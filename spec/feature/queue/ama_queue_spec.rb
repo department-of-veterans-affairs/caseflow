@@ -569,10 +569,9 @@ RSpec.feature "AmaQueue" do
     before do
       ["Elaine Abitong", "Byron Acero", "Jan Antonioni"].each do |attorney_name|
         another_attorney_on_the_team = FactoryBot.create(
-          :staff,
-          :attorney_role,
-          user: FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: attorney_name)
+          :user, station_id: User::BOARD_STATION_ID, full_name: attorney_name
         )
+        FactoryBot.create(:staff, :attorney_role, user: another_attorney_on_the_team)
         OrganizationsUser.add_user_to_organization(another_attorney_on_the_team, judgeteam)
       end
 
