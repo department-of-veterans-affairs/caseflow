@@ -364,9 +364,12 @@ class EndProductEstablishment < ApplicationRecord
       status = ep.status_type&.to_s || status_type
     else
       code = ""
-      status = source.try(:establishment_error) ?
-        COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED :
-        COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
+
+      status = if source.try(:establishment_error)
+                 COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED
+               else
+                 COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
+               end
     end
 
     {

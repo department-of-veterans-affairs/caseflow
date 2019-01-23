@@ -123,7 +123,9 @@ RSpec.feature "Search" do
 
               context "when the EPs have not been established" do
                 it "shows that the EP is establishing if it has not been established" do
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content(COPY::OTHER_REVIEWS_TABLE_ESTABLISHING)
+                  expect(find(".cf-other-reviews-table > tbody")).to have_content(
+                    COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
+                  )
                   expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Canceled")
                   expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Cleared")
                 end
@@ -136,7 +138,9 @@ RSpec.feature "Search" do
                 end
 
                 it "shows that the EP has an establishment error" do
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content(COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED)
+                  expect(find(".cf-other-reviews-table > tbody")).to have_content(
+                    COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED
+                  )
                 end
               end
 
