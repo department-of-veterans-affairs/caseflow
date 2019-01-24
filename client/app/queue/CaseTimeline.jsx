@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import type { State } from './types/state';
-import { allCompleteTasksForAppeal, allTasksForTimeline } from './selectors';
+import { allCompleteTasksForAppeal } from './selectors';
 import COPY from '../../COPY.json';
 import TaskRows from './components/TaskRows';
 import _ from 'lodash';
@@ -20,7 +20,7 @@ class CaseTimeline extends React.PureComponent {
       {COPY.CASE_TIMELINE_HEADER}
       <table>
         <tbody>
-          { <TaskRows appeal={appeal} taskList={this.props.timelineTasks} timeline /> }
+          { <TaskRows appeal={appeal} taskList={this.props.completedTasks} timeline /> }
         </tbody>
       </table>
     </React.Fragment>;
@@ -28,15 +28,12 @@ class CaseTimeline extends React.PureComponent {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
-
   let completedTasks = allCompleteTasksForAppeal(state, { appealId: ownProps.appeal.externalId });
 
   completedTasks = _.orderBy(completedTasks, ['completedOn'], ['desc']);
 
   return {
-    completedTasks,
-    timelineTasks: allTasksForTimeline(state, { appealId: ownProps.appeal.externalId })
-
+    completedTasks
   };
 };
 

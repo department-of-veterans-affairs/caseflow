@@ -260,7 +260,8 @@ class TaskRows extends React.PureComponent {
               { this.taskInstructionsListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
-          { !timeline && <td {...taskActionsContainerStyling}> { this.showActionsListItem(task, appeal) } </td> }
+          { !timeline && <td {...taskActionsContainerStyling}>
+            { task.availableActions.length > 0 && this.showActionsListItem(task, appeal) } </td> }
         </tr>
       ) }
       { timeline && appeal.isLegacyAppeal && <tr>

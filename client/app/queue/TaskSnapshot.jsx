@@ -3,7 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
   appealWithDetailSelector,
-  nonRootActionableTasksForAppeal
+  nonRootActionableTasksForAppeal,
+  allTasksForTimeline
 } from './selectors';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
@@ -15,6 +16,7 @@ import {
   sectionHeadingStyling,
   anchorJumpLinkStyling
 } from './StickyNavContentArea';
+import _ from 'lodash';
 
 const tableStyling = css({
   width: '100%',
@@ -39,7 +41,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     } = this.props;
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
-    const tasks = this.props.tasks;
+    const tasks = this.props.tasks.concat(this.props.nonActionableTasks);
     const taskLength = tasks.length;
 
     if (taskLength) {
@@ -64,11 +66,15 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { userRole } = state.ui;
+  let nonActionableTasks = allTasksForTimeline(state, { appealId: ownProps.appealId });
+
+  nonActionableTasks = _.orderBy(nonActionableTasks, ['createdAt'], ['desc']);
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
-    tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId })
+    tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId }),
+    nonActionableTasks
   };
 };
 
