@@ -6,6 +6,7 @@ class TasksController < ApplicationController
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
+    AttorneyRewriteTask: AttorneyRewriteTask,
     AttorneyTask: AttorneyTask,
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
