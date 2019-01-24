@@ -1,4 +1,4 @@
-class SCStatusSerializer < V2::AppealSerializer
+class V2::SCStatusSerializer < V2::AppealSerializer
   type :supplemental_claim
 
   def id
