@@ -11,7 +11,7 @@ import COPY from '../../../COPY.json';
 import _ from 'lodash';
 
 type Params = {|
-  tasks: Object
+  tasks: Array<Object>
 |};
 
 type Props = Params & {|

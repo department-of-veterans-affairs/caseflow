@@ -91,6 +91,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         page: <TaskTableTab
           description={COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION}
           tasks={this.props.workableTasks}
+          includeNewDocsIcon={false}
         />
       },
       {
@@ -109,6 +110,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         page: <TaskTableTab
           description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
           tasks={this.props.completedTasks}
+          includeNewDocsIcon={false}
         />
       }
     ];
