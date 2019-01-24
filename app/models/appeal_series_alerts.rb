@@ -39,7 +39,7 @@ class AppealSeriesAlerts
         details: {
           date: hearing.scheduled_for.to_date,
           type: hearing.readable_request_type.downcase,
-          location: hearing.location
+          location: hearing.vacols_location
         }
       }
     end
