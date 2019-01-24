@@ -89,7 +89,7 @@ class DecisionReview < ApplicationRecord
         formName: veteran&.name&.formatted(:form),
         ssn: veteran&.ssn
       },
-      relationships: veteran&.relationships,
+      relationships: veteran&.relationships&.map(&:ui_hash),
       claimant: claimant_participant_id,
       veteranIsNotClaimant: veteran_is_not_claimant,
       receiptDate: receipt_date.to_formatted_s(:json_date),
@@ -266,6 +266,11 @@ class DecisionReview < ApplicationRecord
     return [] unless veteran
 
     veteran.ratings.reject { |rating| rating.issues.empty? }
+
+    # return empty list when there are no ratings
+  rescue Rating::BackfilledRatingError => e
+    Raven.capture_exception(e)
+    []
   end
 
   def ratings_cache_key

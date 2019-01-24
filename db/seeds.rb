@@ -660,6 +660,9 @@ class SeedDB
     create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, colocated, action: "translation")
     create_task_at_attorney_review(@ama_appeals[7], judge, attorney)
     create_task_at_attorney_review(@ama_appeals[8], judge, attorney)
+    create_task_at_judge_assignment(@ama_appeals[8], judge)
+    create_task_at_judge_review(@ama_appeals[8], judge, attorney)
+    create_task_at_colocated(@ama_appeals[8], judge, attorney, colocated)
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 
@@ -757,6 +760,39 @@ class SeedDB
     FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
   end
 
+  def create_ama_hearing_appeals
+    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+    notes = "Pain disorder with 100\% evaluation per examination"
+
+    FeatureToggle.enable!(:ama_auto_case_distribution)
+
+    @ama_appeals << FactoryBot.create(
+      :intaked_appeal,
+      number_of_claimants: 1,
+      veteran_file_number: "808415990",
+      docket_type: "hearing",
+      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+    )
+    @ama_appeals << FactoryBot.create(
+      :intaked_appeal,
+      number_of_claimants: 1,
+      veteran_file_number: "992190636",
+      docket_type: "hearing",
+      request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
+    )
+
+    user = User.find_by(css_id: "BVATWARNER")
+    HearingDay.create(
+      regional_office: "RO17",
+      request_type: "V",
+      scheduled_for: 5.days.from_now,
+      room: "001",
+      created_by: user,
+      updated_by: user
+    )
+    Veteran.where(file_number: %w[808415990 992190636]).update_all(closest_regional_office: "RO17")
+  end
+
   def seed
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
@@ -774,6 +810,8 @@ class SeedDB
     create_legacy_issues_eligible_for_opt_in
 
     create_higher_level_reviews_and_supplemental_claims
+
+    create_ama_hearing_appeals
 
     return if Rails.env.development?
 

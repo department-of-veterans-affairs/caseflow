@@ -83,6 +83,8 @@ feature "Higher Level Review Edit issues" do
     )
   end
 
+  let(:legacy_opt_in_approved) { false }
+
   let!(:higher_level_review) do
     HigherLevelReview.create!(
       veteran_file_number: veteran.file_number,
@@ -90,7 +92,8 @@ feature "Higher Level Review Edit issues" do
       informal_conference: false,
       same_office: false,
       benefit_type: "compensation",
-      veteran_is_not_claimant: true
+      veteran_is_not_claimant: true,
+      legacy_opt_in_approved: legacy_opt_in_approved
     )
   end
 
@@ -281,38 +284,60 @@ feature "Higher Level Review Edit issues" do
       higher_level_review.establish!
     end
 
-    it "shows the Higher-Level Review Edit page with ineligibility messages" do
-      visit "higher_level_reviews/#{ep_claim_id}/edit"
-      expect(page).to have_content(
-        "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
-      )
-      expect(page).to have_content(
-        "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
-      )
-      expect(page).to have_content(
-        "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
-      )
-      expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
-      expect(page).to have_content(
-        "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
-      )
-      expect(page).to have_content(
-        "#{eligible_ri_before_ama.contention_text} Decision date:"
-      )
-      expect(page).to have_content(
-        "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
-      )
-      expect(page).to have_content(
-        "#{ri_legacy_issue_ineligible.contention_text} #{ineligible.legacy_appeal_not_eligible}"
-      )
+    context "VACOLS issue from before AMA opted in" do
+      let!(:ri_legacy_issue_eligible) do
+        RequestIssue.create!(
+          contested_rating_issue_reference_id: "before_ama_ref_id",
+          contested_rating_issue_profile_date: rating_before_ama.profile_date,
+          review_request: higher_level_review,
+          contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
+          contention_reference_id: "12345678",
+          vacols_id: "vacols1",
+          benefit_type: "compensation",
+          vacols_sequence_id: "2"
+        )
+      end
+
+      let(:legacy_opt_in_approved) { true }
+
+      it "shows the Higher-Level Review Edit page with ineligibility messages" do
+        visit "higher_level_reviews/#{ep_claim_id}/edit"
+        expect(page).to have_content(
+          "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
+        )
+        expect(page).to have_content(
+          "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
+        )
+        expect(page).to have_content(
+          "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
+        )
+        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
+        expect(page).to have_content(
+          "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
+        )
+        expect(page).to have_content(
+          "#{eligible_ri_before_ama.contention_text} Decision date:"
+        )
+        expect(page).to have_content(
+          "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
+        )
+        expect(page).to have_content(
+          "#{ri_legacy_issue_ineligible.contention_text} #{ineligible.legacy_appeal_not_eligible}"
+        )
+        expect(page).to have_content(
+          "#{ri_legacy_issue_eligible.contention_text} Decision date:"
+        )
+      end
     end
 
     it "re-applies eligibility check on remove/re-add of ineligible issue" do
       visit "higher_level_reviews/#{ep_claim_id}/edit"
 
-      expect(page).to have_content("8 issues")
+      number_of_issues = 8
 
-      # remove and re-add each ineligible issue. when re-added, it should always be issue 8.
+      expect(page).to have_content("#{number_of_issues} issues")
+
+      # remove and re-add each ineligible issue. when re-added, it should always be last issue.
       # excludes ineligible legacy opt in issue because it requires the HLR to have that option selected
 
       # 1
@@ -331,7 +356,7 @@ feature "Higher Level Review Edit issues" do
       add_intake_rating_issue(ri_legacy_issue_not_withdrawn.contention_text)
       add_intake_rating_issue("ankylosis of hip")
 
-      expect_ineligible_issue(8)
+      expect_ineligible_issue(number_of_issues)
 
       expect(page).to have_content(
         "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
@@ -351,7 +376,7 @@ feature "Higher Level Review Edit issues" do
       add_intake_rating_issue(ri_with_previous_hlr.contention_text)
       add_intake_rating_issue("None of these match")
 
-      expect_ineligible_issue(8)
+      expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
         "#{ri_with_previous_hlr.contention_text} #{ineligible.higher_level_review_to_higher_level_review}"
       )
@@ -370,7 +395,7 @@ feature "Higher Level Review Edit issues" do
       add_intake_rating_issue(ri_in_review.contention_text)
       add_intake_rating_issue("None of these match")
 
-      expect_ineligible_issue(8)
+      expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
         "#{ri_in_review.contention_text} is ineligible because it's already under review as a Higher-Level Review"
       )
@@ -396,7 +421,7 @@ feature "Higher Level Review Edit issues" do
       add_intake_rating_issue("None of these match")
       add_untimely_exemption_response("No", "I am a nonrating exemption note")
 
-      expect_ineligible_issue(8)
+      expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
         "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
       )
@@ -415,7 +440,7 @@ feature "Higher Level Review Edit issues" do
       add_intake_rating_issue(ri_before_ama.contention_text)
       add_intake_rating_issue("None of these match")
 
-      expect_ineligible_issue(8)
+      expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
         "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
       )

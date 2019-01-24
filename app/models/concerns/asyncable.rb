@@ -5,8 +5,12 @@
 # This becomes necessary when a Job has multiple external service calls, each of
 # which may fail and cause retries beyond the "normal" retry window.
 # See ClaimReview and RequestIssuesUpdate e.g.
+
+# rubocop:disable Metrics/ModuleLength
 module Asyncable
   extend ActiveSupport::Concern
+
+  include RunAsyncable
 
   # class methods to scope queries based on class-defined columns
   # we expect 4 column types:
@@ -70,11 +74,16 @@ module Asyncable
     def expired_without_processing
       where(processed_at_column => nil)
         .where(arel_table[submitted_at_column].lteq(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
-        .order_by_oldest_submitted
     end
 
-    def run_async?
-      !Rails.env.development? && !Rails.env.test?
+    def attempted_without_being_submitted
+      where(arel_table[attempted_at_column].lteq(Time.zone.now)).where(submitted_at_column => nil)
+    end
+
+    def potentially_stuck
+      processable
+        .or(attempted_without_being_submitted)
+        .order_by_oldest_submitted
     end
   end
 
@@ -113,6 +122,10 @@ module Asyncable
     !!self[self.class.submitted_at_column]
   end
 
+  def sort_by_submitted_at
+    self[self.class.submitted_at_column] || Time.zone.now
+  end
+
   def clear_error!
     update!(self.class.error_column => nil)
   end
@@ -121,9 +134,25 @@ module Asyncable
     update!(self.class.error_column => err)
   end
 
-  private
+  def restart!
+    update!(
+      self.class.submitted_at_column => Time.zone.now,
+      self.class.processed_at_column => nil,
+      self.class.attempted_at_column => nil,
+      self.class.error_column => nil
+    )
+  end
 
-  def run_async?
-    self.class.run_async?
+  def asyncable_ui_hash
+    {
+      klass: self.class.to_s,
+      id: id,
+      submitted_at: self[self.class.submitted_at_column],
+      attempted_at: self[self.class.attempted_at_column],
+      processed_at: self[self.class.processed_at_column],
+      error: self[self.class.error_column],
+      veteran_file_number: try(:veteran).try(:file_number)
+    }
   end
 end
+# rubocop:enable Metrics/ModuleLength

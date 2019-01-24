@@ -88,6 +88,17 @@ feature "Higher-Level Review" do
     )
   end
 
+  let!(:before_ama_rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: DecisionReview.ama_activation_date - 5.days,
+      profile_date: DecisionReview.ama_activation_date - 10.days,
+      issues: [
+        { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
+      ]
+    )
+  end
+
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -182,7 +193,7 @@ feature "Higher-Level Review" do
     click_intake_continue
 
     expect(page).to have_content(
-      "add them in VBMS, then refresh this page. Please select an option."
+      "If you do not see the claimant in the options below, and you have access, "
     )
     expect(page).to have_content(
       "What is the payee code for this claimant? Please select an option."
@@ -548,6 +559,46 @@ feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
+  scenario "intake can still be completed when ratings are backfilled" do
+    mock_backfilled_rating_response
+    start_higher_level_review(veteran_no_ratings)
+
+    visit "/intake"
+    click_intake_continue
+    click_intake_add_issue
+
+    # expect the rating modal to be skipped
+    expect(page).to have_content("Does issue 1 match any of these issue categories?")
+    add_intake_nonrating_issue(
+      category: "Active Duty Adjustments",
+      description: "Description for Active Duty Adjustments",
+      date: "04/19/2018"
+    )
+
+    click_intake_finish
+    expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+  end
+
+  context "ratings with disabiliity codes" do
+    let(:disabiliity_receive_date) { receipt_date + 2.days }
+    let(:disability_profile_date) { profile_date - 1.day }
+    let!(:ratings_with_disability_codes) do
+      generate_ratings_with_disabilities(veteran,
+                                         disabiliity_receive_date,
+                                         disability_profile_date)
+    end
+
+    scenario "saves disability codes" do
+      hlr, = start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      save_and_check_request_issues_with_disability_codes(
+        Constants.INTAKE_FORM_NAMES.higher_level_review,
+        hlr
+      )
+    end
+  end
+
   context "Add / Remove Issues page" do
     let(:higher_level_review_reference_id) { "hlr123" }
     let(:supplemental_claim_reference_id) { "sc123" }
@@ -589,17 +640,6 @@ feature "Higher-Level Review" do
         profile_date: receipt_date - 450.days,
         issues: [
           { reference_id: old_reference_id, decision_text: "Really old injury" }
-        ]
-      )
-    end
-
-    let!(:before_ama_rating) do
-      Generators::Rating.build(
-        participant_id: veteran.participant_id,
-        promulgation_date: DecisionReview.ama_activation_date - 5.days,
-        profile_date: DecisionReview.ama_activation_date - 10.days,
-        issues: [
-          { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
         ]
       )
     end
@@ -1266,6 +1306,17 @@ feature "Higher-Level Review" do
             "#{intake_constants.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
           )
 
+          # add before_ama ratings
+          click_intake_add_issue
+          add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+          add_intake_rating_issue("limitation of thigh motion (extension)")
+          add_untimely_exemption_response("Yes")
+
+          expect(page).to have_content("Non-RAMP Issue before AMA Activation")
+          expect(page).to_not have_content(
+            "Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
+          )
+
           # add ineligible legacy issue (already opted-in)
           click_intake_add_issue
           add_intake_rating_issue("Looks like a VACOLS issue")
@@ -1291,7 +1342,7 @@ feature "Higher-Level Review" do
 
           expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
 
-          expect(LegacyIssueOptin.all.count).to eq(1)
+          expect(LegacyIssueOptin.all.count).to eq(2)
 
           li_optin = LegacyIssueOptin.first
 

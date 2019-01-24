@@ -112,7 +112,7 @@ class RegionalOffice
     timezone: "America/New_York",
     hold_hearings: true,
     facility_locator_id: "vba_405",
-    alternate_locations: nil },
+    alternate_locations: ["vba_373"] },
     "RO06" =>
   { label: "New York City regional office",
     city: "New York",
@@ -176,6 +176,14 @@ class RegionalOffice
     timezone: "America/New_York",
     hold_hearings: true,
     facility_locator_id: "vba_314",
+    alternate_locations: nil },
+    "C" =>
+  { label: "Central",
+    city: "Washington",
+    state: "DC",
+    timezone: "America/New_York",
+    hold_hearings: false,
+    facility_locator_id: "vba_372",
     alternate_locations: nil },
     "RO15" =>
   { label: "Huntington regional office",
@@ -465,7 +473,6 @@ class RegionalOffice
     alternate_locations: %w[vha_663GC
                             vha_663GE
                             vba_348
-                            vha_663GD
                             vha_668
                             vha_687
                             vc_0523V] },
@@ -490,7 +497,6 @@ class RegionalOffice
                             vha_692GA
                             vha_687GC
                             vha_653GA
-                            vha_653
                             vba_346
                             vha_692] },
     "RO49" =>

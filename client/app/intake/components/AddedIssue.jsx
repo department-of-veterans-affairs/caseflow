@@ -61,14 +61,14 @@ class AddedIssue extends React.PureComponent {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.appeal_to_higher_level_review;
     } else if (formType === 'appeal' && issue.sourceReviewType === 'Appeal') {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.appeal_to_appeal;
-    } else if (issue.beforeAma) {
-      errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
     } else if (issue.vacolsId) {
       if (!legacyOptInApproved) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn;
-      } else if (!issue.eligibleForSocOptIn) {
+      } else if (issue.eligibleForSocOptIn === false) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible;
       }
+    } else if (issue.beforeAma) {
+      errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
     }
 
     if (errorMsg !== '') {
