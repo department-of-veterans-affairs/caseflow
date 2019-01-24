@@ -27,6 +27,11 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 
 import type { TaskWithAppeal } from '../types/models';
 
+import { toggleDropdownFilterVisibility } from '../../components/common/actions';
+import { clearTagFilters, clearCategoryFilters,
+  setTagFilter, setCategoryFilter
+} from '../../reader/DocumentList/DocumentListActions';
+
 type Params = {|
   includeHearingBadge?: boolean,
   includeSelect?: boolean,
@@ -156,6 +161,14 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseTypeColumn = () => {
     return this.props.includeType ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
+      enableFilter: true,
+      tableData: this.props.tasks,
+      columnName: 'appeal.caseType',
+      toggleDropdownFilterVisibility: () => this.props.toggleDropdownFilterVisibility('caseType'),
+      isDropdownFilterOpen: this.props.isDropdownFilterOpen.caseType,
+      anyFiltersAreSet: true,
+      label: 'Filter by type',
+      valueName: 'caseType',
       valueFunction: (task: TaskWithAppeal) => this.taskHasDASRecord(task) ?
         renderAppealType(task.appeal) :
         <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
@@ -349,13 +362,15 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
+  isDropdownFilterOpen: state.queue.isDropdownFilterOpen,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   userRole: state.ui.userRole
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    setSelectionOfTaskOfUser
+    setSelectionOfTaskOfUser,
+    toggleDropdownFilterVisibility
   }, dispatch)
 );
 

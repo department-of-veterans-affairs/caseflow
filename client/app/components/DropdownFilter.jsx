@@ -28,17 +28,12 @@ class DropdownFilter extends React.PureComponent {
   render() {
     const { children, name } = this.props;
 
-    const style = {
-      top: '25px',
-      right: 0
-    };
-
     const rel = {
       position: 'relative'
     };
 
     return <div style={rel}>
-      <div className="cf-dropdown-filter" style={style} ref={(rootElem) => {
+      <div className="cf-dropdown-filter" style={{top: '17px'}} ref={(rootElem) => {
         this.rootElem = rootElem;
       }}>
         {this.props.addClearFiltersRow &&
