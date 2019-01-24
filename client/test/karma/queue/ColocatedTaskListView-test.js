@@ -161,6 +161,7 @@ describe('ColocatedTaskListView', () => {
     });
   });
 
+  /* eslint-disable no-unused-expressions */
   describe('On hold tab', () => {
     it('shows only on-hold tasks', () => {
       const task = amaTaskWith({
@@ -216,6 +217,8 @@ describe('ColocatedTaskListView', () => {
 
       wrapper.find('[aria-label="On hold (2) tab window"]').simulate('click');
 
+      expect(wrapper.find('[aria-label="On hold (2) tab window"] #NEW')).to.exist;
+
       const cells = wrapper.find('td');
 
       expect(cells).to.have.length(12);
@@ -236,3 +239,4 @@ describe('ColocatedTaskListView', () => {
     });
   });
 });
+/* eslint-enable no-unused-expressions */
