@@ -80,7 +80,7 @@ class ScheduleHearingTask < GenericTask
     []
   end
 
-  def add_admin_action_data
+  def add_admin_action_data(_user)
     {
       selected: nil,
       options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|
