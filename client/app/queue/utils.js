@@ -469,7 +469,7 @@ export const taskIsOnHold = (task: Task) => {
   return task.status === TASK_STATUSES.on_hold;
 };
 
-export const taskActionData = (props) => {
+export const taskActionData = (props: Object) => {
   const relevantAction = props.task.availableActions.
     find((action) => props.history.location.pathname.endsWith(action.value));
 

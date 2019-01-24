@@ -169,7 +169,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         expect(page).to have_content("case has been placed on hold")
       end
-      
+
       # Refresh the page in the present, and the hold should be completed.
       visit "/queue"
       click_on "Bob Smith"

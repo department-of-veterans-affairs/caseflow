@@ -301,7 +301,8 @@ class Task < ApplicationRecord
   end
 
   def on_hold_expired?
-    return true if on_hold? && placed_on_hold_at && on_hold_duration && placed_on_hold_at + on_hold_duration.days < Time.zone.now
+    return true if on_hold? && placed_on_hold_at && on_hold_duration &&
+                   placed_on_hold_at + on_hold_duration.days < Time.zone.now
 
     false
   end
