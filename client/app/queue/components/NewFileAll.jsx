@@ -22,9 +22,15 @@ type Props = Params & {|
 
 class NewFileAll extends React.Component<Props> {
   componentDidMount = () => {
-    this.props.externalIds.forEach((externalId) => {
-      if (!this.props.documentObjects[externalId].docs && !this.props.documentObjects[externalId].loading) {
-        this.props.getNewDocuments(externalId);
+    const {
+      tasks,
+      documentObjects
+    } = this.props;
+
+    tasks.forEach((task) => {
+      if (!documentObjects[task.externalAppealId] ||
+        (!documentObjects[task.externalAppealId].docs && !documentObjects[task.externalAppealId].loading)) {
+        this.props.getNewDocuments(task.externalAppealId);
       }
     });
   }
@@ -50,10 +56,7 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   const externalIds = _.map(ownProps.tasks, 'externalAppealId');
   const documentObjects = _.pick(state.queue.newDocsForAppeal, externalIds) || {};
 
-  return {
-    externalIds,
-    documentObjects
-  };
+  return { documentObjects };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
