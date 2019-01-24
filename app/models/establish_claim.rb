@@ -253,7 +253,8 @@ class EstablishClaim < Dispatch::Task
     EndProduct.new(
       claim_id: outgoing_reference_id,
       station_of_jurisdiction: appeal.dispatched_to_station,
-      claim_type_code: claim_establishment.ep_code
+      claim_type_code: claim_establishment.ep_code,
+      payee_code: "00"
     )
   end
 
