@@ -64,25 +64,22 @@ class AppealsController < ApplicationController
   end
 
   def hearings
-    #TODO: does this sort in the right order?
-    sorted_hearings = appeal.hearings.sort_by { |hearing| hearing.scheduled_for }
+    most_recently_held_hearing = appeal.hearings
+      .select { |hearing| hearing.disposition == :held }
+      .max_by(&:scheduled_for)
 
-    serialized_hearings = sorted_hearings.map do |hearing|
-      {
-        held_by: hearing.judge.present? ? hearing.judge.full_name : "",
-        # this assumes only the assigned judge will view the hearing worksheet. otherwise,
-        # we should check `hearing.hearing_views.map(&:user_id).include? judge.css_id`
-        viewed_by_judge: !hearing.hearing_views.empty?,
-        date: hearing.scheduled_for,
-        type: hearing.readable_request_type,
-        external_id: hearing.external_id,
-        disposition: hearing.disposition
-      }
-    end
-
-    render json: {
-      hearings: serialized_hearings
-    }
+    render json: if most_recently_held_hearing
+                   {
+                     held_by: most_recently_held_hearing.judge.present? ? most_recently_held_hearing.judge.full_name : "",
+                     viewed_by_judge: !most_recently_held_hearing.hearing_views.empty?,
+                     date: most_recently_held_hearing.scheduled_for,
+                     type: most_recently_held_hearing.readable_request_type,
+                     external_id: most_recently_held_hearing.external_id,
+                     disposition: most_recently_held_hearing.disposition
+                   }
+                 else
+                   {}
+                 end
   end
 
   # For legacy appeals, veteran address and birth/death dates are

@@ -49,16 +49,20 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
 });
 
 export const prepareMostRecentlyHeldHearingForStore = (appealId: string, hearing: Hearing = {}) => {
-  return {
-    appealId,
-    hearing: {
+  if (!_.isEmpty(hearing)) {
+    hearing = {
       heldBy: hearing.held_by,
       viewedByJudge: hearing.viewed_by_judge,
       date: hearing.date,
       type: hearing.type,
       externalId: hearing.external_id,
       disposition: hearing.disposition
-    }
+    };
+  }
+
+  return {
+    appealId,
+    hearing
   };
 };
 
