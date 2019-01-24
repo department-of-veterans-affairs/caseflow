@@ -82,6 +82,7 @@ export type QueueState = {|
   claimReviews: ClaimReviews,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
+  docCountForAppeal: Object,
   stagedChanges: {
     appeals: {[string]: Object},
     taskDecision: {

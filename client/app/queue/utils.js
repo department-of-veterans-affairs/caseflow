@@ -16,7 +16,6 @@ import type {
   BasicAppeal,
   BasicAppeals,
   AppealDetails,
-  Hearing,
   Issue,
   Issues
 } from './types/models';
@@ -48,21 +47,17 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
   }
 });
 
-export const prepareMostRecentlyHeldHearingForStore = (appealId: string, hearing: Hearing = {}) => {
-  if (!_.isEmpty(hearing)) {
-    hearing = {
+export const prepareMostRecentlyHeldHearingForStore = (appealId: string, hearing) => {
+  return {
+    appealId,
+    hearing: {
       heldBy: hearing.held_by,
       viewedByJudge: hearing.viewed_by_judge,
       date: hearing.date,
       type: hearing.type,
       externalId: hearing.external_id,
       disposition: hearing.disposition
-    };
-  }
-
-  return {
-    appealId,
-    hearing
+    }
   };
 };
 

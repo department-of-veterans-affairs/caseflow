@@ -10,12 +10,8 @@ import { setMostRecentlyHeldHearingForAppeal, errorFetchingHearingForAppeal } fr
 
 class HearingBadgeLoader extends React.PureComponent {
   componentDidMount = () => {
-    this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, {});
-
     ApiUtil.get(`/appeals/${this.props.externalId}/hearings`).then((response) => {
-      const resp = JSON.parse(response.text);
-
-      this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, resp);
+      this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, JSON.parse(response.text));
     }, (error) => {
       this.props.errorFetchingHearingForAppeal(this.props.externalId, error);
     });
