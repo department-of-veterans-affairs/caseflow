@@ -89,14 +89,27 @@ describe HearingDay do
       before do
         RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: create(:staff).slogid)
       end
-      let!(:child_hearing) { create(:case_hearing, vdkey: hearing_day.id, folder_nr: create(:case).bfkey) }
+      let!(:vacols_child_hearing) { create(:case_hearing, vdkey: hearing_day.id, folder_nr: create(:case).bfkey) }
+      let!(:caseflow_child_hearing) { create(:hearing, hearing_day: hearing_day) }
 
       it "updates children hearings" do
         HearingDay.find(hearing_day.id).update!(hearing_hash)
-        updated_child_hearing = child_hearing.reload
-        expect(updated_child_hearing[:room]).to eql "5"
+        updated_vacols_child_hearing = vacols_child_hearing.reload
+        expect(updated_vacols_child_hearing[:room]).to eql "5"
+        updated_caseflow_child_hearing = caseflow_child_hearing.reload
+        expect(updated_caseflow_child_hearing.room).to eql "5"
       end
     end
+  end
+
+  context "delete hearing day", focus: true do
+    let!(:hearing_day) { create(:hearing_day) }
+    let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
+
+    it "doesn't delete hearing days with hearings" do
+      expect { hearing_day.delete }.to raise_error(HearingDay::HearingDayHasChildrenRecords)
+    end
+
   end
 
   context "bulk persist" do
