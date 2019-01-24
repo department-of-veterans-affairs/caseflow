@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -403,7 +405,7 @@ export class DailyDocket extends React.PureComponent {
             <span {...notesTitleStyling}>
               <br /><strong>Notes: </strong>
               <br />{this.props.hearingDay.notes}
-          </span>
+            </span>
             }
           </div>
           <span className="cf-push-right">
