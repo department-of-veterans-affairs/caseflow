@@ -145,8 +145,6 @@ RSpec.describe "Hearing Schedule", type: :request do
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)["hearings"].size).to eq(3)
       expect(JSON.parse(response.body)["hearings"][2]["regional_office"]).to eq("Louisville, KY")
-      expect(JSON.parse(response.body)["tbhearings"].size).to eq(1)
-      expect(JSON.parse(response.body)["tbhearings"][0]["tbmem1"]).to eq("111")
     end
   end
 
@@ -214,8 +212,6 @@ RSpec.describe "Hearing Schedule", type: :request do
       # expect(JSON.parse(response.body)["hearings"][1]["judge_last_name"]).to eq("Randall")
       # expect(JSON.parse(response.body)["hearings"][1]["judge_first_name"]).to eq("Tony")
       # expect(JSON.parse(response.body)["hearings"][2]["regional_office"]).to eq("Louisville, KY")
-      expect(JSON.parse(response.body)["tbhearings"].size).to eq(1)
-      expect(JSON.parse(response.body)["tbhearings"][0]["tbmem1"]).to eq("111")
     end
   end
 
@@ -242,7 +238,6 @@ RSpec.describe "Hearing Schedule", type: :request do
       expect(response).to have_http_status(:success)
       # We don't pull in VACOLS hearings later than 1/1
       expect(JSON.parse(response.body)["hearings"].size).to be(1)
-      expect(JSON.parse(response.body)["tbhearings"].size).to be(0)
     end
   end
 
@@ -268,7 +263,6 @@ RSpec.describe "Hearing Schedule", type: :request do
                                              end_date: "2017-12-31" }, headers: headers
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)["hearings"].size).to be(1)
-      expect(JSON.parse(response.body)["tbhearings"].size).to be(1)
     end
   end
 
@@ -295,7 +289,6 @@ RSpec.describe "Hearing Schedule", type: :request do
                                              end_date: "2019-12-31" }, headers: headers
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)["hearings"].size).to be(1)
-      expect(JSON.parse(response.body)["tbhearings"].size).to be(1)
     end
   end
 

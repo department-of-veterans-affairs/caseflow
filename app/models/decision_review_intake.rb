@@ -1,4 +1,6 @@
 class DecisionReviewIntake < Intake
+  include RunAsyncable
+
   def ui_hash(ama_enabled)
     super.merge(
       receipt_date: detail.receipt_date,

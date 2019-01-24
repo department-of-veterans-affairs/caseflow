@@ -1,19 +1,7 @@
 class BvaDispatchTask < GenericTask
-  include RoundRobinAssigner
-
   class << self
-    def create_and_assign(root_task)
-      parent = create!(
-        assigned_to: BvaDispatch.singleton,
-        parent_id: root_task.id,
-        appeal: root_task.appeal,
-        status: Constants.TASK_STATUSES.on_hold
-      )
-      create!(
-        appeal: parent.appeal,
-        parent_id: parent.id,
-        assigned_to: next_assignee
-      )
+    def create_from_root_task(root_task)
+      create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id, appeal: root_task.appeal)
     end
 
     def outcode(appeal, params, user)

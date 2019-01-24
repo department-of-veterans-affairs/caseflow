@@ -193,7 +193,7 @@ feature "Higher-Level Review" do
     click_intake_continue
 
     expect(page).to have_content(
-      "add them in VBMS, then refresh this page. Please select an option."
+      "If you do not see the claimant in the options below, and you have access, "
     )
     expect(page).to have_content(
       "What is the payee code for this claimant? Please select an option."
@@ -577,6 +577,26 @@ feature "Higher-Level Review" do
 
     click_intake_finish
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+  end
+
+  context "ratings with disabiliity codes" do
+    let(:disabiliity_receive_date) { receipt_date + 2.days }
+    let(:disability_profile_date) { profile_date - 1.day }
+    let!(:ratings_with_disability_codes) do
+      generate_ratings_with_disabilities(veteran,
+                                         disabiliity_receive_date,
+                                         disability_profile_date)
+    end
+
+    scenario "saves disability codes" do
+      hlr, = start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      save_and_check_request_issues_with_disability_codes(
+        Constants.INTAKE_FORM_NAMES.higher_level_review,
+        hlr
+      )
+    end
   end
 
   context "Add / Remove Issues page" do
