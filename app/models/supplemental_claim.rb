@@ -26,6 +26,58 @@ class SupplementalClaim < ClaimReview
     !!decision_review_remanded
   end
 
+  # needed for appeal status api
+
+  def review_status_id
+    "SC#{id}"
+  end
+
+  def linked_review_ids
+    Array.wrap(review_status_id)
+  end
+
+  def active?
+    end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
+  end
+
+  def description
+    # need to implement
+  end
+
+  def aoj
+    # need to implement. add logic to return proper enum: - vba, vha, nca, other
+  end
+
+  def program
+    case benefit_type
+    when "voc_rehab"
+      "vre"
+    when "vha"
+      "medical"
+    when "nca"
+      "burial"
+    else
+      benefit_type
+    end
+  end
+
+  def status_hash
+    # need to implement. returns the details object for the status
+  end
+
+  def alerts
+    # need to implement. add logic to return alert enum
+  end
+
+  def issues
+    # need to implement. get request and corresponding rating issue
+    []
+  end
+
+  def events
+    # need to implement
+  end
+
   private
 
   def end_product_created_by
