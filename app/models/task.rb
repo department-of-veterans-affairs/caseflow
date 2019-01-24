@@ -103,11 +103,15 @@ class Task < ApplicationRecord
   def update_from_params(params, current_user)
     verify_user_can_update!(current_user)
 
+    return reassign(params[:reassign], current_user) if params[:reassign]
+
     params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
     update(params)
 
     [self]
   end
+
+  def reassign; end
 
   def legacy?
     appeal_type == LegacyAppeal.name
@@ -207,7 +211,7 @@ class Task < ApplicationRecord
             end
 
     {
-      selected: nil,
+      selected: current_user,
       options: users_to_options(users),
       type: type
     }

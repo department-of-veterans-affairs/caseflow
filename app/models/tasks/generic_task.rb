@@ -46,16 +46,6 @@ class GenericTask < Task
   end
   # rubocop:enable Metrics/MethodLength
 
-  def update_from_params(params, current_user)
-    verify_user_can_update!(current_user)
-
-    return reassign(params[:reassign], current_user) if params[:reassign]
-
-    update!(params)
-
-    [self]
-  end
-
   def reassign(reassign_params, current_user)
     reassign_params[:instructions] = [instructions, reassign_params[:instructions]].flatten
     sibling = self.class.create_child_task(parent, current_user, reassign_params)
@@ -112,12 +102,8 @@ class GenericTask < Task
       end
     end
 
-    def child_task_assignee(parent, params)
-      if params[:assigned_to_id]
-        Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
-      else
-        parent.assigned_to
-      end
+    def child_task_assignee(_parent, params)
+      Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
     end
 
     def child_assigned_by_id(parent, current_user)

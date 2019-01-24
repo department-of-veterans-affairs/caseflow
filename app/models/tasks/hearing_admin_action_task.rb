@@ -3,6 +3,20 @@ class HearingAdminActionTask < GenericTask
   validates :parent, presence: true
   validate :on_hold_duration_is_set, on: :update
 
+  def self.child_task_assignee(parent, params)
+    if params[:assigned_to_type] && params[:assigned_to_id]
+      super(parent, params)
+    else
+      HearingsManagement.singleton
+    end
+  end
+
+  # We need to allow multiple tasks to be assigned to the organization since all tasks will start there and be
+  # manually distributed to users.
+  def verify_org_task_unique
+    true
+  end
+
   # rubocop:disable Metrics/AbcSize
   def available_actions(user)
     if assigned_to == user

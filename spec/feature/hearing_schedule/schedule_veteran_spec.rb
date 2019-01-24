@@ -117,7 +117,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       )
     end
 
-    scenario "Schedule Veteran for a video hearing", focus: true do
+    scenario "Schedule Veteran for a video hearing" do
       # Do the first part of the test in the past so we can wait for our hold to complete.
       Timecop.travel(20.days.ago) do
         visit "hearings/schedule/assign"
@@ -155,7 +155,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_on "Bob Smith"
         click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
 
-        click_dropdown(text: current_user.full_name)
         click_on "Submit"
 
         # Your queue
