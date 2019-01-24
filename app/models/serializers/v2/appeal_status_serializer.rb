@@ -39,5 +39,6 @@ class V2::AppealStatusSerializer < V2::AppealSerializer
     # to be implemented
     # will need to override method used
     # issues already exists in appeal
+    []
   end
 end

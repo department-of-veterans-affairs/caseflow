@@ -26,7 +26,7 @@ class Api::V2::AppealsController < Api::ApplicationController
         all_reviews_and_appeals
       else
         ActiveModelSerializers::SerializableResource.new(
-          appeals,
+          legacy_appeals,
           each_serializer: ::V2::AppealSerializer,
           key_transform: :camel_lower
         ).as_json
@@ -34,9 +34,9 @@ class Api::V2::AppealsController < Api::ApplicationController
     end
   end
 
-  def appeals
+  def legacy_appeals
     # Appeals API is currently limited to VBA appeals
-    @appeals ||= AppealHistory.for_api(vbms_id: vbms_id).select do |series|
+    @legacy_appeals ||= AppealHistory.for_api(vbms_id: vbms_id).select do |series|
       series.aoj == :vba
     end
   end
@@ -47,6 +47,10 @@ class Api::V2::AppealsController < Api::ApplicationController
 
   def supplemental_claims
     @supplemental_claims ||= SupplementalClaim.where(veteran_file_number: vbms_id.sub("S", ""))
+  end
+
+  def appeals
+    @appeals ||= Appeal.where(veteran_file_number: vbms_id.sub("S", ""))
   end
 
   def all_reviews_and_appeals
@@ -62,7 +66,13 @@ class Api::V2::AppealsController < Api::ApplicationController
       key_transform: :camel_lower
     ).as_json
 
-    { data: hlr_json[:data] + sc_json[:data] }
+    appeal_json = ActiveModelSerializers::SerializableResource.new(
+      appeals,
+      each_serializer: ::V2::AppealStatusSerializer,
+      key_transform: :camel_lower
+    ).as_json
+
+    { data: hlr_json[:data] + sc_json[:data] + appeal_json[:data] }
   end
 
   def vbms_id
