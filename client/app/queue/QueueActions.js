@@ -89,7 +89,7 @@ export const receiveNewDocuments = ({ appealId, newDocuments }: { appealId: stri
   }
 });
 
-export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
+export const getNewDocuments = (appealId: string, cached: ?boolean) => (dispatch: Dispatch) => {
   dispatch({
     type: ACTIONS.STARTED_LOADING_DOCUMENTS,
     payload: {
@@ -100,7 +100,7 @@ export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
     timeout: { response: 5 * 60 * 1000 }
   };
 
-  ApiUtil.get(`/appeals/${appealId}/new_documents`, requestOptions).then((response) => {
+  ApiUtil.get(`/appeals/${appealId}/new_documents${cached ? '?cached' : ''}`, requestOptions).then((response) => {
     const resp = JSON.parse(response.text);
 
     dispatch(receiveNewDocuments({

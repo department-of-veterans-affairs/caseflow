@@ -447,6 +447,31 @@ feature "Higher Level Review Edit issues" do
     end
   end
 
+  context "Nonrating issue with untimely date and VACOLS opt-in" do
+    before do
+      setup_legacy_opt_in_appeals(veteran.file_number)
+      higher_level_review.reload # get UUID
+    end
+
+    let(:legacy_opt_in_approved) { true }
+
+    it "does not apply untimely check to legacy opt-in" do
+      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        category: "Dependent Child - Biological",
+        description: "test",
+        date: "01/01/2010",
+        legacy_issues: true
+      )
+      add_intake_rating_issue("ankylosis of hip")
+
+      expect(page).to have_content(Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin)
+    end
+  end
+
   context "when there is a nonrating end product" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(

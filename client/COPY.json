@@ -55,6 +55,7 @@
   "TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL": "Assigned to",
   "TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL": "Assigned by",
   "TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL": "Assigned on",
+  "TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL": "Completed on",
   "TASK_SNAPSHOT_TASK_DUE_DATE_LABEL": "Due",
   "TASK_SNAPSHOT_ASSIGNED_JUDGE_LABEL": "VLJ",
   "TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL": "Attorney",
@@ -331,7 +332,7 @@
 
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
 
-  "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please",
+  "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_END": " for assistance."
 }
