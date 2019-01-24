@@ -261,7 +261,7 @@ class Veteran < ApplicationRecord
       participant_id: participant_id
     )
     relationships_array = Array.wrap(relationships)
-    relationships_array.map { |relationship_hash| Relationship.from_bgs_hash(relationship_hash) }
+    relationships_array.map { |relationship_hash| Relationship.from_bgs_hash(self, relationship_hash) }
   end
 
   def period_of_service(service_attributes)
