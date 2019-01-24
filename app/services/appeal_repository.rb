@@ -301,32 +301,29 @@ class AppealRepository
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
   def self.appeals_ready_for_hearing_schedule(regional_office)
     if regional_office == HearingDay::REQUEST_TYPES[:central]
       return appeals_ready_for_co_hearing_schedule
     end
 
-    # do we need to not limit this to 30 for assign hearings page?
     cavc_cases = VACOLS::Case.joins(:folder)
       .where(bfregoff: regional_office, bfcurloc: "57", bfac: "7", bfdocind: "V", bfhr: "2")
-      .order("folder.tinum").limit(30).includes(:correspondent, :case_issues, folder: [:outcoder])
+      .order("folder.tinum").includes(:correspondent, :case_issues, folder: [:outcoder])
     aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).joins(:folder).where("aod = 1").where(
       bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V"
-    ).order("folder.tinum").limit(30).includes(:correspondent, :case_issues, folder: [:outcoder])
+    ).order("folder.tinum").includes(:correspondent, :case_issues, folder: [:outcoder])
     other_cases = VACOLS::Case.joins(:folder)
       .where(bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V")
-      .order("folder.tinum").limit(30).includes(:correspondent, :case_issues, folder: [:outcoder])
+      .order("folder.tinum").includes(:correspondent, :case_issues, folder: [:outcoder])
 
     aod_vacols_ids = aod_cases.pluck(:bfkey)
 
-    (cavc_cases + aod_cases + other_cases).uniq.first(30).map do |case_record|
+    (cavc_cases + aod_cases + other_cases).uniq.map do |case_record|
       build_appeal(case_record, true).tap do |appeal|
         appeal.aod = aod_vacols_ids.include?(appeal.vacols_id)
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def self.appeals_ready_for_co_hearing_schedule
     cavc_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57", bfac: "7").order("folder.tinum").limit(30)
