@@ -163,7 +163,7 @@ class HearingRepository
     def load_vacols_data(hearing)
       vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
                                             service: :vacols,
-                                            name: "load_vacols_data") do
+                                            name: "load_vacols_hearing_data") do
         VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
       end
 
