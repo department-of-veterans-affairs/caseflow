@@ -891,7 +891,6 @@ feature "Supplemental Claim Intake" do
           click_intake_add_issue
           add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
           add_intake_rating_issue("limitation of thigh motion (extension)")
-          add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Non-RAMP Issue before AMA Activation")
           expect(page).to_not have_content(
