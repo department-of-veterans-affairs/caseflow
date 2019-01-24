@@ -422,63 +422,6 @@ describe Veteran do
     end
   end
 
-  context "#relationships_with_default_payee_codes" do
-    subject { veteran.relationships_with_default_payee_codes }
-
-    let!(:recent_end_product_with_claimant) do
-      Generators::EndProduct.build(
-        veteran_file_number: veteran.file_number,
-        bgs_attrs: {
-          benefit_claim_id: "claim_id",
-          claimant_first_name: "BOB",
-          claimant_last_name: "VANCE",
-          payee_type_code: "10",
-          claim_date: 5.days.ago
-        }
-      )
-    end
-
-    let!(:outdated_end_product_with_claimant) do
-      Generators::EndProduct.build(
-        veteran_file_number: veteran.file_number,
-        bgs_attrs: {
-          benefit_claim_id: "another_claim_id",
-          claimant_first_name: "BOB",
-          claimant_last_name: "VANCE",
-          payee_type_code: "11",
-          claim_date: 10.days.ago
-        }
-      )
-    end
-
-    before do
-      allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
-        [
-          { first_name: "BOB",
-            last_name: "VANCE",
-            ptcpnt_id: "5382910292",
-            relationship_type: "Spouse" },
-          { first_name: "BILLY",
-            last_name: "VANCE",
-            ptcpnt_id: "12345",
-            relationship_type: "Child" }
-        ]
-      )
-    end
-
-    it "returns the payee code most recently used by the same claimant if available" do
-      expect(subject.first).to have_attributes(
-        first_name: "BOB",
-        default_payee_code: "10"
-      )
-
-      expect(subject.second).to have_attributes(
-        first_name: "BILLY",
-        default_payee_code: nil
-      )
-    end
-  end
-
   describe ".find_by_file_number_or_ssn" do
     let(:file_number) { "123456789" }
     let(:ssn) { file_number.to_s.reverse } # our fakes do this
