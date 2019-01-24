@@ -5,7 +5,7 @@ describe RequestIssue do
 
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:profile_date) { Time.zone.now.to_s }
-  let(:contention_reference_id) { 1234 }
+  let(:contention_reference_id) { "1234" }
   let(:ramp_claim_id) { nil }
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
@@ -916,8 +916,6 @@ describe RequestIssue do
           let(:associated_claims) { [{ clm_id: end_product_establishment.reference_id, bnft_clm_tc: ep_code }] }
 
           context "when matching rating issues exist" do
-            let(:contention_reference_id) { "1234" }
-
             it "creates decision issues based on rating issues" do
               subject
               expect(rating_request_issue.decision_issues.count).to eq(1)
