@@ -160,7 +160,8 @@ export class CaseTitleDetails extends React.PureComponent {
               redirectUrl={redirectUrl}
               appeal={appeal}
               taskType={taskType}
-              docCountWithinLink />
+              docCountWithinLink
+              newDocsIcon />
           </div>
         </React.Fragment> }
 

@@ -137,6 +137,7 @@ const OnHoldTasksTab = connect(
         includeDocketNumber
         includeDaysOnHold
         includeReaderLink
+        includeNewDocsIcon
         tasks={props.tasks}
       />
     </React.Fragment>;

@@ -43,6 +43,7 @@ type Params = {|
   includeDaysOnHold?: boolean,
   includeReaderLink?: boolean,
   includeDocumentCount?: boolean,
+  includeNewDocsIcon?: boolean,
   requireDasRecord?: boolean,
   tasks: Array<TaskWithAppeal>,
   customColumns?: Array<Function>,
@@ -274,6 +275,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
           appeal={task.appeal}
+          newDocsIcon={this.props.includeNewDocsIcon}
           cached
           docCountBelowLink />;
       }

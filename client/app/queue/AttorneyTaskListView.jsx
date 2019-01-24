@@ -100,6 +100,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         page: <TaskTableTab
           description={COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}
           tasks={this.props.onHoldTasks}
+          includeNewDocsIcon
         />,
         icon: <NewFileAll tasks={this.props.onHoldTasks} />
       },
@@ -162,7 +163,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView): React.ComponentType<Params>);
 
-const TaskTableTab = ({ description, tasks }) => <React.Fragment>
+const TaskTableTab = ({ description, tasks , includeNewDocsIcon}) => <React.Fragment>
   <p className="cf-margin-top-0" >{description}</p>
   <TaskTable
     includeDetailsLink
@@ -171,6 +172,7 @@ const TaskTableTab = ({ description, tasks }) => <React.Fragment>
     includeIssueCount
     includeDueDate
     includeReaderLink
+    includeNewDocsIcon={includeNewDocsIcon}
     requireDasRecord
     tasks={tasks}
   />
