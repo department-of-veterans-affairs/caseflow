@@ -10,7 +10,7 @@ class ExternalApi::VADotGovService
 
       until remaining_ids.empty?
         results = fetch_facilities_with_ids(
-          query: { lat: lat, long: long, page: page, ids: remaining_ids }
+          query: { lat: lat, long: long, page: page, ids: remaining_ids.join(",") }
         )
 
         remaining_ids -= results[:facilities].pluck(:id)
