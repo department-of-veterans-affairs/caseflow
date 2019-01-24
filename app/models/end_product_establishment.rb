@@ -148,6 +148,8 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  validates :payee_code, presence: true
+
   def perform!(commit: false)
     return if reference_id
 
