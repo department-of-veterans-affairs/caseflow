@@ -12,6 +12,7 @@ import QueueSelectorDropdown from './components/QueueSelectorDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
+import NewFileAll from './components/NewFileAll';
 
 import {
   completeTasksByAssigneeCssIdSelector,
@@ -99,7 +100,8 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         page: <TaskTableTab
           description={COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}
           tasks={this.props.onHoldTasks}
-        />
+        />,
+        icon: <NewFileAll tasks={this.props.onHoldTasks} />
       },
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
