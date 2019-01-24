@@ -36,6 +36,7 @@ import {
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
+import { onHearingOptionalTime } from '../../components/common/actions';
 
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
@@ -87,7 +88,7 @@ export class DailyDocketContainer extends React.Component {
   };
 
   getTime = (hearing) => {
-    if (hearing.editedTime) {
+    if (hearing.editedTime || hearing.selectedOptionalTime) {
       return {
         // eslint-disable-next-line id-length
         h: hearing.editedTime.split(':')[0],
@@ -116,7 +117,7 @@ export class DailyDocketContainer extends React.Component {
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
       master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
         time } : null,
-      scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
+      scheduled_for: hearing.editedTime === 'other' ? hearing.selectedOptionalTime : moment(hearing.scheduledFor).set(time)
     };
   };
 
@@ -249,6 +250,7 @@ export class DailyDocketContainer extends React.Component {
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
+        onHearingOptionalTime={this.props.onHearingOptionalTime}
         saveHearing={this.saveHearing}
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
@@ -296,7 +298,8 @@ const mapStateToProps = (state) => ({
   displayLockModal: state.hearingSchedule.displayLockModal,
   displayLockSuccessMessage: state.hearingSchedule.displayLockSuccessMessage,
   dailyDocketServerError: state.hearingSchedule.dailyDocketServerError,
-  onErrorHearingDayLock: state.hearingSchedule.onErrorHearingDayLock
+  onErrorHearingDayLock: state.hearingSchedule.onErrorHearingDayLock,
+  selectedOptionalTime: state.components.selectedOptionalTime
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -323,7 +326,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError
+  onResetLockHearingAfterError,
+  onHearingOptionalTime
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

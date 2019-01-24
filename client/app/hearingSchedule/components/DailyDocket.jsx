@@ -112,6 +112,10 @@ export default class DailyDocket extends React.Component {
     return _.filter(this.props.hearings, (hearing) => !this.previouslyScheduled(hearing));
   };
 
+   onHearingOptionalTime= (value) => {
+     this.props.onHearingOptionalTime(value.value);
+   };
+
   getAppellantName = (hearing) => {
     let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName } = hearing;
 
@@ -263,8 +267,9 @@ export default class DailyDocket extends React.Component {
         name="optionalTime"
         placeholder="Select a time"
         options={TIME_OPTIONS}
-        value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
-        onChange={this.onHearingTimeUpdate(hearing.id)}
+        value={hearing.selectedOptionalTime ?
+          hearing.selectedOptionalTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
+        onChange={this.onHearingOptionalTime(hearing)}
         hideLabel />}</div>
 
     </div>;
@@ -515,5 +520,6 @@ DailyDocket.propTypes = {
   onHearingTimeUpdate: PropTypes.func,
   openModal: PropTypes.func,
   deleteHearingDay: PropTypes.func,
-  notes: PropTypes.string
+  notes: PropTypes.string,
+  onHearingOptionalTime: PropTypes.func
 };
