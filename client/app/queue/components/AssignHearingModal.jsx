@@ -308,20 +308,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     };
   };
 
-  setSelectedTime = (val) => {
-  	const selectedTime = _.isString(val) ? val : val.value;
-
-  	if (val === 'Other') {
-  	  this.setState({ selectedTime: 'Other' });
-  	  this.props.onHearingTimeChange(null);
-  	} else {
-  	  this.setState({ selectedTime });
-  	  this.props.onHearingTimeChange(selectedTime);
-  	}
-
-    return val;
-  }
-
   render = () => {
     const {
       selectedHearingDay, selectedRegionalOffice,
@@ -354,9 +340,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           label="Time"
           strongLabel
           options={timeOptions}
-          onChange={this.setSelectedTime}
+          onChange={this.props.onHearingTimeChange}
           value={selectedHearingTime || initVals.hearingTime} />
-        {this.state.selectedTime === 'other' && <SearchableDropdown
+        {selectedHearingTime === 'other' && <SearchableDropdown
           name="optionalTime"
           placeholder="Select a time"
           options={TIME_OPTIONS}

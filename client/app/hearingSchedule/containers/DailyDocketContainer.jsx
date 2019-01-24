@@ -298,8 +298,7 @@ const mapStateToProps = (state) => ({
   displayLockModal: state.hearingSchedule.displayLockModal,
   displayLockSuccessMessage: state.hearingSchedule.displayLockSuccessMessage,
   dailyDocketServerError: state.hearingSchedule.dailyDocketServerError,
-  onErrorHearingDayLock: state.hearingSchedule.onErrorHearingDayLock,
-  selectedOptionalTime: state.components.selectedOptionalTime
+  onErrorHearingDayLock: state.hearingSchedule.onErrorHearingDayLock
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
