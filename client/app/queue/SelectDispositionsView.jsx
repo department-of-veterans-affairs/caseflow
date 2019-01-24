@@ -318,8 +318,9 @@ class SelectDispositionsView extends React.PureComponent {
           noStyling
         />
         <br />
-        <h3>{COPY.DECISION_ISSUE_MODAL_DESCRIPTION}</h3>
+        <h3 {...textAreaStyle}>{COPY.DECISION_ISSUE_MODAL_DESCRIPTION}</h3>
         <TextareaField
+          labelStyling={textAreaStyle}
           styling={textAreaStyle}
           errorMessage={highlightModal && !decisionIssue.description ? 'This field is required' : null}
           label={COPY.DECISION_ISSUE_MODAL_DESCRIPTION_EXAMPLE}

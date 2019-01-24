@@ -22,7 +22,8 @@ export default class TextareaField extends React.Component {
       value,
       styling,
       textAreaStyling,
-      disabled
+      disabled,
+      labelStyling
     } = this.props;
 
     const className = 'cf-form-textarea' +
@@ -41,7 +42,7 @@ export default class TextareaField extends React.Component {
     // hideLabel still leaves the label element in the DOM (for a11y purposes)
     // but makes it invisible to any screens
     return <div className={className} {...styling}>
-      <label className={classNamesFn({ 'sr-only': hideLabel }, 'question-label')} htmlFor={id || name}>
+      <label {...labelStyling} className={classNamesFn({ 'sr-only': hideLabel }, 'question-label')} htmlFor={id || name}>
         {
           strongLabel ?
             <strong>{labelContents}</strong> :
