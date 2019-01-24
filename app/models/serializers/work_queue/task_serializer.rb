@@ -13,6 +13,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :on_hold_duration
   attribute :instructions
   attribute :appeal_type
+  attribute :timeline_title
 
   attribute :assigned_by do
     {
