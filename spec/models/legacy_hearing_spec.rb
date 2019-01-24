@@ -30,7 +30,7 @@ describe LegacyHearing do
   let(:request_type) { "V" }
 
   context "#location" do
-    subject { hearing.vacols_location }
+    subject { hearing.request_type_location }
 
     it { is_expected.to eq("Baltimore regional office") }
 

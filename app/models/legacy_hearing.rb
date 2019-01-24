@@ -40,7 +40,7 @@ class LegacyHearing < ApplicationRecord
     vacols_id
   end
 
-  def vacols_location
+  def request_type_location
     (request_type == "C") ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
   end
 
