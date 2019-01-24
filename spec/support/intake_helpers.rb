@@ -110,11 +110,11 @@ module IntakeHelpers
   # rubocop: enable Metrics/MethodLength
   # rubocop: enable Metrics/ParameterLists
 
-  def start_claim_review(claim_review_type)
+  def start_claim_review(claim_review_type, veteran: create(:veteran), veteran_is_not_claimant: false)
     if claim_review_type == :supplemental_claim
-      start_supplemental_claim(create(:veteran))
+      start_supplemental_claim(veteran, veteran_is_not_claimant: veteran_is_not_claimant)
     else
-      start_higher_level_review(create(:veteran), informal_conference: true)
+      start_higher_level_review(veteran, veteran_is_not_claimant: veteran_is_not_claimant, informal_conference: true)
     end
   end
 
@@ -428,6 +428,7 @@ module IntakeHelpers
         dis_dt: promulgation_date.to_datetime,
         dis_sn: "rating#{i}",
         disability_evaluations: {
+          dis_dt: promulgation_date.to_datetime,
           dgnstc_tc: "disability_code#{i}"
         }
       }

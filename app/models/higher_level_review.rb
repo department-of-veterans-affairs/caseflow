@@ -29,6 +29,62 @@ class HigherLevelReview < ClaimReview
     create_dta_supplemental_claim
   end
 
+  # needed for appeal status api
+
+  def review_status_id
+    "HLR#{id}"
+  end
+
+  def linked_review_ids
+    Array.wrap(review_status_id)
+  end
+
+  def incomplete
+    false
+  end
+
+  def active?
+    end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
+  end
+
+  def description
+    # need to impelement
+  end
+
+  def aoj
+    # need to implement. add logic to return proper enum: - vba, vha, nca, other
+  end
+
+  def program
+    case benefit_type
+    when "voc_rehab"
+      "vre"
+    when "vha"
+      "medical"
+    when "nca"
+      "burial"
+    else
+      benefit_type
+    end
+  end
+
+  def status_hash
+    # need to implement. returns the details object for the status
+  end
+
+  def alerts
+    # need to implement. add logic to return alert enum
+  end
+
+  def issues
+    # need to implement. get request and corresponding rating issue
+    []
+  end
+
+  def events
+    # need to implement. hlr_request, hlr_decision, hlr_dta_error, or hlr_other_close
+  end
+
   private
 
   def create_dta_supplemental_claim
