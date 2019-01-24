@@ -916,6 +916,8 @@ describe RequestIssue do
           let(:associated_claims) { [{ clm_id: end_product_establishment.reference_id, bnft_clm_tc: ep_code }] }
 
           context "when matching rating issues exist" do
+            let(:contention_reference_id) { "1234" }
+
             it "creates decision issues based on rating issues" do
               subject
               expect(rating_request_issue.decision_issues.count).to eq(1)
