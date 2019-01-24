@@ -17,6 +17,16 @@ const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>
 const veteranNotAssignedTitleStyle = css({ fontSize: '4rem' });
 const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no schedulable veterans</span>;
 
+const filterDropdownFix = css({
+  '& svg.table-icon + div': {
+    position: 'absolute !important',
+    padding: '10px',
+    border: '1px solid #ddd',
+    background: '#fff',
+    cursor: 'pointer'
+  }
+});
+
 const AvailableVeteransTable = ({ rows, columns }) => {
   if (_.isEmpty(rows)) {
     return <div>
@@ -47,6 +57,25 @@ const UpcomingHearingsTable = ({ rows, columns }) => (
 );
 
 export default class AssignHearingsTabs extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      amaAppeals: {
+        dropdownIsOpen: false,
+        filteredBy: []
+      },
+      legacyAppeals: {
+        dropdownIsOpen: false,
+        filteredBy: []
+      },
+      upcomingHearings: {
+        dropdownIsOpen: false,
+        filteredBy: []
+      }
+    };
+  }
 
   isAmaAppeal = (appeal) => {
     return appeal.attributes.appealType === 'Appeal';
@@ -113,7 +142,7 @@ export default class AssignHearingsTabs extends React.Component {
     case 'benefits':
       return classification.indexOf('Regional') === -1 ? '(VBA)' : '(RO)';
     default:
-      return null;
+      return '';
     }
   }
 
@@ -122,30 +151,58 @@ export default class AssignHearingsTabs extends React.Component {
       return '';
     }
 
-    const { city, state, distance, facilityType } = location;
+    const { city, state, distance } = location;
 
     return <span>
-      <div>{`${city}, ${state} ${facilityType}`}</div>
+      <div>{`${city}, ${state} ${this.getLocationType(location)}`}</div>
       <div>{`Distance: ${distance} miles away`}</div>
     </span>;
   }
 
-  availableVeteransRows = (appeals) => {
-    return _.map(appeals, (appeal) => ({
+  availableVeteransRows = (appeals, { tab }) => {
+    const filteredBy = this.state[tab].filteredBy;
+    const filtered = _.filter(appeals, (appeal) => {
+
+      if (filteredBy.length === 0) {
+        return true;
+      }
+
+      if (appeal.attributes.suggestedHearingLocation === null && filteredBy.indexOf('null') !== -1) {
+        return true;
+      }
+
+      return filteredBy.indexOf(appeal.attributes.suggestedHearingLocation.facilityId) !== -1;
+    });
+
+    return _.map(filtered, (appeal) => ({
       caseDetails: this.getCaseDetailsInformation(appeal),
       type: renderAppealType({
         caseType: appeal.attributes.caseType,
         isAdvancedOnDocket: appeal.attributes.aod
       }),
       docketNumber: this.getAppealDocketTag(appeal),
-      suggestLocation: this.getSuggestedHearingLocation(appeal.attributes.suggestedHearingLocation),
+      suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.suggestedHearingLocation),
       time: null,
       externalId: appeal.attributes.externalAppealId
     }));
   };
 
   upcomingHearingsRows = (hearings) => {
-    return _.map(hearings, (hearing) => ({
+    const filteredBy = this.state.upcomingHearings.filteredBy;
+    const filtered = _.filter(hearings, (hearing) => {
+
+      if (filteredBy.length === 0) {
+        return true;
+      }
+
+      if (hearing.location === null && filteredBy.indexOf('null') !== -1) {
+        return true;
+      }
+
+      return filteredBy.indexOf(hearing.location.facilityId) !== -1;
+    });
+
+    return _.map(filtered, (hearing) => ({
       externalId: hearing.appealExternalId,
       caseDetails: this.appellantName(hearing),
       type: renderAppealType({
@@ -153,35 +210,69 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: hearing.aod
       }),
       docketNumber: this.getHearingDocketTag(hearing),
-      suggestLocation: this.getSuggestedHearingLocation(hearing.location),
+      suggestedLocation: this.getSuggestedHearingLocation(hearing.location),
       time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
     }));
   };
 
-  tabWindowColumns = () => {
+  getLocationFilterValues = (data, tab) => {
+    const getLocation = (row) => tab === 'upcomingHearings' ? row.location : row.attributes.suggestedHearingLocation;
+
+    const locations = data.map((row) => {
+      const location = getLocation(row);
+
+      if (!location) {
+        return {
+          displayText: '<<blank>>',
+          value: 'null'
+        };
+      }
+
+      const { city, state, facilityId } = location;
+
+      return {
+        displayText: `${city}, ${state}`,
+        value: facilityId || 'null'
+      };
+    });
+
+    const countByValue = _.countBy(locations, 'value');
+
+    return _.sortedUniqBy(locations, 'value').map((row) => ({
+      ...row,
+      displayText: `${row.displayText} (${countByValue[row.value]} Veterans)`
+    }));
+  }
+
+  tabWindowColumns = (data, { tab }) => {
 
     const { selectedRegionalOffice, selectedHearingDay } = this.props;
 
-    const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
-    const timer = () => {
-      let time = getTime(selectedHearingDay.scheduledFor);
+    const state = this.state[tab];
+    let locationFilterValues = this.getLocationFilterValues(data, tab);
 
-      if (time === '12:00 am ET') {
-        return '';
-      }
-
-      return time;
-    };
-
-    const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}&hearingTime=${timer()}`;
+    locationFilterValues.unshift({
+      displayText: `All (${data.length})`,
+      value: 'all'
+    });
 
     return [{
       header: 'Case details',
       align: 'left',
       valueName: 'caseDetails',
       valueFunction: (appeal) => <Link
-        href={`/queue/appeals/${appeal.externalId}/${qry}`}
-        name={appeal.externalId}>
+        name={appeal.externalId}
+        href={(() => {
+          const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
+          const timer = () => {
+            let time = getTime(selectedHearingDay.scheduledFor);
+
+            return time === '12:00 am ET' ? '' : time;
+          };
+          const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}&hearingTime=${timer()}`;
+
+          return `/queue/appeals/${appeal.externalId}/${qry}`;
+        })()}>
         {appeal.caseDetails}
       </Link>
     },
@@ -198,7 +289,35 @@ export default class AssignHearingsTabs extends React.Component {
     {
       header: 'Suggested Location',
       align: 'left',
-      valueName: 'suggestLocation'
+      valueName: 'suggestedLocation',
+      getFilterValues: locationFilterValues,
+      isDropdownFilterOpen: state.dropdownIsOpen,
+      label: 'Filter by location',
+      anyFiltersAreSet: true,
+      toggleDropdownFilterVisiblity: () => this.setState({
+        [tab]: {
+          ...state,
+          dropdownIsOpen: !state.dropdownIsOpen
+        }
+      }),
+      setSelectedValue: (val) => {
+        let filteredBy;
+
+        if (val === 'all') {
+          filteredBy = [];
+        } else if (state.filteredBy.indexOf(val) === -1) {
+          filteredBy = [...state.filteredBy, val];
+        } else {
+          filteredBy = _.remove([...state.filteredBy], (value) => value === val);
+        }
+
+        this.setState({
+          [tab]: {
+            ...state,
+            filteredBy
+          }
+        });
+      }
     },
     {
       header: 'Time',
@@ -212,13 +331,11 @@ export default class AssignHearingsTabs extends React.Component {
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
 
-    const columns = this.tabWindowColumns();
-
     const upcomingHearings = _.sortBy(selectedHearingDay.hearings, 'date');
     const amaAppeals = _.filter(appealsReadyForHearing, (appeal) => this.isAmaAppeal(appeal));
     const legacyAppeals = _.filter(appealsReadyForHearing, (appeal) => !this.isAmaAppeal(appeal));
 
-    return <div className="usa-width-three-fourths">
+    return <div className="usa-width-three-fourths" {...filterDropdownFix}>
       <h1>
         {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}
           ${room} (${availableSlots} slots remaining)`}
@@ -230,21 +347,21 @@ export default class AssignHearingsTabs extends React.Component {
             label: 'Scheduled Veterans',
             page: <UpcomingHearingsTable
               rows={this.upcomingHearingsRows(upcomingHearings)}
-              columns={columns}
+              columns={this.tabWindowColumns(upcomingHearings, { tab: 'upcomingHearings' })}
             />
           },
           {
             label: 'Legacy Veterans Waiting',
             page: <AvailableVeteransTable
-              rows={this.availableVeteransRows(legacyAppeals)}
-              columns={columns}
+              rows={this.availableVeteransRows(legacyAppeals, { tab: 'legacyAppeals' })}
+              columns={this.tabWindowColumns(legacyAppeals, { tab: 'legacyAppeals' })}
             />
           },
           {
             label: 'AMA Veterans Waiting',
             page: <AvailableVeteransTable
-              rows={this.availableVeteransRows(amaAppeals)}
-              columns={columns}
+              rows={this.availableVeteransRows(amaAppeals, { tab: 'amaAppeals' })}
+              columns={this.tabWindowColumns(amaAppeals, { tab: 'amaAppeals' })}
             />
           }
         ]}

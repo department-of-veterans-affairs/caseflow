@@ -121,7 +121,7 @@ class Hearing < ApplicationRecord
         :military_service,
         :current_issue_count,
         :appeal_representative_name,
-        :location
+        :location,
         :worksheet_issues
       ]
     )

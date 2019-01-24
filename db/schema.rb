@@ -463,6 +463,19 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.index ["deleted_at"], name: "index_hearing_days_on_deleted_at"
   end
 
+  create_table "hearing_issue_notes", force: :cascade do |t|
+    t.boolean "allow", default: false
+    t.boolean "deny", default: false
+    t.boolean "dismiss", default: false
+    t.bigint "hearing_id", null: false
+    t.boolean "remand", default: false
+    t.boolean "reopen", default: false
+    t.bigint "request_issue_id", null: false
+    t.string "worksheet_notes"
+    t.index ["hearing_id"], name: "index_hearing_issue_notes_on_hearing_id"
+    t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
+  end
+
   create_table "hearing_locations", force: :cascade do |t|
     t.string "address"
     t.string "city"
@@ -477,19 +490,6 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.string "state"
     t.datetime "updated_at", null: false
     t.string "zip_code"
-  end
-  
-  create_table "hearing_issue_notes", force: :cascade do |t|
-    t.boolean "allow", default: false
-    t.boolean "deny", default: false
-    t.boolean "dismiss", default: false
-    t.bigint "hearing_id", null: false
-    t.boolean "remand", default: false
-    t.boolean "reopen", default: false
-    t.bigint "request_issue_id", null: false
-    t.string "worksheet_notes"
-    t.index ["hearing_id"], name: "index_hearing_issue_notes_on_hearing_id"
-    t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
   end
 
   create_table "hearing_views", id: :serial, force: :cascade do |t|
