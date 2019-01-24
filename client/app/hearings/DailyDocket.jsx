@@ -411,7 +411,8 @@ export class DailyDocket extends React.PureComponent {
           <span className="cf-push-right">
             VLJ: {this.props.veteran_law_judge.full_name}<br />
             Coordinator: {this.props.hearingDay.coordinator}<br />
-            Hearing Type: {this.props.hearingDay.requestType}<br />
+            Hearing Type: {this.props.hearingDay.requestType ?
+              this.props.hearingDay.requestType : docket[0].readable_request_type}<br />
             Room Number: {this.props.hearingDay.room}<br />
           </span>
         </div>
