@@ -326,17 +326,17 @@ class AppealRepository
   end
 
   def self.appeals_ready_for_co_hearing_schedule
-    cavc_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57", bfac: "7").order("folder.tinum").limit(30)
+    cavc_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57", bfac: "7").order("folder.tinum")
       .includes(:correspondent, :case_issues, folder: [:outcoder])
     aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD)
-      .joins(:folder).where("aod = 1").where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
+      .joins(:folder).where("aod = 1").where(bfhr: "1", bfcurloc: "57").order("folder.tinum")
       .includes(:correspondent, :case_issues, folder: [:outcoder])
-    other_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum").limit(30)
+    other_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum")
       .includes(:correspondent, :case_issues, folder: [:outcoder])
 
     aod_vacols_ids = aod_cases.pluck(:bfkey)
 
-    (cavc_cases + aod_cases + other_cases).uniq.first(30).map do |case_record|
+    (cavc_cases + aod_cases + other_cases).uniq.map do |case_record|
       build_appeal(case_record, true).tap do |appeal|
         appeal.aod = aod_vacols_ids.include?(appeal.vacols_id)
       end
