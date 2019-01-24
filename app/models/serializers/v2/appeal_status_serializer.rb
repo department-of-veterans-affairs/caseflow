@@ -8,19 +8,15 @@ class V2::AppealStatusSerializer < V2::AppealSerializer
   attribute :linked_review_ids, key: :appeal_ids
 
   attribute :type do
-    # this does not apply to HLR
+    "original"
   end
 
   attribute :location do
     # to be implement
   end
 
-  attribute :incomplete do
+  attribute :incomplete_history do
     false
-  end
-
-  attribute :type do
-    "original"
   end
 
   attribute :aoj do
@@ -36,5 +32,12 @@ class V2::AppealStatusSerializer < V2::AppealSerializer
   end
 
   attribute :events do
+    # to be implemented
+  end
+
+  attribute :issues do
+    # to be implemented
+    # will need to override method used
+    # issues already exists in appeal
   end
 end
