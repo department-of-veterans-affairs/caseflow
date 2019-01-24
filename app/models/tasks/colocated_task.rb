@@ -43,7 +43,7 @@ class ColocatedTask < Task
       send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
       actions.unshift(send_to_team)
     else
-      actions.unshift(Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h)
+      actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
     end
 
     if action == "translation" && appeal.is_a?(Appeal)
