@@ -42,6 +42,16 @@ class HearingDateDropdown extends React.Component {
           hearingDate: formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD') }
       }));
 
+      if (this.props.staticOptions) {
+        hearingDateOptions.push(...this.props.staticOptions.map((opt) => ({
+          label: opt.label,
+          value: {
+            ...opt.value,
+            hearingDate: formatDateStr(opt.value.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD')
+          }
+        })));
+      }
+
       hearingDateOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
       this.props.onReceiveDropdownData(name, hearingDateOptions);
     });
@@ -51,7 +61,7 @@ class HearingDateDropdown extends React.Component {
     const { value, hearingDates: { options } } = this.props;
 
     const comparison = typeof (value) === 'string' ?
-      (opt) => opt.value.hearingDate === value :
+      (opt) => opt.value.hearingDate === formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD') :
       (opt) => opt.value === value;
 
     return _.find(options, comparison) ||
@@ -91,7 +101,8 @@ HearingDateDropdown.propTypes = {
   readOnly: PropTypes.bool,
   placeholder: PropTypes.string,
   errorMessage: PropTypes.string,
-  validateValueOnMount: PropTypes.bool
+  validateValueOnMount: PropTypes.bool,
+  staticOptions: PropTypes.array
 };
 
 HearingDateDropdown.defaultProps = {

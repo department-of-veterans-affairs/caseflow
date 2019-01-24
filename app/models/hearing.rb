@@ -27,6 +27,9 @@ class Hearing < ApplicationRecord
   delegate :veteran_available_hearing_locations, to: :appeal
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
+  # changing RO should re-parent hearing
+  delegate :regional_office, to: :hearing_day, prefix: true
+  alias_attribute :regional_office_key, :hearing_day_regional_office
 
   HEARING_TYPES = {
     V: "Video",
@@ -70,16 +73,12 @@ class Hearing < ApplicationRecord
 
   #:nocov:
   # This is all fake data that will be refactored in a future PR.
-  def regional_office_key
-    "RO19"
-  end
-
   def regional_office_name
-    "Winston-Salem, NC"
+    RegionalOffice::CITIES[regional_office_key][:label] unless regional_office_key.nil?
   end
 
   def regional_office_timezone
-    "America/New_York"
+    RegionalOffice::CITIES[regional_office_key][:timezone] unless regional_office_key.nil?
   end
 
   def current_issue_count
@@ -109,6 +108,7 @@ class Hearing < ApplicationRecord
         :appellant_last_name,
         :appellant_city,
         :appellant_state,
+        :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
         :readable_request_type,

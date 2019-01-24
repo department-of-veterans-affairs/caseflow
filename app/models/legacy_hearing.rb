@@ -167,6 +167,7 @@ class LegacyHearing < ApplicationRecord
         :master_record,
         :representative,
         :representative_name,
+        :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
         :venue,

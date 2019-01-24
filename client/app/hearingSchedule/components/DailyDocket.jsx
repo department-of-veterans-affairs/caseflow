@@ -15,10 +15,11 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import Modal from '../../components/Modal';
 import StatusMessage from '../../components/StatusMessage';
-import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
+import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone, formatDateStr } from '../../util/DateUtil';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { crossSymbolHtml, pencilSymbol } from '../../components/RenderFunctions';
+import { RegionalOfficeDropdown, HearingDateDropdown } from '../../components/DataDropdowns';
 
 const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
@@ -90,7 +91,7 @@ export default class DailyDocket extends React.Component {
     this.props.onHearingDispositionUpdate(hearingId, disposition.value);
   };
 
-  onHearingDateUpdate = (hearingId) => (date) => this.props.onHearingDateUpdate(hearingId, date.value);
+  onHearingDateUpdate = (hearingId) => (hearingDay) => this.props.onHearingDateUpdate(hearingId, hearingDay);
 
   onHearingTimeUpdate = (hearingId) => (time) => this.props.onHearingTimeUpdate(hearingId, time);
 
@@ -235,20 +236,35 @@ export default class DailyDocket extends React.Component {
 
   getHearingDayDropdown = (hearing, readOnly) => {
     const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
+    const staticOptions = () => {
+      if (moment(hearing.scheduledFor).toDate() < new Date()) {
+        return [{
+          label: formatDateStr(hearing.scheduledFor),
+          value: {
+            scheduledFor: hearing.scheduledFor
+          }
+        }];
+      }
 
-    return <div><SearchableDropdown
-      name="HearingDay"
-      label="Hearing Day"
-      options={this.getHearingDateOptions(hearing)}
-      value={hearing.editedDate ? hearing.editedDate : hearing.id}
-      onChange={this.onHearingDateUpdate(hearing.id)}
-      readOnly={readOnly || hearing.editedDisposition !== 'postponed'} />
-    <RadioField
-      name={`hearingTime${hearing.id}`}
-      options={this.getHearingTimeOptions(hearing, readOnly)}
-      value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
-      onChange={this.onHearingTimeUpdate(hearing.id)}
-      hideLabel /></div>;
+      return null;
+    };
+
+    return <div>
+      <HearingDateDropdown
+        name="HearingDay"
+        label="Hearing Day"
+        regionalOffice={hearing.regionalOfficeKey}
+        value={hearing.editedDate ? hearing.editedDate : hearing.scheduledFor}
+        readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
+        staticOptions={staticOptions()}
+        onChange={this.onHearingDateUpdate(hearing.id)}
+      />
+      <RadioField
+        name={`hearingTime${hearing.id}`}
+        options={this.getHearingTimeOptions(hearing, readOnly)}
+        value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
+        onChange={this.onHearingTimeUpdate(hearing.id)}
+        hideLabel /></div>;
   };
 
   getNotesField = (hearing) => {
