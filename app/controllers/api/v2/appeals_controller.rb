@@ -23,13 +23,7 @@ class Api::V2::AppealsController < Api::ApplicationController
   def json_appeals
     Rails.cache.fetch("appeals/v2/#{ssn}", expires_in: 20.hours, force: reload?) do
       if appeal_status_v3_enabled?
-        # eventually will return back the json for all of them (legacy, hlr, sc, ama appeal)
-        # for now just HLRs
-        ActiveModelSerializers::SerializableResource.new(
-          hlrs,
-          each_serializer: ::V2::HLRStatusSerializer,
-          key_transform: :camel_lower
-        ).as_json
+        all_reviews_and_appeals
       else
         ActiveModelSerializers::SerializableResource.new(
           appeals,
@@ -49,6 +43,26 @@ class Api::V2::AppealsController < Api::ApplicationController
 
   def hlrs
     @hlrs ||= HigherLevelReview.where(veteran_file_number: vbms_id.sub("S", ""))
+  end
+
+  def supplemental_claims
+    @supplemental_claims ||= SupplementalClaim.where(veteran_file_number: vbms_id.sub("S", ""))
+  end
+
+  def all_reviews_and_appeals
+    hlr_json = ActiveModelSerializers::SerializableResource.new(
+      hlrs,
+      each_serializer: ::V2::HLRStatusSerializer,
+      key_transform: :camel_lower
+    ).as_json
+
+    sc_json = ActiveModelSerializers::SerializableResource.new(
+      supplemental_claims,
+      each_serializer: ::V2::SCStatusSerializer,
+      key_transform: :camel_lower
+    ).as_json
+
+    { data: hlr_json[:data] + sc_json[:data] }
   end
 
   def vbms_id
