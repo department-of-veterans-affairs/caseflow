@@ -36,12 +36,20 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    render json: { document_count: appeal.number_of_documents_from_caseflow }
+    if params[:cached]
+      render json: { document_count: appeal.number_of_documents_from_caseflow }
+      return
+    end
+    render json: { document_count: appeal.number_of_documents }
   rescue StandardError => e
     handle_non_critical_error("document_count", e)
   end
 
   def new_documents
+    if params[:cached]
+      render json: { new_documents: appeal.new_documents_from_caseflow(current_user) }
+      return
+    end
     render json: { new_documents: appeal.new_documents_for_user(current_user) }
   rescue StandardError => e
     handle_non_critical_error("new_documents", e)

@@ -30,6 +30,27 @@ describe AsyncableJobsController, type: :controller do
                establishment_attempted_at: 7.days.ago,
                veteran_file_number: veteran.file_number)
       end
+      let!(:riu) do
+        create(:request_issues_update, review: hlr, submitted_at: 7.days.ago, attempted_at: 7.days.ago)
+      end
+      let!(:request_issue) do
+        create(:request_issue,
+               review_request: hlr,
+               decision_sync_submitted_at: 7.days.ago,
+               decision_sync_attempted_at: 7.days.ago)
+      end
+      let!(:bge) do
+        create(:board_grant_effectuation,
+               decision_sync_submitted_at: 7.days.ago,
+               decision_sync_attempted_at: 7.days.ago)
+      end
+      let!(:decision_document) do
+        create(:decision_document, submitted_at: 7.days.ago, attempted_at: 7.days.ago)
+      end
+      let!(:task_timer) do
+        task = create(:generic_task, :on_hold)
+        TaskTimer.create!(task: task, submitted_at: 7.days.ago, attempted_at: 7.days.ago)
+      end
 
       context "no asyncable klass specified" do
         render_views
@@ -40,6 +61,11 @@ describe AsyncableJobsController, type: :controller do
           expect(response.status).to eq 200
           expect(response.body).to match(/SupplementalClaim/)
           expect(response.body).to match(/HigherLevelReview/)
+          expect(response.body).to match(/RequestIssuesUpdate/)
+          expect(response.body).to match(/RequestIssue\b/)
+          expect(response.body).to match(/BoardGrantEffectuation/)
+          expect(response.body).to match(/TaskTimer/)
+          expect(response.body).to match(/DecisionDocument/)
         end
       end
 
