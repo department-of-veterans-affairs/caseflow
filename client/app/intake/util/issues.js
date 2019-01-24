@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import { formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES.json';
 import { FORM_TYPES } from '../constants';
 
@@ -199,6 +199,7 @@ const formatRatingRequestIssues = (state) => {
         rating_issue_reference_id: issue.ratingIssueReferenceId,
         decision_text: issue.description,
         rating_issue_profile_date: issue.ratingIssueProfileDate,
+        rating_issue_disability_code: issue.ratingIssueDisabilityCode,
         notes: issue.notes,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,
@@ -256,7 +257,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'Veteran',
         content: veteranInfo },
       { field: 'Receipt date of this form',
-        content: formatDate(intakeData.receiptDate) },
+        content: formatDateStr(intakeData.receiptDate) },
       { field: 'Benefit type',
         content: _.startCase(intakeData.benefitType) },
       { field: 'Informal conference request',
@@ -272,7 +273,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'Veteran',
         content: veteranInfo },
       { field: 'Receipt date of this form',
-        content: formatDate(intakeData.receiptDate) },
+        content: formatDateStr(intakeData.receiptDate) },
       { field: 'Benefit type',
         content: _.startCase(intakeData.benefitType) }
     ];
@@ -282,7 +283,7 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
       { field: 'Veteran',
         content: veteranInfo },
       { field: 'NOD receipt date',
-        content: formatDate(intakeData.receiptDate) },
+        content: formatDateStr(intakeData.receiptDate) },
       { field: 'Review option',
         content: _.startCase(intakeData.docketType.split('_').join(' ')) }
     ];
@@ -343,7 +344,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       referenceId: issue.id,
       text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
       benefitType: issue.benefitType,
-      date: formatDate(issue.decisionDate),
+      date: formatDateStr(issue.decisionDate),
       timely: issue.timely,
       beforeAma: decisionDate < amaActivationDate,
       untimelyExemption: issue.untimelyExemption,

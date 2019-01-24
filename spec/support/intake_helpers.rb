@@ -110,11 +110,11 @@ module IntakeHelpers
   # rubocop: enable Metrics/MethodLength
   # rubocop: enable Metrics/ParameterLists
 
-  def start_claim_review(claim_review_type)
+  def start_claim_review(claim_review_type, veteran: create(:veteran), veteran_is_not_claimant: false)
     if claim_review_type == :supplemental_claim
-      start_supplemental_claim(create(:veteran))
+      start_supplemental_claim(veteran, veteran_is_not_claimant: veteran_is_not_claimant)
     else
-      start_higher_level_review(create(:veteran), informal_conference: true)
+      start_higher_level_review(veteran, veteran_is_not_claimant: veteran_is_not_claimant, informal_conference: true)
     end
   end
 
@@ -395,6 +395,76 @@ module IntakeHelpers
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range)
       .and_return(rating_profile_list: { rating_profile: nil },
                   reject_reason: "Converted or Backfilled Rating - no promulgated ratings found")
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def generate_ratings_with_disabilities(
+    veteran,
+    promulgation_date,
+    profile_date,
+    issues: []
+  )
+    if issues == []
+      issues = [
+        {
+          reference_id: "disability0",
+          decision_text: "this is a disability"
+        },
+        {
+          reference_id: "disability1",
+          decision_text: "this is another disability"
+        }
+      ]
+    end
+
+    issues_with_disabilities = issues.map.with_index do |issue, i|
+      issue[:rba_contentions_data] = [{ prfil_dt: promulgation_date, cntntn_id: nil }]
+      issue[:dis_sn] = "rating#{i}"
+      issue
+    end
+
+    disabilities = issues.map.with_index do |_issue, i|
+      {
+        dis_dt: promulgation_date.to_datetime,
+        dis_sn: "rating#{i}",
+        disability_evaluations: {
+          dis_dt: promulgation_date.to_datetime,
+          dgnstc_tc: "disability_code#{i}"
+        }
+      }
+    end
+
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: promulgation_date,
+      profile_date: profile_date,
+      issues: issues_with_disabilities,
+      disabilities: disabilities
+    )
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def save_and_check_request_issues_with_disability_codes(form_name, decision_review)
+    click_intake_add_issue
+    expect(page).to have_content("this is a disability")
+    expect(page).to have_content("this is another disability")
+    add_intake_rating_issue("this is another disability")
+
+    if current_url.include?("/edit")
+      click_edit_submit_and_confirm
+      # edit page for appeals goes to queue
+      expect(page).to have_content("View all cases")
+    else
+      click_intake_finish
+      expect(page).to have_content("#{form_name} has been processed.")
+    end
+
+    expect(RequestIssue.find_by(
+             contested_rating_issue_disability_code: "disability_code1",
+             contested_rating_issue_reference_id: "disability1",
+             contested_issue_description: "this is another disability",
+             decision_review: decision_review
+           )).to_not be_nil
   end
 
   # rubocop:disable Metrics/MethodLength

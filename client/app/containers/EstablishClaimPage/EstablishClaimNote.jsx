@@ -7,7 +7,7 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import TextareaField from '../../components/TextareaField';
 import FormField from '../../util/FormField';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import { connect } from 'react-redux';
 import SPECIAL_ISSUES from '../../constants/SpecialIssues';
 import CopyToClipboard from 'react-copy-to-clipboard';
@@ -30,7 +30,7 @@ export class EstablishClaimNote extends BaseForm {
     }
 
     let vbmsNote = `The BVA ${this.props.decisionType} decision` +
-      ` dated ${formatDate(appeal.serialized_decision_date)}` +
+      ` dated ${formatDateStr(appeal.serialized_decision_date)}` +
       ` for ${appeal.veteran_name}, ID #${appeal.vbms_id}, was sent to the ARC but` +
       ` cannot be processed here, as it contains ${selectedSpecialIssues.join(', ')}` +
       ' in your jurisdiction. Please proceed with control and implement this grant.';
@@ -94,7 +94,7 @@ export class EstablishClaimNote extends BaseForm {
     }
 
     return `The BVA ${this.props.decisionType} decision` +
-      ` dated ${formatDate(this.props.appeal.serialized_decision_date)}` +
+      ` dated ${formatDateStr(this.props.appeal.serialized_decision_date)}` +
       ' is being transfered from ARC as it contains: ' +
       `${this.selectedSpecialIssues().join(', ')} in your jurisdiction.`;
   }

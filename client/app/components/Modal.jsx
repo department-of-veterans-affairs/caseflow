@@ -6,7 +6,8 @@ import Button from './Button';
 import _ from 'lodash';
 import { css } from 'glamor';
 
-const modalTextStyling = css({ width: '100%' });
+const modalTextStyling = css({ width: '100%',
+  fontFamily: 'Source Sans Pro' });
 
 export default class Modal extends React.Component {
   constructor(props) {
