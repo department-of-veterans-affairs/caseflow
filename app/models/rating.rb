@@ -47,6 +47,10 @@ class Rating
     end
   end
 
+  def pension?
+    associated_claims_data.first[:bnft_clm_tc] != "110LCOMP"
+  end
+
   private
 
   def disability_codes(rating_profile)
