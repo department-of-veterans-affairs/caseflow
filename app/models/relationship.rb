@@ -29,7 +29,7 @@ class Relationship
   private
 
   def default_payee_code
-    @default_payee_code ||= end_products.max_by(&:claim_date).try(:payee_code)
+    @default_payee_code ||= end_products.max_by(&:claim_date).try(:payee_code) || EndProduct::DEFAULT_PAYEE_CODE
   end
 
   def end_products
