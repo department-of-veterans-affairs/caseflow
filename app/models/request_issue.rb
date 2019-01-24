@@ -599,6 +599,7 @@ class RequestIssue < ApplicationRecord
   def check_for_untimely!
     return unless eligible?
     return if untimely_exemption
+    return if vacols_id
     return if review_request&.is_a?(SupplementalClaim)
 
     if !review_request.timely_issue?(decision_or_promulgation_date)
