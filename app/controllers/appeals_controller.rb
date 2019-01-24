@@ -63,6 +63,28 @@ class AppealsController < ApplicationController
     }
   end
 
+  def hearings
+    #TODO: does this sort in the right order?
+    sorted_hearings = appeal.hearings.sort_by { |hearing| hearing.scheduled_for }
+
+    serialized_hearings = sorted_hearings.map do |hearing|
+      {
+        held_by: hearing.judge.present? ? hearing.judge.full_name : "",
+        # this assumes only the assigned judge will view the hearing worksheet. otherwise,
+        # we should check `hearing.hearing_views.map(&:user_id).include? judge.css_id`
+        viewed_by_judge: !hearing.hearing_views.empty?,
+        date: hearing.scheduled_for,
+        type: hearing.readable_request_type,
+        external_id: hearing.external_id,
+        disposition: hearing.disposition
+      }
+    end
+
+    render json: {
+      hearings: serialized_hearings
+    }
+  end
+
   # For legacy appeals, veteran address and birth/death dates are
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
   def veteran

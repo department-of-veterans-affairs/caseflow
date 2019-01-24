@@ -25,6 +25,7 @@ export const initialState = {
   claimReviews: {},
   editingIssue: {},
   docCountForAppeal: {},
+  mostRecentlyHeldHearingForAppeal: {},
   newDocsForAppeal: {},
   specialIssues: {},
 
@@ -168,6 +169,22 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       docCountForAppeal: {
         [action.payload.appealId]: {
           $set: action.payload.docCount
+        }
+      }
+    });
+  case ACTIONS.SET_MOST_RECENTLY_HELD_HEARING_FOR_APPEAL:
+    return update(state, {
+      mostRecentlyHeldHearingForAppeal: {
+        [action.payload.appealId]: {
+          $set: action.payload.hearing
+        }
+      }
+    });
+  case ACTIONS.ERROR_ON_RECEIVE_HEARING_FOR_APPEAL:
+    return update(state, {
+      mostRecentlyHeldHearingForAppeal: {
+        [action.payload.appealId]: {
+          $set: 'Failed to load'
         }
       }
     });

@@ -16,6 +16,7 @@ import type {
   BasicAppeal,
   BasicAppeals,
   AppealDetails,
+  Hearing,
   Issue,
   Issues
 } from './types/models';
@@ -47,6 +48,20 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
   }
 });
 
+export const prepareMostRecentlyHeldHearingForStore = (appealId: string, hearing: Hearing = {}) => {
+  return {
+    appealId,
+    hearing: {
+      heldBy: hearing.held_by,
+      viewedByJudge: hearing.viewed_by_judge,
+      date: hearing.date,
+      type: hearing.type,
+      externalId: hearing.external_id,
+      disposition: hearing.disposition
+    }
+  };
+};
+
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
     const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
@@ -76,16 +91,6 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
         cssId: task.attributes.assigned_by.css_id,
         pgId: task.attributes.assigned_by.pg_id
       },
-      hearings: task.attributes.hearings.map((hearing) => {
-        return {
-          heldBy: hearing.held_by,
-          viewedByJudge: hearing.viewed_by_judge,
-          date: hearing.date,
-          type: hearing.type,
-          externalId: hearing.external_id,
-          disposition: hearing.disposition
-        };
-      }),
       taskId: task.id,
       label: task.attributes.label,
       documentId: task.attributes.document_id,

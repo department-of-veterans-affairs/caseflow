@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-import HearingBadge from './HearingBadge';
+import HearingBadgeLoader from './HearingBadgeLoader';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
@@ -86,7 +86,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     return this.props.includeHearingBadge ? {
       header: '',
       valueFunction: (task: TaskWithAppeal) => {
-        return <HearingBadge hearing={task.hearings && task.hearings[0]} />;
+        return <HearingBadgeLoader task={task} />;
       }
     } : null;
   }
