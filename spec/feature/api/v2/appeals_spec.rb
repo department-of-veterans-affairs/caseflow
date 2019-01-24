@@ -122,6 +122,15 @@ describe "Appeals API v2", type: :request do
              veteran_is_not_claimant: veteran_is_not_claimant)
     end
 
+    let!(:supplemental_claim_review) do
+      create(:supplemental_claim,
+             veteran_file_number: veteran_file_number,
+             receipt_date: nil,
+             benefit_type: benefit_type,
+             legacy_opt_in_approved: legacy_opt_in_approved,
+             veteran_is_not_claimant: veteran_is_not_claimant)
+    end
+
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs, ssn|
         ssn
@@ -387,10 +396,11 @@ describe "Appeals API v2", type: :request do
       # test for the 200 status-code
       expect(response).to be_success
       # check to make sure the right amount of appeals are returned
-      expect(json["data"].length).to eq(1)
+      expect(json["data"].length).to eq(2)
 
       # check the attribtues on the hlr
       expect(json["data"].first["type"]).to eq("higherLevelReview")
+      expect(json["data"].first["id"]).to include("HLR")
       expect(json["data"].first["attributes"]["appealIds"].length).to eq(1)
       expect(json["data"].first["attributes"]["appealIds"].first).to include("HLR")
       expect(json["data"].first["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
@@ -406,6 +416,25 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["docket"]).to be_nil
       expect(json["data"].first["attributes"]["status"]).to be_nil
       expect(json["data"].first["attributes"]["issues"].length).to eq(0)
+
+      # check the attributes on the sc
+      expect(json["data"][1]["type"]).to eq("supplementalClaim")
+      expect(json["data"][1]["id"]).to include("SC")
+      expect(json["data"][1]["attributes"]["appealIds"].length).to eq(1)
+      expect(json["data"][1]["attributes"]["appealIds"].first).to include("SC")
+      expect(json["data"][1]["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
+      expect(json["data"][1]["attributes"]["type"]).to be_nil
+      expect(json["data"][1]["attributes"]["active"]).to eq(false)
+      expect(json["data"][1]["attributes"]["incompleteHistory"]).to eq(false)
+      expect(json["data"][1]["attributes"]["description"]).to be_nil
+      expect(json["data"][1]["attributes"]["aod"]).to be_nil
+      expect(json["data"][1]["attributes"]["location"]).to eq("aoj")
+      expect(json["data"][1]["attributes"]["alerts"]).to be_nil
+      expect(json["data"][1]["attributes"]["aoj"]).to be_nil
+      expect(json["data"][1]["attributes"]["programArea"]).to eq("compensation")
+      expect(json["data"][1]["attributes"]["docket"]).to be_nil
+      expect(json["data"][1]["attributes"]["status"]).to be_nil
+      expect(json["data"][1]["attributes"]["issues"].length).to eq(0)
 
       FeatureToggle.disable!(:api_appeal_status_v3)
     end
