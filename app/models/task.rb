@@ -265,6 +265,17 @@ class Task < ApplicationRecord
     }
   end
 
+  def return_to_attorney_data
+    assignee = children.select { |t| t.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+    attorneys = JudgeTeam.for_judge(assigned_to)&.attorneys || []
+    attorneys |= [assignee] if assignee.present?
+    {
+      selected: assignee,
+      options: users_to_options(attorneys),
+      type: AttorneyRewriteTask.name
+    }
+  end
+
   def timeline_title
     "#{type} completed"
   end
