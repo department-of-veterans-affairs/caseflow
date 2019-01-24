@@ -54,7 +54,7 @@ export default class ReaderLink extends React.PureComponent {
     return <React.Fragment>
       <Link {...linkProps} onClick={this.readerLinkAnalytics}>
           View { docCountWithinLink && <AppealDocumentCount appeal={appeal} cached={cached} /> } docs
-        { newDocsIcon && 
+        { newDocsIcon &&
           <span {...newFileIconStyling}><NewFile externalAppealId={appeal.externalId} cached={cached} /></span> }</Link>
       { docCountBelowLink &&
             <div {...documentCountSizeStyling}>

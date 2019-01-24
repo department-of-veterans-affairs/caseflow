@@ -89,6 +89,10 @@
     svg path {
       fill: $color-primary;
     }
+
+    span + span svg path {
+      fill: $color-white;
+    }
   }
 }
 
