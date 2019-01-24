@@ -19,10 +19,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def missing_veteran_file_numbers
-    @missing_veteran_file_numbers ||= begin
-      existing_veteran_file_numbers = Veteran.where(file_number: file_numbers).pluck(:file_number)
-      (file_numbers - existing_veteran_file_numbers)[0, (QUERY_LIMIT - existing_veteran_file_numbers.length)]
-    end
+    existing_veteran_file_numbers = Veteran.where(file_number: file_numbers).pluck(:file_number)
+    (file_numbers - existing_veteran_file_numbers)[0, (QUERY_LIMIT - existing_veteran_file_numbers.length)] || []
   end
 
   def create_missing_veterans
@@ -62,7 +60,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def perform
     RequestStore.store[:current_user] = User.system_user
-    create_missing_veterans unless missing_veteran_file_numbers.nil?
+    create_missing_veterans
 
     veterans.each do |veteran|
       begin
