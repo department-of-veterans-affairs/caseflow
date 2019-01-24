@@ -67,8 +67,8 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.veteran_closest_regional_office
   end
 
-  attribute :suggested_hearing_location do
-    object.appeal.veteran_suggested_hearing_location
+  attribute :veteran_available_hearing_locations do
+    object.appeal.veteran_available_hearing_locations
   end
 
   attribute :previous_task do

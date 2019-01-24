@@ -128,7 +128,6 @@ class LegacyHearing < ApplicationRecord
       appellant_middle_initial: appellant_middle_initial,
       appellant_last_name: appellant_last_name,
       appeal_vacols_id: appeal_vacols_id
-
     }
   end
 
@@ -149,6 +148,7 @@ class LegacyHearing < ApplicationRecord
     :veteran,  \
     :veteran_file_number, \
     :docket_name,
+    :veteran_available_hearing_locations,
     to: :appeal, allow_nil: true
 
   delegate :external_id, to: :appeal, prefix: true
@@ -188,7 +188,8 @@ class LegacyHearing < ApplicationRecord
         :readable_location,
         :appeal_external_id,
         :external_id,
-        :veteran_file_number
+        :veteran_file_number,
+        :veteran_available_hearing_locations
       ],
       except: [:military_service, :vacols_id]
     ).merge(

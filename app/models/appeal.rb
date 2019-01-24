@@ -193,7 +193,7 @@ class Appeal < DecisionReview
            :date_of_birth,
            :age,
            :closest_regional_office,
-           :suggested_hearing_location,
+           :available_hearing_locations,
            :country, to: :veteran, prefix: true
 
   delegate :city,

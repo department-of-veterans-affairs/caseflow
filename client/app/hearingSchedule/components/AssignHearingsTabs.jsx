@@ -64,15 +64,15 @@ export default class AssignHearingsTabs extends React.Component {
     this.state = {
       amaAppeals: {
         dropdownIsOpen: false,
-        filteredBy: []
+        filteredBy: null
       },
       legacyAppeals: {
         dropdownIsOpen: false,
-        filteredBy: []
+        filteredBy: null
       },
       upcomingHearings: {
         dropdownIsOpen: false,
-        filteredBy: []
+        filteredBy: null
       }
     };
   }
@@ -163,15 +163,15 @@ export default class AssignHearingsTabs extends React.Component {
     const filteredBy = this.state[tab].filteredBy;
     const filtered = _.filter(appeals, (appeal) => {
 
-      if (filteredBy.length === 0) {
+      if (filteredBy === null) {
         return true;
       }
 
-      if (appeal.attributes.suggestedHearingLocation === null && filteredBy.indexOf('null') !== -1) {
+      if (_.isEmpty(appeal.attributes.veteranAvailableHearingLocations) && filteredBy === 'null') {
         return true;
       }
 
-      return filteredBy.indexOf(appeal.attributes.suggestedHearingLocation.facilityId) !== -1;
+      return filteredBy === appeal.attributes.veteranAvailableHearingLocations[0].facilityId;
     });
 
     return _.map(filtered, (appeal) => ({
@@ -181,7 +181,7 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: appeal.attributes.aod
       }),
       docketNumber: this.getAppealDocketTag(appeal),
-      suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.suggestedHearingLocation),
+      suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.veteranAvailableHearingLocations[0]),
       time: null,
       externalId: appeal.attributes.externalAppealId
     }));
@@ -191,15 +191,15 @@ export default class AssignHearingsTabs extends React.Component {
     const filteredBy = this.state.upcomingHearings.filteredBy;
     const filtered = _.filter(hearings, (hearing) => {
 
-      if (filteredBy.length === 0) {
+      if (filteredBy === null) {
         return true;
       }
 
-      if (hearing.location === null && filteredBy.indexOf('null') !== -1) {
+      if (hearing.location === null && filteredBy === 'null') {
         return true;
       }
 
-      return filteredBy.indexOf(hearing.location.facilityId) !== -1;
+      return filteredBy === hearing.location.facilityId;
     });
 
     return _.map(filtered, (hearing) => ({
@@ -216,7 +216,8 @@ export default class AssignHearingsTabs extends React.Component {
   };
 
   getLocationFilterValues = (data, tab) => {
-    const getLocation = (row) => tab === 'upcomingHearings' ? row.location : row.attributes.suggestedHearingLocation;
+    const getLocation = (row) => tab === 'upcomingHearings' ? row.location :
+      row.attributes.veteranAvailableHearingLocations[0];
 
     const locations = data.map((row) => {
       const location = getLocation(row);
@@ -301,20 +302,10 @@ export default class AssignHearingsTabs extends React.Component {
         }
       }),
       setSelectedValue: (val) => {
-        let filteredBy;
-
-        if (val === 'all') {
-          filteredBy = [];
-        } else if (state.filteredBy.indexOf(val) === -1) {
-          filteredBy = [...state.filteredBy, val];
-        } else {
-          filteredBy = _.remove([...state.filteredBy], (value) => value === val);
-        }
-
         this.setState({
           [tab]: {
             ...state,
-            filteredBy
+            filteredBy: val === 'all' ? null : val
           }
         });
       }
