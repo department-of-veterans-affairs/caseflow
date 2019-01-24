@@ -51,9 +51,11 @@ const getModals = (state: State): UiStateModals => state.ui.modals;
 const getNewDocsForAppeal = (state: State): NewDocsForAppeal => state.queue.newDocsForAppeal;
 const getClaimReviews = (state: State): ClaimReviews => state.queue.claimReviews;
 
-const incompleteTasksSelector = (tasks: Tasks | Array<Task>) =>
+export const incompleteTasksSelector = (tasks: Tasks | Array<Task>) =>
   _.filter(tasks, (task) => task.status !== TASK_STATUSES.completed);
-const completeTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed);
+
+export const completeTasksSelector = (tasks: Tasks) =>
+  _.filter(tasks, (task) => task.status === TASK_STATUSES.completed);
 
 export const getActiveModalType = createSelector(
   [getModals],
@@ -116,6 +118,14 @@ export const getTasksForAppeal = createSelector(
   (tasks: Tasks, amaTasks: Tasks, appealId: string) => {
     return incompleteTasksSelector(_.filter(tasks, (task) => task.externalAppealId === appealId).
       concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId)));
+  }
+);
+
+export const getAllTasksForAppeal = createSelector(
+  [getTasks, getAmaTasks, getAppealId],
+  (tasks: Tasks, amaTasks: Tasks, appealId: string) => {
+    return _.filter(tasks, (task) => task.externalAppealId === appealId).
+      concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId));
   }
 );
 
@@ -194,6 +204,13 @@ export const rootTasksForAppeal = createSelector(
 
 export const nonRootActionableTasksForAppeal = createSelector(
   [actionableTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.type !== 'RootTask')
+);
+
+export const allCompleteTasksForAppeal = createSelector(
+  [getAllTasksForAppeal, getAppealId],
+  (tasks: Tasks, appealId: string) => {
+    return _.filter(tasks, (task) => task.externalAppealId === appealId && task.status === TASK_STATUSES.completed);
+  }
 );
 
 export const newTasksByAssigneeCssIdSelector = createSelector(

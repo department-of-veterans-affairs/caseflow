@@ -1,8 +1,9 @@
 class ScheduleHearingTask < GenericTask
   class << self
     def create_if_eligible(appeal)
-      if appeal.is_a?(LegacyAppeal) && appeal.case_record.bfcurloc == "57"
-        ScheduleHearingTask.find_or_create_by!(appeal: appeal) do |task|
+      if appeal.is_a?(LegacyAppeal) && appeal.case_record.bfcurloc == "57" &&
+         appeal.hearings.all?(&:disposition)
+        ScheduleHearingTask.where.not(status: "completed").find_or_create_by!(appeal: appeal) do |task|
           task.update(
             assigned_to: HearingsManagement.singleton,
             parent: RootTask.find_or_create_by!(appeal: appeal)

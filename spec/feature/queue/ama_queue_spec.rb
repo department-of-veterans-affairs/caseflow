@@ -258,7 +258,7 @@ RSpec.feature "AmaQueue" do
 
         click_on "Pal Smith"
 
-        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, id: old_task.id.to_s).click
         expect(page).to have_content(existing_instruction)
 
         find(".Select-control", text: "Select an action").click
@@ -503,8 +503,7 @@ RSpec.feature "AmaQueue" do
 
       click_on veteran_full_name
 
-      expect(page).to have_content("Decision signed by judge")
-
+      expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
       find(".Select-control", text: "Select an action").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
