@@ -22,13 +22,14 @@ export const grayLineStyling = css({
   background: COLORS.GREY_LIGHT,
   margin: 'auto',
   position: 'absolute',
-  top: '39px',
+  top: '30px',
   left: '49.5%',
   bottom: 0
 });
 
 const grayLineTimelineStyling = css(grayLineStyling, { left: '9%',
-  marginLeft: '12px' });
+  marginLeft: '12px',
+  top: '39px' });
 
 const greyDotAndlineStyling = css({ top: '25px' });
 
@@ -55,7 +56,7 @@ const taskTimeTimelineContainerStyling = css(taskContainerStyling, { width: '40%
 const taskInformationTimelineContainerStyling =
   css(taskInformationContainerStyling, { align: 'left',
     width: '50%',
-    maxWidth: '230px' });
+    maxWidth: '235px' });
 const taskInfoWithIconTimelineContainer =
   css(taskInfoWithIconContainer, { textAlign: 'left',
     marginLeft: '5px',
@@ -108,8 +109,17 @@ class TaskRows extends React.PureComponent {
   };
 
   assignedOnListItem = (task) => {
+    if (task.completedOn) {
+      return null;
+    }
+
     return task.assignedOn ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
       <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+  }
+
+  completedOnListItem = (task) => {
+    return task.completedOn ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}</dt>
+      <dd><DateString date={task.completedOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
   dueDateListItem = (task) => {
@@ -158,6 +168,10 @@ class TaskRows extends React.PureComponent {
   }
 
   taskLabelListItem = (task) => {
+    if (task.completedOn) {
+      return null;
+    }
+
     return task.label ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_TYPE_LABEL}</dt>
       <dd>{this.getActionName(task)}</dd></div> : null;
   }
@@ -211,8 +225,9 @@ class TaskRows extends React.PureComponent {
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
         <td {...taskTimeTimelineContainerStyling}></td>
-        <td {...taskInfoWithIconTimelineContainer} {...greyDotStyling}><GrayDot /><div {...grayLineTimelineStyling}
-          {...css({ top: '25px' })} /></td>
+        <td {...taskInfoWithIconTimelineContainer} {...greyDotStyling}><GrayDot />
+          { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
+            <div {...grayLineTimelineStyling}{...css({ top: '25px !important' })} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
           { appeal.decisionDate ? COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
           } <br />
@@ -223,30 +238,29 @@ class TaskRows extends React.PureComponent {
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>
               { this.assignedOnListItem(task) }
+              { this.completedOnListItem(task) }
               { this.dueDateListItem(task) }
-              { this.daysWaitingListItem(task) }
+              { !task.completedOn && this.daysWaitingListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
-            task.completedOn ? '' : greyDotTimelineStyling].join(' ')} >
-            { task.completedOn ? <GreenCheckmark /> : <GrayDot /> }
-            { (index < taskList.length) && <div {...grayLineStyling}
-              className={[timeline ? grayLineTimelineStyling : '',
+            task.completedOn ? '' : greyDotTimelineStyling].join(' ')}>
+            { task.completedOn && timeline ? <GreenCheckmark /> : <GrayDot /> }
+            { (((index < taskList.length) && timeline) || (index < taskList.length - 1 && !timeline)) &&
+              <div {...grayLineStyling} className={[timeline ? grayLineTimelineStyling : '',
                 task.completedOn ? '' : greyDotAndlineStyling].join(' ')} /> }
           </td>
           <td {...taskInformationContainerStyling}
             className={timeline ? taskInformationTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>
-              { timeline && task.timeline_title }
+              { timeline && task.timelineTitle }
               { this.assignedToListItem(task) }
               { this.assignedByListItem(task) }
               { this.taskLabelListItem(task) }
               { this.taskInstructionsListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
-          { !timeline && <td {...taskActionsContainerStyling}>
-            { this.showActionsListItem(task, appeal) }
-          </td> }
+          { !timeline && <td {...taskActionsContainerStyling}> { this.showActionsListItem(task, appeal) } </td> }
         </tr>
       ) }
       { timeline && appeal.isLegacyAppeal && <tr>
@@ -254,19 +268,20 @@ class TaskRows extends React.PureComponent {
           { appeal.form9Date ? moment(appeal.form9Date).format('MM/DD/YYYY') : null }
         </td>
         <td {...taskInfoWithIconTimelineContainer} className={appeal.form9Date ? '' : greyDotStyling}>
-          { appeal.form9Date ? <GreenCheckmark /> : <GrayDot /> } <div {...grayLineTimelineStyling} /></td>
+          { appeal.form9Date ? <GreenCheckmark /> : <GrayDot /> }
+          { appeal.nodDate && <div {...grayLineTimelineStyling} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
           { appeal.form9Date ? COPY.CASE_TIMELINE_FORM_9_RECEIVED : COPY.CASE_TIMELINE_FORM_9_PENDING}
         </td>
       </tr> }
-      { timeline && <tr>
+      { timeline && appeal.nodDate && <tr>
         <td {...taskTimeTimelineContainerStyling}>
-          { appeal.nodDate ? moment(appeal.nodDate).format('MM/DD/YYYY') : null }
+          { moment(appeal.nodDate).format('MM/DD/YYYY') }
         </td>
-        <td {...taskInfoWithIconTimelineContainer} className={appeal.nodDate ? '' : greyDotStyling}>
-          { appeal.nodDate ? <GreenCheckmark /> : <GrayDot /> }</td>
+        <td {...taskInfoWithIconTimelineContainer}>
+          { <GreenCheckmark /> } </td>
         <td {...taskInformationTimelineContainerStyling}>
-          { appeal.nodDate ? COPY.CASE_TIMELINE_NOD_RECEIVED : COPY.CASE_TIMELINE_NOD_PENDING } <br />
+          { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
         </td>
       </tr> }
     </React.Fragment>;

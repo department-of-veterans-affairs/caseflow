@@ -10,6 +10,8 @@ class RequestIssuesUpdate < ApplicationRecord
   attr_writer :request_issues_data
   attr_reader :error_code
 
+  delegate :veteran, to: :review
+
   def perform!
     return false unless validate_before_perform
     return false if processed?

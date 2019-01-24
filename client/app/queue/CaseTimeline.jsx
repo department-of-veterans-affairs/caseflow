@@ -4,6 +4,7 @@ import type { State } from './types/state';
 import { allCompleteTasksForAppeal, allTasksForTimeline } from './selectors';
 import COPY from '../../COPY.json';
 import TaskRows from './components/TaskRows';
+import _ from 'lodash';
 
 type Params = {|
   appealId: string
@@ -28,9 +29,14 @@ class CaseTimeline extends React.PureComponent {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
 
+  let completedTasks = allCompleteTasksForAppeal(state, { appealId: ownProps.appeal.externalId });
+
+  completedTasks = _.orderBy(completedTasks, ['completedOn'], ['desc']);
+
   return {
-    completedTasks: allCompleteTasksForAppeal(state, { appealId: ownProps.appeal.externalId }),
+    completedTasks,
     timelineTasks: allTasksForTimeline(state, { appealId: ownProps.appeal.externalId })
+
   };
 };
 

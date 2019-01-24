@@ -100,6 +100,12 @@ describe RequestIssuesUpdate do
       review.request_issues.find { |issue| issue.contested_rating_issue_reference_id == "issue1" }.id
     end
 
+    context "#veteran" do
+      it "delegates to review" do
+        expect(request_issues_update.veteran).to eq(request_issues_update.review.veteran)
+      end
+    end
+
     context "#created_issues" do
       before do
         request_issues_update.perform!
