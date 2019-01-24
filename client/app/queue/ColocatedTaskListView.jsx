@@ -69,7 +69,7 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
       {
         label: sprintf(COPY.QUEUE_PAGE_ON_HOLD_TAB_TITLE, numOnHoldTasks),
         page: <OnHoldTasksTab />,
-        icon: <NewFileIcon />
+        indicator: <NewFileIcon />
       },
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,

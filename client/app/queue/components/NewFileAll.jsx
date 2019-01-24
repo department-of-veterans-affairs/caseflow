@@ -41,7 +41,7 @@ class NewFileAll extends React.Component<Props> {
       (appealDocs) => appealDocs && appealDocs.length);
 
     if (allDocs && allDocs.length) {
-      return <Tooltip id="newfile-tip" text={COPY.NEW_FILE_ICON_TOOLTIP} offset={{ top: '-10px' }}>
+      return <Tooltip id="newfile-tip" text={COPY.NEW_FILE_ALL_ICON_TOOLTIP} offset={{ top: '-10px' }}>
         <NewFileIcon />
       </Tooltip>;
     }

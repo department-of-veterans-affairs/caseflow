@@ -102,7 +102,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
           tasks={this.props.onHoldTasks}
           includeNewDocsIcon
         />,
-        icon: <NewFileAll tasks={this.props.onHoldTasks} />
+        indicator: <NewFileAll tasks={this.props.onHoldTasks} />
       },
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
@@ -163,7 +163,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView): React.ComponentType<Params>);
 
-const TaskTableTab = ({ description, tasks , includeNewDocsIcon}) => <React.Fragment>
+const TaskTableTab = ({ description, tasks, includeNewDocsIcon }) => <React.Fragment>
   <p className="cf-margin-top-0" >{description}</p>
   <TaskTable
     includeDetailsLink

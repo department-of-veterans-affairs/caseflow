@@ -2,7 +2,6 @@
 import { createSelector } from 'reselect';
 import _ from 'lodash';
 import {
-  taskHasNewDocuments,
   taskIsOnHold
 } from './utils';
 
