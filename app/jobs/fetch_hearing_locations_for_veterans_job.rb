@@ -68,6 +68,17 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       rescue Caseflow::Error::VaDotGovLimitError
         sleep 60
         va_dot_gov_address = validate_veteran_address(veteran)
+      rescue Caseflow::Error::VaDotGovRequestError => e
+        case e.message["messages"][0]["key"]
+        when "AddressCouldNotBeFound"
+          # do something when address is not valid (1234 Fake st.)
+          next
+        when "InvalidRequestStreetAddress"
+          # do something when address doesn't exist (address_line1.nil?)
+          next
+        else
+          raise e
+        end
       end
 
       create_available_locations_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
