@@ -78,6 +78,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
             includeIssueCount
             includeDaysWaiting
             includeReaderLink
+            includeNewDocsIcon
             tasks={this.props.tasks}
             userId={userId} />
         </React.Fragment>
@@ -98,6 +99,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
                 includeIssueCount
                 includeDaysWaiting
                 includeReaderLink
+                includeNewDocsIcon
                 tasks={this.props.tasks}
                 userId={userId} />
               {this.props.distributionCompleteCasesLoading &&

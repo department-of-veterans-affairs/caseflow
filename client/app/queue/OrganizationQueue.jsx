@@ -106,6 +106,7 @@ const TaskTableTab = ({ description, tasks }) => <React.Fragment>
     includeDocketNumber
     includeDaysWaiting
     includeReaderLink
+    includeNewDocsIcon
     tasks={tasks}
   />
 </React.Fragment>;
