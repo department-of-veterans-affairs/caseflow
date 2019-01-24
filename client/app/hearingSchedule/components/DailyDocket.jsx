@@ -94,6 +94,8 @@ export default class DailyDocket extends React.Component {
 
   onHearingTimeUpdate = (hearingId) => (time) => this.props.onHearingTimeUpdate(hearingId, time);
 
+  onHearingLocationUpdate = (hearingId) => (location) => this.props.onHearingLocationUpdate(hearingId, location);
+
   saveHearing = (hearing) => () => this.props.saveHearing(hearing);
 
   cancelHearingUpdate = (hearing) => () => this.props.onCancelHearingUpdate(hearing);
@@ -160,9 +162,11 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
-  getHearingLocationOptions = (hearing) => {
-    return [{ label: hearing.readableLocation,
-      value: hearing.readableLocation }];
+  getHearingLocationOptions = (availableHearingLocations) => {
+    return _.map(availableHearingLocations, (ahl) => ({
+      label: `${ahl.city}, ${ahl.state} (${ahl.distance} miles away)`,
+      value: ahl
+    }));
   };
 
   getHearingDate = (date) => {
@@ -193,9 +197,9 @@ export default class DailyDocket extends React.Component {
   getHearingLocationDropdown = (hearing) => {
     return <SearchableDropdown
       name="Hearing Location"
-      options={this.getHearingLocationOptions(hearing)}
-      value={hearing.readableLocation}
-      readOnly
+      options={this.getHearingLocationOptions(hearing.veteranAvailableHearingLocations)}
+      value={hearing.location}
+      onChange={this.onHearingLocationUpdate(hearing.id)}
     />;
   };
 

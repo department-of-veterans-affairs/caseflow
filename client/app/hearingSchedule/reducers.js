@@ -92,6 +92,15 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case ACTIONS.HEARING_LOCATION_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          location: { $set: action.payload.location },
+          edited: { $set: true }
+        }
+      }
+    });
   case ACTIONS.HEARING_DATE_UPDATE:
     return update(state, {
       hearings: {
