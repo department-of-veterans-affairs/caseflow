@@ -217,17 +217,10 @@ const incompleteTasksWithHold: (State) => Array<Task> = createSelector(
   (tasks: Array<Task>) => tasks.filter((task) => taskIsOnHold(task))
 );
 
-export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
-  [incompleteTasksWithHold, getNewDocsForAppeal],
-  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
-    !taskIsOnHold(task) || taskHasNewDocuments(task, newDocsForAppeal)
-  )
-);
-
 export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
   [incompleteTasksWithHold, getNewDocsForAppeal],
-  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
-    taskIsOnHold(task) && !taskHasNewDocuments(task, newDocsForAppeal)
+  (tasks: Array<Task>) => tasks.filter((task) =>
+    taskIsOnHold(task)
   )
 );
 

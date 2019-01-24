@@ -161,80 +161,6 @@ describe('ColocatedTaskListView', () => {
     });
   });
 
-  describe('Pending tab', () => {
-    it('shows only pending tasks', () => {
-      const task = amaTaskWith({
-        id: '1',
-        cssIdAssignee: 'BVALSPORER',
-        placedOnHoldAt: moment().subtract(30, 'days'),
-        onHoldDuration: 30
-      });
-      const taskWithNewDocs = amaTaskWith({
-        id: '4',
-        cssIdAssignee: 'BVALSPORER',
-        externalAppealId: '44',
-        placedOnHoldAt: moment().subtract(2, 'days'),
-        onHoldDuration: 30
-      });
-      const taskNotAssigned = amaTaskWith({
-        ...task,
-        id: '5',
-        cssIdAssignee: 'NOTBVALSPORER'
-      });
-      const taskNew = amaTaskWith({
-        id: '6',
-        cssIdAssignee: task.assignedTo.cssId
-      });
-      const appeal = appealTemplate;
-      const appealWithNewDocs = {
-        ...appeal,
-        id: '6',
-        externalId: taskWithNewDocs.externalAppealId
-      };
-
-      const tasks = {};
-      const amaTasks = {
-        [task.id]: task,
-        [taskNotAssigned.id]: taskNotAssigned,
-        [taskWithNewDocs.id]: taskWithNewDocs,
-        [taskNew.id]: taskNew
-      };
-      const appeals = {
-        [appeal.id]: appeal,
-        [appealWithNewDocs.id]: appealWithNewDocs
-      };
-      const store = getStore();
-
-      store.dispatch(onReceiveQueue({ tasks,
-        amaTasks,
-        appeals }));
-      store.dispatch(setUserCssId(task.assignedTo.cssId));
-      store.dispatch(receiveNewDocuments({
-        appealId: appealWithNewDocs.externalId,
-        newDocuments: [{}]
-      }));
-
-      const wrapper = getWrapperColocatedTaskListView(store);
-
-      wrapper.find('[aria-label="Pending action (1) tab window"]').simulate('click');
-
-      const cells = wrapper.find('td');
-
-      expect(cells).to.have.length(6);
-      const wrappers = [];
-
-      for (let i = 0; i < cells.length; i++) {
-        wrappers.push(cells.at(i));
-      }
-      {
-        const [daysOnHold, documents] = wrappers.slice(4);
-
-        expect(daysOnHold.text()).to.equal('1 of 30');
-        expect(documents.html()).to.include(`/reader/appeal/${taskWithNewDocs.externalAppealId}/documents`);
-      }
-    });
-  });
-
   describe('On hold tab', () => {
     it('shows only on-hold tasks', () => {
       const task = amaTaskWith({
@@ -288,14 +214,14 @@ describe('ColocatedTaskListView', () => {
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
-      wrapper.find('[aria-label="On hold (1) tab window"]').simulate('click');
+      wrapper.find('[aria-label="On hold (2) tab window"]').simulate('click');
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(6);
+      expect(cells).to.have.length(12);
       const wrappers = [];
 
-      for (let i = 0; i < cells.length; i++) {
+      for (let i = 0; i < cells.length / 2; i++) {
         wrappers.push(cells.at(i));
       }
       const [caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers;

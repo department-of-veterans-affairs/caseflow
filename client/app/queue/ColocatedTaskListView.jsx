@@ -11,7 +11,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 import {
   newTasksByAssigneeCssIdSelector,
-  pendingTasksByAssigneeCssIdSelector,
   onHoldTasksByAssigneeCssIdSelector,
   completeTasksByAssigneeCssIdSelector
 } from './selectors';
@@ -41,7 +40,6 @@ type Props = Params & {|
   success: UiStateMessage,
   organizations: Array<Object>,
   numNewTasks: number,
-  numPendingTasks: number,
   numOnHoldTasks: number,
   // Action creators
   clearCaseSelectSearch: typeof clearCaseSelectSearch,
@@ -60,7 +58,6 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
       success,
       organizations,
       numNewTasks,
-      numPendingTasks,
       numOnHoldTasks
     } = this.props;
 
@@ -70,13 +67,9 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
         page: <NewTasksTab />
       },
       {
-        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE, numPendingTasks),
-        page: <PendingTasksTab />,
-        icon: <NewFileIcon />
-      },
-      {
         label: sprintf(COPY.QUEUE_PAGE_ON_HOLD_TAB_TITLE, numOnHoldTasks),
-        page: <OnHoldTasksTab />
+        page: <OnHoldTasksTab />,
+        icon: <NewFileIcon />
       },
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
@@ -100,7 +93,6 @@ const mapStateToProps = (state) => {
     success,
     organizations: state.ui.organizations,
     numNewTasks: newTasksByAssigneeCssIdSelector(state).length,
-    numPendingTasks: pendingTasksByAssigneeCssIdSelector(state).length,
     numOnHoldTasks: onHoldTasksByAssigneeCssIdSelector(state).length
   };
 };
@@ -113,7 +105,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView): React.ComponentType<Params>);
 
 const NewFileIcon = connect(
-  (state: State) => ({ tasks: pendingTasksByAssigneeCssIdSelector(state) }))(
+  (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
   (props: { tasks: Array<TaskWithAppeal> }) => <NewFileAll tasks={props.tasks} />);
 
 const NewTasksTab = connect(
@@ -127,23 +119,6 @@ const NewTasksTab = connect(
         includeType
         includeDocketNumber
         includeDaysWaiting
-        includeReaderLink
-        tasks={props.tasks}
-      />
-    </React.Fragment>;
-  });
-
-const PendingTasksTab = connect(
-  (state: State) => ({ tasks: pendingTasksByAssigneeCssIdSelector(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => {
-    return <React.Fragment>
-      <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION}</p>
-      <TaskTable
-        includeDetailsLink
-        includeTask
-        includeType
-        includeDocketNumber
-        includeDaysOnHold
         includeReaderLink
         tasks={props.tasks}
       />
