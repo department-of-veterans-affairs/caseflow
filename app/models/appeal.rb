@@ -290,6 +290,19 @@ class Appeal < DecisionReview
     remand_supplemental_claims.each(&:start_processing_job!)
   end
 
+# needed for appeal status api
+  def appeal_status_id
+    "A#{id}"
+  end
+
+  def linked_review_ids
+    Array.wrap(appeal_status_id)
+  end
+
+  def aod
+    #to be implemented
+  end
+
   private
 
   def bgs
