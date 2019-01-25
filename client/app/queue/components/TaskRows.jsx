@@ -74,7 +74,7 @@ class TaskRows extends React.PureComponent {
     super(props);
     const taskVisibiltyObj = {};
 
-    this.props.timelineTasks.forEach((task) => taskVisibiltyObj[task.uniqueId] = false);
+    this.props.incompleteNonActionableTasks.forEach((task) => taskVisibiltyObj[task.uniqueId] = false);
 
     this.state = {
       taskInstructionsIsVisible: false,
@@ -292,7 +292,7 @@ class TaskRows extends React.PureComponent {
 const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
-    timelineTasks: incompleteNonActionableTasks(state, { appealId: ownProps.appeal.externalId })
+    incompleteNonActionableTasks: incompleteNonActionableTasks(state, { appealId: ownProps.appeal.externalId })
   };
 };
 
