@@ -14,7 +14,6 @@ import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
-import { incompleteNonActionableTasks } from '../selectors';
 import type { State } from '../types/state';
 
 export const grayLineStyling = css({
@@ -74,13 +73,13 @@ class TaskRows extends React.PureComponent {
     super(props);
     const taskVisibiltyObj = {};
 
-    this.props.incompleteNonActionableTasks.forEach((task) => taskVisibiltyObj[task.uniqueId] = false);
+    this.props.taskList.forEach((task) => taskVisibiltyObj[task.uniqueId] = false);
 
     this.state = {
       taskInstructionsIsVisible: false,
       taskInstructionsIsVisibleObj: taskVisibiltyObj
     };
-  }
+  };
 
   toggleTaskInstructionsVisibility = (task) => {
     const prevState = this.state.taskInstructionsIsVisible;
@@ -209,6 +208,9 @@ class TaskRows extends React.PureComponent {
   }
 
   showActionsListItem = (task, appeal) => {
+    if (task.availableActions.length <= 0) {
+      return null;
+    }
     return this.showActionsSection(task) ? <div><h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
       <ActionsDropdown task={task} appealId={appeal.externalId} /></div> : null;
   }
@@ -261,7 +263,7 @@ class TaskRows extends React.PureComponent {
             </CaseDetailsDescriptionList>
           </td>
           { !timeline && <td {...taskActionsContainerStyling}>
-            { task.availableActions.length > 0 && this.showActionsListItem(task, appeal) } </td> }
+            { this.showActionsListItem(task, appeal) } </td> }
         </tr>
       ) }
       { timeline && appeal.isLegacyAppeal && <tr>
@@ -292,7 +294,6 @@ class TaskRows extends React.PureComponent {
 const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
-    incompleteNonActionableTasks: incompleteNonActionableTasks(state, { appealId: ownProps.appeal.externalId })
   };
 };
 
