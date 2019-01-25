@@ -14,7 +14,6 @@ import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
-import type { State } from '../types/state';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -64,10 +63,6 @@ const taskInfoWithIconTimelineContainer =
 const greyDotStyling = css({ paddingLeft: '6px' });
 const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
 
-type Params = {|
-  appealId: string
-|};
-
 class TaskRows extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -79,7 +74,7 @@ class TaskRows extends React.PureComponent {
       taskInstructionsIsVisible: false,
       taskInstructionsIsVisibleObj: taskVisibiltyObj
     };
-  };
+  }
 
   toggleTaskInstructionsVisibility = (task) => {
     const prevState = this.state.taskInstructionsIsVisible;
@@ -291,7 +286,7 @@ class TaskRows extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = () => {
 
   return {
   };
