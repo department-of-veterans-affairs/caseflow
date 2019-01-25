@@ -4,20 +4,19 @@ class HearingsController < ApplicationController
   before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
   before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
 
+  def show
+    render json: hearing.to_hash(current_user.id)
+  end
+
   def update
-    if params["hearing"]["master_record_updated"]
-      HearingRepository.slot_new_hearing(
-        params["hearing"]["master_record_updated"]["id"],
-        params["hearing"]["master_record_updated"]["time"],
-        hearing.appeal
-      )
-    end
+    slot_new_hearing
 
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(update_params_legacy)
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
       HearingRepository.load_vacols_data(hearing)
     else
+      Transcription.find_or_create_by(hearing: hearing)
       hearing.update!(update_params)
     end
 
@@ -33,6 +32,16 @@ class HearingsController < ApplicationController
   end
 
   private
+
+  def slot_new_hearing
+    if params["hearing"]["master_record_updated"]
+      HearingRepository.slot_new_hearing(
+        params["hearing"]["master_record_updated"]["id"],
+        params["hearing"]["master_record_updated"]["time"],
+        hearing.appeal
+      )
+    end
+  end
 
   def check_hearing_prep_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("hearing_prep_out_of_service")
@@ -77,8 +86,18 @@ class HearingsController < ApplicationController
                                      :disposition,
                                      :hold_open,
                                      :transcript_requested,
+                                     :transcript_sent_date,
                                      :prepped,
                                      :scheduled_time,
-                                     :evidence_window_waived)
+                                     :judge_id,
+                                     :room,
+                                     :bva_poc,
+                                     :evidence_window_waived,
+                                     transcription_attributes: [
+                                       :expected_return_date, :problem_notice_sent_date,
+                                       :problem_type, :requested_remedy,
+                                       :sent_to_transcriber_date, :task_number,
+                                       :transcriber, :uploaded_to_vbms_date
+                                     ])
   end
 end
