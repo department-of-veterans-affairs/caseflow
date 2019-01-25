@@ -126,9 +126,9 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     case INTAKE_STATES.REVIEWED:
       if (formType === FORM_TYPES.RAMP_ELECTION.key || formType === FORM_TYPES.RAMP_REFILING.key) {
         return <Redirect to={PAGE_PATHS.FINISH} />;
-      } else {
-        return <Redirect to={PAGE_PATHS.ADD_ISSUES} />;
       }
+
+      return <Redirect to={PAGE_PATHS.ADD_ISSUES} />;
     default:
     }
 
