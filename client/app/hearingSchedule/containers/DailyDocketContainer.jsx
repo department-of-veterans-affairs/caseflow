@@ -88,7 +88,7 @@ export class DailyDocketContainer extends React.Component {
   };
 
   getTime = (hearing) => {
-    if (hearing.editedTime || hearing.selectedOptionalTime) {
+    if (hearing.editedTime) {
       return {
         // eslint-disable-next-line id-length
         h: hearing.editedTime.split(':')[0],
@@ -97,6 +97,7 @@ export class DailyDocketContainer extends React.Component {
         offset: moment.tz('America/New_York').format('Z')
       };
     }
+
     const timeObject = moment(hearing.scheduledFor);
 
     return {
@@ -117,7 +118,7 @@ export class DailyDocketContainer extends React.Component {
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
       master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
         time } : null,
-      scheduled_for: hearing.editedTime === 'other' ? hearing.selectedOptionalTime : moment(hearing.scheduledFor).set(time)
+      scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
     };
   };
 

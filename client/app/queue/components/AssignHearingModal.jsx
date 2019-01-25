@@ -1,6 +1,4 @@
 // @flow
-/* eslint no-mixed-spaces-and-tabs: 0*/
-/* eslint no-tabs: 0*/
 
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -279,8 +277,10 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   formatHearingDate = () => {
     const { selectedHearingDay, selectedHearingTime, selectedOptionalTime } = this.props;
 
-    if (!selectedHearingTime && !selectedOptionalTime) {
+    if (selectedHearingDay && !selectedHearingTime) {
       return new Date(selectedHearingDay.hearingDate);
+    } else if (!selectedHearingTime || !selectedHearingDay) {
+      return null;
     }
 
     const hearingTime = selectedHearingTime === 'other' ? selectedOptionalTime : selectedHearingTime;

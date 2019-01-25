@@ -267,8 +267,7 @@ export default class DailyDocket extends React.Component {
         name="optionalTime"
         placeholder="Select a time"
         options={TIME_OPTIONS}
-        value={hearing.selectedOptionalTime ? 
-          hearing.selectedOptionalTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
+        value={hearing.selectedOptionalTime ? hearing.selectedOptionalTime || '' : hearing.editedTime}
         onChange={this.onHearingOptionalTime(hearing)}
         hideLabel />}</div>
 
