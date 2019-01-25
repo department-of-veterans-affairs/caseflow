@@ -7,7 +7,10 @@ class Hearing < ApplicationRecord
   has_one :hearing_location, as: :hearing
   alias_attribute :location, :hearing_location
   has_many :hearing_issue_notes
+
   accepts_nested_attributes_for :hearing_issue_notes
+  accepts_nested_attributes_for :transcription
+  accepts_nested_attributes_for :hearing_location
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
@@ -31,8 +34,6 @@ class Hearing < ApplicationRecord
   # changing RO should re-parent hearing
   delegate :regional_office, to: :hearing_day, prefix: true
   alias_attribute :regional_office_key, :hearing_day_regional_office
-
-  accepts_nested_attributes_for :transcription, allow_destroy: true
 
   HEARING_TYPES = {
     V: "Video",

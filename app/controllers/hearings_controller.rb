@@ -11,6 +11,8 @@ class HearingsController < ApplicationController
   def update
     slot_new_hearing
 
+    puts params
+
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(update_params_legacy)
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
@@ -78,9 +80,16 @@ class HearingsController < ApplicationController
                                      :aod,
                                      :transcript_requested,
                                      :prepped,
-                                     :scheduled_for)
+                                     :scheduled_for,
+                                     hearing_location_attributes: [
+                                       :city, :state, :address,
+                                       :facility_id, :facility_type,
+                                       :classification, :name, :distance,
+                                       :zip_code
+                                     ])
   end
 
+  # rubocop:disable Metrics/MethodLength
   def update_params
     params.require("hearing").permit(:notes,
                                      :disposition,
@@ -93,6 +102,12 @@ class HearingsController < ApplicationController
                                      :room,
                                      :bva_poc,
                                      :evidence_window_waived,
+                                     hearing_location_attributes: [
+                                       :city, :state, :address,
+                                       :facility_id, :facility_type,
+                                       :classification, :name, :distance,
+                                       :zip_code
+                                     ],
                                      transcription_attributes: [
                                        :expected_return_date, :problem_notice_sent_date,
                                        :problem_type, :requested_remedy,
@@ -100,4 +115,5 @@ class HearingsController < ApplicationController
                                        :transcriber, :uploaded_to_vbms_date
                                      ])
   end
+  # rubocop:enable Metrics/MethodLength
 end

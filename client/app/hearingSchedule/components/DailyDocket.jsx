@@ -19,7 +19,11 @@ import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone, formatDate
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { crossSymbolHtml, pencilSymbol } from '../../components/RenderFunctions';
-import { RegionalOfficeDropdown, HearingDateDropdown } from '../../components/DataDropdowns';
+import {
+  RegionalOfficeDropdown,
+  HearingDateDropdown,
+  VeteranHearingLocationsDropdown
+} from '../../components/DataDropdowns';
 
 const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
@@ -158,11 +162,29 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
-  getHearingLocationOptions = (availableHearingLocations) => {
-    return _.map(availableHearingLocations, (ahl) => ({
-      label: `${ahl.city}, ${ahl.state} (${ahl.distance} miles away)`,
-      value: ahl
-    }));
+  getHearingLocationValue = (location) => ({
+    name: location.name,
+    address: location.address,
+    city: location.city,
+    state: location.state,
+    zipCode: location.zipCode,
+    distance: location.distance,
+    classification: location.classification,
+    facilityId: location.facilityId,
+    facilityType: location.facilityType
+  });
+
+  getHearingLocationOptions = (hearing) => {
+    let options = [];
+
+    _.forEach(hearing.veteranAvailableHearingLocations, (ahl) => {
+      options.push({
+        label: `${ahl.city}, ${ahl.state} (${ahl.distance} miles away)`,
+        value: this.getHearingLocationValue(ahl)
+      });
+    });
+
+    return options;
   };
 
   getHearingDate = (date) => {
@@ -191,19 +213,19 @@ export default class DailyDocket extends React.Component {
  };
 
  getRegionalOfficeDropdown = (hearing, readOnly) => {
-
+   // read only until we make AHL list dynamic
    return <RegionalOfficeDropdown
-     readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
+     readOnly={true || readOnly}
      onChange={this.onHearingRegionalOfficeUpdate(hearing.id)}
      value={hearing.editedRegionalOffice || hearing.regionalOfficeKey} />;
  }
 
   getHearingLocationDropdown = (hearing, readOnly) => {
-    return <SearchableDropdown
-      name="Hearing Location"
-      readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
-      options={this.getHearingLocationOptions(hearing.veteranAvailableHearingLocations)}
-      value={hearing.editedLocation || hearing.location}
+    return <VeteranHearingLocationsDropdown
+      readOnly={readOnly}
+      veteranFileNumber={hearing.veteranFileNumber}
+      hearingLocationOptions={this.getHearingLocationOptions(hearing)}
+      value={hearing.editedLocation || hearing.location.facilityId}
       onChange={this.onHearingLocationUpdate(hearing.id)}
     />;
   };

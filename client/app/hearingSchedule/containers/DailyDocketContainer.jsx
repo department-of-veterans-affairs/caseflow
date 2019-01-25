@@ -116,7 +116,9 @@ export class DailyDocketContainer extends React.Component {
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
+      hearing_location_attributes: hearing.editedLocation ?
+        ApiUtil.convertToSnakeCase(hearing.editedLocation) : hearing.location,
+      master_record_updated: hearing.editedDate ? { id: hearing.editedDate.hearingId,
         time } : null,
       scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
     };
@@ -126,13 +128,6 @@ export class DailyDocketContainer extends React.Component {
     const formattedHearing = this.formatHearing(hearing);
 
     let data = { hearing: formattedHearing };
-
-    if (hearing.editedDate && hearing.editedDate.hearingId) {
-      data.postponed_hearing = {
-        hearing_day_id: hearing.editedDate.hearingId,
-        hearing_location: hearing.editedHearingLocation
-      };
-    }
 
     ApiUtil.patch(`/hearings/${hearing.externalId}`, { data }).
       then((response) => {

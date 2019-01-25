@@ -17,9 +17,11 @@ class LegacyHearing < ApplicationRecord
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
   has_many :hearing_views, as: :hearing
-  has_one :hearing_location, as: :hearing
-  alias_attribute :location, :hearing_location
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
+  has_one :hearing_location, as: :hearing
+
+  alias_attribute :location, :hearing_location
+  accepts_nested_attributes_for :hearing_location
 
   # this is used to cache appeal stream for hearings
   # when fetched intially.

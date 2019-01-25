@@ -86,7 +86,7 @@ class HearingRepository
       end
     end
 
-    def slot_new_hearing(parent_record_id, time, appeal)
+    def slot_new_hearing(parent_record_id, time, appeal, postponed_hearing:)
       hearing_day = HearingDay.find_hearing_day(nil, parent_record_id)
       hearing_datetime = hearing_day[:scheduled_for].to_datetime.change(
         hour: time["h"].to_i,
@@ -95,13 +95,13 @@ class HearingRepository
       )
 
       if hearing_day[:request_type] == "C"
-        create_child_co_hearing(hearing_datetime, appeal)
+        create_child_co_hearing(hearing_datetime, appeal, postponed_hearing)
       else
-        create_child_video_hearing(parent_record_id, hearing_datetime, appeal)
+        create_child_video_hearing(parent_record_id, hearing_datetime, appeal, postponed_hearing)
       end
     end
 
-    def create_child_co_hearing(hearing_date_str, appeal)
+    def create_child_co_hearing(hearing_date_str, appeal, postponed_hearing)
       hearing_day = HearingDay.find_by(request_type: "C", scheduled_for: hearing_date_str.to_date)
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
