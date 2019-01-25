@@ -11,8 +11,6 @@ class HearingsController < ApplicationController
   def update
     slot_new_hearing
 
-    puts params
-
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(update_params_legacy)
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
