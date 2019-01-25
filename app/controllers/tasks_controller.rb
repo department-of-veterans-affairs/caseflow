@@ -6,12 +6,14 @@ class TasksController < ApplicationController
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
+    AttorneyRewriteTask: AttorneyRewriteTask,
     AttorneyTask: AttorneyTask,
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
     JudgeAssignTask: JudgeAssignTask,
     JudgeQualityReviewTask: JudgeQualityReviewTask,
     ScheduleHearingTask: ScheduleHearingTask,
+    HearingAdminActionTask: HearingAdminActionTask,
     MailTask: MailTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
@@ -151,8 +153,11 @@ class TasksController < ApplicationController
   helper_method :user
 
   def task_class
-    mail_task_classes = Hash[*MailTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten]
-    classes = TASK_CLASSES.merge(mail_task_classes)
+    additional_task_classes = Hash[
+      *MailTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
+      *HearingAdminActionTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten
+    ]
+    classes = TASK_CLASSES.merge(additional_task_classes)
     classes[create_params.first[:type].try(:to_sym)]
   end
 

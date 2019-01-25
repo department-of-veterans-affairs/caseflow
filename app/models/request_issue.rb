@@ -420,7 +420,7 @@ class RequestIssue < ApplicationRecord
 
   def matching_rating_issues
     @matching_rating_issues ||= end_product_establishment.associated_rating.issues.select do |rating_issue|
-      rating_issue.contention_reference_id == contention_reference_id
+      rating_issue.contention_reference_id.to_i == contention_reference_id.to_i
     end
   end
 

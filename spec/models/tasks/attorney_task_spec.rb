@@ -1,23 +1,59 @@
 describe AttorneyTask do
-  let(:attorney) { create(:user) }
-  let(:judge) { create(:user) }
-  let!(:staff1) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
-  let!(:staff2) { create(:staff, :judge_role, sdomainid: judge.css_id) }
-  let(:parent) { create(:ama_judge_task, assigned_by: judge) }
+  let!(:attorney) { create(:user) }
+  let!(:judge) { create(:user) }
+  let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+  let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
+  let(:appeal) { FactoryBot.create(:appeal) }
+  let!(:parent) { create(:ama_judge_task, assigned_by: judge, appeal: appeal) }
 
   context ".create" do
-    subject { AttorneyTask.create(assigned_to: attorney, assigned_by: judge, appeal: create(:appeal), parent: parent) }
-
-    it "should validate number of children" do
-      expect(subject.valid?).to eq true
-      record = AttorneyTask.create(
+    subject do
+      AttorneyTask.create(
         assigned_to: attorney,
         assigned_by: judge,
-        appeal: create(:appeal),
-        parent: subject.parent
+        appeal: appeal,
+        parent: parent,
+        status: Constants.TASK_STATUSES.assigned
       )
-      expect(record.valid?).to eq false
-      expect(record.errors.messages[:parent].first).to eq "has too many children"
+    end
+
+    context "there are no sibling tasks" do
+      it "is valid" do
+        expect(subject.valid?).to eq true
+      end
+    end
+
+    context "there is a completed sibling task" do
+      before do
+        AttorneyTask.create!(
+          assigned_to: attorney,
+          assigned_by: judge,
+          appeal: appeal,
+          parent: parent,
+          status: Constants.TASK_STATUSES.completed
+        )
+      end
+
+      it "is valid" do
+        expect(subject.valid?).to eq true
+      end
+    end
+
+    context "there is an uncompleted sibling task" do
+      before do
+        AttorneyTask.create!(
+          assigned_to: attorney,
+          assigned_by: judge,
+          appeal: appeal,
+          parent: parent,
+          status: Constants.TASK_STATUSES.assigned
+        )
+      end
+
+      it "is not valid" do
+        expect(subject.valid?).to eq false
+        expect(subject.errors.messages[:parent].first).to eq "has open child tasks"
+      end
     end
   end
 end
