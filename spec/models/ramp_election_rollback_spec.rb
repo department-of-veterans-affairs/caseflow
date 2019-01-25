@@ -11,7 +11,8 @@ describe RampElectionRollback do
         status_type_code: ep_status
       }
     )
-    EndProductEstablishment.create(
+    create(
+      :end_product_establishment,
       veteran_file_number: "44444444",
       source: ramp_election,
       last_synced_at: 2.days.ago,
