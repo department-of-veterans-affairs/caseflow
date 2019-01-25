@@ -31,7 +31,6 @@ class Hearing < ApplicationRecord
   delegate :veteran_available_hearing_locations, to: :appeal
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
-  # changing RO should re-parent hearing
   delegate :regional_office, to: :hearing_day, prefix: true
   alias_attribute :regional_office_key, :hearing_day_regional_office
 

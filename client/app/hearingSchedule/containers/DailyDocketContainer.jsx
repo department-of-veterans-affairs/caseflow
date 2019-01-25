@@ -112,6 +112,7 @@ export class DailyDocketContainer extends React.Component {
 
   formatHearing = (hearing) => {
     const time = this.getTime(hearing);
+    console.log(hearing.editedDate);
 
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
@@ -127,9 +128,7 @@ export class DailyDocketContainer extends React.Component {
   saveHearing = (hearing) => {
     const formattedHearing = this.formatHearing(hearing);
 
-    let data = { hearing: formattedHearing };
-
-    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data }).
+    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: { hearing: formattedHearing } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 

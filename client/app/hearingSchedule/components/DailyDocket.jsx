@@ -225,7 +225,7 @@ export default class DailyDocket extends React.Component {
       readOnly={readOnly}
       veteranFileNumber={hearing.veteranFileNumber}
       hearingLocationOptions={this.getHearingLocationOptions(hearing)}
-      value={hearing.editedLocation || hearing.location.facilityId}
+      value={hearing.editedLocation || hearing.location ? hearing.location.facilityId : null}
       onChange={this.onHearingLocationUpdate(hearing.id)}
     />;
   };
@@ -266,7 +266,8 @@ export default class DailyDocket extends React.Component {
         return [{
           label: formatDateStr(hearing.scheduledFor),
           value: {
-            scheduledFor: hearing.scheduledFor
+            scheduledFor: hearing.scheduledFor,
+            hearingId: this.props.dailyDocket.id
           }
         }];
       }

@@ -317,10 +317,10 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.string "description"
     t.string "file_number"
     t.integer "previous_document_version_id"
+    t.date "upload_date"
     t.date "received_at"
     t.string "series_id"
     t.string "type"
-    t.date "upload_date"
     t.string "vbms_document_id", null: false
     t.index ["file_number"], name: "index_documents_on_file_number"
     t.index ["series_id"], name: "index_documents_on_series_id"

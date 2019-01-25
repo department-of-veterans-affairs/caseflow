@@ -36,8 +36,9 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       find(".dropdown-Disposition").click
       find("#react-select-2--option-3").click
-      find(".dropdown-HearingDay").click
-      find("#react-select-4--option-2").click
+      hearing_day_dropdown = find(".dropdown-HearingDay")
+      hearing_day_dropdown.click
+      hearing_day_dropdown.find(".Select-option").click
       click_button("Save")
 
       expect(page).to have_content("You have successfully updated")
