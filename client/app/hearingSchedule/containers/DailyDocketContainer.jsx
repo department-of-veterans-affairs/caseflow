@@ -125,7 +125,16 @@ export class DailyDocketContainer extends React.Component {
   saveHearing = (hearing) => {
     const formattedHearing = this.formatHearing(hearing);
 
-    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: { hearing: formattedHearing } }).
+    let data = { hearing: formattedHearing };
+
+    if (hearing.editedDate && hearing.editedDate.hearingId) {
+      data.postponed_hearing = {
+        hearing_day_id: hearing.editedDate.hearingId,
+        hearing_location: hearing.editedHearingLocation
+      };
+    }
+
+    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
