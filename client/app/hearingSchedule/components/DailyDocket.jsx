@@ -113,7 +113,7 @@ export default class DailyDocket extends React.Component {
   };
 
    onHearingOptionalTime= (value) => {
-     this.props.onHearingOptionalTime(value.value);
+     this.props.onHearingOptionalTime(value);
    };
 
   getAppellantName = (hearing) => {
@@ -268,7 +268,7 @@ export default class DailyDocket extends React.Component {
         placeholder="Select a time"
         options={TIME_OPTIONS}
         value={hearing.selectedOptionalTime ? hearing.selectedOptionalTime || '' : hearing.editedTime}
-        onChange={this.onHearingOptionalTime(hearing)}
+        onChange={this.onHearingOptionalTime(hearing.id)}
         hideLabel />}</div>
 
     </div>;
