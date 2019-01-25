@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import {
   appealWithDetailSelector,
   nonRootActionableTasksForAppeal,
-  allTasksForTimeline
+  incompleteNonActionableTasks
 } from './selectors';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
@@ -66,7 +66,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { userRole } = state.ui;
-  let nonActionableTasks = allTasksForTimeline(state, { appealId: ownProps.appealId });
+  let nonActionableTasks = incompleteNonActionableTasks(state, { appealId: ownProps.appealId });
 
   nonActionableTasks = _.orderBy(nonActionableTasks, ['createdAt'], ['desc']);
 

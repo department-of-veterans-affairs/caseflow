@@ -28,6 +28,7 @@ class CaseTimeline extends React.PureComponent {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
+
   let completedTasks = allCompleteTasksForAppeal(state, { appealId: ownProps.appeal.externalId });
 
   completedTasks = _.orderBy(completedTasks, ['completedOn'], ['desc']);

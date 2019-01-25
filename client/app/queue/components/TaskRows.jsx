@@ -14,7 +14,7 @@ import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
-import { allTasksForTimeline } from '../selectors';
+import { incompleteNonActionableTasks } from '../selectors';
 import type { State } from '../types/state';
 
 export const grayLineStyling = css({
@@ -222,6 +222,8 @@ class TaskRows extends React.PureComponent {
       timeline
     } = this.props;
 
+    // console.log(taskList)
+
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
         <td {...taskTimeTimelineContainerStyling}></td>
@@ -241,6 +243,7 @@ class TaskRows extends React.PureComponent {
               { this.completedOnListItem(task) }
               { this.dueDateListItem(task) }
               { !task.completedOn && this.daysWaitingListItem(task) }
+              { task.uniqueId}
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
@@ -292,7 +295,7 @@ class TaskRows extends React.PureComponent {
 const mapStateToProps = (state: State, ownProps: Params) => {
 
   return {
-    timelineTasks: allTasksForTimeline(state, { appealId: ownProps.appeal.externalId })
+    timelineTasks: incompleteNonActionableTasks(state, { appealId: ownProps.appeal.externalId })
   };
 };
 

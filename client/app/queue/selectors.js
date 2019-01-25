@@ -213,11 +213,11 @@ export const allCompleteTasksForAppeal = createSelector(
   }
 );
 
-export const allTasksForTimeline = createSelector(
+export const incompleteNonActionableTasks = createSelector(
   [getAllTasksForAppeal, getAppealId],
   (tasks: Tasks, appealId: string) => {
     return _.filter(tasks, (task) => task.externalAppealId === appealId &&
-    (task.status === TASK_STATUSES.completed || !task.availableActions.length));
+    (task.status !== TASK_STATUSES.completed && !task.availableActions.length));
   }
 );
 
