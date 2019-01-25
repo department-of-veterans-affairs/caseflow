@@ -8,7 +8,7 @@ class LegacyHearing < ApplicationRecord
   vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
-  vacols_attr_accessor :representative_name, :representative
+  vacols_attr_accessor :representative_name, :representative, :vdkey
   vacols_attr_accessor :regional_office_key, :master_record
   vacols_attr_accessor :docket_number, :appeal_type, :appellant_address_line_1
   vacols_attr_accessor :appellant_address_line_2, :appellant_city, :appellant_state
@@ -117,6 +117,7 @@ class LegacyHearing < ApplicationRecord
       add_on: add_on,
       representative: representative,
       representative_name: representative_name,
+      vdkey: vdkey,
       regional_office_key: regional_office_key,
       master_record: master_record,
       veteran_first_name: veteran_first_name,
@@ -165,6 +166,7 @@ class LegacyHearing < ApplicationRecord
         :master_record,
         :representative,
         :representative_name,
+        :vdkey,
         :regional_office_name,
         :regional_office_timezone,
         :venue,

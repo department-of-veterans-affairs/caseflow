@@ -26,8 +26,10 @@ class Judge
   end
 
   def upcoming_hearings_on(date, is_fetching_issues = false)
+    true_date = date.to_date
     upcoming_hearings(is_fetching_issues).select do |hearing|
-      hearing.scheduled_for.between?(date.beginning_of_day, date.end_of_day) || hearing.scheduled_for.to_date == date
+      hearing.scheduled_for.between?(true_date.beginning_of_day,
+                                     true_date.end_of_day) || hearing.scheduled_for.to_date == true_date
     end
   end
 
