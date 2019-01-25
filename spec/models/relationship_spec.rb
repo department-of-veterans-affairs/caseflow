@@ -15,13 +15,13 @@ describe Relationship do
     subject { relationship.ui_hash }
 
     context "when there are no prior claims for that relationship" do
-      it "returns a hash with a not-nil default_payee_code" do
+      it "returns a hash with a nil default_payee_code" do
         expect(subject).to include(
           participant_id: "1234",
           first_name: "BOB",
           last_name: "VANCE",
           relationship_type: "Spouse",
-          default_payee_code: "00"
+          default_payee_code: nil
         )
       end
     end
