@@ -30,7 +30,8 @@ module IntakeHelpers
     )
 
     if claim_participant_id
-      Claimant.create!(
+      create(
+        :claimant,
         review_request: higher_level_review,
         participant_id: claim_participant_id,
         payee_code: "02"
