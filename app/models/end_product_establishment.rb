@@ -148,7 +148,11 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  validates :payee_code, presence: true
+  before_save :set_default_values
+
+  def set_default_values
+    self.payee_code ||= EndProduct::DEFAULT_PAYEE_CODE
+  end
 
   def perform!(commit: false)
     return if reference_id
