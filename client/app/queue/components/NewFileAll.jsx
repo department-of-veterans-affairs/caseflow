@@ -11,6 +11,7 @@ import COPY from '../../../COPY.json';
 import _ from 'lodash';
 
 type Params = {|
+  useOnHoldDate: ?boolean,
   tasks: Array<Object>
 |};
 
@@ -28,9 +29,9 @@ class NewFileAll extends React.Component<Props> {
     } = this.props;
 
     tasks.forEach((task) => {
-      if (!documentObjects[task.externalAppealId] ||
-        (!documentObjects[task.externalAppealId].docs && !documentObjects[task.externalAppealId].loading)) {
-        this.props.getNewDocuments(task.externalAppealId);
+      if (!documentObjects[task.externalAppealId] || !documentObjects[task.externalAppealId].loading) {
+        this.props.getNewDocuments(task.externalAppealId, true,
+          this.props.useOnHoldDate ? task.placedOnHoldAt : null);
       }
     });
   }

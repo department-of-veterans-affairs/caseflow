@@ -92,6 +92,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
           description={COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION}
           tasks={this.props.workableTasks}
           includeNewDocsIcon={false}
+          useOnHoldDate={false}
         />
       },
       {
@@ -102,8 +103,9 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
           description={COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}
           tasks={this.props.onHoldTasks}
           includeNewDocsIcon
+          useOnHoldDate
         />,
-        indicator: <NewFileAll tasks={this.props.onHoldTasks} />
+        indicator: <NewFileAll tasks={this.props.onHoldTasks} useOnHoldDate />
       },
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
@@ -111,6 +113,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
           description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
           tasks={this.props.completedTasks}
           includeNewDocsIcon={false}
+          useOnHoldDate={false}
         />
       }
     ];
@@ -165,7 +168,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView): React.ComponentType<Params>);
 
-const TaskTableTab = ({ description, tasks, includeNewDocsIcon }) => <React.Fragment>
+const TaskTableTab = ({ description, tasks, includeNewDocsIcon, useOnHoldDate }) => <React.Fragment>
   <p className="cf-margin-top-0" >{description}</p>
   <TaskTable
     includeDetailsLink
@@ -174,8 +177,9 @@ const TaskTableTab = ({ description, tasks, includeNewDocsIcon }) => <React.Frag
     includeIssueCount
     includeDueDate
     includeReaderLink
-    includeNewDocsIcon={includeNewDocsIcon}
     requireDasRecord
     tasks={tasks}
+    includeNewDocsIcon={includeNewDocsIcon}
+    useOnHoldDate={useOnHoldDate}
   />
 </React.Fragment>;

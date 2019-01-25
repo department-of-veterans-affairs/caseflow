@@ -10,7 +10,8 @@ import COPY from '../../../COPY.json';
 
 type Params = {|
   externalAppealId: string,
-  cached: ?boolean
+  cached: ?boolean,
+  onHoldDate: string
 |};
 
 type Props = Params & {|
@@ -24,8 +25,8 @@ type Props = Params & {|
 
 class NewFile extends React.Component<Props> {
   componentDidMount = () => {
-    if (!this.props.docs && !this.props.docsLoading) {
-      this.props.getNewDocuments(this.props.externalId, this.props.cached);
+    if (!this.props.docsLoading) {
+      this.props.getNewDocuments(this.props.externalId, this.props.cached, this.props.onHoldDate);
     }
   }
 

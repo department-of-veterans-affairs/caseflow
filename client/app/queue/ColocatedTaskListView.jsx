@@ -106,7 +106,7 @@ export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListVi
 
 const NewFileIcon = connect(
   (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => <NewFileAll tasks={props.tasks} />);
+  (props: { tasks: Array<TaskWithAppeal> }) => <NewFileAll tasks={props.tasks} useOnHoldDate />);
 
 const NewTasksTab = connect(
   (state: State) => ({ tasks: newTasksByAssigneeCssIdSelector(state) }))(
@@ -138,6 +138,7 @@ const OnHoldTasksTab = connect(
         includeDaysOnHold
         includeReaderLink
         includeNewDocsIcon
+        useOnHoldDate
         tasks={props.tasks}
       />
     </React.Fragment>;

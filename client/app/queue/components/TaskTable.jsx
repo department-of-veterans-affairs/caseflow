@@ -44,6 +44,7 @@ type Params = {|
   includeReaderLink?: boolean,
   includeDocumentCount?: boolean,
   includeNewDocsIcon?: boolean,
+  useOnHoldDate?: boolean,
   requireDasRecord?: boolean,
   tasks: Array<TaskWithAppeal>,
   customColumns?: Array<Function>,
@@ -276,6 +277,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
           redirectUrl={window.location.pathname}
           appeal={task.appeal}
           newDocsIcon={this.props.includeNewDocsIcon}
+          onHoldDate={this.props.useOnHoldDate ? task.placedOnHoldAt : null}
           cached
           docCountBelowLink />;
       }
