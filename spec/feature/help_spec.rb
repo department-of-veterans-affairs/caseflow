@@ -29,7 +29,7 @@ RSpec.feature "Help" do
   end
 
   scenario "user goes to the Hearings Help page" do
-    visit "/hearings/help"
+    visit "/hearing_prep/help"
     expect(page).to have_content("Welcome to the Hearings Help page!")
   end
 

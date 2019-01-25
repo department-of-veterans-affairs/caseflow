@@ -227,7 +227,7 @@ RSpec.feature "AmaQueue" do
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
-        find(".Select-control", text: "Select a user").click
+        find(".Select-control", text: user.full_name).click
         find("div", class: "Select-option", text: other_user.full_name).click
 
         expect(page).to have_content(existing_instruction)
@@ -242,9 +242,6 @@ RSpec.feature "AmaQueue" do
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
-
-        find(".Select-control", text: "Select a user").click
-        find("div", class: "Select-option", text: user.full_name).click
 
         fill_in "taskInstructions", with: instructions
         click_on "Submit"
@@ -417,9 +414,6 @@ RSpec.feature "AmaQueue" do
 
       find(".Select-control", text: "Select an action").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
-
-      find(".Select-control", text: "Select a user").click
-      find("div", class: "Select-option", text: qr_user.full_name).click
 
       fill_in "taskInstructions", with: "Review the quality"
       click_on "Submit"
