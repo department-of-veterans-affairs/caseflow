@@ -45,7 +45,7 @@ feature "Intake Confirmation Page" do
             expect(page).to have_content("Edit the notice letter to reflect the status of requested issues")
           end
 
-          it "redirects you back if you manually visit /completed", focus: true do
+          it "redirects you back if you manually visit /completed" do
             start_claim_review(claim_review_type)
 
             visit "/intake/completed"
