@@ -151,7 +151,7 @@ class EndProductEstablishment < ApplicationRecord
   before_save :set_default_values
 
   def set_default_values
-    self.payee_code ||= EndProduct::DEFAULT_PAYEE_CODE
+    # TODO: self.payee_code ||= EndProduct::DEFAULT_PAYEE_CODE
   end
 
   def perform!(commit: false)
