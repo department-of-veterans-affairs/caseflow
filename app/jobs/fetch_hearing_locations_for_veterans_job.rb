@@ -20,7 +20,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def missing_veteran_file_numbers
     existing_veteran_file_numbers = Veteran.where(file_number: file_numbers).pluck(:file_number)
-    (file_numbers - existing_veteran_file_numbers)[0, (QUERY_LIMIT - existing_veteran_file_numbers.length)]
+    (file_numbers - existing_veteran_file_numbers)[0, (QUERY_LIMIT - existing_veteran_file_numbers.length)] || []
   end
 
   def create_missing_veterans

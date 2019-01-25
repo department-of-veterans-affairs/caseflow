@@ -5,7 +5,7 @@ describe RequestIssue do
 
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:profile_date) { Time.zone.now.to_s }
-  let(:contention_reference_id) { 1234 }
+  let(:contention_reference_id) { "1234" }
   let(:ramp_claim_id) { nil }
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
@@ -24,10 +24,12 @@ describe RequestIssue do
     )
   end
 
+  let(:rating_promulgation_date) { (review.receipt_date - 40.days).in_time_zone }
+
   let!(:ratings) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: (review.receipt_date - 40.days).in_time_zone,
+      promulgation_date: rating_promulgation_date,
       profile_date: (review.receipt_date - 50.days).in_time_zone,
       issues: issues,
       associated_claims: associated_claims
@@ -599,7 +601,7 @@ describe RequestIssue do
     let!(:ratings) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: receipt_date - 40.days,
+        promulgation_date: rating_promulgation_date,
         profile_date: receipt_date - 50.days,
         issues: [
           { reference_id: "xyz123", decision_text: "Left knee granted" },
@@ -875,12 +877,16 @@ describe RequestIssue do
       end
 
       context "rating issue is from a VACOLS legacy opt-in" do
+        let(:rating_promulgation_date) { 10.years.ago }
+
         it "does not flag rating issues before AMA" do
           rating_request_issue.review_request.legacy_opt_in_approved = true
           rating_request_issue.vacols_id = "something"
+          rating_request_issue.contested_rating_issue_reference_id = "xyz123"
 
           rating_request_issue.validate_eligibility!
 
+          expect(rating_request_issue.contested_rating_issue).to_not be_nil
           expect(rating_request_issue.ineligible_reason).to be_nil
         end
       end

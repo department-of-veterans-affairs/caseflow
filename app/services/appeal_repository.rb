@@ -47,7 +47,7 @@ class AppealRepository
   def self.load_vacols_data(appeal)
     case_record = MetricsService.record("VACOLS: load_vacols_data #{appeal.vacols_id}",
                                         service: :vacols,
-                                        name: "load_vacols_data") do
+                                        name: "load_vacols_appeal_data") do
       find_case_record(appeal.vacols_id)
     end
 

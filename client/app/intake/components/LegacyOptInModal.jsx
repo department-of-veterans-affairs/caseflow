@@ -52,6 +52,9 @@ class LegacyOptInModal extends React.Component {
     if (this.props.formType === 'supplemental_claim') {
       return false;
     }
+    if (this.props.intakeData.currentIssueAndNotes.currentIssue.vacolsId || this.state.vacolsId) {
+      return false;
+    }
 
     return !this.props.intakeData.currentIssueAndNotes.currentIssue.timely;
   }

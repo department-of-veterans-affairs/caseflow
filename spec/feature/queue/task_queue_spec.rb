@@ -265,7 +265,7 @@ RSpec.feature "Task queue" do
         visit("/queue/appeals/#{appeal.external_id}")
 
         find(".Select-control", text: "Select an action…").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h[:label]).click
+        find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
@@ -370,7 +370,15 @@ RSpec.feature "Task queue" do
     end
 
     context "judge user's queue table view" do
-      let!(:caseflow_review_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge_user) }
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let!(:caseflow_review_task) do
+        FactoryBot.create(
+          :ama_judge_decision_review_task,
+          assigned_to: judge_user,
+          parent: root_task,
+          appeal: root_task.appeal
+        )
+      end
       let!(:legacy_review_task) do
         FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, :assigned, user: judge_user))
       end
