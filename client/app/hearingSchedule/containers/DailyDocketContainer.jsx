@@ -18,6 +18,7 @@ import {
   onHearingDateUpdate,
   onHearingTimeUpdate,
   onHearingLocationUpdate,
+  onHearingRegionalOfficeUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -251,6 +252,7 @@ export class DailyDocketContainer extends React.Component {
         onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
         onHearingLocationUpdate={this.props.onHearingLocationUpdate}
+        onHearingRegionalOfficeUpdate={this.props.onHearingRegionalOfficeUpdate}
         saveHearing={this.saveHearing}
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
@@ -311,6 +313,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onHearingDateUpdate,
   onHearingTimeUpdate,
   onHearingLocationUpdate,
+  onHearingRegionalOfficeUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
