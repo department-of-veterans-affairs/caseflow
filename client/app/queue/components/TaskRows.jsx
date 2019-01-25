@@ -68,15 +68,15 @@ class TaskRows extends React.PureComponent {
     super(props);
 
     this.state = {
-      taskInstructionsIsVisibleObj: { }
+      taskInstructionsIsVisible: { }
     };
   }
 
   toggleTaskInstructionsVisibility = (task) => {
-    const previousState = Object.assign({}, this.state.taskInstructionsIsVisibleObj);
+    const previousState = Object.assign({}, this.state.taskInstructionsIsVisible);
 
     previousState[task.uniqueId] = previousState[task.uniqueId] ? !previousState[task.uniqueId] : true;
-    this.setState({ taskInstructionsIsVisibleObj: previousState });
+    this.setState({ taskInstructionsIsVisible: previousState });
   }
 
   daysSinceTaskAssignmentListItem = (task) => {
@@ -179,7 +179,7 @@ class TaskRows extends React.PureComponent {
     }
 
     return <div>
-      { this.state.taskInstructionsIsVisibleObj[task.uniqueId] &&
+      { this.state.taskInstructionsIsVisible[task.uniqueId] &&
       <React.Fragment key={`${task.uniqueId}instructions_text`} >
         <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
         <dd>{this.taskInstructionsWithLineBreaks(task)}</dd>
@@ -188,7 +188,7 @@ class TaskRows extends React.PureComponent {
         linkStyling
         styling={css({ padding: '0' })}
         id={task.uniqueId}
-        name={this.state.taskInstructionsIsVisibleObj[task.uniqueId] ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
+        name={this.state.taskInstructionsIsVisible[task.uniqueId] ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
           COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
         onClick={() => this.toggleTaskInstructionsVisibility(task)} />
     </div>;
