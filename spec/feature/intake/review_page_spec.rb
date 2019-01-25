@@ -169,7 +169,6 @@ def check_deceased_veteran_cant_be_payee
   expect(page).to have_content("10 - Spouse")
 end
 
-# rubocop: disable Metrics/MethodLength
 # rubocop: disable Metrics/AbcSize
 def check_pension_and_compensation_payee_code
   visit "/intake"
@@ -211,5 +210,5 @@ def check_pension_and_compensation_payee_code
   click_intake_continue
   expect(page).to have_current_path("/intake/add_issues")
 end
-# rubocop: enable Metrics/MethodLength
+
 # rubocop: enable Metrics/AbcSize
