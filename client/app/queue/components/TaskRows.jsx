@@ -222,8 +222,6 @@ class TaskRows extends React.PureComponent {
       timeline
     } = this.props;
 
-    // console.log(taskList)
-
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
         <td {...taskTimeTimelineContainerStyling}></td>
