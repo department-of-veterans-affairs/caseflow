@@ -67,12 +67,21 @@ export const onReceiveAmaTasks = (amaTasks: Array<Object>) => ({
   }
 });
 
-export const onUpdateToTasks = (updatedTasks) => ({
-  type: ACTIONS.UPDATE_TASKS,
+export const toggleDropdownFilterVisibility = (filterName) => ({
+  type: ACTIONS.TOGGLE_FILTER_DROPDOWN,
   payload: {
-    tasks: updatedTasks
+    filterName
   }
 });
+
+export const updateFilteredByList = (newList: Object) => (dispatch: Dispatch) => {
+  dispatch({
+    type: ACTIONS.UPDATE_FILTERED_BY_LIST,
+    payload: {
+      newList
+    }
+  });
+};
 
 export const fetchJudges = () => (dispatch: Dispatch) => {
   ApiUtil.get('/users?role=Judge').then((response) => {

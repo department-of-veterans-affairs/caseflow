@@ -14,7 +14,7 @@ import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 
-import { setSelectionOfTaskOfUser } from '../QueueActions';
+import { setSelectionOfTaskOfUser, toggleDropdownFilterVisibility, updateFilteredByList } from '../QueueActions';
 import { renderAppealType } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
@@ -27,7 +27,7 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 
 import type { TaskWithAppeal } from '../types/models';
 
-import { toggleDropdownFilterVisibility, updateFilteredByList } from '../../components/common/actions';
+// import { toggleDropdownFilterVisibility, updateFilteredByList } from '../../components/common/actions';
 
 type Params = {|
   includeHearingBadge?: boolean,
@@ -354,6 +354,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       rowObjects={tasks}
       getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
       defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
+      filteredByList={this.props.filteredByList}
       rowClassNames={(task) =>
         this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
   }

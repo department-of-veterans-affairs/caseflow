@@ -185,8 +185,27 @@ export default class Table extends React.PureComponent {
   defaultRowClassNames = () => ''
 
   filterRowObjects = () => {
-    
+    const { rowObjects, filteredByList } = this.props;
+
+    let filteredData = {};
+
+    for (let key in rowObjects) {
+
+    }
+
   }
+
+  // filterTableData = (dataToFilter, filterName, value) => {
+  //   let filteredData = {};
+
+  //   for (let key in dataToFilter) {
+  //     if (String(_.get(dataToFilter[key], filterName)) === String(value)) {
+  //       filteredData[key] = dataToFilter[key];
+  //     }
+  //   }
+
+  //   return filteredData;
+  // }
 
   sortRowObjects = () => {
     const { rowObjects } = this.props;
@@ -285,5 +304,6 @@ Table.propTypes = {
   defaultSort: PropTypes.shape({
     sortColIdx: PropTypes.number,
     sortAscending: PropTypes.bool
-  })
+  }),
+  filteredByList: PropTypes.object
 };

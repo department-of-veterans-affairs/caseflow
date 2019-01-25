@@ -21,21 +21,22 @@ class TableFilter extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
-      filteredByList: []
-    };
+    // this.state = {
+    //   filteredByList: []
+    // };
   }
 
   filterDropdownOptions = (tableDataByRow, columnName) => {
     let countByFilterName = _.countBy(tableDataByRow, columnName);
     let uniqueOptions = [];
+    const filtersForColumn = _.get(this.props.column.filteredByList, columnName);
 
     for (let key in countByFilterName) {
       if (key && key !== 'null' && key !== 'undefined') {
         uniqueOptions.push({
           value: key,
           displayText: `${key} (${countByFilterName[key]})`,
-          checked: this.props.column.filteredByList.includes(key)
+          checked: filtersForColumn ? filtersForColumn.includes(key) : false
         });
       } else {
         uniqueOptions.push({
@@ -48,38 +49,52 @@ class TableFilter extends React.PureComponent {
     return _.sortBy(uniqueOptions, 'displayText');
   }
 
-  filterTableData = (dataToFilter, filterName, value) => {
-    let filteredData = {};
+  // filterTableData = (dataToFilter, filterName, value) => {
+  //   let filteredData = {};
 
-    for (let key in dataToFilter) {
-      if (String(_.get(dataToFilter[key], filterName)) === String(value)) {
-        filteredData[key] = dataToFilter[key];
-      }
-    }
+  //   for (let key in dataToFilter) {
+  //     if (String(_.get(dataToFilter[key], filterName)) === String(value)) {
+  //       filteredData[key] = dataToFilter[key];
+  //     }
+  //   }
 
-    return filteredData;
-  }
+  //   return filteredData;
+  // }
 
   updateSelectedFilter = (value, filterName) => {
     const oldList = this.props.column.filteredByList;
-    let newList;
+    const filtersForColumn = _.get(oldList, filterName);
+    let newList = {};
+    let newFilters = [];
 
-    if (oldList.includes(value)) {
-      newList = _.pull(oldList, value);
-      // this.unsetSelectedFilter(value, filterName);
+    if (filtersForColumn) {
+      if (filtersForColumn.includes(value)) {
+        newFilters = _.pull(filtersForColumn, value);
+      } else {
+        newFilters = filtersForColumn.concat([value]);
+      }
     } else {
-      newList = oldList.concat([value]);
-      // this.setSelectedFilter(value, filterName);
+      newFilters = newFilters.concat([value]);
     }
 
+    // const filtersForColumn = this.state.filteredByList;
+
+    // if (filtersForColumn.includes(value)) {
+    //   this.unsetSelectedFilter(value, filterName);
+    // } else {
+    //   this.setSelectedFilter(value, filterName);
+    // }
+
+    newList = _.set(oldList, filterName, newFilters);
     this.props.column.updateFilters(newList);
 
-    this.forceUpdate()
+    // For some reason when filters are removed a render doesn't automatically happen
+    this.forceUpdate();
   }
 
   // updateTableData = (value, filterName) => {
   //   const filteredData = this.filterTableData(this.props.column.tableData, filterName, value);
-  //   this.props.column.receiveUpdatedData(filteredData);
+  //   // this.props.column.receiveUpdatedData(filteredData);
   // }
 
   // setSelectedFilter = (value, filterName) => {
@@ -98,13 +113,18 @@ class TableFilter extends React.PureComponent {
   //   this.forceUpdate();
   // }
 
-  clearFilteredByList = () => {
+  clearFilteredByList = (filterName) => {
     // this.updateTableData(value, filterName);
     // this.setState({
     //   filteredByList: []
     // });
+    const oldList = this.props.column.filteredByList;
+    let newList = _.set(oldList, filterName, []);
 
-    this.props.column.updateFilters([]);
+    this.props.column.updateFilters(newList);
+
+    // For some reason when filters are removed a render doesn't automatically happen
+    this.forceUpdate();
   }
 
   render() {
@@ -136,7 +156,7 @@ class TableFilter extends React.PureComponent {
 
         {column.isDropdownFilterOpen &&
           <DropdownFilter
-            clearFilters={this.clearFilteredByList}
+            clearFilters={() => this.clearFilteredByList(column.columnName)}
             name={column.valueName}
             isClearEnabled={column.anyFiltersAreSet}
             handleClose={column.toggleDropdownFilterVisibility}

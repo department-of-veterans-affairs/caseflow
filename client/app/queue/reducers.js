@@ -44,7 +44,7 @@ export const initialState = {
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
   isDropdownFilterOpen: {},
-  filteredByList: [],
+  filteredByList: {},
   pendingDistribution: null,
   attorneys: {},
   organizationId: null,

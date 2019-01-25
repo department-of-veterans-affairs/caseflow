@@ -71,10 +71,3 @@ export const onChangeFormData = (formName, formData) => ({
     formData
   }
 });
-
-export const updateFilteredByList = (newList) => ({
-  type: ACTIONS.UPDATE_FILTERED_BY_LIST,
-  payload: {
-    newList
-  }
-})
