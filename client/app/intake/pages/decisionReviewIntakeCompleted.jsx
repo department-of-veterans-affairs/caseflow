@@ -124,14 +124,18 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     case INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW} />;
     case INTAKE_STATES.REVIEWED:
-      return <Redirect to={PAGE_PATHS.FINISH} />;
+      if (formType === FORM_TYPES.RAMP_ELECTION.key || formType === FORM_TYPES.RAMP_REFILING.key) {
+        return <Redirect to={PAGE_PATHS.FINISH} />;
+      } else {
+        return <Redirect to={PAGE_PATHS.ADD_ISSUES} />;
+      }
     default:
     }
 
     const ineligibleRequestIssues = requestIssues.filter((ri) => ri.ineligibleReason);
     const vacolsOptInIssues = requestIssues.filter((ri) => ri.vacolsId && !ri.ineligibleReason);
 
-    if (completedReview.processedInCaseflow && formType !== 'appeal') {
+    if (completedReview.processedInCaseflow && formType !== FORM_TYPES.APPEAL.key) {
       // we do not use Redirect because state no longer matters,
       // and because we are likely not in a relative URL path any more.
       window.location = completedReview.redirectTo;
