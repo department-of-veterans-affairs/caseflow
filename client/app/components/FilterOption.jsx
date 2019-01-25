@@ -25,7 +25,7 @@ const FilterOption = ({ options, setSelectedValue,
 
   return <ul {...dropdownFilterViewListStyle} {...listStyling}>
     {options.map((option, index) => {
-      return <li key={index} {...dropdownFilterViewListItemStyle} {...listItemStyling}>
+      return <li className="cf-filter-option-row" key={index} {...dropdownFilterViewListItemStyle} {...listItemStyling}>
         <input
           type="checkbox"
           id={`${index}-${option.value}`}
@@ -47,9 +47,3 @@ FilterOption.propTypes = {
 };
 
 export default FilterOption;
-
-        // <option
-        //   value={option.value}
-        //   id={`${index}-${option.value}`}
-        //   key={index}>{option.displayText}
-        // </option>

@@ -28,20 +28,24 @@ class DropdownFilter extends React.PureComponent {
   render() {
     const { children, name } = this.props;
 
+    // Some of the filter names are camelCase, which would be displayed to the user.
+    // To make this more readable, convert the camelCase text to regular casing.
+    const displayName = _.capitalize(_.upperCase(name));
+
     const rel = {
       position: 'relative'
     };
 
     return <div style={rel}>
-      <div className="cf-dropdown-filter" style={{top: '17px'}} ref={(rootElem) => {
+      <div className="cf-dropdown-filter" style={{top: '10px'}} ref={(rootElem) => {
         this.rootElem = rootElem;
       }}>
         {this.props.addClearFiltersRow &&
-          <div className="cf-clear-filter-row">
+          <div className="cf-filter-option-row">
             <button className="cf-text-button" onClick={this.props.clearFilters}
               disabled={!this.props.isClearEnabled}>
               <div className="cf-clear-filter-button-wrapper">
-                Clear {name} filter
+                Clear {displayName} filter
               </div>
             </button>
           </div>

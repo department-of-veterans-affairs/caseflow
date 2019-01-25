@@ -67,6 +67,13 @@ export const onReceiveAmaTasks = (amaTasks: Array<Object>) => ({
   }
 });
 
+export const onUpdateToTasks = (updatedTasks) => ({
+  type: ACTIONS.UPDATE_TASKS,
+  payload: {
+    tasks: updatedTasks
+  }
+});
+
 export const fetchJudges = () => (dispatch: Dispatch) => {
   ApiUtil.get('/users?role=Judge').then((response) => {
     const resp = JSON.parse(response.text);

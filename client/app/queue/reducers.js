@@ -44,6 +44,7 @@ export const initialState = {
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
   isDropdownFilterOpen: {},
+  filteredByList: [],
   pendingDistribution: null,
   attorneys: {},
   organizationId: null,
@@ -88,6 +89,12 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       },
       amaTasks: {
         $merge: action.payload.amaTasks ? action.payload.amaTasks : {}
+      }
+    });
+  case ACTIONS.UPDATE_FILTERED_BY_LIST:
+    return update(state, {
+      filteredByList: {
+        $set: action.payload.newList
       }
     });
   case ACTIONS.RECEIVE_AMA_TASKS:
@@ -351,7 +358,7 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       }
     });
   }
-  case 'TOGGLE_FILTER_DROPDOWN': {
+  case ACTIONS.TOGGLE_FILTER_DROPDOWN: {
     const originalValue = _.get(state, [
       'isDropdownFilterOpen', action.payload.filterName
     ], false);

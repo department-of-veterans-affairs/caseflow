@@ -184,6 +184,10 @@ export default class Table extends React.PureComponent {
 
   defaultRowClassNames = () => ''
 
+  filterRowObjects = () => {
+    
+  }
+
   sortRowObjects = () => {
     const { rowObjects } = this.props;
     const {

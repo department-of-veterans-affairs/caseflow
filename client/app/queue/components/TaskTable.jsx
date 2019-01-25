@@ -27,10 +27,7 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 
 import type { TaskWithAppeal } from '../types/models';
 
-import { toggleDropdownFilterVisibility } from '../../components/common/actions';
-import { clearTagFilters, clearCategoryFilters,
-  setTagFilter, setCategoryFilter
-} from '../../reader/DocumentList/DocumentListActions';
+import { toggleDropdownFilterVisibility, updateFilteredByList } from '../../components/common/actions';
 
 type Params = {|
   includeHearingBadge?: boolean,
@@ -165,6 +162,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       tableData: this.props.tasks,
       columnName: 'appeal.caseType',
       toggleDropdownFilterVisibility: () => this.props.toggleDropdownFilterVisibility('caseType'),
+      filteredByList: this.props.filteredByList,
+      updateFilters: (newList) => this.props.updateFilteredByList(newList),
       isDropdownFilterOpen: this.props.isDropdownFilterOpen.caseType,
       anyFiltersAreSet: true,
       label: 'Filter by type',
@@ -363,6 +362,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   isDropdownFilterOpen: state.queue.isDropdownFilterOpen,
+  filteredByList: state.queue.filteredByList,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   userRole: state.ui.userRole
 });
@@ -370,7 +370,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     setSelectionOfTaskOfUser,
-    toggleDropdownFilterVisibility
+    toggleDropdownFilterVisibility,
+    updateFilteredByList
   }, dispatch)
 );
 
