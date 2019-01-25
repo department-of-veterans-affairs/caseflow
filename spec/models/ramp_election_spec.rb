@@ -236,7 +236,8 @@ describe RampElection do
         ]
       end
       let!(:end_product_establishment) do
-        EndProductEstablishment.create(
+        create(
+          :end_product_establishment,
           veteran_file_number: veteran_file_number,
           source: ramp_election,
           reference_id: end_product_reference_id

@@ -5,6 +5,7 @@ FactoryBot.define do
     source { create(:ramp_election, veteran_file_number: veteran_file_number) }
     code "030HLRR"
     modifier "030"
+    payee_code EndProduct::DEFAULT_PAYEE_CODE
 
     trait :cleared do
       synced_status "CLR"

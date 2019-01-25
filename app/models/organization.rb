@@ -4,7 +4,7 @@ class Organization < ApplicationRecord
   has_many :users, through: :organizations_users
 
   def admins
-    organizations_users.select(&:admin?).map(&:user)
+    organizations_users.includes(:user).select(&:admin?).map(&:user)
   end
 
   def non_admins
