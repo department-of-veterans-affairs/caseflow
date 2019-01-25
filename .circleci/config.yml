@@ -197,6 +197,34 @@ jobs:
           command: |
             ~/project/ci-bin/capture-log "bundle exec rake security_caseflow"
 
+      # Run rake db:seed to make sure seeds work.
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+
+      - run:
+          name: Wait for database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Database setup
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake db:create"
+            ~/project/ci-bin/capture-log "bundle exec rake db:schema:load"
+
+      - run:
+          name: Wait for FACOLS to be ready
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake local:vacols:wait_for_connection"
+
+      - run:
+          name: Run rake db:seed
+          command: |
+            ~/project/ci-bin/capture-log "bundle exec rake db:seed"
+
+      # Wrap up
       - deploy:
           name: Concatenate all logs
           command: |
