@@ -66,15 +66,12 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: State, ownProps: Params) => {
   const { userRole } = state.ui;
-  let nonActionableTasks = incompleteNonActionableTasks(state, { appealId: ownProps.appealId });
-
-  nonActionableTasks = _.orderBy(nonActionableTasks, ['createdAt'], ['desc']);
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
     tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId }),
-    nonActionableTasks
+    nonActionableTasks: incompleteNonActionableTasks(state, { appealId: ownProps.appealId })
   };
 };
 
