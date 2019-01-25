@@ -15,7 +15,7 @@ class BoardGrantEffectuation < ApplicationRecord
 
   END_PRODUCT_CODES = {
     rating: "030BGR",
-    nonrating: "030BGNR",
+    nonrating: "030BGRNR",
     pension_rating: "030BGRPMC",
     pension_nonrating: "030BGNRPMC"
   }.freeze
