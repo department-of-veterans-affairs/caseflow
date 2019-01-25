@@ -23,6 +23,8 @@ import {
   requestSave
 } from './uiReducer/uiActions';
 
+import { taskActionData } from './utils';
+
 import type { State } from './types/state';
 import type { Appeal, Task } from './types/models';
 
@@ -49,18 +51,6 @@ type ViewState = {|
   selectedValue: ?string,
   instructions: ?string
 |};
-
-const taskActionData = (props) => {
-  const relevantAction = props.task.availableActions.
-    find((action) => props.history.location.pathname.endsWith(action.value));
-
-  if (relevantAction && relevantAction.data) {
-    return (relevantAction.data);
-  }
-
-  // We should never get here since any task action the creates this modal should provide data.
-  throw new Error('Task action requires data');
-};
 
 const selectedAction = (props) => {
   const actionData = taskActionData(props);

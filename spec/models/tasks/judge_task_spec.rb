@@ -31,7 +31,7 @@ describe JudgeTask do
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
-            ].map { |action| subject_task.build_action_hash(action) }
+            ].map { |action| subject_task.build_action_hash(action, judge) }
           )
         end
 
@@ -44,7 +44,7 @@ describe JudgeTask do
                 Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
                 Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
                 Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
-              ].map { |action| subject_task.build_action_hash(action) }
+              ].map { |action| subject_task.build_action_hash(action, judge) }
             )
           end
         end
@@ -61,7 +61,7 @@ describe JudgeTask do
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
               Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h,
               Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h
-            ].map { |action| subject_task.build_action_hash(action) }
+            ].map { |action| subject_task.build_action_hash(action, judge) }
           )
         end
       end
@@ -116,7 +116,7 @@ describe JudgeTask do
         let(:params) { { status: nil } }
 
         it "doesn't change the task's status" do
-          subject
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
           expect(jqr_task.reload.status).to eq(existing_status.to_s)
         end
       end

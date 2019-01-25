@@ -127,7 +127,7 @@ describe BoardGrantEffectuation do
       let!(:not_matching_end_product_establishment) do
         FactoryBot.create(
           :end_product_establishment,
-          code: "030BGNR",
+          code: "030BGRNR",
           source: decision_document
         )
       end
@@ -217,7 +217,7 @@ describe BoardGrantEffectuation do
             payee_code: "00",
             benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
             user: User.system_user,
-            code: "030BGNR"
+            code: "030BGRNR"
           )
         end
       end
