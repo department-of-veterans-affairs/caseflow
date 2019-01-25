@@ -102,14 +102,13 @@ describe HearingDay do
     end
   end
 
-  context "delete hearing day", focus: true do
+  context "confirm_no_children_records", focus: true do
     let!(:hearing_day) { create(:hearing_day) }
     let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
 
-    it "doesn't delete hearing days with hearings" do
-      expect { hearing_day.delete }.to raise_error(HearingDay::HearingDayHasChildrenRecords)
+    it "returns an error if there are children records" do
+      expect { hearing_day.confirm_no_children_records }.to raise_error(HearingDay::HearingDayHasChildrenRecords)
     end
-
   end
 
   context "bulk persist" do

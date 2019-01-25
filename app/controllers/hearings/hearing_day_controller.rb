@@ -78,6 +78,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def destroy
+    hearing_day.confirm_no_children_records
     hearing_day.destroy!
     render json: {}
   end
