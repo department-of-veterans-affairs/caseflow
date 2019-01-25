@@ -254,10 +254,10 @@ RSpec.feature "Case details" do
 
   context "when an appeal has some number of documents" do
     let!(:appeal) do
-      FactoryBot.create(
+      create(
         :legacy_appeal,
         :with_veteran,
-        vacols_case: FactoryBot.create(:case_with_soc, :assigned, user: attorney_user)
+        vacols_case: create(:case_with_soc, :assigned, :docs_in_vbms, user: attorney_user)
       )
     end
 
@@ -267,9 +267,7 @@ RSpec.feature "Case details" do
     scenario "reader link appears on page and sends us to reader" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-      # TODO: Why isn't the document count coming through here?
-      # click_on "View #{appeal.documents.count} documents"
-      click_on "View"
+      click_on "View #{appeal.documents.count} docs"
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("Caseflow> Reader")
