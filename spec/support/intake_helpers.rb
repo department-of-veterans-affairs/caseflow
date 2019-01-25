@@ -32,8 +32,8 @@ module IntakeHelpers
     if claim_participant_id
       Claimant.create!(
         review_request: higher_level_review,
-        participant_id: claim_participant_id || test_veteran.participant_id,
-        payee_code: claim_participant_id ? "02" : "00"
+        participant_id: claim_participant_id,
+        payee_code: "02"
       )
     end
 

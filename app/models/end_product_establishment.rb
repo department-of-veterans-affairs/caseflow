@@ -148,7 +148,7 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  before_save :set_default_values
+  # before_save :set_default_values
 
   def set_default_values
     if payee_code.nil?
