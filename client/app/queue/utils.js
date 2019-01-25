@@ -273,7 +273,8 @@ export const prepareAppealForStore =
         regionalOffice: appeal.attributes.regional_office,
         caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
         documentID: appeal.attributes.document_id,
-        caseReviewId: appeal.attributes.attorney_case_review_id
+        caseReviewId: appeal.attributes.attorney_case_review_id,
+        canEditDocumentId: appeal.attributes.can_edit_document_id
       };
 
       return accumulator;
@@ -467,4 +468,16 @@ export const taskIsOnHold = (task: Task) => {
   }
 
   return task.status === TASK_STATUSES.on_hold;
+};
+
+export const taskActionData = (props: Object) => {
+  const relevantAction = props.task.availableActions.
+    find((action) => props.history.location.pathname.endsWith(action.value));
+
+  if (relevantAction && relevantAction.data) {
+    return (relevantAction.data);
+  }
+
+  // We should never get here since any task action the creates this modal should provide data.
+  throw new Error('Task action requires data');
 };

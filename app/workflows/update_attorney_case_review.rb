@@ -6,10 +6,10 @@ class UpdateAttorneyCaseReview
   validate :authorized_to_edit
   validate :correct_format
 
-  def initialize(id:, document_id:, user_id:)
+  def initialize(id:, document_id:, user:)
     @id = id
     @document_id = document_id
-    @user_id = user_id
+    @user = user
   end
 
   def call
@@ -22,8 +22,7 @@ class UpdateAttorneyCaseReview
 
   private
 
-  attr_reader :id, :document_id, :user_id
-  attr_writer :user_id
+  attr_reader :id, :document_id, :user
 
   def case_review
     @case_review ||= AttorneyCaseReview.find_by(id: id)
@@ -37,9 +36,13 @@ class UpdateAttorneyCaseReview
 
   def authorized_to_edit
     return unless case_review
-    return if [case_review.attorney_id, case_review.reviewing_judge_id].include?(user_id)
+    return if allowed_to_edit_ama_case_review?
 
     errors.add(:document_id, "You are not authorized to edit this document ID")
+  end
+
+  def allowed_to_edit_ama_case_review?
+    AmaDocumentIdPolicy.new(user: user, case_review: case_review).editable?
   end
 
   def correct_format

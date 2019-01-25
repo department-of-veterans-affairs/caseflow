@@ -69,6 +69,8 @@ Rails/Present:
 
 Metrics/MethodLength:
   Max: 20
+  Exclude:
+    - "spec/**/*"
 
 Metrics/ClassLength:
   Max: 400
