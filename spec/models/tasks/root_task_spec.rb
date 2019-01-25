@@ -166,7 +166,7 @@ describe RootTask do
       before { allow_any_instance_of(MailTeam).to receive(:user_has_access?).and_return(true) }
 
       it "should return a list that includes only the create mail task" do
-        expect(subject).to eq([root_task.build_action_hash(Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h)])
+        expect(subject).to eq([root_task.build_action_hash(Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h, user)])
       end
     end
 

@@ -46,7 +46,7 @@ class SeedDB
     User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Attorney no cases")
     User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Judge with hearings and cases")
     User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Judge has attorneys with cases")
-    User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Judge has case to sign")
+    User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Judge has case to assign")
     User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Judge has case to assign no team")
     User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
     User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "BVA Dispatch user with cases")
@@ -767,14 +767,14 @@ class SeedDB
     FeatureToggle.enable!(:ama_auto_case_distribution)
 
     @ama_appeals << FactoryBot.create(
-      :intaked_appeal,
+      :with_tasks,
       number_of_claimants: 1,
       veteran_file_number: "808415990",
       docket_type: "hearing",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
-      :intaked_appeal,
+      :with_tasks,
       number_of_claimants: 1,
       veteran_file_number: "992190636",
       docket_type: "hearing",
