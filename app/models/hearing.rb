@@ -2,6 +2,7 @@ class Hearing < ApplicationRecord
   belongs_to :hearing_day
   belongs_to :appeal
   belongs_to :judge, class_name: "User"
+  has_one :transcription
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
   alias_attribute :location, :hearing_location
@@ -30,6 +31,8 @@ class Hearing < ApplicationRecord
   # changing RO should re-parent hearing
   delegate :regional_office, to: :hearing_day, prefix: true
   alias_attribute :regional_office_key, :hearing_day_regional_office
+
+  accepts_nested_attributes_for :transcription, allow_destroy: true
 
   HEARING_TYPES = {
     V: "Video",
@@ -117,6 +120,10 @@ class Hearing < ApplicationRecord
         :veteran_gender,
         :appeal_external_id,
         :veteran_file_number,
+        :evidence_window_waived,
+        :bva_poc,
+        :room,
+        :transcription,
         :docket_number,
         :docket_name,
         :military_service,

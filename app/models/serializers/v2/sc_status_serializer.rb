@@ -1,5 +1,5 @@
-class V2::HLRStatusSerializer < V2::AppealSerializer
-  type :higher_level_review
+class V2::SCStatusSerializer < V2::AppealSerializer
+  type :supplemental_claim
 
   def id
     object.review_status_id
@@ -8,11 +8,11 @@ class V2::HLRStatusSerializer < V2::AppealSerializer
   attribute :linked_review_ids, key: :appeal_ids
 
   attribute :type do
-    # this does not apply to HLR
+    # this does not apply to SC
   end
 
   attribute :location do
-    # for HLR will always be aoj
+    # for SC will always be aoj
     "aoj"
   end
 
@@ -21,11 +21,11 @@ class V2::HLRStatusSerializer < V2::AppealSerializer
   end
 
   attribute :aod do
-    # does not apply to HLR
+    # does not apply to SC
   end
 
   attribute :docket do
-    # doesn't apply to HLRs
+    # doesn't apply to SC
   end
 
   attribute :events do
