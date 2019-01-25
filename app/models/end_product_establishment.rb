@@ -148,19 +148,6 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  # before_save :set_default_values
-
-  def set_default_values
-    if payee_code.nil?
-      if source && source.try(:veteran_is_not_claimant) == true
-        fail "nil payee_code should be 02"
-      elsif source && source.try(:veteran_is_not_claimant) == false
-        self.payee_code = EndProduct::DEFAULT_PAYEE_CODE
-      end
-    end
-    # TODO: self.payee_code ||= EndProduct::DEFAULT_PAYEE_CODE
-  end
-
   def perform!(commit: false)
     return if reference_id
 

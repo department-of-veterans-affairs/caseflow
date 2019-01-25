@@ -136,8 +136,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def payee_code
-    return EndProduct::DEFAULT_PAYEE_CODE if claimants.empty?
-    return EndProduct::DEFAULT_PAYEE_CODE if claimant_participant_id == veteran.participant_id
+    return nil if claimants.empty?
 
     claimants.first.payee_code
   end
