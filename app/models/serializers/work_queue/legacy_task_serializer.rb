@@ -18,6 +18,7 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   attribute :document_id
   attribute :work_product
   attribute :appeal_type
+  attribute :timeline_title
   attribute :previous_task do
     {
       assigned_on: object.previous_task.try(:assigned_at)
@@ -74,6 +75,6 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   end
 
   attribute :available_actions do
-    object.available_actions(@instance_options[:role])
+    object.available_actions_unwrapper(@instance_options[:user], @instance_options[:role])
   end
 end

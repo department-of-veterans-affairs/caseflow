@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema.define(version: 20190118155859) do
 
   # These are extensions that must be enabled in order to support this database
@@ -317,6 +318,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.string "description"
     t.string "file_number"
     t.integer "previous_document_version_id"
+    t.date "upload_date"
     t.date "received_at"
     t.string "series_id"
     t.string "type"
@@ -487,6 +489,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
 
   create_table "hearings", force: :cascade do |t|
     t.integer "appeal_id", null: false
+    t.string "bva_poc"
     t.string "disposition"
     t.boolean "evidence_window_waived"
     t.integer "hearing_day_id", null: false
@@ -495,9 +498,11 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.string "notes"
     t.boolean "prepped"
     t.string "representative_name"
+    t.string "room"
     t.time "scheduled_time"
     t.text "summary"
     t.boolean "transcript_requested"
+    t.date "transcript_sent_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "witness"
   end
@@ -737,6 +742,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.integer "contested_decision_issue_id"
     t.string "contested_issue_description"
     t.string "contested_rating_issue_diagnostic_code"
+    t.string "contested_rating_issue_disability_code"
     t.string "contested_rating_issue_profile_date"
     t.string "contested_rating_issue_reference_id"
     t.datetime "created_at"
@@ -907,6 +913,19 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.datetime "updated_at", null: false
     t.integer "user_count"
     t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true
+  end
+
+  create_table "transcriptions", force: :cascade do |t|
+    t.date "expected_return_date"
+    t.bigint "hearing_id"
+    t.date "problem_notice_sent_date"
+    t.string "problem_type"
+    t.string "requested_remedy"
+    t.date "sent_to_transcriber_date"
+    t.string "task_number"
+    t.string "transcriber"
+    t.date "uploaded_to_vbms_date"
+    t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
   end
 
   create_table "user_quotas", id: :serial, force: :cascade do |t|

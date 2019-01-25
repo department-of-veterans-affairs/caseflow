@@ -427,6 +427,26 @@ feature "Supplemental Claim Intake" do
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
   end
 
+  context "ratings with disabiliity codes" do
+    let(:disabiliity_receive_date) { receipt_date + 2.days }
+    let(:disability_profile_date) { profile_date - 1.day }
+    let!(:ratings_with_disability_codes) do
+      generate_ratings_with_disabilities(veteran,
+                                         disabiliity_receive_date,
+                                         disability_profile_date)
+    end
+
+    scenario "saves disability codes" do
+      sc, = start_supplemental_claim(veteran)
+      visit "/intake"
+      click_intake_continue
+      save_and_check_request_issues_with_disability_codes(
+        Constants.INTAKE_FORM_NAMES.supplemental_claim,
+        sc
+      )
+    end
+  end
+
   context "Add / Remove Issues page" do
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old1234" }
@@ -871,7 +891,6 @@ feature "Supplemental Claim Intake" do
           click_intake_add_issue
           add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
           add_intake_rating_issue("limitation of thigh motion (extension)")
-          add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Non-RAMP Issue before AMA Activation")
           expect(page).to_not have_content(

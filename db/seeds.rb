@@ -660,6 +660,9 @@ class SeedDB
     create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, colocated, action: "translation")
     create_task_at_attorney_review(@ama_appeals[7], judge, attorney)
     create_task_at_attorney_review(@ama_appeals[8], judge, attorney)
+    create_task_at_judge_assignment(@ama_appeals[8], judge)
+    create_task_at_judge_review(@ama_appeals[8], judge, attorney)
+    create_task_at_colocated(@ama_appeals[8], judge, attorney, colocated)
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 
@@ -764,14 +767,14 @@ class SeedDB
     FeatureToggle.enable!(:ama_auto_case_distribution)
 
     @ama_appeals << FactoryBot.create(
-      :intaked_appeal,
+      :with_tasks,
       number_of_claimants: 1,
       veteran_file_number: "808415990",
       docket_type: "hearing",
       request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
-      :intaked_appeal,
+      :with_tasks,
       number_of_claimants: 1,
       veteran_file_number: "992190636",
       docket_type: "hearing",

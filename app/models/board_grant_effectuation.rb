@@ -15,12 +15,13 @@ class BoardGrantEffectuation < ApplicationRecord
 
   END_PRODUCT_CODES = {
     rating: "030BGR",
-    nonrating: "030BGNR",
+    nonrating: "030BGRNR",
     pension_rating: "030BGRPMC",
     pension_nonrating: "030BGNRPMC"
   }.freeze
 
   delegate :contention_text, to: :granted_decision_issue
+  delegate :veteran, to: :appeal
 
   class << self
     # We don't need to retry these as frequently
@@ -138,10 +139,6 @@ class BoardGrantEffectuation < ApplicationRecord
       benefit_type_code: veteran.benefit_type_code,
       user: User.system_user
     )
-  end
-
-  def veteran
-    appeal.veteran
   end
 
   def end_product_code

@@ -579,6 +579,26 @@ feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
+  context "ratings with disabiliity codes" do
+    let(:disabiliity_receive_date) { receipt_date + 2.days }
+    let(:disability_profile_date) { profile_date - 1.day }
+    let!(:ratings_with_disability_codes) do
+      generate_ratings_with_disabilities(veteran,
+                                         disabiliity_receive_date,
+                                         disability_profile_date)
+    end
+
+    scenario "saves disability codes" do
+      hlr, = start_higher_level_review(veteran)
+      visit "/intake"
+      click_intake_continue
+      save_and_check_request_issues_with_disability_codes(
+        Constants.INTAKE_FORM_NAMES.higher_level_review,
+        hlr
+      )
+    end
+  end
+
   context "Add / Remove Issues page" do
     let(:higher_level_review_reference_id) { "hlr123" }
     let(:supplemental_claim_reference_id) { "sc123" }
@@ -1290,7 +1310,6 @@ feature "Higher-Level Review" do
           click_intake_add_issue
           add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
           add_intake_rating_issue("limitation of thigh motion (extension)")
-          add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Non-RAMP Issue before AMA Activation")
           expect(page).to_not have_content(

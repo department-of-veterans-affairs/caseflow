@@ -19,10 +19,16 @@ feature "Intake Review Page" do
   describe "Selecting a claimant" do
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
-        first_name: "BOB",
-        last_name: "VANCE",
-        ptcpnt_id: "5382910292",
-        relationship_type: "Spouse"
+        [
+          { first_name: "BOB",
+            last_name: "VANCE",
+            ptcpnt_id: "5382910292",
+            relationship_type: "Spouse" },
+          { first_name: "BILLY",
+            last_name: "VANCE",
+            ptcpnt_id: "12345",
+            relationship_type: "Child" }
+        ]
       )
     end
 
@@ -48,25 +54,39 @@ feature "Intake Review Page" do
 
     context "when the Veteran is not the claimant" do
       let(:veteran_is_not_claimant) { true }
+      let!(:recent_end_product_with_claimant) do
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: {
+            benefit_claim_id: "claim_id",
+            claimant_first_name: "BOB",
+            claimant_last_name: "VANCE",
+            payee_type_code: "11",
+            claim_date: 5.days.ago
+          }
+        )
+      end
+
+      let!(:outdated_end_product_with_claimant) do
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: {
+            benefit_claim_id: "another_claim_id",
+            claimant_first_name: "BOB",
+            claimant_last_name: "VANCE",
+            payee_type_code: "10",
+            claim_date: 10.days.ago
+          }
+        )
+      end
 
       context "when benefit type is pension or compensation" do
-        context "higher level review" do
-          it "requires payee code" do
-            start_higher_level_review(
-              veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant
-            )
-            check_pension_and_compensation_payee_code
-          end
-        end
-
-        context "supplemental claim" do
-          it "requires payee code" do
-            start_supplemental_claim(
-              veteran,
-              veteran_is_not_claimant: veteran_is_not_claimant
-            )
-            check_pension_and_compensation_payee_code
+        [:higher_level_review, :supplemental_claim].each do |claim_review_type|
+          describe "given a #{claim_review_type}" do
+            it "requires payee code and shows default value" do
+              start_claim_review(claim_review_type, veteran: veteran, veteran_is_not_claimant: veteran_is_not_claimant)
+              check_pension_and_compensation_payee_code
+            end
           end
         end
       end
@@ -160,7 +180,7 @@ def check_pension_and_compensation_payee_code
   end
 
   fill_in "What is the Receipt Date of this form?", with: "04/20/2025"
-  find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+  find("label", text: "Billy Vance, Child", match: :prefer_exact).click
   click_intake_continue
 
   # check that other validation still works
@@ -178,6 +198,12 @@ def check_pension_and_compensation_payee_code
   click_intake_continue
 
   expect(page).to have_content("Please select an option.")
+
+  expect(find(".Select-placeholder")).to have_content("Select")
+
+  find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+
+  expect(find(".Select-multi-value-wrapper")).to have_content("11 - C&P First Child")
 
   fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
   find("#cf-payee-code").send_keys :enter
