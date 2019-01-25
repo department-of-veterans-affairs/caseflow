@@ -1,17 +1,19 @@
 describe JudgeTask do
-  let(:judge) { create(:user) }
-  let(:judge2) { create(:user) }
-  let(:attorney) { create(:user) }
+  let(:judge) { FactoryBot.create(:user) }
+  let(:judge2) { FactoryBot.create(:user) }
+  let(:attorney) { FactoryBot.create(:user) }
 
   before do
-    create(:staff, :judge_role, sdomainid: judge.css_id)
-    create(:staff, :judge_role, sdomainid: judge2.css_id)
-    create(:staff, :attorney_role, sdomainid: attorney.css_id)
+    FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
+    FactoryBot.create(:staff, :judge_role, sdomainid: judge2.css_id)
+    FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
   end
 
   describe ".available_actions" do
     let(:user) { judge }
-    let(:subject_task) { JudgeAssignTask.create!(assigned_to: judge, appeal: FactoryBot.create(:appeal)) }
+    let(:subject_task) do
+      FactoryBot.create(:ama_judge_task, assigned_to: judge, appeal: FactoryBot.create(:appeal))
+    end
 
     subject { subject_task.available_actions_unwrapper(user) }
 
@@ -29,7 +31,7 @@ describe JudgeTask do
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
-            ].map { |action| subject_task.build_action_hash(action) }
+            ].map { |action| subject_task.build_action_hash(action, judge) }
           )
         end
 
@@ -42,21 +44,24 @@ describe JudgeTask do
                 Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
                 Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
                 Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
-              ].map { |action| subject_task.build_action_hash(action) }
+              ].map { |action| subject_task.build_action_hash(action, judge) }
             )
           end
         end
       end
 
       context "in the review phase" do
-        let(:subject_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
+        let(:subject_task) do
+          FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge, parent: FactoryBot.create(:root_task))
+        end
 
-        it "should return the dispatch action" do
+        it "returns the dispatch action" do
           expect(subject).to eq(
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-              Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h
-            ].map { |action| subject_task.build_action_hash(action) }
+              Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h,
+              Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h
+            ].map { |action| subject_task.build_action_hash(action, judge) }
           )
         end
       end
@@ -66,7 +71,7 @@ describe JudgeTask do
   describe ".create_from_params" do
     context "creating a JudgeQualityReviewTask from a QualityReviewTask" do
       let(:judge_task) { FactoryBot.create(:ama_judge_task, parent: FactoryBot.create(:root_task), assigned_to: judge) }
-      let(:qr_user) { create(:user) }
+      let(:qr_user) { FactoryBot.create(:user) }
       let(:qr_task) { FactoryBot.create(:qr_task, assigned_to: qr_user, parent: judge_task) }
       let(:params) { { assigned_to: judge, appeal: qr_task.appeal, parent_id: qr_task.id } }
 
@@ -111,7 +116,7 @@ describe JudgeTask do
         let(:params) { { status: nil } }
 
         it "doesn't change the task's status" do
-          subject
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
           expect(jqr_task.reload.status).to eq(existing_status.to_s)
         end
       end
@@ -120,16 +125,16 @@ describe JudgeTask do
 
   describe ".previous_task" do
     it "should return the only child" do
-      parent = create(:ama_judge_task, assigned_to: judge)
-      child = create(:ama_attorney_task, assigned_to: attorney, status: "completed", parent: parent)
+      parent = FactoryBot.create(:ama_judge_task, assigned_to: judge)
+      child = FactoryBot.create(:ama_attorney_task, assigned_to: attorney, status: "completed", parent: parent)
 
       expect(parent.previous_task.id).to eq(child.id)
     end
 
     it "should throw an exception if there are too many children" do
-      parent = create(:ama_judge_task, assigned_to: judge)
-      create(:ama_attorney_task, assigned_to: attorney, status: "completed", parent: parent)
-      create(:ama_attorney_task, assigned_to: attorney, status: "completed", parent: parent)
+      parent = FactoryBot.create(:ama_judge_task, assigned_to: judge)
+      FactoryBot.create(:ama_attorney_task, assigned_to: attorney, status: "completed", parent: parent)
+      FactoryBot.create(:ama_attorney_task, assigned_to: attorney, status: "completed", parent: parent)
 
       expect { parent.previous_task }.to raise_error(Caseflow::Error::TooManyChildTasks)
     end
