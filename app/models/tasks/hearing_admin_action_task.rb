@@ -16,6 +16,7 @@ class HearingAdminActionTask < GenericTask
   def verify_org_task_unique
     true
   end
+
   def available_actions(user)
     if assigned_to == user
       [
@@ -29,7 +30,6 @@ class HearingAdminActionTask < GenericTask
       ]
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   private
 

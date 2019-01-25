@@ -182,7 +182,7 @@ class Task < ApplicationRecord
     nil
   end
 
-  def assign_to_organization_data(_user)
+  def assign_to_organization_data(_user = nil)
     organizations = Organization.assignable(self).map do |organization|
       {
         label: organization.name,
@@ -197,11 +197,11 @@ class Task < ApplicationRecord
     }
   end
 
-  def mail_assign_to_organization_data(_user)
+  def mail_assign_to_organization_data(_user = nil)
     { options: MailTask.subclass_routing_options }
   end
 
-  def assign_to_user_data(user)
+  def assign_to_user_data(user = nil)
     users = if assigned_to.is_a?(Organization)
               assigned_to.users
             elsif parent&.assigned_to.is_a?(Organization)
@@ -217,7 +217,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def assign_to_judge_data(_user)
+  def assign_to_judge_data(_user = nil)
     {
       selected: root_task.children.find { |task| task.is_a?(JudgeTask) }&.assigned_to,
       options: users_to_options(Judge.list_all),
@@ -225,7 +225,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def assign_to_attorney_data(_user)
+  def assign_to_attorney_data(_user = nil)
     {
       selected: nil,
       options: nil,
@@ -233,7 +233,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def assign_to_privacy_team_data(_user)
+  def assign_to_privacy_team_data(_user = nil)
     org = PrivacyTeam.singleton
 
     {
@@ -243,7 +243,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def assign_to_translation_team_data(_user)
+  def assign_to_translation_team_data(_user = nil)
     org = Translation.singleton
 
     {
@@ -253,7 +253,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def add_admin_action_data(_user)
+  def add_admin_action_data(_user = nil)
     {
       selected: nil,
       options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
@@ -266,7 +266,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def schedule_veteran_data(_user)
+  def schedule_veteran_data(_user = nil)
     {
       selected: nil,
       options: nil,
@@ -274,7 +274,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def return_to_attorney_data(_user)
+  def return_to_attorney_data(_user = nil)
     assignee = children.select { |t| t.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
     attorneys = JudgeTeam.for_judge(assigned_to)&.attorneys || []
     attorneys |= [assignee] if assignee.present?
