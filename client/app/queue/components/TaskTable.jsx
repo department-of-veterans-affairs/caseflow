@@ -34,6 +34,7 @@ type Params = {|
   includeTask?: boolean,
   includeDocumentId?: boolean,
   includeType?: boolean,
+  includeAssignedTo?: boolean,
   includeDocketNumber?: boolean,
   includeCompletedDate?: boolean,
   includeCompletedToName?: boolean,
@@ -170,6 +171,13 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     } : null;
   }
 
+  caseAssignedToColumn = () => {
+    return this.props.includeAssignedTo ? {
+      header: COPY.CASE_LIST_TABLE_ASSIGNED_TO_COLUMN_TITLE,
+      valueFunction: (task: TaskWithAppeal) => task.assignedTo.name
+    } : null;
+  }
+
   caseDocketNumberColumn = () => {
     return this.props.includeDocketNumber ? {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
@@ -289,6 +297,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
         this.caseTaskColumn(),
         this.caseDocumentIdColumn(),
         this.caseTypeColumn(),
+        this.caseAssignedToColumn(),
         this.caseDocketNumberColumn(),
         this.caseIssueCountColumn(),
         this.caseDueDateColumn(),

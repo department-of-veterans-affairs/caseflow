@@ -64,6 +64,7 @@ export type Task = {
   dueOn: ?string,
   assignedTo: {
     cssId: ?string,
+    name: ?name,
     type: string,
     id: number
   },
