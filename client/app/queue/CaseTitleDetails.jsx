@@ -43,6 +43,8 @@ const containingDivStyling = css({
 const listStyling = css({
   listStyleType: 'none',
   verticalAlign: 'super',
+  display: 'flex',
+  'flex-wrap': 'wrap',
   padding: '1rem 0 0 0'
 });
 

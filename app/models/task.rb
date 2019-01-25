@@ -121,10 +121,6 @@ class Task < ApplicationRecord
     (Time.zone.today - assigned_at.to_date).to_i if assigned_at
   end
 
-  def colocated_task?
-    type == ColocatedTask.name
-  end
-
   def latest_attorney_case_review
     AttorneyCaseReview.where(task_id: Task.where(appeal: appeal).pluck(:id)).order(:created_at).last
   end
@@ -266,6 +262,17 @@ class Task < ApplicationRecord
       selected: nil,
       options: nil,
       type: ScheduleHearingTask.name
+    }
+  end
+
+  def return_to_attorney_data
+    assignee = children.select { |t| t.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+    attorneys = JudgeTeam.for_judge(assigned_to)&.attorneys || []
+    attorneys |= [assignee] if assignee.present?
+    {
+      selected: assignee,
+      options: users_to_options(attorneys),
+      type: AttorneyRewriteTask.name
     }
   end
 

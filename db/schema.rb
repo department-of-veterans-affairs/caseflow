@@ -318,6 +318,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.string "description"
     t.string "file_number"
     t.integer "previous_document_version_id"
+    t.date "upload_date"
     t.date "received_at"
     t.string "series_id"
     t.string "type"

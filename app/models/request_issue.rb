@@ -203,6 +203,8 @@ class RequestIssue < ApplicationRecord
     # rubocop:enable Metrics/MethodLength
   end
 
+  delegate :veteran, to: :review_request
+
   def end_product_code
     remanded? ? dta_end_product_code : original_end_product_code
   end
@@ -418,7 +420,7 @@ class RequestIssue < ApplicationRecord
 
   def matching_rating_issues
     @matching_rating_issues ||= end_product_establishment.associated_rating.issues.select do |rating_issue|
-      rating_issue.contention_reference_id == contention_reference_id
+      rating_issue.contention_reference_id.to_i == contention_reference_id.to_i
     end
   end
 
@@ -597,6 +599,7 @@ class RequestIssue < ApplicationRecord
   def check_for_untimely!
     return unless eligible?
     return if untimely_exemption
+    return if vacols_id
     return if review_request&.is_a?(SupplementalClaim)
 
     if !review_request.timely_issue?(decision_or_promulgation_date)
