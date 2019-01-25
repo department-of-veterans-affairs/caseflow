@@ -112,7 +112,6 @@ export class DailyDocketContainer extends React.Component {
 
   formatHearing = (hearing) => {
     const time = this.getTime(hearing);
-    console.log(hearing.editedDate);
 
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
