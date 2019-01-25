@@ -116,7 +116,7 @@ describe JudgeTask do
         let(:params) { { status: nil } }
 
         it "doesn't change the task's status" do
-          subject
+          expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
           expect(jqr_task.reload.status).to eq(existing_status.to_s)
         end
       end
