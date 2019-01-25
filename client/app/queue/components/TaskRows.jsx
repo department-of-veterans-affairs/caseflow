@@ -73,7 +73,8 @@ class TaskRows extends React.PureComponent {
   }
 
   toggleTaskInstructionsVisibility = (task) => {
-    let previousState = Object.assign({}, this.state.taskInstructionsIsVisibleObj);
+    const previousState = Object.assign({}, this.state.taskInstructionsIsVisibleObj);
+
     previousState[task.uniqueId] = previousState[task.uniqueId] ? !previousState[task.uniqueId] : true;
     this.setState({ taskInstructionsIsVisibleObj: previousState });
   }
