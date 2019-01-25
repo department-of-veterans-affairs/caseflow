@@ -66,13 +66,10 @@ const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
 class TaskRows extends React.PureComponent {
   constructor(props) {
     super(props);
-    const taskVisibiltyObj = {};
-
-    this.props.taskList.forEach((task) => taskVisibiltyObj[task.uniqueId] = false);
 
     this.state = {
       taskInstructionsIsVisible: false,
-      taskInstructionsIsVisibleObj: taskVisibiltyObj
+      taskInstructionsIsVisibleObj: { }
     };
   }
 
@@ -80,10 +77,9 @@ class TaskRows extends React.PureComponent {
     const prevState = this.state.taskInstructionsIsVisible;
 
     this.setState({ taskInstructionsIsVisible: !prevState });
-
     const previousState = this.state.taskInstructionsIsVisibleObj;
 
-    previousState[task.uniqueId] = !previousState[task.uniqueId];
+    previousState[task.uniqueId] = previousState[task.uniqueId] ? !previousState[task.uniqueId] : true;
     this.setState({ taskInstructionsIsVisibleObj: previousState });
   }
 
@@ -206,6 +202,7 @@ class TaskRows extends React.PureComponent {
     if (task.availableActions.length <= 0) {
       return null;
     }
+
     return this.showActionsSection(task) ? <div><h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
       <ActionsDropdown task={task} appealId={appeal.externalId} /></div> : null;
   }
