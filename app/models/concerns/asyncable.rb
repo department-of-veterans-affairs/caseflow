@@ -13,8 +13,9 @@ module Asyncable
   include RunAsyncable
 
   # class methods to scope queries based on class-defined columns
-  # we expect 4 column types:
-  #  * submitted_at : make the job eligible to run
+  # we expect 5 column types:
+  #  * last_submitted_at : when the job is eligible to run (can be reset to restart the job)
+  #  * submitted_at : when the job first became eligible to run
   #  * attempted_at : flag the job as having run
   #  * processed_at : flag the job as concluded
   #  * error        : any error message captured from a failed attempt.
@@ -25,6 +26,10 @@ module Asyncable
 
     def processing_retry_interval_hours
       DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
+    end
+
+    def last_submitted_at_column
+      :last_submitted_at
     end
 
     def submitted_at_column
@@ -44,11 +49,11 @@ module Asyncable
     end
 
     def unexpired
-      where(arel_table[submitted_at_column].gt(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
+      where(arel_table[last_submitted_at_column].gt(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
     end
 
     def processable
-      where(arel_table[submitted_at_column].lteq(Time.zone.now)).where(processed_at_column => nil)
+      where(arel_table[last_submitted_at_column].lteq(Time.zone.now)).where(processed_at_column => nil)
     end
 
     def never_attempted
@@ -64,7 +69,7 @@ module Asyncable
     end
 
     def order_by_oldest_submitted
-      order(submitted_at_column => :asc)
+      order(last_submitted_at_column => :asc)
     end
 
     def requires_processing
@@ -73,11 +78,11 @@ module Asyncable
 
     def expired_without_processing
       where(processed_at_column => nil)
-        .where(arel_table[submitted_at_column].lteq(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
+        .where(arel_table[last_submitted_at_column].lteq(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
     end
 
     def attempted_without_being_submitted
-      where(arel_table[attempted_at_column].lteq(Time.zone.now)).where(submitted_at_column => nil)
+      where(arel_table[attempted_at_column].lteq(Time.zone.now)).where(last_submitted_at_column => nil)
     end
 
     def potentially_stuck
@@ -88,7 +93,13 @@ module Asyncable
   end
 
   def submit_for_processing!(delay: 0)
-    update!(self.class.submitted_at_column => (Time.zone.now + delay), self.class.processed_at_column => nil)
+    when_to_start = Time.zone.now + delay
+
+    update!(
+      self.class.last_submitted_at_column => when_to_start,
+      self.class.submitted_at_column => when_to_start,
+      self.class.processed_at_column => nil
+    )
   end
 
   def processed!
@@ -104,6 +115,7 @@ module Asyncable
     now = Time.zone.now
 
     update!(
+      self.class.last_submitted_at_column => now,
       self.class.submitted_at_column => now,
       self.class.attempted_at_column => now,
       self.class.processed_at_column => now
@@ -122,8 +134,8 @@ module Asyncable
     !!self[self.class.submitted_at_column]
   end
 
-  def sort_by_submitted_at
-    self[self.class.submitted_at_column] || Time.zone.now
+  def sort_by_last_submitted_at
+    self[self.class.last_submitted_at_column] || Time.zone.now
   end
 
   def clear_error!
@@ -136,7 +148,7 @@ module Asyncable
 
   def restart!
     update!(
-      self.class.submitted_at_column => Time.zone.now,
+      self.class.last_submitted_at_column => Time.zone.now,
       self.class.processed_at_column => nil,
       self.class.attempted_at_column => nil,
       self.class.error_column => nil
@@ -147,6 +159,7 @@ module Asyncable
     {
       klass: self.class.to_s,
       id: id,
+      last_submitted_at: self[self.class.last_submitted_at_column],
       submitted_at: self[self.class.submitted_at_column],
       attempted_at: self[self.class.attempted_at_column],
       processed_at: self[self.class.processed_at_column],

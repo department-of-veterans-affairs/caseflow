@@ -20,6 +20,6 @@ class AsyncableJobs
     models.each do |klass|
       expired_jobs << klass.potentially_stuck
     end
-    expired_jobs.flatten.sort_by(&:sort_by_submitted_at)
+    expired_jobs.flatten.sort_by(&:sort_by_last_submitted_at)
   end
 end

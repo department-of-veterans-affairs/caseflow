@@ -81,6 +81,21 @@ class AsyncableJobsPage extends React.PureComponent {
     return txt;
   }
 
+  disableRestart = (job) => {
+    if (!job.attempted_at) {
+      return false;
+    }
+
+    const fiveMinutes = 300000;
+
+    let lastAttempted = new Date(job.attempted_at);
+    let now = new Date();
+    console.log(lastAttempted);
+    console.log(now);
+
+    return (now - lastAttempted) < fiveMinutes;
+  }
+
   render = () => {
     const rowObjects = this.props.jobs;
 
@@ -96,13 +111,23 @@ class AsyncableJobsPage extends React.PureComponent {
         }
       },
       {
-        header: 'Submitted',
+        header: 'Originally Submitted',
         valueFunction: (job) => {
           if (job.submitted_at === 'restarted') {
             return job.submitted_at;
           }
 
           return moment(job.submitted_at).format(DATE_TIME_FORMAT);
+        }
+      },
+      {
+        header: 'Last Submitted',
+        valueFunction: (job) => {
+          if (job.last_submitted_at === 'restarted') {
+            return job.last_submitted_at;
+          }
+
+          return moment(job.last_submitted_at).format(DATE_TIME_FORMAT);
         }
       },
       {
@@ -140,6 +165,7 @@ class AsyncableJobsPage extends React.PureComponent {
             title={`${job.klass} ${job.id}`}
             loading={this.state.jobsRestarting[job.id]}
             loadingText="Restarting..."
+            disable={this.disableRestart(job)}
             onClick={() => {
               this.restartJob(job);
             }}
