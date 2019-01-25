@@ -328,7 +328,7 @@ export class DailyDocket extends React.PureComponent {
     let dailyDocketRows = [];
     let count = 0;
 
-    _.forEach(hearings, (hearing) => {
+    _.forEach(_.sortBy(hearings, ['scheduled_for']), (hearing) => {
       count += 1;
 
       const dailyDocketRow = this.getDailyDocketRow(hearing, count);
