@@ -106,7 +106,7 @@ class Task < ApplicationRecord
     return reassign(params[:reassign], current_user) if params[:reassign]
 
     params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
-    update(params)
+    update!(params)
 
     [self]
   end
