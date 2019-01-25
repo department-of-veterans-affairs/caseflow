@@ -16,7 +16,6 @@ import {
   sectionHeadingStyling,
   anchorJumpLinkStyling
 } from './StickyNavContentArea';
-import _ from 'lodash';
 
 const tableStyling = css({
   width: '100%',
