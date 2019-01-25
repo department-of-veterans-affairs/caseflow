@@ -273,7 +273,8 @@ export const prepareAppealForStore =
         regionalOffice: appeal.attributes.regional_office,
         caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
         documentID: appeal.attributes.document_id,
-        caseReviewId: appeal.attributes.attorney_case_review_id
+        caseReviewId: appeal.attributes.attorney_case_review_id,
+        canEditDocumentId: appeal.attributes.can_edit_document_id
       };
 
       return accumulator;
