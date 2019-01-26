@@ -36,23 +36,21 @@ class Api::V2::AppealsController < Api::ApplicationController
 
   def legacy_appeals
     # Appeals API is currently limited to VBA appeals
-    converted_vbms_id = LegacyAppeal.convert_file_number_to_vacols(file_number);
-
-    @legacy_appeals ||= AppealHistory.for_api(vbms_id: converted_vbms_id).select do |series|
+    @legacy_appeals ||= AppealHistory.for_api(vbms_id: vbms_id).select do |series|
       series.aoj == :vba
     end
   end
 
   def hlrs
-    @hlrs ||= HigherLevelReview.where(veteran_file_number: vbms_id)
+    @hlrs ||= HigherLevelReview.where(veteran_file_number: veteran_file_number)
   end
 
   def supplemental_claims
-    @supplemental_claims ||= SupplementalClaim.where(veteran_file_number: vbms_id)
+    @supplemental_claims ||= SupplementalClaim.where(veteran_file_number: veteran_file_number)
   end
 
   def appeals
-    @appeals ||= Appeal.where(veteran_file_number: vbms_id)
+    @appeals ||= Appeal.where(veteran_file_number: veteran_file_number)
   end
 
   def all_reviews_and_appeals
@@ -78,16 +76,19 @@ class Api::V2::AppealsController < Api::ApplicationController
   end
 
   def vbms_id
-    @vbms_id ||= fetch_vbms_id
+    @vbms_id ||= LegacyAppeal.convert_file_number_to_vacols(veteran_file_number);
   end
 
-  def fetch_vbms_id
+  def veteran_file_number
+    @veteran_file_number ||= fetch_veteran_file_number
+  end
+
+  def fetch_veteran_file_number
     fail Caseflow::Error::InvalidSSN if !ssn || ssn.length != 9 || ssn.scan(/\D/).any?
 
     file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
-    return unless file_number
-
-    fail ActiveRecord::RecordNotFound
+    fail ActiveRecord::RecordNotFound unless file_number
+    return file_number
   end
 
   # Cache can't be busted in prod

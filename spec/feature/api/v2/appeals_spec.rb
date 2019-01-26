@@ -198,7 +198,7 @@ describe "Appeals API v2", type: :request do
       }
 
       get "/api/v2/appeals", headers: headers
-
+      
       expect(ApiView.last.source).to eq("white house hotline")
     end
 
