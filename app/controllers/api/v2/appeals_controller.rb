@@ -76,7 +76,7 @@ class Api::V2::AppealsController < Api::ApplicationController
   end
 
   def vbms_id
-    @vbms_id ||= LegacyAppeal.convert_file_number_to_vacols(veteran_file_number);
+    @vbms_id ||= LegacyAppeal.convert_file_number_to_vacols(veteran_file_number)
   end
 
   def veteran_file_number
@@ -88,7 +88,8 @@ class Api::V2::AppealsController < Api::ApplicationController
 
     file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
     fail ActiveRecord::RecordNotFound unless file_number
-    return file_number
+
+    file_number
   end
 
   # Cache can't be busted in prod
