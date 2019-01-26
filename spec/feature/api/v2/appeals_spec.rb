@@ -131,10 +131,15 @@ describe "Appeals API v2", type: :request do
              veteran_is_not_claimant: veteran_is_not_claimant)
     end
 
+    let(:request_issue) do
+      create(:request_issue, benefit_type: benefit_type)
+    end
+
     let!(:appeal) do
       create(:appeal,
              veteran_file_number: veteran_file_number,
-             receipt_date: nil)
+             receipt_date: nil,
+             request_issues: [request_issue])
     end
 
     before do
@@ -456,7 +461,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["location"]).to be_nil
       expect(json["data"][2]["attributes"]["alerts"]).to be_nil
       expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
-      expect(json["data"][2]["attributes"]["programArea"]).to be_nil
+      expect(json["data"][2]["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"][2]["attributes"]["docket"]).to be_nil
       expect(json["data"][2]["attributes"]["status"]).to be_nil
       expect(json["data"][2]["attributes"]["issues"].length).to eq(0)
