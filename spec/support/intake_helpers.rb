@@ -1,6 +1,5 @@
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
-  # rubocop: disable Metrics/MethodLength
   # rubocop: disable Metrics/ParameterLists
   def start_higher_level_review(
     test_veteran,
@@ -30,10 +29,11 @@ module IntakeHelpers
     )
 
     if claim_participant_id
-      Claimant.create!(
+      create(
+        :claimant,
         review_request: higher_level_review,
-        participant_id: claim_participant_id || test_veteran.participant_id,
-        payee_code: claim_participant_id ? "02" : "00"
+        participant_id: claim_participant_id,
+        payee_code: "02"
       )
     end
 
@@ -107,7 +107,6 @@ module IntakeHelpers
 
     [appeal, intake]
   end
-  # rubocop: enable Metrics/MethodLength
   # rubocop: enable Metrics/ParameterLists
 
   def start_claim_review(claim_review_type, veteran: create(:veteran), veteran_is_not_claimant: false)
@@ -397,7 +396,6 @@ module IntakeHelpers
                   reject_reason: "Converted or Backfilled Rating - no promulgated ratings found")
   end
 
-  # rubocop:disable Metrics/MethodLength
   def generate_ratings_with_disabilities(
     veteran,
     promulgation_date,
@@ -442,7 +440,6 @@ module IntakeHelpers
       disabilities: disabilities
     )
   end
-  # rubocop:enable Metrics/MethodLength
 
   def save_and_check_request_issues_with_disability_codes(form_name, decision_review)
     click_intake_add_issue
@@ -467,7 +464,6 @@ module IntakeHelpers
            )).to_not be_nil
   end
 
-  # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def verify_decision_issues_can_be_added_and_removed(page_url,
                                                       original_request_issue,
@@ -538,10 +534,8 @@ module IntakeHelpers
       contested_issue_description: contested_decision_issues.second.description
     )
   end
-  # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 
-  # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def verify_request_issue_contending_decision_issue_not_readded(
       page_url,
@@ -585,7 +579,6 @@ module IntakeHelpers
     expect(request_issue_update.created_issues.map(&:id)).to_not include(non_modified_ids)
     expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
   end
-  # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 end
 # rubocop:enable Metrics/ModuleLength
