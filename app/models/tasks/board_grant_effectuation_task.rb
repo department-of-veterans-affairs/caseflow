@@ -20,8 +20,8 @@ class BoardGrantEffectuationTask < DecisionReviewTask
   private
 
   def validate_task
-    if !in_progress?
-      @error_code = :task_not_in_progress
+    if completed?
+      @error_code = :task_completed
     end
 
     !@error_code
