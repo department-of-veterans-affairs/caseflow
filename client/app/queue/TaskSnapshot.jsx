@@ -3,7 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
   appealWithDetailSelector,
-  nonRootActionableTasksForAppeal
+  nonRootActionableTasksForAppeal,
+  incompleteNonActionableTasks
 } from './selectors';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
@@ -39,7 +40,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
     } = this.props;
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
-    const tasks = this.props.tasks;
+    const tasks = this.props.tasks.concat(this.props.nonActionableTasks);
     const taskLength = tasks.length;
 
     if (taskLength) {
@@ -68,7 +69,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     userRole,
-    tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId })
+    tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId }),
+    nonActionableTasks: incompleteNonActionableTasks(state, { appealId: ownProps.appealId })
   };
 };
 
