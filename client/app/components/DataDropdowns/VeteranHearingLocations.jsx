@@ -8,15 +8,40 @@ import _ from 'lodash';
 
 import SearchableDropdown from '../SearchableDropdown';
 
+const generateHearingLocationOptions = (hearingLocations) => (
+  hearingLocations.map((location) => ({
+    label: `${location.city}, ${location.state} (${location.distance} miles away)`,
+    value: {
+      name: location.name,
+      address: location.address,
+      city: location.city,
+      state: location.state,
+      zipCode: location.zipCode,
+      distance: location.distance,
+      classification: location.classification,
+      facilityId: location.facilityId,
+      facilityType: location.facilityType
+    }
+  }))
+);
+
 class VeteranHearingLocationsDropdown extends React.Component {
 
   componentDidMount() {
-    if (this.props.hearingLocationOptions) {
+    if (this.props.dynamic || !this.props.staticHearingLocations) {
+      setTimeout(this.getLocations, 0);
+    } else {
       this.props.onReceiveDropdownData(
         `hearingLocationsFor${this.props.veteranFileNumber}`,
-        this.props.hearingLocationOptions
+        generateHearingLocationOptions(this.props.staticHearingLocations)
       );
-    } else {
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { dynamic, regionalOffice } = this.props;
+
+    if ((prevProps.dynamic !== dynamic || prevProps.regionalOffice !== regionalOffice) && dynamic) {
       setTimeout(this.getLocations, 0);
     }
   }
@@ -82,10 +107,11 @@ class VeteranHearingLocationsDropdown extends React.Component {
 
 VeteranHearingLocationsDropdown.propTypes = {
   veteranFileNumber: PropTypes.string.isRequired,
-  hearingLocationOptions: PropTypes.array,
+  staticHearingLocations: PropTypes.array,
   regionalOffice: PropTypes.string,
   name: PropTypes.string,
   label: PropTypes.string,
+  dynamic: PropTypes.bool,
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object
