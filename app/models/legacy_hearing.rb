@@ -264,9 +264,9 @@ class LegacyHearing < ApplicationRecord
       user.nil? || (user.css_id != vacols_css_id)
     end
 
-    def assign_or_create_from_vacols_record(vacols_record, fetched_hearing = nil)
+    def assign_or_create_from_vacols_record(vacols_record, legacy_hearing: nil)
       transaction do
-        hearing = fetched_hearing ||
+        hearing = legacy_hearing ||
                   find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq)
 
         # update hearing if user is nil, it's likely when the record doesn't exist and is being created

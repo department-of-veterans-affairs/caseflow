@@ -11,7 +11,12 @@ import {
   resetSuccessMessages,
   requestPatch
 } from '../uiReducer/uiActions';
-import { onRegionalOfficeChange, onHearingDayChange, onHearingTimeChange } from '../../components/common/actions';
+import {
+  onRegionalOfficeChange,
+  onHearingDayChange,
+  onHearingTimeChange,
+  onHearingLocationChange
+} from '../../components/common/actions';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
 import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
@@ -25,7 +30,8 @@ import { withRouter } from 'react-router-dom';
 import RadioField from '../../components/RadioField';
 import {
   HearingDateDropdown,
-  RegionalOfficeDropdown
+  RegionalOfficeDropdown,
+  VeteranHearingLocationsDropdown
 } from '../../components/DataDropdowns';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
@@ -135,7 +141,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const {
       appeal,
       scheduleHearingTask, history,
-      selectedHearingDay, selectedRegionalOffice
+      selectedHearingDay, selectedRegionalOffice,
+      selectedHearingLocation
     } = this.props;
 
     const payload = {
@@ -148,7 +155,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
               regional_office_value: selectedRegionalOffice,
               hearing_pkseq: selectedHearingDay.hearingId,
               hearing_type: this.getHearingType(),
-              hearing_date: this.formatHearingDate()
+              hearing_date: this.formatHearingDate(),
+              hearing_location: selectedHearingLocation
             }
           }
         }
@@ -290,12 +298,13 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   render = () => {
     const {
-      selectedHearingDay, selectedRegionalOffice,
-      selectedHearingTime, openHearing
+      selectedHearingDay, selectedRegionalOffice, appeal,
+      selectedHearingTime, openHearing, selectedHearingLocation
     } = this.props;
 
     const initVals = this.getInitialValues();
     const timeOptions = this.getTimeOptions();
+    const currentRegionalOffice = selectedRegionalOffice || initVals.regionalOffice;
 
     if (openHearing) {
       return null;
@@ -305,8 +314,21 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
         <RegionalOfficeDropdown
           onChange={this.props.onRegionalOfficeChange}
+          readOnly
           value={selectedRegionalOffice || initVals.regionalOffice}
           validateValueOnMount />
+
+        {selectedRegionalOffice && <VeteranHearingLocationsDropdown
+          label="Suggested Hearing Location"
+          key={`ahl-dropdown__${currentRegionalOffice}`}
+          regionalOffice={currentRegionalOffice}
+          veteranFileNumber={appeal.veteranFileNumber}
+          dynamic={appeal.veteranClosestRegionalOffice !== currentRegionalOffice}
+          staticHearingLocations={appeal.veteranAvailableHearingLocations}
+          onChange={this.props.onHearingLocationChange}
+          value={selectedHearingLocation ||
+            appeal.veteranAvailableHearingLocations ? appeal.veteranAvailableHearingLocations[0].facilityId : null}
+        />}
 
         {selectedRegionalOffice && <HearingDateDropdown
           key={selectedRegionalOffice}
@@ -343,7 +365,8 @@ const mapStateToProps = (state: State, ownProps: Params) => ({
   regionalOfficeOptions: state.components.regionalOffices,
   hearingDay: state.ui.hearingDay,
   selectedHearingDay: state.components.selectedHearingDay,
-  selectedHearingTime: state.components.selectedHearingTime
+  selectedHearingTime: state.components.selectedHearingTime,
+  selectedHearingLocation: state.components.selectedHearingLocation
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -356,6 +379,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onRegionalOfficeChange,
   onHearingDayChange,
   onHearingTimeChange,
+  onHearingLocationChange,
   onReceiveAppealDetails
 }, dispatch);
 

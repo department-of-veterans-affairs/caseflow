@@ -44,8 +44,11 @@ class ScheduleHearingTask < GenericTask
     end
     hearing_day_id = task_payloads[:values][:hearing_pkseq]
     hearing_type = task_payloads[:values][:hearing_type]
+    hearing_location = task_payloads[:values][:hearing_location]
 
-    update_hearing(hearing_day_id, hearing_date, hearing_type) if params[:status] == Constants.TASK_STATUSES.completed
+    if params[:status] == Constants.TASK_STATUSES.completed
+      slot_new_hearing(hearing_day_id, hearing_type, hearing_date, hearing_location)
+    end
 
     super(params, current_user)
   end
@@ -70,16 +73,15 @@ class ScheduleHearingTask < GenericTask
 
   private
 
-  def update_hearing(hearing_day_id, hearing_date, hearing_type)
-    hearing_date_str = "#{hearing_date.year}-#{hearing_date.month}-#{hearing_date.day} " \
-                       "#{format('%##d', hearing_date.hour)}:#{format('%##d', hearing_date.min)}:00"
-
-    if hearing_type == LegacyHearing::CO_HEARING
-      HearingRepository.create_child_co_hearing(hearing_date_str, appeal)
-    else
-      HearingRepository.create_child_video_hearing(hearing_day_id, hearing_date, appeal)
-    end
-
+  def slot_new_hearing(hearing_day_id, hearing_type, hearing_date, hearing_location)
+    HearingRepository.slot_new_hearing(hearing_day_id,
+                                       appeal: appeal,
+                                       hearing_location_attrs: hearing_location,
+                                       time: {
+                                         "h" => hearing_date.hour,
+                                         "m" => format("%##d", hearing_date.min),
+                                         "offset" => "+0000"
+                                       })
     if appeal.is_a?(LegacyAppeal)
       AppealRepository.update_location!(appeal, location_based_on_hearing_type(hearing_type))
     end
