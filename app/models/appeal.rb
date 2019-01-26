@@ -323,7 +323,7 @@ class Appeal < DecisionReview
     if request_issues.all? { |ri| ri.benefit_type == request_issues.first.benefit_type }
       request_issues.first.benefit_type
     else
-      "other"
+      "multiple"
     end
   end
 

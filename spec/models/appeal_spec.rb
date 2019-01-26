@@ -608,7 +608,7 @@ describe Appeal do
     context "appeal has multiple request issue with different benefit_types" do
       let(:appeal) { create(:appeal, request_issues: [request_issue, request_issue2, request_issue3]) }
 
-      it { is_expected.to eq "other" }
+      it { is_expected.to eq "multiple" }
     end
   end
 end
