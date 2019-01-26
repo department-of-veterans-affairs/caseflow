@@ -128,7 +128,7 @@ RSpec.feature "Hearings" do
       fill_in "1.notes", with: "This is a note about the hearing!"
       find(".checkbox-wrapper-1-prep").find(".cf-form-checkbox").click
       find(".dropdown-1-disposition").click
-      find("#react-select-5--option-1").click
+      find("#react-select-2--option-1").click
       find("label", text: "Yes, Waive 90 Day Hold").click
 
       visit "/hearings/dockets/2019-03-02"
