@@ -162,31 +162,6 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
-  getHearingLocationValue = (location) => ({
-    name: location.name,
-    address: location.address,
-    city: location.city,
-    state: location.state,
-    zipCode: location.zipCode,
-    distance: location.distance,
-    classification: location.classification,
-    facilityId: location.facilityId,
-    facilityType: location.facilityType
-  });
-
-  getHearingLocationOptions = (hearing) => {
-    let options = [];
-
-    _.forEach(hearing.veteranAvailableHearingLocations, (ahl) => {
-      options.push({
-        label: `${ahl.city}, ${ahl.state} (${ahl.distance} miles away)`,
-        value: this.getHearingLocationValue(ahl)
-      });
-    });
-
-    return options;
-  };
-
   getHearingDate = (date) => {
     return moment(date).format('MM/DD/YYYY');
   };
@@ -221,10 +196,14 @@ export default class DailyDocket extends React.Component {
  }
 
   getHearingLocationDropdown = (hearing, readOnly) => {
+    const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
+
     return <VeteranHearingLocationsDropdown
       readOnly={readOnly}
       veteranFileNumber={hearing.veteranFileNumber}
-      hearingLocationOptions={this.getHearingLocationOptions(hearing)}
+      regionalOffice={currentRegionalOffice}
+      staticHearingLocations={hearing.veteranAvailableHearingLocations}
+      dynamic={false}
       value={hearing.editedLocation || hearing.location ? hearing.location.facilityId : null}
       onChange={this.onHearingLocationUpdate(hearing.id)}
     />;
