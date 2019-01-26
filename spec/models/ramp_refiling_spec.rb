@@ -154,7 +154,8 @@ describe RampRefiling do
 
       context "when the EP is already established" do
         let!(:end_product_establishment) do
-          EndProductEstablishment.create!(
+          create(
+            :end_product_establishment,
             veteran_file_number: veteran_file_number,
             reference_id: "testtest",
             source: ramp_refiling,

@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20190118155859) do
+ActiveRecord::Schema.define(version: 20190125151257) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -318,10 +317,10 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.string "description"
     t.string "file_number"
     t.integer "previous_document_version_id"
-    t.date "upload_date"
     t.date "received_at"
     t.string "series_id"
     t.string "type"
+    t.date "upload_date"
     t.string "vbms_document_id", null: false
     t.index ["file_number"], name: "index_documents_on_file_number"
     t.index ["series_id"], name: "index_documents_on_series_id"
@@ -345,7 +344,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.datetime "established_at"
     t.datetime "last_synced_at"
     t.string "modifier"
-    t.string "payee_code"
+    t.string "payee_code", null: false
     t.string "reference_id"
     t.bigint "source_id", null: false
     t.string "source_type", null: false
