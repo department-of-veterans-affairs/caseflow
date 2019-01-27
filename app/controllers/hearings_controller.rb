@@ -66,7 +66,7 @@ class HearingsController < ApplicationController
         params["hearing"]["master_record_updated"]["id"],
         time: params["hearing"]["master_record_updated"]["time"],
         appeal: hearing.appeal,
-        hearing_location_attrs: params["hearing"]["hearing_location_attributes"]
+        hearing_location_attrs: update_params[:hearing_location_attributes]&.to_hash
       )
     end
   end

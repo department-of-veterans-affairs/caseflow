@@ -51,7 +51,7 @@ class HearingDateDropdown extends React.Component {
       if (this.props.staticOptions) {
 
         _.forEach(this.props.staticOptions, (opt) => {
-          if (_.includes(ids, opt.hearingId)) {
+          if (_.includes(ids, opt.value.hearingId)) {
             return;
           }
 
