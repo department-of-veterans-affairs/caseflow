@@ -84,6 +84,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   end
 
   attribute :veteran_available_hearing_locations do
+    return [] if object.veteran_available_hearing_locations.nil?
+
     object.veteran_available_hearing_locations.map do |ahl|
       {
         name: ahl.name,
