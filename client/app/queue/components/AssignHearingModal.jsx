@@ -352,7 +352,6 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         </p>
         <RegionalOfficeDropdown
           onChange={this.props.onRegionalOfficeChange}
-          readOnly
           errorMessage={invalid.regionalOffice}
           value={selectedRegionalOffice || initVals.regionalOffice}
           validateValueOnMount />
@@ -363,7 +362,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           key={`ahl-dropdown__${currentRegionalOffice || ''}`}
           regionalOffice={currentRegionalOffice}
           veteranFileNumber={appeal.veteranFileNumber}
-          dynamic={false}
+          dynamic={appeal.veteranClosestRegionalOffice !== currentRegionalOffice}
           staticHearingLocations={appeal.veteranAvailableHearingLocations}
           onChange={this.props.onHearingLocationChange}
           value={selectedHearingLocation}
