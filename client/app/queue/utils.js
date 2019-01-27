@@ -219,7 +219,7 @@ export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) =>
     disposition: hearing.disposition
   }));
 
-const prepareAppealAvailableHearingLocationsForStore = (appeal: { attributes: object }) => appeal.attributes.
+const prepareAppealAvailableHearingLocationsForStore = (appeal: { attributes: Object }) => appeal.attributes.
   veteran_available_hearing_locations.map((ahl) => ({
     name: ahl.name,
     address: ahl.address,

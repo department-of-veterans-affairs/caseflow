@@ -62,6 +62,7 @@ type Props = Params & {|
   hearingDay: Object,
   selectedHearingDay: Object,
   selectedHearingTime: string,
+  selectedHearingLocation: Object,
   // Action creators
   showErrorMessage: typeof showErrorMessage,
   resetErrorMessages: typeof resetErrorMessages,
@@ -73,6 +74,7 @@ type Props = Params & {|
   onReceiveAmaTasks: typeof onReceiveAmaTasks,
   onHearingDayChange: typeof onHearingDayChange,
   onHearingTimeChange: typeof onHearingTimeChange,
+  onHearingLocationChange: typeof onHearingLocationChange,
   onReceiveAppealDetails: typeof onReceiveAppealDetails,
   // Inherited from EditModalBase
   setLoading: Function,
@@ -163,8 +165,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       selectedHearingLocation
     } = this.props;
 
-    const hearingLocation = selectedHearingLocation ||
-      appeal.veteranAvailableHearingLocations ? appeal.veteranAvailableHearingLocations[0] : null;
+    const veteranHearingLocations = appeal.veteranAvailableHearingLocations || [];
+    const hearingLocation = selectedHearingLocation || veteranHearingLocations[0];
 
     const payload = {
       data: {
@@ -348,7 +350,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
         {selectedRegionalOffice && <VeteranHearingLocationsDropdown
           label="Suggested Hearing Location"
-          key={`ahl-dropdown__${currentRegionalOffice}`}
+          key={`ahl-dropdown__${currentRegionalOffice || ''}`}
           regionalOffice={currentRegionalOffice}
           veteranFileNumber={appeal.veteranFileNumber}
           dynamic={false}
