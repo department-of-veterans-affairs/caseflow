@@ -143,14 +143,15 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   validateForm = () => {
     const {
       selectedHearingDay, selectedHearingTime,
-      selectedRegionalOffice, selectedHearingLocation
+      selectedRegionalOffice
+      // selectedHearingLocation
     } = this.props;
 
     const invalid = {
-      day: Boolean(!selectedHearingDay),
-      time: Boolean(!selectedRegionalOffice),
-      regionalOffice: Boolean(!selectedHearingTime),
-      location: Boolean(!selectedHearingLocation)
+      day: selectedHearingDay ? false : 'Please select a hearing day',
+      regionalOffice: selectedRegionalOffice ? false : 'Please select a regional office',
+      time: selectedHearingTime ? false : 'Please pick a hearing time'
+      // location: selectedHearingLocation ? false : 'Please select a hearing location'
     };
 
     this.setState({ invalid });
@@ -330,6 +331,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       selectedHearingTime, openHearing, selectedHearingLocation
     } = this.props;
 
+    const { invalid } = this.state;
+
     const initVals = this.getInitialValues();
     const timeOptions = this.getTimeOptions();
     const currentRegionalOffice = selectedRegionalOffice || initVals.regionalOffice;
@@ -350,10 +353,12 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         <RegionalOfficeDropdown
           onChange={this.props.onRegionalOfficeChange}
           readOnly
+          errorMessage={invalid.regionalOffice}
           value={selectedRegionalOffice || initVals.regionalOffice}
           validateValueOnMount />
 
         {selectedRegionalOffice && <VeteranHearingLocationsDropdown
+          errorMessage={invalid.location}
           label="Suggested Hearing Location"
           key={`ahl-dropdown__${currentRegionalOffice || ''}`}
           regionalOffice={currentRegionalOffice}
@@ -365,6 +370,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         />}
 
         {selectedRegionalOffice && <HearingDateDropdown
+          errorMessage={invalid.day}
           key={selectedRegionalOffice}
           regionalOffice={selectedRegionalOffice}
           onChange={this.props.onHearingDayChange}
@@ -373,6 +379,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
         />}
 
         <RadioField
+          errorMessage={invalid.time}
           name="time"
           label="Time"
           strongLabel
