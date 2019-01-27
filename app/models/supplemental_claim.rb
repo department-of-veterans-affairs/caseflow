@@ -92,7 +92,7 @@ class SupplementalClaim < ClaimReview
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
       claim_date: receipt_date,
-      payee_code: payee_code,
+      payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,

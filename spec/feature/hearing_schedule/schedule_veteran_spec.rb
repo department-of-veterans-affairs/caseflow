@@ -125,6 +125,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown(text: "Denver")
         click_button("AMA Veterans Waiting")
         click_on "Bob Smith"
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
 
         # Case details screen
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])

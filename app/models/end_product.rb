@@ -80,6 +80,8 @@ class EndProduct
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
+  DEFAULT_PAYEE_CODE = "00".freeze
+
   attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :last_action_date,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter, :payee_code,
                 :claimant_last_name, :claimant_first_name
@@ -242,7 +244,7 @@ class EndProduct
         suppress_acknowledgement_letter: hash[:suppress_acknowledgement_letter],
         gulf_war_registry: hash[:gulf_war_registry],
         station_of_jurisdiction: hash[:station_of_jurisdiction],
-        payee_code: hash[:payee_code] || "00"
+        payee_code: hash[:payee_code] || DEFAULT_PAYEE_CODE
       )
     end
 
