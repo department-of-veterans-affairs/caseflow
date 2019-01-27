@@ -17,7 +17,6 @@ class HearingsController < ApplicationController
       HearingRepository.load_vacols_data(hearing)
     else
       Transcription.find_or_create_by(hearing: hearing)
-      params.delete("hearing_location_attributes") if params["hearing"]["master_record_updated"]
       hearing.update!(update_params)
     end
 
