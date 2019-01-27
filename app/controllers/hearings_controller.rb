@@ -17,6 +17,7 @@ class HearingsController < ApplicationController
       HearingRepository.load_vacols_data(hearing)
     else
       Transcription.find_or_create_by(hearing: hearing)
+      params.delete("hearing_location_attributes") if params["hearing"]["master_record_updated"]
       hearing.update!(update_params)
     end
 
@@ -29,6 +30,32 @@ class HearingsController < ApplicationController
 
   def logo_path
     hearings_dockets_path
+  end
+
+  def find_closest_hearing_locations
+    HearingDayMapper.validate_regional_office(params["regional_office"])
+
+    veteran = Veteran.find_by(file_number: params["veteran_file_number"])
+
+    facility_ids = RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
+                   [] << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
+
+    va_dot_gov_address = VADotGovService.validate_address(
+      address_line1: veteran.address_line1,
+      address_line2: veteran.address_line2,
+      address_line3: veteran.address_line3,
+      city: veteran.city,
+      state: veteran.state,
+      country: veteran.country,
+      zip_code: veteran.zip_code
+    )
+
+    render json: { hearing_locations: VADotGovService.get_distance(lat: va_dot_gov_address[:lat],
+                                                                   long: va_dot_gov_address[:long],
+                                                                   ids: facility_ids).map do |v|
+                                                                     v[:facility_id] = v[:id]
+                                                                     v
+                                                                   end }
   end
 
   private
@@ -115,4 +142,8 @@ class HearingsController < ApplicationController
                                      ])
   end
   # rubocop:enable Metrics/MethodLength
+
+  def find_hearing_location_params
+    params.permit(:veteran_file_number, :regional_office)
+  end
 end

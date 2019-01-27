@@ -28,6 +28,7 @@ import {
 const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
   '& > tr:nth-child(odd) > td': { borderBottom: 'none' },
+  '& > tr': { borderBottom: '1px solid #ddd' },
   '& > tr > td': {
     verticalAlign: 'top'
   },
@@ -131,7 +132,7 @@ export default class DailyDocket extends React.Component {
       </Link></b><br />
       <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
       {hearing.docketNumber}
-      <br />
+      <br /><br />
       {hearing.appellantAddressLine1}<br />
       {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
       <div>{hearing.representative} <br /> {hearing.representativeName}</div>
@@ -148,7 +149,7 @@ export default class DailyDocket extends React.Component {
     return <div>{getTime(hearing.scheduledFor)} /<br />
       {getTimeInDifferentTimeZone(hearing.scheduledFor, hearing.regionalOfficeTimezone)} <br />
       {hearing.regionalOfficeName}
-      <div>{hearing.currentIssueCount} issues</div>
+      <p>{hearing.currentIssueCount} issues</p>
     </div>;
   };
 
@@ -188,9 +189,8 @@ export default class DailyDocket extends React.Component {
  };
 
  getRegionalOfficeDropdown = (hearing, readOnly) => {
-   // read only until we make AHL list dynamic
    return <RegionalOfficeDropdown
-     readOnly={true || readOnly}
+     readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
      onChange={this.onHearingRegionalOfficeUpdate(hearing.id)}
      value={hearing.editedRegionalOffice || hearing.regionalOfficeKey} />;
  }
@@ -203,8 +203,8 @@ export default class DailyDocket extends React.Component {
       veteranFileNumber={hearing.veteranFileNumber}
       regionalOffice={currentRegionalOffice}
       staticHearingLocations={_.values(hearing.veteranAvailableHearingLocations)}
-      dynamic={false}
-      value={hearing.editedLocation || hearing.location ? hearing.location.facilityId : null}
+      dynamic={currentRegionalOffice !== hearing.veteranClosestRegionalOffice}
+      value={hearing.editedLocation || (hearing.location ? hearing.location.facilityId : null)}
       onChange={this.onHearingLocationUpdate(hearing.id)}
     />;
   };
@@ -240,28 +240,24 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingDayDropdown = (hearing, readOnly) => {
-    const staticOptions = () => {
-      if (moment(hearing.scheduledFor).toDate() < new Date() && !hearing.editedRegionalOffice) {
-        return [{
-          label: formatDateStr(hearing.scheduledFor),
-          value: {
-            scheduledFor: hearing.scheduledFor,
-            hearingId: this.props.dailyDocket.id
-          }
-        }];
-      }
-
-      return null;
-    };
+    const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
+    const staticOptions = hearing.regionalOfficeKey === currentRegionalOffice ?
+      [{
+        label: formatDateStr(hearing.scheduledFor),
+        value: {
+          scheduledFor: hearing.scheduledFor,
+          hearingId: this.props.dailyDocket.id
+        }
+      }] : null;
 
     return <HearingDateDropdown
       name="HearingDay"
       label="Hearing Day"
-      key={hearing.editedRegionalOffice || hearing.regionalOfficeKey}
-      regionalOffice={hearing.editedRegionalOffice || hearing.regionalOfficeKey}
+      key={currentRegionalOffice}
+      regionalOffice={currentRegionalOffice}
       value={hearing.editedDate ? hearing.editedDate : hearing.scheduledFor}
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
-      staticOptions={staticOptions()}
+      staticOptions={staticOptions}
       onChange={this.onHearingDateUpdate(hearing.id)} />;
   };
 
