@@ -42,14 +42,23 @@ class HearingDateDropdown extends React.Component {
           hearingDate: formatDateStr(hearingDate.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD') }
       }));
 
+      const ids = _.map(hearingDateOptions, (opt) => opt.value.hearingId);
+
       if (this.props.staticOptions) {
-        hearingDateOptions.push(...this.props.staticOptions.map((opt) => ({
-          label: opt.label,
-          value: {
-            ...opt.value,
-            hearingDate: formatDateStr(opt.value.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD')
+
+        _.forEach(this.props.staticOptions, (opt) => {
+          if (_.includes(ids, opt.hearingId)) {
+            return;
           }
-        })));
+
+          hearingDateOptions.push({
+            label: opt.label,
+            value: {
+              ...opt.value,
+              hearingDate: formatDateStr(opt.value.scheduledFor, 'YYYY-MM-DD', 'YYYY-MM-DD')
+            }
+          });
+        });
       }
 
       hearingDateOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
