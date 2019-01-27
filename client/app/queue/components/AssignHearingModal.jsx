@@ -82,7 +82,7 @@ type Props = Params & {|
 |};
 
 type LocalState = {|
-  timeOptions: Array<Object>
+  invalid: Object
 |}
 
 class AssignHearingModal extends React.PureComponent<Props, LocalState> {
