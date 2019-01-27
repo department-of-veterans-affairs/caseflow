@@ -241,7 +241,6 @@ export default class DailyDocket extends React.Component {
 
   getHearingDayDropdown = (hearing, readOnly) => {
     const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
-    console.log(this.props.dailyDocket.id)
     const staticOptions = hearing.regionalOfficeKey === currentRegionalOffice ?
       [{
         label: formatDateStr(hearing.scheduledFor),
