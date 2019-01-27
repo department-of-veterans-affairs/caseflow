@@ -85,7 +85,7 @@ type LocalState = {|
 class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   componentDidMount = () => {
-    const { hearingDay, openHearing } = this.props;
+    const { hearingDay, openHearing, appeal } = this.props;
 
     if (openHearing) {
       this.props.showErrorMessage({
@@ -95,6 +95,24 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       });
 
       return;
+    }
+
+    if (appeal.veteranAvailableHearingLocations) {
+      const location = appeal.veteranAvailableHearingLocations[0];
+
+      if (location) {
+        this.props.onHearingLocationChange({
+          name: location.name,
+          address: location.address,
+          city: location.city,
+          state: location.state,
+          zipCode: location.zipCode,
+          distance: location.distance,
+          classification: location.classification,
+          facilityId: location.facilityId,
+          facilityType: location.facilityType
+        });
+      }
     }
 
     if (hearingDay.hearingTime) {
@@ -145,6 +163,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       selectedHearingLocation
     } = this.props;
 
+    const hearingLocation = selectedHearingLocation ||
+      appeal.veteranAvailableHearingLocations ? appeal.veteranAvailableHearingLocations[0] : null;
+
     const payload = {
       data: {
         task: {
@@ -156,7 +177,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
               hearing_pkseq: selectedHearingDay.hearingId,
               hearing_type: this.getHearingType(),
               hearing_date: this.formatHearingDate(),
-              hearing_location: selectedHearingLocation
+              hearing_location: ApiUtil.convertToSnakeCase(hearingLocation)
             }
           }
         }
@@ -305,13 +326,20 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const initVals = this.getInitialValues();
     const timeOptions = this.getTimeOptions();
     const currentRegionalOffice = selectedRegionalOffice || initVals.regionalOffice;
+    const { address_line_1, city, state, zip } = appeal.appellantAddress || {};
 
     if (openHearing) {
       return null;
     }
 
+    /* eslint-disable camelcase */
     return <React.Fragment>
       <div {...fullWidth} {...css({ marginBottom: '0' })} >
+        <p>
+          Veteran Address<br />
+          {address_line_1}<br />
+          {`${city}, ${state} ${zip}`}
+        </p>
         <RegionalOfficeDropdown
           onChange={this.props.onRegionalOfficeChange}
           readOnly
@@ -323,11 +351,10 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           key={`ahl-dropdown__${currentRegionalOffice}`}
           regionalOffice={currentRegionalOffice}
           veteranFileNumber={appeal.veteranFileNumber}
-          dynamic={appeal.veteranClosestRegionalOffice !== currentRegionalOffice}
+          dynamic={false}
           staticHearingLocations={appeal.veteranAvailableHearingLocations}
           onChange={this.props.onHearingLocationChange}
-          value={selectedHearingLocation ||
-            appeal.veteranAvailableHearingLocations ? appeal.veteranAvailableHearingLocations[0].facilityId : null}
+          value={selectedHearingLocation}
         />}
 
         {selectedRegionalOffice && <HearingDateDropdown

@@ -76,7 +76,7 @@ class ScheduleHearingTask < GenericTask
   def slot_new_hearing(hearing_day_id, hearing_type, hearing_date, hearing_location)
     HearingRepository.slot_new_hearing(hearing_day_id,
                                        appeal: appeal,
-                                       hearing_location_attrs: hearing_location,
+                                       hearing_location_attrs: hearing_location&.to_hash,
                                        time: {
                                          "h" => hearing_date.hour,
                                          "m" => format("%##d", hearing_date.min),

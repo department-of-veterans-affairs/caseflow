@@ -95,10 +95,10 @@ class HearingRepository
       )
 
       if hearing_day[:request_type] == "C"
-        create_child_co_hearing(hearing_datetime, appeal, hearing_location_attributes: hearing_location_attrs)
+        create_child_co_hearing(hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs)
       else
         create_child_video_hearing(
-          parent_record_id, hearing_datetime, appeal, hearing_location_attributes: hearing_location_attrs
+          parent_record_id, hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs
         )
       end
     end
@@ -109,7 +109,7 @@ class HearingRepository
 
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
 
-      vacols_record = VACOLS::CaseHearing.create_child_hearing!(
+      VACOLS::CaseHearing.create_child_hearing!(
         folder_nr: appeal.vacols_id,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date_str),
         vdkey: hearing_day.id,
@@ -119,9 +119,10 @@ class HearingRepository
         vdbvapoc: hearing_day.bva_poc
       )
 
+      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing_day.id)
       hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
 
-      hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location.nil?
+      hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
     end
 
     def create_child_video_hearing(hearing_pkseq, hearing_date, appeal, hearing_location_attrs: nil)
@@ -133,7 +134,7 @@ class HearingRepository
 
       hearing = VACOLS::CaseHearing.find(hearing_pkseq)
 
-      vacols_record = VACOLS::CaseHearing.create_child_hearing!(
+      VACOLS::CaseHearing.create_child_hearing!(
         folder_nr: appeal.vacols_id,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
         vdkey: hearing.hearing_pkseq,
@@ -143,9 +144,10 @@ class HearingRepository
         vdbvapoc: hearing.vdbvapoc
       )
 
+      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing_day.id)
       hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
 
-      hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location.nil?
+      hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
     end
 
     # rubocop:disable Metrics/MethodLength
@@ -155,7 +157,7 @@ class HearingRepository
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
       if appeal.is_a?(LegacyAppeal)
-        vacols_record = VACOLS::CaseHearing.create_child_hearing!(
+        VACOLS::CaseHearing.create_child_hearing!(
           folder_nr: appeal.vacols_id,
           hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
           vdkey: hearing_day.id,
@@ -165,9 +167,10 @@ class HearingRepository
           vdbvapoc: hearing_day.bva_poc
         )
 
+        vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing_day.id)
         hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
 
-        hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location.nil?
+        hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
       else
         Hearing.create!(
           appeal: appeal,
