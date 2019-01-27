@@ -117,7 +117,7 @@ export class DailyDocketContainer extends React.Component {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
       hearing_location_attributes: hearing.editedLocation ?
-        ApiUtil.convertToSnakeCase(hearing.editedLocation) : hearing.location,
+        ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
       master_record_updated: hearing.editedDate ? { id: hearing.editedDate.hearingId,
         time } : null,
       scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
