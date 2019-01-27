@@ -202,7 +202,7 @@ export default class DailyDocket extends React.Component {
       readOnly={readOnly}
       veteranFileNumber={hearing.veteranFileNumber}
       regionalOffice={currentRegionalOffice}
-      staticHearingLocations={hearing.veteranAvailableHearingLocations}
+      staticHearingLocations={_.values(hearing.veteranAvailableHearingLocations)}
       dynamic={false}
       value={hearing.editedLocation || hearing.location ? hearing.location.facilityId : null}
       onChange={this.onHearingLocationUpdate(hearing.id)}

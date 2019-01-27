@@ -72,19 +72,14 @@ class VeteranHearingLocationsDropdown extends React.Component {
   getSelectedOption = () => {
     const { value, veteranHearingLocations: { options } } = this.props;
 
-    if (typeof (value) === 'string') {
-      return _.find(options, (opt) => opt.value.facilityId === value) ||
-        {
-          value: null,
-          label: null
-        };
-    }
+    const facilityId = typeof (value) === 'string' ? value : (value || {}).facilityId;
 
-    return _.find(options, (opt) => opt.value === value) ||
+    return _.find(options, (opt) => opt.value.facilityId === facilityId) ||
       {
         value: null,
         label: null
       };
+
   }
 
   render() {
