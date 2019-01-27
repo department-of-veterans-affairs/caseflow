@@ -96,7 +96,7 @@ class HearingRepository
         offset: time["offset"]
       )
 
-      if (hearing_type || hearing_day_hash["request_type"]) == "C"
+      if (hearing_type || hearing_day_hash[:request_type]) == "C"
         create_child_co_hearing(hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs)
       else
         create_child_video_hearing(
