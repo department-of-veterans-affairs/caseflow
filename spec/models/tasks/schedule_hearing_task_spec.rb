@@ -18,7 +18,7 @@ describe ScheduleHearingTask do
 
   let(:test_hearing_date_vacols) do
     Time.use_zone("Eastern Time (US & Canada)") do
-      Time.zone.local(2018, 11, 2, 5, 0, 0)
+      Time.zone.local(2018, 11, 2, 6, 0, 0)
     end
   end
 
@@ -63,7 +63,9 @@ describe ScheduleHearingTask do
   end
 
   describe "Add and update a schedule hearing task with a new business payload" do
-    let(:hearing) { FactoryBot.create(:case_hearing) }
+    let!(:hearing_day) do
+      create(:case_hearing, hearing_date: test_hearing_date_vacols, hearing_type: "C")
+    end
     let(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
     let(:params) do
       {
@@ -90,8 +92,12 @@ describe ScheduleHearingTask do
           description: "Update",
           values: {
             "regional_office_value": "RO13",
-            "hearing_pkseq": hearing.vdkey,
-            "hearing_date": "2018-10-30",
+            "hearing_pkseq": hearing_day.id,
+            "hearing_time": {
+              "h": "09",
+              "m": "00",
+              "offset": "-0500"
+            },
             "hearing_type": "Video"
           }
         }
@@ -125,7 +131,7 @@ describe ScheduleHearingTask do
           description: "test",
           values: {
             "regional_office_value": "RO13",
-            "hearing_date": "2018-11-02T09:00:00.000-04:00",
+            "hearing_date": "2018-11-02T09:00:00.000-05:00",
             "hearing_type": "Central"
           }
         }
@@ -138,8 +144,13 @@ describe ScheduleHearingTask do
           description: "Update",
           values: {
             "regional_office_value": "RO13",
-            "hearing_date": "2018-11-02T09:00:00.000-04:00",
-            "hearing_type": "Central"
+            "hearing_time": {
+              "h": "09",
+              "m": "00",
+              "offset": "-0500"
+            },
+            "hearing_type": "Central",
+            "hearing_pkseq": hearing_day.id
           }
         }
       }
@@ -157,7 +168,7 @@ describe ScheduleHearingTask do
   end
 
   describe "A Video hearing should be created and appeal placed in location 38" do
-    let(:hearing) { FactoryBot.create(:case_hearing, hearing_date: test_hearing_date_vacols) }
+    let(:hearing) { FactoryBot.create(:case_hearing, hearing_date: test_hearing_date_vacols, hearing_type: "C") }
     let(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
     let(:params) do
       {
@@ -171,7 +182,7 @@ describe ScheduleHearingTask do
           description: "test",
           values: {
             "regional_office_value": "RO13",
-            "hearing_date": "2018-11-02T09:00:00.000-04:00",
+            "hearing_date": "2018-11-02T09:00:00.000-05:00",
             "hearing_type": "Video"
           }
         }
@@ -184,8 +195,12 @@ describe ScheduleHearingTask do
           description: "Update",
           values: {
             "regional_office_value": "RO13",
-            "hearing_pkseq": hearing.vdkey,
-            "hearing_date": "2018-11-02T09:00:00.000-04:00",
+            "hearing_pkseq": hearing.hearing_pkseq,
+            "hearing_time": {
+              "h": "09",
+              "m": "00",
+              "offset": "-0500"
+            },
             "hearing_type": "Video"
           }
         }
@@ -198,7 +213,7 @@ describe ScheduleHearingTask do
       created_hearing = VACOLS::CaseHearing.find_by(hearing_type: "V",
                                                     folder_nr: appeal.vacols_id)
 
-      expect(created_hearing.vdkey).to eq(hearing.vdkey)
+      expect(created_hearing.vdkey).to eq(hearing.hearing_pkseq.to_s)
       expect(created_hearing.hearing_date).to eq(hearing.hearing_date)
       expect(created_hearing.folder_nr).to eq(appeal.vacols_id)
       expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing]
@@ -207,7 +222,7 @@ describe ScheduleHearingTask do
 
   context "#update_from_params" do
     context "AMA appeal" do
-      let(:hearing_day) { create(:hearing_day) }
+      let(:hearing_day) { create(:hearing_day, request_type: "V") }
       let(:appeal) { create(:appeal) }
       let(:schedule_hearing_task) do
         ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user)
@@ -220,7 +235,11 @@ describe ScheduleHearingTask do
             values: {
               "regional_office_value": hearing_day.regional_office,
               "hearing_pkseq": hearing_day.id,
-              "hearing_date": "2018-11-02T09:00:00.000-04:00",
+              "hearing_time": {
+                "h": "09",
+                "m": "00",
+                "offset": "-0500"
+              },
               "hearing_type": "Video"
             }
           }

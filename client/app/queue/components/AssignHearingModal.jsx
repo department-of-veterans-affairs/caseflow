@@ -43,6 +43,7 @@ import { prepareAppealForStore } from '../utils';
 import _ from 'lodash';
 import type { Appeal, Task } from '../types/models';
 import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants/constants';
+import moment from 'moment';
 
 type Params = {|
   task: Task,
@@ -86,6 +87,19 @@ type LocalState = {|
 
 class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      invalid: {
+        time: false,
+        day: false,
+        regionalOffice: false,
+        location: false
+      }
+    };
+  }
+
   componentDidMount = () => {
     const { hearingDay, openHearing, appeal } = this.props;
 
@@ -127,29 +141,29 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   validateForm = () => {
+    const {
+      selectedHearingDay, selectedHearingTime,
+      selectedRegionalOffice, selectedHearingLocation
+    } = this.props;
+
+    const invalid = {
+      day: Boolean(!selectedHearingDay),
+      time: Boolean(!selectedRegionalOffice),
+      regionalOffice: Boolean(!selectedHearingTime),
+      location: Boolean(!selectedHearingLocation)
+    };
+
+    this.setState({ invalid });
+
+    const invalidVals = _.values(invalid);
+
+    for (let i = 0; i < invalidVals.length; i++) {
+      if (invalidVals[i]) {
+        return false;
+      }
+    }
 
     if (this.props.openHearing) {
-      return false;
-    }
-
-    const hearingDate = this.formatHearingDate();
-
-    const invalid = [];
-
-    if (!hearingDate) {
-      invalid.push('Date of Hearing');
-    }
-    if (!this.props.selectedHearingTime) {
-      invalid.push('Hearing Time');
-    }
-
-    if (invalid.length > 0) {
-
-      this.props.showErrorMessage({
-        title: 'Required Fields',
-        detail: `Please fill in the following fields: ${invalid.join(', ')}.`
-      });
-
       return false;
     }
 
@@ -178,7 +192,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
               regional_office_value: selectedRegionalOffice,
               hearing_pkseq: selectedHearingDay.hearingId,
               hearing_type: this.getHearingType(),
-              hearing_date: this.formatHearingDate(),
+              hearing_time: this.getHearingTime(),
               hearing_location: ApiUtil.convertToSnakeCase(hearingLocation)
             }
           }
@@ -284,30 +298,21 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     return formatDateStringForApi(formattedDate);
   };
 
-  formatHearingDate = () => {
-    const { selectedHearingDay, selectedHearingTime } = this.props;
+  getHearingTime = () => {
+    const { selectedHearingTime } = this.props;
 
-    if (selectedHearingDay && !selectedHearingTime) {
-      return new Date(selectedHearingDay.hearingDate);
-    } else if (!selectedHearingTime || !selectedHearingDay) {
+    if (!selectedHearingTime) {
       return null;
     }
 
-    const dateParts = selectedHearingDay.hearingDate.split('-');
-    const year = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10) - 1;
-    const day = parseInt(dateParts[2], 10);
-    const timeParts = selectedHearingTime.split(':');
-    let hour = parseInt(timeParts[0], 10);
-
-    if (hour === 1) {
-      hour += 12;
-    }
-    const minute = parseInt(timeParts[1].split(' ')[0], 10);
-    const hearingDate = new Date(year, month, day, hour, minute);
-
-    return hearingDate;
-  };
+    return {
+      // eslint-disable-next-line id-length
+      h: selectedHearingTime.split(':')[0],
+      // eslint-disable-next-line id-length
+      m: selectedHearingTime.split(':')[1],
+      offset: moment.tz('America/New_York').format('Z')
+    };
+  }
 
   getInitialValues = () => {
     const { hearingDay } = this.props;

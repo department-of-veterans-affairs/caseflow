@@ -86,15 +86,17 @@ class HearingRepository
       end
     end
 
-    def slot_new_hearing(parent_record_id, time:, appeal:, hearing_location_attrs: nil)
+    def slot_new_hearing(parent_record_id, time:, appeal:, hearing_type: nil, hearing_location_attrs: nil)
       hearing_day = HearingDay.find_hearing_day(nil, parent_record_id)
-      hearing_datetime = hearing_day[:scheduled_for].to_datetime.change(
+      hearing_day_hash = HearingDay.to_hash(hearing_day)
+
+      hearing_datetime = hearing_day_hash[:scheduled_for].to_datetime.change(
         hour: time["h"].to_i,
         minute: time["m"].to_i,
         offset: time["offset"]
       )
 
-      if hearing_day[:request_type] == "C"
+      if (hearing_type || hearing_day_hash["request_type"]) == "C"
         create_child_co_hearing(hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs)
       else
         create_child_video_hearing(
@@ -144,7 +146,7 @@ class HearingRepository
         vdbvapoc: hearing.vdbvapoc
       )
 
-      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing_day.id)
+      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing.hearing_pkseq)
       hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
 
       hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
@@ -177,7 +179,7 @@ class HearingRepository
           hearing_day_id: hearing_day.id,
           judge_id: hearing_day.judge.try(:id),
           scheduled_time: hearing_date,
-          hearing_location: hearing_location
+          hearing_location_attributes: hearing_location_attrs || {}
         )
       end
     end
