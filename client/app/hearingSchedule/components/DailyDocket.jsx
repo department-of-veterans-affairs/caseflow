@@ -131,7 +131,7 @@ export default class DailyDocket extends React.Component {
       </Link></b><br />
       <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
       {hearing.docketNumber}
-      <br />
+      <br /><br />
       {hearing.appellantAddressLine1}<br />
       {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
       <div>{hearing.representative} <br /> {hearing.representativeName}</div>
@@ -148,7 +148,7 @@ export default class DailyDocket extends React.Component {
     return <div>{getTime(hearing.scheduledFor)} /<br />
       {getTimeInDifferentTimeZone(hearing.scheduledFor, hearing.regionalOfficeTimezone)} <br />
       {hearing.regionalOfficeName}
-      <div>{hearing.currentIssueCount} issues</div>
+      <p>{hearing.currentIssueCount} issues</p>
     </div>;
   };
 
