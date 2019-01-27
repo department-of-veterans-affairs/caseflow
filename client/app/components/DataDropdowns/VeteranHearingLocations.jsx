@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
-// import ApiUtil from '../../util/ApiUtil';
+import ApiUtil from '../../util/ApiUtil';
+import { css } from 'glamor';
 import _ from 'lodash';
+import { loadingSymbolHtml } from '../RenderFunctions';
 
 import SearchableDropdown from '../SearchableDropdown';
 
@@ -27,6 +29,14 @@ const generateHearingLocationOptions = (hearingLocations) => (
 
 class VeteranHearingLocationsDropdown extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      errorMsg: false
+    };
+  }
+
   componentDidMount() {
     if (this.props.dynamic || !this.props.staticHearingLocations) {
       setTimeout(this.getLocations, 0);
@@ -42,31 +52,47 @@ class VeteranHearingLocationsDropdown extends React.Component {
     const { dynamic, regionalOffice } = this.props;
 
     if ((prevProps.dynamic !== dynamic || prevProps.regionalOffice !== regionalOffice) && dynamic) {
-      setTimeout(this.getLocations, 0);
+      setTimeout(() => this.getLocations(true), 0);
     }
   }
 
-  getLocations = () => {
-    const { veteranHearingLocations: { options, isFetching }, veteranFileNumber } = this.props;
+  getLocations = (force) => {
+    const {
+      veteranHearingLocations: { options, isFetching },
+      veteranFileNumber, regionalOffice
+    } = this.props;
 
     const name = `hearingLocationsFor${veteranFileNumber}`;
 
-    if (options || isFetching) {
+    if ((options && !force) || isFetching) {
       return;
     }
 
     this.props.onFetchDropdownData(name);
 
-    // TODO Dynamic Location Loading
-    // ApiUtil.get('').then((resp) => {
-    //   const locationOptions = _.values(ApiUtil.convertToCamelCase(resp.body.hearingLocations)).map((loc) => ({
-    //
-    //   }));
-    //
-    //   locationOptions.sort((first, second) => (first.distance - second.distance));
-    //
-    //   this.props.onReceiveDropdownData(name, locationOptions);
-    // });
+    let url = '/hearings/find_closest_hearing_locations?regional_office=';
+
+    url += `${regionalOffice}&veteran_file_number=${veteranFileNumber}`;
+
+    ApiUtil.get(url).then((resp) => {
+      const locationOptionsResp = _.values(ApiUtil.convertToCamelCase(resp.body).hearingLocations);
+      const locationOptions = generateHearingLocationOptions(locationOptionsResp);
+
+      locationOptions.sort((first, second) => (first.distance - second.distance));
+
+      this.props.onReceiveDropdownData(name, locationOptions);
+      this.setState({ errorMsg: false });
+    }).
+      catch(() => {
+
+        const errorMsg = `
+          Could not find hearing locations for this veteran. Either they live outside US territories or
+          their address needs to be confirmed in VBMS.
+        `;
+
+        this.props.onReceiveDropdownData(name, []);
+        this.setState({ errorMsg });
+      });
   }
 
   getSelectedOption = () => {
@@ -83,19 +109,35 @@ class VeteranHearingLocationsDropdown extends React.Component {
   }
 
   render() {
-    const { name, label, onChange, readOnly, errorMessage, placeholder } = this.props;
+    const {
+      name, label, onChange, readOnly, errorMessage, placeholder,
+      veteranHearingLocations: { isFetching } } = this.props;
 
     return (
-      <SearchableDropdown
-        name={name}
-        label={label}
-        strongLabel
-        readOnly={readOnly}
-        value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value, option.label)}
-        options={this.props.veteranHearingLocations.options}
-        errorMessage={errorMessage}
-        placeholder={placeholder} />
+      <div>
+        {isFetching &&
+          <span {...css({
+            marginTop: '-25px',
+            '& > *': {
+              display: 'inline-block',
+              marginRight: '10px'
+            }
+          })}>
+            {loadingSymbolHtml('', '15px')}
+            {'Finding hearing locations for veteran ...'}
+          </span>
+        }
+        <SearchableDropdown
+          name={name}
+          label={label}
+          strongLabel
+          readOnly={readOnly}
+          value={this.getSelectedOption()}
+          onChange={(option) => onChange(option.value, option.label)}
+          options={this.props.veteranHearingLocations.options}
+          errorMessage={this.state.errorMsg || errorMessage}
+          placeholder={placeholder} />
+      </div>
     );
   }
 }

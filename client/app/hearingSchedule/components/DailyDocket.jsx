@@ -189,9 +189,8 @@ export default class DailyDocket extends React.Component {
  };
 
  getRegionalOfficeDropdown = (hearing, readOnly) => {
-   // read only until we make AHL list dynamic
    return <RegionalOfficeDropdown
-     readOnly={true || readOnly}
+     readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
      onChange={this.onHearingRegionalOfficeUpdate(hearing.id)}
      value={hearing.editedRegionalOffice || hearing.regionalOfficeKey} />;
  }
@@ -204,7 +203,7 @@ export default class DailyDocket extends React.Component {
       veteranFileNumber={hearing.veteranFileNumber}
       regionalOffice={currentRegionalOffice}
       staticHearingLocations={_.values(hearing.veteranAvailableHearingLocations)}
-      dynamic={false}
+      dynamic={currentRegionalOffice !== hearing.veteranClosestRegionalOffice}
       value={hearing.editedLocation || (hearing.location ? hearing.location.facilityId : null)}
       onChange={this.onHearingLocationUpdate(hearing.id)}
     />;
@@ -241,19 +240,21 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingDayDropdown = (hearing, readOnly) => {
-    const staticOptions = [{
-      label: formatDateStr(hearing.scheduledFor),
-      value: {
-        scheduledFor: hearing.scheduledFor,
-        hearingId: this.props.dailyDocket.id
-      }
-    }];
+    const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
+    const staticOptions = hearing.regionalOfficeKey === currentRegionalOffice ?
+      [{
+        label: formatDateStr(hearing.scheduledFor),
+        value: {
+          scheduledFor: hearing.scheduledFor,
+          hearingId: this.props.dailyDocket.id
+        }
+      }] : null;
 
     return <HearingDateDropdown
       name="HearingDay"
       label="Hearing Day"
-      key={hearing.editedRegionalOffice || hearing.regionalOfficeKey}
-      regionalOffice={hearing.editedRegionalOffice || hearing.regionalOfficeKey}
+      key={currentRegionalOffice}
+      regionalOffice={currentRegionalOffice}
       value={hearing.editedDate ? hearing.editedDate : hearing.scheduledFor}
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
       staticOptions={staticOptions}

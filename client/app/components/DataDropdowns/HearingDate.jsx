@@ -23,13 +23,17 @@ class HearingDateDropdown extends React.Component {
 
       onChange(option.value, option.label);
     }
+
+    if (prevProps.regionalOffice !== this.props.regionalOffice) {
+      setTimeout(() => this.getHearingDates(true), 0);
+    }
   }
 
-  getHearingDates = () => {
+  getHearingDates = (force) => {
     const { hearingDates: { options, isFetching }, regionalOffice } = this.props;
     const name = `hearingDatesFor${regionalOffice}`;
 
-    if (options || isFetching) {
+    if ((options && !force) || isFetching) {
       return;
     }
 
