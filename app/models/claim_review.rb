@@ -137,6 +137,16 @@ class ClaimReview < DecisionReview
     Veteran.find_by(file_number: veteran_file_number)
   end
 
+  # needed for appeal status api
+  def aoj
+    case benefit_type
+    when "compensation", "pension", "fiduciary", "insurance", "education", "voc_rehab", "loan_guaranty"
+      "vba"
+    else
+      benefit_type
+    end
+  end
+
   private
 
   def can_contest_rating_issues?

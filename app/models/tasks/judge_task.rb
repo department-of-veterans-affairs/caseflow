@@ -1,6 +1,4 @@
 class JudgeTask < Task
-  include RoundRobinAssigner
-
   def available_actions(user)
     additional_available_actions(user).unshift(Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h)
   end
@@ -29,7 +27,7 @@ class JudgeTask < Task
   # rubocop:disable Metrics/PerceivedComplexity
   # This function to be manually run in production when we need to fetch all RAMP
   # appeals that are eligible for assignment to judges, and assign them. This and related methods
-  # can be removed after February 14th 2019.
+  # can be removed after AMA day.
   def self.assign_ramp_judge_tasks(dry_run: true, batch_size: 10)
     # Find all unassigned tasks, sort them by the NOD date, and take the first N.
     tasks = unassigned_ramp_tasks.sort_by { |task| task.appeal.receipt_date }[0..batch_size - 1]
@@ -45,10 +43,10 @@ class JudgeTask < Task
       return
     end
 
-    assign_judge_tasks_for_root_tasks(tasks)
+    create_many_from_root_tasks(tasks)
   end
 
-  def self.assign_judge_tasks_for_root_tasks(root_tasks)
+  def self.create_many_from_root_tasks(root_tasks)
     root_tasks.each do |root_task|
       Rails.logger.info("Assigning judge task for appeal #{root_task.appeal.id}")
 
@@ -57,7 +55,7 @@ class JudgeTask < Task
         parent: root_task,
         appeal_type: Appeal.name,
         assigned_at: Time.zone.now,
-        assigned_to: next_assignee
+        assigned_to: JudgeAssignTaskDistributor.new.next_assignee
       )
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
     end
@@ -82,10 +80,6 @@ class JudgeTask < Task
     end
 
     task.children.all? { |t| !t.is_a?(JudgeTask) && t.completed? }
-  end
-
-  def self.list_of_assignees
-    Constants::RampJudges::USERS[Rails.current_env]
   end
   #:nocov:
   # rubocop:enable Metrics/AbcSize

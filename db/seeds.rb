@@ -46,7 +46,7 @@ class SeedDB
     User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Attorney no cases")
     User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Judge with hearings and cases")
     User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Judge has attorneys with cases")
-    User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Judge has case to sign")
+    User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Judge has case to assign")
     User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Judge has case to assign no team")
     User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
     User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "BVA Dispatch user with cases")
