@@ -55,7 +55,8 @@ describe RampClosedAppeal do
     context "when end product was canceled" do
       let!(:current_end_product) do
         end_product.tap do |_ep|
-          EndProductEstablishment.create(
+          create(
+            :end_product_establishment,
             source: ramp_election,
             veteran_file_number: ramp_election.veteran_file_number,
             last_synced_at: Time.zone.now,
@@ -160,7 +161,8 @@ describe RampClosedAppeal do
                       OpenStruct.new(vacols_id: "CANCELED1"),
                       OpenStruct.new(vacols_id: "CANCELED2")
                     ])
-      EndProductEstablishment.create(
+      create(
+        :end_product_establishment,
         source: ramp_election_canceled_ep,
         veteran_file_number: veteran.file_number,
         last_synced_at: 2.days.ago,

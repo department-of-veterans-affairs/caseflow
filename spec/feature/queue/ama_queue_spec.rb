@@ -227,7 +227,7 @@ RSpec.feature "AmaQueue" do
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
-        find(".Select-control", text: "Select a user").click
+        find(".Select-control", text: user.full_name).click
         find("div", class: "Select-option", text: other_user.full_name).click
 
         expect(page).to have_content(existing_instruction)
@@ -242,9 +242,6 @@ RSpec.feature "AmaQueue" do
 
         find(".Select-control", text: "Select an action").click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label]).click
-
-        find(".Select-control", text: "Select a user").click
-        find("div", class: "Select-option", text: user.full_name).click
 
         fill_in "taskInstructions", with: instructions
         click_on "Submit"
@@ -418,9 +415,6 @@ RSpec.feature "AmaQueue" do
       find(".Select-control", text: "Select an action").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
-      find(".Select-control", text: "Select a user").click
-      find("div", class: "Select-option", text: qr_user.full_name).click
-
       fill_in "taskInstructions", with: "Review the quality"
       click_on "Submit"
 
@@ -449,10 +443,11 @@ RSpec.feature "AmaQueue" do
 
       click_on veteran_full_name
 
-      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, match: :first).click
+
       expect(page).to have_content(qr_instructions)
 
-      find(".Select-control", text: "Select an action").click
+      find(".Select-control", text: "Select an action", match: :first).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h[:label]).click
 
       find(".Select-control", text: "Select a user").click
@@ -503,10 +498,10 @@ RSpec.feature "AmaQueue" do
 
       click_on veteran_full_name
 
-      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, match: :first).click
       expect(page).to have_content(qr_instructions)
 
-      find(".Select-control", text: "Select an action").click
+      find(".Select-control", text: "Select an action", match: :first).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
       expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")

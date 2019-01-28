@@ -40,7 +40,7 @@ class EndProduct
 
   EFFECTUATION_CODES = {
     "030BGR" => "Board Grant Rating",
-    "030BGNR" => "Board Grant Non-Rating",
+    "030BGRNR" => "Board Grant Non-Rating",
     "030BGRPMC" => "PMC Board Grant Rating",
     "030BGNRPMC" => "PMC Board Grant Non-Rating"
   }.freeze
@@ -79,6 +79,8 @@ class EndProduct
   CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES).merge(EFFECTUATION_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
+
+  DEFAULT_PAYEE_CODE = "00".freeze
 
   attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :last_action_date,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter, :payee_code,
@@ -242,7 +244,7 @@ class EndProduct
         suppress_acknowledgement_letter: hash[:suppress_acknowledgement_letter],
         gulf_war_registry: hash[:gulf_war_registry],
         station_of_jurisdiction: hash[:station_of_jurisdiction],
-        payee_code: hash[:payee_code] || "00"
+        payee_code: hash[:payee_code] || DEFAULT_PAYEE_CODE
       )
     end
 
