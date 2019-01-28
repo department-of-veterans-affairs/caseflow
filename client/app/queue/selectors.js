@@ -205,23 +205,16 @@ export const rootTasksForAppeal = createSelector(
   [actionableTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.type === 'RootTask')
 );
 
-export const nonRootActionableTasksForAppeal = createSelector(
-  [actionableTasksForAppeal], (tasks: Tasks) => _.filter(tasks, (task) => task.type !== 'RootTask')
+export const caseTimelineTasksForAppeal = createSelector(
+  [getAllTasksForAppeal],
+  (tasks: Tasks) => _.orderBy(_.filter(completeTasksSelector(tasks), (task) =>
+    !task.hideFromCaseTimeline), ['createdAt'], ['desc'])
 );
 
-export const allCompleteTasksForAppeal = createSelector(
-  [getAllTasksForAppeal, getAppealId],
-  (tasks: Tasks, appealId: string) => {
-    return _.filter(tasks, (task) => task.externalAppealId === appealId && task.status === TASK_STATUSES.completed);
-  }
-);
-
-export const incompleteNonActionableTasks = createSelector(
-  [getAllTasksForAppeal, getAppealId],
-  (tasks: Tasks, appealId: string) => {
-    return _.orderBy(_.filter(tasks, (task) => task.externalAppealId === appealId &&
-    (task.status !== TASK_STATUSES.completed && !task.availableActions.length)), ['createdAt'], ['desc']);
-  }
+export const taskSnapshotTasksForAppeal = createSelector(
+  [getAllTasksForAppeal],
+  (tasks: Tasks) => _.orderBy(_.filter(incompleteTasksSelector(tasks), (task) =>
+    !task.hideFromTaskSnapshot), ['createdAt'], ['asc'])
 );
 
 export const newTasksByAssigneeCssIdSelector = createSelector(
