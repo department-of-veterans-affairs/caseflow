@@ -83,11 +83,28 @@ class VeteranHearingLocationsDropdown extends React.Component {
       this.props.onReceiveDropdownData(name, locationOptions);
       this.setState({ errorMsg: false });
     }).
-      catch(() => {
+      catch((error) => {
+
+        let errorReason = '.';
+
+        if (error.body.message.messages && error.body.message.messages[0]) {
+          switch (error.body.message.messages[0].key) {
+          case 'InvalidRequestStreetAddress':
+            errorReason = ' because their address does not exist in VBMS.';
+            break;
+          case 'AddressCouldNotBeFound':
+            errorReason = ' because their address from VBMS could not be found on a map.';
+            break;
+          case 'DualAddressError':
+            errorReason = ' because their address from VBMS is ambiguous.';
+            break;
+          default:
+            errorReason = '.';
+          }
+        }
 
         const errorMsg = `
-          Could not find hearing locations for this veteran. Either they live outside US territories or
-          their address needs to be confirmed in VBMS.
+          Could not find hearing locations for this veteran${errorReason}
         `;
 
         this.props.onReceiveDropdownData(name, []);

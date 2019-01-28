@@ -92,10 +92,10 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     this.state = {
       invalid: {
-        time: false,
-        day: false,
-        regionalOffice: false,
-        location: false
+        time: null,
+        day: null,
+        regionalOffice: null,
+        location: null
       }
     };
   }
@@ -148,10 +148,10 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     } = this.props;
 
     const invalid = {
-      day: selectedHearingDay ? false : 'Please select a hearing day',
-      regionalOffice: selectedRegionalOffice ? false : 'Please select a regional office',
-      time: selectedHearingTime ? false : 'Please pick a hearing time'
-      // location: selectedHearingLocation ? false : 'Please select a hearing location'
+      day: selectedHearingDay ? null : 'Please select a hearing day',
+      regionalOffice: selectedRegionalOffice ? null : 'Please select a regional office',
+      time: selectedHearingTime ? null : 'Please pick a hearing time'
+      // location: selectedHearingLocation ? null : 'Please select a hearing location'
     };
 
     this.setState({ invalid });
