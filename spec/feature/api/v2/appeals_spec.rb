@@ -126,7 +126,7 @@ describe "Appeals API v2", type: :request do
       create(:supplemental_claim,
              veteran_file_number: veteran_file_number,
              receipt_date: nil,
-             benefit_type: benefit_type,
+             benefit_type: "vha",
              legacy_opt_in_approved: legacy_opt_in_approved,
              veteran_is_not_claimant: veteran_is_not_claimant)
     end
@@ -422,7 +422,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["aod"]).to be_nil
       expect(json["data"].first["attributes"]["location"]).to eq("aoj")
       expect(json["data"].first["attributes"]["alerts"]).to be_nil
-      expect(json["data"].first["attributes"]["aoj"]).to be_nil
+      expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
       expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["docket"]).to be_nil
       expect(json["data"].first["attributes"]["status"]).to be_nil
@@ -441,8 +441,8 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][1]["attributes"]["aod"]).to be_nil
       expect(json["data"][1]["attributes"]["location"]).to eq("aoj")
       expect(json["data"][1]["attributes"]["alerts"]).to be_nil
-      expect(json["data"][1]["attributes"]["aoj"]).to be_nil
-      expect(json["data"][1]["attributes"]["programArea"]).to eq("compensation")
+      expect(json["data"][1]["attributes"]["aoj"]).to eq("vha")
+      expect(json["data"][1]["attributes"]["programArea"]).to eq("medical")
       expect(json["data"][1]["attributes"]["docket"]).to be_nil
       expect(json["data"][1]["attributes"]["status"]).to be_nil
       expect(json["data"][1]["attributes"]["issues"].length).to eq(0)

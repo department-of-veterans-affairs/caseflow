@@ -151,6 +151,15 @@ class ClaimReview < DecisionReview
     end
   end
 
+  def aoj
+    case benefit_type
+    when "compensation", "pension", "fiduciary", "insurance", "education", "voc_rehab", "loan_guaranty"
+      "vba"
+    else
+      benefit_type
+    end
+  end
+
   private
 
   def can_contest_rating_issues?

@@ -51,10 +51,6 @@ class HigherLevelReview < ClaimReview
     # need to impelement
   end
 
-  def aoj
-    # need to implement. add logic to return proper enum: - vba, vha, nca, other
-  end
-
   def status_hash
     # need to implement. returns the details object for the status
   end

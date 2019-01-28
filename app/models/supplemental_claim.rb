@@ -44,10 +44,6 @@ class SupplementalClaim < ClaimReview
     # need to implement
   end
 
-  def aoj
-    # need to implement. add logic to return proper enum: - vba, vha, nca, other
-  end
-
   def status_hash
     # need to implement. returns the details object for the status
   end
