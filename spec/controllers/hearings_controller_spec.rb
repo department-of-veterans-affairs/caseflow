@@ -117,4 +117,16 @@ RSpec.describe HearingsController, type: :controller do
       expect(response.status).to eq 404
     end
   end
+
+  describe "#find_closest_hearing_locations" do
+    let!(:veteran) { create(:veteran, file_number: "123456789") }
+
+    it "returns an address" do
+      get :find_closest_hearing_locations,
+          as: :json,
+          params: { veteran_file_number: "123456789", regional_office: "RO13" }
+
+      expect(response.status).to eq 200
+    end
+  end
 end
