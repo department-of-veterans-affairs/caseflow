@@ -133,7 +133,7 @@ class BoardGrantEffectuation < ApplicationRecord
       source: decision_document,
       veteran_file_number: veteran.file_number,
       claim_date: decision_document.decision_date,
-      payee_code: "00",
+      payee_code: EndProduct::DEFAULT_PAYEE_CODE,
       code: end_product_code,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,

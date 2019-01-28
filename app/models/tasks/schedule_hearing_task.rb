@@ -34,18 +34,29 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
+  def label
+    "Schedule hearing"
+  end
+
+  # We only want to take this off hold, not actually complete it, like the inherited method does
+  def update_status_if_children_tasks_are_complete
+    return update!(status: :assigned) if on_hold?
+  end
+
   def update_from_params(params, current_user)
     verify_user_can_update!(current_user)
 
-    task_payloads = params.delete(:business_payloads)
+    if params[:status] == Constants.TASK_STATUSES.completed
+      task_payloads = params.delete(:business_payloads)
 
-    hearing_date = Time.use_zone("Eastern Time (US & Canada)") do
-      Time.zone.parse(task_payloads[:values][:hearing_date])
+      hearing_date = Time.use_zone("Eastern Time (US & Canada)") do
+        Time.zone.parse(task_payloads[:values][:hearing_date])
+      end
+      hearing_day_id = task_payloads[:values][:hearing_pkseq]
+      hearing_type = task_payloads[:values][:hearing_type]
+
+      update_hearing(hearing_day_id, hearing_date, hearing_type)
     end
-    hearing_day_id = task_payloads[:values][:hearing_pkseq]
-    hearing_type = task_payloads[:values][:hearing_type]
-
-    update_hearing(hearing_day_id, hearing_date, hearing_type) if params[:status] == Constants.TASK_STATUSES.completed
 
     super(params, current_user)
   end
@@ -61,11 +72,21 @@ class ScheduleHearingTask < GenericTask
   def available_actions(user)
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
       return [
-        Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h
+        Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h,
+        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
       ]
     end
 
     []
+  end
+
+  def add_admin_action_data(_user)
+    {
+      selected: nil,
+      options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|
+        { value: subclass.name, label: subclass.label }
+      end
+    }
   end
 
   private

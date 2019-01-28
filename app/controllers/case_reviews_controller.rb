@@ -26,9 +26,10 @@ class CaseReviewsController < ApplicationController
   end
 
   def update
-    result = UpdateAttorneyCaseReview.new(
+    case_review_class = (params[:legacy] == true) ? UpdateLegacyAttorneyCaseReview : UpdateAttorneyCaseReview
+    result = case_review_class.new(
       id: params[:id],
-      user_id: current_user.id,
+      user: current_user,
       document_id: params[:document_id]
     ).call
 

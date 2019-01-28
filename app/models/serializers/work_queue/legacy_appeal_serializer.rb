@@ -89,6 +89,17 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     latest_attorney_case_review&.document_id
   end
 
+  attribute :can_edit_document_id do
+    LegacyDocumentIdPolicy.new(
+      user: @instance_options[:user],
+      case_review: latest_attorney_case_review
+    ).editable?
+  end
+
+  attribute :attorney_case_review_id do
+    latest_attorney_case_review&.vacols_id
+  end
+
   def latest_attorney_case_review
     VACOLS::CaseAssignment.latest_task_for_appeal(object.vacols_id)
   end

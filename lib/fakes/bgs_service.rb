@@ -225,6 +225,7 @@ class Fakes::BGSService
           established_at: 1.day.ago
         )
         EndProductEstablishment.find_or_create_by!(reference_id: claim_id, source: ramp_election) do |e|
+          e.payee_code = EndProduct::DEFAULT_PAYEE_CODE
           e.veteran_file_number = veteran.file_number
           e.last_synced_at = 10.minutes.ago
           e.synced_status = "CLR"
