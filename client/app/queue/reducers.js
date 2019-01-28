@@ -360,12 +360,12 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
   }
   case ACTIONS.TOGGLE_FILTER_DROPDOWN: {
     const originalValue = _.get(state, [
-      'isDropdownFilterOpen', action.payload.filterName
+      'isDropdownFilterOpen', action.payload.columnName
     ], false);
 
     return update(state, {
       isDropdownFilterOpen: {
-        [action.payload.filterName]: {
+        [action.payload.columnName]: {
           $set: !originalValue
         }
       }

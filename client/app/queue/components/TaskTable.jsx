@@ -15,7 +15,7 @@ import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 
 import { setSelectionOfTaskOfUser, toggleDropdownFilterVisibility, updateFilteredByList } from '../QueueActions';
-import { renderAppealType } from '../utils';
+import { renderAppealType, userReadableColumnNames } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
@@ -26,8 +26,6 @@ import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import type { TaskWithAppeal } from '../types/models';
-
-// import { toggleDropdownFilterVisibility, updateFilteredByList } from '../../components/common/actions';
 
 type Params = {|
   includeHearingBadge?: boolean,
@@ -214,8 +212,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       updateFilters: (newList) => this.props.updateFilteredByList(newList),
       isDropdownFilterOpen: this.props.isDropdownFilterOpen.docketName,
       anyFiltersAreSet: true,
-      label: 'Filter by docker name',
-      valueName: 'dockerName',
+      label: 'Filter by docket name',
+      valueName: 'docketName',
       valueFunction: (task: TaskWithAppeal) => {
         if (!this.taskHasDASRecord(task)) {
           return null;
@@ -398,17 +396,56 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
   render = () => {
     let { tasks } = this.props;
+    const { filteredByList } = this.props;
 
     tasks = this.filterTableData(tasks);
 
-    return <Table
-      columns={this.getQueueColumns}
-      rowObjects={tasks}
-      getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
-      defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
-      filteredByList={this.props.filteredByList}
-      rowClassNames={(task) =>
-        this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
+    let filterSummary;
+    let filterListContent = [];
+    const clearAllFiltersLink = <a onClick={() => this.props.updateFilteredByList({})}> Clear all filters</a>;
+
+    // Don't show anything if there are no filters.
+    if (!_.isEmpty(filteredByList)) {
+      for (const filter in filteredByList) {
+        // This condition might be met if filters were added and then later removed,
+        // as there could still bea key in the filteredByList object pointing to an empty array.
+        if (filteredByList[filter].length > 0) {
+          const filterContent = (<span
+            key={filter}> {userReadableColumnNames[filter]} ({filteredByList[filter].length})</span>
+          );
+
+          filterListContent = filterListContent.concat(filterContent);
+        }
+      }
+
+      // Don't show anything if there are no filters.
+      // This may be different than the first condition because when filters are added
+      // and then later removed, there may still be a key in the filteredByList object
+      // pointing to an empty array.
+      if (filterListContent.length > 0) {
+        filterSummary = (
+          <div>
+            <strong>Filtering by:</strong>
+            {filterListContent}
+            <span>{clearAllFiltersLink}</span>
+          </div>
+        );
+      }
+    }
+
+    return (
+      <div>
+        {filterSummary}
+        <Table
+          columns={this.getQueueColumns}
+          rowObjects={tasks}
+          getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
+          defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
+          filteredByList={this.props.filteredByList}
+          rowClassNames={(task) =>
+            this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />
+      </div>
+    );
   }
 }
 

@@ -512,3 +512,9 @@ export const taskActionData = (props: Object) => {
 
   return null;
 };
+
+export const userReadableColumnNames = {
+  'appeal.caseType': 'Case type',
+  'appeal.docketName': 'Docket Number',
+  label: 'Task(s)'
+};

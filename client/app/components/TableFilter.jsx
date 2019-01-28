@@ -18,30 +18,30 @@ import FilterOption from './FilterOption';
 
 class TableFilter extends React.PureComponent {
   filterDropdownOptions = (tableDataByRow, columnName) => {
-    let countByFilterName = _.countBy(tableDataByRow, columnName);
+    let countByColumnName = _.countBy(tableDataByRow, columnName);
     let uniqueOptions = [];
     const filtersForColumn = _.get(this.props.column.filteredByList, columnName);
     const { customFilterLabels } = this.props.column;
 
-    for (let key in countByFilterName) {
+    for (let key in countByColumnName) {
       if (key && key !== 'null' && key !== 'undefined') {
         if (customFilterLabels && customFilterLabels[key]) {
           uniqueOptions.push({
             value: key,
-            displayText: `${customFilterLabels[key]} (${countByFilterName[key]})`,
+            displayText: `${customFilterLabels[key]} (${countByColumnName[key]})`,
             checked: filtersForColumn ? filtersForColumn.includes(key) : false
           });
         } else {
           uniqueOptions.push({
             value: key,
-            displayText: `${_.capitalize(key)} (${countByFilterName[key]})`,
+            displayText: `${_.capitalize(key)} (${countByColumnName[key]})`,
             checked: filtersForColumn ? filtersForColumn.includes(key) : false
           });
         }
       } else {
         uniqueOptions.push({
           value: 'null',
-          displayText: `<<blank>> (${countByFilterName[key]})`
+          displayText: `<<blank>> (${countByColumnName[key]})`
         });
       }
     }
@@ -49,9 +49,9 @@ class TableFilter extends React.PureComponent {
     return _.sortBy(uniqueOptions, 'displayText');
   }
 
-  updateSelectedFilter = (value, filterName) => {
+  updateSelectedFilter = (value, columnName) => {
     const oldList = this.props.column.filteredByList;
-    const filtersForColumn = _.get(oldList, String(filterName));
+    const filtersForColumn = _.get(oldList, String(columnName));
     let newList = {};
     let newFilters = [];
 
@@ -65,16 +65,16 @@ class TableFilter extends React.PureComponent {
       newFilters = newFilters.concat([value]);
     }
 
-    newList[filterName] = newFilters;
+    newList[columnName] = newFilters;
     this.props.column.updateFilters(newList);
 
     // For some reason when filters are removed a render doesn't automatically happen
     this.forceUpdate();
   }
 
-  clearFilteredByList = (filterName) => {
+  clearFilteredByList = (columnName) => {
     const oldList = this.props.column.filteredByList;
-    let newList = _.set(oldList, filterName, []);
+    let newList = _.set(oldList, columnName, []);
 
     this.props.column.updateFilters(newList);
     this.props.column.toggleDropdownFilterVisibility();
@@ -104,7 +104,7 @@ class TableFilter extends React.PureComponent {
           label={column.label}
           idPrefix={column.valueName}
           getRef={column.getFilterIconRef}
-          selected={column.isDropdownFilterOpen || column.anyFiltersAreSet}
+          selected={column.isDropdownFilterOpen || column.filteredByList[column.columnName]}
           handleActivate={column.toggleDropdownFilterVisibility} />
 
         {column.isDropdownFilterOpen &&
