@@ -402,7 +402,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
     let filterSummary;
     let filterListContent = [];
-    const clearAllFiltersLink = <a onClick={() => this.props.updateFilteredByList({})}> Clear all filters</a>;
+    const clearAllFiltersLink = <a style={{ cursor: 'pointer' }}
+      onClick={() => this.props.updateFilteredByList({})}> Clear all filters</a>;
 
     // Don't show anything if there are no filters.
     if (!_.isEmpty(filteredByList)) {
