@@ -348,13 +348,15 @@ class RequestIssue < ApplicationRecord
   # Instead of fully deleting removed issues, we instead strip them from the review so we can
   # maintain a record of the other data that was on them incase we need to revert the update.
   def remove_from_review
-    update!(review_request: nil)
-    legacy_issue_optin&.flag_for_rollback!
+    transaction do
+      update!(review_request: nil)
+      legacy_issue_optin&.flag_for_rollback!
 
-    # removing a request issue also deletes the associated request_decision_issue
-    # if the decision issue is not associated with any other request issue, also delete
-    decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
-    decision_issues.delete_all
+      # removing a request issue also deletes the associated request_decision_issue
+      # if the decision issue is not associated with any other request issue, also delete
+      decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
+      decision_issues.delete_all
+    end
   end
 
   def create_decision_issue_from_params(decision_issue_param)
