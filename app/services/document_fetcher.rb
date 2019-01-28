@@ -1,5 +1,6 @@
 class DocumentFetcher
   include ActiveModel::Model
+  include DocumentConcern
 
   attr_accessor :appeal, :use_efolder
 
@@ -19,15 +20,14 @@ class DocumentFetcher
     @find_or_create_documents ||= save!
   end
 
-  def new_documents_for_user(user)
+  def new_documents_for_user(user, alt_date_timestamp = nil)
     appeal_view = appeal.appeal_views.find_by(user: user)
-    return documents if !appeal_view
+    return documents if !appeal_view && !alt_date_timestamp
 
-    documents.select do |doc|
-      next if doc.upload_date.nil?
+    alt_date = alt_date_timestamp ? DateTime.strptime(alt_date_timestamp, "%s") : Time.zone.at(0)
+    compare_date = appeal_view ? [alt_date, appeal_view.last_viewed_at].max : alt_date
 
-      doc.upload_date > appeal_view.last_viewed_at
-    end
+    filter_docs_by_date(documents, compare_date)
   end
 
   private
