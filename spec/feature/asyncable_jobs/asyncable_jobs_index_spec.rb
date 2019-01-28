@@ -55,7 +55,7 @@ feature "Asyncable Jobs index" do
       visit "/jobs"
 
       expect(page).to have_content(
-        /RequestIssuesUpdate #{six_days_ago} #{six_days_ago} unavailable unknown Restart/
+        /RequestIssuesUpdate #{six_days_ago} #{six_days_ago} queued unknown Queued/
       )
     end
 
