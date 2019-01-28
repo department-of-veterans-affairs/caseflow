@@ -76,9 +76,42 @@ class AsyncableJobsPage extends React.PureComponent {
       txt = 'Restarting';
     } else if (this.state.jobsRestarted[job.id]) {
       txt = 'Restarted';
+    } else if (this.disableRestart(job)) {
+      txt = 'Queued';
     }
 
     return txt;
+  }
+
+  disableRestart = (job) => {
+    if (!job.attempted_at) {
+      return true;
+    }
+
+    const fiveMinutes = 300000;
+
+    let lastAttempted = new Date(job.attempted_at).getTime();
+    let submittedAt = new Date(job.last_submitted_at).getTime();
+    let now = new Date().getTime();
+
+    if ((now - lastAttempted) < fiveMinutes || (now - submittedAt) < fiveMinutes) {
+      return true;
+    }
+
+    return false;
+  }
+
+  formatDate = (datetime) => {
+    if (datetime === 'restarted') {
+      return datetime;
+    }
+
+    // TODO best UX word for this state?
+    if (!datetime) {
+      return 'queued';
+    }
+
+    return moment(datetime).format(DATE_TIME_FORMAT);
   }
 
   render = () => {
@@ -96,23 +129,21 @@ class AsyncableJobsPage extends React.PureComponent {
         }
       },
       {
-        header: 'Submitted',
+        header: 'Originally Submitted',
         valueFunction: (job) => {
-          if (job.submitted_at === 'restarted') {
-            return job.submitted_at;
-          }
-
-          return moment(job.submitted_at).format(DATE_TIME_FORMAT);
+          return this.formatDate(job.submitted_at);
+        }
+      },
+      {
+        header: 'Last Submitted',
+        valueFunction: (job) => {
+          return this.formatDate(job.last_submitted_at);
         }
       },
       {
         header: 'Last Attempted',
         valueFunction: (job) => {
-          if (!job.attempted_at) {
-            return 'never';
-          }
-
-          return moment(job.attempted_at).format(DATE_TIME_FORMAT);
+          return this.formatDate(job.attempted_at);
         }
       },
       {
@@ -132,7 +163,6 @@ class AsyncableJobsPage extends React.PureComponent {
         }
       },
       {
-        header: 'Restart',
         align: 'right',
         valueFunction: (job) => {
           return <Button
@@ -140,6 +170,7 @@ class AsyncableJobsPage extends React.PureComponent {
             title={`${job.klass} ${job.id}`}
             loading={this.state.jobsRestarting[job.id]}
             loadingText="Restarting..."
+            disabled={this.disableRestart(job)}
             onClick={() => {
               this.restartJob(job);
             }}

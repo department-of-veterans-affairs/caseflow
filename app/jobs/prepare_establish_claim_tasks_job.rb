@@ -3,6 +3,13 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
   application_attr :dispatch
 
   def perform
+    RequestStore.store[:current_user] = User.system_user
+
+    prepare_establish_claims
+    count_unfinished_jobs
+  end
+
+  def prepare_establish_claims
     count = { success: 0, fail: 0 }
 
     # Set user to system_user to avoid sensitivity errors
@@ -14,6 +21,13 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
       count[:fail] += ((status == :failed) ? 1 : 0)
     end
     log_info(count)
+  end
+
+  def count_unfinished_jobs
+    jobs = AsyncableJobs.new.jobs
+    msg = "Jobs: #{jobs.count} unfinished asyncable jobs exist in the queue"
+    Rails.logger.info msg
+    SlackService.new(url: url).send_notification(msg)
   end
 
   def log_info(count)

@@ -75,6 +75,7 @@ class HigherLevelReview < ClaimReview
 
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
     dta_supplemental_claim.create_decision_review_task_if_required!
+    dta_supplemental_claim.submit_for_processing!
     dta_supplemental_claim.start_processing_job!
   end
 
