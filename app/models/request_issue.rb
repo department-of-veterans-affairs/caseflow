@@ -138,20 +138,13 @@ class RequestIssue < ApplicationRecord
       )
     end
 
-    # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
-    def from_intake_data(data)
-      new(
-        attributes_from_intake_data(data)
-      ).tap(&:validate_eligibility!)
-    end
-
     def find_or_build_from_intake_data(data)
       # request issues on edit have ids but newly added issues do not
       data[:request_issue_id] ? find(data[:request_issue_id]) : from_intake_data(data)
     end
 
     def find_active_by_contested_rating_issue_reference_id(rating_issue_reference_id)
-      request_issue = unscoped.find_by(
+      request_issue = find_by(
         contested_rating_issue_reference_id: rating_issue_reference_id,
         removed_at: nil,
         ineligible_reason: nil
@@ -163,11 +156,18 @@ class RequestIssue < ApplicationRecord
     end
 
     def find_active_by_contested_decision_id(contested_decision_issue_id)
-      request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id,
+      request_issue = find_by(contested_decision_issue_id: contested_decision_issue_id,
                                        removed_at: nil, ineligible_reason: nil)
       return unless request_issue&.status_active?
 
       request_issue
+    end
+
+    # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
+    def from_intake_data(data, decision_review:)
+      new(
+        attributes_from_intake_data(data).merge(review_request: decision_review)
+      ).tap(&:validate_eligibility!)
     end
 
     private
@@ -420,7 +420,7 @@ class RequestIssue < ApplicationRecord
 
   def matching_rating_issues
     @matching_rating_issues ||= end_product_establishment.associated_rating.issues.select do |rating_issue|
-      rating_issue.contention_reference_id.to_i == contention_reference_id.to_i
+      rating_issue.decides_contention?(contention_reference_id: contention_reference_id)
     end
   end
 
@@ -497,7 +497,7 @@ class RequestIssue < ApplicationRecord
       self.ineligible_reason = :appeal_to_appeal
     end
 
-    self.ineligible_due_to_id = contested_issue.source_request_issue.id if ineligible_reason
+    self.ineligible_due_to_id = contested_issue.source_request_issues.first&.id if ineligible_reason
   end
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
