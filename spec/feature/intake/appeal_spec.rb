@@ -229,10 +229,6 @@ feature "Appeal Intake" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
-      find("label", text: "N/A", match: :prefer_exact).click
-    end
-
     select_agree_to_withdraw_legacy_issues(false)
 
     ## Validate error message when complete intake fails
