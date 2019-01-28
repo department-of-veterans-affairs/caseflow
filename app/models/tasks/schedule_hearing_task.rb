@@ -46,8 +46,7 @@ class ScheduleHearingTask < GenericTask
   def update_from_params(params, current_user)
     verify_user_can_update!(current_user)
 
-    if params[:status] == Constants.TASK_STATUSES.completed
-      task_payloads = params.delete(:business_payloads)
+    task_payloads = params.delete(:business_payloads)
 
     hearing_time = task_payloads[:values][:hearing_time]
     hearing_day_id = task_payloads[:values][:hearing_pkseq]
