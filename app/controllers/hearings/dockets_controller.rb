@@ -45,6 +45,8 @@ class Hearings::DocketsController < HearingsController
       notes: hearing_day.notes
     }
     hearing_day_object
+  rescue ActiveRecord::RecordNotFound
+    {}
   end
 
   def daily_docket(date)
