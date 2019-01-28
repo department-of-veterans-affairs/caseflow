@@ -149,6 +149,9 @@ describe ScheduleHearingTask do
               "m": "00",
               "offset": "-0500"
             },
+            "hearing_location": {
+              "facility_id": "vba_301"
+            },
             "hearing_type": "Central",
             "hearing_pkseq": hearing_day.id
           }
@@ -164,6 +167,8 @@ describe ScheduleHearingTask do
       expect(updated_hearing.folder_nr).to eq(appeal.vacols_id)
       expect(updated_hearing.hearing_date.to_date).to eq(hearing_day.scheduled_for)
       expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing]
+
+      expect(LegacyHearing.first.location.facility_id).to eq("vba_301")
     end
   end
 
@@ -201,13 +206,16 @@ describe ScheduleHearingTask do
               "m": "00",
               "offset": "-0500"
             },
+            "hearing_location": {
+              "facility_id": "vba_301"
+            },
             "hearing_type": "Video"
           }
         }
       }
     end
 
-    it "should create a task of type ScheduleHearingTask" do
+    it "should create a task of type ScheduleHearingTask, a Vacols Hearing, and a Legacy Hearing" do
       hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
       hearing_task.update_from_params(update_params, hearings_user)
       created_hearing = VACOLS::CaseHearing.find_by(hearing_type: "V",
@@ -217,6 +225,8 @@ describe ScheduleHearingTask do
       expect(created_hearing.hearing_date).to eq(hearing.hearing_date)
       expect(created_hearing.folder_nr).to eq(appeal.vacols_id)
       expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing]
+
+      expect(LegacyHearing.first.location.facility_id).to eq("vba_301")
     end
   end
 

@@ -1,13 +1,13 @@
 require "rails_helper"
 
 RSpec.feature "Schedule Veteran For A Hearing" do
+  let!(:hearings_user) do
+    create(:hearings_management)
+  end
+
   let!(:current_user) do
     OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
     User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
-  end
-
-  let!(:hearings_user) do
-    create(:hearings_management)
   end
 
   context "When creating Caseflow Central hearings" do
@@ -18,6 +18,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         bfcorlid: "123454787S"
       )
     end
+
+    let!(:veteran) { create(:veteran, file_number: "123454787") }
 
     scenario "Schedule Veteran for central hearing",
              skip: "This test passes on local but fails intermittently on circle" do
@@ -31,6 +33,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Currently active tasks", wait: 30)
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
+      click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (0 miles away)")
       radio_link = find(".cf-form-radio-option", match: :first)
       radio_link.click
       click_button("Schedule")
@@ -64,6 +67,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       )
     end
 
+    let!(:veteran) { create(:veteran, file_number: "123456789") }
+
     scenario "Schedule Veteran for video",
              skip: "This test passes on local but fails intermittently on circle" do
       visit "hearings/schedule/assign"
@@ -78,6 +83,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Time")
       radio_link = find(".cf-form-radio-option", match: :first)
       radio_link.click
+      expect(page).not_to have_content("Could not find hearing locations for this veteran", wait: 30)
       click_button("Schedule")
       find_link("Back to Schedule Veterans").click
       expect(page).to have_content("Schedule Veterans")

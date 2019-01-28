@@ -106,7 +106,7 @@ end
 
 Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
 # the default default_max_wait_time is 2 seconds
-Capybara.default_max_wait_time = 5
+Capybara.default_max_wait_time = 5000000000000
 
 # This allows for active job expectations
 ActiveJob::Base.queue_adapter = :test
