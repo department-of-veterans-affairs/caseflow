@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190125151257) do
+ActiveRecord::Schema.define(version: 20190128185846) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -477,6 +477,22 @@ ActiveRecord::Schema.define(version: 20190125151257) do
     t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
   end
 
+  create_table "hearing_locations", force: :cascade do |t|
+    t.string "address"
+    t.string "city"
+    t.string "classification"
+    t.datetime "created_at", null: false
+    t.float "distance"
+    t.string "facility_id"
+    t.string "facility_type"
+    t.integer "hearing_id"
+    t.string "hearing_type"
+    t.string "name"
+    t.string "state"
+    t.datetime "updated_at", null: false
+    t.string "zip_code"
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "hearing_id", null: false
@@ -498,7 +514,7 @@ ActiveRecord::Schema.define(version: 20190125151257) do
     t.boolean "prepped"
     t.string "representative_name"
     t.string "room"
-    t.time "scheduled_time"
+    t.time "scheduled_time", null: false
     t.text "summary"
     t.boolean "transcript_requested"
     t.date "transcript_sent_date"
