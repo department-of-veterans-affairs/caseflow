@@ -6,7 +6,7 @@ FactoryBot.define do
     redacted_document_location { "C://Windows/User/BOBLAW/Documents/Decision.docx" }
 
     trait :requires_processing do
-      submitted_at { Time.zone.now - 1.minute }
+      last_submitted_at { Time.zone.now - 1.minute }
     end
 
     trait :processed do
