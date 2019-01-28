@@ -57,7 +57,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       find(".dropdown-Disposition").click
       find("#react-select-2--option-1").click
       fill_in "Notes", with: "This is a note about the hearing!"
-      find("label", text: "8:30").click
+      find("label", text: "9:00").click
       click_button("Save")
 
       expect(page).to have_content("You have successfully updated")
