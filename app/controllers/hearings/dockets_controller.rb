@@ -31,13 +31,7 @@ class Hearings::DocketsController < HearingsController
   private
 
   def hearing_day(first_hearing)
-    hearing_day_key = if first_hearing["hearing_day_id"].nil?
-                        first_hearing["vdkey"]
-                      else
-                        first_hearing["hearing_day_id"]
-                      end
-
-    hearing_day = HearingDay.find(hearing_day_key)
+    hearing_day = HearingDay.find(first_hearing["hearing_day_id"])
     hearing_day_object = {
       requestType: HearingDayMapper.label_for_type(hearing_day.request_type),
       coordinator: hearing_day.bva_poc,
