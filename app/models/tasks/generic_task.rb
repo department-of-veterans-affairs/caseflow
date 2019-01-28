@@ -61,6 +61,10 @@ class GenericTask < Task
     available_actions_unwrapper(user).any?
   end
 
+  # We put the parent on hold in create_many_from_params in a transaction block, so we
+  # do not need to put the parent on hold in this after create defined in task.rb
+  def put_parent_on_hold; end
+
   private
 
   def task_is_assigned_to_user_within_organiztaion?(user)
@@ -74,32 +78,42 @@ class GenericTask < Task
   end
 
   class << self
+    def create_many_from_params(params_array, user)
+      transaction do
+        children = params_array.map do |params|
+          parent_task = Task.find(params[:parent_id])
+          fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
+                                                               parent_task.assigned_to_type == params[:assigned_to_type]
+
+          verify_user_can_create!(user, parent_task)
+
+          params = modify_params(params)
+          child = create_child_task(parent_task, user, params)
+
+          child
+        end
+
+        params_array.pluck(:parent_id).uniq.map do |parent_id|
+          Task.find(parent_id).update!(status: Constants.TASK_STATUSES.on_hold)
+        end
+
+        children
+      end
+    end
+
     def create_from_params(params, user)
-      parent_task = Task.find(params[:parent_id])
-      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
-                                                           parent_task.assigned_to_type == params[:assigned_to_type]
-
-      verify_user_can_create!(user, parent_task)
-
-      params = modify_params(params)
-      child = create_child_task(parent_task, user, params)
-      parent_task.update!(status: params[:status]) if params[:status]
-      child
+      create_many_from_params([params], user)
     end
 
     def create_child_task(parent, current_user, params)
-      transaction do
-        parent.update!(status: Constants.TASK_STATUSES.on_hold)
-
-        Task.create!(
-          type: name,
-          appeal: parent.appeal,
-          assigned_by_id: child_assigned_by_id(parent, current_user),
-          parent_id: parent.id,
-          assigned_to: child_task_assignee(parent, params),
-          instructions: params[:instructions]
-        )
-      end
+      Task.create!(
+        type: name,
+        appeal: parent.appeal,
+        assigned_by_id: child_assigned_by_id(parent, current_user),
+        parent_id: parent.id,
+        assigned_to: child_task_assignee(parent, params),
+        instructions: params[:instructions]
+      )
     end
 
     def child_task_assignee(_parent, params)

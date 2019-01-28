@@ -101,6 +101,11 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     (action) => Boolean(action.actionLabel) && Boolean(action.instructions)
   );
 
+  getNextStepUrl = () => {
+    // We don't want to use state here since this does not impact rendering
+    return taskActionData(this.props).redirect_after;
+  }
+
   buildPayload = () => {
     const { task, appeal } = this.props;
 
@@ -131,7 +136,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     const msgDisplayCount = this.state.adminActions.length === 1 ? 'an' : this.state.adminActions.length;
     const successMsg = {
       title: sprintf(msgTitle, msgDisplayCount, msgSubject, msgActions),
-      detail: <DispatchSuccessDetail task={task} />
+      detail: taskActionData(this.props).message_detail || COPY.ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL
     };
 
     this.props.requestSave('/tasks', payload, successMsg).

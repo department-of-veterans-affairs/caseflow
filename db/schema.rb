@@ -10,7 +10,6 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
 ActiveRecord::Schema.define(version: 20190118155859) do
 
   # These are extensions that must be enabled in order to support this database
@@ -110,17 +109,14 @@ ActiveRecord::Schema.define(version: 20190118155859) do
 
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address"
-    t.string "city"
     t.string "classification"
     t.datetime "created_at", null: false
     t.float "distance"
     t.string "facility_id"
     t.string "facility_type"
     t.string "name"
-    t.string "state"
     t.datetime "updated_at", null: false
     t.string "veteran_file_number", null: false
-    t.string "zip_code"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
@@ -318,10 +314,10 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.string "description"
     t.string "file_number"
     t.integer "previous_document_version_id"
-    t.date "upload_date"
     t.date "received_at"
     t.string "series_id"
     t.string "type"
+    t.date "upload_date"
     t.string "vbms_document_id", null: false
     t.index ["file_number"], name: "index_documents_on_file_number"
     t.index ["series_id"], name: "index_documents_on_series_id"

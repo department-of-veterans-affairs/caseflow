@@ -255,6 +255,7 @@ class Task < ApplicationRecord
 
   def add_admin_action_data(_user = nil)
     {
+      redirect_after: "/queue/appeals/#{appeal.external_id}",
       selected: nil,
       options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
         {
@@ -263,6 +264,12 @@ class Task < ApplicationRecord
         }
       end,
       type: ColocatedTask.name
+    }
+  end
+
+  def complete_data(user = nil)
+    {
+      modal_body: COPY::MARK_TASK_COMPLETE_COPY
     }
   end
 

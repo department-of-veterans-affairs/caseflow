@@ -31,6 +31,19 @@ class HearingAdminActionTask < GenericTask
     end
   end
 
+  def assign_to_user_data(user = nil)
+    super(user).merge(
+      redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
+      message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
+    )
+  end
+
+  def complete_data(user = nil)
+    {
+      modal_body: COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL
+    }
+  end
+
   private
 
   def on_hold_duration_is_set
