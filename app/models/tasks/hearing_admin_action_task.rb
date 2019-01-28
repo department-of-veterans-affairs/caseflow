@@ -11,6 +11,10 @@ class HearingAdminActionTask < GenericTask
     end
   end
 
+  def label
+    self.class.label || "Hearing admin action"
+  end
+
   # We need to allow multiple tasks to be assigned to the organization since all tasks will start there and be
   # manually distributed to users.
   def verify_org_task_unique

@@ -267,7 +267,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def complete_data(user = nil)
+  def complete_data(_user = nil)
     {
       modal_body: COPY::MARK_TASK_COMPLETE_COPY
     }
