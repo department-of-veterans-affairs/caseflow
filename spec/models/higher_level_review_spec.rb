@@ -227,7 +227,8 @@ describe HigherLevelReview do
         )
 
         expect(supplemental_claim).to_not be_nil
-        expect(RequestIssue.where(review_request: supplemental_claim).length).to eq(2)
+        expect(supplemental_claim.establishment_submitted_at).to_not be_nil
+        expect(supplemental_claim.request_issues.count).to eq(2)
 
         first_dta_request_issue = RequestIssue.find_by(
           review_request: supplemental_claim,

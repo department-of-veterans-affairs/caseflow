@@ -38,7 +38,7 @@ describe SyncReviewsJob do
     let!(:riu_attempts_ended) do
       create(
         :request_issues_update,
-        submitted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        last_submitted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
         attempted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
       )
     end
