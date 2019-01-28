@@ -20,10 +20,6 @@ import FilterOption from './FilterOption';
 class TableFilter extends React.PureComponent {
   constructor(props) {
     super(props);
-
-    // this.state = {
-    //   filteredByList: []
-    // };
   }
 
   filterDropdownOptions = (tableDataByRow, columnName) => {
@@ -49,18 +45,6 @@ class TableFilter extends React.PureComponent {
     return _.sortBy(uniqueOptions, 'displayText');
   }
 
-  // filterTableData = (dataToFilter, filterName, value) => {
-  //   let filteredData = {};
-
-  //   for (let key in dataToFilter) {
-  //     if (String(_.get(dataToFilter[key], filterName)) === String(value)) {
-  //       filteredData[key] = dataToFilter[key];
-  //     }
-  //   }
-
-  //   return filteredData;
-  // }
-
   updateSelectedFilter = (value, filterName) => {
     const oldList = this.props.column.filteredByList;
     const filtersForColumn = _.get(oldList, String(filterName));
@@ -77,15 +61,6 @@ class TableFilter extends React.PureComponent {
       newFilters = newFilters.concat([value]);
     }
 
-    // const filtersForColumn = this.state.filteredByList;
-
-    // if (filtersForColumn.includes(value)) {
-    //   this.unsetSelectedFilter(value, filterName);
-    // } else {
-    //   this.setSelectedFilter(value, filterName);
-    // }
-
-    // newList = _.set(oldList, filterName, newFilters);
     newList[filterName] = newFilters;
     this.props.column.updateFilters(newList);
 
@@ -93,32 +68,7 @@ class TableFilter extends React.PureComponent {
     this.forceUpdate();
   }
 
-  // updateTableData = (value, filterName) => {
-  //   const filteredData = this.filterTableData(this.props.column.tableData, filterName, value);
-  //   // this.props.column.receiveUpdatedData(filteredData);
-  // }
-
-  // setSelectedFilter = (value, filterName) => {
-  //   this.updateTableData(value, filterName);
-  //   this.setState({
-  //     filteredByList: this.state.filteredByList.concat([value])
-  //   });
-  // }
-
-  // unsetSelectedFilter = (value, filterName) => {
-  //   this.updateTableData(value, filterName);
-  //   this.setState({
-  //     filteredByList: _.pull(this.state.filteredByList, value)
-  //   });
-
-  //   this.forceUpdate();
-  // }
-
   clearFilteredByList = (filterName) => {
-    // this.updateTableData(value, filterName);
-    // this.setState({
-    //   filteredByList: []
-    // });
     const oldList = this.props.column.filteredByList;
     let newList = _.set(oldList, filterName, []);
 
