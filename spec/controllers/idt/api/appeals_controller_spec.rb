@@ -69,29 +69,73 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           ]
         end
 
-        context "with AMA appeals" do
-          before do
-            FeatureToggle.enable!(:idt_ama_appeals)
-          end
+        it "returns a list of assigned appeals" do
+          get :list
+          expect(response.status).to eq 200
+          expect(RequestStore[:current_user]).to eq user
+          response_body = JSON.parse(response.body)["data"]
+          ama_appeals = response_body
+            .select { |appeal| appeal["type"] == "appeals" }
+            .sort_by { |appeal| appeal["attributes"]["file_number"] }
 
-          after do
-            FeatureToggle.disable!(:idt_ama_appeals)
-          end
+          expect(ama_appeals.size).to eq 1
+          expect(ama_appeals.first["id"]).to eq tasks.second.appeal.uuid
+          expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
+          expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran2.reload.name.first_name
+        end
+      end
 
-          it "returns a list of assigned appeals" do
-            get :list
-            expect(response.status).to eq 200
-            expect(RequestStore[:current_user]).to eq user
-            response_body = JSON.parse(response.body)["data"]
-            ama_appeals = response_body
-              .select { |appeal| appeal["type"] == "appeals" }
-              .sort_by { |appeal| appeal["attributes"]["file_number"] }
+      context "and user is a colocated" do
+        let(:role) { :colocated_role }
 
-            expect(ama_appeals.size).to eq 1
-            expect(ama_appeals.first["id"]).to eq tasks.second.appeal.uuid
-            expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
-            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran2.reload.name.first_name
-          end
+        before do
+          create(:staff, role, sdomainid: user.css_id)
+          request.headers["TOKEN"] = token
+        end
+
+        let!(:legacy_appeals) do
+          [
+            create(:legacy_appeal, vacols_case: create(:case, :assigned, user: create(:user))),
+            create(:legacy_appeal, vacols_case: create(:case, :assigned, user: create(:user)))
+          ]
+        end
+
+        let(:veteran1) { create(:veteran) }
+        let(:veteran2) { create(:veteran) }
+
+        let!(:ama_appeals) do
+          [
+            create(:appeal, veteran: veteran1, number_of_claimants: 2),
+            create(:appeal, veteran: veteran2, number_of_claimants: 1)
+          ]
+        end
+
+        # Both legacy and ama tasks are stored in the tasks table for colocated users
+        # so we don't query Vacols
+        let!(:tasks) do
+          [
+            create(:ama_colocated_task, assigned_to: user, appeal: ama_appeals.first),
+            create(:ama_colocated_task, assigned_to: user, appeal: ama_appeals.second),
+            create(:colocated_task, assigned_to: user, appeal: legacy_appeals.first)
+          ]
+        end
+
+        it "returns a list of assigned appeals" do
+          get :list
+          expect(response.status).to eq 200
+          expect(RequestStore[:current_user]).to eq user
+          response_body = JSON.parse(response.body)["data"]
+          expect(response_body.size).to eq 3
+
+          expect(response_body.first["id"]).to eq tasks.first.appeal.uuid
+          expect(response_body.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
+          expect(response_body.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
+
+          expect(response_body.second["id"]).to eq tasks.second.appeal.uuid
+          expect(response_body.second["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
+          expect(response_body.second["attributes"]["veteran_first_name"]).to eq veteran2.reload.name.first_name
+
+          expect(response_body.third["id"]).to eq tasks.third.appeal.vacols_id
         end
       end
 
@@ -160,62 +204,52 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         let!(:case_review1) { create(:attorney_case_review, task_id: tasks.first.id) }
         let!(:case_review2) { create(:attorney_case_review, task_id: tasks.first.id) }
 
-        context "with AMA appeals" do
-          before do
-            FeatureToggle.enable!(:idt_ama_appeals)
-          end
+        it "returns a list of assigned appeals" do
+          tasks.first.update(assigned_at: 5.days.ago)
+          tasks.second.update(assigned_at: 15.days.ago)
+          get :list
+          expect(response.status).to eq 200
+          expect(RequestStore[:current_user]).to eq user
+          response_body = JSON.parse(response.body)["data"]
+          ama_appeals = response_body
+            .select { |appeal| appeal["type"] == "appeals" }
+            .sort_by { |appeal| appeal["attributes"]["file_number"] }
 
-          after do
-            FeatureToggle.disable!(:idt_ama_appeals)
-          end
+          expect(ama_appeals.size).to eq 2
+          expect(ama_appeals.first["id"]).to eq tasks.first.appeal.uuid
+          expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
+          expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
+          expect(ama_appeals.first["attributes"]["days_waiting"]).to eq 5
 
-          it "returns a list of assigned appeals" do
-            tasks.first.update(assigned_at: 5.days.ago)
-            tasks.second.update(assigned_at: 15.days.ago)
-            get :list
-            expect(response.status).to eq 200
-            expect(RequestStore[:current_user]).to eq user
-            response_body = JSON.parse(response.body)["data"]
-            ama_appeals = response_body
-              .select { |appeal| appeal["type"] == "appeals" }
-              .sort_by { |appeal| appeal["attributes"]["file_number"] }
+          expect(ama_appeals.second["id"]).to eq tasks.second.appeal.uuid
+          expect(ama_appeals.second["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
+          expect(ama_appeals.second["attributes"]["veteran_first_name"]).to eq veteran2.reload.name.first_name
+          expect(ama_appeals.second["attributes"]["days_waiting"]).to eq 15
 
-            expect(ama_appeals.size).to eq 2
-            expect(ama_appeals.first["id"]).to eq tasks.first.appeal.uuid
-            expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
-            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
-            expect(ama_appeals.first["attributes"]["days_waiting"]).to eq 5
+          expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
+          expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
+          expect(ama_appeals.first["attributes"]["documents"].first["written_by"])
+            .to eq case_review1.attorney.full_name
+          expect(ama_appeals.first["attributes"]["documents"].first["document_id"])
+            .to eq case_review1.document_id
+          expect(ama_appeals.first["attributes"]["documents"].second["written_by"])
+            .to eq case_review2.attorney.full_name
+          expect(ama_appeals.first["attributes"]["documents"].second["document_id"])
+            .to eq case_review2.document_id
+        end
 
-            expect(ama_appeals.second["id"]).to eq tasks.second.appeal.uuid
-            expect(ama_appeals.second["attributes"]["docket_number"]).to eq tasks.second.appeal.docket_number
-            expect(ama_appeals.second["attributes"]["veteran_first_name"]).to eq veteran2.reload.name.first_name
-            expect(ama_appeals.second["attributes"]["days_waiting"]).to eq 15
-
-            expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
-            expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
-            expect(ama_appeals.first["attributes"]["documents"].first["written_by"])
-              .to eq case_review1.attorney.full_name
-            expect(ama_appeals.first["attributes"]["documents"].first["document_id"])
-              .to eq case_review1.document_id
-            expect(ama_appeals.first["attributes"]["documents"].second["written_by"])
-              .to eq case_review2.attorney.full_name
-            expect(ama_appeals.first["attributes"]["documents"].second["document_id"])
-              .to eq case_review2.document_id
-          end
-
-          it "returns appeals associated with a file number" do
-            headers = { "FILENUMBER" => tasks.first.appeal.veteran_file_number }
-            request.headers.merge! headers
-            get :list
-            expect(response.status).to eq 200
-            response_body = JSON.parse(response.body)["data"]
-            ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
-            expect(ama_appeals.size).to eq 1
-            expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
-            expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
-            expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
-            expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
-          end
+        it "returns appeals associated with a file number" do
+          headers = { "FILENUMBER" => tasks.first.appeal.veteran_file_number }
+          request.headers.merge! headers
+          get :list
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)["data"]
+          ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
+          expect(ama_appeals.size).to eq 1
+          expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
+          expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
+          expect(ama_appeals.first["attributes"]["assigned_by"]).to eq tasks.first.parent.assigned_to.full_name
+          expect(ama_appeals.first["attributes"]["documents"].size).to eq 2
         end
 
         context "and appeal id URL parameter not is passed" do
