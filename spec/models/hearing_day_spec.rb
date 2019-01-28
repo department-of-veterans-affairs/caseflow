@@ -102,7 +102,7 @@ describe HearingDay do
     end
   end
 
-  context "confirm_no_children_records", focus: true do
+  context "confirm_no_children_records" do
     let!(:hearing_day) { create(:hearing_day) }
     let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
 
