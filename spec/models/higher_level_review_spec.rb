@@ -292,7 +292,8 @@ describe HigherLevelReview do
   context "#active" do
     let(:synced_status) { "CLR" }
     let(:dta_ep_sync_status) { "PEND" }
-    let!(:hlr_with_dta_error) { create(:higher_level_review, veteran_file_number: "123456789") }
+    let(:veteran_file_number) { "123456789" }
+    let!(:hlr_with_dta_error) { create(:higher_level_review, veteran_file_number: veteran_file_number) }
     let!(:hlr_end_product) do
       create(:end_product_establishment,
              source: hlr_with_dta_error,
@@ -301,7 +302,7 @@ describe HigherLevelReview do
 
     let!(:dta_sc) do
       create(:supplemental_claim,
-             veteran_file_number: "123456789",
+             veteran_file_number: veteran_file_number,
              decision_review_remanded: hlr_with_dta_error)
     end
 
@@ -311,7 +312,8 @@ describe HigherLevelReview do
              synced_status: dta_ep_sync_status)
     end
 
-    let!(:hlr_no_dta_error) { create(:higher_level_review, veteran_file_number: "111223333") }
+    let(:veteran_file_number2) { "111223333" }
+    let!(:hlr_no_dta_error) { create(:higher_level_review, veteran_file_number: veteran_file_number2) }
     let!(:hlr_ep) do
       create(:end_product_establishment,
              source: hlr_no_dta_error,

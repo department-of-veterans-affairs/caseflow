@@ -140,8 +140,8 @@ class HigherLevelReview < ClaimReview
   end
 
   def dta_claim_active?
-    dta_claim = SupplementalClaim.where(veteran_file_number: veteran_file_number,
-                                        decision_review_remanded: self)
-    dta_claim.empty? ? false : dta_claim.first.active?
+    dta_claim = SupplementalClaim.find_by(veteran_file_number: veteran_file_number,
+                                          decision_review_remanded: self)
+    dta_claim ? dta_claim.active? : false
   end
 end

@@ -123,7 +123,7 @@ describe "Appeals API v2", type: :request do
     end
 
     let!(:hlr_ep) do
-      create(:end_product_establishment, source: hlr, synced_status: "PEND")
+      create(:end_product_establishment, :active, source: hlr)
     end
 
     let!(:supplemental_claim_review) do
@@ -136,7 +136,7 @@ describe "Appeals API v2", type: :request do
     end
 
     let!(:sc_ep) do
-      create(:end_product_establishment, source: supplemental_claim_review, synced_status: "CLR")
+      create(:end_product_establishment, :cleared, source: supplemental_claim_review)
     end
 
     let(:request_issue) do
