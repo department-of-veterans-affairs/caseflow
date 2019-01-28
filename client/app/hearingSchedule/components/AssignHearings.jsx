@@ -14,7 +14,6 @@ import { renderAppealType } from '../../queue/utils';
 import StatusMessage from '../../components/StatusMessage';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 
-
 const sectionNavigationListStyling = css({
   '& > li': {
     backgroundColor: COLORS.GREY_BACKGROUND,
@@ -24,6 +23,16 @@ const sectionNavigationListStyling = css({
 });
 
 const roSelectionStyling = css({ marginTop: '10px' });
+
+const tableNumberStyling = css({
+  '& > tr:nth-child(even)': {
+    '& > td:nth-child(1)': {
+      width: '1%',
+      paddingLeft: '0'
+    }
+  }
+
+});
 
 export default class AssignHearings extends React.Component {
 
@@ -279,6 +288,7 @@ export default class AssignHearings extends React.Component {
         rowObjects={this.tableAssignHearingsRows(this.getLegacyAppeals())}
         summary="scheduled-hearings-table"
         slowReRendersAreOk
+        bodyStyling={tableNumberStyling}
       />;
     };
 
@@ -299,17 +309,18 @@ export default class AssignHearings extends React.Component {
         rowObjects={this.tableAssignHearingsRows(this.getAmaAppeals())}
         summary="scheduled-hearings-table"
         slowReRendersAreOk
+        bodyStyling={tableNumberStyling}
       />;
     };
 
-
-
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
 
-    const scheduledOrder = _.orderBy(Object.values(this.props.selectedHearingDay.hearings), (hearing) => hearing.scheduledFor, 'asc');
+    const scheduledOrder = _.orderBy(Object.values(this.props.selectedHearingDay.hearings),
+      (hearing) => hearing.scheduledFor, 'asc');
 
     const scheduledLink = () => {
-      const scheduled = this.props.selectedHearingDay
+      const scheduled = this.props.selectedHearingDay;
+
       if (scheduled) {
         return scheduled.id;
       }
@@ -326,15 +337,15 @@ export default class AssignHearings extends React.Component {
           {
             label: 'Scheduled Veterans',
             page: <div>
-           <Link to={`/schedule/docket/${scheduledLink()}`}>
-           {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }</Link>
-            <Table
-              columns={tabWindowColumns}
-              rowObjects={this.tableScheduledHearingsRows(scheduledOrder)}
-              summary="scheduled-hearings-table"
-              slowReRendersAreOk
-            />
-          </div>
+              <Link to={`/schedule/docket/${scheduledLink()}`}>
+                {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }</Link>
+              <Table
+                columns={tabWindowColumns}
+                rowObjects={this.tableScheduledHearingsRows(scheduledOrder)}
+                summary="scheduled-hearings-table"
+                slowReRendersAreOk
+              />
+            </div>
           },
           {
             label: 'Legacy Veterans Waiting',
