@@ -20,6 +20,7 @@ feature "Asyncable Jobs index" do
   let!(:hlr) do
     create(:higher_level_review,
            last_submitted_at: 7.days.ago,
+           establishment_submitted_at: 8.days.ago,
            establishment_attempted_at: 6.days.ago,
            establishment_error: "oops!",
            veteran_file_number: veteran.file_number)
@@ -72,9 +73,10 @@ feature "Asyncable Jobs index" do
       expect(page).to_not have_content("oops!")
 
       expect(hlr.reload.last_submitted_at).to eq(now)
+      expect(hlr.establishment_submitted_at).to eq(8.days.ago)
     end
 
-    context "zero unprocesed jobs" do
+    context "zero unprocessed jobs" do
       before do
         AsyncableJobs.new.jobs.each(&:processed!)
       end
