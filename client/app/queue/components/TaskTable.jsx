@@ -32,7 +32,6 @@ type Params = {|
   includeSelect?: boolean,
   includeDetailsLink?: boolean,
   includeTask?: boolean,
-  includeTaskLabel?: boolean,
   includeDocumentId?: boolean,
   includeType?: boolean,
   includeDocketNumber?: boolean,
@@ -122,20 +121,13 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     } : null;
   }
 
-  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.label]
+  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.label] || _.startCase(task.label)
 
   caseTaskColumn = () => {
     return this.props.includeTask ? {
       header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
       valueFunction: (task: TaskWithAppeal) => this.actionNameOfTask(task),
       getSortValue: (task: TaskWithAppeal) => this.actionNameOfTask(task)
-    } : null;
-  }
-
-  caseTaskLabelColumn = () => {
-    return this.props.includeTaskLabel ? {
-      header: COPY.CASE_LIST_TABLE_TASK_LABEL_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) => _.startCase(task.label)
     } : null;
   }
 
@@ -295,7 +287,6 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
         this.caseSelectColumn(),
         this.caseDetailsColumn(),
         this.caseTaskColumn(),
-        this.caseTaskLabelColumn(),
         this.caseDocumentIdColumn(),
         this.caseTypeColumn(),
         this.caseDocketNumberColumn(),
