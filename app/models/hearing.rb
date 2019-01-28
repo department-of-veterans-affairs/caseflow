@@ -87,6 +87,10 @@ class Hearing < ApplicationRecord
   end
   #:nocov:
 
+  def slot_new_hearing(hearing_day_id, scheduled_time, appeal)
+    Hearing.create!(hearing_day_id: hearing_day_id, scheduled_time: scheduled_time, appeal: appeal)
+  end
+
   def external_id
     uuid
   end
