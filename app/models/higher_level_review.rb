@@ -44,7 +44,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def active?
-    end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
+    end_product_establishments.any? { |ep| ep.status_active?(sync: false) } || dta_claim_active?
   end
 
   def description
@@ -137,5 +137,11 @@ class HigherLevelReview < ClaimReview
       benefit_type_code: veteran.benefit_type_code,
       user: intake_processed_by
     )
+  end
+
+  def dta_claim_active?
+    dta_claim = SupplementalClaim.where(veteran_file_number: veteran_file_number,
+                                        decision_review_remanded: self)
+    dta_claim.empty? ? false : dta_claim.first.active?
   end
 end
