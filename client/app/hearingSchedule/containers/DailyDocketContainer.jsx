@@ -32,11 +32,11 @@ import {
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError
+  onResetLockHearingAfterError,
+  onHearingOptionalTime
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
-import { onHearingOptionalTime } from '../../components/common/actions';
 
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
@@ -96,6 +96,7 @@ export class DailyDocketContainer extends React.Component {
         m: hearing.editedTime.split(':')[1],
         offset: moment.tz('America/New_York').format('Z')
       };
+
     }
 
     const timeObject = moment(hearing.scheduledFor);
@@ -118,7 +119,7 @@ export class DailyDocketContainer extends React.Component {
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
       master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
         time } : null,
-      scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
+      scheduled_for: hearing.editedTime === 'other' ? hearing.editedOptionalTime : moment(hearing.scheduledFor).set(time)
     };
   };
 

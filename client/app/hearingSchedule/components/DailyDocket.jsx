@@ -112,9 +112,9 @@ export default class DailyDocket extends React.Component {
     return _.filter(this.props.hearings, (hearing) => !this.previouslyScheduled(hearing));
   };
 
-   onHearingOptionalTime= (value) => {
-     this.props.onHearingOptionalTime(value);
-   };
+   onHearingOptionalTime = (hearingId) => (optionalTime) => {
+     this.props.onHearingOptionalTime(hearingId, optionalTime.value);
+   }
 
   getAppellantName = (hearing) => {
     let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName } = hearing;
@@ -267,7 +267,7 @@ export default class DailyDocket extends React.Component {
         name="optionalTime"
         placeholder="Select a time"
         options={TIME_OPTIONS}
-        value={hearing.selectedOptionalTime ? hearing.selectedOptionalTime || '' : hearing.editedTime}
+        value={hearing.editedOptionalTime ? hearing.editedOptionalTime : hearing.id}
         onChange={this.onHearingOptionalTime(hearing.id)}
         hideLabel />}</div>
 
