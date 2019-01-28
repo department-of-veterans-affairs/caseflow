@@ -86,8 +86,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
 
       context "and user is a mail intake" do
+        let(:user) { User.find_by(css_id: "ID1234") }
         before do
-          User.authenticate!(roles: ["Mail Intake"], css_id: "TEST_ID")
+          User.authenticate!(roles: ["Mail Intake"], css_id: "ID1234")
           request.headers["TOKEN"] = token
         end
 
