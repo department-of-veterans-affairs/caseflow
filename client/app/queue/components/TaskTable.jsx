@@ -130,6 +130,17 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseTaskColumn = () => {
     return this.props.includeTask ? {
       header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+      enableFilter: true,
+      tableData: this.props.tasks,
+      columnName: 'label',
+      toggleDropdownFilterVisibility: () => this.props.toggleDropdownFilterVisibility('label'),
+      filteredByList: this.props.filteredByList,
+      updateFilters: (newList) => this.props.updateFilteredByList(newList),
+      isDropdownFilterOpen: this.props.isDropdownFilterOpen.label,
+      anyFiltersAreSet: true,
+      customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+      label: 'Filter by task',
+      valueName: 'label',
       valueFunction: (task: TaskWithAppeal) => this.actionNameOfTask(task),
       getSortValue: (task: TaskWithAppeal) => this.actionNameOfTask(task)
     } : null;
@@ -195,6 +206,16 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseDocketNumberColumn = () => {
     return this.props.includeDocketNumber ? {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
+      enableFilter: true,
+      tableData: this.props.tasks,
+      columnName: 'appeal.docketName',
+      toggleDropdownFilterVisibility: () => this.props.toggleDropdownFilterVisibility('docketName'),
+      filteredByList: this.props.filteredByList,
+      updateFilters: (newList) => this.props.updateFilteredByList(newList),
+      isDropdownFilterOpen: this.props.isDropdownFilterOpen.docketName,
+      anyFiltersAreSet: true,
+      label: 'Filter by docker name',
+      valueName: 'dockerName',
       valueFunction: (task: TaskWithAppeal) => {
         if (!this.taskHasDASRecord(task)) {
           return null;
@@ -373,7 +394,6 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     }
 
     return filteredData;
-    // return data;
   }
 
   render = () => {

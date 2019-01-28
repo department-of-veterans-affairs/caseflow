@@ -21,14 +21,23 @@ class TableFilter extends React.PureComponent {
     let countByFilterName = _.countBy(tableDataByRow, columnName);
     let uniqueOptions = [];
     const filtersForColumn = _.get(this.props.column.filteredByList, columnName);
+    const { customFilterLabels } = this.props.column;
 
     for (let key in countByFilterName) {
       if (key && key !== 'null' && key !== 'undefined') {
-        uniqueOptions.push({
-          value: key,
-          displayText: `${key} (${countByFilterName[key]})`,
-          checked: filtersForColumn ? filtersForColumn.includes(key) : false
-        });
+        if (customFilterLabels && customFilterLabels[key]) {
+          uniqueOptions.push({
+            value: key,
+            displayText: `${customFilterLabels[key]} (${countByFilterName[key]})`,
+            checked: filtersForColumn ? filtersForColumn.includes(key) : false
+          });
+        } else {
+          uniqueOptions.push({
+            value: key,
+            displayText: `${_.capitalize(key)} (${countByFilterName[key]})`,
+            checked: filtersForColumn ? filtersForColumn.includes(key) : false
+          });
+        }
       } else {
         uniqueOptions.push({
           value: 'null',
@@ -68,9 +77,7 @@ class TableFilter extends React.PureComponent {
     let newList = _.set(oldList, filterName, []);
 
     this.props.column.updateFilters(newList);
-
-    // For some reason when filters are removed a render doesn't automatically happen
-    this.forceUpdate();
+    this.props.column.toggleDropdownFilterVisibility();
   }
 
   render() {
@@ -84,6 +91,8 @@ class TableFilter extends React.PureComponent {
       paddingTop: '0.3rem',
       verticalAlign: 'middle'
     }, hover({ cursor: 'pointer' }));
+
+    console.log(column.tableData);
 
     const filterOptions = column.tableData && column.columnName ?
       this.filterDropdownOptions(column.tableData, column.columnName) :
