@@ -116,7 +116,7 @@ class RatingIssue
       RequestIssue.find_by(contention_reference_id: contention_reference_id)
     end
 
-    result.reject(&:nil?)
+    result.compact
   end
 
   def calculate_contention_reference_ids
@@ -124,7 +124,7 @@ class RatingIssue
       contention_data.dig(:cntntn_id)
     end
 
-    result.reject(&:nil?)
+    result.compact
   end
 
   def associated_ramp_ep
