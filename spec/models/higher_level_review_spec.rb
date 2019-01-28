@@ -288,4 +288,23 @@ describe HigherLevelReview do
       end
     end
   end
+
+  context "#linked_review_ids" do
+    let(:hlr) { create(:higher_level_review, veteran_file_number: "123456789") }
+    subject { hlr.linked_review_ids }
+
+    context "there is no dta supplemental claim associated" do
+      it "returns the hlr claim id" do
+        is_expected.to eq(Array.wrap("HLR#{hlr.id}"))
+      end
+    end
+
+    context "there is a dta supplemental claim associated" do
+      let!(:dta_sc) { create(:supplemental_claim, veteran_file_number: "123456789", decision_review_remanded: hlr) }
+
+      it "returns the dta supplemental claim id" do
+        is_expected.to eq(Array.wrap("SC#{dta_sc.id}"))
+      end
+    end
+  end
 end

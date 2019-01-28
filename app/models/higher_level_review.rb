@@ -36,7 +36,12 @@ class HigherLevelReview < ClaimReview
   end
 
   def linked_review_ids
-    Array.wrap(review_status_id)
+    linked_id = linked_dta_claim_id
+    if linked_id
+      Array.wrap("SC#{linked_id}")
+    else
+      Array.wrap(review_status_id)
+    end
   end
 
   def incomplete
@@ -150,5 +155,11 @@ class HigherLevelReview < ClaimReview
       benefit_type_code: veteran.benefit_type_code,
       user: intake_processed_by
     )
+  end
+
+  def linked_dta_claim_id
+    claim_id = SupplementalClaim.where(veteran_file_number: veteran_file_number,
+                                       decision_review_remanded: self).pluck(:id)
+    claim_id.first unless claim_id.empty?
   end
 end
