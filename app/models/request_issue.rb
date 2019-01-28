@@ -172,10 +172,11 @@ class RequestIssue < ApplicationRecord
     end
 
     # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
-    def from_intake_data(data, decision_review:)
-      new(
-        attributes_from_intake_data(data).merge(review_request: decision_review)
-      ).tap(&:validate_eligibility!)
+    def from_intake_data(data, decision_review: nil)
+      attrs = attributes_from_intake_data(data)
+      attrs.merge(review_request: decision_review) if decision_review
+
+      new(attrs).tap(&:validate_eligibility!)
     end
 
     private
