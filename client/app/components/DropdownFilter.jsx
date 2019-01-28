@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 const dropdownFilterViewListStyle = css({
   margin: 0
@@ -37,7 +38,7 @@ class DropdownFilter extends React.PureComponent {
     };
 
     return <div style={rel}>
-      <div className="cf-dropdown-filter" style={{top: '10px'}} ref={(rootElem) => {
+      <div className="cf-dropdown-filter" style={{ top: '10px' }} ref={(rootElem) => {
         this.rootElem = rootElem;
       }}>
         {this.props.addClearFiltersRow &&

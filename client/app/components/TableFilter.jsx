@@ -5,7 +5,6 @@ import _ from 'lodash';
 import { css, hover } from 'glamor';
 import FilterIcon from './FilterIcon';
 import DropdownFilter from './DropdownFilter';
-import ListItemPicker from './ListItemPicker';
 import FilterOption from './FilterOption';
 
 /**
@@ -18,10 +17,6 @@ import FilterOption from './FilterOption';
  */
 
 class TableFilter extends React.PureComponent {
-  constructor(props) {
-    super(props);
-  }
-
   filterDropdownOptions = (tableDataByRow, columnName) => {
     let countByFilterName = _.countBy(tableDataByRow, columnName);
     let uniqueOptions = [];

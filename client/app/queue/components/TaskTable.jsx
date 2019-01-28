@@ -356,8 +356,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     } else {
       // Loop through the data to check if each data point matches a filter
       // that has been selected
-      for (let key in data) {
-        for (let columnName in filteredByList) {
+      for (const key in data) { // eslint-disable-line guard-for-in
+        for (const columnName in filteredByList) {
           // If there are no filters selected for a particular column,
           // just add the data point to the filtered data to show
           if (_.isEmpty(filteredByList[columnName])) {

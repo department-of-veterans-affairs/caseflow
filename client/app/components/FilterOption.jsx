@@ -31,7 +31,7 @@ const FilterOption = ({ options, setSelectedValue,
           id={`${index}-${option.value}`}
           value={option.value}
           checked={option.checked}
-          onChange={handleChange}/>
+          onChange={handleChange} />
         <label htmlFor={`${index}-${option.value}`}>
           {option.displayText}
         </label>
