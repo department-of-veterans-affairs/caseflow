@@ -7,7 +7,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   def veterans
     @veterans ||= Veteran.where(file_number: file_numbers)
       .left_outer_joins(:available_hearing_locations)
-      .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.month.ago)
+      .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
       .limit(QUERY_LIMIT)
   end
 
@@ -68,6 +68,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       rescue Caseflow::Error::VaDotGovLimitError
         sleep 60
         va_dot_gov_address = validate_veteran_address(veteran)
+      rescue StandardError => error
+        handle_error(error, veteran)
+        next
       end
 
       create_available_locations_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
@@ -143,5 +146,19 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     msg = "#{state_code} is not a valid state code."
     fail Caseflow::Error::FetchHearingLocationsJobError, code: 500, message: msg
+  end
+
+  def handle_error(error, veteran)
+    case error.message.messages[0]["key"]
+    when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress"
+      Raven.capture_exception(error)
+      LegacyAppeal.where(
+        vbms_id: LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)
+      ).each do |appeal|
+        HearingAdminActionVerifyAddressTask.create(appeal: appeal)
+      end
+    else
+      fail error
+    end
   end
 end
