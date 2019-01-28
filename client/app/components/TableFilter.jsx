@@ -92,8 +92,6 @@ class TableFilter extends React.PureComponent {
       verticalAlign: 'middle'
     }, hover({ cursor: 'pointer' }));
 
-    console.log(column.tableData);
-
     const filterOptions = column.tableData && column.columnName ?
       this.filterDropdownOptions(column.tableData, column.columnName) :
       // Keeping the historical prop `getFilterValues` for backwards compatibility,
