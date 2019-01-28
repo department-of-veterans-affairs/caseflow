@@ -177,7 +177,7 @@ feature "Supplemental Claim Intake" do
     find("#cf-payee-code").send_keys :enter
 
     within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
-      find("label", text: "No", match: :prefer_exact).click
+      find("label", text: "N/A", match: :prefer_exact).click
     end
 
     click_intake_continue

@@ -136,7 +136,7 @@ feature "Appeal Intake" do
     end
 
     within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
-      find("label", text: "No", match: :prefer_exact).click
+      find("label", text: "N/A", match: :prefer_exact).click
     end
 
     click_intake_continue
@@ -232,8 +232,9 @@ feature "Appeal Intake" do
     end
 
     within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
-      find("label", text: "No", match: :prefer_exact).click
+      find("label", text: "N/A", match: :prefer_exact).click
     end
+
 
     ## Validate error message when complete intake fails
     expect_any_instance_of(AppealIntake).to receive(:review!).and_raise("A random error. Oh no!")
