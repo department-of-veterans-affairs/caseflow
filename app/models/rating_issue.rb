@@ -64,7 +64,6 @@ class RatingIssue
       decision_text: decision_text,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
-      contention_reference_id: contention_reference_id,
       ramp_claim_id: ramp_claim_id,
       title_of_active_review: title_of_active_review,
       rba_contentions_data: rba_contentions_data,
