@@ -45,8 +45,6 @@ class RootTask < GenericTask
       end
     end
 
-    private
-
     def create_evidence_submission_task!(appeal, parent)
       EvidenceSubmissionWindowTask.create!(
         appeal: appeal,

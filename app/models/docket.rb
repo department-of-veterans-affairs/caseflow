@@ -7,9 +7,22 @@ class Docket
 
   def appeals(priority: nil, ready: nil)
     scope = docket_appeals
-    scope = scope.merge(Appeal.where_priority(priority)) unless priority.nil?
-    scope = scope.merge(Appeal.where_ready_for_distribution(ready)) unless ready.nil?
-    scope.order("#{priority ? 'ready_for_distribution_at' : 'receipt_date'} ASC")
+
+    unless priority.nil?
+      scope = scope.merge(Appeal.all_priority) if priority == true
+      scope = scope.merge(Appeal.all_nonpriority) if priority == false
+    end
+
+    unless ready.nil?
+      fail "'ready for distribution' value cannot be false" if ready == false
+      scope = scope.merge(Appeal.ready_for_distribution) if ready == true
+    end
+
+    if priority == true
+      scope.merge(Appeal.ordered_by_distribution_ready_date) 
+    else 
+      scope.order('receipt_date')
+    end
   end
 
   def count(priority: nil, ready: nil)
@@ -21,7 +34,7 @@ class Docket
   end
 
   def age_of_n_oldest_priority_appeals(n)
-    appeals(priority: true, ready: true).limit(n).pluck("ready_for_distribution_at")
+    appeals(priority: true, ready: true).limit(n).map(&:ready_for_distribution_at)
   end
 
   # CMGTODO: unique index on distributed_cases.case_id to prevent distributing the same appeal twice
@@ -44,9 +57,8 @@ class Docket
 
   private
 
-  # CMGTODO: only return active appeals
   def docket_appeals
-    Appeal.where(docket_type: docket_type)
+    Appeal.active.where(docket_type: docket_type)
   end
 
   def assign_judge_tasks_for_appeals(appeals, judge)
