@@ -7,8 +7,6 @@ class RatingIssue
   attr_accessor :reference_id, :decision_text, :profile_date, :associated_end_products,
                 :promulgation_date, :participant_id, :rba_contentions_data, :disability_code
 
-  attr_writer :contention_reference_id
-
   class << self
     def from_bgs_hash(rating, bgs_data)
       new(
