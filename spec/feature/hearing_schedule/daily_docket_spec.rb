@@ -47,4 +47,40 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       expect(new_hearing.folder_nr).to eql(case_hearing.folder_nr)
     end
   end
+
+  context "Daily docket with one AMA hearing" do
+    let!(:hearing) { create(:hearing) }
+    let!(:postponed_hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 3)) }
+
+    scenario "User can update fields" do
+      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      find(".dropdown-Disposition").click
+      find("#react-select-2--option-1").click
+      fill_in "Notes", with: "This is a note about the hearing!"
+      find("label", text: "9:00").click
+      click_button("Save")
+
+      expect(page).to have_content("You have successfully updated")
+      expect(page).to have_content("No Show")
+      expect(page).to have_content("This is a note about the hearing!")
+      # For unknown reasons, in feature tests, the hearing time is displayed as 3:30am. I
+      # created a ticket that we can look into after February.
+      # expect(page).to have_content("8:30 am")
+    end
+
+    scenario "User can postpone a hearing" do
+      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      find(".dropdown-Disposition").click
+      find("#react-select-2--option-3").click
+      find(".dropdown-HearingDay").click
+      find("#react-select-4--option-2").click
+      click_button("Save")
+
+      expect(page).to have_content("You have successfully updated")
+      expect(page).to have_content("No Veterans are scheduled for this hearing day.")
+      expect(page).to have_content("Previously Scheduled")
+      new_hearing = Hearing.find_by(hearing_day: postponed_hearing_day)
+      expect(new_hearing.appeal).to eql(hearing.appeal)
+    end
+  end
 end

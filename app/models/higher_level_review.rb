@@ -51,19 +51,6 @@ class HigherLevelReview < ClaimReview
     # need to impelement
   end
 
-  def program
-    case benefit_type
-    when "voc_rehab"
-      "vre"
-    when "vha"
-      "medical"
-    when "nca"
-      "burial"
-    else
-      benefit_type
-    end
-  end
-
   def status_hash
     # need to implement. returns the details object for the status
   end
@@ -88,6 +75,7 @@ class HigherLevelReview < ClaimReview
 
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
     dta_supplemental_claim.create_decision_review_task_if_required!
+    dta_supplemental_claim.submit_for_processing!
     dta_supplemental_claim.start_processing_job!
   end
 
