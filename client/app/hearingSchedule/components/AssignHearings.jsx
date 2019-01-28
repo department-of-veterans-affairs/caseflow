@@ -28,10 +28,14 @@ const tableNumberStyling = css({
   '& > tr:nth-child(even)': {
     '& > td:nth-child(1)': {
       width: '1%',
+      paddingRight: '0'
+    }
+  },
+  '& > tr:nth-child(odd)': {
+    '& > td:nth-child(1)': {
       paddingLeft: '0'
     }
   }
-
 });
 
 export default class AssignHearings extends React.Component {
@@ -318,14 +322,6 @@ export default class AssignHearings extends React.Component {
     const scheduledOrder = _.orderBy(Object.values(this.props.selectedHearingDay.hearings),
       (hearing) => hearing.scheduledFor, 'asc');
 
-    const scheduledLink = () => {
-      const scheduled = this.props.selectedHearingDay;
-
-      if (scheduled) {
-        return scheduled.id;
-      }
-    };
-
     return <div className="usa-width-three-fourths">
       <h1>
         {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}
@@ -337,13 +333,14 @@ export default class AssignHearings extends React.Component {
           {
             label: 'Scheduled Veterans',
             page: <div>
-              <Link to={`/schedule/docket/${scheduledLink()}`}>
+              <Link to={`/schedule/docket/${this.props.selectedHearingDay.id}`}>
                 {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }</Link>
               <Table
                 columns={tabWindowColumns}
                 rowObjects={this.tableScheduledHearingsRows(scheduledOrder)}
                 summary="scheduled-hearings-table"
                 slowReRendersAreOk
+                bodyStyling={tableNumberStyling}
               />
             </div>
           },
