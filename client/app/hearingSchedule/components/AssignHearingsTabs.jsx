@@ -181,7 +181,9 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: appeal.attributes.aod
       }),
       docketNumber: this.getAppealDocketTag(appeal),
-      suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.veteranAvailableHearingLocations[0]),
+      suggestedLocation: this.getSuggestedHearingLocation(
+        (appeal.attributes.veteranAvailableHearingLocations || [])[0]
+      ),
       time: null,
       externalId: appeal.attributes.externalAppealId
     }));
@@ -217,7 +219,7 @@ export default class AssignHearingsTabs extends React.Component {
 
   getLocationFilterValues = (data, tab) => {
     const getLocation = (row) => tab === 'upcomingHearings' ? row.location :
-      row.attributes.veteranAvailableHearingLocations[0];
+      (row.attributes.veteranAvailableHearingLocations || [])[0];
 
     const locations = data.map((row) => {
       const location = getLocation(row);
