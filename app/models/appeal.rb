@@ -336,7 +336,11 @@ class Appeal < DecisionReview
   end
 
   def program
-    # to be implemented
+    if request_issues.all? { |ri| ri.benefit_type == request_issues.first.benefit_type }
+      request_issues.first.benefit_type
+    else
+      "multiple"
+    end
   end
 
   private
