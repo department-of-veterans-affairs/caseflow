@@ -5,6 +5,7 @@ class LegacyAppeal < ApplicationRecord
   include CachedAttributes
   include AddressMapper
   include Taskable
+  include DocumentConcern
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -12,6 +13,7 @@ class LegacyAppeal < ApplicationRecord
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
+  has_one :special_issue_list, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -39,6 +41,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :location_code
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
+  vacols_attr_accessor :number_of_issues
 
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
@@ -134,11 +137,12 @@ class LegacyAppeal < ApplicationRecord
     )
   end
 
-  delegate :documents, :number_of_documents, :new_documents_for_user,
+  delegate :documents, :new_documents_for_user, :number_of_documents,
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_after_certification
     return 0 unless certification_date
+
     documents.count { |d| d.received_at && d.received_at > certification_date }
   end
 
@@ -160,26 +164,20 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def v1_events
-    @v1_events ||= AppealEvents.new(appeal: self, version: 1).all.sort_by(&:date)
-  end
-
   def events
     @events ||= AppealEvents.new(appeal: self).all
   end
 
   def form9_due_date
     return unless notification_date && soc_date
+
     [notification_date + 1.year, soc_date + 60.days].max.to_date
   end
 
   def cavc_due_date
     return unless decided_by_bva?
-    (decision_date + 120.days).to_date
-  end
 
-  def number_of_issues
-    issues.length
+    (decision_date + 120.days).to_date
   end
 
   def appellant_is_not_veteran
@@ -191,7 +189,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran_ssn
-    vbms_id.ends_with?("C") ? (veteran && veteran.ssn) : sanitized_vbms_id
+    vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
   end
 
   delegate :address_line_1,
@@ -221,7 +219,7 @@ class LegacyAppeal < ApplicationRecord
   def power_of_attorney
     # TODO: this will only return a single power of attorney. There are sometimes multiple values, eg.
     # when a contesting claimant is present. Refactor so we surface all POA data.
-    @poa ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
+    @power_of_attorney ||= PowerOfAttorney.new(file_number: veteran_file_number, vacols_id: vacols_id).tap do |poa|
       # Set the VACOLS properties of the PowerOfAttorney object here explicitly so we only query the database once.
       poa.class.repository.set_vacols_values(
         poa: poa,
@@ -233,7 +231,7 @@ class LegacyAppeal < ApplicationRecord
 
   attr_writer :hearings
   def hearings
-    @hearings ||= Hearing.repository.hearings_for_appeal(vacols_id)
+    @hearings ||= HearingRepository.hearings_for_appeal(vacols_id)
   end
 
   def completed_hearing_on_previous_appeal?
@@ -269,7 +267,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran_death_date
-    veteran && veteran.date_of_death
+    veteran&.date_of_death
   end
 
   attr_writer :cavc_decisions
@@ -459,6 +457,7 @@ class LegacyAppeal < ApplicationRecord
 
   def documents_match?
     return false if missing_certification_data?
+
     nod.matching? && soc.matching? && form9.matching? && ssocs.all?(&:matching?)
   end
 
@@ -566,7 +565,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def reviewing_judge_name
-    das_assignments.sort_by(&:created_at).last.try(:assigned_by_name)
+    das_assignments.max_by(&:created_at).try(:assigned_by_name)
   end
 
   attr_writer :issues
@@ -574,17 +573,11 @@ class LegacyAppeal < ApplicationRecord
     @issues ||= self.class.repository.issues(vacols_id)
   end
 
-  def issue_count
-    issues.count
-  end
-
   # a list of issues with undecided dispositions (see queue/utils.getUndecidedIssues)
   def undecided_issues
     issues.select do |issue|
-      issue.disposition_id.nil? || (
-        issue.disposition_id.to_i.between?(1, 9) &&
-        Constants::VACOLS_DISPOSITIONS_BY_ID.keys.include?(issue.disposition_id)
-      )
+      issue.disposition_id.nil? ||
+        Constants::UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.key?(issue.disposition_id)
     end
   end
 
@@ -634,14 +627,7 @@ class LegacyAppeal < ApplicationRecord
     # values, so we should not sanitize the vbms_id.
     return vbms_id.to_s if vbms_id =~ /DEMO/ && Rails.env.development?
 
-    numeric = vbms_id.gsub(/[^0-9]/, "")
-
-    # ensure 8 digits if "C"-type id
-    if vbms_id.ends_with?("C")
-      numeric.rjust(8, "0")
-    else
-      numeric
-    end
+    LegacyAppeal.veteran_file_number_from_bfcorlid vbms_id
   end
 
   # Alias sanitized_vbms_id becauase file_number is the term used VBA wide for this veteran identifier
@@ -665,10 +651,6 @@ class LegacyAppeal < ApplicationRecord
     TYPE_CODES[type] || "other"
   end
 
-  def latest_event_date
-    v1_events.last.try(:date)
-  end
-
   def cavc
     type == "Court Remand"
   end
@@ -688,15 +670,20 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  def matchable_to_request_issue?
-    issues.any? && (active? || eligible_for_soc_opt_in?)
+  def matchable_to_request_issue?(receipt_date)
+    issues.any? && (active? || eligible_for_soc_opt_in?(receipt_date))
   end
 
-  def eligible_for_soc_opt_in?
+  def eligible_for_soc_opt_in?(receipt_date)
     return false unless nod_date
     return false unless soc_date
+    return false unless receipt_date
 
-    soc_date > soc_eligible_date || nod_date > nod_eligible_date
+    soc_eligible_date = receipt_date - 60.days
+    nod_eligible_date = receipt_date - 372.days
+
+    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
+    soc_date > soc_eligible_date || nod_date > nod_eligible_date || ssoc_dates.any? { |d| d > soc_eligible_date }
   end
 
   def serializer_class
@@ -707,32 +694,7 @@ class LegacyAppeal < ApplicationRecord
     vacols_id
   end
 
-  def timeline
-    [
-      {
-        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
-        date: decision_date
-      },
-      {
-        title: form9_date ? COPY::CASE_TIMELINE_FORM_9_RECEIVED : COPY::CASE_TIMELINE_FORM_9_PENDING,
-        date: form9_date
-      },
-      {
-        title: nod_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
-        date: nod_date
-      }
-    ]
-  end
-
   private
-
-  def soc_eligible_date
-    Time.zone.today - 60.days
-  end
-
-  def nod_eligible_date
-    Time.zone.today - 372.days
-  end
 
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
@@ -760,6 +722,7 @@ class LegacyAppeal < ApplicationRecord
 
   def fuzzy_matched_document(type, vacols_datetime, excluding: [])
     return nil unless vacols_datetime
+
     Document.new(type: type, vacols_date: vacols_datetime.to_date).tap do |doc|
       doc.fuzzy_match_vbms_document_from(exclude_and_sort_documents(excluding))
     end
@@ -791,15 +754,15 @@ class LegacyAppeal < ApplicationRecord
       appeal
     end
 
-    def for_api(vbms_id:)
-      # Some appeals that are early on in the process
-      # have no events recorded. We are not showing these.
-      # TODD: Research and revise strategy around appeals with no events
-      repository.appeals_by_vbms_id(vbms_id)
-        .select(&:api_supported?)
-        .reject { |a| a.latest_event_date.nil? }
-        .sort_by(&:latest_event_date)
-        .reverse
+    def veteran_file_number_from_bfcorlid(bfcorlid)
+      numeric = bfcorlid.gsub(/[^0-9]/, "")
+
+      # ensure 8 digits if "C"-type id
+      if bfcorlid.ends_with?("C")
+        numeric.rjust(8, "0")
+      else
+        numeric
+      end
     end
 
     def bgs
@@ -841,14 +804,15 @@ class LegacyAppeal < ApplicationRecord
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def reopen(appeals:, user:, disposition:, safeguards: true)
+    def reopen(appeals:, user:, disposition:, safeguards: true, reopen_issues: true)
       repository.transaction do
         appeals.each do |reopen_appeal|
           reopen_single(
             appeal: reopen_appeal,
             user: user,
             disposition: disposition,
-            safeguards: safeguards
+            safeguards: safeguards,
+            reopen_issues: reopen_issues
           )
         end
       end
@@ -939,7 +903,7 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
-    def reopen_single(appeal:, user:, disposition:, safeguards:)
+    def reopen_single(appeal:, user:, disposition:, safeguards:, reopen_issues: true)
       disposition_code = Constants::VACOLS_DISPOSITIONS_BY_ID.key(disposition)
       fail "Disposition #{disposition}, does not exist" unless disposition_code
 
@@ -961,7 +925,8 @@ class LegacyAppeal < ApplicationRecord
         repository.reopen_undecided_appeal!(
           appeal: appeal,
           user: user,
-          safeguards: safeguards
+          safeguards: safeguards,
+          reopen_issues: reopen_issues
         )
       end
     end

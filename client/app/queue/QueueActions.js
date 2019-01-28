@@ -15,6 +15,7 @@ import type {
   Tasks,
   BasicAppeals,
   AppealDetails,
+  ClaimReviews,
   User
 } from './types/models';
 
@@ -37,6 +38,15 @@ export const onReceiveAppealDetails = (
   payload: {
     appeals,
     appealDetails
+  }
+});
+
+export const onReceiveClaimReviewDetails = (
+  { claimReviews }: { claimReviews: ClaimReviews }
+) => ({
+  type: ACTIONS.RECEIVE_CLAIM_REVIEW_DETAILS,
+  payload: {
+    claimReviews
   }
 });
 
@@ -79,14 +89,18 @@ export const receiveNewDocuments = ({ appealId, newDocuments }: { appealId: stri
   }
 });
 
-export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
+export const getNewDocuments = (appealId: string, cached: ?boolean) => (dispatch: Dispatch) => {
   dispatch({
     type: ACTIONS.STARTED_LOADING_DOCUMENTS,
     payload: {
       appealId
     }
   });
-  ApiUtil.get(`/appeals/${appealId}/new_documents`).then((response) => {
+  const requestOptions = {
+    timeout: { response: 5 * 60 * 1000 }
+  };
+
+  ApiUtil.get(`/appeals/${appealId}/new_documents${cached ? '?cached' : ''}`, requestOptions).then((response) => {
     const resp = JSON.parse(response.text);
 
     dispatch(receiveNewDocuments({
@@ -281,6 +295,14 @@ const errorTasksAndAppealsOfAttorney = ({ attorneyId, error }) => ({
   }
 });
 
+export const errorFetchingDocumentCount = (appealId: string, error: Object) => ({
+  type: ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT,
+  payload: {
+    appealId,
+    error
+  }
+});
+
 export const fetchTasksAndAppealsOfAttorney = (attorneyId: string, params: Object) => (dispatch: Dispatch) => {
   const requestOptions = {
     timeout: true
@@ -319,7 +341,7 @@ export const initialAssignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = '/tasks?role=Judge';
+    url = '/tasks';
     params = {
       data: {
         tasks: [{
@@ -378,7 +400,7 @@ export const reassignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = `/tasks/${oldTask.taskId}?role=Judge`;
+    url = `/tasks/${oldTask.taskId}`;
     params = {
       data: {
         task: {
@@ -503,7 +525,7 @@ const errorAllAttorneys = (error) => ({
 export const fetchAllAttorneys = () => (dispatch: Dispatch) =>
   ApiUtil.get('/users?role=Attorney').
     then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
-    catch((error) => Promise.reject(dispatch(errorAllAttorneys(error))));
+    catch((error) => dispatch(errorAllAttorneys(error)));
 
 export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) =>
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).

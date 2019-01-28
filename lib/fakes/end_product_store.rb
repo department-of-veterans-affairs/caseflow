@@ -8,8 +8,12 @@ class Fakes::EndProductStore
     end
   end
 
+  def self.all_keys
+    cache_store.redis.keys("#{REDIS_NS}:*")
+  end
+
   def clear!
-    self.class.cache_store.redis.keys("#{REDIS_NS}:*").each do |k|
+    self.class.all_keys.each do |k|
       self.class.cache_store.redis.del(k)
     end
   end

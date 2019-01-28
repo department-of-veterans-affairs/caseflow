@@ -10,6 +10,19 @@ export const getPageError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.other, 0) === 'unknown_error') && 'Unknown error.'
 );
 
+// use this conversion to change between rails model and react radio input
+// otherwise we send over a string true/false and reloading turns it into a boolean
+// which messes up logic on backend which expects a string
+export const convertStringToBoolean = (string) => {
+  if (string === 'true') {
+    return true;
+  } else if (string === 'false') {
+    return false;
+  }
+
+  return null;
+};
+
 export const getReceiptDateError = (responseErrorCodes, state) => (
   {
     blank:
@@ -36,15 +49,27 @@ export const formatRelationships = (relationships) => {
 
     return {
       value: relationship.participant_id,
-      displayText: `${first} ${last}, ${type}`
+      displayText: `${first} ${last}, ${type}`,
+      defaultPayeeCode: relationship.default_payee_code
     };
   });
+};
+
+export const getDefaultPayeeCode = (state, claimant) => {
+  return _.find(state.relationships, { value: claimant }).defaultPayeeCode;
 };
 
 export const formatRadioOptions = (options) => {
   return _.map(options, (value, key) => {
     return { value: key,
       displayText: value };
+  });
+};
+
+export const formatSearchableDropdownOptions = (options) => {
+  return _.map(options, (value, key) => {
+    return { value: key,
+      label: value };
   });
 };
 

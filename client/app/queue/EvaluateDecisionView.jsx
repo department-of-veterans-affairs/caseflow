@@ -14,8 +14,8 @@ import CheckboxGroup from '../components/CheckboxGroup';
 import Checkbox from '../components/Checkbox';
 import TextareaField from '../components/TextareaField';
 import CaseTitle from './CaseTitle';
-import CaseSnapshot from './CaseSnapshot';
 import Alert from '../components/Alert';
+import TaskSnapshot from './TaskSnapshot';
 
 import { deleteAppeal } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
@@ -132,7 +132,8 @@ class EvaluateDecisionView extends React.PureComponent {
       checkoutFlow,
       decision,
       userRole,
-      appealId
+      appealId,
+      amaDecisionIssues
     } = this.props;
 
     let loc = 'bva_dispatch';
@@ -142,7 +143,8 @@ class EvaluateDecisionView extends React.PureComponent {
       loc = 'omo_office';
       successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
     }
-    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, appeal.issues, {
+    const issuesToPass = !appeal.isLegacyAppeal && amaDecisionIssues ? appeal.decisionIssues : appeal.issues;
+    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issuesToPass, {
       location: loc,
       attorney_id: appeal.isLegacyAppeal ? task.assignedBy.pgId : appeal.assignedAttorney.id,
       isLegacyAppeal: appeal.isLegacyAppeal,
@@ -154,7 +156,10 @@ class EvaluateDecisionView extends React.PureComponent {
       payload,
       { title: successMsg,
         detail: <DispatchSuccessDetail task={task} /> }).
-      then(() => this.props.deleteAppeal(appealId));
+      then(() => this.props.deleteAppeal(appealId), (response) => {
+        // eslint-disable-next-line no-console
+        console.log(response);
+      });
   }
 
   getDisplayOptions = (opts) => _.map(JUDGE_CASE_REVIEW_OPTIONS[opts.toUpperCase()],
@@ -206,7 +211,7 @@ class EvaluateDecisionView extends React.PureComponent {
       {error && <Alert title={error.title} type="error" styling={css(marginTop(0), marginBottom(1))}>
         {error.detail}
       </Alert>}
-      <CaseSnapshot appealId={appealId} hideDropdown />
+      <TaskSnapshot appealId={appealId} hideDropdown />
       <hr {...hrStyling} />
 
       {appeal.isLegacyAppeal && <React.Fragment>
@@ -318,15 +323,20 @@ EvaluateDecisionView.propTypes = {
   appealId: PropTypes.string.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
-  highlight: state.ui.highlightFormItems,
-  taskOptions: state.queue.stagedChanges.taskDecision.opts,
-  task: taskById(state, { taskId: ownProps.taskId }),
-  decision: state.queue.stagedChanges.taskDecision,
-  userRole: state.ui.userRole,
-  error: state.ui.messages.error
-});
+const mapStateToProps = (state, ownProps) => {
+  const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
+
+  return {
+    appeal,
+    highlight: state.ui.highlightFormItems,
+    taskOptions: state.queue.stagedChanges.taskDecision.opts,
+    task: taskById(state, { taskId: ownProps.taskId }),
+    decision: state.queue.stagedChanges.taskDecision,
+    userRole: state.ui.userRole,
+    error: state.ui.messages.error,
+    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal,

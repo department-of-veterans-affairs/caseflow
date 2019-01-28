@@ -16,7 +16,7 @@ class DocumentFetcher
   end
 
   def find_or_create_documents!
-    @created_documents ||= save!
+    @find_or_create_documents ||= save!
   end
 
   def new_documents_for_user(user)
@@ -42,7 +42,7 @@ class DocumentFetcher
   end
 
   def fetched_at_format
-    "%D %l:%M%P %Z"
+    "%D %l:%M%P %Z %z"
   end
 
   def save!
@@ -55,16 +55,14 @@ class DocumentFetcher
     end
 
     documents.map do |document|
-      begin
-        if existing_documents[document.vbms_document_id]
-          document.merge_into(existing_documents[document.vbms_document_id]).save!
-          existing_documents[document.vbms_document_id]
-        else
-          create_new_document!(document, ids)
-        end
-      rescue ActiveRecord::RecordNotUnique
-        Document.find_by_vbms_document_id(document.vbms_document_id)
+      if existing_documents[document.vbms_document_id]
+        document.merge_into(existing_documents[document.vbms_document_id]).save!
+        existing_documents[document.vbms_document_id]
+      else
+        create_new_document!(document, ids)
       end
+    rescue ActiveRecord::RecordNotUnique
+      Document.find_by_vbms_document_id(document.vbms_document_id)
     end
   end
 

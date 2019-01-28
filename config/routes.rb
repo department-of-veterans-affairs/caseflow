@@ -118,29 +118,28 @@ Rails.application.routes.draw do
 
   namespace :hearings do
     resources :dockets, only: [:index, :show], param: :docket_date
-    resources :worksheets, only: [:update, :show], param: :hearing_id
+    resources :worksheets, only: [:update, :show], param: :id
     resources :appeals, only: [:update], param: :appeal_id
-    resources :hearing_day, only: [:index, :show, :destroy]
+    resources :hearing_day, only: [:index, :show, :destroy, :update]
     resources :schedule_periods, only: [:index, :create]
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule', to: "hearings/hearing_day#index"
+  get 'hearings/:hearing_id/details', to: "hearings/hearing_day#index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/assign', to: "hearing_schedule#index"
-  get 'hearings/:hearing_id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
-  get 'hearings/:hearing_id/worksheet/print', to: "hearings/worksheets#show_print"
+  get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
+  get 'hearings/:id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
-  put 'hearings/:hearing_key/hearing_day', to: "hearings/hearing_day#update"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
-  get 'hearings/schedule/assign/veterans', to: "hearings/hearing_day#veterans_ready_for_hearing"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
 
-  resources :hearings, only: [:update]
+  resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"
 
@@ -148,7 +147,7 @@ Rails.application.routes.draw do
   get 'dispatch/help' => 'help#dispatch'
   get 'certification/help' => 'help#certification'
   get 'reader/help' => 'help#reader'
-  get 'hearings/help' => 'help#hearings'
+  get 'hearing_prep/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
   get 'queue/help' => 'help#queue'
 
@@ -177,9 +176,21 @@ Rails.application.routes.draw do
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
+  resources :decision_reviews, param: :business_line_slug, only: [] do
+    resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
+    end
+  end
+  match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
+
+  resources :asyncable_jobs, param: :klass, only: [] do
+    resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
+  end
+  match '/jobs' => 'asyncable_jobs#index', via: [:get]
+
   resources :users, only: [:index]
 
   get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
+  get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
@@ -202,6 +213,7 @@ Rails.application.routes.draw do
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
+  patch '/case_reviews/:id', to: 'case_reviews#update'
 
   get "health-check", to: "health_checks#show"
   get "dependencies-check", to: "dependencies_checks#show"

@@ -2,7 +2,7 @@
 ENV["RAILS_ENV"] ||= "test"
 require "simplecov"
 
-require File.expand_path("../../config/environment", __FILE__)
+require File.expand_path("../config/environment", __dir__)
 
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
@@ -15,6 +15,9 @@ require_relative "support/fake_pdf_service"
 require_relative "support/sauce_driver"
 require_relative "support/database_cleaner"
 require_relative "support/download_helper"
+require_relative "support/clear_cache"
+require_relative "support/feature_helper"
+require_relative "support/date_time_helper"
 require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -41,7 +44,7 @@ ActiveRecord::Migration.maintain_test_schema!
 require "capybara"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
-Sniffybara::Driver.configuration_file = File.expand_path("../support/VA-axe-configuration.json", __FILE__)
+Sniffybara::Driver.configuration_file = File.expand_path("support/VA-axe-configuration.json", __dir__)
 
 download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
 cache_directory = Rails.root.join("tmp/browser_cache_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
@@ -52,8 +55,6 @@ if File.directory?(cache_directory)
 else
   Dir.mkdir cache_directory
 end
-
-FeatureToggle.cache_namespace = "test_#{ENV['TEST_SUBCATEGORY'] || 'all'}"
 
 ENV["TZ"] ||= "America/New York"
 
@@ -107,12 +108,16 @@ Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffyb
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 5
 
+# This allows for active job expectations
+ActiveJob::Base.queue_adapter = :test
+
 # Convenience methods for stubbing current user
 module StubbableUser
   module ClassMethods
     def clear_stub!
       Functions.delete_all_keys!
       @stub = nil
+      @system_user = nil
     end
 
     def stub=(user)
@@ -120,7 +125,7 @@ module StubbableUser
     end
 
     def authenticate!(css_id: nil, roles: nil, user: nil)
-      Functions.grant!("System Admin", users: ["DSUSER"]) if roles && roles.include?("System Admin")
+      Functions.grant!("System Admin", users: ["DSUSER"]) if roles&.include?("System Admin")
 
       if user.nil?
         user = User.from_session(
@@ -186,17 +191,17 @@ def current_user
 end
 
 # Utility functions for reading CSV data
-def dateshift_field(items, date_shift, k)
+def dateshift_field(items, date_shift, key)
   items.map! do |item|
-    item[k] = item[k] + date_shift if item[k]
+    item[key] = item[key] + date_shift if item[key]
     item
   end
 end
 
-def truncate_string(items, sql_type, k)
+def truncate_string(items, sql_type, key)
   max_index = /\((\d*)\)/.match(sql_type)[1].to_i - 1
   items.map! do |item|
-    item[k] = item[k][0..max_index] if item[k]
+    item[key] = item[key][0..max_index] if item[key]
     item
   end
 end
@@ -227,7 +232,8 @@ RSpec.configure do |config|
   # If it does, it will not execute ReactOnRails, since that slows down tests
   # Thus this will only run once (to initially compile assets) and not on
   # subsequent test runs
-  if !File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js")
+  if !File.exist?("#{::Rails.root}/app/assets/javascripts/webpack-bundle.js") &&
+     ENV["REACT_ON_RAILS_ENV"] != "HOT"
     ReactOnRails::TestHelper.ensure_assets_compiled
   end
   config.before(:all) do
@@ -240,8 +246,6 @@ RSpec.configure do |config|
     read_csv(VACOLS::Vftypes, date_shift)
     read_csv(VACOLS::Issref, date_shift)
     read_csv(VACOLS::Actcode, date_shift)
-
-    Rails.cache.clear
   end
 
   config.before(:each) do
@@ -250,7 +254,6 @@ RSpec.configure do |config|
 
   config.after(:each) do
     Timecop.return
-    Rails.cache.clear
     Fakes::BGSService.clean!
     Time.zone = @spec_time_zone
   end
@@ -357,16 +360,14 @@ RSpec::Matchers.define :become_truthy do |wait: Capybara.default_max_wait_time|
   supports_block_expectations
 
   match do |block|
-    begin
-      Timeout.timeout(wait) do
-        # rubocop:disable AssignmentInCondition
-        sleep(0.1) until value = block.call
-        # rubocop:enable AssignmentInCondition
-        value
-      end
-    rescue TimeoutError
-      false
+    Timeout.timeout(wait) do
+      # rubocop:disable AssignmentInCondition
+      sleep(0.1) until value = block.call
+      # rubocop:enable AssignmentInCondition
+      value
     end
+  rescue TimeoutError
+    false
   end
 end
 
@@ -380,4 +381,6 @@ end
 RSpec.configure do |config|
   config.include ActionView::Helpers::NumberHelper
   config.include FakeDateHelper
+  config.include FeatureHelper, type: :feature
+  config.include DateTimeHelper
 end

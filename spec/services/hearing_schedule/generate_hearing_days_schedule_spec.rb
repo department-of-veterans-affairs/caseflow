@@ -263,26 +263,5 @@ describe HearingSchedule::GenerateHearingDaysSchedule do
 
       it { expect { subject }.to raise_error(HearingSchedule::GenerateHearingDaysSchedule::NoDaysAvailableForRO) }
     end
-
-    context "too many co non-availability days", skip: "unclear test name" do
-      let(:co_non_availability_days) do
-        get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 126).map do |date|
-          create(:co_non_availability, date: date, schedule_period_id: schedule_period.id)
-        end
-      end
-
-      let(:ro_non_availability_days) do
-        {
-          "RO17" => get_unique_dates_for_ro_between("RO17", schedule_period, 0)
-        }
-      end
-      let(:ro_allocations) do
-        [
-          create(:allocation, regional_office: "RO17", allocated_days: 1, schedule_period: schedule_period)
-        ]
-      end
-
-      it { expect(subject["RO17"][:allocated_dates].values.map(&:size).inject(:+)).to eq(1) }
-    end
   end
 end

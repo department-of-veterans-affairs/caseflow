@@ -4,9 +4,9 @@ import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS } from '../constants';
 import RampElectionPage, { FinishButtons as RampElectionButtons } from './rampElection/finish';
 import RampRefilingPage, { FinishButtons as RampRefilingButtons } from './rampRefiling/finish';
-import SupplementalClaimPage, { FinishButtons as SupplementalClaimButtons } from './supplementalClaim/finish';
-import HigherLevelReviewPage, { FinishButtons as HigherLevelReviewButtons } from './higherLevelReview/finish';
-import AppealPage, { FinishButtons as AppealButtons } from './appeal/finish';
+import { FinishButtons as SupplementalClaimButtons } from './supplementalClaim/finish';
+import { FinishButtons as HigherLevelReviewButtons } from './higherLevelReview/finish';
+import { FinishButtons as AppealButtons } from './appeal/finish';
 import SwitchOnForm from '../components/SwitchOnForm';
 
 class Finish extends React.PureComponent {
@@ -14,10 +14,7 @@ class Finish extends React.PureComponent {
     <SwitchOnForm
       formComponentMapping={{
         ramp_election: <RampElectionPage />,
-        ramp_refiling: <RampRefilingPage />,
-        supplemental_claim: <SupplementalClaimPage />,
-        higher_level_review: <HigherLevelReviewPage />,
-        appeal: <AppealPage />
+        ramp_refiling: <RampRefilingPage />
       }}
       componentForNoFormSelected={<Redirect to={PAGE_PATHS.BEGIN} />}
     />;

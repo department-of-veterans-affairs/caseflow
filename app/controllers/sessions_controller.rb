@@ -4,7 +4,7 @@ class SessionsController < ApplicationController
   def new
     # :nocov:
     if Rails.application.config.sso_service_disabled
-      return render "errors/500", layout: "application", status: 503
+      return render "errors/500", layout: "application", status: :service_unavailable
     end
     # :nocov:
 
@@ -34,7 +34,7 @@ class SessionsController < ApplicationController
 
     # :nocov:
     unless regional_office
-      render json: { "error": "Required parameter 'regional_office' is missing." }, status: 400
+      render json: { "error": "Required parameter 'regional_office' is missing." }, status: :bad_request
       return
     end
     # :nocov:

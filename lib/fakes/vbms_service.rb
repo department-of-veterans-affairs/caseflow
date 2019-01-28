@@ -40,8 +40,9 @@ class Fakes::VBMSService
     @document_records ||= {}
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
-      @document_records[row_hash["vbms_id"].gsub(/[^0-9]/, "")] =
-        Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
+      vbms_id = row_hash["vbms_id"].gsub(/[^0-9]/, "")
+      @document_records[vbms_id] = Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
+      (@document_records[vbms_id] || []).each { |document| document.write_attribute(:file_number, vbms_id) }
     end
   end
 
@@ -113,6 +114,7 @@ class Fakes::VBMSService
   def self.establish_claim!(claim_hash:, veteran_hash:, user:)
     (HOLD_REQUEST_TIMEOUT_SECONDS * 100).times do
       break unless @hold_request
+
       sleep 0.01
     end
 
@@ -155,20 +157,19 @@ class Fakes::VBMSService
     (contention_records || {})[claim_id] || []
   end
 
-  def self.create_contentions!(veteran_file_number:, claim_id:, contention_descriptions:, special_issues: [], user:)
+  def self.create_contentions!(veteran_file_number:, claim_id:, contentions:, user:)
     Rails.logger.info("Submitting contentions to VBMS...")
     Rails.logger.info("File number: #{veteran_file_number}")
     Rails.logger.info("Claim id:\n #{claim_id}")
-    Rails.logger.info("Contention descriptions: #{contention_descriptions.inspect}")
-    Rails.logger.info("Special issues: #{special_issues.inspect}")
+    Rails.logger.info("Contentions: #{contentions.inspect}")
     Rails.logger.info("User:\n #{user}")
 
     # Used to simulate a contention that fails to be created in VBMS
-    contention_descriptions.delete("FAIL ME")
+    contentions.delete(description: "FAIL ME")
 
     # return fake list of contentions
-    contention_descriptions.map do |description|
-      Generators::Contention.build(text: description, claim_id: claim_id)
+    contentions.map do |contention|
+      Generators::Contention.build(text: contention[:description], claim_id: claim_id)
     end
   end
 

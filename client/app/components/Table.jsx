@@ -10,6 +10,7 @@ import { css, hover } from 'glamor';
 import FilterIcon from './FilterIcon';
 import DropdownFilter from './DropdownFilter';
 import ListItemPicker from './ListItemPicker';
+import ListItemPickerCheckbox from './ListItemPickerCheckbox';
 
 /**
  * This component can be used to easily build tables.
@@ -83,9 +84,15 @@ const HeaderRow = (props) => {
                 name={column.valueName}
                 isClearEnabled={column.anyFiltersAreSet}
                 handleClose={column.toggleDropdownFilterVisiblity}>
-                <ListItemPicker
-                  options={column.getFilterValues}
-                  setSelectedValue={column.setSelectedValue} />
+                { column.useCheckbox ?
+                  <ListItemPickerCheckbox
+                    options={column.getFilterValues}
+                    setSelectedValue={column.setSelectedValue}
+                    selected={column.checkSelectedValue} /> :
+                  <ListItemPicker
+                    options={column.getFilterValues}
+                    setSelectedValue={column.setSelectedValue} />
+                }
               </DropdownFilter>
             }
             </span>

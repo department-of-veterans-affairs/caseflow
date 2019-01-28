@@ -8,7 +8,7 @@ class BgsPowerOfAttorney
   bgs_attr_accessor :representative_name, :representative_type, :participant_id
 
   def representative_address
-    @bgs_representative_address ||= load_bgs_address!
+    @representative_address ||= load_bgs_address!
   end
 
   private

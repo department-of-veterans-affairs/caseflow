@@ -1,68 +1,34 @@
 class JudgeTask < Task
-  include RoundRobinAssigner
-
-  def available_actions(_user)
-    actions = [{ label: COPY::JUDGE_CHECKOUT_DISPATCH_LABEL, value: "dispatch_decision/special_issues" }]
-    actions = [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h] if action.eql? "assign"
-
-    actions << Constants.TASK_ACTIONS.MARK_COMPLETE.to_h if parent && parent.is_a?(QualityReviewTask)
-
-    actions
+  def available_actions(user)
+    additional_available_actions(user).unshift(Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h)
   end
 
-  def no_actions_available?(user)
-    assigned_to != user
+  def actions_available?(user)
+    assigned_to == user
+  end
+
+  def additional_available_actions(_user)
+    fail Caseflow::Error::MustImplementInSubclass
   end
 
   def timeline_title
     COPY::CASE_TIMELINE_JUDGE_TASK
   end
 
-  def self.create_from_params(params, user)
-    new_task = super(params, user)
-
-    parent = Task.find(params[:parent_id]) if params[:parent_id]
-    if parent && parent.is_a?(QualityReviewTask)
-      parent.update!(status: :on_hold)
-    end
-
-    new_task
-  end
-
-  def self.modify_params(params)
-    super(params.merge(type: JudgeAssignTask.name))
-  end
-
-  def self.verify_user_can_assign!(user)
-    QualityReview.singleton.user_has_access?(user) || super(user)
-  end
-
-  def update_from_params(params, _current_user)
-    return super unless parent && parent.is_a?(QualityReviewTask)
-
-    params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
-
-    update_status(params.delete("status")) if params.key?("status")
-    update(params)
-
-    [self]
-  end
-
-  def when_child_task_completed
-    update!(type: JudgeReviewTask.name)
-    super
-  end
-
   def previous_task
     fail Caseflow::Error::TooManyChildTasks, task_id: id if children_attorney_tasks.length > 1
+
     children_attorney_tasks[0]
   end
 
   #:nocov:
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   # This function to be manually run in production when we need to fetch all RAMP
-  # appeals that are eligible for assignment to judges, and assign them.
-  def self.assign_ramp_judge_tasks(dry_run: false, batch_size: 10)
+  # appeals that are eligible for assignment to judges, and assign them. This and related methods
+  # can be removed after AMA day.
+  def self.assign_ramp_judge_tasks(dry_run: true, batch_size: 10)
     # Find all unassigned tasks, sort them by the NOD date, and take the first N.
     tasks = unassigned_ramp_tasks.sort_by { |task| task.appeal.receipt_date }[0..batch_size - 1]
 
@@ -77,10 +43,10 @@ class JudgeTask < Task
       return
     end
 
-    assign_judge_tasks_for_root_tasks(tasks)
+    create_many_from_root_tasks(tasks)
   end
 
-  def self.assign_judge_tasks_for_root_tasks(root_tasks)
+  def self.create_many_from_root_tasks(root_tasks)
     root_tasks.each do |root_task|
       Rails.logger.info("Assigning judge task for appeal #{root_task.appeal.id}")
 
@@ -89,17 +55,19 @@ class JudgeTask < Task
         parent: root_task,
         appeal_type: Appeal.name,
         assigned_at: Time.zone.now,
-        assigned_to: next_assignee
+        assigned_to: JudgeAssignTaskDistributor.new.next_assignee
       )
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
     end
   end
 
   def self.unassigned_ramp_tasks
-    RootTask.includes(:appeal).all.select { |task| eligible_for_assigment?(task) }
+    RootTask.includes(:appeal).all.select { |task| eligible_for_assignment?(task) }
   end
 
-  def self.eligible_for_assigment?(task)
+  def self.eligible_for_assignment?(task)
+    return false if task.completed?
+    return false if task.appeal.nil?
     return false if task.appeal.class == LegacyAppeal
     return false if task.appeal.docket_name.nil?
     # Hearing cases will not be processed until February 2019
@@ -110,15 +78,11 @@ class JudgeTask < Task
     if task.appeal.evidence_submission_docket?
       return false if task.appeal.receipt_date > 90.days.ago
     end
-    # If the task already has been assigned to a judge, or if it
-    # is a VSO task, it will have children tasks. We only want to
-    # assign tasks that have not been assigned yet.
-    task.children.empty?
-  end
 
-  def self.list_of_assignees
-    Constants::RampJudges::USERS[Rails.current_env]
+    task.children.all? { |t| !t.is_a?(JudgeTask) && t.completed? }
   end
   #:nocov:
   # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 end

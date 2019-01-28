@@ -110,6 +110,26 @@ describe RemandReasonRepository do
         expect(BusinessMetrics).to_not receive(:record)
         subject
       end
+
+      context "when remand reasons are not passed" do
+        let(:initial_disposition) { nil }
+        let(:disposition) { "3" }
+
+        let(:issue_attrs) do
+          {
+            disposition: "3",
+            vacols_user_id: "TEST1",
+            readjudication: nil,
+            vacols_sequence_id: "3",
+            vacols_id: "123456",
+            remand_reasons: []
+          }
+        end
+
+        it "throws an error" do
+          expect { subject }.to raise_error(Caseflow::Error::RemandReasonRepositoryError)
+        end
+      end
     end
 
     context "when disposition is changed from remanded" do

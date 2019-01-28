@@ -6,7 +6,7 @@ describe AppealIntake do
   let(:veteran_file_number) { "64205555" }
   let(:user) { Generators::User.build }
   let(:detail) { nil }
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
   let(:completed_at) { nil }
 
   let(:intake) do
@@ -18,12 +18,25 @@ describe AppealIntake do
     )
   end
 
+  let(:profile_date) { Time.zone.local(2018, 9, 15) }
+
+  let!(:rating) do
+    Generators::Rating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: profile_date,
+      profile_date: profile_date,
+      issues: [
+        { reference_id: "reference-id", decision_text: "Left knee granted" }
+      ]
+    )
+  end
+
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
     let(:detail) do
       Appeal.create!(
-        veteran_file_number: "64205555",
+        veteran_file_number: veteran_file_number,
         receipt_date: 3.days.ago
       )
     end
@@ -39,10 +52,10 @@ describe AppealIntake do
     let!(:request_issue) do
       RequestIssue.new(
         review_request: detail,
-        rating_issue_profile_date: Time.zone.local(2018, 4, 30),
-        rating_issue_reference_id: "issue1",
-        contention_reference_id: "1234",
-        description: "description"
+        contested_rating_issue_profile_date: Time.zone.local(2018, 4, 30),
+        contested_rating_issue_reference_id: "issue1",
+        contested_issue_description: "description",
+        contention_reference_id: "1234"
       )
     end
 
@@ -118,7 +131,7 @@ describe AppealIntake do
     context "Claimant is different than Veteran" do
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
-      let(:veteran_is_not_claimant) { "true" }
+      let(:veteran_is_not_claimant) { true }
 
       it "adds other relationship to claimants" do
         subject
@@ -147,21 +160,28 @@ describe AppealIntake do
   context "#complete!" do
     subject { intake.complete!(params) }
 
+    let(:legacy_opt_in_approved) { false }
+
     let(:params) { { request_issues: issue_data } }
 
     let(:issue_data) do
       [
-        { profile_date: "2018-04-30", reference_id: "reference-id", decision_text: "decision text" },
+        {
+          rating_issue_reference_id: "reference-id",
+          decision_text: "decision text"
+        },
         { decision_text: "nonrating request issue decision text",
           issue_category: "test issue category",
+          benefit_type: "compensation",
           decision_date: "2018-12-25" }
       ]
     end
 
     let(:detail) do
       Appeal.create!(
-        veteran_file_number: "64205555",
-        receipt_date: 3.days.ago
+        veteran_file_number: veteran_file_number,
+        receipt_date: 3.days.ago,
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 
@@ -172,39 +192,60 @@ describe AppealIntake do
       expect(intake.detail.established_at).to_not be_nil
       expect(intake.detail.request_issues.count).to eq 2
       expect(intake.detail.request_issues.first).to have_attributes(
-        rating_issue_reference_id: "reference-id",
-        rating_issue_profile_date: Time.zone.local(2018, 4, 30),
-        description: "decision text"
+        contested_rating_issue_reference_id: "reference-id",
+        contested_issue_description: "decision text"
       )
       expect(intake.detail.request_issues.second).to have_attributes(
         issue_category: "test issue category",
         decision_date: Date.new(2018, 12, 25),
-        description: "nonrating request issue decision text"
+        nonrating_issue_description: "nonrating request issue decision text"
       )
       expect(intake.detail.tasks.count).to eq 1
+      expect(intake.detail.submitted?).to eq true
+      expect(intake.detail.attempted?).to eq true
+      expect(intake.detail.processed?).to eq true
     end
 
     context "when a legacy VACOLS opt-in occurs" do
+      let(:vacols_issue) { create(:case_issue) }
+      let(:vacols_case) { create(:case, case_issues: [vacols_issue]) }
+      let(:legacy_appeal) do
+        create(:legacy_appeal, vacols_case: vacols_case)
+      end
+
       let(:issue_data) do
         [
           {
             profile_date: "2018-04-30",
-            reference_id: "reference-id",
+            rating_issue_reference_id: "reference-id",
             decision_text: "decision text",
-            vacols_id: "a-vacols-issue",
-            vacols_sequence_id: "vacols-seq"
+            vacols_id: legacy_appeal.vacols_id,
+            vacols_sequence_id: vacols_issue.issseq
           }
         ]
       end
 
-      it "submits a LegacyIssueOptin" do
-        expect(LegacyIssueOptin.count).to eq 0
-        expect(LegacyOptinProcessJob).to receive(:perform_now).once
+      context "legacy_opt_in_approved is false" do
+        it "does not submit a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
 
-        subject
+          subject
 
-        expect(LegacyIssueOptin.count).to eq 1
-        expect(LegacyIssueOptin.first).to be_submitted
+          expect(LegacyIssueOptin.count).to eq 0
+        end
+      end
+
+      context "legacy_opt_approved is true" do
+        let(:legacy_opt_in_approved) { true }
+
+        it "submits a LegacyIssueOptin" do
+          expect(LegacyIssueOptin.count).to eq 0
+          expect_any_instance_of(LegacyOptinManager).to receive(:process!).once
+
+          subject
+
+          expect(LegacyIssueOptin.count).to eq 1
+        end
       end
     end
   end

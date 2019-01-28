@@ -23,6 +23,7 @@ class Generators::Random
     def unique_ssn
       my_ssn = ssn
       return unique_ssn if @unique_ssns[my_ssn]
+
       @unique_ssns[my_ssn] = 1
       my_ssn
     end

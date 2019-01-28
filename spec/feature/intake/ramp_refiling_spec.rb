@@ -1,6 +1,9 @@
 require "rails_helper"
+require "support/intake_helpers"
 
 RSpec.feature "RAMP Refiling Intake" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:intake)
 
@@ -83,7 +86,8 @@ RSpec.feature "RAMP Refiling Intake" do
         bgs_attrs: { status_type_code: "PEND" }
       ).claim_id
 
-      EndProductEstablishment.create!(
+      create(
+        :end_product_establishment,
         veteran_file_number: veteran.file_number,
         source: r,
         established_at: 2.days.ago,
@@ -123,7 +127,8 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      create(
+        :end_product_establishment,
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -151,7 +156,7 @@ RSpec.feature "RAMP Refiling Intake" do
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       expect(page).to have_content("Ineligible for Higher-Level Review")
       expect(page).to have_button("Continue to next step", disabled: true)
@@ -178,7 +183,8 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      create(
+        :end_product_establishment,
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -202,7 +208,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       expect_any_instance_of(RampRefilingIntake).to receive(:review!).and_raise("A random error. Oh no!")
 
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       expect(page).to have_content("Something went wrong")
       expect(page).to have_current_path("/intake/review_request")
@@ -220,7 +226,8 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      create(
+        :end_product_establishment,
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -265,14 +272,14 @@ RSpec.feature "RAMP Refiling Intake" do
         find("label", text: "Appeal to Board").click
       end
 
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       expect(page).to have_content(
         "Receipt date cannot be earlier than the original RAMP election receipt date of 12/03/2017"
       )
 
       fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       expect(page).to have_content("Please select an option")
 
@@ -280,7 +287,7 @@ RSpec.feature "RAMP Refiling Intake" do
         find("label", text: "Evidence Submission").click
       end
 
-      safe_click "#button-submit-review"
+      click_intake_continue
       expect(page).to have_content("Finish processing RAMP Selection form")
 
       ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
@@ -331,7 +338,8 @@ RSpec.feature "RAMP Refiling Intake" do
         bgs_attrs: { status_type_code: "CLR" }
       ).claim_id
 
-      EndProductEstablishment.create!(
+      create(
+        :end_product_establishment,
         veteran_file_number: "12341234",
         source: ramp_election,
         established_at: 2.days.ago,
@@ -363,7 +371,7 @@ RSpec.feature "RAMP Refiling Intake" do
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Supplemental Claim", match: :prefer_exact).click
       end
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "Left knee rating increase").click
@@ -403,7 +411,7 @@ RSpec.feature "RAMP Refiling Intake" do
       expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: "12341234",
         claim_id: "SHANE9123242",
-        contention_descriptions: ["Left knee rating increase"],
+        contentions: [{ description: "Left knee rating increase" }],
         user: current_user
       )
 
@@ -429,7 +437,8 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      create(
+        :end_product_establishment,
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -457,7 +466,7 @@ RSpec.feature "RAMP Refiling Intake" do
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Supplemental Claim", match: :prefer_exact).click
       end
-      safe_click "#button-submit-review"
+      click_intake_continue
 
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "The Veteran's form lists at least one ineligible contention").click
@@ -487,7 +496,8 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      create(
+        :end_product_establishment,
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -511,7 +521,7 @@ RSpec.feature "RAMP Refiling Intake" do
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
-      safe_click "#button-submit-review"
+      click_intake_continue
       click_label("confirm-outside-caseflow-steps")
       find("label", text: "Left knee rating increase").click
       find("label", text: "The Veteran's form lists at least one ineligible contention").click

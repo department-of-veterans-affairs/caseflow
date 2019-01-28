@@ -1,6 +1,7 @@
 module AddressMapper
   def get_address_from_bgs_address(bgs_address)
     return {} unless bgs_address
+
     {
       address_line_1: bgs_address[:addrs_one_txt],
       address_line_2: bgs_address[:addrs_two_txt],
@@ -14,6 +15,7 @@ module AddressMapper
 
   def get_address_from_corres_entry(corres_entry)
     return {} unless corres_entry
+
     {
       address_line_1: corres_entry.saddrst1,
       address_line_2: corres_entry.saddrst2,
@@ -26,6 +28,7 @@ module AddressMapper
 
   def get_address_from_rep_entry(rep_entry)
     return {} unless rep_entry
+
     {
       address_line_1: rep_entry.repaddr1,
       address_line_2: rep_entry.repaddr2,

@@ -56,6 +56,31 @@ describe JudgeTeam do
     end
   end
 
+  context "a judge team with attorneys on it" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:judge) { Judge.new(user) }
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
+    let(:attorneys) { FactoryBot.create_list(:user, 5) }
+
+    before do
+      attorneys.each do |u|
+        OrganizationsUser.add_user_to_organization(u, judge_team)
+      end
+    end
+
+    describe ".judge" do
+      it "returns the team judge" do
+        expect(judge_team.judge).to eq judge.user
+      end
+    end
+
+    describe ".attorneys" do
+      it "returns the team attorneys" do
+        expect(judge_team.attorneys).to match_array attorneys
+      end
+    end
+  end
+
   describe ".can_receive_task?" do
     it "should return false because judge teams should not have tasks assigned to them in the web UI" do
       expect(JudgeTeam.create_for_judge(judge).can_receive_task?(nil)).to eq(false)

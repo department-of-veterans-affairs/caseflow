@@ -12,7 +12,7 @@ class PowerOfAttorneyRepository
 
     true
   rescue ActiveRecord::RecordNotFound
-    return false
+    false
   end
 
   def self.set_vacols_values(poa:, case_record:, representative:)
@@ -75,6 +75,7 @@ class PowerOfAttorneyRepository
 
   def self.split_representative_name(representative_name)
     return "", "", "" unless representative_is_person?(representative_name)
+
     split_name = representative_name.strip.split(" ")
 
     return split_name[0], "", split_name[1] if first_last_name?(representative_name)

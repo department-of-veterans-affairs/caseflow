@@ -170,7 +170,10 @@ class SearchableDropdown extends React.Component<Props, ComponentState> {
       <div className={errorMessage ? 'usa-input-error' : ''}>
         {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
         <SelectComponent
-          inputProps={{ id: name }}
+          inputProps={{
+            id: name,
+            autoComplete: 'off'
+          }}
           options={options}
           onChange={this.onChange}
           value={this.state.value}

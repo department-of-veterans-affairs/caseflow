@@ -14,6 +14,7 @@ class UserRepository
     def user_info_for_idt(css_id)
       staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
       return {} unless staff_record
+
       {
         first_name: staff_record.snamef,
         middle_name: staff_record.snamemi,
@@ -65,6 +66,15 @@ class UserRepository
       staff.first.try(:sdomainid)
     end
     # :nocov:
+    #
+
+    def find_all_hearing_coordinators
+      coordinator_records = VACOLS::Staff.where(sdept: "HRG", sactive: "A")
+
+      coordinator_records.select(&:sdomainid).map do |record|
+        User.find_by_css_id_or_create_with_default_station_id(record.sdomainid)
+      end
+    end
 
     private
 
@@ -94,6 +104,7 @@ class UserRepository
 
     def check_other_staff_fields(staff_record)
       return ["attorney"] if staff_record.sattyid
+
       roles = []
       roles << "colocated" if staff_record.stitle == "A1" || staff_record.stitle == "A2"
       roles << "dispatch" if staff_record.sdept == "DSP"
@@ -108,6 +119,7 @@ class UserRepository
     # If the STAFF.SVLJ is nil and STAFF.SATTYID is not nil then it is an attorney.
     def vacols_roles(staff_record)
       return roles_based_on_staff_fields(staff_record) if staff_record
+
       []
     end
 

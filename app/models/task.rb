@@ -9,14 +9,18 @@ class Task < ApplicationRecord
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
-  before_create :set_assigned_at_and_update_parent_status
+  before_create :set_assigned_at
+  after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
+  after_create :put_parent_on_hold
+
   before_update :set_timestamps
+  after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
 
   enum status: {
-    Constants.TASK_STATUSES.assigned.to_sym    => Constants.TASK_STATUSES.assigned,
+    Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
-    Constants.TASK_STATUSES.on_hold.to_sym     => Constants.TASK_STATUSES.on_hold,
-    Constants.TASK_STATUSES.completed.to_sym   => Constants.TASK_STATUSES.completed
+    Constants.TASK_STATUSES.on_hold.to_sym => Constants.TASK_STATUSES.on_hold,
+    Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed
   }
 
   def available_actions(_user)
@@ -31,18 +35,27 @@ class Task < ApplicationRecord
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
-    no_actions_available?(user) ? [] : available_actions(user).map { |action| build_action_hash(action) }
+    actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
+
+    # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
+    if actions.length > actions.pluck(:value).uniq.length
+      fail Caseflow::Error::DuplicateTaskActionPaths, task_id: id, user_id: user.id, labels: actions.pluck(:label)
+    end
+
+    actions
   end
 
-  def build_action_hash(action)
-    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func]) : nil }
+  def build_action_hash(action, user)
+    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func], user) : nil }
   end
 
-  def no_actions_available?(user)
-    return true if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
+  def actions_available?(user)
+    return false if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
-    assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
+    return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
+
+    true
   end
 
   def assigned_by_display_name
@@ -74,35 +87,31 @@ class Task < ApplicationRecord
   end
 
   def self.create_from_params(params, user)
-    verify_user_can_assign!(user)
+    parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
+    verify_user_can_create!(user, parent_task)
     params = modify_params(params)
-    create(params)
+    create!(params)
   end
 
   def self.modify_params(params)
-    if params.key?("instructions") && !params[:instructions].is_a?(Array)
-      params["instructions"] = [params["instructions"]]
+    if params.key?(:instructions) && !params[:instructions].is_a?(Array)
+      params[:instructions] = [params[:instructions]]
     end
     params
   end
 
-  def update_from_params(params, _current_user)
+  def update_from_params(params, current_user)
+    verify_user_can_update!(current_user)
+
+    return reassign(params[:reassign], current_user) if params[:reassign]
+
     params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
-    update(params)
+    update!(params)
 
     [self]
   end
 
-  def update_status(new_status)
-    return unless new_status
-
-    case new_status
-    when Constants.TASK_STATUSES.completed
-      mark_as_complete!
-    else
-      update!(status: new_status)
-    end
-  end
+  def reassign; end
 
   def legacy?
     appeal_type == LegacyAppeal.name
@@ -114,10 +123,6 @@ class Task < ApplicationRecord
 
   def days_waiting
     (Time.zone.today - assigned_at.to_date).to_i if assigned_at
-  end
-
-  def colocated_task?
-    type == ColocatedTask.name
   end
 
   def latest_attorney_case_review
@@ -134,34 +139,34 @@ class Task < ApplicationRecord
     ["", ""]
   end
 
-  def mark_as_complete!
-    update!(status: :completed)
-    parent.when_child_task_completed if parent
-  end
-
   def when_child_task_completed
     update_status_if_children_tasks_are_complete
   end
 
-  def can_be_accessed_by_user?(user)
-    if assigned_to == user ||
-       assigned_by == user ||
-       (parent && parent.assigned_to == user) ||
-       Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].keys.include?(user.css_id)
-      return true
-    end
+  def can_be_updated_by_user?(user)
+    return true if [assigned_to, assigned_by].include?(user) ||
+                   parent&.assigned_to == user ||
+                   user.administered_teams.select { |team| team.is_a?(JudgeTeam) }.any?
+
     false
   end
 
-  def verify_user_access!(user)
-    unless can_be_accessed_by_user?(user)
+  def verify_user_can_update!(user)
+    unless can_be_updated_by_user?(user)
       fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
     end
   end
 
-  def self.verify_user_can_assign!(user)
-    unless user.attorney_in_vacols? || user.judge_in_vacols?
-      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot assign this task"
+  def self.verify_user_can_create!(user, parent)
+    can_create = parent&.available_actions_unwrapper(user)&.any? do |action|
+      action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
+    end
+
+    unless can_create
+      user_description = user ? "User #{user.id}" : "nil User"
+      parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
+      message = "#{user_description} cannot assign #{name}#{parent_description}."
+      fail Caseflow::Error::ActionForbiddenError, message: message
     end
   end
 
@@ -169,6 +174,7 @@ class Task < ApplicationRecord
     task_id = id if task_id.nil?
     return parent.root_task(task_id) if parent
     return self if type == RootTask.name
+
     fail Caseflow::Error::NoRootTask, task_id: task_id
   end
 
@@ -176,7 +182,7 @@ class Task < ApplicationRecord
     nil
   end
 
-  def assign_to_organization_data
+  def assign_to_organization_data(_user = nil)
     organizations = Organization.assignable(self).map do |organization|
       {
         label: organization.name,
@@ -191,31 +197,91 @@ class Task < ApplicationRecord
     }
   end
 
-  def mail_assign_to_organization_data
-    assign_to_organization_data.merge(type: MailTask.name)
+  def mail_assign_to_organization_data(_user = nil)
+    { options: MailTask.subclass_routing_options }
   end
 
-  def assign_to_user_data
+  def assign_to_user_data(user = nil)
     users = if assigned_to.is_a?(Organization)
               assigned_to.users
-            elsif parent && parent.assigned_to.is_a?(Organization)
+            elsif parent&.assigned_to.is_a?(Organization)
               parent.assigned_to.users.reject { |u| u == assigned_to }
             else
               []
             end
 
     {
-      selected: nil,
+      selected: user,
       options: users_to_options(users),
       type: type
     }
   end
 
-  def assign_to_judge_data
+  def assign_to_judge_data(_user = nil)
     {
-      selected: root_task.children.find { |task| task.is_a?(JudgeTask) }.assigned_to,
+      selected: root_task.children.find { |task| task.is_a?(JudgeTask) }&.assigned_to,
       options: users_to_options(Judge.list_all),
-      type: JudgeAssignTask.name
+      type: JudgeQualityReviewTask.name
+    }
+  end
+
+  def assign_to_attorney_data(_user = nil)
+    {
+      selected: nil,
+      options: nil,
+      type: AttorneyTask.name
+    }
+  end
+
+  def assign_to_privacy_team_data(_user = nil)
+    org = PrivacyTeam.singleton
+
+    {
+      selected: org,
+      options: [{ label: org.name, value: org.id }],
+      type: GenericTask.name
+    }
+  end
+
+  def assign_to_translation_team_data(_user = nil)
+    org = Translation.singleton
+
+    {
+      selected: org,
+      options: [{ label: org.name, value: org.id }],
+      type: GenericTask.name
+    }
+  end
+
+  def add_admin_action_data(_user = nil)
+    {
+      selected: nil,
+      options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
+        {
+          label: value,
+          value: key
+        }
+      end,
+      type: ColocatedTask.name
+    }
+  end
+
+  def schedule_veteran_data(_user = nil)
+    {
+      selected: nil,
+      options: nil,
+      type: ScheduleHearingTask.name
+    }
+  end
+
+  def return_to_attorney_data(_user = nil)
+    assignee = children.select { |t| t.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
+    attorneys = JudgeTeam.for_judge(assigned_to)&.attorneys || []
+    attorneys |= [assignee] if assignee.present?
+    {
+      selected: assignee,
+      options: users_to_options(attorneys),
+      type: AttorneyRewriteTask.name
     }
   end
 
@@ -230,7 +296,42 @@ class Task < ApplicationRecord
     }
   end
 
+  def update_if_hold_expired!
+    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
+  end
+
+  def on_hold_expired?
+    return true if on_hold? && placed_on_hold_at && on_hold_duration &&
+                   placed_on_hold_at + on_hold_duration.days < Time.zone.now
+
+    false
+  end
+
+  def serializer_class
+    ::WorkQueue::TaskSerializer
+  end
+
   private
+
+  def create_and_auto_assign_child_task(options = {})
+    dup.tap do |child_task|
+      child_task.assigned_to = assigned_to.next_assignee(**options)
+      child_task.parent = self
+      child_task.save!
+    end
+  end
+
+  def automatically_assign_org_task?
+    assigned_to.is_a?(Organization) && assigned_to.automatically_assign_to_member?
+  end
+
+  def update_parent_status
+    parent.when_child_task_completed
+  end
+
+  def status_changed_to_completed_and_has_parent?
+    saved_change_to_attribute?("status") && completed? && parent
+  end
 
   def users_to_options(users)
     users.map do |user|
@@ -243,16 +344,17 @@ class Task < ApplicationRecord
 
   def update_status_if_children_tasks_are_complete
     if children.any? && children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.empty?
-      return mark_as_complete! if assigned_to.is_a?(Organization)
+      return update!(status: Constants.TASK_STATUSES.completed) if assigned_to.is_a?(Organization)
       return update!(status: :assigned) if on_hold?
     end
   end
 
-  def set_assigned_at_and_update_parent_status
-    self.assigned_at = created_at
-    if ama? && parent
-      parent.update(status: :on_hold)
-    end
+  def set_assigned_at
+    self.assigned_at = created_at unless assigned_at
+  end
+
+  def put_parent_on_hold
+    parent&.update(status: :on_hold)
   end
 
   def set_timestamps

@@ -41,7 +41,7 @@ class Generators::Rating
       Fakes::BGSService.rating_profile_records[attrs[:participant_id]][attrs[:profile_date]] =
         bgs_rating_profile_data(attrs)
 
-      Rating.new(attrs.except(:issues, :associated_claims))
+      Rating.new(attrs.except(:issues, :associated_claims, :disabilities))
     end
 
     private
@@ -66,7 +66,8 @@ class Generators::Rating
           rba_issue_contentions: {
             prfil_dt: issue[:profile_date],
             cntntn_id: issue[:contention_reference_id]
-          }
+          },
+          dis_sn: issue[:dis_sn]
         }
       end
 
@@ -83,7 +84,8 @@ class Generators::Rating
     def bgs_rating_profile_data(attrs)
       {
         rating_issues: bgs_rating_issues_data(attrs),
-        associated_claims: bgs_associated_claims_data(attrs)
+        associated_claims: bgs_associated_claims_data(attrs),
+        disabilities: attrs[:disabilities]
       }
     end
 
@@ -100,16 +102,12 @@ class Generators::Rating
       end
     end
 
-    def get_prev_issues_count(participant_id)
-      Fakes::BGSService.rating_profile_records[participant_id].values.flatten(1).count
-    end
-
     def populate_issue_ids(attrs)
       return unless attrs[:issues]
+
       # gives a unique id to each issue that is tied to a specific participant_id
-      prev_count = get_prev_issues_count(attrs[:participant_id])
-      attrs[:issues].each_with_index.map do |issue, i|
-        issue[:reference_id] ||= "#{attrs[:participant_id]}#{prev_count + i}"
+      attrs[:issues].map do |issue|
+        issue[:reference_id] ||= "#{attrs[:participant_id]}#{generate_external_id}"
         issue
       end
     end

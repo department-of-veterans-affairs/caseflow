@@ -5,8 +5,26 @@ import React from 'react';
 import { removeIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
 
+const removeIssueMessage = (formType) => {
+  if (formType === 'appeal') {
+    return <div>
+      <p>The issue you selected will be removed from the list of issues on appeal.</p>
+      <p>Are you sure that this issue is not listed on the veteran's NOD and that you want to remove it?</p> </div>;
+  }
+
+  return <div>
+    <p>The contention you selected will be removed from the EP in VBMS.</p>
+    <p>Are you sure you want to remove this issue?</p> </div>;
+
+};
+
 class RemoveIssueModal extends React.PureComponent {
   render() {
+    const {
+      intakeData,
+      removeIndex
+    } = this.props;
+
     return <div className="intake-remove-issue">
       <Modal
         buttons={[
@@ -18,7 +36,7 @@ class RemoveIssueModal extends React.PureComponent {
             name: 'Yes, remove issue',
             onClick: () => {
               this.props.closeHandler();
-              this.props.removeIssue(this.props.removeIndex);
+              this.props.removeIssue(removeIndex);
             }
           }
         ]}
@@ -26,8 +44,9 @@ class RemoveIssueModal extends React.PureComponent {
         closeHandler={this.props.closeHandler}
         title="Remove issue"
       >
-        <p>The contention you selected will be removed from the EP in VBMS.</p>
-        <p>Are you sure you want to remove this issue?</p>
+
+        { removeIssueMessage(intakeData.formType) }
+
       </Modal>
     </div>;
   }

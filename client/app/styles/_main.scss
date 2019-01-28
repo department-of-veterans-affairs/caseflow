@@ -383,3 +383,8 @@ select {
   color: $color-gray-dark;
   text-transform: uppercase;
 }
+// this can be used in other areas where the text doesn't indent on multiline labels
+.special-options label {
+  margin-left: 1.5em;
+  text-indent: -1.7em;
+}

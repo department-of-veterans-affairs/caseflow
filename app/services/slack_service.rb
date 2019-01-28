@@ -9,6 +9,7 @@ class SlackService
 
   def send_notification(msg)
     return unless url
+
     body = { "text": msg }.to_json
     params = { body: body, headers: { "Content-Type" => "application/json" } }
     http_service.post(url, params)

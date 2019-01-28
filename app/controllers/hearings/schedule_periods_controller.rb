@@ -25,7 +25,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
     render json: { schedule_period: sp }
   rescue HearingSchedule::Errors::NotEnoughAvailableDays,
          HearingSchedule::Errors::CannotAssignJudges => error
-    render json: { error: error.message, details: error.details, type: schedule_period.type }, status: 422
+    render_error_for_show_action(error)
   end
 
   def create
@@ -44,7 +44,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
       schedule_period.schedule_confirmed(schedule_period.algorithm_assignments)
       render json: { id: schedule_period.id }
     else
-      render json: { error: "This schedule period cannot be finalized." }, status: 422
+      render json: { error: "This schedule period cannot be finalized." }, status: :unprocessable_entity
     end
   end
 
@@ -58,11 +58,22 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
     )
   end
 
+  private
+
   def schedule_period_params
     params.require(:schedule_period).permit(:type, :file, :start_date, :end_date)
   end
 
   def schedule_period
     SchedulePeriod.find(params[:schedule_period_id])
+  end
+
+  def render_error_for_show_action(error)
+    render(
+      json: {
+        error: error.message, details: error.details, type: schedule_period.type
+      },
+      status: :unprocessable_entity
+    )
   end
 end

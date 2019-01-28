@@ -22,6 +22,7 @@ export const initialState = {
   amaTasks: {},
   appeals: {},
   appealDetails: {},
+  claimReviews: {},
   editingIssue: {},
   docCountForAppeal: {},
   newDocsForAppeal: {},
@@ -71,6 +72,12 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       },
       appealDetails: {
         $merge: action.payload.appealDetails
+      }
+    });
+  case ACTIONS.RECEIVE_CLAIM_REVIEW_DETAILS:
+    return update(state, {
+      claimReviews: {
+        $merge: action.payload.claimReviews
       }
     });
   case ACTIONS.RECEIVE_TASKS:
@@ -148,6 +155,14 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     };
+  case ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT:
+    return update(state, {
+      docCountForAppeal: {
+        [action.payload.appealId]: {
+          $set: 'Failed to load'
+        }
+      }
+    });
   case ACTIONS.SET_APPEAL_DOC_COUNT:
     return update(state, {
       docCountForAppeal: {

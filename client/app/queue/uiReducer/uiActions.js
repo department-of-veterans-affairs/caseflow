@@ -82,7 +82,7 @@ const saveFailure = (resp: Object) => (dispatch: Dispatch) => {
   dispatch(showErrorMessage(responseObject.errors[0]));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
 
-  return Promise.reject(responseObject.errors[0]);
+  return Promise.reject(new Error(response.text));
 };
 
 export const requestSave = (

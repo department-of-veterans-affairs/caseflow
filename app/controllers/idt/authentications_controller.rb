@@ -4,11 +4,11 @@ class Idt::AuthenticationsController < ApplicationController
   def index
     key = params[:one_time_key]
 
-    return render json: { message: "Missing key." }, status: 400 unless key
+    return render json: { message: "Missing key." }, status: :bad_request unless key
 
     Idt::Token.activate_proposed_token(key, current_user.css_id)
     render json: { message: "Success!" }
   rescue Caseflow::Error::InvalidOneTimeKey
-    render json: { message: "Invalid key." }, status: 400
+    render json: { message: "Invalid key." }, status: :bad_request
   end
 end

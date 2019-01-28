@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
@@ -9,6 +8,7 @@ import AutoSave from '../components/AutoSave';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
 import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
+import ContestedIssues from '../queue/components/ContestedIssues';
 import { now } from './util/DateUtil';
 import { CATEGORIES, ACTIONS } from './analytics';
 import WorksheetFooter from './components/WorksheetFooter';
@@ -16,6 +16,7 @@ import LoadingScreen from '../components/LoadingScreen';
 import CFRichTextEditor from '../components/CFRichTextEditor';
 import DOMPurify from 'dompurify';
 import Button from '../components/Button';
+import ContentSection from '../components/ContentSection';
 
 // TODO Move all stream related to streams container
 import HearingWorksheetDocs from './components/HearingWorksheetDocs';
@@ -94,7 +95,11 @@ export class HearingWorksheet extends React.PureComponent {
     }
   }
 
-  getWorksheetTitle = () => `${this.props.worksheet.veteran_fi_last_formatted}'s ${document.title}`;
+  getWorksheetTitle = () => {
+    const { worksheet } = this.props;
+
+    return `${worksheet.veteran_first_name[0]}. ${worksheet.veteran_last_name}'s ${document.title}`;
+  };
 
   save = (worksheet, worksheetIssues) => () => {
     this.props.saveWorksheet(worksheet);
@@ -110,20 +115,36 @@ export class HearingWorksheet extends React.PureComponent {
 
   onSummaryChange = (value) => this.props.onSummaryChange(value);
 
+  getLegacyHearingWorksheet = () => {
+    return <div>
+      <HearingWorksheetDocs {...this.props} />
+      <HearingWorksheetStream {...this.props} print={this.props.print} />
+    </div>;
+  };
+
+  getHearingWorksheet = () => {
+    return <div className="cf-hearings-worksheet-data cf-hearings-worksheet-issues">
+      <ContentSection
+        header={<div>Issues</div>}
+        content={<ContestedIssues
+          requestIssues={_.values(this.props.worksheetIssues)}
+          decisionIssues={[]}
+          hearingWorksheet
+        />}
+      />
+    </div>;
+  };
+
   render() {
     let { worksheet, worksheetIssues, fetchingWorksheet } = this.props;
-    const appellant = worksheet.appellant_mi_formatted ?
-      worksheet.appellant_mi_formatted : worksheet.veteran_mi_formatted;
 
     const worksheetHeader = <WorksheetHeader
       print={this.props.print}
-      appellant={appellant}
     />;
 
     const firstWorksheetPage = <div className="cf-hearings-first-page">
       {worksheetHeader}
-      <HearingWorksheetDocs {...this.props} />
-      <HearingWorksheetStream {...this.props} print={this.props.print} />
+      {this.props.worksheet.docket_name === 'hearing' ? this.getHearingWorksheet() : this.getLegacyHearingWorksheet()}
       {this.props.print &&
         <WorksheetFooter
           veteranName={this.props.worksheet.veteran_fi_last_formatted}

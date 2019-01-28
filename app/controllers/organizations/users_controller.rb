@@ -20,13 +20,13 @@ class Organizations::UsersController < OrganizationsController
   def create
     OrganizationsUser.add_user_to_organization(user_to_modify, organization)
 
-    render json: { users: json_users([user_to_modify]) }, status: 200
+    render json: { users: json_users([user_to_modify]) }, status: :ok
   end
 
   def destroy
     OrganizationsUser.remove_user_from_organization(user_to_modify, organization)
 
-    render json: { users: json_users([user_to_modify]) }, status: 200
+    render json: { users: json_users([user_to_modify]) }, status: :ok
   end
 
   def verify_organization_access

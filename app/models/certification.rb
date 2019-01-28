@@ -10,7 +10,7 @@ class Certification < ApplicationRecord
   def async_start!
     return certification_status unless can_be_updated?
 
-    update_attributes!(
+    update!(
       v2: true,
       loading_data: true,
       loading_data_failed: false,
@@ -94,7 +94,7 @@ class Certification < ApplicationRecord
   def complete!(user_id)
     update_vacols_poa! unless poa_matches || poa_correct_in_vacols
     appeal.certify!
-    update_attributes!(completed_at: Time.zone.now, user_id: user_id)
+    update!(completed_at: Time.zone.now, user_id: user_id)
   end
 
   # VACOLS attributes
@@ -108,6 +108,7 @@ class Certification < ApplicationRecord
 
   def time_to_certify
     return nil if !completed_at || !created_at
+
     completed_at - created_at
   end
 

@@ -19,7 +19,7 @@ class Api::ApplicationController < ActionController::Base
         "title": "Unknown error occured",
         "detail": "#{error} (Sentry event id: #{Raven.last_event_id})"
       ]
-    }, status: 500
+    }, status: :internal_server_error
   end
 
   private
@@ -40,7 +40,7 @@ class Api::ApplicationController < ActionController::Base
   end
 
   def unauthorized
-    render json: { status: "unauthorized" }, status: 401
+    render json: { status: "unauthorized" }, status: :unauthorized
   end
 
   def ssl_enabled?

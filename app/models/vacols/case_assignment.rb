@@ -93,7 +93,7 @@ class VACOLS::CaseAssignment < VACOLS::Record
     end
 
     def latest_task_for_appeal(appeal_id)
-      tasks_for_appeal(appeal_id).sort_by(&:created_at).last
+      tasks_for_appeal(appeal_id).max_by(&:created_at)
     end
 
     # rubocop:disable Metrics/MethodLength

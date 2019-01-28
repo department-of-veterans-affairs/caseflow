@@ -6,6 +6,7 @@ class RoNonAvailability < NonAvailability
       transaction do
         dates.each do |date|
           next if date["date"] == "N/A"
+
           ro_non_availability << RoNonAvailability.create!(schedule_period: schedule_period,
                                                            date: date["date"],
                                                            object_identifier: date["ro_code"])

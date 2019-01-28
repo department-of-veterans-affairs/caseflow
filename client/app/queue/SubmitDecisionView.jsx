@@ -194,6 +194,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
         value={decisionOpts.document_id}
         maxLength={DOCUMENT_ID_MAX_LENGTH}
+        autoComplete="off"
       />
       <JudgeSelectComponent assignedByCssId={
         (this.props.task && this.props.task.addedByCssId) || '' /* not compatible with AMA tasks */
@@ -238,7 +239,7 @@ const mapStateToProps = (state, ownProps) => {
     error,
     userRole,
     highlightFormItems,
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues
+    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)
   };
 };
 

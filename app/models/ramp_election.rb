@@ -31,10 +31,8 @@ class RampElection < RampReview
     transaction do
       issues.destroy_all
 
-      if contentions
-        contentions.each do |contention|
-          issues.create!(contention: contention)
-        end
+      contentions&.each do |contention|
+        issues.create!(contention: contention)
       end
     end
   end
@@ -86,6 +84,7 @@ class RampElection < RampReview
 
   def validate_receipt_date
     return unless receipt_date
+
     validate_receipt_date_not_before_ramp
     validate_receipt_date_not_in_future
   end

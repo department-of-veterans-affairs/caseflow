@@ -1,42 +1,6 @@
 class AppealEvent
   include ActiveModel::Model
 
-  V1_EVENT_TYPE_FOR_DISPOSITIONS = {
-    bva_final_decision: [
-      "Allowed",
-      "Denied",
-      "Vacated",
-      "Dismissed, Death",
-      "Dismissed, Withdrawn"
-    ],
-    bva_remand: [
-      "Remanded",
-      "Manlincon Remand"
-    ],
-    field_grant: [
-      "Benefits Granted by AOJ",
-      "Advance Allowed in Field"
-    ],
-    withdrawn: [
-      "Withdrawn",
-      "Motion to Vacate Withdrawn",
-      "Withdrawn from Remand",
-      "Recon Motion Withdrawn",
-      "Advance Withdrawn Death of Veteran",
-      "Advance Withdrawn by Appellant/Rep",
-      "Advance Failure to Respond",
-      "Remand Failure to Respond",
-      "RAMP Opt-in"
-    ],
-    merged: [
-      "Merged Appeal"
-    ],
-    other: [
-      "Designation of Record",
-      "Reconsideration by Letter"
-    ]
-  }.freeze
-
   EVENT_TYPE_FOR_DISPOSITIONS = {
     bva_decision: [
       "Allowed",
@@ -62,6 +26,9 @@ class AppealEvent
     ramp: [
       "RAMP Opt-in"
     ],
+    statutory_opt_in: [
+      "AMA SOC/SSOC Opt-in"
+    ],
     death: [
       "Dismissed, Death",
       "Advance Withdrawn Death of Veteran"
@@ -78,12 +45,6 @@ class AppealEvent
     other_close: [
       "Dismissed, Withdrawn"
     ]
-  }.freeze
-
-  V1_EVENT_TYPE_FOR_HEARING_DISPOSITIONS = {
-    hearing_held: :held,
-    hearing_cancelled: :cancelled,
-    hearing_no_show: :no_show
   }.freeze
 
   EVENT_TYPE_FOR_HEARING_DISPOSITIONS = {
@@ -104,10 +65,6 @@ class AppealEvent
     { type: type, date: date.to_date }
   end
 
-  def v1_disposition=(disposition)
-    self.type = v1_type_from_disposition(disposition)
-  end
-
   def disposition=(disposition)
     self.type = type_from_disposition(disposition)
   end
@@ -116,14 +73,9 @@ class AppealEvent
     self.type = type_from_issue_disposition(disposition)
   end
 
-  def v1_hearing=(hearing)
-    self.type = V1_EVENT_TYPE_FOR_HEARING_DISPOSITIONS.key(hearing.disposition)
-    self.date = hearing.date
-  end
-
   def hearing=(hearing)
     self.type = EVENT_TYPE_FOR_HEARING_DISPOSITIONS.key(hearing.disposition)
-    self.date = hearing.date
+    self.date = hearing.scheduled_for
   end
 
   def valid?
@@ -146,12 +98,6 @@ class AppealEvent
   end
 
   private
-
-  def v1_type_from_disposition(disposition)
-    V1_EVENT_TYPE_FOR_DISPOSITIONS.keys.find do |type|
-      V1_EVENT_TYPE_FOR_DISPOSITIONS[type].include?(disposition)
-    end
-  end
 
   def type_from_disposition(disposition)
     EVENT_TYPE_FOR_DISPOSITIONS.keys.find do |type|

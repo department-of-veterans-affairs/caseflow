@@ -3,8 +3,6 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :assigned_judge
   attribute :sanitized_hearing_request_type
 
-  attribute :timeline
-
   attribute :issues do
     object.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
@@ -17,13 +15,13 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :hearings do
     object.hearings.map do |hearing|
       {
-        held_by: hearing.user.present? ? hearing.user.full_name : "",
+        held_by: hearing.judge.present? ? hearing.judge.full_name : "",
         # this assumes only the assigned judge will view the hearing worksheet. otherwise,
         # we should check `hearing.hearing_views.map(&:user_id).include? judge.css_id`
         viewed_by_judge: !hearing.hearing_views.empty?,
-        date: hearing.date,
-        type: hearing.type,
-        id: hearing.id,
+        date: hearing.scheduled_for,
+        type: hearing.readable_request_type,
+        external_id: hearing.external_id,
         disposition: hearing.disposition
       }
     end
@@ -64,6 +62,8 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :docket_number
   attribute :status
   attribute :decision_date
+  attribute :form9_date
+  attribute :nod_date
   attribute :certification_date
   attribute :paper_case do
     object.file_type.eql? "Paper"
@@ -83,5 +83,24 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
       city: object.regional_office.city,
       state: object.regional_office.state
     }
+  end
+
+  attribute :document_id do
+    latest_attorney_case_review&.document_id
+  end
+
+  attribute :can_edit_document_id do
+    LegacyDocumentIdPolicy.new(
+      user: @instance_options[:user],
+      case_review: latest_attorney_case_review
+    ).editable?
+  end
+
+  attribute :attorney_case_review_id do
+    latest_attorney_case_review&.vacols_id
+  end
+
+  def latest_attorney_case_review
+    VACOLS::CaseAssignment.latest_task_for_appeal(object.vacols_id)
   end
 end

@@ -14,6 +14,10 @@ export const formatDate = function(dateString) {
     return;
   }
 
+  if (typeof dateString === 'string' && !dateString.match(/([+-][0-2]\d:[0-5]\d|Z)$/)) {
+    throw new Error('Passing string without timezone -- try formatDateStr() instead');
+  }
+
   let date = new Date(dateString);
   let month = StringUtil.leftPad(date.getMonth() + ZERO_INDEX_MONTH_OFFSET, 2, '0');
   let day = StringUtil.leftPad(date.getDate(), 2, '0');
@@ -22,19 +26,30 @@ export const formatDate = function(dateString) {
   return `${month}/${day}/${year}`;
 };
 
-export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
-  return arrayOfDateStrings.map((dateString) => {
-    return formatDate(dateString);
-  }).join(', ');
-};
-
 // Date format YYYY-MM-DD
 export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => {
   if (!dateString) {
     return;
   }
 
-  return moment(dateString, dateFormat).format(expectedFormat);
+  let dateStringFormat = dateFormat;
+
+  // attempt to Do the Right Thing
+  if (typeof dateString === 'string' && dateFormat === 'YYYY-MM-DD') {
+    if (dateString.match(/^\d\d?\/\d\d?\/\d\d\d\d$/)) {
+      dateStringFormat = 'MM/DD/YYYY';
+    } else if (dateString.match(/^\d\d\d\d\//)) {
+      dateStringFormat = 'YYYY/MM/DD';
+    }
+  }
+
+  return moment(dateString, dateStringFormat).format(expectedFormat);
+};
+
+export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
+  return arrayOfDateStrings.map((dateString) => {
+    return formatDateStr(dateString);
+  }).join(', ');
 };
 
 export const DateString = ({ date, dateFormat = 'MM/DD/YY', inputFormat = 'YYYY-MM-DD', style }) => <span {...style}>

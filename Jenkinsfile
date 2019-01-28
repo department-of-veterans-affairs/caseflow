@@ -61,7 +61,7 @@ node('deploy') {
     // since the deployment scripts are separated from the source code.
     stage ('pull-deploy-repo') {
 
-      sh "git clone -b $DEPLOY_BRANCH https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
+      sh "git clone --depth 1 -b $DEPLOY_BRANCH https://${env.GIT_CREDENTIAL}@github.com/department-of-veterans-affairs/appeals-deployment"
       dir ('./appeals-deployment/ansible') {
         // The commmon pipeline script should kick off the deployment.
         commonPipeline = load "../jenkins/common-pipeline.groovy"
@@ -73,4 +73,8 @@ node('deploy') {
 // Execute the common pipeline.
 // Note that this must be outside of the node block since the common pipeline
 // runs another set of stages.
-commonPipeline.deploy(APP_NAME, APP_VERSION, DEPLOY_MESSAGE);
+if (env.COMMON_PIPELINE_TASK == 'build') {
+  commonPipeline.build(APP_NAME, APP_VERSION, DEPLOY_MESSAGE);
+} else {
+  commonPipeline.deploy(APP_NAME, APP_VERSION, DEPLOY_MESSAGE);
+}

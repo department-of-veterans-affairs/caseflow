@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { timeFunction } from '../util/PerfDebug';
 import { ACTIONS } from './constants';
 import { update } from '../util/ReducerUtil';
@@ -9,7 +10,6 @@ import { workQueueReducer } from '../queue/reducers';
 import uiReducer from '../queue/uiReducer/uiReducer';
 
 export const initialState = {};
-
 const hearingScheduleReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_HEARING_SCHEDULE:
@@ -47,7 +47,7 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.RESET_SAVE_SUCCESSFUL:
     return update(state, {
-      $unset: ['saveSuccessful']
+      $unset: ['saveSuccessful', 'displayLockSuccessMessage']
     });
   case ACTIONS.CANCEL_HEARING_UPDATE:
     return update(state, {
@@ -68,10 +68,10 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.upcomingHearingDays
       }
     });
-  case ACTIONS.RECEIVE_VETERANS_READY_FOR_HEARING:
+  case ACTIONS.RECEIVE_APPEALS_READY_FOR_HEARING:
     return update(state, {
-      veteransReadyForHearing: {
-        $set: action.payload.veterans
+      appealsReadyForHearing: {
+        $set: action.payload.appeals
       }
     });
   case ACTIONS.HEARING_NOTES_UPDATE:
@@ -267,6 +267,48 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       $toggle: ['filterVljIsOpen']
     });
+  case ACTIONS.SELECT_REQUEST_TYPE:
+    return update(state, {
+      requestType: {
+        $set: action.payload.requestType
+      }
+    });
+  case ACTIONS.SELECT_VLJ:
+    return update(state, {
+      vlj: {
+        $set: action.payload.vlj
+      }
+    });
+  case ACTIONS.SELECT_COORDINATOR:
+    return update(state, {
+      coordinator: {
+        $set: action.payload.coordinator
+      }
+    });
+  case ACTIONS.SELECT_HEARING_ROOM:
+    return update(state, {
+      hearingRoom: {
+        $set: action.payload.hearingRoom
+      }
+    });
+  case ACTIONS.SET_NOTES:
+    return update(state, {
+      notes: {
+        $set: action.payload.notes
+      }
+    });
+  case ACTIONS.ASSIGN_HEARING_ROOM:
+    return update(state, {
+      roomRequired: {
+        $set: action.payload.roomRequired
+      }
+    });
+  case ACTIONS.HEARING_DAY_MODIFIED:
+    return update(state, {
+      hearingDayModified: {
+        $set: action.payload.hearingDayModified
+      }
+    });
   case ACTIONS.ON_CLICK_REMOVE_HEARING_DAY:
     return update(state, {
       displayRemoveHearingDayModal: {
@@ -283,15 +325,62 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.date
       }
     });
+  case ACTIONS.HANDLE_DAILY_DOCKET_SERVER_ERROR:
+    return update(state, {
+      dailyDocketServerError: { $set: true },
+      displayRemoveHearingDayModal: { $set: false }
+    });
+
+  case ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR:
+    return update(state, {
+      $unset: ['dailyDocketServerError']
+    });
+
+  case ACTIONS.HANDLE_LOCK_HEARING_SERVER_ERROR:
+    return update(state, {
+      onErrorHearingDayLock: { $set: true },
+      displayLockModal: { $set: false }
+    });
+
+  case ACTIONS.RESET_LOCK_HEARING_SERVER_ERROR:
+    return update(state, {
+      $unset: ['onErrorHearingDayLock']
+    });
+
   case ACTIONS.RESET_DELETE_SUCCESSFUL:
     return update(state, {
       $unset: ['successfulHearingDayDelete']
+    });
+  case ACTIONS.DISPLAY_LOCK_MODAL:
+    return update(state, {
+      displayLockModal: {
+        $set: true
+      }
+    });
+  case ACTIONS.CANCEL_DISPLAY_LOCK_MODAL:
+    return update(state, {
+      $unset: ['displayLockModal']
+    });
+  case ACTIONS.UPDATE_LOCK:
+    return update(state, {
+      dailyDocket: {
+        lock: {
+          $set: action.payload.lock
+        }
+      },
+      displayLockSuccessMessage: {
+        $set: true
+      },
+      $unset: ['displayLockModal']
+    });
+  case ACTIONS.RESET_LOCK_SUCCESS_MESSAGE:
+    return update(state, {
+      $unset: ['displayLockSuccessMessage']
     });
   default:
     return state;
   }
 };
-
 const combinedReducer = combineReducers({
   hearingSchedule: hearingScheduleReducer,
   ui: uiReducer,

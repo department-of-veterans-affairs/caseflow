@@ -227,17 +227,17 @@ namespace :local do
       end
     end
 
-    def dateshift_field(items, date_shift, k)
+    def dateshift_field(items, date_shift, key)
       items.map! do |item|
-        item[k] = item[k] + date_shift.seconds if item[k]
+        item[key] = item[key] + date_shift.seconds if item[key]
         item
       end
     end
 
-    def truncate_string(items, sql_type, k)
+    def truncate_string(items, sql_type, key)
       max_index = /\((\d*)\)/.match(sql_type)[1].to_i - 1
       items.map! do |item|
-        item[k] = item[k][0..max_index] if item[k]
+        item[key] = item[key][0..max_index] if item[key]
         item
       end
     end
@@ -267,6 +267,7 @@ namespace :local do
         csv << names
         rows.to_a.flatten.select { |e| e }.sort.each do |row|
           next if row.nil?
+
           sanitizer.sanitize(klass, row)
           attributes = row.attributes.select { |k, _v| names.include?(k) }
           csv << attributes.values

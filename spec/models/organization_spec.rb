@@ -104,4 +104,34 @@ describe Organization do
       end
     end
   end
+
+  describe ".next_assignee" do
+    let(:org) { FactoryBot.create(:organization) }
+    let(:appeal) { nil }
+
+    subject { org.next_assignee(appeal: appeal) }
+
+    context "when no appeal is specified" do
+      it "should return nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+
+    context "when appeal is specified" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+      it "should return nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+  end
+
+  describe ".automatically_assign_to_member?" do
+    let(:org) { FactoryBot.create(:organization) }
+
+    subject { org.automatically_assign_to_member? }
+
+    it "should return false" do
+      expect(subject).to eq(false)
+    end
+  end
 end

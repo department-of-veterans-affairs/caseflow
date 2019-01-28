@@ -6,6 +6,7 @@ import type {
   Appeals,
   BasicAppeals,
   AppealDetails,
+  ClaimReviews,
   User,
   Attorneys,
   Distribution
@@ -78,6 +79,7 @@ export type QueueState = {|
   appeals: BasicAppeals,
   appealDetails: AppealDetails,
   amaTasks: Tasks,
+  claimReviews: ClaimReviews,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
   stagedChanges: {
@@ -103,7 +105,8 @@ export type CommonComponentState = {|
   regionalOffices: Array<Object>,
   selectedRegionalOffice: { label: string, value: string },
   selectedHearingDate: string,
-  selectedHearingTime: string
+  selectedHearingTime: string,
+  selectedHearingDay: Object
 |};
 
 export type State = {

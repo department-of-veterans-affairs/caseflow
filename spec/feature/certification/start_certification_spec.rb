@@ -1,4 +1,3 @@
-
 require "rails_helper"
 
 RSpec.feature "Start Certification" do
@@ -202,7 +201,7 @@ RSpec.feature "Start Certification" do
       visit "certifications/new/#{appeal_ready_exact_match.vacols_id}"
       expect(page).to have_content("Loading")
       certification = Certification.find_by_vacols_id(appeal_ready_exact_match.vacols_id)
-      certification.update_attributes(loading_data_failed: true)
+      certification.update(loading_data_failed: true)
       expect(page).to have_content("Technical Difficulties", wait: 30)
     end
 

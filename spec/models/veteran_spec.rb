@@ -210,6 +210,12 @@ describe Veteran do
     context "when a zip code is nil" do
       let(:zip_code) { nil }
 
+      context "when address line 3 is nil" do
+        let(:address_line3) { nil }
+
+        it { is_expected.to include(zip_code: nil) }
+      end
+
       context "when address line 3 contains a zip code" do
         let(:address_line3) { "055411-177" }
 

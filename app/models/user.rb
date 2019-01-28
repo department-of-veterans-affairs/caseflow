@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :document_views
   has_many :appeal_views
   has_many :hearing_views
+  has_many :hearings
   has_many :annotations
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
@@ -29,7 +30,7 @@ class User < ApplicationRecord
 
   def roles
     (self[:roles] || []).inject([]) do |result, role|
-      result.concat([role]).concat(FUNCTION_ALIASES[role] ? FUNCTION_ALIASES[role] : [])
+      result.concat([role]).concat(FUNCTION_ALIASES[role] || [])
     end
   end
 
@@ -76,6 +77,14 @@ class User < ApplicationRecord
     @vacols_full_name ||= user_info[:full_name]
   rescue Caseflow::Error::UserRepositoryError
     nil
+  end
+
+  def can_edit_request_issues?(appeal)
+    Task.where(
+      appeal: appeal,
+      assigned_to: self,
+      status: [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
+    ).select { |t| t.is_a?(JudgeTask) || t.is_a?(AttorneyTask) }.any?
   end
 
   def participant_id
@@ -138,6 +147,7 @@ class User < ApplicationRecord
     return false if denied?(thing)
     # Ignore "System Admin" function from CSUM/CSEM users
     return false if thing.include?("System Admin")
+
     roles.include?(thing)
   end
 
@@ -214,10 +224,9 @@ class User < ApplicationRecord
   end
 
   def judge_css_id
-    Constants::AttorneyJudgeTeams::JUDGES[Rails.current_env].each_pair do |id, value|
-      return id if value[:attorneys].include?(css_id)
-    end
-    nil
+    organizations.find_by(type: JudgeTeam.name)
+      .try(:judge)
+      .try(:css_id)
   end
 
   def as_json(options)
@@ -256,7 +265,7 @@ class User < ApplicationRecord
   end
 
   def appeal_hearings(appeal_ids)
-    Hearing.where(appeal_id: appeal_ids)
+    LegacyHearing.where(appeal_id: appeal_ids)
   end
 
   class << self
@@ -302,6 +311,12 @@ class User < ApplicationRecord
 
     def find_by_css_id_or_create_with_default_station_id(css_id)
       User.find_by(css_id: css_id) || User.create(css_id: css_id, station_id: BOARD_STATION_ID)
+    end
+
+    def list_hearing_coordinators
+      Rails.cache.fetch("#{Rails.env}_list_of_hearing_coordinators_from_vacols") do
+        user_repository.find_all_hearing_coordinators
+      end
     end
 
     def authentication_service

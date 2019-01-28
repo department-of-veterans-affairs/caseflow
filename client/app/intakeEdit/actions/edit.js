@@ -26,7 +26,8 @@ export const requestIssuesUpdate = (claimId, formType, state) => (dispatch) => {
         dispatch({
           type: ACTIONS.REQUEST_ISSUES_UPDATE_SUCCEED,
           payload: {
-            requestIssues: responseObject.requestIssues
+            issuesBefore: responseObject.issuesBefore,
+            issuesAfter: responseObject.issuesAfter
           },
           meta: { analytics }
         });

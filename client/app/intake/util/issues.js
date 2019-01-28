@@ -1,6 +1,7 @@
 import _ from 'lodash';
-import { formatDate, formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import { formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES.json';
+import { FORM_TYPES } from '../constants';
 
 const getNonVeteranClaimant = (intakeData) => {
   const claimant = intakeData.relationships.filter((relationship) => {
@@ -23,25 +24,18 @@ const getClaimantField = (formType, veteran, intakeData) => {
   return [];
 };
 
-export const formatRatings = (ratings, requestIssues = []) => {
-  const result = _.keyBy(_.map(ratings, (rating) => {
-    return _.assign(rating,
-      { issues: _.keyBy(rating.issues, 'reference_id') }
-    );
-  }), 'profile_date');
+export const legacyIssue = (issue, legacyAppeals) => {
+  if (issue.vacolsIssue) {
+    return issue.vacolsIssue;
+  }
 
-  _.forEach(requestIssues, (requestIssue) => {
-    // filter out nil dates (request issues that are not yet rated)
-    if (requestIssue.reference_id) {
-      _.forEach(result, (rating) => {
-        if (rating.issues[requestIssue.reference_id]) {
-          rating.issues[requestIssue.reference_id].isSelected = true;
-        }
-      });
-    }
-  });
+  let legacyAppeal = _.filter(legacyAppeals, { vacols_id: issue.vacolsId })[0];
 
-  return result;
+  if (!legacyAppeal) {
+    throw new Error(`No legacyAppeal found for '${issue.vacolsId}'`);
+  }
+
+  return _.filter(legacyAppeal.issues, { vacols_sequence_id: parseInt(issue.vacolsSequenceId, 10) })[0];
 };
 
 export const validateDate = (date) => {
@@ -73,157 +67,169 @@ export const validNonratingRequestIssue = (issue) => {
   if (!decisionDate) {
     return false;
   }
+  if (!issue.benefitType) {
+    return false;
+  }
 
   // If we've gotten to here, that means we've got all necessary parts for a nonRatingRequestIssue to count
   return true;
 };
 
+const contestableIssueIndexByRequestIssue = (contestableIssuesByDate, requestIssue) => {
+  const foundContestableIssue = _.reduce(contestableIssuesByDate, (foundIssue, contestableIssues) => {
+    return foundIssue || _.find(contestableIssues, {
+      decisionIssueId: requestIssue.contested_decision_issue_id,
+      ratingIssueReferenceId: requestIssue.rating_issue_reference_id
+    });
+  }, null);
+
+  return foundContestableIssue && foundContestableIssue.index;
+};
+
 // formatRequestIssues takes an array of requestIssues in the server ui_hash format
 // and returns objects useful for displaying in UI
-export const formatRequestIssues = (requestIssues) => {
+export const formatRequestIssues = (requestIssues, contestableIssues) => {
   return requestIssues.map((issue) => {
     // Nonrating issues
     if (issue.category) {
       return {
+        id: String(issue.id),
         isRating: false,
+        benefitType: issue.benefit_type,
         category: issue.category,
+        decisionIssueId: issue.contested_decision_issue_id,
         description: issue.description,
         decisionDate: formatDateStr(issue.decision_date),
         ineligibleReason: issue.ineligible_reason,
+        ineligibleDueToId: issue.ineligible_due_to_id,
+        reviewRequestTitle: issue.review_request_title,
         contentionText: issue.contention_text,
         untimelyExemption: issue.untimelyExemption,
-        untimelyExemptionNotes: issue.untimelyExemptionNotes
+        untimelyExemptionNotes: issue.untimelyExemptionNotes,
+        vacolsId: issue.vacols_id,
+        vacolsSequenceId: issue.vacols_sequence_id,
+        vacolsIssue: issue.vacols_issue
       };
     }
 
     // Unidentified issues
     if (issue.is_unidentified) {
       return {
+        id: String(issue.id),
         description: issue.description,
         contentionText: issue.contention_text,
         notes: issue.notes,
-        isUnidentified: issue.is_unidentified
+        isUnidentified: issue.is_unidentified,
+        vacolsId: issue.vacols_id,
+        vacolsSequenceId: issue.vacols_sequence_id,
+        vacolsIssue: issue.vacols_issue
       };
     }
 
     // Rating issues
-    const issueDate = new Date(issue.profile_date);
+    const issueDate = new Date(issue.rating_issue_profile_date);
 
     return {
+      id: String(issue.id),
+      index: contestableIssueIndexByRequestIssue(contestableIssues, issue),
       isRating: true,
-      id: issue.reference_id,
-      profileDate: issueDate.toISOString(),
+      ratingIssueReferenceId: issue.rating_issue_reference_id,
+      ratingIssueProfileDate: issueDate.toISOString(),
+      date: issue.decision_date,
+      decisionIssueId: issue.contested_decision_issue_id,
       notes: issue.notes,
       description: issue.description,
       ineligibleReason: issue.ineligible_reason,
+      ineligibleDueToId: issue.ineligible_due_to_id,
       titleOfActiveReview: issue.title_of_active_review,
       contentionText: issue.contention_text,
       rampClaimId: issue.ramp_claim_id,
       untimelyExemption: issue.untimelyExemption,
-      untimelyExemptionNotes: issue.untimelyExemptionNotes
+      untimelyExemptionNotes: issue.untimelyExemptionNotes,
+      vacolsId: issue.vacols_id,
+      vacolsSequenceId: issue.vacols_sequence_id,
+      vacolsIssue: issue.vacols_issue
     };
   });
 };
 
-const ratingIssuesById = (ratings) => {
-  return _.reduce(ratings, (result, rating) => {
-    _.forEach(rating.issues, (issue, id) => {
-      result[id] = issue.decision_text;
-    });
+export const formatContestableIssues = (contestableIssues) => {
+  // order by date, otherwise all decision issues will always
+  // come after rating issues regardless of date
+  const orderedContestableIssues = _.orderBy(contestableIssues, ['date'], ['desc']);
 
-    return result;
+  return orderedContestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
+    contestableIssue.index = String(index);
+
+    contestableIssuesByDate[contestableIssue.date] = contestableIssuesByDate[contestableIssue.date] || {};
+    contestableIssuesByDate[contestableIssue.date][index] = contestableIssue;
+
+    return contestableIssuesByDate;
   }, {});
 };
 
-export const issueById = (ratings, issueId) => {
-  const currentRating = _.filter(
-    ratings,
-    (ratingDate) => _.some(ratingDate.issues, { reference_id: issueId })
+export const issueByIndex = (contestableIssuesByDate, issueIndex) => {
+  const currentContestableIssueGroup = _.filter(
+    contestableIssuesByDate,
+    (contestableIssues) => _.some(contestableIssues, { index: issueIndex })
   )[0];
 
-  return currentRating.issues[issueId];
+  return currentContestableIssueGroup[issueIndex];
 };
 
 const formatUnidentifiedIssues = (state) => {
-  // only used for the new add intake flow
-  if (state.addedIssues && state.addedIssues.length > 0) {
-    return state.addedIssues.
-      filter((issue) => issue.isUnidentified).
-      map((issue) => {
-        return {
-          decision_text: issue.description,
-          notes: issue.notes,
-          is_unidentified: true
-        };
-      });
-  }
-
-  return [];
+  return (state.addedIssues || []).
+    filter((issue) => issue.isUnidentified).
+    map((issue) => {
+      return {
+        request_issue_id: issue.id,
+        decision_text: issue.description,
+        notes: issue.notes,
+        is_unidentified: true
+      };
+    });
 };
 
 const formatRatingRequestIssues = (state) => {
-  const ratingIssues = ratingIssuesById(state.ratings);
-
-  if (state.addedIssues && state.addedIssues.length > 0) {
-    // we're using the new add issues page
-    return state.addedIssues.
-      filter((issue) => issue.isRating && !issue.isUnidentified).
-      map((issue) => {
-        return {
-          reference_id: issue.id,
-          decision_text: ratingIssues[issue.id],
-          profile_date: issue.profileDate,
-          notes: issue.notes,
-          untimely_exemption: issue.untimelyExemption,
-          untimely_exemption_notes: issue.untimelyExemptionNotes,
-          ramp_claim_id: issue.rampClaimId,
-          vacols_id: issue.vacolsId,
-          vacols_sequence_id: issue.vacolsSequenceId
-        };
-      });
-  }
-
-  // default to original ratings format
-  return _(state.ratings).
-    map((rating) => {
-      return _.map(rating.issues, (issue) => {
-        return _.merge(issue, { profile_date: rating.profile_date });
-      });
-    }).
-    flatten().
-    filter('isSelected').
-    value();
+  return (state.addedIssues || []).
+    filter((issue) => issue.isRating && !issue.isUnidentified).
+    map((issue) => {
+      return {
+        request_issue_id: issue.id,
+        rating_issue_reference_id: issue.ratingIssueReferenceId,
+        decision_text: issue.description,
+        rating_issue_profile_date: issue.ratingIssueProfileDate,
+        rating_issue_disability_code: issue.ratingIssueDisabilityCode,
+        notes: issue.notes,
+        untimely_exemption: issue.untimelyExemption,
+        untimely_exemption_notes: issue.untimelyExemptionNotes,
+        ramp_claim_id: issue.rampClaimId,
+        vacols_id: issue.vacolsId,
+        vacols_sequence_id: issue.vacolsSequenceId,
+        contested_decision_issue_id: issue.decisionIssueId,
+        ineligible_reason: issue.ineligibleReason,
+        ineligible_due_to_id: issue.ineligibleDueToId
+      };
+    });
 };
 
 const formatNonratingRequestIssues = (state) => {
-  if (state.addedIssues && state.addedIssues.length > 0) {
-    // we're using the new add issues page
-    return state.addedIssues.filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
-      return {
-        issue_category: issue.category,
-        decision_text: issue.description,
-        decision_date: formatDateStringForApi(issue.decisionDate),
-        untimely_exemption: issue.untimelyExemption,
-        untimely_exemption_notes: issue.untimelyExemptionNotes,
-        vacols_id: issue.vacolsId,
-        vacols_sequence_id: issue.vacolsSequenceId
-      };
-    });
-  }
-
-  // default to original format
-  return _(state.nonRatingRequestIssues).
-    filter((issue) => {
-      return validNonratingRequestIssue(issue);
-    }).
-    map((issue) => {
-      return {
-        decision_text: issue.description,
-        issue_category: issue.category,
-        decision_date: formatDateStringForApi(issue.decisionDate)
-      };
-    }).
-    value();
+  return (state.addedIssues || []).filter((issue) => !issue.isRating && !issue.isUnidentified).map((issue) => {
+    return {
+      request_issue_id: issue.id,
+      contested_decision_issue_id: issue.decisionIssueId,
+      benefit_type: issue.benefitType,
+      issue_category: issue.category,
+      decision_text: issue.description,
+      decision_date: formatDateStringForApi(issue.decisionDate),
+      untimely_exemption: issue.untimelyExemption,
+      untimely_exemption_notes: issue.untimelyExemptionNotes,
+      vacols_id: issue.vacolsId,
+      vacols_sequence_id: issue.vacolsSequenceId,
+      ineligible_due_to_id: issue.ineligibleDueToId,
+      ineligible_reason: issue.ineligibleReason
+    };
+  });
 };
 
 export const formatIssues = (state) => {
@@ -240,10 +246,18 @@ export const formatIssues = (state) => {
 
 export const getAddIssuesFields = (formType, veteran, intakeData) => {
   let fields;
+  const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
+  const selectedForm = _.find(FORM_TYPES, { key: formType });
 
   switch (formType) {
   case 'higher_level_review':
     fields = [
+      { field: 'Form',
+        content: selectedForm.name },
+      { field: 'Veteran',
+        content: veteranInfo },
+      { field: 'Receipt date of this form',
+        content: formatDateStr(intakeData.receiptDate) },
       { field: 'Benefit type',
         content: _.startCase(intakeData.benefitType) },
       { field: 'Informal conference request',
@@ -254,12 +268,22 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
     break;
   case 'supplemental_claim':
     fields = [
+      { field: 'Form',
+        content: selectedForm.name },
+      { field: 'Veteran',
+        content: veteranInfo },
+      { field: 'Receipt date of this form',
+        content: formatDateStr(intakeData.receiptDate) },
       { field: 'Benefit type',
         content: _.startCase(intakeData.benefitType) }
     ];
     break;
   case 'appeal':
     fields = [
+      { field: 'Veteran',
+        content: veteranInfo },
+      { field: 'NOD receipt date',
+        content: formatDateStr(intakeData.receiptDate) },
       { field: 'Review option',
         content: _.startCase(intakeData.docketType.split('_').join(' ')) }
     ];
@@ -275,8 +299,6 @@ export const getAddIssuesFields = (formType, veteran, intakeData) => {
 
 export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
-  let ratingIssues = ratingIssuesById(intakeData.ratings);
-
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
   return issues.map((issue) => {
@@ -288,17 +310,20 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
-      const profileDate = new Date(issue.profileDate);
+      // todo: date works for contestable issue
+      // and profile_date works for request issue (for the edit page)
+      // fix this to use same keys
+      const profileDate = new Date(issue.date || issue.profileDate);
 
       return {
         referenceId: issue.id,
-        text: ratingIssues[issue.id],
-        date: formatDateStr(issue.profileDate),
+        text: issue.description,
+        date: formatDateStr(profileDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
-        sourceHigherLevelReview: issue.sourceHigherLevelReview,
+        sourceReviewType: issue.sourceReviewType,
         promulgationDate: issue.promulgationDate,
-        profileDate: issue.profileDate,
+        profileDate,
         timely: issue.timely,
         beforeAma: profileDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
@@ -307,6 +332,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         rampClaimId: issue.rampClaimId,
         vacolsId: issue.vacolsId,
         vacolsSequenceId: issue.vacolsSequenceId,
+        vacolsIssue: issue.vacolsIssue,
         eligibleForSocOptIn: issue.eligibleForSocOptIn
       };
     }
@@ -316,8 +342,9 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
     // returns nonrating request issue format
     return {
       referenceId: issue.id,
-      text: `${issue.category} - ${issue.description}`,
-      date: formatDate(issue.decisionDate),
+      text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
+      benefitType: issue.benefitType,
+      date: formatDateStr(issue.decisionDate),
       timely: issue.timely,
       beforeAma: decisionDate < amaActivationDate,
       untimelyExemption: issue.untimelyExemption,
@@ -325,7 +352,9 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       ineligibleReason: issue.ineligibleReason,
       vacolsId: issue.vacolsId,
       vacolsSequenceId: issue.vacolsSequenceId,
-      eligibleForSocOptIn: issue.eligibleForSocOptIn
+      vacolsIssue: issue.vacolsIssue,
+      eligibleForSocOptIn: issue.eligibleForSocOptIn,
+      reviewRequestTitle: issue.reviewRequestTitle
     };
   });
 };

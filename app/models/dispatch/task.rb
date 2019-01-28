@@ -95,7 +95,7 @@ class Dispatch::Task < ApplicationRecord
 
     def find_and_assign_next!(user)
       retry_when ActiveRecord::StaleObjectError, limit: 3 do
-        next_assignable.tap { |task| task && task.assign!(user) }
+        next_assignable.tap { |task| task&.assign!(user) }
       end
     end
 

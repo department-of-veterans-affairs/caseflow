@@ -10,6 +10,7 @@ namespace :local do
     puts "Waiting for our FACOLS containers to be ready"
     180.times do
       break if `docker-compose ps | grep 'health: starting'`.strip.chomp.empty?
+
       print "."
       sleep 1
     end

@@ -25,7 +25,28 @@ const specialIssueFilters = {
     return SPECIAL_ISSUES.filter((issue) => {
       return issue.stationOfJurisdiction;
     });
+  },
+
+  aboutSection() {
+    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'about');
+  },
+
+  residenceSection() {
+    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'residence');
+  },
+
+  benefitTypeSection () {
+    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'benefitType');
+  },
+
+  issuesOnAppealSection () {
+    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'issuesOnAppeal');
+  },
+
+  dicOrPensionSection () {
+    return SPECIAL_ISSUES.filter((issue) => issue.queueSection === 'dicOrPension');
   }
+
 };
 
 export default specialIssueFilters;

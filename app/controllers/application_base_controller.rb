@@ -12,12 +12,12 @@ class ApplicationBaseController < ActionController::Base
   def unauthorized
     respond_to do |format|
       format.html do
-        render layout: "application", status: 403
+        render layout: "application", status: :forbidden
       end
       format.json do
         render json: {
           errors: ["Unauthorized"]
-        }, status: 403
+        }, status: :forbidden
       end
     end
   end
@@ -39,12 +39,12 @@ class ApplicationBaseController < ActionController::Base
   def not_found
     respond_to do |format|
       format.html do
-        render "errors/404", layout: "application", status: 404
+        render "errors/404", layout: "application", status: :not_found
       end
       format.json do
         render json: {
           errors: ["Response not found"]
-        }, status: 404
+        }, status: :not_found
       end
     end
   end

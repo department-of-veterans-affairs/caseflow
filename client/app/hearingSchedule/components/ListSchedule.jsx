@@ -1,9 +1,9 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
 import Table from '../../components/Table';
-import { formatDateStr } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
 import FilterRibbon from '../../components/FilterRibbon';
@@ -18,13 +18,10 @@ import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
+import moment from 'moment';
 
 const downloadButtonStyling = css({
   marginTop: '60px'
-});
-
-export const hearingSchedStyling = css({
-  marginTop: '50px'
 });
 
 const formatVljName = (lastName, firstName) => {
@@ -108,22 +105,24 @@ class ListSchedule extends React.Component {
     this.setState({ dateRangeKey: `${this.props.startDate}->${this.props.endDate}` });
   }
 
-  getHearingScheduleRows = () => {
+  getHearingScheduleRows = (forCsv = false) => {
     const { hearingSchedule } = this.props;
 
-    return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.hearingDate, 'asc').
+    return _.orderBy(hearingSchedule, (hearingDay) => hearingDay.scheduledFor, 'asc').
       map((hearingDay) => ({
-        hearingDate: <Link to={`/schedule/docket/${hearingDay.id}`}>{formatDateStr(hearingDay.hearingDate)}</Link>,
-        hearingType: hearingDay.hearingType,
+        scheduledFor: forCsv ? hearingDay.scheduledFor : <Link to={`/schedule/docket/${hearingDay.id}`}>
+          {moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
+        </Link>,
+        requestType: hearingDay.requestType,
         regionalOffice: hearingDay.regionalOffice,
-        room: hearingDay.roomInfo,
+        room: hearingDay.room,
         vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
       }));
   };
 
   getHearingScheduleColumns = (hearingScheduleRows) => {
 
-    const uniqueHearingTypes = populateFilterDropDowns(hearingScheduleRows, 'hearingType');
+    const uniqueRequestTypes = populateFilterDropDowns(hearingScheduleRows, 'requestType');
     const uniqueVljs = populateFilterDropDowns(hearingScheduleRows, 'vlj');
     const uniqueLocations = populateFilterDropDowns(hearingScheduleRows, 'regionalOffice');
 
@@ -131,18 +130,18 @@ class ListSchedule extends React.Component {
       {
         header: 'Date',
         align: 'left',
-        valueName: 'hearingDate',
+        valueName: 'scheduledFor',
         getSortValue: (hearingDay) => {
-          return hearingDay.hearingDate;
+          return hearingDay.scheduledFor;
         }
       },
       {
         header: 'Type',
         cellClass: 'type-column',
         align: 'left',
-        valueName: 'hearingType',
+        valueName: 'requestType',
         label: 'Filter by type',
-        getFilterValues: uniqueHearingTypes,
+        getFilterValues: uniqueRequestTypes,
         isDropdownFilterOpen: this.props.filterTypeIsOpen,
         anyFiltersAreSet: false,
         toggleDropdownFilterVisiblity: this.props.toggleTypeFilterVisibility,
@@ -189,7 +188,7 @@ class ListSchedule extends React.Component {
   };
 
   setTypeSelectedValue = (value) => {
-    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'hearingType', value));
+    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'requestType', value));
     this.setState({
       filteredByList: this.state.filteredByList.concat(['Hearing Type'])
     });
@@ -213,7 +212,7 @@ class ListSchedule extends React.Component {
   };
 
   render() {
-    const hearingScheduleRows = this.getHearingScheduleRows();
+    const hearingScheduleRows = this.getHearingScheduleRows(false);
     const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
 
     return (
@@ -231,7 +230,7 @@ class ListSchedule extends React.Component {
             <Button
               classNames={['usa-button-secondary']}>
               <CSVLink
-                data={hearingScheduleRows}
+                data={this.getHearingScheduleRows(true)}
                 target="_blank"
                 filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
                 Download current view
@@ -255,6 +254,11 @@ class ListSchedule extends React.Component {
               <FilterRibbon
                 filteredByList={this.state.filteredByList}
                 clearAllFilters={this.clearFilteredByList} />
+              <Button
+                linkStyling
+                onClick={this.props.openModal} >
+                Add Hearing Date
+              </Button>
             </div>
             <Table
               columns={hearingScheduleColumns}
@@ -272,16 +276,17 @@ class ListSchedule extends React.Component {
 
 ListSchedule.propTypes = {
   hearingSchedule: PropTypes.shape({
-    hearingDate: PropTypes.string,
-    hearingType: PropTypes.string,
+    scheduledFor: PropTypes.string,
+    requestType: PropTypes.string,
     regionalOffice: PropTypes.string,
-    roomInfo: PropTypes.string,
+    room: PropTypes.string,
     judgeId: PropTypes.string,
     judgeName: PropTypes.string,
     updatedOn: PropTypes.string,
     updatedBy: PropTypes.string
   }),
-  onApply: PropTypes.func
+  onApply: PropTypes.func,
+  openModal: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -302,4 +307,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveHearingSchedule
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListSchedule);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListSchedule));

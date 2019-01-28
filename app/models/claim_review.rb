@@ -2,8 +2,7 @@
 # higher level review as defined in the Appeals Modernization Act of 2017
 
 class ClaimReview < DecisionReview
-  include Asyncable
-  include LegacyOptinable
+  include HasBusinessLine
 
   has_many :end_product_establishments, as: :source
   has_one :intake, as: :detail
@@ -20,6 +19,23 @@ class ClaimReview < DecisionReview
 
   self.abstract_class = true
 
+  class NoEndProductsRequired < StandardError; end
+
+  class << self
+    def find_by_uuid_or_reference_id!(claim_id)
+      claim_review = find_by(uuid: claim_id) ||
+                     EndProductEstablishment.find_by(reference_id: claim_id, source_type: to_s).try(:source)
+      fail ActiveRecord::RecordNotFound unless claim_review
+
+      claim_review
+    end
+
+    def find_all_by_file_number(file_number)
+      HigherLevelReview.where(veteran_file_number: file_number) +
+        SupplementalClaim.where(veteran_file_number: file_number)
+    end
+  end
+
   def ui_hash
     super.merge(
       benefitType: benefit_type,
@@ -28,50 +44,41 @@ class ClaimReview < DecisionReview
     )
   end
 
-  # The Asyncable module requires we define these.
-  # establishment_submitted_at - when our db is ready to push to exernal services
-  # establishment_attempted_at - when our db attempted to push to external services
-  # establishment_processed_at - when our db successfully pushed to external services
-
-  class << self
-    def submitted_at_column
-      :establishment_submitted_at
-    end
-
-    def attempted_at_column
-      :establishment_attempted_at
-    end
-
-    def processed_at_column
-      :establishment_processed_at
-    end
-
-    def error_column
-      :establishment_error
-    end
-  end
-
-  def issue_code(*)
-    fail Caseflow::Error::MustImplementInSubclass
+  def caseflow_only_edit_issues_url
+    "/#{self.class.to_s.underscore.pluralize}/#{uuid}/edit"
   end
 
   # Save issues and assign it the appropriate end product establishment.
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      issue.update!(
-        end_product_establishment: end_product_establishment_for_issue(issue),
-        benefit_type: benefit_type
-      )
-      create_legacy_issue_optin(issue) if issue.vacols_id
+      if processed_in_caseflow?
+        issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
+      else
+        issue.update!(
+          end_product_establishment: end_product_establishment_for_issue(issue),
+          benefit_type: benefit_type,
+          veteran_participant_id: veteran.participant_id
+        )
+      end
+      issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
+    request_issues.reload
+  end
+
+  def create_decision_review_task_if_required!
+    create_decision_review_task! if processed_in_caseflow?
   end
 
   # Idempotent method to create all the artifacts for this claim.
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
-  def process_end_product_establishments!
+  def establish!
     attempted!
+
+    if processed_in_caseflow? && end_product_establishments.any?
+      fail NoEndProductsRequired, message: "Decision reviews processed in Caseflow should not have End Products"
+    end
 
     end_product_establishments.each do |end_product_establishment|
       end_product_establishment.perform!
@@ -84,12 +91,22 @@ class ClaimReview < DecisionReview
       end_product_establishment.commit!
     end
 
+    process_legacy_issues!
+
     clear_error!
     processed!
   end
 
   def invalid_modifiers
     end_product_establishments.map(&:modifier).reject(&:nil?)
+  end
+
+  def end_product_base_modifier
+    valid_modifiers.first
+  end
+
+  def valid_modifiers
+    self.class::END_PRODUCT_MODIFIERS
   end
 
   def on_sync(end_product_establishment)
@@ -104,14 +121,42 @@ class ClaimReview < DecisionReview
     end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
 
-  def find_request_issue_by_description(description)
-    request_issues.find { |reqi| reqi.description == description }
+  def search_table_ui_hash
+    {
+      caseflow_veteran_id: claim_veteran&.id,
+      claim_id: id,
+      veteran_file_number: veteran_file_number,
+      veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
+      end_products: end_product_establishments,
+      claimant_names: claimants.map(&:name).uniq, # We're not sure why we see duplicate claimants, but this helps
+      review_type: self.class.to_s.underscore
+    }
+  end
+
+  def claim_veteran
+    Veteran.find_by(file_number: veteran_file_number)
+  end
+
+  # needed for appeal status api
+  def aoj
+    case benefit_type
+    when "compensation", "pension", "fiduciary", "insurance", "education", "voc_rehab", "loan_guaranty"
+      "vba"
+    else
+      benefit_type
+    end
   end
 
   private
 
-  def contestable_decision_issues
-    DecisionIssue.where(participant_id: veteran.participant_id, benefit_type: benefit_type)
+  def can_contest_rating_issues?
+    processed_in_vbms?
+  end
+
+  def create_decision_review_task!
+    return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
+
+    DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
   end
 
   def informal_conference?
@@ -123,8 +168,9 @@ class ClaimReview < DecisionReview
   end
 
   def end_product_establishment_for_issue(issue)
-    ep_code = issue_code(rating: (issue.rating? || issue.is_unidentified?))
-    end_product_establishments.find_by(code: ep_code) || new_end_product_establishment(ep_code)
+    end_product_establishments.find_by(
+      code: issue.end_product_code
+    ) || new_end_product_establishment(issue.end_product_code)
   end
 
   def matching_request_issue(contention_id)

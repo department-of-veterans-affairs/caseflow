@@ -17,15 +17,32 @@ class EndProduct
   }.freeze
 
   DTA_CODES = {
+    "040HDER" => "Supplemental Claim Rating DTA",
     "040HDENR" => "Supplemental Claim Nonrating DTA",
-    "040HDER" => "Supplemental Claim Rating DTA"
+    "040HDERPMC" => "PMC HLR DTA Error - Rating",
+    "040HDENRPMC" => "PMC HLR DTA Error - Non-Rating",
+    "040BDE" => "Board DTA Error",
+    "040BDEIMO" => "Board DTA Error with IMO",
+    "040BDEPMC" => "PMC Board DTA Error",
+    "040BDEIMOPMC" => "PMC Board DTA Error - w/IMO"
   }.freeze
 
   DECISION_REVIEW_CODES = {
     "030HLRR" => "Higher-Level Review Rating",
     "030HLRNR" => "Higher-Level Review Nonrating",
+    "030HLRRPMC" => "PMC Higher-Level Review Rating",
+    "030HLRNRPMC" => "PMC Higher-Level Review Non-Rating",
     "040SCR" => "Supplemental Claim Rating",
-    "040SCNR" => "Supplemental Claim Nonrating"
+    "040SCNR" => "Supplemental Claim Nonrating",
+    "040SCRPMC" => "PMC Supplemental Claim Rating",
+    "040SCNRPMC" => "PMC Supplemental Claim Non-Rating"
+  }.freeze
+
+  EFFECTUATION_CODES = {
+    "030BGR" => "Board Grant Rating",
+    "030BGRNR" => "Board Grant Non-Rating",
+    "030BGRPMC" => "PMC Board Grant Rating",
+    "030BGNRPMC" => "PMC Board Grant Non-Rating"
   }.freeze
 
   DISPATCH_CODES = {
@@ -59,14 +76,17 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES)
+  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES).merge(EFFECTUATION_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
-  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :last_action_date,
-                :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter
+  DEFAULT_PAYEE_CODE = "00".freeze
 
-  attr_writer :payee_code, :claimant_participant_id, :benefit_type_code
+  attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :last_action_date,
+                :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter, :payee_code,
+                :claimant_last_name, :claimant_first_name
+
+  attr_writer :claimant_participant_id, :benefit_type_code
 
   # Validators are used for validating the EP before we create it in VBMS
   validates :modifier, :claim_type_code, :station_of_jurisdiction, :claim_date, presence: true
@@ -75,10 +95,6 @@ class EndProduct
 
   def benefit_type_code
     @benefit_type_code ||= Veteran::BENEFIT_TYPE_CODE_LIVE
-  end
-
-  def payee_code
-    @payee_code ||= "00"
   end
 
   def claimant_participant_id
@@ -181,7 +197,7 @@ class EndProduct
   end
 
   def dispatch_code?
-    DISPATCH_CODES.keys.include?(claim_type_code)
+    DISPATCH_CODES.key?(claim_type_code)
   end
 
   def dispatch_modifier?
@@ -213,7 +229,10 @@ class EndProduct
         claim_type_code: hash[:claim_type_code],
         modifier: hash[:end_product_type_code],
         status_type_code: hash[:status_type_code],
-        last_action_date: hash[:last_action_date]
+        last_action_date: hash[:last_action_date],
+        claimant_first_name: hash[:claimant_first_name],
+        claimant_last_name: hash[:claimant_last_name],
+        payee_code: hash[:payee_type_code]
       )
     end
 
@@ -224,7 +243,8 @@ class EndProduct
         modifier: hash[:end_product_modifier],
         suppress_acknowledgement_letter: hash[:suppress_acknowledgement_letter],
         gulf_war_registry: hash[:gulf_war_registry],
-        station_of_jurisdiction: hash[:station_of_jurisdiction]
+        station_of_jurisdiction: hash[:station_of_jurisdiction],
+        payee_code: hash[:payee_code] || DEFAULT_PAYEE_CODE
       )
     end
 

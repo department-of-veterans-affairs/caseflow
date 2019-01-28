@@ -236,6 +236,11 @@ describe AppealSeries do
         it { is_expected.to eq(:ramp) }
       end
 
+      context "when statutory opt-in" do
+        let(:disposition) { "O" }
+        it { is_expected.to eq(:statutory_opt_in) }
+      end
+
       context "when death" do
         let(:disposition) { "8" }
         it { is_expected.to eq(:death) }

@@ -11,7 +11,7 @@ class CreateEstablishClaim
     multiple_appeals: "There were multiple appeals matching this VBMS ID.",
     missing_decision_type: "You must select a decision type",
     invalid: "The appeal found is was not valid for claims establishment",
-    appeal_not_found:  "Appeal not found for that decision type." \
+    appeal_not_found: "Appeal not found for that decision type." \
       "Make sure to add the 'S' or 'C' to the end of the file number.",
     default: "Something went wrong when creating the task."
   }.freeze
@@ -41,7 +41,7 @@ class CreateEstablishClaim
   end
 
   def prepare_establish_claim
-    @prepare_outcome ||= establish_claim.prepare_with_decision!
+    @prepare_establish_claim ||= establish_claim.prepare_with_decision!
   end
 
   def establish_claim
@@ -64,6 +64,7 @@ class CreateEstablishClaim
     appeal = LegacyAppeal.find_or_initialize_by(vbms_id: vbms_id)
 
     fail ActiveRecord::RecordNotFound unless load_vacols_data_for(appeal)
+
     appeal.save!
 
     appeal

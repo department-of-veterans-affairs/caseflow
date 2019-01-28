@@ -1,14 +1,22 @@
 import { ACTIONS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import { applyCommonReducers } from './common';
 import { formatDateStr } from '../../util/DateUtil';
-import { formatRatings, formatRequestIssues } from '../util/issues';
-import { getReceiptDateError, getBlankOptionError, getPageError, formatRelationships } from '../util';
+import { formatRequestIssues, formatContestableIssues } from '../util/issues';
+import {
+  convertStringToBoolean,
+  getReceiptDateError,
+  getBlankOptionError,
+  getPageError,
+  formatRelationships
+} from '../util';
 import { update } from '../../util/ReducerUtil';
 
 const updateFromServerIntake = (state, serverIntake) => {
   if (serverIntake.form_type !== FORM_TYPES.APPEAL.key) {
     return state;
   }
+
+  const contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 
   return update(state, {
     isStarted: {
@@ -22,6 +30,11 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     veteranIsNotClaimant: {
       $set: serverIntake.veteran_is_not_claimant
+    },
+
+    // TODO do we need this at all?
+    processedInCaseflow: {
+      $set: true
     },
     claimant: {
       $set: serverIntake.veteran_is_not_claimant ? serverIntake.claimant : null
@@ -38,11 +51,14 @@ const updateFromServerIntake = (state, serverIntake) => {
     isReviewed: {
       $set: Boolean(serverIntake.receipt_date)
     },
-    ratings: {
-      $set: formatRatings(serverIntake.ratings)
+    contestableIssues: {
+      $set: contestableIssues
+    },
+    activeNonratingRequestIssues: {
+      $set: formatRequestIssues(serverIntake.activeNonratingRequestIssues)
     },
     requestIssues: {
-      $set: formatRequestIssues(serverIntake.requestIssues)
+      $set: formatRequestIssues(serverIntake.requestIssues, contestableIssues)
     },
     isComplete: {
       $set: Boolean(serverIntake.completed_at)
@@ -76,6 +92,7 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     isComplete: false,
     issueCount: 0,
     nonRatingRequestIssues: { },
+    contestableIssues: { },
     reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
@@ -99,6 +116,12 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
     return state;
   }
 
+  let veteranIsNotClaimant;
+
+  if (action.payload) {
+    veteranIsNotClaimant = convertStringToBoolean(action.payload.veteranIsNotClaimant);
+  }
+
   switch (action.type) {
   case ACTIONS.CANCEL_INTAKE_SUCCEED:
     return mapDataToInitialAppeal();
@@ -117,10 +140,10 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
   case ACTIONS.SET_VETERAN_IS_NOT_CLAIMANT:
     return update(state, {
       veteranIsNotClaimant: {
-        $set: action.payload.veteranIsNotClaimant
+        $set: veteranIsNotClaimant
       },
       claimant: {
-        $set: action.payload.veteranIsNotClaimant === 'true' ? state.claimant : null
+        $set: veteranIsNotClaimant === true ? state.claimant : null
       }
     });
   case ACTIONS.SET_CLAIMANT:
@@ -286,6 +309,16 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         [action.payload.issueId]: {
           decisionDate: {
             $set: action.payload.decisionDate
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_ISSUE_BENEFIT_TYPE:
+    return update(state, {
+      nonRatingRequestIssues: {
+        [action.payload.issueId]: {
+          benefitType: {
+            $set: action.payload.benefitType
           }
         }
       }

@@ -16,6 +16,7 @@ RSpec.configure do |config|
         uncommitted transaction data setup over the spec's database connection.
       MSG
     end
+
     # ActiveRecord::Base.logger = Logger.new($stdout)
     DatabaseCleaner[:active_record, { connection: "#{Rails.env}_vacols".to_sym }]
       .clean_with(:deletion, except: %w[vftypes issref])

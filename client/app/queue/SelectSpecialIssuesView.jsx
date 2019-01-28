@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -8,20 +9,36 @@ import { requestSave } from './uiReducer/uiActions';
 
 import decisionViewBase from './components/DecisionViewBase';
 import Alert from '../components/Alert';
-import Checkbox from '../components/Checkbox';
-import SPECIAL_ISSUES from '../constants/SpecialIssues';
+import { css } from 'glamor';
+import CheckboxGroup from '../components/CheckboxGroup';
+import specialIssueFilters from '../constants/SpecialIssueFilters';
 import COPY from '../../COPY.json';
 import ApiUtil from '../util/ApiUtil';
+import Checkbox from '../components/Checkbox';
+import SPECIAL_ISSUES from '../constants/SpecialIssues';
+const flexContainer = css({
+  display: 'flex',
+  justifyContent: 'space-between'
+});
+const flexColumn = css({
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  width: '50%'
+});
 
 class SelectSpecialIssuesView extends React.PureComponent {
   getPageName = () => COPY.SPECIAL_ISSUES_PAGE_TITLE;
-
+  getPageNote = () => COPY.SPECIAL_ISSUES_PAGE_NOTE;
   onChangeSpecialIssue = (issue) => (value) => {
     this.props.setSpecialIssues({
       [issue.snakeCase]: value
     });
   }
-
+  onChangeLegacySpecialIssue = (event) => {
+    this.props.setSpecialIssues({
+      [event.target.id]: document.getElementById(event.target.id).checked
+    });
+  }
   goToNextStep = () => {
     const {
       appeal,
@@ -32,15 +49,24 @@ class SelectSpecialIssuesView extends React.PureComponent {
 
     this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, null);
   };
+  render() {
+    const { specialIssues } = this.props;
 
-  render = () => {
+    if (specialIssues.appeal_type === 'LegacyAppeal') {
+      return this.renderLegacySpecialIssues(specialIssues);
+    }
+
+    return this.renderNonLegacySpecialIssues(specialIssues);
+
+  }
+  renderNonLegacySpecialIssues = (specialIssues) => {
     const {
-      specialIssues,
+      appeal,
       error
     } = this.props;
 
     const specialIssueCheckboxes = SPECIAL_ISSUES.map((issue) => {
-      if (issue.nonCompensation) {
+      if (issue.nonCompensation && !appeal.isLegacyAppeal) {
         return null;
       }
 
@@ -57,9 +83,91 @@ class SelectSpecialIssuesView extends React.PureComponent {
       <h1>
         {this.getPageName()}
       </h1>
+      <p>
+        {this.getPageNote()}
+      </p>
       {error && <Alert type="error" title={error.title} message={error.detail} />}
       <div className="cf-multiple-columns">
         {specialIssueCheckboxes}
+      </div>
+    </React.Fragment>;
+
+  }
+  renderLegacySpecialIssues = (specialIssues) => {
+    const {
+      error
+    } = this.props;
+    let sections = [
+      specialIssueFilters.aboutSection(),
+      specialIssueFilters.residenceSection(),
+      specialIssueFilters.benefitTypeSection(),
+      specialIssueFilters.issuesOnAppealSection(),
+      specialIssueFilters.dicOrPensionSection()];
+
+    // format the section the way the CheckBoxGroup expects it, and sort according to the mock
+    sections = sections.map((section) => {
+      return section.sort((previous, next) => {
+        return previous.queueSectionOrder - next.queueSectionOrder;
+      }).map((issue) => {
+        return {
+          id: issue.snakeCase,
+          label: issue.node || issue.queueDisplay || issue.display
+        };
+      });
+    });
+
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
+    const [aboutSection, residenceSection, benefitTypeSection, issuesOnAppealSection, dicOrPensionSection] = sections;
+
+    return <React.Fragment>
+      <h1>
+        {this.getPageName()}
+      </h1>
+      <p>
+        {this.getPageNote()}
+      </p>
+      {error && <Alert type="error" title={error.title} message={error.detail} />}
+      <div {...flexContainer} className="special-options">
+        <div {...flexColumn}>
+          <CheckboxGroup
+            label={<h3>{COPY.SPECIAL_ISSUES_ABOUT_SECTION}</h3>}
+            name="About the appellant"
+            options={aboutSection}
+            values={specialIssues}
+            onChange={this.onChangeLegacySpecialIssue}
+          />
+          <CheckboxGroup
+            label={<h3>{COPY.SPECIAL_ISSUES_RESIDENCE_SECTION}</h3>}
+            name="Residence"
+            options={residenceSection}
+            values={specialIssues}
+            onChange={this.onChangeLegacySpecialIssue}
+          />
+          <CheckboxGroup
+            label={<h3>{COPY.SPECIAL_ISSUES_BENEFIT_TYPE_SECTION}</h3>}
+            name="Benefit Types"
+            options={benefitTypeSection}
+            values={specialIssues}
+            onChange={this.onChangeLegacySpecialIssue}
+          />
+        </div>
+        <div {...flexColumn}>
+          <CheckboxGroup
+            styling={css({ marginTop: 0 })}
+            label={<h3> {COPY.SPECIAL_ISSUES_ISSUES_ON_APPEAL_SECTION}</h3>}
+            name="Issues on Appeal"
+            options={issuesOnAppealSection}
+            values={specialIssues}
+            onChange={this.onChangeLegacySpecialIssue}
+          />
+          <CheckboxGroup
+            label={<h3>{COPY.SPECIAL_ISSUES_DIC_OR_PENSION_SECTION} </h3>}
+            name="DIC or Pension"
+            options={dicOrPensionSection}
+            values={specialIssues}
+            onChange={this.onChangeLegacySpecialIssue}
+          />
+        </div>
       </div>
     </React.Fragment>;
   };

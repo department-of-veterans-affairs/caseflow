@@ -2,7 +2,7 @@ class Claimant < ApplicationRecord
   include AssociatedBgsRecord
 
   belongs_to :review_request, polymorphic: true
-
+  belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
   validates_with ClaimantValidator
 
   bgs_attr_accessor :first_name, :last_name, :middle_name, :relationship
@@ -18,7 +18,7 @@ class Claimant < ApplicationRecord
   end
 
   def power_of_attorney
-    @bgs_power_of_attorney ||= BgsPowerOfAttorney.new(claimant_participant_id: participant_id)
+    @power_of_attorney ||= BgsPowerOfAttorney.new(claimant_participant_id: participant_id)
   end
   delegate :representative_name, :representative_type, :representative_address, to: :power_of_attorney
 

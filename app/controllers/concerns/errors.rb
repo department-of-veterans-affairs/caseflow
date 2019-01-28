@@ -6,6 +6,6 @@ module Errors
         "title": "Role is Invalid",
         "detail": "User is not allowed to perform this action"
       ]
-    }, status: 400
+    }, status: :bad_request
   end
 end

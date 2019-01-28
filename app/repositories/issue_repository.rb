@@ -48,7 +48,7 @@ class IssueRepository
 
     unless record
       msg = "Cannot find issue with vacols ID: #{vacols_id} and sequence ID: #{vacols_sequence_id} in VACOLS"
-      fail Caseflow::Error::IssueRepositoryError, msg
+      fail Caseflow::Error::IssueRepositoryError, message: msg
     end
     record
   end

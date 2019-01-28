@@ -6,7 +6,7 @@ class AnnotationController < ApplicationController
     # :nocov:
     Rails.logger.error "AnnotationController failed validation: #{e.message}"
 
-    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: 400
+    render json: { "errors": ["title": e.class.to_s, "detail": e.message] }, status: :bad_request
     # :nocov:
   end
 

@@ -14,7 +14,6 @@ import Button from '../../components/Button';
 import AddedIssue from '../components/AddedIssue';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
-import { formatDate } from '../../util/DateUtil';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import {
@@ -69,7 +68,6 @@ export class AddIssuesPage extends React.Component {
     }
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
-    const veteranInfo = `${veteran.name} (${veteran.fileNumber})`;
     const { useAmaActivationDate } = featureToggles;
     const intakeData = intakeForms[selectedForm.key];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
@@ -95,6 +93,7 @@ export class AddIssuesPage extends React.Component {
                 issueIdx={index}
                 requestIssues={intakeData.requestIssues}
                 legacyOptInApproved={intakeData.legacyOptInApproved}
+                legacyAppeals={intakeData.legacyAppeals}
                 formType={formType} />
               <div className="issue-action">
                 <Button
@@ -112,7 +111,7 @@ export class AddIssuesPage extends React.Component {
             name="add-issue"
             legacyStyling={false}
             classNames={['usa-button-secondary']}
-            onClick={this.onClickAddIssue(_.size(intakeData.ratings))}
+            onClick={this.onClickAddIssue(_.size(intakeData.contestableIssues))}
           >
             + Add issue
           </Button>
@@ -125,17 +124,8 @@ export class AddIssuesPage extends React.Component {
       { valueName: 'content' }
     ];
 
-    let sharedFields = [
-      { field: 'Form',
-        content: selectedForm.name },
-      { field: 'Veteran',
-        content: veteranInfo },
-      { field: 'Receipt date of this form',
-        content: formatDate(intakeData.receiptDate) }
-    ];
-
-    let additionalFields = getAddIssuesFields(selectedForm.key, veteran, intakeData);
-    let rowObjects = sharedFields.concat(additionalFields).concat(
+    let fieldsForFormType = getAddIssuesFields(selectedForm.key, veteran, intakeData);
+    let rowObjects = fieldsForFormType.concat(
       { field: 'Requested issues',
         content: issuesComponent() }
     );

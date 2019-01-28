@@ -5,47 +5,47 @@ RSpec.feature "Certification Stats Dashboard" do
     Timecop.freeze(Time.utc(2015, 1, 1, 17, 55, 0, rand(1000)))
 
     Certification.create(
-      nod_matching_at:     5.hours.ago,
-      form9_matching_at:   5.hours.ago,
-      soc_matching_at:     5.hours.ago,
-      ssocs_required:      false,
-      ssocs_matching_at:   nil,
-      form8_started_at:    5.hours.ago,
-      created_at:          5.hours.ago,
-      completed_at:        4.hours.ago
+      nod_matching_at: 5.hours.ago,
+      form9_matching_at: 5.hours.ago,
+      soc_matching_at: 5.hours.ago,
+      ssocs_required: false,
+      ssocs_matching_at: nil,
+      form8_started_at: 5.hours.ago,
+      created_at: 5.hours.ago,
+      completed_at: 4.hours.ago
     )
 
     Certification.create(
-      nod_matching_at:     4.hours.ago,
-      form9_matching_at:   5.hours.ago,
-      soc_matching_at:     5.hours.ago,
-      ssocs_required:      true,
-      ssocs_matching_at:   4.hours.ago,
-      form8_started_at:    4.hours.ago,
-      created_at:          5.hours.ago,
-      completed_at:        nil
+      nod_matching_at: 4.hours.ago,
+      form9_matching_at: 5.hours.ago,
+      soc_matching_at: 5.hours.ago,
+      ssocs_required: true,
+      ssocs_matching_at: 4.hours.ago,
+      form8_started_at: 4.hours.ago,
+      created_at: 5.hours.ago,
+      completed_at: nil
     )
 
     Certification.create(
-      nod_matching_at:     4.hours.ago,
-      form9_matching_at:   5.hours.ago,
-      soc_matching_at:     5.hours.ago,
-      ssocs_required:      true,
-      ssocs_matching_at:   5.hours.ago,
-      form8_started_at:    4.hours.ago,
-      created_at:          5.hours.ago,
-      completed_at:        3.hours.ago
+      nod_matching_at: 4.hours.ago,
+      form9_matching_at: 5.hours.ago,
+      soc_matching_at: 5.hours.ago,
+      ssocs_required: true,
+      ssocs_matching_at: 5.hours.ago,
+      form8_started_at: 4.hours.ago,
+      created_at: 5.hours.ago,
+      completed_at: 3.hours.ago
     )
 
     Certification.create(
-      nod_matching_at:     45.minutes.ago,
-      form9_matching_at:   45.minutes.ago,
-      soc_matching_at:     45.minutes.ago,
-      ssocs_required:      true,
-      ssocs_matching_at:   45.minutes.ago,
-      form8_started_at:    45.minutes.ago,
-      created_at:          45.minutes.ago,
-      completed_at:        30.minutes.ago
+      nod_matching_at: 45.minutes.ago,
+      form9_matching_at: 45.minutes.ago,
+      soc_matching_at: 45.minutes.ago,
+      ssocs_required: true,
+      ssocs_matching_at: 45.minutes.ago,
+      form8_started_at: 45.minutes.ago,
+      created_at: 45.minutes.ago,
+      completed_at: 30.minutes.ago
     )
     CertificationStats.calculate_all!
 
@@ -87,25 +87,25 @@ RSpec.feature "Certification Stats Dashboard" do
   # TODO: Augment stats to disable mouseover for the tests
   scenario "Check missing documents" do
     Certification.create(
-      nod_matching_at:     45.minutes.ago,
-      form9_matching_at:   45.minutes.ago,
-      soc_matching_at:     45.minutes.ago,
-      ssocs_required:      true,
-      ssocs_matching_at:   43.minutes.ago,
-      form8_started_at:    nil,
-      created_at:          45.minutes.ago,
-      completed_at:        nil
+      nod_matching_at: 45.minutes.ago,
+      form9_matching_at: 45.minutes.ago,
+      soc_matching_at: 45.minutes.ago,
+      ssocs_required: true,
+      ssocs_matching_at: 43.minutes.ago,
+      form8_started_at: nil,
+      created_at: 45.minutes.ago,
+      completed_at: nil
     )
 
     Certification.create(
-      nod_matching_at:     45.minutes.ago,
-      form9_matching_at:   45.minutes.ago,
-      soc_matching_at:     nil,
-      ssocs_required:      true,
-      ssocs_matching_at:   45.minutes.ago,
-      form8_started_at:    nil,
-      created_at:          45.minutes.ago,
-      completed_at:        nil
+      nod_matching_at: 45.minutes.ago,
+      form9_matching_at: 45.minutes.ago,
+      soc_matching_at: nil,
+      ssocs_required: true,
+      ssocs_matching_at: 45.minutes.ago,
+      form8_started_at: nil,
+      created_at: 45.minutes.ago,
+      completed_at: nil
     )
     CertificationStats.calculate_all!
 

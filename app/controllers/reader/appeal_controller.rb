@@ -1,30 +1,6 @@
 class Reader::AppealController < Reader::ApplicationController
   def index
-    respond_to do |format|
-      format.html do
-        return redirect_to "/queue"
-      end
-      format.json do
-        MetricsService.record "Get assignments for #{current_user.id}" do
-          render json: {
-            cases: current_user.current_case_assignments_with_views
-          }
-        end
-      end
-    end
-  end
-
-  def find_appeals_by_veteran_id
-    MetricsService.record("VACOLS: Get appeal information for file_number #{veteran_id}",
-                          name: "Reader::AppealController.find_appeals_by_veteran_id") do
-      appeals = LegacyAppeal.fetch_appeals_by_file_number(veteran_id)
-      hashed_appeals = appeals.map { |appeal| appeal.to_hash(issues: appeal.issues) }
-        .reject { |appeal_hash| appeal_hash["issues"].empty? }
-
-      render json: {
-        appeals: hashed_appeals
-      }
-    end
+    redirect_to "/queue"
   end
 
   def show
@@ -50,9 +26,5 @@ class Reader::AppealController < Reader::ApplicationController
     ActiveModelSerializers::SerializableResource.new(
       appeal
     ).as_json
-  end
-
-  def veteran_id
-    request.headers["HTTP_VETERAN_ID"]
   end
 end

@@ -16,10 +16,17 @@ import {
 } from '../constants/AppConstants';
 import CaseListSearch from './CaseListSearch';
 import CaseListTable from './CaseListTable';
+import OtherReviewsTable from './OtherReviewsTable';
 import { fullWidth } from './constants';
 
-import { onReceiveAppealsUsingVeteranId } from './CaseList/CaseListActions';
-import { appealsByCaseflowVeteranId } from './selectors';
+import {
+  onReceiveAppealsUsingVeteranId,
+  onReceiveClaimReviewsUsingVeteranId
+} from './CaseList/CaseListActions';
+import {
+  appealsByCaseflowVeteranId,
+  claimReviewsByCaseflowVeteranId
+} from './selectors';
 
 import COPY from '../../COPY.json';
 
@@ -34,7 +41,7 @@ class CaseListView extends React.PureComponent {
   createLoadPromise = () => {
     const caseflowVeteranId = this.props.caseflowVeteranId;
 
-    if (this.props.appeals.length || !caseflowVeteranId) {
+    if (this.props.appeals.length || this.props.claimReviews.length || !caseflowVeteranId) {
       return Promise.resolve();
     }
 
@@ -43,6 +50,7 @@ class CaseListView extends React.PureComponent {
         const returnedObject = JSON.parse(response.text);
 
         this.props.onReceiveAppealsUsingVeteranId(returnedObject.appeals);
+        this.props.onReceiveClaimReviewsUsingVeteranId(returnedObject.claim_reviews);
       });
   };
 
@@ -53,9 +61,12 @@ class CaseListView extends React.PureComponent {
   </React.Fragment>;
 
   caseListTable = () => {
+    let heading;
     const appealsCount = this.props.appeals.length;
+    const claimReviewsCount = this.props.claimReviews.length;
+    const doesSearchHaveAnyResults = (appealsCount + claimReviewsCount > 0);
 
-    if (!appealsCount) {
+    if (!doesSearchHaveAnyResults) {
       return <div>
         {this.searchPageHeading()}
         <hr {...horizontalRuleStyling} />
@@ -65,15 +76,27 @@ class CaseListView extends React.PureComponent {
 
     // Using the first appeal in the list to get the Veteran's name and ID. We expect that data to be
     // the same for all appeals in the list.
-    const firstAppeal = this.props.appeals[0];
-    const heading = `${appealsCount} ${pluralize('case', appealsCount)} found for
-        “${firstAppeal.veteranFullName} (${firstAppeal.veteranFileNumber})”`;
+    if (this.props.appeals.length > 0) {
+      const firstAppeal = this.props.appeals[0];
+
+      heading = `${appealsCount} ${pluralize('case', appealsCount)} found for
+          “${firstAppeal.veteranFullName} (${firstAppeal.veteranFileNumber})”`;
+    } else if (this.props.claimReviews.length > 0) {
+      const firstClaimReview = this.props.claimReviews[0];
+
+      heading = `No cases found for “${firstClaimReview.veteranFullName} (${firstClaimReview.veteranFileNumber})”`;
+    }
 
     return <div>
       {this.searchPageHeading()}
       <br /><br />
       <h2 className="cf-push-left" {...fullWidth}>{heading}</h2>
+
+      <h3 className="cf-push-left" {...fullWidth}>{COPY.CASE_LIST_TABLE_TITLE}</h3>
       <CaseListTable appeals={this.props.appeals} />
+
+      <h3 className="cf-push-left" {...fullWidth}>{COPY.OTHER_REVIEWS_TABLE_TITLE}</h3>
+      <OtherReviewsTable reviews={this.props.claimReviews} />
     </div>;
   }
 
@@ -106,12 +129,16 @@ CaseListView.defaultProps = {
   caseflowVeteranId: ''
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  appeals: appealsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId })
-});
+const mapStateToProps = (state, ownProps) => {
+  return {
+    appeals: appealsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId }),
+    claimReviews: claimReviewsByCaseflowVeteranId(state, { caseflowVeteranId: ownProps.caseflowVeteranId })
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onReceiveAppealsUsingVeteranId
+  onReceiveAppealsUsingVeteranId,
+  onReceiveClaimReviewsUsingVeteranId
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CaseListView);

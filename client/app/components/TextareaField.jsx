@@ -21,7 +21,9 @@ export default class TextareaField extends React.Component {
       type,
       value,
       styling,
-      textAreaStyling
+      textAreaStyling,
+      disabled,
+      labelStyling
     } = this.props;
 
     const className = 'cf-form-textarea' +
@@ -40,7 +42,9 @@ export default class TextareaField extends React.Component {
     // hideLabel still leaves the label element in the DOM (for a11y purposes)
     // but makes it invisible to any screens
     return <div className={className} {...styling}>
-      <label className={classNamesFn({ 'sr-only': hideLabel }, 'question-label')} htmlFor={id || name}>
+      <label {...labelStyling}
+        className={classNamesFn({ 'sr-only': hideLabel }, 'question-label')}
+        htmlFor={id || name}>
         {
           strongLabel ?
             <strong>{labelContents}</strong> :
@@ -56,6 +60,7 @@ export default class TextareaField extends React.Component {
         type={type}
         value={value}
         maxLength={maxlength}
+        disabled={disabled}
       />
       { characterLimitCount !== null && <p>
         <i>{characterLimitCount} {pluralize('character', characterLimitCount)} left</i>
@@ -63,6 +68,10 @@ export default class TextareaField extends React.Component {
     </div>;
   }
 }
+
+TextareaField.defaultProps = {
+  disabled: false
+};
 
 TextareaField.propTypes = {
   hideLabel: PropTypes.bool,
@@ -76,5 +85,6 @@ TextareaField.propTypes = {
   type: PropTypes.string,
   errorMessage: PropTypes.string,
   value: PropTypes.string,
-  styling: PropTypes.object
+  styling: PropTypes.object,
+  disabled: PropTypes.bool
 };

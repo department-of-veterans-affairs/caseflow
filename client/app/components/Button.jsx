@@ -28,7 +28,8 @@ export default class Button extends React.Component {
       dangerStyling,
       willNeverBeLoading,
       type,
-      styling
+      styling,
+      title
     } = this.props;
 
     let LoadingIndicator = () => {
@@ -75,6 +76,7 @@ export default class Button extends React.Component {
       type={type}
       disabled={disabled}
       onClick={onClick}
+      title={title}
       aria-label={ariaLabel}
       {...styling}>
       {children}

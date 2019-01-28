@@ -10,6 +10,13 @@ const toggleAnnotationDeleteModalFor = (state, annotationId) =>
     }
   });
 
+const toggleAnnotationShareModalFor = (state, annotationId) =>
+  update(state, {
+    shareAnnotationModalIsOpenFor: {
+      $set: annotationId
+    }
+  });
+
 const initialState = {
   annotations: {},
   placingAnnotationIconPageCoords: null,
@@ -17,6 +24,7 @@ const initialState = {
   pendingEditingAnnotations: {},
   selectedAnnotationId: null,
   deleteAnnotationModalIsOpenFor: null,
+  shareAnnotationModalIsOpenFor: null,
   placedButUnsavedAnnotation: null,
   isPlacingAnnotation: false,
 
@@ -35,6 +43,10 @@ export const annotationLayerReducer = (state = initialState, action = {}) => {
     return toggleAnnotationDeleteModalFor(state, action.payload.annotationId);
   case Constants.CLOSE_ANNOTATION_DELETE_MODAL:
     return toggleAnnotationDeleteModalFor(state, null);
+  case Constants.OPEN_ANNOTATION_SHARE_MODAL:
+    return toggleAnnotationShareModalFor(state, action.payload.annotationId);
+  case Constants.CLOSE_ANNOTATION_SHARE_MODAL:
+    return toggleAnnotationShareModalFor(state, null);
   case Constants.SHOW_PLACE_ANNOTATION_ICON:
     return update(state, {
       placingAnnotationIconPageCoords: {

@@ -1,5 +1,6 @@
 class AttorneyCaseReview < ApplicationRecord
   include CaseReviewConcern
+  include IssueUpdater
 
   belongs_to :reviewing_judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
@@ -15,6 +16,8 @@ class AttorneyCaseReview < ApplicationRecord
     draft_decision: Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
   }
 
+  before_create :strip_document_id
+
   def update_in_vacols!
     MetricsService.record("VACOLS: reassign_case_to_judge #{task_id}",
                           service: :vacols,
@@ -22,6 +25,15 @@ class AttorneyCaseReview < ApplicationRecord
       reassign_case_to_judge_in_vacols!
       update_issue_dispositions_in_vacols! if draft_decision?
     end
+  end
+
+  def update_in_caseflow!
+    task.update!(status: Constants.TASK_STATUSES.completed)
+
+    if task.assigned_by_id != reviewing_judge_id
+      task.parent.update(assigned_to_id: reviewing_judge_id)
+    end
+    update_issue_dispositions_in_caseflow!
   end
 
   def written_by_name
@@ -52,12 +64,16 @@ class AttorneyCaseReview < ApplicationRecord
     attorney.vacols_uniq_id
   end
 
+  def strip_document_id
+    self.document_id = document_id&.strip
+  end
+
   class << self
     def complete(params)
       ActiveRecord::Base.multi_transaction do
         record = create(params)
         if record.valid?
-          record.legacy? ? record.update_in_vacols! : record.update_task_and_issue_dispositions
+          record.legacy? ? record.update_in_vacols! : record.update_in_caseflow!
         end
         record
       end

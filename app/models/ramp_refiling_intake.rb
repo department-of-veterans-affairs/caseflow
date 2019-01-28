@@ -15,7 +15,7 @@ class RampRefilingIntake < Intake
 
   def review!(request_params)
     detail.start_review!
-    detail.update_attributes(request_params.permit(:receipt_date, :option_selected, :appeal_docket))
+    detail.update(request_params.permit(:receipt_date, :option_selected, :appeal_docket))
   end
 
   def save_error!(code:)

@@ -16,6 +16,7 @@ describe VACOLS::CaseDocket do
   let(:another_judge) { create(:user) }
   let!(:another_vacols_judge) { create(:staff, :judge_role, sdomainid: another_judge.css_id) }
 
+  let(:nonpriority_ready_case_bfbox) { nil }
   let(:nonpriority_ready_case_docket_number) { "1801001" }
   let!(:nonpriority_ready_case) do
     create(:case,
@@ -24,6 +25,7 @@ describe VACOLS::CaseDocket do
            bfmpro: "ACT",
            bfcurloc: "81",
            bfdloout: 1.day.ago,
+           bfbox: nonpriority_ready_case_bfbox,
            folder: build(:folder, tinum: nonpriority_ready_case_docket_number, titrnum: "123456789S"))
   end
 
@@ -60,6 +62,7 @@ describe VACOLS::CaseDocket do
            bfdloout: 1.day.ago)
   end
 
+  let(:aod_ready_case_bfbox) { nil }
   let(:aod_ready_case_docket_number) { "1801003" }
   let(:aod_ready_case_ready_time) { 3.days.ago }
   let!(:aod_ready_case) do
@@ -70,6 +73,7 @@ describe VACOLS::CaseDocket do
            bfmpro: "ACT",
            bfcurloc: "81",
            bfdloout: aod_ready_case_ready_time,
+           bfbox: aod_ready_case_bfbox,
            folder: build(:folder, tinum: aod_ready_case_docket_number, titrnum: "123456789S"))
   end
 
@@ -97,12 +101,12 @@ describe VACOLS::CaseDocket do
   context ".counts_by_priority_and_readiness" do
     subject { VACOLS::CaseDocket.counts_by_priority_and_readiness }
     it "creates counts grouped by priority and readiness" do
-      expect(subject).to eq([
-                              { "n" => 1, "priority" => 1, "ready" => 0 },
-                              { "n" => 2, "priority" => 1, "ready" => 1 },
-                              { "n" => 1, "priority" => 0, "ready" => 0 },
-                              { "n" => 2, "priority" => 0, "ready" => 1 }
-                            ])
+      expect(subject).to match_array([
+                                       { "n" => 1, "priority" => 1, "ready" => 0 },
+                                       { "n" => 2, "priority" => 1, "ready" => 1 },
+                                       { "n" => 1, "priority" => 0, "ready" => 0 },
+                                       { "n" => 2, "priority" => 0, "ready" => 1 }
+                                     ])
     end
   end
 
@@ -215,6 +219,52 @@ describe VACOLS::CaseDocket do
           expect(subject.count).to eq(1)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+        end
+      end
+    end
+
+    context "when the case is set aside for a specialty case team" do
+      let(:nonpriority_ready_case_bfbox) { "01" }
+
+      it "does not distribute the case" do
+        expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+      end
+    end
+
+    context "when the case has pending mail" do
+      let(:mltype) { "01" }
+      let!(:mail) { create(:mail, mlfolder: nonpriority_ready_case.bfkey, mltype: mltype) }
+
+      it "does not distribute the case" do
+        expect(subject.count).to eq(1)
+        expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+      end
+
+      context "when the mail should not block distribution" do
+        let(:mltype) { "02" }
+
+        it "distributes the case" do
+          expect(subject.count).to eq(2)
+          expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        end
+      end
+    end
+
+    context "when the case has a pending diary" do
+      let(:code) { "POA" }
+      let!(:diary) { create(:diary, tsktknm: nonpriority_ready_case.bfkey, tskactcd: code) }
+
+      it "does not distribute the case" do
+        expect(subject.count).to eq(1)
+        expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
+      end
+
+      context "when the diary should not block distribution" do
+        let(:code) { "IHP" }
+
+        it "distributes the case" do
+          expect(subject.count).to eq(2)
+          expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
     end
@@ -353,6 +403,52 @@ describe VACOLS::CaseDocket do
             subject
             expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           end
+        end
+      end
+    end
+
+    context "when the case is set aside for a specialty case team" do
+      let(:aod_ready_case_bfbox) { "01" }
+
+      it "does not distribute the case" do
+        expect(aod_ready_case.reload.bfcurloc).to eq("81")
+      end
+    end
+
+    context "when the case has pending mail" do
+      let(:mltype) { "01" }
+      let!(:mail) { create(:mail, mlfolder: aod_ready_case.bfkey, mltype: mltype) }
+
+      it "does not distribute the case" do
+        expect(subject.count).to eq(1)
+        expect(aod_ready_case.reload.bfcurloc).to eq("81")
+      end
+
+      context "when the mail should not block distribution" do
+        let(:mltype) { "02" }
+
+        it "distributes the case" do
+          expect(subject.count).to eq(2)
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+        end
+      end
+    end
+
+    context "when the case has a pending diary" do
+      let(:code) { "POA" }
+      let!(:diary) { create(:diary, tsktknm: aod_ready_case.bfkey, tskactcd: code) }
+
+      it "does not distribute the case" do
+        expect(subject.count).to eq(1)
+        expect(aod_ready_case.reload.bfcurloc).to eq("81")
+      end
+
+      context "when the diary should not block distribution" do
+        let(:code) { "IHP" }
+
+        it "distributes the case" do
+          expect(subject.count).to eq(2)
+          expect(aod_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
     end

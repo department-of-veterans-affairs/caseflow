@@ -12,14 +12,15 @@ describe LegacyAppeal do
   end
 
   context "#eligible_for_soc_opt_in? and #matchable_to_request_issue?" do
-    let(:soc_eligible_date) { Time.zone.today - 60.days }
-    let(:nod_eligible_date) { Time.zone.today - 372.days }
+    let(:soc_eligible_date) { receipt_date - 60.days }
+    let(:nod_eligible_date) { receipt_date - 372.days }
+    let(:receipt_date) { Time.zone.today }
 
     let(:vacols_case) do
       create(:case, bfcorlid: "123456789S")
     end
 
-    let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1)] }
+    let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1, disposition: nil)] }
 
     scenario "when is active but not eligible" do
       allow(appeal).to receive(:active?).and_return(true)
@@ -27,8 +28,8 @@ describe LegacyAppeal do
       allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
 
-      expect(appeal.eligible_for_soc_opt_in?).to eq(false)
-      expect(appeal.matchable_to_request_issue?).to eq(true)
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
     scenario "when is not active but is eligible" do
@@ -37,8 +38,8 @@ describe LegacyAppeal do
       allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
 
-      expect(appeal.eligible_for_soc_opt_in?).to eq(true)
-      expect(appeal.matchable_to_request_issue?).to eq(true)
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
     end
 
     scenario "when is not active or eligible" do
@@ -47,8 +48,8 @@ describe LegacyAppeal do
       allow(appeal).to receive(:soc_date).and_return(soc_eligible_date - 1.day)
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date - 1.day)
 
-      expect(appeal.eligible_for_soc_opt_in?).to eq(false)
-      expect(appeal.matchable_to_request_issue?).to eq(false)
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
     end
 
     scenario "when is active or eligible but has no issues" do
@@ -57,8 +58,22 @@ describe LegacyAppeal do
       allow(appeal).to receive(:soc_date).and_return(soc_eligible_date + 1.day)
       allow(appeal).to receive(:nod_date).and_return(nod_eligible_date + 1.day)
 
-      expect(appeal.eligible_for_soc_opt_in?).to eq(true)
-      expect(appeal.matchable_to_request_issue?).to eq(false)
+      expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(true)
+      expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+    end
+
+    context "receipt_date is nil" do
+      let(:receipt_date) { nil }
+
+      scenario "always returns false" do
+        allow(appeal).to receive(:active?).and_return(false)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(Time.zone.today)
+        allow(appeal).to receive(:nod_date).and_return(Time.zone.today)
+
+        expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(false)
+      end
     end
   end
 
@@ -178,20 +193,6 @@ describe LegacyAppeal do
         expect(subject.first).to have_attributes(vacols_date: vacols_case.bfssoc1)
         expect(subject.last).to have_attributes(vacols_date: vacols_case.bfssoc2)
       end
-    end
-  end
-
-  context "#v1_events" do
-    subject { appeal.v1_events }
-
-    let(:vacols_case) do
-      create(:case_with_soc)
-    end
-
-    it "returns list of events sorted from oldest to newest by date" do
-      expect(subject.length > 1).to be_truthy
-      expect(subject.first.date.to_date).to eq(vacols_case.bfdnod)
-      expect(subject.first.type).to eq(:nod)
     end
   end
 
@@ -411,10 +412,69 @@ describe LegacyAppeal do
       create(:case, documents: documents)
     end
 
-    subject { appeal.number_of_documents }
+    context "Number of documents from vbms" do
+      subject { appeal.number_of_documents }
 
-    it "should return number of documents" do
-      expect(subject).to eq 3
+      it "should return number of documents" do
+        expect(subject).to eq 3
+      end
+    end
+
+    context "Number of documents from caseflow" do
+      subject { appeal.number_of_documents_from_caseflow }
+
+      it "should return number of documents" do
+        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
+        expect(subject).to eq 3
+      end
+    end
+  end
+
+  context "#new_documents_from_caseflow" do
+    before do
+      documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
+    end
+
+    let(:user) { create(:user) }
+
+    let!(:documents) do
+      [
+        Generators::Document.create(upload_date: 5.days.ago),
+        Generators::Document.create(upload_date: 5.days.ago)
+      ]
+    end
+
+    let!(:appeal) { Generators::LegacyAppeal.create }
+    let!(:vacols_case) { create(:case, documents: documents) }
+
+    subject { appeal.new_documents_from_caseflow(user) }
+
+    context "when appeal has no appeal view" do
+      it "should return all documents" do
+        expect(subject).to match_array(documents)
+      end
+    end
+
+    context "when appeal has an appeal view newer than documents" do
+      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
+
+      it "should return no documents" do
+        expect(subject).to eq([])
+      end
+
+      context "when one document is missing a received at date" do
+        it "should return no documents" do
+          documents[0].update(upload_date: nil)
+          expect(subject).to eq([])
+        end
+      end
+
+      context "when one document is newer than the appeal view date" do
+        it "should return the newer document" do
+          documents[0].update(upload_date: -2.days.ago)
+          expect(subject).to eq([documents[0]])
+        end
+      end
     end
   end
 
@@ -434,13 +494,17 @@ describe LegacyAppeal do
     context "when certification_date is nil" do
       let(:certification_date) { nil }
 
-      it { is_expected.to eq 0 }
+      it do
+        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
+        is_expected.to eq 0
+      end
     end
 
     context "when certification_date is set" do
       let(:certification_date) { 2.days.ago }
 
       it do
+        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
         is_expected.to eq 1
       end
     end
@@ -1788,25 +1852,6 @@ describe LegacyAppeal do
       it "includes issues in hash" do
         expect(subject["issues"]).to eq(issues.map(&:attributes))
       end
-    end
-  end
-
-  context ".for_api" do
-    subject { LegacyAppeal.for_api(vbms_id: bfcorlid) }
-    let(:bfcorlid) { "VBMS_ID" }
-    let(:case_with_form_9) { create(:case_with_form_9, :type_original, bfcorlid: bfcorlid) }
-    let!(:veteran_appeals) do
-      [
-        create(:case_with_soc, :type_original, bfcorlid: bfcorlid),
-        create(:case_with_soc, :type_reconsideration, bfcorlid: bfcorlid),
-        case_with_form_9,
-        create(:case, :type_original, bfcorlid: bfcorlid)
-      ]
-    end
-
-    it "returns filtered appeals with events only for veteran sorted by latest event date" do
-      expect(subject.length).to eq(2)
-      expect(subject.first.form9_date.to_date).to eq(case_with_form_9.bfd19)
     end
   end
 

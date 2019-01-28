@@ -32,7 +32,7 @@ class UserQuota < ApplicationRecord
   end
 
   def user_name
-    user && user.full_name
+    user&.full_name
   end
 
   def locked?

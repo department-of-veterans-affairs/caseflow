@@ -4,7 +4,7 @@ class Organization < ApplicationRecord
   has_many :users, through: :organizations_users
 
   def admins
-    organizations_users.select(&:admin?).map(&:user)
+    organizations_users.includes(:user).select(&:admin?).map(&:user)
   end
 
   def non_admins
@@ -18,7 +18,16 @@ class Organization < ApplicationRecord
   def can_receive_task?(task)
     return false if task.assigned_to == self
     return false if task.assigned_to.is_a?(User) && task.parent && task.parent.assigned_to == self
+
     true
+  end
+
+  def next_assignee(_options = {})
+    nil
+  end
+
+  def automatically_assign_to_member?
+    !!next_assignee
   end
 
   def selectable_in_queue?
@@ -34,7 +43,7 @@ class Organization < ApplicationRecord
   end
 
   def path
-    "/organizations/#{url ? url : id}"
+    "/organizations/#{url || id}"
   end
 
   def user_admin_path

@@ -44,7 +44,7 @@ class RampElectionRollback < ApplicationRecord
   # require that it was canceled manually beforehand
   def validate_canceled_end_product
     establishment = EndProductEstablishment.find_by(source: ramp_election)
-    unless establishment && establishment.status_canceled?
+    unless establishment&.status_canceled?
       errors.add(:ramp_election, "end_product_not_canceled")
     end
   end

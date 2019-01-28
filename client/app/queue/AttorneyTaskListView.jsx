@@ -15,8 +15,8 @@ import Alert from '../components/Alert';
 
 import {
   completeTasksByAssigneeCssIdSelector,
-  onHoldTasksByAssigneeCssIdSelector,
-  workableTasksByAssigneeCssIdSelector
+  workableTasksByAssigneeCssIdSelector,
+  onHoldTasksForAttorney
 } from './selectors';
 
 import {
@@ -140,7 +140,7 @@ const mapStateToProps = (state) => {
 
   return ({
     workableTasks: workableTasksByAssigneeCssIdSelector(state),
-    onHoldTasks: onHoldTasksByAssigneeCssIdSelector(state),
+    onHoldTasks: onHoldTasksForAttorney(state),
     completedTasks: completeTasksByAssigneeCssIdSelector(state),
     messages,
     organizations,

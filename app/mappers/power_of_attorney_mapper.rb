@@ -30,6 +30,7 @@ module PowerOfAttorneyMapper
 
   def get_rep_name_from_rep_record(rep_record)
     return if !rep_record || (rep_record.repfirst.blank? && rep_record.replast.blank?)
+
     [rep_record.repfirst, rep_record.repmi, rep_record.replast, rep_record.repsuf].select(&:present?).join(" ").strip
   end
 
@@ -97,11 +98,13 @@ module PowerOfAttorneyMapper
 
   def get_short_name(vacols_code)
     return if vacols_representatives[vacols_code].blank?
+
     vacols_representatives[vacols_code][:short]
   end
 
   def get_full_name(vacols_code)
     return if vacols_representatives[vacols_code].blank?
+
     vacols_representatives[vacols_code][:full_name]
   end
 

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { connect } from 'react-redux';
+import querystring from 'querystring';
 
 import PdfUI from './PdfUI';
 import PdfSidebar from './PdfSidebar';
@@ -9,10 +10,13 @@ import Modal from '../components/Modal';
 import { fetchAppealDetails, showSearchBar
 } from '../reader/PdfViewer/PdfViewerActions';
 import { selectCurrentPdf, closeDocumentUpdatedModal } from '../reader/Documents/DocumentsActions';
-import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation, closeAnnotationDeleteModal
+import { stopPlacingAnnotation, showPlaceAnnotationIcon, deleteAnnotation,
+  closeAnnotationDeleteModal, closeAnnotationShareModal
 } from '../reader/AnnotationLayer/AnnotationActions';
+import { onScrollToComment } from '../reader/Pdf/PdfActions';
 
 import { isUserEditingText, shouldFetchAppeal } from './utils';
+import CopyTextButton from '../components/CopyTextButton';
 import { update } from '../util/ReducerUtil';
 import { bindActionCreators } from 'redux';
 import { getFilteredDocuments } from './selectors';
@@ -137,6 +141,12 @@ export class PdfViewer extends React.Component {
       this.props.fetchAppealDetails(this.props.match.params.vacolsId);
     }
     this.updateWindowTitle();
+
+    const query = querystring.parse(window.location.search.slice(1));
+
+    if ('annotation' in query) {
+      this.props.onScrollToComment(this.props.annotations[query.annotation]);
+    }
   }
 
   componentWillUnmount = () => {
@@ -249,6 +259,19 @@ export class PdfViewer extends React.Component {
           title="Delete Comment">
           Are you sure you want to delete this comment?
         </Modal>}
+        {this.props.shareAnnotationModalIsOpenFor && <Modal
+          buttons={[
+            { classNames: ['usa-button', 'usa-button-secondary'],
+              name: 'Close',
+              onClick: this.props.closeAnnotationShareModal
+            }
+          ]}
+          closeHandler={this.props.closeAnnotationShareModal}
+          title="Share Comment">
+          <CopyTextButton
+            text={`${location.origin}${location.pathname}?annotation=${this.props.shareAnnotationModalIsOpenFor}`}
+          />
+        </Modal>}
       </div>
     );
   }
@@ -257,21 +280,25 @@ export class PdfViewer extends React.Component {
 const mapStateToProps = (state) => ({
   documents: getFilteredDocuments(state),
   appeal: state.pdfViewer.loadedAppeal,
+  annotations: state.annotationLayer.annotations,
   ..._.pick(state.pdfViewer, 'hidePdfSidebar'),
   ..._.pick(state.annotationLayer, 'placingAnnotationIconPageCoords',
-    'deleteAnnotationModalIsOpenFor', 'placedButUnsavedAnnotation', 'isPlacingAnnotation'),
+    'deleteAnnotationModalIsOpenFor', 'shareAnnotationModalIsOpenFor',
+    'placedButUnsavedAnnotation', 'isPlacingAnnotation'),
   ..._.pick(state.pdf, 'scrollToComment', 'pageDimensions')
 });
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     showPlaceAnnotationIcon,
+    closeAnnotationShareModal,
     closeAnnotationDeleteModal,
     deleteAnnotation,
     stopPlacingAnnotation,
     fetchAppealDetails,
     showSearchBar,
-    closeDocumentUpdatedModal
+    closeDocumentUpdatedModal,
+    onScrollToComment
   }, dispatch),
 
   handleSelectCurrentPdf: (docId) => dispatch(selectCurrentPdf(docId))
@@ -288,6 +315,7 @@ PdfViewer.propTypes = {
     id: PropTypes.number
   }),
   deleteAnnotationModalIsOpenFor: PropTypes.number,
+  shareAnnotationModalIsOpenFor: PropTypes.number,
   documents: PropTypes.array.isRequired,
   allDocuments: PropTypes.array.isRequired,
   selectCurrentPdf: PropTypes.func,

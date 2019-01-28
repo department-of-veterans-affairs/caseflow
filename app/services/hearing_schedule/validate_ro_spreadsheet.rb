@@ -52,6 +52,7 @@ class HearingSchedule::ValidateRoSpreadsheet
                                                          end.uniq.sort
       return false
     end
+
     true
   end
 

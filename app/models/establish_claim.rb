@@ -127,6 +127,7 @@ class EstablishClaim < Dispatch::Task
 
   def time_to_complete
     return nil if !created_at
+
     completed_at - created_at
   end
 
@@ -212,6 +213,7 @@ class EstablishClaim < Dispatch::Task
 
   def email_sent_action_description
     return nil unless sent_email
+
     "Sent email to: #{sent_email.recipient} in #{sent_email.ro_name} - re: #{special_issues} Issue(s)"
   end
 
@@ -240,7 +242,7 @@ class EstablishClaim < Dispatch::Task
   end
 
   def sent_email
-    claim_establishment && claim_establishment.sent_email
+    claim_establishment&.sent_email
   end
 
   def ep_created?
@@ -251,7 +253,8 @@ class EstablishClaim < Dispatch::Task
     EndProduct.new(
       claim_id: outgoing_reference_id,
       station_of_jurisdiction: appeal.dispatched_to_station,
-      claim_type_code: claim_establishment.ep_code
+      claim_type_code: claim_establishment.ep_code,
+      payee_code: EndProduct::DEFAULT_PAYEE_CODE
     )
   end
 

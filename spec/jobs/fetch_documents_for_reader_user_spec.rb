@@ -26,9 +26,33 @@ describe FetchDocumentsForReaderUserJob do
       }
     end
 
-    context "when a reader user with 1 appeal is provided" do
+    context "when a reader user with 1 legacy appeal is provided" do
       it "retrieves the appeal document and updates the fetched at time" do
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything).and_return(doc_struct).once
+
+        expect(reader_user.documents_fetched_at).to be_nil
+        FetchDocumentsForReaderUserJob.perform_now(reader_user)
+        expect(reader_user.documents_fetched_at).to_not be_nil
+      end
+    end
+
+    context "when a reader user with 1 ama appeal is provided" do
+      let(:ama_appeal) do
+        create(
+          :appeal,
+          documents: [document]
+        )
+      end
+      let!(:task) do
+        create(
+          :ama_attorney_task,
+          :in_progress,
+          assigned_to: user,
+          appeal: ama_appeal
+        )
+      end
+      it "retrieves the appeal document and updates the fetched at time" do
+        expect(EFolderService).to receive(:fetch_documents_for).with(ama_appeal, anything).and_return(doc_struct).once
 
         expect(reader_user.documents_fetched_at).to be_nil
         FetchDocumentsForReaderUserJob.perform_now(reader_user)

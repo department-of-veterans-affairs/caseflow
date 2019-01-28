@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 
 import Table from '../../components/Table';
-import { formatDate } from '../../util/DateUtil';
+import { formatDate, formatDateStr } from '../../util/DateUtil';
 
 export default class CanceledTasksIndex extends React.Component {
   render() {
@@ -24,7 +24,7 @@ export default class CanceledTasksIndex extends React.Component {
       },
       {
         header: 'Decision Date',
-        valueFunction: (task) => formatDate(task.cached_serialized_decision_date)
+        valueFunction: (task) => formatDateStr(task.cached_serialized_decision_date)
       },
       {
         header: 'Cancel Date',

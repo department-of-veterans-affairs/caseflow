@@ -62,12 +62,12 @@ describe SyncReviewsJob do
 
     context "when there are claim reviews awaiting processing" do
       it "ignores completed and older expired reviews" do
-        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_attempts_ended)
-        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_processed)
-        expect(ClaimReviewProcessJob).to receive(:perform_later).with(higher_level_review_requiring_processing)
-        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(riu_attempts_ended)
-        expect(ClaimReviewProcessJob).to_not receive(:perform_later).with(riu_processed)
-        expect(ClaimReviewProcessJob).to receive(:perform_later).with(riu_requiring_processing)
+        expect(DecisionReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_attempts_ended)
+        expect(DecisionReviewProcessJob).to_not receive(:perform_later).with(higher_level_review_processed)
+        expect(DecisionReviewProcessJob).to receive(:perform_later).with(higher_level_review_requiring_processing)
+        expect(DecisionReviewProcessJob).to_not receive(:perform_later).with(riu_attempts_ended)
+        expect(DecisionReviewProcessJob).to_not receive(:perform_later).with(riu_processed)
+        expect(DecisionReviewProcessJob).to receive(:perform_later).with(riu_requiring_processing)
 
         SyncReviewsJob.perform_now("limit" => 2)
       end
@@ -85,13 +85,13 @@ describe SyncReviewsJob do
       end
     end
 
-    context "when there are legacy optins awaiting processing" do
-      let!(:pending_legacy_optin) { create(:legacy_issue_optin).tap(&:submit_for_processing!) }
-      let!(:legacy_optin) { create(:legacy_issue_optin) }
+    context "when there are effectuations awaiting processing" do
+      let!(:pending_effectuation) { create(:board_grant_effectuation).tap(&:submit_for_processing!) }
+      let!(:effectuation) { create(:board_grant_effectuation) }
 
-      it "ignores legacy optins that are not flagged" do
-        expect(LegacyOptinProcessJob).to_not receive(:perform_later).with(legacy_optin)
-        expect(LegacyOptinProcessJob).to receive(:perform_later).with(pending_legacy_optin)
+      it "ignores effectuations that are not flagged" do
+        expect(DecisionIssueSyncJob).to_not receive(:perform_later).with(effectuation)
+        expect(DecisionIssueSyncJob).to receive(:perform_later).with(pending_effectuation)
 
         SyncReviewsJob.perform_now("limit" => 2)
       end
@@ -129,6 +129,17 @@ describe SyncReviewsJob do
           expect(ramp_refiling2).to receive(:create_end_product_and_contentions!)
           SyncReviewsJob.perform_now
         end
+      end
+    end
+
+    context "when there are decision documents that need to be reprocessed" do
+      let!(:decision_document_already_processed) { create(:decision_document, :processed) }
+      let!(:decision_document_needs_reprocessing) { create(:decision_document, :requires_processing) }
+
+      it "starts jobs to reprocess them" do
+        expect do
+          SyncReviewsJob.perform_now
+        end.to have_enqueued_job(ProcessDecisionDocumentJob).with(decision_document_needs_reprocessing).exactly(:once)
       end
     end
   end

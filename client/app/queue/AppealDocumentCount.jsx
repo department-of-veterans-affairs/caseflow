@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import ApiUtil from '../util/ApiUtil';
 import _ from 'lodash';
 
-import { setAppealDocCount } from './QueueActions';
+import { setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
 
 import { css } from 'glamor';
 import { COLORS } from '../constants/AppConstants';
@@ -17,24 +17,31 @@ const documentCountStyling = css({
 
 class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
-    const appeal = this.props.appeal;
+    this.props.setAppealDocCount(this.props.externalId, null);
+
+    const {
+      appeal,
+      cached
+    } = this.props;
 
     if (appeal.isPaperCase) {
       return;
     }
 
-    if (!this.props.docCountForAppeal) {
-      const requestOptions = {
-        withCredentials: true,
-        timeout: true
-      };
+    const requestOptions = {
+      withCredentials: true,
+      timeout: { response: 5 * 60 * 1000 }
+    };
 
-      ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
-        const resp = JSON.parse(response.text);
+    const endpoint = `document_count${cached ? '?cached' : ''}`;
 
-        this.props.setAppealDocCount(this.props.externalId, resp.document_count);
-      });
-    }
+    ApiUtil.get(`/appeals/${this.props.externalId}/${endpoint}`, requestOptions).then((response) => {
+      const resp = JSON.parse(response.text);
+
+      this.props.setAppealDocCount(this.props.externalId, resp.document_count);
+    }, (error) => {
+      this.props.errorFetchingDocumentCount(this.props.externalId, error);
+    });
   }
 
   render = () => {
@@ -46,15 +53,14 @@ class AppealDocumentCount extends React.PureComponent {
       return null;
     }
 
-    return <span {...documentCountStyling}>
-      {`${this.props.docCountForAppeal} docs`}
-    </span>;
+    return this.props.docCountForAppeal;
   }
 }
 
 AppealDocumentCount.propTypes = {
   appeal: PropTypes.object.isRequired,
-  loadingText: PropTypes.bool
+  loadingText: PropTypes.bool,
+  cached: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -67,7 +73,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setAppealDocCount
+  setAppealDocCount,
+  errorFetchingDocumentCount
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppealDocumentCount);

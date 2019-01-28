@@ -115,6 +115,10 @@ jobs:
           path: ~/project/log/test.log
 
       - store_artifacts:
+          name: Store bullet log
+          path: ~/project/log/bullet.log
+
+      - store_artifacts:
           name: Store testfile ordering
           path: ~/project/tmp/testfiles
 

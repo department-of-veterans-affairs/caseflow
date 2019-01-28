@@ -19,7 +19,7 @@ class Generators::Vacols::Decass
         deadtim: "2017-10-27 00:00:00 UTC",
         deprogrev: nil,
         deatcom: nil,
-        debmcom:  "Illum voluptatem consectetur molestiae maiores commodi est est optio.",
+        debmcom: "Illum voluptatem consectetur molestiae maiores commodi est est optio.",
         demdusr: "AABSHIRE",
         demdtim: "2017-11-21 00:00:00 UTC",
         delock: "Y",

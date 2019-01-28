@@ -11,7 +11,7 @@ class OrganizationsController < ApplicationController
   private
 
   def verify_organization_access
-    redirect_to "/unauthorized" unless organization && organization.user_has_access?(current_user)
+    redirect_to "/unauthorized" unless organization&.user_has_access?(current_user)
   end
 
   def verify_role_access

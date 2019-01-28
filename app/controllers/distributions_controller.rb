@@ -37,7 +37,7 @@ class DistributionsController < ApplicationController
         "title": "Distribution Error",
         "detail": "An error occurred while trying to retrieve cases. Please try again."
       }]
-    }, status: 500
+    }, status: :internal_server_error
   end
 
   def render_403_error(errors)
@@ -45,7 +45,7 @@ class DistributionsController < ApplicationController
 
     render json: {
       errors: errors.map { |error| json_error(error) }
-    }, status: 403
+    }, status: :forbidden
   end
 
   # rubocop:disable Metrics/MethodLength

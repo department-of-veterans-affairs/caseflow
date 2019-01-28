@@ -4,6 +4,8 @@ import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
+import { LinkSymbol } from '../../components/RenderFunctions';
+import HearingWorksheetAmaIssues from '../../hearings/components/HearingWorksheetAmaIssues';
 
 const TEXT_INDENTATION = '10px';
 
@@ -24,7 +26,7 @@ const buttonDiv = css({
 
 const outerDiv = css({
   marginLeft: '50px',
-  marginTop: '10px'
+  marginTop: '5px'
 });
 
 const decisionIssueDiv = css({
@@ -46,7 +48,7 @@ const grayLine = css({
   minHeight: '20px',
   background: COLORS.GREY_LIGHT,
   marginLeft: '20px',
-  marginBottom: '10px'
+  marginBottom: '5px'
 });
 
 const flexContainer = css({
@@ -67,33 +69,55 @@ export default class ContestedIssues extends React.PureComponent {
   decisionIssues = (requestIssue) => {
     const {
       decisionIssues,
-      openDecisionHandler
+      openDecisionHandler,
+      openDeleteAddedDecisionIssueHandler
     } = this.props;
 
     return decisionIssues.filter((decisionIssue) => {
       return decisionIssue.request_issue_ids.includes(requestIssue.id);
     }).map((decisionIssue) => {
-      return <div {...outerDiv} key={decisionIssue.id}>
+      const linkedDecisionIssue = decisionIssue.request_issue_ids.length > 1;
+
+      return <div {...outerDiv} key={decisionIssue.id} className="decision-issue">
         <div {...grayLine} />
         <div {...decisionIssueDiv}>
           <div {...flexContainer}>
             Decision
-            {openDecisionHandler && <span>
-              <Button
-                name="Edit"
-                onClick={openDecisionHandler([requestIssue.id], decisionIssue)}
-                classNames={['cf-btn-link']}
-              />
-            </span>}
+            <div>
+              {openDeleteAddedDecisionIssueHandler && <span>
+                <Button
+                  name="Delete"
+                  id={`delete-issue-${requestIssue.id}-${decisionIssue.id}`}
+                  onClick={() => {
+                    openDeleteAddedDecisionIssueHandler(requestIssue.id, decisionIssue);
+                  }}
+                  classNames={['cf-btn-link']}
+                />
+              </span>}
+              {openDecisionHandler && <span>
+                <Button
+                  name="Edit"
+                  id={`edit-issue-${requestIssue.id}-${decisionIssue.id}`}
+                  onClick={openDecisionHandler(requestIssue.id, decisionIssue)}
+                  classNames={['cf-btn-link']}
+                />
+              </span>}
+            </div>
           </div>
           <div {...verticalSpaceDiv} {...flexContainer}>
             <span {...descriptionSpan}>
               {decisionIssue.description}
+              { decisionIssue.diagnostic_code &&
+              <div>Diagnostic code: {decisionIssue.diagnostic_code}</div>
+              }
             </span>
             <span>
               {ISSUE_DISPOSITIONS_BY_ID[decisionIssue.disposition]}
             </span>
           </div>
+          {linkedDecisionIssue && <div {...noteDiv} {...verticalSpaceDiv}>
+            <LinkSymbol /> Added to {decisionIssue.request_issue_ids.length} issues
+          </div>}
         </div>
       </div>;
     });
@@ -105,7 +129,8 @@ export default class ContestedIssues extends React.PureComponent {
       decisionIssues,
       highlight,
       openDecisionHandler,
-      numbered
+      numbered,
+      hearingWorksheet
     } = this.props;
 
     const listStyle = css({
@@ -125,29 +150,37 @@ export default class ContestedIssues extends React.PureComponent {
 
       return <li {...listPadding} key={issue.id}>
         <div {...contestedIssueStyling}>
-          Contested Issue
+          Issue
         </div>
         { shouldShowError &&
           <span {...errorTextSpacing} className="usa-input-error-message">
-            Each request issue must have at least one decision issue
+            You must add a decision before you continue.
           </span>
         }
         <div {...indentedIssueStyling} className={shouldShowError ? 'usa-input-error' : ''}>
-          {issue.description}
           <div {...verticalSpaceDiv}>Benefit type: {BENEFIT_TYPES[issue.program]}</div>
-          <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>
+          {issue.description}
+          { issue.diagnostic_code &&
+            <div>Diagnostic code: {issue.diagnostic_code}</div>
+          }
+          { issue.notes &&
+            <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>
+          }
+
           {this.decisionIssues(issue)}
           { openDecisionHandler &&
             <React.Fragment>
               <div {...buttonDiv}>
                 <Button
-                  name="+ Add Decision"
-                  onClick={openDecisionHandler([issue.id])}
+                  name="+ Add decision"
+                  id={`add-decision-${issue.id}`}
+                  onClick={openDecisionHandler(issue.id)}
                   classNames={['usa-button-secondary']}
                 />
               </div>
             </React.Fragment>
           }
+          { hearingWorksheet && <HearingWorksheetAmaIssues issue={issue} /> }
         </div>
       </li>;
     })}

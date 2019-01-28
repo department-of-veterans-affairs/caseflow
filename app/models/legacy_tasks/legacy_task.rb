@@ -8,7 +8,28 @@ class LegacyTask
   attr_accessor(*ATTRS)
   attr_writer :appeal
 
-  TASK_ID_REGEX = /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i
+  TASK_ID_REGEX = /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i.freeze
+
+  def available_actions_unwrapper(user, role)
+    available_actions(role).map { |action| build_action_hash(action, user) }
+  end
+
+  def build_action_hash(action, user)
+    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func], user) : nil }
+  end
+
+  def add_admin_action_data(_user)
+    {
+      selected: nil,
+      options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
+        {
+          label: value,
+          value: key
+        }
+      end,
+      type: ColocatedTask.name
+    }
+  end
 
   ### Serializer Methods Start
   def assigned_on
@@ -19,15 +40,19 @@ class LegacyTask
     action
   end
 
+  def serializer_class
+    ::WorkQueue::LegacyTaskSerializer
+  end
+
   delegate :css_id, :name, to: :added_by, prefix: true
   delegate :first_name, :last_name, :pg_id, :css_id, to: :assigned_by, prefix: true
 
   def user_id
-    assigned_to && assigned_to.css_id
+    assigned_to&.css_id
   end
 
   def assigned_to_pg_id
-    assigned_to && assigned_to.id
+    assigned_to&.id
   end
 
   def appeal

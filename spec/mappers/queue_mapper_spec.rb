@@ -3,8 +3,8 @@ describe QueueMapper do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
-  context ".rename_and_validate_decass_attrs" do
-    subject { QueueMapper.rename_and_validate_decass_attrs(info) }
+  describe "#rename_and_validate_decass_attrs" do
+    subject { QueueMapper.new(info).rename_and_validate_decass_attrs }
 
     context "when all fields are present" do
       let(:info) do
@@ -21,7 +21,15 @@ describe QueueMapper do
           quality: :exceeds_expectations,
           comment: "do something",
           deficiencies: [:caselaw, :lay_evidence, :remands_are_not_completed],
-          one_touch_initiative: true }
+          one_touch_initiative: true,
+          case_id: "123",
+          adding_user: "TESTSLOGID",
+          added_at_date: VacolsHelper.local_date_with_utc_timezone,
+          deadline_date: VacolsHelper.local_date_with_utc_timezone,
+          board_member_id: "123",
+          complexity_rating: "4",
+          completion_date: VacolsHelper.local_date_with_utc_timezone,
+          timeliness: "Y" }
       end
 
       let(:expected_result) do
@@ -40,7 +48,15 @@ describe QueueMapper do
           deqr3: "Y",
           deqr7: "Y",
           deqr10: "Y",
-          de1touch: "Y" }
+          de1touch: "Y",
+          defolder: "123",
+          deadusr: "TESTSLOGID",
+          deadtim: VacolsHelper.local_date_with_utc_timezone,
+          dedeadline: VacolsHelper.local_date_with_utc_timezone,
+          dememid: "123",
+          deicr: "4",
+          decomp: VacolsHelper.local_date_with_utc_timezone,
+          detrem: "Y" }
       end
       it { is_expected.to eq expected_result }
     end
@@ -54,16 +70,40 @@ describe QueueMapper do
           document_id: "123456789.1234",
           modifying_user: "TESTSLOGID" }
       end
-      let(:expected_result) do
-        { deprod: "OTI",
-          deatcom: nil,
-          dedocid: "123456789.1234",
-          dereceive: VacolsHelper.local_date_with_utc_timezone,
-          demdtim: VacolsHelper.local_date_with_utc_timezone,
-          demdusr: "TESTSLOGID",
-          de1touch: "N" }
+
+      it "renames the key to deatcom and sets it to nil" do
+        expect(subject[:deatcom]).to be_nil
       end
-      it { is_expected.to eq expected_result }
+    end
+
+    context "when optional note is too long (more than 350 characters)" do
+      let(:info) do
+        { work_product: "OMO - IME",
+          overtime: true,
+          note: "a" * 351,
+          reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone,
+          document_id: "123456789.1234",
+          modifying_user: "TESTSLOGID" }
+      end
+
+      it "only uses the first 350 characters" do
+        expect(subject[:deatcom]).to eq "a" * 350
+      end
+    end
+
+    context "when note contains non-ASCII characters that make the length greater than 350" do
+      let(:info) do
+        { work_product: "OMO - IME",
+          overtime: true,
+          note: ("a" * 341) + "Véteran’s",
+          reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone,
+          document_id: "123456789.1234",
+          modifying_user: "TESTSLOGID" }
+      end
+
+      it "only converts all characters to ASCII" do
+        expect(subject[:deatcom]).to eq(("a" * 341) + "Veteran's")
+      end
     end
 
     context "when optional note is missing" do
@@ -74,72 +114,143 @@ describe QueueMapper do
           document_id: "123456789.1234",
           modifying_user: "TESTSLOGID" }
       end
-      let(:expected_result) do
-        { deprod: "IME",
-          dedocid: "123456789.1234",
-          dereceive: VacolsHelper.local_date_with_utc_timezone,
-          demdtim: VacolsHelper.local_date_with_utc_timezone,
-          demdusr: "TESTSLOGID",
-          de1touch: "N" }
+
+      it "does not contain the deatcom key" do
+        expect(subject.keys).to_not include :deatcom
       end
-      it { is_expected.to eq expected_result }
     end
-  end
 
-  context ".complexity_to_vacols_code" do
-    subject { QueueMapper.complexity_to_vacols_code(complexity) }
+    context "when work product key is present and overtime is true" do
+      let(:info) do
+        { work_product: "OMO - IME",
+          overtime: true,
+          note: nil,
+          reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone,
+          document_id: "123456789.1234",
+          modifying_user: "TESTSLOGID" }
+      end
 
-    context "when complexity is not valid" do
-      let(:complexity) { "not_valid" }
+      it "converts to the VACOLS overtime work product codes" do
+        expect(subject[:deprod]).to eq "OTI"
+      end
+    end
 
-      it "should raise Caseflow::Error::QueueRepositoryError" do
+    context "when work product key is present and overtime is false" do
+      let(:info) do
+        { work_product: "OMO - IME",
+          overtime: false }
+      end
+
+      it "converts to the VACOLS regular work product codes" do
+        expect(subject[:deprod]).to eq "IME"
+      end
+    end
+
+    context "when work product key is present but the value is unrecognized" do
+      let(:info) do
+        { work_product: "foo",
+          overtime: false }
+      end
+
+      it "sets to deprod to nil" do
+        expect(subject[:deprod]).to be_nil
+      end
+    end
+
+    context "when complexity key is present but the value is invalid" do
+      let(:info) do
+        { complexity: "not_valid" }
+      end
+
+      it "raises Caseflow::Error::QueueRepositoryError" do
         expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
       end
     end
 
     context "when complexity is valid" do
-      let(:complexity) { "hard" }
+      let(:info) do
+        { complexity: "hard" }
+      end
 
-      it { is_expected.to eq "3" }
+      it "converts the string complexity into a number" do
+        expect(subject[:defdiff]).to eq "3"
+      end
     end
-  end
-
-  context ".quality_to_vacols_code" do
-    subject { QueueMapper.quality_to_vacols_code(quality) }
 
     context "when quality is not valid" do
-      let(:quality) { "not_valid" }
+      let(:info) do
+        { quality: "not_valid" }
+      end
 
-      it "should raise Caseflow::Error::QueueRepositoryError" do
+      it "raises Caseflow::Error::QueueRepositoryError" do
         expect { subject }.to raise_error(Caseflow::Error::QueueRepositoryError)
       end
     end
 
     context "when quality is valid" do
-      let(:quality) { "does_not_meet_expectations" }
+      let(:info) do
+        { quality: "does_not_meet_expectations" }
+      end
 
-      it { is_expected.to eq "1" }
-    end
-  end
-
-  context ".work_product_to_vacols_code" do
-    subject { QueueMapper.work_product_to_vacols_code(work_product, overtime) }
-    context "when overtime" do
-      let(:work_product) { "OMO - VHA" }
-      let(:overtime) { true }
-      it { is_expected.to eq "OTV" }
+      it "converts the string quality into a number" do
+        expect(subject[:deoq]).to eq "1"
+      end
     end
 
-    context "when not overtime" do
-      let(:work_product) { "OMO - VHA" }
-      let(:overtime) { false }
-      it { is_expected.to eq "VHA" }
+    context "when deficiencies are present" do
+      let(:info) do
+        {
+          deficiencies: [
+            :issues_are_not_addressed,
+            :theory_contention,
+            :caselaw,
+            :statute_regulation,
+            :admin_procedure,
+            :relevant_records,
+            :lay_evidence,
+            :findings_are_not_supported,
+            :process_violations,
+            :remands_are_not_completed,
+            :grammar_errors
+          ]
+        }
+      end
+
+      it "renames the keys and sets them all to Y" do
+        (1..11).each do |index|
+          expect(subject[:"deqr#{index}"]).to eq "Y"
+        end
+      end
     end
 
-    context "when unrecognized" do
-      let(:work_product) { "unknown" }
-      let(:overtime) { false }
-      it { is_expected.to eq nil }
+    context "demdtim timestamp" do
+      let(:info) do
+        {}
+      end
+
+      it "always adds a key called demdtime set to the local date with UTC timezone" do
+        expect(subject[:demdtim]).to eq VacolsHelper.local_date_with_utc_timezone
+      end
+    end
+
+    context "one_touch_initiative is true" do
+      let(:info) do
+        { one_touch_initiative: true }
+      end
+
+      it "renames the key to de1touch and maps true to Y" do
+        expect(subject[:de1touch]).to eq "Y"
+      end
+    end
+
+    context "one_touch_initiative is false" do
+      let(:info) do
+        { one_touch_initiative: false }
+      end
+
+      it "renames the key to de1touch and maps false to N" do
+        expect(subject[:de1touch]).to eq "N"
+      end
     end
   end
 end

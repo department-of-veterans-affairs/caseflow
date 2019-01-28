@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Table from '../../components/Table';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import { COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
 
@@ -29,7 +29,7 @@ export default class UnpreparedTasksIndex extends React.Component {
       },
       {
         header: 'Decision Date',
-        valueFunction: (task) => formatDate(task.cached_serialized_decision_date)
+        valueFunction: (task) => formatDateStr(task.cached_serialized_decision_date)
       },
       {
         header: 'Days Since Outcoding',
