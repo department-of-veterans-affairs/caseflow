@@ -106,7 +106,7 @@ class RatingIssue
 
   # tells whether a the rating issue was made as a decision in response to a contention
   def decides_contention?(contention_reference_id:)
-    contention_reference_ids.any? { |reference_id| reference_id.to_i == contention_reference_id.to_i }
+    contention_reference_ids.any? { |reference_id| reference_id.to_s == contention_reference_id.to_s }
   end
 
   private

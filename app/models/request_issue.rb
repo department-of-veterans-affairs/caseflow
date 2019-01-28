@@ -148,7 +148,7 @@ class RequestIssue < ApplicationRecord
     end
 
     def find_active_by_contested_rating_issue_reference_id(rating_issue_reference_id)
-      request_issue = find_by(
+      request_issue = unscoped.find_by(
         contested_rating_issue_reference_id: rating_issue_reference_id,
         removed_at: nil,
         ineligible_reason: nil
@@ -160,8 +160,12 @@ class RequestIssue < ApplicationRecord
     end
 
     def find_active_by_contested_decision_id(contested_decision_issue_id)
-      request_issue = find_by(contested_decision_issue_id: contested_decision_issue_id,
-                                       removed_at: nil, ineligible_reason: nil)
+      request_issue = unscoped.find_by(
+        contested_decision_issue_id: contested_decision_issue_id,
+        removed_at: nil,
+        ineligible_reason: nil
+      )
+
       return unless request_issue&.status_active?
 
       request_issue
