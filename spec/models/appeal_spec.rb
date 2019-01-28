@@ -584,4 +584,31 @@ describe Appeal do
       end
     end
   end
+
+  context "#program" do
+    subject { appeal.program }
+
+    let(:benefit_type1) { "compensation" }
+    let(:benefit_type2) { "pension" }
+    let(:appeal) { create(:appeal, request_issues: [request_issue]) }
+    let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
+    let(:request_issue2) { create(:request_issue, benefit_type: benefit_type1) }
+    let(:request_issue3) { create(:request_issue, benefit_type: benefit_type2) }
+
+    context "appeal has one request issue" do
+      it { is_expected.to eq benefit_type1 }
+    end
+
+    context "appeal has multiple request issues with same benefit type" do
+      let(:appeal) { create(:appeal, request_issues: [request_issue, request_issue2]) }
+
+      it { is_expected.to eq benefit_type1 }
+    end
+
+    context "appeal has multiple request issue with different benefit_types" do
+      let(:appeal) { create(:appeal, request_issues: [request_issue, request_issue2, request_issue3]) }
+
+      it { is_expected.to eq "multiple" }
+    end
+  end
 end
