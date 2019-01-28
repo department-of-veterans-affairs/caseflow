@@ -35,7 +35,7 @@ class Task < ApplicationRecord
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
-    actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action) } : []
+    actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
 
     # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
     if actions.length > actions.pluck(:value).uniq.length
@@ -45,8 +45,8 @@ class Task < ApplicationRecord
     actions
   end
 
-  def build_action_hash(action)
-    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func]) : nil }
+  def build_action_hash(action, user)
+    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func], user) : nil }
   end
 
   def actions_available?(user)
@@ -103,11 +103,15 @@ class Task < ApplicationRecord
   def update_from_params(params, current_user)
     verify_user_can_update!(current_user)
 
+    return reassign(params[:reassign], current_user) if params[:reassign]
+
     params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
-    update(params)
+    update!(params)
 
     [self]
   end
+
+  def reassign; end
 
   def legacy?
     appeal_type == LegacyAppeal.name
@@ -178,7 +182,7 @@ class Task < ApplicationRecord
     nil
   end
 
-  def assign_to_organization_data
+  def assign_to_organization_data(_user = nil)
     organizations = Organization.assignable(self).map do |organization|
       {
         label: organization.name,
@@ -193,11 +197,11 @@ class Task < ApplicationRecord
     }
   end
 
-  def mail_assign_to_organization_data
+  def mail_assign_to_organization_data(_user = nil)
     { options: MailTask.subclass_routing_options }
   end
 
-  def assign_to_user_data
+  def assign_to_user_data(user = nil)
     users = if assigned_to.is_a?(Organization)
               assigned_to.users
             elsif parent&.assigned_to.is_a?(Organization)
@@ -207,13 +211,13 @@ class Task < ApplicationRecord
             end
 
     {
-      selected: nil,
+      selected: user,
       options: users_to_options(users),
       type: type
     }
   end
 
-  def assign_to_judge_data
+  def assign_to_judge_data(_user = nil)
     {
       selected: root_task.children.find { |task| task.is_a?(JudgeTask) }&.assigned_to,
       options: users_to_options(Judge.list_all),
@@ -221,7 +225,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def assign_to_attorney_data
+  def assign_to_attorney_data(_user = nil)
     {
       selected: nil,
       options: nil,
@@ -229,7 +233,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def assign_to_privacy_team_data
+  def assign_to_privacy_team_data(_user = nil)
     org = PrivacyTeam.singleton
 
     {
@@ -239,7 +243,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def assign_to_translation_team_data
+  def assign_to_translation_team_data(_user = nil)
     org = Translation.singleton
 
     {
@@ -249,15 +253,20 @@ class Task < ApplicationRecord
     }
   end
 
-  def add_admin_action_data
+  def add_admin_action_data(_user = nil)
     {
       selected: nil,
-      options: nil,
+      options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
+        {
+          label: value,
+          value: key
+        }
+      end,
       type: ColocatedTask.name
     }
   end
 
-  def schedule_veteran_data
+  def schedule_veteran_data(_user = nil)
     {
       selected: nil,
       options: nil,
@@ -265,7 +274,7 @@ class Task < ApplicationRecord
     }
   end
 
-  def return_to_attorney_data
+  def return_to_attorney_data(_user = nil)
     assignee = children.select { |t| t.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
     attorneys = JudgeTeam.for_judge(assigned_to)&.attorneys || []
     attorneys |= [assignee] if assignee.present?
@@ -292,7 +301,8 @@ class Task < ApplicationRecord
   end
 
   def on_hold_expired?
-    return true if placed_on_hold_at && on_hold_duration && placed_on_hold_at + on_hold_duration.days < Time.zone.now
+    return true if on_hold? && placed_on_hold_at && on_hold_duration &&
+                   placed_on_hold_at + on_hold_duration.days < Time.zone.now
 
     false
   end

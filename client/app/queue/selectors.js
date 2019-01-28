@@ -57,6 +57,9 @@ export const incompleteTasksSelector = (tasks: Tasks | Array<Task>) =>
 export const completeTasksSelector = (tasks: Tasks) =>
   _.filter(tasks, (task) => task.status === TASK_STATUSES.completed);
 
+export const taskIsNotOnHoldSelector = (tasks: Tasks) =>
+  _.filter(tasks, (task) => !taskIsOnHold(task));
+
 export const getActiveModalType = createSelector(
   [getModals],
   (modals: { String: boolean }) => _.find(Object.keys(modals), (modalName) => modals[modalName])
@@ -213,6 +216,14 @@ export const allCompleteTasksForAppeal = createSelector(
   }
 );
 
+export const incompleteNonActionableTasks = createSelector(
+  [getAllTasksForAppeal, getAppealId],
+  (tasks: Tasks, appealId: string) => {
+    return _.orderBy(_.filter(tasks, (task) => task.externalAppealId === appealId &&
+    (task.status !== TASK_STATUSES.completed && !task.availableActions.length)), ['createdAt'], ['desc']);
+  }
+);
+
 export const newTasksByAssigneeCssIdSelector = createSelector(
   [incompleteTasksByAssigneeCssIdSelector],
   (tasks: Array<Task>) => tasks.filter((task) => !taskIsOnHold(task))
@@ -293,7 +304,10 @@ const getAttorney = (state: State, attorneyId: string) => {
 };
 
 export const getAssignedTasks = (state: State, attorneyId: string) => {
-  const tasks = incompleteTasksSelector(tasksWithAppealSelector(state));
+  const tasks =
+    incompleteTasksSelector(
+      taskIsNotOnHoldSelector(
+        tasksWithAppealSelector(state)));
   const attorney = getAttorney(state, attorneyId);
   const cssId = attorney ? attorney.css_id : null;
 
@@ -301,7 +315,10 @@ export const getAssignedTasks = (state: State, attorneyId: string) => {
 };
 
 export const getTasksByUserId = (state: State) => {
-  const tasks = incompleteTasksSelector(tasksWithAppealSelector(state));
+  const tasks =
+    incompleteTasksSelector(
+      taskIsNotOnHoldSelector(
+        tasksWithAppealSelector(state)));
   const attorneys = state.queue.attorneysOfJudge;
   const attorneysByCssId = _.keyBy(attorneys, 'css_id');
 
