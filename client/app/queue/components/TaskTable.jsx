@@ -346,8 +346,40 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
+  filterTableData = (data) => {
+    const { filteredByList } = this.props;
+    let filteredData = [];
+
+    // If no filters have yet been selected, just show all the data
+    if (_.isEmpty(filteredByList)) {
+      filteredData = data;
+    } else {
+      // Loop through the data to check if each data point matches a filter
+      // that has been selected
+      for (let key in data) {
+        for (let columnName in filteredByList) {
+          // If there are no filters selected for a particular column,
+          // just add the data point to the filtered data to show
+          if (_.isEmpty(filteredByList[columnName])) {
+            filteredData[key] = data[key];
+          // If there is a filter for a particular column,
+          // and the filter matches a value in the data point,
+          // add that data point to the filtered data to show
+          } else if (filteredByList[columnName].includes(_.get(data[key], columnName))) {
+            filteredData = filteredData.concat(data[key]);
+          }
+        }
+      }
+    }
+
+    return filteredData;
+    // return data;
+  }
+
   render = () => {
-    const { tasks } = this.props;
+    let { tasks } = this.props;
+
+    tasks = this.filterTableData(tasks);
 
     return <Table
       columns={this.getQueueColumns}

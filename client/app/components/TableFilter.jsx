@@ -63,7 +63,7 @@ class TableFilter extends React.PureComponent {
 
   updateSelectedFilter = (value, filterName) => {
     const oldList = this.props.column.filteredByList;
-    const filtersForColumn = _.get(oldList, filterName);
+    const filtersForColumn = _.get(oldList, String(filterName));
     let newList = {};
     let newFilters = [];
 
@@ -85,7 +85,8 @@ class TableFilter extends React.PureComponent {
     //   this.setSelectedFilter(value, filterName);
     // }
 
-    newList = _.set(oldList, filterName, newFilters);
+    // newList = _.set(oldList, filterName, newFilters);
+    newList[filterName] = newFilters;
     this.props.column.updateFilters(newList);
 
     // For some reason when filters are removed a render doesn't automatically happen
