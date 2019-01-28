@@ -138,8 +138,4 @@ class HearingsController < ApplicationController
                                      ])
   end
   # rubocop:enable Metrics/MethodLength
-
-  def find_hearing_location_params
-    params.permit(:veteran_file_number, :regional_office)
-  end
 end

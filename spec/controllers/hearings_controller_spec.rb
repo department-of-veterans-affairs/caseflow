@@ -118,6 +118,16 @@ RSpec.describe HearingsController, type: :controller do
     end
   end
 
+  describe "#show" do
+    let!(:hearing) { create(:hearing) }
+
+    it "returns hearing details" do
+      get :show, as: :json, params: { id: hearing.external_id }
+
+      expect(response.status).to eq 200
+    end
+  end
+
   describe "#find_closest_hearing_locations" do
     let!(:veteran) { create(:veteran, file_number: "123456789") }
 
