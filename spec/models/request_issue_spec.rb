@@ -125,6 +125,16 @@ describe RequestIssue do
     end
   end
 
+  context ".not_deleted" do
+    subject { RequestIssue.not_deleted }
+
+    let!(:deleted_request_issue) { create(:request_issue, review_request: nil) }
+
+    it "filters by whether it is associated with a review_request" do
+      expect(subject.find_by(id: deleted_request_issue.id)).to be_nil
+    end
+  end
+
   context ".find_active_by_contested_rating_issue_reference_id" do
     let(:active_rating_request_issue) do
       rating_request_issue.tap do |ri|
