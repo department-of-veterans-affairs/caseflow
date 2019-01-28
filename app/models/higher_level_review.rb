@@ -51,23 +51,6 @@ class HigherLevelReview < ClaimReview
     # need to impelement
   end
 
-  def aoj
-    # need to implement. add logic to return proper enum: - vba, vha, nca, other
-  end
-
-  def program
-    case benefit_type
-    when "voc_rehab"
-      "vre"
-    when "vha"
-      "medical"
-    when "nca"
-      "burial"
-    else
-      benefit_type
-    end
-  end
-
   def status_hash
     # need to implement. returns the details object for the status
   end
