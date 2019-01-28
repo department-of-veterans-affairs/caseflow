@@ -3,13 +3,13 @@ describe AsyncableJobs do
     let(:veteran) { create(:veteran) }
     let!(:hlr) do
       create(:higher_level_review,
-             establishment_submitted_at: 7.days.ago,
+             last_submitted_at: 7.days.ago,
              establishment_attempted_at: 7.days.ago,
              veteran_file_number: veteran.file_number)
     end
     let!(:sc) do
       create(:supplemental_claim,
-             establishment_submitted_at: 6.days.ago,
+             last_submitted_at: 6.days.ago,
              establishment_attempted_at: 7.days.ago,
              veteran_file_number: veteran.file_number)
     end
@@ -20,12 +20,12 @@ describe AsyncableJobs do
     end
     let!(:sc_not_attempted) do
       create(:supplemental_claim,
-             establishment_submitted_at: 2.days.ago,
+             last_submitted_at: 2.days.ago,
              veteran_file_number: veteran.file_number)
     end
     let!(:sc_not_attempted_expired) do
       create(:supplemental_claim,
-             establishment_submitted_at: 8.days.ago,
+             last_submitted_at: 8.days.ago,
              veteran_file_number: veteran.file_number)
     end
 
