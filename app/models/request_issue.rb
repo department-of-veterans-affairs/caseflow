@@ -131,6 +131,10 @@ class RequestIssue < ApplicationRecord
       ).where.not(issue_category: nil)
     end
 
+    def not_deleted
+      where.not(review_request_id: nil)
+    end
+
     def unidentified
       where(
         contested_rating_issue_reference_id: nil,
