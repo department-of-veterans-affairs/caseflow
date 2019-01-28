@@ -32,6 +32,14 @@ class LegacyTask
     }
   end
 
+  def assign_to_attorney_data(_user)
+    {
+      selected: nil,
+      options: nil,
+      type: AttorneyLegacyTask.name
+    }
+  end
+
   ### Serializer Methods Start
   def assigned_on
     assigned_at

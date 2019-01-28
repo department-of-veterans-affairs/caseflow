@@ -223,6 +223,10 @@ class LegacyHearing < ApplicationRecord
     )
   end
 
+  def slot_new_hearing(parent_record_id, time, appeal)
+    HearingRepository.slot_new_hearing(parent_record_id, time, appeal)
+  end
+
   def appeals_ready_for_hearing
     active_appeal_streams.map(&:attributes_for_hearing)
   end

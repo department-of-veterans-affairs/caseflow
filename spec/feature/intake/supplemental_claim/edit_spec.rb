@@ -454,7 +454,7 @@ feature "Supplemental Claim Edit issues" do
         before_request_issue_ids: [request_issue.id],
         after_request_issue_ids: [request_issue.id],
         attempted_at: Time.zone.now,
-        submitted_at: Time.zone.now,
+        last_submitted_at: Time.zone.now,
         processed_at: nil
       )
 

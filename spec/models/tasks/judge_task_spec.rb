@@ -150,4 +150,57 @@ describe JudgeTask do
       expect(parent.type).to eq JudgeDecisionReviewTask.name
     end
   end
+
+  describe ".create_many_from_root_tasks" do
+    let!(:root_tasks) { [] }
+
+    subject { JudgeTask.create_many_from_root_tasks(root_tasks) }
+
+    before do
+      stub_const("Constants::RampJudges::USERS", test: [judge.css_id, judge2.css_id])
+    end
+
+    context "with one root task" do
+      let!(:root_tasks) { [FactoryBot.create(:root_task)] }
+
+      context "the first assignee doesn't already have a JudgeAssignTask" do
+        it "creates and assigns a task to the first assignee" do
+          expect(JudgeAssignTask.all.count).to eq 0
+          subject
+          expect(JudgeAssignTask.all.count).to eq 1
+          expect(JudgeAssignTask.last.assigned_to).to eq judge
+        end
+      end
+
+      context "the first assignee already has a JudgeAssignTask" do
+        let!(:existing_task) { FactoryBot.create(:ama_judge_task, assigned_to: judge) }
+
+        it "creates and assigns a task to the next available assignee" do
+          expect(JudgeAssignTask.all.count).to eq 1
+          subject
+          expect(JudgeAssignTask.all.count).to eq 2
+          expect(JudgeAssignTask.last.assigned_to).to eq judge2
+        end
+      end
+    end
+
+    context "with multiple root tasks" do
+      let(:root_task1) { FactoryBot.create(:root_task).becomes(RootTask) }
+      let(:root_task2) { FactoryBot.create(:root_task).becomes(RootTask) }
+      let(:root_task3) { FactoryBot.create(:root_task).becomes(RootTask) }
+      let(:root_tasks) { [root_task1, root_task2, root_task3] }
+
+      it "evenly distributes the JudgeAssignTasks" do
+        expect(JudgeAssignTask.all.count).to eq 0
+        subject
+        expect(JudgeAssignTask.all.count).to eq 3
+        expect(JudgeAssignTask.first.parent).to eq root_task1
+        expect(JudgeAssignTask.first.assigned_to).to eq judge
+        expect(JudgeAssignTask.second.parent).to eq root_task2
+        expect(JudgeAssignTask.second.assigned_to).to eq judge2
+        expect(JudgeAssignTask.third.parent).to eq root_task3
+        expect(JudgeAssignTask.third.assigned_to).to eq judge
+      end
+    end
+  end
 end

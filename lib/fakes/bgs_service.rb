@@ -110,7 +110,8 @@ class Fakes::BGSService
         epe = EndProductEstablishment.find_or_create_by!(
           reference_id: in_active_review_reference_id,
           veteran_file_number: veteran.file_number,
-          source: hlr
+          source: hlr,
+          payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
           review_request: hlr,
@@ -132,7 +133,8 @@ class Fakes::BGSService
           reference_id: completed_review_reference_id,
           veteran_file_number: veteran.file_number,
           source: previous_hlr,
-          synced_status: "CLR"
+          synced_status: "CLR",
+          payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
           review_request: previous_hlr,
@@ -178,7 +180,8 @@ class Fakes::BGSService
         EndProductEstablishment.find_or_create_by!(
           reference_id: claim_id,
           veteran_file_number: veteran.file_number,
-          source: sc
+          source: sc,
+          payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
@@ -194,7 +197,8 @@ class Fakes::BGSService
         epe = EndProductEstablishment.find_or_create_by!(
           reference_id: claim_id,
           veteran_file_number: veteran.file_number,
-          source: hlr
+          source: hlr,
+          payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
           review_request: hlr,
@@ -225,6 +229,7 @@ class Fakes::BGSService
           established_at: 1.day.ago
         )
         EndProductEstablishment.find_or_create_by!(reference_id: claim_id, source: ramp_election) do |e|
+          e.payee_code = EndProduct::DEFAULT_PAYEE_CODE
           e.veteran_file_number = veteran.file_number
           e.last_synced_at = 10.minutes.ago
           e.synced_status = "CLR"
