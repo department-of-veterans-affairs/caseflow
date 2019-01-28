@@ -254,10 +254,10 @@ RSpec.feature "Case details" do
 
   context "when an appeal has some number of documents" do
     let!(:appeal) do
-      FactoryBot.create(
+      create(
         :legacy_appeal,
         :with_veteran,
-        vacols_case: FactoryBot.create(:case_with_soc, :assigned, user: attorney_user)
+        vacols_case: create(:case_with_soc, :assigned, :docs_in_vbms, user: attorney_user)
       )
     end
 
@@ -267,9 +267,7 @@ RSpec.feature "Case details" do
     scenario "reader link appears on page and sends us to reader" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-      # TODO: Why isn't the document count coming through here?
-      # click_on "View #{appeal.documents.count} documents"
-      click_on "View"
+      click_on "View #{appeal.documents.count} docs"
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("Caseflow> Reader")
@@ -356,7 +354,8 @@ RSpec.feature "Case details" do
 
       # Wait for page to load some known content before testing for expected content.
       expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
-      expect(page).to_not have_button "Edit"
+      edit_link_url = "/queue/appeals/#{appeal.external_id}/modal/advanced_on_docket_motion"
+      expect(page).to_not have_link("Edit", href: edit_link_url)
       expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL} #{preparer_name}/i)
       expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
     end

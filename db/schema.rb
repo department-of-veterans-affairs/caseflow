@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.string "establishment_error"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
+    t.datetime "last_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
@@ -133,6 +134,7 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.datetime "decision_sync_submitted_at"
     t.bigint "end_product_establishment_id"
     t.bigint "granted_decision_issue_id", null: false
+    t.datetime "last_submitted_at"
     t.index ["appeal_id"], name: "index_board_grant_effectuations_on_appeal_id"
     t.index ["decision_document_id"], name: "index_board_grant_effectuations_on_decision_document_id"
     t.index ["end_product_establishment_id"], name: "index_board_grant_effectuations_on_end_product_establishment_id"
@@ -226,6 +228,7 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.datetime "created_at", null: false
     t.date "decision_date", null: false
     t.string "error"
+    t.datetime "last_submitted_at"
     t.datetime "processed_at"
     t.string "redacted_document_location", null: false
     t.datetime "submitted_at"
@@ -317,10 +320,10 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.string "description"
     t.string "file_number"
     t.integer "previous_document_version_id"
-    t.date "upload_date"
     t.date "received_at"
     t.string "series_id"
     t.string "type"
+    t.date "upload_date"
     t.string "vbms_document_id", null: false
     t.index ["file_number"], name: "index_documents_on_file_number"
     t.index ["series_id"], name: "index_documents_on_series_id"
@@ -344,7 +347,7 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.datetime "established_at"
     t.datetime "last_synced_at"
     t.string "modifier"
-    t.string "payee_code"
+    t.string "payee_code", null: false
     t.string "reference_id"
     t.bigint "source_id", null: false
     t.string "source_type", null: false
@@ -529,6 +532,7 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
     t.boolean "informal_conference"
+    t.datetime "last_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
     t.boolean "same_office"
@@ -775,6 +779,7 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.string "ineligible_reason"
     t.boolean "is_unidentified"
     t.string "issue_category"
+    t.datetime "last_submitted_at"
     t.string "nonrating_issue_description"
     t.text "notes"
     t.integer "parent_request_issue_id"
@@ -807,6 +812,7 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.datetime "attempted_at"
     t.integer "before_request_issue_ids", null: false, array: true
     t.string "error"
+    t.datetime "last_submitted_at"
     t.datetime "processed_at"
     t.bigint "review_id", null: false
     t.string "review_type", null: false
@@ -867,6 +873,7 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.string "establishment_error"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
+    t.datetime "last_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
@@ -894,6 +901,7 @@ ActiveRecord::Schema.define(version: 20190122230514) do
     t.datetime "attempted_at"
     t.datetime "created_at", null: false
     t.string "error"
+    t.datetime "last_submitted_at"
     t.datetime "processed_at"
     t.datetime "submitted_at"
     t.bigint "task_id", null: false
