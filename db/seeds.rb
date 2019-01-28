@@ -767,7 +767,6 @@ class SeedDB
     FeatureToggle.enable!(:ama_auto_case_distribution)
 
     @ama_appeals << FactoryBot.create(
-      :appeal,
       :with_tasks,
       number_of_claimants: 1,
       veteran_file_number: "808415990",
@@ -775,7 +774,6 @@ class SeedDB
       request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
     )
     @ama_appeals << FactoryBot.create(
-      :appeal,
       :with_tasks,
       number_of_claimants: 1,
       veteran_file_number: "992190636",
