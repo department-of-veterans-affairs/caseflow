@@ -32,7 +32,7 @@ RSpec.feature "Hearings" do
              hearing_type: "C",
              hearing_date: 6.days.ago,
              folder_nr: create(:case).bfkey)
-      create(:hearing, judge: current_user)
+      create(:hearing, hearing_day: create(:hearing_day, judge: current_user))
       create(:case_hearing,
              board_member: vacols_staff.sattyid,
              hearing_type: "C",
