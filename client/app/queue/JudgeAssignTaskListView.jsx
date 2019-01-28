@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import { NavLink } from 'react-router-dom';
 
+import QueueJudgeViewSelectorDropdown from './components/QueueJudgeViewSelectorDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
   resetErrorMessages,
@@ -13,7 +14,6 @@ import {
 } from './uiReducer/uiActions';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SmallLoader from '../components/SmallLoader';
 import { LOGO_COLORS } from '../constants/AppConstants';
@@ -26,6 +26,10 @@ import PageRoute from '../components/PageRoute';
 import AssignedCasesPage from './AssignedCasesPage';
 import UnassignedCasesPage from './UnassignedCasesPage';
 
+const containerStyles = css({
+  position: 'relative'
+});
+
 class JudgeAssignTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
@@ -36,8 +40,6 @@ class JudgeAssignTaskListView extends React.PureComponent {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
   };
-
-  switchLink = () => <Link to={`/queue/${this.props.userId}/review`}>Switch to Review Cases</Link>
 
   createLoadPromise = () => {
     for (const attorney of this.props.attorneysOfJudge) {
@@ -62,11 +64,11 @@ class JudgeAssignTaskListView extends React.PureComponent {
   render = () => {
     const { userId, attorneysOfJudge, match } = this.props;
 
-    return <AppSegment filledBackground>
+    return <AppSegment filledBackground styling={containerStyles}>
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
           <h1>Assign {this.props.unassignedTasksCount} Cases</h1>
-          {this.switchLink()}
+          <QueueJudgeViewSelectorDropdown userId={userId} />
         </div>
         <div className="usa-width-one-fourth">
           <LoadingDataDisplay

@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import PropTypes from 'prop-types';
-import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -25,7 +24,7 @@ const styles = {
 };
 
 type Props = {|
-  organizations: Array<Object>
+  items: Array<Object>
 |};
 
 type ComponentState = {|
@@ -47,33 +46,20 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
   };
 
   render = () => {
-    const { organizations } = this.props;
-    const url = window.location.pathname.split('/');
-    const location = url[url.length - 1];
+    const { items } = this.props;
     let dropdownButtonList;
 
-    if (organizations.length < 1) {
+    if (items.length < 1) {
       return null;
     }
 
     if (this.state.menu) {
-      const queueHref = (location === 'queue') ? '#' : '/queue';
-
       dropdownButtonList = <ul className="cf-dropdown-menu active" {...styles.dropdownList}>
-        <li key={0}>
-          <Link className="usa-button-secondary usa-button"
-            href={queueHref} onClick={this.onMenuClick}>
-            {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL}
-          </Link>
-        </li>
-
-        {organizations.map((org, index) => {
-          const orgHref = (location === org.url) ? '#' : `/organizations/${org.url}`;
-
-          return <li key={index + 1}>
+        {items.map((item) => {
+          return <li key={item.key}>
             <Link className="usa-button-secondary usa-button"
-              href={orgHref} onClick={this.onMenuClick}>
-              {sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL, org.name)}
+              href={item.href} onClick={this.onMenuClick}>
+              {item.label}
             </Link>
           </li>;
         })}
@@ -92,8 +78,9 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
 }
 
 QueueSelectorDropdown.propTypes = {
-  organizations: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired
+  items: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    href: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired
   }))
 };

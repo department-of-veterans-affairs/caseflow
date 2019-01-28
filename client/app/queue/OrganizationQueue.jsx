@@ -7,7 +7,7 @@ import { css } from 'glamor';
 
 import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
-import QueueSelectorDropdown from './components/QueueSelectorDropdown';
+import QueueOrganizationSelectorDropdown from './components/QueueOrganizationSelectorDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -67,7 +67,7 @@ class OrganizationQueue extends React.PureComponent {
     return <AppSegment filledBackground styling={containerStyles}>
       <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
-        <QueueSelectorDropdown organizations={this.props.organizations} />
+        <QueueOrganizationSelectorDropdown organizations={this.props.organizations} />
         <TabWindow
           name="tasks-organization-queue"
           tabs={tabs}
