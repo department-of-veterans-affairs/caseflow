@@ -121,6 +121,7 @@ class HearingRepository
         vdbvapoc: hearing_day.bva_poc
       )
 
+
       vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing_day.id)
       hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
 
