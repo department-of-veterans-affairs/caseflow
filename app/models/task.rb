@@ -111,6 +111,14 @@ class Task < ApplicationRecord
     [self]
   end
 
+  def hide_from_case_timeline
+    false
+  end
+
+  def hide_from_task_snapshot
+    false
+  end
+
   def reassign; end
 
   def legacy?
