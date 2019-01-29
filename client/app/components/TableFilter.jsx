@@ -149,6 +149,7 @@ TableFilter.propTypes = {
     columnName: PropTypes.string,
     toggleDropdownFilterVisibility: PropTypes.func,
     filteredByList: PropTypes.object,
+    updateFilters: PropTypes.func,
     isDropdownFilterOpen: PropTypes.object,
     anyFiltersAreSet: PropTypes.boolean,
     customFilterLabels: PropTypes.object,
