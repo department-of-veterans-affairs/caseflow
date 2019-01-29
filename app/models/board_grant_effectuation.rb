@@ -65,8 +65,9 @@ class BoardGrantEffectuation < ApplicationRecord
   def matching_rating_issue
     return unless associated_rating
 
-    @matching_rating_issue ||
-      associated_rating.issues.find { |i| i.contention_reference_id == contention_reference_id }
+    @matching_rating_issue || associated_rating.issues.find do |rating_issue|
+      rating_issue.decides_contention?(contention_reference_id: contention_reference_id)
+    end
   end
 
   def update_from_matching_rating_issue!
