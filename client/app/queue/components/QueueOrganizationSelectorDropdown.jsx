@@ -17,6 +17,10 @@ export default class QueueOrganizationSelectorDropdown extends React.Component<P
     const location = url[url.length - 1];
     const queueHref = (location === 'queue') ? '#' : '/queue';
 
+    if (organizations.length < 1) {
+      return null;
+    }
+
     const items = organizations.map((org, index) => {
       return {
         key: (index + 1).toString(),
