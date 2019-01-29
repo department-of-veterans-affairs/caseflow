@@ -58,7 +58,7 @@ class HearingsController < ApplicationController
 
   def slot_new_hearing
     if params["hearing"]["master_record_updated"]
-      HearingRepository.slot_new_hearing(
+      hearing.slot_new_hearing(
         params["hearing"]["master_record_updated"]["id"],
         time: params["hearing"]["master_record_updated"]["time"],
         appeal: hearing.appeal,

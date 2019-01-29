@@ -5,12 +5,14 @@ class Hearing < ApplicationRecord
   has_one :transcription
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
-  alias_attribute :location, :hearing_location
   has_many :hearing_issue_notes
 
   accepts_nested_attributes_for :hearing_issue_notes
   accepts_nested_attributes_for :transcription
   accepts_nested_attributes_for :hearing_location
+  
+  alias_attribute :location, :hearing_location
+  alias_attribute :regional_office_key, :hearing_day_regional_office
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
@@ -33,13 +35,19 @@ class Hearing < ApplicationRecord
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
-  alias_attribute :regional_office_key, :hearing_day_regional_office
+  
+  after_create :update_fields_from_hearing_day
+
 
   HEARING_TYPES = {
     V: "Video",
     T: "Travel",
     C: "Central"
   }.freeze
+
+  def update_fields_from_hearing_day
+    update!(judge: hearing_day.judge, room: hearing_day.room, bva_poc: hearing_day.bva_poc)
+  end
 
   def self.find_hearing_by_uuid_or_vacols_id(id)
     if UUID_REGEX.match?(id)
@@ -90,6 +98,13 @@ class Hearing < ApplicationRecord
     1
   end
   #:nocov:
+
+  def slot_new_hearing(hearing_day_id, _scheduled_time_unused, _appeal_unused)
+    # These fields are needed for the legacy hearing's version of this method
+    Hearing.create!(hearing_day_id: hearing_day_id,
+                    scheduled_time: scheduled_time,
+                    appeal: appeal)
+  end
 
   def external_id
     uuid

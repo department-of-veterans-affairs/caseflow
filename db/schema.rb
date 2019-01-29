@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190125223733) do
+ActiveRecord::Schema.define(version: 20190128185846) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -517,7 +517,7 @@ ActiveRecord::Schema.define(version: 20190125223733) do
     t.boolean "prepped"
     t.string "representative_name"
     t.string "room"
-    t.time "scheduled_time"
+    t.time "scheduled_time", null: false
     t.text "summary"
     t.boolean "transcript_requested"
     t.date "transcript_sent_date"

@@ -120,6 +120,7 @@ export class DailyDocketContainer extends React.Component {
         ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
       master_record_updated: hearing.editedDate ? { id: hearing.editedDate.hearingId,
         time } : null,
+      scheduled_time: hearing.editedTime ? hearing.editedTime : hearing.scheduledTime,
       scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
     };
   };

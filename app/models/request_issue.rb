@@ -131,18 +131,15 @@ class RequestIssue < ApplicationRecord
       ).where.not(issue_category: nil)
     end
 
+    def not_deleted
+      where.not(review_request_id: nil)
+    end
+
     def unidentified
       where(
         contested_rating_issue_reference_id: nil,
         is_unidentified: true
       )
-    end
-
-    # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
-    def from_intake_data(data)
-      new(
-        attributes_from_intake_data(data)
-      ).tap(&:validate_eligibility!)
     end
 
     def find_or_build_from_intake_data(data)
@@ -163,11 +160,23 @@ class RequestIssue < ApplicationRecord
     end
 
     def find_active_by_contested_decision_id(contested_decision_issue_id)
-      request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id,
-                                       removed_at: nil, ineligible_reason: nil)
+      request_issue = unscoped.find_by(
+        contested_decision_issue_id: contested_decision_issue_id,
+        removed_at: nil,
+        ineligible_reason: nil
+      )
+
       return unless request_issue&.status_active?
 
       request_issue
+    end
+
+    # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
+    def from_intake_data(data, decision_review: nil)
+      attrs = attributes_from_intake_data(data)
+      attrs = attrs.merge(review_request: decision_review) if decision_review
+
+      new(attrs).tap(&:validate_eligibility!)
     end
 
     private
@@ -348,13 +357,15 @@ class RequestIssue < ApplicationRecord
   # Instead of fully deleting removed issues, we instead strip them from the review so we can
   # maintain a record of the other data that was on them incase we need to revert the update.
   def remove_from_review
-    update!(review_request: nil)
-    legacy_issue_optin&.flag_for_rollback!
+    transaction do
+      update!(review_request: nil)
+      legacy_issue_optin&.flag_for_rollback!
 
-    # removing a request issue also deletes the associated request_decision_issue
-    # if the decision issue is not associated with any other request issue, also delete
-    decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
-    decision_issues.delete_all
+      # removing a request issue also deletes the associated request_decision_issue
+      # if the decision issue is not associated with any other request issue, also delete
+      decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
+      decision_issues.delete_all
+    end
   end
 
   def create_decision_issue_from_params(decision_issue_param)
@@ -420,7 +431,7 @@ class RequestIssue < ApplicationRecord
 
   def matching_rating_issues
     @matching_rating_issues ||= end_product_establishment.associated_rating.issues.select do |rating_issue|
-      rating_issue.contention_reference_id.to_i == contention_reference_id.to_i
+      rating_issue.decides_contention?(contention_reference_id: contention_reference_id)
     end
   end
 
@@ -497,7 +508,7 @@ class RequestIssue < ApplicationRecord
       self.ineligible_reason = :appeal_to_appeal
     end
 
-    self.ineligible_due_to_id = contested_issue.source_request_issue.id if ineligible_reason
+    self.ineligible_due_to_id = contested_issue.source_request_issues.first&.id if ineligible_reason
   end
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity

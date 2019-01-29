@@ -212,7 +212,7 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingTimeOptions = (hearing, readOnly) => {
-    if (hearing.requestType === 'Central') {
+    if (hearing.readableRequestType === 'Central') {
       return [
         {
           displayText: '9:00',

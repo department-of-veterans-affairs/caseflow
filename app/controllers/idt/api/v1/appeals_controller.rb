@@ -50,10 +50,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
             else
               []
             end
-
-    if feature_enabled?(:idt_ama_appeals)
-      tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
-    end
+    tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
     tasks.reject { |task| (task.is_a?(JudgeLegacyTask) && task.action == "assign") || task.is_a?(JudgeAssignTask) }
   end
 
@@ -63,9 +60,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def appeals_by_file_number
     appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:activated?)
-    if feature_enabled?(:idt_ama_appeals)
-      appeals += Appeal.where(veteran_file_number: file_number)
-    end
+    appeals += Appeal.where(veteran_file_number: file_number)
     appeals
   end
 
