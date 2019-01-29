@@ -6,6 +6,7 @@ import moment from 'moment';
 import pluralize from 'pluralize';
 import { bindActionCreators } from 'redux';
 
+import FilterSummary from '../../components/FilterSummary';
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
@@ -401,43 +402,12 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
     tasks = this.filterTableData(tasks);
 
-    let filterSummary;
-    let filterListContent = [];
-    const clearAllFiltersLink = <a style={{ cursor: 'pointer' }}
-      onClick={() => this.props.updateFilteredByList({})}> Clear all filters</a>;
-
-    // Don't show anything if there are no filters.
-    if (!_.isEmpty(filteredByList)) {
-      for (const filter in filteredByList) { // eslint-disable-line guard-for-in
-        // This condition might be met if filters were added and then later removed,
-        // as there could still bea key in the filteredByList object pointing to an empty array.
-        if (filteredByList[filter].length > 0) {
-          const filterContent = (<span
-            key={filter}> {userReadableColumnNames[filter]} ({filteredByList[filter].length})</span>
-          );
-
-          filterListContent = filterListContent.concat(filterContent);
-        }
-      }
-
-      // Don't show anything if there are no filters.
-      // This may be different than the first condition because when filters are added
-      // and then later removed, there may still be a key in the filteredByList object
-      // pointing to an empty array.
-      if (filterListContent.length > 0) {
-        filterSummary = (
-          <div>
-            <strong>Filtering by:</strong>
-            {filterListContent}
-            <span>{clearAllFiltersLink}</span>
-          </div>
-        );
-      }
-    }
-
     return (
       <div>
-        {filterSummary}
+        <FilterSummary
+          filteredByList={filteredByList}
+          alternateColumnNames={userReadableColumnNames}
+          clearFilteredByList={(newList) => this.props.updateFilteredByList(newList)} />
         <Table
           columns={this.getQueueColumns}
           rowObjects={tasks}

@@ -41,25 +41,25 @@ class TableFilter extends React.PureComponent {
     const filtersForColumn = _.get(this.props.column.filteredByList, columnName);
     const { customFilterLabels } = this.props.column;
 
-    for (let key in countByColumnName) {
+    for (let key in countByColumnName) { // eslint-disable-line guard-for-in
+      let displayText = `<<blank>> (${countByColumnName[key]})`;
+
       if (key && key !== 'null' && key !== 'undefined') {
         if (customFilterLabels && customFilterLabels[key]) {
-          uniqueOptions.push({
-            value: key,
-            displayText: `${customFilterLabels[key]} (${countByColumnName[key]})`,
-            checked: filtersForColumn ? filtersForColumn.includes(key) : false
-          });
+          displayText = `${customFilterLabels[key]} (${countByColumnName[key]})`;
         } else {
-          uniqueOptions.push({
-            value: key,
-            displayText: `${_.capitalize(key)} (${countByColumnName[key]})`,
-            checked: filtersForColumn ? filtersForColumn.includes(key) : false
-          });
+          displayText = `${_.capitalize(key)} (${countByColumnName[key]})`;
         }
+
+        uniqueOptions.push({
+          value: key,
+          displayText,
+          checked: filtersForColumn ? filtersForColumn.includes(key) : false
+        });
       } else {
         uniqueOptions.push({
           value: 'null',
-          displayText: `<<blank>> (${countByColumnName[key]})`
+          displayText
         });
       }
     }
@@ -84,9 +84,7 @@ class TableFilter extends React.PureComponent {
 
     filteredByList[columnName] = newFilters;
     this.props.column.updateFilters(filteredByList);
-
-    // For some reason when filters are removed a render doesn't automatically happen
-    this.forceUpdate();
+    this.props.column.toggleDropdownFilterVisibility();
   }
 
   clearFilteredByList = (columnName) => {
