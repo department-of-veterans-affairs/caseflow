@@ -9,6 +9,7 @@
   "CASE_SEARCH_ERROR_UNKNOWN_ERROR_MESSAGE": "Please retry your search and contact support if errors persist.",
   "CASE_SEARCH_DATA_LOAD_IN_PROGRESS_MESSAGE": "Loading cases...",
   "CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE": "Unable to load cases",
+  "CONTESTED_ISSUE": "Contested Issue",
 
   "CASE_LIST_TABLE_TITLE": "Appeals",
   "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
