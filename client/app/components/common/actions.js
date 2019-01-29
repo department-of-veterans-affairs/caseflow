@@ -49,3 +49,11 @@ export const onReceiveDropdownData = (dropdownName, data) => ({
     data
   }
 });
+
+export const onChangeFormData = (formName, formData) => ({
+  type: ACTIONS.CHANGE_FORM_DATA,
+  payload: {
+    formName,
+    formData
+  }
+});

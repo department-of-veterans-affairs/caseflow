@@ -211,8 +211,6 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
   end
-
-  # rubocop:disable Metrics/MethodLength
   def veteran_record(file_number:, state: "MA")
     {
       file_number: file_number,
@@ -304,5 +302,4 @@ describe FetchHearingLocationsForVeteransJob do
       "distance": distance
     }
   end
-  # rubocop:enable Metrics/MethodLength
 end

@@ -5,7 +5,7 @@ describe RequestIssue do
 
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:profile_date) { Time.zone.now.to_s }
-  let(:contention_reference_id) { 1234 }
+  let(:contention_reference_id) { "1234" }
   let(:ramp_claim_id) { nil }
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
@@ -122,6 +122,16 @@ describe RequestIssue do
     it "filters by unidentified issues" do
       expect(subject.length).to eq(1)
       expect(subject.find_by(id: unidentified_issue.id)).to_not be_nil
+    end
+  end
+
+  context ".not_deleted" do
+    subject { RequestIssue.not_deleted }
+
+    let!(:deleted_request_issue) { create(:request_issue, review_request: nil) }
+
+    it "filters by whether it is associated with a review_request" do
+      expect(subject.find_by(id: deleted_request_issue.id)).to be_nil
     end
   end
 
@@ -538,7 +548,16 @@ describe RequestIssue do
     end
 
     context "when contesting the same decision review" do
+      let(:previous_contention) do
+        Generators::Contention.build(
+          id: contention_reference_id,
+          claim_id: previous_end_product_establishment.reference_id,
+          disposition: "allowed"
+        )
+      end
+
       let(:contested_decision_issue_id) do
+        previous_contention
         previous_request_issue.sync_decision_issues!
         previous_request_issue.decision_issues.first.id
       end
@@ -917,16 +936,35 @@ describe RequestIssue do
                code: ep_code)
       end
 
+      let!(:contention) do
+        Generators::Contention.build(
+          id: contention_reference_id,
+          claim_id: end_product_establishment.reference_id,
+          disposition: "allowed"
+        )
+      end
+
       context "with rating ep" do
         context "when associated rating exists" do
           let(:associated_claims) { [{ clm_id: end_product_establishment.reference_id, bnft_clm_tc: ep_code }] }
 
           context "when matching rating issues exist" do
+            let!(:decision_issue_not_matching_disposition) do
+              create(
+                :decision_issue,
+                decision_review: review,
+                participant_id: veteran.participant_id,
+                disposition: "denied",
+                rating_issue_reference_id: contested_rating_issue_reference_id
+              )
+            end
+
             it "creates decision issues based on rating issues" do
               subject
               expect(rating_request_issue.decision_issues.count).to eq(1)
               expect(rating_request_issue.decision_issues.first).to have_attributes(
                 rating_issue_reference_id: contested_rating_issue_reference_id,
+                disposition: "allowed",
                 participant_id: veteran.participant_id,
                 promulgation_date: ratings.promulgation_date,
                 decision_text: "Left knee granted",
@@ -948,19 +986,30 @@ describe RequestIssue do
                 expect { subject }.to raise_error(RequestIssue::NilEndProductLastActionDate)
               end
             end
+
+            context "when decision issue with disposition and rating issue already exists" do
+              let!(:preexisting_decision_issue) do
+                create(
+                  :decision_issue,
+                  decision_review: review,
+                  participant_id: veteran.participant_id,
+                  disposition: "allowed",
+                  rating_issue_reference_id: contested_rating_issue_reference_id
+                )
+              end
+
+              it "links preexisting decision issue to request issue" do
+                subject
+                expect(rating_request_issue.decision_issues.count).to eq(1)
+                expect(rating_request_issue.decision_issues.first).to eq(preexisting_decision_issue)
+                expect(rating_request_issue.processed?).to eq(true)
+              end
+            end
           end
 
           context "when no matching rating issues exist" do
             let(:issues) do
               [{ reference_id: "xyz456", decision_text: "PTSD denied", contention_reference_id: "bad_id" }]
-            end
-
-            let!(:contention) do
-              Generators::Contention.build(
-                id: contention_reference_id,
-                claim_id: end_product_establishment.reference_id,
-                disposition: "allowed"
-              )
             end
 
             it "creates decision issues based on contention disposition" do
