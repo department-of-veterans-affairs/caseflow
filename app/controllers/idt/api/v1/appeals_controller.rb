@@ -79,9 +79,13 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ActiveModelSerializers::SerializableResource.new(
       appeal,
       serializer: ::Idt::V1::AppealDetailsSerializer,
-      include_addresses: BvaDispatch.singleton.user_has_access?(user),
+      include_addresses: include_addresses_in_response?,
       base_url: request.base_url
     ).as_json
+  end
+
+  def include_addresses_in_response?
+    BvaDispatch.singleton.user_has_access?(user) || user.intake_user?
   end
 
   def json_appeals_with_tasks(tasks)
