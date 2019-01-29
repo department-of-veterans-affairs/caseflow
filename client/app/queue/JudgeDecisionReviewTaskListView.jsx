@@ -49,6 +49,7 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
       </p>;
     } else {
       tableContent = <TaskTable
+        includeTask
         includeDetailsLink
         includeDocumentId
         includeType

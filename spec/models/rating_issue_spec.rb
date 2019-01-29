@@ -64,7 +64,7 @@ describe RatingIssue do
         reference_id: "NBA",
         decision_text: "This broadcast may not be reproduced",
         profile_date: profile_date,
-        contention_reference_id: nil
+        contention_reference_ids: []
       )
     end
 
@@ -82,7 +82,7 @@ describe RatingIssue do
           reference_id: "NBA",
           decision_text: "This broadcast may not be reproduced",
           profile_date: profile_date,
-          contention_reference_id: "foul"
+          contention_reference_ids: ["foul"]
         )
       end
     end
@@ -92,7 +92,10 @@ describe RatingIssue do
         {
           rba_issue_id: "NBA",
           decn_txt: "This broadcast may not be reproduced",
-          rba_issue_contentions: [{ prfil_dt: Time.zone.now, cntntn_id: "foul" }]
+          rba_issue_contentions: [
+            { prfil_dt: Time.zone.now, cntntn_id: "foul" },
+            { prfil_dt: Time.zone.now, cntntn_id: "dunk" }
+          ]
         }
       end
 
@@ -101,7 +104,7 @@ describe RatingIssue do
           reference_id: "NBA",
           decision_text: "This broadcast may not be reproduced",
           profile_date: profile_date,
-          contention_reference_id: "foul"
+          contention_reference_ids: %w[foul dunk]
         )
       end
     end
