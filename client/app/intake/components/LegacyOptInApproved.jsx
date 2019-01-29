@@ -1,6 +1,12 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
-import { BOOLEAN_RADIO_OPTIONS } from '../constants';
+
+const radioOptions = [
+  { value: 'false',
+    displayText: 'N/A' },
+  { value: 'true',
+    displayText: 'Yes' }
+];
 
 export default class LegacyOptInApproved extends React.PureComponent {
   render = () => {
@@ -16,7 +22,7 @@ export default class LegacyOptInApproved extends React.PureComponent {
         label="Did they agree to withdraw their issues from the legacy system?"
         strongLabel
         vertical
-        options={BOOLEAN_RADIO_OPTIONS}
+        options={radioOptions}
         onChange={onChange}
         errorMessage={errorMessage}
         value={value}
