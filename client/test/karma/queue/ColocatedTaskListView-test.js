@@ -114,18 +114,27 @@ describe('ColocatedTaskListView', () => {
 
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
-  describe('New tab', () => {
-    it('shows only new tasks', () => {
+  describe('Assigned tab', () => {
+    it('shows only new tasks and tasks with a completed hold', () => {
+      const daysOnHold = 31;
       const taskNewAssigned = amaTaskWith({ id: '1',
         cssIdAssignee: 'BVALSPORER' });
       const taskUnassigned = amaTaskWith({ id: '5',
         cssIdAssignee: 'NOTBVALSPORER' });
+      const completedHoldTask = amaTaskWith({
+        id: '6',
+        cssIdAssignee: 'BVALSPORER',
+        assignedOn: moment().subtract(daysOnHold + 0.5, 'days'),
+        placedOnHoldAt: moment().subtract(daysOnHold, 'days'),
+        onHoldDuration: daysOnHold - 1
+      });
       const appeal = appealTemplate;
 
       const tasks = {};
       const amaTasks = {
         [taskNewAssigned.id]: taskNewAssigned,
-        [taskUnassigned.id]: taskUnassigned
+        [taskUnassigned.id]: taskUnassigned,
+        [completedHoldTask.id]: completedHoldTask
       };
       const appeals = {
         [appeal.id]: appeal
@@ -142,10 +151,10 @@ describe('ColocatedTaskListView', () => {
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(6);
+      expect(cells).to.have.length(12);
       const wrappers = [];
 
-      for (let i = 0; i < cells.length; i++) {
+      for (let i = 0; i < cells.length / 2; i++) {
         wrappers.push(cells.at(i));
       }
       const [caseDetails, columnTasks, types, docketNumber, daysWaiting, documents] = wrappers;
@@ -158,6 +167,10 @@ describe('ColocatedTaskListView', () => {
       expect(docketNumber.text()).to.include(appeal.docketNumber);
       expect(daysWaiting.text()).to.equal('1');
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
+
+      const onHoldDaysWaiting = cells.at(10);
+
+      expect(onHoldDaysWaiting.text()).to.equal(daysOnHold.toString());
     });
   });
 
