@@ -13,7 +13,7 @@ import FilterOption from './FilterOption';
  * - @column {array[string]} array of objects that define the properties
  *   of the column. Possible attributes for each column include:
  *   - @enableFilter {boolean} whether filtering is turned on for each column
- *   - @tableData {object} the entire data set for the table (required to calculate
+ *   - @tableData {array} the entire data set for the table (required to calculate
  *     the options each column can be filtered on)
  *   - @columnName {string} the name of the column in the table data
  *   - @toggleDropdownFilterVisibility {function} changes the status of the filter
@@ -143,9 +143,18 @@ class TableFilter extends React.PureComponent {
 }
 
 TableFilter.propTypes = {
-  column: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.object),
-    PropTypes.func]).isRequired
+  column: PropTypes.shape({
+    enableFilter: PropTypes.boolean,
+    tableData: PropTypes.array,
+    columnName: PropTypes.string,
+    toggleDropdownFilterVisibility: PropTypes.func,
+    filteredByList: PropTypes.object,
+    isDropdownFilterOpen: PropTypes.object,
+    anyFiltersAreSet: PropTypes.boolean,
+    customFilterLabels: PropTypes.object,
+    label: PropTypes.string,
+    valueName: PropTypes.string
+  }).isRequired
 };
 
 export default TableFilter;
