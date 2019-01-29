@@ -456,17 +456,39 @@ class RequestIssue < ApplicationRecord
 
   def create_decision_issues_from_rating
     matching_rating_issues.each do |rating_issue|
-      decision_issues.create!(
-        rating_issue_reference_id: rating_issue.reference_id,
-        participant_id: rating_issue.participant_id,
-        promulgation_date: rating_issue.promulgation_date,
-        decision_text: rating_issue.decision_text,
-        profile_date: rating_issue.profile_date,
-        decision_review: review_request,
-        benefit_type: benefit_type,
-        end_product_last_action_date: end_product_establishment.result.last_action_date
-      )
+      transaction { decision_issues << find_or_create_decision_issue_from_rating_issue(rating_issue) }
     end
+  end
+
+  # One rating issue can be made as a decision for many request issues. However, we trust the disposition of the
+  # request issue contention OVER the decision issue disposition (since it's a "supplementary decision").
+  #
+  # This creates a scenario where multiple request issues can have different dispositions but be decided by the
+  # same rating issue. In this scenario, we will create 2 decision issues with the same rating_issue_reference_id
+  # but different dispositions.
+  #
+  # However, if the dispositions for any of these request issues match, there is no need to create multiple decision
+  # issues. They can instead be mapped to the same decision issue.
+  def find_or_create_decision_issue_from_rating_issue(rating_issue)
+    preexisting_decision_issue = DecisionIssue.find_by(
+      participant_id: rating_issue.participant_id,
+      rating_issue_reference_id: rating_issue.reference_id,
+      disposition: contention_disposition.disposition
+    )
+
+    return preexisting_decision_issue if preexisting_decision_issue
+
+    DecisionIssue.create!(
+      rating_issue_reference_id: rating_issue.reference_id,
+      disposition: contention_disposition.disposition,
+      participant_id: rating_issue.participant_id,
+      promulgation_date: rating_issue.promulgation_date,
+      decision_text: rating_issue.decision_text,
+      profile_date: rating_issue.profile_date,
+      decision_review: review_request,
+      benefit_type: benefit_type,
+      end_product_last_action_date: end_product_establishment.result.last_action_date
+    )
   end
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
