@@ -17,6 +17,8 @@ import {
   onHearingDispositionUpdate,
   onHearingDateUpdate,
   onHearingTimeUpdate,
+  onHearingLocationUpdate,
+  onHearingRegionalOfficeUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -114,7 +116,9 @@ export class DailyDocketContainer extends React.Component {
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
+      hearing_location_attributes: hearing.editedLocation ?
+        ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
+      master_record_updated: hearing.editedDate ? { id: hearing.editedDate.hearingId,
         time } : null,
       scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
     };
@@ -249,6 +253,8 @@ export class DailyDocketContainer extends React.Component {
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
+        onHearingLocationUpdate={this.props.onHearingLocationUpdate}
+        onHearingRegionalOfficeUpdate={this.props.onHearingRegionalOfficeUpdate}
         saveHearing={this.saveHearing}
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
@@ -308,6 +314,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onHearingDispositionUpdate,
   onHearingDateUpdate,
   onHearingTimeUpdate,
+  onHearingLocationUpdate,
+  onHearingRegionalOfficeUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,

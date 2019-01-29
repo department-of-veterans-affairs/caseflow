@@ -17,9 +17,11 @@ class LegacyHearing < ApplicationRecord
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
   has_many :hearing_views, as: :hearing
-  has_one :hearing_location, as: :hearing
-  alias_attribute :location, :hearing_location
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
+  has_one :hearing_location, as: :hearing
+
+  alias_attribute :location, :hearing_location
+  accepts_nested_attributes_for :hearing_location
 
   # this is used to cache appeal stream for hearings
   # when fetched intially.
@@ -148,6 +150,7 @@ class LegacyHearing < ApplicationRecord
     :veteran,  \
     :veteran_file_number, \
     :docket_name,
+    :veteran_closest_regional_office,
     :veteran_available_hearing_locations,
     to: :appeal, allow_nil: true
 
@@ -167,6 +170,7 @@ class LegacyHearing < ApplicationRecord
         :master_record,
         :representative,
         :representative_name,
+        :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
         :venue,
@@ -189,6 +193,7 @@ class LegacyHearing < ApplicationRecord
         :appeal_external_id,
         :external_id,
         :veteran_file_number,
+        :veteran_closest_regional_office,
         :veteran_available_hearing_locations
       ],
       except: [:military_service, :vacols_id]
@@ -261,9 +266,9 @@ class LegacyHearing < ApplicationRecord
       user.nil? || (user.css_id != vacols_css_id)
     end
 
-    def assign_or_create_from_vacols_record(vacols_record, fetched_hearing = nil)
+    def assign_or_create_from_vacols_record(vacols_record, legacy_hearing: nil)
       transaction do
-        hearing = fetched_hearing ||
+        hearing = legacy_hearing ||
                   find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq)
 
         # update hearing if user is nil, it's likely when the record doesn't exist and is being created
