@@ -35,7 +35,11 @@ class Task < ApplicationRecord
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user, allow_actions_while_on_hold = false)
-    actions = actions_available?(user, allow_actions_while_on_hold) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
+    actions = if actions_available?(user, allow_actions_while_on_hold)
+                available_actions(user).map { |action| build_action_hash(action, user) }
+              else
+                []
+              end
 
     # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
     if actions.length > actions.pluck(:value).uniq.length

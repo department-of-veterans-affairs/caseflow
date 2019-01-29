@@ -2,12 +2,11 @@ require "rails_helper"
 
 RSpec.feature "Schedule Veteran For A Hearing" do
   let!(:current_user) do
-    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
     User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
   end
 
-  let!(:hearings_user) do
-    create(:hearings_management)
+  before do
+    OrganizationsUser.add_user_to_organization(current_user, HearingsManagement.singleton)
   end
 
   context "When creating Caseflow Central hearings" do
@@ -125,7 +124,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown(text: "Denver")
         click_button("AMA Veterans Waiting")
         click_on "Bob Smith"
-        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
 
         # Case details screen
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
