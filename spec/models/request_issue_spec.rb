@@ -548,7 +548,16 @@ describe RequestIssue do
     end
 
     context "when contesting the same decision review" do
+      let(:previous_contention) do
+        Generators::Contention.build(
+          id: contention_reference_id,
+          claim_id: previous_end_product_establishment.reference_id,
+          disposition: "allowed"
+        )
+      end
+
       let(:contested_decision_issue_id) do
+        previous_contention
         previous_request_issue.sync_decision_issues!
         previous_request_issue.decision_issues.first.id
       end
