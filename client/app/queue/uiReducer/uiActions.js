@@ -1,5 +1,6 @@
 // @flow
 import { ACTIONS } from './uiConstants';
+import { ACTIONS as QUEUE_STATE_ACTIONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 
 import type {
@@ -194,4 +195,10 @@ export const hideVeteranCaseList = () => ({
 export const setHearingDay = (hearingDay: Object) => ({
   type: ACTIONS.SET_HEARING_DAY,
   payload: hearingDay
+});
+
+export const setAppealType = (isLegacy, appealId) => ({
+  type: QUEUE_STATE_ACTIONS.SET_APPEAL_TYPE,
+  payload: { isLegacy,
+    appealId }
 });

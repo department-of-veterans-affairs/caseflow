@@ -18,11 +18,12 @@ import CaseTitleDetails from './CaseTitleDetails';
 import TaskSnapshot from './TaskSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
-import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
+import { resetErrorMessages, resetSuccessMessages, setHearingDay, setAppealType } from './uiReducer/uiActions';
 import CaseTimeline from './CaseTimeline';
 import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
+import * as TASK_ROUTE_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY.json';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -55,6 +56,7 @@ class CaseDetailsView extends React.PureComponent {
     this.props.resetErrorMessages();
 
     const { hearingDate, regionalOffice, hearingTime } = getQueryParams(window.location.search);
+    const { appeal, appealId } = this.props;
 
     if (hearingDate && regionalOffice) {
       this.props.setHearingDay({
@@ -63,6 +65,7 @@ class CaseDetailsView extends React.PureComponent {
         regionalOffice
       });
     }
+    this.props.setAppealType(appeal.isLegacyAppeal, appealId);
   }
 
   render = () => {
@@ -74,6 +77,7 @@ class CaseDetailsView extends React.PureComponent {
       featureToggles
     } = this.props;
 
+    // debugger;
     const amaIssueType = featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
 
     return <React.Fragment>
@@ -140,7 +144,8 @@ const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     resetErrorMessages,
     resetSuccessMessages,
-    setHearingDay
+    setHearingDay,
+    setAppealType
   }, dispatch)
 );
 

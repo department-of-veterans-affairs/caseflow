@@ -136,25 +136,34 @@ class QueueApp extends React.PureComponent<Props> {
     checkoutFlow={props.match.params.checkoutFlow}
     nextStep="/queue" />;
 
-  routedSelectDispositions = (props) => <SelectDispositionsContainer
-    appealId={props.match.params.appealId}
-    taskId={props.match.params.taskId}
-    checkoutFlow={props.match.params.checkoutFlow} />;
+  routedSelectDispositions = (props) => {
+
+    return <SelectDispositionsContainer
+      appealId={props.match.params.appealId}
+      taskId={props.match.params.taskId}
+      checkoutFlow={props.match.params.checkoutFlow} />;
+  }
 
   routedSelectSpecialIssues = (props) => {
+
     const {
       appealId,
       checkoutFlow,
       taskId
     } = props.match.params;
 
-    return <SpecialIssueLoadingScreen appealExternalId={appealId}>
-      <SelectSpecialIssuesView
-        appealId={appealId}
-        taskId={taskId}
-        prevStep={`/queue/appeals/${appealId}`}
-        nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`} />
-    </SpecialIssueLoadingScreen>;
+    if (this.props.appealDetails[appealId].isLegacy) {
+      return <SpecialIssueLoadingScreen appealExternalId={appealId}>
+        <SelectSpecialIssuesView
+          appealId={appealId}
+          taskId={taskId}
+          prevStep={`/queue/appeals/${appealId}`}
+          nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`} />
+      </SpecialIssueLoadingScreen>;
+    }
+
+    return this.routedSelectDispositions(props);
+
   }
 
   routedAddEditIssue = (props) => {
@@ -428,7 +437,8 @@ QueueApp.propTypes = {
 };
 
 const mapStateToProps = (state: State) => ({
-  reviewActionType: state.queue.stagedChanges.taskDecision.type
+  reviewActionType: state.queue.stagedChanges.taskDecision.type,
+  appealDetails: state.queue.appealDetails
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

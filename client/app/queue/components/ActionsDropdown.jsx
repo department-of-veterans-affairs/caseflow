@@ -42,11 +42,20 @@ type Props = Params & {|
 |};
 
 class ActionsDropdown extends React.PureComponent<Props> {
+  handleSpecialIssuesRoute = (routeString, reDirect) => {
+    if (routeString.includes('special_issues') && reDirect) {
+      return reDirect;
+    }
+
+    return routeString;
+  }
+
   changeRoute = (option: ?OptionType) => {
     const {
       appealId,
       task,
-      history
+      history,
+      specialIssuesRedirect
     } = this.props;
 
     if (!option) {
@@ -55,8 +64,9 @@ class ActionsDropdown extends React.PureComponent<Props> {
 
     this.props.stageAppeal(appealId);
     this.props.resetDecisionOptions();
+    const nextRoute = this.handleSpecialIssuesRoute(option.value, specialIssuesRedirect);
 
-    history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${option.value}`);
+    history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${nextRoute}`);
   };
 
   render = () => {
@@ -77,7 +87,8 @@ class ActionsDropdown extends React.PureComponent<Props> {
 const mapStateToProps = (state: State, ownProps) => ({
   appeal: state.queue.appeals[ownProps.appealId],
   changedAppeals: _.keys(state.queue.stagedChanges.appeals),
-  featureToggles: state.ui.featureToggles
+  featureToggles: state.ui.featureToggles,
+  specialIssuesRedirect: state.queue.appealDetails[ownProps.appealId].specialIssuesRedirect
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

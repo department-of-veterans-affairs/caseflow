@@ -462,6 +462,18 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       }
     });
   }
+  case ACTIONS.SET_APPEAL_TYPE:
+
+    return update(state, {
+      appealDetails: {
+        [action.payload.appealId]: {
+          $merge: {
+            isLegacy: action.payload.isLegacy,
+            specialIssuesRedirect: action.payload.isLegacy ? null : 'draft_decision/dispositions'
+          }
+        }
+      }
+    });
   default:
     return state;
   }
