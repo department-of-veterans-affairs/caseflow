@@ -42,7 +42,7 @@ class HearingAdminActionTask < GenericTask
     )
   end
 
-  def complete_data(user = nil)
+  def complete_data(_user = nil)
     {
       modal_body: COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL
     }

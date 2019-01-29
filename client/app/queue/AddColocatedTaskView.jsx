@@ -25,7 +25,6 @@ import {
   marginTop
 } from './constants';
 import COPY from '../../COPY.json';
-import DispatchSuccessDetail from './components/DispatchSuccessDetail';
 import Button from '../components/Button';
 
 import { taskActionData } from './utils';
@@ -101,10 +100,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     (action) => Boolean(action.actionLabel) && Boolean(action.instructions)
   );
 
-  getNextStepUrl = () => {
-    // We don't want to use state here since this does not impact rendering
-    return taskActionData(this.props).redirect_after;
-  }
+  getNextStepUrl = () => taskActionData(this.props).redirect_after;
 
   buildPayload = () => {
     const { task, appeal } = this.props;
