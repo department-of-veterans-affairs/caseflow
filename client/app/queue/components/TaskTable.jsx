@@ -175,7 +175,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     return this.props.includeAssignedTo ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
       valueFunction: (task: TaskWithAppeal) => task.assignedTo.name,
-      getSortValue: (task: TaskWithAppeal) => task.assignedTo.name,
+      getSortValue: (task: TaskWithAppeal) => task.assignedTo.name
     } : null;
   }
 
