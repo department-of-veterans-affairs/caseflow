@@ -86,7 +86,8 @@ RSpec.feature "RAMP Refiling Intake" do
         bgs_attrs: { status_type_code: "PEND" }
       ).claim_id
 
-      EndProductEstablishment.create!(
+      create(
+        :end_product_establishment,
         veteran_file_number: veteran.file_number,
         source: r,
         established_at: 2.days.ago,
@@ -126,7 +127,8 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      create(
+        :end_product_establishment,
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -181,7 +183,8 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      create(
+        :end_product_establishment,
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -223,7 +226,8 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      create(
+        :end_product_establishment,
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -334,7 +338,8 @@ RSpec.feature "RAMP Refiling Intake" do
         bgs_attrs: { status_type_code: "CLR" }
       ).claim_id
 
-      EndProductEstablishment.create!(
+      create(
+        :end_product_establishment,
         veteran_file_number: "12341234",
         source: ramp_election,
         established_at: 2.days.ago,
@@ -432,7 +437,8 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      create(
+        :end_product_establishment,
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,
@@ -490,7 +496,8 @@ RSpec.feature "RAMP Refiling Intake" do
         veteran_file_number: "12341234",
         bgs_attrs: { status_type_code: "CLR" }
       )
-      EndProductEstablishment.create(
+      create(
+        :end_product_establishment,
         source: ramp_election,
         veteran_file_number: "12341234",
         reference_id: ep.claim_id,

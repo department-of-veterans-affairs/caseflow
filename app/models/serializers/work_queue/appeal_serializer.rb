@@ -130,6 +130,13 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     latest_attorney_case_review&.id
   end
 
+  attribute :can_edit_document_id do
+    AmaDocumentIdPolicy.new(
+      user: @instance_options[:user],
+      case_review: latest_attorney_case_review
+    ).editable?
+  end
+
   def latest_attorney_case_review
     AttorneyCaseReview.where(task_id: Task.where(appeal: object).pluck(:id)).order(:created_at).last
   end

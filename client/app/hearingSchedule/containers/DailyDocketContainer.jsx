@@ -116,6 +116,7 @@ export class DailyDocketContainer extends React.Component {
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
       master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
         time } : null,
+      scheduled_time: hearing.editedTime ? hearing.editedTime : hearing.scheduledTime,
       scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
     };
   };

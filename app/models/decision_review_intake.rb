@@ -42,6 +42,6 @@ class DecisionReviewIntake < Intake
   end
 
   def build_issues(request_issues_data)
-    request_issues_data.map { |data| detail.request_issues.from_intake_data(data) }
+    request_issues_data.map { |data| RequestIssue.from_intake_data(data, decision_review: detail) }
   end
 end
