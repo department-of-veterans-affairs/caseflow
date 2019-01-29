@@ -150,5 +150,12 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_by nil
     end
+
+    factory :veteran_record_request_task do
+      type VeteranRecordRequest.name
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_by nil
+    end
   end
 end

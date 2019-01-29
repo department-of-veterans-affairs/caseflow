@@ -379,6 +379,10 @@ class RequestIssue < ApplicationRecord
     )
   end
 
+  def requires_record_request_task?
+    !benefit_type_requires_payee_code?
+  end
+
   private
 
   # The contested_rating_issue_profile_date is used as an identifier to retrieve the
