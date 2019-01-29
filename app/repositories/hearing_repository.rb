@@ -177,7 +177,6 @@ class HearingRepository
         Hearing.create!(
           appeal: appeal,
           hearing_day_id: hearing_day.id,
-          judge_id: hearing_day.judge.try(:id),
           hearing_location_attributes: hearing_location_attrs || {},
           scheduled_time: hearing_date
         )
