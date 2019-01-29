@@ -43,6 +43,16 @@ describe ScheduleHearingTask do
       expect(subject.appeal_type).to eq(LegacyAppeal.name)
       expect(subject.status).to eq("assigned")
     end
+
+    it "yields the correct location based on hearing type" do
+      expect(subject.location_based_on_hearing_type(LegacyHearing::CO_HEARING))
+        .to eq(LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing])
+    end
+
+    it "yields the correct location based on hearing type" do
+      expect(subject.location_based_on_hearing_type(LegacyHearing::VIDEO_HEARING))
+        .to eq(LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing])
+    end
   end
 
   context "#update_from_params" do
