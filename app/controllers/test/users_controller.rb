@@ -92,6 +92,7 @@ class Test::UsersController < ApplicationController
     return head :not_found if user.nil?
 
     session["user"] = user.to_session_hash
+    RequestStore[:current_user] = user
     session[:regional_office] = user.selected_regional_office || user.regional_office
     head :ok
   end
