@@ -88,7 +88,7 @@ class SearchableDropdown extends React.Component<Props, ComponentState> {
   }
 
   // Override the default keys to create a new tag (allows creating options that contain a comma)
-  shouldKeyDownEventCreateNewOption = ({ keyCode }) => {
+  shouldKeyDownEventCreateNewOption = ({ keyCode }: { keyCode: number }) => {
     switch (keyCode) {
     // Tab and Enter only
     case 9:
