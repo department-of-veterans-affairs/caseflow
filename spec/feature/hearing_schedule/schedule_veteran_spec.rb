@@ -116,94 +116,90 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       )
     end
 
-    ensure_stable do
-      scenario "Schedule Veteran for a video hearing", focus: true do
-        # Do the first part of the test in the past so we can wait for our hold to complete.
-        Timecop.travel(20.days.ago) do
-          visit "hearings/schedule/assign"
-          expect(page).to have_content("Regional Office")
-          click_dropdown(text: "Denver")
-          click_button("AMA Veterans Waiting")
-          click_on "Bob Smith"
-
-          puts "Schedule Hearing Task Assignees #{ScheduleHearingTask.all.map { |task| task.assigned_to }}"
-
-          # Case details screen
-          click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
-
-          # Admin action screen
-
-          # First admin action
-          expect(page).to have_content("Submit admin action")
-          click_dropdown(text: HearingAdminActionIncarceratedVeteranTask.label)
-          fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 1"
-
-          # Second admin action
-          # click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
-          # within all('div[id^="action_"]', count: 2)[1] do
-          #   click_dropdown(text: HearingAdminActionContestedClaimantTask.label)
-          #   fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 2"
-          # end
-
-          click_on "Assign Action"
-          expect(page).to have_content("You have assigned an administrative action")
-
-          click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
-          click_on "Submit"
-
-          # Your queue
-          visit "/queue"
-          click_on "Bob Smith"
-          click_dropdown(text: Constants.TASK_ACTIONS.PLACE_HOLD.to_h[:label])
-
-          # On hold
-          click_dropdown(text: "15 days")
-          fill_in "Notes:", with: "Waiting for response"
-
-          click_on "Place case on hold"
-
-          expect(page).to have_content("case has been placed on hold")
-        end
-
-        # Refresh the page in the present, and the hold should be completed.
-        visit "/queue"
-        click_on "Bob Smith"
-
-        # Complete the admin action
-        click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label])
-        click_on "Mark complete"
-
-        expect(page).to have_content("has been marked complete")
-
-        # Schedule veteran!
-        find("a", text: "Switch views").click
-        click_on "Hearings Management team"
-
-        click_on "Bob Smith"
-        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
-        click_dropdown(text: "Denver")
-
-        within find(".dropdown-hearingDate") do
-          click_dropdown(index: 0)
-        end
-
-        find("label", text: "9:00 am").click
-
-        click_on "Schedule"
-
-        expect(page).to have_content("You have successfully assigned")
-
-        # Ensure the veteran appears on the scheduled page
+    scenario "Schedule Veteran for a video hearing" do
+      # Do the first part of the test in the past so we can wait for our hold to complete.
+      Timecop.travel(20.days.ago) do
         visit "hearings/schedule/assign"
         expect(page).to have_content("Regional Office")
         click_dropdown(text: "Denver")
-
-        expect(page).to have_content(appeal.docket_number)
-
-        # Ensure the veteran is no longer in the veterans waiting to be scheduled
         click_button("AMA Veterans Waiting")
-        expect(page).to have_content("There are no schedulable veterans")
+        click_on "Bob Smith"
+
+        # Case details screen
+        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
+
+        # Admin action screen
+
+        # First admin action
+        expect(page).to have_content("Submit admin action")
+        click_dropdown(text: HearingAdminActionIncarceratedVeteranTask.label)
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 1"
+
+        # Second admin action
+        # click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
+        # within all('div[id^="action_"]', count: 2)[1] do
+        #   click_dropdown(text: HearingAdminActionContestedClaimantTask.label)
+        #   fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 2"
+        # end
+
+        click_on "Assign Action"
+        expect(page).to have_content("You have assigned an administrative action")
+
+        click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
+        click_on "Submit"
+
+        # Your queue
+        visit "/queue"
+        click_on "Bob Smith"
+        click_dropdown(text: Constants.TASK_ACTIONS.PLACE_HOLD.to_h[:label])
+
+        # On hold
+        click_dropdown(text: "15 days")
+        fill_in "Notes:", with: "Waiting for response"
+
+        click_on "Place case on hold"
+
+        expect(page).to have_content("case has been placed on hold")
       end
+
+      # Refresh the page in the present, and the hold should be completed.
+      visit "/queue"
+      click_on "Bob Smith"
+
+      # Complete the admin action
+      click_dropdown(text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label])
+      click_on "Mark complete"
+
+      expect(page).to have_content("has been marked complete")
+
+      # Schedule veteran!
+      find("a", text: "Switch views").click
+      click_on "Hearings Management team"
+
+      click_on "Bob Smith"
+      click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
+      click_dropdown(text: "Denver")
+
+      within find(".dropdown-hearingDate") do
+        click_dropdown(index: 0)
+      end
+
+      find("label", text: "9:00 am").click
+
+      click_on "Schedule"
+
+      expect(page).to have_content("You have successfully assigned")
+
+      # Ensure the veteran appears on the scheduled page
+      visit "hearings/schedule/assign"
+      expect(page).to have_content("Regional Office")
+      click_dropdown(text: "Denver")
+
+      expect(page).to have_content(appeal.docket_number)
+
+      # Ensure the veteran is no longer in the veterans waiting to be scheduled
+      click_button("AMA Veterans Waiting")
+      expect(page).to have_content("There are no schedulable veterans")
     end
   end
 end

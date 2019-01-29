@@ -339,7 +339,7 @@ describe Task do
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
       allow_any_instance_of(Task)
         .to receive(:available_actions_unwrapper)
-        .with(attorney)
+        .with(attorney, any_args)
         .and_return([{ data: { type: Task.name } }])
     end
 
