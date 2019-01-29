@@ -142,7 +142,7 @@ class HigherLevelReview < ClaimReview
 
   def dta_claim
     @dta_claim ||= SupplementalClaim.find_by(veteran_file_number: veteran_file_number,
-                                          decision_review_remanded: self)
+                                             decision_review_remanded: self)
   end
 
   def dta_claim_active?

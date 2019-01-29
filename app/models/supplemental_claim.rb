@@ -111,7 +111,7 @@ class SupplementalClaim < ClaimReview
   def fetch_status
     if active?
       :sc_recieved
-    else 
+    else
       decision_issues.empty? ? :sc_closed : :sc_decision
     end
   end
