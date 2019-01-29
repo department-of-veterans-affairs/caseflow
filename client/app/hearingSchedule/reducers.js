@@ -58,7 +58,8 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
             'editedDisposition',
             'editedDate',
             'editedTime',
-            'edited'
+            'edited',
+            'editedOptionalTime'
           ] }
       }
     });
