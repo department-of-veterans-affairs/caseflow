@@ -21,7 +21,7 @@ describe HearingRepository do
     end
 
     it "slots hearing at correct time" do
-      HearingRepository.slot_new_hearing(hearing_day.id, time, legacy_appeal)
+      HearingRepository.slot_new_hearing(hearing_day.id, time: time, appeal: legacy_appeal)
 
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
         .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)

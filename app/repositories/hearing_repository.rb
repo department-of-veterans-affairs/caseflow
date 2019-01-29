@@ -86,22 +86,26 @@ class HearingRepository
       end
     end
 
-    def slot_new_hearing(parent_record_id, time, appeal)
+    def slot_new_hearing(parent_record_id, time:, appeal:, hearing_type: nil, hearing_location_attrs: nil)
       hearing_day = HearingDay.find_hearing_day(nil, parent_record_id)
-      hearing_datetime = hearing_day[:scheduled_for].to_datetime.change(
+      hearing_day_hash = HearingDay.to_hash(hearing_day)
+
+      hearing_datetime = hearing_day_hash[:scheduled_for].to_datetime.change(
         hour: time["h"].to_i,
         minute: time["m"].to_i,
         offset: time["offset"]
       )
 
-      if hearing_day[:request_type] == "C"
-        create_child_co_hearing(hearing_datetime, appeal)
+      if (hearing_type || hearing_day_hash[:request_type]) == "C"
+        create_child_co_hearing(hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs)
       else
-        create_child_video_hearing(parent_record_id, hearing_datetime, appeal)
+        create_child_video_hearing(
+          parent_record_id, hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs
+        )
       end
     end
 
-    def create_child_co_hearing(hearing_date_str, appeal)
+    def create_child_co_hearing(hearing_date_str, appeal, hearing_location_attrs: nil)
       hearing_day = HearingDay.find_by(request_type: "C", scheduled_for: hearing_date_str.to_date)
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
@@ -116,11 +120,18 @@ class HearingRepository
         board_member: attorney_id,
         vdbvapoc: hearing_day.bva_poc
       )
+
+      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing_day.id)
+      hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
+
+      hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
     end
 
-    def create_child_video_hearing(hearing_pkseq, hearing_date, appeal)
+    def create_child_video_hearing(hearing_pkseq, hearing_date, appeal, hearing_location_attrs: nil)
       if hearing_date.to_date > HearingDay::CASEFLOW_V_PARENT_DATE || appeal.is_a?(Appeal)
-        return create_caseflow_child_video_hearing(hearing_pkseq, hearing_date, appeal)
+        return create_caseflow_child_video_hearing(
+          hearing_pkseq, hearing_date, appeal, hearing_location_attrs: hearing_location_attrs
+        )
       end
 
       hearing = VACOLS::CaseHearing.find(hearing_pkseq)
@@ -134,9 +145,16 @@ class HearingRepository
         board_member: hearing.board_member,
         vdbvapoc: hearing.vdbvapoc
       )
+
+      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing.hearing_pkseq)
+      hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
+
+      hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
     end
 
-    def create_caseflow_child_video_hearing(id, hearing_date, appeal)
+    # rubocop:disable Metrics/MethodLength
+
+    def create_caseflow_child_video_hearing(id, hearing_date, appeal, hearing_location_attrs: nil)
       hearing_day = HearingDay.find(id)
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
@@ -150,15 +168,22 @@ class HearingRepository
           board_member: hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil,
           vdbvapoc: hearing_day.bva_poc
         )
+
+        vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing_day.id)
+        hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
+
+        hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
       else
         Hearing.create!(
           appeal: appeal,
           hearing_day_id: hearing_day.id,
           judge_id: hearing_day.judge.try(:id),
-          scheduled_time: hearing_date
+          scheduled_time: hearing_date,
+          hearing_location_attributes: hearing_location_attrs || {}
         )
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def load_vacols_data(hearing)
       vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
@@ -196,8 +221,9 @@ class HearingRepository
       case_hearings.map do |vacols_record|
         next empty_dockets(vacols_record) if master_record?(vacols_record)
 
-        hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record,
-                                                                    fetched_hearings_hash[vacols_record.hearing_pkseq])
+        hearing = LegacyHearing
+          .assign_or_create_from_vacols_record(vacols_record,
+                                               legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
         set_vacols_values(hearing, vacols_record)
       end.flatten
     end

@@ -1,8 +1,8 @@
 class HearingsController < ApplicationController
-  before_action :verify_access, except: [:show_print, :show, :update]
-  before_action :check_hearing_prep_out_of_service
+  before_action :verify_access, except: [:show_print, :show, :update, :find_closest_hearing_locations]
   before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
   before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
+  before_action :check_hearing_prep_out_of_service
 
   def show
     render json: hearing.to_hash(current_user.id)
@@ -12,6 +12,7 @@ class HearingsController < ApplicationController
     slot_new_hearing
 
     if hearing.is_a?(LegacyHearing)
+
       hearing.update_caseflow_and_vacols(update_params_legacy)
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
       HearingRepository.load_vacols_data(hearing)
@@ -32,29 +33,25 @@ class HearingsController < ApplicationController
   end
 
   def find_closest_hearing_locations
-    HearingDayMapper.validate_regional_office(params["regional_office"])
+    begin
+      HearingDayMapper.validate_regional_office(params["regional_office"])
 
-    veteran = Veteran.find_by(file_number: params["veteran_file_number"])
+      veteran = Veteran.find_by(file_number: params["veteran_file_number"])
 
-    facility_ids = RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
-                   [] << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
+      facility_ids = RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
+                     [] << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
 
-    va_dot_gov_address = VADotGovService.validate_address(
-      address_line1: veteran.address_line1,
-      address_line2: veteran.address_line2,
-      address_line3: veteran.address_line3,
-      city: veteran.city,
-      state: veteran.state,
-      country: veteran.country,
-      zip_code: veteran.zip_code
-    )
+      va_dot_gov_address = veteran.validate_address
 
-    render json: { hearing_locations: VADotGovService.get_distance(lat: va_dot_gov_address[:lat],
-                                                                   long: va_dot_gov_address[:long],
-                                                                   ids: facility_ids).map do |v|
-                                                                     v[:facility_id] = v[:id]
-                                                                     v
-                                                                   end }
+      render json: { hearing_locations: VADotGovService.get_distance(lat: va_dot_gov_address[:lat],
+                                                                     long: va_dot_gov_address[:long],
+                                                                     ids: facility_ids).map do |v|
+                                                                       v[:facility_id] = v[:id]
+                                                                       v
+                                                                     end }
+    rescue StandardError => e
+      render json: { message: e.message, status: "ERROR" }
+    end
   end
 
   private
@@ -63,8 +60,9 @@ class HearingsController < ApplicationController
     if params["hearing"]["master_record_updated"]
       HearingRepository.slot_new_hearing(
         params["hearing"]["master_record_updated"]["id"],
-        params["hearing"]["master_record_updated"]["time"],
-        hearing.appeal
+        time: params["hearing"]["master_record_updated"]["time"],
+        appeal: hearing.appeal,
+        hearing_location_attrs: update_params[:hearing_location_attributes]&.to_hash
       )
     end
   end
@@ -140,8 +138,4 @@ class HearingsController < ApplicationController
                                      ])
   end
   # rubocop:enable Metrics/MethodLength
-
-  def find_hearing_location_params
-    params.permit(:veteran_file_number, :regional_office)
-  end
 end

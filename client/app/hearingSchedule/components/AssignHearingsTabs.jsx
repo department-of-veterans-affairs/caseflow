@@ -10,6 +10,7 @@ import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { renderAppealType } from '../../queue/utils';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import StatusMessage from '../../components/StatusMessage';
+import { getFacilityType } from '../../components/DataDropdowns/VeteranHearingLocations';
 
 const veteranNotAssignedStyle = css({ fontSize: '3rem' });
 const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>
@@ -131,21 +132,6 @@ export default class AssignHearingsTabs extends React.Component {
     }
   }
 
-  getLocationType = (location) => {
-    const { facilityType, classification } = location;
-
-    switch (facilityType) {
-    case 'vet_center':
-      return '(Vet Center)';
-    case 'health':
-      return '(VHA)';
-    case 'benefits':
-      return classification.indexOf('Regional') === -1 ? '(VBA)' : '(RO)';
-    default:
-      return '';
-    }
-  }
-
   getSuggestedHearingLocation = (location) => {
     if (!location) {
       return '';
@@ -154,7 +140,7 @@ export default class AssignHearingsTabs extends React.Component {
     const { city, state, distance } = location;
 
     return <span>
-      <div>{`${city}, ${state} ${this.getLocationType(location)}`}</div>
+      <div>{`${city}, ${state} ${getFacilityType(location)}`}</div>
       <div>{`Distance: ${distance} miles away`}</div>
     </span>;
   }
@@ -169,6 +155,8 @@ export default class AssignHearingsTabs extends React.Component {
 
       if (_.isEmpty(appeal.attributes.veteranAvailableHearingLocations) && filteredBy === 'null') {
         return true;
+      } else if (_.isEmpty(appeal.attributes.veteranAvailableHearingLocations)) {
+        return false;
       }
 
       return filteredBy === appeal.attributes.veteranAvailableHearingLocations[0].facilityId;
@@ -181,7 +169,9 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: appeal.attributes.aod
       }),
       docketNumber: this.getAppealDocketTag(appeal),
-      suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.veteranAvailableHearingLocations[0]),
+      suggestedLocation: this.getSuggestedHearingLocation(
+        (appeal.attributes.veteranAvailableHearingLocations || [])[0]
+      ),
       time: null,
       externalId: appeal.attributes.externalAppealId
     }));
@@ -195,8 +185,10 @@ export default class AssignHearingsTabs extends React.Component {
         return true;
       }
 
-      if (hearing.location === null && filteredBy === 'null') {
+      if (_.isEmpty(hearing.location) && filteredBy === 'null') {
         return true;
+      } else if (_.isEmpty(hearing.location)) {
+        return false;
       }
 
       return filteredBy === hearing.location.facilityId;
@@ -217,7 +209,7 @@ export default class AssignHearingsTabs extends React.Component {
 
   getLocationFilterValues = (data, tab) => {
     const getLocation = (row) => tab === 'upcomingHearings' ? row.location :
-      row.attributes.veteranAvailableHearingLocations[0];
+      (row.attributes.veteranAvailableHearingLocations || [])[0];
 
     const locations = data.map((row) => {
       const location = getLocation(row);
@@ -304,7 +296,7 @@ export default class AssignHearingsTabs extends React.Component {
       setSelectedValue: (val) => {
         this.setState({
           [tab]: {
-            ...state,
+            dropdownIsOpen: false,
             filteredBy: val === 'all' ? null : val
           }
         });
