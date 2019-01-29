@@ -339,7 +339,7 @@ RSpec.feature "Attorney checkout flow" do
         # Again, hate to add a sleep, but for some reason clicking continue too soon doesn't go
         # to the next page. I think it's related to how we're using continue to load the next
         # section of the remand reason screen.
-        sleep 2
+        sleep 1
 
         click_on "Continue"
 
