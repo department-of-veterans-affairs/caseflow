@@ -37,6 +37,10 @@ export default class IntakeEditFrame extends React.PureComponent {
       Go to VBMS claim details and click the “Edit in Caseflow” button to return to edit.`;
   }
 
+  displayOutcodedMessage = () => {
+    return 'This appeal has been outcoded and the issues are no longer editable.';
+  }
+
   render() {
     const {
       veteran,
@@ -97,6 +101,13 @@ export default class IntakeEditFrame extends React.PureComponent {
                   title="Edit Claim Issues | Caseflow Intake"
                   component={() => {
                     return <Message title="Issues Not Editable" displayMessage={this.displayClearedEpMessage} />;
+                  }} />
+                <PageRoute
+                  exact
+                  path={PAGE_PATHS.OUTCODED}
+                  title="Edit Claim Issues | Caseflow Intake"
+                  component={() => {
+                    return <Message title="Issues Not Editable" displayMessage={this.displayOutcodedMessage} />;
                   }} />
               </div>
             </AppSegment>
