@@ -255,7 +255,7 @@ class Task < ApplicationRecord
 
   def add_admin_action_data(_user = nil)
     {
-      redirect_after: "/queue/appeals/#{appeal.external_id}",
+      redirect_after: "/queue",
       selected: nil,
       options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
         {
@@ -326,6 +326,8 @@ class Task < ApplicationRecord
       child_task.parent = self
       child_task.save!
     end
+
+    update(status: :on_hold)
   end
 
   def automatically_assign_org_task?

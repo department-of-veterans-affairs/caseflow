@@ -483,6 +483,5 @@ export const taskActionData = (props: Object) => {
     return (relevantAction.data);
   }
 
-  // We should never get here since any task action the creates this modal should provide data.
-  throw new Error('Task action requires data');
+  return {};
 };

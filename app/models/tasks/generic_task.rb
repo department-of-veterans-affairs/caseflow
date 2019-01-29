@@ -102,7 +102,7 @@ class GenericTask < Task
     end
 
     def create_from_params(params, user)
-      create_many_from_params([params], user)
+      create_many_from_params([params], user).first
     end
 
     def create_child_task(parent, current_user, params)

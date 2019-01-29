@@ -20,7 +20,7 @@ class LegacyTask
 
   def add_admin_action_data(_user)
     {
-      redirect_after: "/queue/appeals/#{appeal.external_id}",
+      redirect_after: "/queue",
       selected: nil,
       options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
         {
