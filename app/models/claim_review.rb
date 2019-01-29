@@ -124,7 +124,7 @@ class ClaimReview < DecisionReview
   def search_table_ui_hash
     {
       caseflow_veteran_id: claim_veteran&.id,
-      claimant_names: claimants.map(&:name),
+      claimant_names: claimants.map(&:name).uniq, # We're not sure why we see duplicate claimants, but this helps
       claim_id: id,
       end_product_status: search_table_statuses,
       establishment_error: establishment_error,
