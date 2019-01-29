@@ -197,7 +197,7 @@ export const setHearingDay = (hearingDay: Object) => ({
   payload: hearingDay
 });
 
-export const setAppealType = (isLegacy, appealId) => ({
+export const setAppealType = (isLegacy: boolean, appealId: number) => ({
   type: QUEUE_STATE_ACTIONS.SET_APPEAL_TYPE,
   payload: { isLegacy,
     appealId }

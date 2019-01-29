@@ -23,7 +23,6 @@ import CaseTimeline from './CaseTimeline';
 import { getQueryParams } from '../util/QueryParamsUtil';
 
 import { CATEGORIES, TASK_ACTIONS } from './constants';
-import * as TASK_ROUTE_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import { COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY.json';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';

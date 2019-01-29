@@ -73,6 +73,7 @@ type Props = {|
   canEditAod: Boolean,
   featureToggles: Object,
   organizations: Array<Object>,
+  appealDetails: Object,
   // Action creators
   setCanEditAod: typeof setCanEditAod,
   setFeatureToggles: typeof setFeatureToggles,
@@ -80,7 +81,7 @@ type Props = {|
   setUserCssId: typeof setUserCssId,
   setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
   setFeedbackUrl: typeof setFeedbackUrl,
-  setOrganizations: typeof setOrganizations
+  setOrganizations: typeof setOrganizations,
 |};
 
 class QueueApp extends React.PureComponent<Props> {

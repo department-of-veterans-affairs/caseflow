@@ -469,9 +469,7 @@ RSpec.feature "AmaQueue" do
       find(".Select-control", text: "Select an action").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_DECISION.to_h[:label]).click
 
-      expect(page).to have_content("Select special issues (optional)")
-
-      click_on "Continue"
+      expect(page).not_to have_content("Select special issues (optional)")
 
       expect(page).to have_content("Select Dispositions")
 
