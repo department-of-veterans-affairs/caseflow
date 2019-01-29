@@ -1,5 +1,4 @@
 class HearingAdminActionTask < GenericTask
-  validates :assigned_by, presence: true
   validates :parent, presence: true
   validate :on_hold_duration_is_set, on: :update
 

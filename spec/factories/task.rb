@@ -121,8 +121,12 @@ FactoryBot.define do
       assigned_by nil
     end
 
-    factory :schedule_hearing_task do
-      type ScheduleHearingTask.name
+    factory :schedule_hearing_task, class: ScheduleHearingTask do
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
+
+    factory :hearing_admin_action_task, class: HearingAdminActionTask do
       appeal { create(:appeal) }
       assigned_by nil
     end

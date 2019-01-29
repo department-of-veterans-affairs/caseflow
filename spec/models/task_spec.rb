@@ -327,6 +327,41 @@ describe Task do
     end
   end
 
+  describe ".actions_available?" do
+    let(:user) { create(:user) }
+
+    context "when task status is on_hold" do
+      let(:task) { create(:generic_task, status: "on_hold") }
+
+      it "returns true when allow_actions_while_on_hold is true" do
+        expect(task.actions_available?(user, true)).to eq(true)
+      end
+
+      it "returns false when allow_actions_while_on_hold is false" do
+        expect(task.actions_available?(user)).to eq(false)
+      end
+    end
+
+    context "when task status is completed" do
+      let(:task) { create(:generic_task, status: "completed") }
+
+      it "returns false" do
+        expect(task.actions_available?(user)).to eq(false)
+      end
+    end
+
+    context "when user has subtask assigned to them" do
+      let(:organization) { create(:organization) }
+      let(:parent_task) { create(:generic_task, assigned_to: organization) }
+      let!(:task) { create(:generic_task, assigned_to: user, parent: parent_task) }
+
+      it "returns false" do
+        OrganizationsUser.add_user_to_organization(user, organization)
+        expect(parent_task.actions_available?(user)).to eq(false)
+      end
+    end
+  end
+
   describe "#create_from_params" do
     let!(:judge) { FactoryBot.create(:user) }
     let!(:attorney) { FactoryBot.create(:user) }
