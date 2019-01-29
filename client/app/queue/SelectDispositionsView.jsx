@@ -286,7 +286,7 @@ class SelectDispositionsView extends React.PureComponent {
       >
 
         <div {...contestedIssueStyling}>
-          Contested Issue
+          {COPY.CONTESTED_ISSUE}
           <ul>
             {
               connectedRequestIssues.map((issue) => <li key={issue.id}>{issue.description}</li>)
