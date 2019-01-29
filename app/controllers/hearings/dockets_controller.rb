@@ -14,7 +14,6 @@ class Hearings::DocketsController < HearingsController
     return not_found unless date && judge.docket?(date)
 
     daily_docket = daily_docket(date)
-    Rails.logger.info("Daily Docket: #{daily_docket}")
     return not_found if daily_docket.empty?
 
     respond_to do |format|

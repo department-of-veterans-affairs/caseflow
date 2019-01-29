@@ -3,7 +3,7 @@ RSpec.describe Hearings::DocketsController, type: :controller do
   let!(:staff) { create(:staff, user: user) }
   let!(:case_hearing) { create(:case_hearing, user: user, hearing_date: Time.zone.today, board_member: staff.sattyid) }
   let!(:legacy_hearing) { create(:legacy_hearing, case_hearing: case_hearing) }
-  let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 1) }
+  let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 1, judge_id: user.id) }
   let!(:hearing) { create(:hearing, hearing_day: hearing_day, judge_id: user.id) }
 
   describe "SHOW Daily Docket" do
