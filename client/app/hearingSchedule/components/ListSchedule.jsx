@@ -51,6 +51,15 @@ const populateFilterDropDowns = (resultSet, filterName) => {
   return _.sortBy(uniqueOptions, 'displayText');
 };
 
+const judgeNameToIdMap = (hearings) => {
+  let nameToIdMap = {};
+
+  _.forEach(hearings, (hearingDay) => nameToIdMap[formatVljName(hearingDay.judgeLastName,
+    hearingDay.judgeFirstName)] = hearingDay.judgeId);
+
+  return nameToIdMap;
+};
+
 const filterSchedule = (scheduleToFilter, filterName, value) => {
   let filteredSchedule = {};
 
@@ -203,8 +212,18 @@ class ListSchedule extends React.Component {
     this.props.toggleLocationFilterVisibility();
   };
 
+  /*
+    As props.hearingSchedule does not have judge full name we need to create a full name to judgeId mapping
+    to use when receiving the full name through the value parameter.
+   */
   setVljSelectedValue = (value) => {
-    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'judgeName', value));
+    const judges = judgeNameToIdMap(this.props.hearingSchedule);
+
+    if (value === 'null') {
+      this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'judgeLastName', null));
+    } else {
+      this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'judgeId', judges[value]));
+    }
     this.setState({
       filteredByList: this.state.filteredByList.concat(['VLJ'])
     });
