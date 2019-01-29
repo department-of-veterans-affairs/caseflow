@@ -16,9 +16,6 @@ class Distribution < ApplicationRecord
   before_create :mark_as_pending
   after_commit :enqueue_distribution_job, on: :create
 
-  attr_accessor :tasks
-  attr_accessor :legacy_tasks
-
   CASES_PER_ATTORNEY = 3
   ALTERNATIVE_BATCH_SIZE = 5
 

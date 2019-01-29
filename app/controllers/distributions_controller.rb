@@ -60,7 +60,7 @@ class DistributionsController < ApplicationController
     when :too_many_unassigned_cases
       {
         "error": error,
-        "title": "There are too many unassigned cases in your queue",
+        "title": "Cases in your queue are waiting to be assigned",
         "detail": "Please ensure you have eight or fewer unassigned cases before requesting more."
       }
     when :unassigned_cases_waiting_too_long
