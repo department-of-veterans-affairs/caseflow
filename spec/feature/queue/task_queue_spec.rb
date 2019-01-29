@@ -369,11 +369,19 @@ RSpec.feature "Task queue" do
       end
     end
 
-    context "judge user's queue table view" do
+    context "judge user's queue table view", focus: true do
       let(:root_task) { FactoryBot.create(:root_task) }
       let!(:caseflow_review_task) do
         FactoryBot.create(
           :ama_judge_decision_review_task,
+          assigned_to: judge_user,
+          parent: root_task,
+          appeal: root_task.appeal
+        )
+      end      
+      let!(:caseflow_assign_task) do
+        FactoryBot.create(
+          :ama_judge_task,
           assigned_to: judge_user,
           parent: root_task,
           appeal: root_task.appeal
@@ -383,10 +391,13 @@ RSpec.feature "Task queue" do
         FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, :assigned, user: judge_user))
       end
 
-      it "should display both legacy and caseflow review tasks" do
+      it "should display both legacy and caseflow tasks for review and assign tasks page" do
         visit("/queue")
         expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 2))
-      end
+        find("a", text: COPY::SWITCH_TO_ASSIGN_MODE_LINK_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE)
+        expect(page).to have_content("Assign 1 Cases")
+      end      
     end
   end
 end

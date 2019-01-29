@@ -210,13 +210,15 @@ const mapStateToProps = (state: State) => {
   const { attorneysOfJudge, attorneys } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
   const { savePending } = state.ui.saveState;
+  const { featureToggles } = state.ui.featureToggles;
 
   return {
     attorneysOfJudge,
     selectedAssignee,
     selectedAssigneeSecondary,
     attorneys,
-    savePending
+    savePending,
+    featureToggles
   };
 };
 

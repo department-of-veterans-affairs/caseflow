@@ -64,12 +64,20 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
       <h2>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
-      {!featureToggles.automatic_case_distribution &&
+      <div {...assignSectionStyling}>
         <React.Fragment>
           <AssignWidget
             previousAssigneeId={userId}
             onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
             selectedTasks={selectedTasks} />
+          {featureToggles.automatic_case_distribution &&
+                  <Button
+                    name="Request cases"
+                    onClick={this.requestDistributionSubmit}
+                    loading={this.props.distributionLoading}
+                    loadingText="Requesting cases&hellip;"
+                  />
+          }
           <TaskTable
             includeSelect
             includeDetailsLink
@@ -80,45 +88,16 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
             includeReaderLink
             tasks={this.props.tasks}
             userId={userId} />
+          {this.props.distributionCompleteCasesLoading &&
+            <div {...loadingContainerStyling}>
+              <LoadingContainer color={LOGO_COLORS.QUEUE.ACCENT}>
+                <div className="cf-image-loader"></div>
+                <p className="cf-txt-c">Loading new cases&hellip;</p>
+              </LoadingContainer>
+            </div>
+          }
         </React.Fragment>
-      }
-      {featureToggles.automatic_case_distribution &&
-        <div {...assignSectionStyling}>
-          {this.props.tasks.length > 0 || this.props.distributionCompleteCasesLoading ? (
-            <React.Fragment>
-              <AssignWidget
-                previousAssigneeId={userId}
-                onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
-                selectedTasks={selectedTasks} />
-              <TaskTable
-                includeSelect
-                includeDetailsLink
-                includeType
-                includeDocketNumber
-                includeIssueCount
-                includeDaysWaiting
-                includeReaderLink
-                tasks={this.props.tasks}
-                userId={userId} />
-              {this.props.distributionCompleteCasesLoading &&
-                <div {...loadingContainerStyling}>
-                  <LoadingContainer color={LOGO_COLORS.QUEUE.ACCENT}>
-                    <div className="cf-image-loader"></div>
-                    <p className="cf-txt-c">Loading new cases&hellip;</p>
-                  </LoadingContainer>
-                </div>
-              }
-            </React.Fragment>
-          ) : (
-            <Button
-              name="Request cases"
-              onClick={this.requestDistributionSubmit}
-              loading={this.props.distributionLoading}
-              loadingText="Requesting cases&hellip;"
-            />
-          )}
-        </div>
-      }
+      </div>
     </React.Fragment>;
   }
 }
