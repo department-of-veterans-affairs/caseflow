@@ -3,6 +3,8 @@ class AppealEvents
 
   attr_accessor :appeal
   attr_accessor :version
+  attr_accessor :supplemental_claim
+  attr_accessor :higher_level_review
 
   def all
     [
@@ -21,6 +23,23 @@ class AppealEvents
       cavc_decision_events
     ].flatten.uniq.select(&:valid?)
   end
+
+  def sc_events
+    [
+      sc_request_event,
+      sc_decision_event,
+      sc_other_close_event
+    ].flatten.uniq.select(&:valid?)
+  end
+
+  def hlr_events
+    [
+      hlr_request_event,
+      hlr_decision_event,
+      hlr_dta_error_event,
+      dta_decision_event,
+      hlr_other_close_event
+    ].flatten.uniq.select(&:valid?)
 
   private
 
@@ -84,5 +103,37 @@ class AppealEvents
 
   def ramp_notice_event
     AppealEvent.new(type: :ramp_notice, date: appeal.ramp_election.try(:notice_date))
+  end
+
+  def sc_request_event
+    AppealEvent.new(type: :sc_request, date: supplemental_claim.receipt_date
+  end
+      
+  def sc_decision_event
+    AppealEvent.new(type: :sc_decision, date: supplemental_claim.decision_event_date)
+  end
+      
+  def sc_other_close_event
+    AppealEvent.new(type: :sc_other_close, date: supplemental_claim.)
+  end
+
+  def hlr_request_event
+    AppealEvent.new(type: :hlr_request, date: higher_level_review.receipt_date)
+  end
+
+  def hlr_decision_event
+    AppealEvent.new(type: :hlr_decision, date: )
+  end
+      
+  def hlr_dta_error_event
+    AppealEvent.new(type: :hlr_dta_error, date: )
+  end
+      
+  def dta_decision_event
+    AppealEvent.new(type: :dta_decision, date: )
+  end
+
+  def hlr_other_close_event
+    AppealEvent.new(type: :hlr_other_close, date: )
   end
 end

@@ -115,4 +115,17 @@ class SupplementalClaim < ClaimReview
       decision_issues.empty? ? :sc_closed : :sc_decision
     end
   end
+  
+  def decision_event_date
+    if decision_issues.any?
+      end_product_establishments.any? ? decision_issues.first.approx_decision_date :
+        decision_issues.first.promulgation_date
+    end
+  end
+
+  def other_close_event_date
+    if !active? && decision_issues.empty && end_product_establishments.any?
+      end_product_establishments.first.last_synced_at
+    end
+  end
 end
