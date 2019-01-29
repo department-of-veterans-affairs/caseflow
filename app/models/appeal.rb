@@ -69,6 +69,7 @@ class Appeal < DecisionReview
   def ui_hash
     super.merge(
       docketType: docket_type,
+      isOutcoded: outcoded?,
       formType: "appeal"
     )
   end

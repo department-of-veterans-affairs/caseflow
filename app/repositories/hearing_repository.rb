@@ -291,6 +291,7 @@ class HearingRepository
         regional_office_key: ro,
         request_type: vacols_record.hearing_type,
         scheduled_for: date,
+        hearing_day_id: vacols_record.vdkey,
         master_record: false
       }
     end
