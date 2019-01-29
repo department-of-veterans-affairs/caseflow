@@ -214,7 +214,7 @@ export const caseTimelineTasksForAppeal = createSelector(
 export const taskSnapshotTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
   (tasks: Tasks) => _.orderBy(_.filter(incompleteTasksSelector(tasks), (task) =>
-    !task.hideFromTaskSnapshot), ['createdAt'], ['asc'])
+    !task.hideFromTaskSnapshot), ['createdAt'], ['desc'])
 );
 
 export const newTasksByAssigneeCssIdSelector = createSelector(
