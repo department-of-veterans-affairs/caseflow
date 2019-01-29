@@ -81,6 +81,10 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     }
 
+    if (intakeData.isOutcoded) {
+      return <Redirect to={PAGE_PATHS.OUTCODED} />;
+    }
+
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData, useAmaActivationDate);
 
