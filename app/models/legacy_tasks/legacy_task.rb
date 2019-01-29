@@ -10,6 +10,35 @@ class LegacyTask
 
   TASK_ID_REGEX = /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i.freeze
 
+  def available_actions_unwrapper(user, role)
+    available_actions(role).map { |action| build_action_hash(action, user) }
+  end
+
+  def build_action_hash(action, user)
+    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func], user) : nil }
+  end
+
+  def add_admin_action_data(_user)
+    {
+      selected: nil,
+      options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
+        {
+          label: value,
+          value: key
+        }
+      end,
+      type: ColocatedTask.name
+    }
+  end
+
+  def assign_to_attorney_data(_user)
+    {
+      selected: nil,
+      options: nil,
+      type: AttorneyLegacyTask.name
+    }
+  end
+
   ### Serializer Methods Start
   def assigned_on
     assigned_at
@@ -17,6 +46,14 @@ class LegacyTask
 
   def label
     action
+  end
+
+  def hide_from_case_timeline
+    false
+  end
+
+  def hide_from_task_snapshot
+    false
   end
 
   def serializer_class

@@ -16,7 +16,7 @@ class V2::HLRStatusSerializer < V2::AppealSerializer
     "aoj"
   end
 
-  attribute :incomplete do
+  attribute :incomplete_history do
     false
   end
 

@@ -447,6 +447,31 @@ feature "Higher Level Review Edit issues" do
     end
   end
 
+  context "Nonrating issue with untimely date and VACOLS opt-in" do
+    before do
+      setup_legacy_opt_in_appeals(veteran.file_number)
+      higher_level_review.reload # get UUID
+    end
+
+    let(:legacy_opt_in_approved) { true }
+
+    it "does not apply untimely check to legacy opt-in" do
+      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        category: "Dependent Child - Biological",
+        description: "test",
+        date: "01/01/2010",
+        legacy_issues: true
+      )
+      add_intake_rating_issue("ankylosis of hip")
+
+      expect(page).to have_content(Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin)
+    end
+  end
+
   context "when there is a nonrating end product" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(
@@ -521,8 +546,7 @@ feature "Higher Level Review Edit issues" do
         click_intake_add_issue
         click_intake_no_matching_issues
 
-        fill_in "Issue category", with: active_nonrating_request_issue.issue_category
-        find("#issue-category").send_keys :enter
+        click_dropdown(text: active_nonrating_request_issue.issue_category)
         expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
         expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
                                      "#{active_nonrating_request_issue.description}")
@@ -547,6 +571,33 @@ feature "Higher Level Review Edit issues" do
             decision_date: active_nonrating_request_issue.decision_date
           )
         ).to_not be_nil
+      end
+    end
+
+    context "nonrating request issue was added and then removed" do
+      let!(:active_nonrating_request_issue) do
+        create(
+          :request_issue,
+          :nonrating,
+          review_request: higher_level_review
+        )
+      end
+
+      before do
+        higher_level_review.create_issues!([active_nonrating_request_issue])
+        active_nonrating_request_issue.remove_from_review
+        higher_level_review.reload
+      end
+
+      it "does not appear as a potential match on edit" do
+        visit "higher_level_reviews/#{nonrating_ep_claim_id}/edit"
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        click_dropdown(text: active_nonrating_request_issue.issue_category)
+
+        expect(page).to have_content("Does issue 2 match any of these issue categories?")
+        expect(page).to_not have_content("Does issue match any of the issues actively being reviewed?")
+        expect(page).to_not have_content("nonrating issue description")
       end
     end
   end
@@ -903,7 +954,7 @@ feature "Higher Level Review Edit issues" do
         before_request_issue_ids: [request_issue.id],
         after_request_issue_ids: [request_issue.id],
         attempted_at: Time.zone.now,
-        submitted_at: Time.zone.now,
+        last_submitted_at: Time.zone.now,
         processed_at: nil
       )
 

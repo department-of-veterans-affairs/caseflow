@@ -50,6 +50,7 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
     } else {
       tableContent = <TaskTable
         includeHearingBadge
+        includeTask
         includeDetailsLink
         includeDocumentId
         includeType

@@ -9,6 +9,7 @@
   "CASE_SEARCH_ERROR_UNKNOWN_ERROR_MESSAGE": "Please retry your search and contact support if errors persist.",
   "CASE_SEARCH_DATA_LOAD_IN_PROGRESS_MESSAGE": "Loading cases...",
   "CASE_SEARCH_DATA_LOAD_FAILED_MESSAGE": "Unable to load cases",
+  "CONTESTED_ISSUE": "Issue",
 
   "CASE_LIST_TABLE_TITLE": "Appeals",
   "CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE": "Case Details",
@@ -182,7 +183,7 @@
   "ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL": "Please select someone to assign the tasks to.",
   "ASSIGN_WIDGET_NO_TASK_TITLE": "No tasks selected",
   "ASSIGN_WIDGET_NO_TASK_DETAIL": "Please select a task.",
-  "ASSIGN_WIDGET_SUCCESS": "Assigned %(numCases)s %(casePlural)s",
+  "ASSIGN_WIDGET_SUCCESS": "%(verb)s %(numCases)s %(casePlural)s",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE": "Error assigning tasks",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "One or more tasks couldn't be assigned.",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL": "Please reassign tasks from your assign page",

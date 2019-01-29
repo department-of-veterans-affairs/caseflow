@@ -154,7 +154,6 @@ class HearingRepository
         Hearing.create!(
           appeal: appeal,
           hearing_day_id: hearing_day.id,
-          judge_id: hearing_day.judge.try(:id),
           scheduled_time: hearing_date
         )
       end
@@ -163,7 +162,7 @@ class HearingRepository
     def load_vacols_data(hearing)
       vacols_record = MetricsService.record("VACOLS: HearingRepository.load_vacols_data: #{hearing.vacols_id}",
                                             service: :vacols,
-                                            name: "load_vacols_data") do
+                                            name: "load_vacols_hearing_data") do
         VACOLS::CaseHearing.load_hearing(hearing.vacols_id)
       end
 
@@ -266,6 +265,7 @@ class HearingRepository
         regional_office_key: ro,
         request_type: vacols_record.hearing_type,
         scheduled_for: date,
+        hearing_day_id: vacols_record.vdkey,
         master_record: false
       }
     end

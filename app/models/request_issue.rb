@@ -131,18 +131,15 @@ class RequestIssue < ApplicationRecord
       ).where.not(issue_category: nil)
     end
 
+    def not_deleted
+      where.not(review_request_id: nil)
+    end
+
     def unidentified
       where(
         contested_rating_issue_reference_id: nil,
         is_unidentified: true
       )
-    end
-
-    # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
-    def from_intake_data(data)
-      new(
-        attributes_from_intake_data(data)
-      ).tap(&:validate_eligibility!)
     end
 
     def find_or_build_from_intake_data(data)
@@ -163,11 +160,23 @@ class RequestIssue < ApplicationRecord
     end
 
     def find_active_by_contested_decision_id(contested_decision_issue_id)
-      request_issue = unscoped.find_by(contested_decision_issue_id: contested_decision_issue_id,
-                                       removed_at: nil, ineligible_reason: nil)
+      request_issue = unscoped.find_by(
+        contested_decision_issue_id: contested_decision_issue_id,
+        removed_at: nil,
+        ineligible_reason: nil
+      )
+
       return unless request_issue&.status_active?
 
       request_issue
+    end
+
+    # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
+    def from_intake_data(data, decision_review: nil)
+      attrs = attributes_from_intake_data(data)
+      attrs = attrs.merge(review_request: decision_review) if decision_review
+
+      new(attrs).tap(&:validate_eligibility!)
     end
 
     private
@@ -348,13 +357,15 @@ class RequestIssue < ApplicationRecord
   # Instead of fully deleting removed issues, we instead strip them from the review so we can
   # maintain a record of the other data that was on them incase we need to revert the update.
   def remove_from_review
-    update!(review_request: nil)
-    legacy_issue_optin&.flag_for_rollback!
+    transaction do
+      update!(review_request: nil)
+      legacy_issue_optin&.flag_for_rollback!
 
-    # removing a request issue also deletes the associated request_decision_issue
-    # if the decision issue is not associated with any other request issue, also delete
-    decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
-    decision_issues.delete_all
+      # removing a request issue also deletes the associated request_decision_issue
+      # if the decision issue is not associated with any other request issue, also delete
+      decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
+      decision_issues.delete_all
+    end
   end
 
   def create_decision_issue_from_params(decision_issue_param)
@@ -420,7 +431,7 @@ class RequestIssue < ApplicationRecord
 
   def matching_rating_issues
     @matching_rating_issues ||= end_product_establishment.associated_rating.issues.select do |rating_issue|
-      rating_issue.contention_reference_id == contention_reference_id
+      rating_issue.decides_contention?(contention_reference_id: contention_reference_id)
     end
   end
 
@@ -445,17 +456,39 @@ class RequestIssue < ApplicationRecord
 
   def create_decision_issues_from_rating
     matching_rating_issues.each do |rating_issue|
-      decision_issues.create!(
-        rating_issue_reference_id: rating_issue.reference_id,
-        participant_id: rating_issue.participant_id,
-        promulgation_date: rating_issue.promulgation_date,
-        decision_text: rating_issue.decision_text,
-        profile_date: rating_issue.profile_date,
-        decision_review: review_request,
-        benefit_type: benefit_type,
-        end_product_last_action_date: end_product_establishment.result.last_action_date
-      )
+      transaction { decision_issues << find_or_create_decision_issue_from_rating_issue(rating_issue) }
     end
+  end
+
+  # One rating issue can be made as a decision for many request issues. However, we trust the disposition of the
+  # request issue contention OVER the decision issue disposition (since it's a "supplementary decision").
+  #
+  # This creates a scenario where multiple request issues can have different dispositions but be decided by the
+  # same rating issue. In this scenario, we will create 2 decision issues with the same rating_issue_reference_id
+  # but different dispositions.
+  #
+  # However, if the dispositions for any of these request issues match, there is no need to create multiple decision
+  # issues. They can instead be mapped to the same decision issue.
+  def find_or_create_decision_issue_from_rating_issue(rating_issue)
+    preexisting_decision_issue = DecisionIssue.find_by(
+      participant_id: rating_issue.participant_id,
+      rating_issue_reference_id: rating_issue.reference_id,
+      disposition: contention_disposition.disposition
+    )
+
+    return preexisting_decision_issue if preexisting_decision_issue
+
+    DecisionIssue.create!(
+      rating_issue_reference_id: rating_issue.reference_id,
+      disposition: contention_disposition.disposition,
+      participant_id: rating_issue.participant_id,
+      promulgation_date: rating_issue.promulgation_date,
+      decision_text: rating_issue.decision_text,
+      profile_date: rating_issue.profile_date,
+      decision_review: review_request,
+      benefit_type: benefit_type,
+      end_product_last_action_date: end_product_establishment.result.last_action_date
+    )
   end
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
@@ -497,7 +530,7 @@ class RequestIssue < ApplicationRecord
       self.ineligible_reason = :appeal_to_appeal
     end
 
-    self.ineligible_due_to_id = contested_issue.source_request_issue.id if ineligible_reason
+    self.ineligible_due_to_id = contested_issue.source_request_issues.first&.id if ineligible_reason
   end
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
@@ -599,6 +632,7 @@ class RequestIssue < ApplicationRecord
   def check_for_untimely!
     return unless eligible?
     return if untimely_exemption
+    return if vacols_id
     return if review_request&.is_a?(SupplementalClaim)
 
     if !review_request.timely_issue?(decision_or_promulgation_date)

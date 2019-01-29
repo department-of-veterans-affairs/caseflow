@@ -87,7 +87,8 @@ export default class Modal extends React.Component {
       noDivider,
       confirmButton,
       cancelButton,
-      title
+      title,
+      customStyles
     } = this.props;
 
     let modalButtons;
@@ -115,7 +116,7 @@ export default class Modal extends React.Component {
       aria-describedby="modal_id-desc"
     >
       <ScrollLock />
-      <div className="cf-modal-body" id={id || ''}>
+      <div className="cf-modal-body" id={id || ''} {...customStyles}>
         <button
           type="button"
           id={`${this.buttonIdPrefix}close`}

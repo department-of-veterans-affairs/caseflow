@@ -204,9 +204,7 @@ feature "Higher-Level Review" do
     fill_in "What is the payee code for this claimant?", with: "10 - Spouse"
     find("#cf-payee-code").send_keys :enter
 
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
+    select_agree_to_withdraw_legacy_issues(false)
 
     click_intake_continue
 
@@ -466,9 +464,7 @@ feature "Higher-Level Review" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
+    select_agree_to_withdraw_legacy_issues(false)
 
     click_intake_continue
     expect(page).to have_current_path("/intake/add_issues")
@@ -1310,7 +1306,6 @@ feature "Higher-Level Review" do
           click_intake_add_issue
           add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
           add_intake_rating_issue("limitation of thigh motion (extension)")
-          add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Non-RAMP Issue before AMA Activation")
           expect(page).to_not have_content(

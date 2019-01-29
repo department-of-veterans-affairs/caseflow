@@ -47,7 +47,7 @@ class Help extends React.PureComponent {
               title="Reader Help"
               component={ReaderHelp} />
             <PageRoute exact
-              path="/hearings/help"
+              path="/hearing_prep/help"
               title="Hearings Help"
               component={HearingsHelp} />
             <PageRoute exact

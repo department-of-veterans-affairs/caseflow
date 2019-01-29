@@ -8,7 +8,7 @@ describe UpdateAttorneyCaseReview do
         result = UpdateAttorneyCaseReview.new(
           id: review.id,
           document_id: valid_decision_document_id,
-          user_id: 123_456_789
+          user: build(:user, id: 123_456_789)
         ).call
         errors = { document_id: ["You are not authorized to edit this document ID"] }
 
@@ -23,7 +23,7 @@ describe UpdateAttorneyCaseReview do
         UpdateAttorneyCaseReview.new(
           id: review.id,
           document_id: valid_decision_document_id,
-          user_id: review.reviewing_judge_id
+          user: build(:user, id: review.reviewing_judge_id)
         ).call
 
         expect(review.reload.document_id).to eq valid_decision_document_id
@@ -36,7 +36,7 @@ describe UpdateAttorneyCaseReview do
         UpdateAttorneyCaseReview.new(
           id: review.id,
           document_id: valid_decision_document_id,
-          user_id: review.attorney_id
+          user: build(:user, id: review.attorney_id)
         ).call
 
         expect(review.reload.document_id).to eq valid_decision_document_id
@@ -49,7 +49,7 @@ describe UpdateAttorneyCaseReview do
         result = UpdateAttorneyCaseReview.new(
           id: review.id,
           document_id: "V1234567.12",
-          user_id: review.attorney_id
+          user: build(:user, id: review.attorney_id)
         ).call
 
         errors = {
@@ -66,7 +66,7 @@ describe UpdateAttorneyCaseReview do
         result = UpdateAttorneyCaseReview.new(
           id: review.id,
           document_id: "V1234567.123",
-          user_id: review.attorney_id
+          user: build(:user, id: review.attorney_id)
         ).call
 
         expect(result.success?).to eq true
@@ -79,7 +79,7 @@ describe UpdateAttorneyCaseReview do
         result = UpdateAttorneyCaseReview.new(
           id: review.id,
           document_id: "V1234567.123",
-          user_id: review.attorney_id
+          user: build(:user, id: review.attorney_id)
         ).call
 
         errors = {
@@ -96,7 +96,7 @@ describe UpdateAttorneyCaseReview do
         result = UpdateAttorneyCaseReview.new(
           id: review.id,
           document_id: "M1234567.1234",
-          user_id: review.attorney_id
+          user: build(:user, id: review.attorney_id)
         ).call
 
         expect(result.success?).to eq true
@@ -109,7 +109,7 @@ describe UpdateAttorneyCaseReview do
         result = UpdateAttorneyCaseReview.new(
           id: review.id,
           document_id: "V1234567.123",
-          user_id: review.attorney_id
+          user: build(:user, id: review.attorney_id)
         ).call
 
         error_message = "Draft Decision Document IDs must be in one of these formats: " \
@@ -127,7 +127,7 @@ describe UpdateAttorneyCaseReview do
         result = UpdateAttorneyCaseReview.new(
           id: 123,
           document_id: "V1234567.123",
-          user_id: 1
+          user: build(:user)
         ).call
 
         errors = {
