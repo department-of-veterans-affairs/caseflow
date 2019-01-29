@@ -29,7 +29,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def approx_decision_date
-    profile_date ? profile_date.to_date : end_product_last_action_date
+    appeal? ? appeal_decision_date : claim_review_approx_decision_date
   end
 
   def issue_category
@@ -74,6 +74,15 @@ class DecisionIssue < ApplicationRecord
   end
 
   private
+
+  def appeal_decision_date
+    return unless appeal?
+    decision_review.decision_document.decision_date
+  end
+
+  def claim_review_approx_decision_date
+    profile_date ? profile_date.to_date : end_product_last_action_date
+  end
 
   def calculate_and_set_description
     self.description ||= calculate_description
