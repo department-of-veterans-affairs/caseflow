@@ -433,7 +433,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
       expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["docket"]).to be_nil
-      expect(json["data"].first["attributes"]["status"]).to be_nil
+      expect(json["data"].first["attributes"]["status"]["type"]).to eq("hlr_received")
       expect(json["data"].first["attributes"]["issues"].length).to eq(0)
 
       # check the attributes on the sc
@@ -452,7 +452,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][1]["attributes"]["aoj"]).to eq("vha")
       expect(json["data"][1]["attributes"]["programArea"]).to eq("medical")
       expect(json["data"][1]["attributes"]["docket"]).to be_nil
-      expect(json["data"][1]["attributes"]["status"]).to be_nil
+      expect(json["data"][1]["attributes"]["status"]["type"]).to eq("sc_closed")
       expect(json["data"][1]["attributes"]["issues"].length).to eq(0)
 
       # checkout the attributes on the appeal
