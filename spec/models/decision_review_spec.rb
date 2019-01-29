@@ -38,6 +38,7 @@ describe DecisionReview do
   let!(:decision_issues) do
     [
       create(:decision_issue,
+             :rating,
              participant_id: participant_id,
              rating_issue_reference_id: "123",
              decision_text: "decision issue 1",
@@ -45,6 +46,7 @@ describe DecisionReview do
              profile_date: profile_date,
              decision_review: higher_level_review),
       create(:decision_issue,
+             :rating,
              participant_id: participant_id,
              rating_issue_reference_id: "789",
              decision_text: "decision issue 2",
@@ -52,6 +54,7 @@ describe DecisionReview do
              profile_date: profile_date + 1.day,
              decision_review: higher_level_review),
       create(:decision_issue,
+             :nonrating,
              participant_id: participant_id,
              rating_issue_reference_id: nil,
              decision_text: "decision issue 3",
@@ -59,6 +62,7 @@ describe DecisionReview do
              profile_date: profile_date + 2.days,
              decision_review: higher_level_review),
       create(:decision_issue,
+             :rating,
              participant_id: participant_id,
              rating_issue_reference_id: "appeal123",
              decision_text: "appeal decision issue",
