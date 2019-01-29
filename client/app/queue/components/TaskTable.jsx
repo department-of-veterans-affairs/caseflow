@@ -381,14 +381,18 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       // that has been selected
       for (const key in data) { // eslint-disable-line guard-for-in
         for (const columnName in filteredByList) {
-          // If there are no filters selected for a particular column,
-          // just add the data point to the filtered data to show
-          if (_.isEmpty(filteredByList[columnName])) {
-            filteredData[key] = data[key];
-          // If there is a filter for a particular column,
-          // and the filter matches a value in the data point,
-          // add that data point to the filtered data to show
-          } else if (filteredByList[columnName].includes(_.get(data[key], columnName))) {
+          if (
+            // Conditions under which data should be added to `filteredData`:
+            // 1. If there are no filters selected for this column
+            // (meaning we should show all the data in that column)
+            (_.isEmpty(filteredByList[columnName]) ||
+            // OR if there is a filter for a particular column,
+            // and the filter matches a value in the data point
+            // (meaning that data point is one we are trying to filter for)
+            filteredByList[columnName].includes(_.get(data[key], columnName))) &&
+            // 2. AND If the data point has not already been added to `filteredData`
+            _.find(filteredData, ['uniqueId', data[key].uniqueId]) === undefined // eslint-disable-line no-undefined
+          ) {
             filteredData = filteredData.concat(data[key]);
           }
         }
@@ -411,7 +415,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
     // Don't show anything if there are no filters.
     if (!_.isEmpty(filteredByList)) {
-      for (const filter in filteredByList) {
+      for (const filter in filteredByList) { // eslint-disable-line guard-for-in
         // This condition might be met if filters were added and then later removed,
         // as there could still bea key in the filteredByList object pointing to an empty array.
         if (filteredByList[filter].length > 0) {

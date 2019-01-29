@@ -23,7 +23,7 @@ import FilterOption from './FilterOption';
  *     this data comes from the store, and is an object where each key is a column name,
  *     which then points to an array of the specific options that column is filtered by
  *   - @updateFilters {function} updates the filteredByList
- *   - @isDropdownFilterOpen {object} a property from the store that is updated by
+ *   - @isDropdownFilterOpen {boolean} a property from the store that is updated by
  *     toggleDropdownFilterVisibility, and should receive the specific column name
  *   - @anyFiltersAreSet {boolean} determines whether the "Clear All Filters" option
  *     in the dropdown is enabled
@@ -68,9 +68,8 @@ class TableFilter extends React.PureComponent {
   }
 
   updateSelectedFilter = (value, columnName) => {
-    const oldList = this.props.column.filteredByList;
-    const filtersForColumn = _.get(oldList, String(columnName));
-    let newList = {};
+    const { filteredByList } = this.props.column;
+    const filtersForColumn = _.get(filteredByList, String(columnName));
     let newFilters = [];
 
     if (filtersForColumn) {
@@ -83,8 +82,8 @@ class TableFilter extends React.PureComponent {
       newFilters = newFilters.concat([value]);
     }
 
-    newList[columnName] = newFilters;
-    this.props.column.updateFilters(newList);
+    filteredByList[columnName] = newFilters;
+    this.props.column.updateFilters(filteredByList);
 
     // For some reason when filters are removed a render doesn't automatically happen
     this.forceUpdate();
@@ -150,7 +149,7 @@ TableFilter.propTypes = {
     toggleDropdownFilterVisibility: PropTypes.func,
     filteredByList: PropTypes.object,
     updateFilters: PropTypes.func,
-    isDropdownFilterOpen: PropTypes.object,
+    isDropdownFilterOpen: PropTypes.boolean,
     anyFiltersAreSet: PropTypes.boolean,
     customFilterLabels: PropTypes.object,
     label: PropTypes.string,
