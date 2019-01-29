@@ -48,7 +48,7 @@ class Rating
   end
 
   def pension?
-    associated_claims_data.first[:bnft_clm_tc] != "110LCOMP"
+    associated_claims_data.any? { |ac| ac[:bnft_clm_tc].match(/PMC$/) }
   end
 
   private
