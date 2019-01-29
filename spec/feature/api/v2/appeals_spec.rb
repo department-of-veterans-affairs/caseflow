@@ -111,7 +111,7 @@ describe "Appeals API v2", type: :request do
     let(:veteran_is_not_claimant) { false }
     let(:profile_date) { receipt_date - 1 }
 
-    let!(:claim_review) do
+    let!(:hlr) do
       create(:higher_level_review,
              veteran_file_number: veteran_file_number,
              receipt_date: receipt_date,
@@ -122,6 +122,10 @@ describe "Appeals API v2", type: :request do
              veteran_is_not_claimant: veteran_is_not_claimant)
     end
 
+    let!(:hlr_ep) do
+      create(:end_product_establishment, :active, source: hlr)
+    end
+
     let!(:supplemental_claim_review) do
       create(:supplemental_claim,
              veteran_file_number: veteran_file_number,
@@ -129,6 +133,10 @@ describe "Appeals API v2", type: :request do
              benefit_type: "vha",
              legacy_opt_in_approved: legacy_opt_in_approved,
              veteran_is_not_claimant: veteran_is_not_claimant)
+    end
+
+    let!(:sc_ep) do
+      create(:end_product_establishment, :cleared, source: supplemental_claim_review)
     end
 
     let(:request_issue) do
@@ -416,7 +424,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["appealIds"].first).to include("HLR")
       expect(json["data"].first["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
       expect(json["data"].first["attributes"]["type"]).to be_nil
-      expect(json["data"].first["attributes"]["active"]).to eq(false)
+      expect(json["data"].first["attributes"]["active"]).to eq(true)
       expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
       expect(json["data"].first["attributes"]["description"]).to be_nil
       expect(json["data"].first["attributes"]["aod"]).to be_nil
