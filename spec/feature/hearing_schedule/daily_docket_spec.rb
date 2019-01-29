@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.feature "Hearing Schedule Daily Docket", focus: true do
+RSpec.feature "Hearing Schedule Daily Docket" do
   let!(:current_user) do
     User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
   end
