@@ -80,6 +80,7 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
 
   case Constants.POPULATE_DAILY_DOCKET:
     return update(state, {
+      hearingDay: { $set: action.payload.hearingDay },
       dailyDocket: {
         [action.payload.date]: { $set: convertDailyDocketToHash(action.payload.dailyDocket) }
       }
