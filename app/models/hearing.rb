@@ -10,7 +10,7 @@ class Hearing < ApplicationRecord
   accepts_nested_attributes_for :hearing_issue_notes
   accepts_nested_attributes_for :transcription
   accepts_nested_attributes_for :hearing_location
-  
+
   alias_attribute :location, :hearing_location
   alias_attribute :regional_office_key, :hearing_day_regional_office
 
@@ -35,9 +35,8 @@ class Hearing < ApplicationRecord
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
-  
-  after_create :update_fields_from_hearing_day
 
+  after_create :update_fields_from_hearing_day
 
   HEARING_TYPES = {
     V: "Video",
