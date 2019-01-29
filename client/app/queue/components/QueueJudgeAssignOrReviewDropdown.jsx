@@ -9,7 +9,7 @@ type Props = {|
   userId: number
 |};
 
-export default class QueueJudgeViewSelectorDropdown extends React.Component<Props> {
+export default class QueueJudgeAssignOrReviewDropdown extends React.Component<Props> {
   render = () => {
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];
@@ -20,12 +20,12 @@ export default class QueueJudgeViewSelectorDropdown extends React.Component<Prop
       {
         key: '0',
         to: reviewTo,
-        label: COPY.REVIEW_MODE_LINK_LABEL
+        label: COPY.JUDGE_REVIEW_DROPDOWN_LINK_LABEL
       },
       {
         key: '1',
         to: assignTo,
-        label: COPY.ASSIGN_MODE_LINK_LABEL
+        label: COPY.JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
       }
     ];
 
@@ -33,6 +33,6 @@ export default class QueueJudgeViewSelectorDropdown extends React.Component<Prop
   }
 }
 
-QueueJudgeViewSelectorDropdown.propTypes = {
+QueueJudgeAssignOrReviewDropdown.propTypes = {
   userId: PropTypes.number.isRequired
 };

@@ -122,8 +122,8 @@
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
 
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
-  "ASSIGN_MODE_LINK_LABEL": "Assign Cases",
-  "REVIEW_MODE_LINK_LABEL": "Review Cases",
+  "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign Cases",
+  "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Review Cases",
 
   "IS_PAPER_CASE": "This is a paper case",
 

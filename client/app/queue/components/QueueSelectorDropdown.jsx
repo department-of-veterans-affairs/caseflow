@@ -39,7 +39,7 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
     };
   }
 
-  onMenuClick = () => {
+  toggleMenuVisible = () => {
     this.setState((prevState) => ({
       menu: !prevState.menu
     }));
@@ -58,7 +58,7 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
         {items.map((item) => {
           const linkProps = {
             className: 'usa-button-secondary usa-button',
-            onClick: this.onMenuClick,
+            onClick: this.toggleMenuVisible,
             href: item.href,
             to: item.to
           };
@@ -73,7 +73,7 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
     }
 
     return <div className="cf-dropdown" {...styles.dropdownButton}>
-      <a onClick={this.onMenuClick}
+      <a onClick={this.toggleMenuVisible}
         className="cf-dropdown-trigger usa-button usa-button-secondary"
         {...styles.dropdownTrigger}>
         {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL}

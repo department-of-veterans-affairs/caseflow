@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import { NavLink } from 'react-router-dom';
 
-import QueueJudgeViewSelectorDropdown from './components/QueueJudgeViewSelectorDropdown';
+import QueueJudgeAssignOrReviewDropdown from './components/QueueJudgeAssignOrReviewDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import {
   resetErrorMessages,
@@ -68,7 +68,7 @@ class JudgeAssignTaskListView extends React.PureComponent {
       <div>
         <div {...fullWidth} {...css({ marginBottom: '2em' })}>
           <h1>Assign {this.props.unassignedTasksCount} Cases</h1>
-          <QueueJudgeViewSelectorDropdown userId={userId} />
+          <QueueJudgeAssignOrReviewDropdown userId={userId} />
         </div>
         <div className="usa-width-one-fourth">
           <LoadingDataDisplay

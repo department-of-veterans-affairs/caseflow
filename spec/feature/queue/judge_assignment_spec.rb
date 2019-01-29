@@ -28,8 +28,8 @@ RSpec.feature "Judge assignment to attorney" do
       visit "/queue"
 
       find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-      expect(page).to have_content(COPY::ASSIGN_MODE_LINK_LABEL)
-      click_on COPY::ASSIGN_MODE_LINK_LABEL
+      expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+      click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
 
       expect(page).to have_content("Cases to Assign (2)")
       expect(page).to have_content("Moe Syzlak")
@@ -89,8 +89,8 @@ RSpec.feature "Judge assignment to attorney" do
         visit "/queue"
 
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-        expect(page).to have_content(COPY::ASSIGN_MODE_LINK_LABEL)
-        click_on COPY::ASSIGN_MODE_LINK_LABEL
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
 
         expect(page).to have_content("Assign 3 Cases")
         expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
@@ -127,15 +127,15 @@ RSpec.feature "Judge assignment to attorney" do
         visit "/queue"
 
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-        expect(page).to have_content(COPY::ASSIGN_MODE_LINK_LABEL)
-        click_on COPY::ASSIGN_MODE_LINK_LABEL
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
 
         expect(page).to have_current_path("/queue/#{judge.user.id}/assign")
         expect(page).to have_content("Assign 2 Cases")
 
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
-        expect(page).to have_content(COPY::REVIEW_MODE_LINK_LABEL)
-        click_on COPY::REVIEW_MODE_LINK_LABEL
+        expect(page).to have_content(COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL
 
         expect(page).to have_current_path("/queue/#{judge.user.id}/review")
         expect(page).to have_content("Review 1 Cases")

@@ -10,7 +10,7 @@ type Props = {|
   organizations: Array<Object>
 |};
 
-export default class QueueOrganizationSelectorDropdown extends React.Component<Props> {
+export default class QueueOrganizationDropdown extends React.Component<Props> {
   render = () => {
     const { organizations } = this.props;
     const url = window.location.pathname.split('/');
@@ -21,7 +21,13 @@ export default class QueueOrganizationSelectorDropdown extends React.Component<P
       return null;
     }
 
-    const items = organizations.map((org, index) => {
+    const queueItem = {
+      key: '0',
+      href: queueHref,
+      label: COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL
+    };
+
+    const organizationItems = organizations.map((org, index) => {
       return {
         key: (index + 1).toString(),
         href: (location === org.url) ? '#' : `/organizations/${org.url}`,
@@ -29,19 +35,13 @@ export default class QueueOrganizationSelectorDropdown extends React.Component<P
       };
     });
 
-    items.unshift(
-      {
-        key: '0',
-        href: queueHref,
-        label: COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL
-      }
-    );
+    const items = [queueItem, ...organizationItems];
 
     return <QueueSelectorDropdown items={items} />;
   }
 }
 
-QueueOrganizationSelectorDropdown.propTypes = {
+QueueOrganizationDropdown.propTypes = {
   organizations: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired

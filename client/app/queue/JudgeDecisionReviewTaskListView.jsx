@@ -6,7 +6,7 @@ import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
 import TaskTable from './components/TaskTable';
-import QueueJudgeViewSelectorDropdown from './components/QueueJudgeViewSelectorDropdown';
+import QueueJudgeAssignOrReviewDropdown from './components/QueueJudgeAssignOrReviewDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
@@ -67,7 +67,7 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
 
     return <AppSegment filledBackground styling={containerStyles}>
       <h1 {...fullWidth}>{sprintf(COPY.JUDGE_CASE_REVIEW_TABLE_TITLE, reviewableCount)}</h1>
-      <QueueJudgeViewSelectorDropdown userId={userId} />
+      <QueueJudgeAssignOrReviewDropdown userId={userId} />
       {messages.error && <Alert type="error" title={messages.error.title}>
         {messages.error.detail}
       </Alert>}
