@@ -218,7 +218,7 @@ const propsToText = (props) => {
     sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label) :
     COPY.ASSIGN_TASK_TITLE;
   const actionData = taskActionData(props);
-  const pathAfterSubmit = actionData.redirect_after || '/queue';
+  const pathAfterSubmit = (actionData && actionData.redirect_after) || '/queue';
 
   return {
     title,
