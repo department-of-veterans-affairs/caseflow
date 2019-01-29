@@ -10,9 +10,22 @@ import { loadingSymbolHtml } from '../RenderFunctions';
 
 import SearchableDropdown from '../SearchableDropdown';
 
+export const getFacilityType = (location) => {
+  switch (location.facilityType) {
+  case 'vet_center':
+    return '(Vet Center) ';
+  case 'va_health_facility':
+    return '(VHA) ';
+  case 'va_benefits_facility':
+    return location.classification.indexOf('Regional') === -1 ? '(VBA) ' : '(RO) ';
+  default:
+    return '';
+  }
+};
+
 const generateHearingLocationOptions = (hearingLocations) => (
   hearingLocations.map((location) => ({
-    label: `${location.city}, ${location.state} (${location.distance} miles away)`,
+    label: `${location.city}, ${location.state} ${getFacilityType(location)}${location.distance || '?'} miles away`,
     value: {
       name: location.name,
       address: location.address,
@@ -38,12 +51,14 @@ class VeteranHearingLocationsDropdown extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.dynamic || !this.props.staticHearingLocations) {
+    const { dropdownName, dynamic, staticHearingLocations } = this.props;
+
+    if (dynamic || !staticHearingLocations) {
       setTimeout(this.getLocations, 0);
     } else {
       this.props.onReceiveDropdownData(
-        `hearingLocationsFor${this.props.veteranFileNumber}`,
-        generateHearingLocationOptions(this.props.staticHearingLocations)
+        dropdownName,
+        generateHearingLocationOptions(staticHearingLocations)
       );
     }
   }
@@ -52,19 +67,17 @@ class VeteranHearingLocationsDropdown extends React.Component {
     const { dynamic, regionalOffice } = this.props;
 
     if ((prevProps.dynamic !== dynamic || prevProps.regionalOffice !== regionalOffice) && dynamic) {
-      setTimeout(() => this.getLocations(true), 0);
+      setTimeout(this.getLocations, 0);
     }
   }
 
-  getLocations = (force) => {
+  getLocations = () => {
     const {
       veteranHearingLocations: { options, isFetching },
-      veteranFileNumber, regionalOffice
+      veteranFileNumber, regionalOffice, dropdownName
     } = this.props;
 
-    const name = `hearingLocationsFor${veteranFileNumber}`;
-
-    if ((options && !force) || isFetching) {
+    if (options || isFetching) {
       return;
     }
 
@@ -80,7 +93,7 @@ class VeteranHearingLocationsDropdown extends React.Component {
 
       locationOptions.sort((first, second) => (first.distance - second.distance));
 
-      this.props.onReceiveDropdownData(name, locationOptions);
+      this.props.onReceiveDropdownData(dropdownName, locationOptions);
       this.setState({ errorMsg: false });
     }).
       catch((error) => {
@@ -107,7 +120,7 @@ class VeteranHearingLocationsDropdown extends React.Component {
           Could not find hearing locations for this veteran${errorReason}
         `;
 
-        this.props.onReceiveDropdownData(name, []);
+        this.props.onReceiveDropdownData(dropdownName, []);
         this.setState({ errorMsg });
       });
   }
@@ -181,12 +194,18 @@ VeteranHearingLocationsDropdown.defaultProps = {
   label: 'Hearing Location'
 };
 
-const mapStateToProps = (state, props) => ({
-  veteranHearingLocations: state.components.dropdowns[`hearingLocationsFor${props.veteranFileNumber}`] ? {
-    options: state.components.dropdowns[`hearingLocationsFor${props.veteranFileNumber}`].options,
-    isFetching: state.components.dropdowns[`hearingLocationsFor${props.veteranFileNumber}`].isFetching
-  } : {}
-});
+const mapStateToProps = (state, props) => {
+  const { regionalOffice, veteranFileNumber } = props;
+  const name = `hearingLocationsFor${veteranFileNumber}At${regionalOffice}`;
+
+  return {
+    dropdownName: name,
+    veteranHearingLocations: state.components.dropdowns[name] ? {
+      options: state.components.dropdowns[name].options,
+      isFetching: state.components.dropdowns[name].isFetching
+    } : {}
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onFetchDropdownData,

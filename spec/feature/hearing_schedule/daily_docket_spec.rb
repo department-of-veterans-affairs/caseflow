@@ -26,7 +26,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       find(".dropdown-Disposition").click
       find("#react-select-2--option-1").click
-      click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (0 miles away)")
+      click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "8:30").click
       click_button("Save")
@@ -41,7 +41,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can postpone a hearing" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
-      click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (0 miles away)")
+      click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       click_dropdown(name: "Disposition", text: "Postponed")
       # For unknown reasons, hearing_date is saved to 1 day before
       click_dropdown(name: "HearingDay", text: (hearing_day_two.hearing_date - 1.day).strftime("%m/%d/%Y"))

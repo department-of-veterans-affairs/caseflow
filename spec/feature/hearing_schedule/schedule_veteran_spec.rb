@@ -33,7 +33,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Currently active tasks", wait: 30)
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
-      click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (0 miles away)")
+      click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       radio_link = find(".cf-form-radio-option", match: :first)
       radio_link.click
       click_button("Schedule")
