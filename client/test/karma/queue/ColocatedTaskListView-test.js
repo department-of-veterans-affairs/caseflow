@@ -80,7 +80,9 @@ describe('ColocatedTaskListView', () => {
     onHoldDuration: null,
     decisionPreparedBy: null,
     availableActions: [],
-    taskBusinessPayloads: []
+    taskBusinessPayloads: [],
+    hideFromCaseTimeline: false,
+    hideFromTaskSnapshot: false
   });
 
   const appealTemplate: BasicAppeal = {

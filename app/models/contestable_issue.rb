@@ -3,7 +3,7 @@ class ContestableIssue
   include ActiveModel::Model
 
   attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id, :contesting_decision_review,
-                :decision_issue_id, :promulgation_date, :rating_issue_profile_date, :source_request_issue,
+                :decision_issue_id, :promulgation_date, :rating_issue_profile_date, :source_request_issues,
                 :rating_issue_disability_code
 
   class << self
@@ -14,7 +14,7 @@ class ContestableIssue
         date: rating_issue.profile_date.to_date,
         description: rating_issue.decision_text,
         ramp_claim_id: rating_issue.ramp_claim_id,
-        source_request_issue: rating_issue.source_request_issue,
+        source_request_issues: rating_issue.source_request_issues,
         contesting_decision_review: contesting_decision_review,
         rating_issue_disability_code: rating_issue.disability_code
       )
@@ -27,7 +27,7 @@ class ContestableIssue
         decision_issue_id: decision_issue.id,
         date: decision_issue.approx_decision_date,
         description: decision_issue.description,
-        source_request_issue: decision_issue,
+        source_request_issues: decision_issue.request_issues,
         contesting_decision_review: contesting_decision_review
       )
     end
@@ -49,9 +49,9 @@ class ContestableIssue
   end
 
   def source_review_type
-    return unless source_request_issue
+    return unless source_request_issues.first
 
-    decision_issue? ? source_request_issue.decision_review_type : source_request_issue.review_request_type
+    decision_issue? ? source_request_issues.first.decision_review_type : source_request_issues.first.review_request_type
   end
 
   private

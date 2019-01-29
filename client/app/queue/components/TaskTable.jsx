@@ -122,7 +122,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     } : null;
   }
 
-  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.label]
+  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.label] || _.startCase(task.label)
 
   caseTaskColumn = () => {
     return this.props.includeTask ? {
