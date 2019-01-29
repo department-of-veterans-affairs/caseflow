@@ -8,6 +8,8 @@ class HearingDay < ApplicationRecord
   has_many :hearings
   validates :regional_office, absence: true, if: :central_office?
 
+  class HearingDayHasChildrenRecords < StandardError; end
+
   REQUEST_TYPES = {
     video: "V",
     travel: "T",
@@ -23,18 +25,26 @@ class HearingDay < ApplicationRecord
   end
 
   def update_children_records
-    hearings = if request_type == REQUEST_TYPES[:central]
-                 HearingRepository.fetch_co_hearings_for_date(scheduled_for)
-               else
-                 HearingRepository.fetch_video_hearings_for_parent(id)
-               end
-
-    hearings.each do |hearing|
+    vacols_children_records.each do |hearing|
       hearing.update_caseflow_and_vacols(
         room: room,
         bva_poc: bva_poc,
         judge_id: judge ? judge.vacols_attorney_id : nil
       )
+    end
+
+    hearings.each { |hearing| hearing.update!(room: room, bva_poc: bva_poc, judge: judge) }
+  end
+
+  def confirm_no_children_records
+    fail HearingDayHasChildrenRecords if vacols_children_records.count > 0 || hearings.count > 0
+  end
+
+  def vacols_children_records
+    if request_type == REQUEST_TYPES[:central]
+      HearingRepository.fetch_co_hearings_for_date(scheduled_for)
+    else
+      HearingRepository.fetch_video_hearings_for_parent(id)
     end
   end
 

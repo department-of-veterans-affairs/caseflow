@@ -31,6 +31,14 @@ class LegacyTask
     }
   end
 
+  def assign_to_attorney_data(_user)
+    {
+      selected: nil,
+      options: nil,
+      type: AttorneyLegacyTask.name
+    }
+  end
+
   ### Serializer Methods Start
   def assigned_on
     assigned_at
@@ -38,6 +46,14 @@ class LegacyTask
 
   def label
     action
+  end
+
+  def hide_from_case_timeline
+    false
+  end
+
+  def hide_from_task_snapshot
+    false
   end
 
   def serializer_class

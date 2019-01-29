@@ -63,6 +63,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_at,
+      createdAt: task.attributes.created_at,
       completedOn: task.attributes.completed_at,
       dueOn: null,
       assignedTo: {
@@ -89,7 +90,9 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       availableActions: task.attributes.available_actions,
       taskBusinessPayloads: task.attributes.task_business_payloads,
       caseReviewId: task.attributes.attorney_case_review_id,
-      timelineTitle: task.attributes.timeline_title
+      timelineTitle: task.attributes.timeline_title,
+      hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
+      hideFromCaseTimeline: task.attributes.hide_from_case_timeline
     };
 
     return acc;
@@ -160,7 +163,9 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       decisionPreparedBy: null,
       availableActions: task.attributes.available_actions,
       taskBusinessPayloads: task.attributes.task_business_payloads,
-      timelineTitle: task.attributes.timeline_title
+      timelineTitle: task.attributes.timeline_title,
+      hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
+      hideFromCaseTimeline: task.attributes.hide_from_case_timeline
     };
   });
 
