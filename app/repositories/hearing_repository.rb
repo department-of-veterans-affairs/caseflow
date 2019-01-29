@@ -154,7 +154,6 @@ class HearingRepository
         Hearing.create!(
           appeal: appeal,
           hearing_day_id: hearing_day.id,
-          judge_id: hearing_day.judge.try(:id),
           scheduled_time: hearing_date
         )
       end
@@ -266,6 +265,7 @@ class HearingRepository
         regional_office_key: ro,
         request_type: vacols_record.hearing_type,
         scheduled_for: date,
+        hearing_day_id: vacols_record.vdkey,
         master_record: false
       }
     end

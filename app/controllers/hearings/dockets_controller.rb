@@ -13,17 +13,43 @@ class Hearings::DocketsController < HearingsController
     date = date_from_string(params[:docket_date])
     return not_found unless date && judge.docket?(date)
 
+    daily_docket = daily_docket(date)
+    return not_found if daily_docket.empty?
+
     respond_to do |format|
       format.html { render template: "hearings/index" }
       format.json do
-        render json: (judge.upcoming_hearings_on(date, is_fetching_issues: true).map do |hearing|
-                        hearing.to_hash(current_user.id)
-                      end)
+        render json: {
+          hearingDay: hearing_day(daily_docket[0]),
+          dailyDocket: daily_docket
+        }
       end
     end
   end
 
   private
+
+  def hearing_day(first_hearing)
+    hearing_day = HearingDay.find(first_hearing["hearing_day_id"])
+    hearing_day_object = {
+      requestType: HearingDayMapper.label_for_type(hearing_day.request_type),
+      coordinator: hearing_day.bva_poc,
+      room: hearing_day.room,
+      notes: hearing_day.notes
+    }
+    hearing_day_object
+  rescue ActiveRecord::RecordNotFound
+    {}
+  end
+
+  def daily_docket(date)
+    daily_docket = judge.upcoming_hearings_on(date, is_fetching_issues: true).map do |hearing|
+      next if hearing.class.name == "Hearings::MasterRecord"
+
+      hearing.to_hash(current_user.id)
+    end
+    daily_docket.compact
+  end
 
   def date_from_string(date_string)
     # date should be YYYY-MM-DD

@@ -27,8 +27,8 @@ class DecisionReviewTask < GenericTask
   private
 
   def validate_task(decision_issue_params)
-    if !in_progress?
-      @error_code = :task_not_in_progress
+    if completed?
+      @error_code = :task_completed
     elsif !validate_decision_issue_per_request_issue(decision_issue_params)
       @error_code = :invalid_decision_issue_per_request_issue
     end

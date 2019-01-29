@@ -580,5 +580,11 @@ module IntakeHelpers
     expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
   end
   # rubocop:enable Metrics/AbcSize
+
+  def select_agree_to_withdraw_legacy_issues(withdraw)
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: withdraw ? "Yes" : "N/A", match: :prefer_exact).click
+    end
+  end
 end
 # rubocop:enable Metrics/ModuleLength
