@@ -257,7 +257,7 @@ export default class DailyDocket extends React.Component {
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'} />
     <div {...radioButtonStyling}>
       <RadioField
-        name= "time"
+        name={`hearingTime${hearing.id}`}
         label= "Time"
         options={this.getHearingTimeOptions(hearing, readOnly)}
         value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
