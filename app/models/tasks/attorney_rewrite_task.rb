@@ -1,0 +1,2 @@
+class AttorneyRewriteTask < AttorneyTask
+end

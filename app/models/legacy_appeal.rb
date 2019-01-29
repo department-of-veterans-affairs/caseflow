@@ -5,6 +5,7 @@ class LegacyAppeal < ApplicationRecord
   include CachedAttributes
   include AddressMapper
   include Taskable
+  include DocumentConcern
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -138,13 +139,6 @@ class LegacyAppeal < ApplicationRecord
 
   delegate :documents, :new_documents_for_user, :number_of_documents,
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
-
-  # Number of documents stored locally via nightly RetrieveDocumentsForReaderJob.
-  # Fall back to count from VBMS if no local documents are found.
-  def number_of_documents_from_caseflow
-    count = Document.where(file_number: veteran_file_number).size
-    (count != 0) ? count : number_of_documents
-  end
 
   def number_of_documents_after_certification
     return 0 unless certification_date
@@ -698,23 +692,6 @@ class LegacyAppeal < ApplicationRecord
 
   def external_id
     vacols_id
-  end
-
-  def timeline
-    [
-      {
-        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
-        date: decision_date
-      },
-      {
-        title: form9_date ? COPY::CASE_TIMELINE_FORM_9_RECEIVED : COPY::CASE_TIMELINE_FORM_9_PENDING,
-        date: form9_date
-      },
-      {
-        title: nod_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
-        date: nod_date
-      }
-    ]
   end
 
   private

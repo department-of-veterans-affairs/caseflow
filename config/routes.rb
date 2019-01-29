@@ -126,6 +126,7 @@ Rails.application.routes.draw do
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule', to: "hearings/hearing_day#index"
+  get 'hearings/:hearing_id/details', to: "hearings/hearing_day#index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
@@ -138,7 +139,7 @@ Rails.application.routes.draw do
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
 
-  resources :hearings, only: [:update]
+  resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"
 
@@ -146,7 +147,7 @@ Rails.application.routes.draw do
   get 'dispatch/help' => 'help#dispatch'
   get 'certification/help' => 'help#certification'
   get 'reader/help' => 'help#reader'
-  get 'hearings/help' => 'help#hearings'
+  get 'hearing_prep/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
   get 'queue/help' => 'help#queue'
 

@@ -63,6 +63,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_at,
+      createdAt: task.attributes.created_at,
       completedOn: task.attributes.completed_at,
       dueOn: null,
       assignedTo: {
@@ -88,7 +89,10 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       decisionPreparedBy,
       availableActions: task.attributes.available_actions,
       taskBusinessPayloads: task.attributes.task_business_payloads,
-      caseReviewId: task.attributes.attorney_case_review_id
+      caseReviewId: task.attributes.attorney_case_review_id,
+      timelineTitle: task.attributes.timeline_title,
+      hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
+      hideFromCaseTimeline: task.attributes.hide_from_case_timeline
     };
 
     return acc;
@@ -158,7 +162,10 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       status: task.attributes.status,
       decisionPreparedBy: null,
       availableActions: task.attributes.available_actions,
-      taskBusinessPayloads: task.attributes.task_business_payloads
+      taskBusinessPayloads: task.attributes.task_business_payloads,
+      timelineTitle: task.attributes.timeline_title,
+      hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
+      hideFromCaseTimeline: task.attributes.hide_from_case_timeline
     };
   });
 
@@ -263,14 +270,16 @@ export const prepareAppealForStore =
         veteranAddress: appeal.attributes.veteran_address,
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
-        timeline: appeal.attributes.timeline,
         decisionDate: appeal.attributes.decision_date,
+        form9Date: appeal.attributes.form9_date,
+        nodDate: appeal.attributes.nod_date,
         certificationDate: appeal.attributes.certification_date,
         powerOfAttorney: appeal.attributes.power_of_attorney,
         regionalOffice: appeal.attributes.regional_office,
         caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
         documentID: appeal.attributes.document_id,
-        caseReviewId: appeal.attributes.attorney_case_review_id
+        caseReviewId: appeal.attributes.attorney_case_review_id,
+        canEditDocumentId: appeal.attributes.can_edit_document_id
       };
 
       return accumulator;
@@ -465,4 +474,16 @@ export const taskIsOnHold = (task: Task) => {
   }
 
   return task.status === TASK_STATUSES.on_hold;
+};
+
+export const taskActionData = (props: Object) => {
+  const relevantAction = props.task.availableActions.
+    find((action) => props.history.location.pathname.endsWith(action.value));
+
+  if (relevantAction && relevantAction.data) {
+    return (relevantAction.data);
+  }
+
+  // We should never get here since any task action the creates this modal should provide data.
+  throw new Error('Task action requires data');
 };

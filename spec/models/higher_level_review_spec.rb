@@ -227,7 +227,8 @@ describe HigherLevelReview do
         )
 
         expect(supplemental_claim).to_not be_nil
-        expect(RequestIssue.where(review_request: supplemental_claim).length).to eq(2)
+        expect(supplemental_claim.establishment_submitted_at).to_not be_nil
+        expect(supplemental_claim.request_issues.count).to eq(2)
 
         first_dta_request_issue = RequestIssue.find_by(
           review_request: supplemental_claim,
@@ -285,6 +286,68 @@ describe HigherLevelReview do
 
         expect(SupplementalClaim.where.not(decision_review_remanded: nil).empty?).to eq(true)
         expect(RequestIssue.all.empty?).to eq(true)
+      end
+    end
+  end
+
+  context "#active" do
+    let(:synced_status) { "CLR" }
+    let(:dta_ep_sync_status) { "PEND" }
+    let(:veteran_file_number) { "123456789" }
+    let!(:hlr_with_dta_error) { create(:higher_level_review, veteran_file_number: veteran_file_number) }
+    let!(:hlr_end_product) do
+      create(:end_product_establishment,
+             source: hlr_with_dta_error,
+             synced_status: synced_status)
+    end
+
+    let!(:dta_sc) do
+      create(:supplemental_claim,
+             veteran_file_number: veteran_file_number,
+             decision_review_remanded: hlr_with_dta_error)
+    end
+
+    let!(:dta_ep) do
+      create(:end_product_establishment,
+             source: dta_sc,
+             synced_status: dta_ep_sync_status)
+    end
+
+    let(:veteran_file_number2) { "111223333" }
+    let!(:hlr_no_dta_error) { create(:higher_level_review, veteran_file_number: veteran_file_number2) }
+    let!(:hlr_ep) do
+      create(:end_product_establishment,
+             source: hlr_no_dta_error,
+             synced_status: synced_status)
+    end
+
+    context "there is a dta error" do
+      it "hlr active, has active dta error ep" do
+        expect(hlr_with_dta_error.active?).to eq(true)
+      end
+    end
+
+    context "dta error ep cleared" do
+      let(:dta_ep_sync_status) { "CLR" }
+
+      it "hlr is not active" do
+        expect(hlr_with_dta_error.active?).to eq(false)
+      end
+    end
+
+    context "there is no dta error" do
+      let(:synced_status) { "PEND" }
+
+      it "has active ep" do
+        expect(hlr_no_dta_error.active?).to eq(true)
+      end
+    end
+
+    context "ep is cleared" do
+      let(:synced_status) { "CLR" }
+
+      it "has cleared ep" do
+        expect(hlr_no_dta_error.active?).to eq(false)
       end
     end
   end

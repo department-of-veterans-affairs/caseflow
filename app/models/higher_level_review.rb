@@ -29,6 +29,45 @@ class HigherLevelReview < ClaimReview
     create_dta_supplemental_claim
   end
 
+  # needed for appeal status api
+
+  def review_status_id
+    "HLR#{id}"
+  end
+
+  def linked_review_ids
+    Array.wrap(review_status_id)
+  end
+
+  def incomplete
+    false
+  end
+
+  def active?
+    end_product_establishments.any? { |ep| ep.status_active?(sync: false) } || dta_claim_active?
+  end
+
+  def description
+    # need to impelement
+  end
+
+  def status_hash
+    # need to implement. returns the details object for the status
+  end
+
+  def alerts
+    # need to implement. add logic to return alert enum
+  end
+
+  def issues
+    # need to implement. get request and corresponding rating issue
+    []
+  end
+
+  def events
+    # need to implement. hlr_request, hlr_decision, hlr_dta_error, or hlr_other_close
+  end
+
   private
 
   def create_dta_supplemental_claim
@@ -36,6 +75,7 @@ class HigherLevelReview < ClaimReview
 
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
     dta_supplemental_claim.create_decision_review_task_if_required!
+    dta_supplemental_claim.submit_for_processing!
     dta_supplemental_claim.start_processing_job!
   end
 
@@ -91,12 +131,18 @@ class HigherLevelReview < ClaimReview
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
       claim_date: receipt_date,
-      payee_code: payee_code,
+      payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
       user: intake_processed_by
     )
+  end
+
+  def dta_claim_active?
+    dta_claim = SupplementalClaim.find_by(veteran_file_number: veteran_file_number,
+                                          decision_review_remanded: self)
+    dta_claim ? dta_claim.active? : false
   end
 end

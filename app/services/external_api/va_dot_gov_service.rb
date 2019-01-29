@@ -10,7 +10,7 @@ class ExternalApi::VADotGovService
 
       until remaining_ids.empty?
         results = fetch_facilities_with_ids(
-          query: { lat: lat, long: long, page: page, ids: remaining_ids }
+          query: { lat: lat, long: long, page: page, ids: remaining_ids.join(",") }
         )
 
         remaining_ids -= results[:facilities].pluck(:id)
@@ -72,11 +72,11 @@ class ExternalApi::VADotGovService
     end
 
     def facilities_endpoint
-      "services/va_facilities/v0/facilities"
+      "va_facilities/v0/facilities"
     end
 
     def address_validation_endpoint
-      "services/address_validation/v1/validate"
+      "address_validation/v1/validate"
     end
 
     # rubocop:disable Metrics/ParameterLists

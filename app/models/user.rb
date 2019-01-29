@@ -57,6 +57,10 @@ class User < ApplicationRecord
     vacols_roles.include?("dispatch")
   end
 
+  def intake_user?
+    roles && (roles.include?("Mail Intake") || roles.include?("Admin Intake"))
+  end
+
   def vacols_uniq_id
     @vacols_uniq_id ||= user_info[:uniq_id]
   end

@@ -61,36 +61,115 @@ describe Rating do
             decision_text: "Decision2"
           }
         ],
-        disabilities: [
-          {
-            dis_dt: "2018-07-17T08:31:43.000-05:00",
-            dis_sn: "rating1",
-            disability_evaluations: {
-              dgnstc_tc: "original_code"
-            }
-          },
-          {
-            dis_dt: "2019-07-17T08:31:43.000-05:00",
-            dis_sn: "rating1",
-            disability_evaluations: {
-              dgnstc_tc: "later_code"
-            }
-          }
-        ]
+        disabilities: disabilities
       )
     end
     subject { rating.issues }
 
-    it "returns issues with ratings" do
-      expect(subject.count).to eq(2)
+    context "with multiple disabilities" do
+      let(:disabilities) do
+        [{
+          dis_dt: promulgation_date - 2.days,
+          dis_sn: "rating1",
+          disability_evaluations: {
+            dis_dt: promulgation_date - 2.days,
+            dgnstc_tc: "original_code"
+          }
+        },
+         {
+           dis_dt: promulgation_date - 1.day,
+           dis_sn: "rating1",
+           disability_evaluations: {
+             dis_dt: promulgation_date - 2.days,
+             dgnstc_tc: "later_code"
+           }
+         }]
+      end
 
-      expect(subject.first).to have_attributes(
-        reference_id: "Issue1", decision_text: "Decision1", disability_code: "later_code"
-      )
+      it "overrides disability with earlier date" do
+        expect(subject.count).to eq(2)
 
-      expect(subject.second).to have_attributes(
-        reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
-      )
+        expect(subject.first).to have_attributes(
+          reference_id: "Issue1", decision_text: "Decision1", disability_code: "later_code"
+        )
+
+        expect(subject.second).to have_attributes(
+          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+        )
+      end
+    end
+
+    context "with one disability" do
+      let(:disabilities) do
+        {
+          dis_dt: promulgation_date - 2.days,
+          dis_sn: "rating1",
+          disability_evaluations: {
+            dis_dt: promulgation_date - 2.days,
+            dgnstc_tc: "original_code"
+          }
+        }
+      end
+
+      it "returns issues with ratings" do
+        expect(subject.count).to eq(2)
+
+        expect(subject.first).to have_attributes(
+          reference_id: "Issue1", decision_text: "Decision1", disability_code: "original_code"
+        )
+
+        expect(subject.second).to have_attributes(
+          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+        )
+      end
+    end
+
+    context "with multiple evaluations" do
+      let(:disabilities) do
+        {
+          dis_dt: promulgation_date - 2.days,
+          dis_sn: "rating1",
+          disability_evaluations: [{
+            dis_dt: promulgation_date - 3.days,
+            dgnstc_tc: "original_code"
+          }, {
+            dis_dt: promulgation_date - 2.days,
+            dgnstc_tc: "later_code"
+          }]
+        }
+      end
+
+      it "overrides evaluation with earlier date" do
+        expect(subject.count).to eq(2)
+
+        expect(subject.first).to have_attributes(
+          reference_id: "Issue1", decision_text: "Decision1", disability_code: "later_code"
+        )
+
+        expect(subject.second).to have_attributes(
+          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+        )
+      end
+    end
+
+    context "with no evaluation" do
+      let(:disabilities) do
+        {
+          dis_dt: promulgation_date - 2.days,
+          dis_sn: "rating1"
+        }
+      end
+
+      it "creates ratings without disability codes" do
+        expect(subject.count).to eq(2)
+        expect(subject.first).to have_attributes(
+          reference_id: "Issue1", decision_text: "Decision1", disability_code: nil
+        )
+
+        expect(subject.second).to have_attributes(
+          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+        )
+      end
     end
   end
 

@@ -8,11 +8,15 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :status
   attribute :assigned_at
   attribute :started_at
+  attribute :created_at
   attribute :completed_at
   attribute :placed_on_hold_at
   attribute :on_hold_duration
   attribute :instructions
   attribute :appeal_type
+  attribute :timeline_title
+  attribute :hide_from_case_timeline
+  attribute :hide_from_task_snapshot
 
   attribute :assigned_by do
     {

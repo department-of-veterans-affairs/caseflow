@@ -1,5 +1,6 @@
 class Appeal < DecisionReview
   include Taskable
+  include DocumentConcern
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -56,13 +57,6 @@ class Appeal < DecisionReview
 
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :new_documents_for_user, :manifest_vva_fetched_at, to: :document_fetcher
-
-  # Number of documents stored locally via nightly RetrieveDocumentsForReaderJob.
-  # Fall back to count from VBMS if no local documents are found.
-  def number_of_documents_from_caseflow
-    count = Document.where(file_number: veteran_file_number).size
-    (count != 0) ? count : number_of_documents
-  end
 
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
@@ -272,28 +266,6 @@ class Appeal < DecisionReview
     RootTask.create_root_and_sub_tasks!(self)
   end
 
-  # Only select completed tasks because incomplete tasks will appear elsewhere on case details page.
-  # Tasks are sometimes assigned to organizations for tracking, these will appear as duplicates if they have child
-  # tasks, so we do not return those organization tasks.
-  def tasks_for_timeline
-    tasks.where(status: Constants.TASK_STATUSES.completed).order("completed_at DESC")
-      .reject { |t| t.assigned_to.is_a?(Organization) && t.children.pluck(:assigned_to_type).include?(User.name) }
-  end
-
-  def timeline
-    [
-      {
-        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
-        date: decision_date
-      },
-      tasks_for_timeline.map(&:timeline_details),
-      {
-        title: receipt_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
-        date: receipt_date
-      }
-    ].flatten
-  end
-
   def establish!
     attempted!
 
@@ -316,6 +288,43 @@ class Appeal < DecisionReview
     remand_supplemental_claims.each(&:create_remand_issues!)
     remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
     remand_supplemental_claims.each(&:start_processing_job!)
+  end
+
+  # needed for appeal status api
+  def appeal_status_id
+    "A#{id}"
+  end
+
+  def linked_review_ids
+    Array.wrap(appeal_status_id)
+  end
+
+  def aod
+    # to be implemented
+  end
+
+  def location
+    # to be implemented
+  end
+
+  def status_hash
+    # to be implemented
+  end
+
+  def alerts
+    # to be implemented
+  end
+
+  def description
+    # to be implemented
+  end
+
+  def program
+    if request_issues.all? { |ri| ri.benefit_type == request_issues.first.benefit_type }
+      request_issues.first.benefit_type
+    else
+      "multiple"
+    end
   end
 
   private

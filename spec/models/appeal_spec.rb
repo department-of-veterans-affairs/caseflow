@@ -118,6 +118,53 @@ describe Appeal do
     end
   end
 
+  context "#new_documents_from_caseflow" do
+    before do
+      documents.each { |document| document.update(file_number: appeal.veteran_file_number) }
+    end
+
+    let(:user) { create(:user) }
+
+    let!(:documents) do
+      [
+        Generators::Document.create(upload_date: 5.days.ago),
+        Generators::Document.create(upload_date: 5.days.ago)
+      ]
+    end
+
+    let!(:appeal) { create(:appeal) }
+
+    subject { appeal.new_documents_from_caseflow(user) }
+
+    context "when appeal has no appeal view" do
+      it "should return all documents" do
+        expect(subject).to match_array(documents)
+      end
+    end
+
+    context "when appeal has an appeal view newer than documents" do
+      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
+
+      it "should return no documents" do
+        expect(subject).to eq([])
+      end
+
+      context "when one document is missing a received at date" do
+        it "should return no documents" do
+          documents[0].update(upload_date: nil)
+          expect(subject).to eq([])
+        end
+      end
+
+      context "when one document is newer than the appeal view date" do
+        it "should return the newer document" do
+          documents[0].update(upload_date: -2.days.ago)
+          expect(subject).to eq([documents[0]])
+        end
+      end
+    end
+  end
+
   context "#contestable_issues" do
     subject { appeal.contestable_issues }
 
@@ -186,7 +233,7 @@ describe Appeal do
     let!(:appeal_attempts_ended) do
       create(
         :appeal,
-        establishment_submitted_at: (Appeal::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        last_submitted_at: (Appeal::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
         establishment_attempted_at: (Appeal::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
       )
     end
@@ -502,35 +549,6 @@ describe Appeal do
     end
   end
 
-  context ".tasks_for_timeline" do
-    context "when there are completed organization tasks with completed child tasks assigned to people" do
-      let(:judge) { create(:user) }
-      let(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
-      let!(:task2) do
-        create(:qr_task, appeal: appeal, status: Constants.TASK_STATUSES.completed, assigned_to_type: "Organization")
-      end
-      let!(:task3) do
-        create(:qr_task, assigned_to: judge, appeal: appeal, status: Constants.TASK_STATUSES.completed,
-                         parent_id: task2.id)
-      end
-
-      subject { appeal.tasks_for_timeline.first }
-      it { is_expected.to eq task3 }
-    end
-    context "when there are completed organization tasks without child tasks" do
-      let(:judge) { create(:user) }
-      let(:appeal) { create(:appeal) }
-      let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
-      let!(:task2) do
-        create(:qr_task, appeal: appeal, status: Constants.TASK_STATUSES.completed, assigned_to_type: "Organization")
-      end
-
-      subject { appeal.tasks_for_timeline.first }
-      it { is_expected.to eq task2 }
-    end
-  end
-
   context ".active?" do
     subject { appeal.active? }
 
@@ -564,6 +582,33 @@ describe Appeal do
       it "should indicate the appeal is active" do
         expect(subject).to eq(false)
       end
+    end
+  end
+
+  context "#program" do
+    subject { appeal.program }
+
+    let(:benefit_type1) { "compensation" }
+    let(:benefit_type2) { "pension" }
+    let(:appeal) { create(:appeal, request_issues: [request_issue]) }
+    let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
+    let(:request_issue2) { create(:request_issue, benefit_type: benefit_type1) }
+    let(:request_issue3) { create(:request_issue, benefit_type: benefit_type2) }
+
+    context "appeal has one request issue" do
+      it { is_expected.to eq benefit_type1 }
+    end
+
+    context "appeal has multiple request issues with same benefit type" do
+      let(:appeal) { create(:appeal, request_issues: [request_issue, request_issue2]) }
+
+      it { is_expected.to eq benefit_type1 }
+    end
+
+    context "appeal has multiple request issue with different benefit_types" do
+      let(:appeal) { create(:appeal, request_issues: [request_issue, request_issue2, request_issue3]) }
+
+      it { is_expected.to eq "multiple" }
     end
   end
 end

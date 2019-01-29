@@ -37,7 +37,8 @@ type Params = {|
   previousAssigneeId: string,
   onTaskAssignment: Function,
   selectedTasks: Array<Task>,
-  isModal?: boolean
+  isModal?: boolean,
+  assignedVerb?: string
 |};
 
 type Props = Params & {|
@@ -113,6 +114,7 @@ class AssignWidget extends React.PureComponent<Props> {
 
         return this.props.showSuccessMessage({
           title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
+            verb: this.props.assignedVerb || 'Assigned',
             numCases: selectedTasks.length,
             casePlural: pluralize('case', selectedTasks.length)
           })

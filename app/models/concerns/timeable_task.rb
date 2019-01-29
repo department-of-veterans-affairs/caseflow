@@ -7,7 +7,7 @@ module TimeableTask
       fail Caseflow::Error::MissingTimerMethod unless respond_to?(:timer_delay)
 
       super(args).tap do |task|
-        TaskTimer.create!(task: task, submitted_at: Time.zone.now + timer_delay)
+        TaskTimer.create!(task: task, last_submitted_at: Time.zone.now + timer_delay)
       end
     end
   end

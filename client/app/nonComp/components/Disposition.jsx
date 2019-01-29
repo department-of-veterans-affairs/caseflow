@@ -25,7 +25,7 @@ class NonCompDecisionIssue extends React.PureComponent {
   }
 
   handleDispositionChange = (option) => {
-    this.props.onDispositionChange(this.state.issueIdx, option.value);
+    this.props.onDispositionChange(this.state.issueIdx, option && option.value);
   }
 
   dispositionOptions = () => {
@@ -97,8 +97,7 @@ class NonCompDispositions extends React.PureComponent {
   }
 
   handleDecisionDate = (value) => {
-    this.setState({ decisionDate: value });
-    this.checkFormFilledOut();
+    this.setState({ decisionDate: value }, this.checkFormFilledOut);
   }
 
   handleSave = () => {

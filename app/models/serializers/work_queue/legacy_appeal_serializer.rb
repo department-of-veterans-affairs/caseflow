@@ -3,8 +3,6 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :assigned_judge
   attribute :sanitized_hearing_request_type
 
-  attribute :timeline
-
   attribute :issues do
     object.issues.map do |issue|
       ActiveModelSerializers::SerializableResource.new(
@@ -64,6 +62,8 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :docket_number
   attribute :status
   attribute :decision_date
+  attribute :form9_date
+  attribute :nod_date
   attribute :certification_date
   attribute :paper_case do
     object.file_type.eql? "Paper"
@@ -87,6 +87,17 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
 
   attribute :document_id do
     latest_attorney_case_review&.document_id
+  end
+
+  attribute :can_edit_document_id do
+    LegacyDocumentIdPolicy.new(
+      user: @instance_options[:user],
+      case_review: latest_attorney_case_review
+    ).editable?
+  end
+
+  attribute :attorney_case_review_id do
+    latest_attorney_case_review&.vacols_id
   end
 
   def latest_attorney_case_review

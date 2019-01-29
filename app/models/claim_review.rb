@@ -130,7 +130,10 @@ class ClaimReview < DecisionReview
       establishment_error: establishment_error,
       review_type: self.class.to_s.underscore,
       veteran_file_number: veteran_file_number,
-      veteran_full_name: claim_veteran&.name&.formatted(:readable_full)
+      veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
+      end_products: end_product_establishments,
+      claimant_names: claimants.map(&:name).uniq, # We're not sure why we see duplicate claimants, but this helps
+      review_type: self.class.to_s.underscore
     }
   end
 
@@ -146,6 +149,29 @@ class ClaimReview < DecisionReview
       }] # eventually this is a link
     else
       end_product_establishments.map(&:status)
+    end
+  end
+  
+  # needed for appeal status api
+  def program
+    case benefit_type
+    when "voc_rehab"
+      "vre"
+    when "vha"
+      "medical"
+    when "nca"
+      "burial"
+    else
+      benefit_type
+    end
+  end
+
+  def aoj
+    case benefit_type
+    when "compensation", "pension", "fiduciary", "insurance", "education", "voc_rehab", "loan_guaranty"
+      "vba"
+    else
+      benefit_type
     end
   end
 

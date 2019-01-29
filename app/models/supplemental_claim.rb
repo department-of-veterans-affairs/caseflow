@@ -26,6 +26,41 @@ class SupplementalClaim < ClaimReview
     !!decision_review_remanded
   end
 
+  # needed for appeal status api
+
+  def review_status_id
+    "SC#{id}"
+  end
+
+  def linked_review_ids
+    Array.wrap(review_status_id)
+  end
+
+  def active?
+    end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
+  end
+
+  def description
+    # need to implement
+  end
+
+  def status_hash
+    # need to implement. returns the details object for the status
+  end
+
+  def alerts
+    # need to implement. add logic to return alert enum
+  end
+
+  def issues
+    # need to implement. get request and corresponding rating issue
+    []
+  end
+
+  def events
+    # need to implement
+  end
+
   private
 
   def end_product_created_by
@@ -40,7 +75,7 @@ class SupplementalClaim < ClaimReview
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
       claim_date: receipt_date,
-      payee_code: payee_code,
+      payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,

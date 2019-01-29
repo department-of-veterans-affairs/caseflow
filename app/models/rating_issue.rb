@@ -1,13 +1,11 @@
 # ephemeral class used for caching Rating Issues for client,
-# and for creating DecisionIssues when a Rating Issue has a contention_reference_id
+# and for creating DecisionIssues when a Rating Issue has contention_reference_ids
 
 class RatingIssue
   include ActiveModel::Model
 
   attr_accessor :reference_id, :decision_text, :profile_date, :associated_end_products,
                 :promulgation_date, :participant_id, :rba_contentions_data, :disability_code
-
-  attr_writer :contention_reference_id
 
   class << self
     def from_bgs_hash(rating, bgs_data)
@@ -64,7 +62,6 @@ class RatingIssue
       decision_text: decision_text,
       promulgation_date: promulgation_date,
       profile_date: profile_date,
-      contention_reference_id: contention_reference_id,
       ramp_claim_id: ramp_claim_id,
       title_of_active_review: title_of_active_review,
       rba_contentions_data: rba_contentions_data,
@@ -95,19 +92,40 @@ class RatingIssue
     associated_ramp_ep&.claim_id
   end
 
-  def contention_reference_id
-    return unless rba_contentions_data
+  def contention_reference_ids
+    return [] unless rba_contentions_data
 
-    @contention_reference_id ||= rba_contentions_data.first.dig(:cntntn_id)
+    @contention_reference_ids ||= calculate_contention_reference_ids
   end
 
-  def source_request_issue
-    return if contention_reference_id.nil?
+  def source_request_issues
+    return [] if contention_reference_ids.empty?
 
-    @source_request_issue ||= RequestIssue.unscoped.find_by(contention_reference_id: contention_reference_id)
+    @source_request_issues ||= calculate_source_request_issues
+  end
+
+  # tells whether a the rating issue was made as a decision in response to a contention
+  def decides_contention?(contention_reference_id:)
+    contention_reference_ids.any? { |reference_id| reference_id.to_s == contention_reference_id.to_s }
   end
 
   private
+
+  def calculate_source_request_issues
+    result = contention_reference_ids.map do |contention_reference_id|
+      RequestIssue.find_by(contention_reference_id: contention_reference_id)
+    end
+
+    result.compact
+  end
+
+  def calculate_contention_reference_ids
+    result = rba_contentions_data.map do |contention_data|
+      contention_data.dig(:cntntn_id)
+    end
+
+    result.compact
+  end
 
   def associated_ramp_ep
     @associated_ramp_ep ||= associated_end_products.find(&:ramp?)
