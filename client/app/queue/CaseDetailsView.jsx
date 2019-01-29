@@ -76,7 +76,6 @@ class CaseDetailsView extends React.PureComponent {
       featureToggles
     } = this.props;
 
-    // debugger;
     const amaIssueType = featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
 
     return <React.Fragment>
