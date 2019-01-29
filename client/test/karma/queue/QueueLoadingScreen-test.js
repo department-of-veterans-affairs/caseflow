@@ -44,7 +44,9 @@ const serverData = {
           veteran_file_number: '767574947',
           veteran_name: 'Mills, Beulah, J',
           work_product: 'OTD',
-          status: 'Assigned'
+          status: 'Assigned',
+          hide_from_case_timeline: false,
+          hide_from_task_snapshot: false
         },
         id: '3625593',
         type: 'judge_legacy_tasks'
@@ -93,7 +95,9 @@ describe('QueueLoadingScreen', () => {
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z',
         status: 'Assigned',
         decisionPreparedBy: null,
-        type: 'LegacyJudgeTask'
+        type: 'LegacyJudgeTask',
+        hideFromCaseTimeline: false,
+        hideFromTaskSnapshot: false
       }
     });
   });
