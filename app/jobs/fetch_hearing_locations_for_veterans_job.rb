@@ -148,14 +148,29 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     fail Caseflow::Error::FetchHearingLocationsJobError, code: 500, message: msg
   end
 
+  def error_instructions_map
+    { "DualAddressError" => "The veteran's address in VBMS is ambiguous.",
+      "AddressCouldNotBeFound" => "The veteran's address in VBMS could not be found on a map",
+      "InvalidRequestStreetAddress" => "The veteran's address in VBMS does not exist or is invalid." }
+  end
+
   def handle_error(error, veteran)
-    case error.message.messages[0]["key"]
+    key = error.message["messages"][0]["key"]
+
+    case key
     when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress"
-      Raven.capture_exception(error)
       LegacyAppeal.where(
         vbms_id: LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)
       ).each do |appeal|
-        HearingAdminActionVerifyAddressTask.create(appeal: appeal)
+        schedule_hearing_task = ScheduleHearingTask.create_if_eligible(appeal)
+        next unless schedule_hearing_task
+
+        HearingAdminActionVerifyAddressTask.create!(
+          appeal: appeal,
+          instructions: error_instructions_map[key],
+          assigned_to: HearingsManagement.singleton,
+          parent: schedule_hearing_task
+        )
       end
     else
       fail error
