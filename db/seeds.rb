@@ -106,22 +106,26 @@ class SeedDB
         roles: %w[VSO]
       )
       OrganizationsUser.add_user_to_organization(u, vso)
-    end
 
-    (0..5).each do |n|
-      a = FactoryBot.create(:appeal)
-      root_task = FactoryBot.create(:root_task, appeal: a)
-      ihp_task = FactoryBot.create(:informal_hearing_presentation_task, parent: root_task, appeal: a, assigned_to: vso)
+      # Assign one IHP task to each member of the VSO team and leave some IHP tasks assigned to the organization.
+      [true, false].each do |assign_to_user|
+        a = FactoryBot.create(:appeal)
+        root_task = FactoryBot.create(:root_task, appeal: a)
+        ihp_task = FactoryBot.create(
+          :informal_hearing_presentation_task,
+          parent: root_task,
+          appeal: a,
+          assigned_to: vso
+        )
 
-      # Assign one of the IHP tasks to each member of the VSO team.
-      next unless n < vso.users.count
+        next unless assign_to_user
 
-      u = vso.users[n]
-      InformalHearingPresentationTask.create_many_from_params([{
-                                                                parent_id: ihp_task.id,
-                                                                assigned_to_id: u.id,
-                                                                assigned_to_type: User.name
-                                                              }], u)
+        InformalHearingPresentationTask.create_many_from_params([{
+                                                                  parent_id: ihp_task.id,
+                                                                  assigned_to_id: u.id,
+                                                                  assigned_to_type: User.name
+                                                                }], u)
+      end
     end
   end
 
