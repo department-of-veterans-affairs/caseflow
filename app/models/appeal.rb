@@ -199,7 +199,11 @@ class Appeal < DecisionReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :first_name, :last_name, :name_suffix, :ssn, to: :veteran, prefix: true, allow_nil: true
+  delegate :closest_regional_office,
+           :first_name,
+           :last_name,
+           :name_suffix,
+           :ssn, to: :veteran, prefix: true, allow_nil: true
 
   def appellant
     claimants.first
