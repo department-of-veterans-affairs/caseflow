@@ -54,7 +54,7 @@ class ColocatedTask < Task
   end
   # rubocop:enable Metrics/AbcSize
 
-  def actions_available?(user)
+  def actions_available?(user, _allow_actions_while_on_hold)
     return false if completed? || assigned_to != user
 
     true

@@ -74,47 +74,32 @@ class GenericTask < Task
   end
 
   class << self
-    def create_many_from_params(params_array, user)
-      transaction do
-        # verify access to all of the tasks
-        params_array.each do |params|
-          parent_task = Task.find(params[:parent_id])
-          fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
-                                                               parent_task.assigned_to_type == params[:assigned_to_type]
-
-          verify_user_can_create!(user, parent_task)
-        end
-
-        children = params_array.map do |params|
-          parent_task = Task.find(params[:parent_id])
-
-          params = modify_params(params)
-          child = create_child_task(parent_task, user, params)
-
-          child
-        end
-
-        params_array.pluck(:parent_id).uniq.map do |parent_id|
-          Task.find(parent_id).update!(status: Constants.TASK_STATUSES.on_hold)
-        end
-
-        children
-      end
-    end
-
     def create_from_params(params, user)
-      create_many_from_params([params], user).first
+      parent_task = Task.find(params[:parent_id])
+      fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
+                                                           parent_task.assigned_to_type == params[:assigned_to_type]
+
+      verify_user_can_create!(user, parent_task)
+
+      params = modify_params(params)
+      child = create_child_task(parent_task, user, params)
+      parent_task.update!(status: params[:status]) if params[:status]
+      child
     end
 
     def create_child_task(parent, current_user, params)
-      Task.create!(
-        type: name,
-        appeal: parent.appeal,
-        assigned_by_id: child_assigned_by_id(parent, current_user),
-        parent_id: parent.id,
-        assigned_to: child_task_assignee(parent, params),
-        instructions: params[:instructions]
-      )
+      transaction do
+        parent.update!(status: Constants.TASK_STATUSES.on_hold)
+
+        Task.create!(
+          type: name,
+          appeal: parent.appeal,
+          assigned_by_id: child_assigned_by_id(parent, current_user),
+          parent_id: parent.id,
+          assigned_to: child_task_assignee(parent, params),
+          instructions: params[:instructions]
+        )
+      end
     end
 
     def child_task_assignee(_parent, params)

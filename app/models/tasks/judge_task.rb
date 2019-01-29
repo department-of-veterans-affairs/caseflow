@@ -3,7 +3,7 @@ class JudgeTask < Task
     additional_available_actions(user).unshift(Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h)
   end
 
-  def actions_available?(user)
+  def actions_available?(user, _allow_actions_while_on_hold)
     assigned_to == user
   end
 

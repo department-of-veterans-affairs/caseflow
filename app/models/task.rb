@@ -34,8 +34,8 @@ class Task < ApplicationRecord
   # available_actions() returns an array of options from selected by the subclass
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
-  def available_actions_unwrapper(user)
-    actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
+  def available_actions_unwrapper(user, allow_actions_while_on_hold = false)
+    actions = actions_available?(user, allow_actions_while_on_hold) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
 
     # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
     if actions.length > actions.pluck(:value).uniq.length
@@ -49,8 +49,9 @@ class Task < ApplicationRecord
     { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func], user) : nil }
   end
 
-  def actions_available?(user)
-    return false if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
+  def actions_available?(user, allow_actions_while_on_hold = false)
+    return false if !allow_actions_while_on_hold && status == Constants.TASK_STATUSES.on_hold
+    return false if Constants.TASK_STATUSES.completed == status
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
     return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
@@ -158,7 +159,7 @@ class Task < ApplicationRecord
   end
 
   def self.verify_user_can_create!(user, parent)
-    can_create = parent&.available_actions_unwrapper(user)&.any? do |action|
+    can_create = parent&.available_actions_unwrapper(user, true)&.any? do |action|
       action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
     end
 
