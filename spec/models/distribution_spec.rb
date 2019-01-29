@@ -144,7 +144,7 @@ describe Distribution do
       end
     end
 
-    context "when the judge has 8 or fewer unassigned appeals", focus: true do
+    context "when the judge has 8 or fewer unassigned appeals" do
       before do
         5.times { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: Time.zone.today) }
         3.times { create(:ama_judge_task, assigned_to: judge, assigned_at: Time.zone.today) }
