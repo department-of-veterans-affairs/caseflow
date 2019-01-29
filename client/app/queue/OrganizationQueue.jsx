@@ -46,7 +46,7 @@ class OrganizationQueue extends React.PureComponent {
       {
         label: sprintf(
           COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
-        page: <NotUnassignedTaskTableTab
+        page: <TaskTableWithUserColumnTab
           description={
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
@@ -55,7 +55,7 @@ class OrganizationQueue extends React.PureComponent {
       },
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
-        page: <NotUnassignedTaskTableTab
+        page: <TaskTableWithUserColumnTab
           description={
             sprintf(COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION,
               this.props.organizationName)}
@@ -110,7 +110,7 @@ const UnassignedTaskTableTab = ({ description, tasks }) => <React.Fragment>
   />
 </React.Fragment>;
 
-const NotUnassignedTaskTableTab = ({ description, tasks }) => <React.Fragment>
+const TaskTableWithUserColumnTab = ({ description, tasks }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
   <TaskTable
     includeDetailsLink
