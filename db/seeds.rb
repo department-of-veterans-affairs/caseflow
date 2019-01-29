@@ -505,6 +505,18 @@ class SeedDB
       claimant_participant_id: veteran.participant_id
     )
 
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
+      code: ep_rating_code,
+      station: "397",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "LOL",
+      claimant_participant_id: veteran.participant_id
+    )
+
     eligible_request_issue = RequestIssue.create!(
       review_request: higher_level_review,
       issue_category: "Military Retired Pay",
