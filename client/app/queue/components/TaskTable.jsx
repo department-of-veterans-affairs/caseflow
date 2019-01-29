@@ -371,29 +371,22 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
   filterTableData = (data: Array<Object>) => {
     const { filteredByList } = this.props;
-    let filteredData = [];
+    const filteredData = _.clone(data);
 
-    // If no filters have yet been selected, just show all the data
-    if (_.isEmpty(filteredByList)) {
-      filteredData = data;
-    } else {
-      // Loop through the data to check if each data point matches a filter
-      // that has been selected
-      for (const key in data) { // eslint-disable-line guard-for-in
-        for (const columnName in filteredByList) {
-          if (
-            // Conditions under which data should be added to `filteredData`:
-            // 1. If there are no filters selected for this column
-            // (meaning we should show all the data in that column)
-            (_.isEmpty(filteredByList[columnName]) ||
-            // OR if there is a filter for a particular column,
-            // and the filter matches a value in the data point
-            // (meaning that data point is one we are trying to filter for)
-            filteredByList[columnName].includes(_.get(data[key], columnName))) &&
-            // 2. AND If the data point has not already been added to `filteredData`
-            _.find(filteredData, ['uniqueId', data[key].uniqueId]) === undefined // eslint-disable-line no-undefined
-          ) {
-            filteredData = filteredData.concat(data[key]);
+    // Only filter the data if filters have been selected
+    if (!_.isEmpty(filteredByList)) {
+      for (const columnName in filteredByList) {
+        // If there are no filters for this columnName,
+        // continue to the next columnName
+        if (_.isEmpty(filteredByList[columnName])) {
+          continue; // eslint-disable-line no-continue
+        }
+
+        for (const key in data) {
+          // If this data point does not match a filter in this columnName,
+          // remove the data point from `filteredData`
+          if (!filteredByList[columnName].includes(_.get(data[key], columnName))) {
+            _.pull(filteredData, _.find(filteredData, ['uniqueId', data[key].uniqueId]));
           }
         }
       }
