@@ -34,5 +34,5 @@ export default class QueueJudgeViewSelectorDropdown extends React.Component<Prop
 }
 
 QueueJudgeViewSelectorDropdown.propTypes = {
-  userId: PropTypes.number
+  userId: PropTypes.number.isRequired
 };
