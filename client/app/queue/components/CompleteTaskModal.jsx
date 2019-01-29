@@ -45,7 +45,7 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
     getContent: ({ props }: { props: Object }) => <React.Fragment>
-      {taskActionData(props).modal_body}
+      {taskActionData(props) && taskActionData(props).modal_body}
     </React.Fragment>,
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },

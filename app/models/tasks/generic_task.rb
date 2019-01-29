@@ -61,10 +61,6 @@ class GenericTask < Task
     available_actions_unwrapper(user).any?
   end
 
-  # We put the parent on hold in create_many_from_params in a transaction block, so we
-  # do not need to put the parent on hold in this after create defined in task.rb
-  def put_parent_on_hold; end
-
   private
 
   def task_is_assigned_to_user_within_organiztaion?(user)
@@ -80,12 +76,17 @@ class GenericTask < Task
   class << self
     def create_many_from_params(params_array, user)
       transaction do
-        children = params_array.map do |params|
+        # verify access to all of the tasks
+        params_array.each do |params|
           parent_task = Task.find(params[:parent_id])
           fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
                                                                parent_task.assigned_to_type == params[:assigned_to_type]
 
           verify_user_can_create!(user, parent_task)
+        end
+
+        children = params_array.map do |params|
+          parent_task = Task.find(params[:parent_id])
 
           params = modify_params(params)
           child = create_child_task(parent_task, user, params)

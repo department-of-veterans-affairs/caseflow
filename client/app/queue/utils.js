@@ -482,5 +482,5 @@ export const taskActionData = (props: Object) => {
     return (relevantAction.data);
   }
 
-  return {};
+  return null;
 };

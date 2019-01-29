@@ -326,8 +326,6 @@ class Task < ApplicationRecord
       child_task.parent = self
       child_task.save!
     end
-
-    update(status: :on_hold)
   end
 
   def automatically_assign_org_task?

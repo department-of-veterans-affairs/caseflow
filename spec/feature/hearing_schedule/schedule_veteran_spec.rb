@@ -145,20 +145,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         # end
 
         click_on "Assign Action"
-
         expect(page).to have_content("You have assigned an administrative action")
 
-        # Temporary until we figure out a good way to redirect users to the right page
-        find("a", text: "Switch views").click
-        click_on "Hearings Management team"
-
-        # Hearing management queue
-        click_on "Bob Smith"
         click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
-
         click_on "Submit"
 
         # Your queue
+        visit "/queue"
         click_on "Bob Smith"
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_HOLD.to_h[:label])
 
