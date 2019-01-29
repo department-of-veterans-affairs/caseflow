@@ -40,7 +40,7 @@ describe ContestableIssue do
         decision_issue_id: nil,
         date: profile_date,
         description: rating_issue.decision_text,
-        source_request_issue: rating_issue.source_request_issue,
+        source_request_issues: rating_issue.source_request_issues,
         contesting_decision_review: decision_review
       )
 
@@ -89,7 +89,7 @@ describe ContestableIssue do
         decision_issue_id: decision_issue.id,
         date: profile_date,
         description: decision_issue.description,
-        source_request_issue: decision_issue,
+        source_request_issues: decision_issue.request_issues,
         contesting_decision_review: decision_review
       )
 
