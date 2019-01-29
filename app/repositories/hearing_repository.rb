@@ -86,14 +86,14 @@ class HearingRepository
       end
     end
 
-    def slot_new_hearing(parent_record_id, time:, appeal:, hearing_type: nil, hearing_location_attrs: nil)
+    def slot_new_hearing(parent_record_id, scheduled_time:, appeal:, hearing_type: nil, hearing_location_attrs: nil)
       hearing_day = HearingDay.find_hearing_day(nil, parent_record_id)
       hearing_day_hash = HearingDay.to_hash(hearing_day)
 
       hearing_datetime = hearing_day_hash[:scheduled_for].to_datetime.change(
-        hour: time["h"].to_i,
-        minute: time["m"].to_i,
-        offset: time["offset"]
+        hour: scheduled_time["h"].to_i,
+        minute: scheduled_time["m"].to_i,
+        offset: scheduled_time["offset"]
       )
 
       if (hearing_type || hearing_day_hash[:request_type]) == "C"
