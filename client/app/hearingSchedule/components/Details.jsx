@@ -42,7 +42,7 @@ class HearingDetails extends React.Component {
     super(props);
 
     this.state = {
-      disabled: false,
+      disabled: this.props.disabled,
       isLegacy: this.props.hearing.docketName !== 'hearing',
       updated: false,
       loading: false,
@@ -206,7 +206,8 @@ class HearingDetails extends React.Component {
 
 HearingDetails.propTypes = {
   hearing: PropTypes.object.isRequired,
-  goBack: PropTypes.func
+  goBack: PropTypes.func,
+  disabled: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({
