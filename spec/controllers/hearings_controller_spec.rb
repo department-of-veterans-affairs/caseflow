@@ -1,7 +1,7 @@
 RSpec.describe HearingsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
-  let(:legacy_hearing) { create(:legacy_hearing) }
+  let!(:legacy_hearing) { create(:legacy_hearing) }
 
   describe "PATCH update" do
     it "should be successful" do
@@ -14,7 +14,7 @@ RSpec.describe HearingsController, type: :controller do
                    facility_id: "vba_301"
                  },
                  prepped: true }
-      patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
+      patch :update, as: :json, params: { id: legacy_hearing.external_id, hearing: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["notes"]).to eq "Test"
