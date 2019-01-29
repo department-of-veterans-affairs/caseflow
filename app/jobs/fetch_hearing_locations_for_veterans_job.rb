@@ -179,7 +179,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
       tasks.each do |task|
         HearingAdminActionVerifyAddressTask.create!(
-          appeal: appeal,
+          appeal: task.appeal,
           instructions: instructions(key, has_multiple: tasks.count > 1),
           assigned_to: HearingsManagement.singleton,
           parent: task
