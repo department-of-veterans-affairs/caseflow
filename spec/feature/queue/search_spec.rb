@@ -132,9 +132,10 @@ RSpec.feature "Search" do
               end
 
               context "if there was an establishment error" do
-                before do
-                  higher_level_review.establishment_error = "big error"
-                  higher_level_review.establish!
+                let!(:higher_level_review) do
+                  create(:higher_level_review,
+                         veteran_file_number: appeal.veteran_file_number,
+                         establishment_error: "error")
                 end
 
                 it "shows that the EP has an establishment error" do
