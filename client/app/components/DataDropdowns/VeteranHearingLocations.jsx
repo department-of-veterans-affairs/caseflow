@@ -25,7 +25,7 @@ export const getFacilityType = (location) => {
 
 const generateHearingLocationOptions = (hearingLocations) => (
   hearingLocations.map((location) => ({
-    label: `${location.city}, ${location.state} ${getFacilityType(location)}${location.distance || '?'} miles away`,
+    label: `${location.city}, ${location.state} ${getFacilityType(location)}${location.distance} miles away`,
     value: {
       name: location.name,
       address: location.address,
