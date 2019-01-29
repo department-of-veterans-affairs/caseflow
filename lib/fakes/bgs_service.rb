@@ -599,7 +599,7 @@ class Fakes::BGSService
   end
 
   def get_participant_id_for_user(user)
-    return VSO_PARTICIPANT_ID if user.css_id == "VSO"
+    return VSO_PARTICIPANT_ID if user.css_id =~ /.*_VSO/
 
     DEFAULT_PARTICIPANT_ID
   end
