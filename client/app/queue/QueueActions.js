@@ -67,7 +67,7 @@ export const onReceiveAmaTasks = (amaTasks: Array<Object>) => ({
   }
 });
 
-export const toggleDropdownFilterVisibility = (columnName) => ({
+export const toggleDropdownFilterVisibility = (columnName: string) => ({
   type: ACTIONS.TOGGLE_FILTER_DROPDOWN,
   payload: {
     columnName

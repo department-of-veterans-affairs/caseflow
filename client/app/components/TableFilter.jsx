@@ -12,6 +12,24 @@ import FilterOption from './FilterOption';
  * The required props are:
  * - @column {array[string]} array of objects that define the properties
  *   of the column. Possible attributes for each column include:
+ *   - @enableFilter {boolean} whether filtering is turned on for each column
+ *   - @tableData {object} the entire data set for the table (required to calculate
+ *     the options each column can be filtered on)
+ *   - @columnName {string} the name of the column in the table data
+ *   - @toggleDropdownFilterVisibility {function} changes the status of the filter
+ *     dropdown's visibility, and dispatches an action to change a new value in the
+ *     store to capture this information
+ *   - @filteredByList {object} the list of filters that have been selected;
+ *     this data comes from the store, and is an object where each key is a column name,
+ *     which then points to an array of the specific options that column is filtered by
+ *   - @updateFilters {function} updates the filteredByList
+ *   - @isDropdownFilterOpen {object} a property from the store that is updated by
+ *     toggleDropdownFilterVisibility, and should receive the specific column name
+ *   - @anyFiltersAreSet {boolean} determines whether the "Clear All Filters" option
+ *     in the dropdown is enabled
+ *   - @customFilterLabels {object} key-value pairs translating the data values to
+ *     user readable text
+ *   - @label {string} used for the aria-label on the icon,
  *   - @valueName {string} if valueFunction is not defined, cell value will use
  *     valueName to pull that attribute from the rowObject.
  */

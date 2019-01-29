@@ -55,7 +55,11 @@ type Params = {|
 
 type Props = Params & {|
   setSelectionOfTaskOfUser: Function,
+  toggleDropdownFilterVisibility: Function,
+  updateFilteredByList: Function,
   isTaskAssignedToUserSelected?: Object,
+  isDropdownFilterOpen: Object,
+  filteredByList: Object,
   userIsVsoEmployee: boolean,
   userRole: string,
   defaultSortIdx: number
@@ -133,7 +137,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       columnName: 'label',
       toggleDropdownFilterVisibility: () => this.props.toggleDropdownFilterVisibility('label'),
       filteredByList: this.props.filteredByList,
-      updateFilters: (newList) => this.props.updateFilteredByList(newList),
+      updateFilters: (newList: Object) => this.props.updateFilteredByList(newList),
       isDropdownFilterOpen: this.props.isDropdownFilterOpen.label,
       anyFiltersAreSet: true,
       customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
@@ -172,7 +176,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       columnName: 'appeal.caseType',
       toggleDropdownFilterVisibility: () => this.props.toggleDropdownFilterVisibility('caseType'),
       filteredByList: this.props.filteredByList,
-      updateFilters: (newList) => this.props.updateFilteredByList(newList),
+      updateFilters: (newList: Object) => this.props.updateFilteredByList(newList),
       isDropdownFilterOpen: this.props.isDropdownFilterOpen.caseType,
       anyFiltersAreSet: true,
       label: 'Filter by type',
@@ -209,7 +213,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       columnName: 'appeal.docketName',
       toggleDropdownFilterVisibility: () => this.props.toggleDropdownFilterVisibility('docketName'),
       filteredByList: this.props.filteredByList,
-      updateFilters: (newList) => this.props.updateFilteredByList(newList),
+      updateFilters: (newList: Object) => this.props.updateFilteredByList(newList),
       isDropdownFilterOpen: this.props.isDropdownFilterOpen.docketName,
       anyFiltersAreSet: true,
       label: 'Filter by docket name',
@@ -365,7 +369,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
-  filterTableData = (data) => {
+  filterTableData = (data: Array<Object>) => {
     const { filteredByList } = this.props;
     let filteredData = [];
 
