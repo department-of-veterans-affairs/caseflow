@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190125223733) do
+ActiveRecord::Schema.define(version: 20190129002938) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -251,7 +251,7 @@ ActiveRecord::Schema.define(version: 20190125223733) do
     t.datetime "profile_date"
     t.datetime "promulgation_date"
     t.string "rating_issue_reference_id"
-    t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
+    t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "decision_issues_uniq_by_disposition_and_ref_id", unique: true
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
@@ -501,7 +501,7 @@ ActiveRecord::Schema.define(version: 20190125223733) do
     t.boolean "prepped"
     t.string "representative_name"
     t.string "room"
-    t.time "scheduled_time"
+    t.time "scheduled_time", null: false
     t.text "summary"
     t.boolean "transcript_requested"
     t.date "transcript_sent_date"

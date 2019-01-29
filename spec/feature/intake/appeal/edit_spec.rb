@@ -338,4 +338,16 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("Left knee granted")
     end
   end
+
+  context "appeal is outcoded" do
+    let(:appeal) { create(:appeal, :outcoded, veteran: veteran) }
+
+    scenario "error message is shown and no edit is allowed" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/outcoded")
+      expect(page).to have_content("Issues Not Editable")
+      expect(page).to have_content("This appeal has been outcoded and the issues are no longer editable.")
+    end
+  end
 end
