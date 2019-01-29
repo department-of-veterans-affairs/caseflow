@@ -158,7 +158,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     "
     Please note that this Veteran has multiple appeals. It’s possible this issue has already been resolved.
 
-    If you see a regional office and alternate hearing location task, then this task can be closed."
+    If you see a regional office and an alternate hearing location, then this task can be closed."
   end
 
   def instructions(key, has_multiple:)
@@ -171,19 +171,18 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     case key
     when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress"
-      veteran_appeals = LegacyAppeal.where(
+      tasks = LegacyAppeal.where(
         vbms_id: LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)
-      )
+      ).map do |appeal|
+        ScheduleHearingTask.create_if_eligible(appeal)
+      end.compact
 
-      veteran_appeals.each do |appeal|
-        schedule_hearing_task = ScheduleHearingTask.create_if_eligible(appeal)
-        next unless schedule_hearing_task
-
+      tasks.each do |task|
         HearingAdminActionVerifyAddressTask.create!(
           appeal: appeal,
-          instructions: instructions(key, has_multiple: veteran_appeals.count > 1),
+          instructions: instructions(key, has_multiple: tasks.count > 1),
           assigned_to: HearingsManagement.singleton,
-          parent: schedule_hearing_task
+          parent: task
         )
       end
     else
