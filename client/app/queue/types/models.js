@@ -90,6 +90,8 @@ export type Task = {
   },
   availableActions: Array<{ label?: string, value: string, data: ?Object }>,
   taskBusinessPayloads: Array<{description: string, values: Object}>,
+  hideFromCaseTimeline: boolean,
+  hideFromTaskSnapshot: boolean
 };
 
 export type Tasks = { [string]: Task };
