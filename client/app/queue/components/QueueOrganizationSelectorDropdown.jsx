@@ -19,7 +19,7 @@ export default class QueueOrganizationSelectorDropdown extends React.Component<P
 
     const items = organizations.map((org, index) => {
       return {
-        key: index + 1,
+        key: (index + 1).toString(),
         href: (location === org.url) ? '#' : `/organizations/${org.url}`,
         label: sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL, org.name)
       };
@@ -33,9 +33,7 @@ export default class QueueOrganizationSelectorDropdown extends React.Component<P
       }
     );
 
-    return (
-      <QueueSelectorDropdown items={items} />
-    );
+    return <QueueSelectorDropdown items={items} />;
   }
 }
 

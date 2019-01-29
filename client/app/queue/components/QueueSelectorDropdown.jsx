@@ -56,9 +56,15 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
     if (this.state.menu) {
       dropdownButtonList = <ul className="cf-dropdown-menu active" {...styles.dropdownList}>
         {items.map((item) => {
+          const linkProps = {
+            className: 'usa-button-secondary usa-button',
+            onClick: this.onMenuClick,
+            href: item.href,
+            to: item.to
+          };
+
           return <li key={item.key}>
-            <Link className="usa-button-secondary usa-button"
-              href={item.href} onClick={this.onMenuClick}>
+            <Link {...linkProps}>
               {item.label}
             </Link>
           </li>;
@@ -77,10 +83,19 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
   }
 }
 
+const hrefOrToRequired = (props, propName, componentName) => {
+  if (!props.href && !props.to) {
+    return new Error(`The ${componentName} component requires either an 'href' or a 'to' value.`);
+  } else if (props.href && props.to) {
+    return new Error(`The ${componentName} component should not be given both 'href' and 'to' values.`);
+  }
+};
+
 QueueSelectorDropdown.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.string.isRequired,
-    href: PropTypes.string.isRequired,
+    href: hrefOrToRequired,
+    to: hrefOrToRequired,
     label: PropTypes.string.isRequired
   }))
 };

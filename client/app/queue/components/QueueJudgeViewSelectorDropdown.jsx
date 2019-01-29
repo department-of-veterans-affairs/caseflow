@@ -13,25 +13,23 @@ export default class QueueJudgeViewSelectorDropdown extends React.Component<Prop
   render = () => {
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];
-    const reviewHref = (['review', 'queue'].includes(location)) ? '#' : `/queue/${this.props.userId}/review`;
-    const assignHref = (location === 'assign') ? '#' : `/queue/${this.props.userId}/assign`;
+    const reviewTo = (['review', 'queue'].includes(location)) ? '#' : `/queue/${this.props.userId}/review`;
+    const assignTo = (location === 'assign') ? '#' : `/queue/${this.props.userId}/assign`;
 
     const items = [
       {
         key: '0',
-        href: reviewHref,
+        to: reviewTo,
         label: COPY.REVIEW_MODE_LINK_LABEL
       },
       {
         key: '1',
-        href: assignHref,
+        to: assignTo,
         label: COPY.ASSIGN_MODE_LINK_LABEL
       }
     ];
 
-    return (
-      <QueueSelectorDropdown items={items} />
-    );
+    return <QueueSelectorDropdown items={items} />;
   }
 }
 
