@@ -232,8 +232,11 @@ class LegacyHearing < ApplicationRecord
     )
   end
 
-  def slot_new_hearing(parent_record_id, time, appeal)
-    HearingRepository.slot_new_hearing(parent_record_id, time, appeal)
+  def slot_new_hearing(parent_record_id, scheduled_time:, appeal:, hearing_location_attrs: nil)
+    HearingRepository.slot_new_hearing(parent_record_id,
+                                       scheduled_time: scheduled_time,
+                                       hearing_location_attrs: hearing_location_attrs,
+                                       appeal: appeal)
   end
 
   def appeals_ready_for_hearing

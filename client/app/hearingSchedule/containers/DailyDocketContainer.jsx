@@ -110,16 +110,24 @@ export class DailyDocketContainer extends React.Component {
 
   }
 
+  formatMasterRecordUpdated = (hearing) => {
+    const time = this.getTime(hearing);
+
+    return hearing.editedDate ? {
+      id: hearing.editedDate.hearingId,
+      time,
+      hearing_location_attributes: hearing.editedLocation ? ApiUtil.convertToSnakeCase(hearing.editedLocation) : null
+    } : null;
+  }
+
   formatHearing = (hearing) => {
     const time = this.getTime(hearing);
 
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      hearing_location_attributes: hearing.editedLocation ?
+      hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
         ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
-      master_record_updated: hearing.editedDate ? { id: hearing.editedDate.hearingId,
-        time } : null,
       scheduled_time: hearing.editedTime ? hearing.editedTime : hearing.scheduledTime,
       scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
     };
@@ -127,8 +135,12 @@ export class DailyDocketContainer extends React.Component {
 
   saveHearing = (hearing) => {
     const formattedHearing = this.formatHearing(hearing);
+    const formattedMasterRecordUpdated = this.formatMasterRecordUpdated(hearing);
 
-    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: { hearing: formattedHearing } }).
+    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
+      hearing: formattedHearing,
+      master_record_updated: formattedMasterRecordUpdated
+    } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 

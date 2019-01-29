@@ -73,20 +73,5 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       # created a ticket that we can look into after February.
       # expect(page).to have_content("8:30 am")
     end
-
-    scenario "User can postpone a hearing" do
-      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      find(".dropdown-Disposition").click
-      find("#react-select-2--option-3").click
-      find(".dropdown-HearingDay").click
-      find("#react-select-4--option-2").click
-      click_button("Save")
-
-      expect(page).to have_content("You have successfully updated")
-      expect(page).to have_content("No Veterans are scheduled for this hearing day.")
-      expect(page).to have_content("Previously Scheduled")
-      new_hearing = Hearing.find_by(hearing_day: postponed_hearing_day)
-      expect(new_hearing.appeal).to eql(hearing.appeal)
-    end
   end
 end

@@ -98,10 +98,11 @@ class Hearing < ApplicationRecord
   end
   #:nocov:
 
-  def slot_new_hearing(hearing_day_id, _scheduled_time_unused, _appeal_unused)
+  def slot_new_hearing(hearing_day_id, hearing_location_attrs: nil, **_args)
     # These fields are needed for the legacy hearing's version of this method
     Hearing.create!(hearing_day_id: hearing_day_id,
                     scheduled_time: scheduled_time,
+                    hearing_location_attributes: hearing_location_attrs,
                     appeal: appeal)
   end
 

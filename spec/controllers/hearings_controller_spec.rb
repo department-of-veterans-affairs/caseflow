@@ -1,7 +1,7 @@
 RSpec.describe HearingsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
-  let(:hearing) { create(:legacy_hearing) }
+  let!(:legacy_hearing) { create(:legacy_hearing) }
 
   describe "PATCH update" do
     it "should be successful" do
@@ -14,7 +14,7 @@ RSpec.describe HearingsController, type: :controller do
                    facility_id: "vba_301"
                  },
                  prepped: true }
-      patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
+      patch :update, as: :json, params: { id: legacy_hearing.external_id, hearing: params }
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["notes"]).to eq "Test"
@@ -24,26 +24,6 @@ RSpec.describe HearingsController, type: :controller do
       expect(response_body["disposition"]).to eq "held"
       expect(response_body["location"]["facility_id"]).to eq "vba_301"
       expect(response_body["prepped"]).to eq true
-    end
-
-    context "when legacy hearing with location is patched with no hearing location update" do
-      let(:hearing) { create(:legacy_hearing, hearing_location_attributes: { facility_id: "vba_301" }) }
-
-      it "should not overwrite location" do
-        params = { notes: "Test",
-                   hold_open: 30,
-                   transcript_requested: false,
-                   aod: :granted,
-                   disposition: :held,
-                   hearing_location_attributes: nil,
-                   prepped: true }
-
-        patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)
-
-        expect(response_body["location"]["facility_id"]).to eq "vba_301"
-      end
     end
 
     context "when updating an ama hearing" do
@@ -71,8 +51,8 @@ RSpec.describe HearingsController, type: :controller do
     end
 
     context "when setting disposition as postponed" do
-      let(:scheduled_for) { Date.new(2019, 4, 2) }
-      let(:hearing_day) do
+      let!(:scheduled_for) { Date.new(2019, 4, 2) }
+      let!(:hearing_day) do
         HearingDay.create_hearing_day(
           request_type: "C",
           scheduled_for: scheduled_for,
@@ -81,34 +61,60 @@ RSpec.describe HearingsController, type: :controller do
         )
       end
 
+      let!(:params) do
+        { notes: "Test",
+          hold_open: 30,
+          transcript_requested: false,
+          aod: :granted,
+          add_on: true,
+          disposition: :postponed,
+          prepped: true }
+      end
+
+      let!(:master_record_params) do
+        {
+          id: hearing_day[:id],
+          time: {
+            "h" => "9",
+            "m" => "00",
+            "offset" => "-500"
+          },
+          hearing_location_attributes: {
+            "facility_id" => "vba_301"
+          }
+        }
+      end
+
       before { Time.zone = "America/New_York" }
 
-      it "should create a new VACOLS hearing and LegacyHearing" do
-        params = { notes: "Test",
-                   hold_open: 30,
-                   transcript_requested: false,
-                   aod: :granted,
-                   add_on: true,
-                   disposition: :postponed,
-                   hearing_location_attributes: {
-                     facility_id: "vba_301"
-                   },
-                   master_record_updated: {
-                     "id" => hearing_day[:id],
-                     "time" => {
-                       "h" => "9",
-                       "m" => "00",
-                       "offset" => "-500"
-                     }
-                   },
-                   prepped: true }
-        patch :update, as: :json, params: { id: hearing.external_id, hearing: params }
-        expect(response.status).to eq 200
+      context "for a legacy hearing" do
+        it "should create a new VACOLS hearing and LegacyHearing" do
+          patch :update, as: :json, params: {
+            id: legacy_hearing.external_id, hearing: params, master_record_updated: master_record_params
+          }
+          expect(response.status).to eq 200
 
-        expect(LegacyHearing.first.location.facility_id).to eq "vba_301"
-        expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id]).hearing_date).to eq(
-          Time.new(2019, 4, 2, 10).in_time_zone("Eastern Time (US & Canada)")
-        )
+          expect(LegacyHearing.last.location.facility_id).to eq "vba_301"
+          expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id]).hearing_date).to eq(
+            Time.new(2019, 4, 2, 10).in_time_zone("Eastern Time (US & Canada)")
+          )
+        end
+      end
+
+      context "for an AMA hearing" do
+        let(:hearing) { create(:hearing, scheduled_time: Time.zone.now) }
+        let!(:params) do
+          { notes: "Test",
+            disposition: :postponed }
+        end
+
+        it "should create a new hearing" do
+          patch :update, as: :json, params: {
+            id: hearing.external_id, hearing: params, master_record_updated: master_record_params
+          }
+
+          expect(Hearing.last.location.facility_id).to eq "vba_301"
+        end
       end
     end
 
