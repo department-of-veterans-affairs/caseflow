@@ -480,6 +480,22 @@ ActiveRecord::Schema.define(version: 20190129233723) do
     t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
   end
 
+  create_table "hearing_locations", force: :cascade do |t|
+    t.string "address"
+    t.string "city"
+    t.string "classification"
+    t.datetime "created_at", null: false
+    t.float "distance"
+    t.string "facility_id"
+    t.string "facility_type"
+    t.integer "hearing_id"
+    t.string "hearing_type"
+    t.string "name"
+    t.string "state"
+    t.datetime "updated_at", null: false
+    t.string "zip_code"
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "hearing_id", null: false

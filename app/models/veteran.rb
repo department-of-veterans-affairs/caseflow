@@ -164,6 +164,18 @@ class Veteran < ApplicationRecord
     super || ptcpnt_id
   end
 
+  def validate_address
+    VADotGovService.validate_address(
+      address_line1: address_line1,
+      address_line2: address_line2,
+      address_line3: address_line3,
+      city: city,
+      state: state,
+      country: country,
+      zip_code: zip_code
+    )
+  end
+
   class << self
     def find_or_create_by_file_number(file_number)
       find_and_maybe_backfill_name(file_number) || create_by_file_number(file_number)
