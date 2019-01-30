@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 const dropdownFilterViewListStyle = css({
   margin: 0
@@ -17,7 +18,7 @@ const dropdownFilterViewListItemStyle = css(
   }
 );
 
-class DropdownFilter extends React.PureComponent {
+class QueueDropdownFilter extends React.PureComponent {
   constructor() {
     super();
     this.state = {
@@ -28,25 +29,24 @@ class DropdownFilter extends React.PureComponent {
   render() {
     const { children, name } = this.props;
 
-    const style = {
-      top: '25px',
-      right: 0
-    };
+    // Some of the filter names are camelCase, which would be displayed to the user.
+    // To make this more readable, convert the camelCase text to regular casing.
+    const displayName = _.capitalize(_.upperCase(name));
 
     const rel = {
       position: 'relative'
     };
 
     return <div style={rel}>
-      <div className="cf-dropdown-filter" style={style} ref={(rootElem) => {
+      <div className="cf-dropdown-filter" style={{ top: '10px' }} ref={(rootElem) => {
         this.rootElem = rootElem;
       }}>
         {this.props.addClearFiltersRow &&
-          <div className="cf-clear-filter-row">
+          <div className="cf-filter-option-row">
             <button className="cf-text-button" onClick={this.props.clearFilters}
               disabled={!this.props.isClearEnabled}>
               <div className="cf-clear-filter-button-wrapper">
-                Clear {name} filter
+                Clear {displayName} filter
               </div>
             </button>
           </div>
@@ -80,7 +80,7 @@ class DropdownFilter extends React.PureComponent {
   }
 }
 
-DropdownFilter.propTypes = {
+QueueDropdownFilter.propTypes = {
   children: PropTypes.node,
   isClearEnabled: PropTypes.bool,
   clearFilters: PropTypes.func,
@@ -88,4 +88,4 @@ DropdownFilter.propTypes = {
   addClearFiltersRow: PropTypes.bool
 };
 
-export default DropdownFilter;
+export default QueueDropdownFilter;

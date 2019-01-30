@@ -30,7 +30,7 @@ const formatVljName = (lastName, firstName) => {
   }
 };
 
-export const populateFilterDropDowns = (resultSet, filterName) => {
+const populateFilterDropDowns = (resultSet, filterName) => {
   let countByFilterName = _.countBy(resultSet, filterName);
   let uniqueOptions = [];
 

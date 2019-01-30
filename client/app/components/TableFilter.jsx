@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import { css, hover } from 'glamor';
 import FilterIcon from './FilterIcon';
-import DropdownFilter from './DropdownFilter';
+import QueueDropdownFilter from '../queue/QueueDropdownFilter';
 import FilterOption from './FilterOption';
 
 /**
@@ -100,8 +100,6 @@ class TableFilter extends React.PureComponent {
       column
     } = this.props;
 
-    console.log(column);
-
     const iconStyle = css({
       display: 'table-cell',
       paddingLeft: '1rem',
@@ -121,11 +119,11 @@ class TableFilter extends React.PureComponent {
           label={column.label}
           idPrefix={column.valueName}
           getRef={column.getFilterIconRef}
-          selected={column.isDropdownFilterOpen || (column.filteredByList ? column.filteredByList[column.columnName] : column.isDropdownFilterOpen)}
+          selected={column.isDropdownFilterOpen || column.filteredByList[column.columnName]}
           handleActivate={column.toggleDropdownFilterVisibility} />
 
         {column.isDropdownFilterOpen &&
-          <DropdownFilter
+          <QueueDropdownFilter
             clearFilters={() => this.clearFilteredByList(column.columnName)}
             name={column.valueName}
             isClearEnabled={column.anyFiltersAreSet}
@@ -134,7 +132,7 @@ class TableFilter extends React.PureComponent {
             <FilterOption
               options={filterOptions}
               setSelectedValue={(value) => this.updateSelectedFilter(value, column.columnName)} />
-          </DropdownFilter>
+          </QueueDropdownFilter>
         }
       </span>
     );

@@ -7,7 +7,7 @@ import pluralize from 'pluralize';
 import { bindActionCreators } from 'redux';
 
 import FilterSummary from '../../components/FilterSummary';
-import Table from '../../components/Table';
+import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
@@ -408,7 +408,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
           filteredByList={filteredByList}
           alternateColumnNames={userReadableColumnNames}
           clearFilteredByList={(newList) => this.props.updateFilteredByList(newList)} />
-        <Table
+        <QueueTable
           columns={this.getQueueColumns}
           rowObjects={tasks}
           getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}

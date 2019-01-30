@@ -1,16 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { css, hover } from 'glamor';
 import _ from 'lodash';
 
-import Tooltip from './Tooltip';
-import { DoubleArrow } from './RenderFunctions';
+import Tooltip from '../components/Tooltip';
+import { DoubleArrow } from '../components/RenderFunctions';
+import TableFilter from '../components/TableFilter';
 import { COLORS } from '../constants/AppConstants';
-import { css, hover } from 'glamor';
-import FilterIcon from './FilterIcon';
-import DropdownFilter from './DropdownFilter';
-import ListItemPicker from './ListItemPicker';
-import ListItemPickerCheckbox from './ListItemPickerCheckbox';
 
 /**
  * This component can be used to easily build tables.
@@ -43,18 +40,19 @@ const getColumns = (props) => {
 };
 
 const HeaderRow = (props) => {
-  const sortableHeaderStyle = css({ display: 'table-row' }, hover({ cursor: 'pointer' }));
-  const sortArrowsStyle = css({
+  const iconHeaderStyle = css({ display: 'table-row' });
+  const iconStyle = css({
     display: 'table-cell',
     paddingLeft: '1rem',
     paddingTop: '0.3rem',
     verticalAlign: 'middle'
-  });
+  }, hover({ cursor: 'pointer' }));
 
   return <thead className={props.headerClassName}>
     <tr>
       {getColumns(props).map((column, columnNumber) => {
-        let columnContent = <span>{column.header || ''}</span>;
+        let sortIcon;
+        let filterIcon;
 
         if (column.getSortValue) {
           const topColor = props.sortColIdx === columnNumber && !props.sortAscending ?
@@ -64,40 +62,23 @@ const HeaderRow = (props) => {
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
 
-          columnContent = <span {...sortableHeaderStyle} onClick={() => props.setSortOrder(columnNumber)}>
-            <span>{column.header || ''}</span>
-            <span {...sortArrowsStyle}><DoubleArrow topColor={topColor} bottomColor={botColor} /></span>
+          sortIcon = <span {...iconStyle} onClick={() => props.setSortOrder(columnNumber)}>
+            <DoubleArrow topColor={topColor} bottomColor={botColor} />
           </span>;
         }
 
-        if (column.getFilterValues) {
-          columnContent = <span><span>{column.header || ''}</span>
-            <span><FilterIcon
-              label={column.label}
-              idPrefix={column.valueName}
-              getRef={column.getFilterIconRef}
-              selected={column.isDropdownFilterOpen || column.anyFiltersAreSet}
-              handleActivate={column.toggleDropdownFilterVisibility} />
-
-            {column.isDropdownFilterOpen &&
-              <DropdownFilter
-                name={column.valueName}
-                isClearEnabled={column.anyFiltersAreSet}
-                handleClose={column.toggleDropdownFilterVisibility}>
-                { column.useCheckbox ?
-                  <ListItemPickerCheckbox
-                    options={column.getFilterValues}
-                    setSelectedValue={column.setSelectedValue}
-                    selected={column.checkSelectedValue} /> :
-                  <ListItemPicker
-                    options={column.getFilterValues}
-                    setSelectedValue={column.setSelectedValue} />
-                }
-              </DropdownFilter>
-            }
-            </span>
-          </span>;
+        // Keeping the historical prop `getFilterValues` for backwards compatibility,
+        // will remove this once all apps are using this new component.
+        if (column.enableFilter || column.getFilterValues) {
+          filterIcon = <TableFilter column={column} />;
         }
+
+        const columnTitleContent = <span>{column.header || ''}</span>;
+        const columnContent = <span {...iconHeaderStyle}>
+          {columnTitleContent}
+          {sortIcon}
+          {filterIcon}
+        </span>;
 
         return <th scope="col" key={columnNumber} className={cellClasses(column)}>
           { column.tooltip ?
@@ -223,7 +204,7 @@ export default class Table extends React.PureComponent {
   }
 
   render() {
-    let {
+    const {
       columns,
       summary,
       headerClassName = '',
@@ -300,5 +281,6 @@ Table.propTypes = {
   defaultSort: PropTypes.shape({
     sortColIdx: PropTypes.number,
     sortAscending: PropTypes.bool
-  })
+  }),
+  filteredByList: PropTypes.object
 };
