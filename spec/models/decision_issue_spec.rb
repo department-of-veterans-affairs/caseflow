@@ -121,6 +121,16 @@ describe DecisionIssue do
     let(:profile_date) { nil }
     let(:end_product_last_action_date) { nil }
 
+    context "when the decision review is an appeal" do
+      let(:decision_review) { create(:appeal) }
+      let(:decision_date) { 10.days.ago }
+      let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
+
+      it "returns the decision document's decision date" do
+        expect(subject).to eq(decision_date.to_date)
+      end
+    end
+
     context "when there is no profile date" do
       it "returns nil" do
         expect(subject).to be_nil

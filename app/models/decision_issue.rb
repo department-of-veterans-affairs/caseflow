@@ -77,6 +77,7 @@ class DecisionIssue < ApplicationRecord
 
   def appeal_decision_date
     return unless appeal?
+
     decision_review.decision_document.decision_date
   end
 
