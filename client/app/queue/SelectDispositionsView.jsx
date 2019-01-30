@@ -336,6 +336,7 @@ class SelectDispositionsView extends React.PureComponent {
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE}</h3>
         <SearchableDropdown
+          errorMessage={highlightModal && !decisionIssue.diagnostic_code ? 'This field is required' : null}
           name="Diagnostic code"
           placeholder={COPY.DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE}
           hideLabel
@@ -345,7 +346,7 @@ class SelectDispositionsView extends React.PureComponent {
           onChange={(diagnosticCode) => this.setState({
             decisionIssue: {
               ...decisionIssue,
-              diagnostic_code: diagnosticCode.value
+              diagnostic_code: diagnosticCode ? diagnosticCode.value : ''
             }
           })}
         />
