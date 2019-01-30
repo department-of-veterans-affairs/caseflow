@@ -294,8 +294,7 @@ export const prepareAppealForStore =
         caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
         documentID: appeal.attributes.document_id,
         caseReviewId: appeal.attributes.attorney_case_review_id,
-        canEditDocumentId: appeal.attributes.can_edit_document_id,
-        isLegacyAppeal: appeal.attributes.docket_name === 'legacy'
+        canEditDocumentId: appeal.attributes.can_edit_document_id
       };
 
       return accumulator;
