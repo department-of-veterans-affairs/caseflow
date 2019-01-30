@@ -99,6 +99,9 @@ describe SupplementalClaim do
     subject { supplemental_claim.create_remand_issues! }
 
     let(:decision_review_remanded) { create(:appeal) }
+    let!(:decision_document) do
+      create(:decision_document, decision_date: Time.zone.today - 3.days, appeal: decision_review_remanded)
+    end
     let(:benefit_type) { "education" }
 
     let!(:decision_issue_not_remanded) do
@@ -126,7 +129,6 @@ describe SupplementalClaim do
         benefit_type: benefit_type,
         decision_review: decision_review_remanded,
         rating_issue_reference_id: "1234",
-        profile_date: Time.zone.today - 3.days,
         description: "a description"
       )
     end

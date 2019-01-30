@@ -23,6 +23,7 @@ describe DecisionIssue do
   let(:description) { "description" }
   let(:disposition) { "allowed" }
   let(:decision_text) { "decision text" }
+  let(:decision_date) { 10.days.ago }
   let(:decision_review) { create(:supplemental_claim) }
 
   context "#save" do
@@ -121,6 +122,15 @@ describe DecisionIssue do
     let(:profile_date) { nil }
     let(:end_product_last_action_date) { nil }
 
+    context "when the decision review is an appeal" do
+      let(:decision_review) { create(:appeal) }
+      let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
+
+      it "returns the decision document's decision date" do
+        expect(subject).to eq(decision_date.to_date)
+      end
+    end
+
     context "when there is no profile date" do
       it "returns nil" do
         expect(subject).to be_nil
@@ -197,6 +207,7 @@ describe DecisionIssue do
 
       context "when no supplemental claim matches decision issue" do
         let(:decision_review) { create(:appeal, number_of_claimants: 1) }
+        let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
 
         # Test that this supplemental claim does not match
         let!(:another_supplemental_claim) do
