@@ -372,10 +372,19 @@ describe Task do
     before do
       FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+
+      # Monkey patching might not be the best option, but we want to define a test_func
+      # for our available actions unwrapper to call. This is the simplest way to do it
+      class Task
+        def test_func(_user)
+          { type: Task.name }
+        end
+      end
+
       allow_any_instance_of(Task)
-        .to receive(:available_actions_unwrapper)
+        .to receive(:available_actions)
         .with(attorney)
-        .and_return([{ data: { type: Task.name } }])
+        .and_return([{ label: "test label", value: "test/path", func: "test_func" }])
     end
 
     subject { Task.create_from_params(params, attorney) }
