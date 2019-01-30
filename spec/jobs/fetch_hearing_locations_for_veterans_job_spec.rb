@@ -21,6 +21,49 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
 
+    describe "#veterans" do
+      context "when veterans that are in location 57 and have schedule hearing tasks" do
+        let!(:veteran_2) { create(:veteran, file_number: "999999999") }
+        let!(:vacols_case_2) { create(:case, bfcurloc: "CASEFLOW", bfregoff: "RO01", bfcorlid: "999999999S") }
+        let!(:legacy_appeal_2) { create(:legacy_appeal, vbms_id: "999999999S", vacols_case: vacols_case_2) }
+        let!(:task_1) do
+          ScheduleHearingTask.create!(appeal: legacy_appeal_2, assigned_to: HearingsManagement.singleton)
+        end
+        let!(:veteran_3) { create(:veteran, file_number: "000000000") }
+        let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
+        let!(:task_2) { ScheduleHearingTask.create!(appeal: appeal, assigned_to: HearingsManagement.singleton) }
+        # should not be returned
+        before do
+          # tasks marked completed
+          (0..2).each do |number|
+            create(:veteran, file_number: "23456781#{number}")
+            app = create(:appeal, veteran_file_number: "23456781#{number}")
+            ScheduleHearingTask.create!(appeal: app, assigned_to: HearingsManagement.singleton, status: "completed")
+          end
+
+          # task with Address admin action
+          create(:veteran, file_number: "234567815")
+          app_2 = create(:appeal, veteran_file_number: "234567815")
+          tsk = ScheduleHearingTask.create!(appeal: app_2, assigned_to: HearingsManagement.singleton)
+          HearingAdminActionVerifyAddressTask.create!(
+            appeal: app_2,
+            assigned_to: HearingsManagement.singleton,
+            parent: tsk
+          )
+
+          # legacy not in location 57
+          create(:veteran, file_number: "111111111")
+          vac_case = create(:case, bfcurloc: "39", bfregoff: "RO01", bfcorlid: "111111111S")
+          create(:legacy_appeal, vbms_id: "111111111", vacols_case: vac_case)
+        end
+
+        it "returns all veterans with scheduled tasks" do
+          job.create_missing_veterans
+          expect(job.veterans.count).to eq 3
+        end
+      end
+    end
+
     describe "#perform" do
       let(:distance_response) { HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11).to_json) }
       let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body.to_json) }
@@ -89,7 +132,7 @@ describe FetchHearingLocationsForVeteransJob do
           }
 
           error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
-          allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+          allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error).twice
         end
 
         it "creates an ScheduleHearingTask and admin action" do
@@ -97,6 +140,16 @@ describe FetchHearingLocationsForVeteransJob do
           tsk = ScheduleHearingTask.first
           expect(tsk.appeal.veteran_file_number).to eq bfcorlid_file_number
           expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
+          FetchHearingLocationsForVeteransJob.perform_now
+          expect(HearingAdminActionVerifyAddressTask.count).to eq 1
+        end
+
+        context "and job has alreay been run on a veteran" do
+          it "only produces one admin action" do
+            FetchHearingLocationsForVeteransJob.perform_now
+            FetchHearingLocationsForVeteransJob.perform_now
+            expect(HearingAdminActionVerifyAddressTask.count).to eq 1
+          end
         end
       end
     end

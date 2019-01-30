@@ -5,17 +5,27 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   QUERY_LIMIT = 500
 
   def veterans
-    @veterans ||= Veteran.where(file_number: file_numbers)
+    @veterans ||= Veteran.where("file_number IN (?) OR veterans.id IN (?)", file_numbers, veteran_ids_from_tasks)
       .left_outer_joins(:available_hearing_locations)
       .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
       .limit(QUERY_LIMIT)
   end
 
   def file_numbers
-    # TODO: will need an AMA equivalent of this query
     @file_numbers ||= VACOLS::Case.where(bfcurloc: 57).pluck(:bfcorlid).map do |bfcorlid|
       LegacyAppeal.veteran_file_number_from_bfcorlid(bfcorlid)
     end
+  end
+
+  def veteran_ids_from_tasks
+    ScheduleHearingTask.where.not(status: "completed")
+      .joins("
+        LEFT OUTER JOIN (SELECT parent_id FROM tasks
+        WHERE type = 'HearingAdminActionVerifyAddressTask' AND status != 'completed') admin_actions
+        ON admin_actions.parent_id = id")
+      .where("admin_actions.parent_id IS NULL").limit(QUERY_LIMIT).map do |task|
+        task.appeal.veteran.id
+      end
   end
 
   def missing_veteran_file_numbers
@@ -174,7 +184,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       tasks = LegacyAppeal.where(
         vbms_id: LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)
       ).map do |appeal|
-        ScheduleHearingTask.create_if_eligible(appeal)
+        ScheduleHearingTask.create_if_eligible(appeal) ||
+          ScheduleHearingTask.where(appeal: appeal).where.not(status: "completed").first
       end.compact
 
       tasks.each do |task|
