@@ -49,8 +49,15 @@ class Task < ApplicationRecord
     { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func], user) : nil }
   end
 
+  # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
   def actions_available?(user)
-    return false if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
+    return false if status == Constants.TASK_STATUSES.on_hold
+
+    actions_allowable?(user)
+  end
+
+  def actions_allowable?(user)
+    return false if Constants.TASK_STATUSES.completed == status
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
     return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
@@ -166,11 +173,13 @@ class Task < ApplicationRecord
   end
 
   def self.verify_user_can_create!(user, parent)
-    can_create = parent&.available_actions_unwrapper(user)&.any? do |action|
+    can_create = parent&.available_actions(user)&.map do |action|
+      parent.build_action_hash(action, user)
+    end&.any? do |action|
       action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
     end
 
-    unless can_create
+    if !parent&.actions_allowable?(user) || !can_create
       user_description = user ? "User #{user.id}" : "nil User"
       parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
       message = "#{user_description} cannot assign #{name}#{parent_description}."
@@ -263,6 +272,7 @@ class Task < ApplicationRecord
 
   def add_admin_action_data(_user = nil)
     {
+      redirect_after: "/queue",
       selected: nil,
       options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
         {
@@ -271,6 +281,12 @@ class Task < ApplicationRecord
         }
       end,
       type: ColocatedTask.name
+    }
+  end
+
+  def complete_data(_user = nil)
+    {
+      modal_body: COPY::MARK_TASK_COMPLETE_COPY
     }
   end
 

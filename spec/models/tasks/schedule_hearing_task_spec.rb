@@ -1,13 +1,8 @@
 describe ScheduleHearingTask do
   before do
-    FeatureToggle.enable!(:test_facols)
     Time.zone = "Eastern Time (US & Canada)"
     OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
     RequestStore[:current_user] = hearings_user
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
   end
 
   let(:vacols_case) { FactoryBot.create(:case) }
@@ -274,6 +269,33 @@ describe ScheduleHearingTask do
         expect(tasks.count).to eq(1)
         expect(tasks[0].id).to eq(hearing_task.id)
       end
+    end
+  end
+
+  context "#update_location_in_vacols" do
+    let(:vacols_case) { create(:case, bfcurloc: "57") }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
+
+    it "when task is put on hold, location is changed to CASEFLOW" do
+      expect(vacols_case.bfcurloc).to eq("57")
+      task.update!(status: :on_hold)
+
+      expect(vacols_case.reload.bfcurloc).to eq("CASEFLOW")
+    end
+  end
+
+  context "#update_status_if_children_tasks_are_complete" do
+    let(:vacols_case) { create(:case, bfcurloc: "57") }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
+    let!(:child_task) { create(:hearing_admin_action_task, appeal: legacy_appeal, parent: task) }
+
+    it "when children task are completed, location is changed to 57" do
+      expect(vacols_case.reload.bfcurloc).to eq("CASEFLOW")
+      child_task.update!(status: :completed)
+
+      expect(vacols_case.reload.bfcurloc).to eq("57")
     end
   end
 end
