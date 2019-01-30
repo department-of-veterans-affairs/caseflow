@@ -386,7 +386,13 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync_status
-    request_issues.any?(&:submitted_not_processed?) ? COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS : nil
+    if request_issues.any?(&:decision_sync_error)
+      COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS_ERROR
+    elsif request_issues.any?(&:submitted_not_processed?)
+      COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS
+    else
+      nil
+    end
   end
 
   # All records that create contentions should be an instance of ApplicationRecord with

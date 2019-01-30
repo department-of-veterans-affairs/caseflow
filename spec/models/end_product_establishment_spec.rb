@@ -909,6 +909,20 @@ describe EndProductEstablishment do
             end
 
             it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared, Syncing decisions...") }
+
+            context "when there are pending request issues to sync with errors" do
+              let!(:errored_request_issue) do
+                create(
+                  :request_issue,
+                  review_request: epe.source,
+                  end_product_establishment: epe,
+                  decision_sync_submitted_at: Time.zone.now,
+                  decision_sync_error: "oh no"
+                )
+              end
+
+              it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared, Decisions sync failed. Support notified.") }
+            end
           end
         end
       end
