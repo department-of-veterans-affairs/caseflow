@@ -64,7 +64,8 @@ describe RatingIssue do
         reference_id: "NBA",
         decision_text: "This broadcast may not be reproduced",
         profile_date: profile_date,
-        contention_reference_ids: []
+        contention_reference_ids: [],
+        benefit_type: :compensation
       )
     end
 
@@ -82,7 +83,8 @@ describe RatingIssue do
           reference_id: "NBA",
           decision_text: "This broadcast may not be reproduced",
           profile_date: profile_date,
-          contention_reference_ids: ["foul"]
+          contention_reference_ids: ["foul"],
+          benefit_type: :compensation
         )
       end
     end
