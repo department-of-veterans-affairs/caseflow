@@ -1,6 +1,5 @@
 describe ScheduleHearingTask do
   before do
-    FeatureToggle.enable!(:test_facols)
     Time.zone = "Eastern Time (US & Canada)"
     OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
     RequestStore[:current_user] = hearings_user
@@ -18,7 +17,7 @@ describe ScheduleHearingTask do
 
   let(:test_hearing_date_vacols) do
     Time.use_zone("Eastern Time (US & Canada)") do
-      Time.zone.local(2018, 11, 2, 5, 0, 0)
+      Time.zone.local(2018, 11, 2, 6, 0, 0)
     end
   end
 
@@ -57,7 +56,7 @@ describe ScheduleHearingTask do
 
   context "#update_from_params" do
     context "AMA appeal" do
-      let(:hearing_day) { create(:hearing_day) }
+      let(:hearing_day) { create(:hearing_day, request_type: "V") }
       let(:appeal) { create(:appeal) }
       let(:schedule_hearing_task) do
         ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user)
@@ -70,7 +69,11 @@ describe ScheduleHearingTask do
             values: {
               "regional_office_value": hearing_day.regional_office,
               "hearing_pkseq": hearing_day.id,
-              "hearing_date": "2018-11-02T09:00:00.000-04:00",
+              "hearing_time": {
+                "h": "09",
+                "m": "00",
+                "offset": "-0500"
+              },
               "hearing_type": "Video"
             }
           }
@@ -124,6 +127,33 @@ describe ScheduleHearingTask do
         expect(tasks.count).to eq(1)
         expect(tasks[0].id).to eq(hearing_task.id)
       end
+    end
+  end
+
+  context "#update_location_in_vacols" do
+    let(:vacols_case) { create(:case, bfcurloc: "57") }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
+
+    it "when task is put on hold, location is changed to CASEFLOW" do
+      expect(vacols_case.bfcurloc).to eq("57")
+      task.update!(status: :on_hold)
+
+      expect(vacols_case.reload.bfcurloc).to eq("CASEFLOW")
+    end
+  end
+
+  context "#update_status_if_children_tasks_are_complete" do
+    let(:vacols_case) { create(:case, bfcurloc: "57") }
+    let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+    let(:task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
+    let!(:child_task) { create(:hearing_admin_action_task, appeal: legacy_appeal, parent: task) }
+
+    it "when children task are completed, location is changed to 57" do
+      expect(vacols_case.reload.bfcurloc).to eq("CASEFLOW")
+      child_task.update!(status: :completed)
+
+      expect(vacols_case.reload.bfcurloc).to eq("57")
     end
   end
 end

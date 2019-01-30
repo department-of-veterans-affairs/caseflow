@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190129002938) do
+ActiveRecord::Schema.define(version: 20190129233723) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,9 +84,9 @@ ActiveRecord::Schema.define(version: 20190129002938) do
     t.datetime "established_at"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
+    t.datetime "establishment_last_submitted_at"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
-    t.datetime "last_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
@@ -480,6 +480,22 @@ ActiveRecord::Schema.define(version: 20190129002938) do
     t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
   end
 
+  create_table "hearing_locations", force: :cascade do |t|
+    t.string "address"
+    t.string "city"
+    t.string "classification"
+    t.datetime "created_at", null: false
+    t.float "distance"
+    t.string "facility_id"
+    t.string "facility_type"
+    t.integer "hearing_id"
+    t.string "hearing_type"
+    t.string "name"
+    t.string "state"
+    t.datetime "updated_at", null: false
+    t.string "zip_code"
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "hearing_id", null: false
@@ -513,10 +529,10 @@ ActiveRecord::Schema.define(version: 20190129002938) do
     t.string "benefit_type"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
+    t.datetime "establishment_last_submitted_at"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
     t.boolean "informal_conference"
-    t.datetime "last_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
     t.boolean "same_office"
@@ -855,9 +871,9 @@ ActiveRecord::Schema.define(version: 20190129002938) do
     t.string "decision_review_remanded_type"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
+    t.datetime "establishment_last_submitted_at"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
-    t.datetime "last_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false

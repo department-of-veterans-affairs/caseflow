@@ -73,6 +73,28 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     object.veteran ? object.veteran.id : nil
   end
 
+  attribute :veteran_closest_regional_office do
+    object.veteran_closest_regional_office
+  end
+
+  attribute :veteran_available_hearing_locations do
+    locations = object.veteran_available_hearing_locations || []
+
+    locations.map do |ahl|
+      {
+        name: ahl.name,
+        address: ahl.address,
+        city: ahl.city,
+        state: ahl.state,
+        distance: ahl.distance,
+        facility_id: ahl.facility_id,
+        facility_type: ahl.facility_type,
+        classification: ahl.classification,
+        zip_code: ahl.zip_code
+      }
+    end
+  end
+
   attribute :docket_name do
     "legacy"
   end
