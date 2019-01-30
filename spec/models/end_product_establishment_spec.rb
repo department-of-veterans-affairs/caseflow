@@ -864,6 +864,70 @@ describe EndProductEstablishment do
     end
   end
 
+  context "#status" do
+    subject { epe.status }
+
+    context "if there is an end product" do
+      let(:epe) do
+        EndProductEstablishment.new(
+          source: source,
+          veteran_file_number: veteran_file_number,
+          code: code,
+          synced_status: synced_status,
+          established_at: 30.days.ago,
+          committed_at: 30.days.ago
+        )
+      end
+
+      context "and there is a modifier, show the modifier" do
+        let(:expected_result) do
+          { ep_code: code,
+            ep_status: nil }
+        end
+
+        it { is_expected.to eq expected_result }
+      end
+
+      context "if there is no modifier, show an empty string" do
+        let(:expected_result) do
+          { ep_code: code,
+            ep_status: nil }
+        end
+
+        it { is_expected.to eq expected_result }
+      end
+    end
+
+    context "if there is not an end product" do
+      let(:epe) do
+        EndProductEstablishment.new(
+          source: source,
+          veteran_file_number: veteran_file_number,
+          established_at: nil
+        )
+      end
+
+      context "if there was an error establishing the claim review" do
+        before { source.establishment_error = "big error" }
+        let(:expected_result) do
+          { ep_code: "",
+            ep_status: COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED }
+        end
+
+        it { is_expected.to eq expected_result }
+      end
+
+      context "if it is establishing" do
+        let(:expected_result) do
+          { ep_code: "",
+            ep_status: COPY::OTHER_REVIEWS_TABLE_ESTABLISHING }
+        end
+
+        it { is_expected.to eq expected_result }
+      end
+    end
+  end
+
   context "#search_table_ui_hash" do
     it "sets a null modifier to empty string so it displays correctly" do
       expect([*end_product_establishment].map(&:search_table_ui_hash)).to include(hash_including(

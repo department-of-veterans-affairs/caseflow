@@ -112,10 +112,55 @@ RSpec.feature "Search" do
                   synced_status: "CLR"
                 )
               end
+              let!(:end_product_establishment_3) do
+                create(
+                  :end_product_establishment,
+                  source: higher_level_review,
+                  veteran_file_number: appeal.veteran_file_number,
+                  synced_status: "LOL"
+                )
+              end
 
-              it "shows the end product status" do
-                expect(find(".cf-other-reviews-table > tbody")).to have_content("Cancelled")
-                expect(find(".cf-other-reviews-table > tbody")).to have_content("Cleared")
+              context "when the EPs have not been established" do
+                it "shows that the EP is establishing if it has not been established" do
+                  expect(find(".cf-other-reviews-table > tbody")).to have_content(
+                    COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
+                  )
+                  expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Canceled")
+                  expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Cleared")
+                end
+              end
+
+              context "if there was an establishment error" do
+                let!(:higher_level_review) do
+                  create(:higher_level_review,
+                         veteran_file_number: appeal.veteran_file_number,
+                         establishment_error: "error")
+                end
+
+                it "shows that the EP has an establishment error" do
+                  expect(find(".cf-other-reviews-table > tbody")).to have_content(
+                    COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED
+                  )
+                end
+              end
+
+              context "the EP has been established" do
+                before do
+                  end_product_establishment_1.commit!
+                  end_product_establishment_2.commit!
+                  end_product_establishment_3.commit!
+                  higher_level_review.establish!
+                end
+
+                it "shows the end product status" do
+                  expect(find(".cf-other-reviews-table > tbody")).to have_content("Canceled")
+                  expect(find(".cf-other-reviews-table > tbody")).to have_content("Cleared")
+                end
+
+                it "if the end products have synced_status codes we don't recognize, show the status code" do
+                  expect(find(".cf-other-reviews-table > tbody")).to have_content("LOL")
+                end
               end
             end
           end
