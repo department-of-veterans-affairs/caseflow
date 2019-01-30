@@ -32,14 +32,15 @@ class RootTask < GenericTask
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
+      maybe_create_vso_tracking_tasks(appeal, root_task)
       if FeatureToggle.enabled?(:ama_auto_case_distribution)
         create_subtasks!(appeal, root_task)
       else
-        create_vso_subtask!(appeal, root_task)
+        create_ihp_tasks!(appeal, root_task)
       end
     end
 
-    def create_vso_subtask!(appeal, parent)
+    def create_ihp_tasks!(appeal, parent)
       appeal.vsos.map do |vso_organization|
         InformalHearingPresentationTask.create!(
           appeal: appeal,
@@ -50,6 +51,16 @@ class RootTask < GenericTask
     end
 
     private
+
+    def maybe_create_vso_tracking_tasks(appeal, parent)
+      appeal.vsos.map do |vso_organization|
+        TrackVeteranTask.create!(
+          appeal: appeal,
+          parent: parent,
+          assigned_to: vso_organization
+        )
+      end
+    end
 
     def create_evidence_submission_task!(appeal, parent)
       EvidenceSubmissionWindowTask.create!(
@@ -85,7 +96,7 @@ class RootTask < GenericTask
         elsif appeal.hearing_docket?
           create_hearing_tasks!(appeal, distribution_task)
         else
-          vso_tasks = create_vso_subtask!(appeal, distribution_task)
+          vso_tasks = create_ihp_tasks!(appeal, distribution_task)
           # If the appeal is direct docket and there are no ihp tasks,
           # then it is initially ready for distribution.
           distribution_task.ready_for_distribution! if vso_tasks.empty?

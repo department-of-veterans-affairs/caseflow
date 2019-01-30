@@ -7,7 +7,7 @@ class EvidenceSubmissionWindowTask < GenericTask
   end
 
   def create_vso_subtask
-    RootTask.create_vso_subtask!(appeal, parent)
+    RootTask.create_ihp_tasks!(appeal, parent)
   end
 
   def self.timer_delay
