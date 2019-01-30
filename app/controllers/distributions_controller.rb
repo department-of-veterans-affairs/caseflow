@@ -67,7 +67,9 @@ class DistributionsController < ApplicationController
       {
         "error": error,
         "title": "Cases in your queue are waiting to be assigned",
-        "detail": "Please assign all cases that have been waiting more than 14 days before requesting more."
+        # rubocop:disable Metrics/LineLength
+        "detail": "Please assign all cases that have been waiting in your assignment queue for more than 14 days before requesting more."
+        # rubocop:enable Metrics/LineLength
       }
     when :different_user
       {
