@@ -21,7 +21,7 @@ class RootTask < GenericTask
       children.where(type: ScheduleHearingTask.name).where.not(status: Constants.TASK_STATUSES.completed).empty?
   end
 
-  def actions_available?(_user, _allow_actions_while_on_hold)
+  def actions_available?(_user)
     true
   end
 

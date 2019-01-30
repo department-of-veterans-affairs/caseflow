@@ -272,7 +272,7 @@ describe ScheduleHearingTask do
     end
   end
 
-  context ".update_location_in_vacols" do
+  context "#update_location_in_vacols" do
     let(:vacols_case) { create(:case, bfcurloc: "57") }
     let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
     let(:task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
@@ -285,7 +285,7 @@ describe ScheduleHearingTask do
     end
   end
 
-  context ".update_status_if_children_tasks_are_complete" do
+  context "#update_status_if_children_tasks_are_complete" do
     let(:vacols_case) { create(:case, bfcurloc: "57") }
     let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
     let(:task) { create(:schedule_hearing_task, appeal: legacy_appeal) }

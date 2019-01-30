@@ -327,26 +327,26 @@ describe Task do
     end
   end
 
-  describe ".actions_available?" do
+  describe "#actions_available?" do
     let(:user) { create(:user) }
 
     context "when task status is on_hold" do
       let(:task) { create(:generic_task, status: "on_hold") }
 
-      it "returns true when allow_actions_while_on_hold is true" do
-        expect(task.actions_available?(user, true)).to eq(true)
-      end
-
-      it "returns false when allow_actions_while_on_hold is false" do
+      it "returns false" do
         expect(task.actions_available?(user)).to eq(false)
       end
     end
+  end
+
+  describe "#actions_allowable?" do
+    let(:user) { create(:user) }
 
     context "when task status is completed" do
       let(:task) { create(:generic_task, status: "completed") }
 
       it "returns false" do
-        expect(task.actions_available?(user)).to eq(false)
+        expect(task.actions_allowable?(user)).to eq(false)
       end
     end
 
@@ -357,7 +357,7 @@ describe Task do
 
       it "returns false" do
         OrganizationsUser.add_user_to_organization(user, organization)
-        expect(parent_task.actions_available?(user)).to eq(false)
+        expect(parent_task.actions_allowable?(user)).to eq(false)
       end
     end
   end
@@ -443,6 +443,62 @@ describe Task do
 
       it "should not create a child task when a task assigned to the organization is created" do
         expect(subject.children).to eq([])
+      end
+    end
+  end
+
+  describe "#verify_user_can_create!" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:task) { FactoryBot.create(:generic_task) }
+
+    before do
+      allow(task).to receive(:available_actions).and_return(dummy_actions)
+    end
+
+    context "when task has an available action" do
+      let(:dummy_actions) do
+        [
+          { label: "test label", value: "test/path", func: "assign_to_attorney_data" }
+        ]
+      end
+
+      it "should not throw an error" do
+        expect { AttorneyTask.verify_user_can_create!(user, task) }.to_not raise_error(
+          Caseflow::Error::ActionForbiddenError
+        )
+      end
+
+      context "when task is completed" do
+        it "should throw an error" do
+          task.update!(status: :completed)
+          expect { AttorneyTask.verify_user_can_create!(user, task) }.to raise_error(
+            Caseflow::Error::ActionForbiddenError
+          )
+        end
+      end
+    end
+
+    context "when task has no available actions with AttorneyTask type" do
+      let(:dummy_actions) do
+        [
+          { label: "test label", value: "test/path", func: "assign_to_privacy_team_data" }
+        ]
+      end
+
+      it "should throw an error" do
+        expect { AttorneyTask.verify_user_can_create!(user, task) }.to raise_error(
+          Caseflow::Error::ActionForbiddenError
+        )
+      end
+    end
+
+    context "when task has no available actions" do
+      let(:dummy_actions) { [] }
+
+      it "should throw an error" do
+        expect { AttorneyTask.verify_user_can_create!(user, task) }.to raise_error(
+          Caseflow::Error::ActionForbiddenError
+        )
       end
     end
   end
