@@ -63,7 +63,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_at,
-      closest_regional_office: task.attributes.veteran_closest_regional_office,
+      closestRegionalOffice: task.attributes.veteran_closest_regional_office,
       createdAt: task.attributes.created_at,
       completedOn: task.attributes.completed_at,
       dueOn: null,

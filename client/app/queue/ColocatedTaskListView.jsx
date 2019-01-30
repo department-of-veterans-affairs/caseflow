@@ -118,6 +118,7 @@ const NewTasksTab = connect(
       <TaskTable
         includeDetailsLink
         includeTask
+        includeRegionalOffice
         includeType
         includeDocketNumber
         includeDaysWaiting
@@ -135,6 +136,7 @@ const PendingTasksTab = connect(
       <TaskTable
         includeDetailsLink
         includeTask
+        includeRegionalOffice
         includeType
         includeDocketNumber
         includeDaysOnHold
@@ -152,6 +154,7 @@ const OnHoldTasksTab = connect(
       <TaskTable
         includeDetailsLink
         includeTask
+        includeRegionalOffice
         includeType
         includeDocketNumber
         includeDaysOnHold
