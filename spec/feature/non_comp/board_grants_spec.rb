@@ -15,7 +15,7 @@ feature "NonComp Board Grant Task Page" do
     click_on "Complete"
   end
 
-  let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+  let!(:nca_org) { create(:business_line, name: "national cemetary association", url: "nca") }
   let(:user) { create(:default_user) }
   let(:veteran) { create(:veteran) }
   let(:prior_date) { Time.zone.now - 2.days }
@@ -32,26 +32,27 @@ feature "NonComp Board Grant Task Page" do
       request_issue = create(:request_issue,
                              :nonrating,
                              veteran_participant_id: veteran.participant_id,
-                             review_request: appeal)
+                             review_request: appeal,
+                             benefit_type: nca_org.url)
 
       request_issue.create_decision_issue_from_params(
         disposition: dispositions[index],
-        description: "disposition #{index}",
+        description: "disposition nca #{index}",
         decision_date: prior_date
       )
     end
   end
 
   let!(:in_progress_task) do
-    create(:board_grant_effectuation_task, :in_progress, appeal: appeal, assigned_to: non_comp_org)
+    create(:board_grant_effectuation_task, :in_progress, appeal: appeal, assigned_to: nca_org)
   end
 
-  let(:business_line_url) { "decision_reviews/nco" }
+  let(:business_line_url) { "decision_reviews/nca" }
   let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
 
   before do
     User.stub = user
-    OrganizationsUser.add_user_to_organization(user, non_comp_org)
+    OrganizationsUser.add_user_to_organization(user, nca_org)
   end
 
   scenario "cancel returns back to business line" do
@@ -65,15 +66,15 @@ feature "NonComp Board Grant Task Page" do
     visit dispositions_url
 
     expect(page).to have_button("Complete", disabled: true)
-    expect(page).to have_content("Non-Comp Org")
+    expect(page).to have_content("national cemetary association")
     expect(page).to have_content("Decision")
     expect(page).to have_content(veteran.name)
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
 
     # expect to have the two granted decision issues
     expect(page).to have_content("GRANTED", count: 2)
-    expect(page).to have_content("disposition 0")
-    expect(page).to have_content("disposition 1")
+    expect(page).to have_content("disposition nca 0")
+    expect(page).to have_content("disposition nca 1")
 
     submit_form
     # should have success message
@@ -102,6 +103,56 @@ feature "NonComp Board Grant Task Page" do
 
       expect(page).to have_content("Something went wrong")
       expect(page).to have_current_path("/#{dispositions_url}")
+    end
+  end
+
+  context "appeal with issues for multiple organizations" do
+    before do
+      OrganizationsUser.add_user_to_organization(user, vha_org)
+    end
+
+    let!(:vha_org) { create(:business_line, name: "veterans health admin", url: "vha") }
+
+    let!(:vha_request_issues) do
+      3.times do |index|
+        request_issue = create(:request_issue,
+                               :nonrating,
+                               veteran_participant_id: veteran.participant_id,
+                               review_request: appeal,
+                               benefit_type: vha_org.url)
+
+        request_issue.create_decision_issue_from_params(
+          disposition: dispositions[index],
+          description: "disposition vha #{index}",
+          decision_date: prior_date
+        )
+      end
+    end
+
+    let!(:in_progress_vha_task) do
+      create(:board_grant_effectuation_task, :in_progress, appeal: appeal, assigned_to: vha_org)
+    end
+
+    let(:vha_dispositions_url) { "decision_reviews/vha/tasks/#{in_progress_vha_task.id}" }
+
+    scenario "displays board grants page with correct dispositions" do
+      # only include dispositions from request issues matching the benefit type
+      # when this test executes, the nca business line with request issues already exists
+
+      visit vha_dispositions_url
+      expect(page).to have_content("veterans health admin")
+      expect(page).to have_content("Decision")
+      expect(page).to have_content(veteran.name)
+      expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
+
+      # expect to have the two granted decision issues
+      expect(page).to have_content("GRANTED", count: 2)
+      expect(page).to have_content("disposition vha 0")
+      expect(page).to have_content("disposition vha 1")
+
+      # expect decision issues associated with nca benefit type to not exist
+      expect(page).to_not have_content("disposition nca 0")
+      expect(page).to_not have_content("disposition nca 1")
     end
   end
 end

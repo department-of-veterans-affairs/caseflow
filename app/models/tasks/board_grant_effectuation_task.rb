@@ -1,4 +1,6 @@
 class BoardGrantEffectuationTask < DecisionReviewTask
+  include BusinessLineTask
+
   def label
     "Board Grant"
   end
@@ -7,23 +9,16 @@ class BoardGrantEffectuationTask < DecisionReviewTask
     ::WorkQueue::BoardGrantEffectuationTaskSerializer
   end
 
-  def ui_hash
-    serializer_class.new(self).as_json
-  end
-
-  def complete_with_payload!(_decision_issue_params, _decision_date)
-    return false unless validate_task
-
-    update!(status: Constants.TASK_STATUSES.completed, completed_at: Time.zone.now)
+  def appeal_ui_hash
+    appeal.ui_hash.merge(
+      requestIssues: request_issues_by_benefit_type.map(&:ui_hash)
+    )
   end
 
   private
 
-  def validate_task
-    if !in_progress?
-      @error_code = :task_not_in_progress
-    end
-
-    !@error_code
+  def request_issues_by_benefit_type
+    appeal.request_issues
+      .select { |issue| issue.benefit_type == business_line.url }
   end
 end
