@@ -1,6 +1,5 @@
 // @flow
 import { ACTIONS } from './uiConstants';
-import { ACTIONS as QUEUE_STATE_ACTIONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 
 import type {

@@ -58,6 +58,7 @@ import COPY from '../../COPY.json';
 import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
+import type { State } from './types/state';
 
 type Props = {|
   userDisplayName: string,
