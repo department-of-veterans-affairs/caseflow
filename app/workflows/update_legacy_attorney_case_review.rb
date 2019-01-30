@@ -28,6 +28,8 @@ class UpdateLegacyAttorneyCaseReview
   attr_reader :id, :document_id, :user
 
   def update_attorney_case_review
+    return unless attorney_case_review
+
     attorney_case_review.update!(document_id: document_id)
   end
 
@@ -79,7 +81,7 @@ class UpdateLegacyAttorneyCaseReview
   end
 
   def correct_format?
-    if decision_work_product?
+    if draft_decision_work_product?
       return document_id.match?(new_decision_regex) || document_id.match?(old_decision_regex)
     end
 
@@ -88,8 +90,8 @@ class UpdateLegacyAttorneyCaseReview
     document_id.match?(ime_regex) if ime_work_product?
   end
 
-  def decision_work_product?
-    %w[DEC OTD].include?(work_product)
+  def draft_decision_work_product?
+    Constants::DECASS_WORK_PRODUCT_TYPES["DRAFT_DECISION"].include?(work_product)
   end
 
   def vha_work_product?
