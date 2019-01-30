@@ -61,7 +61,7 @@ export const taskIsNotOnHoldSelector = (tasks: Tasks) =>
   _.filter(tasks, (task) => !taskIsOnHold(task));
 
 export const workTasksSelector = (tasks: Tasks | Array<Task> | Array<TaskWithAppeal>) =>
-  _.filter(tasks, (task) => task.type === 'TrackVeteranTask');
+  _.filter(tasks, (task) => task.type !== 'TrackVeteranTask');
 
 export const getActiveModalType = createSelector(
   [getModals],
