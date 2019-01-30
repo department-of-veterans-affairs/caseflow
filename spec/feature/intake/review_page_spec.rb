@@ -1,6 +1,6 @@
 require "support/intake_helpers"
 
-feature "Intake Review Page" do
+ffeature "Intake Review Page" do
   include IntakeHelpers
 
   before do
@@ -27,7 +27,11 @@ feature "Intake Review Page" do
           { first_name: "BILLY",
             last_name: "VANCE",
             ptcpnt_id: "12345",
-            relationship_type: "Child" }
+            relationship_type: "Child" },
+          { first_name: "BLAKE",
+            last_name: "VANCE",
+            ptcpnt_id: "11111",
+            relationship_type: "Other" }
         ]
       )
     end
@@ -179,7 +183,7 @@ def check_pension_and_compensation_payee_code
   end
 
   fill_in "What is the Receipt Date of this form?", with: "04/20/2025"
-  find("label", text: "Billy Vance, Child", match: :prefer_exact).click
+  find("label", text: "Blake Vance, Other", match: :prefer_exact).click
   click_intake_continue
 
   # check that other validation still works
