@@ -469,6 +469,18 @@ describe Appeal do
 
       appeal.create_tasks_on_intake_success!
     end
+
+    context "request issue has non-comp business line" do
+      let(:appeal) do
+        create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)])
+      end
+
+      it "creates root task and veteran record request task" do
+        expect(VeteranRecordRequest).to receive(:create!).once
+
+        appeal.create_tasks_on_intake_success!
+      end
+    end
   end
 
   context "#location_code" do
