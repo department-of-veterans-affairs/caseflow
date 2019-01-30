@@ -1,13 +1,16 @@
 describe Relationship do
   let(:veteran) { create(:veteran) }
+  let(:relationship_type) { "Spouse" }
+  let(:gender) { nil }
 
   let(:relationship) do
     Relationship.new(
       veteran_file_number: veteran.file_number,
       participant_id: "1234",
-      first_name: "BOB",
+      first_name: "TORY",
       last_name: "VANCE",
-      relationship_type: "Spouse"
+      relationship_type: relationship_type,
+      gender: gender
     )
   end
 
@@ -15,18 +18,69 @@ describe Relationship do
     subject { relationship.ui_hash }
 
     context "when there are no prior claims for that relationship" do
-      it "returns a hash with a nil default_payee_code" do
-        expect(subject).to include(
-          participant_id: "1234",
-          first_name: "BOB",
-          last_name: "VANCE",
-          relationship_type: "Spouse",
-          default_payee_code: nil
-        )
+      context "when the claimant is a spouse" do
+        let(:relationship_type) { "Spouse" }
+
+        it "defaults to spouse payee code" do
+          expect(subject).to include(
+            participant_id: "1234",
+            first_name: "TORY",
+            last_name: "VANCE",
+            relationship_type: "Spouse",
+            default_payee_code: "10"
+          )
+        end
+      end
+
+      context "when the claimant is a child" do
+        let(:relationship_type) { "Child" }
+
+        it "defaults to spouse payee code" do
+          expect(subject).to include(
+            relationship_type: "Child",
+            default_payee_code: "11"
+          )
+        end
+      end
+
+      context "when the relationship is a parent" do
+        let(:relationship_type) { "Parent" }
+        context "when the parent is male" do
+          let(:gender) { "M" }
+
+          it "returns the Father payee code" do
+            expect(subject).to include(
+              relationship_type: "Parent",
+              default_payee_code: "50"
+            )
+          end
+        end
+
+        context "when the parent is female" do
+          let(:gender) { "F" }
+
+          it "returns the Mother payee code" do
+            expect(subject).to include(
+              relationship_type: "Parent",
+              default_payee_code: "60"
+            )
+          end
+        end
+      end
+
+      context "when the claimant is an unhandled relationship type" do
+        let(:relationship_type) { "Other" }
+
+        it "does not have a default payee code" do
+          expect(subject).to include(
+            relationship_type: "Other",
+            default_payee_code: nil
+          )
+        end
       end
     end
 
-    context "when there are claims with that relationship" do
+    context "when there are previous claims with that relationship" do
       let!(:recent_end_product_with) do
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
@@ -56,7 +110,7 @@ describe Relationship do
       it "returns hash with the claimant's most recently used payee code" do
         expect(subject).to include(
           participant_id: "1234",
-          first_name: "BOB",
+          first_name: "TORY",
           last_name: "VANCE",
           relationship_type: "Spouse",
           default_payee_code: "10"
