@@ -434,6 +434,7 @@ RSpec.feature "AmaQueue" do
       fill_in "taskInstructions", with: qr_instructions
 
       click_on "Submit"
+
       expect(page).to have_content("On hold (3)")
 
       # step "judge reviews case and assigns a task to an attorney"
@@ -504,7 +505,7 @@ RSpec.feature "AmaQueue" do
       find(".Select-control", text: "Select an action", match: :first).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
-      expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
+      expect(page).to have_content("Mark as complete")
 
       click_on "Mark complete"
 
@@ -521,7 +522,7 @@ RSpec.feature "AmaQueue" do
       find(".Select-control", text: "Select an action").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
-      expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
+      expect(page).to have_content("Mark as complete")
 
       click_on "Mark complete"
 

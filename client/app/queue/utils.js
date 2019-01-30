@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-// @flow
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
@@ -493,6 +492,10 @@ export const taskIsOnHold = (task: Task) => {
 };
 
 export const taskActionData = (props: Object) => {
+  if (!props.task) {
+    return {};
+  }
+
   const relevantAction = props.task.availableActions.
     find((action) => props.history.location.pathname.endsWith(action.value));
 
@@ -500,6 +503,5 @@ export const taskActionData = (props: Object) => {
     return (relevantAction.data);
   }
 
-  // We should never get here since any task action the creates this modal should provide data.
-  throw new Error('Task action requires data');
+  return null;
 };
