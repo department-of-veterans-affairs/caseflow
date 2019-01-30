@@ -284,7 +284,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseRegionalOfficeColumn = () => {
     return this.props.includeRegionalOffice ? {
       header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) => task.closestRegionalOffice ? task.closestRegionalOffice : "Unknown",
+      valueFunction: (task: TaskWithAppeal) => task.closestRegionalOffice ? task.closestRegionalOffice : 'Unknown',
       getSortValue: (task: TaskWithAppeal) => task.closestRegionalOffice
     } : null;
   }
