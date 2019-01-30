@@ -122,7 +122,7 @@ describe ClaimReview do
       create(
         :higher_level_review,
         receipt_date: receipt_date,
-        last_submitted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        establishment_last_submitted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
         establishment_attempted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
       )
     end
