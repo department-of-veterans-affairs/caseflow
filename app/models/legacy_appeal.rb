@@ -189,11 +189,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran_closest_regional_office
-    veteran_if_exists.closest_regional_office
+    veteran_if_exists&.closest_regional_office
   end
 
   def veteran_available_hearing_locations
-    veteran_if_exists.available_hearing_locations
+    veteran_if_exists&.available_hearing_locations
   end
 
   def veteran
