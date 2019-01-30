@@ -184,10 +184,13 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
         $set: action.payload.organizations
       }
     });
-  case ACTIONS.SET_ACTIVE_ORGANIZATION_ID:
+  case ACTIONS.SET_ACTIVE_ORGANIZATION:
     return update(state, {
       activeOrganizationId: {
         $set: action.payload.activeOrganizationId
+      },
+      activeOrganizationName: {
+        $set: action.payload.activeOrganizationName
       }
     });
   case ACTIONS.SET_HEARING_DAY:

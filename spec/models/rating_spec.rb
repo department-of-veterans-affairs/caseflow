@@ -224,6 +224,36 @@ describe Rating do
     end
   end
 
+  context "#pension?" do
+    subject { rating.pension? }
+
+    context "when one or more associated claims have a bnftClmTc matching PMC" do
+      let(:associated_claims) do
+        [
+          { clm_id: "abc123", bnft_clm_tc: "040SCR" },
+          { clm_id: "dcf345", bnft_clm_tc: "154IVMC9PMC" }
+        ]
+      end
+
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when no associated claims have a bnftClmTc matching PMC" do
+      let(:associated_claims) do
+        [
+          { clm_id: "abc123", bnft_clm_tc: "040SCR" },
+          { clm_id: "dcf345", bnft_clm_tc: "030HLRNR" }
+        ]
+      end
+
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   context "#serialize" do
     subject { rating.serialize }
 

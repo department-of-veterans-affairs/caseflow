@@ -8,6 +8,7 @@ describe FetchHearingLocationsForVeteransJob do
     let!(:bfcorlid) { "123456789S" }
     let!(:bfcorlid_file_number) { "123456789" }
     let!(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S") }
+    let!(:legacy_appeal) { create(:legacy_appeal, vbms_id: "123456789S", vacols_case: vacols_case) }
 
     before(:each) do
       Fakes::BGSService.veteran_records = { "123456789" => veteran_record(file_number: "123456789S", state: "MA") }
@@ -26,12 +27,7 @@ describe FetchHearingLocationsForVeteransJob do
       before do
         VADotGovService = ExternalApi::VADotGovService
 
-        allow(DataDogService).to receive(:emit_gauge).with(hash_including(metric_name: "pages_requested"), any_args).and_return("") # rubocop:disable Metrics/LineLength
-
-        allow(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response)
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
-
-        allow(MetricsService).to receive(:record).with(/POST/, any_args).and_return(validate_response)
         allow(HTTPI).to receive(:post).with(instance_of(HTTPI::Request)).and_return(validate_response)
       end
 
@@ -43,7 +39,7 @@ describe FetchHearingLocationsForVeteransJob do
 
       context "when closest_regional_office has to be fetched and only one RO/AHL is in veteran's state" do
         it "only fetches RO distance once" do
-          expect(MetricsService).to receive(:record).with(/GET/, any_args).once
+          expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).once
           FetchHearingLocationsForVeteransJob.perform_now
           expect(AvailableHearingLocations.count).to eq 1
         end
@@ -62,7 +58,7 @@ describe FetchHearingLocationsForVeteransJob do
         end
         let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body(state: "OH").to_json) }
         it "fetches RO distance twice" do
-          expect(MetricsService).to receive(:record).with(/GET/, any_args).twice
+          expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).twice
           FetchHearingLocationsForVeteransJob.perform_now
           expect(AvailableHearingLocations.count).to eq 1
         end
@@ -79,6 +75,28 @@ describe FetchHearingLocationsForVeteransJob do
             .to be_empty
           expect(AvailableHearingLocations.count).to eq 1
           expect(AvailableHearingLocations.first.distance).to eq 11.11
+        end
+      end
+
+      context "when va_dot_gov_service throws an Address error" do
+        before do
+          message = {
+            "messages" => [
+              {
+                "key" => "AddressCouldNotBeFound"
+              }
+            ]
+          }
+
+          error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
+          allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+        end
+
+        it "creates an ScheduleHearingTask and admin action" do
+          FetchHearingLocationsForVeteransJob.perform_now
+          tsk = ScheduleHearingTask.first
+          expect(tsk.appeal.veteran_file_number).to eq bfcorlid_file_number
+          expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
         end
       end
     end
