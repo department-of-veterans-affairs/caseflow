@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import BoardGrant from '../components/BoardGrant';
 import Disposition from '../components/Disposition';
+import RecordRequest from '../components/RecordRequest';
 import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import { formatDate, formatDateStr } from '../../util/DateUtil';
 import { longFormNameFromKey } from '../util';
@@ -40,6 +41,8 @@ class TaskPageUnconnected extends React.PureComponent {
 
     if (task.type === 'Board Grant') {
       detailedTaskView = <BoardGrant handleSave={this.handleSave} />;
+    } else if (task.type === 'Record Request') {
+      detailedTaskView = <RecordRequest handleSave={this.handleSave} />;
     } else {
       detailedTaskView = <Disposition handleSave={this.handleSave} />;
     }
