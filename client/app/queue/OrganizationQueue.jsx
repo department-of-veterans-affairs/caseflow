@@ -39,6 +39,7 @@ class OrganizationQueue extends React.PureComponent {
         label: sprintf(
           COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
         page: <TaskTableTab
+          organizationName={this.props.organizationName}
           description={
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
@@ -49,6 +50,7 @@ class OrganizationQueue extends React.PureComponent {
         label: sprintf(
           COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
         page: <TaskTableTab
+          organizationName={this.props.organizationName}
           description={
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
@@ -58,6 +60,7 @@ class OrganizationQueue extends React.PureComponent {
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
         page: <TaskTableTab
+          organizationName={this.props.organizationName}
           description={
             sprintf(COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION,
               this.props.organizationName)}
@@ -106,11 +109,12 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
-const TaskTableTab = ({ description, tasks }) => <React.Fragment>
+const TaskTableTab = ({ description, tasks, organizationName }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
   <TaskTable
     includeDetailsLink
     includeTask
+    includeRegionalOffice={organizationName === 'Hearings Management'}
     includeType
     includeDocketNumber
     includeDaysWaiting
