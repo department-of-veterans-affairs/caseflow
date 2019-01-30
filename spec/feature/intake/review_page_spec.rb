@@ -1,6 +1,6 @@
 require "support/intake_helpers"
 
-ffeature "Intake Review Page" do
+feature "Intake Review Page" do
   include IntakeHelpers
 
   before do
