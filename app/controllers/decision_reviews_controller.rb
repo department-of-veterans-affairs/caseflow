@@ -64,15 +64,15 @@ class DecisionReviewsController < ApplicationController
   private
 
   def decision_date
-    return if task.is_a? BoardGrantEffectuationTask
+    return unless task.is_a? DecisionReviewTask
 
-    Date.parse(params.require("decision_date")).to_datetime
+    Date.parse(allowed_params.require("decision_date")).to_datetime
   end
 
   def decision_issue_params
-    return if task.is_a? BoardGrantEffectuationTask
+    return unless task.is_a? DecisionReviewTask
 
-    params.require("decision_issues").map do |decision_issue_param|
+    allowed_params.require("decision_issues").map do |decision_issue_param|
       decision_issue_param.permit(:request_issue_id, :disposition, :description)
     end
   end
@@ -103,6 +103,13 @@ class DecisionReviewsController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:decision_review_business_line_slug, :business_line_slug, :task_id)
+    params.permit(
+      :decision_review_business_line_slug,
+      :decision_review,
+      :decision_date,
+      :decision_issues,
+      :business_line_slug,
+      :task_id
+    )
   end
 end

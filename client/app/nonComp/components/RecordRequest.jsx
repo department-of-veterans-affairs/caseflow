@@ -61,12 +61,15 @@ class RecordRequestUnconnected extends React.PureComponent {
             <h2>Request to send Veteran record to the Board</h2>
           </div>
         </div>
+        <hr />
         <div className="usa-width-full">
-          <div>
+          <p>
             The Veteran/appellant has filed a Notice of Disagreement at the Board of Veterans' Appeals.
             In order to decide that appeal, the Board will need the complete records from {businessLine}.
-            Please take necessary steps to send this record to the Board.
-          </div>
+          </p>
+          <p>
+            Please take necessary steps to send this record to the Board. Mail to
+          </p>
         </div>
       </div>
       { completeDiv }
