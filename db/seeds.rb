@@ -54,7 +54,7 @@ class SeedDB
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
     create_colocated_users
-    create_vso_user
+    create_vso_users_and_tasks
     create_org_queue_users
     create_qr_user
     create_aod_user
@@ -90,14 +90,43 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
   end
 
-  def create_vso_user
-    u = User.create(
-      css_id: "VSO",
-      station_id: 101,
-      full_name: "VSO user associated with PVA",
-      roles: %w[VSO]
+  def create_vso_users_and_tasks
+    vso = Vso.create(
+      name: "VSO",
+      role: "VSO",
+      url: "veterans-service-organization",
+      participant_id: "2452415"
     )
-    OrganizationsUser.add_user_to_organization(u, Organization.find_by(name: "Paralyzed Veterans Of America"))
+
+    %w[BILLIE MICHAEL WINNIE].each do |name|
+      u = User.create(
+        css_id: "#{name}_VSO",
+        station_id: 101,
+        full_name: "#{name} - VSO user",
+        roles: %w[VSO]
+      )
+      OrganizationsUser.add_user_to_organization(u, vso)
+
+      # Assign one IHP task to each member of the VSO team and leave some IHP tasks assigned to the organization.
+      [true, false].each do |assign_to_user|
+        a = FactoryBot.create(:appeal)
+        root_task = FactoryBot.create(:root_task, appeal: a)
+        ihp_task = FactoryBot.create(
+          :informal_hearing_presentation_task,
+          parent: root_task,
+          appeal: a,
+          assigned_to: vso
+        )
+
+        next unless assign_to_user
+
+        InformalHearingPresentationTask.create_many_from_params([{
+                                                                  parent_id: ihp_task.id,
+                                                                  assigned_to_id: u.id,
+                                                                  assigned_to_type: User.name
+                                                                }], u)
+      end
+    end
   end
 
   def create_org_queue_users
@@ -476,6 +505,18 @@ class SeedDB
       claimant_participant_id: veteran.participant_id
     )
 
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
+      code: ep_rating_code,
+      station: "397",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "LOL",
+      claimant_participant_id: veteran.participant_id
+    )
+
     eligible_request_issue = RequestIssue.create!(
       review_request: higher_level_review,
       issue_category: "Military Retired Pay",
@@ -648,7 +689,6 @@ class SeedDB
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
     colocated = User.find_by(css_id: "BVALSPORER")
-    vso = Organization.find_by(name: "American Legion")
 
     create_task_at_judge_assignment(@ama_appeals[0], judge)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
@@ -664,8 +704,6 @@ class SeedDB
     create_task_at_judge_review(@ama_appeals[8], judge, attorney)
     create_task_at_colocated(@ama_appeals[8], judge, attorney, colocated)
 
-    FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
-
     create_colocated_legacy_tasks(attorney, colocated)
 
     FactoryBot.create_list(
@@ -674,27 +712,6 @@ class SeedDB
       assigned_by: judge,
       assigned_to: Translation.singleton,
       parent: FactoryBot.create(:root_task)
-    )
-  end
-
-  def create_vsos
-    Vso.create(
-      name: "American Legion",
-      role: "VSO",
-      url: "american-legion",
-      participant_id: "2452415"
-    )
-    Vso.create(
-      name: "Vietnam Veterans Of America",
-      role: "VSO",
-      url: "vietnam-veterans-of-america",
-      participant_id: "2452415"
-    )
-    Vso.create(
-      name: "Paralyzed Veterans Of America",
-      role: "VSO",
-      url: "pva",
-      participant_id: "2452383"
     )
   end
 
@@ -799,7 +816,6 @@ class SeedDB
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
     # create them in all envs
-    create_vsos
     create_annotations
     create_tags
     create_ama_appeals

@@ -28,6 +28,20 @@ const filterDropdownFix = css({
   }
 });
 
+const tableNumberStyling = css({
+  '& > tr:nth-child(even)': {
+    '& > td:nth-child(1)': {
+      width: '1%',
+      paddingRight: '0'
+    }
+  },
+  '& > tr:nth-child(odd)': {
+    '& > td:nth-child(1)': {
+      paddingLeft: '0'
+    }
+  }
+});
+
 const AvailableVeteransTable = ({ rows, columns }) => {
   if (_.isEmpty(rows)) {
     return <div>
@@ -45,16 +59,22 @@ const AvailableVeteransTable = ({ rows, columns }) => {
     rowObjects={rows}
     summary="scheduled-hearings-table"
     slowReRendersAreOk
+    bodyStyling={tableNumberStyling}
   />;
 };
 
-const UpcomingHearingsTable = ({ rows, columns }) => (
-  <Table
-    columns={columns}
-    rowObjects={rows}
-    summary="scheduled-hearings-table"
-    slowReRendersAreOk
-  />
+const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => (
+  <div>
+    <Link to={`/schedule/docket/${selectedHearingDay.id}`}>
+      {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }</Link>
+    <Table
+      columns={columns}
+      rowObjects={rows}
+      summary="scheduled-hearings-table"
+      slowReRendersAreOk
+      bodyStyling={tableNumberStyling}
+    />
+  </div>
 );
 
 export default class AssignHearingsTabs extends React.Component {
@@ -162,7 +182,8 @@ export default class AssignHearingsTabs extends React.Component {
       return filteredBy === appeal.attributes.veteranAvailableHearingLocations[0].facilityId;
     });
 
-    return _.map(filtered, (appeal) => ({
+    return _.map(filtered, (appeal, index) => ({
+      number: <span>{index + 1}.</span>,
       caseDetails: this.getCaseDetailsInformation(appeal),
       type: renderAppealType({
         caseType: appeal.attributes.caseType,
@@ -194,7 +215,8 @@ export default class AssignHearingsTabs extends React.Component {
       return filteredBy === hearing.location.facilityId;
     });
 
-    return _.map(filtered, (hearing) => ({
+    return _.map(filtered, (hearing, index) => ({
+      number: <span>{index + 1}.</span>,
       externalId: hearing.appealExternalId,
       caseDetails: this.appellantName(hearing),
       type: renderAppealType({
@@ -250,6 +272,11 @@ export default class AssignHearingsTabs extends React.Component {
     });
 
     return [{
+      header: '',
+      align: 'left',
+      valueName: 'number'
+    },
+    {
       header: 'Case details',
       align: 'left',
       valueName: 'caseDetails',
@@ -314,7 +341,8 @@ export default class AssignHearingsTabs extends React.Component {
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
 
-    const upcomingHearings = _.sortBy(selectedHearingDay.hearings, 'date');
+    const upcomingHearings = _.orderBy(Object.values(selectedHearingDay.hearings),
+      (hearing) => hearing.scheduledFor, 'asc');
     const amaAppeals = _.filter(appealsReadyForHearing, (appeal) => this.isAmaAppeal(appeal));
     const legacyAppeals = _.filter(appealsReadyForHearing, (appeal) => !this.isAmaAppeal(appeal));
 
@@ -329,6 +357,7 @@ export default class AssignHearingsTabs extends React.Component {
           {
             label: 'Scheduled Veterans',
             page: <UpcomingHearingsTable
+              selectedHearingDay={selectedHearingDay}
               rows={this.upcomingHearingsRows(upcomingHearings)}
               columns={this.tabWindowColumns(upcomingHearings, { tab: 'upcomingHearings' })}
             />
