@@ -23,10 +23,6 @@ class V2::AppealStatusSerializer < V2::AppealSerializer
     "other"
   end
 
-  attribute :aod do
-    # to be implemented
-  end
-
   attribute :docket do
     # to be implemented
   end
