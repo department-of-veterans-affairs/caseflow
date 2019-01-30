@@ -48,6 +48,7 @@
   "OTHER_REVIEWS_TABLE_EMPTY_TEXT": "This Veteran has no higher level reviews or supplemental claims at this time.",
   "OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED": "Establishment failed. Support notified.",
   "OTHER_REVIEWS_TABLE_ESTABLISHING": "Establishing...",
+  "OTHER_REVIEWS_TABLE_SYNCING_DECISIONS": "Syncing decisions...",
 
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "TASK_SNAPSHOT_ABOUT_BOX_TYPE_LABEL": "Type",
