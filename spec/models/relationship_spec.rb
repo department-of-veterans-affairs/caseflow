@@ -59,7 +59,7 @@ describe Relationship do
         context "when the parent is female" do
           let(:gender) { "F" }
 
-          it "returns the Father payee code" do
+          it "returns the Mother payee code" do
             expect(subject).to include(
               relationship_type: "Parent",
               default_payee_code: "60"
