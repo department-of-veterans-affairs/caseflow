@@ -284,6 +284,12 @@ class Task < ApplicationRecord
     }
   end
 
+  def add_ama_re_route(_user = nil)
+    {
+      redirect_to: "/dispositions",
+    }
+  end
+
   def complete_data(_user = nil)
     {
       modal_body: COPY::MARK_TASK_COMPLETE_COPY

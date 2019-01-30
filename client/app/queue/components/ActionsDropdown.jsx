@@ -43,20 +43,6 @@ type Props = Params & {|
 |};
 
 class ActionsDropdown extends React.PureComponent<Props> {
-  determineNextStep = (optionSelected, appeal) => {
-    let urlStringSuffix = optionSelected.value;
-
-    const nextRouteIsSpecialIssues = urlStringSuffix.includes('special_issues');
-    const [checkoutFlow] = urlStringSuffix.split('/');
-
-    // routing to dispositions instead of special issues if it's an AMA appeal
-    if (nextRouteIsSpecialIssues && !appeal.isLegacyAppeal) {
-
-      urlStringSuffix = `${checkoutFlow}/dispositions`;
-    }
-
-    return urlStringSuffix;
-  }
 
   changeRoute = (option: ?OptionType) => {
     const {
@@ -72,8 +58,9 @@ class ActionsDropdown extends React.PureComponent<Props> {
 
     this.props.stageAppeal(appealId);
     this.props.resetDecisionOptions();
-    // debugger;
-    const nextStep = this.determineNextStep(option, appeal);
+    const [checkoutFlow] = option.value && option.value.split('/');
+    const nextStep = _.get(option, 'data.redirect_to', null) && !appeal.isLegacyAppeal ?
+      `${checkoutFlow}${option.data.redirect_to}` : option.value;
 
     history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${nextStep}`);
   };
@@ -82,6 +69,8 @@ class ActionsDropdown extends React.PureComponent<Props> {
     if (!this.props.task) {
       return null;
     }
+
+    console.log(this.props.task);
 
     return <SearchableDropdown
       name={`start-checkout-flow-${this.props.appealId}-${this.props.task.uniqueId}`}

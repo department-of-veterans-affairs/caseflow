@@ -32,6 +32,12 @@ class LegacyTask
     }
   end
 
+  def add_ama_re_route(_user = nil)
+    {
+      redirect_to: "/dispositions",
+    }
+  end
+
   def assign_to_attorney_data(_user)
     {
       selected: nil,
