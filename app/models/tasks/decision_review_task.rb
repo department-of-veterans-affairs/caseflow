@@ -24,7 +24,7 @@ class DecisionReviewTask < GenericTask
     true
   end
 
-  def appeal_data
+  def appeal_ui_hash
     appeal.ui_hash
   end
 

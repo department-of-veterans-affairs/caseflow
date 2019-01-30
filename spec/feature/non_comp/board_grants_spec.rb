@@ -135,7 +135,7 @@ feature "NonComp Board Grant Task Page" do
 
     let(:vha_dispositions_url) { "decision_reviews/vha/tasks/#{in_progress_vha_task.id}" }
 
-    scenario "displays board grants page with correct dispositions", focus: true do
+    scenario "displays board grants page with correct dispositions" do
       # only include dispositions from request issues matching the benefit type
       # when this test executes, the nca business line with request issues already exists
 

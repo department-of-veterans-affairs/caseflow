@@ -30,7 +30,7 @@ describe BoardGrantEffectuationTask do
     end
   end
 
-  describe "#appeal_data" do
+  describe "#appeal_ui_hash" do
     let(:veteran) { create(:veteran) }
     let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
     let!(:education_business_line) { create(:business_line, url: "education") }
@@ -51,8 +51,8 @@ describe BoardGrantEffectuationTask do
       end
 
       it "only shows request issues relevant to business line" do
-        education_task_issues = education_task.appeal_data[:requestIssues]
-        insurance_task_issues = insurance_task.appeal_data[:requestIssues]
+        education_task_issues = education_task.appeal_ui_hash[:requestIssues]
+        insurance_task_issues = insurance_task.appeal_ui_hash[:requestIssues]
 
         expect(education_task_issues.length).to eq(1)
         expect(insurance_task_issues.length).to eq(1)
@@ -70,7 +70,7 @@ describe BoardGrantEffectuationTask do
       end
 
       it "shows all request issues" do
-        education_task_issues = education_task.appeal_data[:requestIssues]
+        education_task_issues = education_task.appeal_ui_hash[:requestIssues]
         expect(education_task_issues.length).to eq(2)
       end
     end
