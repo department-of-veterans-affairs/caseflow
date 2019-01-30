@@ -1,4 +1,6 @@
 class ScheduleHearingTask < GenericTask
+  after_update :update_location_in_vacols
+
   class << self
     def create_if_eligible(appeal)
       if appeal.is_a?(LegacyAppeal) && appeal.case_record.bfcurloc == "57" &&
@@ -38,8 +40,18 @@ class ScheduleHearingTask < GenericTask
     "Schedule hearing"
   end
 
+  def update_location_in_vacols
+    if saved_change_to_status? && appeal.is_a?(LegacyAppeal) && on_hold?
+      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+    end
+  end
+
   # We only want to take this off hold, not actually complete it, like the inherited method does
   def update_status_if_children_tasks_are_complete
+    if appeal.is_a?(LegacyAppeal)
+      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:schedule_hearing])
+    end
+
     return update!(status: :assigned) if on_hold?
   end
 
@@ -82,6 +94,8 @@ class ScheduleHearingTask < GenericTask
 
   def add_admin_action_data(_user)
     {
+      redirect_after: "/queue/appeals/#{appeal.external_id}",
+      message_detail: COPY::ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL,
       selected: nil,
       options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|
         { value: subclass.name, label: subclass.label }

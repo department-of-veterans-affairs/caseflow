@@ -2,12 +2,14 @@ require "rails_helper"
 
 RSpec.feature "Schedule Veteran For A Hearing" do
   let!(:current_user) do
-    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
     User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
   end
 
-  let!(:hearings_user) do
-    create(:hearings_management)
+  let(:other_user) { create(:user) }
+
+  before do
+    OrganizationsUser.add_user_to_organization(current_user, HearingsManagement.singleton)
+    OrganizationsUser.add_user_to_organization(other_user, HearingsManagement.singleton)
   end
 
   context "When creating Caseflow Central hearings" do
@@ -117,7 +119,60 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       )
     end
 
-    scenario "Schedule Veteran for a video hearing" do
+    scenario "Can create multiple admin actions and reassign them" do
+      visit "hearings/schedule/assign"
+      expect(page).to have_content("Regional Office")
+      click_dropdown(text: "Denver")
+      click_button("AMA Veterans Waiting")
+      click_on "Bob Smith"
+
+      # Case details screen
+      click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
+
+      # Admin action screen
+
+      # First admin action
+      expect(page).to have_content("Submit admin action")
+      click_dropdown(text: HearingAdminActionIncarceratedVeteranTask.label)
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 1"
+
+      # Second admin action
+      click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
+      within all('div[id^="action_"]', count: 2)[1] do
+        click_dropdown(text: HearingAdminActionContestedClaimantTask.label)
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 2"
+      end
+
+      click_on "Assign Action"
+      expect(page).to have_content("You have assigned 2 administrative actions")
+
+      within all("div", class: "Select", count: 2).first do
+        click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
+      end
+
+      click_on "Submit"
+
+      # Your queue
+      visit "/queue"
+      click_on "Bob Smith"
+
+      # Reassign
+      within find("tr", text: "BVATWARNER") do
+        click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label])
+      end
+
+      click_dropdown(text: other_user.full_name)
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Reassign"
+      click_on "Submit"
+
+      # Case should exist in other users' queue
+      User.authenticate!(user: other_user)
+      visit "/queue"
+
+      expect(page).to have_content("Bob Smith")
+    end
+
+    scenario "Schedule Veteran for a video hearing with admin actions that can be put on hold and completed" do
       # Do the first part of the test in the past so we can wait for our hold to complete.
       Timecop.travel(20.days.ago) do
         visit "hearings/schedule/assign"
@@ -125,7 +180,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown(text: "Denver")
         click_button("AMA Veterans Waiting")
         click_on "Bob Smith"
-        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
 
         # Case details screen
         click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
@@ -145,20 +199,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         # end
 
         click_on "Assign Action"
-
         expect(page).to have_content("You have assigned an administrative action")
 
-        # Temporary until we figure out a good way to redirect users to the right page
-        find("a", text: "Switch views").click
-        click_on "Hearings Management team"
-
-        # Hearing management queue
-        click_on "Bob Smith"
         click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
-
         click_on "Submit"
 
         # Your queue
+        visit "/queue"
         click_on "Bob Smith"
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_HOLD.to_h[:label])
 

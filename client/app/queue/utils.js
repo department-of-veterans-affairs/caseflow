@@ -1,4 +1,4 @@
-// @flow
+/* eslint-disable max-lines */
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
@@ -299,7 +299,8 @@ export const prepareClaimReviewForStore = (claimReviews: Array<Object>) => {
       caseflowVeteranId: claimReview.caseflow_veteran_id,
       claimantNames: claimReview.claimant_names,
       claimId: claimReview.claim_id,
-      endProducts: claimReview.end_products,
+      endProductStatuses: claimReview.end_product_status,
+      establishmentError: claimReview.establishment_error,
       reviewType: claimReview.review_type,
       veteranFileNumber: claimReview.veteran_file_number,
       veteranFullName: claimReview.veteran_full_name
@@ -476,6 +477,10 @@ export const taskIsOnHold = (task: Task) => {
 };
 
 export const taskActionData = (props: Object) => {
+  if (!props.task) {
+    return {};
+  }
+
   const relevantAction = props.task.availableActions.
     find((action) => props.history.location.pathname.endsWith(action.value));
 
@@ -483,6 +488,5 @@ export const taskActionData = (props: Object) => {
     return (relevantAction.data);
   }
 
-  // We should never get here since any task action the creates this modal should provide data.
-  throw new Error('Task action requires data');
+  return null;
 };
