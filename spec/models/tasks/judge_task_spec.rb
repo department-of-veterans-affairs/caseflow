@@ -76,6 +76,19 @@ describe JudgeTask do
           )
           
         end
+
+        it "returns the correct label" do
+          expect(JudgeDecisionReviewTask.new.label).to eq(
+            COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
+          )
+        end
+
+        it "returns the correct additional actions" do
+          expect(JudgeDecisionReviewTask.new.additional_available_actions(user)).to eq(
+            [ Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h,
+            Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
+          )
+        end
       end
     end
   end
