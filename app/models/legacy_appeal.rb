@@ -184,6 +184,14 @@ class LegacyAppeal < ApplicationRecord
     !!appellant_first_name
   end
 
+  def veteran_if_exists
+    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
+  end
+
+  delegate :closest_regional_office,
+           :available_hearing_locations,
+           to: :veteran_if_exists, allow_nil: true
+
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
@@ -201,8 +209,6 @@ class LegacyAppeal < ApplicationRecord
            :country,
            :age,
            :sex,
-           :closest_regional_office,
-           :available_hearing_locations,
            to: :veteran, prefix: true, allow_nil: true
 
   # NOTE: we cannot currently match end products to a specific appeal.
