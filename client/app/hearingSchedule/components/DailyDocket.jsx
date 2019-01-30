@@ -342,13 +342,12 @@ export default class DailyDocket extends React.Component {
   }
 
   getDailyDocketRows = (hearings, readOnly) => {
-    return _.orderBy(hearings, (hearing) => hearing.scheduledFor, 'asc').
-      map(hearings, (hearing, index) => ({
-        number: <b>{index + 1}.</b>,
-        appellantInformation: this.getAppellantInformation(hearing),
-        hearingTime: this.getHearingTime(hearing),
-        actions: this.getHearingActions(hearing, readOnly)
-      }));
+    return _.map(_.orderBy(hearings, (hearing) => hearing.scheduledFor, 'asc'), (hearing, index) => ({
+      number: <b>{index + 1}.</b>,
+      appellantInformation: this.getAppellantInformation(hearing),
+      hearingTime: this.getHearingTime(hearing),
+      actions: this.getHearingActions(hearing, readOnly)
+    }));
   }
 
   getRemoveHearingDayMessage = () => {
