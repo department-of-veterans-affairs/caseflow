@@ -1,7 +1,7 @@
 class HearingScheduleController < ApplicationController
   before_action :react_routed, :check_hearing_schedule_out_of_service
   before_action :verify_build_hearing_schedule_access, only: [:build_schedule_index]
-  before_action :verify_hearings_access, only: [:hearing_details_index]
+  before_action :verify_hearings_or_reader_access, only: [:hearing_details_index]
   before_action :verify_edit_hearing_schedule_access, except: [:hearing_details_index]
 
   def set_application
@@ -28,8 +28,8 @@ class HearingScheduleController < ApplicationController
     verify_authorized_roles("Edit HearSched", "Build HearSched")
   end
 
-  def verify_hearings_access
-    verify_authorized_roles("Hearing Prep", "Edit HearSched", "Build HearSched")
+  def verify_hearings_or_reader_access
+    verify_authorized_roles("Reader", "Hearing Prep", "Edit HearSched", "Build HearSched")
   end
 
   def check_hearing_schedule_out_of_service
