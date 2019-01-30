@@ -134,6 +134,10 @@ module Asyncable
     !!self[self.class.submitted_at_column]
   end
 
+  def submitted_not_processed?
+    submitted? && !processed?
+  end
+
   def sort_by_last_submitted_at
     self[self.class.last_submitted_at_column] || Time.zone.now
   end
