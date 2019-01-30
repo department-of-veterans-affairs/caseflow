@@ -100,6 +100,8 @@ class TableFilter extends React.PureComponent {
       column
     } = this.props;
 
+    console.log(column);
+
     const iconStyle = css({
       display: 'table-cell',
       paddingLeft: '1rem',
@@ -119,7 +121,7 @@ class TableFilter extends React.PureComponent {
           label={column.label}
           idPrefix={column.valueName}
           getRef={column.getFilterIconRef}
-          selected={column.isDropdownFilterOpen || column.filteredByList[column.columnName]}
+          selected={column.isDropdownFilterOpen || (column.filteredByList ? column.filteredByList[column.columnName] : column.isDropdownFilterOpen)}
           handleActivate={column.toggleDropdownFilterVisibility} />
 
         {column.isDropdownFilterOpen &&
