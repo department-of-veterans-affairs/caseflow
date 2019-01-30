@@ -69,6 +69,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         id: task.attributes.assigned_to.id,
+        isOrganization: task.attributes.assigned_to.is_organization,
         type: task.attributes.assigned_to.type
       },
       assignedBy: {

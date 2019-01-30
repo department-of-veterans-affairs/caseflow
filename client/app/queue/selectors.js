@@ -90,7 +90,10 @@ export const tasksWithAppealSelector = createSelector(
 export const tasksByOrganization = createSelector(
   [tasksWithAppealSelector, getActiveOrganizationId],
   (tasks: Array<TaskWithAppeal>, organizationId: string) =>
-    _.filter(tasks, (task) => (task.assignedTo.id === organizationId))
+    _.filter(tasks, (task) => (
+      task.assignedTo.id === organizationId &&
+      task.assignedTo.isOrganization
+    ))
 );
 
 export const taskById = createSelector(
