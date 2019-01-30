@@ -251,6 +251,8 @@ class EndProduct
     private
 
     def parse_claim_date(date)
+      return unless date
+
       Date.strptime(date, "%m/%d/%Y").in_time_zone
     end
   end
