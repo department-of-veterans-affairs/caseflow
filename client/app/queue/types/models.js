@@ -130,7 +130,9 @@ export type AppealDetail = {
   certificationDate: ?string,
   powerOfAttorney: ?PowerOfAttorney,
   caseflowVeteranId: ?string,
-  tasks: ?Array<Task>
+  tasks: ?Array<Task>,
+  veteranAvailableHearingLocations: ?Array<Object>,
+  veteranClosestRegionalOffice: ?string
 };
 
 export type AppealDetails = { [string]: AppealDetail };

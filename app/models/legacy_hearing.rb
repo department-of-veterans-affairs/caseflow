@@ -18,6 +18,10 @@ class LegacyHearing < ApplicationRecord
   belongs_to :user # the judge
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
+  has_one :hearing_location, as: :hearing
+
+  alias_attribute :location, :hearing_location
+  accepts_nested_attributes_for :hearing_location
 
   # this is used to cache appeal stream for hearings
   # when fetched intially.
@@ -38,7 +42,7 @@ class LegacyHearing < ApplicationRecord
     vacols_id
   end
 
-  def location
+  def request_type_location
     (request_type == "C") ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
   end
 
@@ -127,7 +131,6 @@ class LegacyHearing < ApplicationRecord
       appellant_middle_initial: appellant_middle_initial,
       appellant_last_name: appellant_last_name,
       appeal_vacols_id: appeal_vacols_id
-
     }
   end
 
@@ -148,6 +151,8 @@ class LegacyHearing < ApplicationRecord
     :veteran,  \
     :veteran_file_number, \
     :docket_name,
+    :veteran_closest_regional_office,
+    :veteran_available_hearing_locations,
     to: :appeal, allow_nil: true
 
   delegate :external_id, to: :appeal, prefix: true
@@ -166,6 +171,7 @@ class LegacyHearing < ApplicationRecord
         :master_record,
         :representative,
         :representative_name,
+        :regional_office_key,
         :hearing_day_id,
         :regional_office_name,
         :regional_office_timezone,
@@ -184,10 +190,13 @@ class LegacyHearing < ApplicationRecord
         :appellant_city,
         :appellant_state,
         :appellant_zip,
+        :location,
         :readable_location,
         :appeal_external_id,
         :external_id,
-        :veteran_file_number
+        :veteran_file_number,
+        :veteran_closest_regional_office,
+        :veteran_available_hearing_locations
       ],
       except: [:military_service, :vacols_id]
     ).merge(
@@ -225,8 +234,11 @@ class LegacyHearing < ApplicationRecord
     )
   end
 
-  def slot_new_hearing(parent_record_id, time, appeal)
-    HearingRepository.slot_new_hearing(parent_record_id, time, appeal)
+  def slot_new_hearing(parent_record_id, scheduled_time:, appeal:, hearing_location_attrs: nil)
+    HearingRepository.slot_new_hearing(parent_record_id,
+                                       scheduled_time: scheduled_time,
+                                       hearing_location_attrs: hearing_location_attrs,
+                                       appeal: appeal)
   end
 
   def appeals_ready_for_hearing
@@ -263,9 +275,9 @@ class LegacyHearing < ApplicationRecord
       user.nil? || (user.css_id != vacols_css_id)
     end
 
-    def assign_or_create_from_vacols_record(vacols_record, fetched_hearing = nil)
+    def assign_or_create_from_vacols_record(vacols_record, legacy_hearing: nil)
       transaction do
-        hearing = fetched_hearing ||
+        hearing = legacy_hearing ||
                   find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq)
 
         # update hearing if user is nil, it's likely when the record doesn't exist and is being created
