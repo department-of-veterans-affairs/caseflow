@@ -514,7 +514,14 @@ export const taskActionData = (props: Object) => {
 };
 
 export const userReadableColumnNames = {
-  'appeal.caseType': 'Case type',
+  'appeal.caseType': 'Case Type',
   'appeal.docketName': 'Docket Number',
   label: 'Task(s)'
+};
+
+export const userReadableDocketNameFilters = {
+  direct_review: 'Direct Review',
+  legacy: 'Legacy',
+  hearing: 'Hearing',
+  evidence: 'Evidence'
 };

@@ -284,7 +284,7 @@ export default class Table extends React.PureComponent {
     return <div>
       <FilterSummary
         filteredByList={this.state.filteredByList}
-        // alternateColumnNames={userReadableColumnNames}
+        alternateColumnNames={this.props.alternateColumnNames}
         clearFilteredByList={(newList) => this.updateFilteredByList(newList)} />
       <table
         id={id}
@@ -342,5 +342,5 @@ Table.propTypes = {
     sortColIdx: PropTypes.number,
     sortAscending: PropTypes.bool
   }),
-  filteredByList: PropTypes.object
+  userReadableColumnNames: PropTypes.object
 };

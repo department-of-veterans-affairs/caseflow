@@ -151,14 +151,14 @@ TableFilter.propTypes = {
   enableFilter: PropTypes.bool,
   tableData: PropTypes.array,
   columnName: PropTypes.string,
-  toggleDropdownFilterVisibility: PropTypes.func,
-  filteredByList: PropTypes.object,
-  updateFilters: PropTypes.func,
-  isDropdownFilterOpen: PropTypes.bool,
   anyFiltersAreSet: PropTypes.bool,
   customFilterLabels: PropTypes.object,
   label: PropTypes.string,
-  valueName: PropTypes.string
+  valueName: PropTypes.string,
+  toggleDropdownFilterVisibility: PropTypes.func,
+  filteredByList: PropTypes.object,
+  updateFilters: PropTypes.func,
+  isDropdownFilterOpen: PropTypes.bool
 };
 
 export default TableFilter;

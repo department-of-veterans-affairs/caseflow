@@ -15,7 +15,11 @@ import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
-import { renderAppealType, userReadableColumnNames } from '../utils';
+import {
+  renderAppealType,
+  userReadableColumnNames,
+  userReadableDocketNameFilters
+} from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
@@ -199,6 +203,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       enableFilter: true,
       tableData: this.props.tasks,
       columnName: 'appeal.docketName',
+      customFilterLabels: userReadableDocketNameFilters,
       anyFiltersAreSet: true,
       label: 'Filter by docket name',
       valueName: 'docketName',
@@ -363,6 +368,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
           rowObjects={tasks}
           getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
           defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
+          alternateColumnNames={userReadableColumnNames}
           rowClassNames={(task) =>
             this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />
       </div>
