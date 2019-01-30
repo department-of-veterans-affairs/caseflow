@@ -122,18 +122,18 @@ class AppealEvents
   end
 
   def hlr_decision_event
-    AppealEvent.new(type: :hlr_decision, date: )
+    AppealEvent.new(type: :hlr_decision, date: higher_level_review.decision_event_date)
   end
       
   def hlr_dta_error_event
-    AppealEvent.new(type: :hlr_dta_error, date: )
+    AppealEvent.new(type: :hlr_dta_error, date: dta_error_event_date)
   end
       
   def dta_decision_event
-    AppealEvent.new(type: :dta_decision, date: )
+    AppealEvent.new(type: :dtaDecision, date: dta_descision_event_date)
   end
 
   def hlr_other_close_event
-    AppealEvent.new(type: :hlr_other_close, date: )
+    AppealEvent.new(type: :hlr_other_close, date: other_close_event_date)
   end
 end
