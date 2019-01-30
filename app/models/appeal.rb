@@ -303,10 +303,6 @@ class Appeal < DecisionReview
     Array.wrap(appeal_status_id)
   end
 
-  def aod
-    advanced_on_docket
-  end
-
   def location
     # to be implemented
   end
