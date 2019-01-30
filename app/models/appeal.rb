@@ -304,7 +304,7 @@ class Appeal < DecisionReview
   end
 
   def aod
-    # to be implemented
+    advanced_on_docket
   end
 
   def location
