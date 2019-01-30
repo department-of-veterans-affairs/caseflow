@@ -48,8 +48,7 @@ class ActionsDropdown extends React.PureComponent<Props> {
     const {
       appealId,
       task,
-      history,
-      appeal
+      history
     } = this.props;
 
     if (!option) {
@@ -58,11 +57,9 @@ class ActionsDropdown extends React.PureComponent<Props> {
 
     this.props.stageAppeal(appealId);
     this.props.resetDecisionOptions();
-    const [checkoutFlow] = option.value && option.value.split('/');
-    const nextStep = _.get(option, 'data.redirect_to', null) && !appeal.isLegacyAppeal ?
-      `${checkoutFlow}${option.data.redirect_to}` : option.value;
+    console.log(option, 'the option');
 
-    history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${nextStep}`);
+    history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${option.value}`);
   };
 
   render = () => {
