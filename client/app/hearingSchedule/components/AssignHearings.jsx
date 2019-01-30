@@ -70,7 +70,7 @@ export default class AssignHearings extends React.Component {
       return selectedHearingDay.room;
     }
 
-    return '';
+    return ' ';
   };
 
   render() {

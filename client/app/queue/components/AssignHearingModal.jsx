@@ -159,7 +159,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   validateForm = () => {
     const {
-      selectedHearingDay, selectedHearingTime,
+      selectedHearingDay,
       selectedRegionalOffice
       // selectedHearingLocation
     } = this.props;
@@ -167,7 +167,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const invalid = {
       day: selectedHearingDay ? null : 'Please select a hearing day',
       regionalOffice: selectedRegionalOffice ? null : 'Please select a regional office',
-      time: selectedHearingTime ? null : 'Please pick a hearing time'
+      time: this.getHearingTime() ? null : 'Please pick a hearing time'
       // location: selectedHearingLocation ? null : 'Please select a hearing location'
     };
 
@@ -321,27 +321,14 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     return formatDateStringForApi(formattedDate);
   };
 
-
   getHearingTime = () => {
-    const { selectedHearingTime, selectedHearingDay, selectedOptionalTime } = this.props;
-    console.log(selectedHearingTime, selectedOptionalTime, hearingTime);
+    const { selectedHearingTime, selectedOptionalTime } = this.props;
+
     if (!selectedHearingTime && !selectedOptionalTime) {
       return null;
     }
 
     const hearingTime = selectedHearingTime === 'other' ? selectedOptionalTime : selectedHearingTime;
-
-    console.log(selectedHearingTime, selectedOptionalTime, hearingTime);
-    // const dateParts = selectedHearingDay.hearingDate.split('-');
-    // const year = parseInt(dateParts[0], 10);
-    // const month = parseInt(dateParts[1], 10) - 1;
-    // const day = parseInt(dateParts[2], 10);
-    // const timeParts = hearingTime.split(':');
-    // const hour = parseInt(timeParts[0], 10);
-
-    // const minute = parseInt(timeParts[1].split(' ')[0], 10);
-    // const hearingDate = new Date(year, month, day, hour, minute);
-    // return hearingDate;
 
     return {
       // eslint-disable-next-line id-length
