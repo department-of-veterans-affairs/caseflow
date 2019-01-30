@@ -921,7 +921,12 @@ describe EndProductEstablishment do
                 )
               end
 
-              it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared, Decisions sync failed. Support notified.") }
+              it do
+                is_expected.to eq(
+                  ep_code: "EP 037",
+                  ep_status: "Cleared, Decisions sync failed. Support notified."
+                )
+              end
             end
           end
         end
