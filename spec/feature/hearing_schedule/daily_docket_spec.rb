@@ -15,6 +15,14 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     end
 
     let!(:veteran) { create(:veteran, file_number: "123456789") }
+    let!(:hearing_location) do
+      create(:available_hearing_locations,
+             veteran_file_number: "123456789",
+             city: "Holdrege",
+             state: "NE",
+             distance: 0,
+             facility_type: "va_health_facility")
+    end
     let!(:vacols_case) { create(:case, bfcorlid: "123456789S") }
     let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
