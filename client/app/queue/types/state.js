@@ -102,7 +102,7 @@ export type QueueState = {|
   organizationId: ?number,
   organizations: Array<Object>,
   specialIssues: Object,
-  loadingAppealDetail: Object,
+  loadingAppealDetail: Object
 |};
 
 export type CommonComponentState = {|
