@@ -150,7 +150,7 @@ describe "Appeals API v2", type: :request do
              request_issues: [request_issue])
     end
 
-    let!(:task) { create(:task, :in_progress, type: RootTask.name, appeal: appeal)}
+    let!(:task) { create(:task, :in_progress, type: RootTask.name, appeal: appeal) }
 
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs, ssn|
