@@ -60,8 +60,11 @@ class SupplementalClaim < ClaimReview
 
   def decision_event_date
     if decision_issues.any?
-      end_product_establishments.any? ? decision_issues.first.approx_decision_date :
+      if end_product_establishments.any?
+        decision_issues.first.approx_decision_date
+      else
         decision_issues.first.promulgation_date
+      end
     end
   end
 
@@ -72,7 +75,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def events
-    @events ||= AppealEvents.new(appeal: self).sc_events
+    @events ||= AppealEvents.new(supplemental_claim: self).sc_events
   end
 
   private

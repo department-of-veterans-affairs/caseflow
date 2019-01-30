@@ -65,9 +65,12 @@ class HigherLevelReview < ClaimReview
   end
 
   def decision_event_date
-    if !active? && !dta_claim && decision_issues.any? 
-      end_product_establishments.any? ? decision_issues.first.approx_decision_date :
+    if !active? && !dta_claim && decision_issues.any?
+      if end_product_establishments.any?
+        decision_issues.first.approx_decision_date
+      else
         decision_issues.first.promulgation_date
+      end
     end
   end
 
@@ -90,7 +93,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def events
-    @events ||= AppealEvents.new(appeal: self).hlr_events
+    @events ||= AppealEvents.new(higher_level_review: self).hlr_events
   end
 
   private

@@ -40,6 +40,7 @@ class AppealEvents
       dta_decision_event,
       hlr_other_close_event
     ].flatten.uniq.select(&:valid?)
+  end
 
   private
 
@@ -106,34 +107,34 @@ class AppealEvents
   end
 
   def sc_request_event
-    AppealEvent.new(type: :sc_request, date: supplemental_claim.receipt_date
+    AppealEvent.new(type: :sc_request, date: supplemental_claim.try(:receipt_date))
   end
-      
+
   def sc_decision_event
     AppealEvent.new(type: :sc_decision, date: supplemental_claim.decision_event_date)
   end
-      
+
   def sc_other_close_event
-    AppealEvent.new(type: :sc_other_close, date: supplemental_claim.)
+    AppealEvent.new(type: :sc_other_close, date: supplemental_claim.other_close_event_date)
   end
 
   def hlr_request_event
-    AppealEvent.new(type: :hlr_request, date: higher_level_review.receipt_date)
+    AppealEvent.new(type: :hlr_request, date: higher_level_review.try(:receipt_date))
   end
 
   def hlr_decision_event
     AppealEvent.new(type: :hlr_decision, date: higher_level_review.decision_event_date)
   end
-      
+
   def hlr_dta_error_event
-    AppealEvent.new(type: :hlr_dta_error, date: dta_error_event_date)
+    AppealEvent.new(type: :hlr_dta_error, date: higher_level_review.dta_error_event_date)
   end
-      
+
   def dta_decision_event
-    AppealEvent.new(type: :dtaDecision, date: dta_descision_event_date)
+    AppealEvent.new(type: :dtaDecision, date: higher_level_review.dta_descision_event_date)
   end
 
   def hlr_other_close_event
-    AppealEvent.new(type: :hlr_other_close, date: other_close_event_date)
+    AppealEvent.new(type: :hlr_other_close, date: higher_level_review.other_close_event_date)
   end
 end
