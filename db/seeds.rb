@@ -90,7 +90,6 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
   end
 
-  # TODO: Add VSO tracking tasks here.
   def create_vso_users_and_tasks
     vso = Vso.create(
       name: "VSO",
