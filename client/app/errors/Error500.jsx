@@ -14,6 +14,13 @@ class Error500 extends React.PureComponent {
     { title: 'Switch User',
       link: '/test/users' }];
 
+    let detailedErrorMessage = null;
+    if (this.props.flashError) {
+      detailedErrorMessage = <React.Fragment>
+        <p>Error: {this.props.flashError}</p>
+      </React.Fragment>
+    }
+
     return <BrowserRouter>
       <div>
         <NavigationBar
@@ -28,6 +35,8 @@ class Error500 extends React.PureComponent {
         <AppFrame>
           <StatusMessage title="Something went wrong." type="alert">
              If you continue to see this page, please contact the help desk.
+
+             { detailedErrorMessage }
           </StatusMessage>
         </AppFrame>
         <Footer
