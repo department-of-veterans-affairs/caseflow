@@ -303,21 +303,18 @@ class Appeal < DecisionReview
     Array.wrap(appeal_status_id)
   end
 
-<<<<<<< HEAD
-=======
   def active_status?
-    active? || active_ep?
+    active? || active_ep? || active_remanded_claims?
   end
 
   def active_ep?
-    decision_document.end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
+    decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
   end
 
-  def aod
-    # to be implemented
+  def active_remanded_claims?
+    remand_supplemental_claims.any?(&:active?)
   end
 
->>>>>>> initial changes for active
   def location
     # to be implemented
   end
