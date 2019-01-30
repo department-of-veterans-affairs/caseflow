@@ -38,8 +38,8 @@ class TableFilter extends React.PureComponent {
   filterDropdownOptions = (tableDataByRow, columnName) => {
     let countByColumnName = _.countBy(tableDataByRow, columnName);
     let uniqueOptions = [];
-    const filtersForColumn = _.get(this.props.column.filteredByList, columnName);
-    const { customFilterLabels } = this.props.column;
+    const filtersForColumn = _.get(this.props.filteredByList, columnName);
+    const { customFilterLabels } = this.props;
 
     for (let key in countByColumnName) { // eslint-disable-line guard-for-in
       let displayText = `<<blank>> (${countByColumnName[key]})`;
@@ -68,7 +68,7 @@ class TableFilter extends React.PureComponent {
   }
 
   updateSelectedFilter = (value, columnName) => {
-    const { filteredByList } = this.props.column;
+    const { filteredByList } = this.props;
     const filtersForColumn = _.get(filteredByList, String(columnName));
     let newFilters = [];
 
@@ -83,21 +83,29 @@ class TableFilter extends React.PureComponent {
     }
 
     filteredByList[columnName] = newFilters;
-    this.props.column.updateFilters(filteredByList);
-    this.props.column.toggleDropdownFilterVisibility();
+    this.props.updateFilters(filteredByList);
+    this.props.toggleDropdownFilterVisibility();
   }
 
   clearFilteredByList = (columnName) => {
-    const oldList = this.props.column.filteredByList;
+    const oldList = this.props.filteredByList;
     let newList = _.set(oldList, columnName, []);
 
-    this.props.column.updateFilters(newList);
-    this.props.column.toggleDropdownFilterVisibility();
+    this.props.updateFilters(newList);
+    this.props.toggleDropdownFilterVisibility();
   }
 
   render() {
     const {
-      column
+      tableData,
+      columnName,
+      toggleDropdownFilterVisibility,
+      filteredByList,
+      isDropdownFilterOpen,
+      anyFiltersAreSet,
+      label,
+      valueName,
+      getFilterValues
     } = this.props;
 
     const iconStyle = css({
@@ -107,31 +115,31 @@ class TableFilter extends React.PureComponent {
       verticalAlign: 'middle'
     }, hover({ cursor: 'pointer' }));
 
-    const filterOptions = column.tableData && column.columnName ?
-      this.filterDropdownOptions(column.tableData, column.columnName) :
+    const filterOptions = tableData && columnName ?
+      this.filterDropdownOptions(tableData, columnName) :
       // Keeping the historical prop `getFilterValues` for backwards compatibility,
       // will remove this once all apps are using this new component.
-      column.getFilterValues;
+      getFilterValues;
 
     return (
       <span {...iconStyle}>
         <FilterIcon
-          label={column.label}
-          idPrefix={column.valueName}
-          getRef={column.getFilterIconRef}
-          selected={column.isDropdownFilterOpen || column.filteredByList[column.columnName]}
-          handleActivate={column.toggleDropdownFilterVisibility} />
+          label={label}
+          idPrefix={valueName}
+          getRef={this.props.getFilterIconRef}
+          selected={isDropdownFilterOpen || filteredByList[columnName]}
+          handleActivate={toggleDropdownFilterVisibility} />
 
-        {column.isDropdownFilterOpen &&
+        {isDropdownFilterOpen &&
           <QueueDropdownFilter
-            clearFilters={() => this.clearFilteredByList(column.columnName)}
-            name={column.valueName}
-            isClearEnabled={column.anyFiltersAreSet}
-            handleClose={column.toggleDropdownFilterVisibility}
+            clearFilters={() => this.clearFilteredByList(columnName)}
+            name={valueName}
+            isClearEnabled={anyFiltersAreSet}
+            handleClose={toggleDropdownFilterVisibility}
             addClearFiltersRow>
             <FilterOption
               options={filterOptions}
-              setSelectedValue={(value) => this.updateSelectedFilter(value, column.columnName)} />
+              setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
           </QueueDropdownFilter>
         }
       </span>
@@ -140,19 +148,17 @@ class TableFilter extends React.PureComponent {
 }
 
 TableFilter.propTypes = {
-  column: PropTypes.shape({
-    enableFilter: PropTypes.boolean,
-    tableData: PropTypes.array,
-    columnName: PropTypes.string,
-    toggleDropdownFilterVisibility: PropTypes.func,
-    filteredByList: PropTypes.object,
-    updateFilters: PropTypes.func,
-    isDropdownFilterOpen: PropTypes.boolean,
-    anyFiltersAreSet: PropTypes.boolean,
-    customFilterLabels: PropTypes.object,
-    label: PropTypes.string,
-    valueName: PropTypes.string
-  }).isRequired
+  enableFilter: PropTypes.bool,
+  tableData: PropTypes.array,
+  columnName: PropTypes.string,
+  toggleDropdownFilterVisibility: PropTypes.func,
+  filteredByList: PropTypes.object,
+  updateFilters: PropTypes.func,
+  isDropdownFilterOpen: PropTypes.bool,
+  anyFiltersAreSet: PropTypes.bool,
+  customFilterLabels: PropTypes.object,
+  label: PropTypes.string,
+  valueName: PropTypes.string
 };
 
 export default TableFilter;

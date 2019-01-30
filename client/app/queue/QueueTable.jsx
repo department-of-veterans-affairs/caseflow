@@ -70,7 +70,7 @@ const HeaderRow = (props) => {
         // Keeping the historical prop `getFilterValues` for backwards compatibility,
         // will remove this once all apps are using this new component.
         if (column.enableFilter || column.getFilterValues) {
-          filterIcon = <TableFilter column={column} />;
+          filterIcon = <TableFilter {...column} />;
         }
 
         const columnTitleContent = <span>{column.header || ''}</span>;
