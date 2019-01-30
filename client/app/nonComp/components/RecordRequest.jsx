@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Button from '../../components/Button';
-import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
+import { BOA_ADDRESS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import Checkbox from '../../components/Checkbox';
 
 class RecordRequestUnconnected extends React.PureComponent {
@@ -68,7 +68,10 @@ class RecordRequestUnconnected extends React.PureComponent {
             In order to decide that appeal, the Board will need the complete records from {businessLine}.
           </p>
           <p>
-            Please take necessary steps to send this record to the Board. Mail to
+            Please take necessary steps to send this record to the Board.
+          </p>
+          <p>
+            Mail to <strong>{BOA_ADDRESS}</strong>.
           </p>
         </div>
       </div>

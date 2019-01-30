@@ -64,13 +64,13 @@ class DecisionReviewsController < ApplicationController
   private
 
   def decision_date
-    return unless task.is_a? DecisionReviewTask
+    return unless task.instance_of? DecisionReviewTask
 
     Date.parse(allowed_params.require("decision_date")).to_datetime
   end
 
   def decision_issue_params
-    return unless task.is_a? DecisionReviewTask
+    return unless task.instance_of? DecisionReviewTask
 
     allowed_params.require("decision_issues").map do |decision_issue_param|
       decision_issue_param.permit(:request_issue_id, :disposition, :description)
@@ -107,9 +107,9 @@ class DecisionReviewsController < ApplicationController
       :decision_review_business_line_slug,
       :decision_review,
       :decision_date,
-      :decision_issues,
       :business_line_slug,
-      :task_id
+      :task_id,
+      decision_issues: [:description, :disposition, :request_issue_id]
     )
   end
 end
