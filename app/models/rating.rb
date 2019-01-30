@@ -47,6 +47,10 @@ class Rating
     end
   end
 
+  def pension?
+    associated_claims_data.any? { |ac| ac[:bnft_clm_tc].match(/PMC$/) }
+  end
+
   private
 
   def disability_codes(rating_profile)
