@@ -57,7 +57,6 @@ class ActionsDropdown extends React.PureComponent<Props> {
 
     this.props.stageAppeal(appealId);
     this.props.resetDecisionOptions();
-    console.log(option, 'the option');
 
     history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${option.value}`);
   };

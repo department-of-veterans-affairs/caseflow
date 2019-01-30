@@ -12,8 +12,13 @@ class AttorneyTask < Task
     end
 
     return [] if assigned_to != user
-    
-    [ama? ? Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h : Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h, Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
+
+    review_decision_label = if ama?
+                              Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h
+                            else
+                              Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
+                            end
+    [review_decision_label, Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
   end
 
   def timeline_title

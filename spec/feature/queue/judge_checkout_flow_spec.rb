@@ -51,7 +51,7 @@ RSpec.feature "Judge checkout flow" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
 
-      click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
+      click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
       # Request Issues screen
       click_on "Continue"
       expect(page).to have_content("Evaluate Decision")
@@ -115,7 +115,7 @@ RSpec.feature "Judge checkout flow" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
-        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
+        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.label)
 
         click_label "vamc"
 
@@ -125,7 +125,7 @@ RSpec.feature "Judge checkout flow" do
         click_on "Cancel"
         click_on "Yes, cancel"
 
-        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
+        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.label)
 
         # Vamc should still be checked
         expect(page).to have_field("vamc", checked: true, visible: false)
