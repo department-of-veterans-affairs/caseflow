@@ -58,8 +58,10 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
             'editedDisposition',
             'editedDate',
             'editedTime',
-            'edited',
-            'editedOptionalTime'
+            'editedOptionalTime',
+            'editedRegionalOffice',
+            'editedLocation',
+            'edited'
           ] }
       }
     });
@@ -89,6 +91,24 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
       hearings: {
         [action.payload.hearingId]: {
           editedDisposition: { $set: action.payload.disposition },
+          edited: { $set: true }
+        }
+      }
+    });
+  case ACTIONS.HEARING_LOCATION_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedLocation: { $set: action.payload.location },
+          edited: { $set: true }
+        }
+      }
+    });
+  case ACTIONS.HEARING_REGIONAL_OFFICE_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedRegionalOffice: { $set: action.payload.regionalOffice },
           edited: { $set: true }
         }
       }
