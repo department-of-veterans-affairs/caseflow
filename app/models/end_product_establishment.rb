@@ -357,7 +357,32 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def status
+    if committed?
+      ep = result(cached: true)
+      code = ep.claim_type_code.to_s + ep.modifier.to_s
+      status = ep.status_type&.to_s || status_type
+    else
+      code = ""
+
+      status = if source.try(:establishment_error)
+                 COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED
+               else
+                 COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
+               end
+    end
+
+    {
+      ep_code: code,
+      ep_status: status
+    }
+  end
+
   private
+
+  def status_type
+    EndProduct::STATUSES[synced_status] || synced_status
+  end
 
   # All records that create contentions should be an instance of ApplicationRecord with
   # a contention_reference_id column, and contention_text method
