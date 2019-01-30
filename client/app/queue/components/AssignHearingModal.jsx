@@ -91,6 +91,14 @@ type LocalState = {|
   invalid: Object
 |}
 
+const formStyling = css({
+  '& .cf-form-radio-option:not(:last-child)': {
+    display: 'inline-block',
+    marginRight: '25px'
+  },
+  marginBottom: 0
+});
+
 class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   constructor(props) {
     super(props);
@@ -316,13 +324,14 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
   getHearingTime = () => {
     const { selectedHearingTime, selectedHearingDay, selectedOptionalTime } = this.props;
-
-    if (!selectedHearingTime || !selectedOptionalTime) {
+    console.log(selectedHearingTime, selectedOptionalTime, hearingTime);
+    if (!selectedHearingTime && !selectedOptionalTime) {
       return null;
     }
 
     const hearingTime = selectedHearingTime === 'other' ? selectedOptionalTime : selectedHearingTime;
 
+    console.log(selectedHearingTime, selectedOptionalTime, hearingTime);
     // const dateParts = selectedHearingDay.hearingDate.split('-');
     // const year = parseInt(dateParts[0], 10);
     // const month = parseInt(dateParts[1], 10) - 1;
@@ -333,7 +342,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     // const minute = parseInt(timeParts[1].split(' ')[0], 10);
     // const hearingDate = new Date(year, month, day, hour, minute);
     // return hearingDate;
-    
+
     return {
       // eslint-disable-next-line id-length
       h: hearingTime.split(':')[0],
@@ -356,7 +365,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   render = () => {
     const {
       selectedHearingDay, selectedRegionalOffice, appeal,
-      selectedHearingTime, openHearing, selectedHearingLocation, 
+      selectedHearingTime, openHearing, selectedHearingLocation,
       selectedOptionalTime
     } = this.props;
 
@@ -373,7 +382,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     /* eslint-disable camelcase */
     return <React.Fragment>
-      <div {...fullWidth} {...css({ marginBottom: '0' })} >
+      <div {...fullWidth}>
         <p>
           Veteran Address<br />
           {address_line_1}<br />
@@ -405,14 +414,16 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           value={selectedHearingDay || initVals.hearingDate}
           validateValueOnMount
         />}
-        <RadioField
-          errorMessage={invalid.time}
-          name="time"
-          label="Time"
-          strongLabel
-          options={timeOptions}
-          onChange={this.props.onHearingTimeChange}
-          value={selectedHearingTime || initVals.hearingTime} />
+        <span {...formStyling}>
+          <RadioField
+            errorMessage={invalid.time}
+            name="time"
+            label="Time"
+            strongLabel
+            options={timeOptions}
+            onChange={this.props.onHearingTimeChange}
+            value={selectedHearingTime || initVals.hearingTime} />
+        </span>
         {selectedHearingTime === 'other' && <SearchableDropdown
           name="optionalTime"
           placeholder="Select a time"

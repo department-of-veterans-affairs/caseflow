@@ -62,13 +62,12 @@ export default class AssignHearings extends React.Component {
     this.props.onSelectedHearingDayChange(hearingDay);
   };
 
-  room = (hearingDay) => {
-    // St. Petersburg, FL
-    if (this.props.selectedRegionalOffice === 'RO17') {
-      return hearingDay.room;
-      // Winston-Salem, NC
-    } else if (this.props.selectedRegionalOffice === 'RO18') {
-      return hearingDay.room;
+  room = () => {
+    const { selectedHearingDay, selectedRegionalOffice } = this.props;
+
+    // St. Petersburg, FL or Winston-Salem, NC
+    if (selectedRegionalOffice === 'RO17' || selectedRegionalOffice === 'RO18') {
+      return selectedHearingDay.room;
     }
 
     return '';
