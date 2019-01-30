@@ -6,6 +6,8 @@ class DecisionIssue < ApplicationRecord
   validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
                               if: :appeal?, allow_nil: true
   validates :description, presence: true, if: :appeal?
+  validates :end_product_last_action_date, presence: true, unless: :appeal?
+
   has_many :request_decision_issues, dependent: :destroy
   has_many :request_issues, through: :request_decision_issues
   has_many :remand_reasons, dependent: :destroy

@@ -977,16 +977,6 @@ describe RequestIssue do
               expect(rating_request_issue.processed?).to eq(true)
             end
 
-            context "when end product last action date is nil" do
-              before do
-                end_product_establishment.result.last_action_date = nil
-              end
-
-              it "throws an error" do
-                expect { subject }.to raise_error(RequestIssue::NilEndProductLastActionDate)
-              end
-            end
-
             context "when decision issue with disposition and rating issue already exists" do
               let!(:preexisting_decision_issue) do
                 create(
