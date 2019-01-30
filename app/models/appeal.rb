@@ -267,6 +267,7 @@ class Appeal < DecisionReview
 
   def create_tasks_on_intake_success!
     RootTask.create_root_and_sub_tasks!(self)
+    create_business_line_tasks if request_issues.any?(&:requires_record_request_task?)
   end
 
   def establish!
@@ -331,6 +332,18 @@ class Appeal < DecisionReview
   end
 
   private
+
+  def create_business_line_tasks
+    request_issues.select(&:requires_record_request_task?).each do |req_issue|
+      business_line = req_issue.business_line
+      VeteranRecordRequest.create!(
+        parent: root_task,
+        appeal: self,
+        assigned_at: Time.zone.now,
+        assigned_to: business_line
+      )
+    end
+  end
 
   def bgs
     BGSService.new
