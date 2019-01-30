@@ -18,7 +18,8 @@ import type { Task, TaskWithAppeal, Appeals } from './types/models';
 import type { AttorneysOfJudge, AttorneyAppealsLoadingState, UiStateMessage, State } from './types/state';
 
 type Params = {|
-  match: Object
+  match: Object,
+  userId: string
 |};
 
 type Props = Params & {|
@@ -55,7 +56,7 @@ class AssignedCasesPage extends React.Component<Props> {
   render = () => {
     const props = this.props;
     const {
-      match, attorneysOfJudge, attorneyAppealsLoadingState, selectedTasks, success, error
+      match, attorneysOfJudge, attorneyAppealsLoadingState, selectedTasks, success, error, userId
     } = props;
     const { attorneyId } = match.params;
 
@@ -81,6 +82,7 @@ class AssignedCasesPage extends React.Component<Props> {
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
       <AssignWidget
         previousAssigneeId={attorneyId}
+        userId={userId}
         onTaskAssignment={(params) => props.reassignTasksToUser(params)}
         selectedTasks={selectedTasks} />
       <TaskTable
