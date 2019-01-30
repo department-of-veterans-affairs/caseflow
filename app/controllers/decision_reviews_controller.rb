@@ -40,15 +40,19 @@ class DecisionReviewsController < ApplicationController
   end
 
   def task
-    @task ||= DecisionReviewTask.find(task_id)
+    @task ||= Task.includes([:appeal, :assigned_to]).find(task_id)
   end
 
   def in_progress_tasks
-    apply_task_serializer(business_line.tasks.order(assigned_at: :desc).reject(&:completed?))
+    apply_task_serializer(
+      business_line.tasks.includes([:assigned_to, :appeal]).order(assigned_at: :desc).reject(&:completed?)
+    )
   end
 
   def completed_tasks
-    apply_task_serializer(business_line.tasks.order(completed_at: :desc).select(&:completed?))
+    apply_task_serializer(
+      business_line.tasks.includes([:assigned_to, :appeal]).order(completed_at: :desc).select(&:completed?)
+    )
   end
 
   def business_line

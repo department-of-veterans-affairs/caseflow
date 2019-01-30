@@ -130,7 +130,9 @@ export type AppealDetail = {
   certificationDate: ?string,
   powerOfAttorney: ?PowerOfAttorney,
   caseflowVeteranId: ?string,
-  tasks: ?Array<Task>
+  tasks: ?Array<Task>,
+  veteranAvailableHearingLocations: ?Array<Object>,
+  veteranClosestRegionalOffice: ?string
 };
 
 export type AppealDetails = { [string]: AppealDetail };
@@ -169,7 +171,7 @@ export type ClaimReview = {
   caseflowVeteranId: string,
   claimId: number,
   claimantNames: ?Array<string>,
-  endProducts: ?Array<Object>,
+  endProductStatuses: ?Array<Object>,
   reviewType: string,
   veteranFileNumber: string,
   veteranFullName: string

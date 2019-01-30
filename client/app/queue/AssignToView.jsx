@@ -105,7 +105,10 @@ class AssignToView extends React.Component<Props, ViewState> {
       }
     };
 
-    const successMsg = { title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
+    const successMsg = {
+      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
+      detail: taskActionData(this.props).message_detail
+    };
 
     if (isReassignAction) {
       return this.reassignTask();
@@ -214,7 +217,8 @@ const propsToText = (props) => {
   const title = (props.assigneeAlreadySelected && action) ?
     sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label) :
     COPY.ASSIGN_TASK_TITLE;
-  const pathAfterSubmit = props.returnToCaseDetails ? `/queue/appeals/${props.appealId}` : '/queue';
+  const actionData = taskActionData(props);
+  const pathAfterSubmit = (actionData && actionData.redirect_after) || '/queue';
 
   return {
     title,
