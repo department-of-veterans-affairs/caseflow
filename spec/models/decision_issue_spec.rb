@@ -23,6 +23,7 @@ describe DecisionIssue do
   let(:description) { "description" }
   let(:disposition) { "allowed" }
   let(:decision_text) { "decision text" }
+  let(:decision_date) { 10.days.ago }
   let(:decision_review) { create(:supplemental_claim) }
 
   context "#save" do
@@ -123,7 +124,6 @@ describe DecisionIssue do
 
     context "when the decision review is an appeal" do
       let(:decision_review) { create(:appeal) }
-      let(:decision_date) { 10.days.ago }
       let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
 
       it "returns the decision document's decision date" do
@@ -207,6 +207,7 @@ describe DecisionIssue do
 
       context "when no supplemental claim matches decision issue" do
         let(:decision_review) { create(:appeal, number_of_claimants: 1) }
+        let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
 
         # Test that this supplemental claim does not match
         let!(:another_supplemental_claim) do
