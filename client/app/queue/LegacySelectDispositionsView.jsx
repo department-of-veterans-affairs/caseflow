@@ -80,16 +80,16 @@ class LegacySelectDispositionsView extends React.PureComponent {
   getPrevStepUrl = () => {
     const {
       appealId,
-      taskId,
-      checkoutFlow,
+      // taskId,
+      // checkoutFlow,
       appeal
     } = this.props;
 
     if (appeal.isLegacyAppeal) {
       return `/queue/appeals/${appealId}`;
     }
-
-    return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
+    // we will never be in a state where we go back to special_issues from here, right?
+    // return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
   }
 
   componentWillUnmount = () => this.props.hideSuccessMessage();

@@ -468,8 +468,7 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       appealDetails: {
         [action.payload.appealId]: {
           $merge: {
-            isLegacy: action.payload.isLegacy,
-            specialIssuesRedirect: action.payload.isLegacy ? null : 'draft_decision/dispositions'
+            isLegacy: action.payload.isLegacy
           }
         }
       }

@@ -43,12 +43,19 @@ type Props = Params & {|
 |};
 
 class ActionsDropdown extends React.PureComponent<Props> {
-  handleSpecialIssuesRoute = (routeString, reDirect) => {
-    if (routeString.includes('special_issues') && reDirect) {
-      return reDirect;
+  determineNextStep = (optionSelected, appeal) => {
+    let urlStringSuffix = optionSelected.value;
+
+    const nextRouteIsSpecialIssues = urlStringSuffix.includes('special_issues');
+    const [checkoutFlow] = urlStringSuffix.split('/');
+
+    // routing to dispositions instead of special issues if it's an AMA appeal
+    if (nextRouteIsSpecialIssues && !appeal.isLegacyAppeal) {
+
+      urlStringSuffix = `${checkoutFlow}/dispositions`;
     }
 
-    return routeString;
+    return urlStringSuffix;
   }
 
   changeRoute = (option: ?OptionType) => {
@@ -56,7 +63,7 @@ class ActionsDropdown extends React.PureComponent<Props> {
       appealId,
       task,
       history,
-      specialIssuesRedirect
+      appeal
     } = this.props;
 
     if (!option) {
@@ -65,9 +72,10 @@ class ActionsDropdown extends React.PureComponent<Props> {
 
     this.props.stageAppeal(appealId);
     this.props.resetDecisionOptions();
-    const nextRoute = this.handleSpecialIssuesRoute(option.value, specialIssuesRedirect);
+    // debugger;
+    const nextStep = this.determineNextStep(option, appeal);
 
-    history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${nextRoute}`);
+    history.push(`/queue/appeals/${appealId}/tasks/${task.uniqueId}/${nextStep}`);
   };
 
   render = () => {
@@ -88,8 +96,7 @@ class ActionsDropdown extends React.PureComponent<Props> {
 const mapStateToProps = (state: State, ownProps) => ({
   appeal: state.queue.appeals[ownProps.appealId],
   changedAppeals: _.keys(state.queue.stagedChanges.appeals),
-  featureToggles: state.ui.featureToggles,
-  specialIssuesRedirect: state.queue.appealDetails[ownProps.appealId].specialIssuesRedirect
+  featureToggles: state.ui.featureToggles
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
