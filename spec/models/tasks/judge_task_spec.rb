@@ -53,9 +53,8 @@ describe JudgeTask do
       context "in the review phase" do
         let(:subject_task) do
           FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge, parent: FactoryBot.create(:root_task))
-          
         end
-        
+
         it "returns the dispatch action" do
           expect(subject).to eq(
             [
@@ -64,7 +63,6 @@ describe JudgeTask do
               Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
-          
         end
         it "returns the correct dispatch action" do
           expect(subject).not_to eq(
@@ -74,7 +72,6 @@ describe JudgeTask do
               Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
-          
         end
 
         it "returns the correct label" do
@@ -85,8 +82,8 @@ describe JudgeTask do
 
         it "returns the correct additional actions" do
           expect(JudgeDecisionReviewTask.new.additional_available_actions(user)).to eq(
-            [ Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h,
-            Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
+            [Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h,
+             Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h]
           )
         end
       end
