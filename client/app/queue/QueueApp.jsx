@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable no-debugger */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -73,7 +74,7 @@ type Props = {|
   canEditAod: Boolean,
   featureToggles: Object,
   organizations: Array<Object>,
-  appealDetails: Object,
+  appeals: Object,
   // Action creators
   setCanEditAod: typeof setCanEditAod,
   setFeatureToggles: typeof setFeatureToggles,
@@ -146,14 +147,14 @@ class QueueApp extends React.PureComponent<Props> {
   }
 
   routedSelectSpecialIssues = (props) => {
-
+    // debugger;
     const {
       appealId,
       checkoutFlow,
       taskId
     } = props.match.params;
 
-    if (this.props.appealDetails[appealId].isLegacy) {
+    if (this.props.appeals[appealId].isLegacyAppeal) {
       return <SpecialIssueLoadingScreen appealExternalId={appealId}>
         <SelectSpecialIssuesView
           appealId={appealId}
@@ -439,7 +440,7 @@ QueueApp.propTypes = {
 
 const mapStateToProps = (state: State) => ({
   reviewActionType: state.queue.stagedChanges.taskDecision.type,
-  appealDetails: state.queue.appealDetails
+  appeals: state.queue.appeals
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

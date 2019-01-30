@@ -39,7 +39,7 @@ type Props = Params & {|
   resetDecisionOptions: typeof resetDecisionOptions,
   // withrouter
   history: Object,
-  specialIssuesRedirect: string
+
 |};
 
 class ActionsDropdown extends React.PureComponent<Props> {

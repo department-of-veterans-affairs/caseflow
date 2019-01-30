@@ -18,7 +18,7 @@ import CaseTitleDetails from './CaseTitleDetails';
 import TaskSnapshot from './TaskSnapshot';
 import CaseDetailsIssueList from './components/CaseDetailsIssueList';
 import StickyNavContentArea from './StickyNavContentArea';
-import { resetErrorMessages, resetSuccessMessages, setHearingDay, setAppealType } from './uiReducer/uiActions';
+import { resetErrorMessages, resetSuccessMessages, setHearingDay } from './uiReducer/uiActions';
 import CaseTimeline from './CaseTimeline';
 import { getQueryParams } from '../util/QueryParamsUtil';
 
@@ -55,7 +55,6 @@ class CaseDetailsView extends React.PureComponent {
     this.props.resetErrorMessages();
 
     const { hearingDate, regionalOffice, hearingTime } = getQueryParams(window.location.search);
-    const { appeal, appealId } = this.props;
 
     if (hearingDate && regionalOffice) {
       this.props.setHearingDay({
@@ -64,7 +63,6 @@ class CaseDetailsView extends React.PureComponent {
         regionalOffice
       });
     }
-    this.props.setAppealType(appeal.isLegacyAppeal, appealId);
   }
 
   render = () => {
@@ -142,8 +140,7 @@ const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     resetErrorMessages,
     resetSuccessMessages,
-    setHearingDay,
-    setAppealType
+    setHearingDay
   }, dispatch)
 );
 
