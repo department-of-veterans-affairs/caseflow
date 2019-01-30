@@ -26,12 +26,12 @@ class BoardGrantEffectuationTask < DecisionReviewTask
   private
 
   def request_issues_by_benefit_type
-    request_issues = appeal.request_issues
+    appeal.request_issues
       .select { |issue| issue.benefit_type == business_line.url }
   end
 
   def business_line
-    business_line = assigned_to.becomes(BusinessLine)
+    assigned_to.becomes(BusinessLine)
   end
 
   def validate_task

@@ -24,9 +24,7 @@ class DecisionReviewTask < GenericTask
     true
   end
 
-  def appeal_ui_hash
-    appeal.ui_hash
-  end
+  delegate :ui_hash, to: :appeal, prefix: true
 
   private
 
