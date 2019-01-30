@@ -11,7 +11,7 @@ FactoryBot.define do
       type "Bva"
     end
 
-    factory :business_line do
+    factory :business_line, class: BusinessLine do
       type "BusinessLine"
     end
 
