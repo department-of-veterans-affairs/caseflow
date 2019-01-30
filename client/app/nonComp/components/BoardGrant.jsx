@@ -84,6 +84,8 @@ class BoardGrantUnconnected extends React.PureComponent {
       </React.Fragment>;
     }
 
+    // note that this mapping has to be decision issues to request issues.
+    // Appeals only show request issues that are filtered by the selected business line
     const requestIssuesWithDecisionIssues = formatRequestIssuesWithDecisionIssues(
       appeal.requestIssues, appeal.decisionIssues).
       filter((requestIssue) =>

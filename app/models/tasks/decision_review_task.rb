@@ -24,6 +24,10 @@ class DecisionReviewTask < GenericTask
     true
   end
 
+  def appeal_data
+    appeal.ui_hash
+  end
+
   private
 
   def validate_task(decision_issue_params)
