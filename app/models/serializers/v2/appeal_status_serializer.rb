@@ -6,6 +6,7 @@ class V2::AppealStatusSerializer < V2::AppealSerializer
   end
 
   attribute :linked_review_ids, key: :appeal_ids
+  attribute :advanced_on_docket, key: :aod
 
   attribute :type do
     "original"
@@ -21,10 +22,6 @@ class V2::AppealStatusSerializer < V2::AppealSerializer
 
   attribute :aoj do
     "other"
-  end
-
-  attribute :aod do
-    # to be implemented
   end
 
   attribute :docket do

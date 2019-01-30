@@ -35,6 +35,7 @@ describe DecisionReview do
     )
   end
   let(:appeal) { create(:appeal) }
+  let!(:decision_document) { create(:decision_document, decision_date: profile_date + 3.days, appeal: appeal) }
   let!(:decision_issues) do
     [
       create(:decision_issue,
@@ -67,7 +68,6 @@ describe DecisionReview do
              rating_issue_reference_id: "appeal123",
              decision_text: "appeal decision issue",
              benefit_type: higher_level_review.benefit_type,
-             profile_date: profile_date + 3.days,
              description: "test",
              decision_review: appeal)
     ]
@@ -161,11 +161,11 @@ describe DecisionReview do
 
     context "when the issue is from an Appeal that is not outcoded" do
       let(:outcoded_appeal) { create(:appeal, :outcoded, veteran: veteran, receipt_date: receipt_date) }
+      let!(:outcoded_decision_doc) { create(:decision_document, decision_date: profile_date, appeal: outcoded_appeal) }
 
       let!(:active_appeal_decision_issue) do
         create(:decision_issue,
                decision_review: appeal,
-               profile_date: profile_date,
                benefit_type: "compensation",
                decision_text: "my appeal isn't outcoded yet",
                description: "active appeal issue",
@@ -175,7 +175,6 @@ describe DecisionReview do
       let!(:outcoded_appeal_decision_issue) do
         create(:decision_issue,
                decision_review: outcoded_appeal,
-               profile_date: profile_date,
                benefit_type: "compensation",
                decision_text: "my appeal is outcoded",
                description: "completed appeal issue",
