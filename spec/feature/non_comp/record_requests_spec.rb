@@ -12,7 +12,7 @@ feature "NonComp Record Request Page" do
 
   def submit_form
     find("label[for=isSent]").click
-    click_on "Complete"
+    click_on "Confirm"
   end
 
   let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
@@ -47,7 +47,7 @@ feature "NonComp Record Request Page" do
   scenario "completes task" do
     visit task_url
 
-    expect(page).to have_button("Complete", disabled: true)
+    expect(page).to have_button("Confirm", disabled: true)
     expect(page).to have_content("Non-Comp Org")
     expect(page).to have_content(veteran.name)
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
@@ -70,7 +70,7 @@ feature "NonComp Record Request Page" do
     expect(page).to have_content("Request to send Veteran record to the Board")
     expect(page).to have_current_path("/#{task_url}")
     expect(page).not_to have_css("[id='isSent'][disabled]")
-    expect(page).not_to have_button("Complete")
+    expect(page).not_to have_button("Confirm")
   end
 
   context "when there is an error saving" do

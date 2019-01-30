@@ -49,7 +49,7 @@ class RecordRequestUnconnected extends React.PureComponent {
           <Button className="usa-button"
             name="submit-update"
             loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
-            disabled={!this.state.isSent} onClick={this.handleSave}>Complete</Button>
+            disabled={!this.state.isSent} onClick={this.handleSave}>Confirm</Button>
         </div>
       </React.Fragment>;
     }
