@@ -142,7 +142,7 @@ class HearingDetails extends React.Component {
     const {
       veteranFirstName,
       veteranLastName,
-      vbmsId
+      veteranFileNumber
     } = this.props.hearing;
 
     const { hearingDetailsForm, transcriptionDetailsForm } = this.props;
@@ -164,7 +164,7 @@ class HearingDetails extends React.Component {
         <div {...inputFix}>
           <div {...row}>
             <h1 className="cf-margin-bottom-0">{`${veteranFirstName} ${veteranLastName}`}</h1>
-            <div>Veteran ID: <CopyTextButton text={vbmsId} /></div>
+            <div>Veteran ID: <CopyTextButton text={veteranFileNumber} /></div>
           </div>
 
           <div className="cf-help-divider" />
