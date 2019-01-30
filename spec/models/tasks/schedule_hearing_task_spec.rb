@@ -5,7 +5,11 @@ describe ScheduleHearingTask do
     RequestStore[:current_user] = hearings_user
   end
 
-  let(:vacols_case) { FactoryBot.create(:case) }
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  let(:vacols_case) { FactoryBot.create(:case, bfcurloc: "57") }
   let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
   let!(:hearings_user) { create(:hearings_coordinator) }
   let(:staff) { create(:staff, sdomainid: "BVATWARNER", slogid: "TWARNER") }
@@ -31,7 +35,7 @@ describe ScheduleHearingTask do
       }
     end
 
-    subject { ScheduleHearingTask.create_from_params(params, hearings_user) }
+    subject { ScheduleHearingTask.create_if_eligible(appeal) }
 
     it "should create a task of type ScheduleHearingTask" do
       expect(subject.type).to eq(ScheduleHearingTask.name)
@@ -39,189 +43,14 @@ describe ScheduleHearingTask do
       expect(subject.status).to eq("assigned")
     end
 
-    context "the root task is not a legacy task" do
-      let(:appeal) { create :appeal }
-      let(:root_task_appeal_type) { Appeal.name }
-
-      it "raises an ActionForbiddenError" do
-        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
-      end
+    it "yields the correct location based on hearing type" do
+      expect(subject.location_based_on_hearing_type(LegacyHearing::CO_HEARING))
+        .to eq(LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing])
     end
 
-    context "the root task has an on hold ScheduleHearingTask child" do
-      let!(:on_hold_task) { create(:schedule_hearing_task, parent: root_task, status: Constants.TASK_STATUSES.on_hold) }
-
-      it "raises an ActionForbiddenError" do
-        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
-      end
-    end
-  end
-
-  describe "Add and update a schedule hearing task with a new business payload" do
-    let!(:hearing_day) do
-      create(:case_hearing, hearing_date: test_hearing_date_vacols, hearing_type: "C")
-    end
-    let(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
-    let(:params) do
-      {
-        type: ScheduleHearingTask.name,
-        action: "Assign Hearing",
-        appeal: appeal,
-        assigned_to_type: "User",
-        assigned_to_id: hearings_user.id,
-        parent_id: root_task.id,
-        business_payloads: {
-          description: "test",
-          values: {
-            "regional_office": "RO13",
-            "hearing_date": "2018-10-25",
-            "hearing_time": "8:00"
-          }
-        }
-      }
-    end
-    let(:update_params) do
-      {
-        status: "completed",
-        business_payloads: {
-          description: "Update",
-          values: {
-            "regional_office_value": "RO13",
-            "hearing_pkseq": hearing_day.id,
-            "hearing_time": {
-              "h": "09",
-              "m": "00",
-              "offset": "-0500"
-            },
-            "hearing_type": "Video"
-          }
-        }
-      }
-    end
-
-    it "should create a task of type ScheduleHearingTask" do
-      hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
-      updated_task = hearing_task.update_from_params(update_params, hearings_user)
-
-      expect(updated_task[0].type).to eq(ScheduleHearingTask.name)
-      expect(updated_task[0].appeal_type).to eq(LegacyAppeal.name)
-      expect(updated_task[0].status).to eq("completed")
-    end
-  end
-
-  describe "A Central Office hearing should be updated with vacols_id and appeal placed in location 36" do
-    let!(:hearing_day) do
-      create(:hearing_day, scheduled_for: test_hearing_date_vacols)
-    end
-    let!(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
-    let!(:params) do
-      {
-        type: ScheduleHearingTask.name,
-        action: "Assign Hearing",
-        appeal: appeal,
-        assigned_to_type: "User",
-        assigned_to_id: hearings_user.id,
-        parent_id: root_task.id,
-        business_payloads: {
-          description: "test",
-          values: {
-            "regional_office_value": "RO13",
-            "hearing_date": "2018-11-02T09:00:00.000-05:00",
-            "hearing_type": "Central"
-          }
-        }
-      }
-    end
-    let!(:update_params) do
-      {
-        status: "completed",
-        business_payloads: {
-          description: "Update",
-          values: {
-            "regional_office_value": "RO13",
-            "hearing_time": {
-              "h": "09",
-              "m": "00",
-              "offset": "-0500"
-            },
-            "hearing_location": {
-              "facility_id": "vba_301"
-            },
-            "hearing_type": "Central",
-            "hearing_pkseq": hearing_day.id
-          }
-        }
-      }
-    end
-
-    it "should create a task of type ScheduleHearingTask" do
-      hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
-      hearing_task.update_from_params(update_params, hearings_user)
-      updated_hearing = VACOLS::CaseHearing.first
-
-      expect(updated_hearing.folder_nr).to eq(appeal.vacols_id)
-      expect(updated_hearing.hearing_date.to_date).to eq(hearing_day.scheduled_for)
-      expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing]
-
-      expect(LegacyHearing.first.location.facility_id).to eq("vba_301")
-    end
-  end
-
-  describe "A Video hearing should be created and appeal placed in location 38" do
-    let(:hearing) { FactoryBot.create(:case_hearing, hearing_date: test_hearing_date_vacols, hearing_type: "C") }
-    let(:root_task) { FactoryBot.create(:root_task, appeal_type: "LegacyAppeal", appeal: appeal) }
-    let(:params) do
-      {
-        type: ScheduleHearingTask.name,
-        action: "Assign Hearing",
-        appeal: appeal,
-        assigned_to_type: "User",
-        assigned_to_id: hearings_user.id,
-        parent_id: root_task.id,
-        business_payloads: {
-          description: "test",
-          values: {
-            "regional_office_value": "RO13",
-            "hearing_date": "2018-11-02T09:00:00.000-05:00",
-            "hearing_type": "Video"
-          }
-        }
-      }
-    end
-    let(:update_params) do
-      {
-        status: "completed",
-        business_payloads: {
-          description: "Update",
-          values: {
-            "regional_office_value": "RO13",
-            "hearing_pkseq": hearing.hearing_pkseq,
-            "hearing_time": {
-              "h": "09",
-              "m": "00",
-              "offset": "-0500"
-            },
-            "hearing_location": {
-              "facility_id": "vba_301"
-            },
-            "hearing_type": "Video"
-          }
-        }
-      }
-    end
-
-    it "should create a task of type ScheduleHearingTask, a Vacols Hearing, and a Legacy Hearing" do
-      hearing_task = ScheduleHearingTask.create_from_params(params, hearings_user)
-      hearing_task.update_from_params(update_params, hearings_user)
-      created_hearing = VACOLS::CaseHearing.find_by(hearing_type: "V",
-                                                    folder_nr: appeal.vacols_id)
-
-      expect(created_hearing.vdkey).to eq(hearing.hearing_pkseq.to_s)
-      expect(created_hearing.hearing_date).to eq(hearing.hearing_date)
-      expect(created_hearing.folder_nr).to eq(appeal.vacols_id)
-      expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing]
-
-      expect(LegacyHearing.first.location.facility_id).to eq("vba_301")
+    it "yields the correct location based on hearing type" do
+      expect(subject.location_based_on_hearing_type(LegacyHearing::VIDEO_HEARING))
+        .to eq(LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing])
     end
   end
 
