@@ -1,5 +1,5 @@
 // @flow
-/* eslint-disable no-debugger */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -58,7 +58,6 @@ import COPY from '../../COPY.json';
 import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
-import type { State } from './types/state';
 
 type Props = {|
   userDisplayName: string,
@@ -74,7 +73,6 @@ type Props = {|
   canEditAod: Boolean,
   featureToggles: Object,
   organizations: Array<Object>,
-  appeals: Object,
   // Action creators
   setCanEditAod: typeof setCanEditAod,
   setFeatureToggles: typeof setFeatureToggles,
@@ -147,24 +145,20 @@ class QueueApp extends React.PureComponent<Props> {
   }
 
   routedSelectSpecialIssues = (props) => {
-    // debugger;
+
     const {
       appealId,
       checkoutFlow,
       taskId
     } = props.match.params;
 
-    if (this.props.appeals[appealId].isLegacyAppeal) {
-      return <SpecialIssueLoadingScreen appealExternalId={appealId}>
-        <SelectSpecialIssuesView
-          appealId={appealId}
-          taskId={taskId}
-          prevStep={`/queue/appeals/${appealId}`}
-          nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`} />
-      </SpecialIssueLoadingScreen>;
-    }
-
-    return this.routedSelectDispositions(props);
+    return <SpecialIssueLoadingScreen appealExternalId={appealId}>
+      <SelectSpecialIssuesView
+        appealId={appealId}
+        taskId={taskId}
+        prevStep={`/queue/appeals/${appealId}`}
+        nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`} />
+    </SpecialIssueLoadingScreen>;
 
   }
 
@@ -439,8 +433,7 @@ QueueApp.propTypes = {
 };
 
 const mapStateToProps = (state: State) => ({
-  reviewActionType: state.queue.stagedChanges.taskDecision.type,
-  appeals: state.queue.appeals
+  reviewActionType: state.queue.stagedChanges.taskDecision.type
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
