@@ -513,9 +513,10 @@ class SeedDB
     FactoryBot.create(:root_task, appeal: appeal)
   end
 
-  def create_task_at_judge_assignment(appeal, judge)
+  def create_task_at_judge_assignment(appeal, judge, assigned_at = Time.zone.yesterday)
     FactoryBot.create(:ama_judge_task,
                       assigned_to: judge,
+                      assigned_at: assigned_at,
                       appeal: appeal,
                       parent: create_root_task(appeal))
   end
@@ -650,7 +651,7 @@ class SeedDB
     colocated = User.find_by(css_id: "BVALSPORER")
     vso = Organization.find_by(name: "American Legion")
 
-    create_task_at_judge_assignment(@ama_appeals[0], judge)
+    create_task_at_judge_assignment(@ama_appeals[0], judge, 35.days.ago)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
     create_task_at_judge_assignment(@ama_appeals[2], judge)
     create_task_at_judge_assignment(@ama_appeals[3], judge)
@@ -663,6 +664,12 @@ class SeedDB
     create_task_at_judge_assignment(@ama_appeals[8], judge)
     create_task_at_judge_review(@ama_appeals[8], judge, attorney)
     create_task_at_colocated(@ama_appeals[8], judge, attorney, colocated)
+
+    9.times do
+      appeal = FactoryBot.create(:appeal)
+      FactoryBot.create(:root_task, appeal: appeal)
+      create_task_at_judge_assignment(appeal, judge, Time.zone.today)
+    end
 
     FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
 
