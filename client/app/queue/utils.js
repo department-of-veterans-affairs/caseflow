@@ -224,6 +224,19 @@ export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) =>
     disposition: hearing.disposition
   }));
 
+const prepareAppealAvailableHearingLocationsForStore = (appeal: { attributes: Object }) => appeal.attributes.
+  veteran_available_hearing_locations.map((ahl) => ({
+    name: ahl.name,
+    address: ahl.address,
+    city: ahl.city,
+    state: ahl.state,
+    distance: ahl.distance,
+    facilityId: ahl.facility_id,
+    facilityType: ahl.facility_type,
+    classification: ahl.classification,
+    zipCode: ahl.zip_code
+  }));
+
 export const prepareAppealForStore =
   (appeals: Array<Object>):
     { appeals: BasicAppeals, appealDetails: AppealDetails } => {
@@ -268,6 +281,8 @@ export const prepareAppealForStore =
         veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
         veteranGender: appeal.attributes.veteran_gender,
         veteranAddress: appeal.attributes.veteran_address,
+        veteranClosestRegionalOffice: appeal.attributes.veteran_closest_regional_office,
+        veteranAvailableHearingLocations: prepareAppealAvailableHearingLocationsForStore(appeal),
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
         decisionDate: appeal.attributes.decision_date,
