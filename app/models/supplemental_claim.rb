@@ -46,6 +46,7 @@ class SupplementalClaim < ClaimReview
 
   def status_hash
     # need to implement. returns the details object for the status
+    { type: fetch_status }
   end
 
   def alerts
@@ -105,5 +106,13 @@ class SupplementalClaim < ClaimReview
 
   def remanded_decision_issues
     decision_review_remanded.decision_issues.remanded.where(benefit_type: benefit_type)
+  end
+
+  def fetch_status
+    if active?
+      :sc_recieved
+    else
+      decision_issues.empty? ? :sc_closed : :sc_decision
+    end
   end
 end

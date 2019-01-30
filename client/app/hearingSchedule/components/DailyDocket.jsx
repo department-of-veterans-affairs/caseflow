@@ -276,24 +276,25 @@ export default class DailyDocket extends React.Component {
     let dailyDocketRows = [];
     let count = 0;
 
-    _.forEach(hearings, (hearing) => {
-      count += 1;
-      dailyDocketRows.push({
-        number: <b>{count}.</b>,
-        appellantInformation: this.getAppellantInformation(hearing),
-        hearingTime: this.getHearingTime(hearing),
-        disposition: this.getDispositionDropdown(hearing, readOnly),
-        hearingLocation: this.getHearingLocationDropdown(hearing),
-        hearingDay: this.getHearingDayDropdown(hearing, readOnly)
-      }, {
-        number: null,
-        appellantInformation: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
-        hearingTime: <div>{hearing.currentIssueCount} issues</div>,
-        disposition: this.getNotesField(hearing),
-        hearingLocation: null,
-        hearingDay: this.getSaveButton(hearing)
+    _.orderBy(hearings, (hearing) => hearing.scheduledFor, 'asc').
+      forEach((hearing) => {
+        count += 1;
+        dailyDocketRows.push({
+          number: <b>{count}.</b>,
+          appellantInformation: this.getAppellantInformation(hearing),
+          hearingTime: this.getHearingTime(hearing),
+          disposition: this.getDispositionDropdown(hearing, readOnly),
+          hearingLocation: this.getHearingLocationDropdown(hearing),
+          hearingDay: this.getHearingDayDropdown(hearing, readOnly)
+        }, {
+          number: null,
+          appellantInformation: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
+          hearingTime: <div>{hearing.currentIssueCount} issues</div>,
+          disposition: this.getNotesField(hearing),
+          hearingLocation: null,
+          hearingDay: this.getSaveButton(hearing)
+        });
       });
-    });
 
     return dailyDocketRows;
   };
@@ -443,10 +444,10 @@ export default class DailyDocket extends React.Component {
             {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
           </Button>
           }
-          {this.props.notes &&
+          {this.props.dailyDocket.notes &&
           <span {...notesTitleStyling}>
             <br /><strong>Notes: </strong>
-            <br />{this.props.notes}
+            <br />{this.props.dailyDocket.notes}
           </span>
           }
         </div>

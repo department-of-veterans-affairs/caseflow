@@ -49,6 +49,14 @@ class LegacyTask
     action
   end
 
+  def hide_from_case_timeline
+    false
+  end
+
+  def hide_from_task_snapshot
+    false
+  end
+
   def serializer_class
     ::WorkQueue::LegacyTaskSerializer
   end

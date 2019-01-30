@@ -90,6 +90,8 @@ export type Task = {
   },
   availableActions: Array<{ label?: string, value: string, data: ?Object }>,
   taskBusinessPayloads: Array<{description: string, values: Object}>,
+  hideFromCaseTimeline: boolean,
+  hideFromTaskSnapshot: boolean
 };
 
 export type Tasks = { [string]: Task };
@@ -167,7 +169,7 @@ export type ClaimReview = {
   caseflowVeteranId: string,
   claimId: number,
   claimantNames: ?Array<string>,
-  endProducts: ?Array<Object>,
+  endProductStatuses: ?Array<Object>,
   reviewType: string,
   veteranFileNumber: string,
   veteranFullName: string
