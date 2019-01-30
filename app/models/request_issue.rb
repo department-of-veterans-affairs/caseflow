@@ -418,6 +418,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def create_decision_issues
+    # TODO: we can probably remove this error, we've learned the issue was from date formatting
     fail NilEndProductLastActionDate, id unless end_product_establishment.result.last_action_date
 
     if rating?
