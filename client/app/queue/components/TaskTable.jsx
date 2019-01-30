@@ -6,7 +6,6 @@ import moment from 'moment';
 import pluralize from 'pluralize';
 import { bindActionCreators } from 'redux';
 
-import FilterSummary from '../../components/FilterSummary';
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
@@ -15,7 +14,7 @@ import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 
-import { setSelectionOfTaskOfUser, updateFilteredByList } from '../QueueActions';
+import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { renderAppealType, userReadableColumnNames } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
@@ -56,9 +55,7 @@ type Params = {|
 
 type Props = Params & {|
   setSelectionOfTaskOfUser: Function,
-  updateFilteredByList: Function,
   isTaskAssignedToUserSelected?: Object,
-  filteredByList: Object,
   userIsVsoEmployee: boolean,
   userRole: string,
   defaultSortIdx: number
@@ -134,8 +131,6 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       enableFilter: true,
       tableData: this.props.tasks,
       columnName: 'label',
-      filteredByList: this.props.filteredByList,
-      updateFilters: (newList: Object) => this.props.updateFilteredByList(newList),
       anyFiltersAreSet: true,
       customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
       label: 'Filter by task',
@@ -171,8 +166,6 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       enableFilter: true,
       tableData: this.props.tasks,
       columnName: 'appeal.caseType',
-      filteredByList: this.props.filteredByList,
-      updateFilters: (newList: Object) => this.props.updateFilteredByList(newList),
       anyFiltersAreSet: true,
       label: 'Filter by type',
       valueName: 'caseType',
@@ -206,8 +199,6 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       enableFilter: true,
       tableData: this.props.tasks,
       columnName: 'appeal.docketName',
-      filteredByList: this.props.filteredByList,
-      updateFilters: (newList: Object) => this.props.updateFilteredByList(newList),
       anyFiltersAreSet: true,
       label: 'Filter by docket name',
       valueName: 'docketName',
@@ -362,50 +353,16 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
-  filterTableData = (data: Array<Object>) => {
-    const { filteredByList } = this.props;
-    const filteredData = _.clone(data);
-
-    // Only filter the data if filters have been selected
-    if (!_.isEmpty(filteredByList)) {
-      for (const columnName in filteredByList) {
-        // If there are no filters for this columnName,
-        // continue to the next columnName
-        if (_.isEmpty(filteredByList[columnName])) {
-          continue; // eslint-disable-line no-continue
-        }
-
-        for (const key in data) {
-          // If this data point does not match a filter in this columnName,
-          // remove the data point from `filteredData`
-          if (!filteredByList[columnName].includes(_.get(data[key], columnName))) {
-            _.pull(filteredData, _.find(filteredData, ['uniqueId', data[key].uniqueId]));
-          }
-        }
-      }
-    }
-
-    return filteredData;
-  }
-
   render = () => {
-    let { tasks } = this.props;
-    const { filteredByList } = this.props;
-
-    tasks = this.filterTableData(tasks);
+    const { tasks } = this.props;
 
     return (
       <div>
-        <FilterSummary
-          filteredByList={filteredByList}
-          alternateColumnNames={userReadableColumnNames}
-          clearFilteredByList={(newList) => this.props.updateFilteredByList(newList)} />
         <QueueTable
           columns={this.getQueueColumns}
           rowObjects={tasks}
           getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
           defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
-          filteredByList={this.props.filteredByList}
           rowClassNames={(task) =>
             this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />
       </div>
@@ -415,15 +372,13 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
-  filteredByList: state.queue.filteredByList,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   userRole: state.ui.userRole
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    setSelectionOfTaskOfUser,
-    updateFilteredByList
+    setSelectionOfTaskOfUser
   }, dispatch)
 );
 

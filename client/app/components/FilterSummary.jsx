@@ -15,8 +15,8 @@ const FilterSummary = ({ filteredByList, alternateColumnNames, clearFilteredByLi
       // as there could still bea key in the filteredByList object pointing to an empty array.
       if (filteredByList[filter].length > 0) {
         const filterContent = (<span
-          key={filter}> {alternateColumnNames[filter]} ({filteredByList[filter].length})</span>
-        );
+          key={filter}> {alternateColumnNames ? alternateColumnNames[filter] : filter} ({filteredByList[filter].length})
+        </span>);
 
         filterListContent = filterListContent.concat(filterContent);
       }

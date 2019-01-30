@@ -7,6 +7,7 @@ import _ from 'lodash';
 import Tooltip from '../components/Tooltip';
 import { DoubleArrow } from '../components/RenderFunctions';
 import TableFilter from '../components/TableFilter';
+import FilterSummary from '../components/FilterSummary';
 import { COLORS } from '../constants/AppConstants';
 
 /**
@@ -73,7 +74,9 @@ const HeaderRow = (props) => {
           filterIcon = <TableFilter
             {...column}
             toggleDropdownFilterVisibility={(columnName) => props.toggleDropdownFilterVisibility(columnName)}
-            isDropdownFilterOpen={props.isDropdownFilterOpen[column.columnName]} />;
+            isDropdownFilterOpen={props.isDropdownFilterOpen[column.columnName]}
+            updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
+            filteredByList={props.filteredByList} />;
         }
 
         const columnTitleContent = <span>{column.header || ''}</span>;
@@ -218,6 +221,36 @@ export default class Table extends React.PureComponent {
     this.setState({ newState });
   };
 
+  updateFilteredByList = (newList) => {
+    this.setState({ filteredByList: newList });
+  };
+
+  filterTableData = (data: Array<Object>) => {
+    const { filteredByList } = this.state;
+    const filteredData = _.clone(data);
+
+    // Only filter the data if filters have been selected
+    if (!_.isEmpty(filteredByList)) {
+      for (const columnName in filteredByList) {
+        // If there are no filters for this columnName,
+        // continue to the next columnName
+        if (_.isEmpty(filteredByList[columnName])) {
+          continue; // eslint-disable-line no-continue
+        }
+
+        for (const key in data) {
+          // If this data point does not match a filter in this columnName,
+          // remove the data point from `filteredData`
+          if (!filteredByList[columnName].includes(_.get(data[key], columnName))) {
+            _.pull(filteredData, _.find(filteredData, ['uniqueId', data[key].uniqueId]));
+          }
+        }
+      }
+    }
+
+    return filteredData;
+  };
+
   render() {
     const {
       columns,
@@ -234,7 +267,9 @@ export default class Table extends React.PureComponent {
       styling,
       bodyStyling
     } = this.props;
-    const rowObjects = this.sortRowObjects();
+    let rowObjects = this.sortRowObjects();
+
+    rowObjects = this.filterTableData(rowObjects);
 
     let keyGetter = getKeyForRow;
 
@@ -246,36 +281,44 @@ export default class Table extends React.PureComponent {
       }
     }
 
-    return <table
-      id={id}
-      className={`usa-table-borderless ${this.props.className}`}
-      summary={summary}
-      {...styling} >
+    return <div>
+      <FilterSummary
+        filteredByList={this.state.filteredByList}
+        // alternateColumnNames={userReadableColumnNames}
+        clearFilteredByList={(newList) => this.updateFilteredByList(newList)} />
+      <table
+        id={id}
+        className={`usa-table-borderless ${this.props.className}`}
+        summary={summary}
+        {...styling} >
 
-      { caption && <caption className="usa-sr-only">{ caption }</caption> }
+        { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
-      <HeaderRow
-        columns={columns}
-        headerClassName={headerClassName}
-        setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
-          sortColIdx: colIdx,
-          sortAscending: ascending
-        })}
-        toggleDropdownFilterVisibility={this.toggleDropdownFilterVisibility}
-        isDropdownFilterOpen={this.state.areDropdownFiltersOpen}
-        {...this.state} />
-      <BodyRows
-        id={tbodyId}
-        tbodyRef={tbodyRef}
-        columns={columns}
-        getKeyForRow={keyGetter}
-        rowObjects={rowObjects}
-        bodyClassName={bodyClassName}
-        rowClassNames={rowClassNames}
-        bodyStyling={bodyStyling}
-        {...this.state} />
-      <FooterRow columns={columns} />
-    </table>;
+        <HeaderRow
+          columns={columns}
+          headerClassName={headerClassName}
+          setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
+            sortColIdx: colIdx,
+            sortAscending: ascending
+          })}
+          toggleDropdownFilterVisibility={this.toggleDropdownFilterVisibility}
+          isDropdownFilterOpen={this.state.areDropdownFiltersOpen}
+          updateFilteredByList={this.updateFilteredByList}
+          filteredByList={this.state.filteredByList}
+          {...this.state} />
+        <BodyRows
+          id={tbodyId}
+          tbodyRef={tbodyRef}
+          columns={columns}
+          getKeyForRow={keyGetter}
+          rowObjects={rowObjects}
+          bodyClassName={bodyClassName}
+          rowClassNames={rowClassNames}
+          bodyStyling={bodyStyling}
+          {...this.state} />
+        <FooterRow columns={columns} />
+      </table>
+    </div>;
   }
 }
 

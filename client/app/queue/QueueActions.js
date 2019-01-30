@@ -67,15 +67,6 @@ export const onReceiveAmaTasks = (amaTasks: Array<Object>) => ({
   }
 });
 
-export const updateFilteredByList = (newList: Object) => (dispatch: Dispatch) => {
-  dispatch({
-    type: ACTIONS.UPDATE_FILTERED_BY_LIST,
-    payload: {
-      newList
-    }
-  });
-};
-
 export const fetchJudges = () => (dispatch: Dispatch) => {
   ApiUtil.get('/users?role=Judge').then((response) => {
     const resp = JSON.parse(response.text);
