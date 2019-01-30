@@ -13,6 +13,7 @@ import {
   setSelectedAssignee,
   setSelectedAssigneeSecondary
 } from '../uiReducer/uiActions';
+import { requestDistribution } from '../QueueActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -48,6 +49,8 @@ type Props = Params & {|
   selectedAssigneeSecondary: string,
   attorneys: Attorneys,
   savePending: boolean,
+  featureToggles: Object,
+  distributionLoading: boolean,
   // Action creators
   setSelectedAssignee: typeof setSelectedAssignee,
   setSelectedAssigneeSecondary: typeof setSelectedAssigneeSecondary,
@@ -56,7 +59,8 @@ type Props = Params & {|
   showSuccessMessage: typeof showSuccessMessage,
   resetSuccessMessages: typeof resetSuccessMessages,
   setSavePending: typeof setSavePending,
-  resetSaveState: typeof resetSaveState
+  resetSaveState: typeof resetSaveState,
+  requestDistribution: typeof requestDistribution
 |};
 
 class AssignWidget extends React.PureComponent<Props> {
@@ -133,6 +137,12 @@ class AssignWidget extends React.PureComponent<Props> {
       });
   }
 
+  requestDistributionSubmit = () => {
+    this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
+    this.props.requestDistribution(this.props.userId);
+  }
+
   render = () => {
     const {
       attorneysOfJudge,
@@ -140,7 +150,9 @@ class AssignWidget extends React.PureComponent<Props> {
       selectedAssigneeSecondary,
       attorneys,
       selectedTasks,
-      savePending
+      savePending,
+      distributionLoading,
+      featureToggles
     } = this.props;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
@@ -201,22 +213,29 @@ class AssignWidget extends React.PureComponent<Props> {
               casePlural: pluralize('case', selectedTasks.length) })}
           loading={savePending}
           loadingText={COPY.ASSIGN_WIDGET_LOADING} /> }
+        {!this.props.isModal && featureToggles.automatic_case_distribution &&
+          <Button
+            name="Request cases"
+            onClick={this.requestDistributionSubmit}
+            loading={distributionLoading}
+            loadingText="Requesting cases&hellip;"
+          />
+        }
       </div>
     </React.Fragment>;
   }
 }
 
 const mapStateToProps = (state: State) => {
-  const { attorneysOfJudge, attorneys } = state.queue;
-  const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
+  const { attorneysOfJudge, attorneys, pendingDistribution } = state.queue;
+  const { selectedAssignee, selectedAssigneeSecondary, featureToggles } = state.ui;
   const { savePending } = state.ui.saveState;
-  const { featureToggles } = state.ui.featureToggles;
 
   return {
     attorneysOfJudge,
     selectedAssignee,
     selectedAssigneeSecondary,
-    attorneys,
+    attorneys,distributionLoading: pendingDistribution !== null,
     savePending,
     featureToggles
   };
@@ -230,7 +249,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage,
   resetErrorMessages,
   showSuccessMessage,
-  resetSuccessMessages
+  resetSuccessMessages,
+  requestDistribution
 }, dispatch);
 
 export default (connect(
