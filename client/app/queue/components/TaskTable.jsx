@@ -15,7 +15,7 @@ import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 
-import { setSelectionOfTaskOfUser, toggleDropdownFilterVisibility, updateFilteredByList } from '../QueueActions';
+import { setSelectionOfTaskOfUser, updateFilteredByList } from '../QueueActions';
 import { renderAppealType, userReadableColumnNames } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
@@ -56,10 +56,8 @@ type Params = {|
 
 type Props = Params & {|
   setSelectionOfTaskOfUser: Function,
-  toggleDropdownFilterVisibility: Function,
   updateFilteredByList: Function,
   isTaskAssignedToUserSelected?: Object,
-  isDropdownFilterOpen: Object,
   filteredByList: Object,
   userIsVsoEmployee: boolean,
   userRole: string,
@@ -136,10 +134,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       enableFilter: true,
       tableData: this.props.tasks,
       columnName: 'label',
-      toggleDropdownFilterVisibility: () => this.props.toggleDropdownFilterVisibility('label'),
       filteredByList: this.props.filteredByList,
       updateFilters: (newList: Object) => this.props.updateFilteredByList(newList),
-      isDropdownFilterOpen: this.props.isDropdownFilterOpen.label,
       anyFiltersAreSet: true,
       customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
       label: 'Filter by task',
@@ -175,10 +171,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       enableFilter: true,
       tableData: this.props.tasks,
       columnName: 'appeal.caseType',
-      toggleDropdownFilterVisibility: () => this.props.toggleDropdownFilterVisibility('caseType'),
       filteredByList: this.props.filteredByList,
       updateFilters: (newList: Object) => this.props.updateFilteredByList(newList),
-      isDropdownFilterOpen: this.props.isDropdownFilterOpen.caseType,
       anyFiltersAreSet: true,
       label: 'Filter by type',
       valueName: 'caseType',
@@ -212,10 +206,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       enableFilter: true,
       tableData: this.props.tasks,
       columnName: 'appeal.docketName',
-      toggleDropdownFilterVisibility: () => this.props.toggleDropdownFilterVisibility('docketName'),
       filteredByList: this.props.filteredByList,
       updateFilters: (newList: Object) => this.props.updateFilteredByList(newList),
-      isDropdownFilterOpen: this.props.isDropdownFilterOpen.docketName,
       anyFiltersAreSet: true,
       label: 'Filter by docket name',
       valueName: 'docketName',
@@ -423,7 +415,6 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
-  isDropdownFilterOpen: state.queue.isDropdownFilterOpen,
   filteredByList: state.queue.filteredByList,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   userRole: state.ui.userRole
@@ -432,7 +423,6 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     setSelectionOfTaskOfUser,
-    toggleDropdownFilterVisibility,
     updateFilteredByList
   }, dispatch)
 );

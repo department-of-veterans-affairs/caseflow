@@ -84,7 +84,7 @@ class TableFilter extends React.PureComponent {
 
     filteredByList[columnName] = newFilters;
     this.props.updateFilters(filteredByList);
-    this.props.toggleDropdownFilterVisibility();
+    this.props.toggleDropdownFilterVisibility(columnName);
   }
 
   clearFilteredByList = (columnName) => {
@@ -92,7 +92,7 @@ class TableFilter extends React.PureComponent {
     let newList = _.set(oldList, columnName, []);
 
     this.props.updateFilters(newList);
-    this.props.toggleDropdownFilterVisibility();
+    this.props.toggleDropdownFilterVisibility(columnName);
   }
 
   render() {
@@ -128,14 +128,14 @@ class TableFilter extends React.PureComponent {
           idPrefix={valueName}
           getRef={this.props.getFilterIconRef}
           selected={isDropdownFilterOpen || filteredByList[columnName]}
-          handleActivate={toggleDropdownFilterVisibility} />
+          handleActivate={() => toggleDropdownFilterVisibility(columnName)} />
 
         {isDropdownFilterOpen &&
           <QueueDropdownFilter
             clearFilters={() => this.clearFilteredByList(columnName)}
             name={valueName}
             isClearEnabled={anyFiltersAreSet}
-            handleClose={toggleDropdownFilterVisibility}
+            handleClose={() => toggleDropdownFilterVisibility(columnName)}
             addClearFiltersRow>
             <FilterOption
               options={filterOptions}

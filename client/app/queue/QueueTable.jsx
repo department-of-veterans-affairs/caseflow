@@ -70,7 +70,10 @@ const HeaderRow = (props) => {
         // Keeping the historical prop `getFilterValues` for backwards compatibility,
         // will remove this once all apps are using this new component.
         if (column.enableFilter || column.getFilterValues) {
-          filterIcon = <TableFilter {...column} />;
+          filterIcon = <TableFilter
+            {...column}
+            toggleDropdownFilterVisibility={(columnName) => props.toggleDropdownFilterVisibility(columnName)}
+            isDropdownFilterOpen={props.isDropdownFilterOpen[column.columnName]} />;
         }
 
         const columnTitleContent = <span>{column.header || ''}</span>;
@@ -172,7 +175,9 @@ export default class Table extends React.PureComponent {
     const { defaultSort } = this.props;
     const state = {
       sortAscending: true,
-      sortColIdx: null
+      sortColIdx: null,
+      areDropdownFiltersOpen: {},
+      filteredByList: {}
     };
 
     if (defaultSort) {
@@ -202,6 +207,16 @@ export default class Table extends React.PureComponent {
       sortAscending ? 'asc' : 'desc'
     );
   }
+
+  toggleDropdownFilterVisibility = (columnName) => {
+    const originalValue = _.get(this.state, [
+      'areDropdownFiltersOpen', columnName
+    ], false);
+    const newState = Object.assign({}, this.state);
+
+    newState.areDropdownFiltersOpen[columnName] = !originalValue;
+    this.setState({ newState });
+  };
 
   render() {
     const {
@@ -246,6 +261,8 @@ export default class Table extends React.PureComponent {
           sortColIdx: colIdx,
           sortAscending: ascending
         })}
+        toggleDropdownFilterVisibility={this.toggleDropdownFilterVisibility}
+        isDropdownFilterOpen={this.state.areDropdownFiltersOpen}
         {...this.state} />
       <BodyRows
         id={tbodyId}

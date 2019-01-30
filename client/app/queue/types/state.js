@@ -77,8 +77,6 @@ export type IsTaskAssignedToUserSelected = {[string]: ?{[string]: ?boolean}};
 
 export type NewDocsForAppeal = {[string]: {docs?: Array<Object>, error?: Object, loading: boolean}}
 
-export type IsDropdownFilterOpen = {[string]: ?boolean};
-
 export type QueueState = {|
   judges: UsersById,
   tasks: Tasks,
@@ -105,7 +103,6 @@ export type QueueState = {|
   organizations: Array<Object>,
   specialIssues: Object,
   loadingAppealDetail: Object,
-  isDropdownFilterOpen: IsDropdownFilterOpen
 |};
 
 export type CommonComponentState = {|

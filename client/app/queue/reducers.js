@@ -43,7 +43,6 @@ export const initialState = {
   attorneysOfJudge: [],
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
-  isDropdownFilterOpen: {},
   filteredByList: {},
   pendingDistribution: null,
   attorneys: {},
@@ -354,19 +353,6 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
       isTaskAssignedToUserSelected: {
         [action.payload.userId]: {
           $set: isTaskSelected
-        }
-      }
-    });
-  }
-  case ACTIONS.TOGGLE_FILTER_DROPDOWN: {
-    const originalValue = _.get(state, [
-      'isDropdownFilterOpen', action.payload.columnName
-    ], false);
-
-    return update(state, {
-      isDropdownFilterOpen: {
-        [action.payload.columnName]: {
-          $set: !originalValue
         }
       }
     });
