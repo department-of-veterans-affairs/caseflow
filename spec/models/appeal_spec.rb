@@ -62,16 +62,16 @@ describe Appeal do
         :decision_issue,
         decision_review: appeal,
         disposition: "remanded",
-        benefit_type: "compensation",
-        end_product_last_action_date: 10.days.ago.to_date
+        benefit_type: "compensation"
       )
     end
 
     let!(:remanded_decision_issue_processed_in_caseflow) do
-      create(
-        :decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca", profile_date: 5.days.ago
-      )
+      create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca")
     end
+
+    let(:decision_date) { 10.days.ago }
+    let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: appeal) }
 
     let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
 
@@ -84,7 +84,7 @@ describe Appeal do
 
       vbms_remand = remanded_supplemental_claims.find_by(benefit_type: "compensation")
       expect(vbms_remand).to have_attributes(
-        receipt_date: remanded_decision_issue.approx_decision_date
+        receipt_date: decision_date.to_date
       )
       expect(vbms_remand.request_issues.count).to eq(1)
       expect(vbms_remand.request_issues.first).to have_attributes(
@@ -95,7 +95,7 @@ describe Appeal do
 
       caseflow_remand = remanded_supplemental_claims.find_by(benefit_type: "nca")
       expect(caseflow_remand).to have_attributes(
-        receipt_date: remanded_decision_issue_processed_in_caseflow.approx_decision_date
+        receipt_date: decision_date.to_date
       )
       expect(caseflow_remand.request_issues.count).to eq(1)
       expect(caseflow_remand.request_issues.first).to have_attributes(

@@ -24,6 +24,20 @@ const sectionNavigationListStyling = css({
 
 const roSelectionStyling = css({ marginTop: '10px' });
 
+const tableNumberStyling = css({
+  '& > tr:nth-child(even)': {
+    '& > td:nth-child(1)': {
+      width: '1%',
+      paddingRight: '0'
+    }
+  },
+  '& > tr:nth-child(odd)': {
+    '& > td:nth-child(1)': {
+      paddingLeft: '0'
+    }
+  }
+});
+
 export default class AssignHearings extends React.Component {
 
   amaAppeal = (appeal) => {
@@ -152,31 +166,52 @@ export default class AssignHearings extends React.Component {
   }
 
   tableAssignHearingsRows = (appeals) => {
-    return _.map(appeals, (appeal) => ({
-      caseDetails: this.getCaseDetailsInformation(appeal),
-      type: renderAppealType({
-        caseType: appeal.attributes.caseType,
-        isAdvancedOnDocket: appeal.attributes.aod
-      }),
-      docketNumber: this.getAppealDocketTag(appeal),
-      location: this.getAppealLocation(appeal),
-      time: null,
-      externalId: appeal.attributes.externalAppealId
-    }));
+    let assignAppeals = [];
+    let count = 0;
+
+    _.forEach(appeals, (appeal) => {
+      count += 1;
+      assignAppeals.push({
+        number: <span>{count}.</span>,
+        caseDetails: this.getCaseDetailsInformation(appeal),
+        type: renderAppealType({
+          caseType: appeal.attributes.caseType,
+          isAdvancedOnDocket: appeal.attributes.aod
+        }),
+        docketNumber: this.getAppealDocketTag(appeal),
+        location: this.getAppealLocation(appeal),
+        time: null,
+        externalId: appeal.attributes.externalAppealId
+
+      });
+
+    });
+
+    return assignAppeals;
   };
 
   tableScheduledHearingsRows = (hearings) => {
-    return _.map(hearings, (hearing) => ({
-      externalId: hearing.appealExternalId,
-      caseDetails: this.appellantName(hearing),
-      type: renderAppealType({
-        caseType: hearing.appealType,
-        isAdvancedOnDocket: hearing.aod
-      }),
-      docketNumber: this.getHearingDocketTag(hearing),
-      location: hearing.readableLocation,
-      time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
-    }));
+    let assignHearings = [];
+    let count = 0;
+
+    _.forEach(hearings, (hearing) => {
+      count += 1;
+      assignHearings.push({
+        number: <span>{count}.</span>,
+        externalId: hearing.appealExternalId,
+        caseDetails: this.appellantName(hearing),
+        type: renderAppealType({
+          caseType: hearing.appealType,
+          isAdvancedOnDocket: hearing.aod
+        }),
+        docketNumber: this.getHearingDocketTag(hearing),
+        location: hearing.readableLocation,
+        time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
+
+      });
+    });
+
+    return assignHearings;
   };
 
   appealsReadyForHearing = () => {
@@ -197,6 +232,11 @@ export default class AssignHearings extends React.Component {
     const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}&hearingTime=${timer()}`;
 
     const tabWindowColumns = [
+      {
+        header: '',
+        align: 'left',
+        valueName: 'number'
+      },
       {
         header: 'Case details',
         align: 'left',
@@ -252,6 +292,7 @@ export default class AssignHearings extends React.Component {
         rowObjects={this.tableAssignHearingsRows(this.getLegacyAppeals())}
         summary="scheduled-hearings-table"
         slowReRendersAreOk
+        bodyStyling={tableNumberStyling}
       />;
     };
 
@@ -272,12 +313,14 @@ export default class AssignHearings extends React.Component {
         rowObjects={this.tableAssignHearingsRows(this.getAmaAppeals())}
         summary="scheduled-hearings-table"
         slowReRendersAreOk
+        bodyStyling={tableNumberStyling}
       />;
     };
 
     const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
-    const scheduledOrder = _.sortBy(
-      (this.props.selectedHearingDay.hearings), 'date');
+
+    const scheduledOrder = _.orderBy(Object.values(this.props.selectedHearingDay.hearings),
+      (hearing) => hearing.scheduledFor, 'asc');
 
     return <div className="usa-width-three-fourths">
       <h1>
@@ -289,12 +332,17 @@ export default class AssignHearings extends React.Component {
         tabs={[
           {
             label: 'Scheduled Veterans',
-            page: <Table
-              columns={tabWindowColumns}
-              rowObjects={this.tableScheduledHearingsRows(scheduledOrder)}
-              summary="scheduled-hearings-table"
-              slowReRendersAreOk
-            />
+            page: <div>
+              <Link to={`/schedule/docket/${this.props.selectedHearingDay.id}`}>
+                {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }</Link>
+              <Table
+                columns={tabWindowColumns}
+                rowObjects={this.tableScheduledHearingsRows(scheduledOrder)}
+                summary="scheduled-hearings-table"
+                slowReRendersAreOk
+                bodyStyling={tableNumberStyling}
+              />
+            </div>
           },
           {
             label: 'Legacy Veterans Waiting',
