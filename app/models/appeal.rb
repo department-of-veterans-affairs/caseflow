@@ -303,6 +303,21 @@ class Appeal < DecisionReview
     Array.wrap(appeal_status_id)
   end
 
+<<<<<<< HEAD
+=======
+  def active_status?
+    active? || active_ep?
+  end
+
+  def active_ep?
+    decision_document.end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
+  end
+
+  def aod
+    # to be implemented
+  end
+
+>>>>>>> initial changes for active
   def location
     # to be implemented
   end
