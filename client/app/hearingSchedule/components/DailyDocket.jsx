@@ -8,6 +8,7 @@ import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Table from '../../components/Table';
+import Checkbox from '../../components/Checkbox';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
@@ -15,14 +16,20 @@ import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import Modal from '../../components/Modal';
 import StatusMessage from '../../components/StatusMessage';
-import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
+import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone, formatDateStr } from '../../util/DateUtil';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { crossSymbolHtml, pencilSymbol } from '../../components/RenderFunctions';
+import {
+  RegionalOfficeDropdown,
+  HearingDateDropdown,
+  VeteranHearingLocationsDropdown
+} from '../../components/DataDropdowns';
 
 const tableRowStyling = css({
   '& > tr:nth-child(even) > td': { borderTop: 'none' },
   '& > tr:nth-child(odd) > td': { borderBottom: 'none' },
+  '& > tr': { borderBottom: '1px solid #ddd' },
   '& > tr > td': {
     verticalAlign: 'top'
   },
@@ -31,20 +38,14 @@ const tableRowStyling = css({
     '& > td:nth-child(2)': { width: '19%' },
     '& > td:nth-child(3)': { width: '17%' },
     '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
-      width: '18%' },
-    '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
-      width: '20%' },
-    '& > td:nth-child(6)': { backgroundColor: '#f1f1f1',
-      width: '22%' }
+      width: '60%' }
   },
   '& > tr:nth-child(even)': {
     '& > td:nth-child(1)': { width: '4%' },
     '& > td:nth-child(2)': { width: '19%' },
     '& > td:nth-child(3)': { width: '17%' },
     '& > td:nth-child(4)': { backgroundColor: '#f1f1f1',
-      width: '38%' },
-    '& > td:nth-child(5)': { backgroundColor: '#f1f1f1',
-      width: '22%' }
+      width: '60%' }
   }
 });
 
@@ -55,10 +56,6 @@ const notesFieldStyling = css({
 const noMarginStyling = css({
   marginRight: '-40px',
   marginLeft: '-40px'
-});
-
-const buttonStyling = css({
-  marginTop: '35px'
 });
 
 const backLinkStyling = css({
@@ -86,13 +83,22 @@ export default class DailyDocket extends React.Component {
 
   onHearingNotesUpdate = (hearingId) => (notes) => this.props.onHearingNotesUpdate(hearingId, notes);
 
+  onTranscriptRequestedUpdate = (hearingId) => (transcriptRequested) => {
+    this.props.onTranscriptRequestedUpdate(hearingId, transcriptRequested);
+  };
+
   onHearingDispositionUpdate = (hearingId) => (disposition) => {
     this.props.onHearingDispositionUpdate(hearingId, disposition.value);
   };
 
-  onHearingDateUpdate = (hearingId) => (date) => this.props.onHearingDateUpdate(hearingId, date.value);
+  onHearingDateUpdate = (hearingId) => (hearingDay) => this.props.onHearingDateUpdate(hearingId, hearingDay);
 
   onHearingTimeUpdate = (hearingId) => (time) => this.props.onHearingTimeUpdate(hearingId, time);
+
+  onHearingLocationUpdate = (hearingId) => (location) => this.props.onHearingLocationUpdate(hearingId, location);
+
+  onHearingRegionalOfficeUpdate = (hearingId) => (regionalOffice) =>
+    this.props.onHearingRegionalOfficeUpdate(hearingId, regionalOffice);
 
   saveHearing = (hearing) => () => this.props.saveHearing(hearing);
 
@@ -131,9 +137,10 @@ export default class DailyDocket extends React.Component {
       </Link></b><br />
       <DocketTypeBadge name={hearing.docketName} number={hearing.docketNumber} />
       {hearing.docketNumber}
-      <br />
+      <br /><br />
       {hearing.appellantAddressLine1}<br />
       {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
+      <div>{hearing.representative} <br /> {hearing.representativeName}</div>
     </div>;
   };
 
@@ -147,12 +154,14 @@ export default class DailyDocket extends React.Component {
     return <div>{getTime(hearing.scheduledFor)} /<br />
       {getTimeInDifferentTimeZone(hearing.scheduledFor, hearing.regionalOfficeTimezone)} <br />
       {hearing.regionalOfficeName}
+      <p>{hearing.currentIssueCount} issues</p>
     </div>;
   };
 
   getDispositionDropdown = (hearing, readOnly) => {
     return <SearchableDropdown
       name="Disposition"
+      strongLabel
       options={DISPOSITION_OPTIONS}
       value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
       onChange={this.onHearingDispositionUpdate(hearing.id)}
@@ -160,42 +169,31 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
-  getHearingLocationOptions = (hearing) => {
-    return [{ label: hearing.readableLocation,
-      value: hearing.readableLocation }];
+  getRegionalOfficeDropdown = (hearing, readOnly) => {
+    return <RegionalOfficeDropdown
+      readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
+      onChange={this.onHearingRegionalOfficeUpdate(hearing.id)}
+      value={hearing.editedRegionalOffice || hearing.regionalOfficeKey} />;
   };
 
-  getHearingDate = (date) => {
-    return moment(date).format('MM/DD/YYYY');
-  };
+  getHearingLocationDropdown = (hearing, readOnly) => {
+    const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
+    let staticHearingLocations = hearing.veteranAvailableHearingLocations ?
+      _.values(hearing.veteranAvailableHearingLocations) : [];
 
-  getHearingDateOptions = () => {
-    return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
-      label: this.getHearingDate(hearingDayOption.scheduledFor),
-      value: hearingDayOption.id
-    }));
-  };
+    // always static for now
+    if (staticHearingLocations.length === 0 && hearing.location) {
+      staticHearingLocations = [hearing.location];
+    }
 
- getHearingDateOptions = (hearing) => {
-   const hearings = [{ label: this.getHearingDate(hearing.scheduledFor),
-     value: hearing.id }];
-
-   const hearingDayoptions = _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
-     label: this.getHearingDate(hearingDayOption.scheduledFor),
-     value: hearingDayOption.id
-   }));
-
-   if (this.props.hearingDayOptions) {
-     return hearings.concat(hearingDayoptions);
-   }
- };
-
-  getHearingLocationDropdown = (hearing) => {
-    return <SearchableDropdown
-      name="Hearing Location"
-      options={this.getHearingLocationOptions(hearing)}
-      value={hearing.readableLocation}
-      readOnly
+    return <VeteranHearingLocationsDropdown
+      readOnly={readOnly}
+      veteranFileNumber={hearing.veteranFileNumber}
+      regionalOffice={currentRegionalOffice}
+      staticHearingLocations={staticHearingLocations}
+      dynamic={false}
+      value={hearing.editedLocation || (hearing.location ? hearing.location.facilityId : null)}
+      onChange={this.onHearingLocationUpdate(hearing.id)}
     />;
   };
 
@@ -230,26 +228,66 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingDayDropdown = (hearing, readOnly) => {
-    const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
+    const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
+    const staticOptions = hearing.regionalOfficeKey === currentRegionalOffice ?
+      [{
+        label: formatDateStr(hearing.scheduledFor),
+        value: {
+          scheduledFor: hearing.scheduledFor,
+          hearingId: this.props.dailyDocket.id
+        }
+      }] : null;
 
-    return <div><SearchableDropdown
+    return <HearingDateDropdown
       name="HearingDay"
       label="Hearing Day"
-      options={this.getHearingDateOptions(hearing)}
-      value={hearing.editedDate ? hearing.editedDate : hearing.id}
-      onChange={this.onHearingDateUpdate(hearing.id)}
-      readOnly={readOnly || hearing.editedDisposition !== 'postponed'} />
-    <RadioField
+      key={currentRegionalOffice}
+      regionalOffice={currentRegionalOffice}
+      value={hearing.editedDate ? hearing.editedDate : hearing.scheduledFor}
+      readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
+      staticOptions={staticOptions}
+      onChange={this.onHearingDateUpdate(hearing.id)} />;
+  };
+
+  getTimeRadioButtons = (hearing, readOnly) => {
+    const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
+
+    return <RadioField
       name={`hearingTime${hearing.id}`}
       options={this.getHearingTimeOptions(hearing, readOnly)}
       value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
       onChange={this.onHearingTimeUpdate(hearing.id)}
-      hideLabel /></div>;
+      hideLabel />;
+  };
+
+  getHearingDetailsLink = (hearing) => {
+    return <div>
+      <b>Hearing Details</b> <br /><br />
+      <Link href={`/hearings/${hearing.externalId}/details`}>
+        Edit Hearing Details
+        <span {...css({ position: 'absolute' })}>
+          {pencilSymbol()}
+        </span>
+      </Link>
+    </div>;
+  };
+
+  getTranscriptRequested = (hearing) => {
+    return <div>
+      <b>Copy Requested by Appellant/Rep</b>
+      <Checkbox
+        label="Transcript Requested"
+        name={`${hearing.id}.transcriptRequested`}
+        value={_.isUndefined(hearing.editedTranscriptRequested) ?
+          hearing.transcriptRequested || false : hearing.editedTranscriptRequested}
+        onChange={this.onTranscriptRequestedUpdate(hearing.id)}
+      /></div>;
   };
 
   getNotesField = (hearing) => {
     return <TextareaField
       name="Notes"
+      strongLabel
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
       value={_.isUndefined(hearing.editedNotes) ? hearing.notes || '' : hearing.editedNotes}
@@ -257,14 +295,19 @@ export default class DailyDocket extends React.Component {
   };
 
   getSaveButton = (hearing) => {
-    return hearing.edited ? <div>
+    return hearing.edited ? <div {...css({
+      content: ' ',
+      clear: 'both',
+      display: 'block'
+    })}>
       <Button
+        styling={css({ float: 'left' })}
         linkStyling
         onClick={this.cancelHearingUpdate(hearing)}>
         Cancel
       </Button>
       <Button
-        styling={buttonStyling}
+        styling={css({ float: 'right' })}
         disabled={hearing.dateEdited && !hearing.dispositionEdited}
         onClick={this.saveHearing(hearing)}>
         Save
@@ -272,31 +315,48 @@ export default class DailyDocket extends React.Component {
     </div> : null;
   };
 
-  getDailyDocketRows = (hearings, readOnly) => {
-    let dailyDocketRows = [];
-    let count = 0;
-
-    _.forEach(hearings, (hearing) => {
-      count += 1;
-      dailyDocketRows.push({
-        number: <b>{count}.</b>,
-        appellantInformation: this.getAppellantInformation(hearing),
-        hearingTime: this.getHearingTime(hearing),
-        disposition: this.getDispositionDropdown(hearing, readOnly),
-        hearingLocation: this.getHearingLocationDropdown(hearing),
-        hearingDay: this.getHearingDayDropdown(hearing, readOnly)
-      }, {
-        number: null,
-        appellantInformation: <div>{hearing.representative} <br /> {hearing.representativeName}</div>,
-        hearingTime: <div>{hearing.currentIssueCount} issues</div>,
-        disposition: this.getNotesField(hearing),
-        hearingLocation: null,
-        hearingDay: this.getSaveButton(hearing)
-      });
+  getHearingActions = (hearing, readOnly) => {
+    const twoCol = css({
+      '& > div': {
+        width: '50%',
+        float: 'left',
+        padding: '0px 15px 15px 15px'
+      },
+      '& > div > *:not(:first-child)': {
+        marginTop: '25px'
+      },
+      '&::after': {
+        clear: 'both',
+        content: ' ',
+        display: 'block'
+      }
     });
 
-    return dailyDocketRows;
-  };
+    return <div {...twoCol}>
+      <div>
+        {this.getDispositionDropdown(hearing, readOnly)}
+        {this.getTranscriptRequested(hearing)}
+        {this.getHearingDetailsLink(hearing)}
+        {this.getNotesField(hearing)}
+      </div>
+      <div>
+        {this.getRegionalOfficeDropdown(hearing, readOnly)}
+        {this.getHearingLocationDropdown(hearing, readOnly)}
+        {this.getHearingDayDropdown(hearing, readOnly)}
+        {this.getTimeRadioButtons(hearing, readOnly)}
+        {this.getSaveButton(hearing)}
+      </div>
+    </div>;
+  }
+
+  getDailyDocketRows = (hearings, readOnly) => {
+    return _.map(_.orderBy(hearings, (hearing) => hearing.scheduledFor, 'asc'), (hearing, index) => ({
+      number: <b>{index + 1}.</b>,
+      appellantInformation: this.getAppellantInformation(hearing),
+      hearingTime: this.getHearingTime(hearing),
+      actions: this.getHearingActions(hearing, readOnly)
+    }));
+  }
 
   getRemoveHearingDayMessage = () => {
     return 'Once the hearing day is removed, users will no longer be able to ' +
@@ -337,19 +397,7 @@ export default class DailyDocket extends React.Component {
       {
         header: 'Actions',
         align: 'left',
-        valueName: 'disposition',
-        span: (row) => row.hearingLocation ? 1 : 2
-      },
-      {
-        header: '',
-        align: 'left',
-        valueName: 'hearingLocation',
-        span: (row) => row.hearingLocation ? 1 : 0
-      },
-      {
-        header: '',
-        align: 'left',
-        valueName: 'hearingDay'
+        valueName: 'actions'
       }
     ];
 
@@ -443,10 +491,10 @@ export default class DailyDocket extends React.Component {
             {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
           </Button>
           }
-          {this.props.notes &&
+          {this.props.dailyDocket.notes &&
           <span {...notesTitleStyling}>
             <br /><strong>Notes: </strong>
-            <br />{this.props.notes}
+            <br />{this.props.dailyDocket.notes}
           </span>
           }
         </div>
@@ -490,6 +538,7 @@ DailyDocket.propTypes = {
   onHearingNotesUpdate: PropTypes.func,
   onHearingDispositionUpdate: PropTypes.func,
   onHearingTimeUpdate: PropTypes.func,
+  onHearingRegionalOfficeUpdate: PropTypes.func,
   openModal: PropTypes.func,
   deleteHearingDay: PropTypes.func,
   notes: PropTypes.string

@@ -8,7 +8,6 @@
     userIsVsoEmployee: current_user.vso_employee?,
     canEditAod: AodTeam.singleton.user_has_access?(current_user),
     caseSearchHomePage: case_search_home_page,
-    organizationName: defined?(organization) ? organization.name : nil,
     dropdownUrls: dropdown_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,

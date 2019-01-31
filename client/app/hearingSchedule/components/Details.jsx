@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { css } from 'glamor';
 
 import CopyTextButton from '../../components/CopyTextButton';
@@ -42,7 +41,7 @@ class HearingDetails extends React.Component {
     super(props);
 
     this.state = {
-      disabled: false,
+      disabled: this.props.disabled,
       isLegacy: this.props.hearing.docketName !== 'hearing',
       updated: false,
       loading: false,
@@ -63,19 +62,19 @@ class HearingDetails extends React.Component {
       notes: hearing.notes,
       // Transcription Request
       transcriptRequested: hearing.transcriptRequested,
-      transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate)
+      transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
     });
 
     this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, {
       // Transcription Details
       taskNumber: transcription.taskNumber,
       transcriber: transcription.transcriber,
-      sentToTranscriberDate: DateUtil.formatDateStr(transcription.sentToTranscriberDate),
-      expectedReturnDate: DateUtil.formatDateStr(transcription.expectedReturnDate),
-      uploadedToVbmsDate: DateUtil.formatDateStr(transcription.uploadedToVbmsDate),
+      sentToTranscriberDate: DateUtil.formatDateStr(transcription.sentToTranscriberDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
+      expectedReturnDate: DateUtil.formatDateStr(transcription.expectedReturnDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
+      uploadedToVbmsDate: DateUtil.formatDateStr(transcription.uploadedToVbmsDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
       // Transcription Problem
       problemType: transcription.problemType,
-      problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate),
+      problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
       requestedRemedy: transcription.requestedRemedy
     });
   }
@@ -90,18 +89,6 @@ class HearingDetails extends React.Component {
     this.setState({ updated: true });
   }
 
-  convertDatesForApi = (data) => {
-    let converted = { ...data };
-
-    _.forEach(converted, (value, key) => {
-      if (key.indexOf('Date') !== -1) {
-        converted[key] = DateUtil.formatDateStringForApi(value);
-      }
-    });
-
-    return converted;
-  }
-
   submit = () => {
     const { hearing: { externalId }, hearingDetailsForm, transcriptionDetailsForm } = this.props;
     const { updated } = this.state;
@@ -112,8 +99,10 @@ class HearingDetails extends React.Component {
 
     const data = {
       hearing: {
-        ...this.convertDatesForApi(hearingDetailsForm),
-        transcription_attributes: this.convertDatesForApi(transcriptionDetailsForm)
+        ...hearingDetailsForm,
+        transcription_attributes: {
+          ...transcriptionDetailsForm
+        }
       }
     };
 
@@ -142,7 +131,7 @@ class HearingDetails extends React.Component {
     const {
       veteranFirstName,
       veteranLastName,
-      vbmsId
+      veteranFileNumber
     } = this.props.hearing;
 
     const { hearingDetailsForm, transcriptionDetailsForm } = this.props;
@@ -164,7 +153,7 @@ class HearingDetails extends React.Component {
         <div {...inputFix}>
           <div {...row}>
             <h1 className="cf-margin-bottom-0">{`${veteranFirstName} ${veteranLastName}`}</h1>
-            <div>Veteran ID: <CopyTextButton text={vbmsId} /></div>
+            <div>Veteran ID: <CopyTextButton text={veteranFileNumber} /></div>
           </div>
 
           <div className="cf-help-divider" />
@@ -195,7 +184,7 @@ class HearingDetails extends React.Component {
                 className="usa-button"
                 onClick={this.submit}
                 styling={css({ float: 'right' })}
-              />
+              >Save</Button>
             </span>
           </div>
         </div>
@@ -206,7 +195,8 @@ class HearingDetails extends React.Component {
 
 HearingDetails.propTypes = {
   hearing: PropTypes.object.isRequired,
-  goBack: PropTypes.func
+  goBack: PropTypes.func,
+  disabled: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

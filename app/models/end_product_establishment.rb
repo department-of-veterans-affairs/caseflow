@@ -357,7 +357,41 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def status
+    if committed?
+      {
+        ep_code: "EP #{cached_result.modifier || 'Unknown'}",
+        ep_status: [status_type, sync_status].compact.join(", ")
+      }
+    else
+      {
+        ep_code: "",
+        ep_status: establishment_status
+      }
+    end
+  end
+
   private
+
+  def status_type
+    EndProduct::STATUSES[synced_status] || synced_status
+  end
+
+  def establishment_status
+    if source.try(:establishment_error)
+      COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED
+    else
+      COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
+    end
+  end
+
+  def sync_status
+    if request_issues.any?(&:decision_sync_error)
+      COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS_ERROR
+    elsif request_issues.any?(&:submitted_not_processed?)
+      COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS
+    end
+  end
 
   # All records that create contentions should be an instance of ApplicationRecord with
   # a contention_reference_id column, and contention_text method

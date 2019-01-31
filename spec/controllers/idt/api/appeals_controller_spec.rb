@@ -101,6 +101,43 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
         end
       end
 
+      context "and the user is intake" do
+        let(:user) { User.find_by(css_id: "ID1234") }
+        let(:appeal) { create(:appeal, number_of_claimants: 2) }
+        let(:params) { { appeal_id: appeal.uuid } }
+
+        before do
+          User.authenticate!(roles: ["Mail Intake"], css_id: "ID1234")
+          request.headers["TOKEN"] = token
+          allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(
+            address_line_1: "1234 K St.",
+            address_line_2: "APT 3",
+            address_line_3: "",
+            city: "Washington",
+            country: "USA",
+            state: "CA",
+            zip: "20001"
+          )
+        end
+
+        it "succeeds and passes address info" do
+          get :details, params: params
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)["data"]
+
+          expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"])
+            .to eq appeal.claimants.first.address_line_1
+          expect(response_body["attributes"]["appellants"][0]["address"]["city"])
+            .to eq appeal.claimants.first.city
+          expect(response_body["attributes"]["appellants"][0]["representative"]["address"])
+            .to eq appeal.representative_address.stringify_keys
+          expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"])
+            .to eq appeal.claimants.second.address_line_1
+          expect(response_body["attributes"]["appellants"][1]["address"]["city"])
+            .to eq appeal.claimants.second.city
+        end
+      end
+
       context "and user is an attorney" do
         let(:role) { :attorney_role }
 
