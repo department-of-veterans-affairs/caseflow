@@ -328,7 +328,69 @@ class Appeal < DecisionReview
   end
 
   def status_hash
-    # to be implemented
+    { type: fetch_status, details: {} }
+  end
+
+  def fetch_status
+    if pending_schedule_hearing_task?
+      :pending_hearing_scheduling
+    elsif hearing_pending?
+      :scheduled_hearing
+    elsif evidence_submission_hold_pending?
+      :evidentiary_period
+    elsif at_vso?
+      :at_vso
+    elsif active? && !distributed_to_a_judge?
+      :on_docket
+    elsif active? && distributed_to_a_judge && decision_issues.empty?
+      :decision_in_progress
+    elsif !remanded_issues? && decision_document&.end_product_establishments&.any? && !active_ep?
+      :bva_decision_effectuation
+    elsif remanded_sc_with_ep && !remanded_sc_with_ep.active?
+      :post_bva_dta_decision
+    elsif remanded_issues?
+      :ama_remand
+    elsif decision_issues.any? && !remanded_issues?
+      :bva_decision
+    elsif withdrawn?
+      :withdrawn
+    else !active? && decision_issues.empty?
+      :other_close
+    end 
+  end
+
+  def pending_schedule_hearing_task?
+    tasks.any? { |t| t.is_a?(ScheduleHearingTask) && !t.completed? }
+  end
+
+  def hearing_pending?
+    # This isn't available yet.
+    #tasks.any? { |t| t.is_a?(HoldHearingTask) && !t.completed? }
+  end
+
+  def evidence_submission_hold_pending?
+    tasks.any? { |t| t.is_a?(EvidenceSubmissionWindowTask) && !t.completed? }
+  end
+
+  def at_vso?
+    # This task is always open, this can be used once that task is completed
+    #tasks.any? { |t| t.is_a?(InformalHearingPresentationTask) && !t.completed? }
+  end
+
+  def distributed_to_a_judge?
+    tasks.any? { |t| t.is_a?(JudgeTask) }
+  end
+
+  def remanded_issues?
+    decision_issues.any? { |di| di.remanded }
+  end
+
+  def remanded_sc_with_ep
+    @remanded_sc_with_ep ||= remanded_remand_supplemental_claims.any { |sc| sc.processed_in_vbms? }
+  end
+
+  def withdrawn?
+    #will implement when available
   end
 
   def alerts
