@@ -415,34 +415,13 @@ RSpec.feature "Task queue" do
           appeal: root_task.appeal
         )
       end
-      let!(:caseflow_assign_task) do
-        FactoryBot.create(
-          :ama_judge_task,
-          assigned_to: judge_user,
-          assigned_at: 2.days.ago,
-          parent: root_task,
-          appeal: root_task.appeal
-        )
-      end
-      let!(:legacy_task_to_distribute) do
-        FactoryBot.create(:case, bfcurloc: "81")
-      end
       let!(:legacy_review_task) do
         FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, :assigned, user: judge_user))
       end
 
-      before do
-        FeatureToggle.enable!(:automatic_case_distribution)
-      end
-
-      it "should display tasks on the review and assign tasks page, and allow users to request new tasks" do
+      it "should display both legacy and caseflow review tasks" do
         visit("/queue")
         expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 2))
-        find("a", text: COPY::SWITCH_TO_ASSIGN_MODE_LINK_LABEL).click
-        expect(page).to have_content(COPY::JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE)
-        expect(page).to have_content("Assign 1 Cases")
-        find("button", text: "Request cases").click
-        expect(page).to have_content("Distribution complete")
       end
     end
   end
