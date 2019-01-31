@@ -184,7 +184,7 @@ class HearingDetails extends React.Component {
                 className="usa-button"
                 onClick={this.submit}
                 styling={css({ float: 'right' })}
-              />
+              >Save</Button>
             </span>
           </div>
         </div>

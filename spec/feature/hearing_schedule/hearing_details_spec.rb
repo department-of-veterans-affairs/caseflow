@@ -29,7 +29,12 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       OrganizationsUser.add_user_to_organization(create(:hearings_management), HearingsManagement.singleton)
       User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
     end
-    let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+    let!(:hearing) { create(:hearing) }
+
+    before do
+      create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG")
+      create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO")
+    end
 
     scenario "User can update fields" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -37,7 +42,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       click_dropdown(name: "judgeDropdown", index: 0)
       click_dropdown(name: "hearingCoordinatorDropdown", index: 0)
       click_dropdown(name: "hearingRoomDropdown", index: 0)
-      click_checkbox(name: "evidenceWindowWaived")
+      find("label", text: "Yes, Waive 90 Day Evidence Hold").click
 
       fill_in "Notes", with: generate_words(10)
       fill_in "taskNumber", with: "123456789"
@@ -50,10 +55,12 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       fill_in "problemNoticeSentDate", with: "04042019"
       find(".cf-form-radio-option", text: "Proceeed without transcript").click
 
-      click_checkbox(name: "copyRequested")
+      find("label", text: "Yes, Transcript Requested").click
       fill_in "copySentDate", with: "04052019"
 
       click_button("Save")
+
+      expect(page).to have_content("Hearing Successfully Updated")
     end
   end
 
@@ -66,6 +73,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can update nothing" do
       visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
+      expect(page).to have_content("This is a Legacy Case Hearing")
     end
   end
 end
