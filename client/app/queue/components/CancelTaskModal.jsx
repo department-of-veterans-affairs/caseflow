@@ -6,7 +6,6 @@ import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
 
 import COPY from '../../../COPY.json';
-import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 import {
   taskById,
@@ -63,7 +62,9 @@ class CompleteTaskModal extends React.Component<Props> {
   }
 
   render = () => {
-    return <div>{taskActionData(this.props).modal_body}</div>;
+    const taskData = taskActionData(this.props);
+
+    return <div>{taskData && taskData.modal_body}</div>;
   };
 }
 
@@ -79,8 +80,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const propsToText = (props) => {
+  const taskData = taskActionData(props);
+
   return {
-    title: taskActionData(props).modal_title
+    title: taskData ? taskData.modal_title : ''
   };
 };
 

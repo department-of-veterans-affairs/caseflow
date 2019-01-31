@@ -58,16 +58,16 @@ class ScheduleHearingTask < GenericTask
   def update_from_params(params, current_user)
     verify_user_can_update!(current_user)
 
-    task_payloads = params.delete(:business_payloads)
-
-    hearing_time = task_payloads[:values][:hearing_time]
-    hearing_day_id = task_payloads[:values][:hearing_pkseq]
-    hearing_type = task_payloads[:values][:hearing_type]
-    hearing_location = task_payloads[:values][:hearing_location]
-
     if params[:status] == Constants.TASK_STATUSES.completed
+      task_payloads = params.delete(:business_payloads)
+
+      hearing_time = task_payloads[:values][:hearing_time]
+      hearing_day_id = task_payloads[:values][:hearing_pkseq]
+      hearing_type = task_payloads[:values][:hearing_type]
+      hearing_location = task_payloads[:values][:hearing_location]
+
       slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
-    elsif params[:status] == "cancel"
+    elsif params[:status] == "canceled"
       withdraw_hearing
       params[:status] = Constants.TASK_STATUSES.completed
     end
