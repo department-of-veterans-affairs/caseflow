@@ -38,7 +38,7 @@ type Props = Params & {|
   stageAppeal: typeof stageAppeal,
   resetDecisionOptions: typeof resetDecisionOptions,
   // withrouter
-  history: Object,
+  history: Object
 
 |};
 
