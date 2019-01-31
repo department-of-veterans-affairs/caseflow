@@ -3,7 +3,7 @@ class JudgeLegacyTask < LegacyTask
     if Constants::DECASS_WORK_PRODUCT_TYPES["OMO_REQUEST"].include?(work_product)
       Constants.TASK_ACTIONS.ASSIGN_OMO.to_h
     else
-      Constants.TASK_ACTIONS.JUDGE_CHECKOUT.to_h
+      Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.to_h
     end
   end
 
