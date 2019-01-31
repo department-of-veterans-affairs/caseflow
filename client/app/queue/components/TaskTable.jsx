@@ -16,15 +16,15 @@ import CaseDetailsLink from '../CaseDetailsLink';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
 import {
-  renderAppealType,
-  userReadableColumnNames,
-  userReadableDocketNameFilters
+  renderAppealType
 } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
   redText,
-  LEGACY_APPEAL_TYPES
+  LEGACY_APPEAL_TYPES,
+  COLUMN_NAMES,
+  DOCKET_NAME_FILTERS
 } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
@@ -203,7 +203,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       enableFilter: true,
       tableData: this.props.tasks,
       columnName: 'appeal.docketName',
-      customFilterLabels: userReadableDocketNameFilters,
+      customFilterLabels: DOCKET_NAME_FILTERS,
       anyFiltersAreSet: true,
       label: 'Filter by docket name',
       valueName: 'docketName',
@@ -368,7 +368,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
           rowObjects={tasks}
           getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
           defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
-          alternateColumnNames={userReadableColumnNames}
+          alternateColumnNames={COLUMN_NAMES}
           rowClassNames={(task) =>
             this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />
       </div>

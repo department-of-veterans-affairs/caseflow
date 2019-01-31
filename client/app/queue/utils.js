@@ -512,16 +512,3 @@ export const taskActionData = (props: Object) => {
 
   return null;
 };
-
-export const userReadableColumnNames = {
-  'appeal.caseType': 'Case Type',
-  'appeal.docketName': 'Docket Number',
-  label: 'Task(s)'
-};
-
-export const userReadableDocketNameFilters = {
-  direct_review: 'Direct Review',
-  legacy: 'Legacy',
-  hearing: 'Hearing',
-  evidence: 'Evidence'
-};

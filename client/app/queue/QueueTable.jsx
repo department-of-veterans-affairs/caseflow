@@ -171,7 +171,7 @@ class FooterRow extends React.PureComponent {
   }
 }
 
-export default class Table extends React.PureComponent {
+export default class QueueTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -227,7 +227,7 @@ export default class Table extends React.PureComponent {
 
   filterTableData = (data: Array<Object>) => {
     const { filteredByList } = this.state;
-    const filteredData = _.clone(data);
+    let filteredData = _.clone(data);
 
     // Only filter the data if filters have been selected
     if (!_.isEmpty(filteredByList)) {
@@ -238,13 +238,10 @@ export default class Table extends React.PureComponent {
           continue; // eslint-disable-line no-continue
         }
 
-        for (const key in data) {
-          // If this data point does not match a filter in this columnName,
-          // remove the data point from `filteredData`
-          if (!filteredByList[columnName].includes(_.get(data[key], columnName))) {
-            _.pull(filteredData, _.find(filteredData, ['uniqueId', data[key].uniqueId]));
-          }
-        }
+        // Only return the data point if it contains the value of the filter
+        filteredData = filteredData.filter((row) => {
+          return filteredByList[columnName].includes(_.get(row, columnName));
+        });
       }
     }
 
@@ -276,7 +273,7 @@ export default class Table extends React.PureComponent {
     if (!getKeyForRow) {
       keyGetter = _.identity;
       if (!slowReRendersAreOk) {
-        console.warn('<Table> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
+        console.warn('<QueueTable> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
           'To learn more about keys, see https://facebook.github.io/react/docs/lists-and-keys.html#keys');
       }
     }
@@ -322,7 +319,7 @@ export default class Table extends React.PureComponent {
   }
 }
 
-Table.propTypes = {
+QueueTable.propTypes = {
   tbodyId: PropTypes.string,
   tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([

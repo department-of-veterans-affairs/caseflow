@@ -127,7 +127,9 @@ class TableFilter extends React.PureComponent {
           label={label}
           idPrefix={valueName}
           getRef={this.props.getFilterIconRef}
-          selected={isDropdownFilterOpen || filteredByList[columnName]}
+          selected={
+            isDropdownFilterOpen ||
+            (filteredByList[columnName] ? filteredByList[columnName].length > 0 : false)}
           handleActivate={() => toggleDropdownFilterVisibility(columnName)} />
 
         {isDropdownFilterOpen &&
