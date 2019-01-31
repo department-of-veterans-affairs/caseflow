@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-// @flow
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
