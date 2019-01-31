@@ -85,7 +85,7 @@ class HearingsController < ApplicationController
   end
 
   def verify_access_to_reader_or_hearings
-    verify_authorized_roles("Reader", "Hearing Prep")
+    verify_authorized_roles("Reader", "Hearing Prep", "Edit HearSched", "Build HearSched")
   end
 
   def verify_access_to_hearing_prep_or_schedule

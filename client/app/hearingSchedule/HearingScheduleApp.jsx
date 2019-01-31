@@ -19,12 +19,14 @@ export default class HearingScheduleApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
       userRoleAssign,
-      userRoleBuild
+      userRoleBuild,
+      userInHearingsOrganization
     } = this.props;
 
     return {
       userRoleAssign,
-      userRoleBuild
+      userRoleBuild,
+      userInHearingsOrganization
     };
   };
 
