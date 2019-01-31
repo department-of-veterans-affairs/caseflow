@@ -45,7 +45,11 @@ class HearingDetailsContainer extends React.Component {
   render() {
 
     if (this.state.hearing) {
-      return <HearingDetails hearing={this.state.hearing} goBack={this.goBack} />;
+      return <HearingDetails
+        disabled={!this.props.userInHearingsOrganization}
+        hearing={this.state.hearing}
+        goBack={this.goBack}
+      />;
     }
 
     return null;
