@@ -405,7 +405,7 @@ RSpec.feature "Task queue" do
       end
     end
 
-    context "judge user's queue table view", focus: true do
+    context "judge user's queue table view" do
       let(:root_task) { FactoryBot.create(:root_task) }
       let!(:caseflow_review_task) do
         FactoryBot.create(
