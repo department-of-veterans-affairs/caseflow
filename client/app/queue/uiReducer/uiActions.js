@@ -67,19 +67,21 @@ const saveSuccess = (message: UiStateMessage, response: Object) => (dispatch: Di
 
 const saveFailure = (resp: Object) => (dispatch: Dispatch) => {
   const { response } = resp;
-  let responseObject = {
-    errors: [{
-      title: 'Error',
-      detail: 'There was an error processing your request. ' +
-        'Please retry your action and contact support if errors persist.'
-    }]
-  };
+  let errorResponseObject;
 
   try {
-    responseObject = JSON.parse(response.text);
-  } catch (ex) { /* pass */ }
+    errorResponseObject = JSON.parse(response.text);
+  } catch (ex) {
+    errorResponseObject = {
+      errors: [{
+        title: 'Error',
+        detail: 'There was an error processing your request. ' +
+        'Please retry your action and contact support if errors persist.'
+      }]
+    };
+  }
 
-  dispatch(showErrorMessage(responseObject.errors[0]));
+  dispatch(showErrorMessage(errorResponseObject.errors[0]));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
 
   return Promise.reject(new Error(response.text));
@@ -90,12 +92,18 @@ export const requestSave = (
 ): Function => (dispatch: Dispatch) => {
   dispatch(hideErrorMessage());
   dispatch(hideSuccessMessage());
+
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 
-  return ApiUtil[verb](url, params).then(
-    (resp) => dispatch(saveSuccess(successMessage, resp)),
-    (resp) => dispatch(saveFailure(resp))
-  );
+  return ApiUtil[verb](url, { data: 'null',
+    headers: null }).
+    then(
+      (resp) => dispatch(saveSuccess(successMessage, resp))
+    ).
+    catch((err) => dispatch(saveFailure(err))).
+    catch((err) => {
+      console.log('***the error from attempting to save: ', err);
+    });
 };
 
 export const requestPatch = (url: string, params: Object, successMessage: UiStateMessage) =>
