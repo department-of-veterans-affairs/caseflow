@@ -24,7 +24,7 @@ const serverData = {
           assigned_to: {
             css_id: 'BVANKUVALIS',
             id: 130,
-            isOrganization: true,
+            isOrganization: false,
             type: 'User'
           },
           case_type: 'Post Remand',
@@ -74,7 +74,8 @@ describe('QueueLoadingScreen', () => {
         assignedTo: {
           cssId: 'BVANKUVALIS',
           id: 130,
-          isOrganization: true,
+          // eslint-disable-next-line no-undefined
+          isOrganization: undefined,
           type: 'User'
         },
         // eslint-disable-next-line no-undefined
