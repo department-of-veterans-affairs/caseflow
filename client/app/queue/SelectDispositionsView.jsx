@@ -95,8 +95,15 @@ class SelectDispositionsView extends React.PureComponent {
 
   getPrevStepUrl = () => {
     const {
-      appealId
+      appealId,
+      appeal,
+      taskId,
+      checkoutFlow
     } = this.props;
+
+    if (appeal.isLegacyAppeal) {
+      return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
+    }
 
     return `/queue/appeals/${appealId}`;
 
