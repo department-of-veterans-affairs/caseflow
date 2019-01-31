@@ -21,17 +21,31 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
 
-    describe "#veterans" do
-      context "when veterans that are in location 57 and have schedule hearing tasks" do
+    describe "#veterans", focus: true do
+      context "when veterans exist in location 57 or have schedule hearing tasks" do
+        # Legacy appeal with schedule hearing task
         let!(:veteran_2) { create(:veteran, file_number: "999999999") }
         let!(:vacols_case_2) { create(:case, bfcurloc: "CASEFLOW", bfregoff: "RO01", bfcorlid: "999999999S") }
         let!(:legacy_appeal_2) { create(:legacy_appeal, vbms_id: "999999999S", vacols_case: vacols_case_2) }
         let!(:task_1) do
           ScheduleHearingTask.create!(appeal: legacy_appeal_2, assigned_to: HearingsManagement.singleton)
         end
+        # AMA appeal with schedule taks
         let!(:veteran_3) { create(:veteran, file_number: "000000000") }
         let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
         let!(:task_2) { ScheduleHearingTask.create!(appeal: appeal, assigned_to: HearingsManagement.singleton) }
+        # AMA appeal with completed address admin action
+        let!(:veteran_4) { create(:veteran, file_number: "222222222") }
+        let!(:appeal_2) { create(:appeal, veteran_file_number: "222222222") }
+        let!(:task_3) { ScheduleHearingTask.create!(appeal: appeal_2, assigned_to: HearingsManagement.singleton) }
+        let!(:completed_admin_action) do
+          HearingAdminActionVerifyAddressTask.create!(
+            appeal: appeal_2,
+            assigned_to: HearingsManagement.singleton,
+            parent: task_3,
+            status: "completed"
+          )
+        end
         # should not be returned
         before do
           # tasks marked completed
@@ -57,9 +71,10 @@ describe FetchHearingLocationsForVeteransJob do
           create(:legacy_appeal, vbms_id: "111111111", vacols_case: vac_case)
         end
 
-        it "returns all veterans with scheduled tasks" do
+        it "returns only veterans with scheduled hearings tasks without an admin action or who are in location 57" do
           job.create_missing_veterans
-          expect(job.veterans.count).to eq 3
+          created_vet = Veteran.find_by(file_number: bfcorlid_file_number)
+          expect(job.veterans.pluck(:id)).to contain_exactly(veteran_2.id, veteran_3.id, veteran_4.id, created_vet.id)
         end
       end
     end
@@ -140,8 +155,6 @@ describe FetchHearingLocationsForVeteransJob do
           tsk = ScheduleHearingTask.first
           expect(tsk.appeal.veteran_file_number).to eq bfcorlid_file_number
           expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
-          FetchHearingLocationsForVeteransJob.perform_now
-          expect(HearingAdminActionVerifyAddressTask.count).to eq 1
         end
 
         context "and job has alreay been run on a veteran" do
