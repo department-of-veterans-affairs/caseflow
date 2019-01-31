@@ -677,4 +677,46 @@ describe Appeal do
       end
     end
   end
+
+  context "#location" do
+    subject { appeal.location }
+
+    context "has an active effectuation ep" do
+      let(:appeal) { create(:appeal) }
+      let(:decision_document) { create(:decision_document, appeal: appeal) }
+      let(:ep_status) { "PEND" }
+      let!(:effectuation_ep) { create(:end_product_establishment, source: decision_document, synced_status: ep_status) }
+
+      it "is at aoj" do
+        expect(subject).to eq("aoj")
+      end
+
+      context "effection ep cleared" do
+        let(:ep_status) { "CLR" }
+
+        it "is at bva" do
+          expect(subject).to eq("bva")
+        end
+      end
+    end
+
+    context "has an open remanded supplemental claim" do
+      let(:appeal) { create(:appeal) }
+      let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let(:ep_status) { "PEND" }
+      let!(:remanded_ep) { create(:end_product_establishment, source: remanded_sc, synced_status: ep_status) }
+
+      it "is at aoj" do
+        expect(subject).to eq("aoj")
+      end
+
+      context "remanded supplemental_claim is closed" do
+        let(:ep_status) { "CLR" }
+
+        it "is at bva" do
+          expect(subject).to eq("bva")
+        end
+      end
+    end
+  end
 end
