@@ -17,15 +17,17 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  def veteran_ids_from_tasks
-    ScheduleHearingTask.where.not(status: "completed")
+  def schedule_hearing_tasks
+    @schedule_hearing_tasks ||= ScheduleHearingTask.where.not(status: "completed")
       .joins("
         LEFT OUTER JOIN (SELECT parent_id FROM tasks
         WHERE type = 'HearingAdminActionVerifyAddressTask' AND status != 'completed') admin_actions
         ON admin_actions.parent_id = id")
-      .where("admin_actions.parent_id IS NULL").limit(QUERY_LIMIT).map do |task|
-        task.appeal.veteran.id
-      end
+      .where("admin_actions.parent_id IS NULL").limit(QUERY_LIMIT)
+  end
+
+  def veteran_ids_from_tasks
+    schedule_hearing_tasks.map { |task| task.appeal.veteran.id }
   end
 
   def missing_veteran_file_numbers
@@ -185,7 +187,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         vbms_id: LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)
       ).map do |appeal|
         ScheduleHearingTask.create_if_eligible(appeal) ||
-          ScheduleHearingTask.where(appeal: appeal).where.not(status: "completed").first
+          schedule_hearing_tasks.select { |task| task.appeal.id == appeal.id }
       end.compact
 
       tasks.each do |task|
