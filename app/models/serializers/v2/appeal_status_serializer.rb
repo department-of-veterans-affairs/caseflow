@@ -13,10 +13,6 @@ class V2::AppealStatusSerializer < V2::AppealSerializer
     "original"
   end
 
-  attribute :location do
-    # to be implement
-  end
-
   attribute :incomplete_history do
     false
   end
