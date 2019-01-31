@@ -468,7 +468,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["incompleteHistory"]).to eq(false)
       expect(json["data"][2]["attributes"]["description"]).to be_nil
       expect(json["data"][2]["attributes"]["aod"]).to eq(false)
-      expect(json["data"][2]["attributes"]["location"]).to be_nil
+      expect(json["data"][2]["attributes"]["location"]).to eq("bva")
       expect(json["data"][2]["attributes"]["alerts"]).to be_nil
       expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
       expect(json["data"][2]["attributes"]["programArea"]).to eq("compensation")
