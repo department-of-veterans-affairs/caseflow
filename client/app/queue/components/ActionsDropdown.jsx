@@ -38,12 +38,10 @@ type Props = Params & {|
   stageAppeal: typeof stageAppeal,
   resetDecisionOptions: typeof resetDecisionOptions,
   // withrouter
-  history: Object,
-
+  history: Object
 |};
 
 class ActionsDropdown extends React.PureComponent<Props> {
-
   changeRoute = (option: ?OptionType) => {
     const {
       appealId,

@@ -143,11 +143,11 @@ export const setOrganizations = (organizations: Array<Object>) => ({
   payload: { organizations }
 });
 
-export const setActiveOrganization = (activeOrganizationId: number, activeOrganizationName: string) => ({
+export const setActiveOrganization = (id: number, name: string, isVso: boolean) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
-  payload: {
-    activeOrganizationId,
-    activeOrganizationName
+  payload: { id,
+    name,
+    isVso
   }
 });
 
@@ -198,4 +198,3 @@ export const setHearingDay = (hearingDay: Object) => ({
   type: ACTIONS.SET_HEARING_DAY,
   payload: hearingDay
 });
-
