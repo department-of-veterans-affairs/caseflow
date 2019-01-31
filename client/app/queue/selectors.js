@@ -220,7 +220,7 @@ export const rootTasksForAppeal = createSelector(
 export const caseTimelineTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
   (tasks: Tasks) => _.orderBy(_.filter(completeTasksSelector(tasks), (task) =>
-    !task.hideFromCaseTimeline), ['createdAt'], ['desc'])
+    !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
 );
 
 export const taskSnapshotTasksForAppeal = createSelector(
