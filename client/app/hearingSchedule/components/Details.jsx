@@ -63,19 +63,19 @@ class HearingDetails extends React.Component {
       notes: hearing.notes,
       // Transcription Request
       transcriptRequested: hearing.transcriptRequested,
-      transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate)
+      transcriptSentDate: DateUtil.formatDateStr(hearing.transcriptSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD')
     });
 
     this.props.onChangeFormData(TRANSCRIPTION_DETAILS_FORM_NAME, {
       // Transcription Details
       taskNumber: transcription.taskNumber,
       transcriber: transcription.transcriber,
-      sentToTranscriberDate: DateUtil.formatDateStr(transcription.sentToTranscriberDate),
-      expectedReturnDate: DateUtil.formatDateStr(transcription.expectedReturnDate),
-      uploadedToVbmsDate: DateUtil.formatDateStr(transcription.uploadedToVbmsDate),
+      sentToTranscriberDate: DateUtil.formatDateStr(transcription.sentToTranscriberDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
+      expectedReturnDate: DateUtil.formatDateStr(transcription.expectedReturnDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
+      uploadedToVbmsDate: DateUtil.formatDateStr(transcription.uploadedToVbmsDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
       // Transcription Problem
       problemType: transcription.problemType,
-      problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate),
+      problemNoticeSentDate: DateUtil.formatDateStr(transcription.problemNoticeSentDate, 'YYYY-MM-DD', 'YYYY-MM-DD'),
       requestedRemedy: transcription.requestedRemedy
     });
   }
@@ -90,18 +90,6 @@ class HearingDetails extends React.Component {
     this.setState({ updated: true });
   }
 
-  convertDatesForApi = (data) => {
-    let converted = { ...data };
-
-    _.forEach(converted, (value, key) => {
-      if (key.indexOf('Date') !== -1) {
-        converted[key] = DateUtil.formatDateStringForApi(value);
-      }
-    });
-
-    return converted;
-  }
-
   submit = () => {
     const { hearing: { externalId }, hearingDetailsForm, transcriptionDetailsForm } = this.props;
     const { updated } = this.state;
@@ -112,8 +100,10 @@ class HearingDetails extends React.Component {
 
     const data = {
       hearing: {
-        ...this.convertDatesForApi(hearingDetailsForm),
-        transcription_attributes: this.convertDatesForApi(transcriptionDetailsForm)
+        ...hearingDetailsForm,
+        transcription_attributes: {
+          ...transcriptionDetailsForm
+        }
       }
     };
 
