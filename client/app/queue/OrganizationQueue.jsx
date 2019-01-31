@@ -7,7 +7,7 @@ import { css } from 'glamor';
 
 import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
-import QueueSelectorDropdown from './components/QueueSelectorDropdown';
+import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -21,6 +21,7 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
+import Alert from '../components/Alert';
 
 const containerStyles = css({
   position: 'relative'
@@ -32,11 +33,13 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   render = () => {
+    const { success } = this.props;
     const tabs = [
       {
         label: sprintf(
           COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
         page: <TaskTableTab
+          organizationName={this.props.organizationName}
           description={
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
@@ -47,6 +50,7 @@ class OrganizationQueue extends React.PureComponent {
         label: sprintf(
           COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
         page: <TaskTableTab
+          organizationName={this.props.organizationName}
           description={
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
@@ -56,6 +60,7 @@ class OrganizationQueue extends React.PureComponent {
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
         page: <TaskTableTab
+          organizationName={this.props.organizationName}
           description={
             sprintf(COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION,
               this.props.organizationName)}
@@ -65,9 +70,10 @@ class OrganizationQueue extends React.PureComponent {
     ];
 
     return <AppSegment filledBackground styling={containerStyles}>
+      {success && <Alert type="success" title={success.title} message={success.detail} />}
       <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
-        <QueueSelectorDropdown organizations={this.props.organizations} />
+        <QueueOrganizationDropdown organizations={this.props.organizations} />
         <TabWindow
           name="tasks-organization-queue"
           tabs={tabs}
@@ -81,13 +87,19 @@ OrganizationQueue.propTypes = {
   tasks: PropTypes.array.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  organizations: state.ui.organizations,
-  unassignedTasks: getUnassignedOrganizationalTasks(state),
-  assignedTasks: getAssignedOrganizationalTasks(state),
-  completedTasks: getCompletedOrganizationalTasks(state),
-  tasks: tasksByOrganization(state)
-});
+const mapStateToProps = (state) => {
+  const { success } = state.ui.messages;
+
+  return {
+    success,
+    organizationName: state.ui.activeOrganization.name,
+    organizations: state.ui.organizations,
+    unassignedTasks: getUnassignedOrganizationalTasks(state),
+    assignedTasks: getAssignedOrganizationalTasks(state),
+    completedTasks: getCompletedOrganizationalTasks(state),
+    tasks: tasksByOrganization(state)
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
@@ -97,11 +109,12 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
-const TaskTableTab = ({ description, tasks }) => <React.Fragment>
+const TaskTableTab = ({ description, tasks, organizationName }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
   <TaskTable
     includeDetailsLink
     includeTask
+    includeRegionalOffice={organizationName === 'Hearings Management'}
     includeType
     includeDocketNumber
     includeDaysWaiting
