@@ -63,6 +63,9 @@ export const taskIsNotOnHoldSelector = (tasks: Tasks) =>
 export const workTasksSelector = (tasks: Tasks | Array<Task> | Array<TaskWithAppeal>) =>
   _.filter(tasks, (task) => !task.hideFromQueueTableView);
 
+export const trackingTasksSelector = (tasks: Tasks | Array<Task> | Array<TaskWithAppeal>) =>
+  _.filter(tasks, (task) => task.type === 'TrackVeteranTask');
+
 export const getActiveModalType = createSelector(
   [getModals],
   (modals: { String: boolean }) => _.find(Object.keys(modals), (modalName) => modals[modalName])
@@ -99,6 +102,10 @@ export const tasksByOrganization = createSelector(
   [tasksWithAppealSelector, getActiveOrganizationId],
   (tasks: Array<TaskWithAppeal>, organizationId: string) =>
     _.filter(tasks, (task) => (task.assignedTo.id === organizationId))
+);
+
+export const trackingTasksForOrganization = createSelector(
+  [tasksByOrganization], (tasks: Array<TaskWithAppeal>) => trackingTasksSelector(tasks)
 );
 
 export const taskById = createSelector(

@@ -14,6 +14,7 @@ import {
   getUnassignedOrganizationalTasks,
   getAssignedOrganizationalTasks,
   getCompletedOrganizationalTasks,
+  trackingTasksForOrganization,
   tasksByOrganization
 } from './selectors';
 
@@ -69,6 +70,27 @@ class OrganizationQueue extends React.PureComponent {
       }
     ];
 
+    let focusedTab = 0;
+
+    if (this.props.organizationIsVso) {
+      focusedTab = 1;
+      tabs.unshift({
+        label: 'All cases',
+        page: <React.Fragment>
+          <p className="cf-margin-top-0">
+            {sprintf('All AMA cases where the appellant is represented by %s', this.props.organizationName)}
+          </p>
+          <TaskTable
+            includeDetailsLink
+            includeIssueCount
+            includeType
+            includeDocketNumber
+            tasks={this.props.trackingTasks}
+          />
+        </React.Fragment>
+      });
+    }
+
     return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
       <div>
@@ -77,6 +99,7 @@ class OrganizationQueue extends React.PureComponent {
         <TabWindow
           name="tasks-organization-queue"
           tabs={tabs}
+          defaultPage={focusedTab}
         />
       </div>
     </AppSegment>;
@@ -93,10 +116,12 @@ const mapStateToProps = (state) => {
   return {
     success,
     organizationName: state.ui.activeOrganization.name,
+    organizationIsVso: state.ui.activeOrganization.isVso,
     organizations: state.ui.organizations,
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
     completedTasks: getCompletedOrganizationalTasks(state),
+    trackingTasks: trackingTasksForOrganization(state),
     tasks: tasksByOrganization(state)
   };
 };
