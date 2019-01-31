@@ -469,6 +469,18 @@ describe Appeal do
 
       appeal.create_tasks_on_intake_success!
     end
+
+    context "request issue has non-comp business line" do
+      let(:appeal) do
+        create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)])
+      end
+
+      it "creates root task and veteran record request task" do
+        expect(VeteranRecordRequest).to receive(:create!).once
+
+        appeal.create_tasks_on_intake_success!
+      end
+    end
   end
 
   context "#location_code" do
@@ -609,6 +621,60 @@ describe Appeal do
       let(:appeal) { create(:appeal, request_issues: [request_issue, request_issue2, request_issue3]) }
 
       it { is_expected.to eq "multiple" }
+    end
+  end
+
+  context "#active_status" do
+    subject { appeal.active_status? }
+
+    context "there are in-progress tasks" do
+      let(:appeal) { create(:appeal) }
+
+      before do
+        FactoryBot.create_list(:task, 3, :in_progress, type: RootTask.name, appeal: appeal)
+      end
+
+      it "appeal is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "has an effectuation ep that is active" do
+      let(:appeal) { create(:appeal) }
+      let(:decision_document) { create(:decision_document, appeal: appeal) }
+      let(:ep_status) { "PEND" }
+      let!(:effectuation_ep) { create(:end_product_establishment, source: decision_document, synced_status: ep_status) }
+
+      it "appeal is active" do
+        expect(subject).to eq(true)
+      end
+
+      context "effection ep cleared" do
+        let(:ep_status) { "CLR" }
+
+        it "appeal is not active" do
+          expect(subject).to eq(false)
+        end
+      end
+    end
+
+    context "has an open remanded supplemental claim" do
+      let(:appeal) { create(:appeal) }
+      let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let(:ep_status) { "PEND" }
+      let!(:remanded_ep) { create(:end_product_establishment, source: remanded_sc, synced_status: ep_status) }
+
+      it "appeal is active" do
+        expect(subject).to eq(true)
+      end
+
+      context "remanded supplemental_claim is closed" do
+        let(:ep_status) { "CLR" }
+
+        it "appeal is not active" do
+          expect(subject).to eq(false)
+        end
+      end
     end
   end
 end

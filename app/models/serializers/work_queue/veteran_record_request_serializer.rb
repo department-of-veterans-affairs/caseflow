@@ -1,4 +1,4 @@
-class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
+class WorkQueue::VeteranRecordRequestSerializer < ActiveModel::Serializer
   def task
     object
   end
@@ -62,6 +62,6 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
   end
 
   attribute :type do
-    decision_review.is_a?(Appeal) ? "Board Grant" : decision_review.class.review_title
+    task.label
   end
 end

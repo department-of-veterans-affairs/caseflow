@@ -40,6 +40,18 @@
   }
 }
 
+.cf-record-request-checkbox {
+  label {
+    max-width: none;
+  }
+
+  .cf-form-checkbox {
+    label::before {
+      position: relative;
+    }
+  }
+}
+
 .cf-noncomp-search {
   min-width: 300px;
   margin-right: -40px;
