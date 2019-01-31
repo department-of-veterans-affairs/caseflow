@@ -82,7 +82,7 @@ class AssignedCasesPage extends React.Component<Props> {
       <AssignWidget
         previousAssigneeId={attorneyId}
         onTaskAssignment={(params) => props.reassignTasksToUser(params)}
-        selectedTasks={selectedTasks} />
+        selectedTasks={selectedTasks}/>
       <TaskTable
         includeSelect
         includeDetailsLink

@@ -141,7 +141,10 @@ class AssignWidget extends React.PureComponent<Props> {
   requestDistributionSubmit = () => {
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
-    this.props.requestDistribution(this.props.userId);
+    // Note: the default value of "" will never be used, and will fail on the backend.
+    // Even though this code path will never be hit unless we have a value for userId,
+    // Flow complains without a default value.
+    this.props.requestDistribution(this.props.userId || "");
   }
 
   render = () => {
@@ -214,7 +217,7 @@ class AssignWidget extends React.PureComponent<Props> {
               casePlural: pluralize('case', selectedTasks.length) })}
           loading={savePending}
           loadingText={COPY.ASSIGN_WIDGET_LOADING} /> }
-        {!this.props.isModal && this.props.showRequestCasesButton && featureToggles.automatic_case_distribution &&
+        {this.props.userId && this.props.showRequestCasesButton && featureToggles.automatic_case_distribution &&
           <div {...css({ marginLeft: 'auto' })}>
             <Button
               name="Request more cases"
