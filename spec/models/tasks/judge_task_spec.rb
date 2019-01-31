@@ -207,9 +207,9 @@ describe JudgeTask do
     end
 
     context "with multiple root tasks" do
-      let(:root_task1) { FactoryBot.create(:root_task).becomes(RootTask) }
-      let(:root_task2) { FactoryBot.create(:root_task).becomes(RootTask) }
-      let(:root_task3) { FactoryBot.create(:root_task).becomes(RootTask) }
+      let(:root_task1) { FactoryBot.create(:root_task) }
+      let(:root_task2) { FactoryBot.create(:root_task) }
+      let(:root_task3) { FactoryBot.create(:root_task) }
       let(:root_tasks) { [root_task1, root_task2, root_task3] }
 
       it "evenly distributes the JudgeAssignTasks" do
