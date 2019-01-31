@@ -35,6 +35,7 @@ const OTHER = 'OTHER';
 
 type Params = {|
   userId?: string,
+  showRequestCaseButton?: boolean,
   previousAssigneeId: string,
   onTaskAssignment: Function,
   selectedTasks: Array<Task>,
@@ -213,13 +214,14 @@ class AssignWidget extends React.PureComponent<Props> {
               casePlural: pluralize('case', selectedTasks.length) })}
           loading={savePending}
           loadingText={COPY.ASSIGN_WIDGET_LOADING} /> }
-        {!this.props.isModal && featureToggles.automatic_case_distribution &&
-          <Button
-            name="Request cases"
-            onClick={this.requestDistributionSubmit}
-            loading={distributionLoading}
-            loadingText="Requesting cases&hellip;"
-          />
+        {!this.props.isModal && this.props.showRequestCaseButton && featureToggles.automatic_case_distribution &&
+          <div {...css({ marginLeft: 'auto' })}>
+            <Button
+              name="Request more cases"
+              onClick={this.requestDistributionSubmit}
+              loading={distributionLoading}
+              classNames={['usa-button-secondary', 'cf-push-right']} />
+          </div>
         }
       </div>
     </React.Fragment>;
@@ -235,7 +237,8 @@ const mapStateToProps = (state: State) => {
     attorneysOfJudge,
     selectedAssignee,
     selectedAssigneeSecondary,
-    attorneys,distributionLoading: pendingDistribution !== null,
+    attorneys,
+    distributionLoading: pendingDistribution !== null,
     savePending,
     featureToggles
   };

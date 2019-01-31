@@ -60,7 +60,8 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
             userId={userId}
             previousAssigneeId={userId}
             onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
-            selectedTasks={selectedTasks} />
+            selectedTasks={selectedTasks}
+            showRequestCasesButton />
           {this.props.distributionCompleteCasesLoading &&
             <div {...loadingContainerStyling}>
               <LoadingContainer color={LOGO_COLORS.QUEUE.ACCENT}>
