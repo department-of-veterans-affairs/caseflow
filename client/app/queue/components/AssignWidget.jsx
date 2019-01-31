@@ -35,7 +35,7 @@ const OTHER = 'OTHER';
 
 type Params = {|
   userId?: string,
-  showRequestCaseButton?: boolean,
+  showRequestCasesButton?: boolean,
   previousAssigneeId: string,
   onTaskAssignment: Function,
   selectedTasks: Array<Task>,
