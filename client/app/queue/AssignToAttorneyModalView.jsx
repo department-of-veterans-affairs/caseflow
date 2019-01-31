@@ -19,10 +19,7 @@ import type { Task } from './types/models';
 
 type Params = {|
   appealId: number,
-  userId: string,
-  taskId: number,
-  distributionLoading: boolean,
-  featureToggles: Object
+  userId: string
 |};
 
 type Props = Params & {|
