@@ -803,17 +803,15 @@ describe EndProductEstablishment do
   end
 
   context "#on_decision_issue_sync_processed" do
-    subject { end_product_establishment.on_decision_issue_sync_processed }
+    subject { end_product_establishment.on_decision_issue_sync_processed(processing_request_issue) }
     let(:processed_at) { Time.zone.now }
-    let!(:request_issues) do
-      [
-        create(:request_issue,
-               review_request: source,
-               decision_sync_processed_at: Time.zone.now),
-        create(:request_issue,
-               review_request: source,
-               decision_sync_processed_at: processed_at)
-      ]
+
+    let(:processing_request_issue) do
+      create(:request_issue, review_request: source)
+    end
+
+    let!(:processed_request_issue) do
+      create(:request_issue, review_request: source, decision_sync_processed_at: Time.zone.now)
     end
 
     context "when decision issues are all synced" do
@@ -855,7 +853,9 @@ describe EndProductEstablishment do
     end
 
     context "when decision issues are not all synced" do
-      let(:processed_at) { nil }
+      let!(:not_processed_request_issue) do
+        create(:request_issue, review_request: source)
+      end
 
       it "does nothing" do
         subject
