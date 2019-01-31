@@ -92,6 +92,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       taskBusinessPayloads: task.attributes.task_business_payloads,
       caseReviewId: task.attributes.attorney_case_review_id,
       timelineTitle: task.attributes.timeline_title,
+      hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
       hideFromCaseTimeline: task.attributes.hide_from_case_timeline
     };
@@ -166,6 +167,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       availableActions: task.attributes.available_actions,
       taskBusinessPayloads: task.attributes.task_business_payloads,
       timelineTitle: task.attributes.timeline_title,
+      hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
       hideFromCaseTimeline: task.attributes.hide_from_case_timeline
     };

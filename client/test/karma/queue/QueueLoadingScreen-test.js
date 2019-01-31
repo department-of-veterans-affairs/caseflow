@@ -46,6 +46,7 @@ const serverData = {
           veteran_name: 'Mills, Beulah, J',
           work_product: 'OTD',
           status: 'Assigned',
+          hide_from_queue_table_view: false,
           hide_from_case_timeline: false,
           hide_from_task_snapshot: false
         },
@@ -98,6 +99,7 @@ describe('QueueLoadingScreen', () => {
         status: 'Assigned',
         decisionPreparedBy: null,
         type: 'LegacyJudgeTask',
+        hideFromQueueTableView: false,
         hideFromCaseTimeline: false,
         hideFromTaskSnapshot: false
       }

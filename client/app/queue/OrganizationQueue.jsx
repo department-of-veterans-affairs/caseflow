@@ -7,7 +7,7 @@ import { css } from 'glamor';
 
 import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
-import QueueSelectorDropdown from './components/QueueSelectorDropdown';
+import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -70,7 +70,7 @@ class OrganizationQueue extends React.PureComponent {
       {success && <Alert type="success" title={success.title} message={success.detail} />}
       <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
-        <QueueSelectorDropdown organizations={this.props.organizations} />
+        <QueueOrganizationDropdown organizations={this.props.organizations} />
         <TabWindow
           name="tasks-organization-queue"
           tabs={tabs}
@@ -89,7 +89,7 @@ const mapStateToProps = (state) => {
 
   return {
     success,
-    organizationName: state.ui.activeOrganizationName,
+    organizationName: state.ui.activeOrganization.name,
     organizations: state.ui.organizations,
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
