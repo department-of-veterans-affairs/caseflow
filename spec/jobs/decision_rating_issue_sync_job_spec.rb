@@ -1,13 +1,9 @@
 require "rails_helper"
 
 describe DecisionIssueSyncJob do
-  class NilRatingProfileListError < StandardError; end
-  class LockedRatingError < StandardError; end
-  class BackfilledRatingError < StandardError; end
-
   let(:epe) { create(:end_product_establishment, :cleared, established_at: Time.zone.today) }
   let(:request_issue) { create(:request_issue, end_product_establishment: epe) }
-  let(:no_ratings_err) { NilRatingProfileListError.new("none!") }
+  let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
   let(:bgs_transport_err) { BGS::ShareError.new("network!") }
 
   subject { described_class.perform_now(request_issue) }
