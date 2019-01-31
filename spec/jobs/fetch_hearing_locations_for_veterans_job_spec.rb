@@ -21,7 +21,7 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
 
-    describe "#veterans", focus: true do
+    describe "#veterans" do
       context "when veterans exist in location 57 or have schedule hearing tasks" do
         # Legacy appeal with schedule hearing task
         let!(:veteran_2) { create(:veteran, file_number: "999999999") }
