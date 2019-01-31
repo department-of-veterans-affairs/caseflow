@@ -187,50 +187,51 @@ class Veteran < ApplicationRecord
   end
 
   class << self
-    def find_or_create_by_file_number(file_number)
-      find_and_maybe_backfill_name(file_number) || create_by_file_number(file_number)
+    def find_or_create_by_file_number(file_number, sync: false)
+      find_and_maybe_backfill_name(file_number, sync: sync) || create_by_file_number(file_number)
     end
 
-    def find_by_file_number_or_ssn(file_number_or_ssn)
+    def find_by_file_number_or_ssn(file_number_or_ssn, sync: true)
       if file_number_or_ssn.to_s.length == 9
-        find_and_maybe_backfill_name(file_number_or_ssn) || find_by_ssn(file_number_or_ssn)
+        find_and_maybe_backfill_name(file_number_or_ssn, sync: sync) || find_by_ssn(file_number_or_ssn)
       else
-        find_and_maybe_backfill_name(file_number_or_ssn)
+        find_and_maybe_backfill_name(file_number_or_ssn, sync: sync)
       end
     end
 
-    def find_or_create_by_file_number_or_ssn(file_number_or_ssn)
+    def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync: true)
       if file_number_or_ssn.to_s.length == 9
-        find_or_create_by_file_number(file_number_or_ssn) || find_or_create_by_ssn(file_number_or_ssn)
+        find_or_create_by_file_number(file_number_or_ssn, sync: sync) ||
+          find_or_create_by_ssn(file_number_or_ssn, sync: sync)
       else
-        find_or_create_by_file_number(file_number_or_ssn)
+        find_or_create_by_file_number(file_number_or_ssn, sync: sync)
       end
     end
 
     private
 
-    def find_by_ssn(ssn)
+    def find_by_ssn(ssn, sync: false)
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
-      find_and_maybe_backfill_name(file_number)
+      find_and_maybe_backfill_name(file_number, sync: sync)
     end
 
-    def find_or_create_by_ssn(ssn)
+    def find_or_create_by_ssn(ssn, sync: false)
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
-      find_or_create_by_file_number(file_number)
+      find_or_create_by_file_number(file_number, sync: sync)
     end
 
-    def find_and_maybe_backfill_name(file_number)
+    def find_and_maybe_backfill_name(file_number, sync: false)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
 
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
       # a symbol that will blow up, so check if bgs_record is a hash first.
-      if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
+      if sync && veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
         veteran.update!(
           first_name: veteran.bgs_record[:first_name],
           last_name: veteran.bgs_record[:last_name],

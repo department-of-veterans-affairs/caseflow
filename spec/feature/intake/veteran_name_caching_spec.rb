@@ -10,6 +10,9 @@ feature "Higher-Level Review" do
     Timecop.freeze(post_ramp_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
+    allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
+    allow(bgs).to receive(:fetch_veteran_info).and_call_original
   end
 
   after do
@@ -18,6 +21,7 @@ feature "Higher-Level Review" do
   end
 
   let(:veteran) { create(:veteran) }
+  let(:bgs) { BGSService.new }
 
   scenario "Caseflow creates End Products with current upstream Veteran name" do
     step "start the intake" do
@@ -48,6 +52,8 @@ feature "Higher-Level Review" do
     end
 
     step "EPs use the updated Veteran name" do
+      expect(bgs).to have_received(:fetch_veteran_info).exactly(5).times
+
       veteran.reload
 
       expect(veteran.last_name).to eq("Changed")

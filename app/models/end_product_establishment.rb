@@ -369,7 +369,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync: true)
   end
 
   def establish_claim_in_vbms(end_product)
