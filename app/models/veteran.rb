@@ -191,15 +191,15 @@ class Veteran < ApplicationRecord
       find_and_maybe_backfill_name(file_number, sync: sync) || create_by_file_number(file_number)
     end
 
-    def find_by_file_number_or_ssn(file_number_or_ssn, sync: true)
+    def find_by_file_number_or_ssn(file_number_or_ssn, sync: false)
       if file_number_or_ssn.to_s.length == 9
-        find_and_maybe_backfill_name(file_number_or_ssn, sync: sync) || find_by_ssn(file_number_or_ssn)
+        find_and_maybe_backfill_name(file_number_or_ssn, sync: sync) || find_by_ssn(file_number_or_ssn, sync: sync)
       else
         find_and_maybe_backfill_name(file_number_or_ssn, sync: sync)
       end
     end
 
-    def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync: true)
+    def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync: false)
       if file_number_or_ssn.to_s.length == 9
         find_or_create_by_file_number(file_number_or_ssn, sync: sync) ||
           find_or_create_by_ssn(file_number_or_ssn, sync: sync)
