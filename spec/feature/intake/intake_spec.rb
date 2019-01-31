@@ -226,5 +226,41 @@ RSpec.feature "Intake" do
       expect(intake.cancel_other).to eq("blue!")
       expect(intake).to be_canceled
     end
+
+    context "BGS error" do
+      before do
+        FeatureToggle.enable!(:intakeAma)
+
+        allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships)
+          .and_raise(BGS::ShareError, "bgs error")
+      end
+
+      after do
+        FeatureToggle.disable!(:intakeAma)
+      end
+
+      scenario "Cancel intake on error" do
+        visit "/intake"
+        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
+        find("#form-select").send_keys :enter
+
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_content("Something went wrong")
+
+        visit "/intake"
+        expect(page).to have_content("Error: bgs error. Intake has been cancelled, please retry.")
+
+        # verify that current intake has been cancelled
+        expect(Intake.find_by(completion_status: "canceled", veteran_file_number: "12341234")).to_not be_nil
+
+        # verify user can proceed with new intake
+        visit "/intake"
+        expect(page).to have_content("Welcome to Caseflow Intake!")
+      end
+    end
   end
 end

@@ -69,6 +69,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
+        name: task.attributes.assigned_to.name,
         id: task.attributes.assigned_to.id,
         type: task.attributes.assigned_to.type
       },
@@ -145,6 +146,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       dueOn: task.attributes.due_on,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
+        name: task.attributes.assigned_to.name,
         type: task.attributes.assigned_to.type,
         id: task.attributes.assigned_to.id
       },
