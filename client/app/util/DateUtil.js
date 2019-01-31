@@ -9,7 +9,7 @@ const ZERO_INDEX_MONTH_OFFSET = 1;
 export const dateFormatString = 'MM/DD/YYYY';
 
 // Only Compatible to ISO Date/Time format
-export const formatDate = function(dateString) {
+export const formatDate = function(dateString, utc=false) {
   if (!dateString) {
     return;
   }
@@ -18,10 +18,14 @@ export const formatDate = function(dateString) {
     throw new Error('Passing string without timezone -- try formatDateStr() instead');
   }
 
-  let date = new Date(dateString);
-  let month = StringUtil.leftPad(date.getMonth() + ZERO_INDEX_MONTH_OFFSET, 2, '0');
-  let day = StringUtil.leftPad(date.getDate(), 2, '0');
-  let year = date.getFullYear();
+  const date = new Date(dateString);
+
+  const dateMonth = utc ? date.getUTCMonth() : date.getMonth();
+  const dateDay = utc ? date.getUTCDate() : date.getDate();
+
+  const month = StringUtil.leftPad(dateMonth + ZERO_INDEX_MONTH_OFFSET, 2, '0');
+  const day = StringUtil.leftPad(dateDay, 2, '0');
+  const year = utc ? date.getUTCFullYear() : date.getFullYear();
 
   return `${month}/${day}/${year}`;
 };

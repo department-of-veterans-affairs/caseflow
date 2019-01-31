@@ -3,6 +3,7 @@ require "rails_helper"
 feature "NonComp Dispositions Task Page" do
   before do
     FeatureToggle.enable!(:decision_reviews)
+    Timecop.freeze(Time.zone.today)
   end
 
   after do
@@ -86,13 +87,13 @@ feature "NonComp Dispositions Task Page" do
 
     scenario "saves decision issues" do
       visit dispositions_url
-
       expect(page).to have_button("Complete", disabled: true)
 
       # set description & disposition for each request issue
       fill_in_disposition(0, "Granted")
       fill_in_disposition(1, "Granted", "test description")
       fill_in_disposition(2, "Denied", "denied")
+      fill_in "decision-date", with: "01/01/2019"
 
       # save
       expect(page).to have_button("Complete", disabled: false)
@@ -120,6 +121,8 @@ feature "NonComp Dispositions Task Page" do
       find_disabled_disposition(0, "Granted")
       find_disabled_disposition(1, "Granted", "test description")
       find_disabled_disposition(2, "Denied", "denied")
+      # decision date should be saved
+      expect(page).to have_content("01/01/2019")
     end
 
     context "when there is an error saving" do
