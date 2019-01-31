@@ -16,6 +16,12 @@ describe TrackVeteranTask do
     end
   end
 
+  describe ".hide_from_queue_table_view" do
+    it "should always be hidden from queue table view" do
+      expect(tracking_task.hide_from_queue_table_view).to eq(true)
+    end
+  end
+
   describe ".hide_from_case_timeline" do
     it "should always be hidden from case timeline" do
       expect(tracking_task.hide_from_case_timeline).to eq(true)
