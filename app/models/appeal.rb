@@ -202,7 +202,11 @@ class Appeal < DecisionReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :first_name, :last_name, :name_suffix, :ssn, to: :veteran, prefix: true, allow_nil: true
+  delegate :closest_regional_office,
+           :first_name,
+           :last_name,
+           :name_suffix,
+           :ssn, to: :veteran, prefix: true, allow_nil: true
 
   def appellant
     claimants.first
@@ -303,8 +307,24 @@ class Appeal < DecisionReview
     Array.wrap(appeal_status_id)
   end
 
+  def active_status?
+    active? || active_ep? || active_remanded_claims?
+  end
+
+  def active_ep?
+    decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
+  end
+
+  def active_remanded_claims?
+    remand_supplemental_claims.any?(&:active?)
+  end
+
   def location
-    # to be implemented
+    if active_ep? || active_remanded_claims?
+      "aoj"
+    else
+      "bva"
+    end
   end
 
   def status_hash

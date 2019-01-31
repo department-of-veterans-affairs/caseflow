@@ -7,13 +7,10 @@ class V2::AppealStatusSerializer < V2::AppealSerializer
 
   attribute :linked_review_ids, key: :appeal_ids
   attribute :advanced_on_docket, key: :aod
+  attribute :active_status?, key: :active
 
   attribute :type do
     "original"
-  end
-
-  attribute :location do
-    # to be implement
   end
 
   attribute :incomplete_history do
