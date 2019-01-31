@@ -89,7 +89,7 @@ const mapStateToProps = (state) => {
 
   return {
     success,
-    organizationName: state.ui.activeOrganizationName,
+    organizationName: state.ui.activeOrganization.name,
     organizations: state.ui.organizations,
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
