@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import ApiUtil from '../../util/ApiUtil';
+import LoadingDataDisplay from '../../components/LoadingDataDisplay';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 import HearingDetails from '../components/Details';
 
@@ -12,8 +14,7 @@ class HearingDetailsContainer extends React.Component {
     super(props);
 
     this.state = {
-      hearing: null,
-      loading: false
+      hearing: null
     };
   }
 
@@ -33,8 +34,7 @@ class HearingDetailsContainer extends React.Component {
     if (hearing) {
       this.setState({ hearing });
     } else {
-      this.setState({ loading: true });
-      ApiUtil.get(`/hearings/${hearingId}`).then((resp) => {
+      return ApiUtil.get(`/hearings/${hearingId}`).then((resp) => {
         this.setState({
           hearing: ApiUtil.convertToCamelCase(resp.body),
           loading: false
@@ -45,11 +45,23 @@ class HearingDetailsContainer extends React.Component {
   render() {
 
     if (this.state.hearing) {
-      return <HearingDetails
-        disabled={!this.props.userInHearingsOrganization}
-        hearing={this.state.hearing}
-        goBack={this.goBack}
-      />;
+      return <LoadingDataDisplay
+        createLoadPromise={() => Promise.all([
+          this.getHearing()
+        ])}
+        loadingComponentProps={{
+          spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+          message: 'Loading the hearing details...'
+        }}
+        failStatusMessageProps={{
+          title: 'Unable to load the details.'
+        }}>
+        <HearingDetails
+          disabled={!this.props.userInHearingsOrganization}
+          hearing={this.state.hearing}
+          goBack={this.goBack}
+        />
+      </LoadingDataDisplay>;
     }
 
     return null;

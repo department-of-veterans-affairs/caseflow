@@ -93,7 +93,8 @@ export type Task = {
   taskBusinessPayloads: Array<{description: string, values: Object}>,
   hideFromQueueTableView: boolean,
   hideFromCaseTimeline: boolean,
-  hideFromTaskSnapshot: boolean
+  hideFromTaskSnapshot: boolean,
+  closestRegionalOffice: string
 };
 
 export type Tasks = { [string]: Task };
