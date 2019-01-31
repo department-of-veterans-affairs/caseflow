@@ -1,4 +1,4 @@
-// @flow
+/* eslint-disable max-lines */
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
@@ -91,6 +91,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       taskBusinessPayloads: task.attributes.task_business_payloads,
       caseReviewId: task.attributes.attorney_case_review_id,
       timelineTitle: task.attributes.timeline_title,
+      hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
       hideFromCaseTimeline: task.attributes.hide_from_case_timeline
     };
@@ -164,6 +165,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       availableActions: task.attributes.available_actions,
       taskBusinessPayloads: task.attributes.task_business_payloads,
       timelineTitle: task.attributes.timeline_title,
+      hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
       hideFromCaseTimeline: task.attributes.hide_from_case_timeline
     };
@@ -224,6 +226,19 @@ export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) =>
     disposition: hearing.disposition
   }));
 
+const prepareAppealAvailableHearingLocationsForStore = (appeal: { attributes: Object }) => appeal.attributes.
+  veteran_available_hearing_locations.map((ahl) => ({
+    name: ahl.name,
+    address: ahl.address,
+    city: ahl.city,
+    state: ahl.state,
+    distance: ahl.distance,
+    facilityId: ahl.facility_id,
+    facilityType: ahl.facility_type,
+    classification: ahl.classification,
+    zipCode: ahl.zip_code
+  }));
+
 export const prepareAppealForStore =
   (appeals: Array<Object>):
     { appeals: BasicAppeals, appealDetails: AppealDetails } => {
@@ -268,6 +283,8 @@ export const prepareAppealForStore =
         veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
         veteranGender: appeal.attributes.veteran_gender,
         veteranAddress: appeal.attributes.veteran_address,
+        veteranClosestRegionalOffice: appeal.attributes.veteran_closest_regional_office,
+        veteranAvailableHearingLocations: prepareAppealAvailableHearingLocationsForStore(appeal),
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
         decisionDate: appeal.attributes.decision_date,
@@ -477,6 +494,10 @@ export const taskIsOnHold = (task: Task) => {
 };
 
 export const taskActionData = (props: Object) => {
+  if (!props.task) {
+    return {};
+  }
+
   const relevantAction = props.task.availableActions.
     find((action) => props.history.location.pathname.endsWith(action.value));
 
@@ -484,6 +505,5 @@ export const taskActionData = (props: Object) => {
     return (relevantAction.data);
   }
 
-  // We should never get here since any task action the creates this modal should provide data.
-  throw new Error('Task action requires data');
+  return null;
 };

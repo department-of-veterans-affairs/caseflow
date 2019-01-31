@@ -24,6 +24,8 @@ class DecisionReviewTask < GenericTask
     true
   end
 
+  delegate :ui_hash, to: :appeal, prefix: true
+
   private
 
   def validate_task(decision_issue_params)

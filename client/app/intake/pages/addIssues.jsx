@@ -91,7 +91,7 @@ export class AddIssuesPage extends React.Component {
       return <div className="issues">
         <div>
           { issues.map((issue, index) => {
-            return <div className="issue" key={`issue-${index}`}>
+            return <div className="issue" key={`issue-${index}`} id={`issue-${issue.referenceId}`}>
               <AddedIssue
                 issue={issue}
                 issueIdx={index}
