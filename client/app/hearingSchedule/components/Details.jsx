@@ -41,7 +41,7 @@ class HearingDetails extends React.Component {
     super(props);
 
     this.state = {
-      disabled: false,
+      disabled: this.props.disabled,
       isLegacy: this.props.hearing.docketName !== 'hearing',
       updated: false,
       loading: false,
@@ -131,7 +131,7 @@ class HearingDetails extends React.Component {
     const {
       veteranFirstName,
       veteranLastName,
-      vbmsId
+      veteranFileNumber
     } = this.props.hearing;
 
     const { hearingDetailsForm, transcriptionDetailsForm } = this.props;
@@ -153,7 +153,7 @@ class HearingDetails extends React.Component {
         <div {...inputFix}>
           <div {...row}>
             <h1 className="cf-margin-bottom-0">{`${veteranFirstName} ${veteranLastName}`}</h1>
-            <div>Veteran ID: <CopyTextButton text={vbmsId} /></div>
+            <div>Veteran ID: <CopyTextButton text={veteranFileNumber} /></div>
           </div>
 
           <div className="cf-help-divider" />
@@ -195,7 +195,8 @@ class HearingDetails extends React.Component {
 
 HearingDetails.propTypes = {
   hearing: PropTypes.object.isRequired,
-  goBack: PropTypes.func
+  goBack: PropTypes.func,
+  disabled: PropTypes.bool
 };
 
 const mapStateToProps = (state) => ({

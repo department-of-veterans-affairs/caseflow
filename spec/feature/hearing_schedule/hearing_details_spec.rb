@@ -1,16 +1,34 @@
 require "rails_helper"
 
-RSpec.feature "Hearing Schedule Hearing Details", focus: true do
-  let!(:current_user) do
-    OrganizationsUser.add_user_to_organization(create(:hearings_management), HearingsManagement.singleton)
-    User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
+RSpec.feature "Hearing Schedule Daily Docket" do
+  context "Hearing details is only editable for a hearings management user" do
+    let!(:current_user) do
+      OrganizationsUser.add_user_to_organization(create(:hearings_management), HearingsManagement.singleton)
+      User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
+    end
+    let!(:hearing) { create(:hearing) }
+
+    scenario "Fields are editable" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+      field_labeled("Notes", disabled: false)
+    end
   end
 
-  let!(:veteran) { create(:veteran, file_number: "123456789") }
-  let!(:staff) { create(:staff, stafkey: "RO18", stc2: 2, stc3: 3, stc4: 4) }
-  let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today) }
+  context "Hearing details is not editable for a non-hearings management user" do
+    let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
+    let!(:hearing) { create(:hearing) }
+
+    scenario "Fields are not editable" do
+      visit "hearings/" + hearing.external_id.to_s + "/details"
+      field_labeled("Notes", disabled: true)
+    end
+  end
 
   context "Hearing details for AMA hearing" do
+    let!(:current_user) do
+      OrganizationsUser.add_user_to_organization(create(:hearings_management), HearingsManagement.singleton)
+      User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
+    end
     let(:hearing) { create(:hearing, hearing_day: hearing_day) }
 
     scenario "User can update fields" do
@@ -37,20 +55,17 @@ RSpec.feature "Hearing Schedule Hearing Details", focus: true do
 
       click_button("Save")
     end
+  end
 
-    context "Hearing details for Legacy hearing" do
-      let!(:vacols_hearing_day) { create(:case_hearing, hearing_type: "C", folder_nr: "VIDEO RO18") }
-      let!(:vacols_case) { create(:case, bfcorlid: "123456789S") }
-      let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-      let!(:case_hearing) do
-        create(:case_hearing, vdkey: hearing_day.hearing_pkseq, folder_nr: legacy_appeal.vacols_id)
-      end
-      let!(:legacy_hearing) { create(:legacy_hearing, vacols_id: case_hearing.hearing_pkseq, appeal: legacy_appeal) }
+  context "Hearing details for Legacy hearing" do
+    let!(:current_user) do
+      OrganizationsUser.add_user_to_organization(create(:hearings_management), HearingsManagement.singleton)
+      User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
+    end
+    let!(:legacy_hearing) { create(:legacy_hearing) }
 
-      scenario "User can update nothing" do
-        visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
-
-      end
+    scenario "User can update nothing" do
+      visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
     end
   end
 end

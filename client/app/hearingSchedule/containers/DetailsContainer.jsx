@@ -56,7 +56,11 @@ class HearingDetailsContainer extends React.Component {
         failStatusMessageProps={{
           title: 'Unable to load the details.'
         }}>
-        <HearingDetails hearing={this.state.hearing} goBack={this.goBack} />
+        <HearingDetails
+          disabled={!this.props.userInHearingsOrganization}
+          hearing={this.state.hearing}
+          goBack={this.goBack}
+        />
       </LoadingDataDisplay>;
     }
 
