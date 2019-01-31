@@ -19,6 +19,18 @@ module FeatureHelper
     end
   end
 
+  def click_checkbox(options = {}, container = page)
+    checkbox = if options[:name].present?
+                 container.find(".cf-form-checkbox ##{options[:name]}")
+               elsif options[:label].present?
+                 container.find(text: options[:label])
+               else
+                 container.find(".cf-form-checkbox")
+               end
+
+    checkbox.click
+  end
+
   def dropdown_selected_value(container = page)
     container&.find(".Select-control .Select-value")&.text
   rescue Capybara::ElementNotFound
