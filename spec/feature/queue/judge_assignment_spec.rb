@@ -26,7 +26,10 @@ RSpec.feature "Judge assignment to attorney" do
   context "Can move appeals between attorneys" do
     scenario "submits draft decision" do
       visit "/queue"
-      click_on "Switch to Assign Cases"
+
+      find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+      expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+      click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
 
       expect(page).to have_content("Cases to Assign (2)")
       expect(page).to have_content("Moe Syzlak")
@@ -74,43 +77,69 @@ RSpec.feature "Judge assignment to attorney" do
 
   context "Can view their queue" do
     let(:appeal) { FactoryBot.create(:appeal) }
+    let(:veteran) { appeal.veteran }
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
 
-    scenario "when viewing the review task queue" do
-      judge_review_task = FactoryBot.create(
-        :ama_judge_decision_review_task, :in_progress, assigned_to: judge.user, appeal: appeal, parent: root_task
-      )
-      expect(judge_review_task.status).to eq("in_progress")
-      vet = appeal.veteran
-      attorney_completed_task = FactoryBot.create(:ama_attorney_task, appeal: appeal, parent: judge_review_task)
-      attorney_completed_task.update!(status: Constants.TASK_STATUSES.completed)
-      case_review = FactoryBot.create(:attorney_case_review, task_id: attorney_completed_task.id)
+    context "there's another in-progress JudgeAssignTask" do
+      let!(:judge_task) do
+        FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal, parent: root_task)
+      end
 
-      visit "/queue"
+      scenario "viewing the assign task queue" do
+        visit "/queue"
 
-      expect(page).to have_content("Review 1 Cases")
-      expect(page).to have_content("#{vet.first_name} #{vet.last_name}")
-      expect(page).to have_content(appeal.veteran_file_number)
-      expect(page).to have_content(case_review.document_id)
-      expect(page).to have_content("Original")
-      expect(page).to have_content(appeal.docket_number)
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+
+        expect(page).to have_content("Assign 3 Cases")
+        expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
+        expect(page).to have_content(appeal.veteran_file_number)
+        expect(page).to have_content("Original")
+        expect(page).to have_content(appeal.docket_number)
+      end
     end
 
-    scenario "when viewing the assign task queue" do
-      FactoryBot.create(
-        :ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal, parent: root_task
-      )
-      vet = appeal.veteran
+    context "there's an in-progress JudgeDecisionReviewTask" do
+      let!(:judge_review_task) do
+        FactoryBot.create(
+          :ama_judge_decision_review_task, :in_progress, assigned_to: judge.user, appeal: appeal, parent: root_task
+        )
+      end
 
-      visit "/queue"
+      scenario "viewing the review task queue" do
+        expect(judge_review_task.status).to eq("in_progress")
+        attorney_completed_task = FactoryBot.create(:ama_attorney_task, appeal: appeal, parent: judge_review_task)
+        attorney_completed_task.update!(status: Constants.TASK_STATUSES.completed)
+        case_review = FactoryBot.create(:attorney_case_review, task_id: attorney_completed_task.id)
 
-      click_on "Switch to Assign Cases"
+        visit "/queue"
 
-      expect(page).to have_content("Assign 3 Cases")
-      expect(page).to have_content("#{vet.first_name} #{vet.last_name}")
-      expect(page).to have_content(appeal.veteran_file_number)
-      expect(page).to have_content("Original")
-      expect(page).to have_content(appeal.docket_number)
+        expect(page).to have_content("Review 1 Cases")
+        expect(page).to have_content("#{veteran.first_name} #{veteran.last_name}")
+        expect(page).to have_content(appeal.veteran_file_number)
+        expect(page).to have_content(case_review.document_id)
+        expect(page).to have_content("Original")
+        expect(page).to have_content(appeal.docket_number)
+      end
+
+      scenario "navigating between review and assign task queues" do
+        visit "/queue"
+
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+
+        expect(page).to have_current_path("/queue/#{judge.user.id}/assign")
+        expect(page).to have_content("Assign 2 Cases")
+
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL
+
+        expect(page).to have_current_path("/queue/#{judge.user.id}/review")
+        expect(page).to have_content("Review 1 Cases")
+      end
     end
   end
 end
