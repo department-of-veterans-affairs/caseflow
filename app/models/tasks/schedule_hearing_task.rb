@@ -67,9 +67,24 @@ class ScheduleHearingTask < GenericTask
 
     if params[:status] == Constants.TASK_STATUSES.completed
       slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
+    elsif params[:status] == "cancel"
+      withdraw_hearing
+      params[:status] = Constants.TASK_STATUSES.completed
     end
 
     super(params, current_user)
+  end
+
+  def withdraw_hearing
+    if appeal.is_a?(LegacyAppeal)
+      location = if appeal.representative_name
+                   LegacyAppeal::LOCATION_CODES[:service_organization]
+                 else
+                   LegacyAppeal::LOCATION_CODES[:case_storage]
+                 end
+
+      AppealRepository.update_location!(appeal, location)
+    end
   end
 
   def location_based_on_hearing_type(hearing_type)
@@ -84,7 +99,8 @@ class ScheduleHearingTask < GenericTask
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
       return [
         Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h,
-        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
+        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+        Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h
       ]
     end
 
@@ -99,6 +115,16 @@ class ScheduleHearingTask < GenericTask
       options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|
         { value: subclass.name, label: subclass.label }
       end
+    }
+  end
+
+  def withdraw_hearing_data(_user)
+    {
+      redirect_after: "/queue/appeals/#{appeal.external_id}",
+      modal_title: COPY::WITHDRAW_HEARING_MODAL_TITLE,
+      modal_body: COPY::WITHDRAW_HEARING_MODAL_BODY,
+      message_title: COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE,
+      message_detail: COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY
     }
   end
 

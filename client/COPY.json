@@ -341,5 +341,11 @@
 
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
-  "CLAIMANT_NOT_FOUND_END": " for assistance."
+  "CLAIMANT_NOT_FOUND_END": " for assistance.",
+
+  "WITHDRAW_HEARING_MODAL_TITLE": "Confirm withdraw hearing",
+  "WITHDRAW_HEARING_MODAL_BODY": "Withdrawing this hearing request will remove this veteran from the hearing pool.",
+  "WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE": "You have successfully withdrawn [Veteran Name]'s hearing request",
+  "WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY": "[Veteran Name] has been removed from the hearing schedule and has been sent to the next appropriate location"
+
 }
