@@ -66,6 +66,8 @@ class OrganizationQueue extends React.PureComponent {
       }
     ];
 
+    // TODO: Push a new "All cases" tab onto the list of tabs if this is the queue for an organization
+
     return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
       <div>
@@ -89,7 +91,7 @@ const mapStateToProps = (state) => {
 
   return {
     success,
-    organizationName: state.ui.activeOrganizationName,
+    organizationName: state.ui.activeOrganization.name,
     organizations: state.ui.organizations,
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
