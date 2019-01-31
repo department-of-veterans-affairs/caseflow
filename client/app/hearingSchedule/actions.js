@@ -63,6 +63,14 @@ export const onHearingNotesUpdate = (hearingId, notes) => ({
   }
 });
 
+export const onTranscriptRequestedUpdate = (hearingId, transcriptRequested) => ({
+  type: ACTIONS.TRANSCRIPT_REQUESTED_UPDATE,
+  payload: {
+    hearingId,
+    transcriptRequested
+  }
+});
+
 export const onHearingDispositionUpdate = (hearingId, disposition) => ({
   type: ACTIONS.HEARING_DISPOSITION_UPDATE,
   payload: {

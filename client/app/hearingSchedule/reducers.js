@@ -86,6 +86,15 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  case ACTIONS.TRANSCRIPT_REQUESTED_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedTranscriptRequested: { $set: action.payload.transcriptRequested },
+          edited: { $set: true }
+        }
+      }
+    });
   case ACTIONS.HEARING_DISPOSITION_UPDATE:
     return update(state, {
       hearings: {
