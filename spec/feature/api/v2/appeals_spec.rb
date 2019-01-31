@@ -150,6 +150,8 @@ describe "Appeals API v2", type: :request do
              request_issues: [request_issue])
     end
 
+    let!(:task) { create(:task, :in_progress, type: RootTask.name, appeal: appeal) }
+
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs, ssn|
         ssn
@@ -433,7 +435,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
       expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["docket"]).to be_nil
-      expect(json["data"].first["attributes"]["status"]).to be_nil
+      expect(json["data"].first["attributes"]["status"]["type"]).to eq("hlr_received")
       expect(json["data"].first["attributes"]["issues"].length).to eq(0)
 
       # check the attributes on the sc
@@ -452,7 +454,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][1]["attributes"]["aoj"]).to eq("vha")
       expect(json["data"][1]["attributes"]["programArea"]).to eq("medical")
       expect(json["data"][1]["attributes"]["docket"]).to be_nil
-      expect(json["data"][1]["attributes"]["status"]).to be_nil
+      expect(json["data"][1]["attributes"]["status"]["type"]).to eq("sc_closed")
       expect(json["data"][1]["attributes"]["issues"].length).to eq(0)
 
       # checkout the attributes on the appeal
@@ -462,10 +464,10 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["appealIds"].first).to include("A")
       expect(json["data"][2]["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
       expect(json["data"][2]["attributes"]["type"]).to eq("original")
-      expect(json["data"][2]["attributes"]["active"]).to eq(false)
+      expect(json["data"][2]["attributes"]["active"]).to eq(true)
       expect(json["data"][2]["attributes"]["incompleteHistory"]).to eq(false)
       expect(json["data"][2]["attributes"]["description"]).to be_nil
-      expect(json["data"][2]["attributes"]["aod"]).to be_nil
+      expect(json["data"][2]["attributes"]["aod"]).to eq(false)
       expect(json["data"][2]["attributes"]["location"]).to be_nil
       expect(json["data"][2]["attributes"]["alerts"]).to be_nil
       expect(json["data"][2]["attributes"]["aoj"]).to eq("other")

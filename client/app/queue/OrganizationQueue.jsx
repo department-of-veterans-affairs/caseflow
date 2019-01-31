@@ -7,7 +7,7 @@ import { css } from 'glamor';
 
 import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
-import QueueSelectorDropdown from './components/QueueSelectorDropdown';
+import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -21,6 +21,7 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
+import Alert from '../components/Alert';
 
 const containerStyles = css({
   position: 'relative'
@@ -32,6 +33,7 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   render = () => {
+    const { success } = this.props;
     const tabs = [
       {
         label: sprintf(
@@ -65,9 +67,10 @@ class OrganizationQueue extends React.PureComponent {
     ];
 
     return <AppSegment filledBackground styling={containerStyles}>
+      {success && <Alert type="success" title={success.title} message={success.detail} />}
       <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
-        <QueueSelectorDropdown organizations={this.props.organizations} />
+        <QueueOrganizationDropdown organizations={this.props.organizations} />
         <TabWindow
           name="tasks-organization-queue"
           tabs={tabs}
@@ -81,13 +84,19 @@ OrganizationQueue.propTypes = {
   tasks: PropTypes.array.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  organizations: state.ui.organizations,
-  unassignedTasks: getUnassignedOrganizationalTasks(state),
-  assignedTasks: getAssignedOrganizationalTasks(state),
-  completedTasks: getCompletedOrganizationalTasks(state),
-  tasks: tasksByOrganization(state)
-});
+const mapStateToProps = (state) => {
+  const { success } = state.ui.messages;
+
+  return {
+    success,
+    organizationName: state.ui.activeOrganizationName,
+    organizations: state.ui.organizations,
+    unassignedTasks: getUnassignedOrganizationalTasks(state),
+    assignedTasks: getAssignedOrganizationalTasks(state),
+    completedTasks: getCompletedOrganizationalTasks(state),
+    tasks: tasksByOrganization(state)
+  };
+};
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({

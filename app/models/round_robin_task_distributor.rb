@@ -3,8 +3,12 @@ class RoundRobinTaskDistributor
 
   attr_accessor :list_of_assignees, :task_class
 
+  def assignee_users
+    User.where(css_id: list_of_assignees)
+  end
+
   def latest_task
-    task_class.where(assigned_to_type: User.name).max_by(&:created_at)
+    task_class.where(assigned_to: assignee_users).max_by(&:created_at)
   end
 
   def last_assignee_css_id

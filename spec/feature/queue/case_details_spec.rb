@@ -704,4 +704,39 @@ RSpec.feature "Case details" do
       end
     end
   end
+
+  describe "case timeline" do
+    context "when the only completed task is a TrackVeteranTask" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:appeal) { root_task.appeal }
+      let!(:tracking_task) do
+        FactoryBot.create(
+          :track_veteran_task,
+          appeal: appeal,
+          parent: root_task,
+          status: Constants.TASK_STATUSES.completed
+        )
+      end
+
+      it "should not show the tracking task in case timeline" do
+        visit("/queue/appeals/#{tracking_task.appeal.uuid}")
+
+        # Expect to only find the "NOD received" row and the "dispatch pending" rows.
+        expect(page).to have_css("table#case-timeline-table tbody tr", count: 2)
+      end
+    end
+  end
+
+  describe "task snapshot" do
+    context "when the only task is a TrackVeteranTask" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:appeal) { root_task.appeal }
+      let(:tracking_task) { FactoryBot.create(:track_veteran_task, appeal: appeal, parent: root_task) }
+
+      it "should not show the tracking task in task snapshot" do
+        visit("/queue/appeals/#{tracking_task.appeal.uuid}")
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_NO_ACTIVE_LABEL)
+      end
+    end
+  end
 end
