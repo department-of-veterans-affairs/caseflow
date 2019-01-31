@@ -7,7 +7,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   def veterans
     @veterans ||= Veteran.where(file_number: file_numbers)
       .left_outer_joins(:available_hearing_locations)
-      .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.month.ago)
+      .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
       .limit(QUERY_LIMIT)
   end
 
@@ -68,6 +68,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       rescue Caseflow::Error::VaDotGovLimitError
         sleep 60
         va_dot_gov_address = validate_veteran_address(veteran)
+      rescue Caseflow::Error::VaDotGovAPIError => error
+        handle_error(error, veteran)
+        next
       end
 
       create_available_locations_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
@@ -143,5 +146,47 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     msg = "#{state_code} is not a valid state code."
     fail Caseflow::Error::FetchHearingLocationsJobError, code: 500, message: msg
+  end
+
+  def error_instructions_map
+    { "DualAddressError" => "The veteran's address in VBMS is ambiguous.",
+      "AddressCouldNotBeFound" => "The veteran's address in VBMS could not be found on a map.",
+      "InvalidRequestStreetAddress" => "The veteran's address in VBMS does not exist or is invalid." }
+  end
+
+  def multiple_appeals_instructions
+    "
+    Please note that this Veteran has multiple appeals. It’s possible this issue has already been resolved.
+
+    If you see a regional office and an alternate hearing location, then this task can be closed."
+  end
+
+  def instructions(key, has_multiple:)
+    instructions = error_instructions_map[key]
+    instructions + multiple_appeals_instructions if has_multiple
+  end
+
+  def handle_error(error, veteran)
+    key = error.message["messages"][0]["key"]
+
+    case key
+    when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress"
+      tasks = LegacyAppeal.where(
+        vbms_id: LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)
+      ).map do |appeal|
+        ScheduleHearingTask.create_if_eligible(appeal)
+      end.compact
+
+      tasks.each do |task|
+        HearingAdminActionVerifyAddressTask.create!(
+          appeal: task.appeal,
+          instructions: instructions(key, has_multiple: tasks.count > 1),
+          assigned_to: HearingsManagement.singleton,
+          parent: task
+        )
+      end
+    else
+      fail error
+    end
   end
 end

@@ -434,6 +434,7 @@ RSpec.feature "AmaQueue" do
       fill_in "taskInstructions", with: qr_instructions
 
       click_on "Submit"
+
       expect(page).to have_content("On hold (3)")
 
       # step "judge reviews case and assigns a task to an attorney"
@@ -504,7 +505,7 @@ RSpec.feature "AmaQueue" do
       find(".Select-control", text: "Select an action", match: :first).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
-      expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
+      expect(page).to have_content("Mark as complete")
 
       click_on "Mark complete"
 
@@ -521,7 +522,7 @@ RSpec.feature "AmaQueue" do
       find(".Select-control", text: "Select an action").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
-      expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
+      expect(page).to have_content("Mark as complete")
 
       click_on "Mark complete"
 
@@ -577,8 +578,11 @@ RSpec.feature "AmaQueue" do
     it "judge can return report to attorney for corrections" do
       step "judge reviews case and assigns a task to an attorney" do
         visit "/queue"
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
 
-        click_on COPY::SWITCH_TO_ASSIGN_MODE_LINK_LABEL
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
 
         click_on veteran_full_name
 
@@ -676,7 +680,7 @@ RSpec.feature "AmaQueue" do
         )
       end
 
-      step "judge sees the case in their queue" do
+      step "judge sees the case in their review queue" do
         User.authenticate!(user: judge_user)
         visit "/queue"
 

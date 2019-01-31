@@ -281,7 +281,7 @@ export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
   }
 };
 
-export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
+export const setPrepped = (hearingId, hearingExternalId, prepped, date) => (dispatch) => {
   const payload = {
     hearingId,
     prepped,
@@ -292,7 +292,7 @@ export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
   dispatch(setHearingPrepped(payload,
     CATEGORIES.HEARING_WORKSHEET_PAGE));
 
-  ApiUtil.patch(`/hearings/${hearingId}`, { data: { prepped } }).
+  ApiUtil.patch(`/hearings/${hearingExternalId}`, { data: { prepped } }).
     then(() => {
       // request was successful
     },

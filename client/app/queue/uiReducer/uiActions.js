@@ -143,9 +143,12 @@ export const setOrganizations = (organizations: Array<Object>) => ({
   payload: { organizations }
 });
 
-export const setActiveOrganizationId = (activeOrganizationId: number) => ({
-  type: ACTIONS.SET_ACTIVE_ORGANIZATION_ID,
-  payload: { activeOrganizationId }
+export const setActiveOrganization = (id: number, name: string, isVso: boolean) => ({
+  type: ACTIONS.SET_ACTIVE_ORGANIZATION,
+  payload: { id,
+    name,
+    isVso
+  }
 });
 
 export const setUserId = (userId: number) => ({
