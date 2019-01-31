@@ -61,6 +61,7 @@ describe('ColocatedTaskListView', () => {
     dueOn: null,
     assignedTo: {
       cssId: 'BVALSPORER',
+      name: 'Judge with cases',
       type: 'User',
       id: 7
     },
@@ -82,7 +83,8 @@ describe('ColocatedTaskListView', () => {
     taskBusinessPayloads: [],
     hideFromQueueTableView: false,
     hideFromCaseTimeline: false,
-    hideFromTaskSnapshot: false
+    hideFromTaskSnapshot: false,
+    closestRegionalOffice: ''
   });
 
   const appealTemplate: BasicAppeal = {
