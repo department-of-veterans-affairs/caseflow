@@ -320,7 +320,11 @@ class Appeal < DecisionReview
   end
 
   def location
-    # to be implemented
+    if active_ep? || active_remanded_claims?
+      "aoj"
+    else
+      "bva"
+    end
   end
 
   def status_hash
