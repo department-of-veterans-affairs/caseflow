@@ -462,6 +462,62 @@ describe Veteran do
     end
   end
 
+  describe ".find_or_create_by_file_number_or_ssn" do
+    let(:file_number) { "123456789" }
+    let(:ssn) { file_number.to_s.reverse } # our fakes do this
+    let!(:veteran) { create(:veteran, file_number: file_number) }
+
+    it "fetches based on file_number" do
+      expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran)
+    end
+
+    it "fetches based on SSN" do
+      expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran)
+    end
+
+    context "does not exist in Caseflow" do
+      before do
+        veteran.destroy! # leaves it in BGS
+      end
+
+      it "returns a new Veteran by SSN" do
+        new_veteran = described_class.find_or_create_by_file_number_or_ssn(ssn)
+
+        expect(new_veteran.file_number).to eq(file_number)
+        expect(new_veteran.id).to_not eq(veteran.id)
+      end
+
+      it "returns a new Veteran by file number" do
+        new_veteran = described_class.find_or_create_by_file_number_or_ssn(file_number)
+
+        expect(new_veteran.ssn).to eq(ssn)
+        expect(new_veteran.id).to_not eq(veteran.id)
+      end
+    end
+
+    context "exists in BGS with different name than in Caseflow" do
+      before do
+        Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
+      end
+
+      it "updates Caseflow cache when found by file number" do
+        expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+
+        expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran)
+
+        expect(veteran.reload.last_name).to eq "Changed"
+      end
+
+      it "updates Caseflow cache when found by SSN" do
+        expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+
+        expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran)
+
+        expect(veteran.reload.last_name).to eq "Changed"
+      end
+    end
+  end
+
   describe "#stale_name?" do
     let(:first_name) { "Jane" }
     let(:last_name) { "Doe" }
