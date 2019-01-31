@@ -41,22 +41,6 @@ RSpec.feature "Attorney checkout flow" do
       expect(page).not_to have_content "Correct issues"
 
       click_dropdown(index: 0)
-      click_label "radiation"
-
-      click_on "Continue"
-
-      # Ensure we can reload the flow and the special issue is saved
-      click_on "Cancel"
-      click_on "Yes, cancel"
-
-      click_dropdown(index: 0)
-
-      # Radiation should still be checked
-      expect(page).to have_field("radiation", checked: true, visible: false)
-
-      # Radiation should also be marked in the database
-      expect(appeal.special_issue_list.radiation).to eq(true)
-      click_on "Continue"
 
       expect(page).to have_content "Select disposition"
       issue_dispositions = page.find_all(
@@ -337,10 +321,7 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(page).to have_content "Correct issues"
         expect(page).to have_content("Added to 2 issues", count: 2)
-        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
-
-        # Skip the special issues page
-        click_on "Continue"
+        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
 
         expect(page).to have_content(decision_issue_text)
 
