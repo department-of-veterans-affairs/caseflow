@@ -64,7 +64,7 @@ class IntakesController < ApplicationController
   def index_props
     {
       userDisplayName: current_user.display_name,
-      serverIntake: intake_in_progress ? intake_in_progress.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user)) : {},
+      serverIntake: intake_ui_hash,
       dropdownUrls: dropdown_urls,
       page: "Intake",
       feedbackUrl: feedback_url,
@@ -75,8 +75,7 @@ class IntakesController < ApplicationController
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
       }
     }
-
-  rescue Exception => e
+  rescue StandardError => e
     Raven.capture_exception(e)
     # cancel intake so user doesn't get stuck
     intake_in_progress&.cancel!(reason: "system_error")
@@ -102,6 +101,10 @@ class IntakesController < ApplicationController
 
   def check_intake_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("intake_out_of_service")
+  end
+
+  def intake_ui_hash
+    intake_in_progress ? intake_in_progress.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user)) : {}
   end
 
   # TODO: This could be moved to the model.
