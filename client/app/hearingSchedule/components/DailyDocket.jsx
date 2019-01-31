@@ -8,6 +8,7 @@ import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Table from '../../components/Table';
+import Checkbox from '../../components/Checkbox';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
@@ -81,6 +82,10 @@ const notesTitleStyling = css({
 export default class DailyDocket extends React.Component {
 
   onHearingNotesUpdate = (hearingId) => (notes) => this.props.onHearingNotesUpdate(hearingId, notes);
+
+  onTranscriptRequestedUpdate = (hearingId) => (transcriptRequested) => {
+    this.props.onTranscriptRequestedUpdate(hearingId, transcriptRequested);
+  };
 
   onHearingDispositionUpdate = (hearingId) => (disposition) => {
     this.props.onHearingDispositionUpdate(hearingId, disposition.value);
@@ -156,6 +161,7 @@ export default class DailyDocket extends React.Component {
   getDispositionDropdown = (hearing, readOnly) => {
     return <SearchableDropdown
       name="Disposition"
+      strongLabel
       options={DISPOSITION_OPTIONS}
       value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
       onChange={this.onHearingDispositionUpdate(hearing.id)}
@@ -163,37 +169,12 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
-  getHearingDate = (date) => {
-    return moment(date).format('MM/DD/YYYY');
+  getRegionalOfficeDropdown = (hearing, readOnly) => {
+    return <RegionalOfficeDropdown
+      readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
+      onChange={this.onHearingRegionalOfficeUpdate(hearing.id)}
+      value={hearing.editedRegionalOffice || hearing.regionalOfficeKey} />;
   };
-
-  getHearingDateOptions = () => {
-    return _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
-      label: this.getHearingDate(hearingDayOption.scheduledFor),
-      value: hearingDayOption.id
-    }));
-  };
-
- getHearingDateOptions = (hearing) => {
-   const hearings = [{ label: this.getHearingDate(hearing.scheduledFor),
-     value: hearing.id }];
-
-   const hearingDayoptions = _.map(this.props.hearingDayOptions, (hearingDayOption) => ({
-     label: this.getHearingDate(hearingDayOption.scheduledFor),
-     value: hearingDayOption.id
-   }));
-
-   if (this.props.hearingDayOptions) {
-     return hearings.concat(hearingDayoptions);
-   }
- };
-
- getRegionalOfficeDropdown = (hearing, readOnly) => {
-   return <RegionalOfficeDropdown
-     readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
-     onChange={this.onHearingRegionalOfficeUpdate(hearing.id)}
-     value={hearing.editedRegionalOffice || hearing.regionalOfficeKey} />;
- }
 
   getHearingLocationDropdown = (hearing, readOnly) => {
     const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
@@ -279,9 +260,34 @@ export default class DailyDocket extends React.Component {
       hideLabel />;
   };
 
+  getHearingDetailsLink = (hearing) => {
+    return <div>
+      <b>Hearing Details</b> <br /><br />
+      <Link href={`/hearings/${hearing.externalId}/details`}>
+        Edit Hearing Details
+        <span {...css({ position: 'absolute' })}>
+          {pencilSymbol()}
+        </span>
+      </Link>
+    </div>;
+  };
+
+  getTranscriptRequested = (hearing) => {
+    return <div>
+      <b>Copy Requested by Appellant/Rep</b>
+      <Checkbox
+        label="Transcript Requested"
+        name={`${hearing.id}.transcriptRequested`}
+        value={_.isUndefined(hearing.editedTranscriptRequested) ?
+          hearing.transcriptRequested || false : hearing.editedTranscriptRequested}
+        onChange={this.onTranscriptRequestedUpdate(hearing.id)}
+      /></div>;
+  };
+
   getNotesField = (hearing) => {
     return <TextareaField
       name="Notes"
+      strongLabel
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
       value={_.isUndefined(hearing.editedNotes) ? hearing.notes || '' : hearing.editedNotes}
@@ -329,6 +335,8 @@ export default class DailyDocket extends React.Component {
     return <div {...twoCol}>
       <div>
         {this.getDispositionDropdown(hearing, readOnly)}
+        {this.getTranscriptRequested(hearing)}
+        {this.getHearingDetailsLink(hearing)}
         {this.getNotesField(hearing)}
       </div>
       <div>
