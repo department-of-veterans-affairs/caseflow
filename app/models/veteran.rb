@@ -176,6 +176,16 @@ class Veteran < ApplicationRecord
     )
   end
 
+  def stale_name?
+    return false unless accessible? && bgs_record.is_a?(Hash)
+
+    is_stale = (first_name.nil? || last_name.nil?)
+    [:first_name, :last_name, :middle_name, :name_suffix].each do |name|
+      is_stale = true if self[name] != bgs_record[name]
+    end
+    is_stale
+  end
+
   class << self
     def find_or_create_by_file_number(file_number)
       find_and_maybe_backfill_name(file_number) || create_by_file_number(file_number)
@@ -183,9 +193,9 @@ class Veteran < ApplicationRecord
 
     def find_by_file_number_or_ssn(file_number_or_ssn)
       if file_number_or_ssn.to_s.length == 9
-        find_by(file_number: file_number_or_ssn) || find_by_ssn(file_number_or_ssn)
+        find_and_maybe_backfill_name(file_number_or_ssn) || find_by_ssn(file_number_or_ssn)
       else
-        find_by(file_number: file_number_or_ssn)
+        find_or_create_by_file_number(file_number_or_ssn)
       end
     end
 
@@ -195,7 +205,7 @@ class Veteran < ApplicationRecord
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
-      find_by(file_number: file_number)
+      find_or_create_by_file_number(file_number)
     end
 
     def find_and_maybe_backfill_name(file_number)
@@ -205,7 +215,7 @@ class Veteran < ApplicationRecord
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
       # a symbol that will blow up, so check if bgs_record is a hash first.
-      if veteran.first_name.nil? && veteran.accessible? && veteran.bgs_record.is_a?(Hash)
+      if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
         veteran.update!(
           first_name: veteran.bgs_record[:first_name],
           last_name: veteran.bgs_record[:last_name],
