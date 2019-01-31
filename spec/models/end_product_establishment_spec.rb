@@ -758,12 +758,14 @@ describe EndProductEstablishment do
         [
           create(
             :request_issue,
+            :rating,
             end_product_establishment: end_product_establishment,
             review_request: source,
             decision_sync_submitted_at: nil
           ),
           create(
             :request_issue,
+            :nonrating,
             end_product_establishment: end_product_establishment,
             review_request: source,
             decision_sync_submitted_at: nil
@@ -774,8 +776,9 @@ describe EndProductEstablishment do
       it "submits each request issue and starts decision sync job" do
         subject
 
-        expect(request_issues.first.reload.decision_sync_submitted_at).to_not be_nil
-        expect(request_issues.second.reload.decision_sync_submitted_at).to_not be_nil
+        # delay in processing should be 1 day for rating, immediatly for nonrating
+        expect(request_issues.first.reload.decision_sync_submitted_at).to eq(Time.now + 1.day)
+        expect(request_issues.second.reload.decision_sync_submitted_at).to eq(Time.now)
 
         expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.first)
         expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.second)
@@ -796,7 +799,8 @@ describe EndProductEstablishment do
       it "submits each effectuation and starts decision sync job" do
         subject
 
-        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to_not be_nil
+        # delay in processing should be 1 day
+        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.now + 1.day)
         expect(DecisionIssueSyncJob).to have_been_enqueued.with(board_grant_effectuation)
       end
     end
