@@ -329,6 +329,7 @@ class RequestIssue < ApplicationRecord
 
     transaction do
       return unless create_decision_issues
+
       end_product_establishment.on_decision_issue_sync_processed(self)
       processed!
     end
