@@ -14,11 +14,13 @@ describe DecisionIssue do
       benefit_type: benefit_type,
       profile_date: profile_date,
       end_product_last_action_date: end_product_last_action_date,
+      caseflow_decision_date: caseflow_decision_date,
       diagnostic_code: diagnostic_code
     )
   end
 
   let(:profile_date) { 20.days.ago }
+  let(:caseflow_decision_date) { 20.days.ago }
   let(:benefit_type) { "compensation" }
   let(:end_product_last_action_date) { 10.days.ago }
   let(:request_issues) { [] }
@@ -215,13 +217,14 @@ describe DecisionIssue do
 
     let(:profile_date) { nil }
     let(:end_product_last_action_date) { nil }
+    let(:caseflow_decision_date) { nil }
 
     context "when the decision review is an appeal" do
       let(:decision_review) { create(:appeal) }
-      let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
+      let(:caseflow_decision_date) { 20.days.ago }
 
-      it "returns the decision document's decision date" do
-        expect(subject).to eq(decision_date.to_date)
+      it "returns the caseflow_decision_date" do
+        expect(subject).to eq(caseflow_decision_date.to_date)
       end
     end
 
@@ -266,6 +269,7 @@ describe DecisionIssue do
 
     context "when approx_decision_date is nil" do
       let(:decision_review) { create(:appeal) }
+      let(:caseflow_decision_date) { nil }
 
       it "throws an error" do
         expect { subject }.to raise_error(
@@ -275,7 +279,7 @@ describe DecisionIssue do
     end
 
     context "when there is an approx_decision_date" do
-      let(:profile_date) { 20.days.ago }
+      let(:caseflow_decision_date) { 20.days.ago }
 
       context "when supplemental claim already exists matching decision issue" do
         let!(:matching_supplemental_claim) do

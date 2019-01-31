@@ -1,4 +1,6 @@
 describe DecisionReviewTask do
+  let(:benefit_type) { "education" }
+
   describe "#label" do
     subject { create(:higher_level_review_task).becomes(described_class) }
 
@@ -9,12 +11,12 @@ describe DecisionReviewTask do
 
   describe "#complete_with_payload!" do
     let(:veteran) { create(:veteran) }
-    let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+    let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number, benefit_type: "education") }
     let(:task_status) { "assigned" }
     let!(:request_issues) do
       [
-        create(:request_issue, :rating, review_request: hlr),
-        create(:request_issue, :rating, review_request: hlr)
+        create(:request_issue, :rating, review_request: hlr, benefit_type: benefit_type),
+        create(:request_issue, :rating, review_request: hlr, benefit_type: benefit_type)
       ]
     end
     let(:decision_date) { "01/01/2019" }

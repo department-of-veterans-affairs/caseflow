@@ -17,6 +17,7 @@ describe HigherLevelReview do
   let(:legacy_opt_in_approved) { false }
   let(:veteran_is_not_claimant) { false }
   let(:profile_date) { receipt_date - 1 }
+  let(:caseflow_decision_date) { nil }
 
   let(:higher_level_review) do
     HigherLevelReview.new(
@@ -182,15 +183,21 @@ describe HigherLevelReview do
                  disposition: HigherLevelReview::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
                  profile_date: profile_date,
+                 end_product_last_action_date: profile_date,
+                 caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
                  rating_issue_reference_id: "rating2",
                  profile_date: profile_date,
+                 end_product_last_action_date: profile_date,
+                 caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type),
           create(:decision_issue,
                  decision_review: higher_level_review,
+                 end_product_last_action_date: profile_date,
+                 caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type,
                  disposition: "not a dta error")
         ]
@@ -202,16 +209,6 @@ describe HigherLevelReview do
           participant_id: veteran.participant_id,
           payee_code: "10"
         )
-      end
-
-      context "when there is no approx_decision_date" do
-        let(:profile_date) { nil }
-
-        it "throws an error" do
-          expect { subject }.to raise_error(
-            StandardError, "approx_decision_date is required to create a DTA Supplemental Claim"
-          )
-        end
       end
 
       it "creates a supplemental claim and request issues" do
@@ -273,6 +270,7 @@ describe HigherLevelReview do
 
       context "when benefit type is processed in caseflow" do
         let(:benefit_type) { "voc_rehab" }
+        let(:caseflow_decision_date) { profile_date }
 
         it "creates DecisionReviewTask" do
           expect { subject }.to change(DecisionReviewTask, :count).by(1)

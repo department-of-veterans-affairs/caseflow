@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe RequestIssuesUpdate do
   before do
     Time.zone = "America/New_York"
@@ -351,7 +349,8 @@ describe RequestIssuesUpdate do
           let!(:deleted_decision_issue) do
             create(:decision_issue,
                    request_issues: [RequestIssue.find(existing_legacy_opt_in_request_issue_id)],
-                   participant_id: veteran.participant_id)
+                   participant_id: veteran.participant_id,
+                   end_product_last_action_date: Time.zone.today)
           end
 
           it "deletes associated decision issues" do
@@ -372,7 +371,8 @@ describe RequestIssuesUpdate do
                        RequestIssue.find(existing_request_issue_id),
                        RequestIssue.find(existing_legacy_opt_in_request_issue_id)
                      ],
-                     participant_id: veteran.participant_id)
+                     participant_id: veteran.participant_id,
+                     end_product_last_action_date: Time.zone.today)
             end
 
             it "does not delete decision issues associated with undeleted request issue" do

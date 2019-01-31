@@ -5,6 +5,7 @@ describe RequestIssue do
 
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:profile_date) { Time.zone.now.to_s }
+  let(:end_product_last_action_date) { Time.zone.now }
   let(:contention_reference_id) { "1234" }
   let(:ramp_claim_id) { nil }
   let(:higher_level_review_reference_id) { "hlr123" }
@@ -254,12 +255,14 @@ describe RequestIssue do
           let(:request_issue) { rating_request_issue }
 
           context "when imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue, :imo).id }
+            let(:contested_decision_issue_id) do
+              create(:decision_issue, :imo, decision_review: decision_review_remanded).id
+            end
             it { is_expected.to eq "040BDEIMOPMC" }
           end
 
           context "when not imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue).id }
+            let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
             it { is_expected.to eq "040BDEPMC" }
           end
         end
@@ -287,12 +290,14 @@ describe RequestIssue do
           let(:request_issue) { rating_request_issue }
 
           context "when imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue, :imo).id }
+            let(:contested_decision_issue_id) do
+              create(:decision_issue, :imo, decision_review: decision_review_remanded).id
+            end
             it { is_expected.to eq "040BDEIMO" }
           end
 
           context "when not imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue).id }
+            let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
             it { is_expected.to eq "040BDE" }
           end
         end
@@ -425,7 +430,9 @@ describe RequestIssue do
     end
 
     context "when contested_decision_issue_id is set" do
-      let(:contested_decision_issue_id) { create(:decision_issue).id }
+      let(:contested_decision_issue_id) do
+        create(:decision_issue, end_product_last_action_date: end_product_last_action_date).id
+      end
 
       it do
         is_expected.to have_attributes(
@@ -918,7 +925,13 @@ describe RequestIssue do
 
     context "when it has been processed" do
       let(:decision_sync_processed_at) { 1.day.ago }
-      let!(:decision_issue) { rating_request_issue.decision_issues.create!(participant_id: veteran.participant_id) }
+      let!(:decision_issue) do
+        rating_request_issue.decision_issues.create!(
+          participant_id: veteran.participant_id,
+          end_product_last_action_date: end_product_last_action_date,
+          benefit_type: review.benefit_type
+        )
+      end
 
       it "does nothing" do
         subject
@@ -955,7 +968,8 @@ describe RequestIssue do
                 decision_review: review,
                 participant_id: veteran.participant_id,
                 disposition: "denied",
-                rating_issue_reference_id: contested_rating_issue_reference_id
+                rating_issue_reference_id: contested_rating_issue_reference_id,
+                end_product_last_action_date: end_product_last_action_date
               )
             end
 
@@ -984,7 +998,8 @@ describe RequestIssue do
                   decision_review: review,
                   participant_id: veteran.participant_id,
                   disposition: "allowed",
-                  rating_issue_reference_id: contested_rating_issue_reference_id
+                  rating_issue_reference_id: contested_rating_issue_reference_id,
+                  end_product_last_action_date: end_product_last_action_date
                 )
               end
 
@@ -1043,8 +1058,6 @@ describe RequestIssue do
         end
 
         it "creates decision issues based on contention disposition" do
-          expect(request_issue.end_product_establishment).to_not receive(:associated_rating)
-
           subject
           expect(request_issue.decision_issues.count).to eq(1)
           expect(request_issue.decision_issues.first).to have_attributes(

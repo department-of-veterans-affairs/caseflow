@@ -62,12 +62,16 @@ describe Appeal do
         :decision_issue,
         decision_review: appeal,
         disposition: "remanded",
-        benefit_type: "compensation"
+        benefit_type: "compensation",
+        caseflow_decision_date: decision_date
       )
     end
 
     let!(:remanded_decision_issue_processed_in_caseflow) do
-      create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca")
+      create(
+        :decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca",
+                         caseflow_decision_date: decision_date
+      )
     end
 
     let(:decision_date) { 10.days.ago }
@@ -195,7 +199,8 @@ describe Appeal do
              benefit_type: another_review.benefit_type,
              decision_text: "something decided in the past",
              description: "past issue",
-             participant_id: veteran.participant_id)
+             participant_id: veteran.participant_id,
+             end_product_last_action_date: receipt_date - 1.day)
     end
 
     let!(:future_decision_issue) do
@@ -205,7 +210,8 @@ describe Appeal do
              benefit_type: another_review.benefit_type,
              decision_text: "something was decided in the future",
              description: "future issue",
-             participant_id: veteran.participant_id)
+             participant_id: veteran.participant_id,
+             end_product_last_action_date: receipt_date - 1.day)
     end
 
     it "does not return Decision Issues in the future" do
@@ -288,7 +294,7 @@ describe Appeal do
     end
 
     context "when decision issues" do
-      let(:decision_issues) { [create(:decision_issue)] }
+      let(:decision_issues) { [build(:decision_issue)] }
 
       it { is_expected.to eq true }
     end

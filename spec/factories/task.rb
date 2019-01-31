@@ -141,7 +141,7 @@ FactoryBot.define do
 
     factory :higher_level_review_task, class: DecisionReviewTask do
       type DecisionReviewTask.name
-      appeal { create(:higher_level_review) }
+      appeal { create(:higher_level_review, benefit_type: "education") }
       assigned_by nil
     end
 

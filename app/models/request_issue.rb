@@ -437,6 +437,8 @@ class RequestIssue < ApplicationRecord
         participant_id: review_request.veteran.participant_id,
         disposition: contention_disposition.disposition,
         description: "#{contention_disposition.disposition}: #{description}",
+        profile_date: end_product_establishment.associated_rating&.profile_date,
+        promulgation_date: end_product_establishment.associated_rating&.promulgation_date,
         decision_review: review_request,
         benefit_type: benefit_type,
         end_product_last_action_date: end_product_establishment.result.last_action_date
