@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { css } from 'glamor';
 
 import CopyTextButton from '../../components/CopyTextButton';
