@@ -356,8 +356,8 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def on_decision_issue_sync_processed
-    if decision_issues_sync_complete?
+  def on_decision_issue_sync_processed(processing_request_issue)
+    if decision_issues_sync_complete?(processing_request_issue)
       source.on_decision_issues_sync_processed(self)
     end
   end
@@ -412,8 +412,9 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def decision_issues_sync_complete?
-    request_issues.all?(&:processed?)
+  def decision_issues_sync_complete?(processing_request_issue)
+    other_request_issues = request_issues.reject { |i| i.id == processing_request_issue.id }
+    other_request_issues.all?(&:processed?)
   end
 
   def potential_decision_ratings
