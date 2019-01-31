@@ -4,24 +4,27 @@ describe DecisionIssue do
   end
 
   let(:decision_issue) do
-    create(
+    build(
       :decision_issue,
       decision_review: decision_review,
       disposition: disposition,
       decision_text: decision_text,
       description: description,
       request_issues: request_issues,
-      benefit_type: "compensation",
+      benefit_type: benefit_type,
       profile_date: profile_date,
-      end_product_last_action_date: end_product_last_action_date
+      end_product_last_action_date: end_product_last_action_date,
+      diagnostic_code: diagnostic_code
     )
   end
 
   let(:profile_date) { 20.days.ago }
-  let(:end_product_last_action_date) { nil }
+  let(:benefit_type) { "compensation" }
+  let(:end_product_last_action_date) { 10.days.ago }
   let(:request_issues) { [] }
   let(:description) { "description" }
   let(:disposition) { "allowed" }
+  let(:diagnostic_code) { nil }
   let(:decision_text) { "decision text" }
   let(:decision_date) { 10.days.ago }
   let(:decision_review) { create(:supplemental_claim) }
@@ -57,6 +60,91 @@ describe DecisionIssue do
       it "doesn't overwrite description" do
         subject
         expect(decision_issue).to have_attributes(description: "this is my decision")
+      end
+    end
+  end
+
+  context "#valid?" do
+    subject { decision_issue.valid? }
+
+    context "when it is valid" do
+      it { is_expected.to be true }
+    end
+
+    context "when benefit type is not in list" do
+      let(:benefit_type) { "bogus_benefit_type" }
+
+      it "adds an error to benefit_type" do
+        is_expected.to be false
+        expect(decision_issue.errors[:benefit_type]).to include("is not included in the list")
+      end
+    end
+
+    context "when description is missing" do
+      let(:description) { nil }
+
+      it "adds an error to description" do
+        is_expected.to be false
+        expect(decision_issue.errors[:description]).to include("can't be blank")
+      end
+    end
+
+    context "when the decision review is an appeal" do
+      let(:decision_review) { create(:appeal) }
+
+      context "disposition" do
+        context "when it is nil" do
+          let(:disposition) { nil }
+
+          it "adds an error to disposition" do
+            is_expected.to be false
+            expect(decision_issue.errors[:disposition]).to include("is not included in the list")
+          end
+        end
+
+        context "when it is set to an allowed value" do
+          let(:disposition) { "remanded" }
+          it { is_expected.to be true }
+        end
+
+        context "when it is not an allowed value" do
+          let(:disposition) { "bogus_disposition" }
+
+          it "adds an error to disposition" do
+            is_expected.to be false
+            expect(decision_issue.errors[:disposition]).to include("is not included in the list")
+          end
+        end
+      end
+
+      context "diagnostic code" do
+        context "when it is nil" do
+          it { is_expected.to be true }
+        end
+
+        context "when it is set to an allowed value" do
+          let(:diagnostic_code) { "5000" }
+          it { is_expected.to be true }
+        end
+
+        context "when it is not an allowed value" do
+          let(:diagnostic_code) { "bogus_diagnostic_code" }
+          it "adds an error to diagnostic_code" do
+            is_expected.to be false
+            expect(decision_issue.errors[:diagnostic_code]).to include("is not included in the list")
+          end
+        end
+      end
+    end
+
+    context "when the decision review is a claim review" do
+      context "end_product_last_action_date is nil" do
+        let(:end_product_last_action_date) { nil }
+
+        it "adds an error to end_product_last_action_date" do
+          is_expected.to be false
+          expect(decision_issue.errors[:end_product_last_action_date]).to include("can't be blank")
+        end
       end
     end
   end

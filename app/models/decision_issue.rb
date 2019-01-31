@@ -1,12 +1,18 @@
 class DecisionIssue < ApplicationRecord
-  validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) },
-                          if: :appeal?
-  validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) },
-                           if: :appeal?
-  validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
-                              if: :appeal?, allow_nil: true
-  validates :description, presence: true, if: :appeal?
-  validates :end_product_last_action_date, presence: true, unless: :appeal?
+  validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
+  validates :description, presence: true
+
+  with_options if: :appeal? do
+    validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) }
+    validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
+                                allow_nil: true
+  end
+
+  with_options unless: :appeal? do
+    validates :end_product_last_action_date, presence: true
+    # Attorneys will be entering in a description of the decision manually for appeals
+    before_save :calculate_and_set_description
+  end
 
   has_many :request_decision_issues, dependent: :destroy
   has_many :request_issues, through: :request_decision_issues
@@ -14,9 +20,6 @@ class DecisionIssue < ApplicationRecord
   belongs_to :decision_review, polymorphic: true
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_one :contesting_request_issue, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
-
-  # Attorneys will be entering in a description of the decision manually for appeals
-  before_save :calculate_and_set_description, unless: :appeal?
 
   class << self
     # TODO: These scopes are based only off of Caseflow dispositions, not VBMS dispositions. We probably want
