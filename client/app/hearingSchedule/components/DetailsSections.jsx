@@ -84,6 +84,7 @@ const Details = ({
   <React.Fragment>
     <div {...rowThirds}>
       <JudgeDropdown
+        name="judgeDropdown"
         value={judgeId}
         readOnly={readOnly}
         onChange={(val) => set('judgeId', val)}
@@ -91,11 +92,13 @@ const Details = ({
     </div>
     <div {...rowThirds}>
       <HearingRoomDropdown
+        name="hearingRoomDropdown"
         value={room}
         readOnly={readOnly}
         onChange={(val) => set('room', val)}
       />
       <HearingCoordinatorDropdown
+        name="hearingCoordinatorDropdown"
         value={bvaPoc}
         readOnly={readOnly}
         onChange={(val) => set('bvaPoc', val)}

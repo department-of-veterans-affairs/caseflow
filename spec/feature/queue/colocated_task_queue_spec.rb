@@ -64,7 +64,7 @@ RSpec.feature "ColocatedTask" do
       # Click into case details page. Expect to see draft decision option.
       click_on(appeal.veteran.name.formatted(:readable_full))
       find(".Select-control", text: "Select an action…").click
-      expect(page).to have_content(Constants.TASK_ACTIONS.REVIEW_DECISION.to_h[:label])
+      expect(page).to have_content(Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label])
 
       # ColocatedTask assigned to organization should have status completed.
       expect(atty_task.children.first.status).to eq(Constants.TASK_STATUSES.completed)
