@@ -16,6 +16,7 @@ import {
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
   onHearingDateUpdate,
+  onTranscriptRequestedUpdate,
   onHearingTimeUpdate,
   onHearingLocationUpdate,
   onHearingRegionalOfficeUpdate,
@@ -125,6 +126,8 @@ export class DailyDocketContainer extends React.Component {
 
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
+      transcript_requested: _.isUndefined(hearing.editedTranscriptRequested) ?
+        hearing.transcriptRequested : hearing.editedTranscriptRequested,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
       hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
         ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
@@ -266,6 +269,7 @@ export class DailyDocketContainer extends React.Component {
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
+        onTranscriptRequestedUpdate={this.props.onTranscriptRequestedUpdate}
         onHearingLocationUpdate={this.props.onHearingLocationUpdate}
         onHearingRegionalOfficeUpdate={this.props.onHearingRegionalOfficeUpdate}
         saveHearing={this.saveHearing}
@@ -327,6 +331,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onHearingDispositionUpdate,
   onHearingDateUpdate,
   onHearingTimeUpdate,
+  onTranscriptRequestedUpdate,
   onHearingLocationUpdate,
   onHearingRegionalOfficeUpdate,
   selectHearingRoom,
