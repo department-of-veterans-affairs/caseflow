@@ -327,9 +327,11 @@ class RequestIssue < ApplicationRecord
 
     attempted!
     decision_issues.delete_all
-    create_decision_issues
+    return unless create_decision_issues
 
-    end_product_establishment.on_decision_issue_sync_processed
+    end_product_establishment.on_decision_issue_sync_processed(self)
+
+    processed!
   end
 
   def create_legacy_issue_optin
@@ -422,7 +424,7 @@ class RequestIssue < ApplicationRecord
     fail NilEndProductLastActionDate, id unless end_product_establishment.result.last_action_date
 
     if rating?
-      return unless end_product_establishment.associated_rating
+      return false unless end_product_establishment.associated_rating
 
       create_decision_issues_from_rating
     end
@@ -431,7 +433,7 @@ class RequestIssue < ApplicationRecord
 
     fail ErrorCreatingDecisionIssue, id if decision_issues.empty?
 
-    processed!
+    true
   end
 
   def matching_rating_issues
