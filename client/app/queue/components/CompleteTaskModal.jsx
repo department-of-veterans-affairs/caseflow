@@ -17,6 +17,7 @@ import {
   requestPatch
 } from '../uiReducer/uiActions';
 import editModalBase from './EditModalBase';
+import { taskActionData } from '../utils';
 
 import type { State } from '../types/state';
 import type { Task, Appeal } from '../types/models';
@@ -43,8 +44,8 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
       detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assignerName)
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
-    getContent: ({ assignerName }: { assignerName: string }) => <React.Fragment>
-      {sprintf(COPY.MARK_TASK_COMPLETE_COPY, assignerName)}
+    getContent: ({ props }: { props: Object }) => <React.Fragment>
+      {taskActionData(props) && taskActionData(props).modal_body}
     </React.Fragment>,
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },
@@ -81,7 +82,8 @@ class CompleteTaskModal extends React.Component<Props> {
   getContentArgs = () => ({
     assignerName: this.getTaskAssignerName(),
     teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.label],
-    appeal: this.props.appeal
+    appeal: this.props.appeal,
+    props: this.props
   });
 
   submit = () => {

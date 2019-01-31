@@ -89,6 +89,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :track_veteran_task, class: TrackVeteranTask do
+      type TrackVeteranTask.name
+      appeal { create(:appeal) }
+    end
+
     factory :ama_attorney_task do
       type AttorneyTask.name
       appeal { create(:appeal) }
@@ -121,27 +126,40 @@ FactoryBot.define do
       assigned_by nil
     end
 
-    factory :schedule_hearing_task do
+    factory :schedule_hearing_task, class: ScheduleHearingTask do
       type ScheduleHearingTask.name
       appeal { create(:appeal) }
       assigned_by nil
     end
 
-    factory :informal_hearing_presentation_task do
+    factory :hearing_admin_action_task, class: HearingAdminActionTask do
+      type HearingAdminActionTask.name
+      appeal { create(:appeal) }
+      assigned_by nil
+    end
+
+    factory :informal_hearing_presentation_task, class: InformalHearingPresentationTask do
       type InformalHearingPresentationTask.name
       appeal { create(:appeal) }
       assigned_by nil
     end
 
-    factory :higher_level_review_task do
+    factory :higher_level_review_task, class: DecisionReviewTask do
       type DecisionReviewTask.name
       appeal { create(:higher_level_review) }
       assigned_by nil
     end
 
-    factory :board_grant_effectuation_task do
+    factory :board_grant_effectuation_task, class: BoardGrantEffectuationTask do
       type BoardGrantEffectuationTask.name
       appeal { create(:appeal) }
+      assigned_by nil
+    end
+
+    factory :veteran_record_request_task, class: VeteranRecordRequest do
+      type VeteranRecordRequest.name
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
       assigned_by nil
     end
   end
