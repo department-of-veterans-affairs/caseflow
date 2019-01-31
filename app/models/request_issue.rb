@@ -418,6 +418,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def create_decision_issues
+    # TODO: we can probably remove this error, we've learned the issue was from date formatting
     fail NilEndProductLastActionDate, id unless end_product_establishment.result.last_action_date
 
     if rating?
@@ -490,7 +491,7 @@ class RequestIssue < ApplicationRecord
       decision_text: rating_issue.decision_text,
       profile_date: rating_issue.profile_date,
       decision_review: review_request,
-      benefit_type: benefit_type,
+      benefit_type: rating_issue.benefit_type,
       end_product_last_action_date: end_product_establishment.result.last_action_date
     )
   end
@@ -594,7 +595,7 @@ class RequestIssue < ApplicationRecord
 
   # TODO: use request issue benefit type once it's populated for request issues on build
   def temp_find_benefit_type
-    benefit_type || review_request.benefit_type
+    benefit_type || review_request.benefit_type || contested_benefit_type
   end
 
   def choose_original_end_product_code(end_product_codes)
