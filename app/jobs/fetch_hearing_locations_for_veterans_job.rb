@@ -139,7 +139,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def get_state_code(va_dot_gov_address)
     state_code = case va_dot_gov_address[:country_code]
-                 # Guam, American Somao, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
+                 # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
                  when "GQ", "AQ", "RM", "FM", "CQ", "PS"
                    "HI"
                  when "PH", "RP", "PI"
