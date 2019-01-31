@@ -102,4 +102,4 @@ class EndProductEstablishment::BGSSyncError < RuntimeError
 end
 # rubocop:enable Metrics/CyclomaticComplexity
 # rubocop:enable Metrics/MethodLength
-class TransientBGSSyncError < BGSSyncError; end
+class TransientBGSSyncError < EndProductEstablishment::BGSSyncError; end
