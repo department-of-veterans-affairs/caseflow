@@ -21,6 +21,7 @@ class BGSSyncError < RuntimeError
                     else
                       error.message
                     end
+    # :nocov:
     case error_message
     when /WssVerification Exception - Security Verification Exception/
       # This occasionally happens when client/server timestamps get out of sync. Uncertain why this
@@ -98,6 +99,7 @@ class BGSSyncError < RuntimeError
     else
       new(error, epe)
     end
+    # :nocov:
   end
 end
 # rubocop:enable Metrics/CyclomaticComplexity
