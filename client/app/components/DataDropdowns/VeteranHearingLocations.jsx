@@ -23,6 +23,18 @@ export const getFacilityType = (location) => {
   }
 };
 
+const LoadingLabel = () => (
+  <span {...css({
+    '& > *': {
+      display: 'inline-block',
+      marginRight: '10px'
+    }
+  })}>
+    {loadingSymbolHtml('', '15px')}
+    {'Finding hearing locations for veteran ...'}
+  </span>
+);
+
 const generateHearingLocationOptions = (hearingLocations) => (
   hearingLocations.map((location) => ({
     label: `${location.city}, ${location.state} ${getFacilityType(location)}${location.distance} miles away`,
@@ -144,30 +156,16 @@ class VeteranHearingLocationsDropdown extends React.Component {
       veteranHearingLocations: { isFetching } } = this.props;
 
     return (
-      <div>
-        {isFetching &&
-          <span {...css({
-            marginTop: '-25px',
-            '& > *': {
-              display: 'inline-block',
-              marginRight: '10px'
-            }
-          })}>
-            {loadingSymbolHtml('', '15px')}
-            {'Finding hearing locations for veteran ...'}
-          </span>
-        }
-        <SearchableDropdown
-          name={name}
-          label={label}
-          strongLabel
-          readOnly={readOnly}
-          value={this.getSelectedOption()}
-          onChange={(option) => onChange(option.value, option.label)}
-          options={this.props.veteranHearingLocations.options}
-          errorMessage={this.state.errorMsg || errorMessage}
-          placeholder={placeholder} />
-      </div>
+      <SearchableDropdown
+        name={name}
+        label={isFetching ? <LoadingLabel /> : label}
+        strongLabel
+        readOnly={readOnly}
+        value={this.getSelectedOption()}
+        onChange={(option) => onChange(option.value, option.label)}
+        options={this.props.veteranHearingLocations.options}
+        errorMessage={this.state.errorMsg || errorMessage}
+        placeholder={placeholder} />
     );
   }
 }
