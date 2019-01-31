@@ -351,13 +351,47 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def on_decision_issue_sync_processed
-    if decision_issues_sync_complete?
+  def on_decision_issue_sync_processed(processing_request_issue)
+    if decision_issues_sync_complete?(processing_request_issue)
       source.on_decision_issues_sync_processed(self)
     end
   end
 
+  def status
+    if committed?
+      {
+        ep_code: "EP #{cached_result.modifier || 'Unknown'}",
+        ep_status: [status_type, sync_status].compact.join(", ")
+      }
+    else
+      {
+        ep_code: "",
+        ep_status: establishment_status
+      }
+    end
+  end
+
   private
+
+  def status_type
+    EndProduct::STATUSES[synced_status] || synced_status
+  end
+
+  def establishment_status
+    if source.try(:establishment_error)
+      COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED
+    else
+      COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
+    end
+  end
+
+  def sync_status
+    if request_issues.any?(&:decision_sync_error)
+      COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS_ERROR
+    elsif request_issues.any?(&:submitted_not_processed?)
+      COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS
+    end
+  end
 
   # All records that create contentions should be an instance of ApplicationRecord with
   # a contention_reference_id column, and contention_text method
@@ -373,8 +407,9 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def decision_issues_sync_complete?
-    request_issues.all?(&:processed?)
+  def decision_issues_sync_complete?(processing_request_issue)
+    other_request_issues = request_issues.reject { |i| i.id == processing_request_issue.id }
+    other_request_issues.all?(&:processed?)
   end
 
   def potential_decision_ratings

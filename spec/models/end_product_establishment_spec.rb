@@ -803,17 +803,15 @@ describe EndProductEstablishment do
   end
 
   context "#on_decision_issue_sync_processed" do
-    subject { end_product_establishment.on_decision_issue_sync_processed }
+    subject { end_product_establishment.on_decision_issue_sync_processed(processing_request_issue) }
     let(:processed_at) { Time.zone.now }
-    let!(:request_issues) do
-      [
-        create(:request_issue,
-               review_request: source,
-               decision_sync_processed_at: Time.zone.now),
-        create(:request_issue,
-               review_request: source,
-               decision_sync_processed_at: processed_at)
-      ]
+
+    let(:processing_request_issue) do
+      create(:request_issue, review_request: source)
+    end
+
+    let!(:processed_request_issue) do
+      create(:request_issue, review_request: source, decision_sync_processed_at: Time.zone.now)
     end
 
     context "when decision issues are all synced" do
@@ -855,11 +853,117 @@ describe EndProductEstablishment do
     end
 
     context "when decision issues are not all synced" do
-      let(:processed_at) { nil }
+      let!(:not_processed_request_issue) do
+        create(:request_issue, review_request: source)
+      end
 
       it "does nothing" do
         subject
         expect(SupplementalClaim.find_by(decision_review_remanded: source)).to be_nil
+      end
+    end
+  end
+
+  context "#status" do
+    subject { epe.status }
+
+    context "if there is an end product" do
+      let(:epe) do
+        create(
+          :end_product_establishment,
+          source: source,
+          veteran_file_number: veteran_file_number,
+          modifier: modifier,
+          synced_status: synced_status,
+          established_at: 30.days.ago,
+          committed_at: 30.days.ago
+        )
+      end
+
+      let(:modifier) { nil }
+
+      context "and there is a modifier, show the modifier" do
+        let(:modifier) { "037" }
+
+        context "when there is a status" do
+          let(:synced_status) { "CLR" }
+
+          let!(:pending_request_issue) do
+            create(
+              :request_issue,
+              review_request: epe.source,
+              end_product_establishment: epe
+            )
+          end
+
+          it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared") }
+
+          context "when there are pending request issues to sync" do
+            let!(:pending_request_issue) do
+              create(
+                :request_issue,
+                review_request: epe.source,
+                end_product_establishment: epe,
+                decision_sync_submitted_at: Time.zone.now
+              )
+            end
+
+            it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared, Syncing decisions...") }
+
+            context "when there are pending request issues to sync with errors" do
+              let!(:errored_request_issue) do
+                create(
+                  :request_issue,
+                  review_request: epe.source,
+                  end_product_establishment: epe,
+                  decision_sync_submitted_at: Time.zone.now,
+                  decision_sync_error: "oh no"
+                )
+              end
+
+              it do
+                is_expected.to eq(
+                  ep_code: "EP 037",
+                  ep_status: "Cleared, Decisions sync failed. Support notified."
+                )
+              end
+            end
+          end
+        end
+      end
+
+      context "if there is no modifier, shows unknown" do
+        it { is_expected.to eq(ep_code: "EP Unknown", ep_status: "") }
+      end
+    end
+
+    context "if there is not an end product" do
+      let(:epe) do
+        create(
+          :end_product_establishment,
+          source: source,
+          veteran_file_number: veteran_file_number,
+          established_at: nil
+        )
+      end
+
+      context "if there was an error establishing the claim review" do
+        before { source.establishment_error = "big error" }
+        let(:expected_result) do
+          { ep_code: "",
+            ep_status: COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED }
+        end
+
+        it { is_expected.to eq expected_result }
+      end
+
+      context "if it is establishing" do
+        let(:expected_result) do
+          { ep_code: "",
+            ep_status: COPY::OTHER_REVIEWS_TABLE_ESTABLISHING }
+        end
+
+        it { is_expected.to eq expected_result }
       end
     end
   end

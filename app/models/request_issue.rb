@@ -326,10 +326,13 @@ class RequestIssue < ApplicationRecord
     return if processed?
 
     attempted!
-    decision_issues.delete_all
-    create_decision_issues
 
-    end_product_establishment.on_decision_issue_sync_processed
+    transaction do
+      return unless create_decision_issues
+
+      end_product_establishment.on_decision_issue_sync_processed(self)
+      processed!
+    end
   end
 
   def create_legacy_issue_optin
@@ -379,6 +382,10 @@ class RequestIssue < ApplicationRecord
     )
   end
 
+  def requires_record_request_task?
+    !benefit_type_requires_payee_code?
+  end
+
   private
 
   # The contested_rating_issue_profile_date is used as an identifier to retrieve the
@@ -414,10 +421,11 @@ class RequestIssue < ApplicationRecord
   end
 
   def create_decision_issues
+    # TODO: we can probably remove this error, we've learned the issue was from date formatting
     fail NilEndProductLastActionDate, id unless end_product_establishment.result.last_action_date
 
     if rating?
-      return unless end_product_establishment.associated_rating
+      return false unless end_product_establishment.associated_rating
 
       create_decision_issues_from_rating
     end
@@ -426,7 +434,7 @@ class RequestIssue < ApplicationRecord
 
     fail ErrorCreatingDecisionIssue, id if decision_issues.empty?
 
-    processed!
+    true
   end
 
   def matching_rating_issues
@@ -456,17 +464,39 @@ class RequestIssue < ApplicationRecord
 
   def create_decision_issues_from_rating
     matching_rating_issues.each do |rating_issue|
-      decision_issues.create!(
-        rating_issue_reference_id: rating_issue.reference_id,
-        participant_id: rating_issue.participant_id,
-        promulgation_date: rating_issue.promulgation_date,
-        decision_text: rating_issue.decision_text,
-        profile_date: rating_issue.profile_date,
-        decision_review: review_request,
-        benefit_type: benefit_type,
-        end_product_last_action_date: end_product_establishment.result.last_action_date
-      )
+      transaction { decision_issues << find_or_create_decision_issue_from_rating_issue(rating_issue) }
     end
+  end
+
+  # One rating issue can be made as a decision for many request issues. However, we trust the disposition of the
+  # request issue contention OVER the decision issue disposition (since it's a "supplementary decision").
+  #
+  # This creates a scenario where multiple request issues can have different dispositions but be decided by the
+  # same rating issue. In this scenario, we will create 2 decision issues with the same rating_issue_reference_id
+  # but different dispositions.
+  #
+  # However, if the dispositions for any of these request issues match, there is no need to create multiple decision
+  # issues. They can instead be mapped to the same decision issue.
+  def find_or_create_decision_issue_from_rating_issue(rating_issue)
+    preexisting_decision_issue = DecisionIssue.find_by(
+      participant_id: rating_issue.participant_id,
+      rating_issue_reference_id: rating_issue.reference_id,
+      disposition: contention_disposition.disposition
+    )
+
+    return preexisting_decision_issue if preexisting_decision_issue
+
+    DecisionIssue.create!(
+      rating_issue_reference_id: rating_issue.reference_id,
+      disposition: contention_disposition.disposition,
+      participant_id: rating_issue.participant_id,
+      promulgation_date: rating_issue.promulgation_date,
+      decision_text: rating_issue.decision_text,
+      profile_date: rating_issue.profile_date,
+      decision_review: review_request,
+      benefit_type: rating_issue.benefit_type,
+      end_product_last_action_date: end_product_establishment.result.last_action_date
+    )
   end
 
   # RatingIssue is not in db so we pull hash from the serialized_ratings.
@@ -568,7 +598,7 @@ class RequestIssue < ApplicationRecord
 
   # TODO: use request issue benefit type once it's populated for request issues on build
   def temp_find_benefit_type
-    benefit_type || review_request.benefit_type
+    benefit_type || review_request.benefit_type || contested_benefit_type
   end
 
   def choose_original_end_product_code(end_product_codes)

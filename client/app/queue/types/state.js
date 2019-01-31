@@ -37,7 +37,6 @@ export type UiStateModals = {|
 export type UiStateMessage = { title: string, detail?: React.Node };
 
 export type UiState = {
-  activeOrganizationId: ?number,
   selectingJudge: boolean,
   highlightFormItems: boolean,
   messages: {
@@ -59,6 +58,11 @@ export type UiState = {
   feedbackUrl: string,
   veteranCaseListIsVisible: boolean,
   organizations: Array<Object>,
+  activeOrganization: {
+    id: ?number,
+    name: ?string,
+    isVso: boolean
+  },
   canEditAod: boolean,
   hearingDay: {
     hearingDate: ?string,
@@ -106,7 +110,8 @@ export type CommonComponentState = {|
   selectedRegionalOffice: { label: string, value: string },
   selectedHearingDate: string,
   selectedHearingTime: string,
-  selectedHearingDay: Object
+  selectedHearingDay: Object,
+  selectedHearingLocation: Object
 |};
 
 export type State = {

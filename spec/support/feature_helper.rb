@@ -1,8 +1,10 @@
 module FeatureHelper
-  def click_dropdown(options = {}, container = page)
-    options = { prompt: nil, index: nil, text: nil }.merge(options)
+  def click_dropdown(options = {}, container = page) # rubocop:disable Metrics/PerceivedComplexity
+    options = { prompt: nil, index: nil, text: nil, name: nil }.merge(options)
     dropdown = if options[:prompt].present?
                  container.find(".Select-control", text: options[:prompt])
+               elsif options[:name].present?
+                 container.find(".dropdown-#{options[:name]} .Select-control")
                else
                  container.find(".Select-control")
                end

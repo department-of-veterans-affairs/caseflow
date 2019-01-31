@@ -13,7 +13,7 @@ import {
 } from './QueueActions';
 
 import {
-  setActiveOrganizationId
+  setActiveOrganization
 } from './uiReducer/uiActions';
 
 type Params = {|
@@ -24,7 +24,7 @@ type Params = {|
 type Props = Params & {|
   // Action creators
   onReceiveQueue: typeof onReceiveQueue,
-  setActiveOrganizationId: typeof setActiveOrganizationId
+  setActiveOrganization: typeof setActiveOrganization
 |};
 
 class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
@@ -33,10 +33,12 @@ class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
     (response) => {
       const {
         tasks: { data: tasks },
-        id
+        id,
+        organization_name: organizationName,
+        isVso
       } = JSON.parse(response.text);
 
-      this.props.setActiveOrganizationId(id);
+      this.props.setActiveOrganization(id, organizationName, isVso);
       this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
     }
   );
@@ -70,7 +72,7 @@ class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
-  setActiveOrganizationId
+  setActiveOrganization
 }, dispatch);
 
 export default (connect(null, mapDispatchToProps)(OrganizationQueueLoadingScreen): React.ComponentType<Params>);

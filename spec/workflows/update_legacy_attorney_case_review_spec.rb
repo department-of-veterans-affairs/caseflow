@@ -154,28 +154,9 @@ describe UpdateLegacyAttorneyCaseReview do
       end
     end
 
-    context "when the work_product is 'DEC' but the document_id is in the wrong format" do
+    context "when the work_product is a draft decision but the document_id is in the wrong format" do
       it "returns an error" do
         stub_case_assignment_with_work_product("DEC")
-        result = UpdateLegacyAttorneyCaseReview.new(
-          id: vacols_id,
-          document_id: invalid_document_id,
-          user: attorney
-        ).call
-
-        error_message = "Draft Decision Document IDs must be in one of these formats: " \
-                        "12345-12345678 or 12345678.123 or 12345678.1234"
-        errors = {
-          document_id: [error_message]
-        }
-
-        expect(result.errors).to eq errors
-      end
-    end
-
-    context "when the work_product is 'OTD' but the document_id is in the wrong format" do
-      it "returns an error" do
-        stub_case_assignment_with_work_product("OTD")
         result = UpdateLegacyAttorneyCaseReview.new(
           id: vacols_id,
           document_id: invalid_document_id,
@@ -234,23 +215,9 @@ describe UpdateLegacyAttorneyCaseReview do
       end
     end
 
-    context "when the work_product is 'DEC' and the document_id is in the correct format" do
+    context "when the work_product is draft decision and the document_id is in the correct format" do
       it "returns an error" do
-        stub_case_assignment_with_work_product("DEC")
-        result = UpdateLegacyAttorneyCaseReview.new(
-          id: vacols_id,
-          document_id: valid_decision_document_id,
-          user: attorney
-        ).call
-
-        expect(result.success?).to eq true
-        expect(attorney_case_review.reload.document_id).to eq valid_decision_document_id
-      end
-    end
-
-    context "when the work_product is 'OTD' and the document_id is in the correct format" do
-      it "returns an error" do
-        stub_case_assignment_with_work_product("OTD")
+        stub_case_assignment_with_work_product("REM")
         result = UpdateLegacyAttorneyCaseReview.new(
           id: vacols_id,
           document_id: valid_decision_document_id,
@@ -280,6 +247,33 @@ describe UpdateLegacyAttorneyCaseReview do
         }
 
         expect(result.errors).to eq errors
+      end
+    end
+
+    context "when the attorney_case_review cannot be found" do
+      it "does not attempt to update the AttorneyCaseReview table, but updates VACOLS" do
+        case_assignment = double(
+          vacols_id: vacols_id,
+          assigned_by_css_id: attorney.css_id,
+          assigned_to_css_id: judge.css_id,
+          document_id: document_id,
+          work_product: "DEC",
+          created_at: created_at.to_date
+        )
+        allow(VACOLS::CaseAssignment).to receive(:latest_task_for_appeal).with(vacols_id).and_return(case_assignment)
+
+        decass = class_double(VACOLS::Decass)
+        expect(VACOLS::Decass)
+          .to receive(:where).with(defolder: vacols_id, deadtim: created_at.to_date).and_return(decass)
+        expect(decass).to receive(:update_all).with(dedocid: valid_decision_document_id)
+
+        result = UpdateLegacyAttorneyCaseReview.new(
+          id: vacols_id,
+          document_id: valid_decision_document_id,
+          user: judge
+        ).call
+
+        expect(result.success?).to eq true
       end
     end
   end
