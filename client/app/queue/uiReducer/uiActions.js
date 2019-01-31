@@ -95,15 +95,12 @@ export const requestSave = (
 
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 
-  return ApiUtil[verb](url, { data: 'null',
-    headers: null }).
+  return ApiUtil[verb](url, params).
     then(
-      (resp) => dispatch(saveSuccess(successMessage, resp))
+      (resp) => dispatch(saveSuccess(successMessage, resp)),
+
     ).
-    catch((err) => dispatch(saveFailure(err))).
-    catch((err) => {
-      console.log('***the error from attempting to save: ', err);
-    });
+    catch((err) => dispatch(saveFailure(err)));
 };
 
 export const requestPatch = (url: string, params: Object, successMessage: UiStateMessage) =>
