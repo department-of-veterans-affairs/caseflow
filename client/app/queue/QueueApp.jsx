@@ -1,5 +1,4 @@
 // @flow
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -81,7 +80,7 @@ type Props = {|
   setUserCssId: typeof setUserCssId,
   setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
   setFeedbackUrl: typeof setFeedbackUrl,
-  setOrganizations: typeof setOrganizations,
+  setOrganizations: typeof setOrganizations
 |};
 
 class QueueApp extends React.PureComponent<Props> {
@@ -137,16 +136,12 @@ class QueueApp extends React.PureComponent<Props> {
     checkoutFlow={props.match.params.checkoutFlow}
     nextStep="/queue" />;
 
-  routedSelectDispositions = (props) => {
-
-    return <SelectDispositionsContainer
-      appealId={props.match.params.appealId}
-      taskId={props.match.params.taskId}
-      checkoutFlow={props.match.params.checkoutFlow} />;
-  }
+  routedSelectDispositions = (props) => <SelectDispositionsContainer
+    appealId={props.match.params.appealId}
+    taskId={props.match.params.taskId}
+    checkoutFlow={props.match.params.checkoutFlow} />;
 
   routedSelectSpecialIssues = (props) => {
-
     const {
       appealId,
       checkoutFlow,
@@ -160,7 +155,6 @@ class QueueApp extends React.PureComponent<Props> {
         prevStep={`/queue/appeals/${appealId}`}
         nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`} />
     </SpecialIssueLoadingScreen>;
-
   }
 
   routedAddEditIssue = (props) => {
