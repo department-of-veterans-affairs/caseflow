@@ -37,11 +37,13 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "8:30").click
+      find("label", text: "Transcript Requested").click
       click_button("Save")
 
       expect(page).to have_content("You have successfully updated")
       expect(page).to have_content("No Show")
       expect(page).to have_content("This is a note about the hearing!")
+      expect(find_field("Transcript Requested", visible: false)).to be_checked
       # For unknown reasons, in feature tests, the hearing time is displayed as 3:30am. I
       # created a ticket that we can look into after February.
       # expect(page).to have_content("8:30 am")
@@ -72,11 +74,13 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       find("#react-select-2--option-1").click
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "9:00").click
+      find("label", text: "Transcript Requested").click
       click_button("Save")
 
       expect(page).to have_content("You have successfully updated")
       expect(page).to have_content("No Show")
       expect(page).to have_content("This is a note about the hearing!")
+      expect(find_field("Transcript Requested", visible: false)).to be_checked
       # For unknown reasons, in feature tests, the hearing time is displayed as 3:30am. I
       # created a ticket that we can look into after February.
       # expect(page).to have_content("8:30 am")
