@@ -88,6 +88,13 @@ class EndProductEstablishment::BGSSyncError < RuntimeError
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3404/
       TransientBGSSyncError.new(error, epe)
+    when /System error with BGS./
+      # Full message may be something like
+      # "An error occurred while establishing the claim: Unable to establish claim: TUX-20308 -
+      # An unexpected error was encountered. Please contact the System Administrator. Error is: TUX-20308"
+      #
+      # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3288/
+      TransientBGSSyncError.new(error, epe)
     else
       new(error, epe)
     end
