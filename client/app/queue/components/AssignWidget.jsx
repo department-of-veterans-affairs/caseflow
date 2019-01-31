@@ -144,7 +144,7 @@ class AssignWidget extends React.PureComponent<Props> {
     // Note: the default value of "" will never be used, and will fail on the backend.
     // Even though this code path will never be hit unless we have a value for userId,
     // Flow complains without a default value.
-    this.props.requestDistribution(this.props.userId || "");
+    this.props.requestDistribution(this.props.userId || '');
   }
 
   render = () => {
