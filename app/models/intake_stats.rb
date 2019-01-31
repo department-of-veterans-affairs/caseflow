@@ -46,6 +46,8 @@ class IntakeStats < Caseflow::Stats
     end
 
     def average(values)
+      return 0.0 unless values.count
+
       values.inject(0.0) { |sum, i| sum + i } / values.count
     end
 
