@@ -141,11 +141,11 @@ class VeteranHearingLocationsDropdown extends React.Component {
   render() {
     const {
       name, label, onChange, readOnly, errorMessage, placeholder,
-      veteranHearingLocations: { isFetching } } = this.props;
+      veteranHearingLocations: { options, isFetching }, dynamic } = this.props;
 
     return (
       <div>
-        {isFetching &&
+        {((dynamic && !options) || isFetching) &&
           <span {...css({
             marginTop: '-25px',
             '& > *': {

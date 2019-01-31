@@ -253,7 +253,7 @@ export default class AssignHearingsTabs extends React.Component {
 
     const countByValue = _.countBy(locations, 'value');
 
-    return _.sortedUniqBy(locations, 'value').map((row) => ({
+    return _.uniqBy(_.sortBy(locations, (loc) => loc.displayText), 'value').map((row) => ({
       ...row,
       displayText: `${row.displayText} (${countByValue[row.value]} Veterans)`
     }));
