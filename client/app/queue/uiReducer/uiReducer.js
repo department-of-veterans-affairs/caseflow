@@ -21,7 +21,11 @@ export const initialState = {
   userRole: '',
   userCssId: '',
   organizations: [],
-  activeOrganizationId: null,
+  activeOrganization: {
+    id: null,
+    name: null,
+    isVso: false
+  },
   userIsVsoEmployee: false,
   feedbackUrl: '#',
   loadedUserId: null,
@@ -186,11 +190,10 @@ const workQueueUiReducer = (state: UiState = initialState, action: Object = {}) 
     });
   case ACTIONS.SET_ACTIVE_ORGANIZATION:
     return update(state, {
-      activeOrganizationId: {
-        $set: action.payload.activeOrganizationId
-      },
-      activeOrganizationName: {
-        $set: action.payload.activeOrganizationName
+      activeOrganization: {
+        id: { $set: action.payload.id },
+        name: { $set: action.payload.name },
+        isVso: { $set: action.payload.isVso }
       }
     });
   case ACTIONS.SET_HEARING_DAY:

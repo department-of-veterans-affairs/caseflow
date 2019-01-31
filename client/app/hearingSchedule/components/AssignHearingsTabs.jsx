@@ -29,16 +29,11 @@ const filterDropdownFix = css({
 });
 
 const tableNumberStyling = css({
-  '& > tr:nth-child(even)': {
-    '& > td:nth-child(1)': {
-      width: '1%',
-      paddingRight: '0'
-    }
+  '& tr > td:first-child': {
+    paddingRight: 0
   },
-  '& > tr:nth-child(odd)': {
-    '& > td:nth-child(1)': {
-      paddingLeft: '0'
-    }
+  '& td:nth-child(2)': {
+    paddingLeft: 0
   }
 });
 
@@ -253,7 +248,7 @@ export default class AssignHearingsTabs extends React.Component {
 
     const countByValue = _.countBy(locations, 'value');
 
-    return _.sortedUniqBy(locations, 'value').map((row) => ({
+    return _.uniqBy(_.sortBy(locations, 'displayText'), 'value').map((row) => ({
       ...row,
       displayText: `${row.displayText} (${countByValue[row.value]} Veterans)`
     }));

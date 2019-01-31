@@ -37,8 +37,8 @@ class HearingsController < ApplicationController
 
       veteran = Veteran.find_by(file_number: params["veteran_file_number"])
 
-      facility_ids = RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
-                     [] << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
+      facility_ids = (RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
+                     []) << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
 
       va_dot_gov_address = veteran.validate_address
 
@@ -85,7 +85,7 @@ class HearingsController < ApplicationController
   end
 
   def verify_access_to_reader_or_hearings
-    verify_authorized_roles("Reader", "Hearing Prep")
+    verify_authorized_roles("Reader", "Hearing Prep", "Edit HearSched", "Build HearSched")
   end
 
   def verify_access_to_hearing_prep_or_schedule

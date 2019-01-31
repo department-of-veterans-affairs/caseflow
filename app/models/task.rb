@@ -118,6 +118,10 @@ class Task < ApplicationRecord
     [self]
   end
 
+  def hide_from_queue_table_view
+    false
+  end
+
   def hide_from_case_timeline
     false
   end
