@@ -4,7 +4,7 @@ describe DecisionIssue do
   end
 
   let(:decision_issue) do
-    build(
+    create(
       :decision_issue,
       decision_review: decision_review,
       disposition: disposition,
@@ -67,6 +67,21 @@ describe DecisionIssue do
   context "#valid?" do
     subject { decision_issue.valid? }
 
+    let(:decision_issue) do
+      build(
+        :decision_issue,
+        decision_review: decision_review,
+        disposition: disposition,
+        decision_text: decision_text,
+        description: description,
+        request_issues: request_issues,
+        benefit_type: benefit_type,
+        profile_date: profile_date,
+        end_product_last_action_date: end_product_last_action_date,
+        diagnostic_code: diagnostic_code
+      )
+    end
+
     context "when it is valid" do
       it { is_expected.to be true }
     end
@@ -77,15 +92,6 @@ describe DecisionIssue do
       it "adds an error to benefit_type" do
         is_expected.to be false
         expect(decision_issue.errors[:benefit_type]).to include("is not included in the list")
-      end
-    end
-
-    context "when description is missing" do
-      let(:description) { nil }
-
-      it "adds an error to description" do
-        is_expected.to be false
-        expect(decision_issue.errors[:description]).to include("can't be blank")
       end
     end
 
@@ -220,10 +226,6 @@ describe DecisionIssue do
     end
 
     context "when there is no profile date" do
-      it "returns nil" do
-        expect(subject).to be_nil
-      end
-
       context "when there is an end_product_last_action_date" do
         let(:end_product_last_action_date) { 4.days.ago }
 
@@ -263,8 +265,7 @@ describe DecisionIssue do
     subject { decision_issue.find_or_create_remand_supplemental_claim! }
 
     context "when approx_decision_date is nil" do
-      let(:profile_date) { nil }
-      let(:end_product_last_action_date) { nil }
+      let(:decision_review) { create(:appeal) }
 
       it "throws an error" do
         expect { subject }.to raise_error(

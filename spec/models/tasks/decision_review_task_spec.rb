@@ -40,18 +40,18 @@ describe DecisionReviewTask do
     context "assigned task" do
       it "can be completed" do
         expect(subject).to eq true
-        promulgation_date = Date.parse(decision_date).to_datetime
+        caseflow_decision_date = Date.parse(decision_date).to_datetime
         expect(DecisionIssue.find_by(
                  decision_review: hlr,
                  description: "description 1",
                  disposition: "GRANTED",
-                 promulgation_date: promulgation_date
+                 caseflow_decision_date: caseflow_decision_date
                )).to_not be_nil
         expect(DecisionIssue.find_by(
                  decision_review: hlr,
                  description: "description 2",
                  disposition: "DENIED",
-                 promulgation_date: promulgation_date
+                 caseflow_decision_date: caseflow_decision_date
                )).to_not be_nil
         expect(task.status).to eq "completed"
       end
