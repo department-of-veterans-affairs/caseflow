@@ -468,11 +468,9 @@ RSpec.feature "AmaQueue" do
       click_on veteran_full_name
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_DECISION.to_h[:label]).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label]).click
 
-      expect(page).to have_content("Select special issues (optional)")
-
-      click_on "Continue"
+      expect(page).not_to have_content("Select special issues (optional)")
 
       expect(page).to have_content("Select Dispositions")
 
@@ -578,8 +576,11 @@ RSpec.feature "AmaQueue" do
     it "judge can return report to attorney for corrections" do
       step "judge reviews case and assigns a task to an attorney" do
         visit "/queue"
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
 
-        click_on COPY::SWITCH_TO_ASSIGN_MODE_LINK_LABEL
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
 
         click_on veteran_full_name
 
@@ -599,9 +600,7 @@ RSpec.feature "AmaQueue" do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).to have_content("Select special issues (optional)")
-        click_label "riceCompliance"
-        click_on "Continue"
+        expect(page).not_to have_content("Select special issues (optional)")
 
         expect(page).to have_content("Select Dispositions")
         click_dropdown({ prompt: "Select disposition", text: "Allowed" }, find("#table-row-0"))
@@ -649,9 +648,7 @@ RSpec.feature "AmaQueue" do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).to have_content("Select special issues (optional)")
-        expect(page).to have_field("riceCompliance", checked: true, visible: false)
-        click_on "Continue"
+        expect(page).not_to have_content("Select special issues (optional)")
 
         expect(page).to have_content("Select Dispositions")
         expect(dropdown_selected_value(find("#table-row-0"))).to eq "Allowed"
@@ -677,7 +674,7 @@ RSpec.feature "AmaQueue" do
         )
       end
 
-      step "judge sees the case in their queue" do
+      step "judge sees the case in their review queue" do
         User.authenticate!(user: judge_user)
         visit "/queue"
 

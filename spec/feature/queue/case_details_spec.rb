@@ -124,7 +124,10 @@ RSpec.feature "Case details" do
         page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
 
         worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
-        expect(worksheet_link.text).to eq("View Hearing Worksheet")
+        expect(worksheet_link.text).to eq("View VLJ Hearing Worksheet")
+
+        details_link = page.find("a[href='/hearings/#{hearing.external_id}/details']")
+        expect(details_link.text).to eq("View Hearing Details")
       end
     end
 
@@ -698,6 +701,50 @@ RSpec.feature "Case details" do
         expect(page).to have_content(judge_user.full_name)
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL)
         expect(page).to have_content(attorney_user.full_name)
+      end
+    end
+  end
+
+  describe "case timeline" do
+    context "when the only completed task is a TrackVeteranTask" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:appeal) { root_task.appeal }
+      let!(:tracking_task) do
+        FactoryBot.create(
+          :track_veteran_task,
+          appeal: appeal,
+          parent: root_task,
+          status: Constants.TASK_STATUSES.completed
+        )
+      end
+
+      it "should not show the tracking task in case timeline" do
+        visit("/queue/appeals/#{tracking_task.appeal.uuid}")
+
+        # Expect to only find the "NOD received" row and the "dispatch pending" rows.
+        expect(page).to have_css("table#case-timeline-table tbody tr", count: 2)
+      end
+    end
+  end
+
+  describe "task snapshot" do
+    context "when the only task is a TrackVeteranTask" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:appeal) { root_task.appeal }
+      let(:tracking_task) { FactoryBot.create(:track_veteran_task, appeal: appeal, parent: root_task) }
+
+      it "should not show the tracking task in task snapshot" do
+        visit("/queue/appeals/#{tracking_task.appeal.uuid}")
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_NO_ACTIVE_LABEL)
+      end
+    end
+
+    context "when the only task is an IHP task" do
+      let(:ihp_task) { FactoryBot.create(:informal_hearing_presentation_task) }
+
+      it "should show the label for the IHP task" do
+        visit("/queue/appeals/#{ihp_task.appeal.uuid}")
+        expect(page).to have_content(COPY::IHP_TASK_LABEL)
       end
     end
   end
