@@ -23,6 +23,7 @@ const serverData = {
           completed_at: null,
           assigned_to: {
             css_id: 'BVANKUVALIS',
+            name: 'name',
             id: 130,
             isOrganization: false,
             type: 'User'
@@ -73,6 +74,7 @@ describe('QueueLoadingScreen', () => {
         dueOn: '2018-08-11T00:00:00.000Z',
         assignedTo: {
           cssId: 'BVANKUVALIS',
+          name: 'name',
           id: 130,
           // eslint-disable-next-line no-undefined
           isOrganization: undefined,

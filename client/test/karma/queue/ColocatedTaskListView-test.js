@@ -61,6 +61,7 @@ describe('ColocatedTaskListView', () => {
     dueOn: null,
     assignedTo: {
       cssId: 'BVALSPORER',
+      name: 'Judge with cases',
       type: 'User',
       isOrganization: true,
       id: 7

@@ -31,9 +31,10 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :assigned_to do
     {
       css_id: object.assigned_to.try(:css_id),
-      id: object.assigned_to.id,
       is_organization: object.assigned_to.is_a?(Organization),
-      type: object.assigned_to.class.name
+      name: object.appeal.location_code,
+      type: object.assigned_to.class.name,
+      id: object.assigned_to.id
     }
   end
 
