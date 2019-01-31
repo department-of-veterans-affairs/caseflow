@@ -511,7 +511,7 @@ describe RequestIssue do
 
   context "#contested_benefit_type" do
     it "returns the benefit_type of the contested_rating_issue" do
-      expect(rating_request_issue.contested_benefit_type).to eq "compensation"
+      expect(rating_request_issue.contested_benefit_type).to eq :compensation
     end
   end
 

@@ -6,7 +6,7 @@ import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
 import TaskTable from './components/TaskTable';
-import QueueSelectorDropdown from './components/QueueSelectorDropdown';
+import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -85,7 +85,7 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
     return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} styling={marginBottom(1)} />}
       <h1 {...fullWidth}>{COPY.COLOCATED_QUEUE_PAGE_TABLE_TITLE}</h1>
-      <QueueSelectorDropdown organizations={organizations} />
+      <QueueOrganizationDropdown organizations={organizations} />
       <TabWindow name="tasks-tabwindow" tabs={tabs} />
     </AppSegment>;
   };

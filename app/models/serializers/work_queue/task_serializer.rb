@@ -15,6 +15,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :instructions
   attribute :appeal_type
   attribute :timeline_title
+  attribute :hide_from_queue_table_view
   attribute :hide_from_case_timeline
   attribute :hide_from_task_snapshot
 
