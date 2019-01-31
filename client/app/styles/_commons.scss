@@ -791,10 +791,10 @@ form {
   margin: 0;
 
   button {
-    background-color: #fff;
-    border-bottom: 1px solid #d6d7d9;
+    background-color: $color-white;
+    border-bottom: 1px solid $color-gray-lighter;
     border-radius: 0;
-    color: #323a45;
+    color: $color-gray-dark;
     font-weight: inherit;
     margin: 0;
     padding: 15px 10px;
@@ -802,8 +802,8 @@ form {
     width: 100%;
 
     &:hover {
-      background-color: #5b616b;
-      color: #fff;
+      background-color: $color-gray;
+      color: $color-white;
     }
   }
 
