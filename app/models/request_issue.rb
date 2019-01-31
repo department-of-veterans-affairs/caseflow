@@ -326,12 +326,12 @@ class RequestIssue < ApplicationRecord
     return if processed?
 
     attempted!
-    decision_issues.delete_all
-    return unless create_decision_issues
 
-    end_product_establishment.on_decision_issue_sync_processed(self)
-
-    processed!
+    transaction do
+      return unless create_decision_issues
+      end_product_establishment.on_decision_issue_sync_processed(self)
+      processed!
+    end
   end
 
   def create_legacy_issue_optin
