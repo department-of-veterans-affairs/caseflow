@@ -81,7 +81,8 @@ describe('ColocatedTaskListView', () => {
     availableActions: [],
     taskBusinessPayloads: [],
     hideFromCaseTimeline: false,
-    hideFromTaskSnapshot: false
+    hideFromTaskSnapshot: false,
+    closestRegionalOffice: ''
   });
 
   const appealTemplate: BasicAppeal = {
