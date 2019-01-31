@@ -198,4 +198,3 @@ export const setHearingDay = (hearingDay: Object) => ({
   type: ACTIONS.SET_HEARING_DAY,
   payload: hearingDay
 });
-
