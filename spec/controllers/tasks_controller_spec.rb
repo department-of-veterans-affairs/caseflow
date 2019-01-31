@@ -620,21 +620,73 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "GET cases_to_schedule/:ro" do
-    let!(:vacols_case) do
-      create(
-        :case,
-        folder: create(:folder, tinum: "docket-number"),
-        bfregoff: "RO04",
-        bfcurloc: "57",
-        bfhr: "2",
-        bfdocind: "V"
-      )
+    context "when veteran is defined with regional office and hearing location" do
+      let!(:vacols_case) do
+        create(
+          :case,
+          bfcorlid: "#{veteran.file_number}S",
+          folder: create(:folder, tinum: "docket-number"),
+          bfregoff: "RO04",
+          bfcurloc: "57",
+          bfhr: "2",
+          bfdocind: "V"
+        )
+      end
+      let(:closest_regional_office) { "RO10" }
+      let(:address) { "Fake Address" }
+      let!(:veteran) { create(:veteran, closest_regional_office: closest_regional_office) }
+      let!(:hearing_location) do
+        create(
+          :available_hearing_locations,
+          veteran_file_number: veteran.file_number,
+          address: address,
+          distance: 0,
+          facility_type: "va_health_facility"
+        )
+      end
+
+      it "gets veterans ready for hearing schedule" do
+        BGSService.instance_methods(false).each do |method_name|
+          expect_any_instance_of(BGSService).not_to receive(method_name)
+        end
+
+        get :ready_for_hearing_schedule, params: { ro: "RO04" }
+        expect(response).to have_http_status(:success)
+        data = JSON.parse(response.body)["data"]
+
+        expect(data.size).to be(1)
+        expect(data.first["attributes"]["closest_regional_office"]).to eq(closest_regional_office)
+        expect(data.first["attributes"]["veteran_available_hearing_locations"].first["address"]).to eq(
+          address
+        )
+      end
     end
 
-    it "gets veterans ready for hearing schedule" do
-      get :ready_for_hearing_schedule, params: { ro: "RO04" }
-      expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["data"].size).to be(1)
+    context "when veteran is not defined" do
+      let!(:vacols_case) do
+        create(
+          :case,
+          folder: create(:folder, tinum: "docket-number"),
+          bfregoff: "RO04",
+          bfcurloc: "57",
+          bfhr: "2",
+          bfdocind: "V"
+        )
+      end
+
+      it "does not make a BGS call" do
+        BGSService.instance_methods(false).each do |method_name|
+          expect_any_instance_of(BGSService).not_to receive(method_name)
+        end
+
+        get :ready_for_hearing_schedule, params: { ro: "RO04" }
+        expect(response).to have_http_status(:success)
+        data = JSON.parse(response.body)["data"]
+
+        expect(data.size).to be(1)
+        expect(data.first["attributes"]["closest_regional_office"]).to eq(nil)
+        expect(data.first["attributes"]["veteran_available_hearing_locations"]).to eq(nil)
+      end
     end
   end
 end
