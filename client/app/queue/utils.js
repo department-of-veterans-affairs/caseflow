@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // @flow
 import React from 'react';
 import _ from 'lodash';
@@ -144,8 +145,9 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       dueOn: task.attributes.due_on,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
-        type: task.attributes.assigned_to.type,
-        id: task.attributes.assigned_to.id
+        id: task.attributes.assigned_to.id,
+        isOrganization: task.attributes.assigned_to.is_organization,
+        type: task.attributes.assigned_to.type
       },
       assignedBy: {
         firstName: task.attributes.assigned_by.first_name,

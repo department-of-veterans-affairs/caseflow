@@ -62,6 +62,7 @@ describe('ColocatedTaskListView', () => {
     assignedTo: {
       cssId: 'BVALSPORER',
       type: 'User',
+      isOrganization: true,
       id: 7
     },
     assignedBy: {
