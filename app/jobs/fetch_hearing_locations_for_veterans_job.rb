@@ -102,8 +102,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def facility_ids_for_ro(regional_office_id)
-    RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
-      [] << RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
+    (RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
+      []) << RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
   end
 
   def ro_facility_ids_for_state(state_code)
