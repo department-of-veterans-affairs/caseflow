@@ -37,8 +37,8 @@ class HearingsController < ApplicationController
 
       veteran = Veteran.find_by(file_number: params["veteran_file_number"])
 
-      facility_ids = RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
-                     [] << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
+      facility_ids = (RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
+                     []) << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
 
       va_dot_gov_address = veteran.validate_address
 
