@@ -167,7 +167,7 @@ class EndProductEstablishment < ApplicationRecord
   rescue EstablishedEndProductNotFound => e
     raise e
   rescue StandardError => e
-    raise BGSSyncError.from_bgs_error(e, self)
+    raise ::BGSSyncError.from_bgs_error(e, self)
   end
 
   def fetch_dispositions_from_vbms

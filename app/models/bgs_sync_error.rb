@@ -4,7 +4,7 @@
 #
 # Only add new kinds of transient BGS errors when you have investigated that they are expected,
 # and they happen frequently enough to pollute the alerts channel.
-class EndProductEstablishment::BGSSyncError < RuntimeError
+class BGSSyncError < RuntimeError
   def initialize(error, end_product_establishment)
     Raven.extra_context(end_product_establishment_id: end_product_establishment.id)
     super(error.message).tap do |result|
@@ -102,4 +102,4 @@ class EndProductEstablishment::BGSSyncError < RuntimeError
 end
 # rubocop:enable Metrics/CyclomaticComplexity
 # rubocop:enable Metrics/MethodLength
-class TransientBGSSyncError < EndProductEstablishment::BGSSyncError; end
+class TransientBGSSyncError < BGSSyncError; end
