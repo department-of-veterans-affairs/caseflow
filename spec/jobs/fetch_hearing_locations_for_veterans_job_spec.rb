@@ -147,7 +147,7 @@ describe FetchHearingLocationsForVeteransJob do
           }
 
           error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
-          allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error).twice
+          allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
         end
 
         it "creates an ScheduleHearingTask and admin action" do
@@ -155,6 +155,18 @@ describe FetchHearingLocationsForVeteransJob do
           tsk = ScheduleHearingTask.first
           expect(tsk.appeal.veteran_file_number).to eq bfcorlid_file_number
           expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
+        end
+
+        context "and appeal already has schedule hearing task" do
+          let!(:task) do
+            ScheduleHearingTask.create!(appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
+          end
+
+          it "creates an admin action" do
+            FetchHearingLocationsForVeteransJob.perform_now
+            expect(ScheduleHearingTask.first.id).to eq task.id
+            expect(HearingAdminActionVerifyAddressTask.where(parent_id: task.id).count).to eq 1
+          end
         end
 
         context "and job has alreay been run on a veteran" do
