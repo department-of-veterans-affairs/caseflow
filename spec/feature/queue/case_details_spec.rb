@@ -738,5 +738,14 @@ RSpec.feature "Case details" do
         expect(page).to have_content(COPY::TASK_SNAPSHOT_NO_ACTIVE_LABEL)
       end
     end
+
+    context "when the only task is an IHP task" do
+      let(:ihp_task) { FactoryBot.create(:informal_hearing_presentation_task) }
+
+      it "should show the label for the IHP task" do
+        visit("/queue/appeals/#{ihp_task.appeal.uuid}")
+        expect(page).to have_content(COPY::IHP_TASK_LABEL)
+      end
+    end
   end
 end
