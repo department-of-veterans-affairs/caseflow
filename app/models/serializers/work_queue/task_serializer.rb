@@ -56,6 +56,10 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.veteran_file_number
   end
 
+  attribute :veteran_closest_regional_office do
+    object.appeal.veteran_closest_regional_office
+  end
+
   attribute :external_appeal_id do
     object.appeal.external_id
   end
