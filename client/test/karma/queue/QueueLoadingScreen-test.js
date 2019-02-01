@@ -23,7 +23,9 @@ const serverData = {
           completed_at: null,
           assigned_to: {
             css_id: 'BVANKUVALIS',
+            name: 'name',
             id: 130,
+            isOrganization: false,
             type: 'User'
           },
           case_type: 'Post Remand',
@@ -45,6 +47,7 @@ const serverData = {
           veteran_name: 'Mills, Beulah, J',
           work_product: 'OTD',
           status: 'Assigned',
+          hide_from_queue_table_view: false,
           hide_from_case_timeline: false,
           hide_from_task_snapshot: false
         },
@@ -71,8 +74,9 @@ describe('QueueLoadingScreen', () => {
         dueOn: '2018-08-11T00:00:00.000Z',
         assignedTo: {
           cssId: 'BVANKUVALIS',
-          id: 130,
-          type: 'User'
+          name: 'name',
+          // eslint-disable-next-line no-undefined
+          isOrganization: undefined
         },
         // eslint-disable-next-line no-undefined
         availableActions: undefined,
@@ -96,6 +100,7 @@ describe('QueueLoadingScreen', () => {
         status: 'Assigned',
         decisionPreparedBy: null,
         type: 'LegacyJudgeTask',
+        hideFromQueueTableView: false,
         hideFromCaseTimeline: false,
         hideFromTaskSnapshot: false
       }

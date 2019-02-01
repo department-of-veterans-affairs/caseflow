@@ -61,6 +61,10 @@ class User < ApplicationRecord
     roles && (roles.include?("Mail Intake") || roles.include?("Admin Intake"))
   end
 
+  def administer_org_users?
+    admin? || granted?("Admin Intake")
+  end
+
   def vacols_uniq_id
     @vacols_uniq_id ||= user_info[:uniq_id]
   end
@@ -196,7 +200,7 @@ class User < ApplicationRecord
   end
 
   def to_session_hash
-    serializable_hash.merge("id" => css_id, "name" => full_name)
+    serializable_hash.merge("id" => css_id, "name" => full_name).except("full_name")
   end
 
   def station_offices
@@ -225,16 +229,6 @@ class User < ApplicationRecord
 
   def administered_teams
     organizations_users.select(&:admin?).map(&:organization)
-  end
-
-  def judge_css_id
-    organizations.find_by(type: JudgeTeam.name)
-      .try(:judge)
-      .try(:css_id)
-  end
-
-  def as_json(options)
-    super(options).merge("judge_css_id" => judge_css_id)
   end
 
   def user_info_for_idt

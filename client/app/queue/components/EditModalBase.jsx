@@ -18,7 +18,10 @@ export default function editModalBase(ComponentToWrap, { title, button, pathAfte
     constructor(props) {
       super(props);
 
-      this.state = { loading: false };
+      this.state = {
+        loading: false,
+        pathAfterSubmit: pathAfterSubmit || (propsToText && propsToText(this.props).pathAfterSubmit) || '/queue'
+      };
     }
 
     getWrappedComponentRef = (ref) => this.wrappedComponent = ref;
@@ -27,7 +30,7 @@ export default function editModalBase(ComponentToWrap, { title, button, pathAfte
       this.props.history.goBack();
     }
 
-    pathAfterSubmit = () => pathAfterSubmit || (propsToText && propsToText(this.props).pathAfterSubmit) || '/queue';
+    pathAfterSubmit = () => this.state.pathAfterSubmit;
 
     closeHandler = () => {
       this.props.history.replace(this.pathAfterSubmit());

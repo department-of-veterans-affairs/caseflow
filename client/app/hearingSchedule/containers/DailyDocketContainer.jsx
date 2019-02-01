@@ -16,7 +16,10 @@ import {
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
   onHearingDateUpdate,
+  onTranscriptRequestedUpdate,
   onHearingTimeUpdate,
+  onHearingLocationUpdate,
+  onHearingRegionalOfficeUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -108,14 +111,26 @@ export class DailyDocketContainer extends React.Component {
 
   }
 
+  formatMasterRecordUpdated = (hearing) => {
+    const time = this.getTime(hearing);
+
+    return hearing.editedDate ? {
+      id: hearing.editedDate.hearingId,
+      time,
+      hearing_location_attributes: hearing.editedLocation ? ApiUtil.convertToSnakeCase(hearing.editedLocation) : null
+    } : null;
+  }
+
   formatHearing = (hearing) => {
     const time = this.getTime(hearing);
 
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
+      transcript_requested: _.isUndefined(hearing.editedTranscriptRequested) ?
+        hearing.transcriptRequested : hearing.editedTranscriptRequested,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
-        time } : null,
+      hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
+        ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
       scheduled_time: hearing.editedTime ? hearing.editedTime : hearing.scheduledTime,
       scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
     };
@@ -123,8 +138,12 @@ export class DailyDocketContainer extends React.Component {
 
   saveHearing = (hearing) => {
     const formattedHearing = this.formatHearing(hearing);
+    const formattedMasterRecordUpdated = this.formatMasterRecordUpdated(hearing);
 
-    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: { hearing: formattedHearing } }).
+    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
+      hearing: formattedHearing,
+      master_record_updated: formattedMasterRecordUpdated
+    } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
@@ -250,6 +269,9 @@ export class DailyDocketContainer extends React.Component {
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
+        onTranscriptRequestedUpdate={this.props.onTranscriptRequestedUpdate}
+        onHearingLocationUpdate={this.props.onHearingLocationUpdate}
+        onHearingRegionalOfficeUpdate={this.props.onHearingRegionalOfficeUpdate}
         saveHearing={this.saveHearing}
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
@@ -309,6 +331,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onHearingDispositionUpdate,
   onHearingDateUpdate,
   onHearingTimeUpdate,
+  onTranscriptRequestedUpdate,
+  onHearingLocationUpdate,
+  onHearingRegionalOfficeUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,

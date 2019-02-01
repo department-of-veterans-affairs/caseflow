@@ -639,9 +639,10 @@ feature "Appeal Intake" do
              promulgation_date: 1.month.ago,
              description: "appeal decision issue",
              decision_text: "appeal decision issue",
-             profile_date: profile_date,
              benefit_type: "compensation")
     end
+
+    let!(:decision_document) { create(:decision_document, decision_date: profile_date, appeal: previous_appeal) }
 
     scenario "the issue is ineligible" do
       start_appeal(

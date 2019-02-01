@@ -493,7 +493,7 @@ const receiveDistribution = (dispatch, userId, response) => {
     const caseN = distribution.distributed_cases_count;
 
     dispatch(showSuccessMessage({
-      title: 'Distribution Complete',
+      title: 'Distribution complete',
       detail: `${caseN} new ${pluralize('case', caseN)} have been distributed from the docket.`
     }));
 

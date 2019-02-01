@@ -32,8 +32,10 @@ type Params = {|
   includeSelect?: boolean,
   includeDetailsLink?: boolean,
   includeTask?: boolean,
+  includeRegionalOffice?: boolean,
   includeDocumentId?: boolean,
   includeType?: boolean,
+  includeAssignedTo?: boolean,
   includeDocketNumber?: boolean,
   includeCompletedDate?: boolean,
   includeCompletedToName?: boolean,
@@ -170,6 +172,14 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     } : null;
   }
 
+  caseAssignedToColumn = () => {
+    return this.props.includeAssignedTo ? {
+      header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
+      valueFunction: (task: TaskWithAppeal) => task.assignedTo.name,
+      getSortValue: (task: TaskWithAppeal) => task.assignedTo.name
+    } : null;
+  }
+
   caseDocketNumberColumn = () => {
     return this.props.includeDocketNumber ? {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
@@ -280,6 +290,14 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     } : null;
   }
 
+  caseRegionalOfficeColumn = () => {
+    return this.props.includeRegionalOffice ? {
+      header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
+      valueFunction: (task: TaskWithAppeal) => task.closestRegionalOffice ? task.closestRegionalOffice : 'Unknown',
+      getSortValue: (task: TaskWithAppeal) => task.closestRegionalOffice
+    } : null;
+  }
+
   getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
     _.orderBy((this.props.customColumns || []).concat(
       _.compact([
@@ -287,8 +305,10 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
         this.caseSelectColumn(),
         this.caseDetailsColumn(),
         this.caseTaskColumn(),
+        this.caseRegionalOfficeColumn(),
         this.caseDocumentIdColumn(),
         this.caseTypeColumn(),
+        this.caseAssignedToColumn(),
         this.caseDocketNumberColumn(),
         this.caseIssueCountColumn(),
         this.caseDueDateColumn(),

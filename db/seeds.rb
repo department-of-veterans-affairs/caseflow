@@ -54,7 +54,7 @@ class SeedDB
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
     create_colocated_users
-    create_vso_user
+    create_vso_users_and_tasks
     create_org_queue_users
     create_qr_user
     create_aod_user
@@ -90,14 +90,49 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
   end
 
-  def create_vso_user
-    u = User.create(
-      css_id: "VSO",
-      station_id: 101,
-      full_name: "VSO user associated with PVA",
-      roles: %w[VSO]
+  def create_vso_users_and_tasks
+    vso = Vso.create(
+      name: "VSO",
+      role: "VSO",
+      url: "veterans-service-organization",
+      participant_id: "2452415"
     )
-    OrganizationsUser.add_user_to_organization(u, Organization.find_by(name: "Paralyzed Veterans Of America"))
+
+    %w[BILLIE MICHAEL WINNIE].each do |name|
+      u = User.create(
+        css_id: "#{name}_VSO",
+        station_id: 101,
+        full_name: "#{name} - VSO user",
+        roles: %w[VSO]
+      )
+      OrganizationsUser.add_user_to_organization(u, vso)
+
+      # Assign one IHP task to each member of the VSO team and leave some IHP tasks assigned to the organization.
+      [true, false].each do |assign_to_user|
+        a = FactoryBot.create(:appeal)
+        root_task = FactoryBot.create(:root_task, appeal: a)
+        ihp_task = FactoryBot.create(
+          :informal_hearing_presentation_task,
+          parent: root_task,
+          appeal: a,
+          assigned_to: vso
+        )
+        FactoryBot.create(
+          :track_veteran_task,
+          parent: root_task,
+          appeal: a,
+          assigned_to: vso
+        )
+
+        next unless assign_to_user
+
+        InformalHearingPresentationTask.create_many_from_params([{
+                                                                  parent_id: ihp_task.id,
+                                                                  assigned_to_id: u.id,
+                                                                  assigned_to_type: User.name
+                                                                }], u)
+      end
+    end
   end
 
   def create_org_queue_users
@@ -323,67 +358,33 @@ class SeedDB
       docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
     )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      veteran_file_number: "783740847",
-      docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      veteran_file_number: "963360019",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 2, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "604969679",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "228081153",
-      docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "152003980",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "375273128",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "682007349",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 5, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "231439628",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "975191063",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 8, contested_issue_description: description, notes: notes)
-    )
+
+    es = "evidence_submission"
+    dr = "direct_review"
+    [
+      { number_of_claimants: nil, veteran_file_number: "783740847", docket_type: es, request_issue_count: 3 },
+      { number_of_claimants: nil, veteran_file_number: "963360019", docket_type: dr, request_issue_count: 2 },
+      { number_of_claimants: 1, veteran_file_number: "604969679", docket_type: dr, request_issue_count: 1 },
+      { number_of_claimants: 1, veteran_file_number: "228081153", docket_type: es, request_issue_count: 1 },
+      { number_of_claimants: 1, veteran_file_number: "152003980", docket_type: dr, request_issue_count: 3 },
+      { number_of_claimants: 1, veteran_file_number: "375273128", docket_type: dr, request_issue_count: 1 },
+      { number_of_claimants: 1, veteran_file_number: "682007349", docket_type: dr, request_issue_count: 5 },
+      { number_of_claimants: 1, veteran_file_number: "231439628", docket_type: dr, request_issue_count: 1 },
+      { number_of_claimants: 1, veteran_file_number: "975191063", docket_type: dr, request_issue_count: 8 },
+      { number_of_claimants: 1, veteran_file_number: "662643660", docket_type: dr, request_issue_count: 8 },
+      { number_of_claimants: 1, veteran_file_number: "162726229", docket_type: dr, request_issue_count: 8 },
+      { number_of_claimants: 1, veteran_file_number: "760362568", docket_type: dr, request_issue_count: 8 }
+    ].each do |params|
+      @ama_appeals << FactoryBot.create(
+        :appeal,
+        number_of_claimants: params[:number_of_claimants],
+        veteran_file_number: params[:veteran_file_number],
+        docket_type: params[:docket_type],
+        request_issues: FactoryBot.create_list(
+          :request_issue, params[:request_issue_count], contested_issue_description: description, notes: notes
+        )
+      )
+    end
 
     LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
     LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
@@ -476,6 +477,18 @@ class SeedDB
       claimant_participant_id: veteran.participant_id
     )
 
+    EndProductEstablishment.create!(
+      source: higher_level_review,
+      veteran_file_number: veteran.file_number,
+      claim_date: Time.zone.now - thirty_days_in_seconds,
+      code: ep_rating_code,
+      station: "397",
+      benefit_type_code: "1",
+      payee_code: "00",
+      synced_status: "LOL",
+      claimant_participant_id: veteran.participant_id
+    )
+
     eligible_request_issue = RequestIssue.create!(
       review_request: higher_level_review,
       issue_category: "Military Retired Pay",
@@ -513,9 +526,10 @@ class SeedDB
     FactoryBot.create(:root_task, appeal: appeal)
   end
 
-  def create_task_at_judge_assignment(appeal, judge)
+  def create_task_at_judge_assignment(appeal, judge, assigned_at = Time.zone.yesterday)
     FactoryBot.create(:ama_judge_task,
                       assigned_to: judge,
+                      assigned_at: assigned_at,
                       appeal: appeal,
                       parent: create_root_task(appeal))
   end
@@ -648,9 +662,8 @@ class SeedDB
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
     colocated = User.find_by(css_id: "BVALSPORER")
-    vso = Organization.find_by(name: "American Legion")
 
-    create_task_at_judge_assignment(@ama_appeals[0], judge)
+    create_task_at_judge_assignment(@ama_appeals[0], judge, 35.days.ago)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
     create_task_at_judge_assignment(@ama_appeals[2], judge)
     create_task_at_judge_assignment(@ama_appeals[3], judge)
@@ -660,11 +673,14 @@ class SeedDB
     create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, colocated, action: "translation")
     create_task_at_attorney_review(@ama_appeals[7], judge, attorney)
     create_task_at_attorney_review(@ama_appeals[8], judge, attorney)
-    create_task_at_judge_assignment(@ama_appeals[8], judge)
-    create_task_at_judge_review(@ama_appeals[8], judge, attorney)
-    create_task_at_colocated(@ama_appeals[8], judge, attorney, colocated)
+    create_task_at_judge_assignment(@ama_appeals[9], judge)
+    create_task_at_judge_review(@ama_appeals[10], judge, attorney)
+    create_task_at_colocated(@ama_appeals[11], judge, attorney, colocated)
 
-    FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: @appeal_with_vso)
+    9.times do
+      appeal = FactoryBot.create(:appeal)
+      create_task_at_judge_assignment(appeal, judge, Time.zone.today)
+    end
 
     create_colocated_legacy_tasks(attorney, colocated)
 
@@ -674,27 +690,6 @@ class SeedDB
       assigned_by: judge,
       assigned_to: Translation.singleton,
       parent: FactoryBot.create(:root_task)
-    )
-  end
-
-  def create_vsos
-    Vso.create(
-      name: "American Legion",
-      role: "VSO",
-      url: "american-legion",
-      participant_id: "2452415"
-    )
-    Vso.create(
-      name: "Vietnam Veterans Of America",
-      role: "VSO",
-      url: "vietnam-veterans-of-america",
-      participant_id: "2452415"
-    )
-    Vso.create(
-      name: "Paralyzed Veterans Of America",
-      role: "VSO",
-      url: "pva",
-      participant_id: "2452383"
     )
   end
 
@@ -799,7 +794,6 @@ class SeedDB
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
     # create them in all envs
-    create_vsos
     create_annotations
     create_tags
     create_ama_appeals

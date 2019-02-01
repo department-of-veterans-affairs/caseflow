@@ -8,7 +8,7 @@ import { css } from 'glamor';
 
 import TabWindow from '../components/TabWindow';
 import TaskTable from './components/TaskTable';
-import QueueSelectorDropdown from './components/QueueSelectorDropdown';
+import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
@@ -112,7 +112,7 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
 
     return <AppSegment filledBackground styling={containerStyles}>
       <h1 {...fullWidth}>{COPY.ATTORNEY_QUEUE_TABLE_TITLE}</h1>
-      <QueueSelectorDropdown organizations={organizations} />
+      <QueueOrganizationDropdown organizations={organizations} />
       {messages.error && <Alert type="error" title={messages.error.title}>
         {messages.error.detail}
       </Alert>}

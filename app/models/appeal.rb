@@ -187,6 +187,8 @@ class Appeal < DecisionReview
            :gender,
            :date_of_birth,
            :age,
+           :closest_regional_office,
+           :available_hearing_locations,
            :country, to: :veteran, prefix: true
 
   delegate :city,
@@ -200,7 +202,11 @@ class Appeal < DecisionReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :first_name, :last_name, :name_suffix, :ssn, to: :veteran, prefix: true, allow_nil: true
+  delegate :closest_regional_office,
+           :first_name,
+           :last_name,
+           :name_suffix,
+           :ssn, to: :veteran, prefix: true, allow_nil: true
 
   def appellant
     claimants.first
@@ -265,6 +271,7 @@ class Appeal < DecisionReview
 
   def create_tasks_on_intake_success!
     RootTask.create_root_and_sub_tasks!(self)
+    create_business_line_tasks if request_issues.any?(&:requires_record_request_task?)
   end
 
   def establish!
@@ -300,12 +307,24 @@ class Appeal < DecisionReview
     Array.wrap(appeal_status_id)
   end
 
-  def aod
-    # to be implemented
+  def active_status?
+    active? || active_ep? || active_remanded_claims?
+  end
+
+  def active_ep?
+    decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
+  end
+
+  def active_remanded_claims?
+    remand_supplemental_claims.any?(&:active?)
   end
 
   def location
-    # to be implemented
+    if active_ep? || active_remanded_claims?
+      "aoj"
+    else
+      "bva"
+    end
   end
 
   def status_hash
@@ -329,6 +348,18 @@ class Appeal < DecisionReview
   end
 
   private
+
+  def create_business_line_tasks
+    request_issues.select(&:requires_record_request_task?).each do |req_issue|
+      business_line = req_issue.business_line
+      VeteranRecordRequest.create!(
+        parent: root_task,
+        appeal: self,
+        assigned_at: Time.zone.now,
+        assigned_to: business_line
+      )
+    end
+  end
 
   def bgs
     BGSService.new

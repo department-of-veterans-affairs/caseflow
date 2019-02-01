@@ -511,7 +511,7 @@ describe RequestIssue do
 
   context "#contested_benefit_type" do
     it "returns the benefit_type of the contested_rating_issue" do
-      expect(rating_request_issue.contested_benefit_type).to eq "compensation"
+      expect(rating_request_issue.contested_benefit_type).to eq :compensation
     end
   end
 
@@ -1003,6 +1003,19 @@ describe RequestIssue do
                 expect(rating_request_issue.decision_issues.count).to eq(1)
                 expect(rating_request_issue.decision_issues.first).to eq(preexisting_decision_issue)
                 expect(rating_request_issue.processed?).to eq(true)
+              end
+            end
+
+            context "when syncing the end_product_establishment fails" do
+              before do
+                allow(end_product_establishment).to receive(
+                  :on_decision_issue_sync_processed
+                ).and_raise("DTA 040 failed")
+              end
+
+              it "does not processs" do
+                expect { subject }.to raise_error("DTA 040 failed")
+                expect(rating_request_issue.processed?).to eq(false)
               end
             end
           end
