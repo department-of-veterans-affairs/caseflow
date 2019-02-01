@@ -23,6 +23,7 @@
   "CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
   "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
   "CASE_LIST_TABLE_TASK_ACTION_COLUMN_TITLE": "Action",
+  "CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE": "Regional office",
   "CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE": "Document ID",
   "CASE_LIST_TABLE_SELECT_COLUMN_TITLE": "Select",
   "CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
@@ -75,7 +76,8 @@
   "TASK_SNAPSHOT_ACTIVE_TASKS_LABEL": "Currently active tasks",
   "TASK_SNAPSHOT_ADD_NEW_TASK_LABEL": "+ Add a new task",
 
-  "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View Hearing Worksheet",
+  "CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY": "View VLJ Hearing Worksheet",
+  "CASE_DETAILS_HEARING_DETAILS_LINK_COPY": "View Hearing Details",
   "CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP": "This link opens a PDF copy of the Hearing Worksheet",
   "CASE_DETAILS_HEARING_LIST_LABEL": "Hearings (Oldest to Newest)",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL": "This Post Remand data has hearing data associated with a previous original appeal.",
@@ -125,7 +127,8 @@
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
 
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
-  "SWITCH_TO_ASSIGN_MODE_LINK_LABEL": "Switch to Assign Cases",
+  "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign Cases",
+  "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Review Cases",
 
   "IS_PAPER_CASE": "This is a paper case",
 
@@ -316,6 +319,8 @@
   "JUDGE_ASSIGN_TASK_LABEL": "assign",
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "review",
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "quality review",
+
+  "IHP_TASK_LABEL": "Prepare Informal Hearing Presentation",
 
   "ADDRESS_CHANGE_MAIL_TASK_LABEL": "Change of address",
   "AOD_MOTION_MAIL_TASK_LABEL": "Motion to Advance on Docket",
