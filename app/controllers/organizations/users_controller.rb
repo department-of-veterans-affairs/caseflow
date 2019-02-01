@@ -34,7 +34,7 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def verify_role_access
-    return if current_user.admin?
+    return if current_user.administer_org_users?
 
     super
   end
