@@ -72,7 +72,7 @@ const saveFailure = (err: Object) => (dispatch: Dispatch) => {
   try {
     uiErrorMessage = JSON.parse(response.text);
   } catch (ex) {
-    // the default case if there is no `text` on the response node (ie the backend did not return sufficient info)
+    // the default case if there is no `text` node in the response (ie the backend did not return sufficient info)
     uiErrorMessage = {
       errors: [{
         title: 'Error',
@@ -84,8 +84,9 @@ const saveFailure = (err: Object) => (dispatch: Dispatch) => {
 
   dispatch(showErrorMessage(uiErrorMessage.errors[0]));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
-  // this promise rejection is also uncaught
+  // the promise rejection below is also uncaught
   // but this seems to be by design since that's the same as the frontend handling and throwing an error
+
   return Promise.reject(new Error(response.text));
 };
 
