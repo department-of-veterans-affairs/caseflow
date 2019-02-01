@@ -722,34 +722,67 @@ describe Appeal do
 
   context "#status_hash" do
     let(:judge) { create(:user) }
+    let!(:hearings_user) { create(:hearings_coordinator) }
     let(:appeal) { create(:appeal) }
-    let(:root_task_status) { "in_progress"}
-    let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status)}
-    let(:evidence_hold_task_status) { "in_progress"}
-    let!(:evidence_submission_task) do  
-      EvidenceSubmissionWindowTask.create!(appeal: appeal, status: evidence_hold_task_status, assigned_to: Bva.singleton)
-    end
+    let(:root_task_status) { "in_progress" }
+    let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status) }
 
-    context "in an evidence submission window" do
-      it "is in evidentiary period " do
-        status = appeal.status_hash
-        expect(status[:type]).to eq(:evidentiary_period)
-      end
-    end
-
-    context "evidence submission window ends, appeal not assigned to judge yet" do
-      let(:evidence_hold_task_status) { "completed" }
-
+    context "appeal not assigned" do
       it "is on docket" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:on_docket)
       end
     end
 
-    context "assigned to judge" do
-      let(:evidence_hold_task_status) { "completed" }
+    context "hearing to be scheduled" do
+      let(:schedule_hearing_status) { "in_progress" }
+      let!(:schedule_hearing_task) do
+        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+      end
+
+      it "is waiting for hearing to be scheduled" do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:pending_hearing_scheduling)
+      end
+    end
+
+    context "in an evidence submission window" do
+      let(:schedule_hearing_status) { "completed" }
+      let!(:schedule_hearing_task) do
+        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+      end
+      let(:evidence_hold_task_status) { "in_progress" }
+      let!(:evidence_submission_task) do
+        EvidenceSubmissionWindowTask.create!(appeal: appeal,
+                                             status: evidence_hold_task_status, assigned_to: Bva.singleton)
+      end
       let(:judge_review_task_status) { "in_progress" }
-      let!(:judge_review_task) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: appeal, status: judge_review_task_status) }
+      let!(:judge_review_task) do
+        create(:ama_judge_decision_review_task,
+               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+      end
+
+      it "is in evidentiary period " do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:evidentiary_period)
+      end
+    end
+
+    context "assigned to judge" do
+      let(:schedule_hearing_status) { "completed" }
+      let!(:schedule_hearing_task) do
+        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+      end
+      let(:evidence_hold_task_status) { "completed" }
+      let!(:evidence_submission_task) do
+        EvidenceSubmissionWindowTask.create!(appeal: appeal,
+                                             status: evidence_hold_task_status, assigned_to: Bva.singleton)
+      end
+      let(:judge_review_task_status) { "in_progress" }
+      let!(:judge_review_task) do
+        create(:ama_judge_decision_review_task,
+               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+      end
 
       it "waiting for a decision" do
         status = appeal.status_hash
@@ -758,10 +791,12 @@ describe Appeal do
     end
 
     context "have a decision with no remands or effection" do
-      let(:evidence_hold_task_status) { "completed" }
-      let(:root_task_status) { "completed"}
       let(:judge_review_task_status) { "completed" }
-      let!(:judge_review_task) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: appeal, status: judge_review_task_status) }
+      let!(:judge_review_task) do
+        create(:ama_judge_decision_review_task,
+               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+      end
+      let(:root_task_status) { "completed" }
       let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
 
       it "has a decision" do
@@ -771,10 +806,12 @@ describe Appeal do
     end
 
     context "has an effectuation" do
-      let(:evidence_hold_task_status) { "completed" }
-      let(:root_task_status) { "completed"}
+      let(:root_task_status) { "completed" }
       let(:judge_review_task_status) { "completed" }
-      let!(:judge_review_task) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: appeal, status: judge_review_task_status) }
+      let!(:judge_review_task) do
+        create(:ama_judge_decision_review_task,
+               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+      end
       let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
       let(:decision_document) { create(:decision_document, appeal: appeal) }
       let(:ep_status) { "CLR" }
@@ -787,12 +824,17 @@ describe Appeal do
     end
 
     context "has a remand" do
-      let(:evidence_hold_task_status) { "completed" }
-      let(:root_task_status) { "completed"}
+      let(:root_task_status) { "completed" }
       let(:judge_review_task_status) { "completed" }
-      let!(:judge_review_task) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: appeal, status: judge_review_task_status) }
+      let!(:judge_review_task) do
+        create(:ama_judge_decision_review_task,
+               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+      end
       let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
-      let!(:remanded_decision_issue) { create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca")}
+      let!(:remanded_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "remanded", benefit_type: "nca")
+      end
 
       it "it only has a remand that was processed in caseflow" do
         status = appeal.status_hash
@@ -801,13 +843,21 @@ describe Appeal do
     end
 
     context "has more than one remanded decision" do
-      let(:evidence_hold_task_status) { "completed" }
-      let(:root_task_status) { "completed"}
+      let(:root_task_status) { "completed" }
       let(:judge_review_task_status) { "completed" }
-      let!(:judge_review_task) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: appeal, status: judge_review_task_status) }
+      let!(:judge_review_task) do
+        create(:ama_judge_decision_review_task,
+               assigned_to: judge, appeal: appeal, status: judge_review_task_status)
+      end
       let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
-      let!(:remanded_decision_issue) { create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca")}
-      let!(:remanded_decision_issue_with_ep) { create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "compensation")}
+      let!(:remanded_issue) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "remanded", benefit_type: "nca")
+      end
+      let!(:remanded_issue_with_ep) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "remanded", benefit_type: "compensation")
+      end
       let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
       let!(:remanded_ep) { create(:end_product_establishment, source: remanded_sc, synced_status: "CLR") }
 

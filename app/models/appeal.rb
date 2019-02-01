@@ -332,6 +332,16 @@ class Appeal < DecisionReview
   end
 
   def fetch_status
+    if active?
+      fetch_pre_decision_status
+    else
+      fetch_post_decision_status
+    end
+  end
+
+  # rubocop:disable CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
+  def fetch_pre_decision_status
     if pending_schedule_hearing_task?
       :pending_hearing_scheduling
     elsif hearing_pending?
@@ -340,11 +350,15 @@ class Appeal < DecisionReview
       :evidentiary_period
     elsif at_vso?
       :at_vso
-    elsif active? && !distributed_to_a_judge?
+    elsif !distributed_to_a_judge?
       :on_docket
-    elsif active? && distributed_to_a_judge? && decision_issues.empty?
+    elsif distributed_to_a_judge? && decision_issues.empty?
       :decision_in_progress
-    elsif !remanded_issues? && decision_document&.end_product_establishments&.any? && !active_ep?
+    end
+  end
+
+  def fetch_post_decision_status
+    if !remanded_issues? && decision_document&.end_product_establishments&.any? && !active_ep?
       :bva_decision_effectuation
     elsif remanded_sc_with_ep && !remanded_sc_with_ep.active?
       :post_bva_dta_decision
@@ -354,10 +368,12 @@ class Appeal < DecisionReview
       :bva_decision
     elsif withdrawn?
       :withdrawn
-    else !active? && decision_issues.empty?
-      :other_close
-    end 
+    else decision_issues.empty?
+         :other_close
+    end
   end
+  # rubocop:enable CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def pending_schedule_hearing_task?
     tasks.any? { |t| t.is_a?(ScheduleHearingTask) && !t.completed? }
@@ -365,7 +381,7 @@ class Appeal < DecisionReview
 
   def hearing_pending?
     # This isn't available yet.
-    #tasks.any? { |t| t.is_a?(HoldHearingTask) && !t.completed? }
+    # tasks.any? { |t| t.is_a?(HoldHearingTask) && !t.completed? }
   end
 
   def evidence_submission_hold_pending?
@@ -374,7 +390,7 @@ class Appeal < DecisionReview
 
   def at_vso?
     # This task is always open, this can be used once that task is completed
-    #tasks.any? { |t| t.is_a?(InformalHearingPresentationTask) && !t.completed? }
+    # tasks.any? { |t| t.is_a?(InformalHearingPresentationTask) && !t.completed? }
   end
 
   def distributed_to_a_judge?
@@ -386,11 +402,11 @@ class Appeal < DecisionReview
   end
 
   def remanded_sc_with_ep
-    @remanded_sc_with_ep ||= remand_supplemental_claims.find { |sc| sc.processed_in_vbms? }
+    @remanded_sc_with_ep ||= remand_supplemental_claims.find(&:processed_in_vbms?)
   end
 
   def withdrawn?
-    #will implement when available
+    # will implement when available
   end
 
   def alerts
