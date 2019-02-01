@@ -12,7 +12,7 @@ class ScheduleHearingTask < GenericTask
           )
         end
       elsif appeal.is_a?(Appeal)
-        ScheduleHearingTask.find_by(appeal: appeal)
+        ScheduleHearingTask.where.not(status: "completed").find_by(appeal: appeal)
       end
     end
 
