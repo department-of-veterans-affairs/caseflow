@@ -63,7 +63,6 @@ export default class AssignHearings extends React.Component {
   };
 
   room = () => {
-
     const { selectedRegionalOffice, selectedHearingDay } = this.props;
 
     // St. Petersburg, FL or Winston-Salem, NC
@@ -71,7 +70,7 @@ export default class AssignHearings extends React.Component {
       return selectedHearingDay.room;
     }
 
-    return ' ';
+    return '';
   };
 
   render() {
