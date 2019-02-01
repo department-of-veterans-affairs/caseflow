@@ -37,6 +37,7 @@ class RootTask < GenericTask
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
       create_vso_tracking_tasks(appeal, root_task)
+      maybe_create_translation_task(appeal, root_task)
       if FeatureToggle.enabled?(:ama_auto_case_distribution)
         create_subtasks!(appeal, root_task)
       else
@@ -55,6 +56,10 @@ class RootTask < GenericTask
     end
 
     private
+
+    def maybe_create_translation_task(appeal, root_task)
+      TranslationTask.create_from_root_task(root_task) if %w[VI VQ PR PH RP PI].include?(appeal&.veteran&.state)
+    end
 
     def create_vso_tracking_tasks(appeal, parent)
       appeal.vsos.map do |vso_organization|
