@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 
-import { formatDate, formatDateStr } from '../../util/DateUtil';
+import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
@@ -103,6 +103,7 @@ class NonCompDispositions extends React.PureComponent {
   handleSave = () => {
     const decisionIssues = formatDecisionIssuesFromRequestIssues(this.state.requestIssues);
     const dispositionData = buildDispositionSubmission(decisionIssues, this.state.decisionDate);
+
     this.props.handleSave(dispositionData);
   }
 
@@ -138,7 +139,7 @@ class NonCompDispositions extends React.PureComponent {
     let completeDiv = null;
 
     const promulgationDate = appeal.decisionIssues.length > 0 ? appeal.decisionIssues[0].promulgationDate : this.state.decisionDate;
-    const decisionDate = Boolean(task.completed_at) ? formatDate(promulgationDate, true) : this.state.decisionDate;
+    const decisionDate = task.completed_at ? formatDateStrUtc(promulgationDate) : this.state.decisionDate;
 
     if (!task.completed_at) {
       completeDiv = <React.Fragment>

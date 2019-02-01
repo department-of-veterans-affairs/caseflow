@@ -66,7 +66,7 @@ class DecisionReviewsController < ApplicationController
   def decision_date
     return unless task.instance_of? DecisionReviewTask
 
-    Date.parse(allowed_params.require("decision_date")).to_datetime
+    Date.parse(allowed_params.require("decision_date")).in_time_zone.utc.to_datetime
   end
 
   def decision_issue_params

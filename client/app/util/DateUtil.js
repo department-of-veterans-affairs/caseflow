@@ -9,7 +9,7 @@ const ZERO_INDEX_MONTH_OFFSET = 1;
 export const dateFormatString = 'MM/DD/YYYY';
 
 // Only Compatible to ISO Date/Time format
-export const formatDate = function(dateString, utc=false) {
+export const formatDate = function(dateString) {
   if (!dateString) {
     return;
   }
@@ -20,18 +20,19 @@ export const formatDate = function(dateString, utc=false) {
 
   const date = new Date(dateString);
 
-  const dateMonth = utc ? date.getUTCMonth() : date.getMonth();
-  const dateDay = utc ? date.getUTCDate() : date.getDate();
-
-  const month = StringUtil.leftPad(dateMonth + ZERO_INDEX_MONTH_OFFSET, 2, '0');
-  const day = StringUtil.leftPad(dateDay, 2, '0');
-  const year = utc ? date.getUTCFullYear() : date.getFullYear();
+  const month = StringUtil.leftPad(date.getMonth() + ZERO_INDEX_MONTH_OFFSET, 2, '0');
+  const day = StringUtil.leftPad(date.getDate(), 2, '0');
+  const year = date.getFullYear();
 
   return `${month}/${day}/${year}`;
 };
 
+export const formatDateStrUtc = (dateString, expectedFormat = dateFormatString) => {
+  return formatDateStr(dateString, null, expectedFormat, true);
+};
+
 // Date format YYYY-MM-DD
-export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => {
+export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString, utc = false) => {
   if (!dateString) {
     return;
   }
@@ -47,7 +48,13 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
     }
   }
 
-  return moment(dateString, dateStringFormat).format(expectedFormat);
+  let date = moment(dateString, dateStringFormat);
+
+  if (utc) {
+    date = date.utc();
+  }
+
+  return date.format(expectedFormat);
 };
 
 export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
