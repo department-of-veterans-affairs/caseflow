@@ -65,14 +65,15 @@ const saveSuccess = (message: UiStateMessage, response: Object) => (dispatch: Di
   return Promise.resolve(response);
 };
 
-const saveFailure = (resp: Object) => (dispatch: Dispatch) => {
-  const { response } = resp;
-  let errorResponseObject;
+const saveFailure = (err: Object) => (dispatch: Dispatch) => {
+  const { response } = err;
+  let uiErrorMessage;
 
   try {
-    errorResponseObject = JSON.parse(response.text);
+    uiErrorMessage = JSON.parse(response.text);
   } catch (ex) {
-    errorResponseObject = {
+    // the default case if there is no `text` on the response node (ie the backend did not return sufficient info)
+    uiErrorMessage = {
       errors: [{
         title: 'Error',
         detail: 'There was an error processing your request. ' +
@@ -81,7 +82,7 @@ const saveFailure = (resp: Object) => (dispatch: Dispatch) => {
     };
   }
 
-  dispatch(showErrorMessage(errorResponseObject.errors[0]));
+  dispatch(showErrorMessage(uiErrorMessage.errors[0]));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
 
   return Promise.reject(new Error(response.text));
