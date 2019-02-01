@@ -15,6 +15,7 @@ import { clearCaseListSearch } from './CaseList/CaseListActions';
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
 import COPY from '../../COPY.json';
+import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES.json';
 
 const currentAssigneeStyling = css({
   color: COLORS.GREEN
@@ -80,7 +81,7 @@ class CaseListTable extends React.PureComponent {
     const doAnyAppealsHaveHeldHearings = Boolean(
       _.find(this.props.appeals, (appeal) => {
         return appeal.hearings.
-          filter((hearing) => hearing.disposition === 'held').
+          filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
           length;
       }));
 
@@ -88,7 +89,7 @@ class CaseListTable extends React.PureComponent {
       const hearingColumn = {
         valueFunction: (appeal) => {
           const hearings = appeal.hearings.
-            filter((hearing) => hearing.disposition === 'held').
+            filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
             sort((h1, h2) => h1.date < h2.date ? 1 : -1);
 
           return <HearingBadge hearing={hearings[0]} />;
