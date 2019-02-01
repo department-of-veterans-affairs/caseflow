@@ -237,12 +237,13 @@ class QueueApp extends React.PureComponent<Props> {
       defaultUrl={this.props.caseSearchHomePage ? '/search' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
+      applicationUrls={this.props.applicationUrls}
       logoProps={{
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT
       }}
       rightNavElement={<CaseSearchLink />}
-      appName="">
+      appName="Queue">
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app">

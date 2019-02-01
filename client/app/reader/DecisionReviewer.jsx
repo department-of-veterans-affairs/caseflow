@@ -136,6 +136,7 @@ export class DecisionReviewer extends React.PureComponent {
       }}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
+      applicationUrls={this.props.applicationUrls}
       defaultUrl="/queue"
       outsideCurrentRouter>
       <PageRoute
