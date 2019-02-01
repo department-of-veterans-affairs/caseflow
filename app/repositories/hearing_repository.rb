@@ -92,7 +92,7 @@ class HearingRepository
 
       hearing_datetime = hearing_day_hash[:scheduled_for].to_datetime.change(
         hour: scheduled_time["h"].to_i,
-        minute: scheduled_time["m"].to_i,
+        min: scheduled_time["m"].to_i,
         offset: scheduled_time["offset"]
       )
 

@@ -92,14 +92,7 @@ export class DailyDocketContainer extends React.Component {
 
   getTime = (hearing) => {
     if (hearing.editedTime) {
-      return {
-        // eslint-disable-next-line id-length
-        h: hearing.editedTime.split(':')[0],
-        // eslint-disable-next-line id-length
-        m: hearing.editedTime.split(':')[1],
-        offset: moment.tz('America/New_York').format('Z')
-      };
-
+      return this.formatTime(hearing.scheduledFor, hearing.editedTime);
     }
 
     const timeObject = moment(hearing.scheduledFor);
@@ -112,7 +105,50 @@ export class DailyDocketContainer extends React.Component {
       offset: timeObject.format('Z')
     };
 
-  }
+  };
+
+  formatTime = (hearingDate, hearingTime) => {
+    return {
+      // eslint-disable-next-line id-length
+      h: hearingTime.split(':')[0],
+      // eslint-disable-next-line id-length
+      m: hearingTime.split(':')[1],
+      offset: moment.tz(hearingDate, 'America/New_York').format('Z')
+    };
+  };
+
+  getScheduledTime = (hearing) => {
+    let scheduledTime = null;
+
+    if (hearing.editedTime) {
+      if (hearing.editedTime === 'other') {
+        scheduledTime = hearing.editedOptionalTime;
+      } else {
+        scheduledTime = hearing.editedTime;
+      }
+    } else {
+      scheduledTime = hearing.scheduledTime;
+    }
+
+    return scheduledTime;
+  };
+
+  getScheduledFor = (hearing) => {
+    let scheduledFor = null;
+
+    if (hearing.editedTime) {
+      if (hearing.editedTime === 'other') {
+        scheduledFor = moment(hearing.scheduledFor).
+          set(this.formatTime(hearing.scheduledFor, hearing.editedOptionalTime));
+      } else {
+        scheduledFor = moment(hearing.scheduledFor).set(this.getTime(hearing));
+      }
+    } else {
+      scheduledFor = hearing.scheduledFor;
+    }
+
+    return scheduledFor;
+  };
 
   formatMasterRecordUpdated = (hearing) => {
     const time = this.getTime(hearing);
@@ -122,11 +158,9 @@ export class DailyDocketContainer extends React.Component {
       time,
       hearing_location_attributes: hearing.editedLocation ? ApiUtil.convertToSnakeCase(hearing.editedLocation) : null
     } : null;
-  }
+  };
 
   formatHearing = (hearing) => {
-    const time = this.getTime(hearing);
-
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       transcript_requested: _.isUndefined(hearing.editedTranscriptRequested) ?
@@ -134,9 +168,8 @@ export class DailyDocketContainer extends React.Component {
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
       hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
         ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
-      scheduled_time: hearing.editedTime ? hearing.editedTime : hearing.scheduledTime,
-      scheduled_for: hearing.editedTime === 'other' ?
-        hearing.editedOptionalTime : moment(hearing.scheduledFor).set(time)
+      scheduled_time: this.getScheduledTime(hearing),
+      scheduled_for: this.getScheduledFor(hearing)
     };
   };
 

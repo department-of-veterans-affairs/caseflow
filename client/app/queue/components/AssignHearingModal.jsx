@@ -81,13 +81,12 @@ type Props = Params & {|
   onHearingTimeChange: typeof onHearingTimeChange,
   onHearingLocationChange: typeof onHearingLocationChange,
   onReceiveAppealDetails: typeof onReceiveAppealDetails,
+  onHearingOptionalTime: typeof onHearingOptionalTime,
   // Inherited from EditModalBase
   setLoading: Function,
 |};
 
 type LocalState = {|
-  timeOptions: Array<Object>,
-  timeSelected: String,
   invalid: Object
 |}
 
@@ -153,8 +152,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     return this.completeScheduleHearingTask();
   };
 
-  onHearingOptionalTime= (value) => {
-    this.props.onHearingOptionalTime(value.value);
+  onHearingOptionalTime = (option) => {
+    this.props.onHearingOptionalTime(option.value);
   };
 
   validateForm = () => {
@@ -186,7 +185,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     }
 
     return true;
-  }
+  };
 
   completeScheduleHearingTask = () => {
 
@@ -254,9 +253,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     if (sanitizedHearingRequestType === 'video') {
       return [
         { displayText: '8:30 am',
-          value: '8:30 am ET' },
+          value: '8:30' },
         { displayText: '12:30 pm',
-          value: '12:30 pm ET' },
+          value: '12:30' },
         { displayText: 'Other',
           value: 'other' }
 
@@ -265,9 +264,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
 
     return [
       { displayText: '9:00 am',
-        value: '9:00 am ET' },
+        value: '9:00' },
       { displayText: '1:00 pm',
-        value: '1:00 pm ET' },
+        value: '1:00' },
       { displayText: 'Other',
         value: 'other' }
     ];
@@ -322,7 +321,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   };
 
   getHearingTime = () => {
-    const { selectedHearingTime, selectedOptionalTime } = this.props;
+    const { selectedHearingTime, selectedOptionalTime, selectedHearingDay } = this.props;
 
     if (!selectedHearingTime && !selectedOptionalTime) {
       return null;
@@ -335,7 +334,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       h: hearingTime.split(':')[0],
       // eslint-disable-next-line id-length
       m: hearingTime.split(':')[1],
-      offset: moment.tz('America/New_York').format('Z')
+      offset: moment.tz(selectedHearingDay.hearingDate, 'America/New_York').format('Z')
     };
   }
 
@@ -416,7 +415,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           placeholder="Select a time"
           options={TIME_OPTIONS}
           value={selectedOptionalTime || initVals.hearingDate}
-          onChange={this.onHearingOptionalTime}
+          onChange={(option) => this.onHearingOptionalTime(option)}
           hideLabel />}
       </div>
     </React.Fragment>;
