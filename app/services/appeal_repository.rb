@@ -32,7 +32,14 @@ class AppealRepository
   end
 
   def self.find_case_record(id)
-    VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(id)
+    # Oracle cannot load more than 1000 records at a time
+    if id.is_a?(Array)
+      id.in_groups_of(500, false).map do |group|
+        VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(group)
+      end.flatten
+    else
+      VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(id)
+    end
   end
 
   def self.vacols_records_for_appeals(ids)
@@ -297,6 +304,35 @@ class AppealRepository
                              code: :other,
                              days_to_complete: 30,
                              days_til_due: 30)
+      end
+    end
+  end
+
+  def self.create_schedule_hearing_tasks
+    # Find cases that need hearing tasks
+    cases = VACOLS::Case.joins(:folder).where(bfhr: "2", bfcurloc: "57", bfdocind: "V").order("folder.tinum").includes(:correspondent, :case_issues, folder: [:outcoder])
+
+    # Create legacy appeals where needed
+    ids = cases.pluck(:bfkey, :bfcorlid)
+
+    missing_ids = ids - LegacyAppeal.where(vacols_id: ids.map(&:first)).pluck(:vacols_id, :vbms_id)
+    missing_ids.each do |id|
+      LegacyAppeal.find_or_create_by!(vacols_id: id.first) do |appeal|
+        appeal.vbms_id = id.second
+      end
+    end
+
+    # Get the all the LegacyAppeals, including the newly created ones
+    vacols_ids_with_schedule_tasks = ScheduleHearingTask.where(appeal_type: LegacyAppeal.name)
+      .joins("LEFT JOIN legacy_appeals ON appeal_id = legacy_appeals.id")
+      .where("status <> ? AND type = ?", Constants.TASK_STATUSES.completed.to_sym, ScheduleHearingTask.name)
+      .select("legacy_appeals.vacols_id").uniq
+
+    # Create the schedule hearing tasks
+    LegacyAppeal.where(vacols_id: ids.map(&:first) - vacols_ids_with_schedule_tasks).each do |appeal|
+      ScheduleHearingTask.find_or_create_by(appeal: appeal) do |task|
+        task.status = Constants.TASK_STATUSES.assigned.to_sym
+        task.assigned_to = HearingsManagement.singleton
       end
     end
   end

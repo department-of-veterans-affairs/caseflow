@@ -699,18 +699,26 @@ RSpec.describe TasksController, type: :controller do
             folder: create(:folder, tinum: "docket-number"),
             bfregoff: "RO04",
             bfcurloc: "57",
+            bfcorlid: vetearn.file_number,
             bfhr: "2",
             bfdocind: "V"
           )
         end
       end
 
+      let(:vetearn) { create(:veteran, closest_regional_office: "RO04") }
+
       it "completes quickly", focus: true do
+        AppealRepository.create_schedule_hearing_tasks
+
         stopwatch = Benchmark.measure do
           get :ready_for_hearing_schedule, params: { ro: "RO04" }
         end
 
         puts "stopwatch: #{stopwatch}"
+        data = JSON.parse(response.body)["data"]
+
+        expect(data.size).to be(1001)
       end
     end
   end
