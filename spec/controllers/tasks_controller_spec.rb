@@ -1,3 +1,5 @@
+require "benchmark"
+
 RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
@@ -686,6 +688,29 @@ RSpec.describe TasksController, type: :controller do
         expect(data.size).to be(1)
         expect(data.first["attributes"]["closest_regional_office"]).to eq(nil)
         expect(data.first["attributes"]["veteran_available_hearing_locations"]).to eq(nil)
+      end
+    end
+
+    context "stress test for endpoint" do
+      let!(:vacols_case) do
+        (0..1000).map do |_index|
+          create(
+            :case,
+            folder: create(:folder, tinum: "docket-number"),
+            bfregoff: "RO04",
+            bfcurloc: "57",
+            bfhr: "2",
+            bfdocind: "V"
+          )
+        end
+      end
+
+      it "completes quickly", focus: true do
+        stopwatch = Benchmark.measure do
+          get :ready_for_hearing_schedule, params: { ro: "RO04" }
+        end
+
+        puts "stopwatch: #{stopwatch}"
       end
     end
   end

@@ -308,13 +308,13 @@ class AppealRepository
 
     cavc_cases = VACOLS::Case.joins(:folder)
       .where(bfregoff: regional_office, bfcurloc: "57", bfac: "7", bfdocind: "V", bfhr: "2")
-      .order("folder.tinum").limit(100).includes(:correspondent, :case_issues, folder: [:outcoder])
+      .order("folder.tinum").includes(:correspondent, :case_issues, folder: [:outcoder])
     aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).joins(:folder).where("aod = 1").where(
       bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V"
-    ).order("folder.tinum").limit(100).includes(:correspondent, :case_issues, folder: [:outcoder])
+    ).order("folder.tinum").includes(:correspondent, :case_issues, folder: [:outcoder])
     other_cases = VACOLS::Case.joins(:folder)
       .where(bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V")
-      .order("folder.tinum").limit(100).includes(:correspondent, :case_issues, folder: [:outcoder])
+      .order("folder.tinum").includes(:correspondent, :case_issues, folder: [:outcoder])
 
     aod_vacols_ids = aod_cases.pluck(:bfkey)
 

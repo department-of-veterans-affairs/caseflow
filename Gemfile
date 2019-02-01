@@ -15,6 +15,7 @@ gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8dde00d67b7c629e4b871f8dcb3617bfe989b3db"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "0d56a6c6a2ec314f97bce863f6aeffe837d75a13"
 gem "dogstatsd-ruby"
+gem "fast_jsonapi"
 gem "holidays", "~> 6.4"
 # Use jquery as the JavaScript library
 gem "jquery-rails"

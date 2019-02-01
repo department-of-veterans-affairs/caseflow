@@ -114,11 +114,15 @@ class TasksController < ApplicationController
 
     render json: {
       data: ScheduleHearingTask.tasks_for_ro(ro).map do |task|
-        ActiveModelSerializers::SerializableResource.new(
+        WorkQueue::TaskSerializer.new(
           task,
-          user: current_user,
-          role: user_role
-        ).as_json[:data]
+          {
+            params: {
+              user: current_user,
+              role: user_role
+            }
+          }
+        ).serialized_json
       end
     }
   end
