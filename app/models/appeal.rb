@@ -342,7 +342,7 @@ class Appeal < DecisionReview
       :at_vso
     elsif active? && !distributed_to_a_judge?
       :on_docket
-    elsif active? && distributed_to_a_judge && decision_issues.empty?
+    elsif active? && distributed_to_a_judge? && decision_issues.empty?
       :decision_in_progress
     elsif !remanded_issues? && decision_document&.end_product_establishments&.any? && !active_ep?
       :bva_decision_effectuation
@@ -382,11 +382,11 @@ class Appeal < DecisionReview
   end
 
   def remanded_issues?
-    decision_issues.any? { |di| di.remanded }
+    decision_issues.any? { |di| di.disposition == "remanded" }
   end
 
   def remanded_sc_with_ep
-    @remanded_sc_with_ep ||= remanded_remand_supplemental_claims.any { |sc| sc.processed_in_vbms? }
+    @remanded_sc_with_ep ||= remand_supplemental_claims.find { |sc| sc.processed_in_vbms? }
   end
 
   def withdrawn?

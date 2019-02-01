@@ -719,4 +719,102 @@ describe Appeal do
       end
     end
   end
+
+  context "#status_hash" do
+    let(:judge) { create(:user) }
+    let(:appeal) { create(:appeal) }
+    let(:root_task_status) { "in_progress"}
+    let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status)}
+    let(:evidence_hold_task_status) { "in_progress"}
+    let!(:evidence_submission_task) do  
+      EvidenceSubmissionWindowTask.create!(appeal: appeal, status: evidence_hold_task_status, assigned_to: Bva.singleton)
+    end
+
+    context "in an evidence submission window" do
+      it "is in evidentiary period " do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:evidentiary_period)
+      end
+    end
+
+    context "evidence submission window ends, appeal not assigned to judge yet" do
+      let(:evidence_hold_task_status) { "completed" }
+
+      it "is on docket" do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:on_docket)
+      end
+    end
+
+    context "assigned to judge" do
+      let(:evidence_hold_task_status) { "completed" }
+      let(:judge_review_task_status) { "in_progress" }
+      let!(:judge_review_task) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: appeal, status: judge_review_task_status) }
+
+      it "waiting for a decision" do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:decision_in_progress)
+      end
+    end
+
+    context "have a decision with no remands or effection" do
+      let(:evidence_hold_task_status) { "completed" }
+      let(:root_task_status) { "completed"}
+      let(:judge_review_task_status) { "completed" }
+      let!(:judge_review_task) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: appeal, status: judge_review_task_status) }
+      let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
+
+      it "has a decision" do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:bva_decision)
+      end
+    end
+
+    context "has an effectuation" do
+      let(:evidence_hold_task_status) { "completed" }
+      let(:root_task_status) { "completed"}
+      let(:judge_review_task_status) { "completed" }
+      let!(:judge_review_task) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: appeal, status: judge_review_task_status) }
+      let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
+      let(:decision_document) { create(:decision_document, appeal: appeal) }
+      let(:ep_status) { "CLR" }
+      let!(:effectuation_ep) { create(:end_product_establishment, source: decision_document, synced_status: ep_status) }
+
+      it "effectuation had an ep" do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:bva_decision_effectuation)
+      end
+    end
+
+    context "has a remand" do
+      let(:evidence_hold_task_status) { "completed" }
+      let(:root_task_status) { "completed"}
+      let(:judge_review_task_status) { "completed" }
+      let!(:judge_review_task) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: appeal, status: judge_review_task_status) }
+      let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
+      let!(:remanded_decision_issue) { create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca")}
+
+      it "it only has a remand that was processed in caseflow" do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:ama_remand)
+      end
+    end
+
+    context "has more than one remanded decision" do
+      let(:evidence_hold_task_status) { "completed" }
+      let(:root_task_status) { "completed"}
+      let(:judge_review_task_status) { "completed" }
+      let!(:judge_review_task) { create(:ama_judge_decision_review_task, assigned_to: judge, appeal: appeal, status: judge_review_task_status) }
+      let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
+      let!(:remanded_decision_issue) { create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca")}
+      let!(:remanded_decision_issue_with_ep) { create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "compensation")}
+      let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let!(:remanded_ep) { create(:end_product_establishment, source: remanded_sc, synced_status: "CLR") }
+
+      it "has a remand processed in vbms" do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:post_bva_dta_decision)
+      end
+    end
+  end
 end
