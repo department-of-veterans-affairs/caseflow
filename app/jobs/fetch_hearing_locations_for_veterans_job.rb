@@ -142,8 +142,10 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
                  # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
                  when "GQ", "AQ", "RM", "FM", "CQ", "PS"
                    "HI"
+                 # Philippine Islands
                  when "PH", "RP", "PI"
                    "PI"
+                 # Puerto Rico, Vieques, U.S. Virgin Islands
                  when "VI", "VQ", "PR"
                    "PR"
                  when "US"

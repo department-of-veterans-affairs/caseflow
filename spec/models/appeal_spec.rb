@@ -460,25 +460,47 @@ describe Appeal do
   end
 
   context ".create_tasks_on_intake_success!" do
-    let(:appeal) do
-      create(:appeal)
-    end
+    let(:appeal) { create(:appeal) }
+
+    subject { appeal.create_tasks_on_intake_success! }
 
     it "creates root and vso tasks" do
       expect(RootTask).to receive(:create_root_and_sub_tasks!).once
 
-      appeal.create_tasks_on_intake_success!
+      subject
     end
 
     context "request issue has non-comp business line" do
-      let(:appeal) do
-        create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)])
-      end
+      let(:appeal) { create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)]) }
 
       it "creates root task and veteran record request task" do
         expect(VeteranRecordRequest).to receive(:create!).once
 
-        appeal.create_tasks_on_intake_success!
+        subject
+      end
+    end
+
+    context "the veteran's RO is in Puerto Rico or Philippines" do
+      let(:bgs_veteran_record) { { state: "PR" } }
+      let(:veteran) { FactoryBot.create(:veteran, bgs_veteran_record: bgs_veteran_record) }
+      let(:appeal) { FactoryBot.create(:appeal, veteran: veteran) }
+
+      it "creates a translation task" do
+        subject
+
+        expect(TranslationTask).to receive(:create!).once
+      end
+    end
+
+    context "the veteran's RO is not in either Puerto Rico or Philippines" do
+      let(:bgs_veteran_record) { { state: "FL" } }
+      let(:veteran) { FactoryBot.create(:veteran, bgs_veteran_record: bgs_veteran_record) }
+      let(:appeal) { FactoryBot.create(:appeal, veteran: veteran) }
+
+      it "doesn't create a translation task" do
+        subject
+
+        expect(TranslationTask).to_not receive(:create!)
       end
     end
   end
