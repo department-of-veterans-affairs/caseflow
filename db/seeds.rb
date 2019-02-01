@@ -117,6 +117,12 @@ class SeedDB
           appeal: a,
           assigned_to: vso
         )
+        FactoryBot.create(
+          :track_veteran_task,
+          parent: root_task,
+          appeal: a,
+          assigned_to: vso
+        )
 
         next unless assign_to_user
 
