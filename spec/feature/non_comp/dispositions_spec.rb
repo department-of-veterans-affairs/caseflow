@@ -70,7 +70,7 @@ feature "NonComp Dispositions Task Page" do
     scenario "displays dispositions page" do
       visit dispositions_url
 
-      expect(page).to have_content("Non-Comp Org")
+      expect(page).to have_content("National Cemetery Association")
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
       expect(page).to have_content(

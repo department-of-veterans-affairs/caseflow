@@ -5,7 +5,6 @@ describe RequestIssue do
 
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:profile_date) { Time.zone.now.to_s }
-  let(:end_product_last_action_date) { Time.zone.now }
   let(:contention_reference_id) { "1234" }
   let(:ramp_claim_id) { nil }
   let(:higher_level_review_reference_id) { "hlr123" }
@@ -431,7 +430,7 @@ describe RequestIssue do
 
     context "when contested_decision_issue_id is set" do
       let(:contested_decision_issue_id) do
-        create(:decision_issue, end_product_last_action_date: end_product_last_action_date).id
+        create(:decision_issue).id
       end
 
       it do
@@ -928,8 +927,8 @@ describe RequestIssue do
       let!(:decision_issue) do
         rating_request_issue.decision_issues.create!(
           participant_id: veteran.participant_id,
-          end_product_last_action_date: end_product_last_action_date,
-          benefit_type: review.benefit_type
+          benefit_type: review.benefit_type,
+          end_product_last_action_date: Time.zone.now
         )
       end
 
@@ -968,8 +967,7 @@ describe RequestIssue do
                 decision_review: review,
                 participant_id: veteran.participant_id,
                 disposition: "denied",
-                rating_issue_reference_id: contested_rating_issue_reference_id,
-                end_product_last_action_date: end_product_last_action_date
+                rating_issue_reference_id: contested_rating_issue_reference_id
               )
             end
 
@@ -998,8 +996,7 @@ describe RequestIssue do
                   decision_review: review,
                   participant_id: veteran.participant_id,
                   disposition: "allowed",
-                  rating_issue_reference_id: contested_rating_issue_reference_id,
-                  end_product_last_action_date: end_product_last_action_date
+                  rating_issue_reference_id: contested_rating_issue_reference_id
                 )
               end
 
@@ -1038,6 +1035,8 @@ describe RequestIssue do
                 disposition: "allowed",
                 description: "allowed: #{request_issue.description}",
                 decision_review_type: "HigherLevelReview",
+                profile_date: ratings.profile_date,
+                promulgation_date: ratings.promulgation_date,
                 decision_review_id: review.id,
                 benefit_type: "compensation",
                 end_product_last_action_date: end_product_establishment.result.last_action_date.to_date

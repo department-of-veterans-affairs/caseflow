@@ -27,8 +27,7 @@ describe ContestableIssue do
       rating_issue_reference_id: "rating1",
       profile_date: profile_date,
       description: "this is a good decision",
-      benefit_type: benefit_type,
-      end_product_last_action_date: profile_date
+      benefit_type: benefit_type
     )
   end
 

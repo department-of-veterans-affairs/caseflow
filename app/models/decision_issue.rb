@@ -1,6 +1,4 @@
 class DecisionIssue < ApplicationRecord
-  include HasBusinessLine
-
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
 
   with_options if: :appeal? do
@@ -9,11 +7,10 @@ class DecisionIssue < ApplicationRecord
                                 allow_nil: true
   end
 
-  with_options unless: :appeal? do
-    validates :end_product_last_action_date, presence: true, if: :benefit_type_requires_payee_code?
-    # Attorneys will be entering in a description of the decision manually for appeals
-    before_save :calculate_and_set_description
-  end
+  validates :end_product_last_action_date, presence: true, unless: :processed_in_caseflow?
+
+  # Attorneys will be entering in a description of the decision manually for appeals
+  before_save :calculate_and_set_description, unless: :appeal?
 
   has_many :request_decision_issues, dependent: :destroy
   has_many :request_issues, through: :request_decision_issues
@@ -35,7 +32,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def approx_decision_date
-    (appeal? || processed_in_caseflow?) ? caseflow_decision_date : claim_review_approx_decision_date
+    processed_in_caseflow? ? caseflow_decision_date : claim_review_approx_decision_date
   end
 
   def issue_category
@@ -80,6 +77,10 @@ class DecisionIssue < ApplicationRecord
   end
 
   private
+
+  def processed_in_caseflow?
+    decision_review.processed_in_caseflow?
+  end
 
   def claim_review_approx_decision_date
     profile_date ? profile_date.to_date : end_product_last_action_date

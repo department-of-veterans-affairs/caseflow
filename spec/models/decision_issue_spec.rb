@@ -29,7 +29,7 @@ describe DecisionIssue do
   let(:diagnostic_code) { nil }
   let(:decision_text) { "decision text" }
   let(:decision_date) { 10.days.ago }
-  let(:decision_review) { create(:supplemental_claim) }
+  let(:decision_review) { create(:supplemental_claim, benefit_type: benefit_type) }
 
   context "#save" do
     subject { decision_issue.save }
