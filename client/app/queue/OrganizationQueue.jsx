@@ -75,10 +75,10 @@ class OrganizationQueue extends React.PureComponent {
     if (this.props.organizationIsVso) {
       focusedTab = 1;
       tabs.unshift({
-        label: 'All cases',
+        label: COPY.ALL_CASES_QUEUE_TABLE_TAB_TITLE,
         page: <React.Fragment>
           <p className="cf-margin-top-0">
-            {sprintf('All AMA cases where the appellant is represented by %s', this.props.organizationName)}
+            {sprintf(COPY.ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, this.props.organizationName)}
           </p>
           <TaskTable
             includeDetailsLink
