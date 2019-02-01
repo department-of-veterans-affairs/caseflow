@@ -68,6 +68,8 @@ class OrganizationQueue extends React.PureComponent {
       }
     ];
 
+    // Focus on the first tab in the list of tabs unless we have an "all cases" view, in which case the first tab will
+    // be the "all cases" tab. In that case focus on the second tab which will be the first tab with workable tasks.
     let focusedTab = 0;
 
     if (this.props.organizationIsVso) {
