@@ -14,9 +14,9 @@ class Docket
     scope = scope.merge(Appeal.all_nonpriority) if priority == false
 
     if priority == true
-      scope.merge(Appeal.ordered_by_distribution_ready_date) 
-    else 
-      scope.order('receipt_date')
+      scope.merge(Appeal.ordered_by_distribution_ready_date)
+    else
+      scope.order("receipt_date")
     end
   end
 
@@ -28,7 +28,7 @@ class Docket
     count
   end
 
-  def age_of_n_oldest_priority_appeals(n)
+  def age_of_n_oldest_priority_appeals(num)
     appeals(priority: true, ready: true).limit(n).map(&:ready_for_distribution_at)
   end
 
