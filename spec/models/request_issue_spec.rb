@@ -972,9 +972,10 @@ describe RequestIssue do
                 decision_review_type: "HigherLevelReview",
                 decision_review_id: review.id,
                 benefit_type: "compensation",
-                end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
+                end_product_last_action_date: end_product_establishment.result.last_action_date
               )
               expect(rating_request_issue.processed?).to eq(true)
+              expect(rating_request_issue.decision_issues.first.month).to eq 2
             end
 
             context "when end product last action date is nil" do
@@ -1035,9 +1036,10 @@ describe RequestIssue do
                 decision_review_type: "HigherLevelReview",
                 decision_review_id: review.id,
                 benefit_type: "compensation",
-                end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
+                end_product_last_action_date: end_product_establishment.result.last_action_date
               )
               expect(rating_request_issue.processed?).to eq(true)
+              expect(rating_request_issue.decision_issues.first.month).to eq 2
             end
           end
         end
@@ -1076,7 +1078,7 @@ describe RequestIssue do
             decision_review_type: "HigherLevelReview",
             decision_review_id: review.id,
             benefit_type: "compensation",
-            end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
+            end_product_last_action_date: end_product_establishment.result.last_action_date
           )
           expect(request_issue.processed?).to eq(true)
         end

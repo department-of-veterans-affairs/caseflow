@@ -518,6 +518,12 @@ class RequestIssue < ApplicationRecord
     return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
+  def formatted_last_action_date
+    return unless end_product_establishment&.result
+
+    end_product_establishment.result.last_action_date
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
   def check_for_eligible_previous_review!

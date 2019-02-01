@@ -26,7 +26,7 @@ FactoryBot.define do
           claim_type_code: end_product_establishment.code,
           end_product_type_code: end_product_establishment.modifier,
           benefit_claim_id: end_product_establishment.reference_id,
-          last_action_date: 5.days.ago.to_formatted_s(:short_date)
+          last_action_date: "02/01/2019"
         }
       )
     end

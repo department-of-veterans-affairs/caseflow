@@ -61,6 +61,47 @@ describe DecisionIssue do
     end
   end
 
+  context "end_product_last_action_date" do
+    subject { decision_issue.end_product_last_action_date }
+    let(:original_format_from_bgs) { "02/01/2019" } # February 1st
+    let(:claim_id) { "987" }
+    let(:veteran) { create(:veteran) }
+    let(:bgs_hash) do
+      {   benefit_claim_id: claim_id,
+          last_action_date: original_format_from_bgs }
+    end
+    let!(:end_product) do
+      Generators::EndProduct.build(
+        veteran_file_number: veteran.file_number,
+        bgs_attrs: bgs_hash
+      )
+    end
+    let(:review) { create(:higher_level_review, benefit_type: "pension", veteran_file_number: veteran.file_number) }
+    let!(:end_product_establishment) do
+      EndProductEstablishment.create!(
+        reference_id: claim_id,
+        veteran_file_number: veteran.file_number,
+        source: review,
+        payee_code: EndProduct::DEFAULT_PAYEE_CODE
+      )
+    end
+    let(:decision_issue) do
+      DecisionIssue.create!(
+        disposition: "allowed",
+        decision_review: review,
+        participant_id: "123",
+        benefit_type: review.benefit_type,
+        end_product_last_action_date: end_product_establishment.result.last_action_date
+      )
+    end
+
+    it "has the correct date format" do
+      expect(end_product_establishment.result.last_action_date).to eq(Date.new(2019, 2, 1))
+      expect(subject.month).to eq 2
+      expect(subject.day).to eq 1
+    end
+  end
+
   context "#finalized?" do
     subject { decision_issue.finalized? }
 
