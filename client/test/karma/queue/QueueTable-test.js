@@ -46,7 +46,7 @@ describe('QueueTable', () => {
       ).to.eq('EstablishClaim');
     });
 
-    it('displays the correctly filtered data', () => {
+    it('updates filteredByList', () => {
       const additionalRows = createTask(2, { type: 'AttorneyLegacyTask' });
 
       rowObjects = rowObjects.concat(additionalRows);
@@ -58,6 +58,19 @@ describe('QueueTable', () => {
       wrapper.update();
 
       expect(wrapper.instance().state.filteredByList.type).to.include('AttorneyLegacyTask');
+    });
+
+    it('displays the correctly filtered data', () => {
+      const additionalRows = createTask(2, { type: 'AttorneyLegacyTask' });
+
+      rowObjects = rowObjects.concat(additionalRows);
+      wrapper = mount(
+        <QueueTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+      );
+
+      wrapper.instance().updateFilteredByList({ type: ['AttorneyLegacyTask'] });
+      wrapper.update();
+
       expect(wrapper.find('tr')).to.have.length(3);
     });
   });

@@ -15,7 +15,9 @@ describe('TableFilter', () => {
       filteredByList: {},
       label: 'type',
       tableData: createTask(3),
-      valueName: 'type'
+      valueName: 'type',
+      updateFilters: () => ({}),
+      toggleDropdownFilterVisibility: () => ({})
     };
   });
 
@@ -60,6 +62,60 @@ describe('TableFilter', () => {
       );
 
       expect(wrapper.find('input[type="checkbox"]')).to.have.length(2);
+    });
+
+    it('adds additional filters to the correct array in the filteredByList', () => {
+      wrapper = mount(
+        <TableFilter
+          {...props}
+          isDropdownFilterOpen={false} />
+      );
+
+      wrapper.instance().updateSelectedFilter('AttorneyLegacyTask', 'type');
+      wrapper.update();
+
+      expect(props.filteredByList.type).to.include('AttorneyLegacyTask');
+
+      wrapper.instance().updateSelectedFilter('EstablishClaim', 'type');
+      wrapper.update();
+
+      expect(props.filteredByList.type).to.include('EstablishClaim');
+      expect(props.filteredByList.type).to.have.length(2);
+    });
+
+    it('removes additional filters from the correct array in the filteredByList', () => {
+      wrapper = mount(
+        <TableFilter
+          {...props}
+          isDropdownFilterOpen={false} />
+      );
+
+      wrapper.instance().updateSelectedFilter('AttorneyLegacyTask', 'type');
+      wrapper.instance().updateSelectedFilter('EstablishClaim', 'type');
+      wrapper.update();
+
+      wrapper.instance().updateSelectedFilter('AttorneyLegacyTask', 'type');
+      wrapper.update();
+
+      expect(props.filteredByList.type).to.include('EstablishClaim');
+      expect(props.filteredByList.type).to.not.include('AttorneyLegacyTask');
+    });
+
+    it('clearFilteredByList clears filters', () => {
+      wrapper = mount(
+        <TableFilter
+          {...props}
+          isDropdownFilterOpen={false} />
+      );
+
+      wrapper.instance().updateSelectedFilter('AttorneyLegacyTask', 'type');
+      wrapper.instance().updateSelectedFilter('EstablishClaim', 'type');
+      wrapper.update();
+
+      wrapper.instance().clearFilteredByList('type');
+      wrapper.update();
+
+      expect(props.filteredByList.type).to.have.length(0);
     });
   });
 });
