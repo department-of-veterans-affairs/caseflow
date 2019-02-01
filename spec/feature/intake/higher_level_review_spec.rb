@@ -1051,7 +1051,6 @@ feature "Higher-Level Review" do
                request_issues: [previous_appeal_request_issue],
                rating_issue_reference_id: appeal_reference_id,
                participant_id: veteran.participant_id,
-               promulgation_date: another_promulgation_date,
                description: "appeal decision issue",
                decision_text: "appeal decision issue",
                benefit_type: "compensation",

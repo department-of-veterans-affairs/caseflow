@@ -160,7 +160,6 @@ describe DecisionDocument do
             :decision_issue,
             decision_review: decision_document.appeal,
             disposition: "remanded",
-            profile_date: 5.days.ago,
             caseflow_decision_date: decision_document.decision_date
           )
         end

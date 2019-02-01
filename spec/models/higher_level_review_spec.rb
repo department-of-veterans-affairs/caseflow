@@ -211,6 +211,17 @@ describe HigherLevelReview do
         )
       end
 
+      context "when there is no approx_decision_date" do
+        let(:benefit_type) { "education" }
+        let(:caseflow_decision_date) { nil }
+
+        it "throws an error" do
+          expect { subject }.to raise_error(
+            StandardError, "approx_decision_date is required to create a DTA Supplemental Claim"
+          )
+        end
+      end
+
       it "creates a supplemental claim and request issues" do
         expect { subject }.to_not change(DecisionReviewTask, :count)
 

@@ -11,7 +11,7 @@ describe DecisionReviewTask do
 
   describe "#complete_with_payload!" do
     let(:veteran) { create(:veteran) }
-    let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number, benefit_type: "education") }
+    let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number, benefit_type: benefit_type) }
     let(:task_status) { "assigned" }
     let!(:request_issues) do
       [

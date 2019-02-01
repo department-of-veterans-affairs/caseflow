@@ -636,7 +636,6 @@ feature "Appeal Intake" do
              request_issues: [previous_appeal_request_issue],
              rating_issue_reference_id: appeal_reference_id,
              participant_id: veteran.participant_id,
-             promulgation_date: 1.month.ago,
              description: "appeal decision issue",
              decision_text: "appeal decision issue",
              benefit_type: "compensation",
