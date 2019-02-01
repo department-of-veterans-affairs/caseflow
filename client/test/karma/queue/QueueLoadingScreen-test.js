@@ -23,7 +23,9 @@ const serverData = {
           completed_at: null,
           assigned_to: {
             css_id: 'BVANKUVALIS',
+            name: 'name',
             id: 130,
+            isOrganization: false,
             type: 'User'
           },
           case_type: 'Post Remand',
@@ -72,8 +74,9 @@ describe('QueueLoadingScreen', () => {
         dueOn: '2018-08-11T00:00:00.000Z',
         assignedTo: {
           cssId: 'BVANKUVALIS',
-          id: 130,
-          type: 'User'
+          name: 'name',
+          // eslint-disable-next-line no-undefined
+          isOrganization: undefined
         },
         // eslint-disable-next-line no-undefined
         availableActions: undefined,

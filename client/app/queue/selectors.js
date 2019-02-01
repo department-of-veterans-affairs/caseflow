@@ -96,9 +96,12 @@ export const workTasksWithAppealSelector = createSelector(
 );
 
 export const tasksByOrganization = createSelector(
-  [tasksWithAppealSelector, getActiveOrganizationId],
+  [workTasksWithAppealSelector, getActiveOrganizationId],
   (tasks: Array<TaskWithAppeal>, organizationId: string) =>
-    _.filter(tasks, (task) => (task.assignedTo.id === organizationId))
+    _.filter(tasks, (task) => (
+      task.assignedTo.id === organizationId &&
+      task.assignedTo.isOrganization
+    ))
 );
 
 export const taskById = createSelector(
@@ -141,19 +144,19 @@ export const getAllTasksForAppeal = createSelector(
 );
 
 export const getUnassignedOrganizationalTasks = createSelector(
-  [workTasksWithAppealSelector],
+  [tasksByOrganization],
   (tasks: Tasks) => _.filter(tasks, (task) => {
     return (task.status === TASK_STATUSES.assigned || task.status === TASK_STATUSES.in_progress);
   })
 );
 
 export const getAssignedOrganizationalTasks = createSelector(
-  [workTasksWithAppealSelector],
+  [tasksByOrganization],
   (tasks: Tasks) => _.filter(tasks, (task) => (task.status === TASK_STATUSES.on_hold))
 );
 
 export const getCompletedOrganizationalTasks = createSelector(
-  [workTasksWithAppealSelector],
+  [tasksByOrganization],
   (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed)
 );
 
@@ -220,7 +223,7 @@ export const rootTasksForAppeal = createSelector(
 export const caseTimelineTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
   (tasks: Tasks) => _.orderBy(_.filter(completeTasksSelector(tasks), (task) =>
-    !task.hideFromCaseTimeline), ['createdAt'], ['desc'])
+    !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
 );
 
 export const taskSnapshotTasksForAppeal = createSelector(
