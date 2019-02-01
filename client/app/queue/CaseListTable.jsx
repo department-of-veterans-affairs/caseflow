@@ -77,14 +77,19 @@ class CaseListTable extends React.PureComponent {
       }
     ];
 
-    const doAnyAppealsHaveHearings = Boolean(_.find(this.props.appeals, (appeal) => {
-      return appeal.hearings.length;
-    }));
+    const doAnyAppealsHaveHeldHearings = Boolean(
+      _.find(this.props.appeals, (appeal) => {
+        return appeal.hearings.
+          filter((hearing) => hearing.disposition === 'held').
+          length;
+      }));
 
-    if (doAnyAppealsHaveHearings) {
+    if (doAnyAppealsHaveHeldHearings) {
       const hearingColumn = {
         valueFunction: (appeal) => {
-          const hearings = appeal.hearings.sort((h1, h2) => h1.date < h2.date ? 1 : -1);
+          const hearings = appeal.hearings.
+            filter((hearing) => hearing.disposition === 'held').
+            sort((h1, h2) => h1.date < h2.date ? 1 : -1);
 
           return <HearingBadge hearing={hearings[0]} />;
         }

@@ -180,14 +180,6 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     });
-  case ACTIONS.ERROR_ON_RECEIVE_HEARING_FOR_APPEAL:
-    return update(state, {
-      mostRecentlyHeldHearingForAppeal: {
-        [action.payload.appealId]: {
-          $set: 'Failed to load'
-        }
-      }
-    });
   case ACTIONS.SET_DECISION_OPTIONS:
     return update(state, {
       stagedChanges: {

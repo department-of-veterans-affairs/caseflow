@@ -163,14 +163,6 @@ export const setMostRecentlyHeldHearingForAppeal = (appealId: string, hearing: O
   payload: prepareMostRecentlyHeldHearingForStore(appealId, hearing)
 });
 
-export const errorFetchingHearingForAppeal = (appealId: string, error: Object) => ({
-  type: ACTIONS.ERROR_ON_RECEIVE_HEARING_FOR_APPEAL,
-  payload: {
-    appealId,
-    error
-  }
-});
-
 export const setDecisionOptions = (opts: Object) => (dispatch: Dispatch) => {
   dispatch(hideErrorMessage());
   dispatch({
