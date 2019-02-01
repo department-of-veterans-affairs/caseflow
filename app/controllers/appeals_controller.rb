@@ -65,7 +65,7 @@ class AppealsController < ApplicationController
 
   def hearings
     most_recently_held_hearing = appeal.hearings
-      .select { |hearing| hearing.disposition == :held }
+      .select { |hearing| hearing.disposition.to_s == "held" }
       .max_by(&:scheduled_for)
 
     render json:

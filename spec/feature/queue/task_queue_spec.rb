@@ -52,6 +52,35 @@ RSpec.feature "Task queue" do
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
     end
 
+    context "hearings" do
+      context "if a task has a hearing" do
+        let!(:attorney_task_with_hearing) do
+          FactoryBot.create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user
+          )
+        end
+
+        let!(:hearing) { create(:hearing, appeal: attorney_task_with_hearing.appeal, disposition: "held") }
+
+        before do
+          visit "/queue"
+        end
+
+        it "shows the hearing badge" do
+          expect(page).to have_selector(".cf-hearing-badge")
+          expect(find(".cf-hearing-badge")).to have_content("H")
+        end
+      end
+
+      context "if no tasks have hearings" do
+        it "does not show the hearing badge" do
+          expect(page).not_to have_selector(".cf-hearing-badge")
+        end
+      end
+    end
+
     it "supports custom sorting" do
       docket_number_column_header = page.find(:xpath, "//thead/tr/th[3]/span/span[1]")
       docket_number_column_header.click

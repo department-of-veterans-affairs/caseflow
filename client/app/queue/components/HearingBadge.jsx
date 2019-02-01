@@ -10,7 +10,7 @@ import { COLORS } from '../../constants/AppConstants';
 
 import ApiUtil from '../../util/ApiUtil';
 import { DateString } from '../../util/DateUtil';
-import { setMostRecentlyHeldHearingForAppeal, errorFetchingHearingForAppeal } from '../QueueActions';
+import { setMostRecentlyHeldHearingForAppeal } from '../QueueActions';
 
 /**
  * This component can accept either a Hearing object or a Task object.
@@ -98,8 +98,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setMostRecentlyHeldHearingForAppeal,
-  errorFetchingHearingForAppeal
+  setMostRecentlyHeldHearingForAppeal
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(HearingBadge);
