@@ -135,7 +135,7 @@ describe Distribution do
 
     let(:user) { judge }
 
-    context "when the user is not a judge in VACOOLS" do
+    context "when the user is not a judge in VACOLS" do
       let(:user) { create(:user) }
 
       it "does not validate" do
@@ -144,21 +144,44 @@ describe Distribution do
       end
     end
 
-    context "when the judge has an unassigned legacy appeal" do
-      let!(:legacy_appeal) { create(:case, bfcurloc: vacols_judge.slogid) }
+    context "when the judge has 8 or fewer unassigned appeals" do
+      before do
+        5.times { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: Time.zone.today) }
+        3.times { create(:ama_judge_task, assigned_to: judge, assigned_at: Time.zone.today) }
+      end
 
-      it "does not validate" do
-        expect(subject.errors.details).to have_key(:judge)
-        expect(subject.errors.details[:judge]).to include(error: :unassigned_cases)
+      it "validates" do
+        expect(subject.errors.details).not_to have_key(:judge)
       end
     end
 
-    context "when the judge has an unassigned AMA appeal" do
-      let!(:task) { create(:ama_judge_task, assigned_to: judge) }
+    context "when the judge has 8 or more unassigned appeals" do
+      before do
+        5.times { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: Time.zone.today) }
+        4.times { create(:ama_judge_task, assigned_to: judge, assigned_at: Time.zone.today) }
+      end
 
       it "does not validate" do
         expect(subject.errors.details).to have_key(:judge)
-        expect(subject.errors.details[:judge]).to include(error: :unassigned_cases)
+        expect(subject.errors.details[:judge]).to include(error: :too_many_unassigned_cases)
+      end
+    end
+
+    context "when the judge has an appeal that has waited more than 14 days" do
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, assigned_at: 15.days.ago) }
+
+      it "does not validate" do
+        expect(subject.errors.details).to have_key(:judge)
+        expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
+      end
+    end
+
+    context "when the judge has a legacy appeal that has waited more than 14 days" do
+      let!(:task) { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: 15.days.ago) }
+
+      it "does not validate" do
+        expect(subject.errors.details).to have_key(:judge)
+        expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
       end
     end
   end
