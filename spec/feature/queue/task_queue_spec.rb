@@ -185,7 +185,7 @@ RSpec.feature "Task queue" do
     end
 
     context "when we are a member of the mail team and a root task exists for the appeal" do
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal).becomes(RootTask) }
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
       let(:instructions) { "Some instructions for how to complete the task" }
 
       it "should allow us to assign a mail task to a user" do
