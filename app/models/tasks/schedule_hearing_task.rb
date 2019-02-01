@@ -2,7 +2,7 @@ class ScheduleHearingTask < GenericTask
   after_update :update_location_in_vacols
 
   class << self
-    def create_if_eligible(appeal)
+    def find_or_create_if_eligible(appeal)
       if appeal.is_a?(LegacyAppeal) && appeal.case_record.bfcurloc == "57" &&
          appeal.hearings.all?(&:disposition)
         ScheduleHearingTask.where.not(status: "completed").find_or_create_by!(appeal: appeal) do |task|
@@ -11,6 +11,8 @@ class ScheduleHearingTask < GenericTask
             parent: RootTask.find_or_create_by!(appeal: appeal)
           )
         end
+      elsif appeal.is_a?(Appeal)
+        ScheduleHearingTask.find_by(appeal: appeal)
       end
     end
 
