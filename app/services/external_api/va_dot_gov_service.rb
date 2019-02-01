@@ -28,7 +28,7 @@ class ExternalApi::VADotGovService
       end
 
       track_pages(page)
-      facility_results
+      facility_results.sort_by { |res| res[:distance] }
     end
 
     # rubocop:disable Metrics/ParameterLists
