@@ -161,7 +161,7 @@ describe AttorneyCaseReview do
   context ".complete" do
     let(:document_type) { Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"] }
     let(:work_product) { "OMO - IME" }
-    let(:document_id) { "123456789.1234" }
+    let(:document_id) { "M1234567.1234" }
     let(:padded_document_id) { "     #{document_id}    " }
     let(:note) { "something" }
     let(:task_id) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney).id }
@@ -268,6 +268,7 @@ describe AttorneyCaseReview do
       context "when ama" do
         let(:document_type) { Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"] }
         let(:work_product) { "Decision" }
+        let(:document_id) { "12345-12345678" }
         let(:task) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney) }
         let(:task_id) { task.id }
         let!(:request_issue1) do
@@ -400,6 +401,7 @@ describe AttorneyCaseReview do
         let(:vacols_case) { FactoryBot.create(:case, :assigned, staff: vacols_atty, case_issues: case_issues) }
         let(:document_type) { Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"] }
         let(:work_product) { "Decision" }
+        let(:document_id) { "12345-12345678" }
         let(:vacated_issue) { FactoryBot.create(:case_issue, :disposition_vacated) }
         let(:remand_reason) { FactoryBot.create(:remand_reason, rmdval: "AB", rmddev: "R2") }
         let(:remanded_issue) do
