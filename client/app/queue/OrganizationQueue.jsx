@@ -147,6 +147,7 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName }) => <Re
 const TaskTableWithUserColumnTab = ({ description, tasks, organizationName }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
   <TaskTable
+    includeHearingBadge
     includeDetailsLink
     includeTask
     includeRegionalOffice={organizationName === 'Hearings Management'}
