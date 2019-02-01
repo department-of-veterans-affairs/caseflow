@@ -61,6 +61,10 @@ class User < ApplicationRecord
     roles && (roles.include?("Mail Intake") || roles.include?("Admin Intake"))
   end
 
+  def administer_org_users?
+    admin? || granted?("Admin Intake")
+  end
+
   def vacols_uniq_id
     @vacols_uniq_id ||= user_info[:uniq_id]
   end

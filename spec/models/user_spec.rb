@@ -281,6 +281,31 @@ describe User do
     end
   end
 
+  context "#administer_org_users?" do
+    subject { user.administer_org_users? }
+    before { session["user"]["roles"] = nil }
+    before { Functions.client.del("System Admin") }
+
+    context "when user with roles that are nil" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "when user with roles that don't contain admin" do
+      before { session["user"]["roles"] = ["Do the other thing!"] }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when user with roles that contain admin" do
+      before { Functions.grant!("System Admin", users: ["123"]) }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user with roles that contain Admin Intake" do
+      before { Functions.grant!("Admin Intake", users: ["123"]) }
+      it { is_expected.to be_truthy }
+    end
+  end
+
   context "#can_edit_request_issues?" do
     let(:appeal) { create(:appeal) }
 
