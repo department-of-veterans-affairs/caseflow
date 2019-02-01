@@ -518,17 +518,6 @@ class RequestIssue < ApplicationRecord
     return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
-  def formatted_last_action_date
-    # not using this at the moment, proposal for a way to brute force the format.
-    return unless end_product_establishment&.result
-
-    Date.new(
-      end_product_establishment.result.last_action_date.year,
-      end_product_establishment.result.last_action_date.month,
-      end_product_establishment.result.last_action_date.day
-    )
-  end
-
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
   def check_for_eligible_previous_review!
