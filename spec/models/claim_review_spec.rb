@@ -615,6 +615,8 @@ describe ClaimReview do
       it "establishes the claim and creates the contetions in VBMS for each one" do
         subject
 
+        expect(claim_review.end_product_establishments.count).to eq(2)
+
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
