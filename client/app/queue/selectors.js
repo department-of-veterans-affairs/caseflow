@@ -99,12 +99,16 @@ export const workTasksWithAppealSelector = createSelector(
 );
 
 export const tasksByOrganization = createSelector(
-  [workTasksWithAppealSelector, getActiveOrganizationId],
+  [tasksWithAppealSelector, getActiveOrganizationId],
   (tasks: Array<TaskWithAppeal>, organizationId: string) =>
     _.filter(tasks, (task) => (
       task.assignedTo.id === organizationId &&
       task.assignedTo.isOrganization
     ))
+);
+
+export const workTasksByOrganization = createSelector(
+  [tasksByOrganization], (tasks: Array<TaskWithAppeal>) => workTasksSelector(tasks)
 );
 
 export const trackingTasksForOrganization = createSelector(
@@ -151,19 +155,19 @@ export const getAllTasksForAppeal = createSelector(
 );
 
 export const getUnassignedOrganizationalTasks = createSelector(
-  [tasksByOrganization],
+  [workTasksByOrganization],
   (tasks: Tasks) => _.filter(tasks, (task) => {
     return (task.status === TASK_STATUSES.assigned || task.status === TASK_STATUSES.in_progress);
   })
 );
 
 export const getAssignedOrganizationalTasks = createSelector(
-  [tasksByOrganization],
+  [workTasksByOrganization],
   (tasks: Tasks) => _.filter(tasks, (task) => (task.status === TASK_STATUSES.on_hold))
 );
 
 export const getCompletedOrganizationalTasks = createSelector(
-  [tasksByOrganization],
+  [workTasksByOrganization],
   (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed)
 );
 

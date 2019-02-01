@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
@@ -14,8 +13,7 @@ import {
   getUnassignedOrganizationalTasks,
   getAssignedOrganizationalTasks,
   getCompletedOrganizationalTasks,
-  trackingTasksForOrganization,
-  tasksByOrganization
+  trackingTasksForOrganization
 } from './selectors';
 
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
@@ -106,10 +104,6 @@ class OrganizationQueue extends React.PureComponent {
   };
 }
 
-OrganizationQueue.propTypes = {
-  tasks: PropTypes.array.isRequired
-};
-
 const mapStateToProps = (state) => {
   const { success } = state.ui.messages;
 
@@ -121,8 +115,7 @@ const mapStateToProps = (state) => {
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
     completedTasks: getCompletedOrganizationalTasks(state),
-    trackingTasks: trackingTasksForOrganization(state),
-    tasks: tasksByOrganization(state)
+    trackingTasks: trackingTasksForOrganization(state)
   };
 };
 
