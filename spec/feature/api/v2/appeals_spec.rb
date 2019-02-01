@@ -150,6 +150,8 @@ describe "Appeals API v2", type: :request do
              request_issues: [request_issue])
     end
 
+    let!(:task) { create(:task, :in_progress, type: RootTask.name, appeal: appeal) }
+
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs, ssn|
         ssn
@@ -462,11 +464,11 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["appealIds"].first).to include("A")
       expect(json["data"][2]["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
       expect(json["data"][2]["attributes"]["type"]).to eq("original")
-      expect(json["data"][2]["attributes"]["active"]).to eq(false)
+      expect(json["data"][2]["attributes"]["active"]).to eq(true)
       expect(json["data"][2]["attributes"]["incompleteHistory"]).to eq(false)
       expect(json["data"][2]["attributes"]["description"]).to be_nil
-      expect(json["data"][2]["attributes"]["aod"]).to be_nil
-      expect(json["data"][2]["attributes"]["location"]).to be_nil
+      expect(json["data"][2]["attributes"]["aod"]).to eq(false)
+      expect(json["data"][2]["attributes"]["location"]).to eq("bva")
       expect(json["data"][2]["attributes"]["alerts"]).to be_nil
       expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
       expect(json["data"][2]["attributes"]["programArea"]).to eq("compensation")

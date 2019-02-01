@@ -18,7 +18,7 @@ class CaseTimeline extends React.PureComponent {
 
     return <React.Fragment>
       {COPY.CASE_TIMELINE_HEADER}
-      <table>
+      <table id="case-timeline-table">
         <tbody>
           { <TaskRows appeal={appeal} taskList={tasks} timeline /> }
         </tbody>

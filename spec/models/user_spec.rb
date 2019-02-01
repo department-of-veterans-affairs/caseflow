@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe User do
-  let(:session) { { "user" => { "id" => "123", "station_id" => "310" } } }
+  let(:session) { { "user" => { "id" => "123", "station_id" => "310", "name" => "Tom Brady" } } }
   let(:user) { User.from_session(session) }
 
   before(:all) do
@@ -28,6 +28,25 @@ describe User do
       before { session["user"]["station_id"] = "301" }
       it { is_expected.to eq("RO01") }
     end
+  end
+
+  context "#to_session_hash" do
+    subject { user.to_session_hash }
+
+    let(:result) do
+      {
+        "id" => "123",
+        "station_id" => "310",
+        "css_id" => "123",
+        "email" => nil,
+        "roles" => [],
+        "selected_regional_office" => nil,
+        :display_name => "123",
+        "name" => "Tom Brady"
+      }
+    end
+
+    it { is_expected.to eq result }
   end
 
   context "#roles" do
@@ -262,6 +281,31 @@ describe User do
     end
   end
 
+  context "#administer_org_users?" do
+    subject { user.administer_org_users? }
+    before { session["user"]["roles"] = nil }
+    before { Functions.client.del("System Admin") }
+
+    context "when user with roles that are nil" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "when user with roles that don't contain admin" do
+      before { session["user"]["roles"] = ["Do the other thing!"] }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when user with roles that contain admin" do
+      before { Functions.grant!("System Admin", users: ["123"]) }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user with roles that contain Admin Intake" do
+      before { Functions.grant!("Admin Intake", users: ["123"]) }
+      it { is_expected.to be_truthy }
+    end
+  end
+
   context "#can_edit_request_issues?" do
     let(:appeal) { create(:appeal) }
 
@@ -465,25 +509,6 @@ describe User do
       it "should return a list of all teams user is an admin for" do
         expect(user.administered_teams).to eq(admin_orgs)
       end
-    end
-  end
-
-  describe ".judge_css_id" do
-    let(:css_id) { SecureRandom.uuid }
-    let(:judge) { FactoryBot.create :user, css_id: css_id }
-    let(:attorney) { FactoryBot.create :user }
-    let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
-
-    before do
-      OrganizationsUser.add_user_to_organization(attorney, judge_team)
-    end
-
-    it "returns the css_id of the judge adminstering a judge team the attorney is in" do
-      expect(attorney.judge_css_id).to eq css_id
-    end
-
-    it "returns the judge's own css_id" do
-      expect(judge.judge_css_id).to eq judge.css_id
     end
   end
 end

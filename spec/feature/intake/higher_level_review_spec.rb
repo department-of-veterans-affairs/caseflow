@@ -1053,9 +1053,10 @@ feature "Higher-Level Review" do
                promulgation_date: another_promulgation_date,
                description: "appeal decision issue",
                decision_text: "appeal decision issue",
-               profile_date: profile_date,
                benefit_type: "compensation")
       end
+
+      let!(:decision_document) { create(:decision_document, decision_date: profile_date, appeal: previous_appeal) }
 
       scenario "the issue is ineligible" do
         start_higher_level_review(

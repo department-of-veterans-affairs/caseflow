@@ -4,6 +4,8 @@ class GenericTask < Task
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
   # task active at a time for a single appeal.
   def verify_org_task_unique
+    return if status == Constants.TASK_STATUSES.completed
+
     if Task.where(type: type, assigned_to: assigned_to, appeal: appeal)
         .where.not(status: Constants.TASK_STATUSES.completed).any? &&
        assigned_to.is_a?(Organization)

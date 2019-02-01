@@ -234,16 +234,6 @@ describe GenericTask do
       end
     end
 
-    context "when all parameters present" do
-      it "should create child task and update parent task's status" do
-        status_before = parent.status
-        GenericTask.create_many_from_params(good_params_array, parent_assignee)
-        expect(GenericTask.where(good_params.except(:status)).count).to eq(1)
-        expect(parent.reload.status).to_not eq(status_before)
-        expect(parent.status).to eq(good_params[:status])
-      end
-    end
-
     context "when parent task is assigned to a user" do
       context "when there is no current user" do
         it "should raise error and not create the child task nor update status" do

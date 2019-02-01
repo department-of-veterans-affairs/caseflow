@@ -5,17 +5,26 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   QUERY_LIMIT = 500
 
   def veterans
-    @veterans ||= Veteran.where(file_number: file_numbers)
+    @veterans ||= Veteran.where("file_number IN (?) OR veterans.id IN (?)", file_numbers, veteran_ids_from_tasks)
       .left_outer_joins(:available_hearing_locations)
-      .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.month.ago)
+      .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
       .limit(QUERY_LIMIT)
   end
 
   def file_numbers
-    # TODO: will need an AMA equivalent of this query
     @file_numbers ||= VACOLS::Case.where(bfcurloc: 57).pluck(:bfcorlid).map do |bfcorlid|
       LegacyAppeal.veteran_file_number_from_bfcorlid(bfcorlid)
     end
+  end
+
+  def veteran_ids_from_tasks
+    ScheduleHearingTask.where.not(status: "completed")
+      .joins("
+        LEFT OUTER JOIN (SELECT parent_id FROM tasks
+        WHERE type = 'HearingAdminActionVerifyAddressTask' AND status != 'completed') admin_actions
+        ON admin_actions.parent_id = id")
+      .where("admin_actions.parent_id IS NULL").limit(QUERY_LIMIT)
+      .map { |task| task.appeal.veteran.id }
   end
 
   def missing_veteran_file_numbers
@@ -37,7 +46,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: facility_ids
     )
 
-    closest_ro_index = RegionalOffice::CITIES.values.find_index { |ro| ro[:facility_locator_id] == distances[0][:id] }
+    closest_ro_index = RegionalOffice::CITIES.values.find_index do |ro|
+      ro[:facility_locator_id] == distances[0][:facility_id]
+    end
     closest_ro = RegionalOffice::CITIES.keys[closest_ro_index]
     veteran.update(closest_regional_office: closest_ro)
 
@@ -68,6 +79,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       rescue Caseflow::Error::VaDotGovLimitError
         sleep 60
         va_dot_gov_address = validate_veteran_address(veteran)
+      rescue Caseflow::Error::VaDotGovAPIError => error
+        handle_error(error, veteran)
+        next
       end
 
       create_available_locations_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
@@ -89,8 +103,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def facility_ids_for_ro(regional_office_id)
-    RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
-      [] << RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
+    (RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
+      []) << RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
   end
 
   def ro_facility_ids_for_state(state_code)
@@ -112,7 +126,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     AvailableHearingLocations.create(
       veteran_file_number: file_number,
       distance: facility[:distance],
-      facility_id: facility[:id],
+      facility_id: facility[:facility_id],
       name: facility[:name],
       address: facility[:address],
       city: facility[:city],
@@ -143,5 +157,47 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     msg = "#{state_code} is not a valid state code."
     fail Caseflow::Error::FetchHearingLocationsJobError, code: 500, message: msg
+  end
+
+  def error_instructions_map
+    { "DualAddressError" => "The veteran's address in VBMS is ambiguous.",
+      "AddressCouldNotBeFound" => "The veteran's address in VBMS could not be found on a map.",
+      "InvalidRequestStreetAddress" => "The veteran's address in VBMS does not exist or is invalid." }
+  end
+
+  def multiple_appeals_instructions
+    "
+    Please note that this Veteran has multiple appeals. It’s possible this issue has already been resolved.
+
+    If you see a regional office and an alternate hearing location, then this task can be closed."
+  end
+
+  def instructions(key, has_multiple:)
+    instructions = error_instructions_map[key]
+    instructions + multiple_appeals_instructions if has_multiple
+  end
+
+  def handle_error(error, veteran)
+    key = error.message["messages"][0]["key"]
+
+    case key
+    when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress"
+      tasks = LegacyAppeal.where(
+        vbms_id: LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)
+      ).map do |appeal|
+        ScheduleHearingTask.find_or_create_if_eligible(appeal)
+      end.compact
+
+      tasks.each do |task|
+        HearingAdminActionVerifyAddressTask.create!(
+          appeal: task.appeal,
+          instructions: instructions(key, has_multiple: tasks.count > 1),
+          assigned_to: HearingsManagement.singleton,
+          parent: task
+        )
+      end
+    else
+      fail error
+    end
   end
 end

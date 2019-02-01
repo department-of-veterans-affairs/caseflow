@@ -164,36 +164,59 @@ class Veteran < ApplicationRecord
     super || ptcpnt_id
   end
 
+  def validate_address
+    VADotGovService.validate_address(
+      address_line1: address_line1,
+      address_line2: address_line2,
+      address_line3: address_line3,
+      city: city,
+      state: state,
+      country: country,
+      zip_code: zip_code
+    )
+  end
+
+  def stale_name?
+    return false unless accessible? && bgs_record.is_a?(Hash)
+
+    is_stale = (first_name.nil? || last_name.nil?)
+    [:first_name, :last_name, :middle_name, :name_suffix].each do |name|
+      is_stale = true if self[name] != bgs_record[name]
+    end
+    is_stale
+  end
+
   class << self
-    def find_or_create_by_file_number(file_number)
-      find_and_maybe_backfill_name(file_number) || create_by_file_number(file_number)
+    def find_or_create_by_file_number(file_number, sync_name: false)
+      find_and_maybe_backfill_name(file_number, sync_name: sync_name) || create_by_file_number(file_number)
     end
 
-    def find_by_file_number_or_ssn(file_number_or_ssn)
+    def find_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_by(file_number: file_number_or_ssn) || find_by_ssn(file_number_or_ssn)
+        find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name) ||
+          find_by_ssn(file_number_or_ssn, sync_name: sync_name)
       else
-        find_by(file_number: file_number_or_ssn)
+        find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
       end
     end
 
     private
 
-    def find_by_ssn(ssn)
+    def find_by_ssn(ssn, sync_name: false)
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
-      find_by(file_number: file_number)
+      find_and_maybe_backfill_name(file_number, sync_name: sync_name)
     end
 
-    def find_and_maybe_backfill_name(file_number)
+    def find_and_maybe_backfill_name(file_number, sync_name: false)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
 
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
       # a symbol that will blow up, so check if bgs_record is a hash first.
-      if veteran.first_name.nil? && veteran.accessible? && veteran.bgs_record.is_a?(Hash)
+      if sync_name && veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
         veteran.update!(
           first_name: veteran.bgs_record[:first_name],
           last_name: veteran.bgs_record[:last_name],

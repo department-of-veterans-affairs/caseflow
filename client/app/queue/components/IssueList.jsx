@@ -5,6 +5,7 @@ import { css } from 'glamor';
 import IssueListItem from './IssueListItem';
 import LegacyIssueListItem from './LegacyIssueListItem';
 import { NO_ISSUES_ON_APPEAL_MSG } from '../../reader/constants';
+import { getUndecidedIssues } from '../utils';
 
 const tableContainerStyling = (fluid) => css({
   width: fluid ? '100%' : '75rem',
@@ -51,7 +52,9 @@ export default class IssueList extends React.PureComponent<Props> {
       </tr>;
     }
 
-    return <React.Fragment>{issues.map((issue, idx) => {
+    const filteredIssues = getUndecidedIssues(issues);
+
+    return <React.Fragment>{filteredIssues.map((issue, idx) => {
       // this component is used in Reader, where issue ids are only `vacols_sequence_id`
       const issueId = String(isLegacyAppeal ? issue.vacols_sequence_id : issue.id);
 

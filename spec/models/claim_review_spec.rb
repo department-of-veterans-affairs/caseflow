@@ -122,7 +122,7 @@ describe ClaimReview do
       create(
         :higher_level_review,
         receipt_date: receipt_date,
-        last_submitted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        establishment_last_submitted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
         establishment_attempted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
       )
     end
@@ -715,6 +715,40 @@ describe ClaimReview do
 
     it "removes duplicate claimant names, if they exist" do
       expect([*sc].map(&:search_table_ui_hash).first[:claimant_names].length).to eq(1)
+    end
+  end
+
+  describe "#search_table_statuses" do
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
+    subject { claim_review.search_table_statuses }
+
+    context "claim says 'Processed in Caseflow' if it is processed in Caseflow" do
+      let(:benefit_type) { "foobar" }
+      let!(:expected_result) do
+        [{
+          ep_code: "Processed in Caseflow",
+          ep_status: ""
+        }]
+      end
+
+      it { is_expected.to eq expected_result }
+    end
+
+    context "if it is not processed in Caseflow and there are no end products" do
+      let(:benefit_type) { "compensation" }
+
+      it { is_expected.to eq [] }
+    end
+
+    context "if it is not processed in Caseflow and there are end products" do
+      let(:benefit_type) { "compensation" }
+      let(:end_product_establishment) { create(:end_product_establishment, source: claim_review) }
+
+      before do
+        end_product_establishment.commit!
+      end
+
+      it { is_expected.to have_attributes(length: 1) }
     end
   end
 
