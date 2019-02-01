@@ -31,6 +31,8 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :assigned_to do
     {
       css_id: object.assigned_to.try(:css_id),
+      is_organization: object.assigned_to.is_a?(Organization),
+      name: object.appeal.location_code,
       type: object.assigned_to.class.name,
       id: object.assigned_to.id
     }
@@ -54,6 +56,10 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
 
   attribute :veteran_file_number do
     object.appeal.veteran_file_number
+  end
+
+  attribute :veteran_closest_regional_office do
+    object.appeal.veteran_closest_regional_office
   end
 
   attribute :external_appeal_id do

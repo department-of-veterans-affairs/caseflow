@@ -93,7 +93,7 @@ class VeteranHearingLocationsDropdown extends React.Component {
       return;
     }
 
-    this.props.onFetchDropdownData(name);
+    this.props.onFetchDropdownData(dropdownName);
 
     let url = '/hearings/find_closest_hearing_locations?regional_office=';
 

@@ -65,7 +65,9 @@ export type Task = {
   assignedTo: {
     cssId: ?string,
     type: string,
-    id: number
+    id: number,
+    isOrganization: boolean,
+    name: ?string
   },
   assignedBy: {
     firstName: string,
@@ -92,7 +94,8 @@ export type Task = {
   taskBusinessPayloads: Array<{description: string, values: Object}>,
   hideFromQueueTableView: boolean,
   hideFromCaseTimeline: boolean,
-  hideFromTaskSnapshot: boolean
+  hideFromTaskSnapshot: boolean,
+  closestRegionalOffice: string
 };
 
 export type Tasks = { [string]: Task };

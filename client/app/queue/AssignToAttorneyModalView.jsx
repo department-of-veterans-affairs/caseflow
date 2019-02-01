@@ -20,7 +20,7 @@ import type { Task } from './types/models';
 type Params = {|
   appealId: number,
   userId: string,
-  taskId: number
+  taskId: string
 |};
 
 type Props = Params & {|

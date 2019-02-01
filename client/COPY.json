@@ -23,6 +23,7 @@
   "CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE": "Issues",
   "CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE": "Veteran Documents",
   "CASE_LIST_TABLE_TASK_ACTION_COLUMN_TITLE": "Action",
+  "CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE": "Regional office",
   "CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE": "Document ID",
   "CASE_LIST_TABLE_SELECT_COLUMN_TITLE": "Select",
   "CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE": "Days Waiting",
@@ -124,6 +125,9 @@
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
+
+  "ALL_CASES_QUEUE_TABLE_TAB_TITLE": "All cases",
+  "ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",
 
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
   "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign Cases",
@@ -318,6 +322,8 @@
   "JUDGE_ASSIGN_TASK_LABEL": "assign",
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "review",
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "quality review",
+
+  "IHP_TASK_LABEL": "Prepare Informal Hearing Presentation",
 
   "ADDRESS_CHANGE_MAIL_TASK_LABEL": "Change of address",
   "AOD_MOTION_MAIL_TASK_LABEL": "Motion to Advance on Docket",
