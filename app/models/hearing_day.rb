@@ -116,13 +116,13 @@ class HearingDay < ApplicationRecord
                         end
 
       {
-        caseflow_hearings: cf_video_and_co,
+        caseflow_hearings: cf_video_and_co
       }
     end
 
     def hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
       hearing_days = load_days(start_date, end_date, regional_office)
-      total_video_and_co = hearing_days[:caseflow_hearings] + hearing_days[:vacols_hearings]
+      total_video_and_co = hearing_days[:caseflow_hearings]
 
       # fetching all the RO keys of the dockets
       regional_office_keys = total_video_and_co.map(&:regional_office)
