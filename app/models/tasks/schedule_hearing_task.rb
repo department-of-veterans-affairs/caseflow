@@ -77,13 +77,15 @@ class ScheduleHearingTask < GenericTask
 
   def withdraw_hearing
     if appeal.is_a?(LegacyAppeal)
-      location = if appeal.representative_name
-                   LegacyAppeal::LOCATION_CODES[:service_organization]
-                 else
+      location = if appeal.vsos.empty?
                    LegacyAppeal::LOCATION_CODES[:case_storage]
+                 else
+                   LegacyAppeal::LOCATION_CODES[:service_organization]
                  end
 
       AppealRepository.update_location!(appeal, location)
+    else
+      RootTask.create_evidence_submission_task!(appeal, parent)
     end
   end
 

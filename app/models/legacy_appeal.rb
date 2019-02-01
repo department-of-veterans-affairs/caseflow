@@ -322,6 +322,10 @@ class LegacyAppeal < ApplicationRecord
 
   delegate :representatives, to: :case_record
 
+  def vsos
+    Vso.where(participant_id: [power_of_attorney.bgs_participant_id])
+  end
+
   def contested_claim
     representatives.any? { |r| r.reptype == "C" }
   end
