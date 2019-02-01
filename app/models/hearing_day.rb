@@ -105,24 +105,18 @@ class HearingDay < ApplicationRecord
     end
 
     def load_days(start_date, end_date, regional_office = nil)
-      if regional_office.nil?
-        cf_video_and_co = where("DATE(scheduled_for) between ? and ?", start_date, end_date)
-        video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
-      elsif regional_office == REQUEST_TYPES[:central]
-        cf_video_and_co = where("request_type = ? and DATE(scheduled_for) between ? and ?",
+      cf_video_and_co = if regional_office.nil?
+                          where("DATE(scheduled_for) between ? and ?", start_date, end_date)
+                        elsif regional_office == REQUEST_TYPES[:central]
+                          where("request_type = ? and DATE(scheduled_for) between ? and ?",
                                 "C", start_date, end_date)
-        video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
-      else
-        cf_video_and_co = where("regional_office = ? and DATE(scheduled_for) between ? and ?",
+                        else
+                          where("regional_office = ? and DATE(scheduled_for) between ? and ?",
                                 regional_office, start_date, end_date)
-        video_and_co, travel_board =
-          HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
-      end
+                        end
 
       {
         caseflow_hearings: cf_video_and_co,
-        vacols_hearings: video_and_co,
-        travel_board_hearings: travel_board
       }
     end
 
