@@ -322,7 +322,10 @@ describe HearingDay do
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
     let!(:hearing_day) { create(:hearing_day) }
     let(:hearing) do
-      create(:case_hearing, hearing_type: "C", folder_nr: appeal.vacols_id, hearing_date: hearing_day.scheduled_for)
+      create(:case_hearing, hearing_type: "C",
+                            folder_nr: appeal.vacols_id,
+                            hearing_date: hearing_day.scheduled_for,
+                            vdkey: hearing_day.id)
     end
 
     context "get parent and children structure" do
