@@ -67,7 +67,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     def hearings_for_hearing_days(hearing_day_ids)
       select_hearings.where(vdkey: hearing_day_ids)
     end
-    
+
     def for_appeal(appeal_vacols_id)
       select_hearings.where(folder_nr: appeal_vacols_id)
     end
