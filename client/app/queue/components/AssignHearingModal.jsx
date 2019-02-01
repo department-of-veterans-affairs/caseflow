@@ -66,7 +66,7 @@ type Props = Params & {|
   hearingDay: Object,
   selectedHearingDay: Object,
   selectedHearingTime: string,
-  selectedOptionalTime: string,
+  selectedOptionalTime: Object,
   selectedHearingLocation: Object,
   // Action creators
   showErrorMessage: typeof showErrorMessage,
@@ -327,7 +327,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       return null;
     }
 
-    const hearingTime = selectedHearingTime === 'other' ? selectedOptionalTime : selectedHearingTime;
+    const hearingTime = selectedHearingTime === 'other' ? selectedOptionalTime.value : selectedHearingTime;
 
     return {
       // eslint-disable-next-line id-length
@@ -415,7 +415,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           placeholder="Select a time"
           options={TIME_OPTIONS}
           value={selectedOptionalTime || initVals.hearingDate}
-          onChange={(option) => this.onHearingOptionalTime(option)}
+          onChange={(value, label) => this.onHearingOptionalTime({ value,
+            label })}
           hideLabel />}
       </div>
     </React.Fragment>;
