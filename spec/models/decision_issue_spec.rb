@@ -206,31 +206,68 @@ describe DecisionIssue do
       end
 
       context "when no supplemental claim matches decision issue" do
-        let(:decision_review) { create(:appeal, number_of_claimants: 1) }
+        let(:veteran) { create(:veteran) }
+        let(:decision_review) { create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number) }
         let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
 
-        # Test that this supplemental claim does not match
-        let!(:another_supplemental_claim) do
-          create(
-            :supplemental_claim,
-            veteran_file_number: decision_review.veteran_file_number,
-            decision_review_remanded: decision_review,
-            benefit_type: "insurance"
-          )
+        context "when there is a prior claim by the same cliamant on the same veteran" do
+          let!(:prior_supplemental_claim) do
+            create(
+              :supplemental_claim,
+              veteran_file_number: decision_review.veteran_file_number,
+              decision_review_remanded: decision_review,
+              benefit_type: "insurance"
+            )
+          end
+
+          let(:prior_sc_claimant) do
+            create(:claimant,
+                   review_request: prior_supplemental_claim,
+                   participant_id: decision_review.claimants.first.participant_id,
+                   payee_code: decision_review.claimants.first.payee_code)
+          end
+
+          let(:prior_payee_code) { "10" }
+
+          # create ep for prior sc
+          let!(:sc_end_product) do
+            Generators::EndProduct.build(
+              veteran_file_number: veteran.file_number,
+              bgs_attrs: {
+                benefit_claim_id: "claim_id",
+                claimant_first_name: prior_sc_claimant.first_name,
+                claimant_last_name: prior_sc_claimant.last_name,
+                payee_type_code: prior_payee_code,
+                claim_date: 5.days.ago
+              }
+            )
+          end
+
+          it "creates a new supplemental claim" do
+            expect(subject).to have_attributes(
+              veteran_file_number: decision_review.veteran_file_number,
+              decision_review_remanded: decision_review,
+              benefit_type: "compensation"
+            )
+            expect(subject.claimants.count).to eq(1)
+            expect(subject.claimants.first).to have_attributes(
+              participant_id: decision_review.claimant_participant_id,
+              payee_code: prior_payee_code
+            )
+          end
         end
 
-        it "creates a new supplemental claim" do
-          expect(subject).to have_attributes(
-            veteran_file_number: decision_review.veteran_file_number,
-            decision_review_remanded: decision_review,
-            benefit_type: "compensation"
-          )
+        context "when there is no prior claim by the claimant" do
+          it "rasies an error" do
+            expect { subject }.to raise_error(DecisionIssue::AppealDTAPayeeCodeError)
 
-          expect(subject.claimants.count).to eq(1)
-          expect(subject.claimants.first).to have_attributes(
-            participant_id: decision_review.claimant_participant_id,
-            payee_code: "00"
-          )
+            # verify that both appeal and newly created dta sc have errors
+            expect(SupplementalClaim.find_by(
+                     veteran_file_number: decision_review.veteran_file_number,
+                     establishment_error: "No payee code"
+                   )).to_not be_nil
+            expect(decision_review.establishment_error).to eq("DTA SC creation failed")
+          end
         end
       end
     end

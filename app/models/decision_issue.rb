@@ -16,6 +16,12 @@ class DecisionIssue < ApplicationRecord
   # Attorneys will be entering in a description of the decision manually for appeals
   before_save :calculate_and_set_description, unless: :appeal?
 
+  class AppealDTAPayeeCodeError < StandardError
+    def initialize(appeal_id)
+      super("Can't create a SC DTA for appeal #{appeal_id} due to missing payee code")
+    end
+  end
+
   class << self
     # TODO: These scopes are based only off of Caseflow dispositions, not VBMS dispositions. We probably want
     # to add those, or assess some sort of conversion
@@ -110,6 +116,19 @@ class DecisionIssue < ApplicationRecord
     decision_review_type == Appeal.to_s
   end
 
+  def prior_payee_code
+    latest_ep = decision_review.veteran
+      .find_latest_end_product_by_claimant(decision_review.claimants.first)
+
+    if latest_ep.nil? || latest_ep.payee_code.nil?
+      # mark appeal as failed
+      decision_review.update_error!("DTA SC creation failed")
+      fail AppealDTAPayeeCodeError, decision_review.id
+    end
+
+    latest_ep.payee_code
+  end
+
   def find_remand_supplemental_claim
     SupplementalClaim.find_by(
       veteran_file_number: veteran_file_number,
@@ -132,11 +151,12 @@ class DecisionIssue < ApplicationRecord
     ).tap do |sc|
       sc.create_claimants!(
         participant_id: decision_review.claimant_participant_id,
-
-        # We have to make payee code "00" for now because intake assistants at
-        # the board do not enter payee codes for claimants :(
-        payee_code: "00"
+        payee_code: prior_payee_code
       )
+    rescue AppealDTAPayeeCodeError
+      # mark SC as failed
+      sc.update_error!("No payee code")
+      raise
     end
   end
 end

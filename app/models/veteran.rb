@@ -67,6 +67,12 @@ class Veteran < ApplicationRecord
     military_address? ? military_address_vbms_hash : base_vbms_hash
   end
 
+  def find_latest_end_product_by_claimant(claimant)
+    end_products.select do |ep|
+      ep.claimant_first_name == claimant.first_name && ep.claimant_last_name == claimant.last_name
+    end.max_by(&:claim_date)
+  end
+
   def end_products
     @end_products ||= fetch_end_products
   end
