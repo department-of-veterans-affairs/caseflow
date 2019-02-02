@@ -427,6 +427,8 @@ class Appeal < DecisionReview
     end
   end
 
+  private
+
   def maybe_create_translation_task
     state_code = veteran&.state
     va_dot_gov_address = veteran.validate_address
@@ -436,8 +438,6 @@ class Appeal < DecisionReview
   ensure
     TranslationTask.create_from_root_task(root_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
-
-  private
 
   def create_business_line_tasks
     request_issues.select(&:requires_record_request_task?).each do |req_issue|

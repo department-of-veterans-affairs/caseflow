@@ -519,21 +519,6 @@ describe Appeal do
     end
   end
 
-  context ".maybe_create_translation_task" do
-    let(:bgs_veteran_record) { { state: "NV" } }
-    let(:veteran) { FactoryBot.create(:veteran, bgs_veteran_record: bgs_veteran_record) }
-    let(:appeal) { FactoryBot.create(:appeal, veteran: veteran) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-
-    subject { appeal.maybe_create_translation_task }
-
-    it "catches subclass errors" do
-      allow_any_instance_of(Veteran).to receive(:validate_address).and_raise(Caseflow::Error::VaDotGovLimitError.new(code: 500, message: "oops"))
-
-      subject
-    end
-  end
-
   context "#location_code" do
     context "if the RootTask status is completed" do
       let(:appeal) { create(:appeal) }
