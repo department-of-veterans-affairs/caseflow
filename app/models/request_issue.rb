@@ -451,7 +451,7 @@ class RequestIssue < ApplicationRecord
         description: "#{contention_disposition.disposition}: #{description}",
         decision_review: review_request,
         benefit_type: benefit_type,
-        end_product_last_action_date: end_product_establishment.result.last_action_date
+        end_product_last_action_date: end_product_establishment.result.last_action_date.strftime("%Y-%m-%d")
       )
     end
   end
@@ -495,7 +495,7 @@ class RequestIssue < ApplicationRecord
       profile_date: rating_issue.profile_date,
       decision_review: review_request,
       benefit_type: rating_issue.benefit_type,
-      end_product_last_action_date: end_product_establishment.result.last_action_date
+      end_product_last_action_date: end_product_establishment.result.last_action_date.strftime("%Y-%m-%d")
     )
   end
 

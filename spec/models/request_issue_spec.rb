@@ -975,7 +975,9 @@ describe RequestIssue do
                 end_product_last_action_date: end_product_establishment.result.last_action_date
               )
               expect(rating_request_issue.processed?).to eq(true)
-              expect(rating_request_issue.decision_issues.first.end_product_last_action_date.month).to eq 2
+              expect(
+                rating_request_issue.decision_issues.first.end_product_last_action_date.month
+              ).to eq end_product_establishment.result.last_action_date.month
             end
 
             context "when end product last action date is nil" do
@@ -1039,7 +1041,9 @@ describe RequestIssue do
                 end_product_last_action_date: end_product_establishment.result.last_action_date
               )
               expect(rating_request_issue.processed?).to eq(true)
-              expect(rating_request_issue.decision_issues.first.end_product_last_action_date.month).to eq 2
+              expect(
+                rating_request_issue.decision_issues.first.end_product_last_action_date.month
+              ).to eq end_product_establishment.result.last_action_date.month
             end
           end
         end
