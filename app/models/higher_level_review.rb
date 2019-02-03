@@ -65,7 +65,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def decision_event_date
-    if !active? && !dta_claim && decision_issues.any?
+    if !dta_claim && decision_issues.any?
       if end_product_establishments.any?
         decision_issues.first.approx_decision_date
       else
@@ -87,7 +87,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def other_close_event_date
-    if !active? && !dta_claim && decision_issues.empty && end_product_establishments.any?
+    if !active? && decision_issues.empty && end_product_establishments.any?
       end_product_establishments.first.last_synced_at
     end
   end
