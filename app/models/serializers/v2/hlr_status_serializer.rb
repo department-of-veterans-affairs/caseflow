@@ -27,7 +27,4 @@ class V2::HLRStatusSerializer < V2::AppealSerializer
   attribute :docket do
     # doesn't apply to HLRs
   end
-
-  attribute :events do
-  end
 end

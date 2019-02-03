@@ -3,7 +3,6 @@ class AppealEvents
 
   attr_accessor :appeal
   attr_accessor :version
-  
 
   def all
     if appeal.is_a?(LegacyAppeal)

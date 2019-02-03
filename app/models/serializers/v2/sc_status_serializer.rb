@@ -27,7 +27,4 @@ class V2::SCStatusSerializer < V2::AppealSerializer
   attribute :docket do
     # doesn't apply to SC
   end
-
-  attribute :events do
-  end
 end

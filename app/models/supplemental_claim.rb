@@ -69,13 +69,13 @@ class SupplementalClaim < ClaimReview
   end
 
   def other_close_event_date
-    if !active? && decision_issues.empty && end_product_establishments.any?
+    if !active? && decision_issues.empty? && end_product_establishments.any?
       end_product_establishments.first.last_synced_at
     end
   end
 
   def events
-    @events ||= AppealEvents.new(supplemental_claim: self).sc_events
+    @events ||= AppealEvents.new(appeal: self).all
   end
 
   private
