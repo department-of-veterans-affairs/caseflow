@@ -17,17 +17,18 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
     end
     let!(:hearing) { create(:hearing) }
-
-    before do
-      create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG")
-      create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO")
-    end
+    let!(:coord) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
+    let!(:full_name) { FullName.new(coord.snamef, coord.snamemi, coord.snamel).formatted(:readable_full) }
+    let!(:judge) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
 
     scenario "User can update fields" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
 
       click_dropdown(name: "judgeDropdown", index: 0)
-      click_dropdown(name: "hearingCoordinatorDropdown", index: 0)
+
+      find(".dropdown-hearingCoordinatorDropdown .Select-control").click
+      find("div .Select-option", text: full_name).click
+
       click_dropdown(name: "hearingRoomDropdown", index: 0)
       find("label", text: "Yes, Waive 90 Day Evidence Hold").click
 
