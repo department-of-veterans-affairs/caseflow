@@ -41,7 +41,7 @@ describe('FilterSummary', () => {
         <FilterSummary {...props} />
       );
 
-      wrapper.find('a').simulate('click');
+      wrapper.find('button').simulate('click');
 
       expect(props.clearFilteredByList.calledOnce).to.equal(true);
     });

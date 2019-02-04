@@ -218,27 +218,15 @@ export class PageArrowRight extends PureComponent {
 }
 
 export const SelectedFilterIcon = ({ idPrefix, getRef, ...restProps }) => {
-  const pathId = `${idPrefix}-path-1`;
-  const filterId = `${idPrefix}-filter-2`;
+  const pathId = `${idPrefix}-selected-path-1`;
+  const filterId = `${idPrefix}-selected-filter-1`;
+  const rectId = `${idPrefix}-selected-rect-1`;
 
   return <svg width="21px" height="21px" viewBox="0 0 21 21" {...restProps} ref={getRef}>
-    <defs>
-      <path d="M16.8333333,20 L4.16666667,20 C2.37222222,20 1,18.6277778 1,16.8333333 L1,4.16666667 C1,2.37222222 2.37222222,1 4.16666667,1 L15,1 L16.8333333,1 C18.6277778,1 20,2.37222222 20,4.16666667 L20,16.8333333 C20,18.6277778 18.6277778,20 16.8333333,20 Z" id={pathId}></path>
-      <filter x="-10.5%" y="-10.5%" width="121.1%" height="121.1%" filterUnits="objectBoundingBox" id={filterId}>
-        <feGaussianBlur stdDeviation="1.5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
-        <feOffset dx="0" dy="1" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
-        <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
-        <feColorMatrix values="0 0 0 0 0   0 0 0 0 0.443137255   0 0 0 0 0.737254902  0 0 0 1 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
-      </filter>
-    </defs>
-    <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+    <g id={filterId} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g>
-        <g transform="translate(5.000000, 6.000000)" fillRule="nonzero" fill={COLORS.GREY_DARK}>
-          <path d="M10.9765625,0.3046875 C11.0651042,0.518229167 11.0286458,0.700520833 10.8671875,0.8515625 L7.015625,4.703125 L7.015625,10.5 C7.015625,10.71875 6.9140625,10.8723958 6.7109375,10.9609375 C6.64322917,10.9869792 6.578125,11 6.515625,11 C6.375,11 6.2578125,10.9505208 6.1640625,10.8515625 L4.1640625,8.8515625 C4.06510417,8.75260417 4.015625,8.63541667 4.015625,8.5 L4.015625,4.703125 L0.1640625,0.8515625 C0.00260416666,0.700520833 -0.0338541667,0.518229167 0.0546875,0.3046875 C0.143229167,0.1015625 0.296875,0 0.515625,0 L10.515625,0 C10.734375,0 10.8880208,0.1015625 10.9765625,0.3046875 Z"></path>
-        </g>
-        <g fillOpacity="1" fill="black">
-          <use filter={`url(#${filterId})`} xlinkHref={`#${pathId}`}></use>
-        </g>
+        <rect id={rectId} stroke="#0071BC" fill="#FFFFFF" fillRule="nonzero" x="0.5" y="0.5" width="20" height="20" rx="2"></rect>
+        <path id={pathId} d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z" fill="#0071BC"></path>
       </g>
     </g>
   </svg>;
@@ -251,14 +239,17 @@ SelectedFilterIcon.propTypes = {
 };
 
 export const UnselectedFilterIcon = (props) => {
-  const { getRef, className, ...restProps } = props;
+  const { getRef, className, idPrefix, ...restProps } = props;
+  const pathId = `${idPrefix}-unselected-path-1`;
+  const filterId = `${idPrefix}-unselected-filter-1`;
+  const rectId = `${idPrefix}-unselected-rect-1`;
 
   return <svg width="21px" height="21px" viewBox="0 0 21 21" {...restProps} ref={getRef} className={`${className} unselected-filter-icon`}>
-    <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-      <g transform="translate(5.000000, 6.000000)" fillRule="nonzero" className="unselected-filter-icon-inner">
-        <path d="M10.9765625,0.3046875 C11.0651042,0.518229167 11.0286458,0.700520833 10.8671875,0.8515625 L7.015625,4.703125 L7.015625,10.5 C7.015625,10.71875 6.9140625,10.8723958 6.7109375,10.9609375 C6.64322917,10.9869792 6.578125,11 6.515625,11 C6.375,11 6.2578125,10.9505208 6.1640625,10.8515625 L4.1640625,8.8515625 C4.06510417,8.75260417 4.015625,8.63541667 4.015625,8.5 L4.015625,4.703125 L0.1640625,0.8515625 C0.00260416666,0.700520833 -0.0338541667,0.518229167 0.0546875,0.3046875 C0.143229167,0.1015625 0.296875,0 0.515625,0 L10.515625,0 C10.734375,0 10.8880208,0.1015625 10.9765625,0.3046875 Z"></path>
+    <g id={filterId} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+      <g>
+        <rect id={rectId} className="unselected-filter-icon-border" stroke="#5B616B" fill="#FFFFFF" fillRule="nonzero" x="0.5" y="0.5" width="20" height="20" rx="2"></rect>
+        <path id={pathId} className="unselected-filter-icon-inner" d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z" fill="#1A1A1A"></path>
       </g>
-      <path d="M16.8333333,20 L4.16666667,20 C2.37222222,20 1,18.6277778 1,16.8333333 L1,4.16666667 C1,2.37222222 2.37222222,1 4.16666667,1 L15,1 L16.8333333,1 C18.6277778,1 20,2.37222222 20,4.16666667 L20,16.8333333 C20,18.6277778 18.6277778,20 16.8333333,20 Z" className="unselected-filter-icon-border"></path>
     </g>
   </svg>;
 };

@@ -31,7 +31,7 @@ class FilterIcon extends React.PureComponent {
       return <SelectedFilterIcon {...props} idPrefix={idPrefix} />;
     }
 
-    return <UnselectedFilterIcon {...props} />;
+    return <UnselectedFilterIcon {...props} idPrefix={idPrefix} />;
   }
 }
 

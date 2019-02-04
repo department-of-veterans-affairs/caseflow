@@ -5,8 +5,9 @@ import _ from 'lodash';
 const FilterSummary = ({ filteredByList, alternateColumnNames, clearFilteredByList }) => {
   let filterSummary = null;
   let filterListContent = [];
-  const clearAllFiltersLink = <a style={{ cursor: 'pointer' }}
-    onClick={() => clearFilteredByList({})}> Clear all filters</a>;
+  const clearAllFiltersLink = <button
+    onClick={() => clearFilteredByList({})}
+    className="cf-btn-link cf-clear-filters-link"> Clear all filters</button>;
 
   // Don't show anything if there are no filters.
   if (!_.isEmpty(filteredByList)) {
@@ -27,6 +28,13 @@ const FilterSummary = ({ filteredByList, alternateColumnNames, clearFilteredByLi
     // and then later removed, there may still be a key in the filteredByList object
     // pointing to an empty array.
     if (filterListContent.length > 0) {
+      // Add commas between filters
+      for (let i = 0; i < filterListContent.length - 1; i += 2) {
+        let commaSpan = <span key={`comma-${i}`}>, </span>;
+
+        filterListContent.splice(i + 1, 0, commaSpan);
+      }
+
       filterSummary = (
         <div>
           <strong>Filtering by:</strong>
