@@ -65,31 +65,36 @@ class HigherLevelReview < ClaimReview
   end
 
   def decision_event_date
-    if !dta_claim && decision_issues.any?
-      if end_product_establishments.any?
-        decision_issues.first.approx_decision_date
-      else
-        decision_issues.first.promulgation_date
-      end
+    return if dta_claim
+    return unless decision_issues.any?
+
+    if end_product_establishments.any?
+      decision_issues.first.approx_decision_date
+    else
+      decision_issues.first.promulgation_date
     end
   end
 
   def dta_error_event_date
-    if !hlr_ep_active? && dta_claim
-      decision_issues.find_by(disposition: DTA_ERRORS).approx_decision_date
-    end
+    return if hlr_ep_active?
+    return unless dta_claim
+
+    decision_issues.find_by(disposition: DTA_ERRORS).approx_decision_date
   end
 
   def dta_descision_event_date
-    if !active? && dta_claim
-      dta_claim.decision_event_date
-    end
+    return if active?
+    return unless dta_claim
+
+    dta_claim.decision_event_date
   end
 
   def other_close_event_date
-    if !active? && decision_issues.empty? && end_product_establishments.any?
-      end_product_establishments.first.last_synced_at
-    end
+    return if active?
+    return unless decision_issues.empty?
+    return unless end_product_establishments.any?
+
+    end_product_establishments.first.last_synced_at
   end
 
   def events

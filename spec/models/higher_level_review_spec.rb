@@ -388,11 +388,10 @@ describe HigherLevelReview do
       end
 
       let(:last_synced_at) { receipt_date + 20.days }
-      let(:synced_status) { "CLR" }
       let!(:hlr_ep) do
         create(:end_product_establishment,
+               :cleared,
                source: hlr,
-               synced_status: synced_status,
                last_synced_at: last_synced_at)
       end
 
@@ -407,8 +406,6 @@ describe HigherLevelReview do
     end
 
     context "hlr has dta error and remanded sc decision" do
-      let(:synced_status) { "CLR" }
-      let(:veteran_file_number) { "123456789" }
       let(:hlr_ep_clr_date) { receipt_date + 30 }
       let!(:hlr_with_dta_error) do
         create(:higher_level_review,
@@ -417,9 +414,7 @@ describe HigherLevelReview do
       end
 
       let!(:hlr_end_product) do
-        create(:end_product_establishment,
-               source: hlr_with_dta_error,
-               synced_status: synced_status)
+        create(:end_product_establishment, :cleared, source: hlr_with_dta_error)
       end
 
       let!(:hlr_decision_issue_with_dta_error) do
@@ -439,9 +434,7 @@ describe HigherLevelReview do
 
       let(:promulgation_date) { receipt_date + 130.days }
       let!(:dta_ep) do
-        create(:end_product_establishment,
-               source: dta_sc,
-               synced_status: synced_status)
+        create(:end_product_establishment, :cleared, source: dta_sc)
       end
 
       let!(:remanded_sc_decision_issue) do

@@ -5,11 +5,12 @@ class AppealEvents
   attr_accessor :version
 
   def all
-    if appeal.is_a?(LegacyAppeal)
+    case appeal
+    when LegacyAppeal
       legacy_appeal_events
-    elsif appeal.is_a?(SupplementalClaim)
+    when SupplementalClaim
       sc_events
-    elsif appeal.is_a?(HigherLevelReview)
+    when HigherLevelReview
       hlr_events
     end
   end

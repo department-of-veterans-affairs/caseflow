@@ -59,19 +59,21 @@ class SupplementalClaim < ClaimReview
   end
 
   def decision_event_date
-    if decision_issues.any?
-      if end_product_establishments.any?
-        decision_issues.first.approx_decision_date
-      else
-        decision_issues.first.promulgation_date
-      end
+    return unless decision_issues.any?
+
+    if end_product_establishments.any?
+      decision_issues.first.approx_decision_date
+    else
+      decision_issues.first.promulgation_date
     end
   end
 
   def other_close_event_date
-    if !active? && decision_issues.empty? && end_product_establishments.any?
-      end_product_establishments.first.last_synced_at
-    end
+    return if active?
+    return unless decision_issues.empty?
+    return unless end_product_establishments.any?
+
+    end_product_establishments.first.last_synced_at
   end
 
   def events
