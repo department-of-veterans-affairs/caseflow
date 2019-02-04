@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190129233723) do
+ActiveRecord::Schema.define(version: 20190204193215) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -917,6 +917,7 @@ ActiveRecord::Schema.define(version: 20190129233723) do
     t.integer "assigned_by_id"
     t.integer "assigned_to_id"
     t.string "assigned_to_type", null: false
+    t.datetime "closed_at"
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true

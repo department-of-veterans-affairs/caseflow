@@ -257,8 +257,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   completedDateColumn = () => {
     return this.props.includeCompletedDate ? {
       header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) => task.completedOn ? <DateString date={task.completedOn} /> : null,
-      getSortValue: (task: TaskWithAppeal) => task.completedOn ? <DateString date={task.completedOn} /> : null
+      valueFunction: (task: TaskWithAppeal) => task.closedAt ? <DateString date={task.closedAt} /> : null,
+      getSortValue: (task: TaskWithAppeal) => task.closedAt ? <DateString date={task.closedAt} /> : null
     } : null;
   }
 

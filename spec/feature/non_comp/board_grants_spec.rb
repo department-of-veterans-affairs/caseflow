@@ -84,7 +84,7 @@ feature "NonComp Board Grant Task Page" do
     expect(page).to have_content(appeal.claimants.first.participant_id)
     in_progress_task.reload
     expect(in_progress_task.status).to eq("completed")
-    expect(in_progress_task.completed_at).to eq(Time.zone.now)
+    expect(in_progress_task.closed_at).to eq(Time.zone.now)
 
     # click on completed task and verify that it is not editable
     click_link veteran.name

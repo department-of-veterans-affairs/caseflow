@@ -77,16 +77,16 @@ class Task < ApplicationRecord
     children.where(type: AttorneyTask.name)
   end
 
-  def self.recently_completed
-    where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+  def self.recently_closed
+    where(status: Constants.TASK_STATUSES.completed, closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
 
   def self.incomplete
     where.not(status: Constants.TASK_STATUSES.completed)
   end
 
-  def self.incomplete_or_recently_completed
-    incomplete.or(recently_completed)
+  def self.incomplete_or_recently_closed
+    incomplete.or(recently_closed)
   end
 
   def self.create_many_from_params(params_array, current_user)

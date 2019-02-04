@@ -97,7 +97,7 @@ describe Distribution do
       subject.distribute!
       expect(subject.valid?).to eq(true)
       expect(subject.status).to eq("completed")
-      expect(subject.completed_at).to eq(Time.zone.now)
+      expect(subject.closed_at).to eq(Time.zone.now)
       expect(subject.statistics["batch_size"]).to eq(15)
       expect(subject.statistics["total_batch_size"]).to eq(45)
       expect(subject.statistics["priority_count"]).to eq(15)
