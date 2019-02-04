@@ -192,17 +192,12 @@ class ClaimReview < DecisionReview
     intake ? intake.user : nil
   end
 
-  def active_end_product_establishment_for_issue(issue)
+  def end_product_establishment_for_issue(issue)
     end_product_establishments
       .where(code: issue.end_product_code)
-      .where.not(synced_status: EndProduct::INACTIVE_STATUSES).first ||
-      new_end_product_establishment(issue.end_product_code)
-  end
-
-  def end_product_establishment_for_issue(issue)
-    end_product_establishments.find_by(
-      code: issue.end_product_code
-    ) || new_end_product_establishment(issue.end_product_code)
+      .where(synced_status: nil)
+      .or(end_product_establishments.where.not(synced_status: EndProduct::INACTIVE_STATUSES))
+      .first || new_end_product_establishment(issue.end_product_code)
   end
 
   def matching_request_issue(contention_id)
