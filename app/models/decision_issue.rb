@@ -141,19 +141,21 @@ class DecisionIssue < ApplicationRecord
     # Checking our assumption that approx_decision_date will always be populated for Decision Issues
     fail "approx_decision_date is required to create a DTA Supplemental Claim" unless approx_decision_date
 
-    SupplementalClaim.create!(
+    sc = SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
       decision_review_remanded: decision_review,
       benefit_type: benefit_type,
       legacy_opt_in_approved: decision_review.legacy_opt_in_approved,
       veteran_is_not_claimant: decision_review.veteran_is_not_claimant,
       receipt_date: approx_decision_date
-    ).tap do |sc|
-      sc.create_claimants!(
-        participant_id: decision_review.claimant_participant_id,
-        payee_code: prior_payee_code
-      )
-    end
+    )
+
+    sc.create_claimants!(
+      participant_id: decision_review.claimant_participant_id,
+      payee_code: prior_payee_code
+    )
+
+    sc
   rescue AppealDTAPayeeCodeError
     # mark SC as failed
     sc.update_error!("No payee code")
