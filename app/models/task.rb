@@ -320,7 +320,7 @@ class Task < ApplicationRecord
   def timeline_details
     {
       title: timeline_title,
-      date: completed_at
+      date: closed_at
     }
   end
 
@@ -390,7 +390,7 @@ class Task < ApplicationRecord
       self.assigned_at = updated_at if assigned?
       self.started_at = updated_at if in_progress?
       self.placed_on_hold_at = updated_at if on_hold?
-      self.completed_at = updated_at if completed?
+      self.closed_at = updated_at if completed?
     end
   end
 end
