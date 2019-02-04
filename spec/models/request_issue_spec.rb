@@ -950,8 +950,11 @@ describe RequestIssue do
         )
       end
 
-      it "does nothing" do
+      before do
         request_issue.processed!
+      end
+
+      it "does nothing" do
         subject
         expect(rating_request_issue.decision_issues.count).to eq(1)
       end
