@@ -63,6 +63,9 @@ export const taskIsNotOnHoldSelector = (tasks: Tasks) =>
 export const workTasksSelector = (tasks: Tasks | Array<Task> | Array<TaskWithAppeal>) =>
   _.filter(tasks, (task) => !task.hideFromQueueTableView);
 
+export const trackingTasksSelector = (tasks: Tasks | Array<Task> | Array<TaskWithAppeal>) =>
+  _.filter(tasks, (task) => task.type === 'TrackVeteranTask');
+
 export const getActiveModalType = createSelector(
   [getModals],
   (modals: { String: boolean }) => _.find(Object.keys(modals), (modalName) => modals[modalName])
@@ -98,7 +101,18 @@ export const workTasksWithAppealSelector = createSelector(
 export const tasksByOrganization = createSelector(
   [tasksWithAppealSelector, getActiveOrganizationId],
   (tasks: Array<TaskWithAppeal>, organizationId: string) =>
-    _.filter(tasks, (task) => (task.assignedTo.id === organizationId))
+    _.filter(tasks, (task) => (
+      task.assignedTo.id === organizationId &&
+      task.assignedTo.isOrganization
+    ))
+);
+
+export const workTasksByOrganization = createSelector(
+  [tasksByOrganization], (tasks: Array<TaskWithAppeal>) => workTasksSelector(tasks)
+);
+
+export const trackingTasksForOrganization = createSelector(
+  [tasksByOrganization], (tasks: Array<TaskWithAppeal>) => trackingTasksSelector(tasks)
 );
 
 export const taskById = createSelector(
@@ -141,19 +155,19 @@ export const getAllTasksForAppeal = createSelector(
 );
 
 export const getUnassignedOrganizationalTasks = createSelector(
-  [workTasksWithAppealSelector],
+  [workTasksByOrganization],
   (tasks: Tasks) => _.filter(tasks, (task) => {
     return (task.status === TASK_STATUSES.assigned || task.status === TASK_STATUSES.in_progress);
   })
 );
 
 export const getAssignedOrganizationalTasks = createSelector(
-  [workTasksWithAppealSelector],
+  [workTasksByOrganization],
   (tasks: Tasks) => _.filter(tasks, (task) => (task.status === TASK_STATUSES.on_hold))
 );
 
 export const getCompletedOrganizationalTasks = createSelector(
-  [workTasksWithAppealSelector],
+  [workTasksByOrganization],
   (tasks: Tasks) => _.filter(tasks, (task) => task.status === TASK_STATUSES.completed)
 );
 

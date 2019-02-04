@@ -27,7 +27,7 @@ FactoryBot.define do
       completed_at Time.zone.now
     end
 
-    factory :root_task do
+    factory :root_task, class: RootTask do
       type RootTask.name
       appeal { create(:appeal) }
       assigned_by { nil }
