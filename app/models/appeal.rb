@@ -163,15 +163,15 @@ class Appeal < DecisionReview
 
   # Optimized version of Appeal.select(&:active?)
   def self.all_active
-    find_by_sql("
+    find_by_sql(["
       SELECT
         distinct(appeals.*)
       FROM appeals
       INNER JOIN tasks
         ON appeals.id = tasks.appeal_id
-      WHERE tasks.type = '#{RootTask.name}'
-        AND tasks.status not in ('#{Constants.TASK_STATUSES.completed}')
-      ORDER BY appeals.id")
+      WHERE tasks.type = ?
+        AND tasks.status not in (?)
+      ORDER BY appeals.id", RootTask.name, Constants.TASK_STATUSES.completed])
   end
 
   def sync_tracking_tasks
