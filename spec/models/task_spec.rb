@@ -327,6 +327,52 @@ describe Task do
     end
   end
 
+  describe ".active?" do
+    let(:status) { nil }
+    let(:task) { FactoryBot.create(:generic_task, status: status) }
+    subject { task.active? }
+
+    context "when status is assigned" do
+      let(:status) { Constants.TASK_STATUSES.assigned }
+
+      it "is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is in_progress" do
+      let(:status) { Constants.TASK_STATUSES.in_progress }
+
+      it "is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is on_hold" do
+      let(:status) { Constants.TASK_STATUSES.on_hold }
+
+      it "is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is completed" do
+      let(:status) { Constants.TASK_STATUSES.completed }
+
+      it "is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when status is cancelled" do
+      let(:status) { Constants.TASK_STATUSES.cancelled }
+
+      it "is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   describe "#actions_available?" do
     let(:user) { create(:user) }
 

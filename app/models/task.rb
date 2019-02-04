@@ -20,7 +20,8 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
     Constants.TASK_STATUSES.on_hold.to_sym => Constants.TASK_STATUSES.on_hold,
-    Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed
+    Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed,
+    Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
   def available_actions(_user)
@@ -29,6 +30,12 @@ class Task < ApplicationRecord
 
   def label
     action
+  end
+
+  # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
+  # properties of the task will not change.
+  def active?
+    ![Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled].include?(status)
   end
 
   # available_actions() returns an array of options from selected by the subclass
