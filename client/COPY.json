@@ -126,6 +126,9 @@
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
 
+  "ALL_CASES_QUEUE_TABLE_TAB_TITLE": "All cases",
+  "ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",
+
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
   "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign Cases",
   "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Review Cases",
@@ -319,6 +322,8 @@
   "JUDGE_ASSIGN_TASK_LABEL": "assign",
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "review",
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "quality review",
+
+  "IHP_TASK_LABEL": "Prepare Informal Hearing Presentation",
 
   "ADDRESS_CHANGE_MAIL_TASK_LABEL": "Change of address",
   "AOD_MOTION_MAIL_TASK_LABEL": "Motion to Advance on Docket",

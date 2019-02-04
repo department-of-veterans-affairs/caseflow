@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.feature "Judge assignment to attorney" do
   let(:judge) { Judge.new(FactoryBot.create(:user, full_name: "Billie Daniel")) }
+  let!(:vacols_user) { FactoryBot.create(:staff, :judge_role, user: judge.user) }
   let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
   let(:attorney_one) { FactoryBot.create(:user, full_name: "Moe Syzlak") }
   let(:attorney_two) { FactoryBot.create(:user, full_name: "Alice Macgyvertwo") }
@@ -10,7 +11,6 @@ RSpec.feature "Judge assignment to attorney" do
   let(:appeal_two) { FactoryBot.create(:appeal) }
 
   before do
-    create(:staff, :judge_role, user: judge.user)
     team_attorneys.each do |attorney|
       create(:staff, :attorney_role, user: attorney)
       OrganizationsUser.add_user_to_organization(attorney, judge_team)
@@ -140,6 +140,22 @@ RSpec.feature "Judge assignment to attorney" do
         expect(page).to have_current_path("/queue/#{judge.user.id}/review")
         expect(page).to have_content("Review 1 Cases")
       end
+    end
+  end
+
+  describe "Assigning a legacy appeal to an attorney from the case details page" do
+    let!(:vacols_case) { FactoryBot.create(:case, staff: vacols_user) }
+    let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
+    let!(:decass) { FactoryBot.create(:decass, defolder: vacols_case.bfkey) }
+
+    it "should allow us to assign a case to an attorney from the case details page" do
+      visit("/queue/appeals/#{appeal.external_id}")
+
+      click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
+      click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
+      click_on("Submit")
+
+      expect(page).to have_content("Assigned 1 case")
     end
   end
 end
