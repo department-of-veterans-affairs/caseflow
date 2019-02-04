@@ -75,6 +75,8 @@ describe('QueueLoadingScreen', () => {
         assignedTo: {
           cssId: 'BVANKUVALIS',
           name: 'name',
+          id: 130,
+          type: 'User',
           // eslint-disable-next-line no-undefined
           isOrganization: undefined
         },
