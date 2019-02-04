@@ -28,6 +28,12 @@ class RootTask < GenericTask
     true
   end
 
+  def close!
+    children.where(type: TrackVeteranTask.name).where.not(status: Constants.TASK_STATUSES.completed)
+      .update_all(status: Constants.TASK_STATUSES.completed)
+    update!(status: Constants.TASK_STATUSES.completed)
+  end
+
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
