@@ -196,7 +196,7 @@ class ClaimReview < DecisionReview
     end_product_establishments
       .where(code: issue.end_product_code)
       .where.not(synced_status: EndProduct::INACTIVE_STATUSES)
-      .or(end_product_establishments.where(synced_status: nil))
+      .or(EndProductEstablishment.where(synced_status: nil))
       .first || new_end_product_establishment(issue.end_product_code)
   end
 
