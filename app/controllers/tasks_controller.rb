@@ -1,3 +1,5 @@
+require "benchmark"
+
 class TasksController < ApplicationController
   include Errors
 
@@ -112,7 +114,12 @@ class TasksController < ApplicationController
   def ready_for_hearing_schedule
     ro = HearingDayMapper.validate_regional_office(params[:ro])
 
-    tasks = ScheduleHearingTask.tasks_for_ro(ro)
+    stopwatch = Benchmark.measure do
+      tasks = ScheduleHearingTask.tasks_for_ro(ro)
+    end
+
+    puts "get tasks: #{stopwatch}"
+
     AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
 
     render json: {
