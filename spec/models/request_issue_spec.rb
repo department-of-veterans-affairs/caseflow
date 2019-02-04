@@ -927,6 +927,7 @@ describe RequestIssue do
       let!(:decision_issue) do
         rating_request_issue.decision_issues.create!(
           participant_id: veteran.participant_id,
+          decision_review: rating_request_issue.review_request,
           benefit_type: review.benefit_type,
           end_product_last_action_date: Time.zone.now
         )

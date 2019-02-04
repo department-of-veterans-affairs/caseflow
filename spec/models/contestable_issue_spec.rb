@@ -21,14 +21,13 @@ describe ContestableIssue do
     )
   end
   let(:profile_date) { Time.zone.today }
+
   let(:decision_issue) do
-    DecisionIssue.new(
-      id: "1",
-      rating_issue_reference_id: "rating1",
-      profile_date: profile_date,
-      description: "this is a good decision",
-      benefit_type: benefit_type
-    )
+    create(:decision_issue,
+           rating_issue_reference_id: "rating1",
+           profile_date: profile_date,
+           description: "this is a good decision",
+           benefit_type: benefit_type)
   end
 
   context ".from_rating_issue" do
