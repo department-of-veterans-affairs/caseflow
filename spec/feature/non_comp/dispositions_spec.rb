@@ -3,7 +3,6 @@ require "rails_helper"
 feature "NonComp Dispositions Task Page" do
   before do
     FeatureToggle.enable!(:decision_reviews)
-    Timecop.freeze(Time.zone.today)
   end
 
   after do
@@ -61,6 +60,7 @@ feature "NonComp Dispositions Task Page" do
 
     let(:business_line_url) { "decision_reviews/nco" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
+    let(:arbitrary_decision_date) { "01/01/2019" }
     before do
       User.stub = user
       OrganizationsUser.add_user_to_organization(user, non_comp_org)
@@ -93,7 +93,7 @@ feature "NonComp Dispositions Task Page" do
       fill_in_disposition(0, "Granted")
       fill_in_disposition(1, "Granted", "test description")
       fill_in_disposition(2, "Denied", "denied")
-      fill_in "decision-date", with: "01/01/2019"
+      fill_in "decision-date", with: arbitrary_decision_date
 
       # save
       expect(page).to have_button("Complete", disabled: false)
@@ -122,7 +122,7 @@ feature "NonComp Dispositions Task Page" do
       find_disabled_disposition(1, "Granted", "test description")
       find_disabled_disposition(2, "Denied", "denied")
       # decision date should be saved
-      expect(page).to have_css("input[value='01/01/2019']")
+      expect(page).to have_css("input[value='#{arbitrary_decision_date}']")
     end
 
     context "when there is an error saving" do
