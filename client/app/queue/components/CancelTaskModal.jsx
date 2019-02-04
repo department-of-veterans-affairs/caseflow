@@ -3,9 +3,7 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { sprintf } from 'sprintf-js';
-
-import COPY from '../../../COPY.json';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import {
   taskById,
@@ -36,10 +34,11 @@ type Props = Params & {|
   onReceiveAmaTasks: typeof onReceiveAmaTasks
 |};
 
-class CompleteTaskModal extends React.Component<Props> {
+class CancelTaskModal extends React.Component<Props> {
   submit = () => {
     const {
-      task
+      task,
+      hearingDay
     } = this.props;
     const payload = {
       data: {
@@ -48,9 +47,13 @@ class CompleteTaskModal extends React.Component<Props> {
         }
       }
     };
+    const hearingScheduleLink = taskActionData(this.props).back_to_hearing_schedule ?
+      <p>
+        <Link href={`/hearings/schedule/assign?roValue=${hearingDay.regionalOffice}`}>Back to Hearing Schedule </Link>
+      </p> : null;
     const successMsg = {
       title: taskActionData(this.props).message_title,
-      detail: taskActionData(this.props).message_detail
+      detail: <span><span>{taskActionData(this.props).message_detail}</span>{hearingScheduleLink}</span>
     };
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
@@ -71,7 +74,8 @@ class CompleteTaskModal extends React.Component<Props> {
 const mapStateToProps = (state: State, ownProps: Params) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   appeal: appealWithDetailSelector(state, ownProps),
-  saveState: state.ui.saveState.savePending
+  saveState: state.ui.saveState.savePending,
+  hearingDay: state.ui.hearingDay
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -81,14 +85,16 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 const propsToText = (props) => {
   const taskData = taskActionData(props);
+  const pathAfterSubmit = (taskData && taskData.redirect_after) || '/queue';
 
   return {
-    title: taskData ? taskData.modal_title : ''
+    title: taskData ? taskData.modal_title : '',
+    pathAfterSubmit
   };
 };
 
 export default (withRouter(
   connect(mapStateToProps, mapDispatchToProps)(editModalBase(
-    CompleteTaskModal, { propsToText }
+    CancelTaskModal, { propsToText }
   ))
 ): React.ComponentType<Params>);

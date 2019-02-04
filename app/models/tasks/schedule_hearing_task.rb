@@ -85,7 +85,11 @@ class ScheduleHearingTask < GenericTask
 
       AppealRepository.update_location!(appeal, location)
     else
-      RootTask.create_evidence_submission_task!(appeal, parent)
+      EvidenceSubmissionWindowTask.create!(
+        appeal: appeal,
+        parent: parent,
+        assigned_to: MailTeam.singleton
+      )
     end
   end
 
@@ -125,8 +129,9 @@ class ScheduleHearingTask < GenericTask
       redirect_after: "/queue/appeals/#{appeal.external_id}",
       modal_title: COPY::WITHDRAW_HEARING_MODAL_TITLE,
       modal_body: COPY::WITHDRAW_HEARING_MODAL_BODY,
-      message_title: COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE,
-      message_detail: COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY
+      message_title: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name),
+      message_detail: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY, appeal.veteran_full_name),
+      back_to_hearing_schedule: true
     }
   end
 
