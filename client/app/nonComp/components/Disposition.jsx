@@ -138,8 +138,11 @@ class NonCompDispositions extends React.PureComponent {
 
     let completeDiv = null;
 
-    const promulgationDate = appeal.decisionIssues.length > 0 ? appeal.decisionIssues[0].promulgationDate : this.state.decisionDate;
-    const decisionDate = task.completed_at ? formatDateStrUtc(promulgationDate) : this.state.decisionDate;
+    let decisionDate = this.state.decisionDate;
+
+    if (appeal.decisionIssues.length > 0) {
+      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].promulgationDate);
+    }
 
     if (!task.completed_at) {
       completeDiv = <React.Fragment>

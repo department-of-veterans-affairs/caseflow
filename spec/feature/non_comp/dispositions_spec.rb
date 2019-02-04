@@ -122,7 +122,7 @@ feature "NonComp Dispositions Task Page" do
       find_disabled_disposition(1, "Granted", "test description")
       find_disabled_disposition(2, "Denied", "denied")
       # decision date should be saved
-      expect(page).to have_content("01/01/2019")
+      expect(page).to have_css("input[value='01/01/2019']")
     end
 
     context "when there is an error saving" do

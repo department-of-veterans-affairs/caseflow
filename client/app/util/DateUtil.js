@@ -27,12 +27,9 @@ export const formatDate = function(dateString) {
   return `${month}/${day}/${year}`;
 };
 
-export const formatDateStrUtc = (dateString, expectedFormat = dateFormatString) => {
-  return formatDateStr(dateString, null, expectedFormat, true);
-};
-
 // Date format YYYY-MM-DD
-export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString, utc = false) => {
+export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD',
+  expectedFormat = dateFormatString, utc = false) => {
   if (!dateString) {
     return;
   }
@@ -55,6 +52,10 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
   }
 
   return date.format(expectedFormat);
+};
+
+export const formatDateStrUtc = (dateString, expectedFormat = dateFormatString) => {
+  return formatDateStr(dateString, null, expectedFormat, true);
 };
 
 export const formatArrayOfDateStrings = function(arrayOfDateStrings) {
