@@ -29,7 +29,7 @@ class Docket
   end
 
   def age_of_n_oldest_priority_appeals(num)
-    appeals(priority: true, ready: true).limit(n).map(&:ready_for_distribution_at)
+    appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
   end
 
   # CMGTODO: unique index on distributed_cases.case_id to prevent distributing the same appeal twice
