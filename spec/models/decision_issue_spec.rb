@@ -1,4 +1,9 @@
+require "rails_helper"
+require "support/intake_helpers"
+
 describe DecisionIssue do
+  include IntakeHelpers
+
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
   end
@@ -211,36 +216,9 @@ describe DecisionIssue do
         let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
 
         context "when there is a prior claim by the same cliamant on the same veteran" do
-          let!(:prior_supplemental_claim) do
-            create(
-              :supplemental_claim,
-              veteran_file_number: decision_review.veteran_file_number,
-              decision_review_remanded: decision_review,
-              benefit_type: "insurance"
-            )
-          end
-
-          let(:prior_sc_claimant) do
-            create(:claimant,
-                   review_request: prior_supplemental_claim,
-                   participant_id: decision_review.claimants.first.participant_id,
-                   payee_code: decision_review.claimants.first.payee_code)
-          end
-
           let(:prior_payee_code) { "10" }
-
-          # create ep for prior sc
-          let!(:sc_end_product) do
-            Generators::EndProduct.build(
-              veteran_file_number: veteran.file_number,
-              bgs_attrs: {
-                benefit_claim_id: "claim_id",
-                claimant_first_name: prior_sc_claimant.first_name,
-                claimant_last_name: prior_sc_claimant.last_name,
-                payee_type_code: prior_payee_code,
-                claim_date: 5.days.ago
-              }
-            )
+          before do
+            setup_prior_claim_with_payee_code(decision_review, veteran, prior_payee_code)
           end
 
           it "creates a new supplemental claim" do
