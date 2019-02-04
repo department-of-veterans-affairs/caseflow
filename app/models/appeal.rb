@@ -358,7 +358,7 @@ class Appeal < DecisionReview
   end
 
   def fetch_post_decision_status
-    if !remanded_issues? && decision_document&.end_product_establishments&.any? && !active_ep?
+    if !remanded_issues? && effectuation_ep? && !active_ep?
       :bva_decision_effectuation
     elsif remanded_sc_with_ep && !remanded_sc_with_ep.active?
       :post_bva_dta_decision
@@ -423,6 +423,49 @@ class Appeal < DecisionReview
     else
       "multiple"
     end
+  end
+
+  def first_distributed_to_judge_date
+    judgeTasks = task.select { |t| t.is_a(JudgeTask) }
+    return unless judgeTasks
+
+    judgeTasks.order(created_at: :asc).first.created_at
+  end
+
+  def decision_date_event
+    return unless decision_issues.any?
+    return if remanded_issues?
+
+    decision_issues.first.approx_decision_date
+  end
+
+  def decision_date_with_remand_event
+    return unless decision_issue.any?
+    return unless remanded_issues?
+
+  def decision_issues.first.approx_decision_date
+    return unless decision_issues.any?
+    return if remanded_issues
+    return unless 
+  end
+
+  def effectuation_ep?
+    decision_document&.end_product_establishments&.any?
+  end
+
+  def decision_effectionation_date
+    return if remanded_issues?
+    return unless effectuation_ep
+    return if active_ep?
+
+    decision_document.end_product_establishments.first.last_synced_at
+  end
+
+  def dta_decision_date
+    return unless remanded_sc_with_ep
+    return if remanded_sc_with_ep.active?
+
+    remanded_sc_with_ep.decision_date_event
   end
 
   private
