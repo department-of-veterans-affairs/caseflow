@@ -113,7 +113,9 @@ describe DecisionDocument do
       before { end_product_establishment.update!(synced_status: "CLR") }
       it "submits the effectuation for processing and enqueues DecisionIssueSyncJob" do
         subject
-        expect(board_grant_effectuation.reload).to be_submitted
+        board_grant_effectuation.reload
+        expect(board_grant_effectuation.decision_sync_submitted_at).to_not be_nil
+        expect(board_grant_effectuation).to_not be_submitted # because we set delay
         expect(DecisionIssueSyncJob).to have_been_enqueued.with(board_grant_effectuation)
       end
     end
@@ -123,6 +125,7 @@ describe DecisionDocument do
     subject { decision_document.process! }
 
     before do
+      allow(decision_document).to receive(:submitted?).and_return(true)
       allow(VBMSService).to receive(:upload_document_to_vbms).and_call_original
       allow(VBMSService).to receive(:establish_claim!).and_call_original
       allow(VBMSService).to receive(:create_contentions!).and_call_original

@@ -41,6 +41,8 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  class NotYetSubmitted < StandardError; end
+
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
   END_PRODUCT_CODES = {
@@ -319,7 +321,7 @@ class RequestIssue < ApplicationRecord
   def sync_decision_issues!
     return if processed?
 
-    fail "Not yet submitted" unless submitted?
+    fail NotYetSubmitted unless submitted?
 
     attempted!
 
