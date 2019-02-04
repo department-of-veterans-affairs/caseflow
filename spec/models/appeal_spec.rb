@@ -1,4 +1,9 @@
+require "rails_helper"
+require "support/intake_helpers"
+
 describe Appeal do
+  include IntakeHelpers
+
   let!(:appeal) { create(:appeal) }
 
   context "priority and non-priority appeals" do
@@ -55,6 +60,11 @@ describe Appeal do
   end
 
   context "#create_remand_supplemental_claims!" do
+    let(:veteran) { create(:veteran) }
+    let(:appeal) do
+      create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number)
+    end
+
     subject { appeal.create_remand_supplemental_claims! }
 
     let!(:remanded_decision_issue) do
@@ -75,10 +85,13 @@ describe Appeal do
 
     let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
 
+    let!(:prior_sc_with_payee_code) { setup_prior_claim_with_payee_code(appeal, veteran) }
+
     it "creates supplemental claim, request issues, and starts processing" do
       subject
 
       remanded_supplemental_claims = SupplementalClaim.where(decision_review_remanded: appeal)
+        .where.not(id: prior_sc_with_payee_code.id)
 
       expect(remanded_supplemental_claims.count).to eq(2)
 
