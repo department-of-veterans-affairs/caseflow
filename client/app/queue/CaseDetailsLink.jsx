@@ -25,12 +25,7 @@ class CaseDetailsLink extends React.PureComponent {
         }
       };
 
-      ApiUtil.patch(`/tasks/${task.taskId}`, payload).
-        then((resp) => {
-          const response = JSON.parse(resp.text);
-
-          this.props.onReceiveAmaTasks(response.tasks.data);
-        });
+      ApiUtil.patch(`/tasks/${task.taskId}`, payload);
     }
 
     return this.props.onClick ? this.props.onClick(arguments) : true;

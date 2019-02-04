@@ -35,7 +35,7 @@ describe ScheduleHearingTask do
       }
     end
 
-    subject { ScheduleHearingTask.create_if_eligible(appeal) }
+    subject { ScheduleHearingTask.find_or_create_if_eligible(appeal) }
 
     it "should create a task of type ScheduleHearingTask" do
       expect(subject.type).to eq(ScheduleHearingTask.name)
