@@ -161,6 +161,40 @@ class Appeal < DecisionReview
     tasks.where(type: RootTask.name).where.not(status: Constants.TASK_STATUSES.completed).any?
   end
 
+  # Optimized version of Appeal.select(&:active?)
+  def self.all_active
+    find_by_sql("
+      SELECT
+        distinct(appeals.*)
+      FROM appeals
+      INNER JOIN tasks
+        ON appeals.id = tasks.appeal_id
+      WHERE tasks.type = '#{RootTask.name}'
+        AND tasks.status not in ('#{Constants.TASK_STATUSES.completed}')
+      ORDER BY appeals.id")
+  end
+
+  def sync_tracking_tasks
+    # Check if there are existing tracking tasks.
+    active_tracking_tasks = tasks.where(type: TrackVeteranTask.name)
+      .where.not(status: Constants.TASK_STATUSES.completed)
+
+    cached_vsos = active_tracking_tasks.map(&:assigned_to)
+    fresh_vsos = vsos
+
+    # Create a TrackVeteranTask for each VSO that does not already have one.
+    new_vsos = fresh_vsos - cached_vsos
+    new_vsos.each do |new_vso|
+      TrackVeteranTask.create!(appeal: self, parent: parent, assigned_to: new_vso)
+    end
+
+    # Close all TrackVeteranTasks for VSOs that are no
+    outdated_vsos = cached_vsos - fresh_vsos
+    active_tracking_tasks.select { |t| outdated_vsos.include?(t.assigned_to) }.each do |task|
+      task.update!(status: Constants.TASK_STATUSES.completed)
+    end
+  end
+
   def veteran_name
     # For consistency with LegacyAppeal.veteran_name
     veteran&.name&.formatted(:form)
