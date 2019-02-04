@@ -24,6 +24,41 @@ class TablePagination extends React.PureComponent {
       currentPage
     } = this.props;
     const numberOfPages = paginatedData.length;
+    const pageButtons;
+    const blankPageButton = <button disabled>...</button>;
+
+    if (numberOfPages > 5) {
+      if (currentPage < 2) {
+        const indexOfLastPage = numberOfPages - 1;
+
+        pageButtons = [...Array(4)].map((number, index) => 
+          <button
+            key={index}
+            onClick={(event) => this.handleClick(event, index)}
+            className={currentPage === index ? 'cf-current-page' : ''}>
+            {index + 1}
+          </button>
+        );
+        pageButtons.concat(blankPageButton);
+        pageButtons.concat(
+          <button
+            key={indexOfLastPage}
+            onClick={(event) = this.handleClick(event, indexOfLastPage)}
+            className={currentPage === indexOfLastPage ? 'cf-current-page' : ''}>
+            {indexOfLastPage}
+          </button>
+        );
+      }
+    } else {
+      pageButtons = [...Array(numberOfPages)].map((number, index) =>
+        <button
+          key={index}
+          onClick={(event) => this.handleClick(event, index)}
+          className={currentPage === index ? 'cf-current-page' : ''}>
+          {index + 1}
+        </button>
+      );
+    }
 
     return (
       <div>
@@ -40,14 +75,7 @@ class TablePagination extends React.PureComponent {
             onClick={this.handlePrevious}>
             Previous
           </button>
-          {[...Array(numberOfPages)].map((number, index) =>
-            <button
-              key={index}
-              onClick={(event) => this.handleClick(event, index)}
-              className={currentPage === index ? 'cf-current-page' : ''}>
-              {index + 1}
-            </button>
-          )}
+          {pageButtons}
           <button
             disabled={currentPage === (numberOfPages - 1)}
             onClick={this.handleNext}>
