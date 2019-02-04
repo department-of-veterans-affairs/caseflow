@@ -496,7 +496,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
       expect(json["data"][2]["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"][2]["attributes"]["docket"]).to be_nil
-      expect(json["data"][2]["attributes"]["status"]).to be_nil
+      expect(json["data"][2]["attributes"]["status"]["type"]).to eq("on_docket")
       expect(json["data"][2]["attributes"]["issues"].length).to eq(0)
 
       FeatureToggle.disable!(:api_appeal_status_v3)
