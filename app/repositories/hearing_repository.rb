@@ -106,7 +106,8 @@ class HearingRepository
     end
 
     def create_child_co_hearing(hearing_date_str, appeal, hearing_location_attrs: nil)
-      hearing_day = HearingDay.find_by(request_type: "C", scheduled_for: hearing_date_str.to_date)
+      hearing_day = HearingDay.find_by(request_type: HearingDay::REQUEST_TYPES[:central],
+                                       scheduled_for: hearing_date_str.to_date)
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
