@@ -319,6 +319,8 @@ class RequestIssue < ApplicationRecord
   def sync_decision_issues!
     return if processed?
 
+    fail "Not yet submitted" unless submitted?
+
     attempted!
 
     transaction do
