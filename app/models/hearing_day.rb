@@ -82,7 +82,11 @@ class HearingDay < ApplicationRecord
                       else
                         Time.zone.parse(scheduled_for).to_datetime
                       end
-      comparison_date = (hearing_hash[:request_type] == "C") ? CASEFLOW_CO_PARENT_DATE : CASEFLOW_V_PARENT_DATE
+      comparison_date = if hearing_hash[:request_type] == REQUEST_TYPES[:central]
+                          CASEFLOW_CO_PARENT_DATE
+                        else
+                          CASEFLOW_V_PARENT_DATE
+                        end
       if scheduled_for > comparison_date
         hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
         create(hearing_hash).to_hash

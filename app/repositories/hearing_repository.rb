@@ -96,7 +96,7 @@ class HearingRepository
         offset: scheduled_time["offset"]
       )
 
-      if (hearing_type || hearing_day_hash[:request_type]) == "C"
+      if (hearing_type || hearing_day_hash[:request_type]) == HearingDay::REQUEST_TYPES[:central]
         create_child_co_hearing(hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs)
       else
         create_child_video_hearing(
@@ -140,7 +140,7 @@ class HearingRepository
         folder_nr: appeal.vacols_id,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
         vdkey: hearing.hearing_pkseq,
-        hearing_type: "V",
+        hearing_type: HearingDay::REQUEST_TYPES[:video],
         room: hearing.room,
         board_member: hearing.board_member,
         vdbvapoc: hearing.vdbvapoc

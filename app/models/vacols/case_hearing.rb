@@ -122,7 +122,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
                            adduser: current_user_slogid,
                            folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil,
-                           hearing_type: "C"))
+                           hearing_type: HearingDay::REQUEST_TYPES[:central]))
       end
     end
 
