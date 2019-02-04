@@ -7,6 +7,11 @@ class RootTask < GenericTask
 
   def when_child_task_completed; end
 
+  def update_children_status
+    children.where(type: TrackVeteranTask.name).where.not(status: Constants.TASK_STATUSES.completed)
+      .update_all(status: Constants.TASK_STATUSES.completed)
+  end
+
   def hide_from_task_snapshot
     true
   end
@@ -26,12 +31,6 @@ class RootTask < GenericTask
 
   def actions_available?(_user)
     true
-  end
-
-  def close!
-    children.where(type: TrackVeteranTask.name).where.not(status: Constants.TASK_STATUSES.completed)
-      .update_all(status: Constants.TASK_STATUSES.completed)
-    update!(status: Constants.TASK_STATUSES.completed)
   end
 
   class << self

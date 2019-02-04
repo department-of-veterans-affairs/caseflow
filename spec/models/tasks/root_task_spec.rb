@@ -188,11 +188,11 @@ describe RootTask do
     end
   end
 
-  describe ".close" do
+  describe ".update_children_status" do
     let!(:root_task) { FactoryBot.create(:root_task) }
     let!(:appeal) { root_task.appeal }
 
-    subject { root_task.close! }
+    subject { root_task.update_children_status }
 
     context "when there are multiple children tasks" do
       let!(:generic_task) { FactoryBot.create(:generic_task, appeal: appeal, parent: root_task) }
