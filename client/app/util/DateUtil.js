@@ -29,7 +29,7 @@ export const formatDate = function(dateString) {
 
 // Date format YYYY-MM-DD
 export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD',
-  expectedFormat = dateFormatString, utc = false) => {
+  expectedFormat = dateFormatString, forceUtc = false) => {
   if (!dateString) {
     return;
   }
@@ -47,7 +47,7 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD',
 
   let date = moment(dateString, dateStringFormat);
 
-  if (utc) {
+  if (forceUtc) {
     date = date.utc();
   }
 
