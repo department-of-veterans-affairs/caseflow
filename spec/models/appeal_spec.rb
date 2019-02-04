@@ -481,39 +481,92 @@ describe Appeal do
     end
 
     context "creating translation tasks" do
-      let(:bgs_veteran_record) { nil }
+      let(:bgs_veteran_state) { nil }
+      let(:bgs_veteran_record) { { state: bgs_veteran_state } }
+      let(:validated_veteran_state) { nil }
+      let(:mock_va_dot_gov_address) { { state_code: validated_veteran_state } }
       let(:veteran) { FactoryBot.create(:veteran, bgs_veteran_record: bgs_veteran_record) }
       let(:appeal) { FactoryBot.create(:appeal, veteran: veteran) }
 
-      context "the veteran's RO is in Puerto Rico or Philippines" do
-        context "in Puerto Rico" do
-          let(:bgs_veteran_record) { { state: "PR" } }
-
-          it "creates a translation task" do
-            expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
-
-            subject
-          end
+      context "VADotGovService is responsive" do
+        before do
+          allow(VADotGovService).to receive(:validate_address).and_return(mock_va_dot_gov_address)
         end
 
-        context "in Philippines" do
-          let(:bgs_veteran_record) { { state: "PI" } }
+        context "the service returns a state code" do
+          context "the state code is PR or PI" do
+            let(:validated_veteran_state) { "PR" }
 
-          it "creates a translation task" do
-            expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+            it "creates a translation task" do
+              expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
 
-            subject
+              subject
+            end
+
+            context "the bgs veteran record has a different state code" do
+              let(:validated_veteran_state) { "PI" }
+              let(:bgs_veteran_state) { "NV" }
+
+              it "prefers the service state code and creates a translation task" do
+                expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+
+                subject
+              end
+            end
+          end
+
+          context "the state code is not PR or PI" do
+            let(:validated_veteran_state) { "NV" }
+
+            it "doesn't create a translation task" do
+              expect(TranslationTask).to_not receive(:create_from_root_task)
+
+              subject
+            end
           end
         end
       end
 
-      context "the veteran's RO is not in either Puerto Rico or Philippines" do
-        let(:bgs_veteran_record) { { state: "NV" } }
+      context "the VADotGovService is not responsive" do
+        let(:message) { { "messages" => [{ "key" => "AddressCouldNotBeFound" }] } }
+        let(:error) { Caseflow::Error::VaDotGovServerError.new(code: "500", message: message) }
 
-        it "doesn't create a translation task" do
-          expect(TranslationTask).to_not receive(:create_from_root_task)
+        before do
+          allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+        end
 
-          subject
+        it "fails silently" do
+          expect { subject }.to_not raise_error
+        end
+
+        context "the bgs veteran record has no state code" do
+          it "doesn't create a translation task" do
+            expect(TranslationTask).to_not receive(:create_from_root_task)
+
+            subject
+          end
+        end
+
+        context "the bgs veteran record has a state code" do
+          context "the state code is PR or PI" do
+            let(:bgs_veteran_state) { "PI" }
+
+            it "creates a translation task" do
+              expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+
+              subject
+            end
+          end
+
+          context "the state code is not PR or PI" do
+            let(:bgs_veteran_state) { "NV" }
+
+            it "doesn't create a translation task" do
+              expect(TranslationTask).to_not receive(:create_from_root_task)
+
+              subject
+            end
+          end
         end
       end
     end
