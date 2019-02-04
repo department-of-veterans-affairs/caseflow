@@ -37,7 +37,7 @@ const connectedIssueDiv = css({
   marginBottom: '10px'
 });
 
-const connectedIssueParagraphStyle = css({ marginTop: '0px !important' });
+const paragraphH3SiblingStyle = css({ marginTop: '0px !important' });
 
 const exampleDiv = css({
   color: COLORS.GREY,
@@ -306,7 +306,7 @@ class SelectDispositionsView extends React.PureComponent {
         {!editingExistingIssue &&
           <React.Fragment>
             <h3>{COPY.DECISION_ISSUE_MODAL_TITLE}</h3>
-            <p {...connectedIssueParagraphStyle}>{COPY.DECISION_ISSUE_MODAL_SUB_TITLE}</p>
+            <p {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_SUB_TITLE}</p>
           </React.Fragment>
         }
 
@@ -375,7 +375,7 @@ class SelectDispositionsView extends React.PureComponent {
           })}
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
-        <p {...exampleDiv} {...connectedIssueParagraphStyle}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
+        <p {...exampleDiv} {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE}</h3>
         <SearchableDropdown
           name="Issues"
