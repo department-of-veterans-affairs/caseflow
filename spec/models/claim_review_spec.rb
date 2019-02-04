@@ -310,6 +310,24 @@ describe ClaimReview do
         end
       end
     end
+
+    context "when there is a canceled end product establishment" do
+      let!(:canceled_epe) do
+        create(:end_product_establishment,
+               :canceled,
+               code: rating_request_issue.end_product_code,
+               source: claim_review,
+               veteran_file_number: claim_review.veteran.file_number)
+      end
+
+      let(:issues) { [non_rating_request_issue, rating_request_issue] }
+
+      it "does not attempt to re-use the canceled EPE" do
+        subject
+
+        expect(claim_review.reload.end_product_establishments.count).to eq(3)
+      end
+    end
   end
 
   context "#establish!" do
@@ -606,32 +624,6 @@ describe ClaimReview do
             )
           end
         end
-      end
-    end
-
-    context "when there is a canceled end product establishment" do
-      let!(:canceled_epe) do
-        create(:end_product_establishment,
-               :canceled,
-               code: rating_request_issue.end_product_code,
-               source: claim_review,
-               veteran_file_number: claim_review.veteran.file_number)
-      end
-
-      let(:issues) { [non_rating_request_issue, rating_request_issue] }
-
-      it "does not attempt to re-use the canceled EPE" do
-        subject
-
-        expect(claim_review.end_product_establishments.count).to eq(3)
-
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).once.with(
-          hash_including(claim_hash: hash_including(end_product_code: "030HLRR"))
-        )
-
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).once.with(
-          hash_including(claim_hash: hash_including(end_product_code: "030HLRNR"))
-        )
       end
     end
 
