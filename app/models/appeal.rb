@@ -430,11 +430,11 @@ class Appeal < DecisionReview
   private
 
   def maybe_create_translation_task
-    state_code = veteran&.state
+    veteran_state_code = veteran&.state
     va_dot_gov_address = veteran.validate_address
-    state_code = va_dot_gov_address&.dig(:address, :stateProvince, :code)
+    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
   rescue Caseflow::Error::VaDotGovAPIError
-    state_code = veteran&.state
+    state_code = veteran_state_code
   ensure
     TranslationTask.create_from_root_task(root_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
   end
