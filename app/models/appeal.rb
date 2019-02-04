@@ -425,6 +425,39 @@ class Appeal < DecisionReview
     end
   end
 
+  def docket_hash
+    return if active_status?
+    return if location == "aoj"
+
+    {
+      type: fetch_docket_type,
+      month: Date.parse(receipt_date.to_s).change(day: 1),
+      switchDueDate: docket_switch_deadline,
+      eligibleToSwitch: eligible_to_switch_dockets?
+    }
+  end
+
+  def fetch_docket_type
+    "new_evidence" if evidence_submission_docket?
+
+    docket_name
+  end
+
+  def docket_switch_deadline
+    deadline_from_receipt = receipt_date + 60.days
+
+    # will need to be updated to ignore closed request issues when that is available
+    oldest_request_issue = request_issues.min_by(&:decision_or_promulgation_date)
+    deadline_from_oldest_request_issue = oldest_request_issue.decision_or_promulgation_date + 365.days
+
+    [deadline_from_receipt, deadline_from_oldest_request_issue].max
+  end
+
+  def eligible_to_switch_dockets?
+    # false if hearing already taken place, to be implemented
+    docket_switch_deadline < Time.zone.today
+  end
+
   private
 
   def create_business_line_tasks

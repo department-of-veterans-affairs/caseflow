@@ -386,6 +386,11 @@ class RequestIssue < ApplicationRecord
     !benefit_type_requires_payee_code?
   end
 
+  def decision_or_promulgation_date
+    return decision_date if nonrating?
+    return contested_rating_issue.try(:promulgation_date) if rating?
+  end
+
   private
 
   # The contested_rating_issue_profile_date is used as an identifier to retrieve the
@@ -511,11 +516,6 @@ class RequestIssue < ApplicationRecord
     rating_with_issue ||= { issues: [] }
 
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
-  end
-
-  def decision_or_promulgation_date
-    return decision_date if nonrating?
-    return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
