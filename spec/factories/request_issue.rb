@@ -67,13 +67,13 @@ FactoryBot.define do
       decision_issues []
     end
 
-    after(:create) do |request_issue, evaluator|
+    after(:create) do |ri, evaluator|
       if evaluator.decision_issues.present?
         evaluator.decision_issues.each do |di|
-          di.decision_review = create(request_issue.review_request_type.underscore.to_sym)
+          di.decision_review = ri.review_request || create(ri.review_request_type.underscore.to_sym)
         end
-        request_issue.decision_issues << evaluator.decision_issues
-        request_issue.save
+        ri.decision_issues << evaluator.decision_issues
+        ri.save
       end
     end
   end
