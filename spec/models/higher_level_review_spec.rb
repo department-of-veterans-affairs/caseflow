@@ -373,10 +373,10 @@ describe HigherLevelReview do
       it "has a request event and a decision event" do
         events = hlr.events
         request_event = events.find { |e| e.type == :hlr_request }
-        expect(request_event.date).to eq(receipt_date)
+        expect(request_event.date.to_date).to eq(receipt_date.to_date)
 
         decision_event = events.find { |e| e.type == :hlr_decision }
-        expect(decision_event.date).to eq(promulgation_date)
+        expect(decision_event.date.to_date).to eq(promulgation_date.to_date)
       end
     end
 
@@ -399,10 +399,10 @@ describe HigherLevelReview do
       it "has a request and closed event" do
         events = hlr.events
         request_event = events.find { |e| e.type == :hlr_request }
-        expect(request_event.date).to eq(receipt_date)
+        expect(request_event.date.to_date).to eq(receipt_date.to_date)
 
         closed_event = events.find { |e| e.type == :hlr_other_close }
-        expect(closed_event.date).to eq(last_synced_at)
+        expect(closed_event.date.to_date).to eq(last_synced_at.to_date)
       end
     end
 
@@ -453,13 +453,13 @@ describe HigherLevelReview do
       it "has a request event, hlr_dta_error event and dta_decision event" do
         events = hlr_with_dta_error.events
         request_event = events.find { |e| e.type == :hlr_request }
-        expect(request_event.date).to eq(receipt_date)
+        expect(request_event.date.to_date).to eq(receipt_date.to_date)
 
         hlr_dta_error_event = events.find { |e| e.type == :hlr_dta_error }
-        expect(hlr_dta_error_event.date).to eq(hlr_ep_clr_date)
+        expect(hlr_dta_error_event.date.to_date).to eq(hlr_ep_clr_date.to_date)
 
         dta_decision_event = events.find { |e| e.type == :dtaDecision }
-        expect(dta_decision_event.date).to eq(promulgation_date)
+        expect(dta_decision_event.date.to_date).to eq(promulgation_date.to_date)
       end
     end
   end
