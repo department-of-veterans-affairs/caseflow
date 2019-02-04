@@ -153,10 +153,10 @@ class DecisionIssue < ApplicationRecord
         participant_id: decision_review.claimant_participant_id,
         payee_code: prior_payee_code
       )
-    rescue AppealDTAPayeeCodeError
-      # mark SC as failed
-      sc.update_error!("No payee code")
-      raise
     end
+  rescue AppealDTAPayeeCodeError
+    # mark SC as failed
+    sc.update_error!("No payee code")
+    raise
   end
 end
