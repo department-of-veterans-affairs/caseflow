@@ -11,6 +11,7 @@ import FilterIcon from './FilterIcon';
 import DropdownFilter from './DropdownFilter';
 import ListItemPicker from './ListItemPicker';
 import ListItemPickerCheckbox from './ListItemPickerCheckbox';
+import TablePagination from './TablePagination';
 
 /**
  * This component can be used to easily build tables.
@@ -191,7 +192,8 @@ export default class Table extends React.PureComponent {
     const { defaultSort } = this.props;
     const state = {
       sortAscending: true,
-      sortColIdx: null
+      sortColIdx: null,
+      currentPage: 0
     };
 
     if (defaultSort) {
@@ -222,6 +224,29 @@ export default class Table extends React.PureComponent {
     );
   }
 
+  paginateData = (tableData) => {
+    const duplicateTableData = tableData.slice(0);
+    let paginatedData = [];
+    const numberOfPages = (duplicateTableData.length / 15) + (duplicateTableData.length % 15 > 0 ? 1 : 0);
+
+    _.times(numberOfPages, () => {
+      let pageOfData = [];
+
+      while (pageOfData.length < 15 && duplicateTableData.length > 0) {
+        pageOfData = pageOfData.concat(duplicateTableData[0]);
+        duplicateTableData.splice(0, 1);
+      }
+
+      paginatedData.push(pageOfData);
+    });
+
+    return paginatedData;
+  }
+
+  updateCurrentPage = (newPage) => {
+    this.setState({ currentPage: newPage });
+  }
+
   render() {
     let {
       columns,
@@ -239,6 +264,7 @@ export default class Table extends React.PureComponent {
       bodyStyling
     } = this.props;
     const rowObjects = this.sortRowObjects();
+    const paginatedData = this.paginateData(rowObjects);
 
     let keyGetter = getKeyForRow;
 
@@ -250,34 +276,40 @@ export default class Table extends React.PureComponent {
       }
     }
 
-    return <table
-      id={id}
-      className={`usa-table-borderless ${this.props.className}`}
-      summary={summary}
-      {...styling} >
+    return <div>
+      <table
+        id={id}
+        className={`usa-table-borderless ${this.props.className}`}
+        summary={summary}
+        {...styling} >
 
-      { caption && <caption className="usa-sr-only">{ caption }</caption> }
+        { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
-      <HeaderRow
-        columns={columns}
-        headerClassName={headerClassName}
-        setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
-          sortColIdx: colIdx,
-          sortAscending: ascending
-        })}
-        {...this.state} />
-      <BodyRows
-        id={tbodyId}
-        tbodyRef={tbodyRef}
-        columns={columns}
-        getKeyForRow={keyGetter}
-        rowObjects={rowObjects}
-        bodyClassName={bodyClassName}
-        rowClassNames={rowClassNames}
-        bodyStyling={bodyStyling}
-        {...this.state} />
-      <FooterRow columns={columns} />
-    </table>;
+        <HeaderRow
+          columns={columns}
+          headerClassName={headerClassName}
+          setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
+            sortColIdx: colIdx,
+            sortAscending: ascending
+          })}
+          {...this.state} />
+        <BodyRows
+          id={tbodyId}
+          tbodyRef={tbodyRef}
+          columns={columns}
+          getKeyForRow={keyGetter}
+          rowObjects={rowObjects}
+          bodyClassName={bodyClassName}
+          rowClassNames={rowClassNames}
+          bodyStyling={bodyStyling}
+          {...this.state} />
+        <FooterRow columns={columns} />
+      </table>
+      <TablePagination
+        paginatedData={paginatedData}
+        currentPage={this.state.currentPage}
+        updatePage={(newPage) => this.updateCurrentPage(newPage)} />
+    </div>;
   }
 }
 

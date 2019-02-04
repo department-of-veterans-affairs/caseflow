@@ -797,7 +797,9 @@ class SeedDB
     create_task_at_judge_assignment(@ama_appeals[9], judge)
     create_task_at_judge_review(@ama_appeals[10], judge, attorney)
     create_task_at_colocated(@ama_appeals[11], judge, attorney, colocated)
-
+    100.times do
+      create_task_at_attorney_review(FactoryBot.create(:appeal), judge, attorney)
+    end
     9.times do
       appeal = FactoryBot.create(:appeal)
       create_task_at_judge_assignment(appeal, judge, Time.zone.today)
