@@ -88,6 +88,71 @@ describe ScheduleHearingTask do
         expect(Hearing.first.appeal).to eq(appeal)
       end
     end
+
+    context "when canceled" do
+      let(:update_params) do
+        {
+          status: "canceled"
+        }
+      end
+
+      context "for legacy appeal" do
+        let(:vacols_case) { create(:case) }
+        let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+        let(:schedule_hearing_task) do
+          ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user)
+        end
+
+        context "with no VSO" do
+          it "completes the task and updates the location to case storage" do
+            schedule_hearing_task.update_from_params(update_params, hearings_user)
+
+            expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
+            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
+          end
+        end
+
+        context "with VSO" do
+          let(:participant_id) { "1234" }
+          let!(:vso) { create(:vso, name: "test", participant_id: participant_id) }
+
+          before do
+            allow(BGSService).to receive(:power_of_attorney_records).and_return(
+              appeal.veteran_file_number => {
+                file_number: appeal.veteran_file_number,
+                power_of_attorney: {
+                  legacy_poa_cd: "3QQ",
+                  nm: "Clarence Darrow",
+                  org_type_nm: "POA Attorney",
+                  ptcpnt_id: participant_id
+                }
+              }
+            )
+          end
+
+          it "completes the task and updates the location to service organization" do
+            schedule_hearing_task.update_from_params(update_params, hearings_user)
+
+            expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
+            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:service_organization])
+          end
+        end
+      end
+
+      context "AMA appeal" do
+        let(:appeal) { create(:appeal) }
+        let(:schedule_hearing_task) do
+          ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user)
+        end
+
+        it "completes the task and creates an EvidenceSubmissionWindowTask" do
+          schedule_hearing_task.update_from_params(update_params, hearings_user)
+
+          expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
+          expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
+        end
+      end
+    end
   end
 
   context ".tasks_for_ro" do

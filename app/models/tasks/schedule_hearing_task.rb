@@ -75,24 +75,6 @@ class ScheduleHearingTask < GenericTask
     super(params, current_user)
   end
 
-  def withdraw_hearing
-    if appeal.is_a?(LegacyAppeal)
-      location = if appeal.vsos.empty?
-                   LegacyAppeal::LOCATION_CODES[:case_storage]
-                 else
-                   LegacyAppeal::LOCATION_CODES[:service_organization]
-                 end
-
-      AppealRepository.update_location!(appeal, location)
-    else
-      EvidenceSubmissionWindowTask.create!(
-        appeal: appeal,
-        parent: parent,
-        assigned_to: MailTeam.singleton
-      )
-    end
-  end
-
   def location_based_on_hearing_type(hearing_type)
     if hearing_type == LegacyHearing::CO_HEARING
       LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing]
@@ -136,6 +118,24 @@ class ScheduleHearingTask < GenericTask
   end
 
   private
+
+  def withdraw_hearing
+    if appeal.is_a?(LegacyAppeal)
+      location = if appeal.vsos.empty?
+                   LegacyAppeal::LOCATION_CODES[:case_storage]
+                 else
+                   LegacyAppeal::LOCATION_CODES[:service_organization]
+                 end
+
+      AppealRepository.update_location!(appeal, location)
+    else
+      EvidenceSubmissionWindowTask.create!(
+        appeal: appeal,
+        parent: parent,
+        assigned_to: MailTeam.singleton
+      )
+    end
+  end
 
   def slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
     HearingRepository.slot_new_hearing(hearing_day_id,
