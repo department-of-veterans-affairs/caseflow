@@ -30,6 +30,7 @@ type Params = {|
 type Props = Params & {|
   saveState: boolean,
   history: Object,
+  hearingDay: Object,
   requestPatch: typeof requestPatch,
   onReceiveAmaTasks: typeof onReceiveAmaTasks
 |};
