@@ -162,6 +162,8 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         isOrganization: task.attributes.assigned_to.is_organization,
+        id: task.attributes.assigned_to.id,
+        type: task.attributes.assigned_to.type,
         name: task.attributes.assigned_to.name
       },
       assignedBy: {
