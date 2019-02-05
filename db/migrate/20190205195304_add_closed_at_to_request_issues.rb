@@ -4,7 +4,7 @@ class AddClosedAtToRequestIssues < ActiveRecord::Migration[5.1]
       add_column :request_issues, :closed_at, :datetime
       add_column :request_issues, :closed_status, :string
       now = Time.zone.now
-      execute "UPDATE request_issues SET closed_at = '#{now}', closed_status = 'removed' WHERE decision_review_id IS NULL"
+      execute "UPDATE request_issues SET closed_at = '#{now}', closed_status = 'removed' WHERE review_request_id IS NULL"
     end
   end
 

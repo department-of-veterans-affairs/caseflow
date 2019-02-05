@@ -232,6 +232,10 @@ class RequestIssue < ApplicationRecord
     !!issue_category
   end
 
+  def closed?
+    !!closed_at
+  end
+
   def description
     return contested_issue_description if contested_issue_description
     return "#{issue_category} - #{nonrating_issue_description}" if nonrating?
@@ -355,11 +359,15 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
+  def remove!
+    update!(closed_at: Time.zone.now, closed_status: :removed)
+  end
+
   # Instead of fully deleting removed issues, we instead strip them from the review so we can
   # maintain a record of the other data that was on them incase we need to revert the update.
   def remove_from_review
     transaction do
-      update!(review_request: nil)
+      remove!
       legacy_issue_optin&.flag_for_rollback!
 
       # removing a request issue also deletes the associated request_decision_issue
