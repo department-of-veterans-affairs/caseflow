@@ -93,6 +93,15 @@ describe DecisionIssue do
       it { is_expected.to be true }
     end
 
+    context "when disposition is not set" do
+      let(:disposition) { nil }
+
+      it "adds an error to disposition" do
+        is_expected.to be false
+        expect(decision_issue.errors[:disposition]).to include("can't be blank")
+      end
+    end
+
     context "when benefit type is not in list" do
       let(:benefit_type) { "bogus_benefit_type" }
 
@@ -187,12 +196,6 @@ describe DecisionIssue do
         let(:disposition) { "denied" }
 
         it { is_expected.to be_truthy }
-      end
-
-      context "disposition is not set" do
-        let(:disposition) { nil }
-
-        it { is_expected.to be_falsey }
       end
     end
   end

@@ -1,13 +1,13 @@
 class DecisionIssue < ApplicationRecord
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
+  validates :disposition, presence: true
+  validates :end_product_last_action_date, presence: true, unless: :processed_in_caseflow?
 
   with_options if: :appeal? do
     validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) }
     validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
                                 allow_nil: true
   end
-
-  validates :end_product_last_action_date, presence: true, unless: :processed_in_caseflow?
 
   # Attorneys will be entering in a description of the decision manually for appeals
   before_save :calculate_and_set_description, unless: :appeal?

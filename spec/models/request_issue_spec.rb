@@ -929,6 +929,7 @@ describe RequestIssue do
           participant_id: veteran.participant_id,
           decision_review: rating_request_issue.review_request,
           benefit_type: review.benefit_type,
+          disposition: "allowed",
           end_product_last_action_date: Time.zone.now
         )
       end
