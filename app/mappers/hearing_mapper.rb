@@ -61,9 +61,9 @@ module HearingMapper
     private
 
     def code_based_on_request_type(type)
-      return "1" if type == HearingDay::REQUEST_TYPES[:central]
-      return "2" if type == HearingDay::REQUEST_TYPES[:travel]
-      return "6" if type == HearingDay::REQUEST_TYPES[:video]
+      return "1" if type == :C
+      return "2" if type == :T
+      return "6" if type == :V
     end
 
     def representative_name_to_vacols_format(value)

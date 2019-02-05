@@ -139,7 +139,7 @@ class HearingDay < ApplicationRecord
       regional_office_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
 
       hearing_days_to_array_of_days_and_hearings(
-        total_video_and_co, regional_office.nil? || regional_office == REQUEST_TYPES[:central]
+        total_video_and_co, regional_office.nil? || regional_office == "C"
       ).map do |value|
         scheduled_hearings = filter_non_scheduled_hearings(value[:hearings] || [])
 
