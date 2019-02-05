@@ -54,11 +54,6 @@ class BGSSyncError < RuntimeError
     when /Connection refused - connect\(2\) for "bepprod.vba.va.gov" port 443/
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3128/
       TransientBGSSyncError.new(error, epe)
-    when /HTTP error \(504\): upstream request timeout/
-      # BGS timeout
-      #
-      # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
-      TransientBGSSyncError.new(error, epe)
     when /HTTPClient::KeepAliveDisconnected: Connection reset by peer/
       # BGS kills connection
       #
@@ -77,12 +72,17 @@ class BGSSyncError < RuntimeError
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2891/
       TransientBGSSyncError.new(error, epe)
-    when /HTTP error (504): upstream request timeout/
+    when /HTTP error \(504\): upstream request timeout/
       # Transient failure when, for example, a WSDL is unavailable. For example, the originating
       # error could be a Wasabi::Resolver::HTTPError
       #  "Error: 504 for url http://localhost:10001/BenefitClaimServiceBean/BenefitClaimWebService?WSDL"
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
+      TransientBGSSyncError.new(error, epe)
+    when /HTTP error \(503\): upstream connect error/
+      # Like above
+      #
+      # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3573/
       TransientBGSSyncError.new(error, epe)
     when /Unable to parse SOAP message/
       # I don't understand why this happens, but it's transient.
