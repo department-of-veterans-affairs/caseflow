@@ -13,7 +13,7 @@ RSpec.configure do |config|
     REDIS_NAMESPACES.each { |namespace| delete_matched(namespace: namespace) }
   end
 
-  config.after(:all) do
+  config.after(:each) do
     Rails.cache.clear
     REDIS_NAMESPACES.each { |namespace| delete_matched(namespace: namespace) }
   end
