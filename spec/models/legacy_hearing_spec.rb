@@ -35,7 +35,7 @@ describe LegacyHearing do
     it { is_expected.to eq("Baltimore regional office") }
 
     context "when it's a central office hearing" do
-      let(:request_type) { "C" }
+      let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
 
       it { is_expected.to eq("Board of Veterans' Appeals in Washington, DC") }
     end
