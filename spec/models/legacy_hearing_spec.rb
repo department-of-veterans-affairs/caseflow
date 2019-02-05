@@ -27,7 +27,7 @@ describe LegacyHearing do
   let(:scheduled_for) { 1.day.ago }
   let(:disposition) { nil }
   let(:hold_open) { nil }
-  let(:request_type) { "V" }
+  let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
 
   context "#location" do
     subject { hearing.request_type_location }
