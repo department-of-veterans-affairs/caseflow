@@ -117,6 +117,12 @@ class SeedDB
           appeal: a,
           assigned_to: vso
         )
+        FactoryBot.create(
+          :track_veteran_task,
+          parent: root_task,
+          appeal: a,
+          assigned_to: vso
+        )
 
         next unless assign_to_user
 
@@ -352,67 +358,33 @@ class SeedDB
       docket_type: "direct_review",
       request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
     )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      veteran_file_number: "783740847",
-      docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      veteran_file_number: "963360019",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 2, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "604969679",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "228081153",
-      docket_type: "evidence_submission",
-      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "152003980",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "375273128",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "682007349",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 5, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "231439628",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 1, contested_issue_description: description, notes: notes)
-    )
-    @ama_appeals << FactoryBot.create(
-      :appeal,
-      number_of_claimants: 1,
-      veteran_file_number: "975191063",
-      docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 8, contested_issue_description: description, notes: notes)
-    )
+
+    es = "evidence_submission"
+    dr = "direct_review"
+    [
+      { number_of_claimants: nil, veteran_file_number: "783740847", docket_type: es, request_issue_count: 3 },
+      { number_of_claimants: nil, veteran_file_number: "963360019", docket_type: dr, request_issue_count: 2 },
+      { number_of_claimants: 1, veteran_file_number: "604969679", docket_type: dr, request_issue_count: 1 },
+      { number_of_claimants: 1, veteran_file_number: "228081153", docket_type: es, request_issue_count: 1 },
+      { number_of_claimants: 1, veteran_file_number: "152003980", docket_type: dr, request_issue_count: 3 },
+      { number_of_claimants: 1, veteran_file_number: "375273128", docket_type: dr, request_issue_count: 1 },
+      { number_of_claimants: 1, veteran_file_number: "682007349", docket_type: dr, request_issue_count: 5 },
+      { number_of_claimants: 1, veteran_file_number: "231439628", docket_type: dr, request_issue_count: 1 },
+      { number_of_claimants: 1, veteran_file_number: "975191063", docket_type: dr, request_issue_count: 8 },
+      { number_of_claimants: 1, veteran_file_number: "662643660", docket_type: dr, request_issue_count: 8 },
+      { number_of_claimants: 1, veteran_file_number: "162726229", docket_type: dr, request_issue_count: 8 },
+      { number_of_claimants: 1, veteran_file_number: "760362568", docket_type: dr, request_issue_count: 8 }
+    ].each do |params|
+      @ama_appeals << FactoryBot.create(
+        :appeal,
+        number_of_claimants: params[:number_of_claimants],
+        veteran_file_number: params[:veteran_file_number],
+        docket_type: params[:docket_type],
+        request_issues: FactoryBot.create_list(
+          :request_issue, params[:request_issue_count], contested_issue_description: description, notes: notes
+        )
+      )
+    end
 
     LegacyAppeal.create(vacols_id: "2096907", vbms_id: "228081153S")
     LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
@@ -701,13 +673,12 @@ class SeedDB
     create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, colocated, action: "translation")
     create_task_at_attorney_review(@ama_appeals[7], judge, attorney)
     create_task_at_attorney_review(@ama_appeals[8], judge, attorney)
-    create_task_at_judge_assignment(@ama_appeals[8], judge)
-    create_task_at_judge_review(@ama_appeals[8], judge, attorney)
-    create_task_at_colocated(@ama_appeals[8], judge, attorney, colocated)
+    create_task_at_judge_assignment(@ama_appeals[9], judge)
+    create_task_at_judge_review(@ama_appeals[10], judge, attorney)
+    create_task_at_colocated(@ama_appeals[11], judge, attorney, colocated)
 
     9.times do
       appeal = FactoryBot.create(:appeal)
-      FactoryBot.create(:root_task, appeal: appeal)
       create_task_at_judge_assignment(appeal, judge, Time.zone.today)
     end
 

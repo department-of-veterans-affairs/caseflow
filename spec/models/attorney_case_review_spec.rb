@@ -6,10 +6,10 @@ describe AttorneyCaseReview do
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
 
   context "#delete_and_create_decision_issues!" do
-    let(:appeal) { create(:appeal) }
+    let!(:appeal) { create(:appeal) }
     let(:task) { create(:ama_attorney_task, appeal: appeal) }
     let!(:request_issue1) { create(:request_issue, review_request: appeal) }
-    let(:decision_issue1) { create(:decision_issue, decision_review: appeal) }
+    let(:decision_issue1) { build(:decision_issue) }
     let!(:request_issue2) { create(:request_issue, review_request: appeal, decision_issues: [decision_issue1]) }
 
     let(:remand_reason1) { create(:ama_remand_reason) }

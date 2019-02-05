@@ -27,7 +27,7 @@ FactoryBot.define do
       completed_at Time.zone.now
     end
 
-    factory :root_task do
+    factory :root_task, class: RootTask do
       type RootTask.name
       appeal { create(:appeal) }
       assigned_by { nil }
@@ -146,7 +146,7 @@ FactoryBot.define do
 
     factory :higher_level_review_task, class: DecisionReviewTask do
       type DecisionReviewTask.name
-      appeal { create(:higher_level_review) }
+      appeal { create(:higher_level_review, benefit_type: "education") }
       assigned_by nil
     end
 

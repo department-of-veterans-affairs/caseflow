@@ -156,18 +156,20 @@ RSpec.feature "Task queue" do
 
     it "shows the right number of cases in each tab" do
       step("Unassigned tab") do
-        expect(page).to have_content(
-          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, vso.name)
-        )
+        expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, vso.name))
         expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
       end
 
       step("Assigned tab") do
         find("button", text: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)).click
-        expect(page).to have_content(
-          format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, vso.name)
-        )
+        expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, vso.name))
         expect(find("tbody").find_all("tr").length).to eq(assigned_count)
+      end
+
+      step("All cases tab") do
+        find("button", text: format(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE, assigned_count)).click
+        expect(page).to have_content(format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, vso.name))
+        expect(find("tbody").find_all("tr").length).to eq(tracking_task_count)
       end
     end
   end
@@ -183,7 +185,7 @@ RSpec.feature "Task queue" do
     end
 
     context "when we are a member of the mail team and a root task exists for the appeal" do
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal).becomes(RootTask) }
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
       let(:instructions) { "Some instructions for how to complete the task" }
 
       it "should allow us to assign a mail task to a user" do
@@ -251,6 +253,10 @@ RSpec.feature "Task queue" do
         format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)
       )
       expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+    end
+
+    it "does not show all cases tab for non-VSO organization" do
+      expect(page).to_not have_content(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE)
     end
 
     it "shows the right number of cases in each tab" do

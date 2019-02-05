@@ -1,4 +1,9 @@
+require "rails_helper"
+require "support/intake_helpers"
+
 describe DecisionDocument do
+  include IntakeHelpers
+
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
     FeatureToggle.enable!(:create_board_grant_effectuations)
@@ -8,8 +13,14 @@ describe DecisionDocument do
     FeatureToggle.disable!(:create_board_grant_effectuations)
   end
 
+  let(:veteran) { create(:veteran) }
+  let(:appeal) do
+    create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number)
+  end
+
   let(:decision_document) do
-    create(:decision_document, file: file, processed_at: processed_at, uploaded_to_vbms_at: uploaded_to_vbms_at)
+    create(:decision_document, file: file, processed_at: processed_at,
+                               uploaded_to_vbms_at: uploaded_to_vbms_at, appeal: appeal)
   end
 
   let(:file) { nil }
@@ -117,6 +128,8 @@ describe DecisionDocument do
       allow(VBMSService).to receive(:create_contentions!).and_call_original
     end
 
+    let!(:prior_sc_with_payee_code) { setup_prior_claim_with_payee_code(appeal, veteran) }
+
     context "the document has already been uploaded" do
       let(:uploaded_to_vbms_at) { Time.zone.now }
 
@@ -150,7 +163,9 @@ describe DecisionDocument do
 
           expect(decision_document.attempted_at).to eq(Time.zone.now)
           expect(decision_document.processed_at).to eq(Time.zone.now)
-          expect(SupplementalClaim.find_by(decision_review_remanded: decision_document.appeal)).to be_nil
+
+          expect(SupplementalClaim.where(decision_review_remanded: decision_document.appeal)
+            .where.not(id: prior_sc_with_payee_code.id)).to eq([])
         end
       end
 
@@ -160,13 +175,14 @@ describe DecisionDocument do
             :decision_issue,
             decision_review: decision_document.appeal,
             disposition: "remanded",
-            profile_date: 5.days.ago
+            caseflow_decision_date: decision_document.decision_date
           )
         end
 
         it "creates remand supplemental claim" do
           subject
-          expect(SupplementalClaim.find_by(decision_review_remanded: decision_document.appeal)).to_not be_nil
+          expect(SupplementalClaim.where(decision_review_remanded: decision_document.appeal)
+              .where.not(id: prior_sc_with_payee_code.id).length).to eq(1)
         end
       end
 

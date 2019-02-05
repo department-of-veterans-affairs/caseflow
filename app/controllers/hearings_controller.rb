@@ -44,11 +44,8 @@ class HearingsController < ApplicationController
 
       render json: { hearing_locations: VADotGovService.get_distance(lat: va_dot_gov_address[:lat],
                                                                      long: va_dot_gov_address[:long],
-                                                                     ids: facility_ids).map do |v|
-                                                                       v[:facility_id] = v[:id]
-                                                                       v
-                                                                     end }
-    rescue StandardError => e
+                                                                     ids: facility_ids) }
+    rescue Caseflow::Error::VaDotGovAPIError => e
       render json: { message: e.message, status: "ERROR" }
     end
   end

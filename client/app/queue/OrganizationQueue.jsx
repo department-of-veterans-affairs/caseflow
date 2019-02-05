@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
@@ -14,7 +13,7 @@ import {
   getUnassignedOrganizationalTasks,
   getAssignedOrganizationalTasks,
   getCompletedOrganizationalTasks,
-  tasksByOrganization
+  trackingTasksForOrganization
 } from './selectors';
 
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
@@ -69,6 +68,29 @@ class OrganizationQueue extends React.PureComponent {
       }
     ];
 
+    // Focus on the first tab in the list of tabs unless we have an "all cases" view, in which case the first tab will
+    // be the "all cases" tab. In that case focus on the second tab which will be the first tab with workable tasks.
+    let focusedTab = 0;
+
+    if (this.props.organizationIsVso) {
+      focusedTab = 1;
+      tabs.unshift({
+        label: COPY.ALL_CASES_QUEUE_TABLE_TAB_TITLE,
+        page: <React.Fragment>
+          <p className="cf-margin-top-0">
+            {sprintf(COPY.ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, this.props.organizationName)}
+          </p>
+          <TaskTable
+            includeDetailsLink
+            includeIssueCount
+            includeType
+            includeDocketNumber
+            tasks={this.props.trackingTasks}
+          />
+        </React.Fragment>
+      });
+    }
+
     return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
       <div>
@@ -77,15 +99,12 @@ class OrganizationQueue extends React.PureComponent {
         <TabWindow
           name="tasks-organization-queue"
           tabs={tabs}
+          defaultPage={focusedTab}
         />
       </div>
     </AppSegment>;
   };
 }
-
-OrganizationQueue.propTypes = {
-  tasks: PropTypes.array.isRequired
-};
 
 const mapStateToProps = (state) => {
   const { success } = state.ui.messages;
@@ -93,11 +112,12 @@ const mapStateToProps = (state) => {
   return {
     success,
     organizationName: state.ui.activeOrganization.name,
+    organizationIsVso: state.ui.activeOrganization.isVso,
     organizations: state.ui.organizations,
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
     completedTasks: getCompletedOrganizationalTasks(state),
-    tasks: tasksByOrganization(state)
+    trackingTasks: trackingTasksForOrganization(state)
   };
 };
 
