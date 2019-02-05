@@ -99,11 +99,23 @@ describe ScheduleHearingTask do
         create_list(:case, number_of_cases, bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V")
       end
 
+      let!(:veterans) do
+        cases.map do |vacols_case|
+          create(
+            :veteran,
+            closest_regional_office: regional_office,
+            file_number: LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
+          )
+        end
+      end
+
       let!(:non_hearing_cases) do
         create_list(:case, number_of_cases)
       end
 
       it "returns tasks for all relevant appeals in location 57" do
+        AppealRepository.create_schedule_hearing_tasks
+
         tasks = ScheduleHearingTask.tasks_for_ro(regional_office)
 
         expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(cases.pluck(:bfkey))

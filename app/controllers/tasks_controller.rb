@@ -113,31 +113,17 @@ class TasksController < ApplicationController
 
   def ready_for_hearing_schedule
     ro = HearingDayMapper.validate_regional_office(params[:ro])
-    tasks = nil
-    stopwatch = Benchmark.measure do
-      tasks = ScheduleHearingTask.tasks_for_ro(ro)
-    end
 
-    puts "load tasks: #{stopwatch}"
+    tasks = ScheduleHearingTask.tasks_for_ro(ro)
 
-    stopwatch = Benchmark.measure do
-      AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
-    end
-    puts "eager load appeals: #{stopwatch}"
+    AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
 
-    data = nil
-    stopwatch = Benchmark.measure do
-      data = ActiveModelSerializers::SerializableResource.new(
+    render json: {
+      data: ActiveModelSerializers::SerializableResource.new(
         tasks,
         user: current_user,
         role: user_role
       ).as_json[:data]
-    end
-
-    puts "serialize: #{stopwatch}"
-
-    render json: {
-      data: data
     }
   end
 

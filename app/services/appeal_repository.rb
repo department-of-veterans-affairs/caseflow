@@ -25,11 +25,11 @@ class AppealRepository
 
     # Associate the cases we pulled from VACOLS to the appeals of the tasks.
     tasks.each do |t|
-      if t.appeal.is_a?(LegacyAppeal)
-        case_record = cases[t.appeal.vacols_id.to_s].first
-        set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
-        t.appeal.aod = aod[t.appeal.vacols_id.to_s]
-      end
+      next unless t.appeal.is_a?(LegacyAppeal)
+
+      case_record = cases[t.appeal.vacols_id.to_s].first
+      set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
+      t.appeal.aod = aod[t.appeal.vacols_id.to_s]
     end
   end
 
@@ -310,12 +310,15 @@ class AppealRepository
     end
   end
 
-  def self.create_schedule_hearing_tasks
-    # Find cases that need hearing tasks
-    cases = VACOLS::Case.joins(:folder).where(bfhr: "2", bfcurloc: "57", bfdocind: "V").order("folder.tinum").includes(:correspondent, :case_issues, folder: [:outcoder])
+  def self.cases_that_need_hearings
+    VACOLS::Case.joins(:folder)
+      .where(bfhr: "2", bfcurloc: "57", bfdocind: "V").order("folder.tinum")
+      .includes(:correspondent, :case_issues, folder: [:outcoder])
+  end
 
+  def self.create_schedule_hearing_tasks
     # Create legacy appeals where needed
-    ids = cases.pluck(:bfkey, :bfcorlid)
+    ids = cases_that_need_hearings.pluck(:bfkey, :bfcorlid)
 
     missing_ids = ids - LegacyAppeal.where(vacols_id: ids.map(&:first)).pluck(:vacols_id, :vbms_id)
     missing_ids.each do |id|

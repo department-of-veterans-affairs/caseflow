@@ -708,7 +708,7 @@ RSpec.describe TasksController, type: :controller do
 
       let(:vetearn) { create(:veteran, closest_regional_office: "RO04") }
 
-      it "completes quickly", focus: true do
+      it "completes quickly" do
         AppealRepository.create_schedule_hearing_tasks
 
         stopwatch = Benchmark.measure do
