@@ -24,7 +24,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def show
-    hearing_day = HearingDay.find_hearing_day(nil, params[:id])
+    hearing_day = HearingDay.find_hearing_day(params[:id])
     hearing_day_hash = HearingDay.to_hash(hearing_day)
 
     hearings, regional_office = fetch_hearings(hearing_day_hash, params[:id]).values_at(:hearings, :regional_office)
