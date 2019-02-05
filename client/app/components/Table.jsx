@@ -263,10 +263,11 @@ export default class Table extends React.PureComponent {
       styling,
       bodyStyling
     } = this.props;
-    const rowObjects = this.sortRowObjects();
+    let keyGetter = getKeyForRow;
+    let rowObjects = this.sortRowObjects();
     const paginatedData = this.paginateData(rowObjects);
 
-    let keyGetter = getKeyForRow;
+    rowObjects = paginatedData[this.state.currentPage];
 
     if (!getKeyForRow) {
       keyGetter = _.identity;
