@@ -1,5 +1,3 @@
-require "benchmark"
-
 class TasksController < ApplicationController
   include Errors
 
@@ -115,7 +113,6 @@ class TasksController < ApplicationController
     ro = HearingDayMapper.validate_regional_office(params[:ro])
 
     tasks = ScheduleHearingTask.tasks_for_ro(ro)
-
     AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
 
     render json: {
