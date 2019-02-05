@@ -14,7 +14,6 @@ class PaginationButton extends React.PureComponent {
 
     return (
       <button
-        key={index}
         onClick={(event) => this.handleClick(event, index)}
         className={currentPage === index ? 'cf-current-page' : ''}>
         {index + 1}

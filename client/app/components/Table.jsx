@@ -11,7 +11,6 @@ import FilterIcon from './FilterIcon';
 import DropdownFilter from './DropdownFilter';
 import ListItemPicker from './ListItemPicker';
 import ListItemPickerCheckbox from './ListItemPickerCheckbox';
-import TablePagination from './TablePagination';
 
 /**
  * This component can be used to easily build tables.
@@ -192,8 +191,7 @@ export default class Table extends React.PureComponent {
     const { defaultSort } = this.props;
     const state = {
       sortAscending: true,
-      sortColIdx: null,
-      currentPage: 0
+      sortColIdx: null
     };
 
     if (defaultSort) {
@@ -224,29 +222,6 @@ export default class Table extends React.PureComponent {
     );
   }
 
-  paginateData = (tableData) => {
-    const duplicateTableData = tableData.slice(0);
-    let paginatedData = [];
-    const numberOfPages = (duplicateTableData.length / 15) + (duplicateTableData.length % 15 > 0 ? 1 : 0);
-
-    _.times(numberOfPages, () => {
-      let pageOfData = [];
-
-      while (pageOfData.length < 15 && duplicateTableData.length > 0) {
-        pageOfData = pageOfData.concat(duplicateTableData[0]);
-        duplicateTableData.splice(0, 1);
-      }
-
-      paginatedData.push(pageOfData);
-    });
-
-    return paginatedData;
-  }
-
-  updateCurrentPage = (newPage) => {
-    this.setState({ currentPage: newPage });
-  }
-
   render() {
     let {
       columns,
@@ -265,9 +240,6 @@ export default class Table extends React.PureComponent {
     } = this.props;
     let keyGetter = getKeyForRow;
     let rowObjects = this.sortRowObjects();
-    const paginatedData = this.paginateData(rowObjects);
-
-    rowObjects = paginatedData[this.state.currentPage];
 
     if (!getKeyForRow) {
       keyGetter = _.identity;
@@ -306,10 +278,6 @@ export default class Table extends React.PureComponent {
           {...this.state} />
         <FooterRow columns={columns} />
       </table>
-      <TablePagination
-        paginatedData={paginatedData}
-        currentPage={this.state.currentPage}
-        updatePage={(newPage) => this.updateCurrentPage(newPage)} />
     </div>;
   }
 }

@@ -23,6 +23,7 @@ class TablePagination extends React.PureComponent {
   generatePaginationButton = (indexOfPage) => {
     return (
       <PaginationButton
+        key={`pagination-button-${indexOfPage}`}
         currentPage={this.props.currentPage}
         index={indexOfPage}
         handleChange={this.handleChange} />
@@ -40,10 +41,13 @@ class TablePagination extends React.PureComponent {
     } = this.props;
     const numberOfPages = paginatedData.length;
     let pageButtons = [];
+    let paginationButtons = [];
 
     // Render the pagination summary
     let currentCaseRange;
-    const totalCases = ((paginatedData.length - 1) * 15) + (paginatedData[paginatedData.length - 1].length);
+    const totalCases = numberOfPages > 0 ?
+      ((numberOfPages - 1) * 15) + (paginatedData[numberOfPages - 1].length) :
+      0;
 
     if (numberOfPages < 2) {
       currentCaseRange = `1-${totalCases}`;
@@ -89,23 +93,33 @@ class TablePagination extends React.PureComponent {
       );
     }
 
+    if (numberOfPages > 1) {
+      paginationButtons.push(
+        <button
+          key="previous-button"
+          disabled={currentPage === 0}
+          onClick={() => this.handlePrevious()}>
+          Previous
+        </button>
+      );
+      paginationButtons = paginationButtons.concat(pageButtons);
+      paginationButtons.push(
+        <button
+          key="next-button"
+          disabled={currentPage === (numberOfPages - 1)}
+          onClick={() => this.handleNext()}>
+          Next
+        </button>
+      );
+    }
+
     return (
       <div>
         <div className="cf-pagination-summary">
           {paginationSummary}
         </div>
         <div className="cf-pagination-pages">
-          <button
-            disabled={currentPage === 0}
-            onClick={() => this.handlePrevious()}>
-            Previous
-          </button>
-          {pageButtons}
-          <button
-            disabled={currentPage === (numberOfPages - 1)}
-            onClick={() => this.handleNext()}>
-            Next
-          </button>
+          {paginationButtons}
         </div>
       </div>
     );

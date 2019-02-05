@@ -8,6 +8,7 @@ import Tooltip from '../components/Tooltip';
 import { DoubleArrow } from '../components/RenderFunctions';
 import TableFilter from '../components/TableFilter';
 import FilterSummary from '../components/FilterSummary';
+import TablePagination from '../components/TablePagination';
 import { COLORS } from '../constants/AppConstants';
 
 /**
@@ -180,7 +181,8 @@ export default class QueueTable extends React.PureComponent {
       sortAscending: true,
       sortColIdx: null,
       areDropdownFiltersOpen: {},
-      filteredByList: {}
+      filteredByList: {},
+      currentPage: 0
     };
 
     if (defaultSort) {
@@ -223,6 +225,9 @@ export default class QueueTable extends React.PureComponent {
 
   updateFilteredByList = (newList) => {
     this.setState({ filteredByList: newList });
+
+    // When filters are added or changed, default back to the first page of data
+    this.updateCurrentPage(0);
   };
 
   filterTableData = (data: Array<Object>) => {
@@ -248,6 +253,29 @@ export default class QueueTable extends React.PureComponent {
     return filteredData;
   };
 
+  paginateData = (tableData) => {
+    const duplicateTableData = tableData.slice(0);
+    const paginatedData = [];
+    const numberOfPages = (duplicateTableData.length / 15) + (duplicateTableData.length % 15 > 0 ? 1 : 0);
+
+    _.times(numberOfPages, () => {
+      let pageOfData = [];
+
+      while (pageOfData.length < 15 && duplicateTableData.length > 0) {
+        pageOfData = pageOfData.concat(duplicateTableData[0]);
+        duplicateTableData.splice(0, 1);
+      }
+
+      paginatedData.push(pageOfData);
+    });
+
+    return paginatedData;
+  }
+
+  updateCurrentPage = (newPage) => {
+    this.setState({ currentPage: newPage });
+  }
+
   render() {
     const {
       columns,
@@ -264,9 +292,19 @@ export default class QueueTable extends React.PureComponent {
       styling,
       bodyStyling
     } = this.props;
+
+    // Steps to calculate table data to display:
+    // 1. Sort data
     let rowObjects = this.sortRowObjects();
 
+    // 2. Filter data
     rowObjects = this.filterTableData(rowObjects);
+
+    // 3. Generate paginated data
+    const paginatedData = this.paginateData(rowObjects);
+
+    // 4. Display only the data for the current page
+    rowObjects = rowObjects.length > 0 ? paginatedData[this.state.currentPage] : rowObjects;
 
     let keyGetter = getKeyForRow;
 
@@ -315,6 +353,10 @@ export default class QueueTable extends React.PureComponent {
           {...this.state} />
         <FooterRow columns={columns} />
       </table>
+      <TablePagination
+        paginatedData={paginatedData}
+        currentPage={this.state.currentPage}
+        updatePage={(newPage) => this.updateCurrentPage(newPage)} />
     </div>;
   }
 }
