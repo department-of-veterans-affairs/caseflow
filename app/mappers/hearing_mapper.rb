@@ -47,7 +47,7 @@ module HearingMapper
     # asctime - returns a canonical string representation of time
     def datetime_based_on_type(datetime:, regional_office_key:, type:)
       datetime = VacolsHelper.normalize_vacols_datetime(datetime)
-      return datetime if type == "C"
+      return datetime if type == HearingDay::REQUEST_TYPES[:central]
 
       datetime.asctime.in_time_zone(timezone(regional_office_key)).in_time_zone("Eastern Time (US & Canada)")
     end
@@ -61,9 +61,9 @@ module HearingMapper
     private
 
     def code_based_on_request_type(type)
-      return "1" if type == :C
-      return "2" if type == :T
-      return "6" if type == :V
+      return "1" if type == HearingDay::REQUEST_TYPES[:central]
+      return "2" if type == HearingDay::REQUEST_TYPES[:travel]
+      return "6" if type == HearingDay::REQUEST_TYPES[:video]
     end
 
     def representative_name_to_vacols_format(value)
