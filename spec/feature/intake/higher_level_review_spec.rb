@@ -1167,14 +1167,9 @@ feature "Higher-Level Review" do
       end
 
       context "no contestable issues present" do
-        before do
-          education_org = create(:business_line, name: "Education", url: "education")
-          FeatureToggle.enable!(:decision_reviews)
-        end
-
-        after do
-          FeatureToggle.disable!(:decision_reviews)
-        end
+        before { FeatureToggle.enable!(:decision_reviews) }
+        after { FeatureToggle.disable!(:decision_reviews) }
+        let!(:business_line) { create(:business_line, name: "Education", url: "education") }
 
         scenario "no rating issues show on first Add Issues modal" do
           hlr, = start_higher_level_review(veteran, is_comp: false)
