@@ -72,7 +72,8 @@ class ClaimReview < DecisionReview
 
   def add_user_to_organization!
     return unless processed_in_caseflow?
-    OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], organization)
+
+    OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
   end
 
   # Idempotent method to create all the artifacts for this claim.
