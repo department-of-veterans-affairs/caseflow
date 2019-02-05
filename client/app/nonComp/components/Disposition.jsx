@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 
-import { formatDateStr } from '../../util/DateUtil';
+import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
@@ -138,6 +138,12 @@ class NonCompDispositions extends React.PureComponent {
 
     let completeDiv = null;
 
+    let decisionDate = this.state.decisionDate;
+
+    if (appeal.decisionIssues.length > 0) {
+      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].caseflowDecisionDate);
+    }
+
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-txt-r">
@@ -183,7 +189,7 @@ class NonCompDispositions extends React.PureComponent {
             <DateSelector
               label="Thank you for completing your decision in Caseflow. Please indicate the decision date."
               name="decision-date"
-              value={this.state.decisionDate}
+              value={decisionDate}
               onChange={this.handleDecisionDate}
               readOnly={Boolean(task.closed_at)}
             />
