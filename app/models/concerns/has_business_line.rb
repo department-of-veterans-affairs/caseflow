@@ -6,6 +6,10 @@ module HasBusinessLine
     @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
   end
 
+  def organization
+    Organization.find_by(url: benefit_type)
+  end
+
   def processed_in_vbms?
     benefit_type_requires_payee_code?
   end
