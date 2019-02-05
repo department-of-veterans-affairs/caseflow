@@ -904,7 +904,7 @@ describe Appeal do
     end
 
     context "decision, no remand and an effectuation" do
-      let!(:decision_issue) { create(:decision_issue, decision_review: appeal, caseflow_decision_date: decision_date)}
+      let!(:decision_issue) { create(:decision_issue, decision_review: appeal, caseflow_decision_date: decision_date) }
       let(:ep_cleared_date) { receipt_date + 150.days }
       let!(:effectuation_ep) do
         create(:end_product_establishment,
