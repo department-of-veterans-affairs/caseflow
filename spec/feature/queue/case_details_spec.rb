@@ -80,7 +80,7 @@ RSpec.feature "Case details" do
       scenario "Entire set of attributes for hearing are displayed" do
         visit "/queue"
 
-        find_table_cell(post_remanded_appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+        find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
           .click_link
 
         expect(page).to have_content("Select an action")
