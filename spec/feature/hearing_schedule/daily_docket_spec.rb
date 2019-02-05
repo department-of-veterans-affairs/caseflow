@@ -61,7 +61,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       click_dropdown(name: "Disposition", text: "Postponed")
-      click_dropdown(name: "HearingDay", text: hearing_day_two.hearing_date.utc.strftime("%m/%d/%Y"))
+      click_dropdown(name: "HearingDay", text: hearing_day_two.hearing_date.strftime("%m/%d/%Y"))
       click_button("Save")
       expect(page).to have_content("You have successfully updated")
       expect(page).to have_content("No Veterans are scheduled for this hearing day.")

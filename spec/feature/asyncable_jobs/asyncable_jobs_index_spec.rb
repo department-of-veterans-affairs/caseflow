@@ -72,7 +72,7 @@ feature "Asyncable Jobs index" do
       expect(page).to_not have_content(hlr.establishment_last_submitted_at.utc.strftime(date_format))
       expect(page).to_not have_content("oops!")
 
-      expect(hlr.reload.establishment_last_submitted_at).to eq(Time.zone.now)
+      expect(hlr.reload.establishment_last_submitted_at).to be_within(1.second).of Time.zone.now
       expect(hlr.establishment_submitted_at).to eq(8.days.ago)
     end
 
