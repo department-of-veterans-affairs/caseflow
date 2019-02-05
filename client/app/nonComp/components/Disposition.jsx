@@ -141,7 +141,7 @@ class NonCompDispositions extends React.PureComponent {
     let decisionDate = this.state.decisionDate;
 
     if (appeal.decisionIssues.length > 0) {
-      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].promulgationDate);
+      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].caseflowDecisionDate);
     }
 
     if (!task.closed_at) {

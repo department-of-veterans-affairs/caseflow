@@ -140,7 +140,7 @@ describe DecisionReviewsController, type: :controller do
                                ],
                                decision_date: decision_date }
 
-        datetime = Date.parse(decision_date).to_datetime.in_time_zone(Time.zone)
+        datetime = Date.parse(decision_date).in_time_zone(Time.zone)
 
         expect(response.status).to eq(200)
         response_data = JSON.parse(response.body)
