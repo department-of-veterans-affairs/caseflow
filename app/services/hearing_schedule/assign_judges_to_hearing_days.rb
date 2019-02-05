@@ -200,7 +200,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def co_hearing_day?(hearing_day)
-    hearing_day.request_type == "C"
+    hearing_day.request_type == HearingDay::REQUEST_TYPES[:central]
   end
 
   def valid_co_day?(day)
