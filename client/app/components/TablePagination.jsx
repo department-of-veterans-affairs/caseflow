@@ -41,6 +41,19 @@ class TablePagination extends React.PureComponent {
     const numberOfPages = paginatedData.length;
     let pageButtons = [];
 
+    // Render the pagination summary
+    let currentCaseRange;
+    const totalCases = ((paginatedData.length - 1) * 15) + (paginatedData[paginatedData.length - 1].length);
+
+    if (numberOfPages < 2) {
+      currentCaseRange = `1-${totalCases}`;
+    } else {
+      currentCaseRange = `${(currentPage * 15) + 1}-${(currentPage * 15) + 15}`;
+    }
+
+    const paginationSummary = `Viewing ${currentCaseRange} of ${totalCases} total cases`;
+
+    // Render the page buttons
     if (numberOfPages > 5) {
       const indexOfLastPage = numberOfPages - 1;
       const firstPageButton = this.generatePaginationButton(0);
@@ -79,11 +92,7 @@ class TablePagination extends React.PureComponent {
     return (
       <div>
         <div className="cf-pagination-summary">
-          Viewing {
-            (currentPage * 15) + 1}-{(currentPage * 15) + 15
-          } of {
-            ((paginatedData.length - 1) * 15) + (paginatedData[paginatedData.length - 1].length)
-          } total cases
+          {paginationSummary}
         </div>
         <div className="cf-pagination-pages">
           <button
