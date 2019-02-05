@@ -51,7 +51,8 @@ module IssueUpdater
         benefit_type: issue_attrs[:benefit_type],
         diagnostic_code: issue_attrs[:diagnostic_code],
         participant_id: appeal.veteran.participant_id,
-        decision_review: appeal
+        decision_review: appeal,
+        caseflow_decision_date: appeal.decision_document&.decision_date
       )
 
       request_issues.each do |request_issue|

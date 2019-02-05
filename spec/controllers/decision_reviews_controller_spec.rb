@@ -9,7 +9,7 @@ describe DecisionReviewsController, type: :controller do
     FeatureToggle.disable!(:decision_reviews)
   end
 
-  let(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+  let(:non_comp_org) { create(:business_line, name: "National Cemetery Association", url: "nca") }
   let(:user) { create(:default_user) }
 
   describe "#index" do
@@ -119,8 +119,8 @@ describe DecisionReviewsController, type: :controller do
 
       let!(:request_issues) do
         [
-          create(:request_issue, :rating, review_request: task.appeal),
-          create(:request_issue, :nonrating, review_request: task.appeal)
+          create(:request_issue, :rating, review_request: task.appeal, benefit_type: non_comp_org.url),
+          create(:request_issue, :nonrating, review_request: task.appeal, benefit_type: non_comp_org.url)
         ]
       end
 
@@ -152,12 +152,12 @@ describe DecisionReviewsController, type: :controller do
         expect(task.appeal.decision_issues.find_by(
                  disposition: "Granted",
                  description: "a rating note",
-                 promulgation_date: datetime
+                 caseflow_decision_date: datetime
                )).to_not be_nil
         expect(task.appeal.decision_issues.find_by(
                  disposition: "Denied",
                  description: "a nonrating note",
-                 promulgation_date: datetime
+                 caseflow_decision_date: datetime
                )).to_not be_nil
         expect(task.status).to eq("completed")
         expect(task.closed_at).to eq(Time.zone.now)
