@@ -67,6 +67,12 @@ class Veteran < ApplicationRecord
     military_address? ? military_address_vbms_hash : base_vbms_hash
   end
 
+  def find_latest_end_product_by_claimant(claimant)
+    end_products.select do |ep|
+      ep.claimant_first_name == claimant.first_name && ep.claimant_last_name == claimant.last_name
+    end.max_by(&:claim_date)
+  end
+
   def end_products
     @end_products ||= fetch_end_products
   end
@@ -200,6 +206,15 @@ class Veteran < ApplicationRecord
       end
     end
 
+    def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
+      if file_number_or_ssn.to_s.length == 9
+        find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name) ||
+          find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name)
+      else
+        find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
+      end
+    end
+
     private
 
     def find_by_ssn(ssn, sync_name: false)
@@ -207,6 +222,13 @@ class Veteran < ApplicationRecord
       return unless file_number
 
       find_and_maybe_backfill_name(file_number, sync_name: sync_name)
+    end
+
+    def find_or_create_by_ssn(ssn, sync_name: false)
+      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      return unless file_number
+
+      find_or_create_by_file_number(file_number, sync_name: sync_name)
     end
 
     def find_and_maybe_backfill_name(file_number, sync_name: false)

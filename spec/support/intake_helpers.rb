@@ -385,6 +385,33 @@ module IntakeHelpers
     rating_request_issue.decision_issues + nonrating_request_issue.decision_issues
   end
 
+  def setup_prior_claim_with_payee_code(appeal, veteran, prior_payee_code = "10")
+    prior_supplemental_claim = create(
+      :supplemental_claim,
+      veteran_file_number: veteran.file_number,
+      decision_review_remanded: appeal,
+      benefit_type: "insurance"
+    )
+
+    prior_sc_claimant = create(:claimant,
+                               review_request: prior_supplemental_claim,
+                               participant_id: appeal.claimants.first.participant_id,
+                               payee_code: appeal.claimants.first.payee_code)
+
+    Generators::EndProduct.build(
+      veteran_file_number: veteran.file_number,
+      bgs_attrs: {
+        benefit_claim_id: "claim_id",
+        claimant_first_name: prior_sc_claimant.first_name,
+        claimant_last_name: prior_sc_claimant.last_name,
+        payee_type_code: prior_payee_code,
+        claim_date: 5.days.ago
+      }
+    )
+
+    prior_supplemental_claim
+  end
+
   def check_row(label, text)
     row = find("tr", text: label)
     expect(row).to have_text(text)
