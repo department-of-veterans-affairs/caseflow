@@ -73,7 +73,7 @@ feature "Asyncable Jobs index" do
       expect(page).to_not have_content("oops!")
 
       expect(hlr.reload.establishment_last_submitted_at).to be_within(1.second).of Time.zone.now
-      expect(hlr.establishment_submitted_at).to eq(8.days.ago)
+      expect(hlr.establishment_submitted_at).to be_within(1.second).of 8.days.ago
     end
 
     context "zero unprocessed jobs" do
