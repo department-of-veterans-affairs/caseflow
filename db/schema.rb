@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190129233723) do
+ActiveRecord::Schema.define(version: 20190131012932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -240,6 +240,7 @@ ActiveRecord::Schema.define(version: 20190129233723) do
 
   create_table "decision_issues", force: :cascade do |t|
     t.string "benefit_type"
+    t.date "caseflow_decision_date"
     t.integer "decision_review_id"
     t.string "decision_review_type"
     t.string "decision_text"
