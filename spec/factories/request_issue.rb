@@ -31,6 +31,7 @@ FactoryBot.define do
                                 participant_id: evaluator.veteran_participant_id,
                                 rating_issue_reference_id: request_issue.contested_rating_issue_reference_id,
                                 profile_date: request_issue.contested_rating_issue_profile_date.to_date,
+                                end_product_last_action_date: request_issue.contested_rating_issue_profile_date.to_date,
                                 benefit_type: request_issue.review_request.benefit_type,
                                 decision_text: "a rating decision issue",
                                 request_issues: [request_issue])
@@ -66,10 +67,13 @@ FactoryBot.define do
       decision_issues []
     end
 
-    after(:create) do |request_issue, evaluator|
+    after(:create) do |ri, evaluator|
       if evaluator.decision_issues.present?
-        request_issue.decision_issues << evaluator.decision_issues
-        request_issue.save
+        evaluator.decision_issues.each do |di|
+          di.decision_review = ri.review_request || create(ri.review_request_type.underscore.to_sym)
+        end
+        ri.decision_issues << evaluator.decision_issues
+        ri.save
       end
     end
   end
