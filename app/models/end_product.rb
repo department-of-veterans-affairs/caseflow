@@ -229,7 +229,7 @@ class EndProduct
         claim_type_code: hash[:claim_type_code],
         modifier: hash[:end_product_type_code],
         status_type_code: hash[:status_type_code],
-        last_action_date: parse_claim_date(hash[:last_action_date]),
+        last_action_date: parse_claim_date(hash[:last_action_date]).to_date,
         claimant_first_name: hash[:claimant_first_name],
         claimant_last_name: hash[:claimant_last_name],
         payee_code: hash[:payee_type_code]

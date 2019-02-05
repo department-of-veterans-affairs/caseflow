@@ -288,7 +288,7 @@ describe EndProduct do
         claim_type_code: "170RMD",
         modifier: "170",
         status_type_code: "PEND",
-        last_action_date: Date.new(2019, 1, 29).to_date
+        last_action_date: Date.new(2019, 1, 29)
       )
     end
   end
