@@ -23,31 +23,33 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO")
     end
 
-    scenario "User can update fields" do
-      visit "hearings/" + hearing.external_id.to_s + "/details"
+    ensure_stable do
+      scenario "User can update fields" do
+        visit "hearings/" + hearing.external_id.to_s + "/details"
 
-      click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
-      click_dropdown(name: "hearingCoordinatorDropdown", index: 0, wait: 30)
-      click_dropdown(name: "hearingRoomDropdown", index: 0, wait: 30)
-      find("label", text: "Yes, Waive 90 Day Evidence Hold").click
+        click_dropdown(name: "judgeDropdown", index: 0, wait: 30)
+        click_dropdown(name: "hearingCoordinatorDropdown", index: 0, wait: 30)
+        click_dropdown(name: "hearingRoomDropdown", index: 0, wait: 30)
+        find("label", text: "Yes, Waive 90 Day Evidence Hold").click
 
-      fill_in "Notes", with: generate_words(10)
-      fill_in "taskNumber", with: "123456789"
-      click_dropdown(name: "transcriber", index: 1)
-      fill_in "sentToTranscriberDate", with: "04012019"
-      fill_in "expectedReturnDate", with: "04022019"
-      fill_in "uploadedToVbmsDate", with: "04032019"
+        fill_in "Notes", with: generate_words(10)
+        fill_in "taskNumber", with: "123456789"
+        click_dropdown(name: "transcriber", index: 1)
+        fill_in "sentToTranscriberDate", with: "04012019"
+        fill_in "expectedReturnDate", with: "04022019"
+        fill_in "uploadedToVbmsDate", with: "04032019"
 
-      click_dropdown(name: "problemType", index: 1)
-      fill_in "problemNoticeSentDate", with: "04042019"
-      find(".cf-form-radio-option", text: "Proceeed without transcript").click
+        click_dropdown(name: "problemType", index: 1)
+        fill_in "problemNoticeSentDate", with: "04042019"
+        find(".cf-form-radio-option", text: "Proceeed without transcript").click
 
-      find("label", text: "Yes, Transcript Requested").click
-      fill_in "copySentDate", with: "04052019"
+        find("label", text: "Yes, Transcript Requested").click
+        fill_in "copySentDate", with: "04052019"
 
-      click_button("Save")
+        click_button("Save")
 
-      expect(page).to have_content("Hearing Successfully Updated")
+        expect(page).to have_content("Hearing Successfully Updated")
+      end
     end
   end
 
