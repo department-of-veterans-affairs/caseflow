@@ -901,4 +901,42 @@ feature "Appeal Intake" do
       expect(page).to have_content("Left knee granted")
     end
   end
+
+  context "has prior non-comp claims with decision issues" do
+    let(:prior_noncomp_decision_review) do
+      create(:higher_level_review,
+             benefit_type: "nca",
+             veteran_file_number: veteran_no_ratings.file_number)
+    end
+    # decision_issue_date needs to be before reciept date to show up
+    let(:decision_issue_date) { receipt_date - 2.days }
+    let!(:decision_issues) do
+      [
+        # non comp decision issues do not have end_product_last_action date
+        # but do have promulgation date
+        create(:decision_issue,
+               disposition: "Granted",
+               description: "granted issue",
+               participant_id: veteran_no_ratings.participant_id,
+               decision_review: prior_noncomp_decision_review,
+               caseflow_decision_date: decision_issue_date),
+        create(:decision_issue,
+               disposition: "Dismissed",
+               description: "dismissed issue",
+               participant_id: veteran_no_ratings.participant_id,
+               decision_review: prior_noncomp_decision_review,
+               caseflow_decision_date: decision_issue_date)
+      ]
+    end
+
+    it "shows prior decision issues as contestable" do
+      start_appeal(veteran_no_ratings)
+
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      expect(page).to have_content(decision_issue_date.strftime("%m/%d/%Y"))
+      expect(page).to have_content("granted issue")
+      expect(page).to have_content("dismissed issue")
+    end
+  end
 end
