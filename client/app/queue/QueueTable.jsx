@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { css, hover } from 'glamor';
 import _ from 'lodash';
 
-import Tooltip from './Tooltip';
-import { DoubleArrow } from './RenderFunctions';
+import Tooltip from '../components/Tooltip';
+import { DoubleArrow } from '../components/RenderFunctions';
+import TableFilter from '../components/TableFilter';
+import FilterSummary from '../components/FilterSummary';
 import { COLORS } from '../constants/AppConstants';
-import { css, hover } from 'glamor';
-import FilterIcon from './FilterIcon';
-import DropdownFilter from './DropdownFilter';
-import ListItemPicker from './ListItemPicker';
-import ListItemPickerCheckbox from './ListItemPickerCheckbox';
 
 /**
  * This component can be used to easily build tables.
@@ -43,18 +41,19 @@ const getColumns = (props) => {
 };
 
 const HeaderRow = (props) => {
-  const sortableHeaderStyle = css({ display: 'table-row' }, hover({ cursor: 'pointer' }));
-  const sortArrowsStyle = css({
+  const iconHeaderStyle = css({ display: 'table-row' });
+  const iconStyle = css({
     display: 'table-cell',
     paddingLeft: '1rem',
     paddingTop: '0.3rem',
     verticalAlign: 'middle'
-  });
+  }, hover({ cursor: 'pointer' }));
 
   return <thead className={props.headerClassName}>
     <tr>
       {getColumns(props).map((column, columnNumber) => {
-        let columnContent = <span>{column.header || ''}</span>;
+        let sortIcon;
+        let filterIcon;
 
         if (column.getSortValue) {
           const topColor = props.sortColIdx === columnNumber && !props.sortAscending ?
@@ -64,40 +63,28 @@ const HeaderRow = (props) => {
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
 
-          columnContent = <span {...sortableHeaderStyle} onClick={() => props.setSortOrder(columnNumber)}>
-            <span>{column.header || ''}</span>
-            <span {...sortArrowsStyle}><DoubleArrow topColor={topColor} bottomColor={botColor} /></span>
+          sortIcon = <span {...iconStyle} onClick={() => props.setSortOrder(columnNumber)}>
+            <DoubleArrow topColor={topColor} bottomColor={botColor} />
           </span>;
         }
 
-        if (column.getFilterValues) {
-          columnContent = <span><span>{column.header || ''}</span>
-            <span><FilterIcon
-              label={column.label}
-              idPrefix={column.valueName}
-              getRef={column.getFilterIconRef}
-              selected={column.isDropdownFilterOpen || column.anyFiltersAreSet}
-              handleActivate={column.toggleDropdownFilterVisibility} />
-
-            {column.isDropdownFilterOpen &&
-              <DropdownFilter
-                name={column.valueName}
-                isClearEnabled={column.anyFiltersAreSet}
-                handleClose={column.toggleDropdownFilterVisibility}>
-                { column.useCheckbox ?
-                  <ListItemPickerCheckbox
-                    options={column.getFilterValues}
-                    setSelectedValue={column.setSelectedValue}
-                    selected={column.checkSelectedValue} /> :
-                  <ListItemPicker
-                    options={column.getFilterValues}
-                    setSelectedValue={column.setSelectedValue} />
-                }
-              </DropdownFilter>
-            }
-            </span>
-          </span>;
+        // Keeping the historical prop `getFilterValues` for backwards compatibility,
+        // will remove this once all apps are using this new component.
+        if (column.enableFilter || column.getFilterValues) {
+          filterIcon = <TableFilter
+            {...column}
+            toggleDropdownFilterVisibility={(columnName) => props.toggleDropdownFilterVisibility(columnName)}
+            isDropdownFilterOpen={props.isDropdownFilterOpen[column.columnName]}
+            updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
+            filteredByList={props.filteredByList} />;
         }
+
+        const columnTitleContent = <span>{column.header || ''}</span>;
+        const columnContent = <span {...iconHeaderStyle}>
+          {columnTitleContent}
+          {sortIcon}
+          {filterIcon}
+        </span>;
 
         return <th scope="col" key={columnNumber} className={cellClasses(column)}>
           { column.tooltip ?
@@ -184,14 +171,16 @@ class FooterRow extends React.PureComponent {
   }
 }
 
-export default class Table extends React.PureComponent {
+export default class QueueTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
     const { defaultSort } = this.props;
     const state = {
       sortAscending: true,
-      sortColIdx: null
+      sortColIdx: null,
+      areDropdownFiltersOpen: {},
+      filteredByList: {}
     };
 
     if (defaultSort) {
@@ -222,8 +211,45 @@ export default class Table extends React.PureComponent {
     );
   }
 
+  toggleDropdownFilterVisibility = (columnName) => {
+    const originalValue = _.get(this.state, [
+      'areDropdownFiltersOpen', columnName
+    ], false);
+    const newState = Object.assign({}, this.state);
+
+    newState.areDropdownFiltersOpen[columnName] = !originalValue;
+    this.setState({ newState });
+  };
+
+  updateFilteredByList = (newList) => {
+    this.setState({ filteredByList: newList });
+  };
+
+  filterTableData = (data: Array<Object>) => {
+    const { filteredByList } = this.state;
+    let filteredData = _.clone(data);
+
+    // Only filter the data if filters have been selected
+    if (!_.isEmpty(filteredByList)) {
+      for (const columnName in filteredByList) {
+        // If there are no filters for this columnName,
+        // continue to the next columnName
+        if (_.isEmpty(filteredByList[columnName])) {
+          continue; // eslint-disable-line no-continue
+        }
+
+        // Only return the data point if it contains the value of the filter
+        filteredData = filteredData.filter((row) => {
+          return filteredByList[columnName].includes(_.get(row, columnName));
+        });
+      }
+    }
+
+    return filteredData;
+  };
+
   render() {
-    let {
+    const {
       columns,
       summary,
       headerClassName = '',
@@ -238,50 +264,62 @@ export default class Table extends React.PureComponent {
       styling,
       bodyStyling
     } = this.props;
-    const rowObjects = this.sortRowObjects();
+    let rowObjects = this.sortRowObjects();
+
+    rowObjects = this.filterTableData(rowObjects);
 
     let keyGetter = getKeyForRow;
 
     if (!getKeyForRow) {
       keyGetter = _.identity;
       if (!slowReRendersAreOk) {
-        console.warn('<Table> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
+        console.warn('<QueueTable> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
           'To learn more about keys, see https://facebook.github.io/react/docs/lists-and-keys.html#keys');
       }
     }
 
-    return <table
-      id={id}
-      className={`usa-table-borderless ${this.props.className}`}
-      summary={summary}
-      {...styling} >
+    return <div>
+      <FilterSummary
+        filteredByList={this.state.filteredByList}
+        alternateColumnNames={this.props.alternateColumnNames}
+        clearFilteredByList={(newList) => this.updateFilteredByList(newList)} />
+      <table
+        id={id}
+        className={`usa-table-borderless ${this.props.className}`}
+        summary={summary}
+        {...styling} >
 
-      { caption && <caption className="usa-sr-only">{ caption }</caption> }
+        { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
-      <HeaderRow
-        columns={columns}
-        headerClassName={headerClassName}
-        setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
-          sortColIdx: colIdx,
-          sortAscending: ascending
-        })}
-        {...this.state} />
-      <BodyRows
-        id={tbodyId}
-        tbodyRef={tbodyRef}
-        columns={columns}
-        getKeyForRow={keyGetter}
-        rowObjects={rowObjects}
-        bodyClassName={bodyClassName}
-        rowClassNames={rowClassNames}
-        bodyStyling={bodyStyling}
-        {...this.state} />
-      <FooterRow columns={columns} />
-    </table>;
+        <HeaderRow
+          columns={columns}
+          headerClassName={headerClassName}
+          setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
+            sortColIdx: colIdx,
+            sortAscending: ascending
+          })}
+          toggleDropdownFilterVisibility={this.toggleDropdownFilterVisibility}
+          isDropdownFilterOpen={this.state.areDropdownFiltersOpen}
+          updateFilteredByList={this.updateFilteredByList}
+          filteredByList={this.state.filteredByList}
+          {...this.state} />
+        <BodyRows
+          id={tbodyId}
+          tbodyRef={tbodyRef}
+          columns={columns}
+          getKeyForRow={keyGetter}
+          rowObjects={rowObjects}
+          bodyClassName={bodyClassName}
+          rowClassNames={rowClassNames}
+          bodyStyling={bodyStyling}
+          {...this.state} />
+        <FooterRow columns={columns} />
+      </table>
+    </div>;
   }
 }
 
-Table.propTypes = {
+QueueTable.propTypes = {
   tbodyId: PropTypes.string,
   tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([
@@ -300,5 +338,6 @@ Table.propTypes = {
   defaultSort: PropTypes.shape({
     sortColIdx: PropTypes.number,
     sortAscending: PropTypes.bool
-  })
+  }),
+  userReadableColumnNames: PropTypes.object
 };
