@@ -11,7 +11,7 @@ class LegacyTask
   TASK_ID_REGEX = /\A[0-9A-Z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\Z/i.freeze
 
   def available_actions_unwrapper(user, role)
-    available_actions(role).map { |action| build_action_hash(action, user) }
+    available_actions(user, role).map { |action| build_action_hash(action, user) }
   end
 
   def build_action_hash(action, user)
