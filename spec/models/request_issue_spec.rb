@@ -151,6 +151,16 @@ describe RequestIssue do
     end
   end
 
+  context ".not_closed" do
+    subject { RequestIssue.not_closed }
+
+    let!(:closed_request_issue) { create(:request_issue, :removed) }
+
+    it "filters by whether the closed_at is nil" do
+      expect(subject.find_by(id: closed_request_issue.id)).to be_nil
+    end
+  end
+
   context ".find_active_by_contested_rating_issue_reference_id" do
     let(:active_rating_request_issue) do
       rating_request_issue.tap do |ri|

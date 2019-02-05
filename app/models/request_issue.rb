@@ -131,6 +131,10 @@ class RequestIssue < ApplicationRecord
       where.not(review_request_id: nil)
     end
 
+    def not_closed
+      where(closed_at: nil)
+    end
+
     def unidentified
       where(
         contested_rating_issue_reference_id: nil,
