@@ -87,12 +87,6 @@ describe DecisionIssue do
 
         it { is_expected.to be_truthy }
       end
-
-      context "disposition is not set" do
-        let(:disposition) { nil }
-
-        it { is_expected.to be_falsey }
-      end
     end
   end
 

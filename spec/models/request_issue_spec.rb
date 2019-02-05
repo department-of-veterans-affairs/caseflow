@@ -918,7 +918,12 @@ describe RequestIssue do
 
     context "when it has been processed" do
       let(:decision_sync_processed_at) { 1.day.ago }
-      let!(:decision_issue) { rating_request_issue.decision_issues.create!(participant_id: veteran.participant_id) }
+      let!(:decision_issue) do
+        rating_request_issue.decision_issues.create!(
+          participant_id: veteran.participant_id,
+          disposition: "allowed"
+        )
+      end
 
       it "does nothing" do
         subject
