@@ -880,4 +880,89 @@ describe Appeal do
       end
     end
   end
+
+  context "#events" do
+    let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+    let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
+    let!(:decision_date) { receipt_date + 130.days }
+    let(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
+    let(:judge) { create(:user) }
+    let(:judge_task_created_date) { receipt_date + 10 }
+    let!(:judge_review_task) do
+      create(:ama_judge_decision_review_task,
+             assigned_to: judge, appeal: appeal, created_at: judge_task_created_date, status: "completed")
+    end
+    let!(:judge_quality_review_task) do
+      create(:ama_judge_quality_review_task,
+             assigned_to: judge, appeal: appeal, created_at: judge_task_created_date + 2.days, status: "completed")
+    end
+
+    context "decision, no remand and an effectuation" do
+      let!(:decision_issue) { create(:decision_issue, decision_review: appeal) }
+      let(:ep_cleared_date) { receipt_date + 150.days }
+      let!(:effectuation_ep) do
+        create(:end_product_establishment,
+               :cleared, source: decision_document, last_synced_at: ep_cleared_date)
+      end
+
+      it "has an nod event, judge assigned event, decision event and effectation event" do
+        events = appeal.events
+        nod_event = events.find { |e| e.type == :amaNod }
+        expect(nod_event.date.to_date).to eq(receipt_date.to_date)
+
+        judge_assigned_event = events.find { |e| e.type == :distributed_to_vlj }
+        expect(judge_assigned_event.date.to_date).to eq(judge_task_created_date.to_date)
+
+        decision_event = events.find { |e| e.type == :bva_decision }
+        expect(decision_event.date.to_date).to eq(decision_date.to_date)
+
+        effectuation_event = events.find { |e| e.type == :bvaDecisionEffectuation }
+        expect(effectuation_event.date.to_date).to eq(ep_cleared_date.to_date)
+      end
+    end
+
+    context "decision with a remand and an effectuation" do
+      # the effectuation
+      let!(:decision_issue) { create(:decision_issue, decision_review: appeal) }
+      let(:ep_cleared_date) { receipt_date + 150.days }
+      let!(:effectuation_ep) do
+        create(:end_product_establishment,
+               :cleared, source: decision_document, last_synced_at: ep_cleared_date)
+      end
+      # the remand
+      let!(:remanded_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "remanded", benefit_type: "compensation")
+      end
+      let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let(:remanded_ep_clr_date) { receipt_date + 200.days }
+      let!(:remanded_ep) { create(:end_product_establishment, :cleared, source: remanded_sc) }
+      let!(:remanded_sc_decision_issue) do
+        create(:decision_issue,
+               decision_review: remanded_sc,
+               end_product_last_action_date: remanded_ep_clr_date)
+      end
+
+      it "has nod event, judge assigned event, remand event, remand decision event" do
+        events = appeal.events
+        nod_event = events.find { |e| e.type == :amaNod }
+        expect(nod_event.date.to_date).to eq(receipt_date.to_date)
+
+        judge_assigned_event = events.find { |e| e.type == :distributed_to_vlj }
+        expect(judge_assigned_event.date.to_date).to eq(judge_task_created_date.to_date)
+
+        remand_event = events.find { |e| e.type == :ama_remand }
+        expect(remand_event.date.to_date).to eq(decision_date.to_date)
+
+        remand_decision_event = events.find { |e| e.type == :dtaDecision }
+        expect(remand_decision_event.date.to_date).to eq(remanded_ep_clr_date.to_date)
+
+        effectuation_event = events.find { |e| e.type == :bvaDecisionEffectuation }
+        expect(effectuation_event).to be_nil
+
+        decision_event = events.find { |e| e.type == :bva_decision }
+        expect(decision_event).to be_nil
+      end
+    end
+  end
 end

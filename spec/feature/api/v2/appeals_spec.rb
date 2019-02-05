@@ -499,6 +499,10 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["status"]["type"]).to eq("on_docket")
       expect(json["data"][2]["attributes"]["issues"].length).to eq(0)
 
+      event_type = json["data"][2]["attributes"]["events"].first
+      expect(event_type["type"]).to eq("amaNod")
+      expect(event_type["date"]).to eq(receipt_date.to_s)
+
       FeatureToggle.disable!(:api_appeal_status_v3)
     end
   end
