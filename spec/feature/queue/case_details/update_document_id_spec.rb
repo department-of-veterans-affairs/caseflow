@@ -90,7 +90,7 @@ feature "Updating Document ID" do
       appeal: appeal,
       parent: root_task,
       assigned_to: attorney,
-      completed_at: Time.zone.now - 4.days
+      closed_at: Time.zone.now - 4.days
     )
     attorney_task.update!(status: Constants.TASK_STATUSES.completed)
     create(
