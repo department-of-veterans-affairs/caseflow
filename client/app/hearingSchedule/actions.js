@@ -111,6 +111,14 @@ export const onHearingTimeUpdate = (hearingId, time) => ({
   }
 });
 
+export const onHearingOptionalTime = (hearingId, optionalTime) => ({
+  type: ACTIONS.HEARING_OPTIONAL_TIME,
+  payload: {
+    hearingId,
+    optionalTime
+  }
+});
+
 export const onSelectedHearingDayChange = (selectedHearingDay) => ({
   type: ACTIONS.SELECTED_HEARING_DAY_CHANGE,
   payload: {
