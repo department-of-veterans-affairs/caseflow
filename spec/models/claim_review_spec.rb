@@ -180,8 +180,8 @@ describe ClaimReview do
     end
   end
 
-  context "#add_user_to_organization!" do
-    subject { claim_review.add_user_to_organization! }
+  context "#add_user_to_business_line!" do
+    subject { claim_review.add_user_to_business_line! }
 
     before { RequestStore[:current_user] = user }
     let(:user) { Generators::User.build }

@@ -70,7 +70,7 @@ class ClaimReview < DecisionReview
     create_decision_review_task! if processed_in_caseflow?
   end
 
-  def add_user_to_organization!
+  def add_user_to_business_line!
     return unless processed_in_caseflow?
 
     OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
