@@ -77,13 +77,13 @@ const HeaderRow = (props) => {
               idPrefix={column.valueName}
               getRef={column.getFilterIconRef}
               selected={column.isDropdownFilterOpen || column.anyFiltersAreSet}
-              handleActivate={column.toggleDropdownFilterVisiblity} />
+              handleActivate={column.toggleDropdownFilterVisibility} />
 
             {column.isDropdownFilterOpen &&
               <DropdownFilter
                 name={column.valueName}
                 isClearEnabled={column.anyFiltersAreSet}
-                handleClose={column.toggleDropdownFilterVisiblity}>
+                handleClose={column.toggleDropdownFilterVisibility}>
                 { column.useCheckbox ?
                   <ListItemPickerCheckbox
                     options={column.getFilterValues}
