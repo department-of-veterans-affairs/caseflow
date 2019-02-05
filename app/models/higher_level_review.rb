@@ -64,8 +64,41 @@ class HigherLevelReview < ClaimReview
     []
   end
 
+  def decision_event_date
+    return if dta_claim
+    return unless decision_issues.any?
+
+    if end_product_establishments.any?
+      decision_issues.first.approx_decision_date
+    else
+      decision_issues.first.promulgation_date
+    end
+  end
+
+  def dta_error_event_date
+    return if hlr_ep_active?
+    return unless dta_claim
+
+    decision_issues.find_by(disposition: DTA_ERRORS).approx_decision_date
+  end
+
+  def dta_descision_event_date
+    return if active?
+    return unless dta_claim
+
+    dta_claim.decision_event_date
+  end
+
+  def other_close_event_date
+    return if active?
+    return unless decision_issues.empty?
+    return unless end_product_establishments.any?
+
+    end_product_establishments.first.last_synced_at
+  end
+
   def events
-    # need to implement. hlr_request, hlr_decision, hlr_dta_error, or hlr_other_close
+    @events ||= AppealEvents.new(appeal: self).all
   end
 
   private
