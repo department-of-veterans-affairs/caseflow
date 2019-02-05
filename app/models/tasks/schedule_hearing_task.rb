@@ -20,7 +20,7 @@ class ScheduleHearingTask < GenericTask
         "status = ? OR status = ?",
         Constants.TASK_STATUSES.assigned.to_sym,
         Constants.TASK_STATUSES.in_progress.to_sym
-      )
+      ).includes(:assigned_to, :assigned_by, :appeal, attorney_case_reviews: [:attorney])
       appeal_tasks = incomplete_tasks.joins("INNER JOIN appeals ON appeals.id = appeal_id")
         .joins("INNER JOIN veterans ON appeals.veteran_file_number = veterans.file_number")
         .where("veterans.closest_regional_office = ?", regional_office)

@@ -693,7 +693,7 @@ RSpec.describe TasksController, type: :controller do
 
     context "stress test for endpoint" do
       let!(:vacols_case) do
-        (0..499).map do |_index|
+        (0..999).map do |_index|
           create(
             :case,
             folder: create(:folder, tinum: "docket-number"),
@@ -718,7 +718,7 @@ RSpec.describe TasksController, type: :controller do
         puts "stopwatch: #{stopwatch}"
         data = JSON.parse(response.body)["data"]
 
-        expect(data.size).to be(500)
+        expect(data.size).to be(1000)
       end
     end
   end
