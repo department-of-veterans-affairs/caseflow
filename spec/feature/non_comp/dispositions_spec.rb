@@ -28,7 +28,7 @@ feature "NonComp Dispositions Task Page" do
   end
 
   context "with an existing organization" do
-    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+    let!(:non_comp_org) { create(:business_line, name: "National Cemetery Association", url: "nca") }
 
     let(:user) { create(:default_user) }
 
@@ -40,7 +40,8 @@ feature "NonComp Dispositions Task Page" do
       create(
         :higher_level_review,
         end_product_establishments: [epe],
-        veteran_file_number: veteran.file_number
+        veteran_file_number: veteran.file_number,
+        benefit_type: non_comp_org.url
       )
     end
 
@@ -50,7 +51,8 @@ feature "NonComp Dispositions Task Page" do
                :nonrating,
                end_product_establishment: epe,
                veteran_participant_id: veteran.participant_id,
-               review_request: hlr)
+               review_request: hlr,
+               benefit_type: hlr.benefit_type)
       end
     end
 
@@ -58,7 +60,7 @@ feature "NonComp Dispositions Task Page" do
       create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org)
     end
 
-    let(:business_line_url) { "decision_reviews/nco" }
+    let(:business_line_url) { "decision_reviews/nca" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
     before do
       User.stub = user
@@ -68,7 +70,7 @@ feature "NonComp Dispositions Task Page" do
     scenario "displays dispositions page" do
       visit dispositions_url
 
-      expect(page).to have_content("Non-Comp Org")
+      expect(page).to have_content("National Cemetery Association")
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
       expect(page).to have_content(

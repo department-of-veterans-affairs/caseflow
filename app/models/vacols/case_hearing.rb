@@ -70,7 +70,7 @@ class VACOLS::CaseHearing < VACOLS::Record
 
     def co_hearings_for_master_records(parent_hearing_dates)
       select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) IN (?)",
-                            "C", "%VIDEO%", parent_hearing_dates.map(&:to_date))
+                            HearingDay::REQUEST_TYPES[:central], "%VIDEO%", parent_hearing_dates.map(&:to_date))
     end
 
     def for_appeal(appeal_vacols_id)
@@ -99,7 +99,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     def load_days_for_central_office(start_date, end_date)
       select_schedule_days.where("hearing_type = ? and (folder_nr NOT LIKE ? OR folder_nr IS NULL) " \
                                   "and trunc(hearing_date) between ? and ?",
-                                 "C", "%VIDEO%", VacolsHelper.day_only_str(start_date),
+                                 HearingDay::REQUEST_TYPES[:central], "%VIDEO%", VacolsHelper.day_only_str(start_date),
                                  VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
@@ -122,7 +122,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
                            adduser: current_user_slogid,
                            folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil,
-                           hearing_type: "C"))
+                           hearing_type: HearingDay::REQUEST_TYPES[:central]))
       end
     end
 

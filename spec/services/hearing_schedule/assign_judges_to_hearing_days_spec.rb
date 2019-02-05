@@ -10,7 +10,10 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
   context "assign judges info from VACOLS staff and Caseflow" do
     before do
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 7, 6), folder_nr: "VIDEO RO13")
+      create(:case_hearing,
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
+             hearing_date: Date.new(2018, 7, 6),
+             folder_nr: "VIDEO RO13")
     end
     subject { assign_judges_to_hearing_days }
 
@@ -139,7 +142,10 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
     let!(:video_hearing_days) do
       get_unique_dates_between(schedule_period.start_date, schedule_period.end_date, 10).map do |date|
-        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
+        create(:case_hearing,
+               hearing_type: HearingDay::REQUEST_TYPES[:central],
+               hearing_date: date,
+               folder_nr: "VIDEO RO13")
       end
     end
 
@@ -170,8 +176,10 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     end
 
     let(:co_hearing_day) do
-      create(:case_hearing, hearing_type: "C", hearing_date: @date,
-                            folder_nr: "VIDEO RO13")
+      create(:case_hearing,
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
+             hearing_date: @date,
+             folder_nr: "VIDEO RO13")
     end
 
     subject { assign_judges_to_hearing_days }
@@ -213,10 +221,15 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
         next if date_count[date] >= 1 && date.wednesday?
 
-        case_hearing = create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13")
+        case_hearing = create(:case_hearing,
+                              hearing_type: HearingDay::REQUEST_TYPES[:central],
+                              hearing_date: date,
+                              folder_nr: "VIDEO RO13")
         hearing_days[case_hearing.hearing_pkseq] = case_hearing
 
-        co_case_hearing = create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: nil)
+        co_case_hearing = create(:case_hearing,
+                                 hearing_type: HearingDay::REQUEST_TYPES[:central],
+                                 hearing_date: date, folder_nr: nil)
         hearing_days[co_case_hearing.hearing_pkseq] = co_case_hearing
         date_count[date] += 1
       end
