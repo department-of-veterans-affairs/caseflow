@@ -16,9 +16,18 @@ describe JudgeSchedulePeriod do
 
   context "assign judges to hearing days" do
     let!(:hearing_days) do
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 8, 14), folder_nr: "VIDEO RO13")
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 9, 12), folder_nr: "VIDEO RO13")
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 6, 2), folder_nr: "VIDEO RO13")
+      create(:case_hearing,
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
+             hearing_date: Date.new(2018, 8, 14),
+             folder_nr: "VIDEO RO13")
+      create(:case_hearing,
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
+             hearing_date: Date.new(2018, 9, 12),
+             folder_nr: "VIDEO RO13")
+      create(:case_hearing,
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
+             hearing_date: Date.new(2018, 6, 2),
+             folder_nr: "VIDEO RO13")
     end
 
     subject { judge_schedule_period.algorithm_assignments }
@@ -38,7 +47,9 @@ describe JudgeSchedulePeriod do
     let!(:hearing_days) do
       get_every_nth_date_between(single_nonavail_date_judge_schedule_period.start_date,
                                  single_nonavail_date_judge_schedule_period.end_date, 4).map do |date|
-        create(:hearing_day, request_type: "V", scheduled_for: date, regional_office: "RO13", room: 4)
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               scheduled_for: date, regional_office: "RO13", room: 4)
       end
     end
 
@@ -75,7 +86,10 @@ describe JudgeSchedulePeriod do
     let!(:hearing_days) do
       get_every_nth_date_between(one_month_judge_schedule_period.start_date,
                                  one_month_judge_schedule_period.end_date, 4).map do |date|
-        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
+        create(:case_hearing,
+               hearing_type: HearingDay::REQUEST_TYPES[:central],
+               hearing_date: date,
+               folder_nr: "VIDEO RO13", room: 4)
       end
     end
 
@@ -105,18 +119,30 @@ describe JudgeSchedulePeriod do
   context "A judge with a lot of non-availability days still gets as many hearings as possible" do
     let!(:hearing_days) do
       [
-        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 7, 22, 9, 0, 0, "+0"),
-                              folder_nr: "VIDEO RO13", room: 4),
-        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 7, 29, 9, 0, 0, "+0"),
-                              folder_nr: "VIDEO RO13", room: 4),
-        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 8, 1, 9, 0, 0, "+0"),
-                              folder_nr: "VIDEO RO13", room: 4),
-        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 8, 6, 9, 0, 0, "+0"),
-                              folder_nr: "VIDEO RO13", room: 4),
-        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 8, 13, 9, 0, 0, "+0"),
-                              folder_nr: "VIDEO RO13", room: 4),
-        create(:case_hearing, hearing_type: "C", hearing_date: DateTime.new(2018, 8, 17, 9, 0, 0, "+0"),
-                              folder_nr: "VIDEO RO13", room: 4)
+        create(:case_hearing,
+               hearing_type: HearingDay::REQUEST_TYPES[:central],
+               hearing_date: DateTime.new(2018, 7, 22, 9, 0, 0, "+0"),
+               folder_nr: "VIDEO RO13", room: 4),
+        create(:case_hearing,
+               hearing_type: HearingDay::REQUEST_TYPES[:central],
+               hearing_date: DateTime.new(2018, 7, 29, 9, 0, 0, "+0"),
+               folder_nr: "VIDEO RO13", room: 4),
+        create(:case_hearing,
+               hearing_type: HearingDay::REQUEST_TYPES[:central],
+               hearing_date: DateTime.new(2018, 8, 1, 9, 0, 0, "+0"),
+               folder_nr: "VIDEO RO13", room: 4),
+        create(:case_hearing,
+               hearing_type: HearingDay::REQUEST_TYPES[:central],
+               hearing_date: DateTime.new(2018, 8, 6, 9, 0, 0, "+0"),
+               folder_nr: "VIDEO RO13", room: 4),
+        create(:case_hearing,
+               hearing_type: HearingDay::REQUEST_TYPES[:central],
+               hearing_date: DateTime.new(2018, 8, 13, 9, 0, 0, "+0"),
+               folder_nr: "VIDEO RO13", room: 4),
+        create(:case_hearing,
+               hearing_type: HearingDay::REQUEST_TYPES[:central],
+               hearing_date: DateTime.new(2018, 8, 17, 9, 0, 0, "+0"),
+               folder_nr: "VIDEO RO13", room: 4)
       ]
     end
 
@@ -141,8 +167,12 @@ describe JudgeSchedulePeriod do
     let!(:hearing_days) do
       get_every_nth_date_between(one_week_one_judge_schedule_period.start_date,
                                  one_week_one_judge_schedule_period.end_date, 4).map do |date|
-        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
-        create(:case_hearing, hearing_type: "C", hearing_date: date, folder_nr: "VIDEO RO17", room: 5)
+        create(:case_hearing,
+               hearing_type: HearingDay::REQUEST_TYPES[:central],
+               hearing_date: date, folder_nr: "VIDEO RO13", room: 4)
+        create(:case_hearing,
+               hearing_type: HearingDay::REQUEST_TYPES[:central],
+               hearing_date: date, folder_nr: "VIDEO RO17", room: 5)
       end
     end
 

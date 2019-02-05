@@ -9,7 +9,8 @@ class HearingDayRepository
 
     # Query Operations
     def find_hearing_day(request_type, hearing_key)
-      if request_type.nil? || request_type == "V" || request_type == "C"
+      if request_type.nil? || request_type == HearingDay::REQUEST_TYPES[:central] ||
+         request_type == HearingDay::REQUEST_TYPES[:video]
         VACOLS::CaseHearing.find_hearing_day(hearing_key)
       else
         tbyear, tbtrip, tbleg = hearing_key.split("-")
