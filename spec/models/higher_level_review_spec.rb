@@ -351,4 +351,109 @@ describe HigherLevelReview do
       end
     end
   end
+
+  context "#events" do
+    let(:veteran_file_number) { "123456789" }
+    let(:promulgation_date) { receipt_date + 130.days }
+
+    context "hlr has a decision with no dta error" do
+      let(:hlr) do
+        create(:higher_level_review,
+               veteran_file_number: veteran_file_number,
+               receipt_date: receipt_date)
+      end
+
+      let!(:decision_issue) do
+        create(:decision_issue,
+               decision_review: hlr,
+               disposition: "not a dta error",
+               promulgation_date: promulgation_date)
+      end
+
+      it "has a request event and a decision event" do
+        events = hlr.events
+        request_event = events.find { |e| e.type == :hlr_request }
+        expect(request_event.date.to_date).to eq(receipt_date.to_date)
+
+        decision_event = events.find { |e| e.type == :hlr_decision }
+        expect(decision_event.date.to_date).to eq(promulgation_date.to_date)
+      end
+    end
+
+    context "hlr closed with no decision" do
+      let(:hlr) do
+        create(:higher_level_review,
+               veteran_file_number: veteran_file_number,
+               receipt_date: receipt_date)
+      end
+
+      let(:last_synced_at) { receipt_date + 20.days }
+      let!(:hlr_ep) do
+        create(:end_product_establishment,
+               :cleared,
+               source: hlr,
+               last_synced_at: last_synced_at)
+      end
+
+      it "has a request and closed event" do
+        events = hlr.events
+        request_event = events.find { |e| e.type == :hlr_request }
+        expect(request_event.date.to_date).to eq(receipt_date.to_date)
+
+        closed_event = events.find { |e| e.type == :hlr_other_close }
+        expect(closed_event.date.to_date).to eq(last_synced_at.to_date)
+      end
+    end
+
+    context "hlr has dta error and remanded sc decision" do
+      let(:hlr_ep_clr_date) { receipt_date + 30 }
+      let!(:hlr_with_dta_error) do
+        create(:higher_level_review,
+               veteran_file_number: veteran_file_number,
+               receipt_date: receipt_date)
+      end
+
+      let!(:hlr_end_product) do
+        create(:end_product_establishment, :cleared, source: hlr_with_dta_error)
+      end
+
+      let!(:hlr_decision_issue_with_dta_error) do
+        create(:decision_issue,
+               decision_review: hlr_with_dta_error,
+               disposition: HigherLevelReview::DTA_ERROR_PMR,
+               rating_issue_reference_id: "rating1",
+               benefit_type: benefit_type,
+               end_product_last_action_date: hlr_ep_clr_date)
+      end
+
+      let!(:dta_sc) do
+        create(:supplemental_claim,
+               veteran_file_number: veteran_file_number,
+               decision_review_remanded: hlr_with_dta_error)
+      end
+
+      let(:promulgation_date) { receipt_date + 130.days }
+      let!(:dta_ep) do
+        create(:end_product_establishment, :cleared, source: dta_sc)
+      end
+
+      let!(:remanded_sc_decision_issue) do
+        create(:decision_issue,
+               decision_review: dta_sc,
+               end_product_last_action_date: promulgation_date)
+      end
+
+      it "has a request event, hlr_dta_error event and dta_decision event" do
+        events = hlr_with_dta_error.events
+        request_event = events.find { |e| e.type == :hlr_request }
+        expect(request_event.date.to_date).to eq(receipt_date.to_date)
+
+        hlr_dta_error_event = events.find { |e| e.type == :hlr_dta_error }
+        expect(hlr_dta_error_event.date.to_date).to eq(hlr_ep_clr_date.to_date)
+
+        dta_decision_event = events.find { |e| e.type == :dtaDecision }
+        expect(dta_decision_event.date.to_date).to eq(promulgation_date.to_date)
+      end
+    end
+  end
 end
