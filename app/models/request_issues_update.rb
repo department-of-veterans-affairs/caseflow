@@ -27,9 +27,8 @@ class RequestIssuesUpdate < ApplicationRecord
         after_request_issue_ids: after_issues.map(&:id)
       )
       submit_for_processing!
+      process_job
     end
-
-    process_job
 
     true
   end

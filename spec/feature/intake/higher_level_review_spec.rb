@@ -696,6 +696,7 @@ feature "Higher-Level Review" do
              promulgation_date: another_promulgation_date,
              decision_text: "supplemental claim decision issue",
              profile_date: profile_date,
+             end_product_last_action_date: profile_date,
              benefit_type: previous_supplemental_claim.benefit_type)
     end
 
@@ -1050,13 +1051,11 @@ feature "Higher-Level Review" do
                request_issues: [previous_appeal_request_issue],
                rating_issue_reference_id: appeal_reference_id,
                participant_id: veteran.participant_id,
-               promulgation_date: another_promulgation_date,
                description: "appeal decision issue",
                decision_text: "appeal decision issue",
-               benefit_type: "compensation")
+               benefit_type: "compensation",
+               caseflow_decision_date: profile_date)
       end
-
-      let!(:decision_document) { create(:decision_document, decision_date: profile_date, appeal: previous_appeal) }
 
       scenario "the issue is ineligible" do
         start_higher_level_review(
@@ -1146,13 +1145,13 @@ feature "Higher-Level Review" do
           hlr, = start_higher_level_review(veteran, is_comp: false)
           create(:decision_issue,
                  decision_review: hlr,
-                 profile_date: receipt_date - 1.day,
+                 caseflow_decision_date: receipt_date - 1.day,
                  benefit_type: hlr.benefit_type,
                  decision_text: "something was decided in the past",
                  participant_id: veteran.participant_id)
           create(:decision_issue,
                  decision_review: hlr,
-                 profile_date: receipt_date + 1.day,
+                 caseflow_decision_date: receipt_date + 1.day,
                  benefit_type: hlr.benefit_type,
                  decision_text: "something was decided in the future",
                  participant_id: veteran.participant_id)

@@ -425,6 +425,10 @@ class Appeal < DecisionReview
     end
   end
 
+  def processed_in_caseflow?
+    true
+  end
+
   private
 
   def create_business_line_tasks

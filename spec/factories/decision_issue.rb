@@ -4,6 +4,8 @@ FactoryBot.define do
     disposition "allowed"
     benefit_type "compensation"
     diagnostic_code "9999"
+    end_product_last_action_date 5.days.ago.to_date
+    decision_review { create(:higher_level_review) }
 
     description { decision_review.is_a?(Appeal) ? "description" : nil }
 
