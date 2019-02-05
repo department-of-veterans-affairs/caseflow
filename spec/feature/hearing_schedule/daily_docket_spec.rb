@@ -1,6 +1,14 @@
 require "rails_helper"
 
 RSpec.feature "Hearing Schedule Daily Docket" do
+  before do
+    Timecop.freeze(Time.zone.now)
+  end
+
+  after do
+    Timecop.return
+  end
+
   let!(:current_user) do
     User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
   end
@@ -53,8 +61,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       click_dropdown(name: "Disposition", text: "Postponed")
-      # For unknown reasons, hearing_date is saved to 1 day before
-      click_dropdown(name: "HearingDay", text: (hearing_day_two.hearing_date - 1.day).strftime("%m/%d/%Y"))
+      click_dropdown(name: "HearingDay", text: hearing_day_two.hearing_date.utc.strftime("%m/%d/%Y"))
       click_button("Save")
       expect(page).to have_content("You have successfully updated")
       expect(page).to have_content("No Veterans are scheduled for this hearing day.")
