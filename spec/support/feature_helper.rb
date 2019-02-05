@@ -1,4 +1,11 @@
 module FeatureHelper
+  def find_table_cell(vacols_id, row_header)
+    header = find(:xpath, "//thead/tr/th", text: row_header)
+    header_index = header.path.split("/").last.delete_prefix("th[").delete_suffix("]")
+
+    find(:xpath, "//tbody/tr[@id='table-row-#{vacols_id}']/td[#{header_index}]")
+  end
+
   def click_dropdown(options = {}, container = page) # rubocop:disable Metrics/PerceivedComplexity
     options = { prompt: nil, index: nil, text: nil, name: nil }.merge(options)
     dropdown = if options[:prompt].present?

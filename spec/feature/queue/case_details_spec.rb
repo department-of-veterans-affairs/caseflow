@@ -79,7 +79,9 @@ RSpec.feature "Case details" do
 
       scenario "Entire set of attributes for hearing are displayed" do
         visit "/queue"
-        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
+
+        find_table_cell(post_remanded_appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+          .click_link
 
         expect(page).to have_content("Select an action")
 
@@ -91,7 +93,8 @@ RSpec.feature "Case details" do
       scenario "Post remanded appeal shows indication of earlier appeal hearing" do
         visit "/queue"
 
-        page.find(:xpath, "//tr[@id='table-row-#{post_remanded_appeal.vacols_id}']/td[1]/a").click
+        find_table_cell(post_remanded_appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+          .click_link
 
         expect(page).to have_content("Select an action")
         expect(page).to have_content(COPY::CASE_DETAILS_HEARING_ON_OTHER_APPEAL)
@@ -103,7 +106,9 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
+
+        find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+          .click_link
 
         hearing = appeal.hearings.first
         expect(page).to have_content("Type: #{hearing.readable_request_type}")
@@ -121,7 +126,8 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
+        find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+          .click_link
 
         worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
         expect(worksheet_link.text).to eq("View VLJ Hearing Worksheet")
@@ -136,7 +142,8 @@ RSpec.feature "Case details" do
 
       scenario "Hearings info box is not displayed" do
         visit "/queue"
-        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
+        find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+          .click_link
         expect(page).not_to have_content("Hearing preference")
       end
     end
