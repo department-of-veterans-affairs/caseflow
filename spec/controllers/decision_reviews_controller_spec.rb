@@ -100,7 +100,7 @@ describe DecisionReviewsController, type: :controller do
         expect(response_data["completed_tasks"].length).to eq(1)
         task.reload
         expect(task.status).to eq("completed")
-        expect(task.completed_at).to eq(Time.zone.now)
+        expect(task.closed_at).to eq(Time.zone.now)
       end
 
       it "returns 400 when the task has already been completed" do
@@ -160,7 +160,7 @@ describe DecisionReviewsController, type: :controller do
                  caseflow_decision_date: datetime
                )).to_not be_nil
         expect(task.status).to eq("completed")
-        expect(task.completed_at).to eq(Time.zone.now)
+        expect(task.closed_at).to eq(Time.zone.now)
       end
 
       it "returns 400 when there is not a matching decision issue for each request issue" do

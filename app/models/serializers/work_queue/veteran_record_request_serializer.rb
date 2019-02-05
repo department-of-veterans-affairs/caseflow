@@ -53,8 +53,8 @@ class WorkQueue::VeteranRecordRequestSerializer < ActiveModel::Serializer
     task.assigned_at
   end
 
-  attribute :completed_at do
-    task.completed_at
+  attribute :closed_at do
+    task.closed_at
   end
 
   attribute :started_at do
