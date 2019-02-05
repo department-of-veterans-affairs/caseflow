@@ -96,6 +96,22 @@ describe RequestIssue do
 
   let(:associated_claims) { [] }
 
+  context ".requires_processing" do
+    before do
+      rating_request_issue.submit_for_processing!(delay: 1.day)
+      nonrating_request_issue.submit_for_processing!
+    end
+
+    it "respects the delay" do
+      expect(rating_request_issue.submitted?).to eq(false)
+      expect(nonrating_request_issue.submitted?).to eq(true)
+
+      todo = RequestIssue.requires_processing
+      expect(todo).to_not include(rating_request_issue)
+      expect(todo).to include(nonrating_request_issue)
+    end
+  end
+
   context ".rating" do
     subject { RequestIssue.rating }
 
@@ -543,7 +559,7 @@ describe RequestIssue do
         contention_reference_id: contention_reference_id,
         end_product_establishment: previous_end_product_establishment,
         description: "a rating request issue"
-      )
+      ).tap(&:submit_for_processing!)
     end
 
     let(:associated_claims) do
@@ -919,7 +935,7 @@ describe RequestIssue do
   end
 
   context "#sync_decision_issues!" do
-    let(:request_issue) { rating_request_issue }
+    let(:request_issue) { rating_request_issue.tap(&:submit_for_processing!) }
     subject { request_issue.sync_decision_issues! }
 
     context "when it has been processed" do
@@ -932,6 +948,10 @@ describe RequestIssue do
           disposition: "allowed",
           end_product_last_action_date: Time.zone.now
         )
+      end
+
+      before do
+        request_issue.processed!
       end
 
       it "does nothing" do
@@ -1059,7 +1079,7 @@ describe RequestIssue do
       end
 
       context "with nonrating ep" do
-        let(:request_issue) { nonrating_request_issue }
+        let(:request_issue) { nonrating_request_issue.tap(&:submit_for_processing!) }
 
         let(:ep_code) { "030HLRNR" }
 
