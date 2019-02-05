@@ -2,7 +2,7 @@ class ScheduleHearingTask < GenericTask
   after_update :update_location_in_vacols
 
   class << self
-    def create_if_eligible(appeal)
+    def find_or_create_if_eligible(appeal)
       if appeal.is_a?(LegacyAppeal) && appeal.case_record.bfcurloc == "57" &&
          appeal.hearings.all?(&:disposition)
         ScheduleHearingTask.where.not(status: "completed").find_or_create_by!(appeal: appeal) do |task|
@@ -11,6 +11,8 @@ class ScheduleHearingTask < GenericTask
             parent: RootTask.find_or_create_by!(appeal: appeal)
           )
         end
+      elsif appeal.is_a?(Appeal)
+        ScheduleHearingTask.where.not(status: "completed").find_by(appeal: appeal)
       end
     end
 
@@ -73,17 +75,10 @@ class ScheduleHearingTask < GenericTask
 
     if params[:status] == Constants.TASK_STATUSES.completed
       slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
+      HoldHearingTask.create_hold_hearing_task!(appeal, parent)
     end
 
     super(params, current_user)
-  end
-
-  def location_based_on_hearing_type(hearing_type)
-    if hearing_type == LegacyHearing::CO_HEARING
-      LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing]
-    else
-      LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing]
-    end
   end
 
   def available_actions(user)
@@ -117,7 +112,7 @@ class ScheduleHearingTask < GenericTask
                                        hearing_location_attrs: hearing_location&.to_hash,
                                        scheduled_time: hearing_time&.stringify_keys)
     if appeal.is_a?(LegacyAppeal)
-      AppealRepository.update_location!(appeal, location_based_on_hearing_type(hearing_type))
+      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end
 end

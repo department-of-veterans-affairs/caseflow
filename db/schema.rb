@@ -237,6 +237,7 @@ ActiveRecord::Schema.define(version: 20190205164106) do
 
   create_table "decision_issues", force: :cascade do |t|
     t.string "benefit_type"
+    t.date "caseflow_decision_date"
     t.integer "decision_review_id"
     t.string "decision_review_type"
     t.string "decision_text"
@@ -907,6 +908,7 @@ ActiveRecord::Schema.define(version: 20190205164106) do
     t.integer "assigned_by_id"
     t.integer "assigned_to_id"
     t.string "assigned_to_type", null: false
+    t.datetime "closed_at"
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true

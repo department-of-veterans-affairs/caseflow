@@ -58,8 +58,26 @@ class SupplementalClaim < ClaimReview
     []
   end
 
+  def decision_event_date
+    return unless decision_issues.any?
+
+    if end_product_establishments.any?
+      decision_issues.first.approx_decision_date
+    else
+      decision_issues.first.promulgation_date
+    end
+  end
+
+  def other_close_event_date
+    return if active?
+    return unless decision_issues.empty?
+    return unless end_product_establishments.any?
+
+    end_product_establishments.first.last_synced_at
+  end
+
   def events
-    # need to implement
+    @events ||= AppealEvents.new(appeal: self).all
   end
 
   private

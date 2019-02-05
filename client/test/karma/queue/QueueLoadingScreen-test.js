@@ -20,7 +20,7 @@ const serverData = {
             pg_id: 10
           },
           assigned_on: '2018-08-02T17:37:03.000Z',
-          completed_at: null,
+          closed_at: null,
           assigned_to: {
             css_id: 'BVANKUVALIS',
             name: 'name',
@@ -70,11 +70,13 @@ describe('QueueLoadingScreen', () => {
         appealType: 'LegacyAppeal',
         externalAppealId: '3625593',
         assignedOn: '2018-08-02T17:37:03.000Z',
-        completedOn: null,
+        closedAt: null,
         dueOn: '2018-08-11T00:00:00.000Z',
         assignedTo: {
           cssId: 'BVANKUVALIS',
           name: 'name',
+          id: 130,
+          type: 'User',
           // eslint-disable-next-line no-undefined
           isOrganization: undefined
         },

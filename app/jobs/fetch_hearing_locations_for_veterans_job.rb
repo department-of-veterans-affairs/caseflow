@@ -5,17 +5,26 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   QUERY_LIMIT = 500
 
   def veterans
-    @veterans ||= Veteran.where(file_number: file_numbers)
+    @veterans ||= Veteran.where("file_number IN (?) OR veterans.id IN (?)", file_numbers, veteran_ids_from_tasks)
       .left_outer_joins(:available_hearing_locations)
       .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
       .limit(QUERY_LIMIT)
   end
 
   def file_numbers
-    # TODO: will need an AMA equivalent of this query
     @file_numbers ||= VACOLS::Case.where(bfcurloc: 57).pluck(:bfcorlid).map do |bfcorlid|
       LegacyAppeal.veteran_file_number_from_bfcorlid(bfcorlid)
     end
+  end
+
+  def veteran_ids_from_tasks
+    ScheduleHearingTask.where.not(status: "completed")
+      .joins("
+        LEFT OUTER JOIN (SELECT parent_id FROM tasks
+        WHERE type = 'HearingAdminActionVerifyAddressTask' AND status != 'completed') admin_actions
+        ON admin_actions.parent_id = id")
+      .where("admin_actions.parent_id IS NULL").limit(QUERY_LIMIT)
+      .map { |task| task.appeal.veteran.id }
   end
 
   def missing_veteran_file_numbers
@@ -37,7 +46,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: facility_ids
     )
 
-    closest_ro_index = RegionalOffice::CITIES.values.find_index { |ro| ro[:facility_locator_id] == distances[0][:id] }
+    closest_ro_index = RegionalOffice::CITIES.values.find_index do |ro|
+      ro[:facility_locator_id] == distances[0][:facility_id]
+    end
     closest_ro = RegionalOffice::CITIES.keys[closest_ro_index]
     veteran.update(closest_regional_office: closest_ro)
 
@@ -97,8 +108,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def facility_ids_for_ro(regional_office_id)
-    RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
-      [] << RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
+    (RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
+      []) << RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
   end
 
   def ro_facility_ids_for_state(state_code)
@@ -120,7 +131,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     AvailableHearingLocations.create(
       veteran_file_number: file_number,
       distance: facility[:distance],
-      facility_id: facility[:id],
+      facility_id: facility[:facility_id],
       name: facility[:name],
       address: facility[:address],
       city: facility[:city],
@@ -179,7 +190,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       tasks = LegacyAppeal.where(
         vbms_id: LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)
       ).map do |appeal|
-        ScheduleHearingTask.create_if_eligible(appeal)
+        ScheduleHearingTask.find_or_create_if_eligible(appeal)
       end.compact
 
       tasks.each do |task|
