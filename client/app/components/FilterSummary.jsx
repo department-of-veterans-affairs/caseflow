@@ -29,11 +29,13 @@ const FilterSummary = ({ filteredByList, alternateColumnNames, clearFilteredByLi
     // pointing to an empty array.
     if (filterListContent.length > 0) {
       // Add commas between filters
-      for (let i = 0; i < filterListContent.length - 1; i += 2) {
-        let commaSpan = <span key={`comma-${i}`}>, </span>;
+      filterListContent = filterListContent.map((element, index) => {
+        if (index < filterListContent.length - 1) {
+          return <span>{element}, </span>;
+        }
 
-        filterListContent.splice(i + 1, 0, commaSpan);
-      }
+        return element;
+      });
 
       filterSummary = (
         <div>
