@@ -28,25 +28,25 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
 
   context "show judge" do
     let!(:co_hearing_days) do
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 5, 1), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 1),
              regional_office: "RO13")
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 5, 7), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 7),
              regional_office: "RO13")
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 5, 16), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 16),
              regional_office: "RO13")
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 5, 22), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 22),
              regional_office: "RO13")
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 5, 23), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 23),
              regional_office: "RO13")
     end
 
@@ -132,25 +132,25 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
 
   context "assign judges to full schedule for a schedule period" do
     let!(:hearing_days) do
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 5, 1), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 1),
              regional_office: "RO13")
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 5, 8), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 8),
              regional_office: "RO13")
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 5, 15), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 15),
              regional_office: "RO13")
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 5, 22), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 22),
              regional_office: "RO13")
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 5, 29), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 29),
              regional_office: "RO13")
     end
 

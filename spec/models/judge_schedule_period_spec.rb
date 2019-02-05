@@ -16,17 +16,17 @@ describe JudgeSchedulePeriod do
 
   context "assign judges to hearing days" do
     let!(:hearing_days) do
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 8, 14), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 8, 14),
              regional_office: "RO13")
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 9, 12), 
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 9, 12),
              regional_office: "RO13")
-      create(:hearing_day, 
-             request_type: HearingDay::REQUEST_TYPES[:video], 
-             scheduled_for: Date.new(2018, 6, 2),  
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 6, 2),
              regional_office: "RO13")
     end
 
@@ -86,10 +86,10 @@ describe JudgeSchedulePeriod do
     let!(:hearing_days) do
       get_every_nth_date_between(one_month_judge_schedule_period.start_date,
                                  one_month_judge_schedule_period.end_date, 4).map do |date|
-        create(:hearing_day, 
-               request_type: HearingDay::REQUEST_TYPES[:video], 
-               scheduled_for: date, 
-               regional_office: "RO13", 
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               scheduled_for: date,
+               regional_office: "RO13",
                room: 4)
       end
     end
@@ -120,28 +120,28 @@ describe JudgeSchedulePeriod do
   context "A judge with a lot of non-availability days still gets as many hearings as possible" do
     let!(:hearing_days) do
       [
-        create(:hearing_day, 
-               request_type: HearingDay::REQUEST_TYPES[:video], 
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 7, 22, 9, 0, 0, "+0"),
                regional_office: "RO13", room: 4),
-        create(:hearing_day, 
-               request_type: HearingDay::REQUEST_TYPES[:video], 
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 7, 29, 9, 0, 0, "+0"),
                regional_office: "RO13", room: 4),
-        create(:hearing_day, 
-               request_type: HearingDay::REQUEST_TYPES[:video], 
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 8, 1, 9, 0, 0, "+0"),
                regional_office: "RO13", room: 4),
-        create(:hearing_day, 
-               request_type: HearingDay::REQUEST_TYPES[:video], 
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 8, 6, 9, 0, 0, "+0"),
                regional_office: "RO13", room: 4),
-        create(:hearing_day, 
-               request_type: HearingDay::REQUEST_TYPES[:video], 
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 8, 13, 9, 0, 0, "+0"),
                regional_office: "RO13", room: 4),
-        create(:hearing_day, 
-               request_type: HearingDay::REQUEST_TYPES[:video], 
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
                scheduled_for: DateTime.new(2018, 8, 17, 9, 0, 0, "+0"),
                regional_office: "RO13", room: 4)
       ]
@@ -168,15 +168,15 @@ describe JudgeSchedulePeriod do
     let!(:hearing_days) do
       get_every_nth_date_between(one_week_one_judge_schedule_period.start_date,
                                  one_week_one_judge_schedule_period.end_date, 4).map do |date|
-        create(:hearing_day, 
-               request_type: HearingDay::REQUEST_TYPES[:video], 
-               scheduled_for: date, 
-               regional_office: "RO13", 
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               scheduled_for: date,
+               regional_office: "RO13",
                room: 4)
-        create(:hearing_day, 
-               request_type: HearingDay::REQUEST_TYPES[:video], 
-               scheduled_for: date, 
-               regional_office: "RO17", 
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               scheduled_for: date,
+               regional_office: "RO17",
                room: 5)
       end
     end
