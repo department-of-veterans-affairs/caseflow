@@ -58,7 +58,6 @@ class AppealEvents
       ama_nod_event,
       distributed_to_vlj_event,
       bva_decision_event,
-      ama_remand_event,
       bva_decision_effectuation_event,
       dta_decision_event,
       other_close_event
@@ -154,7 +153,7 @@ class AppealEvents
   end
 
   def dta_decision_event
-    AppealEvent.new(type: :dtaDecision, date: appeal.dta_descision_event_date)
+    AppealEvent.new(type: :dta_decision, date: appeal.dta_descision_event_date)
   end
 
   def hlr_other_close_event
@@ -162,7 +161,7 @@ class AppealEvents
   end
 
   def ama_nod_event
-    AppealEvent.new(type: :amaNod, date: appeal.try(:receipt_date))
+    AppealEvent.new(type: :ama_nod, date: appeal.try(:receipt_date))
   end
 
   def distributed_to_vlj_event
@@ -173,12 +172,8 @@ class AppealEvents
     AppealEvent.new(type: :bva_decision, date: appeal.decision_event_date)
   end
 
-  def ama_remand_event
-    AppealEvent.new(type: :ama_remand, date: appeal.decision_with_remand_event_date)
-  end
-
   def bva_decision_effectuation_event
-    AppealEvent.new(type: :bvaDecisionEffectuation, date: appeal.decision_effectuation_event_date)
+    AppealEvent.new(type: :bva_decision_effectuation, date: appeal.decision_effectuation_event_date)
   end
 
   def other_close_event

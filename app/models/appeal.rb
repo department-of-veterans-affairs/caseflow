@@ -433,20 +433,11 @@ class Appeal < DecisionReview
     judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
     return unless judge_tasks.any?
 
-    oldest = judge_tasks.min_by(&:created_at)
-    oldest.created_at
+    judge_tasks.min_by(&:created_at).created_at
   end
 
   def decision_event_date
     return unless decision_issues.any?
-    return if remanded_issues?
-
-    decision_issues.first.approx_decision_date
-  end
-
-  def decision_with_remand_event_date
-    return unless decision_issues.any?
-    return unless remanded_issues?
 
     decision_issues.first.approx_decision_date
   end

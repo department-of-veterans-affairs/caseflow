@@ -913,7 +913,7 @@ describe Appeal do
 
       it "has an nod event, judge assigned event, decision event and effectation event" do
         events = appeal.events
-        nod_event = events.find { |e| e.type == :amaNod }
+        nod_event = events.find { |e| e.type == :ama_nod }
         expect(nod_event.date.to_date).to eq(receipt_date.to_date)
 
         judge_assigned_event = events.find { |e| e.type == :distributed_to_vlj }
@@ -922,7 +922,7 @@ describe Appeal do
         decision_event = events.find { |e| e.type == :bva_decision }
         expect(decision_event.date.to_date).to eq(decision_date.to_date)
 
-        effectuation_event = events.find { |e| e.type == :bvaDecisionEffectuation }
+        effectuation_event = events.find { |e| e.type == :bva_decision_effectuation }
         expect(effectuation_event.date.to_date).to eq(ep_cleared_date.to_date)
       end
     end
@@ -949,25 +949,22 @@ describe Appeal do
                end_product_last_action_date: remanded_ep_clr_date)
       end
 
-      it "has nod event, judge assigned event, remand event, remand decision event" do
+      it "has nod event, judge assigned event, decision event, remand decision event" do
         events = appeal.events
-        nod_event = events.find { |e| e.type == :amaNod }
+        nod_event = events.find { |e| e.type == :ama_nod }
         expect(nod_event.date.to_date).to eq(receipt_date.to_date)
 
         judge_assigned_event = events.find { |e| e.type == :distributed_to_vlj }
         expect(judge_assigned_event.date.to_date).to eq(judge_task_created_date.to_date)
 
-        remand_event = events.find { |e| e.type == :ama_remand }
-        expect(remand_event.date.to_date).to eq(decision_date.to_date)
+        decision_event = events.find { |e| e.type == :bva_decision }
+        expect(decision_event.date.to_date).to eq(decision_date.to_date)
 
-        remand_decision_event = events.find { |e| e.type == :dtaDecision }
+        remand_decision_event = events.find { |e| e.type == :dta_decision }
         expect(remand_decision_event.date.to_date).to eq(remanded_ep_clr_date.to_date)
 
-        effectuation_event = events.find { |e| e.type == :bvaDecisionEffectuation }
+        effectuation_event = events.find { |e| e.type == :bva_decision_effectuation }
         expect(effectuation_event).to be_nil
-
-        decision_event = events.find { |e| e.type == :bva_decision }
-        expect(decision_event).to be_nil
       end
     end
   end
