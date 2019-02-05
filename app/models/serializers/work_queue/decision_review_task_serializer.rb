@@ -53,8 +53,8 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
     task.assigned_at
   end
 
-  attribute :closed_at do
-    task.closed_at
+  attribute :completed_at do
+    task.completed_at
   end
 
   attribute :started_at do

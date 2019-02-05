@@ -8,7 +8,7 @@ module BusinessLineTask
   def complete_with_payload!(_decision_issue_params, _decision_date)
     return false unless validate_task
 
-    update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
+    update!(status: Constants.TASK_STATUSES.completed, completed_at: Time.zone.now)
   end
 
   private

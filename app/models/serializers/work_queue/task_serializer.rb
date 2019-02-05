@@ -9,7 +9,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :assigned_at
   attribute :started_at
   attribute :created_at
-  attribute :closed_at
+  attribute :completed_at
   attribute :placed_on_hold_at
   attribute :on_hold_duration
   attribute :instructions

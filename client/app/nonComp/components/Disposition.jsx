@@ -138,7 +138,7 @@ class NonCompDispositions extends React.PureComponent {
 
     let completeDiv = null;
 
-    if (!task.closed_at) {
+    if (!task.completed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-txt-r">
           <a className="cf-cancel-link" href={`${task.tasks_url}`}>Cancel</a>
@@ -171,7 +171,7 @@ class NonCompDispositions extends React.PureComponent {
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
                 decisionDescription={issue.decisionIssue.description}
                 decisionDisposition={issue.decisionIssue.disposition}
-                disabled={Boolean(task.closed_at)}
+                disabled={Boolean(task.completed_at)}
               />;
             })
           }
@@ -185,7 +185,7 @@ class NonCompDispositions extends React.PureComponent {
               name="decision-date"
               value={this.state.decisionDate}
               onChange={this.handleDecisionDate}
-              readOnly={Boolean(task.closed_at)}
+              readOnly={Boolean(task.completed_at)}
             />
           </InlineForm>
         </div>

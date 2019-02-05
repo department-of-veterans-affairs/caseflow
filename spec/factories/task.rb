@@ -24,7 +24,7 @@ FactoryBot.define do
       started_at { rand(20..30).days.ago }
       placed_on_hold_at { rand(1..10).days.ago }
       on_hold_duration [30, 60, 90].sample
-      closed_at Time.zone.now
+      completed_at Time.zone.now
     end
 
     factory :root_task, class: RootTask do

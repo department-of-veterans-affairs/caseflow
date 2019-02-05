@@ -272,7 +272,7 @@ describe ColocatedTask do
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
-        expect(colocated_admin_action.closed_at).to eq time6
+        expect(colocated_admin_action.completed_at).to eq time6
 
         time7 = Time.utc(2015, 1, 9, 12, 0, 0)
         Timecop.freeze(time7)
@@ -280,7 +280,7 @@ describe ColocatedTask do
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
-        expect(colocated_admin_action.closed_at).to eq time6
+        expect(colocated_admin_action.completed_at).to eq time6
       end
     end
   end

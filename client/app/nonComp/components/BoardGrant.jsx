@@ -40,7 +40,7 @@ class BoardGrantUnconnected extends React.PureComponent {
     super(props);
 
     this.state = {
-      isEffectuated: Boolean(this.props.task.closed_at)
+      isEffectuated: Boolean(this.props.task.completed_at)
     };
   }
 
@@ -61,7 +61,7 @@ class BoardGrantUnconnected extends React.PureComponent {
 
     let completeDiv = null;
 
-    if (!task.closed_at) {
+    if (!task.completed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-gray-box">
           <div className="cf-decision-date">
@@ -69,7 +69,7 @@ class BoardGrantUnconnected extends React.PureComponent {
               vertical
               onChange={this.handleEffectuatedClick}
               value={this.state.isEffectuated}
-              disabled={Boolean(task.closed_at)}
+              disabled={Boolean(task.completed_at)}
               name="isEffectuated"
               label="I certify these benefits have been effectuated." />
           </div>
