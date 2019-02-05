@@ -92,7 +92,7 @@ RSpec.describe CaseReviewsController, type: :controller do
               post :complete, params: { task_id: task.id, tasks: params }
               expect(response.status).to eq 400
               response_body = JSON.parse(response.body)
-              msg = "Validation failed: Disposition is not included in the list"
+              msg = "Validation failed: Disposition can't be blank, Disposition is not included in the list"
               expect(response_body["errors"].first["detail"]).to eq msg
               FeatureToggle.disable!(:ama_decision_issues)
             end
