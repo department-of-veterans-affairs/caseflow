@@ -23,19 +23,21 @@ RSpec.feature "Hearings" do
       end
       create(:case_hearing,
              board_member: vacols_staff.sattyid,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: 2500.days.from_now,
              folder_nr: create(:case).bfkey)
-      create(:case_hearing, board_member: vacols_staff.sattyid, hearing_type: "C", hearing_date: 3.days.ago)
+      create(:case_hearing, board_member: vacols_staff.sattyid,
+                            hearing_type: HearingDay::REQUEST_TYPES[:central],
+                            hearing_date: 3.days.ago)
       create(:case_hearing,
              board_member: vacols_staff.sattyid,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: 6.days.ago,
              folder_nr: create(:case).bfkey)
       create(:hearing, hearing_day: create(:hearing_day, judge: current_user))
       create(:case_hearing,
              board_member: vacols_staff.sattyid,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: DateTime.new(2019, 3, 2, 9, 0, 0, "+0"),
              folder_nr: create(:case).bfkey)
     end

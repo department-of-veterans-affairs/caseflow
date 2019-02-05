@@ -1,4 +1,6 @@
 describe DecisionReviewTask do
+  let(:benefit_type) { "education" }
+
   describe "#label" do
     subject { create(:higher_level_review_task).becomes(described_class) }
 
@@ -9,12 +11,12 @@ describe DecisionReviewTask do
 
   describe "#complete_with_payload!" do
     let(:veteran) { create(:veteran) }
-    let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+    let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number, benefit_type: benefit_type) }
     let(:task_status) { "assigned" }
     let!(:request_issues) do
       [
-        create(:request_issue, :rating, review_request: hlr),
-        create(:request_issue, :rating, review_request: hlr)
+        create(:request_issue, :rating, review_request: hlr, benefit_type: benefit_type),
+        create(:request_issue, :rating, review_request: hlr, benefit_type: benefit_type)
       ]
     end
     let(:decision_date) { "01/01/2019" }
@@ -40,19 +42,18 @@ describe DecisionReviewTask do
     context "assigned task" do
       it "can be completed" do
         expect(subject).to eq true
-        promulgation_date = Date.parse(decision_date).in_time_zone(Time.zone)
-
+        caseflow_decision_date = Date.parse(decision_date).in_time_zone(Time.zone)
         expect(DecisionIssue.find_by(
                  decision_review: hlr,
                  description: "description 1",
                  disposition: "GRANTED",
-                 promulgation_date: promulgation_date
+                 caseflow_decision_date: caseflow_decision_date
                )).to_not be_nil
         expect(DecisionIssue.find_by(
                  decision_review: hlr,
                  description: "description 2",
                  disposition: "DENIED",
-                 promulgation_date: promulgation_date
+                 caseflow_decision_date: caseflow_decision_date
                )).to_not be_nil
         expect(task.status).to eq "completed"
       end

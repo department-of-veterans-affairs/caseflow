@@ -1,20 +1,23 @@
 class DecisionIssue < ApplicationRecord
-  validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) },
-                          if: :appeal?
-  validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) },
-                           if: :appeal?
-  validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
-                              if: :appeal?, allow_nil: true
-  validates :description, presence: true, if: :appeal?
+  validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
+  validates :disposition, presence: true
+  validates :end_product_last_action_date, presence: true, unless: :processed_in_caseflow?
+
+  with_options if: :appeal? do
+    validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) }
+    validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
+                                allow_nil: true
+  end
+
+  # Attorneys will be entering in a description of the decision manually for appeals
+  before_save :calculate_and_set_description, unless: :appeal?
+
   has_many :request_decision_issues, dependent: :destroy
   has_many :request_issues, through: :request_decision_issues
   has_many :remand_reasons, dependent: :destroy
   belongs_to :decision_review, polymorphic: true
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_one :contesting_request_issue, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
-
-  # Attorneys will be entering in a description of the decision manually for appeals
-  before_save :calculate_and_set_description, unless: :appeal?
 
   class AppealDTAPayeeCodeError < StandardError
     def initialize(appeal_id)
@@ -35,7 +38,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def approx_decision_date
-    appeal? ? appeal_decision_date : claim_review_approx_decision_date
+    processed_in_caseflow? ? caseflow_decision_date : claim_review_approx_decision_date
   end
 
   def issue_category
@@ -81,10 +84,8 @@ class DecisionIssue < ApplicationRecord
 
   private
 
-  def appeal_decision_date
-    return unless appeal?
-
-    decision_review.decision_document&.decision_date
+  def processed_in_caseflow?
+    decision_review.processed_in_caseflow?
   end
 
   def claim_review_approx_decision_date
