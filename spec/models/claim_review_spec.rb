@@ -180,6 +180,39 @@ describe ClaimReview do
     end
   end
 
+  context "#add_user_to_business_line!" do
+    subject { claim_review.add_user_to_business_line! }
+
+    before { RequestStore[:current_user] = user }
+    let(:user) { Generators::User.build }
+
+    context "when the intake is a" do
+      let(:benefit_type) { "compensation" }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when the intake is not compensation or pension" do
+      let(:benefit_type) { "education" }
+
+      context "when the user is already on the organization" do
+        let!(:existing_record) { OrganizationsUser.add_user_to_organization(user, claim_review.business_line) }
+
+        it "returns the existing record" do
+          expect(subject).to eq(existing_record)
+        end
+      end
+
+      context "when the user isn't added to the organization" do
+        it "adds the user to the organization" do
+          expect(OrganizationsUser.existing_record(user, claim_review.business_line)).to be_nil
+          subject
+          expect(OrganizationsUser.find_by(user: user, organization: claim_review.business_line)).to_not be_nil
+        end
+      end
+    end
+  end
+
   context "#serialized_ratings" do
     let(:ratings) do
       [
