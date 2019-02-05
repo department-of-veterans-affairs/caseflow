@@ -8,13 +8,13 @@ RSpec.feature "Hearing Schedule Daily Docket" do
   context "Daily docket with one legacy hearing" do
     let!(:hearing_day) do
       create(:hearing_day,
-             request_type: "V",
+             request_type: HearingDay::REQUEST_TYPES[:video],
              regional_office: "RO18",
              scheduled_for: Date.new(2019, 4, 15))
     end
     let!(:hearing_day_two) do
       create(:hearing_day,
-             request_type: "V",
+             request_type: HearingDay::REQUEST_TYPES[:video],
              regional_office: "RO18",
              scheduled_for: hearing_day.scheduled_for + 10.days)
     end
@@ -39,7 +39,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       find(".dropdown-Disposition").click
       find("#react-select-2--option-1").click
-      click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
+      click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (VHA) 0 miles away", wait: 30)
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "8:30").click
       find("label", text: "Transcript Requested").click
@@ -56,7 +56,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can postpone a hearing", skip: "Flaky test" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
-      click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
+      click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (VHA) 0 miles away", wait: 30)
       click_dropdown(name: "Disposition", text: "Postponed")
       click_dropdown(name: "HearingDay", text: hearing_day_two.scheduled_for.strftime("%m/%d/%Y"))
       click_button("Save")

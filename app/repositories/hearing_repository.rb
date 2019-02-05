@@ -81,7 +81,7 @@ class HearingRepository
         offset: scheduled_time["offset"]
       )
 
-      if (hearing_type || hearing_day_hash[:request_type]) == "C"
+      if (hearing_type || hearing_day_hash[:request_type]) == HearingDay::REQUEST_TYPES[:central]
         create_child_co_hearing(hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs)
       else
         create_child_video_hearing(
@@ -91,7 +91,8 @@ class HearingRepository
     end
 
     def create_child_co_hearing(hearing_date_str, appeal, hearing_location_attrs: nil)
-      hearing_day = HearingDay.find_by(request_type: "C", scheduled_for: hearing_date_str.to_date)
+      hearing_day = HearingDay.find_by(request_type: HearingDay::REQUEST_TYPES[:central],
+                                       scheduled_for: hearing_date_str.to_date)
       fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
 
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
@@ -125,7 +126,7 @@ class HearingRepository
         folder_nr: appeal.vacols_id,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
         vdkey: hearing.hearing_pkseq,
-        hearing_type: "V",
+        hearing_type: HearingDay::REQUEST_TYPES[:video],
         room: hearing.room,
         board_member: hearing.board_member,
         vdbvapoc: hearing.vdbvapoc

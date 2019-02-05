@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :case_hearing, class: VACOLS::CaseHearing do
-    hearing_type "V"
+    hearing_type HearingDay::REQUEST_TYPES[:video]
     hearing_date { Time.zone.today }
     room 1
     folder_nr { create(:case).bfkey }
@@ -34,7 +34,7 @@ FactoryBot.define do
 
     after(:build) do |hearing, evaluator|
       # Build Caseflow hearing day and associate with legacy hearing.
-      regional_office = (hearing.hearing_type == "V") ? "RO13" : nil
+      regional_office = (hearing.hearing_type == HearingDay::REQUEST_TYPES[:video]) ? "RO13" : nil
       if hearing.vdkey.nil?
         master_record = create(:hearing_day,
                                scheduled_for: hearing.hearing_date,
