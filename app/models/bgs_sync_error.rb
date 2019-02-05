@@ -67,10 +67,14 @@ class BGSSyncError < RuntimeError
     when /Connection reset by peer/
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3036/
       TransientBGSSyncError.new(error, epe)
-    when /Unable to find SOAP operation: :find_benefit_claim/
-      # Transient failure because a VBMS service is unavailable
+    when /Unable to find SOAP operation:/
+      # Transient failure because a VBMS service is unavailable.
       #
-      # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2891/
+      # Examples:
+      # :find_benefit_claim
+      #   https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2891/
+      # :find_veteran_by_file_number
+      #   https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3576/
       TransientBGSSyncError.new(error, epe)
     when /HTTP error \(504\): upstream request timeout/
       # Transient failure when, for example, a WSDL is unavailable. For example, the originating
