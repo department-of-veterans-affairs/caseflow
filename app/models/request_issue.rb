@@ -41,12 +41,6 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  class NilEndProductLastActionDate < StandardError
-    def initialize(request_issue_id)
-      super("Request Issue #{request_issue_id}'s end_product is missing the last action date")
-    end
-  end
-
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
   END_PRODUCT_CODES = {
@@ -378,7 +372,7 @@ class RequestIssue < ApplicationRecord
       description: decision_issue_param[:description],
       decision_review: review_request,
       benefit_type: benefit_type,
-      promulgation_date: decision_issue_param[:decision_date]
+      caseflow_decision_date: decision_issue_param[:decision_date]
     )
   end
 
@@ -421,9 +415,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def create_decision_issues
-    # TODO: we can probably remove this error, we've learned the issue was from date formatting
-    fail NilEndProductLastActionDate, id unless end_product_establishment.result.last_action_date
-
     if rating?
       return false unless end_product_establishment.associated_rating
 
@@ -449,6 +440,8 @@ class RequestIssue < ApplicationRecord
         participant_id: review_request.veteran.participant_id,
         disposition: contention_disposition.disposition,
         description: "#{contention_disposition.disposition}: #{description}",
+        profile_date: end_product_establishment.associated_rating&.profile_date,
+        promulgation_date: end_product_establishment.associated_rating&.promulgation_date,
         decision_review: review_request,
         benefit_type: benefit_type,
         end_product_last_action_date: end_product_establishment.result.last_action_date
