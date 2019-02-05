@@ -62,6 +62,7 @@ feature "NonComp Dispositions Task Page" do
 
     let(:business_line_url) { "decision_reviews/nca" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
+    let(:arbitrary_decision_date) { "01/01/2019" }
     before do
       User.stub = user
       OrganizationsUser.add_user_to_organization(user, non_comp_org)
@@ -88,13 +89,13 @@ feature "NonComp Dispositions Task Page" do
 
     scenario "saves decision issues" do
       visit dispositions_url
-
       expect(page).to have_button("Complete", disabled: true)
 
       # set description & disposition for each request issue
       fill_in_disposition(0, "Granted")
       fill_in_disposition(1, "Granted", "test description")
       fill_in_disposition(2, "Denied", "denied")
+      fill_in "decision-date", with: arbitrary_decision_date
 
       # save
       expect(page).to have_button("Complete", disabled: false)
@@ -122,6 +123,8 @@ feature "NonComp Dispositions Task Page" do
       find_disabled_disposition(0, "Granted")
       find_disabled_disposition(1, "Granted", "test description")
       find_disabled_disposition(2, "Denied", "denied")
+      # decision date should be saved
+      expect(page).to have_css("input[value='#{arbitrary_decision_date}']")
     end
 
     context "when there is an error saving" do
