@@ -90,7 +90,13 @@ class DecisionIssue < ApplicationRecord
   end
 
   def claim_review_approx_decision_date
-    profile_date ? profile_date.to_date : end_product_last_action_date
+    # there's an end_product_last_action_date when decision issues are created from eps
+    # but only a promulgation date when decision issues are created from noncomp
+    if profile_date
+      profile_date.to_date
+    else
+      end_product_last_action_date || (promulgation_date&.to_date)
+    end
   end
 
   def calculate_and_set_description
