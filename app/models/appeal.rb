@@ -427,6 +427,10 @@ class Appeal < DecisionReview
     end
   end
 
+  def processed_in_caseflow?
+    true
+  end
+
   private
 
   def maybe_create_translation_task
