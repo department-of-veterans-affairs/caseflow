@@ -1,8 +1,7 @@
 module FeatureHelper
   def find_table_cell(vacols_id, row_header)
     header = find(:xpath, "//thead/tr/th", text: row_header)
-    header_index = header.path.split("/").last.delete_prefix("th[").delete_suffix("]")
-
+    header_index = /.*\[(\d+)\]$/.match(header.path)[1] # select out the last index
     find(:xpath, "//tbody/tr[@id='table-row-#{vacols_id}']/td[#{header_index}]")
   end
 
