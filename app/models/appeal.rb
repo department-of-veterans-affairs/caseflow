@@ -430,46 +430,55 @@ class Appeal < DecisionReview
   end
 
   def first_distributed_to_judge_date
-    judgeTasks = task.select { |t| t.is_a(JudgeTask) }
-    return unless judgeTasks
+    judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
+    return unless judge_tasks.any?
 
-    judgeTasks.order(created_at: :asc).first.created_at
+    oldest = judge_tasks.min_by(&:created_at)
+    oldest.created_at
   end
 
-  def decision_date_event
+  def decision_event_date
     return unless decision_issues.any?
     return if remanded_issues?
 
     decision_issues.first.approx_decision_date
   end
 
-  def decision_date_with_remand_event
-    return unless decision_issue.any?
+  def decision_with_remand_event_date
+    return unless decision_issues.any?
     return unless remanded_issues?
 
-  def decision_issues.first.approx_decision_date
-    return unless decision_issues.any?
-    return if remanded_issues
-    return unless 
+    decision_issues.first.approx_decision_date
   end
 
   def effectuation_ep?
     decision_document&.end_product_establishments&.any?
   end
 
-  def decision_effectionation_date
+  def decision_effectuation_event_date
     return if remanded_issues?
-    return unless effectuation_ep
+    return unless effectuation_ep?
     return if active_ep?
 
     decision_document.end_product_establishments.first.last_synced_at
   end
 
-  def dta_decision_date
+  def dta_descision_event_date
     return unless remanded_sc_with_ep
     return if remanded_sc_with_ep.active?
 
-    remanded_sc_with_ep.decision_date_event
+    remanded_sc_with_ep.decision_event_date
+  end
+
+  def other_close_event_date
+    return if active_status?
+    return if decision_issues.any?
+
+    root_task.completed_at
+  end
+
+  def events
+    @events ||= AppealEvents.new(appeal: self).all
   end
 
   private

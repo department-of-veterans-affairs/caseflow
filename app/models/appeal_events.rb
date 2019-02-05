@@ -12,6 +12,8 @@ class AppealEvents
       sc_events
     when HigherLevelReview
       hlr_events
+    when Appeal
+      appeal_events
     end
   end
 
@@ -48,6 +50,18 @@ class AppealEvents
       hlr_dta_error_event,
       dta_decision_event,
       hlr_other_close_event
+    ].flatten.uniq.select(&:valid?)
+  end
+
+  def appeal_events
+    [
+      ama_nod_event,
+      distributed_to_vlj_event,
+      bva_decision_event,
+      ama_remand_event,
+      bva_decision_effectuation_event,
+      dta_decision_event,
+      other_close_event
     ].flatten.uniq.select(&:valid?)
   end
 
@@ -145,5 +159,29 @@ class AppealEvents
 
   def hlr_other_close_event
     AppealEvent.new(type: :hlr_other_close, date: appeal.other_close_event_date)
+  end
+
+  def ama_nod_event
+    AppealEvent.new(type: :amaNod, date: appeal.try(:receipt_date))
+  end
+
+  def distributed_to_vlj_event
+    AppealEvent.new(type: :distributed_to_vlj, date: appeal.first_distributed_to_judge_date)
+  end
+
+  def bva_decision_event
+    AppealEvent.new(type: :bva_decision, date: appeal.decision_event_date)
+  end
+
+  def ama_remand_event
+    AppealEvent.new(type: :ama_remand, date: appeal.decision_with_remand_event_date)
+  end
+
+  def bva_decision_effectuation_event
+    AppealEvent.new(type: :bvaDecisionEffectuation, date: appeal.decision_effectuation_event_date)
+  end
+
+  def other_close_event
+    AppealEvent.new(type: :other_close, date: appeal.other_close_event_date)
   end
 end
