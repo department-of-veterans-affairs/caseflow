@@ -1,21 +1,22 @@
 module FeatureHelper
   def click_dropdown(options = {}, container = page) # rubocop:disable Metrics/PerceivedComplexity
-    options = { prompt: nil, index: nil, text: nil, name: nil }.merge(options)
+    options = { prompt: nil, index: nil, text: nil, name: nil, wait: 5 }.merge(options)
     dropdown = if options[:prompt].present?
-                 container.find(".Select-control", text: options[:prompt])
+                 container.find(".Select-control", text: options[:prompt], wait: options[:wait])
                elsif options[:name].present?
-                 container.find(".dropdown-#{options[:name]} .Select-control")
+                 container.find(".dropdown-#{options[:name]} .Select-control", wait: options[:wait])
                else
-                 container.find(".Select-control")
+                 container.find(".Select-control", wait: options[:wait])
                end
 
     dropdown.click
     yield if block_given?
 
     if options[:text].present?
-      dropdown.sibling(".Select-menu-outer").find("div .Select-option", text: options[:text]).click
+      dropdown.sibling(".Select-menu-outer").find("div .Select-option", text: options[:text], wait: options[:wait])
+        .click
     elsif options[:index].present?
-      dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{options[:index]}']").click
+      dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{options[:index]}']", wait: options[:wait]).click
     end
   end
 
