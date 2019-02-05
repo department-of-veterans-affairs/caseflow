@@ -96,6 +96,22 @@ describe RequestIssue do
 
   let(:associated_claims) { [] }
 
+  context ".requires_processing" do
+    before do
+      rating_request_issue.submit_for_processing!(delay: 1.day)
+      nonrating_request_issue.submit_for_processing!
+    end
+
+    it "respects the delay" do
+      expect(rating_request_issue.submitted?).to eq(false)
+      expect(nonrating_request_issue.submitted?).to eq(true)
+
+      todo = RequestIssue.requires_processing
+      expect(todo).to_not include(rating_request_issue)
+      expect(todo).to include(nonrating_request_issue)
+    end
+  end
+
   context ".rating" do
     subject { RequestIssue.rating }
 
@@ -254,12 +270,14 @@ describe RequestIssue do
           let(:request_issue) { rating_request_issue }
 
           context "when imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue, :imo).id }
+            let(:contested_decision_issue_id) do
+              create(:decision_issue, :imo, decision_review: decision_review_remanded).id
+            end
             it { is_expected.to eq "040BDEIMOPMC" }
           end
 
           context "when not imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue).id }
+            let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
             it { is_expected.to eq "040BDEPMC" }
           end
         end
@@ -287,12 +305,14 @@ describe RequestIssue do
           let(:request_issue) { rating_request_issue }
 
           context "when imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue, :imo).id }
+            let(:contested_decision_issue_id) do
+              create(:decision_issue, :imo, decision_review: decision_review_remanded).id
+            end
             it { is_expected.to eq "040BDEIMO" }
           end
 
           context "when not imo" do
-            let(:contested_decision_issue_id) { create(:decision_issue).id }
+            let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
             it { is_expected.to eq "040BDE" }
           end
         end
@@ -425,7 +445,9 @@ describe RequestIssue do
     end
 
     context "when contested_decision_issue_id is set" do
-      let(:contested_decision_issue_id) { create(:decision_issue).id }
+      let(:contested_decision_issue_id) do
+        create(:decision_issue).id
+      end
 
       it do
         is_expected.to have_attributes(
@@ -537,7 +559,7 @@ describe RequestIssue do
         contention_reference_id: contention_reference_id,
         end_product_establishment: previous_end_product_establishment,
         description: "a rating request issue"
-      )
+      ).tap(&:submit_for_processing!)
     end
 
     let(:associated_claims) do
@@ -913,12 +935,24 @@ describe RequestIssue do
   end
 
   context "#sync_decision_issues!" do
-    let(:request_issue) { rating_request_issue }
+    let(:request_issue) { rating_request_issue.tap(&:submit_for_processing!) }
     subject { request_issue.sync_decision_issues! }
 
     context "when it has been processed" do
       let(:decision_sync_processed_at) { 1.day.ago }
-      let!(:decision_issue) { rating_request_issue.decision_issues.create!(participant_id: veteran.participant_id) }
+      let!(:decision_issue) do
+        rating_request_issue.decision_issues.create!(
+          participant_id: veteran.participant_id,
+          decision_review: rating_request_issue.review_request,
+          benefit_type: review.benefit_type,
+          disposition: "allowed",
+          end_product_last_action_date: Time.zone.now
+        )
+      end
+
+      before do
+        request_issue.processed!
+      end
 
       it "does nothing" do
         subject
@@ -977,16 +1011,6 @@ describe RequestIssue do
               expect(rating_request_issue.processed?).to eq(true)
             end
 
-            context "when end product last action date is nil" do
-              before do
-                end_product_establishment.result.last_action_date = nil
-              end
-
-              it "throws an error" do
-                expect { subject }.to raise_error(RequestIssue::NilEndProductLastActionDate)
-              end
-            end
-
             context "when decision issue with disposition and rating issue already exists" do
               let!(:preexisting_decision_issue) do
                 create(
@@ -1033,6 +1057,8 @@ describe RequestIssue do
                 disposition: "allowed",
                 description: "allowed: #{request_issue.description}",
                 decision_review_type: "HigherLevelReview",
+                profile_date: ratings.profile_date,
+                promulgation_date: ratings.promulgation_date,
                 decision_review_id: review.id,
                 benefit_type: "compensation",
                 end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
@@ -1053,7 +1079,7 @@ describe RequestIssue do
       end
 
       context "with nonrating ep" do
-        let(:request_issue) { nonrating_request_issue }
+        let(:request_issue) { nonrating_request_issue.tap(&:submit_for_processing!) }
 
         let(:ep_code) { "030HLRNR" }
 
@@ -1066,8 +1092,6 @@ describe RequestIssue do
         end
 
         it "creates decision issues based on contention disposition" do
-          expect(request_issue.end_product_establishment).to_not receive(:associated_rating)
-
           subject
           expect(request_issue.decision_issues.count).to eq(1)
           expect(request_issue.decision_issues.first).to have_attributes(

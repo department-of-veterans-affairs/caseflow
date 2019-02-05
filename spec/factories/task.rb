@@ -24,7 +24,7 @@ FactoryBot.define do
       started_at { rand(20..30).days.ago }
       placed_on_hold_at { rand(1..10).days.ago }
       on_hold_duration [30, 60, 90].sample
-      completed_at Time.zone.now
+      closed_at Time.zone.now
     end
 
     factory :root_task, class: RootTask do
@@ -146,7 +146,7 @@ FactoryBot.define do
 
     factory :higher_level_review_task, class: DecisionReviewTask do
       type DecisionReviewTask.name
-      appeal { create(:higher_level_review) }
+      appeal { create(:higher_level_review, benefit_type: "education") }
       assigned_by nil
     end
 

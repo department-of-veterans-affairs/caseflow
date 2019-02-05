@@ -6,10 +6,14 @@ RSpec.feature "Hearing Schedule Daily Docket" do
   end
 
   context "Daily docket with one legacy hearing" do
-    let!(:hearing_day) { create(:case_hearing, hearing_type: "C", folder_nr: "VIDEO RO18") }
+    let!(:hearing_day) do
+      create(:case_hearing,
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
+             folder_nr: "VIDEO RO18")
+    end
     let!(:hearing_day_two) do
       create(:case_hearing,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              folder_nr: "VIDEO RO18",
              hearing_date: Time.zone.today + 10.days)
     end
@@ -49,7 +53,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       # expect(page).to have_content("8:30 am")
     end
 
-    scenario "User can postpone a hearing" do
+    scenario "User can postpone a hearing", skip: "Flaky test" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       click_dropdown(name: "veteranHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       click_dropdown(name: "Disposition", text: "Postponed")
