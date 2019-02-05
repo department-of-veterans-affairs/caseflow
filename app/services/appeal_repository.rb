@@ -339,6 +339,8 @@ class AppealRepository
         task.status = Constants.TASK_STATUSES.assigned.to_sym
         task.assigned_to = HearingsManagement.singleton
       end
+
+      update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end
 
