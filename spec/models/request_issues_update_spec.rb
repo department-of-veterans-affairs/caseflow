@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe RequestIssuesUpdate do
   before do
     Time.zone = "America/New_York"

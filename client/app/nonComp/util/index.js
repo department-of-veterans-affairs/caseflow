@@ -8,7 +8,7 @@ export const formatTasks = (serverTasks) => {
     return {
       ...task,
       assignedOn: task.assigned_on,
-      completedOn: task.completed_at,
+      closedAt: task.closed_at,
       veteranParticipantId: task.veteran_participant_id
     };
   });
