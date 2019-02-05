@@ -217,38 +217,30 @@ export class PageArrowRight extends PureComponent {
   }
 }
 
-export const SelectedFilterIcon = ({ idPrefix, getRef, ...restProps }) => {
-  const pathId = `${idPrefix}-selected-path-1`;
-  const filterId = `${idPrefix}-selected-filter-1`;
-  const rectId = `${idPrefix}-selected-rect-1`;
-
+export const SelectedFilterIcon = ({ getRef, ...restProps }) => {
   return <svg width="21px" height="21px" viewBox="0 0 21 21" {...restProps} ref={getRef}>
-    <g id={filterId} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+    <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g>
-        <rect id={rectId} stroke="#0071BC" fill="#FFFFFF" fillRule="nonzero" x="0.5" y="0.5" width="20" height="20" rx="2"></rect>
-        <path id={pathId} d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z" fill="#0071BC"></path>
+        <rect stroke="#0071BC" fill="#FFFFFF" fillRule="nonzero" x="0.5" y="0.5" width="20" height="20" rx="2"></rect>
+        <path d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z" fill="#0071BC"></path>
       </g>
     </g>
   </svg>;
 };
 
 SelectedFilterIcon.propTypes = {
-  idPrefix: PropTypes.string.isRequired,
   getRef: PropTypes.func,
   className: PropTypes.string
 };
 
 export const UnselectedFilterIcon = (props) => {
-  const { getRef, className, idPrefix, ...restProps } = props;
-  const pathId = `${idPrefix}-unselected-path-1`;
-  const filterId = `${idPrefix}-unselected-filter-1`;
-  const rectId = `${idPrefix}-unselected-rect-1`;
+  const { getRef, className, ...restProps } = props;
 
   return <svg width="21px" height="21px" viewBox="0 0 21 21" {...restProps} ref={getRef} className={`${className} unselected-filter-icon`}>
-    <g id={filterId} stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+    <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g>
-        <rect id={rectId} className="unselected-filter-icon-border" stroke="#5B616B" fill="#FFFFFF" fillRule="nonzero" x="0.5" y="0.5" width="20" height="20" rx="2"></rect>
-        <path id={pathId} className="unselected-filter-icon-inner" d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z" fill="#1A1A1A"></path>
+        <rect className="unselected-filter-icon-border" stroke="#5B616B" fill="#FFFFFF" fillRule="nonzero" x="0.5" y="0.5" width="20" height="20" rx="2"></rect>
+        <path className="unselected-filter-icon-inner" d="M16.2335889,6.4 L11.5555083,10.8333333 L11.5555083,14.8333333 C11.5555083,15.0166667 11.3972274,15.1666667 11.2037729,15.1666667 L9.7968314,15.1666667 C9.60337694,15.1666667 9.44509602,15.0166667 9.44509602,14.8333333 L9.44509602,10.8333333 L4.76701542,6.4 C4.55597419,6.2 4.69666834,5.83333333 5.01323019,5.83333333 L15.9697874,5.83333333 C16.303936,5.83333333 16.4446301,6.2 16.2335889,6.4 Z" fill="#1A1A1A"></path>
       </g>
     </g>
   </svg>;

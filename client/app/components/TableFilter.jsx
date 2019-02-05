@@ -125,7 +125,6 @@ class TableFilter extends React.PureComponent {
       <span {...iconStyle}>
         <FilterIcon
           label={label}
-          idPrefix={valueName}
           getRef={this.props.getFilterIconRef}
           selected={
             isDropdownFilterOpen ||

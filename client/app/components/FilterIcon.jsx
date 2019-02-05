@@ -5,7 +5,7 @@ import { SelectedFilterIcon, UnselectedFilterIcon } from './RenderFunctions';
 class FilterIcon extends React.PureComponent {
   render() {
     const {
-      handleActivate, label, getRef, selected, idPrefix
+      handleActivate, label, getRef, selected
     } = this.props;
 
     const handleKeyDown = (event) => {
@@ -28,10 +28,10 @@ class FilterIcon extends React.PureComponent {
     };
 
     if (selected) {
-      return <SelectedFilterIcon {...props} idPrefix={idPrefix} />;
+      return <SelectedFilterIcon {...props} />;
     }
 
-    return <UnselectedFilterIcon {...props} idPrefix={idPrefix} />;
+    return <UnselectedFilterIcon {...props} />;
   }
 }
 
@@ -40,7 +40,6 @@ FilterIcon.propTypes = {
   iconName: PropTypes.string,
   handleActivate: PropTypes.func,
   getRef: PropTypes.func,
-  idPrefix: PropTypes.string.isRequired,
   className: PropTypes.string
 };
 

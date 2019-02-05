@@ -31,7 +31,7 @@ const FilterSummary = ({ filteredByList, alternateColumnNames, clearFilteredByLi
       // Add commas between filters
       filterListContent = filterListContent.map((element, index) => {
         if (index < filterListContent.length - 1) {
-          return <span>{element}, </span>;
+          return <span key={`filter-summary-element-${index}`}>{element}, </span>;
         }
 
         return element;
