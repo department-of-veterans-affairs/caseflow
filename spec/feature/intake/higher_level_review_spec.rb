@@ -1169,7 +1169,6 @@ feature "Higher-Level Review" do
       context "no contestable issues present" do
         before do
           education_org = create(:business_line, name: "Education", url: "education")
-          OrganizationsUser.add_user_to_organization(current_user, education_org)
           FeatureToggle.enable!(:decision_reviews)
         end
 
@@ -1179,6 +1178,7 @@ feature "Higher-Level Review" do
 
         scenario "no rating issues show on first Add Issues modal" do
           hlr, = start_higher_level_review(veteran, is_comp: false)
+          expect(OrganizationsUser.existing_record(current_user, Organization.find_by(url: "education"))).to be_nil
           visit "/intake/add_issues"
 
           expect(page).to have_content("Add / Remove Issues")
@@ -1201,6 +1201,7 @@ feature "Higher-Level Review" do
           # should redirect to tasks review page
           expect(page).to have_content("Reviews needing action")
           expect(current_path).to eq("/decision_reviews/education")
+          expect(OrganizationsUser.existing_record(current_user, Organization.find_by(url: "education"))).to_not be_nil
           expect(page).to have_content("Success!")
 
           # request issue should have matching benefit type

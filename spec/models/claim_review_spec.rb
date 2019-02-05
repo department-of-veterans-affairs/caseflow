@@ -180,6 +180,27 @@ describe ClaimReview do
     end
   end
 
+  context "#add_user_to_organization!" do
+    subject { claim_review.add_user_to_organization! }
+
+    let(:benefit_type) { "education" }
+
+    context "when the user is already on the organization" do
+      before { OrganizationsUser }
+
+      it "returns the existing record" do
+
+      end
+    end
+
+    context "when the user isn't added to the organization" do
+      it "adds the user to the organization" do
+        expect(OrganizationsUser.existing_record(user, Organization.find_by(url: benefit_type))).to be_nil
+        expect(subject).to
+      end
+    end
+  end
+
   context "#serialized_ratings" do
     let(:ratings) do
       [
