@@ -9,7 +9,7 @@ class EndProduct
     "CAN" => "Canceled"
   }.freeze
 
-  INACTIVE_STATUSES = %w[CAN CLR].freeze
+  INACTIVE_STATUSES = %w[CAN CLR CLD].freeze
 
   RAMP_CODES = {
     "682HLRRRAMP" => "Higher-Level Review Rating",
