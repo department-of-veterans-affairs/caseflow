@@ -22,7 +22,7 @@ describe EndProductEstablishment do
   let(:payee_code) { "00" }
   let(:reference_id) { nil }
   let(:same_office) { false }
-  let(:source) { HigherLevelReview.new(veteran_file_number: veteran_file_number, same_office: same_office) }
+  let(:source) { create(:higher_level_review, veteran_file_number: veteran_file_number, same_office: same_office) }
   let(:invalid_modifiers) { nil }
   let(:synced_status) { nil }
   let(:committed_at) { nil }
