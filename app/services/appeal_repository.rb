@@ -312,7 +312,7 @@ class AppealRepository
 
   def self.cases_that_need_hearings
     VACOLS::Case.joins(:folder)
-      .where(bfhr: "2", bfcurloc: "57", bfdocind: "V").order("folder.tinum")
+      .where(bfhr: %w[1 2], bfcurloc: "57").order("folder.tinum")
       .includes(:correspondent, :case_issues, folder: [:outcoder])
   end
 

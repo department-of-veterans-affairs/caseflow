@@ -100,8 +100,19 @@ describe ScheduleHearingTask do
                     bfdocind: HearingDay::REQUEST_TYPES[:video])
       end
 
+      let!(:c_number_case) do
+        create(
+          :case,
+          bfcorlid: "1234C",
+          bfregoff: regional_office,
+          bfhr: "2",
+          bfcurloc: 57,
+          bfdocind: HearingDay::REQUEST_TYPES[:video]
+        )
+      end
+
       let!(:veterans) do
-        cases.map do |vacols_case|
+        VACOLS::Case.all.map do |vacols_case|
           create(
             :veteran,
             closest_regional_office: regional_office,
@@ -119,7 +130,7 @@ describe ScheduleHearingTask do
 
         tasks = ScheduleHearingTask.tasks_for_ro(regional_office)
 
-        expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(cases.pluck(:bfkey))
+        expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(cases.pluck(:bfkey) + [c_number_case.bfkey])
       end
     end
 

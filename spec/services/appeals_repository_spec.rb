@@ -266,4 +266,31 @@ describe AppealRepository do
       end
     end
   end
+
+  context "#create_schedule_hearing_tasks" do
+    context "when missing legacy appeals" do
+      let!(:cases) { create_list(:case, 10, bfcurloc: "57", bfhr: "1") }
+
+      it "creates the legacy appeal and creates schedule hearing tasks" do
+        AppealRepository.create_schedule_hearing_tasks
+
+        expect(LegacyAppeal.all.pluck(:vacols_id)).to match_array(cases.pluck(:bfkey))
+        expect(ScheduleHearingTask.all.pluck(:appeal_id)).to match_array(LegacyAppeal.all.pluck(:id))
+      end
+    end
+
+    context "when some legacy appeals already have schedul hearing tasks" do
+      let!(:cases) { create_list(:case, 5, bfcurloc: "57", bfhr: "1") }
+
+      it "doesn't duplicate tasks" do
+        AppealRepository.create_schedule_hearing_tasks
+
+        more_cases = create_list(:case, 5, bfcurloc: "57", bfhr: "1")
+        AppealRepository.create_schedule_hearing_tasks
+
+        expect(LegacyAppeal.all.pluck(:vacols_id)).to match_array((cases + more_cases).pluck(:bfkey))
+        expect(ScheduleHearingTask.all.pluck(:appeal_id)).to match_array(LegacyAppeal.all.pluck(:id))
+      end
+    end
+  end
 end
