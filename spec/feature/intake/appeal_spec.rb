@@ -910,13 +910,13 @@ feature "Appeal Intake" do
                description: "granted issue",
                participant_id: veteran_no_ratings.participant_id,
                decision_review: prior_noncomp_decision_review,
-               promulgation_date: decision_issue_date),
+               caseflow_decision_date: decision_issue_date),
         create(:decision_issue,
                disposition: "Dismissed",
                description: "dismissed issue",
                participant_id: veteran_no_ratings.participant_id,
                decision_review: prior_noncomp_decision_review,
-               promulgation_date: decision_issue_date)
+               caseflow_decision_date: decision_issue_date)
       ]
     end
 
