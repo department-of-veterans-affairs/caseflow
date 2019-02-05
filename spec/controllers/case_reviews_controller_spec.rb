@@ -56,7 +56,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(request_issue1.reload.disposition).to eq "allowed"
             expect(request_issue2.reload.disposition).to eq "remanded"
             expect(task.reload.status).to eq "completed"
-            expect(task.completed_at).to_not eq nil
+            expect(task.closed_at).to_not eq nil
             expect(task.parent.reload.status).to eq "assigned"
             expect(task.parent.type).to eq JudgeDecisionReviewTask.name
 
@@ -184,7 +184,7 @@ RSpec.describe CaseReviewsController, type: :controller do
               expect(request_issue2.decision_issues.first.remand_reasons.first.post_aoj).to eq true
 
               expect(task.reload.status).to eq "completed"
-              expect(task.completed_at).to_not eq nil
+              expect(task.closed_at).to_not eq nil
               expect(task.parent.reload.status).to eq "assigned"
               expect(task.parent.type).to eq JudgeDecisionReviewTask.name
 
@@ -246,7 +246,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(request_issue1.reload.disposition).to eq "denied"
             expect(request_issue2.reload.disposition).to eq "remanded"
             expect(task.reload.status).to eq "completed"
-            expect(task.completed_at).to_not eq nil
+            expect(task.closed_at).to_not eq nil
 
             # When a judge completes judge checkout we create either a QR or dispatch task.
             quality_review_task = QualityReviewTask.find_by(parent_id: root_task.id)
