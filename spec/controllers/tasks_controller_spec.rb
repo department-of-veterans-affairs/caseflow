@@ -21,7 +21,7 @@ RSpec.describe TasksController, type: :controller do
       let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
       let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
       let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
-      let!(:task16) { create(:ama_attorney_task, :completed, assigned_to: user, completed_at: 3.weeks.ago) }
+      let!(:task16) { create(:ama_attorney_task, :completed, assigned_to: user, closed_at: 3.weeks.ago) }
       let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
 
       it "should process the request successfully" do
@@ -107,7 +107,7 @@ RSpec.describe TasksController, type: :controller do
       let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
       let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
       let!(:task15) do
-        create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user, completed_at: 3.weeks.ago)
+        create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user, closed_at: 3.weeks.ago)
       end
 
       it "should process the request succesfully" do
@@ -514,7 +514,7 @@ RSpec.describe TasksController, type: :controller do
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
-        expect(response_body.first["attributes"]["completed_at"]).to_not be nil
+        expect(response_body.first["attributes"]["closed_at"]).to_not be nil
       end
     end
 
@@ -703,7 +703,7 @@ RSpec.describe TasksController, type: :controller do
           bfregoff: "RO04",
           bfcurloc: "57",
           bfhr: "2",
-          bfdocind: "V"
+          bfdocind: HearingDay::REQUEST_TYPES[:video]
         )
       end
       let(:closest_regional_office) { "RO10" }
@@ -744,7 +744,7 @@ RSpec.describe TasksController, type: :controller do
           bfregoff: "RO04",
           bfcurloc: "57",
           bfhr: "2",
-          bfdocind: "V"
+          bfdocind: HearingDay::REQUEST_TYPES[:video]
         )
       end
 

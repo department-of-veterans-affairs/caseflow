@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :case_hearing, class: VACOLS::CaseHearing do
-    hearing_type "V"
+    hearing_type HearingDay::REQUEST_TYPES[:video]
     hearing_date { Time.zone.today }
     room 1
     folder_nr { create(:case).bfkey }
@@ -34,8 +34,10 @@ FactoryBot.define do
 
     after(:build) do |hearing, evaluator|
       # For video hearings we need to build the master record.
-      if hearing.hearing_type == "V" && hearing.vdkey.nil?
-        master_record = create(:case_hearing, hearing_type: "C", folder_nr: "VIDEO RO13")
+      if hearing.hearing_type == HearingDay::REQUEST_TYPES[:video] && hearing.vdkey.nil?
+        master_record = create(:case_hearing,
+                               hearing_type: HearingDay::REQUEST_TYPES[:central],
+                               folder_nr: "VIDEO RO13")
         # For some reason the returned record's sequence is one less than what is actually saved.
         hearing.vdkey = master_record.hearing_pkseq
       end

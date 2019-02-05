@@ -14,7 +14,7 @@ feature "Updating Document ID" do
 
       enter_invalid_decision_document_id
 
-      expect(page).to have_content "Draft Decision Document IDs must be in one of these formats:"
+      expect(page).to have_content "Document ID of type Draft Decision must be in one of these formats:"
       expect(page).to have_content "12345678.1234"
 
       enter_valid_decision_document_id
@@ -90,7 +90,7 @@ feature "Updating Document ID" do
       appeal: appeal,
       parent: root_task,
       assigned_to: attorney,
-      completed_at: Time.zone.now - 4.days
+      closed_at: Time.zone.now - 4.days
     )
     attorney_task.update!(status: Constants.TASK_STATUSES.completed)
     create(
