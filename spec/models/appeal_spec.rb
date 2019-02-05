@@ -891,7 +891,7 @@ describe Appeal do
     let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
     let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
     let!(:decision_date) { receipt_date + 130.days }
-    let(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
+    let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
     let(:judge) { create(:user) }
     let(:judge_task_created_date) { receipt_date + 10 }
     let!(:judge_review_task) do
@@ -904,7 +904,7 @@ describe Appeal do
     end
 
     context "decision, no remand and an effectuation" do
-      let!(:decision_issue) { create(:decision_issue, decision_review: appeal) }
+      let!(:decision_issue) { create(:decision_issue, decision_review: appeal, caseflow_decision_date: decision_date)}
       let(:ep_cleared_date) { receipt_date + 150.days }
       let!(:effectuation_ep) do
         create(:end_product_establishment,
@@ -929,7 +929,7 @@ describe Appeal do
 
     context "decision with a remand and an effectuation" do
       # the effectuation
-      let!(:decision_issue) { create(:decision_issue, decision_review: appeal) }
+      let!(:decision_issue) { create(:decision_issue, decision_review: appeal, caseflow_decision_date: decision_date) }
       let(:ep_cleared_date) { receipt_date + 150.days }
       let!(:effectuation_ep) do
         create(:end_product_establishment,
