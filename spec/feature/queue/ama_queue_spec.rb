@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.feature "AmaQueue" do
+  def valid_document_id
+    "12345-12345678"
+  end
+
   context "loads appellant detail view" do
     let(:attorney_first_name) { "Robby" }
     let(:attorney_last_name) { "McDobby" }
@@ -478,7 +482,7 @@ RSpec.feature "AmaQueue" do
 
       expect(page).to have_content("Submit Draft Decision for Review")
 
-      fill_in "Document ID:", with: "1234"
+      fill_in "Document ID:", with: valid_document_id
       click_on "Select a judge"
       find(".Select-control", text: "Select a judge…").click
       first("div", class: "Select-option", text: judge_user.full_name).click
@@ -557,8 +561,6 @@ RSpec.feature "AmaQueue" do
       FactoryBot.create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :assigned)
     end
 
-    let(:document_id) { "5551212" }
-
     before do
       ["Elaine Abitong", "Byron Acero", "Jan Antonioni"].each do |attorney_name|
         another_attorney_on_the_team = FactoryBot.create(
@@ -614,7 +616,7 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
-        fill_in "Document ID:", with: "12345"
+        fill_in "Document ID:", with: valid_document_id
         click_on "Select a judge"
         click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
         fill_in "notes", with: "all done"
@@ -662,7 +664,7 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
-        fill_in "Document ID:", with: document_id
+        fill_in "Document ID:", with: valid_document_id
         click_on "Select a judge"
         click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
         fill_in "notes", with: "corrections made"
@@ -679,7 +681,7 @@ RSpec.feature "AmaQueue" do
         visit "/queue"
 
         expect(page).to have_content veteran_full_name
-        expect(page).to have_content document_id
+        expect(page).to have_content valid_document_id
       end
     end
   end

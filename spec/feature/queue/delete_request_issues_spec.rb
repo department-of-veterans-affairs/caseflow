@@ -129,7 +129,7 @@ feature "correcting issues" do
   end
 
   def decision_issue(id)
-    create(:decision_issue, id: id, description: "decision with id #{id}", decision_review_type: "Appeal")
+    create(:decision_issue, id: id, description: "decision with id #{id}", decision_review: create(:appeal))
   end
 
   def judge_user

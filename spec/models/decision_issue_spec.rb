@@ -16,20 +16,25 @@ describe DecisionIssue do
       decision_text: decision_text,
       description: description,
       request_issues: request_issues,
-      benefit_type: "compensation",
+      benefit_type: benefit_type,
       profile_date: profile_date,
-      end_product_last_action_date: end_product_last_action_date
+      end_product_last_action_date: end_product_last_action_date,
+      caseflow_decision_date: caseflow_decision_date,
+      diagnostic_code: diagnostic_code
     )
   end
 
   let(:profile_date) { 20.days.ago }
-  let(:end_product_last_action_date) { nil }
+  let(:caseflow_decision_date) { 20.days.ago }
+  let(:benefit_type) { "compensation" }
+  let(:end_product_last_action_date) { 10.days.ago }
   let(:request_issues) { [] }
   let(:description) { "description" }
   let(:disposition) { "allowed" }
+  let(:diagnostic_code) { nil }
   let(:decision_text) { "decision text" }
   let(:decision_date) { 10.days.ago }
-  let(:decision_review) { create(:supplemental_claim) }
+  let(:decision_review) { create(:supplemental_claim, benefit_type: benefit_type) }
 
   context "#save" do
     subject { decision_issue.save }
@@ -66,6 +71,106 @@ describe DecisionIssue do
     end
   end
 
+  context "#valid?" do
+    subject { decision_issue.valid? }
+
+    let(:decision_issue) do
+      build(
+        :decision_issue,
+        decision_review: decision_review,
+        disposition: disposition,
+        decision_text: decision_text,
+        description: description,
+        request_issues: request_issues,
+        benefit_type: benefit_type,
+        profile_date: profile_date,
+        end_product_last_action_date: end_product_last_action_date,
+        diagnostic_code: diagnostic_code
+      )
+    end
+
+    context "when it is valid" do
+      it { is_expected.to be true }
+    end
+
+    context "when disposition is not set" do
+      let(:disposition) { nil }
+
+      it "adds an error to disposition" do
+        is_expected.to be false
+        expect(decision_issue.errors[:disposition]).to include("can't be blank")
+      end
+    end
+
+    context "when benefit type is not in list" do
+      let(:benefit_type) { "bogus_benefit_type" }
+
+      it "adds an error to benefit_type" do
+        is_expected.to be false
+        expect(decision_issue.errors[:benefit_type]).to include("is not included in the list")
+      end
+    end
+
+    context "when the decision review is an appeal" do
+      let(:decision_review) { create(:appeal) }
+
+      context "disposition" do
+        context "when it is nil" do
+          let(:disposition) { nil }
+
+          it "adds an error to disposition" do
+            is_expected.to be false
+            expect(decision_issue.errors[:disposition]).to include("is not included in the list")
+          end
+        end
+
+        context "when it is set to an allowed value" do
+          let(:disposition) { "remanded" }
+          it { is_expected.to be true }
+        end
+
+        context "when it is not an allowed value" do
+          let(:disposition) { "bogus_disposition" }
+
+          it "adds an error to disposition" do
+            is_expected.to be false
+            expect(decision_issue.errors[:disposition]).to include("is not included in the list")
+          end
+        end
+      end
+
+      context "diagnostic code" do
+        context "when it is nil" do
+          it { is_expected.to be true }
+        end
+
+        context "when it is set to an allowed value" do
+          let(:diagnostic_code) { "5000" }
+          it { is_expected.to be true }
+        end
+
+        context "when it is not an allowed value" do
+          let(:diagnostic_code) { "bogus_diagnostic_code" }
+          it "adds an error to diagnostic_code" do
+            is_expected.to be false
+            expect(decision_issue.errors[:diagnostic_code]).to include("is not included in the list")
+          end
+        end
+      end
+    end
+
+    context "when the decision review is processed in Caseflow" do
+      context "end_product_last_action_date is nil" do
+        let(:end_product_last_action_date) { nil }
+
+        it "adds an error to end_product_last_action_date" do
+          is_expected.to be false
+          expect(decision_issue.errors[:end_product_last_action_date]).to include("can't be blank")
+        end
+      end
+    end
+  end
+
   context "#finalized?" do
     subject { decision_issue.finalized? }
 
@@ -91,12 +196,6 @@ describe DecisionIssue do
         let(:disposition) { "denied" }
 
         it { is_expected.to be_truthy }
-      end
-
-      context "disposition is not set" do
-        let(:disposition) { nil }
-
-        it { is_expected.to be_falsey }
       end
     end
   end
@@ -124,38 +223,40 @@ describe DecisionIssue do
   context "#approx_decision_date" do
     subject { decision_issue.approx_decision_date }
 
-    let(:profile_date) { nil }
-    let(:end_product_last_action_date) { nil }
+    let(:profile_date) { 5.days.ago }
+    let(:end_product_last_action_date) { 6.days.ago }
+    let(:caseflow_decision_date) { 7.days.ago }
 
-    context "when the decision review is an appeal" do
-      let(:decision_review) { create(:appeal) }
-      let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
-
-      it "returns the decision document's decision date" do
-        expect(subject).to eq(decision_date.to_date)
-      end
-    end
-
-    context "when there is no profile date" do
-      it "returns nil" do
-        expect(subject).to be_nil
-      end
-
-      context "when there is an end_product_last_action_date" do
-        let(:end_product_last_action_date) { 4.days.ago }
-
+    context "when the decision review is processed in caseflow" do
+      context "when there is no profile date" do
+        let(:profile_date) { nil }
         it "returns the end_product_last_action_date" do
-          expect(subject).to eq(4.days.ago.to_date)
+          expect(subject).to eq(end_product_last_action_date.to_date)
+        end
+      end
+
+      context "when there is a profile date" do
+        it "returns the profile_date to_date" do
+          expect(subject).to eq(profile_date.to_date)
         end
       end
     end
 
-    context "when there is a profile date" do
-      let(:profile_date) { 3.days.ago }
-      let(:end_product_last_action_date) { 4.days.ago }
+    context "when the decision review is not processed in caseflow" do
+      context "non-comp" do
+        let(:benefit_type) { "education" }
 
-      it "returns the profile_date" do
-        expect(subject).to eq(3.days.ago.to_date)
+        it "returns the caseflow_decision_date" do
+          expect(subject).to eq(caseflow_decision_date.to_date)
+        end
+      end
+
+      context "appeal" do
+        let(:decision_review) { create(:appeal) }
+
+        it "returns the caseflow_decision_date" do
+          expect(subject).to eq(caseflow_decision_date.to_date)
+        end
       end
     end
   end
@@ -180,8 +281,8 @@ describe DecisionIssue do
     subject { decision_issue.find_or_create_remand_supplemental_claim! }
 
     context "when approx_decision_date is nil" do
-      let(:profile_date) { nil }
-      let(:end_product_last_action_date) { nil }
+      let(:decision_review) { create(:appeal) }
+      let(:caseflow_decision_date) { nil }
 
       it "throws an error" do
         expect { subject }.to raise_error(
@@ -191,7 +292,7 @@ describe DecisionIssue do
     end
 
     context "when there is an approx_decision_date" do
-      let(:profile_date) { 20.days.ago }
+      let(:caseflow_decision_date) { 20.days.ago }
 
       context "when supplemental claim already exists matching decision issue" do
         let!(:matching_supplemental_claim) do

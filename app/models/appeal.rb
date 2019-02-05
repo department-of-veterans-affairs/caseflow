@@ -466,6 +466,9 @@ class Appeal < DecisionReview
 
   def events
     @events ||= AppealEvents.new(appeal: self).all
+
+  def processed_in_caseflow?
+    true
   end
 
   private

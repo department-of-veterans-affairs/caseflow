@@ -40,7 +40,7 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
-    if intake.detail.try(:processed_in_caseflow?)
+    if !intake.detail.is_a?(Appeal) && intake.detail.try(:processed_in_caseflow?)
       flash[:success] = success_message
       render json: { serverIntake: { redirect_to: intake.detail.business_line.tasks_url } }
     else
