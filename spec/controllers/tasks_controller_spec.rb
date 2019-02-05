@@ -21,7 +21,7 @@ RSpec.describe TasksController, type: :controller do
       let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
       let!(:task12) { create(:ama_attorney_task, :in_progress, assigned_to: user) }
       let!(:task13) { create(:ama_attorney_task, :completed, assigned_to: user) }
-      let!(:task16) { create(:ama_attorney_task, :completed, assigned_to: user, completed_at: 3.weeks.ago) }
+      let!(:task16) { create(:ama_attorney_task, :completed, assigned_to: user, closed_at: 3.weeks.ago) }
       let!(:task14) { create(:ama_attorney_task, :on_hold, assigned_to: user) }
 
       it "should process the request successfully" do
@@ -107,7 +107,7 @@ RSpec.describe TasksController, type: :controller do
       let!(:task9) { create(:ama_judge_task, :in_progress, assigned_to: user, assigned_by: user) }
       let!(:task10) { create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user) }
       let!(:task15) do
-        create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user, completed_at: 3.weeks.ago)
+        create(:ama_judge_task, :completed, assigned_to: user, assigned_by: user, closed_at: 3.weeks.ago)
       end
 
       it "should process the request succesfully" do
@@ -514,7 +514,7 @@ RSpec.describe TasksController, type: :controller do
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
-        expect(response_body.first["attributes"]["completed_at"]).to_not be nil
+        expect(response_body.first["attributes"]["closed_at"]).to_not be nil
       end
     end
 
@@ -546,13 +546,16 @@ RSpec.describe TasksController, type: :controller do
   describe "GET appeals/:id/tasks" do
     let(:assigning_user) { create(:default_user) }
     let(:attorney_user) { create(:user) }
+    let(:judge_user) { create(:user) }
     let(:colocated_user) { create(:user) }
 
     let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
     let!(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
+    let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
     let!(:legacy_appeal) do
-      create(:legacy_appeal, vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: attorney_user))
+      create(:legacy_appeal,
+             vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: attorney_user))
     end
     let!(:appeal) do
       create(:appeal, veteran: create(:veteran))
@@ -563,8 +566,56 @@ RSpec.describe TasksController, type: :controller do
       create(:ama_colocated_task, appeal: appeal, assigned_to: colocated_user, assigned_by: assigning_user)
     end
 
+    context "when user is a judge" do
+      let(:legacy_appeal) do
+        create(:legacy_appeal,
+               vacols_case:
+               create(:case, :assigned, bfcorlid: "0000000000S", user: judge_user))
+      end
+      before { User.authenticate!(user: judge_user) }
+
+      it "should return JudgeLegacyTasks" do
+        get :for_appeal, params: { appeal_id: legacy_appeal.vacols_id, role: "judge" }
+
+        assert_response :success
+        response_body = JSON.parse(response.body)
+        expect(response_body["tasks"].length).to eq 3
+        task = response_body["tasks"][0]
+        expect(task["id"]).to eq(legacy_appeal.vacols_id)
+        expect(task["type"]).to eq("judge_legacy_tasks")
+        expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
+        expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
+        expect(task["attributes"]["available_actions"].size).to eq 2
+      end
+
+      context "when appeal is not assigned to current user" do
+        let(:another_judge) { create(:user) }
+        let!(:judge_staff2) { create(:staff, :judge_role, sdomainid: another_judge.css_id) }
+        let(:legacy_appeal2) do
+          create(:legacy_appeal,
+                 vacols_case:
+                 create(:case, :assigned, bfcorlid: "0000000000S", user: another_judge))
+        end
+
+        it "should not return available actions" do
+          get :for_appeal, params: { appeal_id: legacy_appeal2.vacols_id, role: "judge" }
+
+          assert_response :success
+          response_body = JSON.parse(response.body)
+          expect(response_body["tasks"].length).to eq 2
+          task = response_body["tasks"][0]
+          expect(task["id"]).to eq(legacy_appeal2.vacols_id)
+          expect(task["type"]).to eq("judge_legacy_tasks")
+          expect(task["attributes"]["user_id"]).to eq(another_judge.css_id)
+          expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal2.id)
+          expect(task["attributes"]["available_actions"].size).to eq 0
+        end
+      end
+    end
+
     context "when user is an attorney" do
       before { User.authenticate!(user: attorney_user) }
+
       it "should return AttorneyLegacyTasks" do
         get :for_appeal, params: { appeal_id: legacy_appeal.vacols_id, role: "attorney" }
 
@@ -576,6 +627,29 @@ RSpec.describe TasksController, type: :controller do
         expect(task["type"]).to eq("attorney_legacy_tasks")
         expect(task["attributes"]["user_id"]).to eq(attorney_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
+        expect(task["attributes"]["available_actions"].size).to eq 2
+      end
+
+      context "when appeal is not assigned to current user" do
+        let(:another_attorney) { create(:user) }
+        let!(:attorney_staff2) { create(:staff, :attorney_role, sdomainid: another_attorney.css_id) }
+        let(:legacy_appeal) do
+          create(:legacy_appeal, vacols_case: create(:case, :assigned, bfcorlid: "0000000000S", user: another_attorney))
+        end
+
+        it "should not return available actions" do
+          get :for_appeal, params: { appeal_id: legacy_appeal.vacols_id, role: "attorney" }
+
+          assert_response :success
+          response_body = JSON.parse(response.body)
+          expect(response_body["tasks"].length).to eq 3
+          task = response_body["tasks"][0]
+          expect(task["id"]).to eq(legacy_appeal.vacols_id)
+          expect(task["type"]).to eq("attorney_legacy_tasks")
+          expect(task["attributes"]["user_id"]).to eq(another_attorney.css_id)
+          expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
+          expect(task["attributes"]["available_actions"].size).to eq 0
+        end
       end
     end
 
@@ -629,7 +703,7 @@ RSpec.describe TasksController, type: :controller do
           bfregoff: "RO04",
           bfcurloc: "57",
           bfhr: "2",
-          bfdocind: "V"
+          bfdocind: HearingDay::REQUEST_TYPES[:video]
         )
       end
       let(:closest_regional_office) { "RO10" }
@@ -670,7 +744,7 @@ RSpec.describe TasksController, type: :controller do
           bfregoff: "RO04",
           bfcurloc: "57",
           bfhr: "2",
-          bfdocind: "V"
+          bfdocind: HearingDay::REQUEST_TYPES[:video]
         )
       end
 

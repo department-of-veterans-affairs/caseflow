@@ -150,8 +150,8 @@ RSpec.feature "Task queue" do
     it "should be able to take actions on task from VSO queue" do
       expect(page).to have_content(COPY::ORGANIZATION_QUEUE_TABLE_TITLE % vso.name)
 
-      case_details_link = page.find(:xpath, "//tbody/tr/td[2]/a")
-      case_details_link.click
+      find_table_cell(vso_task.id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+        .click_link
       expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
 
       # Marking the task as complete correctly changes the task's status in the database.
