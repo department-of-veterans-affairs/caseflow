@@ -57,7 +57,7 @@ describe('ColocatedTaskListView', () => {
     externalAppealId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
     assignedOn: moment().subtract(47, 'hours').
       format(),
-    completedOn: null,
+    closedAt: null,
     dueOn: null,
     assignedTo: {
       cssId: 'BVALSPORER',

@@ -10,7 +10,7 @@ class RecordRequestUnconnected extends React.PureComponent {
     super(props);
 
     this.state = {
-      isSent: Boolean(this.props.task.completed_at)
+      isSent: Boolean(this.props.task.closed_at)
     };
   }
 
@@ -31,7 +31,7 @@ class RecordRequestUnconnected extends React.PureComponent {
 
     let completeDiv = null;
 
-    if (!task.completed_at) {
+    if (!task.closed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-gray-box cf-record-request-checkbox">
           <div className="cf-txt-c">
@@ -39,7 +39,7 @@ class RecordRequestUnconnected extends React.PureComponent {
               vertical
               onChange={this.handleSentClick}
               value={this.state.isSent}
-              disabled={Boolean(task.completed_at)}
+              disabled={Boolean(task.closed_at)}
               name="isSent"
               label="I certify this record has been sent to the Board of Veterans' Appeals." />
           </div>
