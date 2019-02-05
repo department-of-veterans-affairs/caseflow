@@ -200,7 +200,9 @@ class ClaimReview < DecisionReview
 
   def end_product_establishment_for_issue(issue)
     end_product_establishments.find_by(
-      code: issue.end_product_code
+      "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
+      issue.end_product_code,
+      EndProduct::INACTIVE_STATUSES
     ) || new_end_product_establishment(issue.end_product_code)
   end
 
