@@ -35,7 +35,11 @@ class LegacyHearing < ApplicationRecord
   end
 
   def venue
-    self.class.venues[venue_key]
+    self.class.venues[regional_office_key]
+  end
+
+  def regional_office_key
+    HearingDay.find(hearing_day_id).regional_office
   end
 
   def external_id
