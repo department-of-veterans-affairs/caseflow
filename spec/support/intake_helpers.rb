@@ -545,10 +545,11 @@ module IntakeHelpers
 
     # check that decision_request_issue is closed
     updated_request_issue = RequestIssue.find_by(id: original_request_issue.id)
-    expect(updated_request_issue.review_request).to be_nil
+    expect(updated_request_issue.review_request).to_not be_nil
+    expect(updated_request_issue).to be_closed
 
     # check that new request issue is created contesting the decision issue
-    request_issues = review_request.reload.request_issues
+    request_issues = review_request.reload.open_request_issues
     first_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.first.id)
     second_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.second.id)
 

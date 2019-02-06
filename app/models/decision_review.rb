@@ -196,6 +196,10 @@ class DecisionReview < ApplicationRecord
       .select(&:status_active?)
   end
 
+  def open_request_issues
+    request_issues.not_closed
+  end
+
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
   def serializer_class
     ::WorkQueue::DecisionReviewSerializer
@@ -210,10 +214,6 @@ class DecisionReview < ApplicationRecord
   end
 
   private
-
-  def open_request_issues
-    request_issues.not_closed
-  end
 
   def can_contest_rating_issues?
     fail Caseflow::Error::MustImplementInSubclass
