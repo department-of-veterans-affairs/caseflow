@@ -1059,7 +1059,8 @@ describe Appeal do
   end
 
   context "#status_hash" do
-    let(:receipt_date) { Time.new("2018", "10", "05").utc }
+    let(:october_docket_date) { Time.new("2018", "10", "01").utc }
+    let(:receipt_date) { october_docket_date + 20.days }
 
     let(:promulgation_date1) { receipt_date - 50.days }
     let(:request_issue1) { create(:request_issue) }
@@ -1089,7 +1090,7 @@ describe Appeal do
 
         expect(docket).not_to be_nil
         expect(docket[:type]).to eq(docket_type)
-        expect(docket[:month]).to eq(Time.new(2018, 10, 0o1).utc.to_date)
+        expect(docket[:month]).to eq(october_docket_date.to_date)
         expect(docket[:switchDueDate]).to eq((promulgation_date2 + 365.days))
         expect(docket[:eligibleToSwitch]).to eq(true)
       end
@@ -1107,7 +1108,7 @@ describe Appeal do
 
         expect(docket).not_to be_nil
         expect(docket[:type]).to eq(docket_type)
-        expect(docket[:month]).to eq(Time.new(2018, 10, 0o1).utc.to_date)
+        expect(docket[:month]).to eq(october_docket_date.to_date)
         expect(docket[:switchDueDate]).to be_nil
         expect(docket[:eligibleToSwitch]).to eq(false)
       end

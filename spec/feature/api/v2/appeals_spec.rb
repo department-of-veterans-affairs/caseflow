@@ -397,9 +397,7 @@ describe "Appeals API v2", type: :request do
              decision_review: supplemental_claim_review, end_product_last_action_date: receipt_date + 100.days)
     end
 
-    let(:rating_reference_id) { "abc123" }
     let(:rating_promulgated_date) { receipt_date - 40.days }
-    let(:veteran_participant_id) { "8760981" }
 
     let(:request_issue1) do
       create(:request_issue, benefit_type: benefit_type)

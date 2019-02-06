@@ -462,7 +462,8 @@ class Appeal < DecisionReview
   def eligible_to_switch_dockets?
     return false unless docket_switch_deadline
 
-    # false if hearing already taken place, to be implemented
+    # todo: false if hearing already taken place, to be implemented
+    # https://github.com/department-of-veterans-affairs/caseflow/issues/9205
     Time.zone.today < docket_switch_deadline
   end
 
