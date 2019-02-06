@@ -401,47 +401,44 @@ describe "Appeals API v2", type: :request do
     let(:rating_promulgated_date) { receipt_date - 40.days }
     let(:veteran_participant_id) { "8760981" }
 
-    let!(:rating) do
-      Generators::Rating.build(
-        participant_id: veteran_participant_id,
-        promulgation_date: rating_promulgated_date,
-        profile_date: receipt_date - 50.days,
-        issues: [
-          { reference_id: rating_reference_id, decision_text: "Old injury in review" }
-        ]
-      )
-    end
-
-    let(:request_issue) do
-      create(:request_issue, benefit_type: benefit_type, contested_rating_issue_reference_id: rating_reference_id)
+    let(:request_issue1) do
+      create(:request_issue, benefit_type: benefit_type)
     end
 
     let!(:appeal) do
       create(:appeal,
              veteran_file_number: veteran_file_number,
              receipt_date: receipt_date,
-             request_issues: [request_issue],
+             request_issues: [request_issue1],
              docket_type: "evidence_submission")
     end
 
     let!(:task) { create(:task, :in_progress, type: RootTask.name, appeal: appeal) }
 
-    it "returns list of hlr, sc, appeal for veteran with SSN" do
+    before do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
         veteran_file_number
       end
 
-      FeatureToggle.enable!(:api_appeal_status_v3)
+      allow_any_instance_of(RequestIssue).to receive(:decision_or_promulgation_date).and_return(rating_promulgated_date)
 
+      FeatureToggle.enable!(:api_appeal_status_v3)
+    end
+
+    after do
+      FeatureToggle.disable!(:api_appeal_status_v3)
+    end
+
+    it "returns list of hlr, sc, appeal for veteran with SSN" do
       headers = {
         "ssn": veteran_file_number,
         "Authorization": "Token token=#{api_key.key_string}"
       }
-
+      
       get "/api/v2/appeals", headers: headers
 
       json = JSON.parse(response.body)
-      binding.pry
+      
       # test for the 200 status-code
       expect(response).to be_success
       # check to make sure the right amount of appeals are returned
@@ -513,11 +510,9 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["docket"]["type"]).to eq("new_evidence")
       expect(json["data"][2]["attributes"]["docket"]["month"]).to eq(Date.new(2018, 9, 1).to_s)
       expect(json["data"][2]["attributes"]["docket"]["switchDueDate"]).to eq((rating_promulgated_date+365.days).to_s)
-      expect(json["data"][2]["attributes"]["docket"]["eligibleToSwitch"]).to eq(false)
+      expect(json["data"][2]["attributes"]["docket"]["eligibleToSwitch"]).to eq(true)
       expect(json["data"][2]["attributes"]["status"]["type"]).to eq("on_docket")
       expect(json["data"][2]["attributes"]["issues"].length).to eq(0)
-
-      FeatureToggle.disable!(:api_appeal_status_v3)
     end
   end
 end
