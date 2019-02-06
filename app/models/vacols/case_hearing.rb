@@ -12,40 +12,40 @@ class VACOLS::CaseHearing < VACOLS::Record
   HEARING_TYPES = %w[V T C].freeze
 
   HEARING_DISPOSITIONS = {
-    H: :held,
-    C: :cancelled,
-    P: :postponed,
-    N: :no_show
+      H: :held,
+      C: :cancelled,
+      P: :postponed,
+      N: :no_show
   }.freeze
 
   HEARING_AODS = {
-    G: :granted,
-    Y: :filed,
-    N: :none
+      G: :granted,
+      Y: :filed,
+      N: :none
   }.freeze
 
   BOOLEAN_MAP = {
-    N: false,
-    Y: true
+      N: false,
+      Y: true
   }.freeze
 
   COLUMN_NAMES = {
-    notes: :notes1,
-    disposition: :hearing_disp,
-    hold_open: :holddays,
-    aod: :aod,
-    transcript_requested: :tranreq,
-    add_on: :addon,
-    representative_name: :repname,
-    staff_id: :mduser,
-    room: :room,
-    scheduled_for: :hearing_date,
-    request_type: :hearing_type,
-    judge_id: :board_member,
-    folder_nr: :folder_nr,
-    board_member: :board_member,
-    team: :team,
-    bva_poc: :vdbvapoc
+      notes: :notes1,
+      disposition: :hearing_disp,
+      hold_open: :holddays,
+      aod: :aod,
+      transcript_requested: :tranreq,
+      add_on: :addon,
+      representative_name: :repname,
+      staff_id: :mduser,
+      room: :room,
+      scheduled_for: :hearing_date,
+      request_type: :hearing_type,
+      judge_id: :board_member,
+      folder_nr: :folder_nr,
+      board_member: :board_member,
+      team: :team,
+      bva_poc: :vdbvapoc
   }.freeze
 
   after_update :update_hearing_action, if: :hearing_disp_changed?
@@ -57,15 +57,20 @@ class VACOLS::CaseHearing < VACOLS::Record
       id = connection.quote(css_id.upcase)
 
       select_hearings.where("staff.sdomainid = #{id}")
-        .where("hearing_date > ?", 1.year.ago.beginning_of_day)
+          .where("hearing_date > ?", 1.year.ago.beginning_of_day)
     end
 
     def find_hearing_day(hearing_pkseq)
       select_schedule_days.includes(brieff: [:representative]).find_by(hearing_pkseq: hearing_pkseq)
     end
 
-    def hearings_for_hearing_days(hearing_day_ids)
-      select_hearings.where(vdkey: hearing_day_ids)
+    def video_hearings_for_master_records(parent_hearings_pkseqs)
+      select_hearings.where(vdkey: parent_hearings_pkseqs)
+    end
+
+    def co_hearings_for_master_records(parent_hearing_dates)
+      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) IN (?)",
+                            HearingDay::REQUEST_TYPES[:central], "%VIDEO%", parent_hearing_dates.map(&:to_date))
     end
 
     def for_appeal(appeal_vacols_id)
@@ -147,11 +152,11 @@ class VACOLS::CaseHearing < VACOLS::Record
              "corres.saddrstt", "corres.saddrcnty", "corres.saddrzip",
              "corres.snamef, corres.snamemi", "corres.snamel, corres.sspare1",
              "corres.sspare2, corres.sspare3, folder.tinum")
-        .joins("left outer join vacols.staff on staff.sattyid = board_member")
-        .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
-        .joins("left outer join vacols.folder on folder.ticknum = brieff.bfkey")
-        .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
-        .where(hearing_type: HEARING_TYPES)
+          .joins("left outer join vacols.staff on staff.sattyid = board_member")
+          .joins("left outer join vacols.brieff on brieff.bfkey = folder_nr")
+          .joins("left outer join vacols.folder on folder.ticknum = brieff.bfkey")
+          .joins("left outer join vacols.corres on corres.stafkey = bfcorkey")
+          .where(hearing_type: HEARING_TYPES)
     end
 
     def select_schedule_days
@@ -167,8 +172,8 @@ class VACOLS::CaseHearing < VACOLS::Record
              "snamel || CASE WHEN snamel IS NULL THEN '' ELSE ', ' END || snamef AS judge_name",
              :mduser,
              :mdtime)
-        .joins("left outer join vacols.staff on staff.sattyid = board_member")
-        .where("hearing_type = ? and (folder_nr != ? or folder_nr is null)", "C", "1779233")
+          .joins("left outer join vacols.staff on staff.sattyid = board_member")
+          .where("hearing_type = ? and (folder_nr != ? or folder_nr is null)", "C", "1779233")
     end
   end
 

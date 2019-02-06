@@ -10,7 +10,7 @@ class HearingRepository
                                       service: :vacols,
                                       name: "fetch_hearings_for_judge") do
         VACOLS::CaseHearing.hearings_for_judge(css_id) +
-          VACOLS::TravelBoardSchedule.hearings_for_judge(css_id)
+            VACOLS::TravelBoardSchedule.hearings_for_judge(css_id)
       end
       hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
 
@@ -19,15 +19,30 @@ class HearingRepository
       hearings
     end
 
-    def fetch_hearings_for_parent(hearing_day_id)
+    def fetch_video_hearings_for_parent(parent_hearing_pkseq)
       # Implemented by call the array version of this method
-      fetch_hearings_for_parents([hearing_day_id]).values.first || []
+      fetch_video_hearings_for_parents([parent_hearing_pkseq]).values.first || []
     end
 
-    def fetch_hearings_for_parents(hearing_day_ids)
+    def fetch_video_hearings_for_parents(parent_hearings_pkseq)
       # Get hash of hearings grouped by their hearing day ids
-      VACOLS::CaseHearing.hearings_for_hearing_days(hearing_day_ids)
-        .group_by { |record| record.vdkey.to_s }.transform_values do |value|
+      VACOLS::CaseHearing.video_hearings_for_master_records(parent_hearings_pkseq)
+          .group_by { |record| record.vdkey.to_s }.transform_values do |value|
+        hearings_for(value)
+      end
+    end
+
+    def fetch_co_hearings_for_date(parent_hearing_date)
+      # Implemented by call the array version of this method
+      fetch_co_hearings_for_dates([parent_hearing_date]).values.first || []
+    end
+
+    def fetch_co_hearings_for_dates(parent_hearing_dates)
+      # Get hash of hearings grouped by their hearing day date string. Note we do
+      # hearing_date.utc.to_date.to_s to avoid timezone issues and make it consistent
+      # with how the date is stored in the HearingDay table.
+      VACOLS::CaseHearing.co_hearings_for_master_records(parent_hearing_dates)
+          .group_by { |record| record.hearing_date.utc.to_date.to_s }.transform_values do |value|
         hearings_for(value)
       end
     end
@@ -72,20 +87,20 @@ class HearingRepository
     end
 
     def slot_new_hearing(parent_record_id, scheduled_time:, appeal:, hearing_type: nil, hearing_location_attrs: nil)
-      hearing_day = HearingDay.find_hearing_day(parent_record_id)
+      hearing_day = HearingDay.find_hearing_day(nil, parent_record_id)
       hearing_day_hash = HearingDay.to_hash(hearing_day)
 
       hearing_datetime = hearing_day_hash[:scheduled_for].to_datetime.change(
-        hour: scheduled_time["h"].to_i,
-        min: scheduled_time["m"].to_i,
-        offset: scheduled_time["offset"]
+          hour: scheduled_time["h"].to_i,
+          min: scheduled_time["m"].to_i,
+          offset: scheduled_time["offset"]
       )
 
       if (hearing_type || hearing_day_hash[:request_type]) == HearingDay::REQUEST_TYPES[:central]
         create_child_co_hearing(hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs)
       else
         create_child_video_hearing(
-          parent_record_id, hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs
+            parent_record_id, hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs
         )
       end
     end
@@ -98,13 +113,13 @@ class HearingRepository
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
 
       VACOLS::CaseHearing.create_child_hearing!(
-        folder_nr: appeal.vacols_id,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date_str),
-        vdkey: hearing_day.id,
-        hearing_type: hearing_day.request_type,
-        room: hearing_day.room,
-        board_member: attorney_id,
-        vdbvapoc: hearing_day.bva_poc
+          folder_nr: appeal.vacols_id,
+          hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date_str),
+          vdkey: hearing_day.id,
+          hearing_type: hearing_day.request_type,
+          room: hearing_day.room,
+          board_member: attorney_id,
+          vdbvapoc: hearing_day.bva_poc
       )
 
       vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing_day.id)
@@ -116,20 +131,20 @@ class HearingRepository
     def create_child_video_hearing(hearing_pkseq, hearing_date, appeal, hearing_location_attrs: nil)
       if hearing_date.to_date > HearingDay::CASEFLOW_V_PARENT_DATE || appeal.is_a?(Appeal)
         return create_caseflow_child_video_hearing(
-          hearing_pkseq, hearing_date, appeal, hearing_location_attrs: hearing_location_attrs
+            hearing_pkseq, hearing_date, appeal, hearing_location_attrs: hearing_location_attrs
         )
       end
 
       hearing = VACOLS::CaseHearing.find(hearing_pkseq)
 
       VACOLS::CaseHearing.create_child_hearing!(
-        folder_nr: appeal.vacols_id,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
-        vdkey: hearing.hearing_pkseq,
-        hearing_type: HearingDay::REQUEST_TYPES[:video],
-        room: hearing.room,
-        board_member: hearing.board_member,
-        vdbvapoc: hearing.vdbvapoc
+          folder_nr: appeal.vacols_id,
+          hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
+          vdkey: hearing.hearing_pkseq,
+          hearing_type: HearingDay::REQUEST_TYPES[:video],
+          room: hearing.room,
+          board_member: hearing.board_member,
+          vdbvapoc: hearing.vdbvapoc
       )
 
       vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing.hearing_pkseq)
@@ -146,13 +161,13 @@ class HearingRepository
 
       if appeal.is_a?(LegacyAppeal)
         VACOLS::CaseHearing.create_child_hearing!(
-          folder_nr: appeal.vacols_id,
-          hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
-          vdkey: hearing_day.id,
-          hearing_type: hearing_day.request_type,
-          room: hearing_day.room,
-          board_member: hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil,
-          vdbvapoc: hearing_day.bva_poc
+            folder_nr: appeal.vacols_id,
+            hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_date),
+            vdkey: hearing_day.id,
+            hearing_type: hearing_day.request_type,
+            room: hearing_day.room,
+            board_member: hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil,
+            vdbvapoc: hearing_day.bva_poc
         )
 
         vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing_day.id)
@@ -161,10 +176,10 @@ class HearingRepository
         hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
       else
         Hearing.create!(
-          appeal: appeal,
-          hearing_day_id: hearing_day.id,
-          hearing_location_attributes: hearing_location_attrs || {},
-          scheduled_time: hearing_date
+            appeal: appeal,
+            hearing_day_id: hearing_day.id,
+            hearing_location_attributes: hearing_location_attrs || {},
+            scheduled_time: hearing_date
         )
       end
     end
@@ -207,8 +222,8 @@ class HearingRepository
         next empty_dockets(vacols_record) if master_record?(vacols_record)
 
         hearing = LegacyHearing
-          .assign_or_create_from_vacols_record(vacols_record,
-                                               legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
+                      .assign_or_create_from_vacols_record(vacols_record,
+                                                           legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
         set_vacols_values(hearing, vacols_record)
       end.flatten
     end
@@ -217,7 +232,7 @@ class HearingRepository
 
     def worksheet_issues_for_appeals(appeal_ids)
       WorksheetIssue.issues_for_appeals(appeal_ids)
-        .each_with_object({}) do |issue, hash|
+          .each_with_object({}) do |issue, hash|
         hash[issue.appeal_id] ||= []
         hash[issue.appeal_id] << issue
       end
@@ -247,38 +262,38 @@ class HearingRepository
                                                   regional_office_key: ro,
                                                   type: vacols_record.hearing_type)
       {
-        vacols_record: vacols_record,
-        appeal_vacols_id: vacols_record.folder_nr,
-        venue_key: vacols_record.hearing_venue,
-        disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
-        representative_name: vacols_record.repname,
-        representative: VACOLS::Case::REPRESENTATIVES[vacols_record.bfso][:full_name],
-        aod: VACOLS::CaseHearing::HEARING_AODS[vacols_record.aod.try(:to_sym)],
-        hold_open: vacols_record.holddays,
-        transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
-        transcript_sent_date: AppealRepository.normalize_vacols_date(vacols_record.transent),
-        add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
-        notes: vacols_record.notes1,
-        appellant_address_line_1: vacols_record.saddrst1,
-        appellant_address_line_2: vacols_record.saddrst2,
-        appellant_city: vacols_record.saddrcty,
-        appellant_state: vacols_record.saddrstt,
-        appellant_country: vacols_record.saddrcnty,
-        appellant_zip: vacols_record.saddrzip,
-        appeal_type: VACOLS::Case::TYPES[vacols_record.bfac],
-        docket_number: vacols_record.tinum || "Missing Docket Number",
-        veteran_first_name: vacols_record.snamef,
-        veteran_middle_initial: vacols_record.snamemi,
-        veteran_last_name: vacols_record.snamel,
-        appellant_first_name: vacols_record.sspare2,
-        appellant_middle_initial: vacols_record.sspare3,
-        appellant_last_name: vacols_record.sspare1,
-        room: vacols_record.room,
-        regional_office_key: ro,
-        request_type: vacols_record.hearing_type,
-        scheduled_for: date,
-        hearing_day_id: vacols_record.vdkey,
-        master_record: false
+          vacols_record: vacols_record,
+          appeal_vacols_id: vacols_record.folder_nr,
+          venue_key: vacols_record.hearing_venue,
+          disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
+          representative_name: vacols_record.repname,
+          representative: VACOLS::Case::REPRESENTATIVES[vacols_record.bfso][:full_name],
+          aod: VACOLS::CaseHearing::HEARING_AODS[vacols_record.aod.try(:to_sym)],
+          hold_open: vacols_record.holddays,
+          transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
+          transcript_sent_date: AppealRepository.normalize_vacols_date(vacols_record.transent),
+          add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
+          notes: vacols_record.notes1,
+          appellant_address_line_1: vacols_record.saddrst1,
+          appellant_address_line_2: vacols_record.saddrst2,
+          appellant_city: vacols_record.saddrcty,
+          appellant_state: vacols_record.saddrstt,
+          appellant_country: vacols_record.saddrcnty,
+          appellant_zip: vacols_record.saddrzip,
+          appeal_type: VACOLS::Case::TYPES[vacols_record.bfac],
+          docket_number: vacols_record.tinum || "Missing Docket Number",
+          veteran_first_name: vacols_record.snamef,
+          veteran_middle_initial: vacols_record.snamemi,
+          veteran_last_name: vacols_record.snamel,
+          appellant_first_name: vacols_record.sspare2,
+          appellant_middle_initial: vacols_record.sspare3,
+          appellant_last_name: vacols_record.sspare1,
+          room: vacols_record.room,
+          regional_office_key: ro,
+          request_type: vacols_record.hearing_type,
+          scheduled_for: date,
+          hearing_day_id: vacols_record.vdkey,
+          master_record: false
       }
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength

@@ -15,24 +15,24 @@ class Hearings::HearingDayController < HearingScheduleController
       end
       format.json do
         render json: {
-          hearings: json_hearings(HearingDay.array_to_hash(hearings[:vacols_hearings] + hearings[:caseflow_hearings])),
-          startDate: start_date,
-          endDate: end_date
+            hearings: json_hearings(HearingDay.array_to_hash(hearings[:vacols_hearings] + hearings[:caseflow_hearings])),
+            startDate: start_date,
+            endDate: end_date
         }
       end
     end
   end
 
   def show
-    hearing_day = HearingDay.find_hearing_day(params[:id])
+    hearing_day = HearingDay.find_hearing_day(nil, params[:id])
     hearing_day_hash = HearingDay.to_hash(hearing_day)
 
     hearings, regional_office = fetch_hearings(hearing_day_hash, params[:id]).values_at(:hearings, :regional_office)
 
     hearing_day_options = HearingDay.hearing_days_with_hearings_hash(
-      Time.zone.today.beginning_of_day,
-      Time.zone.today.beginning_of_day + 365.days,
-      regional_office
+        Time.zone.today.beginning_of_day,
+        Time.zone.today.beginning_of_day + 365.days,
+        regional_office
     )
 
     if hearing_day.is_a?(HearingDay)
@@ -40,10 +40,10 @@ class Hearings::HearingDayController < HearingScheduleController
     end
 
     render json: {
-      hearing_day: json_hearing(hearing_day_hash).merge(
-        hearings: hearings.map { |hearing| hearing.to_hash(current_user.id) },
-        hearing_day_options: hearing_day_options
-      )
+        hearing_day: json_hearing(hearing_day_hash).merge(
+            hearings: hearings.map { |hearing| hearing.to_hash(current_user.id) },
+            hearing_day_options: hearing_day_options
+        )
     }
   end
 
@@ -51,10 +51,10 @@ class Hearings::HearingDayController < HearingScheduleController
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
     hearing_days_with_hearings = HearingDay.hearing_days_with_hearings_hash(
-      Time.zone.today.beginning_of_day,
-      Time.zone.today.beginning_of_day + 182.days,
-      regional_office,
-      current_user.id
+        Time.zone.today.beginning_of_day,
+        Time.zone.today.beginning_of_day + 182.days,
+        regional_office,
+        current_user.id
     )
 
     render json: { hearing_days: json_hearings(hearing_days_with_hearings) }
@@ -68,7 +68,7 @@ class Hearings::HearingDayController < HearingScheduleController
     return invalid_record_error(hearing) if hearing.nil?
 
     render json: {
-      hearing: json_hearing(hearing)
+        hearing: json_hearing(hearing)
     }, status: :created
   end
 
@@ -94,17 +94,22 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def fetch_hearings(hearing_day, id)
-    unless hearing_day[:request_type] == "V" || hearing_day[:request_type] == "C"
-      return {
-        hearings: [],
-        regional_office: nil
+    if hearing_day[:request_type] == HearingDay::REQUEST_TYPES[:video]
+      {
+          hearings: HearingRepository.fetch_video_hearings_for_parent(id),
+          regional_office: hearing_day[:regional_office]
+      }
+    elsif hearing_day[:request_type] == HearingDay::REQUEST_TYPES[:central]
+      {
+          hearings: HearingRepository.fetch_co_hearings_for_date(hearing_day[:scheduled_for]),
+          regional_office: HearingDay::REQUEST_TYPES[:central]
+      }
+    else
+      {
+          hearings: [],
+          regional_office: nil
       }
     end
-
-    {
-      hearings: HearingRepository.fetch_hearings_for_parent(id),
-      regional_office: (hearing_day[:request_type] == "C") ? "C" : hearing_day[:regional_office]
-    }
   end
 
   def update_params
@@ -116,7 +121,7 @@ class Hearings::HearingDayController < HearingScheduleController
                   :bva_poc,
                   :notes,
                   :lock)
-      .merge(updated_by: current_user.css_id)
+        .merge(updated_by: current_user.css_id)
   end
 
   def create_params
@@ -127,7 +132,7 @@ class Hearings::HearingDayController < HearingScheduleController
                   :regional_office,
                   :notes,
                   :bva_poc)
-      .merge(created_by: current_user, updated_by: current_user)
+        .merge(created_by: current_user, updated_by: current_user)
   end
 
   def validate_start_date(start_date)
@@ -140,23 +145,23 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def invalid_record_error(hearing)
     render json: {
-      "errors": ["title": "Record is invalid", "detail": hearing.errors.full_messages.join(" ,")]
+        "errors": ["title": "Record is invalid", "detail": hearing.errors.full_messages.join(" ,")]
     }, status: :bad_request
   end
 
   def record_not_found
     render json: {
-      "errors": [
-        "title": "Record Not Found",
-        "detail": "Record with that ID is not found"
-      ]
+        "errors": [
+            "title": "Record Not Found",
+            "detail": "Record with that ID is not found"
+        ]
     }, status: :not_found
   end
 
   def json_created_hearings(hearings)
     json_hash = ActiveModelSerializers::SerializableResource.new(
-      hearings,
-      each_serializer: ::Hearings::HearingDaySerializer
+        hearings,
+        each_serializer: ::Hearings::HearingDaySerializer
     ).as_json
 
     format_for_client(json_hash)
@@ -223,14 +228,14 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def select_co_available_room
     hearing_count_by_room = HearingDay.where(scheduled_for: params[:scheduled_for], request_type: params[:request_type])
-      .group(:room).count
+                                .group(:room).count
     room_count = hearing_count_by_room["2"]
     "2" unless !(room_count.nil? || room_count == 0)
   end
 
   def select_video_available_room
     hearing_count_by_room = HearingDay.where(scheduled_for: params[:scheduled_for], request_type: params[:request_type])
-      .group(:room).count
+                                .group(:room).count
     available_room = nil
     (1..HearingRooms::ROOMS.size).each do |hearing_room|
       room_count = hearing_count_by_room[hearing_room.to_s]
@@ -244,10 +249,10 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def no_available_rooms
     render json: {
-      "errors": [
-        "title": "No rooms available",
-        "detail": "All rooms are taken for the date selected."
-      ]
+        "errors": [
+            "title": "No rooms available",
+            "detail": "All rooms are taken for the date selected."
+        ]
     }, status: :not_found
   end
 end
