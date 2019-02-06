@@ -468,3 +468,12 @@ export const taskIsOnHold = (task: Task) => {
 
   return task.status === TASK_STATUSES.on_hold;
 };
+
+export const taskHasCompletedHold = (task: Task) => {
+  if (task.onHoldDuration && task.placedOnHoldAt) {
+    return moment().startOf('day').
+      diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
+  }
+
+  return task.status === TASK_STATUSES.on_hold;
+};
