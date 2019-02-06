@@ -31,8 +31,7 @@ describe HearingRepository do
   context ".set_vacols_values" do
     subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
     let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
-    let(:hearing) { create(:legacy_hearing) }
-    let(:hearing_day) { HearingDay.first }
+    let(:hearing) { Generators::LegacyHearing.create }
 
     let(:hearing_hash) do
       OpenStruct.new(
@@ -47,13 +46,12 @@ describe HearingRepository do
         notes1: "test notes",
         repname: "test rep name",
         bfso: "E",
-        bfregoff: "RO13",
-        vdkey: hearing_day.id
+        bfregoff: "RO36"
       )
     end
 
     it "assigns values properly" do
-      expect(subject.venue[:city]).to eq("Baltimore")
+      expect(subject.venue[:city]).to eq("San Antonio")
       expect(subject.request_type).to eq(HearingDay::REQUEST_TYPES[:video])
       expect(subject.vacols_record).to eq(hearing_hash)
       expect(subject.scheduled_for.class).to eq(ActiveSupport::TimeWithZone)
