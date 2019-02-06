@@ -19,15 +19,30 @@ class HearingRepository
       hearings
     end
 
-    def fetch_hearings_for_parent(hearing_day_id)
+    def fetch_video_hearings_for_parent(parent_hearing_pkseq)
       # Implemented by call the array version of this method
-      fetch_hearings_for_parents([hearing_day_id]).values.first || []
+      fetch_video_hearings_for_parents([parent_hearing_pkseq]).values.first || []
     end
 
-    def fetch_hearings_for_parents(hearing_day_ids)
+    def fetch_video_hearings_for_parents(parent_hearings_pkseq)
       # Get hash of hearings grouped by their hearing day ids
-      VACOLS::CaseHearing.hearings_for_hearing_days(hearing_day_ids)
+      VACOLS::CaseHearing.video_hearings_for_master_records(parent_hearings_pkseq)
         .group_by { |record| record.vdkey.to_s }.transform_values do |value|
+        hearings_for(value)
+      end
+    end
+
+    def fetch_co_hearings_for_date(parent_hearing_date)
+      # Implemented by call the array version of this method
+      fetch_co_hearings_for_dates([parent_hearing_date]).values.first || []
+    end
+
+    def fetch_co_hearings_for_dates(parent_hearing_dates)
+      # Get hash of hearings grouped by their hearing day date string. Note we do
+      # hearing_date.utc.to_date.to_s to avoid timezone issues and make it consistent
+      # with how the date is stored in the HearingDay table.
+      VACOLS::CaseHearing.co_hearings_for_master_records(parent_hearing_dates)
+        .group_by { |record| record.hearing_date.utc.to_date.to_s }.transform_values do |value|
         hearings_for(value)
       end
     end
@@ -72,7 +87,7 @@ class HearingRepository
     end
 
     def slot_new_hearing(parent_record_id, scheduled_time:, appeal:, hearing_type: nil, hearing_location_attrs: nil)
-      hearing_day = HearingDay.find_hearing_day(parent_record_id)
+      hearing_day = HearingDay.find_hearing_day(nil, parent_record_id)
       hearing_day_hash = HearingDay.to_hash(hearing_day)
 
       hearing_datetime = hearing_day_hash[:scheduled_for].to_datetime.change(
