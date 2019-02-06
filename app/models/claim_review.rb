@@ -52,7 +52,7 @@ class ClaimReview < DecisionReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      if processed_in_caseflow?
+      if processed_in_caseflow? || !issue.eligible?
         issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       else
         issue.update!(
@@ -199,8 +199,6 @@ class ClaimReview < DecisionReview
   end
 
   def end_product_establishment_for_issue(issue)
-    return unless issue.eligible?
-
     end_product_establishments.find_by(
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,
