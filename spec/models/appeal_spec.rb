@@ -1,4 +1,9 @@
+require "rails_helper"
+require "support/intake_helpers"
+
 describe Appeal do
+  include IntakeHelpers
+
   let!(:appeal) { create(:appeal) }
 
   context "priority and non-priority appeals" do
@@ -55,6 +60,11 @@ describe Appeal do
   end
 
   context "#create_remand_supplemental_claims!" do
+    let(:veteran) { create(:veteran) }
+    let(:appeal) do
+      create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number)
+    end
+
     subject { appeal.create_remand_supplemental_claims! }
 
     let!(:remanded_decision_issue) do
@@ -62,12 +72,16 @@ describe Appeal do
         :decision_issue,
         decision_review: appeal,
         disposition: "remanded",
-        benefit_type: "compensation"
+        benefit_type: "compensation",
+        caseflow_decision_date: decision_date
       )
     end
 
     let!(:remanded_decision_issue_processed_in_caseflow) do
-      create(:decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca")
+      create(
+        :decision_issue, decision_review: appeal, disposition: "remanded", benefit_type: "nca",
+                         caseflow_decision_date: decision_date
+      )
     end
 
     let(:decision_date) { 10.days.ago }
@@ -75,10 +89,13 @@ describe Appeal do
 
     let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
 
+    let!(:prior_sc_with_payee_code) { setup_prior_claim_with_payee_code(appeal, veteran) }
+
     it "creates supplemental claim, request issues, and starts processing" do
       subject
 
       remanded_supplemental_claims = SupplementalClaim.where(decision_review_remanded: appeal)
+        .where.not(id: prior_sc_with_payee_code.id)
 
       expect(remanded_supplemental_claims.count).to eq(2)
 
@@ -195,7 +212,8 @@ describe Appeal do
              benefit_type: another_review.benefit_type,
              decision_text: "something decided in the past",
              description: "past issue",
-             participant_id: veteran.participant_id)
+             participant_id: veteran.participant_id,
+             end_product_last_action_date: receipt_date - 1.day)
     end
 
     let!(:future_decision_issue) do
@@ -205,7 +223,8 @@ describe Appeal do
              benefit_type: another_review.benefit_type,
              decision_text: "something was decided in the future",
              description: "future issue",
-             participant_id: veteran.participant_id)
+             participant_id: veteran.participant_id,
+             end_product_last_action_date: receipt_date - 1.day)
     end
 
     it "does not return Decision Issues in the future" do
@@ -288,7 +307,7 @@ describe Appeal do
     end
 
     context "when decision issues" do
-      let(:decision_issues) { [create(:decision_issue)] }
+      let(:decision_issues) { [build(:decision_issue)] }
 
       it { is_expected.to eq true }
     end
@@ -864,6 +883,88 @@ describe Appeal do
       it "has a remand processed in vbms" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:post_bva_dta_decision)
+      end
+    end
+  end
+
+  context "#events" do
+    let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+    let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
+    let!(:decision_date) { receipt_date + 130.days }
+    let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
+    let(:judge) { create(:user) }
+    let(:judge_task_created_date) { receipt_date + 10 }
+    let!(:judge_review_task) do
+      create(:ama_judge_decision_review_task,
+             assigned_to: judge, appeal: appeal, created_at: judge_task_created_date, status: "completed")
+    end
+    let!(:judge_quality_review_task) do
+      create(:ama_judge_quality_review_task,
+             assigned_to: judge, appeal: appeal, created_at: judge_task_created_date + 2.days, status: "completed")
+    end
+
+    context "decision, no remand and an effectuation" do
+      let!(:decision_issue) { create(:decision_issue, decision_review: appeal, caseflow_decision_date: decision_date) }
+      let(:ep_cleared_date) { receipt_date + 150.days }
+      let!(:effectuation_ep) do
+        create(:end_product_establishment,
+               :cleared, source: decision_document, last_synced_at: ep_cleared_date)
+      end
+
+      it "has an nod event, judge assigned event, decision event and effectation event" do
+        events = appeal.events
+        nod_event = events.find { |e| e.type == :ama_nod }
+        expect(nod_event.date.to_date).to eq(receipt_date.to_date)
+
+        judge_assigned_event = events.find { |e| e.type == :distributed_to_vlj }
+        expect(judge_assigned_event.date.to_date).to eq(judge_task_created_date.to_date)
+
+        decision_event = events.find { |e| e.type == :bva_decision }
+        expect(decision_event.date.to_date).to eq(decision_date.to_date)
+
+        effectuation_event = events.find { |e| e.type == :bva_decision_effectuation }
+        expect(effectuation_event.date.to_date).to eq(ep_cleared_date.to_date)
+      end
+    end
+
+    context "decision with a remand and an effectuation" do
+      # the effectuation
+      let!(:decision_issue) { create(:decision_issue, decision_review: appeal, caseflow_decision_date: decision_date) }
+      let(:ep_cleared_date) { receipt_date + 150.days }
+      let!(:effectuation_ep) do
+        create(:end_product_establishment,
+               :cleared, source: decision_document, last_synced_at: ep_cleared_date)
+      end
+      # the remand
+      let!(:remanded_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "remanded", benefit_type: "compensation")
+      end
+      let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let(:remanded_ep_clr_date) { receipt_date + 200.days }
+      let!(:remanded_ep) { create(:end_product_establishment, :cleared, source: remanded_sc) }
+      let!(:remanded_sc_decision_issue) do
+        create(:decision_issue,
+               decision_review: remanded_sc,
+               end_product_last_action_date: remanded_ep_clr_date)
+      end
+
+      it "has nod event, judge assigned event, decision event, remand decision event" do
+        events = appeal.events
+        nod_event = events.find { |e| e.type == :ama_nod }
+        expect(nod_event.date.to_date).to eq(receipt_date.to_date)
+
+        judge_assigned_event = events.find { |e| e.type == :distributed_to_vlj }
+        expect(judge_assigned_event.date.to_date).to eq(judge_task_created_date.to_date)
+
+        decision_event = events.find { |e| e.type == :bva_decision }
+        expect(decision_event.date.to_date).to eq(decision_date.to_date)
+
+        remand_decision_event = events.find { |e| e.type == :dta_decision }
+        expect(remand_decision_event.date.to_date).to eq(remanded_ep_clr_date.to_date)
+
+        effectuation_event = events.find { |e| e.type == :bva_decision_effectuation }
+        expect(effectuation_event).to be_nil
       end
     end
   end

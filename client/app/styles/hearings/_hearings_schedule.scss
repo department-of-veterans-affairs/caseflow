@@ -28,58 +28,6 @@
     }
   }
 
-  .cf-dropdown-filter {
-    z-index: 15;
-    position: absolute;
-    border: 1px solid $color-gray-lighter;
-    background: $color-white;
-    box-shadow: 5px 5px 4px -3px $color-gray-lighter;
-    font-weight: normal;
-    padding: 0;
-    $dropdown-interior-padding: 14px;
-
-    @mixin hover {
-      &:hover {
-        background-color: $color-gray;
-        color: $color-white;
-      }
-    }
-
-    .cf-clear-filter-row {
-      border-bottom: 1px solid $color-gray-lighter;
-      padding: 14px;
-      @include hover;
-
-      button {
-        padding: 0 0 0 2px;
-      }
-
-      &:hover .cf-clear-filter-button-wrapper {
-        border-bottom-color: $color-gray;
-      }
-    }
-  }
-
-  .unselected-filter-icon {
-    .unselected-filter-icon-inner {
-      fill: $color-gray-dark;
-    }
-
-    .unselected-filter-icon-border {
-      stroke: $color-gray-dark;
-    }
-  }
-
-  .unselected-filter-icon:hover {
-    .unselected-filter-icon-inner {
-      fill: $color-primary;
-    }
-
-    .unselected-filter-icon-border {
-      stroke: $color-primary;
-    }
-  }
-
   option:first-child {
     font-weight: 400;
     min-height: 1px;
@@ -92,6 +40,58 @@
 
   &.hidden {
     visibility: hidden;
+  }
+}
+
+.cf-dropdown-filter {
+  z-index: 15;
+  position: absolute;
+  border: 1px solid $color-gray-lighter;
+  background: $color-white;
+  box-shadow: 5px 5px 4px -3px $color-gray-lighter;
+  font-weight: normal;
+  padding: 0;
+  $dropdown-interior-padding: 14px;
+
+  @mixin hover {
+    &:hover {
+      background-color: $color-gray;
+      color: $color-white;
+    }
+  }
+
+  .cf-clear-filter-row {
+    border-bottom: 1px solid $color-gray-lighter;
+    padding: 14px;
+    @include hover;
+
+    button {
+      padding: 0 0 0 2px;
+    }
+
+    &:hover .cf-clear-filter-button-wrapper {
+      border-bottom-color: $color-gray;
+    }
+  }
+}
+
+.unselected-filter-icon {
+  .unselected-filter-icon-inner {
+    fill: $color-gray-dark;
+  }
+
+  .unselected-filter-icon-border {
+    stroke: $color-gray-dark;
+  }
+}
+
+.unselected-filter-icon:hover {
+  .unselected-filter-icon-inner {
+    fill: $color-primary;
+  }
+
+  .unselected-filter-icon-border {
+    stroke: $color-primary;
   }
 }
 

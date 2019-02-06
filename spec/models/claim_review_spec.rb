@@ -180,6 +180,39 @@ describe ClaimReview do
     end
   end
 
+  context "#add_user_to_business_line!" do
+    subject { claim_review.add_user_to_business_line! }
+
+    before { RequestStore[:current_user] = user }
+    let(:user) { Generators::User.build }
+
+    context "when the intake is a" do
+      let(:benefit_type) { "compensation" }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when the intake is not compensation or pension" do
+      let(:benefit_type) { "education" }
+
+      context "when the user is already on the organization" do
+        let!(:existing_record) { OrganizationsUser.add_user_to_organization(user, claim_review.business_line) }
+
+        it "returns the existing record" do
+          expect(subject).to eq(existing_record)
+        end
+      end
+
+      context "when the user isn't added to the organization" do
+        it "adds the user to the organization" do
+          expect(OrganizationsUser.existing_record(user, claim_review.business_line)).to be_nil
+          subject
+          expect(OrganizationsUser.find_by(user: user, organization: claim_review.business_line)).to_not be_nil
+        end
+      end
+    end
+  end
+
   context "#serialized_ratings" do
     let(:ratings) do
       [
@@ -308,6 +341,24 @@ describe ClaimReview do
           expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRRPMC")
           expect(non_rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRNRPMC")
         end
+      end
+    end
+
+    context "when there is a canceled end product establishment" do
+      let!(:canceled_epe) do
+        create(:end_product_establishment,
+               :canceled,
+               code: rating_request_issue.end_product_code,
+               source: claim_review,
+               veteran_file_number: claim_review.veteran.file_number)
+      end
+
+      let(:issues) { [non_rating_request_issue, rating_request_issue] }
+
+      it "does not attempt to re-use the canceled EPE" do
+        subject
+
+        expect(claim_review.reload.end_product_establishments.count).to eq(3)
       end
     end
   end
@@ -612,8 +663,10 @@ describe ClaimReview do
     context "when there are more than one end product establishments" do
       let(:issues) { [non_rating_request_issue, rating_request_issue] }
 
-      it "establishes the claim and creates the contetions in VBMS for each one" do
+      it "establishes the claim and creates the contentions in VBMS for each one" do
         subject
+
+        expect(claim_review.end_product_establishments.count).to eq(2)
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {

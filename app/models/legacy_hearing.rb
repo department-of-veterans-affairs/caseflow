@@ -35,7 +35,11 @@ class LegacyHearing < ApplicationRecord
   end
 
   def venue
-    self.class.venues[venue_key]
+    self.class.venues[ro_key]
+  end
+
+  def ro_key
+    HearingDay.find(hearing_day_id).regional_office
   end
 
   def external_id
@@ -43,7 +47,11 @@ class LegacyHearing < ApplicationRecord
   end
 
   def request_type_location
-    (request_type == "C") ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
+    if request_type == HearingDay::REQUEST_TYPES[:central]
+      "Board of Veterans' Appeals in Washington, DC"
+    else
+      venue[:label]
+    end
   end
 
   def closed?

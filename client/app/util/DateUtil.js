@@ -18,16 +18,18 @@ export const formatDate = function(dateString) {
     throw new Error('Passing string without timezone -- try formatDateStr() instead');
   }
 
-  let date = new Date(dateString);
-  let month = StringUtil.leftPad(date.getMonth() + ZERO_INDEX_MONTH_OFFSET, 2, '0');
-  let day = StringUtil.leftPad(date.getDate(), 2, '0');
-  let year = date.getFullYear();
+  const date = new Date(dateString);
+
+  const month = StringUtil.leftPad(date.getMonth() + ZERO_INDEX_MONTH_OFFSET, 2, '0');
+  const day = StringUtil.leftPad(date.getDate(), 2, '0');
+  const year = date.getFullYear();
 
   return `${month}/${day}/${year}`;
 };
 
 // Date format YYYY-MM-DD
-export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFormat = dateFormatString) => {
+export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD',
+  expectedFormat = dateFormatString, forceUtc = false) => {
   if (!dateString) {
     return;
   }
@@ -43,7 +45,17 @@ export const formatDateStr = (dateString, dateFormat = 'YYYY-MM-DD', expectedFor
     }
   }
 
-  return moment(dateString, dateStringFormat).format(expectedFormat);
+  let date = moment(dateString, dateStringFormat);
+
+  if (forceUtc) {
+    date = date.utc();
+  }
+
+  return date.format(expectedFormat);
+};
+
+export const formatDateStrUtc = (dateString, expectedFormat = dateFormatString) => {
+  return formatDateStr(dateString, null, expectedFormat, true);
 };
 
 export const formatArrayOfDateStrings = function(arrayOfDateStrings) {

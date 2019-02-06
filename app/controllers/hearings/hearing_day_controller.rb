@@ -24,7 +24,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def show
-    hearing_day = HearingDay.find_hearing_day(nil, params[:id])
+    hearing_day = HearingDay.find_hearing_day(params[:id])
     hearing_day_hash = HearingDay.to_hash(hearing_day)
 
     hearings, regional_office = fetch_hearings(hearing_day_hash, params[:id]).values_at(:hearings, :regional_office)
@@ -94,22 +94,17 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def fetch_hearings(hearing_day, id)
-    if hearing_day[:request_type] == "V"
-      {
-        hearings: HearingRepository.fetch_video_hearings_for_parent(id),
-        regional_office: hearing_day[:regional_office]
-      }
-    elsif hearing_day[:request_type] == "C"
-      {
-        hearings: HearingRepository.fetch_co_hearings_for_date(hearing_day[:scheduled_for]),
-        regional_office: "C"
-      }
-    else
-      {
+    unless hearing_day[:request_type] == "V" || hearing_day[:request_type] == "C"
+      return {
         hearings: [],
         regional_office: nil
       }
     end
+
+    {
+      hearings: HearingRepository.fetch_hearings_for_parent(id),
+      regional_office: (hearing_day[:request_type] == "C") ? "C" : hearing_day[:regional_office]
+    }
   end
 
   def update_params

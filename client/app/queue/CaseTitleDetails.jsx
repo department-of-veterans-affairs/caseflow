@@ -118,9 +118,9 @@ export class CaseTitleDetails extends React.PureComponent {
         this.handleModalClose();
       }).
       catch((error) => {
-        const documentIdErrors = JSON.parse(error.message).errors.document_id;
+        const documentIdErrors = JSON.parse(error.message).errors;
 
-        const documentIdErrorText = documentIdErrors && documentIdErrors[0];
+        const documentIdErrorText = documentIdErrors && documentIdErrors[0].detail;
 
         this.setState({
           highlightModal: true,

@@ -22,7 +22,7 @@ describe EndProductEstablishment do
   let(:payee_code) { "00" }
   let(:reference_id) { nil }
   let(:same_office) { false }
-  let(:source) { HigherLevelReview.new(veteran_file_number: veteran_file_number, same_office: same_office) }
+  let(:source) { create(:higher_level_review, veteran_file_number: veteran_file_number, same_office: same_office) }
   let(:invalid_modifiers) { nil }
   let(:synced_status) { nil }
   let(:committed_at) { nil }
@@ -754,34 +754,35 @@ describe EndProductEstablishment do
     end
 
     context "when the end product establishment has request issues" do
-      let!(:request_issues) do
-        [
-          create(
-            :request_issue,
-            :rating,
-            end_product_establishment: end_product_establishment,
-            review_request: source,
-            decision_sync_submitted_at: nil
-          ),
-          create(
-            :request_issue,
-            :nonrating,
-            end_product_establishment: end_product_establishment,
-            review_request: source,
-            decision_sync_submitted_at: nil
-          )
-        ]
+      let(:rating_issue) do
+        create(
+          :request_issue,
+          :rating,
+          end_product_establishment: end_product_establishment,
+          review_request: source,
+          decision_sync_submitted_at: nil
+        )
       end
+      let(:nonrating_issue) do
+        create(
+          :request_issue,
+          :nonrating,
+          end_product_establishment: end_product_establishment,
+          review_request: source,
+          decision_sync_submitted_at: nil
+        )
+      end
+      let!(:request_issues) { [rating_issue, nonrating_issue] }
 
       it "submits each request issue and starts decision sync job" do
         subject
 
         # delay in processing should be 1 day for rating, immediatly for nonrating
-        expect(request_issues.first.reload.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
-        expect(request_issues.second.reload.decision_sync_submitted_at).to eq(Time.zone.now)
+        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+        expect(nonrating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now)
 
-        expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.first)
-        expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.second)
+        expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(rating_issue)
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(nonrating_issue)
       end
     end
 
@@ -801,7 +802,7 @@ describe EndProductEstablishment do
 
         # delay in processing should be 1 day
         expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
-        expect(DecisionIssueSyncJob).to have_been_enqueued.with(board_grant_effectuation)
+        expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(board_grant_effectuation)
       end
     end
   end
