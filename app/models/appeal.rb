@@ -44,7 +44,7 @@ class Appeal < DecisionReview
   scope :ready_for_distribution, lambda {
     joins(:tasks)
       .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) = ?",
+      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
               DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
   }
 
