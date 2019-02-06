@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include Taskable
   include DocumentConcern
@@ -523,3 +524,4 @@ class Appeal < DecisionReview
       end
   end
 end
+# rubocop:enable Metrics/ClassLength
