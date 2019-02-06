@@ -448,7 +448,7 @@ class Appeal < DecisionReview
   def docket_switch_deadline
     return unless receipt_date
     return unless request_issues.any?
-    return if request_issues.any? { |ri| ri.decision_or_promulgation_date == nil }
+    return if request_issues.any? { |ri| ri.decision_or_promulgation_date.nil? }
 
     # will need to be updated to ignore closed request issues when that is available
     oldest = request_issues.min_by(&:decision_or_promulgation_date)
@@ -460,6 +460,7 @@ class Appeal < DecisionReview
 
   def eligible_to_switch_dockets?
     return false unless docket_switch_deadline
+
     # false if hearing already taken place, to be implemented
     Time.zone.today < docket_switch_deadline
   end

@@ -1060,22 +1060,23 @@ describe Appeal do
 
   context "#status_hash" do
     let(:receipt_date) { Time.new("2018", "10", "05").utc }
-    
+
     let(:promulgation_date1) { receipt_date - 50.days }
     let(:request_issue1) { create(:request_issue) }
     let(:promulgation_date2) { receipt_date - 60.days }
     let(:request_issue2) { create(:request_issue) }
 
     let(:docket_type) { "direct_review" }
-    let!(:appeal) { create(:appeal,
+    let!(:appeal) do
+      create(:appeal,
              receipt_date: receipt_date,
              request_issues: [request_issue1, request_issue2],
-             docket_type: docket_type) }
+             docket_type: docket_type)
+    end
 
     let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
 
     context "all request issues have a decision or promulgation date" do
-
       before do
         Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
 
@@ -1088,7 +1089,7 @@ describe Appeal do
 
         expect(docket).not_to be_nil
         expect(docket[:type]).to eq(docket_type)
-        expect(docket[:month]).to eq(Time.new(2018, 10, 01).utc.to_date)
+        expect(docket[:month]).to eq(Time.new(2018, 10, 0o1).utc.to_date)
         expect(docket[:switchDueDate]).to eq((promulgation_date2 + 365.days))
         expect(docket[:eligibleToSwitch]).to eq(true)
       end
@@ -1106,7 +1107,7 @@ describe Appeal do
 
         expect(docket).not_to be_nil
         expect(docket[:type]).to eq(docket_type)
-        expect(docket[:month]).to eq(Time.new(2018, 10, 01).utc.to_date)
+        expect(docket[:month]).to eq(Time.new(2018, 10, 0o1).utc.to_date)
         expect(docket[:switchDueDate]).to be_nil
         expect(docket[:eligibleToSwitch]).to eq(false)
       end

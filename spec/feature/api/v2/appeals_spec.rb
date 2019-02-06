@@ -434,11 +434,11 @@ describe "Appeals API v2", type: :request do
         "ssn": veteran_file_number,
         "Authorization": "Token token=#{api_key.key_string}"
       }
-      
+
       get "/api/v2/appeals", headers: headers
 
       json = JSON.parse(response.body)
-      
+
       # test for the 200 status-code
       expect(response).to be_success
       # check to make sure the right amount of appeals are returned
@@ -509,7 +509,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"][2]["attributes"]["docket"]["type"]).to eq("new_evidence")
       expect(json["data"][2]["attributes"]["docket"]["month"]).to eq(Date.new(2018, 9, 1).to_s)
-      expect(json["data"][2]["attributes"]["docket"]["switchDueDate"]).to eq((rating_promulgated_date+365.days).to_s)
+      expect(json["data"][2]["attributes"]["docket"]["switchDueDate"]).to eq((rating_promulgated_date + 365.days).to_s)
       expect(json["data"][2]["attributes"]["docket"]["eligibleToSwitch"]).to eq(true)
       expect(json["data"][2]["attributes"]["status"]["type"]).to eq("on_docket")
       expect(json["data"][2]["attributes"]["issues"].length).to eq(0)
