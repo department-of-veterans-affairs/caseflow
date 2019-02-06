@@ -417,7 +417,7 @@ class SeedDB
     )
     vet.save
 
-    vacols_case = FactoryBot.create(
+    FactoryBot.create(
       :case,
       bfregoff: ro_key,
       bfcurloc: "57",
@@ -450,7 +450,11 @@ class SeedDB
         vbms_id: LegacyAppeal.convert_file_number_to_vacols(vet.file_number)
       )
 
-    ScheduleHearingTask.find_or_create_if_eligible(appeal)
+    ScheduleHearingTask.create!(
+      appeal: appeal,
+      assigned_to: HearingsManagement.singleton,
+      parent: RootTask.find_or_create_by!(appeal: appeal)
+    )
   end
 
   def create_ama_case_with_open_schedule_hearing_task(ro_key)
