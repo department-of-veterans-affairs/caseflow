@@ -142,6 +142,7 @@ RSpec.feature "ColocatedTask" do
       visit("/queue/appeals/#{appeal.uuid}")
 
       # Send case to Translation team.
+      expect(TranslationTask.count).to eq 0
       find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.label).click
       fill_in("instructions", with: "Please translate some documents")
@@ -150,6 +151,7 @@ RSpec.feature "ColocatedTask" do
       # Redirected to personal queue page. Return to attorney succeeds.
       expect(page).to have_current_path("/queue")
       expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, Translation.singleton.name))
+      expect(TranslationTask.count).to eq 1
 
       # View Translation team queue to confirm the appeal shows up there.
       visit(Translation.singleton.path)

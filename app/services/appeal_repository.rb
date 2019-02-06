@@ -343,6 +343,10 @@ class AppealRepository
     end
   end
 
+  def self.withdraw_hearing!(appeal)
+    appeal.case_record.update!(bfhr: "5", bfha: "5")
+  end
+
   def self.update_location_after_dispatch!(appeal:)
     location = location_after_dispatch(appeal: appeal)
 
