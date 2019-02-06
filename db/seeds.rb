@@ -318,6 +318,177 @@ class SeedDB
     Generators::Hearing.create
   end
 
+  def create_ama_hearing(day)
+    vet = Generators::Veteran.build(
+      file_number: Faker::Number.number(9).to_s,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+    vet.save
+
+    app = FactoryBot.create(
+      :appeal,
+      veteran_file_number: vet.file_number,
+      docket_type: "hearing"
+    )
+
+    Hearing.create(
+      hearing_day: day,
+      appeal: app,
+      bva_poc: User.find_by_css_id("BVAAABSHIRE").full_name,
+      scheduled_time: Time.utc(
+        Time.zone.today.year, Time.zone.today.month, Time.zone.today.day, 9, 0, 0
+      )
+    )
+  end
+
+  def create_legacy_hearing(day, ro_key)
+    vet = Generators::Veteran.build(
+      file_number: Faker::Number.number(9).to_s,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+    vet.save
+
+    master_record = FactoryBot.create(
+      :case_hearing,
+      hearing_date: day.scheduled_for,
+      hearing_type: "C",
+      room: "001",
+      folder_nr: (ro_key == "C") ? "VIDEO #{ro_key}" : nil
+    )
+
+    day.update!(id: master_record.hearing_pkseq)
+
+    vacols_case = FactoryBot.create(
+      :case,
+      bfregoff: ro_key,
+      bfcorlid: LegacyAppeal.convert_file_number_to_vacols(vet.file_number)
+    )
+    app = LegacyAppeal
+      .find_or_create_by(
+        vacols_id: vacols_case.bfkey,
+        vbms_id: LegacyAppeal.convert_file_number_to_vacols(vet.file_number)
+      )
+
+    FactoryBot.create(
+      :case_hearing,
+      folder_nr: app.vacols_id,
+      vdkey: master_record.hearing_pkseq
+    )
+  end
+
+  def create_hearing_days
+    RegionalOffice::ROS.each do |ro_key|
+      regional_office = RegionalOffice::CITIES[ro_key]
+      next if regional_office[:facility_id].nil? && !regional_office[:hold_hearings]
+
+      user = User.find_by(css_id: "BVATWARNER")
+
+      (1..5).each do |index|
+        day = HearingDay.create!(
+          regional_office: ro_key,
+          room: "001",
+          bva_poc: User.find_by_css_id("BVAAABSHIRE").full_name,
+          request_type: (ro_key == "C") ? "C" : "V",
+          scheduled_for: Time.zone.today + (index * 11).days,
+          created_by: user,
+          updated_by: user
+        )
+
+        case index
+        when 1
+          create_legacy_hearing(day, ro_key)
+        when 2
+          create_ama_hearing(day)
+        when 3
+          create_legacy_hearing(day, ro_key)
+          create_ama_hearing(day)
+        end
+      end
+    end
+  end
+
+  def create_legacy_case_in_location_57(ro_key)
+    vet = Generators::Veteran.build(
+      file_number: Faker::Number.number(9).to_s,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+    vet.save
+
+    vacols_case = FactoryBot.create(
+      :case,
+      bfregoff: ro_key,
+      bfcurloc: "57",
+      bfhr: "2",
+      bfdocind: "V",
+      bfcorlid: LegacyAppeal.convert_file_number_to_vacols(vet.file_number)
+    )
+  end
+
+  def create_legacy_case_with_open_schedule_hearing_task(ro_key)
+    vet = Generators::Veteran.build(
+      file_number: Faker::Number.number(9).to_s,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+    vet.save
+
+    vacols_case = FactoryBot.create(
+      :case,
+      bfregoff: ro_key,
+      bfcurloc: "CASEFLOW",
+      bfhr: "2",
+      bfdocind: "V",
+      bfcorlid: LegacyAppeal.convert_file_number_to_vacols(vet.file_number)
+    )
+
+    appeal = LegacyAppeal
+      .find_or_create_by(
+        vacols_id: vacols_case.bfkey,
+        vbms_id: LegacyAppeal.convert_file_number_to_vacols(vet.file_number)
+      )
+
+    ScheduleHearingTask.find_or_create_if_eligible(appeal)
+  end
+
+  def create_ama_case_with_open_schedule_hearing_task(ro_key)
+    vet = Generators::Veteran.build(
+      file_number: Faker::Number.number(9).to_s,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+
+    vet.closest_regional_office = ro_key
+    vet.save
+
+    appeal = FactoryBot.create(
+      :appeal,
+      :with_tasks,
+      number_of_claimants: 1,
+      veteran_file_number: vet.file_number,
+      docket_type: "hearing"
+    )
+
+    ScheduleHearingTask.create!(
+      appeal: appeal,
+      assigned_to: HearingsManagement.singleton,
+      parent: RootTask.find_or_create_by!(appeal: appeal)
+    )
+  end
+
+  def create_veterans_ready_for_hearing
+    RegionalOffice::ROS.each do |ro_key|
+      regional_office = RegionalOffice::CITIES[ro_key]
+      next if regional_office[:facility_id].nil? && !regional_office[:hold_hearings]
+
+      create_legacy_case_in_location_57(ro_key)
+      create_legacy_case_with_open_schedule_hearing_task(ro_key)
+      create_ama_case_with_open_schedule_hearing_task(ro_key)
+    end
+  end
+
   def create_api_key
     ApiKey.new(consumer_name: "PUBLIC", key_string: "PUBLICDEMO123").save!
   end
@@ -798,6 +969,8 @@ class SeedDB
     create_tags
     create_ama_appeals
     create_users
+    create_hearing_days
+    create_veterans_ready_for_hearing
     create_tasks
     create_higher_level_review_tasks
 
