@@ -286,8 +286,7 @@ feature "Appeal Intake" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
   end
 
-  scenario "intake can still be completed when ratings are backfilled" do
-    mock_backfilled_rating_response
+  def complete_appeal
     start_appeal(veteran_no_ratings)
 
     visit "/intake"
@@ -304,6 +303,16 @@ feature "Appeal Intake" do
 
     click_intake_finish
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
+  end
+
+  scenario "intake can still be completed when ratings are backfilled" do
+    mock_backfilled_rating_response
+    complete_appeal
+  end
+
+  scenario "intake can still be completed when ratings are locked" do
+    mock_locked_rating_response
+    complete_appeal
   end
 
   context "ratings with disabiliity codes" do
