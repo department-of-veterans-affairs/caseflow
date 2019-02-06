@@ -100,7 +100,7 @@ class DecisionReview < ApplicationRecord
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash),
+      requestIssues: open_request_issues.map(&:ui_hash),
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
@@ -210,6 +210,10 @@ class DecisionReview < ApplicationRecord
   end
 
   private
+
+  def open_request_issues
+    request_issues.not_closed
+  end
 
   def can_contest_rating_issues?
     fail Caseflow::Error::MustImplementInSubclass
