@@ -21,7 +21,7 @@ class Docket
   end
 
   def count(priority: nil, ready: nil)
-    appeals(priority, ready).count
+    appeals(priority: priority, ready: ready).length
   end
 
   def weight
@@ -34,18 +34,30 @@ class Docket
 
   # CMGTODO: unique index on distributed_cases.case_id to prevent distributing the same appeal twice
   # CMGTODO: update DistributedCase validation and add judge_task association
+  # CMGTODO: should priority be false, or nil by default?
+  # CMGTODO: should genpop & genpop_query be passed to this method as well
   def distribute_appeals(distribution, priority: false, limit: 1)
-    transaction do
+    Distribution.transaction do
       appeals = appeals(priority: priority, ready: true).limit(limit)
 
       tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
 
+      genpop_query = case priority
+                     when false
+                       "only_genpop"
+                     when true
+                       "not_genpop"
+                     else
+                       "any"
+                     end
+
       tasks.map do |task|
         distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                                docket: docket_type,
+                                               genpop_query: genpop_query,
                                                priority: priority,
-                                               ready_at: task.appeal.ready_for_distribution_at,
-                                               judge_task: task)
+                                               genpop: false,
+                                               ready_at: task.appeal.ready_for_distribution_at)
       end
     end
   end
