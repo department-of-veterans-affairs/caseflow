@@ -19,6 +19,7 @@ describe('TablePagination', () => {
         createTask(3),
         createTask(3)
       ],
+      totalCasesCount: 9,
       updatePage: sinon.spy(updateFunction)
     };
   });
@@ -67,7 +68,7 @@ describe('TablePagination', () => {
         <TablePagination {...props} />
       );
 
-      expect(wrapper.text()).to.include('Viewing 1-15 of 33 total cases');
+      expect(wrapper.text()).to.include('Viewing 1-3 of 9 total cases');
     });
 
     it('Previous button should be disabled on page 1', () => {

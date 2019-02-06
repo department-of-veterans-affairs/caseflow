@@ -146,7 +146,7 @@ class BodyRows extends React.PureComponent {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow, bodyStyling } = this.props;
 
     return <tbody className={bodyClassName} ref={tbodyRef} id={id} {...bodyStyling}>
-      {rowObjects.map((object, rowNumber) => {
+      {rowObjects && rowObjects.map((object, rowNumber) => {
         const key = getKeyForRow(rowNumber, object);
 
         return <Row
@@ -290,7 +290,8 @@ export default class QueueTable extends React.PureComponent {
       caption,
       id,
       styling,
-      bodyStyling
+      bodyStyling,
+      enablePagination
     } = this.props;
 
     // Steps to calculate table data to display:
@@ -299,6 +300,7 @@ export default class QueueTable extends React.PureComponent {
 
     // 2. Filter data
     rowObjects = this.filterTableData(rowObjects);
+    const totalCases = rowObjects.length;
 
     // 3. Generate paginated data
     const paginatedData = this.paginateData(rowObjects);
@@ -353,10 +355,14 @@ export default class QueueTable extends React.PureComponent {
           {...this.state} />
         <FooterRow columns={columns} />
       </table>
-      <TablePagination
-        paginatedData={paginatedData}
-        currentPage={this.state.currentPage}
-        updatePage={(newPage) => this.updateCurrentPage(newPage)} />
+      {
+        enablePagination &&
+        <TablePagination
+          paginatedData={paginatedData}
+          currentPage={this.state.currentPage}
+          totalCasesCount={totalCases}
+          updatePage={(newPage) => this.updateCurrentPage(newPage)} />
+      }
     </div>;
   }
 }
@@ -381,5 +387,7 @@ QueueTable.propTypes = {
     sortColIdx: PropTypes.number,
     sortAscending: PropTypes.bool
   }),
-  userReadableColumnNames: PropTypes.object
+  userReadableColumnNames: PropTypes.object,
+  alternateColumnNames: PropTypes.object,
+  enablePagination: PropTypes.bool
 };
