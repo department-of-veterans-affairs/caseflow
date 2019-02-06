@@ -114,6 +114,7 @@ describe('ColocatedTaskListView', () => {
 
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
+  /* eslint-disable no-unused-expressions */
   describe('Assigned tab', () => {
     it('shows only new tasks and tasks with a completed hold', () => {
       const daysOnHold = 31;
@@ -171,10 +172,11 @@ describe('ColocatedTaskListView', () => {
       const onHoldDaysWaiting = cells.at(10);
 
       expect(onHoldDaysWaiting.text()).to.equal(daysOnHold.toString());
+      expect(onHoldDaysWaiting.find('.cf-red-text')).to.exist;
+      expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning')).to.exist;
     });
   });
 
-  /* eslint-disable no-unused-expressions */
   describe('On hold tab', () => {
     it('shows only on-hold tasks', () => {
       const task = amaTaskWith({
@@ -248,6 +250,7 @@ describe('ColocatedTaskListView', () => {
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
       expect(daysOnHold.text()).to.equal('1 of 30');
+      expect(daysOnHold.find('.cf-continuous-progress-bar')).to.exist;
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
     });
   });
