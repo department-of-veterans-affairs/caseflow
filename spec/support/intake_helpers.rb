@@ -423,6 +423,12 @@ module IntakeHelpers
                   reject_reason: "Converted or Backfilled Rating - no promulgated ratings found")
   end
 
+  def mock_locked_rating_response
+    allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range)
+      .and_return(rating_profile_list: { rating_profile: nil },
+                  reject_reason: "Locked Rating")
+  end
+
   def generate_ratings_with_disabilities(
     veteran,
     promulgation_date,
