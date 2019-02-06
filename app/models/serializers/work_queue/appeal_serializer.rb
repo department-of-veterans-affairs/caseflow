@@ -152,8 +152,13 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     latest_attorney_case_review&.id
   end
 
-  attribute :latest_appeal_notes do
-    latest_attorney_case_review&.note
+  attribute :attorney_case_review_details do
+    {
+      document_id: latest_attorney_case_review&.document_id,
+      note: latest_attorney_case_review&.note,
+      reviewing_judge: latest_attorney_case_review&.reviewing_judge
+    }
+    # binding.pry
   end
 
   attribute :can_edit_document_id do

@@ -97,6 +97,7 @@ export const requestSave = (
   dispatch(hideSuccessMessage());
 
   dispatch({ type: ACTIONS.REQUEST_SAVE });
+  console.log(url, 'the url being called');
 
   return ApiUtil[verb](url, params).
     then(

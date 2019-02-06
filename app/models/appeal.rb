@@ -118,6 +118,7 @@ class Appeal < DecisionReview
 
   def reviewing_judge_name
     task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
+    binding.pry
     task ? task.assigned_to.try(:full_name) : ""
   end
 
