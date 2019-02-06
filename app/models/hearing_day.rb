@@ -37,7 +37,7 @@ class HearingDay < ApplicationRecord
   end
 
   def confirm_no_children_records
-    fail HearingDayHasChildrenRecords if vacols_children_records.count > 0 || hearings.count > 0
+    fail HearingDayHasChildrenRecords if !vacols_children_records.empty? || !hearings.empty?
   end
 
   def vacols_children_records
