@@ -33,7 +33,7 @@ class WorkQueue::VeteranRecordRequestSerializer < ActiveModel::Serializer
     {
       id: decision_review.external_id,
       isLegacyAppeal: false,
-      issueCount: decision_review.request_issues.count
+      issueCount: decision_review.open_request_issues.count
     }
   end
 
