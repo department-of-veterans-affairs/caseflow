@@ -5,15 +5,9 @@ module FeatureHelper
     find(:xpath, "//tbody/tr[@id='table-row-#{vacols_id}']/td[#{header_index}]")
   end
 
-  def click_dropdown(options = {}, container = page) # rubocop:disable Metrics/PerceivedComplexity
-    options = { prompt: nil, index: nil, text: nil, name: nil, wait: 5 }.merge(options)
-    dropdown = if options[:prompt].present?
-                 container.find(".Select-control", text: options[:prompt], wait: options[:wait])
-               elsif options[:name].present?
-                 container.find(".dropdown-#{options[:name]} .Select-control", wait: options[:wait])
-               else
-                 container.find(".Select-control", wait: options[:wait])
-               end
+  def click_dropdown(options = {}, container = page)
+    options = { prompt: nil, index: nil, text: nil, name: nil, wait: nil }.merge(options)
+    dropdown = expect_or_wait_and_find_dropdown(options, container)
 
     dropdown.click
     yield if block_given?
@@ -49,6 +43,25 @@ module FeatureHelper
   end
 
   private
+
+  def expect_or_wait_and_find_dropdown(options, container)
+    selector = ".Select-control"
+    keyword_args = {}
+
+    if options[:prompt].present?
+      keyword_args = { text: options[:prompt] }
+    elsif options[:name].present?
+      selector = ".dropdown-#{options[:name]} .Select-control"
+    end
+
+    if options[:wait].present? && options[:wait] > 0
+      keyword_args[:wait] = options[:wait]
+    else
+      expect(container).to have_selector(selector, **keyword_args)
+    end
+
+    container.find(selector, **keyword_args)
+  end
 
   def generate_text(length)
     charset = ("A".."Z").to_a.concat(("a".."z").to_a)
