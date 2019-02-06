@@ -15,7 +15,7 @@ describe HearingDocket do
   let(:docket) do
     HearingDocket.new(
       scheduled_for: 7.days.from_now,
-      request_type: "V",
+      request_type: HearingDay::REQUEST_TYPES[:video],
       regional_office_names: [hearing.regional_office_name],
       regional_office_key: "RO31",
       hearings: [

@@ -42,7 +42,7 @@ describe DecisionReviewTask do
     context "assigned task" do
       it "can be completed" do
         expect(subject).to eq true
-        caseflow_decision_date = Date.parse(decision_date).to_datetime
+        caseflow_decision_date = Date.parse(decision_date).in_time_zone(Time.zone)
         expect(DecisionIssue.find_by(
                  decision_review: hlr,
                  description: "description 1",

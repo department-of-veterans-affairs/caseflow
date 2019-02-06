@@ -620,7 +620,7 @@ RSpec.feature "Attorney checkout flow" do
 
         visit "/queue"
 
-        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        issue_count = find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE).text
         expect(issue_count.to_i).to eq(old_issues_count - 1)
       end
     end

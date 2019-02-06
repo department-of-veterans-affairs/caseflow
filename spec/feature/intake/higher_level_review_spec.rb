@@ -555,8 +555,7 @@ feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
-  scenario "intake can still be completed when ratings are backfilled" do
-    mock_backfilled_rating_response
+  def complete_higher_level_review
     start_higher_level_review(veteran_no_ratings)
 
     visit "/intake"
@@ -573,6 +572,16 @@ feature "Higher-Level Review" do
 
     click_intake_finish
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+  end
+
+  scenario "intake can still be completed when ratings are backfilled" do
+    mock_backfilled_rating_response
+    complete_higher_level_review
+  end
+
+  scenario "intake can still be completed when ratings are locked" do
+    mock_locked_rating_response
+    complete_higher_level_review
   end
 
   context "ratings with disabiliity codes" do
@@ -1166,18 +1175,13 @@ feature "Higher-Level Review" do
       end
 
       context "no contestable issues present" do
-        before do
-          education_org = create(:business_line, name: "Education", url: "education")
-          OrganizationsUser.add_user_to_organization(current_user, education_org)
-          FeatureToggle.enable!(:decision_reviews)
-        end
-
-        after do
-          FeatureToggle.disable!(:decision_reviews)
-        end
+        before { FeatureToggle.enable!(:decision_reviews) }
+        after { FeatureToggle.disable!(:decision_reviews) }
+        let!(:business_line) { create(:business_line, name: "Education", url: "education") }
 
         scenario "no rating issues show on first Add Issues modal" do
           hlr, = start_higher_level_review(veteran, is_comp: false)
+          expect(OrganizationsUser.existing_record(current_user, Organization.find_by(url: "education"))).to be_nil
           visit "/intake/add_issues"
 
           expect(page).to have_content("Add / Remove Issues")
@@ -1200,6 +1204,7 @@ feature "Higher-Level Review" do
           # should redirect to tasks review page
           expect(page).to have_content("Reviews needing action")
           expect(current_path).to eq("/decision_reviews/education")
+          expect(OrganizationsUser.existing_record(current_user, Organization.find_by(url: "education"))).to_not be_nil
           expect(page).to have_content("Success!")
 
           # request issue should have matching benefit type

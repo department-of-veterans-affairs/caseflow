@@ -703,7 +703,7 @@ RSpec.describe TasksController, type: :controller do
           bfregoff: "RO04",
           bfcurloc: "57",
           bfhr: "2",
-          bfdocind: "V"
+          bfdocind: HearingDay::REQUEST_TYPES[:video]
         )
       end
       let(:closest_regional_office) { "RO10" }
@@ -744,7 +744,7 @@ RSpec.describe TasksController, type: :controller do
           bfregoff: "RO04",
           bfcurloc: "57",
           bfhr: "2",
-          bfdocind: "V"
+          bfdocind: HearingDay::REQUEST_TYPES[:video]
         )
       end
 
