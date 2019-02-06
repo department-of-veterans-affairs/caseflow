@@ -12,7 +12,6 @@ class BGSSyncError < RuntimeError
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/MethodLength
   def self.from_bgs_error(error, epe)
     error_message = if error.try(:body)
@@ -21,9 +20,9 @@ class BGSSyncError < RuntimeError
                     else
                       error.message
                     end
-    # :nocov:
-    case error_message
-    when /WssVerification Exception - Security Verification Exception/
+
+    transient_errors = [
+      /WssVerification Exception - Security Verification Exception/,
       # This occasionally happens when client/server timestamps get out of sync. Uncertain why this
       # happens or how to fix it - it only happens occasionally.
       #
@@ -32,8 +31,7 @@ class BGSSyncError < RuntimeError
       #    security semantics of the message have expired)"
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2884/
-      TransientBGSSyncError.new(error, epe)
-    when /ShareException thrown in findVeteranByPtcpntId./
+      /ShareException thrown in findVeteranByPtcpntId/,
       # Some context:
       #   "So when the call to get contentions occurred, our BGS call runs through the
       #   Tuxedo layer to get further information, but ran into the issue with BDN and failed the
@@ -42,32 +40,25 @@ class BGSSyncError < RuntimeError
       # BDN = Benefits Delivery Network
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2910/
-      TransientBGSSyncError.new(error, epe)
-    when /The Tuxedo service is down/
+      /The Tuxedo service is down/,
       #  Similar to above, an outage of connection to BDN.
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2926/
-      TransientBGSSyncError.new(error, epe)
-    when /Connection timed out - connect\(2\) for "bepprod.vba.va.gov" port 443/
+      /Connection timed out - connect\(2\) for "bepprod\.vba\.va\.gov" port 443/,
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
-      TransientBGSSyncError.new(error, epe)
-    when /Connection refused - connect\(2\) for "bepprod.vba.va.gov" port 443/
+      /Connection refused - connect\(2\) for "bepprod\.vba\.va\.gov" port 443/,
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3128/
-      TransientBGSSyncError.new(error, epe)
-    when /HTTPClient::KeepAliveDisconnected: Connection reset by peer/
+      /HTTPClient::KeepAliveDisconnected: Connection reset by peer/,
       # BGS kills connection
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3129/
-      TransientBGSSyncError.new(error, epe)
-    when /execution expired/
+      /execution expired/,
       # Connection timeout
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2935/
-      TransientBGSSyncError.new(error, epe)
-    when /Connection reset by peer/
+      /Connection reset by peer/,
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3036/
-      TransientBGSSyncError.new(error, epe)
-    when /Unable to find SOAP operation:/
+      /Unable to find SOAP operation:/,
       # Transient failure because a VBMS service is unavailable.
       #
       # Examples:
@@ -75,37 +66,36 @@ class BGSSyncError < RuntimeError
       #   https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2891/
       # :find_veteran_by_file_number
       #   https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3576/
-      TransientBGSSyncError.new(error, epe)
-    when /HTTP error \(504\): upstream request timeout/
+      /HTTP error \(504\): upstream request timeout/,
       # Transient failure when, for example, a WSDL is unavailable. For example, the originating
       # error could be a Wasabi::Resolver::HTTPError
       #  "Error: 504 for url http://localhost:10001/BenefitClaimServiceBean/BenefitClaimWebService?WSDL"
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2928/
-      TransientBGSSyncError.new(error, epe)
-    when /HTTP error \(503\): upstream connect error/
+      /HTTP error \(503\): upstream connect error/,
       # Like above
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3573/
-      TransientBGSSyncError.new(error, epe)
-    when /Unable to parse SOAP message/
+      /Unable to parse SOAP message/,
       # I don't understand why this happens, but it's transient.
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3404/
-      TransientBGSSyncError.new(error, epe)
-    when /System error with BGS./
+      /TUX-20306 - An unexpected error was encountered/,
+      # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3404/
+      /System error with BGS/
       # Full message may be something like
       # "An error occurred while establishing the claim: Unable to establish claim: TUX-20308 -
       # An unexpected error was encountered. Please contact the System Administrator. Error is: TUX-20308"
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3288/
+    ]
+
+    if transient_errors.any? { |transient| transient.match(error_message) }
       TransientBGSSyncError.new(error, epe)
     else
       new(error, epe)
     end
-    # :nocov:
   end
 end
-# rubocop:enable Metrics/CyclomaticComplexity
 # rubocop:enable Metrics/MethodLength
 class TransientBGSSyncError < BGSSyncError; end

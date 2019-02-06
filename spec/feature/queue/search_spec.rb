@@ -235,11 +235,11 @@ RSpec.feature "Search" do
           expect(find(".cf-hearing-badge")).to have_content("H")
         end
 
-        it "shows information for the correct hearing when there are multiple hearings" do
+        it "shows information for the most recently held hearing" do
           expect(page).to have_css(
             ".__react_component_tooltip div ul li:nth-child(3) strong span",
             visible: :hidden,
-            text: 2.days.ago.strftime("%m/%d/%y")
+            text: 4.days.ago.strftime("%m/%d/%y")
           )
         end
       end
