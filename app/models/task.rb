@@ -304,6 +304,7 @@ class Task < ApplicationRecord
   end
 
   def return_to_attorney_data(_user = nil)
+    # this is the judge:
     assignee = children.select { |t| t.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
     attorneys = JudgeTeam.for_judge(assigned_to)&.attorneys || []
     attorneys |= [assignee] if assignee.present?
@@ -312,6 +313,7 @@ class Task < ApplicationRecord
       options: users_to_options(attorneys),
       type: AttorneyRewriteTask.name
     }
+    # binding.pry
   end
 
   def timeline_title

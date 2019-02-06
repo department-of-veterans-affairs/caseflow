@@ -152,6 +152,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     latest_attorney_case_review&.id
   end
 
+  attribute :latest_appeal_notes do
+    latest_attorney_case_review&.note
+  end
+
   attribute :can_edit_document_id do
     AmaDocumentIdPolicy.new(
       user: @instance_options[:user],
