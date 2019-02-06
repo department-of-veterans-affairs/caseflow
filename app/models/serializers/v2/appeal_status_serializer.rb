@@ -38,10 +38,7 @@ class V2::AppealStatusSerializer < ActiveModel::Serializer
   end
 
   attribute :issues
-
-  attribute :events do
-    # to be implemented in appeal object
-  end
+  attribute :events
 
   attribute :issues do
     # to be implemented

@@ -479,25 +479,114 @@ describe Appeal do
   end
 
   context ".create_tasks_on_intake_success!" do
-    let(:appeal) do
-      create(:appeal)
-    end
+    let!(:appeal) { create(:appeal) }
+
+    subject { appeal.create_tasks_on_intake_success! }
 
     it "creates root and vso tasks" do
       expect(RootTask).to receive(:create_root_and_sub_tasks!).once
 
-      appeal.create_tasks_on_intake_success!
+      subject
     end
 
     context "request issue has non-comp business line" do
-      let(:appeal) do
-        create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)])
-      end
+      let!(:appeal) { create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)]) }
 
       it "creates root task and veteran record request task" do
         expect(VeteranRecordRequest).to receive(:create!).once
 
-        appeal.create_tasks_on_intake_success!
+        subject
+      end
+    end
+
+    context "creating translation tasks" do
+      let(:bgs_veteran_state) { nil }
+      let(:bgs_veteran_record) { { state: bgs_veteran_state } }
+      let(:validated_veteran_state) { nil }
+      let(:mock_va_dot_gov_address) { { state_code: validated_veteran_state } }
+      let(:veteran) { FactoryBot.create(:veteran, bgs_veteran_record: bgs_veteran_record) }
+      let(:appeal) { FactoryBot.create(:appeal, veteran: veteran) }
+
+      context "VADotGovService is responsive" do
+        before do
+          allow(VADotGovService).to receive(:validate_address).and_return(mock_va_dot_gov_address)
+        end
+
+        context "the service returns a state code" do
+          context "the state code is PR or PI" do
+            let(:validated_veteran_state) { "PR" }
+
+            it "creates a translation task" do
+              expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+
+              subject
+            end
+
+            context "the bgs veteran record has a different state code" do
+              let(:validated_veteran_state) { "PI" }
+              let(:bgs_veteran_state) { "NV" }
+
+              it "prefers the service state code and creates a translation task" do
+                expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+
+                subject
+              end
+            end
+          end
+
+          context "the state code is not PR or PI" do
+            let(:validated_veteran_state) { "NV" }
+
+            it "doesn't create a translation task" do
+              expect(TranslationTask).to_not receive(:create_from_root_task)
+
+              subject
+            end
+          end
+        end
+      end
+
+      context "the VADotGovService is not responsive" do
+        let(:message) { { "messages" => [{ "key" => "AddressCouldNotBeFound" }] } }
+        let(:error) { Caseflow::Error::VaDotGovServerError.new(code: "500", message: message) }
+
+        before do
+          allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+        end
+
+        it "fails silently" do
+          expect { subject }.to_not raise_error
+        end
+
+        context "the bgs veteran record has no state code" do
+          it "doesn't create a translation task" do
+            expect(TranslationTask).to_not receive(:create_from_root_task)
+
+            subject
+          end
+        end
+
+        context "the bgs veteran record has a state code" do
+          context "the state code is PR or PI" do
+            let(:bgs_veteran_state) { "PI" }
+
+            it "creates a translation task" do
+              expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+
+              subject
+            end
+          end
+
+          context "the state code is not PR or PI" do
+            let(:bgs_veteran_state) { "NV" }
+
+            it "doesn't create a translation task" do
+              expect(TranslationTask).to_not receive(:create_from_root_task)
+
+              subject
+            end
+          end
+        end
       end
     end
   end
@@ -883,6 +972,88 @@ describe Appeal do
       it "has a remand processed in vbms" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:post_bva_dta_decision)
+      end
+    end
+  end
+
+  context "#events" do
+    let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+    let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
+    let!(:decision_date) { receipt_date + 130.days }
+    let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
+    let(:judge) { create(:user) }
+    let(:judge_task_created_date) { receipt_date + 10 }
+    let!(:judge_review_task) do
+      create(:ama_judge_decision_review_task,
+             assigned_to: judge, appeal: appeal, created_at: judge_task_created_date, status: "completed")
+    end
+    let!(:judge_quality_review_task) do
+      create(:ama_judge_quality_review_task,
+             assigned_to: judge, appeal: appeal, created_at: judge_task_created_date + 2.days, status: "completed")
+    end
+
+    context "decision, no remand and an effectuation" do
+      let!(:decision_issue) { create(:decision_issue, decision_review: appeal, caseflow_decision_date: decision_date) }
+      let(:ep_cleared_date) { receipt_date + 150.days }
+      let!(:effectuation_ep) do
+        create(:end_product_establishment,
+               :cleared, source: decision_document, last_synced_at: ep_cleared_date)
+      end
+
+      it "has an nod event, judge assigned event, decision event and effectation event" do
+        events = appeal.events
+        nod_event = events.find { |e| e.type == :ama_nod }
+        expect(nod_event.date.to_date).to eq(receipt_date.to_date)
+
+        judge_assigned_event = events.find { |e| e.type == :distributed_to_vlj }
+        expect(judge_assigned_event.date.to_date).to eq(judge_task_created_date.to_date)
+
+        decision_event = events.find { |e| e.type == :bva_decision }
+        expect(decision_event.date.to_date).to eq(decision_date.to_date)
+
+        effectuation_event = events.find { |e| e.type == :bva_decision_effectuation }
+        expect(effectuation_event.date.to_date).to eq(ep_cleared_date.to_date)
+      end
+    end
+
+    context "decision with a remand and an effectuation" do
+      # the effectuation
+      let!(:decision_issue) { create(:decision_issue, decision_review: appeal, caseflow_decision_date: decision_date) }
+      let(:ep_cleared_date) { receipt_date + 150.days }
+      let!(:effectuation_ep) do
+        create(:end_product_establishment,
+               :cleared, source: decision_document, last_synced_at: ep_cleared_date)
+      end
+      # the remand
+      let!(:remanded_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "remanded", benefit_type: "compensation")
+      end
+      let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let(:remanded_ep_clr_date) { receipt_date + 200.days }
+      let!(:remanded_ep) { create(:end_product_establishment, :cleared, source: remanded_sc) }
+      let!(:remanded_sc_decision_issue) do
+        create(:decision_issue,
+               decision_review: remanded_sc,
+               end_product_last_action_date: remanded_ep_clr_date)
+      end
+
+      it "has nod event, judge assigned event, decision event, remand decision event" do
+        events = appeal.events
+        nod_event = events.find { |e| e.type == :ama_nod }
+        expect(nod_event.date.to_date).to eq(receipt_date.to_date)
+
+        judge_assigned_event = events.find { |e| e.type == :distributed_to_vlj }
+        expect(judge_assigned_event.date.to_date).to eq(judge_task_created_date.to_date)
+
+        decision_event = events.find { |e| e.type == :bva_decision }
+        expect(decision_event.date.to_date).to eq(decision_date.to_date)
+
+        remand_decision_event = events.find { |e| e.type == :dta_decision }
+        expect(remand_decision_event.date.to_date).to eq(remanded_ep_clr_date.to_date)
+
+        effectuation_event = events.find { |e| e.type == :bva_decision_effectuation }
+        expect(effectuation_event).to be_nil
       end
     end
   end
