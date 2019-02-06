@@ -301,6 +301,10 @@ class Appeal < DecisionReview
     processed!
   end
 
+  def set_target_decision_date!
+    update!(target_decision_date: AmaDirectReviewDocket::TIME_GOAL.days.from_now) if direct_review_docket?
+  end
+
   def outcoded?
     root_task && root_task.status == Constants.TASK_STATUSES.completed
   end
