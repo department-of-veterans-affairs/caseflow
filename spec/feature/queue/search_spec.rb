@@ -120,6 +120,22 @@ RSpec.feature "Search" do
                   synced_status: "LOL"
                 )
               end
+              let!(:end_product_establishment_4) do
+                create(
+                  :end_product_establishment,
+                  source: higher_level_review,
+                  veteran_file_number: appeal.veteran_file_number,
+                  synced_status: "CLD"
+                )
+              end
+              let!(:end_product_establishment_5) do
+                create(
+                  :end_product_establishment,
+                  source: higher_level_review,
+                  veteran_file_number: appeal.veteran_file_number,
+                  synced_status: "RW"
+                )
+              end
 
               context "when the EPs have not been established" do
                 it "shows that the EP is establishing if it has not been established" do
@@ -128,6 +144,8 @@ RSpec.feature "Search" do
                   )
                   expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Canceled")
                   expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Cleared")
+                  expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Closed")
+                  expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Ready to work")
                 end
               end
 
@@ -150,12 +168,16 @@ RSpec.feature "Search" do
                   end_product_establishment_1.commit!
                   end_product_establishment_2.commit!
                   end_product_establishment_3.commit!
+                  end_product_establishment_4.commit!
+                  end_product_establishment_5.commit!
                   higher_level_review.establish!
                 end
 
                 it "shows the end product status" do
                   expect(find(".cf-other-reviews-table > tbody")).to have_content("Canceled")
                   expect(find(".cf-other-reviews-table > tbody")).to have_content("Cleared")
+                  expect(find(".cf-other-reviews-table > tbody")).to have_content("Closed")
+                  expect(find(".cf-other-reviews-table > tbody")).to have_content("Ready to work")
                 end
 
                 it "if the end products have synced_status codes we don't recognize, show the status code" do
@@ -213,11 +235,11 @@ RSpec.feature "Search" do
           expect(find(".cf-hearing-badge")).to have_content("H")
         end
 
-        it "shows information for the correct hearing when there are multiple hearings" do
+        it "shows information for the most recently held hearing" do
           expect(page).to have_css(
             ".__react_component_tooltip div ul li:nth-child(3) strong span",
             visible: :hidden,
-            text: 2.days.ago.strftime("%m/%d/%y")
+            text: 4.days.ago.strftime("%m/%d/%y")
           )
         end
       end

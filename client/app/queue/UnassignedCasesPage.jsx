@@ -72,6 +72,7 @@ class UnassignedCasesPage extends React.PureComponent<Props> {
           }
           {!this.props.distributionCompleteCasesLoading &&
             <TaskTable
+              includeHearingBadge
               includeSelect
               includeDetailsLink
               includeType

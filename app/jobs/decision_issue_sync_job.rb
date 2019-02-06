@@ -12,7 +12,7 @@ class DecisionIssueSyncJob < CaseflowJob
     rescue Rating::NilRatingProfileListError, Rating::LockedRatingError, Rating::BackfilledRatingError => err
       request_issue_or_effectuation.update_error!(err.to_s)
       # no Raven report, just noise. This just means nothing new has happened.
-    rescue BGS::ShareError => err
+    rescue StandardError => err
       request_issue_or_effectuation.update_error!(err.to_s)
       Raven.capture_exception(err)
     end
