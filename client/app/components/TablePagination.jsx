@@ -125,7 +125,7 @@ class TablePagination extends React.PureComponent {
     }
 
     return (
-      <div>
+      <div className="cf-pagination">
         <div className="cf-pagination-summary">
           {paginationSummary}
         </div>

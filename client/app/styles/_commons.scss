@@ -787,6 +787,14 @@ form {
   }
 }
 
+.cf-table-wrapper:focus {
+  outline: none;
+}
+
+.cf-filter-summary {
+  margin-bottom: 1em;
+}
+
 .cf-filter-option-row {
   margin: 0;
 
@@ -1246,11 +1254,13 @@ button {
 
 .cf-pagination-summary {
   float: left;
+  margin-bottom: 2em;
   width: 40%;
 }
 
 .cf-pagination-pages {
   float: right;
+  margin-bottom: 2em;
   text-align: right;
   width: 60%;
 
@@ -1276,10 +1286,6 @@ button {
 
     &:disabled {
       color: $color-gray-light;
-    }
-
-    &:focus {
-      outline: none;
     }
 
     &.cf-current-page {

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { css, hover } from 'glamor';
 import _ from 'lodash';
+import scrollToComponent from 'react-scroll-to-component';
 
 import Tooltip from '../components/Tooltip';
 import { DoubleArrow } from '../components/RenderFunctions';
@@ -28,6 +29,20 @@ import { COLORS } from '../constants/AppConstants';
  *
  * see StyleGuideTables.jsx for usage example.
  */
+const scrollTo = (dest = this, opts) => scrollToComponent(dest, _.defaults(opts, {
+  align: 'top',
+  duration: 1000,
+  ease: 'outCube',
+  offset: -35
+}));
+
+const focusElement = (el = this) => {
+  if (el.tabIndex <= 0) {
+    el.setAttribute('tabindex', '-1');
+  }
+  el.focus();
+};
+
 const helperClasses = {
   center: 'cf-txt-c',
   left: 'cf-txt-l',
@@ -189,6 +204,8 @@ export default class QueueTable extends React.PureComponent {
       Object.assign(state, defaultSort);
     }
 
+    // this.elementForFocus = React.createRef();
+
     this.state = state;
   }
 
@@ -274,6 +291,9 @@ export default class QueueTable extends React.PureComponent {
 
   updateCurrentPage = (newPage) => {
     this.setState({ currentPage: newPage });
+
+    scrollTo(this);
+    focusElement(this.elementForFocus);
   }
 
   render() {
@@ -318,11 +338,21 @@ export default class QueueTable extends React.PureComponent {
       }
     }
 
-    return <div>
+    return <div className="cf-table-wrapper" ref={(div) => {
+      this.elementForFocus = div;
+    }}>
       <FilterSummary
         filteredByList={this.state.filteredByList}
         alternateColumnNames={this.props.alternateColumnNames}
         clearFilteredByList={(newList) => this.updateFilteredByList(newList)} />
+      {
+        enablePagination &&
+        <TablePagination
+          paginatedData={paginatedData}
+          currentPage={this.state.currentPage}
+          totalCasesCount={totalCases}
+          updatePage={(newPage) => this.updateCurrentPage(newPage)} />
+      }
       <table
         id={id}
         className={`usa-table-borderless ${this.props.className}`}
