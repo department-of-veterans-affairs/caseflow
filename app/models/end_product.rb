@@ -6,7 +6,9 @@ class EndProduct
   STATUSES = {
     "PEND" => "Pending",
     "CLR" => "Cleared",
-    "CAN" => "Canceled"
+    "CAN" => "Canceled",
+    "CLD" => "Closed",
+    "RW" => "Ready to work"
   }.freeze
 
   INACTIVE_STATUSES = %w[CAN CLR CLD].freeze
