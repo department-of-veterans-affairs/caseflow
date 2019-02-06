@@ -31,6 +31,7 @@ class RequestIssue < ApplicationRecord
   }
 
   enum closed_status: {
+    decided: "decided",
     removed: "removed"
   }
 
