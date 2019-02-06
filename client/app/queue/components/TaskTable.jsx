@@ -238,7 +238,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
         return <React.Fragment>
           <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>{moment().startOf('day').
             diff(moment(task.assignedOn), 'days')}</span>
-          { taskHasCompletedHold(task) ? <ContinuousProgressBar warning /> : null }
+          { taskHasCompletedHold(task) ? <ContinuousProgressBar level={moment().startOf('day').
+            diff(task.placedOnHoldAt, 'days')} limit={task.onHoldDuration} warning /> : null }
         </React.Fragment>;
       },
       getSortValue: (task: TaskWithAppeal) => moment().startOf('day').
