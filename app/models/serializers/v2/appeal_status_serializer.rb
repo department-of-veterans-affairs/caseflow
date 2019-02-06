@@ -33,10 +33,7 @@ class V2::AppealStatusSerializer < ActiveModel::Serializer
   attribute :alerts
   attribute :docket_hash, key: :docket
   attribute :issues
-
-  attribute :events do
-    # to be implemented in appeal object
-  end
+  attribute :events
 
   attribute :issues do
     # to be implemented

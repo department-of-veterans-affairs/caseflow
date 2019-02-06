@@ -513,6 +513,10 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["docket"]["eligibleToSwitch"]).to eq(true)
       expect(json["data"][2]["attributes"]["status"]["type"]).to eq("on_docket")
       expect(json["data"][2]["attributes"]["issues"].length).to eq(0)
+
+      event_type = json["data"][2]["attributes"]["events"].first
+      expect(event_type["type"]).to eq("ama_nod")
+      expect(event_type["date"]).to eq(receipt_date.to_s)
     end
   end
 end

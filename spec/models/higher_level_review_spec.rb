@@ -457,7 +457,7 @@ describe HigherLevelReview do
         hlr_dta_error_event = events.find { |e| e.type == :hlr_dta_error }
         expect(hlr_dta_error_event.date.to_date).to eq(hlr_ep_clr_date.to_date)
 
-        dta_decision_event = events.find { |e| e.type == :dtaDecision }
+        dta_decision_event = events.find { |e| e.type == :dta_decision }
         expect(dta_decision_event.date.to_date).to eq(promulgation_date.to_date)
       end
     end
