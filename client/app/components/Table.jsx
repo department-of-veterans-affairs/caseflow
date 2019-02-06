@@ -238,8 +238,9 @@ export default class Table extends React.PureComponent {
       styling,
       bodyStyling
     } = this.props;
+    const rowObjects = this.sortRowObjects();
+
     let keyGetter = getKeyForRow;
-    let rowObjects = this.sortRowObjects();
 
     if (!getKeyForRow) {
       keyGetter = _.identity;
@@ -249,36 +250,34 @@ export default class Table extends React.PureComponent {
       }
     }
 
-    return <div>
-      <table
-        id={id}
-        className={`usa-table-borderless ${this.props.className}`}
-        summary={summary}
-        {...styling} >
+    return <table
+      id={id}
+      className={`usa-table-borderless ${this.props.className}`}
+      summary={summary}
+      {...styling} >
 
-        { caption && <caption className="usa-sr-only">{ caption }</caption> }
+      { caption && <caption className="usa-sr-only">{ caption }</caption> }
 
-        <HeaderRow
-          columns={columns}
-          headerClassName={headerClassName}
-          setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
-            sortColIdx: colIdx,
-            sortAscending: ascending
-          })}
-          {...this.state} />
-        <BodyRows
-          id={tbodyId}
-          tbodyRef={tbodyRef}
-          columns={columns}
-          getKeyForRow={keyGetter}
-          rowObjects={rowObjects}
-          bodyClassName={bodyClassName}
-          rowClassNames={rowClassNames}
-          bodyStyling={bodyStyling}
-          {...this.state} />
-        <FooterRow columns={columns} />
-      </table>
-    </div>;
+      <HeaderRow
+        columns={columns}
+        headerClassName={headerClassName}
+        setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
+          sortColIdx: colIdx,
+          sortAscending: ascending
+        })}
+        {...this.state} />
+      <BodyRows
+        id={tbodyId}
+        tbodyRef={tbodyRef}
+        columns={columns}
+        getKeyForRow={keyGetter}
+        rowObjects={rowObjects}
+        bodyClassName={bodyClassName}
+        rowClassNames={rowClassNames}
+        bodyStyling={bodyStyling}
+        {...this.state} />
+      <FooterRow columns={columns} />
+    </table>;
   }
 }
 
