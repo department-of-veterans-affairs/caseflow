@@ -30,6 +30,11 @@ class RequestIssue < ApplicationRecord
     legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
   }
 
+  enum closed_status: {
+    decided: "decided",
+    removed: "removed"
+  }
+
   # TEMPORARY CODE: used to keep decision_review and review_request in sync
   before_save :copy_review_request_to_decision_review
   before_save :set_contested_rating_issue_profile_date
@@ -131,6 +136,10 @@ class RequestIssue < ApplicationRecord
       where.not(review_request_id: nil)
     end
 
+    def open
+      where(closed_at: nil)
+    end
+
     def unidentified
       where(
         contested_rating_issue_reference_id: nil,
@@ -230,6 +239,10 @@ class RequestIssue < ApplicationRecord
   #       decision issue if they are present.
   def nonrating?
     !!issue_category
+  end
+
+  def closed?
+    !!closed_at
   end
 
   def description
@@ -355,11 +368,15 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
+  def remove!
+    update!(closed_at: Time.zone.now, closed_status: :removed)
+  end
+
   # Instead of fully deleting removed issues, we instead strip them from the review so we can
   # maintain a record of the other data that was on them incase we need to revert the update.
   def remove_from_review
     transaction do
-      update!(review_request: nil)
+      remove!
       legacy_issue_optin&.flag_for_rollback!
 
       # removing a request issue also deletes the associated request_decision_issue
