@@ -5,19 +5,31 @@ module FeatureHelper
     find(:xpath, "//tbody/tr[@id='table-row-#{vacols_id}']/td[#{header_index}]")
   end
 
+  # in the `options` hash...
+  # required:
+  #   `index` (the selection's position in the list) OR `text` (the value of the selection)
+  # optional:
+  #   `prompt` (the placeholder text in the dropdown) OR `name` (the dropdown class, like `.dropdown-[name]`
+  #   `wait` (in seconds) so Capybara will wait longer than `Capybara.default_max_wait_time` before timing out
   def click_dropdown(options = {}, container = page)
-    options = { prompt: nil, index: nil, text: nil, name: nil, wait: nil }.merge(options)
-    dropdown = expect_or_wait_and_find_dropdown(options, container)
+    options = { index: nil, text: nil, prompt: nil, name: nil, wait: nil }.merge(options)
+    dropdown = find_dropdown(options, container)
+    selector = ""
+    keyword_args = {}
 
     dropdown.click
     yield if block_given?
 
+    keyword_args[:wait] = options[:wait] if options[:wait].present? && options[:wait] > 0
+
     if options[:text].present?
-      dropdown.sibling(".Select-menu-outer").find("div .Select-option", text: options[:text], wait: options[:wait])
-        .click
+      selector = "div .Select-option"
+      keyword_args[:text] = options[:text]
     elsif options[:index].present?
-      dropdown.sibling(".Select-menu-outer").find("div[id$='--option-#{options[:index]}']", wait: options[:wait]).click
+      selector = "div[id$='--option-#{options[:index]}']"
     end
+
+    dropdown.sibling(".Select-menu-outer").find(selector, **keyword_args).click
   end
 
   def dropdown_selected_value(container = page)
@@ -44,21 +56,17 @@ module FeatureHelper
 
   private
 
-  def expect_or_wait_and_find_dropdown(options, container)
+  def find_dropdown(options, container)
     selector = ".Select-control"
     keyword_args = {}
 
     if options[:prompt].present?
-      keyword_args = { text: options[:prompt] }
+      keyword_args[:text] = options[:prompt]
     elsif options[:name].present?
       selector = ".dropdown-#{options[:name]} .Select-control"
     end
 
-    if options[:wait].present? && options[:wait] > 0
-      keyword_args[:wait] = options[:wait]
-    else
-      expect(container).to have_selector(selector, **keyword_args)
-    end
+    keyword_args[:wait] = options[:wait] if options[:wait].present? && options[:wait] > 0
 
     container.find(selector, **keyword_args)
   end
