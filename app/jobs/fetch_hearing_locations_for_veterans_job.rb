@@ -24,7 +24,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         WHERE type = 'HearingAdminActionVerifyAddressTask' AND status != 'completed') admin_actions
         ON admin_actions.parent_id = id")
       .where("admin_actions.parent_id IS NULL").limit(QUERY_LIMIT)
-      .map { |task| task.appeal.veteran.id }
+      .map { |task| task.appeal.veteran&.id }.compact
   end
 
   def missing_veteran_file_numbers
