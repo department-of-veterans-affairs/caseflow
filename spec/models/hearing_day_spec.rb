@@ -90,7 +90,7 @@ describe HearingDay do
         RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: create(:staff).slogid)
       end
       let!(:vacols_child_hearing) { create(:case_hearing, vdkey: hearing_day.id, folder_nr: create(:case).bfkey) }
-      let!(:caseflow_child_hearing) { create(:hearing, hearing_day: hearing_day, room: "5") }
+      let!(:caseflow_child_hearing) { create(:hearing, hearing_day: hearing_day) }
 
       it "updates children hearings" do
         HearingDay.find(hearing_day.id).update!(hearing_hash)
@@ -132,18 +132,15 @@ describe HearingDay do
   end
 
   context "load Video days for a range date" do
-    let!(:hearing_date) do
-      Date.new(2019, 3, 2)
-    end
-    let!(:hearing_days) do
-      [create(:hearing_day, request_type: "V", scheduled_for: hearing_date, regional_office: "RO13"),
-       create(:hearing_day, request_type: "V", scheduled_for: hearing_date + 1, regional_office: "RO13")]
+    let!(:hearings) do
+      [create(:case_hearing),
+       create(:case_hearing)]
     end
 
-    subject { HearingDay.load_days(hearing_date, hearing_date + 2, "RO13") }
+    subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "RO13") }
 
     it "gets hearings for a date range" do
-      expect(subject[:caseflow_hearings].size).to eq 2
+      expect(subject[:vacols_hearings].size).to eq 2
     end
   end
 
@@ -214,7 +211,7 @@ describe HearingDay do
       create(:case_hearing, folder_nr: appeal.vacols_id)
     end
     let(:parent_hearing) do
-      HearingDay.find(hearing.vdkey)
+      VACOLS::CaseHearing.find(hearing.vdkey)
     end
     let(:vacols_case2) do
       create(
@@ -228,12 +225,12 @@ describe HearingDay do
       create(:legacy_appeal, :with_veteran, vacols_case: vacols_case2)
     end
     let!(:hearing2) do
-      create(:case_hearing, :disposition_postponed, folder_nr: appeal2.vacols_id, vdkey: parent_hearing.id)
+      create(:case_hearing, :disposition_postponed, folder_nr: appeal2.vacols_id, vdkey: parent_hearing.hearing_pkseq)
     end
 
     subject do
       HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                 hearing.hearing_date.beginning_of_day + 1.day, staff.stafkey)
+                                                 hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
     end
 
     context "get video hearings neither postponed or cancelled" do
@@ -266,7 +263,7 @@ describe HearingDay do
         )
       end
       let!(:ama_hearing_day) do
-        create(:hearing_day, request_type: "V", scheduled_for: Time.zone.now, regional_office: staff.stafkey)
+        create(:hearing_day, request_type: :video, scheduled_for: Time.zone.now, regional_office: staff.stafkey)
       end
       let!(:ama_appeal) { create(:appeal) }
       let!(:ama_hearing) { create(:hearing, hearing_day: ama_hearing_day, appeal: ama_appeal) }
@@ -323,9 +320,12 @@ describe HearingDay do
       create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
     let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
+    let!(:hearing_day) { create(:hearing_day) }
     let(:hearing) do
-      create(:case_hearing, hearing_type: HearingDay::REQUEST_TYPES[:central],
-                            folder_nr: appeal.vacols_id)
+      create(:case_hearing,
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
+             folder_nr: appeal.vacols_id,
+             hearing_date: hearing_day.scheduled_for)
     end
 
     context "get parent and children structure" do
