@@ -73,7 +73,7 @@ class DocumentFetcher
     previous_documents = Document.where(series_id: document.series_id).order(:id)
       .where.not(vbms_document_id: ids)
 
-    if previous_documents.count > 0
+    if previous_documents.any?
       document.copy_metadata_from_document(previous_documents.last)
     end
 
