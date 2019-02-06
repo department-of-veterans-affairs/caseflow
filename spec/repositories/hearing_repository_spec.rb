@@ -31,13 +31,14 @@ describe HearingRepository do
   context ".set_vacols_values" do
     subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
     let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
-    let(:hearing) { Generators::LegacyHearing.create }
+    let(:hearing) { create(:legacy_hearing) }
+    let(:hearing_day) { HearingDay.first }
 
     let(:hearing_hash) do
       OpenStruct.new(
         hearing_venue: "SO62",
         hearing_date: date,
-        hearing_type: "V",
+        hearing_type: HearingDay::REQUEST_TYPES[:video],
         hearing_pkseq: "12345678",
         hearing_disp: "N",
         aod: "Y",
@@ -46,13 +47,14 @@ describe HearingRepository do
         notes1: "test notes",
         repname: "test rep name",
         bfso: "E",
-        bfregoff: "RO36"
+        bfregoff: "RO13",
+        vdkey: hearing_day.id
       )
     end
 
     it "assigns values properly" do
-      expect(subject.venue[:city]).to eq("San Antonio")
-      expect(subject.request_type).to eq("V")
+      expect(subject.venue[:city]).to eq("Baltimore")
+      expect(subject.request_type).to eq(HearingDay::REQUEST_TYPES[:video])
       expect(subject.vacols_record).to eq(hearing_hash)
       expect(subject.scheduled_for.class).to eq(ActiveSupport::TimeWithZone)
       expect(subject.disposition).to eq(:no_show)
@@ -73,7 +75,7 @@ describe HearingRepository do
 
     let(:record1) do
       OpenStruct.new(
-        hearing_type: "T",
+        hearing_type: HearingDay::REQUEST_TYPES[:travel],
         master_record_type: nil,
         bfregoff: "RO36",
         hearing_pkseq: case_hearing.hearing_pkseq,

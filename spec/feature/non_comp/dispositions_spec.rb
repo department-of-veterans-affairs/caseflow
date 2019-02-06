@@ -28,7 +28,7 @@ feature "NonComp Dispositions Task Page" do
   end
 
   context "with an existing organization" do
-    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+    let!(:non_comp_org) { create(:business_line, name: "National Cemetery Association", url: "nca") }
 
     let(:user) { create(:default_user) }
 
@@ -40,7 +40,8 @@ feature "NonComp Dispositions Task Page" do
       create(
         :higher_level_review,
         end_product_establishments: [epe],
-        veteran_file_number: veteran.file_number
+        veteran_file_number: veteran.file_number,
+        benefit_type: non_comp_org.url
       )
     end
 
@@ -50,7 +51,8 @@ feature "NonComp Dispositions Task Page" do
                :nonrating,
                end_product_establishment: epe,
                veteran_participant_id: veteran.participant_id,
-               review_request: hlr)
+               review_request: hlr,
+               benefit_type: hlr.benefit_type)
       end
     end
 
@@ -58,8 +60,9 @@ feature "NonComp Dispositions Task Page" do
       create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org)
     end
 
-    let(:business_line_url) { "decision_reviews/nco" }
+    let(:business_line_url) { "decision_reviews/nca" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
+    let(:arbitrary_decision_date) { "01/01/2019" }
     before do
       User.stub = user
       OrganizationsUser.add_user_to_organization(user, non_comp_org)
@@ -68,7 +71,7 @@ feature "NonComp Dispositions Task Page" do
     scenario "displays dispositions page" do
       visit dispositions_url
 
-      expect(page).to have_content("Non-Comp Org")
+      expect(page).to have_content("National Cemetery Association")
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
       expect(page).to have_content(
@@ -86,13 +89,13 @@ feature "NonComp Dispositions Task Page" do
 
     scenario "saves decision issues" do
       visit dispositions_url
-
       expect(page).to have_button("Complete", disabled: true)
 
       # set description & disposition for each request issue
       fill_in_disposition(0, "Granted")
       fill_in_disposition(1, "Granted", "test description")
       fill_in_disposition(2, "Denied", "denied")
+      fill_in "decision-date", with: arbitrary_decision_date
 
       # save
       expect(page).to have_button("Complete", disabled: false)
@@ -120,6 +123,8 @@ feature "NonComp Dispositions Task Page" do
       find_disabled_disposition(0, "Granted")
       find_disabled_disposition(1, "Granted", "test description")
       find_disabled_disposition(2, "Denied", "denied")
+      # decision date should be saved
+      expect(page).to have_css("input[value='#{arbitrary_decision_date}']")
     end
 
     context "when there is an error saving" do
