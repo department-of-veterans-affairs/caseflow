@@ -151,8 +151,8 @@ describe RequestIssue do
     end
   end
 
-  context ".not_closed" do
-    subject { RequestIssue.not_closed }
+  context ".open" do
+    subject { RequestIssue.open }
 
     let!(:closed_request_issue) { create(:request_issue, :removed) }
 

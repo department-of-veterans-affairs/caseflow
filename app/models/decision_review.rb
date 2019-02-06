@@ -190,14 +190,14 @@ class DecisionReview < ApplicationRecord
   end
 
   def active_nonrating_request_issues
-    @active_nonrating_request_issues ||= RequestIssue.nonrating.not_closed
+    @active_nonrating_request_issues ||= RequestIssue.nonrating.open
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
       .select(&:status_active?)
   end
 
   def open_request_issues
-    request_issues.not_closed
+    request_issues.open
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.

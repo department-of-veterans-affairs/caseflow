@@ -136,7 +136,7 @@ class RequestIssue < ApplicationRecord
       where.not(review_request_id: nil)
     end
 
-    def not_closed
+    def open
       where(closed_at: nil)
     end
 
