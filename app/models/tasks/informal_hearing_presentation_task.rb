@@ -11,7 +11,7 @@ class InformalHearingPresentationTask < GenericTask
       ]
     end
 
-    if assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+    if task_is_assigned_to_users_organization?(user)
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h

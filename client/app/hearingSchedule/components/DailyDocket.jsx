@@ -19,7 +19,7 @@ import StatusMessage from '../../components/StatusMessage';
 import { DISPOSITION_OPTIONS, TIME_OPTIONS } from '../../hearings/constants/constants';
 import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone, formatDateStr } from '../../util/DateUtil';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-import { crossSymbolHtml, pencilSymbol } from '../../components/RenderFunctions';
+import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/RenderFunctions';
 import {
   RegionalOfficeDropdown,
   HearingDateDropdown,
@@ -518,7 +518,10 @@ export default class DailyDocket extends React.Component {
           <Button
             linkStyling
             onClick={this.props.onDisplayLockModal} >
-            <span {...css({ marginRight: '5px' })}>
+            <span {...css({ position: 'absolute',
+              '& > svg > g > g': { fill: '#0071bc' } })}>{lockIcon()}</span>
+            <span {...css({ marginRight: '5px',
+              marginLeft: '16px' })}>
               {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
             </span>
           </Button>&nbsp;&nbsp;
