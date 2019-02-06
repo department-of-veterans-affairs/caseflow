@@ -166,8 +166,10 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    def find_hearing_day(hearing_key)
+    def find_hearing_day(request_type, hearing_key)
       find(hearing_key)
+    rescue ActiveRecord::RecordNotFound
+      HearingDayRepository.find_hearing_day(request_type, hearing_key)
     end
 
     private

@@ -35,7 +35,9 @@ class LegacyHearing < ApplicationRecord
   end
 
   def venue
-    self.class.venues[ro_key]
+    search_key = venue_key.nil? ? ro_key : venue_key
+    Rails.logger.info("OAR venue is: #{self.class.venues[search_key]}")
+    self.class.venues[search_key]
   end
 
   def ro_key
