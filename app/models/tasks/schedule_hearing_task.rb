@@ -58,23 +58,25 @@ class ScheduleHearingTask < GenericTask
   end
 
   def update_from_params(params, current_user)
-    verify_user_can_update!(current_user)
+    multi_transaction do
+      verify_user_can_update!(current_user)
 
-    if params[:status] == Constants.TASK_STATUSES.completed
-      task_payloads = params.delete(:business_payloads)
+      if params[:status] == Constants.TASK_STATUSES.completed
+        task_payloads = params.delete(:business_payloads)
 
-      hearing_time = task_payloads[:values][:hearing_time]
-      hearing_day_id = task_payloads[:values][:hearing_pkseq]
-      hearing_type = task_payloads[:values][:hearing_type]
-      hearing_location = task_payloads[:values][:hearing_location]
+        hearing_time = task_payloads[:values][:hearing_time]
+        hearing_day_id = task_payloads[:values][:hearing_pkseq]
+        hearing_type = task_payloads[:values][:hearing_type]
+        hearing_location = task_payloads[:values][:hearing_location]
 
-      slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
-    elsif params[:status] == "canceled"
-      withdraw_hearing
-      params[:status] = Constants.TASK_STATUSES.completed
+        slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
+      elsif params[:status] == "canceled"
+        withdraw_hearing
+        params[:status] = Constants.TASK_STATUSES.completed
+      end
+
+      super(params, current_user)
     end
-
-    super(params, current_user)
   end
 
   def location_based_on_hearing_type(hearing_type)
@@ -129,6 +131,7 @@ class ScheduleHearingTask < GenericTask
                    LegacyAppeal::LOCATION_CODES[:service_organization]
                  end
 
+      AppealRepository.withdraw_hearing!(appeal)
       AppealRepository.update_location!(appeal, location)
     else
       EvidenceSubmissionWindowTask.create!(

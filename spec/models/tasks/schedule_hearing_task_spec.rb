@@ -109,6 +109,8 @@ describe ScheduleHearingTask do
 
             expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
+            expect(vacols_case.bfha).to eq("5")
+            expect(vacols_case.bfhr).to eq("5")
           end
         end
 
@@ -135,6 +137,8 @@ describe ScheduleHearingTask do
 
             expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:service_organization])
+            expect(vacols_case.bfha).to eq("5")
+            expect(vacols_case.bfhr).to eq("5")
           end
         end
       end
