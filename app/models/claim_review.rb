@@ -199,6 +199,8 @@ class ClaimReview < DecisionReview
   end
 
   def end_product_establishment_for_issue(issue)
+    return unless issue.eligible?
+
     end_product_establishments.find_by(
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,
