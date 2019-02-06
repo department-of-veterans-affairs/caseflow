@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 
-import { formatDateStr } from '../../util/DateUtil';
+import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
@@ -138,7 +138,13 @@ class NonCompDispositions extends React.PureComponent {
 
     let completeDiv = null;
 
-    if (!task.completed_at) {
+    let decisionDate = this.state.decisionDate;
+
+    if (appeal.decisionIssues.length > 0) {
+      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].caseflowDecisionDate);
+    }
+
+    if (!task.closed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-txt-r">
           <a className="cf-cancel-link" href={`${task.tasks_url}`}>Cancel</a>
@@ -171,7 +177,7 @@ class NonCompDispositions extends React.PureComponent {
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
                 decisionDescription={issue.decisionIssue.description}
                 decisionDisposition={issue.decisionIssue.disposition}
-                disabled={Boolean(task.completed_at)}
+                disabled={Boolean(task.closed_at)}
               />;
             })
           }
@@ -183,9 +189,9 @@ class NonCompDispositions extends React.PureComponent {
             <DateSelector
               label="Thank you for completing your decision in Caseflow. Please indicate the decision date."
               name="decision-date"
-              value={this.state.decisionDate}
+              value={decisionDate}
               onChange={this.handleDecisionDate}
-              readOnly={Boolean(task.completed_at)}
+              readOnly={Boolean(task.closed_at)}
             />
           </InlineForm>
         </div>

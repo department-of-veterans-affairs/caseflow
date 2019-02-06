@@ -300,8 +300,13 @@ describe User do
       it { is_expected.to be_truthy }
     end
 
-    context "when user with roles that contain Admin Intake" do
+    context "when user with grant that contain Admin Intake" do
       before { Functions.grant!("Admin Intake", users: ["123"]) }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user with roles that contain Admin Intake" do
+      before { session["user"]["roles"] = ["Admin Intake"] }
       it { is_expected.to be_truthy }
     end
   end

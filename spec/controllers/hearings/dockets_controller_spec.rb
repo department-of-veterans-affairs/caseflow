@@ -11,8 +11,8 @@ RSpec.describe Hearings::DocketsController, type: :controller do
       get :show, params: { docket_date: legacy_hearing.scheduled_for }, format: "json"
       response_hearing = JSON.parse(response.body)
       expect(response.status).to eq 200
-      expect(response_hearing["hearingDay"]["requestType"]).to eq nil
-      expect(response_hearing["hearingDay"]["room"]).to eq nil
+      expect(response_hearing["hearingDay"]["requestType"]).to eq "Video"
+      expect(response_hearing["hearingDay"]["room"]).to eq "2"
       expect(response_hearing["dailyDocket"].length).to eq 1
     end
 

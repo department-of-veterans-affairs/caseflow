@@ -6,7 +6,7 @@ import moment from 'moment';
 import pluralize from 'pluralize';
 import { bindActionCreators } from 'redux';
 
-import Table from '../../components/Table';
+import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
@@ -15,12 +15,16 @@ import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
-import { renderAppealType } from '../utils';
+import {
+  renderAppealType
+} from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
   redText,
-  LEGACY_APPEAL_TYPES
+  LEGACY_APPEAL_TYPES,
+  COLUMN_NAMES,
+  DOCKET_NAME_FILTERS
 } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
@@ -87,7 +91,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseHearingColumn = () => {
     return this.props.includeHearingBadge ? {
       header: '',
-      valueFunction: (task: TaskWithAppeal) => <HearingBadge hearing={task.appeal.hearings[0]} />
+      valueFunction: (task: TaskWithAppeal) => <HearingBadge task={task} />
     } : null;
   }
 
@@ -128,6 +132,13 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseTaskColumn = () => {
     return this.props.includeTask ? {
       header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+      enableFilter: true,
+      tableData: this.props.tasks,
+      columnName: 'label',
+      anyFiltersAreSet: true,
+      customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+      label: 'Filter by task',
+      valueName: 'label',
       valueFunction: (task: TaskWithAppeal) => this.actionNameOfTask(task),
       getSortValue: (task: TaskWithAppeal) => this.actionNameOfTask(task)
     } : null;
@@ -156,6 +167,12 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseTypeColumn = () => {
     return this.props.includeType ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
+      enableFilter: true,
+      tableData: this.props.tasks,
+      columnName: 'appeal.caseType',
+      anyFiltersAreSet: true,
+      label: 'Filter by type',
+      valueName: 'caseType',
       valueFunction: (task: TaskWithAppeal) => this.taskHasDASRecord(task) ?
         renderAppealType(task.appeal) :
         <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
@@ -183,6 +200,13 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseDocketNumberColumn = () => {
     return this.props.includeDocketNumber ? {
       header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
+      enableFilter: true,
+      tableData: this.props.tasks,
+      columnName: 'appeal.docketName',
+      customFilterLabels: DOCKET_NAME_FILTERS,
+      anyFiltersAreSet: true,
+      label: 'Filter by docket name',
+      valueName: 'docketName',
       valueFunction: (task: TaskWithAppeal) => {
         if (!this.taskHasDASRecord(task)) {
           return null;
@@ -257,8 +281,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   completedDateColumn = () => {
     return this.props.includeCompletedDate ? {
       header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) => task.completedOn ? <DateString date={task.completedOn} /> : null,
-      getSortValue: (task: TaskWithAppeal) => task.completedOn ? <DateString date={task.completedOn} /> : null
+      valueFunction: (task: TaskWithAppeal) => task.closedAt ? <DateString date={task.closedAt} /> : null,
+      getSortValue: (task: TaskWithAppeal) => task.closedAt ? <DateString date={task.closedAt} /> : null
     } : null;
   }
 
@@ -337,13 +361,18 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   render = () => {
     const { tasks } = this.props;
 
-    return <Table
-      columns={this.getQueueColumns}
-      rowObjects={tasks}
-      getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
-      defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
-      rowClassNames={(task) =>
-        this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
+    return (
+      <div>
+        <QueueTable
+          columns={this.getQueueColumns}
+          rowObjects={tasks}
+          getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
+          defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
+          alternateColumnNames={COLUMN_NAMES}
+          rowClassNames={(task) =>
+            this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />
+      </div>
+    );
   }
 }
 

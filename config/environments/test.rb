@@ -12,7 +12,7 @@ Rails.application.configure do
   # and recreated between test runs. Don't rely on the data there!
   config.cache_classes = true
 
-  cache_dir = Rails.root.join("tmp", "cache", "test_#{ENV['TEST_SUBCATEGORY']}")
+  cache_dir = Rails.root.join("tmp", "cache", "test_#{ENV['TEST_SUBCATEGORY']}", $$.to_s)
   FileUtils.mkdir_p(cache_dir) unless File.exists?(cache_dir)
   config.cache_store = :file_store, cache_dir
 

@@ -47,6 +47,20 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
   }
 });
 
+export const prepareMostRecentlyHeldHearingForStore = (appealId: string, hearing) => {
+  return {
+    appealId,
+    hearing: {
+      heldBy: hearing.held_by,
+      viewedByJudge: hearing.viewed_by_judge,
+      date: hearing.date,
+      type: hearing.type,
+      externalId: hearing.external_id,
+      disposition: hearing.disposition
+    }
+  };
+};
+
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
     const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
@@ -65,7 +79,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       assignedOn: task.attributes.assigned_at,
       closestRegionalOffice: task.attributes.veteran_closest_regional_office,
       createdAt: task.attributes.created_at,
-      completedOn: task.attributes.completed_at,
+      closedAt: task.attributes.closed_at,
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
@@ -143,11 +157,13 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       appealType: task.attributes.appeal_type,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
-      completedOn: null,
+      closedAt: null,
       dueOn: task.attributes.due_on,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         isOrganization: task.attributes.assigned_to.is_organization,
+        id: task.attributes.assigned_to.id,
+        type: task.attributes.assigned_to.type,
         name: task.attributes.assigned_to.name
       },
       assignedBy: {

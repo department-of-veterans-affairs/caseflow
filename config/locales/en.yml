@@ -30,4 +30,11 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  activerecord:
+    attributes:
+      attorney_case_review:
+        document_id: "Document ID"
+  activemodel:
+    attributes:
+      update_attorney_case_review:
+        document_id: "Document ID"
