@@ -36,7 +36,7 @@ feature "NonComp Dispositions Task Page" do
 
     let(:epe) { create(:end_product_establishment, veteran_file_number: veteran.file_number) }
 
-    let(:hlr) do
+    let(:decision_review) do
       create(
         :higher_level_review,
         end_product_establishments: [epe],
@@ -51,13 +51,13 @@ feature "NonComp Dispositions Task Page" do
                :nonrating,
                end_product_establishment: epe,
                veteran_participant_id: veteran.participant_id,
-               review_request: hlr,
-               benefit_type: hlr.benefit_type)
+               review_request: decision_review,
+               benefit_type: decision_review.benefit_type)
       end
     end
 
     let!(:in_progress_task) do
-      create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org)
+      create(:higher_level_review_task, :in_progress, appeal: decision_review, assigned_to: non_comp_org)
     end
 
     let(:business_line_url) { "decision_reviews/nca" }
@@ -66,6 +66,27 @@ feature "NonComp Dispositions Task Page" do
     before do
       User.stub = user
       OrganizationsUser.add_user_to_organization(user, non_comp_org)
+    end
+
+    context "decision_review is a Supplemental Claim" do
+      let(:decision_review) do
+        create(
+          :supplemental_claim,
+          end_product_establishments: [epe],
+          veteran_file_number: veteran.file_number,
+          benefit_type: non_comp_org.url
+        )
+      end
+
+      scenario "does not offer DTA Error as a disposition choice" do
+        visit dispositions_url
+
+        expect(page).to have_content("National Cemetery Association")
+
+        fill_in_disposition(1, "DTA Error", "test description")
+
+        expect(page).to have_content("Not an option")
+      end
     end
 
     scenario "displays dispositions page" do
@@ -93,7 +114,7 @@ feature "NonComp Dispositions Task Page" do
 
       # set description & disposition for each request issue
       fill_in_disposition(0, "Granted")
-      fill_in_disposition(1, "Granted", "test description")
+      fill_in_disposition(1, "DTA Error", "test description")
       fill_in_disposition(2, "Denied", "denied")
       fill_in "decision-date", with: arbitrary_decision_date
 
@@ -111,7 +132,7 @@ feature "NonComp Dispositions Task Page" do
       hlr.decision_issues.reload
       expect(hlr.decision_issues.length).to eq(3)
       expect(hlr.decision_issues.find_by(disposition: "Granted", description: nil)).to_not be_nil
-      expect(hlr.decision_issues.find_by(disposition: "Granted", description: "test description")).to_not be_nil
+      expect(hlr.decision_issues.find_by(disposition: "DTA Error", description: "test description")).to_not be_nil
       expect(hlr.decision_issues.find_by(disposition: "Denied", description: "denied")).to_not be_nil
 
       # verify that going to the completed task does not allow edits
@@ -121,7 +142,7 @@ feature "NonComp Dispositions Task Page" do
       expect(page).not_to have_button("Complete")
 
       find_disabled_disposition(0, "Granted")
-      find_disabled_disposition(1, "Granted", "test description")
+      find_disabled_disposition(1, "DTA Error", "test description")
       find_disabled_disposition(2, "Denied", "denied")
       # decision date should be saved
       expect(page).to have_css("input[value='#{arbitrary_decision_date}']")
