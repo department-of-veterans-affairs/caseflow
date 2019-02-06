@@ -646,7 +646,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).count > 0
+    review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).any?
   end
 
   def copy_review_request_to_decision_review
