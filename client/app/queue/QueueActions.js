@@ -150,11 +150,12 @@ export const getAppealValue = (appealId: string, endpoint: string, name: string)
   });
 };
 
-export const setAppealDocCount = (appealId: string, docCount: number) => ({
+export const setAppealDocCount = (appealId: string, docCount: number, cached: boolean) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
     appealId,
-    docCount
+    docCount,
+    cached
   }
 });
 

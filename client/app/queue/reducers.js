@@ -168,7 +168,10 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
     return update(state, {
       docCountForAppeal: {
         [action.payload.appealId]: {
-          $set: action.payload.docCount
+          $set: {
+            count: action.payload.docCount,
+            cached: action.payload.cached
+          }
         }
       }
     });
