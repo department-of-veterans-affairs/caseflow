@@ -889,7 +889,7 @@ feature "Higher Level Review Edit issues" do
       expect(nonrating_epe).to_not be_nil
 
       # expect the remove/re-add to create a new RequestIssue for same RatingIssue
-      expect(higher_level_review.reload.request_issues).to_not include(request_issue)
+      expect(higher_level_review.reload.open_request_issues).to_not include(request_issue)
 
       new_version_of_request_issue = higher_level_review.request_issues.find do |ri|
         ri.description == request_issue.description
