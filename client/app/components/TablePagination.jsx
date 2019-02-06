@@ -44,7 +44,7 @@ class TablePagination extends React.PureComponent {
 
     // Render the pagination summary
     // Get previous number of cases so we can calculate the case range in
-    // the paginatino summary
+    // the pagination summary
     let previousCaseCount = 0;
     let i = 0;
 

@@ -204,8 +204,6 @@ export default class QueueTable extends React.PureComponent {
       Object.assign(state, defaultSort);
     }
 
-    // this.elementForFocus = React.createRef();
-
     this.state = state;
   }
 
@@ -244,6 +242,7 @@ export default class QueueTable extends React.PureComponent {
     this.setState({ filteredByList: newList });
 
     // When filters are added or changed, default back to the first page of data
+    // because the number of pages could have changed as data is filtered out.
     this.updateCurrentPage(0);
   };
 
