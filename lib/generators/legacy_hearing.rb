@@ -5,7 +5,7 @@ class Generators::LegacyHearing
     def default_attrs
       vacols_id = generate_external_id
       {
-        request_type: "V",
+        request_type: HearingDay::REQUEST_TYPES[:video],
         scheduled_for: Time.zone.now - 5.days,
         venue_key: "RO13",
         vacols_id: vacols_id,

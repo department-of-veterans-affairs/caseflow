@@ -58,7 +58,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     let!(:hearing_day) do
       create(
         :hearing_day,
-        request_type: "V",
+        request_type: HearingDay::REQUEST_TYPES[:video],
         scheduled_for: Time.zone.today + 160,
         regional_office: "RO39"
       )
@@ -114,7 +114,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     let!(:hearing_day) do
       create(
         :hearing_day,
-        request_type: "V",
+        request_type: HearingDay::REQUEST_TYPES[:video],
         scheduled_for: Time.zone.today + 160,
         regional_office: "RO39"
       )

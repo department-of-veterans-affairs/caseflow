@@ -42,21 +42,11 @@ describe ScheduleHearingTask do
       expect(subject.appeal_type).to eq(LegacyAppeal.name)
       expect(subject.status).to eq("assigned")
     end
-
-    it "yields the correct location based on hearing type" do
-      expect(subject.location_based_on_hearing_type(LegacyHearing::CO_HEARING))
-        .to eq(LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing])
-    end
-
-    it "yields the correct location based on hearing type" do
-      expect(subject.location_based_on_hearing_type(LegacyHearing::VIDEO_HEARING))
-        .to eq(LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing])
-    end
   end
 
   context "#update_from_params" do
     context "AMA appeal" do
-      let(:hearing_day) { create(:hearing_day, request_type: "V") }
+      let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video]) }
       let(:appeal) { create(:appeal) }
       let(:schedule_hearing_task) do
         ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user)
@@ -86,6 +76,13 @@ describe ScheduleHearingTask do
         expect(Hearing.count).to eq(1)
         expect(Hearing.first.hearing_day).to eq(hearing_day)
         expect(Hearing.first.appeal).to eq(appeal)
+      end
+
+      it "creates a HoldHearingTask" do
+        schedule_hearing_task.update_from_params(update_params, hearings_user)
+
+        expect(HoldHearingTask.count).to eq(1)
+        expect(HoldHearingTask.first.appeal).to eq(appeal)
       end
     end
 
@@ -165,7 +162,11 @@ describe ScheduleHearingTask do
 
     context "when there are legacy cases" do
       let!(:cases) do
-        create_list(:case, number_of_cases, bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V")
+        create_list(:case, number_of_cases,
+                    bfregoff: regional_office,
+                    bfhr: "2",
+                    bfcurloc: "57",
+                    bfdocind: HearingDay::REQUEST_TYPES[:video])
       end
 
       let!(:non_hearing_cases) do
