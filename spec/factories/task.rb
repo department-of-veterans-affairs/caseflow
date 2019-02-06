@@ -94,6 +94,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :translation_task, class: TranslationTask do
+      type TranslationTask.name
+      appeal { create(:appeal) }
+    end
+
     factory :ama_attorney_task do
       type AttorneyTask.name
       appeal { create(:appeal) }

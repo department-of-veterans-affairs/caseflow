@@ -48,6 +48,7 @@ class Appeal < DecisionReview
   }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
+  STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
@@ -272,6 +273,7 @@ class Appeal < DecisionReview
   def create_tasks_on_intake_success!
     RootTask.create_root_and_sub_tasks!(self)
     create_business_line_tasks if request_issues.any?(&:requires_record_request_task?)
+    maybe_create_translation_task
   end
 
   def establish!
@@ -473,6 +475,16 @@ class Appeal < DecisionReview
   end
 
   private
+
+  def maybe_create_translation_task
+    veteran_state_code = veteran&.state
+    va_dot_gov_address = veteran.validate_address
+    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
+  rescue Caseflow::Error::VaDotGovAPIError
+    state_code = veteran_state_code
+  ensure
+    TranslationTask.create_from_root_task(root_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
+  end
 
   def create_business_line_tasks
     request_issues.select(&:requires_record_request_task?).each do |req_issue|
