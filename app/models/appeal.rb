@@ -426,7 +426,7 @@ class Appeal < DecisionReview
   end
 
   def docket_hash
-    return if active_status?
+    return unless active_status?
     return if location == "aoj"
 
     {
@@ -438,24 +438,29 @@ class Appeal < DecisionReview
   end
 
   def fetch_docket_type
-    "new_evidence" if evidence_submission_docket?
+    return "new_evidence" if evidence_submission_docket?
 
     docket_name
   end
 
   def docket_switch_deadline
+    return unless receipt_date
+    return unless request_issues.any?
+
     deadline_from_receipt = receipt_date + 60.days
 
     # will need to be updated to ignore closed request issues when that is available
     oldest_request_issue = request_issues.min_by(&:decision_or_promulgation_date)
-    deadline_from_oldest_request_issue = oldest_request_issue.decision_or_promulgation_date + 365.days
 
+    return deadline_from_receipt unless oldest_request_issue.decision_or_promulgation_date
+
+    deadline_from_oldest_request_issue = oldest_request_issue.decision_or_promulgation_date + 365.days
     [deadline_from_receipt, deadline_from_oldest_request_issue].max
   end
 
   def eligible_to_switch_dockets?
     # false if hearing already taken place, to be implemented
-    docket_switch_deadline < Time.zone.today
+    Time.zone.today < docket_switch_deadline
   end
 
   def processed_in_caseflow?

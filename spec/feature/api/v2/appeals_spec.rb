@@ -355,7 +355,6 @@ describe "Appeals API v2", type: :request do
     end
 
     let(:veteran_file_number) { "111223333" }
-    let!(:veteran) { create(:veteran, file_number: veteran_file_number) }
     let(:receipt_date) { Date.new(2018, 9, 20) }
     let(:benefit_type) { "compensation" }
     let(:informal_conference) { nil }
@@ -398,15 +397,31 @@ describe "Appeals API v2", type: :request do
              decision_review: supplemental_claim_review, end_product_last_action_date: receipt_date + 100.days)
     end
 
+    let(:rating_reference_id) { "abc123" }
+    let(:rating_promulgated_date) { receipt_date - 40.days }
+    let(:veteran_participant_id) { "8760981" }
+
+    let!(:rating) do
+      Generators::Rating.build(
+        participant_id: veteran_participant_id,
+        promulgation_date: rating_promulgated_date,
+        profile_date: receipt_date - 50.days,
+        issues: [
+          { reference_id: rating_reference_id, decision_text: "Old injury in review" }
+        ]
+      )
+    end
+
     let(:request_issue) do
-      create(:request_issue, benefit_type: benefit_type)
+      create(:request_issue, benefit_type: benefit_type, contested_rating_issue_reference_id: rating_reference_id)
     end
 
     let!(:appeal) do
       create(:appeal,
              veteran_file_number: veteran_file_number,
              receipt_date: receipt_date,
-             request_issues: [request_issue])
+             request_issues: [request_issue],
+             docket_type: "evidence_submission")
     end
 
     let!(:task) { create(:task, :in_progress, type: RootTask.name, appeal: appeal) }
@@ -426,7 +441,7 @@ describe "Appeals API v2", type: :request do
       get "/api/v2/appeals", headers: headers
 
       json = JSON.parse(response.body)
-
+      binding.pry
       # test for the 200 status-code
       expect(response).to be_success
       # check to make sure the right amount of appeals are returned
@@ -495,7 +510,10 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["alerts"]).to be_nil
       expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
       expect(json["data"][2]["attributes"]["programArea"]).to eq("compensation")
-      expect(json["data"][2]["attributes"]["docket"]).to be_nil
+      expect(json["data"][2]["attributes"]["docket"]["type"]).to eq("new_evidence")
+      expect(json["data"][2]["attributes"]["docket"]["month"]).to eq(Date.new(2018, 9, 1).to_s)
+      expect(json["data"][2]["attributes"]["docket"]["switchDueDate"]).to eq((rating_promulgated_date+365.days).to_s)
+      expect(json["data"][2]["attributes"]["docket"]["eligibleToSwitch"]).to eq(false)
       expect(json["data"][2]["attributes"]["status"]["type"]).to eq("on_docket")
       expect(json["data"][2]["attributes"]["issues"].length).to eq(0)
 
