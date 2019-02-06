@@ -446,13 +446,11 @@ class Appeal < DecisionReview
   def docket_switch_deadline
     return unless receipt_date
     return unless request_issues.any?
+    return if request_issues.any? { |ri| ri.decision_or_promulgation_date == nil }
 
     # will need to be updated to ignore closed request issues when that is available
-    oldest_request_issue = request_issues.min_by(&:decision_or_promulgation_date)
-
-    return unless oldest_request_issue.decision_or_promulgation_date
-
-    deadline_from_oldest_request_issue = oldest_request_issue.decision_or_promulgation_date + 365.days
+    oldest = request_issues.min_by(&:decision_or_promulgation_date)
+    deadline_from_oldest_request_issue = oldest.decision_or_promulgation_date + 365.days
     deadline_from_receipt = receipt_date + 60.days
 
     [deadline_from_receipt, deadline_from_oldest_request_issue].max
