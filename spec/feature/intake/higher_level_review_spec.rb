@@ -555,8 +555,7 @@ feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
-  scenario "intake can still be completed when ratings are backfilled" do
-    mock_backfilled_rating_response
+  def complete_higher_level_review
     start_higher_level_review(veteran_no_ratings)
 
     visit "/intake"
@@ -573,6 +572,16 @@ feature "Higher-Level Review" do
 
     click_intake_finish
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
+  end
+
+  scenario "intake can still be completed when ratings are backfilled" do
+    mock_backfilled_rating_response
+    complete_higher_level_review
+  end
+
+  scenario "intake can still be completed when ratings are locked" do
+    mock_locked_rating_response
+    complete_higher_level_review
   end
 
   context "ratings with disabiliity codes" do
