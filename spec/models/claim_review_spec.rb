@@ -25,6 +25,7 @@ describe ClaimReview do
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:benefit_type) { "compensation" }
+  let(:ineligible_reason) { nil }
 
   let(:rating_request_issue) do
     build(
@@ -33,7 +34,8 @@ describe ClaimReview do
       contested_rating_issue_reference_id: "reference-id",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       contested_issue_description: "decision text",
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      ineligible_reason: ineligible_reason
     )
   end
 
@@ -55,7 +57,8 @@ describe ClaimReview do
       nonrating_issue_description: "Issue text",
       issue_category: "surgery",
       decision_date: 4.days.ago.to_date,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      ineligible_reason: ineligible_reason
     )
   end
 
@@ -324,6 +327,17 @@ describe ClaimReview do
 
     context "when there's more than one issue" do
       let(:issues) { [rating_request_issue, non_rating_request_issue] }
+
+      context "when they're all ineligible" do
+        let(:ineligible_reason) { "duplicate_of_rating_issue_in_active_review" }
+
+        it "does not create end product establishments" do
+          subject
+
+          expect(rating_request_issue.reload.end_product_establishment).to be_nil
+          expect(non_rating_request_issue.reload.end_product_establishment).to be_nil
+        end
+      end
 
       it "creates the issues and assigns end product establishments to them" do
         subject

@@ -334,7 +334,7 @@ class RequestIssue < ApplicationRecord
   def sync_decision_issues!
     return if processed?
 
-    fail NotYetSubmitted unless submitted?
+    fail NotYetSubmitted unless submitted_and_ready?
 
     attempted!
 
@@ -399,6 +399,11 @@ class RequestIssue < ApplicationRecord
 
   def requires_record_request_task?
     !benefit_type_requires_payee_code?
+  end
+
+  def decision_or_promulgation_date
+    return decision_date if nonrating?
+    return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
   private
@@ -525,11 +530,6 @@ class RequestIssue < ApplicationRecord
     rating_with_issue ||= { issues: [] }
 
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
-  end
-
-  def decision_or_promulgation_date
-    return decision_date if nonrating?
-    return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
