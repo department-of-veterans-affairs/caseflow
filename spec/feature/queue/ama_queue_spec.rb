@@ -667,7 +667,6 @@ RSpec.feature "AmaQueue" do
         click_on "Continue"
 
         expect(page).to have_content("Submit Draft Decision for Review")
-        binding.pry
       end
 
       step "judge sees the case in their review queue" do
