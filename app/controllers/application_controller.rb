@@ -33,7 +33,7 @@ class ApplicationController < ApplicationBaseController
     current_user.administered_teams.map do |team|
       {
         title: "#{team.name} team management",
-        link: "/organizations/#{team.url}/users"
+        link: team.user_admin_path
       }
     end
   end
