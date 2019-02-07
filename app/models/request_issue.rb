@@ -334,7 +334,7 @@ class RequestIssue < ApplicationRecord
   def sync_decision_issues!
     return if processed?
 
-    fail NotYetSubmitted unless submitted?
+    fail NotYetSubmitted unless submitted_and_ready?
 
     attempted!
 
