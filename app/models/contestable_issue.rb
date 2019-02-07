@@ -4,7 +4,7 @@ class ContestableIssue
 
   attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id, :contesting_decision_review,
                 :decision_issue_id, :promulgation_date, :rating_issue_profile_date, :source_request_issues,
-                :rating_issue_disability_code
+                :rating_issue_disability_code, :latest_issue_in_chain_id, :latest_issue_in_chain_date
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -44,7 +44,11 @@ class ContestableIssue
       rampClaimId: ramp_claim_id,
       titleOfActiveReview: title_of_active_review,
       sourceReviewType: source_review_type,
-      timely: timely?
+      timely: timely?,
+      latestIssueInChain: {
+        id: latest_issue_in_chain_id,
+        date: latest_issue_in_chain_date
+      }
     }
   end
 

@@ -93,14 +93,19 @@ class AddIssuesModal extends React.Component {
       (contestableIssuesByIndex, date) => {
         const radioOptions = _.map(contestableIssuesByIndex, (issue) => {
           const foundIndex = _.findIndex(addedIssues, { index: issue.index });
-          const text = foundIndex === -1 ?
+          let text = foundIndex === -1 ?
             issue.description :
             `${issue.description} (already selected for issue ${foundIndex + 1})`;
+
+          const hasLaterIssueInChain = Boolean(issue.latestIssueInChain.date)
+          if (hasLaterIssueInChain) {
+            text = `${text} (Please select the most recent decision on ${issue.latestIssueInChain.date})`
+          }
 
           return {
             displayText: text,
             value: issue.index,
-            disabled: foundIndex !== -1
+            disabled: (foundIndex !== -1) || hasLaterIssueInChain
           };
         }
         );

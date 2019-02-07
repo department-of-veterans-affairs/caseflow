@@ -103,7 +103,7 @@ class DecisionReview < ApplicationRecord
       requestIssues: request_issues.map(&:ui_hash),
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
-      contestableIssuesByDate: contestable_issues.map(&:serialize),
+      contestableIssuesByDate: contestable_issues_with_latest_decision_issue.map(&:serialize),
       editIssuesUrl: caseflow_only_edit_issues_url
     }
   end
@@ -183,6 +183,18 @@ class DecisionReview < ApplicationRecord
     # no-op
   end
 
+  def contestable_issues_with_latest_decision_issue
+    prior_issues_map = map_prior_issues_to_latest_decision_issue_id
+
+    contestable_issues.each do |contestable_issue|
+      id = contestable_issue.decision_issue_id || contestable_issue.rating_issue_reference_id
+      contestable_issue.latest_issue_in_chain_id = prior_issues_map[id][:id]
+      contestable_issue.latest_issue_in_chain_date = prior_issues_map[id][:date]
+    end
+
+    contestable_issues
+  end
+
   def contestable_issues
     return contestable_issues_from_decision_issues unless can_contest_rating_issues?
 
@@ -210,6 +222,38 @@ class DecisionReview < ApplicationRecord
   end
 
   private
+
+  def get_prior_decision_issue_and_rating_ids(decision_issue)
+    prior_request_issue = decision_issue.associated_request_issue
+
+    prior_ids = []
+    while(prior_request_issue != null) do
+      if not prior_request_issue.contested_decision_issue.nil?
+        prior_ids << prior_request_issue.contested_decision_issue.id
+        prior_request_issue = prior_request_issue.contested_decision_issue.associated_request_issue
+      else
+        break
+      end
+    end
+    prior_ids
+  end
+
+  def map_prior_decision_issues_to_latest_decision_issue_id
+    # only map prior decision issues, rating issues will already have been replaced
+    contested_decision_issue_ids = decision_review.request_issues.map(&:contested_decision_issue_id)
+    last_in_chain_decision_issues = decision_review.decision_issues.select{ |issue| issue.id not in contested_decision_issue_ids }
+
+    # map each of the prior ids to the latest decision issue
+    issueIdMap = {}
+    last_in_chain_decision_issues.each do |decision_issue|
+      prior_ids = get_prior_decision_issue_and_rating_ids(decision_issue)
+      prior_ids.each do |prior_id|
+        issueIdMap[prior_id] = {id: decision_issue.id, date: decision_issue.caseflow_decision_date}
+      end
+    end
+
+    issueIdMap
+  end
 
   def can_contest_rating_issues?
     fail Caseflow::Error::MustImplementInSubclass
