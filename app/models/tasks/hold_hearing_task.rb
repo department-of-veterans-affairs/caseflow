@@ -9,7 +9,7 @@ class HoldHearingTask < GenericTask
         parent: parent,
         assigned_to: Bva.singleton,
         task_associated_object_attributes: {
-          hearing: LegacyHearing.first
+          hearing: hearing
         }
       )
     end
