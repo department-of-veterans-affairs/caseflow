@@ -55,7 +55,7 @@ class AppealDocumentCount extends React.PureComponent {
       return null;
     }
 
-    return this.props.docCountForAppeal.err ? this.props.docCountForAppeal.err : this.props.docCountForAppeal.count;
+    return this.props.docCountForAppeal.err || this.props.docCountForAppeal.count;
   }
 }
 
