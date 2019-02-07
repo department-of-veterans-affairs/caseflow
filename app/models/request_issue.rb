@@ -375,7 +375,7 @@ class RequestIssue < ApplicationRecord
 
   def close_after_end_product_canceled!
     return unless closed_at.nil?
-    return unless end_product_establishment&.status_canceled?
+    return unless end_product_establishment&.reload.status_canceled?
 
     update!(closed_at: Time.zone.now, closed_status: :end_product_canceled)
     legacy_issue_optin&.flag_for_rollback!
