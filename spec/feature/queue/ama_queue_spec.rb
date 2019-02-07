@@ -664,16 +664,21 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
+        fill_in "Document ID:", with: valid_document_id
+        fill_in "notes", with: "corrections made"
         click_on "Continue"
-
-        expect(page).to have_content("Submit Draft Decision for Review")
+        expect(page).to have_content(
+          "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
+          "sent to #{judge_user.full_name} for review."
+        )
       end
 
       step "judge sees the case in their review queue" do
         User.authenticate!(user: judge_user)
         visit "/queue"
 
-        expect(page).to have_content("Review 0 Cases")
+        expect(page).to have_content veteran_full_name
+        expect(page).to have_content valid_document_id
       end
     end
   end
