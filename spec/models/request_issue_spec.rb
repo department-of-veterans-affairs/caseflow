@@ -103,7 +103,8 @@ describe RequestIssue do
     end
 
     it "respects the delay" do
-      expect(rating_request_issue.submitted?).to eq(false)
+      expect(rating_request_issue.submitted_and_ready?).to eq(false)
+      expect(rating_request_issue.submitted?).to eq(true)
       expect(nonrating_request_issue.submitted?).to eq(true)
 
       todo = RequestIssue.requires_processing

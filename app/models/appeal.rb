@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include Taskable
   include DocumentConcern
@@ -44,7 +45,21 @@ class Appeal < DecisionReview
   scope :ready_for_distribution, lambda {
     joins(:tasks)
       .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) = ?", "DistributionTask", "assigned", 1)
+      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
+              DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+  }
+
+  scope :active, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? and tasks.status != ? then 1 end) >= ?",
+              RootTask.name, Constants.TASK_STATUSES.completed, 1)
+  }
+
+  scope :ordered_by_distribution_ready_date, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
   }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
@@ -160,6 +175,10 @@ class Appeal < DecisionReview
 
   def active?
     tasks.where(type: RootTask.name).where.not(status: Constants.TASK_STATUSES.completed).any?
+  end
+
+  def ready_for_distribution_at
+    tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
   def veteran_name
@@ -427,6 +446,45 @@ class Appeal < DecisionReview
     end
   end
 
+  def docket_hash
+    return unless active_status?
+    return if location == "aoj"
+
+    {
+      type: fetch_docket_type,
+      month: Date.parse(receipt_date.to_s).change(day: 1),
+      switchDueDate: docket_switch_deadline,
+      eligibleToSwitch: eligible_to_switch_dockets?
+    }
+  end
+
+  def fetch_docket_type
+    return :new_evidence if evidence_submission_docket?
+
+    docket_name
+  end
+
+  def docket_switch_deadline
+    return unless receipt_date
+    return unless request_issues.open.any?
+    return if request_issues.any? { |ri| !ri.closed? && ri.decision_or_promulgation_date.nil? }
+
+    open_request_issues = request_issues.find_all { |ri| !ri.closed? }
+    oldest = open_request_issues.min_by(&:decision_or_promulgation_date)
+    deadline_from_oldest_request_issue = oldest.decision_or_promulgation_date + 365.days
+    deadline_from_receipt = receipt_date + 60.days
+
+    [deadline_from_receipt, deadline_from_oldest_request_issue].max
+  end
+
+  def eligible_to_switch_dockets?
+    return false unless docket_switch_deadline
+
+    # TODO: false if hearing already taken place, to be implemented
+    # https://github.com/department-of-veterans-affairs/caseflow/issues/9205
+    Time.zone.today < docket_switch_deadline
+  end
+
   def processed_in_caseflow?
     true
   end
@@ -517,3 +575,4 @@ class Appeal < DecisionReview
       end
   end
 end
+# rubocop:enable Metrics/ClassLength
