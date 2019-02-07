@@ -103,7 +103,8 @@ describe RequestIssue do
     end
 
     it "respects the delay" do
-      expect(rating_request_issue.submitted?).to eq(false)
+      expect(rating_request_issue.submitted_and_ready?).to eq(false)
+      expect(rating_request_issue.submitted?).to eq(true)
       expect(nonrating_request_issue.submitted?).to eq(true)
 
       todo = RequestIssue.requires_processing
@@ -148,6 +149,16 @@ describe RequestIssue do
 
     it "filters by whether it is associated with a review_request" do
       expect(subject.find_by(id: deleted_request_issue.id)).to be_nil
+    end
+  end
+
+  context ".open" do
+    subject { RequestIssue.open }
+
+    let!(:closed_request_issue) { create(:request_issue, :removed) }
+
+    it "filters by whether the closed_at is nil" do
+      expect(subject.find_by(id: closed_request_issue.id)).to be_nil
     end
   end
 

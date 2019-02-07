@@ -336,8 +336,12 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def open_request_issues
+    request_issues.reject(&:closed?)
+  end
+
   def rating_request_issues
-    request_issues.select(&:rating?)
+    open_request_issues.select(&:rating?)
   end
 
   def unassociated_rating_request_issues
@@ -345,7 +349,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def eligible_request_issues
-    request_issues.select(&:eligible?)
+    open_request_issues.select(&:eligible?)
   end
 
   def eligible_rating_request_issues

@@ -125,14 +125,6 @@ RSpec.feature "Search" do
                   :end_product_establishment,
                   source: higher_level_review,
                   veteran_file_number: appeal.veteran_file_number,
-                  synced_status: "CLD"
-                )
-              end
-              let!(:end_product_establishment_5) do
-                create(
-                  :end_product_establishment,
-                  source: higher_level_review,
-                  veteran_file_number: appeal.veteran_file_number,
                   synced_status: "RW"
                 )
               end
@@ -144,7 +136,6 @@ RSpec.feature "Search" do
                   )
                   expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Canceled")
                   expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Cleared")
-                  expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Closed")
                   expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Ready to work")
                 end
               end
@@ -169,14 +160,12 @@ RSpec.feature "Search" do
                   end_product_establishment_2.commit!
                   end_product_establishment_3.commit!
                   end_product_establishment_4.commit!
-                  end_product_establishment_5.commit!
                   higher_level_review.establish!
                 end
 
                 it "shows the end product status" do
                   expect(find(".cf-other-reviews-table > tbody")).to have_content("Canceled")
                   expect(find(".cf-other-reviews-table > tbody")).to have_content("Cleared")
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content("Closed")
                   expect(find(".cf-other-reviews-table > tbody")).to have_content("Ready to work")
                 end
 
