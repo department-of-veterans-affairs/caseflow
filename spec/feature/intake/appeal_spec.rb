@@ -1,3 +1,4 @@
+
 require "support/intake_helpers"
 
 feature "Appeal Intake" do
@@ -937,6 +938,63 @@ feature "Appeal Intake" do
       expect(page).to have_content(decision_issue_date.strftime("%m/%d/%Y"))
       expect(page).to have_content("granted issue")
       expect(page).to have_content("dismissed issue")
+    end
+  end
+
+  context "has a chain of prior decision issues" do
+    # let!(:rating) do
+    #   Generators::Rating.build(
+    #     participant_id: veteran.participant_id,
+    #     promulgation_date: receipt_date - 5.days,
+    #     profile_date: profile_date,
+    #     issues: [
+    #       { reference_id: "abc123", decision_text: "Left knee granted" },
+    #       { reference_id: "def456", decision_text: "PTSD denied" }
+    #     ]
+    #   )
+    # end
+    let!(:appeal) do
+      appeal, _ = start_appeal(veteran)
+      appeal
+    end
+
+    let!(:prior_request_issue_chain) do
+      request_issue = create(:request_issue,
+        contested_rating_issue_reference_id: "abc123",
+        contested_rating_issue_profile_date: profile_date,
+        review_request: appeal
+      )
+
+      decision_issue = create(:decision_issue,
+        description: "1st decision issue",
+        participant_id: veteran.participant_id,
+        decision_review: appeal,
+        caseflow_decision_date: Time.zone.today - 2.days,
+        request_issues: [request_issue])
+
+      last_request_issue = create(:request_issue,
+        contested_decision_issue_id: decision_issue.id,
+        # created_at: Time.zone.today - 1.days,
+        review_request: appeal
+      )
+
+      last_decision_issue = create(:decision_issue,
+        description: "2nd decision issue",
+        participant_id: veteran.participant_id,
+        decision_review: appeal,
+        caseflow_decision_date: Time.zone.today,
+        request_issues: [last_request_issue])
+    end
+
+    it "disables prior contestable issues", :focus => true do
+      visit "/intake/add_issues"
+
+      click_intake_add_issue
+      binding.pry
+      datetext = "(Please select the most recent decision on #{Time.zone.today})"
+      expect(page).to have_content("Left knee granted #{datetext}") #disabled
+      expect(page).to have_content("1st decision issue #{datetext}") # disabled
+      expect(page).to have_content("2nd decision issue") # not disabled
     end
   end
 end
