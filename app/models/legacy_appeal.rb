@@ -174,6 +174,12 @@ class LegacyAppeal < ApplicationRecord
     [notification_date + 1.year, soc_date + 60.days].max.to_date
   end
 
+  def soc_opt_in_due_date
+    return unless soc_date || !ssoc_dates.empty?
+
+    ([soc_date] + ssoc_dates).max.to_date + 60.days
+  end
+
   def cavc_due_date
     return unless decided_by_bva?
 
