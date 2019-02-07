@@ -693,6 +693,48 @@ class SeedDB
     )
   end
 
+  def create_board_grant_tasks
+    nca = BusinessLine.find_by(name: "National Cemetery Association")
+    description = "Service connection for pain disorder is granted with an evaluation of 50\% effective May 1 2011"
+    notes = "Pain disorder with 80\% evaluation per examination"
+
+    3.times do |index|
+      board_grant_task = FactoryBot.create(:board_grant_effectuation_task,
+                                           status: "assigned",
+                                           assigned_to: nca)
+
+      request_issues = FactoryBot.create_list(:request_issue, 3,
+                                              :nonrating,
+                                              description: "#{index} #{description}",
+                                              notes: "#{index} #{notes}",
+                                              benefit_type: nca.url,
+                                              review_request: board_grant_task.appeal)
+
+      request_issues.each do |request_issue|
+        # create matching decision issue
+        FactoryBot.create(
+          :decision_issue,
+          :nonrating,
+          disposition: "allowed",
+          decision_review: board_grant_task.appeal,
+          request_issues: [request_issue],
+          promulgation_date: 2.months.ago,
+          benefit_type: request_issue.benefit_type
+        )
+      end
+    end
+  end
+
+  def create_veteran_record_request_tasks
+    nca = BusinessLine.find_by(name: "National Cemetery Association")
+
+    3.times do |_index|
+      FactoryBot.create(:veteran_record_request_task,
+                        status: "assigned",
+                        assigned_to: nca)
+    end
+  end
+
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
     r = Redis.new(url: Rails.application.secrets.redis_url_cache)
@@ -808,6 +850,8 @@ class SeedDB
     create_higher_level_reviews_and_supplemental_claims
 
     create_ama_hearing_appeals
+    create_board_grant_tasks
+    create_veteran_record_request_tasks
 
     return if Rails.env.development?
 

@@ -8,6 +8,16 @@ class HearingDayRepository
     end
 
     # Query Operations
+    def find_hearing_day(request_type, hearing_key)
+      if request_type.nil? || request_type == HearingDay::REQUEST_TYPES[:central] ||
+         request_type == HearingDay::REQUEST_TYPES[:video]
+        VACOLS::CaseHearing.find_hearing_day(hearing_key)
+      else
+        tbyear, tbtrip, tbleg = hearing_key.split("-")
+        VACOLS::TravelBoardSchedule.find_by(tbyear: tbyear, tbtrip: tbtrip, tbleg: tbleg)
+      end
+    end
+
     def load_days_for_range(start_date, end_date)
       video_and_co = VACOLS::CaseHearing.load_days_for_range(start_date, end_date)
 
