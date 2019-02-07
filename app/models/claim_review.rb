@@ -178,6 +178,18 @@ class ClaimReview < DecisionReview
     end
   end
 
+  def fetch_issues_status(issues)
+    issues.map do |issue|
+      {
+        active: active?,
+        last_action: get_issue_last_action(issue),
+        date: get_issue_last_action_date(issue),
+        description: get_issue_description(issue),
+        diagnosticCode: get_issue_diagnostic_code(issue)
+      }
+    end
+  end
+
   private
 
   def can_contest_rating_issues?
@@ -208,5 +220,32 @@ class ClaimReview < DecisionReview
 
   def matching_request_issue(contention_id)
     RequestIssue.find_by!(contention_reference_id: contention_id)
+  end
+
+  def get_issue_last_action(issue)
+    return if active?
+
+    issue.disposition if issue.is_a?(DecisionIssue)
+  end
+
+  def get_issue_last_action_date(issue)
+    return if active?
+
+    issue.approx_decision_date if issue.is_a?(DecisionIssue)
+  end
+
+  def get_issue_description(issue)
+    diagnostic_code = get_issue_diagnostic_code(issue)
+
+    if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      return Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["status_description"]
+    else
+      return "#{issue.benefit_type.capitalize} issue"
+    end
+  end
+
+  def get_issue_diagnostic_code(issue)
+    issue.diagnostic_code if issue.is_a?(DecisionIssue)
+    issue.contested_rating_issue_diagnostic_code if issue.is_a?(RequestIssue)
   end
 end

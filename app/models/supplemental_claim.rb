@@ -54,45 +54,9 @@ class SupplementalClaim < ClaimReview
   end
 
   def issues
-    # need to implement. get request and corresponding rating issue
     issue_list = active? ? request_issues.open : decision_issues
 
-    issue_list.map { |issue|
-        {
-          active: active?,
-          last_action: get_issue_last_action(issue),
-          date: get_issue_last_action_date(issue),
-          description: get_issue_description(issue),
-          diagnosticCode: get_issue_diagnostic_code(issue)
-        }
-      }
-  end
-
-  def get_issue_last_action(issue)
-    return if active?
-
-    issue.disposition if issue.is_a?(DecisionIssue)
-  end
-
-  def get_issue_last_action_date(issue)
-    return if issue.is_a?(RequestIssue)
-
-    issue.approx_decision_date
-  end
-
-  def get_issue_description(issue)
-    diagnostic_code = get_issue_diagnostic_code(issue)
-
-    if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
-      return Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["status_description"]
-    else
-      return "#{benefit_type.capitalize} issue"
-    end
-  end
-
-  def get_issue_diagnostic_code(issue)
-    issue.diagnostic_code if issue.is_a?(DecisionIssue)
-    issue.contested_rating_issue_diagnostic_code if issue.is_a?(RequestIssue)
+    fetch_issues_status(issue_list)
   end
 
   def decision_event_date
