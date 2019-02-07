@@ -115,6 +115,7 @@ feature "NonComp Dispositions Task Page" do
     scenario "saves decision issues" do
       visit dispositions_url
       expect(page).to have_button("Complete", disabled: true)
+      expect(page).to have_link("Edit Issues")
 
       # set description & disposition for each request issue
       fill_in_disposition(0, "Granted")
@@ -144,6 +145,7 @@ feature "NonComp Dispositions Task Page" do
       expect(page).to have_content("Review each issue and assign the appropriate dispositions")
       expect(page).to have_current_path("/#{dispositions_url}")
       expect(page).not_to have_button("Complete")
+      expect(page).not_to have_link("Edit Issues")
 
       find_disabled_disposition(0, "Granted")
       find_disabled_disposition(1, "DTA Error", "test description")
