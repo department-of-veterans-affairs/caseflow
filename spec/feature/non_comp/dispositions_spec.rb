@@ -21,6 +21,8 @@ feature "NonComp Dispositions Task Page" do
   def find_disabled_disposition(num, disposition, description = nil)
     expect(page).to have_field(type: "textarea", with: description, disabled: true)
 
+    scroll_element_in_to_view(".dropdown-disposition-issue-#{num}")
+
     within(".dropdown-disposition-issue-#{num}") do
       expect(find("span[class='Select-value-label']", text: disposition)).to_not be_nil
     end
