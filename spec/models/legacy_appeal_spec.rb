@@ -225,6 +225,35 @@ describe LegacyAppeal do
     end
   end
 
+  context "#soc_opt_in_due_date" do
+    subject { appeal.soc_opt_in_due_date }
+
+    context "when is no soc" do
+      let(:vacols_case) do
+        create(:case)
+      end
+
+      let(:soc_date) { nil }
+      it { is_expected.to eq(nil) }
+    end
+
+    context "when there is an soc" do
+      let(:vacols_case) do
+        create(:case, bfdsoc: 1.day.ago)
+      end
+
+      it { is_expected.to eq((vacols_case.bfdsoc + 60.days).to_date) }
+    end
+
+    context "when there are multiple socs" do
+      let(:vacols_case) do
+        create(:case, bfdsoc: 1.year.ago, bfdssoc1: 6.months.ago, bfdssoc2: 1.day.ago)
+      end
+
+      it { is_expected.to eq((vacols_case.bfdssoc2 + 60.days).to_date) }
+    end
+  end
+
   context "#cavc_due_date" do
     subject { appeal.cavc_due_date }
 

@@ -224,5 +224,13 @@ describe AppealSeriesAlerts do
         end
       end
     end
+
+    context "ama_opt_in_eligible alert" do
+      it "includes an alert" do
+        alert = alerts.find { |a| a[:type] == :ama_opt_in_eligible }
+        expect(alert).to_not be_nil
+        expect(alert[:details][:due_date]).to eq(55.days.from_now.to_date)
+      end
+    end
   end
 end
