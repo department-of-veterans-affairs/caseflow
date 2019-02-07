@@ -16,6 +16,10 @@ describe AppealSeriesAlerts do
     DocketSnapshot.create
   end
 
+  after do
+    FeatureToggle.disable!(:api_appeal_status_v3)
+  end
+
   let(:docket_month) { 1.year.ago.to_date.beginning_of_month }
 
   let(:appeal) do
