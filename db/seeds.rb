@@ -54,6 +54,7 @@ class SeedDB
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
     create_colocated_users
+    create_transcription_team
     create_vso_users_and_tasks
     create_org_queue_users
     create_qr_user
@@ -73,6 +74,11 @@ class SeedDB
         OrganizationsUser.add_user_to_organization(User.find_or_create_by(css_id: css_id, station_id: 101), judge_team)
       end
     end
+  end
+
+  def create_transcription_team
+    transcription_member = User.find_or_create_by(css_id: "TRANSCRIPTION_USER", station_id: 101)
+    OrganizationsUser.add_user_to_organization(transcription_member, TranscriptionTeam.singleton)
   end
 
   def create_hearings_team
