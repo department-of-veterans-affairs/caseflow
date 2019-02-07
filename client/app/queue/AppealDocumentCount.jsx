@@ -26,7 +26,7 @@ class AppealDocumentCount extends React.PureComponent {
       return;
     }
 
-    if (this.props.docCountForAppeal && this.props.docCountForAppeal.cached === cached) {
+    if (this.props.docCountForAppeal && this.props.docCountForAppeal.cached === Boolean(cached)) {
       return;
     }
 
@@ -40,9 +40,9 @@ class AppealDocumentCount extends React.PureComponent {
     ApiUtil.get(`/appeals/${this.props.externalId}/${endpoint}`, requestOptions).then((response) => {
       const resp = JSON.parse(response.text);
 
-      this.props.setAppealDocCount(this.props.externalId, resp.document_count, cached);
+      this.props.setAppealDocCount(this.props.externalId, resp.document_count, Boolean(cached));
     }, (error) => {
-      this.props.errorFetchingDocumentCount(this.props.externalId, error, cached);
+      this.props.errorFetchingDocumentCount(this.props.externalId, error);
     });
   }
 
@@ -55,7 +55,7 @@ class AppealDocumentCount extends React.PureComponent {
       return null;
     }
 
-    return this.props.docCountForAppeal.count;
+    return this.props.docCountForAppeal.err ? this.props.docCountForAppeal.err : this.props.docCountForAppeal.count;
   }
 }
 

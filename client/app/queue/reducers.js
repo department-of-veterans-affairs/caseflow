@@ -160,7 +160,9 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
     return update(state, {
       docCountForAppeal: {
         [action.payload.appealId]: {
-          $set: 'Failed to load'
+          $set: {
+            err: 'Failed to load'
+          }
         }
       }
     });
