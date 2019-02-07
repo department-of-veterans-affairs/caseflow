@@ -327,6 +327,7 @@ class EndProductEstablishment < ApplicationRecord
       # delete end product in bgs & set sync status to canceled
       BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
+      request_issues.each { |ri| ri.close_after_end_product_canceled! }
     end
   end
 

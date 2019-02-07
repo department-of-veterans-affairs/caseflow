@@ -32,7 +32,8 @@ class RequestIssue < ApplicationRecord
 
   enum closed_status: {
     decided: "decided",
-    removed: "removed"
+    removed: "removed",
+    end_product_canceled: "end_product_canceled"
   }
 
   # TEMPORARY CODE: used to keep decision_review and review_request in sync
@@ -370,6 +371,13 @@ class RequestIssue < ApplicationRecord
 
   def remove!
     update!(closed_at: Time.zone.now, closed_status: :removed)
+  end
+
+  def close_after_end_product_canceled!
+    transaction do
+      update!(closed_at: Time.zone.now, closed_status: :end_product_canceled)
+      legacy_issue_optin&.flag_for_rollback!
+    end
   end
 
   # Instead of fully deleting removed issues, we instead strip them from the review so we can
