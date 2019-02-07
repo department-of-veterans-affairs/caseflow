@@ -20,6 +20,11 @@ FactoryBot.define do
       nonrating_issue_description "nonrating issue description"
     end
 
+    trait :removed do
+      closed_at Time.zone.now
+      closed_status :removed
+    end
+
     trait :with_rating_decision_issue do
       transient do
         veteran_participant_id nil

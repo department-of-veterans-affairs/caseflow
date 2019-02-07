@@ -153,7 +153,8 @@ export const setOrganizations = (organizations: Array<Object>) => ({
 
 export const setActiveOrganization = (id: number, name: string, isVso: boolean) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
-  payload: { id,
+  payload: {
+    id,
     name,
     isVso
   }

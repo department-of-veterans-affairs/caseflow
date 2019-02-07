@@ -267,5 +267,24 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_button("AMA Veterans Waiting")
       expect(page).to have_content("There are no schedulable veterans")
     end
+
+    scenario "Withdraw Veteran's hearing request" do
+      visit "hearings/schedule/assign"
+      expect(page).to have_content("Regional Office")
+      click_dropdown(text: "Denver")
+      click_button("AMA Veterans Waiting")
+      click_on "Bob Smith"
+
+      click_dropdown(text: Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h[:label])
+
+      click_on "Submit"
+
+      expect(page).to have_content("You have successfully withdrawn")
+      expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(Constants.TASK_STATUSES.completed)
+      expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
+
+      click_on "Back to Hearing Schedule"
+      expect(page).to have_content("Denver")
+    end
   end
 end
