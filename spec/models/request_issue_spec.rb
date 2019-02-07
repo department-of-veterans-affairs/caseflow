@@ -14,6 +14,8 @@ describe RequestIssue do
   let(:same_office) { false }
   let(:vacols_id) { nil }
   let(:vacols_sequence_id) { nil }
+  let(:closed_at) { nil }
+  let(:closed_status) { nil }
 
   let(:review) do
     create(
@@ -64,7 +66,9 @@ describe RequestIssue do
       contested_decision_issue_id: contested_decision_issue_id,
       benefit_type: benefit_type,
       vacols_id: vacols_id,
-      vacols_sequence_id: vacols_sequence_id
+      vacols_sequence_id: vacols_sequence_id,
+      closed_at: closed_at,
+      closed_status: closed_status
     )
   end
 
@@ -952,6 +956,17 @@ describe RequestIssue do
       subject
       expect(rating_request_issue.closed_at).to eq(Time.zone.now)
       expect(rating_request_issue.closed_status).to eq("end_product_canceled")
+    end
+
+    context "if the request issue is already closed" do
+      let(:closed_at) { 1.day.ago }
+      let(:closed_status) { "removed" }
+
+      it "does not reclose the issue" do
+        subject
+        expect(rating_request_issue.closed_at).to eq(closed_at)
+        expect(rating_request_issue.closed_status).to eq(closed_status)
+      end
     end
 
     context "when there is a legacy issue optin" do
