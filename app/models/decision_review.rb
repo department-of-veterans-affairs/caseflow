@@ -187,9 +187,13 @@ class DecisionReview < ApplicationRecord
     prior_issues_map = map_prior_issues_to_latest_decision_issue_id
 
     contestable_issues.each do |contestable_issue|
-      id = contestable_issue.decision_issue_id || contestable_issue.rating_issue_reference_id
-      contestable_issue.latest_issue_in_chain_id = prior_issues_map[id][:id]
-      contestable_issue.latest_issue_in_chain_date = prior_issues_map[id][:date]
+      # do not check for rating issue ids
+      # if there is a contestable issue from a rating issue, it means we do not have a decision issue contesting it
+      id = contestable_issue.decision_issue_id
+      if id in prior_issues_map
+        contestable_issue.latest_issue_in_chain_id = prior_issues_map[id][:id]
+        contestable_issue.latest_issue_in_chain_date = prior_issues_map[id][:date]
+      end
     end
 
     contestable_issues
