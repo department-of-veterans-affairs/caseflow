@@ -355,7 +355,6 @@ describe "Appeals API v2", type: :request do
     end
 
     let(:veteran_file_number) { "111223333" }
-    let!(:veteran) { create(:veteran, file_number: veteran_file_number) }
     let(:receipt_date) { Date.new(2018, 9, 20) }
     let(:benefit_type) { "compensation" }
     let(:informal_conference) { nil }
@@ -398,7 +397,9 @@ describe "Appeals API v2", type: :request do
              decision_review: supplemental_claim_review, end_product_last_action_date: receipt_date + 100.days)
     end
 
-    let(:request_issue) do
+    let(:rating_promulgated_date) { receipt_date - 40.days }
+
+    let(:request_issue1) do
       create(:request_issue, benefit_type: benefit_type)
     end
 
@@ -406,18 +407,27 @@ describe "Appeals API v2", type: :request do
       create(:appeal,
              veteran_file_number: veteran_file_number,
              receipt_date: receipt_date,
-             request_issues: [request_issue])
+             request_issues: [request_issue1],
+             docket_type: "evidence_submission")
     end
 
     let!(:task) { create(:task, :in_progress, type: RootTask.name, appeal: appeal) }
 
-    it "returns list of hlr, sc, appeal for veteran with SSN" do
+    before do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
         veteran_file_number
       end
 
-      FeatureToggle.enable!(:api_appeal_status_v3)
+      allow_any_instance_of(RequestIssue).to receive(:decision_or_promulgation_date).and_return(rating_promulgated_date)
 
+      FeatureToggle.enable!(:api_appeal_status_v3)
+    end
+
+    after do
+      FeatureToggle.disable!(:api_appeal_status_v3)
+    end
+
+    it "returns list of hlr, sc, appeal for veteran with SSN" do
       headers = {
         "ssn": veteran_file_number,
         "Authorization": "Token token=#{api_key.key_string}"
@@ -495,15 +505,16 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["alerts"]).to be_nil
       expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
       expect(json["data"][2]["attributes"]["programArea"]).to eq("compensation")
-      expect(json["data"][2]["attributes"]["docket"]).to be_nil
+      expect(json["data"][2]["attributes"]["docket"]["type"]).to eq("new_evidence")
+      expect(json["data"][2]["attributes"]["docket"]["month"]).to eq(Date.new(2018, 9, 1).to_s)
+      expect(json["data"][2]["attributes"]["docket"]["switchDueDate"]).to eq((rating_promulgated_date + 365.days).to_s)
+      expect(json["data"][2]["attributes"]["docket"]["eligibleToSwitch"]).to eq(true)
       expect(json["data"][2]["attributes"]["status"]["type"]).to eq("on_docket")
       expect(json["data"][2]["attributes"]["issues"].length).to eq(0)
 
       event_type = json["data"][2]["attributes"]["events"].first
       expect(event_type["type"]).to eq("ama_nod")
       expect(event_type["date"]).to eq(receipt_date.to_s)
-
-      FeatureToggle.disable!(:api_appeal_status_v3)
     end
   end
 end
