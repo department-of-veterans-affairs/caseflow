@@ -944,6 +944,33 @@ describe RequestIssue do
     end
   end
 
+  context "#close_after_end_product_canceled!" do
+    subject { rating_request_issue.close_after_end_product_canceled! }
+    let(:end_product_establishment) { create(:end_product_establishment, :canceled) }
+
+    it "closes the request issue" do
+      subject
+      expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+      expect(rating_request_issue.closed_status).to eq("end_product_canceled")
+    end
+
+    context "when there is a legacy issue optin" do
+      let(:vacols_id) { vacols_issue.id }
+      let(:vacols_sequence_id) { vacols_issue.isskey }
+      let(:vacols_issue) { create(:case_issue, :disposition_remanded, isskey: 1) }
+      let(:vacols_case) do
+        create(:case, case_issues: [vacols_issue])
+      end
+      let!(:legacy_issue_optin) { create(:legacy_issue_optin, request_issue: rating_request_issue) }
+
+      it "flags the legacy issue optin for rollback" do
+        subject
+        expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+        expect(legacy_issue_optin.reload.rollback_created_at).to eq(Time.zone.now)
+      end
+    end
+  end
+
   context "#sync_decision_issues!" do
     let(:request_issue) { rating_request_issue.tap(&:submit_for_processing!) }
     subject { request_issue.sync_decision_issues! }
