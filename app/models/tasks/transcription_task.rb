@@ -1,0 +1,2 @@
+class TranslationTask < GenericTask
+end
