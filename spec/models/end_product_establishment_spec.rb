@@ -973,7 +973,7 @@ describe EndProductEstablishment do
                 :request_issue,
                 review_request: epe.source,
                 end_product_establishment: epe,
-                decision_sync_submitted_at: Time.zone.now
+                decision_sync_submitted_at: Time.zone.now + 1.second
               )
             end
 
