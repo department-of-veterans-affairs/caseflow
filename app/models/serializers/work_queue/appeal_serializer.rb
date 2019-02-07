@@ -156,7 +156,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     {
       document_id: latest_attorney_case_review&.document_id,
       reviewing_judge: latest_attorney_case_review&.reviewing_judge,
-      note: object.get_attorney_rewrite_task_for_appeal&.instructions&.first
+      note: object.get_attorney_rewrite_task_for_appeal&.instructions&.first,
+      overtime: latest_attorney_case_review&.overtime
     }
   end
 

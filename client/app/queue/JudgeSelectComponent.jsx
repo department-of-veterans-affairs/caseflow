@@ -23,7 +23,7 @@ import type {
 } from './types/models';
 
 type Params = {|
-  assignedByCssId: ?string
+  judgeSelector: ?string
 |};
 
 type Props = Params & {|
@@ -48,7 +48,11 @@ class JudgeSelectComponent extends React.PureComponent<Props> {
   }
 
   setDefaultJudge = (judges) => {
-    const judge = _.find(judges, { css_id: this.props.assignedByCssId });
+    const judge =
+       // for legacy
+       _.find(judges, { css_id: this.props.judgeSelector }) ||
+       // for ama
+       _.find(judges, { full_name: this.props.judgeSelector });
 
     if (judge) {
       this.props.setDecisionOptions({

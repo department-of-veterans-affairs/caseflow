@@ -142,6 +142,13 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       });
   };
 
+  getDefaultJudgeSelector = (attorneyCaseReviewDetails) => {
+    const legacyJudgeSelector = _.get(this.props, 'task.addedByCssId', null);
+    const amaJudgeSelector = _.get(attorneyCaseReviewDetails, 'reviewing_judge.full_name');
+
+    return legacyJudgeSelector || amaJudgeSelector || '';
+  }
+
   render = () => {
     const {
       highlightFormItems,
@@ -149,8 +156,12 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       checkoutFlow,
       decision: {
         opts: decisionOpts
+      },
+      appeal: {
+        attorneyCaseReviewDetails
       }
     } = this.props;
+
     const decisionTypeDisplay = getDecisionTypeDisplay(checkoutFlow);
     let documentIdErrorMessage = '';
 
@@ -184,7 +195,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         name="overtime"
         label="This work product is overtime"
         onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
-        value={decisionOpts.overtime || false}
+        value={decisionOpts.overtime || attorneyCaseReviewDetails.overtime || false}
         styling={css(marginBottom(1), marginTop(1))}
       />
       <TextField
@@ -192,17 +203,19 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         name="document_id"
         errorMessage={highlightFormItems ? documentIdErrorMessage : null}
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
-        value={decisionOpts.document_id}
+        value={decisionOpts.document_id || attorneyCaseReviewDetails.document_id}
         maxLength={DOCUMENT_ID_MAX_LENGTH}
         autoComplete="off"
       />
-      <JudgeSelectComponent assignedByCssId={
-        (this.props.task && this.props.task.addedByCssId) || '' /* not compatible with AMA tasks */
-      } />
+      <JudgeSelectComponent
+        judgeSelector={
+          this.getDefaultJudgeSelector(attorneyCaseReviewDetails)
+        }
+      />
       <TextareaField
         label="Notes:"
         name="notes"
-        value={decisionOpts.note}
+        value={decisionOpts.note || attorneyCaseReviewDetails.note}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={marginTop(4)}
         maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
