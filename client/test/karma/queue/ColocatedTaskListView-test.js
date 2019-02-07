@@ -148,16 +148,15 @@ describe('ColocatedTaskListView', () => {
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(7);
+      expect(cells).to.have.length(6);
       const wrappers = [];
 
       for (let i = 0; i < cells.length; i++) {
         wrappers.push(cells.at(i));
       }
-      const [hearings, caseDetails, columnTasks, types, docketNumber, daysWaiting, documents] = wrappers;
+      const [caseDetails, columnTasks, types, docketNumber, daysWaiting, documents] = wrappers;
       const task = taskNewAssigned;
 
-      expect(hearings.text()).to.include('');
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
@@ -228,14 +227,14 @@ describe('ColocatedTaskListView', () => {
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(7);
+      expect(cells).to.have.length(6);
       const wrappers = [];
 
       for (let i = 0; i < cells.length; i++) {
         wrappers.push(cells.at(i));
       }
       {
-        const [daysOnHold, documents] = wrappers.slice(5);
+        const [daysOnHold, documents] = wrappers.slice(4);
 
         expect(daysOnHold.text()).to.equal('1 of 30');
         expect(documents.html()).to.include(`/reader/appeal/${taskWithNewDocs.externalAppealId}/documents`);
@@ -300,15 +299,14 @@ describe('ColocatedTaskListView', () => {
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(7);
+      expect(cells).to.have.length(6);
       const wrappers = [];
 
       for (let i = 0; i < cells.length; i++) {
         wrappers.push(cells.at(i));
       }
-      const [hearings, caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers;
+      const [caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers;
 
-      expect(hearings.text()).to.include('');
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
       expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.label]);

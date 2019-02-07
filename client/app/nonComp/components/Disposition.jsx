@@ -29,7 +29,11 @@ class NonCompDecisionIssue extends React.PureComponent {
   }
 
   dispositionOptions = () => {
-    return DISPOSITION_OPTIONS.map((code) => {
+    const isSupplementalClaim = this.props.issue.review_request_title === 'Supplemental Claim';
+
+    return DISPOSITION_OPTIONS.filter((code) => {
+      return !isSupplementalClaim || code !== 'DTA Error';
+    }).map((code) => {
       return {
         value: code,
         label: code

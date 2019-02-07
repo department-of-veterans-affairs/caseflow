@@ -27,7 +27,7 @@ class ContestableIssue
         decision_issue_id: decision_issue.id,
         date: decision_issue.approx_decision_date,
         description: decision_issue.description,
-        source_request_issues: decision_issue.request_issues,
+        source_request_issues: decision_issue.request_issues.open,
         contesting_decision_review: contesting_decision_review
       )
     end

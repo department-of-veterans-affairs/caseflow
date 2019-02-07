@@ -37,7 +37,7 @@ class HearingDay < ApplicationRecord
   end
 
   def confirm_no_children_records
-    fail HearingDayHasChildrenRecords if vacols_children_records.count > 0 || hearings.count > 0
+    fail HearingDayHasChildrenRecords if !vacols_children_records.empty? || !hearings.empty?
   end
 
   def vacols_children_records
@@ -160,8 +160,10 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    def find_hearing_day(hearing_key)
+    def find_hearing_day(request_type, hearing_key)
       find(hearing_key)
+    rescue ActiveRecord::RecordNotFound
+      HearingDayRepository.find_hearing_day(request_type, hearing_key)
     end
 
     private
