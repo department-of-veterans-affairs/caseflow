@@ -136,7 +136,8 @@ export type AppealDetail = {
   caseflowVeteranId: ?string,
   tasks: ?Array<Task>,
   veteranAvailableHearingLocations: ?Array<Object>,
-  veteranClosestRegionalOffice: ?string
+  veteranClosestRegionalOffice: ?string,
+  attorneyCaseReviewDetails: Object
 };
 
 export type AppealDetails = { [string]: AppealDetail };
