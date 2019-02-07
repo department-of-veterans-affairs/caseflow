@@ -31,15 +31,9 @@ class ApplicationController < ApplicationBaseController
 
   def manage_teams_menu_items
     current_user.administered_teams.map do |team|
-      url = if team.type == "JudgeTeam"
-              team.name
-            else
-              team.url
-            end
-
       {
         title: "#{team.name} team management",
-        link: "/organizations/#{url}/users"
+        link: "/organizations/#{team.url}/users"
       }
     end
   end
