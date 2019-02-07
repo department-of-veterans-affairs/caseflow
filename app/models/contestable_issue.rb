@@ -58,16 +58,14 @@ class ContestableIssue
   private
 
   def serialize_latest_decision_issue_in_chain
-    return {id: nil, date: nil} unless latest_decision_issue_in_chain
-
     {
-      id: latest_decision_issue_in_chain.id,
-      date: latest_decision_issue_in_chain.caseflow_decision_date
+      id: contestable_issue_chain.last_issue.decisionIssueId,
+      date: contestable_issue_chain.last_issue.caseflow_decision_date
     }
   end
 
-  def latest_decision_issue_in_chain
-    @latest_decision_issue_in_chain ||= ContestableIssueChain.latest_decision_issue_in_chain(self)
+  def contestable_issue_chain
+    @contestable_issue_chain || = new ContestableIssueChain(self)
   end
 
   def decision_issue?
