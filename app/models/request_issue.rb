@@ -374,10 +374,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def close_after_end_product_canceled!
-    transaction do
-      update!(closed_at: Time.zone.now, closed_status: :end_product_canceled)
-      legacy_issue_optin&.flag_for_rollback!
-    end
+    # binding.pry
+    update!(closed_at: Time.zone.now, closed_status: :end_product_canceled)
+    legacy_issue_optin&.flag_for_rollback!
   end
 
   # Instead of fully deleting removed issues, we instead strip them from the review so we can
