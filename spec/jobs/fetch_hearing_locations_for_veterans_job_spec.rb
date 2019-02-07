@@ -147,33 +147,51 @@ describe FetchHearingLocationsForVeteransJob do
           }
 
           error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
-          allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+          allow(VADotGovService).to receive(:send_va_dot_gov_request)
+            .with(hash_including(endpoint: "address_validation/v1/validate")).and_raise(error)
+          allow(VADotGovService).to receive(:send_va_dot_gov_request)
+            .with(hash_including(endpoint: "va_facilities/v0/facilities"))
+            .and_return(distance_response)
         end
 
-        it "creates an ScheduleHearingTask and admin action" do
+        it "finds closest RO based on zipcode" do
           FetchHearingLocationsForVeteransJob.perform_now
-          tsk = ScheduleHearingTask.first
-          expect(tsk.appeal.veteran_file_number).to eq bfcorlid_file_number
-          expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
+
+          expect(Veteran.first.closest_regional_office).to eq "RO01"
+          expect(Veteran.first.available_hearing_locations.count).to eq 1
         end
 
-        context "and appeal already has schedule hearing task" do
-          let!(:task) do
-            ScheduleHearingTask.create!(appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
+        context "and Veteran has no zipcode" do
+          before do
+            Fakes::BGSService.veteran_records = {
+              "123456789" => veteran_record(file_number: "123456789S", state: nil, zip_code: nil, country: nil)
+            }
+          end
+          it "creates an ScheduleHearingTask and admin action" do
+            FetchHearingLocationsForVeteransJob.perform_now
+            tsk = ScheduleHearingTask.first
+            expect(tsk.appeal.veteran_file_number).to eq bfcorlid_file_number
+            expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
           end
 
-          it "creates an admin action" do
-            FetchHearingLocationsForVeteransJob.perform_now
-            expect(ScheduleHearingTask.first.id).to eq task.id
-            expect(HearingAdminActionVerifyAddressTask.where(parent_id: task.id).count).to eq 1
-          end
-        end
+          context "and appeal already has schedule hearing task" do
+            let!(:task) do
+              ScheduleHearingTask.create!(appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
+            end
 
-        context "and job has alreay been run on a veteran" do
-          it "only produces one admin action" do
-            FetchHearingLocationsForVeteransJob.perform_now
-            FetchHearingLocationsForVeteransJob.perform_now
-            expect(HearingAdminActionVerifyAddressTask.count).to eq 1
+            it "creates an admin action" do
+              FetchHearingLocationsForVeteransJob.perform_now
+              expect(ScheduleHearingTask.first.id).to eq task.id
+              expect(HearingAdminActionVerifyAddressTask.where(parent_id: task.id).count).to eq 1
+            end
+          end
+
+          context "and job has alreay been run on a veteran" do
+            it "only produces one admin action" do
+              FetchHearingLocationsForVeteransJob.perform_now
+              FetchHearingLocationsForVeteransJob.perform_now
+              expect(HearingAdminActionVerifyAddressTask.count).to eq 1
+            end
           end
         end
       end
@@ -307,7 +325,7 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
   end
-  def veteran_record(file_number:, state: "MA")
+  def veteran_record(file_number:, state: "MA", zip_code: "01002", country: "USA")
     {
       file_number: file_number,
       ptcpnt_id: "123123",
@@ -322,9 +340,9 @@ describe FetchHearingLocationsForVeteransJob do
       address_line3: "",
       city: "Roanoke",
       state: state,
-      country: "USA",
+      country: country,
       date_of_birth: "1977-07-07",
-      zip_code: "99999",
+      zip_code: zip_code,
       military_post_office_type_code: "99999",
       military_postal_type_code: "99999",
       service: "99999"
