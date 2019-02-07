@@ -34,6 +34,17 @@ describe Appeal do
     end
   end
 
+  context "active appeals" do
+    let!(:active_appeal) { create(:appeal, :with_tasks) }
+    let!(:inactive_appeal) { create(:appeal, :outcoded) }
+
+    subject { Appeal.active }
+    it "returns only active appeals" do
+      expect(subject.include?(active_appeal)).to eq(true)
+      expect(subject.include?(inactive_appeal)).to eq(false)
+    end
+  end
+
   context "ready appeals" do
     let!(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
     let!(:hearing_appeal) { create(:appeal, docket_type: "hearing") }
@@ -56,6 +67,17 @@ describe Appeal do
       expect(subject.include?(evidence_submission_appeal)).to eq(false)
       # TODO: support hearing appeals
       # expect(subject.include?(hearing_appeal)).to eq(false)
+    end
+  end
+
+  context "ready appeals sorted by date" do
+    let!(:first_appeal) { create(:appeal, :with_tasks) }
+    let!(:second_appeal) { create(:appeal, :with_tasks) }
+
+    subject { Appeal.ordered_by_distribution_ready_date }
+
+    it "returns appeals ordered by when they became ready for distribution" do
+      expect(subject.find_index(first_appeal) < subject.find_index(second_appeal)).to eq(true)
     end
   end
 
@@ -1054,6 +1076,66 @@ describe Appeal do
 
         effectuation_event = events.find { |e| e.type == :bva_decision_effectuation }
         expect(effectuation_event).to be_nil
+      end
+    end
+  end
+
+  context "#docket_hash" do
+    let(:october_docket_date) { Time.new("2018", "10", "01").utc }
+    let(:receipt_date) { october_docket_date + 20.days }
+
+    let(:promulgation_date1) { receipt_date - 50.days }
+    let(:request_issue1) { create(:request_issue) }
+    let(:promulgation_date2) { receipt_date - 60.days }
+    let(:request_issue2) { create(:request_issue) }
+    let(:promulgation_date3) { receipt_date - 100.days }
+    let(:removed_request_issue) { create(:request_issue, :removed, closed_at: receipt_date) }
+
+    let(:docket_type) { "direct_review" }
+    let!(:appeal) do
+      create(:appeal,
+             receipt_date: receipt_date,
+             request_issues: [request_issue1, request_issue2, removed_request_issue],
+             docket_type: docket_type)
+    end
+
+    let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
+
+    context "all request issues have a decision or promulgation date" do
+      before do
+        Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+
+        allow(request_issue1).to receive(:decision_or_promulgation_date).and_return(promulgation_date1)
+        allow(request_issue2).to receive(:decision_or_promulgation_date).and_return(promulgation_date2)
+        allow(removed_request_issue).to receive(:decision_or_promulgation_date).and_return(promulgation_date3)
+      end
+
+      it "is direct review, in Oct month, has docket switch deadline and is eligible to switch" do
+        docket = appeal.docket_hash
+
+        expect(docket).not_to be_nil
+        expect(docket[:type]).to eq(docket_type)
+        expect(docket[:month]).to eq(october_docket_date.to_date)
+        expect(docket[:switchDueDate]).to eq((promulgation_date2 + 365.days))
+        expect(docket[:eligibleToSwitch]).to eq(true)
+      end
+    end
+
+    context "cannot get decision or promulgation date for an open request issue" do
+      before do
+        Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+
+        allow(request_issue2).to receive(:decision_or_promulgation_date).and_return(promulgation_date2)
+      end
+
+      it "is direct review, in Oct month, has no switch deadline and is not eligible to switch" do
+        docket = appeal.docket_hash
+
+        expect(docket).not_to be_nil
+        expect(docket[:type]).to eq(docket_type)
+        expect(docket[:month]).to eq(october_docket_date.to_date)
+        expect(docket[:switchDueDate]).to be_nil
+        expect(docket[:eligibleToSwitch]).to eq(false)
       end
     end
   end
