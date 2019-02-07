@@ -82,7 +82,7 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
 
   def fetch_closest_ro_and_ahls
     veteran = appeal.veteran
-    FetchHearingLocationsForVeteransJob.perform_once_for(veteran) unless veteran.nil?
+    FetchHearingLocationsForVeteransJob.new.perform_once_for(veteran) unless veteran.nil?
   end
 end
 class HearingAdminActionMissingFormsTask < HearingAdminActionTask

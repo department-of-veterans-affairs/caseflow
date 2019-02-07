@@ -78,7 +78,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  def self.perform_once_for(veteran)
+  def perform_once_for(veteran)
     begin
       va_dot_gov_address = validate_veteran_address(veteran)
     rescue Caseflow::Error::VaDotGovLimitError
