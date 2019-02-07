@@ -121,7 +121,7 @@ class Appeal < DecisionReview
     task ? task.assigned_to.try(:full_name) : ""
   end
 
-  def get_rewrite_task_for_appeal
+  def get_attorney_rewrite_task_for_appeal
     tasks.find { |t| t.is_a?(AttorneyRewriteTask) && (t.appeal_id === id) }
   end
 
