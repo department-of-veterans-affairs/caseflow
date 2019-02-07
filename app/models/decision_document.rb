@@ -42,7 +42,7 @@ class DecisionDocument < ApplicationRecord
   def process!
     return if processed?
 
-    fail NotYetSubmitted unless submitted?
+    fail NotYetSubmitted unless submitted_and_ready?
 
     attempted!
     upload_to_vbms!
