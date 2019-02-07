@@ -256,7 +256,7 @@ describe FetchHearingLocationsForVeteransJob do
         it "raises FetchHearingLocationsJobError" do
           expect { job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
             .to raise_error(Caseflow::Error::FetchHearingLocationsJobError)
-            .with_message("#{mock_va_dot_gov_address[:state_code]} is not a valid state code.")
+            .with_message("#{mock_va_dot_gov_address[:state_code]} for VeteranId: #{Veteran.first.id} is not a valid state code.") # rubocop:disable Metrics/LineLength
         end
       end
 
@@ -274,7 +274,7 @@ describe FetchHearingLocationsForVeteransJob do
           expect { job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
             .to raise_error(Caseflow::Error::FetchHearingLocationsJobError)
             .with_message(
-              "#{mock_va_dot_gov_address[:country_code]} is not a valid country code."
+              "#{mock_va_dot_gov_address[:country_code]} for VeteranId: #{Veteran.first.id} is not a valid country code." # rubocop:disable Metrics/LineLength
             )
         end
       end
