@@ -250,7 +250,7 @@ describe LegacyAppeal do
         create(:case, bfdsoc: 1.year.ago, bfssoc1: 6.months.ago, bfssoc2: 1.day.ago)
       end
 
-      it { is_expected.to eq((vacols_case.bfdssoc2 + 60.days).to_date) }
+      it { is_expected.to eq((vacols_case.bfssoc2 + 60.days).to_date) }
     end
   end
 
