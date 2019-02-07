@@ -105,24 +105,30 @@ class HearingDay < ApplicationRecord
     end
 
     def load_days(start_date, end_date, regional_office = nil)
-      cf_video_and_co = if regional_office.nil?
-                          where("DATE(scheduled_for) between ? and ?", start_date, end_date)
-                        elsif regional_office == REQUEST_TYPES[:central]
-                          where("request_type = ? and DATE(scheduled_for) between ? and ?",
-                                "C", start_date, end_date)
-                        else
-                          where("regional_office = ? and DATE(scheduled_for) between ? and ?",
+      if regional_office.nil?
+        cf_video_and_co = where("DATE(scheduled_for) between ? and ?", start_date, end_date)
+        video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
+      elsif regional_office == REQUEST_TYPES[:central]
+        cf_video_and_co = where("request_type = ? and DATE(scheduled_for) between ? and ?",
+                                REQUEST_TYPES[:central], start_date, end_date)
+        video_and_co = []
+      else
+        cf_video_and_co = where("regional_office = ? and DATE(scheduled_for) between ? and ?",
                                 regional_office, start_date, end_date)
-                        end
+        video_and_co, travel_board =
+          HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
+      end
 
       {
-        caseflow_hearings: cf_video_and_co
+        caseflow_hearings: cf_video_and_co,
+        vacols_hearings: video_and_co,
+        travel_board_hearings: travel_board
       }
     end
 
     def hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
       hearing_days = load_days(start_date, end_date, regional_office)
-      total_video_and_co = hearing_days[:caseflow_hearings]
+      total_video_and_co = hearing_days[:caseflow_hearings] + hearing_days[:vacols_hearings]
 
       # fetching all the RO keys of the dockets
       regional_office_keys = total_video_and_co.map(&:regional_office)
