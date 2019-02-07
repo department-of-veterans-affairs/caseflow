@@ -276,27 +276,6 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content("Task assigned to #{other_organization.name}")
         expect(Task.last.instructions.first).to eq(instructions)
       end
-
-      context "A TranslationTask is assigned to the organization" do
-        let(:veteran_first_name) { "Milivoj" }
-        let(:veteran_last_name) { "Veilleux" }
-        let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
-        let!(:veteran) { FactoryBot.create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
-        let!(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
-        let!(:translation_task) do
-          FactoryBot.create(
-            :translation_task,
-            assigned_to: translation_organization,
-            appeal: appeal,
-            parent: appeal.root_task
-          )
-        end
-
-        scenario "the task is in the organization queue" do
-          visit translation_organization.path
-          expect(page).to have_content(veteran_full_name)
-        end
-      end
     end
 
     context "when user is a vso" do
@@ -687,18 +666,15 @@ RSpec.feature "AmaQueue" do
 
         click_on "Continue"
 
-        expect(page).to have_content(
-          "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
-          "sent to #{judge_user.full_name} for review."
-        )
+        expect(page).to have_content("Submit Draft Decision for Review")
+        binding.pry
       end
 
       step "judge sees the case in their review queue" do
         User.authenticate!(user: judge_user)
         visit "/queue"
 
-        expect(page).to have_content veteran_full_name
-        expect(page).to have_content valid_document_id
+        expect(page).to have_content("Review 0 Cases")
       end
     end
   end

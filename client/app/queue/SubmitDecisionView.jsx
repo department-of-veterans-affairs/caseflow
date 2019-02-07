@@ -186,7 +186,9 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         name="overtime"
         label="This work product is overtime"
         onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
-        value={decisionOpts.overtime || attorneyCaseReviewDetails.overtime || false}
+        value={decisionOpts.overtime ||
+          _.get(attorneyCaseReviewDetails, 'overtime') ||
+          false}
         styling={css(marginBottom(1), marginTop(1))}
       />
       <TextField
@@ -194,7 +196,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         name="document_id"
         errorMessage={highlightFormItems ? documentIdErrorMessage : null}
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
-        value={decisionOpts.document_id || attorneyCaseReviewDetails.document_id}
+        value={decisionOpts.document_id || _.get(attorneyCaseReviewDetails, 'document_id')}
         maxLength={DOCUMENT_ID_MAX_LENGTH}
         autoComplete="off"
       />
@@ -206,7 +208,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       <TextareaField
         label="Notes:"
         name="notes"
-        value={decisionOpts.note || attorneyCaseReviewDetails.note}
+        value={decisionOpts.note || _.get(attorneyCaseReviewDetails, 'note')}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={marginTop(4)}
         maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
