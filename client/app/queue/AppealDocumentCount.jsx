@@ -26,7 +26,8 @@ class AppealDocumentCount extends React.PureComponent {
       return;
     }
 
-    if (this.props.docCountForAppeal && this.props.docCountForAppeal.cached === Boolean(cached)) {
+    if (this.props.docCountForAppeal && !this.props.docCountErrorForAppeal &&
+      (cached || this.props.docCountForAppeal.cached === Boolean(cached))) {
       return;
     }
 
@@ -47,7 +48,7 @@ class AppealDocumentCount extends React.PureComponent {
   }
 
   render = () => {
-    if (_.isNil(this.props.docCountForAppeal)) {
+    if (_.isNil(this.props.docCountForAppeal) && !this.props.docCountErrorForAppeal) {
       if (this.props.loadingText) {
         return <span {...documentCountStyling}>Loading number of docs...</span>;
       }
@@ -55,7 +56,7 @@ class AppealDocumentCount extends React.PureComponent {
       return null;
     }
 
-    return this.props.docCountForAppeal.err || this.props.docCountForAppeal.count;
+    return this.props.docCountErrorForAppeal || this.props.docCountForAppeal.count;
   }
 }
 
@@ -70,7 +71,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     externalId,
-    docCountForAppeal: state.queue.docCountForAppeal[externalId] || null
+    docCountForAppeal: state.queue.docCountForAppeal[externalId] || null,
+    docCountErrorForAppeal: state.queue.docCountErrorForAppeal[externalId] || null
   };
 };
 

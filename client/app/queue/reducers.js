@@ -25,6 +25,7 @@ export const initialState = {
   claimReviews: {},
   editingIssue: {},
   docCountForAppeal: {},
+  docCountErrorForAppeal: {},
   mostRecentlyHeldHearingForAppeal: {},
   newDocsForAppeal: {},
   specialIssues: {},
@@ -158,11 +159,9 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
     };
   case ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT:
     return update(state, {
-      docCountForAppeal: {
+      docCountErrorForAppeal: {
         [action.payload.appealId]: {
-          $set: {
-            err: 'Failed to load'
-          }
+          $set: 'Failed to load'
         }
       }
     });
@@ -174,6 +173,11 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
             count: action.payload.docCount,
             cached: action.payload.cached
           }
+        }
+      },
+      docCountErrorForAppeal: {
+        [action.payload.appealId]: {
+          $set: null
         }
       }
     });
