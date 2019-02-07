@@ -4,7 +4,7 @@ class ContestableIssue
 
   attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id, :contesting_decision_review,
                 :decision_issue_id, :promulgation_date, :rating_issue_profile_date, :source_request_issues,
-                :rating_issue_disability_code, :latest_issue_in_chain_id, :latest_issue_in_chain_date
+                :rating_issue_disability_code
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -45,10 +45,7 @@ class ContestableIssue
       titleOfActiveReview: title_of_active_review,
       sourceReviewType: source_review_type,
       timely: timely?,
-      latestIssueInChain: {
-        id: latest_issue_in_chain_id,
-        date: latest_issue_in_chain_date
-      }
+      latestIssueInChain: serialize_latest_decision_issue_in_chain
     }
   end
 
@@ -59,6 +56,19 @@ class ContestableIssue
   end
 
   private
+
+  def serialize_latest_decision_issue_in_chain
+    return {id: nil, date: nil} unless latest_decision_issue_in_chain
+
+    {
+      id: latest_decision_issue_in_chain.id,
+      date: latest_decision_issue_in_chain.caseflow_decision_date
+    }
+  end
+
+  def latest_decision_issue_in_chain
+    @latest_decision_issue_in_chain ||= ContestableIssueChain.latest_decision_issue_in_chain(self)
+  end
 
   def decision_issue?
     !!decision_issue_id
