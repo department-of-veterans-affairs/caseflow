@@ -97,12 +97,14 @@ class HearingRepository
       )
 
       if (hearing_type || hearing_day_hash[:request_type]) == HearingDay::REQUEST_TYPES[:central]
-        create_child_co_hearing(hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs)
+        hearing = create_child_co_hearing(hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs)
       else
-        create_child_video_hearing(
+        hearing = create_child_video_hearing(
           parent_record_id, hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs
         )
       end
+
+      hearing
     end
 
     def create_child_co_hearing(hearing_date_str, appeal, hearing_location_attrs: nil)

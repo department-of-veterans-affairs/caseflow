@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190206165710) do
+ActiveRecord::Schema.define(version: 20190207182603) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -892,6 +892,14 @@ ActiveRecord::Schema.define(version: 20190206165710) do
     t.string "text"
     t.datetime "updated_at", null: false
     t.index ["text"], name: "index_tags_on_text", unique: true
+  end
+
+  create_table "task_associated_objects", force: :cascade do |t|
+    t.bigint "hearing_id", null: false
+    t.string "hearing_type", null: false
+    t.bigint "hold_hearing_task_id", null: false
+    t.index ["hearing_type", "hearing_id"], name: "index_task_associated_objects_on_hearing_type_and_hearing_id"
+    t.index ["hold_hearing_task_id"], name: "index_task_associated_objects_on_hold_hearing_task_id"
   end
 
   create_table "task_business_payloads", force: :cascade do |t|

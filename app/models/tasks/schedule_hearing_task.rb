@@ -69,8 +69,8 @@ class ScheduleHearingTask < GenericTask
         hearing_type = task_payloads[:values][:hearing_type]
         hearing_location = task_payloads[:values][:hearing_location]
 
-        slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
-        HoldHearingTask.create_hold_hearing_task!(appeal, parent)
+        hearing = slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
+        HoldHearingTask.create_hold_hearing_task!(appeal, parent, hearing)
       elsif params[:status] == "canceled"
         withdraw_hearing
         params[:status] = Constants.TASK_STATUSES.completed
@@ -136,7 +136,7 @@ class ScheduleHearingTask < GenericTask
   end
 
   def slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
-    HearingRepository.slot_new_hearing(hearing_day_id,
+    hearing = HearingRepository.slot_new_hearing(hearing_day_id,
                                        hearing_type: (hearing_type == LegacyHearing::CO_HEARING) ? "C" : "V",
                                        appeal: appeal,
                                        hearing_location_attrs: hearing_location&.to_hash,
@@ -144,5 +144,7 @@ class ScheduleHearingTask < GenericTask
     if appeal.is_a?(LegacyAppeal)
       AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end
+
+    hearing
   end
 end
