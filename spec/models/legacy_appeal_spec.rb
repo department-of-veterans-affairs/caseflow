@@ -247,7 +247,7 @@ describe LegacyAppeal do
 
     context "when there are multiple socs" do
       let(:vacols_case) do
-        create(:case, bfdsoc: 1.year.ago, bfdssoc1: 6.months.ago, bfdssoc2: 1.day.ago)
+        create(:case, bfdsoc: 1.year.ago, bfssoc1: 6.months.ago, bfssoc2: 1.day.ago)
       end
 
       it { is_expected.to eq((vacols_case.bfdssoc2 + 60.days).to_date) }

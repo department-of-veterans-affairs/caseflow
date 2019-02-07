@@ -1,5 +1,6 @@
 describe AppealSeriesAlerts do
   before do
+    FeatureToggle.enable!(:api_appeal_status_v3)
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     allow(AppealRepository).to receive(:latest_docket_month) { docket_month }
     allow(AppealRepository).to receive(:docket_counts_by_month) do
