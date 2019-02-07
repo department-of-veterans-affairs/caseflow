@@ -448,11 +448,11 @@ class Appeal < DecisionReview
 
   def docket_switch_deadline
     return unless receipt_date
-    return unless request_issues.any?
-    return if request_issues.any? { |ri| ri.decision_or_promulgation_date.nil? }
+    return unless request_issues.open.any?
+    return if request_issues.any? { |ri| !ri.closed? && ri.decision_or_promulgation_date.nil? }
 
-    # will need to be updated to ignore closed request issues when that is available
-    oldest = request_issues.min_by(&:decision_or_promulgation_date)
+    open_request_issues = request_issues.find_all { |ri| !ri.closed? }
+    oldest = open_request_issues.min_by(&:decision_or_promulgation_date)
     deadline_from_oldest_request_issue = oldest.decision_or_promulgation_date + 365.days
     deadline_from_receipt = receipt_date + 60.days
 
@@ -462,7 +462,7 @@ class Appeal < DecisionReview
   def eligible_to_switch_dockets?
     return false unless docket_switch_deadline
 
-    # todo: false if hearing already taken place, to be implemented
+    # TODO: false if hearing already taken place, to be implemented
     # https://github.com/department-of-veterans-affairs/caseflow/issues/9205
     Time.zone.today < docket_switch_deadline
   end

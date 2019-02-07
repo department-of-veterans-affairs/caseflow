@@ -1058,7 +1058,7 @@ describe Appeal do
     end
   end
 
-  context "#status_hash" do
+  context "#docket_hash" do
     let(:october_docket_date) { Time.new("2018", "10", "01").utc }
     let(:receipt_date) { october_docket_date + 20.days }
 
@@ -1066,12 +1066,14 @@ describe Appeal do
     let(:request_issue1) { create(:request_issue) }
     let(:promulgation_date2) { receipt_date - 60.days }
     let(:request_issue2) { create(:request_issue) }
+    let(:promulgation_date3) { receipt_date - 100.days }
+    let(:removed_request_issue) { create(:request_issue, :removed, closed_at: receipt_date) }
 
     let(:docket_type) { "direct_review" }
     let!(:appeal) do
       create(:appeal,
              receipt_date: receipt_date,
-             request_issues: [request_issue1, request_issue2],
+             request_issues: [request_issue1, request_issue2, removed_request_issue],
              docket_type: docket_type)
     end
 
@@ -1083,6 +1085,7 @@ describe Appeal do
 
         allow(request_issue1).to receive(:decision_or_promulgation_date).and_return(promulgation_date1)
         allow(request_issue2).to receive(:decision_or_promulgation_date).and_return(promulgation_date2)
+        allow(removed_request_issue).to receive(:decision_or_promulgation_date).and_return(promulgation_date3)
       end
 
       it "is direct review, in Oct month, has docket switch deadline and is eligible to switch" do
@@ -1096,7 +1099,7 @@ describe Appeal do
       end
     end
 
-    context "cannot get decision or promulgation date for a request issue" do
+    context "cannot get decision or promulgation date for an open request issue" do
       before do
         Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
 
