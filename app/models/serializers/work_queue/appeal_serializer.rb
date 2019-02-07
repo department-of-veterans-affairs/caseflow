@@ -155,10 +155,9 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :attorney_case_review_details do
     {
       document_id: latest_attorney_case_review&.document_id,
-      note: latest_attorney_case_review&.note,
-      reviewing_judge: latest_attorney_case_review&.reviewing_judge
+      reviewing_judge: latest_attorney_case_review&.reviewing_judge,
+      note: object.get_rewrite_task_for_appeal.instructions
     }
-    # binding.pry
   end
 
   attribute :can_edit_document_id do
@@ -167,7 +166,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       case_review: latest_attorney_case_review
     ).editable?
   end
-
+  # this should probably be moved to `appeal.rb` but didn't want to break anything
   def latest_attorney_case_review
     AttorneyCaseReview.where(task_id: Task.where(appeal: object).pluck(:id)).order(:created_at).last
   end

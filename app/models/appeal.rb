@@ -118,8 +118,11 @@ class Appeal < DecisionReview
 
   def reviewing_judge_name
     task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
-    binding.pry
     task ? task.assigned_to.try(:full_name) : ""
+  end
+
+  def get_rewrite_task_for_appeal
+    tasks.find { |t| t.is_a?(AttorneyRewriteTask) && (t.appeal_id === id) }
   end
 
   def eligible_request_issues

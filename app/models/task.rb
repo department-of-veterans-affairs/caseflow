@@ -313,7 +313,6 @@ class Task < ApplicationRecord
       options: users_to_options(attorneys),
       type: AttorneyRewriteTask.name
     }
-    # binding.pry
   end
 
   def timeline_title

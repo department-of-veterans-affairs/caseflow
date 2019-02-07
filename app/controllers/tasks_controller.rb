@@ -58,7 +58,6 @@ class TasksController < ApplicationController
     tasks = task_class.create_many_from_params(create_params, current_user)
 
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
-
     render json: { tasks: json_tasks(tasks_to_return) }
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
