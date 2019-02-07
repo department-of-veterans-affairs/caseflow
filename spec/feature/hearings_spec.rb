@@ -23,19 +23,21 @@ RSpec.feature "Hearings" do
       end
       create(:case_hearing,
              board_member: vacols_staff.sattyid,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: 2500.days.from_now,
              folder_nr: create(:case).bfkey)
-      create(:case_hearing, board_member: vacols_staff.sattyid, hearing_type: "C", hearing_date: 3.days.ago)
+      create(:case_hearing, board_member: vacols_staff.sattyid,
+                            hearing_type: HearingDay::REQUEST_TYPES[:central],
+                            hearing_date: 3.days.ago)
       create(:case_hearing,
              board_member: vacols_staff.sattyid,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: 6.days.ago,
              folder_nr: create(:case).bfkey)
-      create(:hearing, judge: current_user)
+      create(:hearing, hearing_day: create(:hearing_day, judge: current_user))
       create(:case_hearing,
              board_member: vacols_staff.sattyid,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: DateTime.new(2019, 3, 2, 9, 0, 0, "+0"),
              folder_nr: create(:case).bfkey)
     end
@@ -128,7 +130,7 @@ RSpec.feature "Hearings" do
       fill_in "1.notes", with: "This is a note about the hearing!"
       find(".checkbox-wrapper-1-prep").find(".cf-form-checkbox").click
       find(".dropdown-1-disposition").click
-      find("#react-select-5--option-1").click
+      find("#react-select-2--option-1").click
       find("label", text: "Yes, Waive 90 Day Hold").click
 
       visit "/hearings/dockets/2019-03-02"
@@ -271,6 +273,41 @@ RSpec.feature "Hearings" do
       page.within_window new_window do
         visit link_href
         expect(page).to have_content("You've viewed 0 out of 3 documents")
+      end
+    end
+
+    context "Worksheet for AMA hearings" do
+      let(:ama_hearing) { create(:hearing, judge: current_user) }
+      let!(:request_issue) { create(:request_issue, review_request_id: ama_hearing.id) }
+
+      scenario "Can save information for ama hearings" do
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        page.find(".public-DraftEditor-content").set("These are the notes being taken here")
+        fill_in "appellant-vet-rep-name", with: "This is a rep name"
+        fill_in "appellant-vet-witness", with: "This is a witness"
+        fill_in "worksheet-military-service", with: "This is military service"
+
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        expect(page).to have_content("This is a rep name")
+        expect(page).to have_content("This is a witness")
+        expect(page).to have_content("These are the notes being taken here")
+        expect(page).to have_content("This is military service")
+      end
+
+      scenario "Can save preliminary impressions for ama hearings" do
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        find("label", text: "Re-Open").click
+        find("label", text: "Remand").click
+        find("label", text: "Allow").click
+        find("label", text: "Dismiss").click
+        find("label", text: "Deny").click
+
+        visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+        expect(find_field("Re-Open", visible: false)).to be_checked
+        expect(find_field("Remand", visible: false)).to be_checked
+        expect(find_field("Allow", visible: false)).to be_checked
+        expect(find_field("Dismiss", visible: false)).to be_checked
+        expect(find_field("Deny", visible: false)).to be_checked
       end
     end
   end

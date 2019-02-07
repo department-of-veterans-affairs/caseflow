@@ -203,7 +203,16 @@ describe HigherLevelReviewIntake do
         veteran_file_number: "64205555",
         receipt_date: 3.days.ago,
         legacy_opt_in_approved: legacy_opt_in_approved,
-        benefit_type: benefit_type
+        benefit_type: benefit_type,
+        veteran_is_not_claimant: false
+      )
+    end
+
+    let!(:claimant) do
+      Claimant.create!(
+        review_request: detail,
+        participant_id: veteran.participant_id,
+        payee_code: "00"
       )
     end
 
@@ -220,7 +229,7 @@ describe HigherLevelReviewIntake do
       expect(ratings_end_product_establishment.established_at).to eq(Time.zone.now)
 
       expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-        claim_hash: {
+        claim_hash: hash_including(
           benefit_type_code: "1",
           payee_code: "00",
           predischarge: false,
@@ -232,8 +241,8 @@ describe HigherLevelReviewIntake do
           end_product_code: "030HLRR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false,
-          claimant_participant_id: nil
-        },
+          claimant_participant_id: veteran.participant_id
+        ),
         veteran_hash: intake.veteran.to_vbms_hash,
         user: user
       )
@@ -279,6 +288,7 @@ describe HigherLevelReviewIntake do
     end
 
     context "when benefit type is non comp" do
+      before { RequestStore[:current_user] = user }
       let(:benefit_type) { "fiduciary" }
 
       it "creates DecisionReviewTask" do
@@ -288,6 +298,11 @@ describe HigherLevelReviewIntake do
 
         expect(intake.detail.tasks.count).to eq(1)
         expect(intake.detail.tasks.first).to be_a(DecisionReviewTask)
+      end
+
+      it "adds user to organization" do
+        subject
+        expect(OrganizationsUser.find_by(user: user, organization: intake.detail.business_line)).to_not be_nil
       end
     end
 

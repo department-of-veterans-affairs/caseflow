@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Button from '../../components/Button';
 import { DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import Checkbox from '../../components/Checkbox';
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import { formatRequestIssuesWithDecisionIssues } from '../util';
 
 class BoardGrantIssue extends React.PureComponent {
@@ -14,7 +14,7 @@ class BoardGrantIssue extends React.PureComponent {
       index
     } = this.props;
 
-    let issueDate = formatDate(issue.decisionIssue.promulgationDate);
+    let issueDate = formatDateStr(issue.decisionIssue.promulgationDate);
 
     return <div className="cf-decision">
       <hr />
@@ -40,7 +40,7 @@ class BoardGrantUnconnected extends React.PureComponent {
     super(props);
 
     this.state = {
-      isEffectuated: Boolean(this.props.task.completed_at)
+      isEffectuated: Boolean(this.props.task.closed_at)
     };
   }
 
@@ -61,7 +61,7 @@ class BoardGrantUnconnected extends React.PureComponent {
 
     let completeDiv = null;
 
-    if (!task.completed_at) {
+    if (!task.closed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-gray-box">
           <div className="cf-decision-date">
@@ -69,7 +69,7 @@ class BoardGrantUnconnected extends React.PureComponent {
               vertical
               onChange={this.handleEffectuatedClick}
               value={this.state.isEffectuated}
-              disabled={Boolean(task.completed_at)}
+              disabled={Boolean(task.closed_at)}
               name="isEffectuated"
               label="I certify these benefits have been effectuated." />
           </div>
@@ -84,6 +84,8 @@ class BoardGrantUnconnected extends React.PureComponent {
       </React.Fragment>;
     }
 
+    // note that this mapping has to be decision issues to request issues.
+    // Appeals only show request issues that are filtered by the selected business line
     const requestIssuesWithDecisionIssues = formatRequestIssuesWithDecisionIssues(
       appeal.requestIssues, appeal.decisionIssues).
       filter((requestIssue) =>

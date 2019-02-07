@@ -6,7 +6,6 @@ class SyncReviewsJob < CaseflowJob
   DEFAULT_EP_LIMIT = 100
 
   def perform(args = {})
-    RequestStore.store[:application] = "intake"
     RequestStore.store[:current_user] = User.system_user
 
     # specified limit of end products that will be synced

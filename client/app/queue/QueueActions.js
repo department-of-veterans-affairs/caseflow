@@ -3,6 +3,7 @@
 import { associateTasksWithAppeals,
   prepareAllTasksForStore,
   extractAppealsAndAmaTasks,
+  prepareMostRecentlyHeldHearingForStore,
   prepareTasksForStore } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiReducer/uiActions';
@@ -89,7 +90,7 @@ export const receiveNewDocuments = ({ appealId, newDocuments }: { appealId: stri
   }
 });
 
-export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
+export const getNewDocuments = (appealId: string, cached: ?boolean) => (dispatch: Dispatch) => {
   dispatch({
     type: ACTIONS.STARTED_LOADING_DOCUMENTS,
     payload: {
@@ -100,7 +101,7 @@ export const getNewDocuments = (appealId: string) => (dispatch: Dispatch) => {
     timeout: { response: 5 * 60 * 1000 }
   };
 
-  ApiUtil.get(`/appeals/${appealId}/new_documents`, requestOptions).then((response) => {
+  ApiUtil.get(`/appeals/${appealId}/new_documents${cached ? '?cached' : ''}`, requestOptions).then((response) => {
     const resp = JSON.parse(response.text);
 
     dispatch(receiveNewDocuments({
@@ -155,6 +156,11 @@ export const setAppealDocCount = (appealId: string, docCount: number) => ({
     appealId,
     docCount
   }
+});
+
+export const setMostRecentlyHeldHearingForAppeal = (appealId: string, hearing: Object) => ({
+  type: ACTIONS.SET_MOST_RECENTLY_HELD_HEARING_FOR_APPEAL,
+  payload: prepareMostRecentlyHeldHearingForStore(appealId, hearing)
 });
 
 export const setDecisionOptions = (opts: Object) => (dispatch: Dispatch) => {
@@ -487,7 +493,7 @@ const receiveDistribution = (dispatch, userId, response) => {
     const caseN = distribution.distributed_cases_count;
 
     dispatch(showSuccessMessage({
-      title: 'Distribution Complete',
+      title: 'Distribution complete',
       detail: `${caseN} new ${pluralize('case', caseN)} have been distributed from the docket.`
     }));
 

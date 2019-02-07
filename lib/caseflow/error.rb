@@ -173,6 +173,7 @@ module Caseflow::Error
       @error_code = error_code
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity
     def self.from_vbms_error(error)
       case error.body
       when /PIF is already in use/
@@ -185,16 +186,21 @@ module Caseflow::Error
         new("bgs_info_invalid")
       when /The maximum data length for AddressLine1/
         LongAddress.new("long_address")
+      when /VBMS does not currently support claim establishment of claimants with a fiduciary/
+        # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/
+        ClaimantWithFiduciary.new("claimant_with_fiduciary")
       else
         error
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
 
   class MissingTimerMethod < StandardError; end
 
   class DuplicateEp < EstablishClaimFailedInVBMS; end
   class LongAddress < EstablishClaimFailedInVBMS; end
+  class ClaimantWithFiduciary < EstablishClaimFailedInVBMS; end
 
   class VacolsRepositoryError < StandardError; end
   class VacolsRecordNotFound < VacolsRepositoryError; end

@@ -57,6 +57,14 @@ json_config = <<EOS.strip_heredoc
         {
           feature: "use_representative_info_from_bgs",
           enable_all: true
+        },
+        {
+          feature: "ama_auto_case_distribution",
+          enable_all: true
+        },
+        {
+          feature: "automatic_case_distribution",
+          enable_all: true
         }
   ]
 EOS

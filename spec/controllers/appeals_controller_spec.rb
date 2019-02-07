@@ -48,7 +48,6 @@ RSpec.describe AppealsController, type: :controller do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfkey: "654321", documents: documents)) }
 
       it "should return document count" do
-        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
         get :document_count, params: { appeal_id: appeal.vacols_id }
 
         response_body = JSON.parse(response.body)
@@ -68,7 +67,7 @@ RSpec.describe AppealsController, type: :controller do
       let(:appeal) { create(:appeal, veteran_file_number: file_number) }
 
       it "should return document count" do
-        get :document_count, params: { appeal_id: appeal.uuid }
+        get :document_count, params: { appeal_id: appeal.uuid, cached: true }
 
         response_body = JSON.parse(response.body)
         expect(response_body["document_count"]).to eq 2

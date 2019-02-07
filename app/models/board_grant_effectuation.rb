@@ -15,12 +15,13 @@ class BoardGrantEffectuation < ApplicationRecord
 
   END_PRODUCT_CODES = {
     rating: "030BGR",
-    nonrating: "030BGNR",
+    nonrating: "030BGRNR",
     pension_rating: "030BGRPMC",
     pension_nonrating: "030BGNRPMC"
   }.freeze
 
   delegate :contention_text, to: :granted_decision_issue
+  delegate :veteran, to: :appeal
 
   class << self
     # We don't need to retry these as frequently
@@ -64,8 +65,9 @@ class BoardGrantEffectuation < ApplicationRecord
   def matching_rating_issue
     return unless associated_rating
 
-    @matching_rating_issue ||
-      associated_rating.issues.find { |i| i.contention_reference_id == contention_reference_id }
+    @matching_rating_issue || associated_rating.issues.find do |rating_issue|
+      rating_issue.decides_contention?(contention_reference_id: contention_reference_id)
+    end
   end
 
   def update_from_matching_rating_issue!
@@ -132,16 +134,12 @@ class BoardGrantEffectuation < ApplicationRecord
       source: decision_document,
       veteran_file_number: veteran.file_number,
       claim_date: decision_document.decision_date,
-      payee_code: "00",
+      payee_code: EndProduct::DEFAULT_PAYEE_CODE,
       code: end_product_code,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
       user: User.system_user
     )
-  end
-
-  def veteran
-    appeal.veteran
   end
 
   def end_product_code

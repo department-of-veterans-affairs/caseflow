@@ -176,9 +176,7 @@ feature "Supplemental Claim Intake" do
     fill_in "What is the payee code for this claimant?", with: "11 - C&P First Child"
     find("#cf-payee-code").send_keys :enter
 
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
+    select_agree_to_withdraw_legacy_issues(false)
 
     click_intake_continue
 
@@ -427,6 +425,26 @@ feature "Supplemental Claim Intake" do
     expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
   end
 
+  context "ratings with disabiliity codes" do
+    let(:disabiliity_receive_date) { receipt_date + 2.days }
+    let(:disability_profile_date) { profile_date - 1.day }
+    let!(:ratings_with_disability_codes) do
+      generate_ratings_with_disabilities(veteran,
+                                         disabiliity_receive_date,
+                                         disability_profile_date)
+    end
+
+    scenario "saves disability codes" do
+      sc, = start_supplemental_claim(veteran)
+      visit "/intake"
+      click_intake_continue
+      save_and_check_request_issues_with_disability_codes(
+        Constants.INTAKE_FORM_NAMES.supplemental_claim,
+        sc
+      )
+    end
+  end
+
   context "Add / Remove Issues page" do
     let(:duplicate_reference_id) { "xyz789" }
     let(:old_reference_id) { "old1234" }
@@ -662,7 +680,7 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
-               end_product_establishment_id: end_product_establishment.id,
+               end_product_establishment_id: nil,
                ineligible_reason: :before_ama
              )).to_not be_nil
 
@@ -678,7 +696,7 @@ feature "Supplemental Claim Intake" do
                review_request: supplemental_claim,
                nonrating_issue_description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
-               end_product_establishment_id: non_rating_end_product_establishment.id
+               end_product_establishment_id: nil
              )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
@@ -724,7 +742,7 @@ feature "Supplemental Claim Intake" do
           sc, = start_supplemental_claim(veteran, is_comp: false)
           create(:decision_issue,
                  decision_review: sc,
-                 profile_date: receipt_date - 1.day,
+                 caseflow_decision_date: receipt_date - 1.day,
                  benefit_type: sc.benefit_type,
                  decision_text: "something was decided",
                  participant_id: veteran.participant_id)
@@ -871,7 +889,6 @@ feature "Supplemental Claim Intake" do
           click_intake_add_issue
           add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
           add_intake_rating_issue("limitation of thigh motion (extension)")
-          add_untimely_exemption_response("Yes")
 
           expect(page).to have_content("Non-RAMP Issue before AMA Activation")
           expect(page).to_not have_content(

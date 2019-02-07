@@ -8,10 +8,8 @@ import { css } from 'glamor';
 import Table from '../components/Table';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
 
-import { DateString } from '../util/DateUtil';
 import COPY from '../../COPY.json';
 import CLAIM_REVIEW_TEXT from '../../constants/CLAIM_REVIEW_TEXT.json';
-import EP_STATUSES from '../../constants/EP_STATUSES.json';
 
 class SubdividedTableRow extends React.PureComponent {
   render = () => {
@@ -47,7 +45,7 @@ class OtherReviewsTable extends React.PureComponent {
     const styles = {};
 
     this.props.reviews.forEach((review, i) => {
-      if (review.endProducts && review.endProducts.length > 1) {
+      if (review.endProductStatuses && review.endProductStatuses.length > 1) {
         styles[`& > tbody > tr:nth-of-type(${i + 1}) > td:nth-of-type(3)`] = { padding: 0 };
         styles[`& > tbody > tr:nth-of-type(${i + 1}) > td:nth-of-type(4)`] = { padding: 0 };
         styles[`& > tbody > tr:nth-of-type(${i + 1}) > td:nth-of-type(5)`] = { padding: 0 };
@@ -76,17 +74,17 @@ class OtherReviewsTable extends React.PureComponent {
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_CODE_COLUMN_TITLE,
       valueFunction: (review) => {
-        if (review.endProducts && review.endProducts.length > 0) {
-          if (review.endProducts.length > 1) {
-            return review.endProducts.map((endProduct, i) => {
+        if (review.endProductStatuses && review.endProductStatuses.length > 0) {
+          if (review.endProductStatuses.length > 1) {
+            return review.endProductStatuses.map((endProduct, i) => {
               return <SubdividedTableRow rowNumber={i}>
-                {`${endProduct.code} ${endProduct.modifier}`}
+                {endProduct.ep_code}
               </SubdividedTableRow>;
             });
           }
-          const endProduct = review.endProducts[0];
+          const endProduct = review.endProductStatuses[0];
 
-          return `${endProduct.code} ${endProduct.modifier}`;
+          return endProduct.ep_code;
         }
 
         return <em>{COPY[CLAIM_REVIEW_TEXT[review.reviewType]]}</em>;
@@ -95,40 +93,18 @@ class OtherReviewsTable extends React.PureComponent {
     {
       header: COPY.OTHER_REVIEWS_TABLE_EP_STATUS_COLUMN_TITLE,
       valueFunction: (review) => {
-        if (review.endProducts && review.endProducts.length > 0) {
-          if (review.endProducts.length > 1) {
-            return review.endProducts.map((endProduct, i) => {
-              const epStatus = endProduct.synced_status ?
-                EP_STATUSES[endProduct.synced_status] :
-                EP_STATUSES.PROCESSING;
-
-              return <SubdividedTableRow rowNumber={i}>{epStatus}</SubdividedTableRow>;
+        if (review.endProductStatuses && review.endProductStatuses.length > 0) {
+          if (review.endProductStatuses.length > 1) {
+            return review.endProductStatuses.map((endProduct, i) => {
+              return <SubdividedTableRow rowNumber={i}>{endProduct.ep_status}</SubdividedTableRow>;
             });
           }
-          const endProduct = review.endProducts[0];
+          const endProduct = review.endProductStatuses[0];
 
-          return endProduct.synced_status ?
-            EP_STATUSES[endProduct.synced_status] :
-            EP_STATUSES.PROCESSING;
+          return endProduct.ep_status;
         }
 
         return '';
-      }
-    },
-    {
-      header: COPY.OTHER_REVIEWS_TABLE_DECISION_DATE_COLUMN_TITLE,
-      valueFunction: (review) => {
-        if (review.endProducts && review.endProducts.length > 1) {
-          return review.endProducts.map((endProduct, i) => {
-            return <SubdividedTableRow rowNumber={i}>
-              {endProduct.last_synced_at && <DateString date={endProduct.last_synced_at} />}
-            </SubdividedTableRow>;
-          });
-        } else if (review.endProducts && review.endProducts.length === 1) {
-          if (review.endProducts[0].last_synced_at) {
-            return <DateString date={review.endProducts[0].last_synced_at} />;
-          }
-        }
       }
     }
   ];

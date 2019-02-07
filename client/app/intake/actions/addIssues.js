@@ -57,6 +57,7 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
       isRating: args.isRating,
       ratingIssueReferenceId: currentIssue.ratingIssueReferenceId,
       ratingIssueProfileDate: currentIssue.ratingIssueProfileDate,
+      ratingIssueDisabilityCode: currentIssue.ratingIssueDisabilityCode,
       decisionIssueId: currentIssue.decisionIssueId,
       titleOfActiveReview: currentIssue.titleOfActiveReview,
       description: currentIssue.description,

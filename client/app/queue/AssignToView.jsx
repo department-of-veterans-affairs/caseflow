@@ -23,6 +23,8 @@ import {
   requestSave
 } from './uiReducer/uiActions';
 
+import { taskActionData } from './utils';
+
 import type { State } from './types/state';
 import type { Appeal, Task } from './types/models';
 
@@ -49,18 +51,6 @@ type ViewState = {|
   selectedValue: ?string,
   instructions: ?string
 |};
-
-const taskActionData = (props) => {
-  const relevantAction = props.task.availableActions.
-    find((action) => props.history.location.pathname.endsWith(action.value));
-
-  if (relevantAction && relevantAction.data) {
-    return (relevantAction.data);
-  }
-
-  // We should never get here since any task action the creates this modal should provide data.
-  throw new Error('Task action requires data');
-};
 
 const selectedAction = (props) => {
   const actionData = taskActionData(props);
@@ -115,7 +105,10 @@ class AssignToView extends React.Component<Props, ViewState> {
       }
     };
 
-    const successMsg = { title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
+    const successMsg = {
+      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()),
+      detail: taskActionData(this.props).message_detail
+    };
 
     if (isReassignAction) {
       return this.reassignTask();
@@ -224,7 +217,8 @@ const propsToText = (props) => {
   const title = (props.assigneeAlreadySelected && action) ?
     sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label) :
     COPY.ASSIGN_TASK_TITLE;
-  const pathAfterSubmit = props.returnToCaseDetails ? `/queue/appeals/${props.appealId}` : '/queue';
+  const actionData = taskActionData(props);
+  const pathAfterSubmit = (actionData && actionData.redirect_after) || '/queue';
 
   return {
     title,

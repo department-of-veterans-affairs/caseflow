@@ -3,7 +3,6 @@ class TaskTimerJob < CaseflowJob
   application_attr :queue
 
   def perform
-    RequestStore.store[:application] = "queue"
     RequestStore.store[:current_user] = User.system_user
 
     TaskTimer.requires_processing.includes(:task).each do |task_timer|

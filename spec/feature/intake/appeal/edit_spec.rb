@@ -175,6 +175,25 @@ feature "Appeal Edit issues" do
     expect(page).to have_button("Save", disabled: false)
   end
 
+  context "ratings with disabiliity codes" do
+    let(:disabiliity_receive_date) { receipt_date - 1.day }
+    let(:disability_profile_date) { receipt_date - 10.days }
+    let!(:ratings_with_disability_codes) do
+      generate_ratings_with_disabilities(veteran,
+                                         disabiliity_receive_date,
+                                         disability_profile_date)
+    end
+
+    scenario "saves disability codes" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      save_and_check_request_issues_with_disability_codes(
+        Constants.INTAKE_FORM_NAMES.appeal,
+        appeal
+      )
+    end
+  end
+
   context "with multiple request issues with same data fields" do
     let!(:duplicate_nonrating_request_issue) { create(:request_issue, nonrating_request_issue_attributes) }
     let!(:duplicate_rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
@@ -317,6 +336,18 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("Add this issue")
       add_intake_rating_issue("Left knee granted")
       expect(page).to have_content("Left knee granted")
+    end
+  end
+
+  context "appeal is outcoded" do
+    let(:appeal) { create(:appeal, :outcoded, veteran: veteran) }
+
+    scenario "error message is shown and no edit is allowed" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/outcoded")
+      expect(page).to have_content("Issues Not Editable")
+      expect(page).to have_content("This appeal has been outcoded and the issues are no longer editable.")
     end
   end
 end

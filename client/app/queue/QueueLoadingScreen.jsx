@@ -23,7 +23,6 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 type Params = {|
   userId: number,
-  userCssId: string,
   userRole: string,
   appealId?: string,
   children: React.Node,
@@ -65,7 +64,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
     return this.props.fetchAmaTasksOfUser(userId, userRole).
       then(
         ({ payload: { appeals: appealsFromServer } }) =>
-          _.map(appealsFromServer, (appeal) => this.props.getNewDocuments(appeal.externalId)));
+          _.map(appealsFromServer, (appeal) => this.props.getNewDocuments(appeal.externalId, true)));
   }
 
   maybeLoadLegacyQueue = () => {
@@ -104,7 +103,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
 
     this.props.fetchAllAttorneys();
 
-    return ApiUtil.get(`/users?role=Attorney&judge_css_id=${this.props.userCssId}`).
+    return ApiUtil.get(`/users?role=Attorney&judge_id=${this.props.userId}`).
       then((resp) => this.props.setAttorneysOfJudge(resp.body.attorneys));
   }
 

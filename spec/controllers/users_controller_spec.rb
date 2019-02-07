@@ -44,7 +44,7 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context "when judge ID is passed" do
-      subject { get :index, params: { role: "Attorney", judge_css_id: judge.user.css_id } }
+      subject { get :index, params: { role: "Attorney", judge_id: judge.user.id } }
 
       it "should return a list of attorneys on the judge's team" do
         subject

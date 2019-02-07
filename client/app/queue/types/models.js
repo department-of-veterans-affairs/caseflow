@@ -8,8 +8,7 @@ export type User = {
   email: ?string,
   roles: Array<string>,
   selected_regional_office: ?string,
-  display_name: string,
-  judge_css_id: ?string
+  display_name: string
 };
 
 export type Judges = { [string]: User };
@@ -61,12 +60,14 @@ export type Task = {
   appealType: string,
   externalAppealId: string,
   assignedOn: string,
-  completedOn: ?string,
+  closedAt: ?string,
   dueOn: ?string,
   assignedTo: {
     cssId: ?string,
     type: string,
-    id: number
+    id: number,
+    isOrganization: boolean,
+    name: ?string
   },
   assignedBy: {
     firstName: string,
@@ -91,6 +92,10 @@ export type Task = {
   },
   availableActions: Array<{ label?: string, value: string, data: ?Object }>,
   taskBusinessPayloads: Array<{description: string, values: Object}>,
+  hideFromQueueTableView: boolean,
+  hideFromCaseTimeline: boolean,
+  hideFromTaskSnapshot: boolean,
+  closestRegionalOffice: string
 };
 
 export type Tasks = { [string]: Task };
@@ -129,7 +134,9 @@ export type AppealDetail = {
   certificationDate: ?string,
   powerOfAttorney: ?PowerOfAttorney,
   caseflowVeteranId: ?string,
-  tasks: ?Array<Task>
+  tasks: ?Array<Task>,
+  veteranAvailableHearingLocations: ?Array<Object>,
+  veteranClosestRegionalOffice: ?string
 };
 
 export type AppealDetails = { [string]: AppealDetail };
@@ -168,7 +175,7 @@ export type ClaimReview = {
   caseflowVeteranId: string,
   claimId: number,
   claimantNames: ?Array<string>,
-  endProducts: ?Array<Object>,
+  endProductStatuses: ?Array<Object>,
   reviewType: string,
   veteranFileNumber: string,
   veteranFullName: string

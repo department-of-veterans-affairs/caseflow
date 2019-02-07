@@ -17,7 +17,7 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
   end
 
   def claimant_relationship
-    return "self" unless decision_review.claimants.any?
+    return "self" unless decision_review.veteran_is_not_claimant
 
     decision_review.claimants.first.try(:relationship)
   end
@@ -33,7 +33,7 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
     {
       id: decision_review.external_id,
       isLegacyAppeal: false,
-      issueCount: decision_review.request_issues.count
+      issueCount: decision_review.open_request_issues.count
     }
   end
 
@@ -53,8 +53,8 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
     task.assigned_at
   end
 
-  attribute :completed_at do
-    task.completed_at
+  attribute :closed_at do
+    task.closed_at
   end
 
   attribute :started_at do

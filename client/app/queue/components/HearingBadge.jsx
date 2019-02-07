@@ -1,11 +1,23 @@
+import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import _ from 'lodash';
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import Tooltip from '../../components/Tooltip';
 import { COLORS } from '../../constants/AppConstants';
 
+import ApiUtil from '../../util/ApiUtil';
 import { DateString } from '../../util/DateUtil';
+import { setMostRecentlyHeldHearingForAppeal } from '../QueueActions';
+
+/**
+ * This component can accept either a Hearing object or a Task object.
+ * e.g.,
+ *   <HearingBadge hearing={hearing} />
+ *   <HearingBadge task={task} />
+ */
 
 const badgeStyling = css({
   display: 'inline-block',
@@ -30,27 +42,63 @@ const listStyling = css({
   }
 });
 
-const DocketTypeBadge = ({ hearing }) => {
-  if (!hearing) {
-    return null;
+class HearingBadge extends React.PureComponent {
+  componentDidMount = () => {
+    if (!this.props.mostRecentlyHeldHearingForAppeal && !this.props.hearing) {
+      ApiUtil.get(`/appeals/${this.props.externalId}/hearings`).then((response) => {
+        this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, JSON.parse(response.text));
+      });
+    }
   }
 
-  const tooltipText = <div>
-    This case has a hearing associated with it.
-    <ul {...listStyling}>
-      <li>Judge: <strong>{hearing.heldBy}</strong></li>
-      <li>Disposition: <strong>{_.startCase(hearing.disposition)}</strong></li>
-      <li>Date: <strong><DateString date={hearing.date} /></strong></li>
-      <li>Type: <strong>{_.startCase(hearing.type)}</strong></li>
-    </ul>
-  </div>;
+  render = () => {
+    const hearing = this.props.mostRecentlyHeldHearingForAppeal || this.props.hearing;
 
-  // We expect this badge to be shown in a table, so we use this to get rid of the standard table padding.
-  return <div {...css({ marginRight: '-3rem' })} className="cf-hearing-badge">
-    <Tooltip id={`badge-${hearing.id}`} text={tooltipText} position="bottom">
-      <span {...badgeStyling}>H</span>
-    </Tooltip>
-  </div>;
+    if (!hearing || !hearing.date) {
+      return null;
+    }
+
+    const tooltipText = <div>
+      This case has a hearing associated with it.
+      <ul {...listStyling}>
+        <li>Judge: <strong>{hearing.heldBy}</strong></li>
+        <li>Disposition: <strong>{_.startCase(hearing.disposition)}</strong></li>
+        <li>Date: <strong><DateString date={hearing.date} /></strong></li>
+        <li>Type: <strong>{_.startCase(hearing.type)}</strong></li>
+      </ul>
+    </div>;
+
+    return <div {...css({ marginRight: '-2.5rem' })} className="cf-hearing-badge">
+      <Tooltip id={`badge-${hearing.id}`} text={tooltipText} position="bottom">
+        <span {...badgeStyling}>H</span>
+      </Tooltip>
+    </div>;
+  }
+}
+
+HearingBadge.propTypes = {
+  task: PropTypes.object,
+  hearing: PropTypes.object
 };
 
-export default DocketTypeBadge;
+const mapStateToProps = (state, ownProps) => {
+  let externalId, hearing;
+
+  if (ownProps.hearing) {
+    hearing = ownProps.hearing;
+  } else if (ownProps.task) {
+    externalId = ownProps.task.appeal.externalId;
+  }
+
+  return {
+    hearing,
+    externalId,
+    mostRecentlyHeldHearingForAppeal: state.queue.mostRecentlyHeldHearingForAppeal[externalId] || null
+  };
+};
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setMostRecentlyHeldHearingForAppeal
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(HearingBadge);

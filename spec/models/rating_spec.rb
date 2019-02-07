@@ -42,6 +42,137 @@ describe Rating do
     [build_issue(1), build_issue(2)]
   end
 
+  context "with disabilities" do
+    let(:participant_id) { "disability_id" }
+    let(:rating) do
+      Generators::Rating.build(
+        promulgation_date: promulgation_date,
+        profile_date: profile_date,
+        participant_id: participant_id,
+        associated_claims: associated_claims,
+        issues: [
+          {
+            reference_id: "Issue1",
+            decision_text: "Decision1",
+            dis_sn: "rating1"
+          },
+          {
+            reference_id: "Issue2",
+            decision_text: "Decision2"
+          }
+        ],
+        disabilities: disabilities
+      )
+    end
+    subject { rating.issues }
+
+    context "with multiple disabilities" do
+      let(:disabilities) do
+        [{
+          dis_dt: promulgation_date - 2.days,
+          dis_sn: "rating1",
+          disability_evaluations: {
+            dis_dt: promulgation_date - 2.days,
+            dgnstc_tc: "original_code"
+          }
+        },
+         {
+           dis_dt: promulgation_date - 1.day,
+           dis_sn: "rating1",
+           disability_evaluations: {
+             dis_dt: promulgation_date - 2.days,
+             dgnstc_tc: "later_code"
+           }
+         }]
+      end
+
+      it "overrides disability with earlier date" do
+        expect(subject.count).to eq(2)
+
+        expect(subject.first).to have_attributes(
+          reference_id: "Issue1", decision_text: "Decision1", disability_code: "later_code"
+        )
+
+        expect(subject.second).to have_attributes(
+          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+        )
+      end
+    end
+
+    context "with one disability" do
+      let(:disabilities) do
+        {
+          dis_dt: promulgation_date - 2.days,
+          dis_sn: "rating1",
+          disability_evaluations: {
+            dis_dt: promulgation_date - 2.days,
+            dgnstc_tc: "original_code"
+          }
+        }
+      end
+
+      it "returns issues with ratings" do
+        expect(subject.count).to eq(2)
+
+        expect(subject.first).to have_attributes(
+          reference_id: "Issue1", decision_text: "Decision1", disability_code: "original_code"
+        )
+
+        expect(subject.second).to have_attributes(
+          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+        )
+      end
+    end
+
+    context "with multiple evaluations" do
+      let(:disabilities) do
+        {
+          dis_dt: promulgation_date - 2.days,
+          dis_sn: "rating1",
+          disability_evaluations: [{
+            dis_dt: promulgation_date - 3.days,
+            dgnstc_tc: "original_code"
+          }, {
+            dis_dt: promulgation_date - 2.days,
+            dgnstc_tc: "later_code"
+          }]
+        }
+      end
+
+      it "overrides evaluation with earlier date" do
+        expect(subject.count).to eq(2)
+
+        expect(subject.first).to have_attributes(
+          reference_id: "Issue1", decision_text: "Decision1", disability_code: "later_code"
+        )
+
+        expect(subject.second).to have_attributes(
+          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+        )
+      end
+    end
+
+    context "with no evaluation" do
+      let(:disabilities) do
+        {
+          dis_dt: promulgation_date - 2.days,
+          dis_sn: "rating1"
+        }
+      end
+
+      it "creates ratings without disability codes" do
+        expect(subject.count).to eq(2)
+        expect(subject.first).to have_attributes(
+          reference_id: "Issue1", decision_text: "Decision1", disability_code: nil
+        )
+
+        expect(subject.second).to have_attributes(
+          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+        )
+      end
+    end
+  end
+
   context "#issues" do
     subject { rating.issues }
 
@@ -89,6 +220,36 @@ describe Rating do
       let(:associated_claims) { nil }
       it do
         is_expected.to be_empty
+      end
+    end
+  end
+
+  context "#pension?" do
+    subject { rating.pension? }
+
+    context "when one or more associated claims have a bnftClmTc matching PMC" do
+      let(:associated_claims) do
+        [
+          { clm_id: "abc123", bnft_clm_tc: "040SCR" },
+          { clm_id: "dcf345", bnft_clm_tc: "154IVMC9PMC" }
+        ]
+      end
+
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when no associated claims have a bnftClmTc matching PMC" do
+      let(:associated_claims) do
+        [
+          { clm_id: "abc123", bnft_clm_tc: "040SCR" },
+          { clm_id: "dcf345", bnft_clm_tc: "030HLRNR" }
+        ]
+      end
+
+      it "returns false" do
+        expect(subject).to eq(false)
       end
     end
   end

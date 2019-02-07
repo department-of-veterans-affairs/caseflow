@@ -34,3 +34,40 @@ export const onHearingTimeChange = (hearingTime) => ({
     hearingTime
   }
 });
+
+export const onHearingLocationChange = (hearingLocation) => ({
+  type: ACTIONS.HEARING_LOCATION_CHANGE,
+  payload: {
+    hearingLocation
+  }
+});
+
+export const onFetchDropdownData = (dropdownName) => ({
+  type: ACTIONS.FETCH_DROPDOWN_DATA,
+  payload: {
+    dropdownName
+  }
+});
+
+export const onReceiveDropdownData = (dropdownName, data) => ({
+  type: ACTIONS.RECEIVE_DROPDOWN_DATA,
+  payload: {
+    dropdownName,
+    data
+  }
+});
+
+export const onHearingOptionalTime = (optionalTime) => ({
+  type: ACTIONS.HEARING_OPTIONAL_TIME_CHANGE,
+  payload: {
+    optionalTime
+  }
+});
+
+export const onChangeFormData = (formName, formData) => ({
+  type: ACTIONS.CHANGE_FORM_DATA,
+  payload: {
+    formName,
+    formData
+  }
+});

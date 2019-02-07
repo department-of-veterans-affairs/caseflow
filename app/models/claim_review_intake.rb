@@ -1,6 +1,4 @@
 class ClaimReviewIntake < DecisionReviewIntake
-  include Asyncable
-
   attr_reader :request_params
 
   def ui_hash(ama_enabled)
@@ -41,6 +39,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   def complete!(request_params)
     super(request_params) do
       detail.submit_for_processing!
+      detail.add_user_to_business_line!
       detail.create_decision_review_task_if_required!
       if run_async?
         DecisionReviewProcessJob.perform_later(detail)

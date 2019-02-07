@@ -64,13 +64,8 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_schedule_days.includes(brieff: [:representative]).find_by(hearing_pkseq: hearing_pkseq)
     end
 
-    def video_hearings_for_master_records(parent_hearings_pkseqs)
-      select_hearings.where(vdkey: parent_hearings_pkseqs)
-    end
-
-    def co_hearings_for_master_records(parent_hearing_dates)
-      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) IN (?)",
-                            "C", "%VIDEO%", parent_hearing_dates.map(&:to_date))
+    def hearings_for_hearing_days(hearing_day_ids)
+      select_hearings.where(vdkey: hearing_day_ids)
     end
 
     def for_appeal(appeal_vacols_id)
@@ -99,7 +94,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     def load_days_for_central_office(start_date, end_date)
       select_schedule_days.where("hearing_type = ? and (folder_nr NOT LIKE ? OR folder_nr IS NULL) " \
                                   "and trunc(hearing_date) between ? and ?",
-                                 "C", "%VIDEO%", VacolsHelper.day_only_str(start_date),
+                                 HearingDay::REQUEST_TYPES[:central], "%VIDEO%", VacolsHelper.day_only_str(start_date),
                                  VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
@@ -122,7 +117,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
                            adduser: current_user_slogid,
                            folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil,
-                           hearing_type: "C"))
+                           hearing_type: HearingDay::REQUEST_TYPES[:central]))
       end
     end
 
@@ -177,6 +172,18 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
   end
 
+  def scheduled_for
+    hearing_date
+  end
+
+  def request_type
+    hearing_type
+  end
+
+  def judge_id
+    board_member
+  end
+
   def master_record_type
     return :video if folder_nr.match?(/VIDEO/)
   end
@@ -188,6 +195,15 @@ class VACOLS::CaseHearing < VACOLS::Record
                           name: "update_hearing") do
       update(attrs.merge(mduser: self.class.current_user_slogid, mdtime: VacolsHelper.local_time_with_utc_timezone))
     end
+  end
+
+  def regional_office
+    # Hearing days have the regional office in the folder_nr
+    regional_office_match = /VIDEO (RO\d*)/.match(folder_nr)
+
+    return regional_office_match[1] if regional_office_match
+
+    nil
   end
 
   private

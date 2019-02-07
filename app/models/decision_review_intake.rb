@@ -1,4 +1,6 @@
 class DecisionReviewIntake < Intake
+  include RunAsyncable
+
   def ui_hash(ama_enabled)
     super.merge(
       receipt_date: detail.receipt_date,
@@ -8,7 +10,7 @@ class DecisionReviewIntake < Intake
       legacy_opt_in_approved: detail.legacy_opt_in_approved,
       legacyAppeals: detail.serialized_legacy_appeals,
       ratings: detail.serialized_ratings,
-      requestIssues: detail.request_issues.map(&:ui_hash),
+      requestIssues: detail.request_issues.open.map(&:ui_hash),
       activeNonratingRequestIssues: detail.active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: detail.contestable_issues.map(&:serialize)
     )
@@ -40,6 +42,6 @@ class DecisionReviewIntake < Intake
   end
 
   def build_issues(request_issues_data)
-    request_issues_data.map { |data| detail.request_issues.from_intake_data(data) }
+    request_issues_data.map { |data| RequestIssue.from_intake_data(data, decision_review: detail) }
   end
 end

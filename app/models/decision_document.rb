@@ -3,6 +3,7 @@ class DecisionDocument < ApplicationRecord
   include UploadableDocument
 
   class NoFileError < StandardError; end
+  class NotYetSubmitted < StandardError; end
 
   belongs_to :appeal
   has_many :end_product_establishments, as: :source
@@ -13,6 +14,8 @@ class DecisionDocument < ApplicationRecord
   attr_writer :file
 
   S3_SUB_BUCKET = "decisions".freeze
+
+  delegate :veteran, to: :appeal
 
   def document_type
     "BVA Decision"
@@ -38,6 +41,8 @@ class DecisionDocument < ApplicationRecord
 
   def process!
     return if processed?
+
+    fail NotYetSubmitted unless submitted_and_ready?
 
     attempted!
     upload_to_vbms!

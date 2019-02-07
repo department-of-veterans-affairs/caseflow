@@ -40,7 +40,7 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
-    if intake.detail.try(:processed_in_caseflow?)
+    if !intake.detail.is_a?(Appeal) && intake.detail.try(:processed_in_caseflow?)
       flash[:success] = success_message
       render json: { serverIntake: { redirect_to: intake.detail.business_line.tasks_url } }
     else
@@ -59,6 +59,29 @@ class IntakesController < ApplicationController
   end
 
   private
+
+  helper_method :index_props
+  def index_props
+    {
+      userDisplayName: current_user.display_name,
+      serverIntake: intake_ui_hash,
+      dropdownUrls: dropdown_urls,
+      page: "Intake",
+      feedbackUrl: feedback_url,
+      buildDate: build_date,
+      featureToggles: {
+        intakeAma: FeatureToggle.enabled?(:intakeAma, user: current_user),
+        legacyOptInEnabled: FeatureToggle.enabled?(:intake_legacy_opt_in, user: current_user),
+        useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
+      }
+    }
+  rescue StandardError => e
+    Raven.capture_exception(e)
+    # cancel intake so user doesn't get stuck
+    intake_in_progress&.cancel!(reason: "system_error")
+    flash[:error] = e.message + ". Intake has been cancelled, please retry."
+    raise
+  end
 
   def ama_enabled?
     FeatureToggle.enabled?(:intakeAma, user: current_user)
@@ -80,13 +103,16 @@ class IntakesController < ApplicationController
     render "out_of_service", layout: "application" if Rails.cache.read("intake_out_of_service")
   end
 
+  def intake_ui_hash
+    intake_in_progress ? intake_in_progress.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user)) : {}
+  end
+
   # TODO: This could be moved to the model.
   def intake_in_progress
     return @intake_in_progress unless @intake_in_progress.nil?
 
     @intake_in_progress = Intake.in_progress.find_by(user: current_user) || false
   end
-  helper_method :intake_in_progress
 
   def new_intake
     @new_intake ||= Intake.build(
@@ -102,7 +128,7 @@ class IntakesController < ApplicationController
 
   def veteran_file_number
     # param could be file number or SSN. Make sure we return file number.
-    veteran = Veteran.find_by_file_number_or_ssn(params[:file_number])
+    veteran = Veteran.find_by_file_number_or_ssn(params[:file_number], sync_name: true)
     veteran ? veteran.file_number : params[:file_number]
   end
 

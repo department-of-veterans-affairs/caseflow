@@ -42,7 +42,7 @@ module IssueUpdater
 
   def create_decision_issues!
     issues.each do |issue_attrs|
-      request_issues = appeal.request_issues.where(id: issue_attrs[:request_issue_ids])
+      request_issues = appeal.request_issues.open.where(id: issue_attrs[:request_issue_ids])
       next if request_issues.empty?
 
       decision_issue = DecisionIssue.create!(
@@ -51,7 +51,8 @@ module IssueUpdater
         benefit_type: issue_attrs[:benefit_type],
         diagnostic_code: issue_attrs[:diagnostic_code],
         participant_id: appeal.veteran.participant_id,
-        decision_review: appeal
+        decision_review: appeal,
+        caseflow_decision_date: appeal.decision_document&.decision_date
       )
 
       request_issues.each do |request_issue|
@@ -117,7 +118,7 @@ module IssueUpdater
     fail_if_invalid_issues_attrs!
 
     (issues || []).each do |issue_attrs|
-      request_issue = appeal.request_issues.find_by(id: issue_attrs[:id]) if appeal
+      request_issue = appeal.request_issues.open.find_by(id: issue_attrs[:id]) if appeal
       next unless request_issue
 
       request_issue.update(disposition: issue_attrs[:disposition])

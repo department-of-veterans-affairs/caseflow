@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe RequestIssuesUpdate do
   before do
     Time.zone = "America/New_York"
@@ -98,6 +96,12 @@ describe RequestIssuesUpdate do
 
     let(:existing_request_issue_id) do
       review.request_issues.find { |issue| issue.contested_rating_issue_reference_id == "issue1" }.id
+    end
+
+    context "#veteran" do
+      it "delegates to review" do
+        expect(request_issues_update.veteran).to eq(request_issues_update.review.veteran)
+      end
     end
 
     context "#created_issues" do
@@ -285,17 +289,17 @@ describe RequestIssuesUpdate do
           )
 
           removed_issue = RequestIssue.find_by(id: existing_legacy_opt_in_request_issue_id)
-          expect(removed_issue).to have_attributes(
-            review_request: nil
-          )
+          expect(removed_issue.review_request).to_not be_nil
           expect(removed_issue.removed_at).to_not be_nil
+          expect(removed_issue).to be_closed
+          expect(removed_issue).to be_removed
           expect(removed_issue.legacy_issue_optin.rollback_processed_at).to_not be_nil
 
           expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
 
-          new_map = rating_end_product_establishment.send(
+          new_map = rating_end_product_establishment.reload.send(
             :rating_issue_contention_map,
-            review.request_issues.reload
+            review.reload.open_request_issues
           )
 
           expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
@@ -470,7 +474,7 @@ describe RequestIssuesUpdate do
     let!(:riu_attempts_ended) do
       create(
         :request_issues_update,
-        submitted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        last_submitted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
         attempted_at: (RequestIssuesUpdate::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
       )
     end

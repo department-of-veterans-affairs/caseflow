@@ -52,7 +52,7 @@ class ClaimReview < DecisionReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      if processed_in_caseflow?
+      if processed_in_caseflow? || !issue.eligible?
         issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       else
         issue.update!(
@@ -68,6 +68,12 @@ class ClaimReview < DecisionReview
 
   def create_decision_review_task_if_required!
     create_decision_review_task! if processed_in_caseflow?
+  end
+
+  def add_user_to_business_line!
+    return unless processed_in_caseflow?
+
+    OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -124,17 +130,52 @@ class ClaimReview < DecisionReview
   def search_table_ui_hash
     {
       caseflow_veteran_id: claim_veteran&.id,
+      claimant_names: claimants.map(&:name).uniq, # We're not sure why we see duplicate claimants, but this helps
       claim_id: id,
+      end_product_status: search_table_statuses,
+      establishment_error: establishment_error,
+      review_type: self.class.to_s.underscore,
       veteran_file_number: veteran_file_number,
-      veteran_full_name: claim_veteran&.name&.formatted(:readable_full),
-      end_products: end_product_establishments,
-      claimant_names: claimants.map(&:name),
-      review_type: self.class.to_s.underscore
+      veteran_full_name: claim_veteran&.name&.formatted(:readable_full)
     }
   end
 
   def claim_veteran
     Veteran.find_by(file_number: veteran_file_number)
+  end
+
+  def search_table_statuses
+    if processed_in_caseflow?
+      [{
+        ep_code: "Processed in Caseflow",
+        ep_status: ""
+      }] # eventually this is a link
+    else
+      end_product_establishments.map(&:status)
+    end
+  end
+
+  # needed for appeal status api
+  def program
+    case benefit_type
+    when "voc_rehab"
+      "vre"
+    when "vha"
+      "medical"
+    when "nca"
+      "burial"
+    else
+      benefit_type
+    end
+  end
+
+  def aoj
+    case benefit_type
+    when "compensation", "pension", "fiduciary", "insurance", "education", "voc_rehab", "loan_guaranty"
+      "vba"
+    else
+      benefit_type
+    end
   end
 
   private
@@ -159,7 +200,9 @@ class ClaimReview < DecisionReview
 
   def end_product_establishment_for_issue(issue)
     end_product_establishments.find_by(
-      code: issue.end_product_code
+      "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
+      issue.end_product_code,
+      EndProduct::INACTIVE_STATUSES
     ) || new_end_product_establishment(issue.end_product_code)
   end
 

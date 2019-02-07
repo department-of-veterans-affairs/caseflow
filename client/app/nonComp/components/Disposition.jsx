@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
@@ -25,11 +25,15 @@ class NonCompDecisionIssue extends React.PureComponent {
   }
 
   handleDispositionChange = (option) => {
-    this.props.onDispositionChange(this.state.issueIdx, option.value);
+    this.props.onDispositionChange(this.state.issueIdx, option && option.value);
   }
 
   dispositionOptions = () => {
-    return DISPOSITION_OPTIONS.map((code) => {
+    const isSupplementalClaim = this.props.issue.review_request_title === 'Supplemental Claim';
+
+    return DISPOSITION_OPTIONS.filter((code) => {
+      return !isSupplementalClaim || code !== 'DTA Error';
+    }).map((code) => {
       return {
         value: code,
         label: code
@@ -47,7 +51,7 @@ class NonCompDecisionIssue extends React.PureComponent {
       index,
       disabled
     } = this.props;
-    let issueDate = formatDate(issue.rating_issue_profile_date || issue.decision_date);
+    let issueDate = formatDateStr(issue.rating_issue_profile_date || issue.decision_date);
 
     return <div className="cf-decision">
       <hr />
@@ -86,7 +90,7 @@ class NonCompDispositions extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    let today = formatDate(new Date());
+    let today = formatDateStr(new Date());
 
     this.state = {
       requestIssues: formatRequestIssuesWithDecisionIssues(
@@ -97,8 +101,7 @@ class NonCompDispositions extends React.PureComponent {
   }
 
   handleDecisionDate = (value) => {
-    this.setState({ decisionDate: value });
-    this.checkFormFilledOut();
+    this.setState({ decisionDate: value }, this.checkFormFilledOut);
   }
 
   handleSave = () => {
@@ -139,7 +142,13 @@ class NonCompDispositions extends React.PureComponent {
 
     let completeDiv = null;
 
-    if (!task.completed_at) {
+    let decisionDate = this.state.decisionDate;
+
+    if (appeal.decisionIssues.length > 0) {
+      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].caseflowDecisionDate);
+    }
+
+    if (!task.closed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-txt-r">
           <a className="cf-cancel-link" href={`${task.tasks_url}`}>Cancel</a>
@@ -172,7 +181,7 @@ class NonCompDispositions extends React.PureComponent {
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
                 decisionDescription={issue.decisionIssue.description}
                 decisionDisposition={issue.decisionIssue.disposition}
-                disabled={Boolean(task.completed_at)}
+                disabled={Boolean(task.closed_at)}
               />;
             })
           }
@@ -184,9 +193,9 @@ class NonCompDispositions extends React.PureComponent {
             <DateSelector
               label="Thank you for completing your decision in Caseflow. Please indicate the decision date."
               name="decision-date"
-              value={this.state.decisionDate}
+              value={decisionDate}
               onChange={this.handleDecisionDate}
-              readOnly={Boolean(task.completed_at)}
+              readOnly={Boolean(task.closed_at)}
             />
           </InlineForm>
         </div>

@@ -1,23 +1,22 @@
 class HearingsController < ApplicationController
-  before_action :verify_access, except: [:show_print, :show, :update]
-  before_action :check_hearing_prep_out_of_service
+  before_action :verify_access, except: [:show_print, :show, :update, :find_closest_hearing_locations]
   before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
   before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
+  before_action :check_hearing_prep_out_of_service
+
+  def show
+    render json: hearing.to_hash(current_user.id)
+  end
 
   def update
-    if params["hearing"]["master_record_updated"]
-      HearingRepository.slot_new_hearing(
-        params["hearing"]["master_record_updated"]["id"],
-        params["hearing"]["master_record_updated"]["time"],
-        hearing.appeal
-      )
-    end
+    slot_new_hearing if postponed?
 
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(update_params_legacy)
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
       HearingRepository.load_vacols_data(hearing)
     else
+      Transcription.find_or_create_by(hearing: hearing)
       hearing.update!(update_params)
     end
 
@@ -32,7 +31,39 @@ class HearingsController < ApplicationController
     hearings_dockets_path
   end
 
+  def find_closest_hearing_locations
+    begin
+      HearingDayMapper.validate_regional_office(params["regional_office"])
+
+      veteran = Veteran.find_by(file_number: params["veteran_file_number"])
+
+      facility_ids = (RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
+                     []) << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
+
+      va_dot_gov_address = veteran.validate_address
+
+      render json: { hearing_locations: VADotGovService.get_distance(lat: va_dot_gov_address[:lat],
+                                                                     long: va_dot_gov_address[:long],
+                                                                     ids: facility_ids) }
+    rescue Caseflow::Error::VaDotGovAPIError => e
+      render json: { message: e.message, status: "ERROR" }
+    end
+  end
+
   private
+
+  def slot_new_hearing
+    hearing.slot_new_hearing(
+      master_record_params["id"],
+      scheduled_time: master_record_params["time"]&.stringify_keys,
+      appeal: hearing.appeal,
+      hearing_location_attrs: master_record_params["hearing_location_attributes"]&.to_hash
+    )
+  end
+
+  def postponed?
+    params["master_record_updated"].present?
+  end
 
   def check_hearing_prep_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("hearing_prep_out_of_service")
@@ -51,7 +82,7 @@ class HearingsController < ApplicationController
   end
 
   def verify_access_to_reader_or_hearings
-    verify_authorized_roles("Reader", "Hearing Prep")
+    verify_authorized_roles("Reader", "Hearing Prep", "Edit HearSched", "Build HearSched")
   end
 
   def verify_access_to_hearing_prep_or_schedule
@@ -69,16 +100,51 @@ class HearingsController < ApplicationController
                                      :aod,
                                      :transcript_requested,
                                      :prepped,
-                                     :scheduled_for)
+                                     :scheduled_for,
+                                     hearing_location_attributes: [
+                                       :city, :state, :address,
+                                       :facility_id, :facility_type,
+                                       :classification, :name, :distance,
+                                       :zip_code
+                                     ])
   end
 
+  def master_record_params
+    params.require("master_record_updated").permit(:id,
+                                                   time: [:h, :m, :offset],
+                                                   hearing_location_attributes: [
+                                                     :city, :state, :address,
+                                                     :facility_id, :facility_type,
+                                                     :classification, :name, :distance,
+                                                     :zip_code
+                                                   ])
+  end
+
+  # rubocop:disable Metrics/MethodLength
   def update_params
     params.require("hearing").permit(:notes,
                                      :disposition,
                                      :hold_open,
                                      :transcript_requested,
+                                     :transcript_sent_date,
                                      :prepped,
                                      :scheduled_time,
-                                     :evidence_window_waived)
+                                     :judge_id,
+                                     :room,
+                                     :bva_poc,
+                                     :evidence_window_waived,
+                                     hearing_location_attributes: [
+                                       :city, :state, :address,
+                                       :facility_id, :facility_type,
+                                       :classification, :name, :distance,
+                                       :zip_code
+                                     ],
+                                     transcription_attributes: [
+                                       :expected_return_date, :problem_notice_sent_date,
+                                       :problem_type, :requested_remedy,
+                                       :sent_to_transcriber_date, :task_number,
+                                       :transcriber, :uploaded_to_vbms_date
+                                     ])
   end
+  # rubocop:enable Metrics/MethodLength
 end

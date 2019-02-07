@@ -6,12 +6,15 @@ class TasksController < ApplicationController
 
   TASK_CLASSES = {
     ColocatedTask: ColocatedTask,
+    AttorneyRewriteTask: AttorneyRewriteTask,
     AttorneyTask: AttorneyTask,
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
     JudgeAssignTask: JudgeAssignTask,
     JudgeQualityReviewTask: JudgeQualityReviewTask,
     ScheduleHearingTask: ScheduleHearingTask,
+    TranslationTask: TranslationTask,
+    HearingAdminActionTask: HearingAdminActionTask,
     MailTask: MailTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
@@ -89,7 +92,7 @@ class TasksController < ApplicationController
     # This is a temporary solution for legacy hearings. We need them to exist on the case details
     # page, but have no good way to create them before a page load. So we need to check here if we
     # need to create a hearing task and if so, create it.
-    ScheduleHearingTask.create_if_eligible(appeal)
+    ScheduleHearingTask.find_or_create_if_eligible(appeal)
 
     # VSO users should only get tasks assigned to them or their organization.
     if current_user.vso_employee?
@@ -110,16 +113,8 @@ class TasksController < ApplicationController
   def ready_for_hearing_schedule
     ro = HearingDayMapper.validate_regional_office(params[:ro])
 
-    tasks = AppealRepository.appeals_ready_for_hearing_schedule(ro).map do |appeal|
-      ScheduleHearingTask.new(
-        appeal: appeal,
-        status: Constants.TASK_STATUSES.in_progress.to_sym,
-        assigned_to: HearingsManagement.singleton
-      )
-    end
-
     render json: {
-      data: tasks.map do |task|
+      data: ScheduleHearingTask.tasks_for_ro(ro).map do |task|
         ActiveModelSerializers::SerializableResource.new(
           task,
           user: current_user,
@@ -159,8 +154,11 @@ class TasksController < ApplicationController
   helper_method :user
 
   def task_class
-    mail_task_classes = Hash[*MailTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten]
-    classes = TASK_CLASSES.merge(mail_task_classes)
+    additional_task_classes = Hash[
+      *MailTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
+      *HearingAdminActionTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten
+    ]
+    classes = TASK_CLASSES.merge(additional_task_classes)
     classes[create_params.first[:type].try(:to_sym)]
   end
 

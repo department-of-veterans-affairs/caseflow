@@ -8,6 +8,7 @@ describe FetchHearingLocationsForVeteransJob do
     let!(:bfcorlid) { "123456789S" }
     let!(:bfcorlid_file_number) { "123456789" }
     let!(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S") }
+    let!(:legacy_appeal) { create(:legacy_appeal, vbms_id: "123456789S", vacols_case: vacols_case) }
 
     before(:each) do
       Fakes::BGSService.veteran_records = { "123456789" => veteran_record(file_number: "123456789S", state: "MA") }
@@ -20,18 +21,71 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
 
+    describe "#veterans" do
+      context "when veterans exist in location 57 or have schedule hearing tasks" do
+        # Legacy appeal with schedule hearing task
+        let!(:veteran_2) { create(:veteran, file_number: "999999999") }
+        let!(:vacols_case_2) { create(:case, bfcurloc: "CASEFLOW", bfregoff: "RO01", bfcorlid: "999999999S") }
+        let!(:legacy_appeal_2) { create(:legacy_appeal, vbms_id: "999999999S", vacols_case: vacols_case_2) }
+        let!(:task_1) do
+          ScheduleHearingTask.create!(appeal: legacy_appeal_2, assigned_to: HearingsManagement.singleton)
+        end
+        # AMA appeal with schedule taks
+        let!(:veteran_3) { create(:veteran, file_number: "000000000") }
+        let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
+        let!(:task_2) { ScheduleHearingTask.create!(appeal: appeal, assigned_to: HearingsManagement.singleton) }
+        # AMA appeal with completed address admin action
+        let!(:veteran_4) { create(:veteran, file_number: "222222222") }
+        let!(:appeal_2) { create(:appeal, veteran_file_number: "222222222") }
+        let!(:task_3) { ScheduleHearingTask.create!(appeal: appeal_2, assigned_to: HearingsManagement.singleton) }
+        let!(:completed_admin_action) do
+          HearingAdminActionVerifyAddressTask.create!(
+            appeal: appeal_2,
+            assigned_to: HearingsManagement.singleton,
+            parent: task_3,
+            status: "completed"
+          )
+        end
+        # should not be returned
+        before do
+          # tasks marked completed
+          (0..2).each do |number|
+            create(:veteran, file_number: "23456781#{number}")
+            app = create(:appeal, veteran_file_number: "23456781#{number}")
+            ScheduleHearingTask.create!(appeal: app, assigned_to: HearingsManagement.singleton, status: "completed")
+          end
+
+          # task with Address admin action
+          create(:veteran, file_number: "234567815")
+          app_2 = create(:appeal, veteran_file_number: "234567815")
+          tsk = ScheduleHearingTask.create!(appeal: app_2, assigned_to: HearingsManagement.singleton)
+          HearingAdminActionVerifyAddressTask.create!(
+            appeal: app_2,
+            assigned_to: HearingsManagement.singleton,
+            parent: tsk
+          )
+
+          # legacy not in location 57
+          create(:veteran, file_number: "111111111")
+          vac_case = create(:case, bfcurloc: "39", bfregoff: "RO01", bfcorlid: "111111111S")
+          create(:legacy_appeal, vbms_id: "111111111", vacols_case: vac_case)
+        end
+
+        it "returns only veterans with scheduled hearings tasks without an admin action or who are in location 57" do
+          job.create_missing_veterans
+          created_vet = Veteran.find_by(file_number: bfcorlid_file_number)
+          expect(job.veterans.pluck(:id)).to contain_exactly(veteran_2.id, veteran_3.id, veteran_4.id, created_vet.id)
+        end
+      end
+    end
+
     describe "#perform" do
       let(:distance_response) { HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11).to_json) }
       let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body.to_json) }
       before do
         VADotGovService = ExternalApi::VADotGovService
 
-        allow(DataDogService).to receive(:emit_gauge).with(hash_including(metric_name: "pages_requested"), any_args).and_return("") # rubocop:disable Metrics/LineLength
-
-        allow(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response)
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
-
-        allow(MetricsService).to receive(:record).with(/POST/, any_args).and_return(validate_response)
         allow(HTTPI).to receive(:post).with(instance_of(HTTPI::Request)).and_return(validate_response)
       end
 
@@ -43,7 +97,7 @@ describe FetchHearingLocationsForVeteransJob do
 
       context "when closest_regional_office has to be fetched and only one RO/AHL is in veteran's state" do
         it "only fetches RO distance once" do
-          expect(MetricsService).to receive(:record).with(/GET/, any_args).once
+          expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).once
           FetchHearingLocationsForVeteransJob.perform_now
           expect(AvailableHearingLocations.count).to eq 1
         end
@@ -62,7 +116,7 @@ describe FetchHearingLocationsForVeteransJob do
         end
         let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body(state: "OH").to_json) }
         it "fetches RO distance twice" do
-          expect(MetricsService).to receive(:record).with(/GET/, any_args).twice
+          expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).twice
           FetchHearingLocationsForVeteransJob.perform_now
           expect(AvailableHearingLocations.count).to eq 1
         end
@@ -81,11 +135,53 @@ describe FetchHearingLocationsForVeteransJob do
           expect(AvailableHearingLocations.first.distance).to eq 11.11
         end
       end
+
+      context "when va_dot_gov_service throws an Address error" do
+        before do
+          message = {
+            "messages" => [
+              {
+                "key" => "AddressCouldNotBeFound"
+              }
+            ]
+          }
+
+          error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
+          allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+        end
+
+        it "creates an ScheduleHearingTask and admin action" do
+          FetchHearingLocationsForVeteransJob.perform_now
+          tsk = ScheduleHearingTask.first
+          expect(tsk.appeal.veteran_file_number).to eq bfcorlid_file_number
+          expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
+        end
+
+        context "and appeal already has schedule hearing task" do
+          let!(:task) do
+            ScheduleHearingTask.create!(appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
+          end
+
+          it "creates an admin action" do
+            FetchHearingLocationsForVeteransJob.perform_now
+            expect(ScheduleHearingTask.first.id).to eq task.id
+            expect(HearingAdminActionVerifyAddressTask.where(parent_id: task.id).count).to eq 1
+          end
+        end
+
+        context "and job has alreay been run on a veteran" do
+          it "only produces one admin action" do
+            FetchHearingLocationsForVeteransJob.perform_now
+            FetchHearingLocationsForVeteransJob.perform_now
+            expect(HearingAdminActionVerifyAddressTask.count).to eq 1
+          end
+        end
+      end
     end
 
     describe "#fetch_and_update_ro_for_veteran" do
       let(:veteran) { create(:veteran, file_number: bfcorlid_file_number) }
-      let(:veteran_state) { "VA" }
+      let(:veteran_state) { "NH" }
       let(:mock_va_dot_gov_address) do
         {
           lat: 0.0,
@@ -211,8 +307,6 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
   end
-
-  # rubocop:disable Metrics/MethodLength
   def veteran_record(file_number:, state: "MA")
     {
       file_number: file_number,
@@ -304,5 +398,4 @@ describe FetchHearingLocationsForVeteransJob do
       "distance": distance
     }
   end
-  # rubocop:enable Metrics/MethodLength
 end

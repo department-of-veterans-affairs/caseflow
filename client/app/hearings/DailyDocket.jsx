@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -100,6 +102,10 @@ const aodOptions = [{ value: 'granted',
   label: 'Filed' },
 { value: 'none',
   label: 'None' }];
+
+const notesTitleStyling = css({
+  marginTop: '15px'
+});
 
 const selectedValue = (selected) => selected ? selected.value : null;
 
@@ -328,7 +334,7 @@ export class DailyDocket extends React.PureComponent {
     let dailyDocketRows = [];
     let count = 0;
 
-    _.forEach(hearings, (hearing) => {
+    _.forEach(_.sortBy(hearings, ['scheduled_for']), (hearing) => {
       count += 1;
 
       const dailyDocketRow = this.getDailyDocketRow(hearing, count);
@@ -394,12 +400,20 @@ export class DailyDocket extends React.PureComponent {
       <AppSegment extraClassNames="cf-hearings" noMarginTop filledBackground>
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
-            <h1>Daily Docket ({moment(docket[0].scheduled_for).format('ddd l')})</h1>
-            <span>VLJ: {this.props.veteran_law_judge.full_name}</span>
+            <h1>Daily Docket ({moment(this.props.date).format('ddd l')})</h1>
+            {this.props.hearingDay.notes &&
+            <span {...notesTitleStyling}>
+              <br /><strong>Notes: </strong>
+              <br />{this.props.hearingDay.notes}
+            </span>
+            }
           </div>
           <span className="cf-push-right">
-            VLJ: {docket[0].judge ? docket[0].judge.full_name : null}<br />
-            Hearing Type: {docket[0].readable_request_type}<br />
+            VLJ: {this.props.veteran_law_judge.full_name}<br />
+            Coordinator: {this.props.hearingDay.coordinator}<br />
+            Hearing Type: {this.props.hearingDay.requestType ?
+              this.props.hearingDay.requestType : docket[0].readable_request_type}<br />
+            Room Number: {this.props.hearingDay.room}<br />
           </span>
         </div>
 

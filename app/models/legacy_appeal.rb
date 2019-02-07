@@ -5,6 +5,7 @@ class LegacyAppeal < ApplicationRecord
   include CachedAttributes
   include AddressMapper
   include Taskable
+  include DocumentConcern
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -126,8 +127,8 @@ class LegacyAppeal < ApplicationRecord
     quality_review: "48",
     translation: "14",
     schedule_hearing: "57",
-    awaiting_video_hearing: "38",
-    awaiting_co_hearing: "36"
+    case_storage: "81",
+    service_organization: "55"
   }.freeze
 
   def document_fetcher
@@ -138,13 +139,6 @@ class LegacyAppeal < ApplicationRecord
 
   delegate :documents, :new_documents_for_user, :number_of_documents,
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
-
-  # Number of documents stored locally via nightly RetrieveDocumentsForReaderJob.
-  # Fall back to count from VBMS if no local documents are found.
-  def number_of_documents_from_caseflow
-    count = Document.where(file_number: veteran_file_number).size
-    (count != 0) ? count : number_of_documents
-  end
 
   def number_of_documents_after_certification
     return 0 unless certification_date
@@ -180,6 +174,12 @@ class LegacyAppeal < ApplicationRecord
     [notification_date + 1.year, soc_date + 60.days].max.to_date
   end
 
+  def soc_opt_in_due_date
+    return unless soc_date || !ssoc_dates.empty?
+
+    ([soc_date] + ssoc_dates).max.to_date + 60.days
+  end
+
   def cavc_due_date
     return unless decided_by_bva?
 
@@ -190,8 +190,20 @@ class LegacyAppeal < ApplicationRecord
     !!appellant_first_name
   end
 
+  def veteran_if_exists
+    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
+  end
+
+  def veteran_closest_regional_office
+    veteran_if_exists&.closest_regional_office
+  end
+
+  def veteran_available_hearing_locations
+    veteran_if_exists&.available_hearing_locations
+  end
+
   def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+    @veteran ||= Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number)
   end
 
   def veteran_ssn
@@ -313,6 +325,10 @@ class LegacyAppeal < ApplicationRecord
   end
 
   delegate :representatives, to: :case_record
+
+  def vsos
+    Vso.where(participant_id: [power_of_attorney.bgs_participant_id])
+  end
 
   def contested_claim
     representatives.any? { |r| r.reptype == "C" }
@@ -700,28 +716,12 @@ class LegacyAppeal < ApplicationRecord
     vacols_id
   end
 
-  def timeline
-    [
-      {
-        title: decision_date ? COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING,
-        date: decision_date
-      },
-      {
-        title: form9_date ? COPY::CASE_TIMELINE_FORM_9_RECEIVED : COPY::CASE_TIMELINE_FORM_9_PENDING,
-        date: form9_date
-      },
-      {
-        title: nod_date ? COPY::CASE_TIMELINE_NOD_RECEIVED : COPY::CASE_TIMELINE_NOD_PENDING,
-        date: nod_date
-      }
-    ]
-  end
-
   private
 
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
       (RequestStore.store[:application] = "queue" ||
+       RequestStore.store[:application] = "hearing_schedule" ||
        RequestStore.store[:application] = "idt")
   end
 

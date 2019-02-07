@@ -102,6 +102,7 @@ Rails.application.routes.draw do
       get :new_documents
       get :veteran
       get :power_of_attorney
+      get :hearings
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
       resources :advance_on_docket_motions, only: [:create]
@@ -126,6 +127,7 @@ Rails.application.routes.draw do
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule', to: "hearings/hearing_day#index"
+  get 'hearings/:hearing_id/details', to: "hearing_schedule#hearing_details_index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
@@ -137,8 +139,9 @@ Rails.application.routes.draw do
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
+  get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
 
-  resources :hearings, only: [:update]
+  resources :hearings, only: [:update, :show]
 
   patch "certifications" => "certifications#create"
 
@@ -146,7 +149,7 @@ Rails.application.routes.draw do
   get 'dispatch/help' => 'help#dispatch'
   get 'certification/help' => 'help#certification'
   get 'reader/help' => 'help#reader'
-  get 'hearings/help' => 'help#hearings'
+  get 'hearing_prep/help' => 'help#hearings'
   get 'intake/help' => 'help#intake'
   get 'queue/help' => 'help#queue'
 
@@ -180,6 +183,11 @@ Rails.application.routes.draw do
     end
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
+
+  resources :asyncable_jobs, param: :klass, only: [] do
+    resources :jobs, controller: :asyncable_jobs, param: :id, only: [:index, :show, :update]
+  end
+  match '/jobs' => 'asyncable_jobs#index', via: [:get]
 
   resources :users, only: [:index]
 

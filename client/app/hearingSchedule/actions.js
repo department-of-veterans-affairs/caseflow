@@ -63,6 +63,14 @@ export const onHearingNotesUpdate = (hearingId, notes) => ({
   }
 });
 
+export const onTranscriptRequestedUpdate = (hearingId, transcriptRequested) => ({
+  type: ACTIONS.TRANSCRIPT_REQUESTED_UPDATE,
+  payload: {
+    hearingId,
+    transcriptRequested
+  }
+});
+
 export const onHearingDispositionUpdate = (hearingId, disposition) => ({
   type: ACTIONS.HEARING_DISPOSITION_UPDATE,
   payload: {
@@ -79,11 +87,35 @@ export const onHearingDateUpdate = (hearingId, date) => ({
   }
 });
 
+export const onHearingLocationUpdate = (hearingId, location) => ({
+  type: ACTIONS.HEARING_LOCATION_UPDATE,
+  payload: {
+    hearingId,
+    location
+  }
+});
+
+export const onHearingRegionalOfficeUpdate = (hearingId, regionalOffice) => ({
+  type: ACTIONS.HEARING_REGIONAL_OFFICE_UPDATE,
+  payload: {
+    hearingId,
+    regionalOffice
+  }
+});
+
 export const onHearingTimeUpdate = (hearingId, time) => ({
   type: ACTIONS.HEARING_TIME_UPDATE,
   payload: {
     hearingId,
     time
+  }
+});
+
+export const onHearingOptionalTime = (hearingId, optionalTime) => ({
+  type: ACTIONS.HEARING_OPTIONAL_TIME,
+  payload: {
+    hearingId,
+    optionalTime
   }
 });
 
@@ -275,20 +307,6 @@ export const onHearingDayModified = (hearingDayModified) => ({
   type: ACTIONS.HEARING_DAY_MODIFIED,
   payload: {
     hearingDayModified
-  }
-});
-
-export const onReceiveJudges = (activeJudges) => ({
-  type: ACTIONS.RECEIVE_JUDGES,
-  payload: {
-    activeJudges
-  }
-});
-
-export const onReceiveCoordinators = (activeCoordinators) => ({
-  type: ACTIONS.RECEIVE_COORDINATORS,
-  payload: {
-    activeCoordinators
   }
 });
 

@@ -49,7 +49,7 @@ RSpec.feature "ColocatedTask" do
 
       # Return case to attorney.
       find(".Select-control", text: "Select an action…").click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h[:label]).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
       find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
       # Redirected to personal queue page. Return to attorney succeeds.
@@ -64,7 +64,7 @@ RSpec.feature "ColocatedTask" do
       # Click into case details page. Expect to see draft decision option.
       click_on(appeal.veteran.name.formatted(:readable_full))
       find(".Select-control", text: "Select an action…").click
-      expect(page).to have_content(Constants.TASK_ACTIONS.REVIEW_DECISION.to_h[:label])
+      expect(page).to have_content(Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label])
 
       # ColocatedTask assigned to organization should have status completed.
       expect(atty_task.children.first.status).to eq(Constants.TASK_STATUSES.completed)
@@ -142,6 +142,7 @@ RSpec.feature "ColocatedTask" do
       visit("/queue/appeals/#{appeal.uuid}")
 
       # Send case to Translation team.
+      expect(TranslationTask.count).to eq 0
       find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.label).click
       fill_in("instructions", with: "Please translate some documents")
@@ -150,6 +151,7 @@ RSpec.feature "ColocatedTask" do
       # Redirected to personal queue page. Return to attorney succeeds.
       expect(page).to have_current_path("/queue")
       expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, Translation.singleton.name))
+      expect(TranslationTask.count).to eq 1
 
       # View Translation team queue to confirm the appeal shows up there.
       visit(Translation.singleton.path)

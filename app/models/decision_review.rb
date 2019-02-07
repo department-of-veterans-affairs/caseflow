@@ -43,6 +43,10 @@ class DecisionReview < ApplicationRecord
       :establishment_error
     end
 
+    def last_submitted_at_column
+      :establishment_last_submitted_at
+    end
+
     def ama_activation_date
       if FeatureToggle.enabled?(:use_ama_activation_date)
         Constants::DATES["AMA_ACTIVATION"].to_date
@@ -89,14 +93,14 @@ class DecisionReview < ApplicationRecord
         formName: veteran&.name&.formatted(:form),
         ssn: veteran&.ssn
       },
-      relationships: veteran&.relationships,
+      relationships: veteran&.relationships&.map(&:ui_hash),
       claimant: claimant_participant_id,
       veteranIsNotClaimant: veteran_is_not_claimant,
       receiptDate: receipt_date.to_formatted_s(:json_date),
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash),
+      requestIssues: open_request_issues.map(&:ui_hash),
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
@@ -186,10 +190,14 @@ class DecisionReview < ApplicationRecord
   end
 
   def active_nonrating_request_issues
-    @active_nonrating_request_issues ||= RequestIssue.nonrating
+    @active_nonrating_request_issues ||= RequestIssue.nonrating.open
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
       .select(&:status_active?)
+  end
+
+  def open_request_issues
+    request_issues.open
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
@@ -268,7 +276,7 @@ class DecisionReview < ApplicationRecord
     veteran.ratings.reject { |rating| rating.issues.empty? }
 
     # return empty list when there are no ratings
-  rescue Rating::BackfilledRatingError => e
+  rescue Rating::BackfilledRatingError, Rating::LockedRatingError => e
     Raven.capture_exception(e)
     []
   end

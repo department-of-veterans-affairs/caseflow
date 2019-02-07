@@ -18,7 +18,7 @@ import {
 } from '../../establishClaim/util';
 import { getStationOfJurisdiction } from '../../establishClaim/selectors';
 
-import { formatDate } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import EstablishClaimDecision from './EstablishClaimDecision';
 import EstablishClaimForm from './EstablishClaimForm';
 import EstablishClaimNote from './EstablishClaimNote';
@@ -379,7 +379,7 @@ export default class EstablishClaim extends React.Component {
   }
 
   formattedDecisionDate = () => {
-    return formatDate(this.props.task.appeal.serialized_decision_date);
+    return formatDateStr(this.props.task.appeal.serialized_decision_date);
   }
 
   prepareSpecialIssues() {

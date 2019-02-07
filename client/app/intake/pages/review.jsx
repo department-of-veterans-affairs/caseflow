@@ -58,7 +58,11 @@ class ReviewNextButton extends React.PureComponent {
       () => selectedForm.category === 'decisionReview' ?
         this.props.history.push('/add_issues') :
         this.props.history.push('/finish')
-    );
+      , (error) => {
+        // This is expected behavior on bad data, so prevent
+        // sentry from alerting an unhandled error
+        return error;
+      });
   }
 
   render = () => {

@@ -27,15 +27,15 @@ describe LegacyHearing do
   let(:scheduled_for) { 1.day.ago }
   let(:disposition) { nil }
   let(:hold_open) { nil }
-  let(:request_type) { "V" }
+  let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
 
   context "#location" do
-    subject { hearing.location }
+    subject { hearing.request_type_location }
 
     it { is_expected.to eq("Baltimore regional office") }
 
     context "when it's a central office hearing" do
-      let(:request_type) { "C" }
+      let(:request_type) { HearingDay::REQUEST_TYPES[:central] }
 
       it { is_expected.to eq("Board of Veterans' Appeals in Washington, DC") }
     end
@@ -250,7 +250,7 @@ describe LegacyHearing do
       let!(:existing_user) { User.create(css_id: vacols_record[:css_id], station_id: "123") }
       let!(:user) { User.create(css_id: "1112", station_id: "123") }
       let!(:hearing) { LegacyHearing.create(vacols_id: case_hearing.hearing_pkseq, user: user) }
-      subject { LegacyHearing.assign_or_create_from_vacols_record(vacols_record, hearing) }
+      subject { LegacyHearing.assign_or_create_from_vacols_record(vacols_record, legacy_hearing: hearing) }
 
       it "should create a hearing record and reassign user" do
         expect(subject.present?).to be true

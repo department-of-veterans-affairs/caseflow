@@ -210,6 +210,8 @@ class AppealSeries < ApplicationRecord
       :ftr
     when "RAMP Opt-in"
       :ramp
+    when "AMA SOC/SSOC Opt-in"
+      :statutory_opt_in
     when "Dismissed, Death", "Advance Withdrawn Death of Veteran"
       :death
     when "Reconsideration by Letter"
@@ -238,7 +240,7 @@ class AppealSeries < ApplicationRecord
       {
         date: hearing.scheduled_for.to_date,
         type: hearing.readable_request_type.downcase,
-        location: hearing.location
+        location: hearing.request_type_location
       }
     when :pending_hearing_scheduling
       { type: latest_appeal.sanitized_hearing_request_type }

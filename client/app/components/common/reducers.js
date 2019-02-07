@@ -1,7 +1,57 @@
 import { ACTIONS } from './actionTypes';
 import { update } from '../../util/ReducerUtil';
 
-export const initialState = {};
+export const initialState = {
+  dropdowns: {
+    judges: {},
+    hearingCoordinators: {},
+    regionalOffices: {}
+  },
+  forms: {}
+};
+
+const dropdownsReducer = (state = {}, action = {}) => {
+  switch (action.type) {
+  case ACTIONS.FETCH_DROPDOWN_DATA:
+    return update(state, {
+      [action.payload.dropdownName]: {
+        $set: {
+          options: null,
+          isFetching: true
+        }
+      }
+    });
+  case ACTIONS.RECEIVE_DROPDOWN_DATA:
+    return update(state, {
+      [action.payload.dropdownName]: {
+        $set: {
+          options: action.payload.data,
+          isFetching: false
+        }
+      }
+    });
+  default:
+    return state;
+  }
+};
+
+const formsReducer = (state = {}, action = {}) => {
+  const formState = state[action.payload.formName] || {};
+
+  switch (action.type) {
+  case ACTIONS.CHANGE_FORM_DATA:
+    return update(state, {
+      [action.payload.formName]: {
+        $set: {
+          ...formState,
+          ...action.payload.formData
+        }
+      }
+    });
+  default:
+    return state;
+  }
+};
 
 const commonComponentsReducer = (state = initialState, action = {}) => {
   switch (action.type) {
@@ -33,6 +83,31 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
     return update(state, {
       selectedHearingTime: {
         $set: action.payload.hearingTime
+      }
+    });
+  case ACTIONS.HEARING_OPTIONAL_TIME_CHANGE:
+    return update(state, {
+      selectedOptionalTime: {
+        $set: action.payload.optionalTime
+      }
+    });
+  case ACTIONS.HEARING_LOCATION_CHANGE:
+    return update(state, {
+      selectedHearingLocation: {
+        $set: action.payload.hearingLocation
+      }
+    });
+  case ACTIONS.FETCH_DROPDOWN_DATA:
+  case ACTIONS.RECEIVE_DROPDOWN_DATA:
+    return update(state, {
+      dropdowns: {
+        $set: dropdownsReducer(state.dropdowns, action)
+      }
+    });
+  case ACTIONS.CHANGE_FORM_DATA:
+    return update(state, {
+      forms: {
+        $set: formsReducer(state.forms, action)
       }
     });
   default:

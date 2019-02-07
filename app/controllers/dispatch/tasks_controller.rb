@@ -2,7 +2,7 @@ class Dispatch::TasksController < ApplicationController
   class InvalidTaskClassError < StandardError; end
   class InvalidTaskStateError < StandardError; end
 
-  before_action :check_dispatch_out_of_service
+  before_action :check_dispatch_out_of_service, :set_application
   before_action :verify_admin_access, only: [:index]
 
   TASK_CLASSES = {
@@ -20,6 +20,10 @@ class Dispatch::TasksController < ApplicationController
   end
 
   private
+
+  def set_application
+    RequestStore.store[:application] = "dispatch"
+  end
 
   def check_dispatch_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("dispatch_out_of_service")

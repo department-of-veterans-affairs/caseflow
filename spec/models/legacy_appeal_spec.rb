@@ -225,6 +225,35 @@ describe LegacyAppeal do
     end
   end
 
+  context "#soc_opt_in_due_date" do
+    subject { appeal.soc_opt_in_due_date }
+
+    context "when is no soc" do
+      let(:vacols_case) do
+        create(:case)
+      end
+
+      let(:soc_date) { nil }
+      it { is_expected.to eq(nil) }
+    end
+
+    context "when there is an soc" do
+      let(:vacols_case) do
+        create(:case, bfdsoc: 1.day.ago)
+      end
+
+      it { is_expected.to eq((vacols_case.bfdsoc + 60.days).to_date) }
+    end
+
+    context "when there are multiple socs" do
+      let(:vacols_case) do
+        create(:case, bfdsoc: 1.year.ago, bfssoc1: 6.months.ago, bfssoc2: 1.day.ago)
+      end
+
+      it { is_expected.to eq((vacols_case.bfssoc2 + 60.days).to_date) }
+    end
+  end
+
   context "#cavc_due_date" do
     subject { appeal.cavc_due_date }
 
@@ -426,6 +455,54 @@ describe LegacyAppeal do
       it "should return number of documents" do
         documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
         expect(subject).to eq 3
+      end
+    end
+  end
+
+  context "#new_documents_from_caseflow" do
+    before do
+      documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
+    end
+
+    let(:user) { create(:user) }
+
+    let!(:documents) do
+      [
+        Generators::Document.create(upload_date: 5.days.ago),
+        Generators::Document.create(upload_date: 5.days.ago)
+      ]
+    end
+
+    let!(:appeal) { Generators::LegacyAppeal.create }
+    let!(:vacols_case) { create(:case, documents: documents) }
+
+    subject { appeal.new_documents_from_caseflow(user) }
+
+    context "when appeal has no appeal view" do
+      it "should return all documents" do
+        expect(subject).to match_array(documents)
+      end
+    end
+
+    context "when appeal has an appeal view newer than documents" do
+      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
+
+      it "should return no documents" do
+        expect(subject).to eq([])
+      end
+
+      context "when one document is missing a received at date" do
+        it "should return no documents" do
+          documents[0].update(upload_date: nil)
+          expect(subject).to eq([])
+        end
+      end
+
+      context "when one document is newer than the appeal view date" do
+        it "should return the newer document" do
+          documents[0].update(upload_date: -2.days.ago)
+          expect(subject).to eq([documents[0]])
+        end
       end
     end
   end

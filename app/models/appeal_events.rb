@@ -5,6 +5,19 @@ class AppealEvents
   attr_accessor :version
 
   def all
+    case appeal
+    when LegacyAppeal
+      legacy_appeal_events
+    when SupplementalClaim
+      sc_events
+    when HigherLevelReview
+      hlr_events
+    when Appeal
+      appeal_events
+    end
+  end
+
+  def legacy_appeal_events
     [
       claim_event,
       nod_event,
@@ -19,6 +32,35 @@ class AppealEvents
       issue_event,
       ramp_notice_event,
       cavc_decision_events
+    ].flatten.uniq.select(&:valid?)
+  end
+
+  def sc_events
+    [
+      sc_request_event,
+      sc_decision_event,
+      sc_other_close_event
+    ].flatten.uniq.select(&:valid?)
+  end
+
+  def hlr_events
+    [
+      hlr_request_event,
+      hlr_decision_event,
+      hlr_dta_error_event,
+      dta_decision_event,
+      hlr_other_close_event
+    ].flatten.uniq.select(&:valid?)
+  end
+
+  def appeal_events
+    [
+      ama_nod_event,
+      distributed_to_vlj_event,
+      bva_decision_event,
+      bva_decision_effectuation_event,
+      dta_decision_event,
+      other_close_event
     ].flatten.uniq.select(&:valid?)
   end
 
@@ -84,5 +126,57 @@ class AppealEvents
 
   def ramp_notice_event
     AppealEvent.new(type: :ramp_notice, date: appeal.ramp_election.try(:notice_date))
+  end
+
+  def sc_request_event
+    AppealEvent.new(type: :sc_request, date: appeal.try(:receipt_date))
+  end
+
+  def sc_decision_event
+    AppealEvent.new(type: :sc_decision, date: appeal.decision_event_date)
+  end
+
+  def sc_other_close_event
+    AppealEvent.new(type: :sc_other_close, date: appeal.other_close_event_date)
+  end
+
+  def hlr_request_event
+    AppealEvent.new(type: :hlr_request, date: appeal.try(:receipt_date))
+  end
+
+  def hlr_decision_event
+    AppealEvent.new(type: :hlr_decision, date: appeal.decision_event_date)
+  end
+
+  def hlr_dta_error_event
+    AppealEvent.new(type: :hlr_dta_error, date: appeal.dta_error_event_date)
+  end
+
+  def dta_decision_event
+    AppealEvent.new(type: :dta_decision, date: appeal.dta_descision_event_date)
+  end
+
+  def hlr_other_close_event
+    AppealEvent.new(type: :hlr_other_close, date: appeal.other_close_event_date)
+  end
+
+  def ama_nod_event
+    AppealEvent.new(type: :ama_nod, date: appeal.try(:receipt_date))
+  end
+
+  def distributed_to_vlj_event
+    AppealEvent.new(type: :distributed_to_vlj, date: appeal.first_distributed_to_judge_date)
+  end
+
+  def bva_decision_event
+    AppealEvent.new(type: :bva_decision, date: appeal.decision_event_date)
+  end
+
+  def bva_decision_effectuation_event
+    AppealEvent.new(type: :bva_decision_effectuation, date: appeal.decision_effectuation_event_date)
+  end
+
+  def other_close_event
+    AppealEvent.new(type: :other_close, date: appeal.other_close_event_date)
   end
 end
