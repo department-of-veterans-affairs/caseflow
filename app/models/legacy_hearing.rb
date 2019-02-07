@@ -35,13 +35,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def venue
-    search_key = venue_key.nil? ? ro_key : venue_key
-    Rails.logger.info("OAR venue is: #{self.class.venues[search_key]}")
-    self.class.venues[search_key]
-  end
-
-  def ro_key
-    HearingDay.find(hearing_day_id).regional_office
+    self.class.venues[venue_key]
   end
 
   def external_id
