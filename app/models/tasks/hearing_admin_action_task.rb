@@ -74,8 +74,15 @@ class HearingAdminActionContestedClaimantTask < HearingAdminActionTask
   end
 end
 class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
+  after_update :fetch_closest_ro_and_ahls, if: :status_changed_to_completed?
+
   def self.label
     "Verify Address"
+  end
+
+  def fetch_closest_ro_and_ahls
+    veteran = appeal.veteran
+    FetchHearingLocationsForVeteransJob.perform_once_for(veteran) unless veteran.nil?
   end
 end
 class HearingAdminActionMissingFormsTask < HearingAdminActionTask

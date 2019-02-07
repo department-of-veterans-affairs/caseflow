@@ -74,18 +74,22 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     create_missing_veterans
 
     veterans.each do |veteran|
-      begin
-        va_dot_gov_address = validate_veteran_address(veteran)
-      rescue Caseflow::Error::VaDotGovLimitError
-        sleep 60
-        va_dot_gov_address = validate_veteran_address(veteran)
-      rescue Caseflow::Error::VaDotGovAPIError => error
-        handle_error(error, veteran)
-        next
-      end
-
-      create_available_locations_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
+      perform_once_for(veteran)
     end
+  end
+
+  def self.perform_once_for(veteran)
+    begin
+      va_dot_gov_address = validate_veteran_address(veteran)
+    rescue Caseflow::Error::VaDotGovLimitError
+      sleep 60
+      va_dot_gov_address = validate_veteran_address(veteran)
+    rescue Caseflow::Error::VaDotGovAPIError => error
+      handle_error(error, veteran)
+      return nil
+    end
+
+    create_available_locations_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
   end
 
   private
@@ -193,7 +197,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       tasks.each do |task|
         HearingAdminActionVerifyAddressTask.create!(
           appeal: task.appeal,
-          instructions: instructions(key, has_multiple: tasks.count > 1),
+          instructions: [instructions(key, has_multiple: tasks.count > 1)],
           assigned_to: HearingsManagement.singleton,
           parent: task
         )
