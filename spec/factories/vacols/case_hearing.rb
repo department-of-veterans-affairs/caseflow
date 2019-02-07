@@ -35,7 +35,7 @@ FactoryBot.define do
     after(:build) do |hearing, evaluator|
       # Build Caseflow hearing day and associate with legacy hearing.
       if hearing.vdkey.nil?
-        master_record = if (hearing.hearing_type == HearingDay::REQUEST_TYPES[:central])
+        master_record = if hearing.hearing_type == HearingDay::REQUEST_TYPES[:central]
                           create(:hearing_day,
                                  scheduled_for: hearing.hearing_date,
                                  request_type: hearing.hearing_type)
