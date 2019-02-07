@@ -52,14 +52,10 @@ class HearingDayRepository
       end
     end
 
-    def fetch_hearing_day_slots(regional_office_record, hearing_day)
+    def fetch_hearing_day_slots(regional_office)
       # returns the total slots for the hearing day's regional office.
 
-      slots_from_vacols = slots_based_on_type(staff: regional_office_record,
-                                              type: hearing_day.request_type,
-                                              date: hearing_day.scheduled_for)
-
-      slots_from_vacols + 1 || HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(hearing_day.regional_office)]
+      HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
     end
 
     def ro_staff_hash(regional_office_keys)
