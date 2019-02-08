@@ -35,9 +35,9 @@ describe HearingDayRepository do
              regional_office: "RO18",
              scheduled_for: Date.new(2019, 4, 15))
     end
-    it "slots hearing at correct time", :focus =>true do
+    it "Total time slots" do
       HearingDayRepository.fetch_hearing_day_slots(regional_office: "Winston-Salem")
-      expect (HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office: "Winston-Salem")).to eq(9)
+      expect (HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office: "Winston-Salem")]).to eq(9)
     end
   end
 
