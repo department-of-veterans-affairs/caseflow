@@ -88,6 +88,10 @@ class SeedDB
     user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
     OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+
+    admin = User.create(css_id: "VLJ_SUPPORT_ADMIN", station_id: 101, full_name: "VLJ Support admin", roles: %w[Reader])
+    FactoryBot.create(:staff, :colocated_role, user: admin, sdept: "DSP")
+    OrganizationsUser.make_user_admin(admin, Colocated.singleton)
   end
 
   def create_vso_users_and_tasks
