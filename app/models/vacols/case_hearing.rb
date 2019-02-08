@@ -64,13 +64,8 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_schedule_days.includes(brieff: [:representative]).find_by(hearing_pkseq: hearing_pkseq)
     end
 
-    def video_hearings_for_master_records(parent_hearings_pkseqs)
-      select_hearings.where(vdkey: parent_hearings_pkseqs)
-    end
-
-    def co_hearings_for_master_records(parent_hearing_dates)
-      select_hearings.where("hearing_type = ? and folder_nr NOT LIKE ? and trunc(hearing_date) IN (?)",
-                            HearingDay::REQUEST_TYPES[:central], "%VIDEO%", parent_hearing_dates.map(&:to_date))
+    def hearings_for_hearing_days(hearing_day_ids)
+      select_hearings.where(vdkey: hearing_day_ids)
     end
 
     def for_appeal(appeal_vacols_id)

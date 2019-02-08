@@ -31,7 +31,8 @@ describe HearingRepository do
   context ".set_vacols_values" do
     subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
     let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
-    let(:hearing) { Generators::LegacyHearing.create }
+    let(:hearing) { create(:legacy_hearing) }
+    let(:hearing_day) { HearingDay.first }
 
     let(:hearing_hash) do
       OpenStruct.new(
@@ -46,7 +47,8 @@ describe HearingRepository do
         notes1: "test notes",
         repname: "test rep name",
         bfso: "E",
-        bfregoff: "RO36"
+        bfregoff: "RO36",
+        vdkey: hearing_day.id
       )
     end
 
