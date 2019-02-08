@@ -233,6 +233,7 @@ Rails.application.routes.draw do
 
   get "styleguide", to: "styleguide#show"
 
+  get "tableau-login", to: "tableau_logins#login"
 
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
