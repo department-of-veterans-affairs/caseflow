@@ -83,13 +83,17 @@ class DecisionIssue < ApplicationRecord
     Contention.new(description).text
   end
 
+  def contests_request_issue(request_issue_id)
+    associated_request_issue.id == request_issue_id
+  end
+
+  private
+
   def associated_request_issue
     return unless request_issues.any?
 
     request_issues.first
   end
-
-  private
 
   def processed_in_caseflow?
     decision_review.processed_in_caseflow?

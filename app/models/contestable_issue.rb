@@ -55,6 +55,10 @@ class ContestableIssue
     decision_issue? ? source_request_issues.first.decision_review_type : source_request_issues.first.review_request_type
   end
 
+  def decision_issue?
+    !!decision_issue_id
+  end
+
   private
 
   def serialize_latest_decision_issue_in_chain
@@ -66,10 +70,6 @@ class ContestableIssue
 
   def contestable_issue_chain
     @contestable_issue_chain ||= new ContestableIssueChain(self)
-  end
-
-  def decision_issue?
-    !!decision_issue_id
   end
 
   def title_of_active_review
