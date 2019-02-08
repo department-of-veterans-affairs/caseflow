@@ -59,13 +59,13 @@ class ContestableIssue
 
   def serialize_latest_decision_issue_in_chain
     {
-      id: contestable_issue_chain.last_issue.decisionIssueId,
-      date: contestable_issue_chain.last_issue.caseflow_decision_date
+      id: contestable_issue_chain.last_issue&.decisionIssueId,
+      date: contestable_issue_chain.last_issue&.caseflow_decision_date
     }
   end
 
   def contestable_issue_chain
-    @contestable_issue_chain || = new ContestableIssueChain(self)
+    @contestable_issue_chain ||= new ContestableIssueChain(self)
   end
 
   def decision_issue?

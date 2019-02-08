@@ -83,6 +83,12 @@ class DecisionIssue < ApplicationRecord
     Contention.new(description).text
   end
 
+  def associated_request_issue
+    return unless request_issues.any?
+
+    request_issues.first
+  end
+
   private
 
   def processed_in_caseflow?
@@ -108,12 +114,6 @@ class DecisionIssue < ApplicationRecord
     return nil unless associated_request_issue
 
     "#{disposition}: #{associated_request_issue.description}"
-  end
-
-  def associated_request_issue
-    return unless request_issues.any?
-
-    request_issues.first
   end
 
   def veteran_file_number
