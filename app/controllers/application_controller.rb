@@ -117,7 +117,7 @@ class ApplicationController < ApplicationBaseController
       }
     ]
 
-    if current_user.administered_teams.any?
+    if current_user&.administered_teams&.any?
       urls.concat(manage_teams_menu_items)
     end
 
