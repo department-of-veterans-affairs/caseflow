@@ -342,14 +342,7 @@ class SeedDB
     )
   end
 
-  def create_legacy_hearing(day, ro_key)
-    vet = Generators::Veteran.build(
-      file_number: Faker::Number.number(9).to_s,
-      first_name: Faker::Name.first_name,
-      last_name: Faker::Name.last_name
-    )
-    vet.save
-
+  def create_vacols_hearing_day(day, ro_key)
     master_record = FactoryBot.create(
       :case_hearing,
       hearing_date: day.scheduled_for,
@@ -357,32 +350,28 @@ class SeedDB
       room: "001",
       folder_nr: (ro_key == "C") ? "VIDEO #{ro_key}" : nil
     )
-
     day.update!(id: master_record.hearing_pkseq)
+  end
 
-    vacols_case = FactoryBot.create(
-      :case,
-      bfregoff: ro_key,
-      bfcorlid: LegacyAppeal.convert_file_number_to_vacols(vet.file_number)
-    )
-    app = LegacyAppeal
-      .find_or_create_by(
-        vacols_id: vacols_case.bfkey,
-        vbms_id: LegacyAppeal.convert_file_number_to_vacols(vet.file_number)
-      )
+  def create_legacy_hearing(day, ro_key)
+    case ro_key
+    when "RO17"
+      folder_nr = "3620725"
+    when "RO45"
+      folder_nr = "3411278"
+    when "C"
+      folder_nr = "3542942"
+    end
 
     FactoryBot.create(
       :case_hearing,
-      folder_nr: app.vacols_id,
-      vdkey: master_record.hearing_pkseq
+      folder_nr: folder_nr,
+      vdkey: day.id
     )
   end
 
   def create_hearing_days
-    RegionalOffice::ROS.each do |ro_key|
-      regional_office = RegionalOffice::CITIES[ro_key]
-      next if regional_office[:facility_id].nil? && !regional_office[:hold_hearings]
-
+    %w[C RO17 RO45].each do |ro_key|
       user = User.find_by(css_id: "BVATWARNER")
 
       (1..5).each do |index|
@@ -398,10 +387,12 @@ class SeedDB
 
         case index
         when 1
-          create_legacy_hearing(day, ro_key)
-        when 2
           create_ama_hearing(day)
+        when 2
+          create_vacols_hearing_day(day, ro_key)
+          create_legacy_hearing(day, ro_key)
         when 3
+          create_vacols_hearing_day(day, ro_key)
           create_legacy_hearing(day, ro_key)
           create_ama_hearing(day)
         end
@@ -409,46 +400,17 @@ class SeedDB
     end
   end
 
-  def create_legacy_case_in_location_57(ro_key)
-    vet = Generators::Veteran.build(
-      file_number: Faker::Number.number(9).to_s,
-      first_name: Faker::Name.first_name,
-      last_name: Faker::Name.last_name
-    )
-    vet.save
-
-    FactoryBot.create(
-      :case,
-      bfregoff: ro_key,
-      bfcurloc: "57",
-      bfhr: "2",
-      bfdocind: "V",
-      bfcorlid: LegacyAppeal.convert_file_number_to_vacols(vet.file_number)
-    )
-  end
-
   def create_legacy_case_with_open_schedule_hearing_task(ro_key)
-    vet = Generators::Veteran.build(
-      file_number: Faker::Number.number(9).to_s,
-      first_name: Faker::Name.first_name,
-      last_name: Faker::Name.last_name
-    )
-    vet.save
+    case ro_key
+    when "RO17"
+      vacols_id = "2668454"
+    when "RO45"
+      vacols_id = "3261587"
+    when "C"
+      vacols_id = "3019752"
+    end
 
-    vacols_case = FactoryBot.create(
-      :case,
-      bfregoff: ro_key,
-      bfcurloc: "CASEFLOW",
-      bfhr: "2",
-      bfdocind: "V",
-      bfcorlid: LegacyAppeal.convert_file_number_to_vacols(vet.file_number)
-    )
-
-    appeal = LegacyAppeal
-      .find_or_create_by(
-        vacols_id: vacols_case.bfkey,
-        vbms_id: LegacyAppeal.convert_file_number_to_vacols(vet.file_number)
-      )
+    appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
 
     ScheduleHearingTask.create!(
       appeal: appeal,
@@ -483,11 +445,7 @@ class SeedDB
   end
 
   def create_veterans_ready_for_hearing
-    RegionalOffice::ROS.each do |ro_key|
-      regional_office = RegionalOffice::CITIES[ro_key]
-      next if regional_office[:facility_id].nil? && !regional_office[:hold_hearings]
-
-      create_legacy_case_in_location_57(ro_key)
+    %w[C RO45 RO17].each do |ro_key|
       create_legacy_case_with_open_schedule_hearing_task(ro_key)
       create_ama_case_with_open_schedule_hearing_task(ro_key)
     end
