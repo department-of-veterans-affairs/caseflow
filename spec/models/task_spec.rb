@@ -511,4 +511,48 @@ describe Task do
       end
     end
   end
+
+  describe ".set_timestamps" do
+    let(:task) { FactoryBot.create(:task) }
+
+    context "when status changes to in_progress" do
+      let(:status) { Constants.TASK_STATUSES.in_progress }
+
+      it "should set started_at timestamp" do
+        expect(task.started_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.started_at).to_not eq(nil)
+      end
+    end
+
+    context "when status changes to on_hold" do
+      let(:status) { Constants.TASK_STATUSES.on_hold }
+
+      it "should set placed_on_hold_at timestamp" do
+        expect(task.placed_on_hold_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.placed_on_hold_at).to_not eq(nil)
+      end
+    end
+
+    context "when status changes to completed" do
+      let(:status) { Constants.TASK_STATUSES.completed }
+
+      it "should set closed_at timestamp" do
+        expect(task.closed_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.closed_at).to_not eq(nil)
+      end
+    end
+
+    context "when status changes to cancelled" do
+      let(:status) { Constants.TASK_STATUSES.cancelled }
+
+      it "should set closed_at timestamp" do
+        expect(task.closed_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.closed_at).to_not eq(nil)
+      end
+    end
+  end
 end
