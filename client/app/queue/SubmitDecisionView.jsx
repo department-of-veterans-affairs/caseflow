@@ -133,9 +133,9 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       });
   };
 
-  getDefaultJudgeSelector = (attorneyCaseReviewDetails) => {
+  getDefaultJudgeSelector = () => {
     const legacyJudgeSelector = _.get(this.props, 'task.addedByCssId', null);
-    const amaJudgeSelector = _.get(attorneyCaseReviewDetails, 'reviewing_judge.full_name');
+    const amaJudgeSelector = _.get(this.props.appeal, 'assignedJudge.full_name');
 
     return legacyJudgeSelector || amaJudgeSelector || '';
   }
@@ -202,7 +202,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       />
       <JudgeSelectComponent
         judgeSelector={
-          this.getDefaultJudgeSelector(attorneyCaseReviewDetails)
+          this.getDefaultJudgeSelector()
         }
       />
       <TextareaField

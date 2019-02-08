@@ -155,7 +155,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :attorney_case_review_details do
     {
       document_id: latest_attorney_case_review&.document_id,
-      reviewing_judge: latest_attorney_case_review&.reviewing_judge,
+      assigned_judge: object.assigned_judge,
       note: object.attorney_rewrite_task_for_appeal&.instructions&.first,
       overtime: latest_attorney_case_review&.overtime
     }
