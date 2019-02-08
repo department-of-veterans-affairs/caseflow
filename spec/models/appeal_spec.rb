@@ -855,7 +855,7 @@ describe Appeal do
       (0..10).map do |num|
         doc = create(:decision_document)
         doc.appeal.update(
-          docket_type: "direct_review", 
+          docket_type: "direct_review",
           receipt_date: (num * 20).days.ago
         )
         doc.appeal
@@ -865,7 +865,7 @@ describe Appeal do
       (0..10).map do |num|
         doc = create(:decision_document)
         doc.appeal.update(
-          docket_type: "direct_review", 
+          docket_type: "direct_review",
           receipt_date: (366 + (num * 20)).days.ago
         )
         doc.appeal
@@ -885,7 +885,25 @@ describe Appeal do
     end
   end
 
-  context "#set_target_decision_date!" do
+  context "#set_target_decision_date!", focus: true do
+    let(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
+    let(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
+
+    context "with direct review appeal" do
+      subject { direct_review_appeal }
+      it "sets target decision date" do
+        subject.set_target_decision_date!
+        expect(subject.target_decision_date).to eq(DirectReviewDocket::DAYS_TO_DECISION_GOAL.days.from_now.to_date)
+      end
+    end
+
+    context "with not direct review appeal" do
+      subject { evidence_submission_appeal }
+      it "does not set target date" do
+        subject.set_target_decision_date!
+        expect(subject.target_decision_date).to eq(nil)
+      end
+    end
   end
 
   context "#status_hash" do

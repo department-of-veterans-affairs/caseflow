@@ -16,11 +16,11 @@ class DirectReviewDocket < Docket
       march_first = Date.new(2019, 3, 1)
       days_since_march_first = Integer(today - march_first)
       appeals_since_march_first =
-        DirectReviewDocket.all_nonpriority.where("receipt_date => ?", march_first).count
+        DirectReviewDocket.all_nonpriority.where("receipt_date > ?", march_first).count.length
       # appeals_since_march_first / adjusted_appeals = days_since_march_first / 365
-      (appeals_since_march_first * 365) / days_since_march_first
+      ((appeals_since_march_first * 365) / days_since_march_first).round
     else
-      DirectReviewDocket.all_nonpriority.where("receipt_date => ?", 1.year.ago).count
+      DirectReviewDocket.all_nonpriority.where("receipt_date > ?", 1.year.ago).count.length
     end
   end
 
