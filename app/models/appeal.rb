@@ -84,7 +84,7 @@ class Appeal < DecisionReview
   end
 
   def self.non_priority_decisions_in_the_last_year
-    all_nonpriority.joins(:decision_documents).where("receipt_date => ?", 1.year.ago).count
+    all_nonpriority.joins(:decision_documents).where("receipt_date > ?", 1.year.ago).count
   end
 
   def ui_hash

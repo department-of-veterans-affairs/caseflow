@@ -850,6 +850,44 @@ describe Appeal do
     end
   end
 
+  context "#non_priority_decisions_in_the_last_year" do
+    let!(:newer_decisions) do
+      (0..10).map do |num|
+        doc = create(:decision_document)
+        doc.appeal.update(
+          docket_type: "direct_review", 
+          receipt_date: (num * 20).days.ago
+        )
+        doc.appeal
+      end
+    end
+    let!(:older_decisions) do
+      (0..10).map do |num|
+        doc = create(:decision_document)
+        doc.appeal.update(
+          docket_type: "direct_review", 
+          receipt_date: (366 + (num * 20)).days.ago
+        )
+        doc.appeal
+      end
+    end
+
+    context "non-priority decision list" do
+      subject { Appeal.non_priority_decisions_in_the_last_year }
+
+      it "returns decisions from the last year" do
+        expect(subject.include?(newer_decisions))
+      end
+
+      it "does not return decisions from more than a year ago" do
+        expect(subject.include?(older_decisions))
+      end
+    end
+  end
+
+  context "#set_target_decision_date!" do
+  end
+
   context "#status_hash" do
     let(:judge) { create(:user) }
     let!(:hearings_user) { create(:hearings_coordinator) }
