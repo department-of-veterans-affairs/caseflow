@@ -24,7 +24,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         WHERE type = 'HearingAdminActionVerifyAddressTask' AND status != 'completed') admin_actions
         ON admin_actions.parent_id = id")
       .where("admin_actions.parent_id IS NULL").limit(QUERY_LIMIT)
-      .map { |task| task.appeal.veteran.id }
+      .map { |task| task.appeal.veteran&.id }.compact
   end
 
   def missing_veteran_file_numbers
@@ -39,7 +39,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address:)
-    state_code = get_state_code(va_dot_gov_address)
+    state_code = get_state_code(va_dot_gov_address, veteran: veteran)
     facility_ids = ro_facility_ids_for_state(state_code)
 
     distances = VADotGovService.get_distance(
@@ -74,18 +74,27 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     create_missing_veterans
 
     veterans.each do |veteran|
-      begin
-        va_dot_gov_address = validate_veteran_address(veteran)
-      rescue Caseflow::Error::VaDotGovLimitError
-        sleep 60
-        va_dot_gov_address = validate_veteran_address(veteran)
-      rescue Caseflow::Error::VaDotGovAPIError => error
-        handle_error(error, veteran)
-        next
-      end
-
-      create_available_locations_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
+      perform_once_for(veteran)
     end
+  end
+
+  def perform_once_for(veteran)
+    begin
+      va_dot_gov_address = validate_veteran_address(veteran)
+    rescue Caseflow::Error::VaDotGovLimitError
+      sleep 60
+      va_dot_gov_address = validate_veteran_address(veteran)
+    rescue Caseflow::Error::VaDotGovAPIError => error
+      if veteran.zip_code.nil? || veteran.state.nil? || veteran.country.nil?
+        handle_error(error, veteran)
+        return nil
+      else
+        va_dot_gov_address = validate_zip_code_or_handle_error(veteran, error: error)
+        return nil if va_dot_gov_address.nil?
+      end
+    end
+
+    create_available_locations_for_veteran(veteran, va_dot_gov_address: va_dot_gov_address)
   end
 
   private
@@ -100,6 +109,16 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       country: veteran.country,
       zip_code: veteran.zip_code
     )
+  end
+
+  def validate_zip_code_or_handle_error(veteran, error:)
+    lat_lng = ZipCodeToLatLngMapper::MAPPING[veteran.zip_code[0..4]]
+    if lat_lng.nil?
+      handle_error(error, veteran)
+      return nil
+    end
+
+    { lat: lat_lng[0], long: lat_lng[1], country_code: veteran.country, state_code: veteran.state }
   end
 
   def facility_ids_for_ro(regional_office_id)
@@ -137,7 +156,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     )
   end
 
-  def get_state_code(va_dot_gov_address)
+  def get_state_code(va_dot_gov_address, veteran:)
     state_code = case va_dot_gov_address[:country_code]
                  # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
                  when "GQ", "AQ", "RM", "FM", "CQ", "PS"
@@ -148,16 +167,17 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
                  # Puerto Rico, Vieques, U.S. Virgin Islands
                  when "VI", "VQ", "PR"
                    "PR"
-                 when "US"
+                 when "US", "USA"
                    va_dot_gov_address[:state_code]
                  else
-                   msg = "#{va_dot_gov_address[:country_code]} is not a valid country code."
+                   country_code = va_dot_gov_address[:country_code]
+                   msg = "#{country_code} for VeteranId: #{veteran.id} is not a valid country code."
                    fail Caseflow::Error::FetchHearingLocationsJobError, code: 500, message: msg
                  end
 
     return state_code if valid_states.include?(state_code)
 
-    msg = "#{state_code} is not a valid state code."
+    msg = "#{state_code} for VeteranId: #{veteran.id} is not a valid state code."
     fail Caseflow::Error::FetchHearingLocationsJobError, code: 500, message: msg
   end
 
@@ -193,7 +213,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       tasks.each do |task|
         HearingAdminActionVerifyAddressTask.create!(
           appeal: task.appeal,
-          instructions: instructions(key, has_multiple: tasks.count > 1),
+          instructions: [instructions(key, has_multiple: tasks.count > 1)],
           assigned_to: HearingsManagement.singleton,
           parent: task
         )
