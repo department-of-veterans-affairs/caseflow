@@ -10,14 +10,14 @@ class Docket
 
     scope = docket_appeals
     scope = scope.merge(Appeal.ready_for_distribution) if ready == true
-    scope = scope.merge(Appeal.all_priority) if priority == true
-    scope = scope.merge(Appeal.all_nonpriority) if priority == false
 
     if priority == true
-      scope.merge(Appeal.ordered_by_distribution_ready_date)
-    else
-      scope.order("receipt_date")
+      scope = scope.merge(Appeal.all_priority)
+      return scope.merge(Appeal.ordered_by_distribution_ready_date)
     end
+
+    scope = scope.merge(Appeal.all_nonpriority) if priority == false
+    scope.order("receipt_date")
   end
 
   def count(priority: nil, ready: nil)
