@@ -483,6 +483,8 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content("Submit Draft Decision for Review")
 
       fill_in "Document ID:", with: valid_document_id
+      #the judge should be pre selected
+      expect(page).to have_content(judge_user.full_name);
       fill_in "notes", with: "all done"
 
       click_on "Continue"
@@ -614,6 +616,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content("Submit Draft Decision for Review")
 
         fill_in "Document ID:", with: valid_document_id
+        expect(page).to have_content(judge_user.full_name);
         fill_in "notes", with: "all done"
         click_on "Continue"
 
@@ -660,6 +663,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content("Submit Draft Decision for Review")
 
         fill_in "Document ID:", with: valid_document_id
+        expect(page).to have_content(judge_user.full_name);
         fill_in "notes", with: "corrections made"
         click_on "Continue"
         expect(page).to have_content(
