@@ -38,6 +38,9 @@ RSpec.feature "User organization" do
 
       find(".cf-dropdown-trigger").click
       expect(page).to have_content("#{organization.name} team management")
+
+      find("a", text: "#{organization.name} team management").click
+      expect(page).to have_content("#{organization.name} team")
     end
 
     scenario "Adds and removes users from the organization" do
