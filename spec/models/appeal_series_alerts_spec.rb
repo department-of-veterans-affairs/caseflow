@@ -37,7 +37,6 @@ describe AppealSeriesAlerts do
         bfddec: decision_date,
         bfdc: disposition,
         bfmpro: status,
-        bfregoff: "RO13",
         case_hearings: hearings,
         bfso: "F",
         case_issues: [create(:case_issue, :compensation)]
