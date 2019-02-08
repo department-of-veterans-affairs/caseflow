@@ -40,6 +40,7 @@ RSpec.feature "User organization" do
       expect(page).to have_content("#{organization.name} team management")
 
       find("a", text: "#{organization.name} team management").click
+      expect(page.current_path).to eq(organization.user_admin_path)
       expect(page).to have_content("#{organization.name} team")
     end
 
