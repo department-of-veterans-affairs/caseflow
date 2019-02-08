@@ -34,6 +34,17 @@ describe Appeal do
     end
   end
 
+  context "active appeals" do
+    let!(:active_appeal) { create(:appeal, :with_tasks) }
+    let!(:inactive_appeal) { create(:appeal, :outcoded) }
+
+    subject { Appeal.active }
+    it "returns only active appeals" do
+      expect(subject.include?(active_appeal)).to eq(true)
+      expect(subject.include?(inactive_appeal)).to eq(false)
+    end
+  end
+
   context "ready appeals" do
     let!(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
     let!(:hearing_appeal) { create(:appeal, docket_type: "hearing") }
@@ -56,6 +67,17 @@ describe Appeal do
       expect(subject.include?(evidence_submission_appeal)).to eq(false)
       # TODO: support hearing appeals
       # expect(subject.include?(hearing_appeal)).to eq(false)
+    end
+  end
+
+  context "ready appeals sorted by date" do
+    let!(:first_appeal) { create(:appeal, :with_tasks) }
+    let!(:second_appeal) { create(:appeal, :with_tasks) }
+
+    subject { Appeal.ordered_by_distribution_ready_date }
+
+    it "returns appeals ordered by when they became ready for distribution" do
+      expect(subject.find_index(first_appeal) < subject.find_index(second_appeal)).to eq(true)
     end
   end
 

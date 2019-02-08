@@ -45,7 +45,21 @@ class Appeal < DecisionReview
   scope :ready_for_distribution, lambda {
     joins(:tasks)
       .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) = ?", "DistributionTask", "assigned", 1)
+      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
+              DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+  }
+
+  scope :active, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? and tasks.status != ? then 1 end) >= ?",
+              RootTask.name, Constants.TASK_STATUSES.completed, 1)
+  }
+
+  scope :ordered_by_distribution_ready_date, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
   }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
@@ -161,6 +175,10 @@ class Appeal < DecisionReview
 
   def active?
     tasks.where(type: RootTask.name).where.not(status: Constants.TASK_STATUSES.completed).any?
+  end
+
+  def ready_for_distribution_at
+    tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
   def veteran_name
