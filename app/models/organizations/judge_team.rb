@@ -1,6 +1,6 @@
 class JudgeTeam < Organization
   def self.for_judge(user)
-    user.administered_teams.select { |team| team.is_a?(JudgeTeam) }.first
+    user.administered_teams.detect { |team| team.is_a?(JudgeTeam) }
   end
 
   def self.create_for_judge(user)
