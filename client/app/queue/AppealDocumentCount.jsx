@@ -26,8 +26,7 @@ class AppealDocumentCount extends React.PureComponent {
       return;
     }
 
-    if (this.props.docCountForAppeal && !this.props.docCountErrorForAppeal &&
-      (cached || this.props.docCountForAppeal.cached === Boolean(cached))) {
+    if (this.props.docCountForAppeal && (cached || this.props.docCountForAppeal.cached === Boolean(cached))) {
       return;
     }
 
