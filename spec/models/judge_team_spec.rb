@@ -12,6 +12,7 @@ describe JudgeTeam do
         expect(judge.organizations.length).to eq(1)
         expect(judge.administered_teams.length).to eq(1)
         expect(judge.administered_teams.first.class).to eq(JudgeTeam)
+        expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase)
       end
     end
   end
