@@ -189,7 +189,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   rescue NoMethodError => e
     Rails.logger.error("Null Folder Error Condition: #{hearing_pkseq}")
     Raven.capture.exception(e)
-    Raven.user_context(
+    Raven.extra_context(
       hearing_pkseq: hearing_pkseq,
       hearing_date: hearing_date,
       folder_nr: folder_nr,
