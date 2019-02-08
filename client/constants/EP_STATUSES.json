@@ -1,5 +1,6 @@
 {
   "CLR": "Cleared",
+  "RW": "Ready to work",
   "PEND": "Pending",
   "CAN": "Cancelled",
   "PROCESSING": "Processing",

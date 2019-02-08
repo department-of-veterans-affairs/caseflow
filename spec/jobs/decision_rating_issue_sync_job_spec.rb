@@ -32,6 +32,16 @@ describe DecisionIssueSyncJob do
     expect(@raven_called).to eq(true)
   end
 
+  it "logs other errors" do
+    capture_raven_log
+    allow(request_issue).to receive(:sync_decision_issues!).and_raise(StandardError.new("random error"))
+
+    subject
+
+    expect(request_issue.decision_sync_error).to eq("random error")
+    expect(@raven_called).to eq(true)
+  end
+
   it "ignores error on success" do
     allow(request_issue).to receive(:sync_decision_issues!).and_return(true)
 

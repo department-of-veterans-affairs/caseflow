@@ -52,7 +52,7 @@ class ClaimReview < DecisionReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      if processed_in_caseflow?
+      if processed_in_caseflow? || !issue.eligible?
         issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       else
         issue.update!(
@@ -68,6 +68,12 @@ class ClaimReview < DecisionReview
 
   def create_decision_review_task_if_required!
     create_decision_review_task! if processed_in_caseflow?
+  end
+
+  def add_user_to_business_line!
+    return unless processed_in_caseflow?
+
+    OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -194,7 +200,9 @@ class ClaimReview < DecisionReview
 
   def end_product_establishment_for_issue(issue)
     end_product_establishments.find_by(
-      code: issue.end_product_code
+      "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
+      issue.end_product_code,
+      EndProduct::INACTIVE_STATUSES
     ) || new_end_product_establishment(issue.end_product_code)
   end
 

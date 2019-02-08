@@ -70,18 +70,9 @@ type Props = Params & {|
 class SubmitDecisionView extends React.PureComponent<Props> {
   validateForm = () => {
     const {
-      checkoutFlow,
       opts: decisionOpts
     } = this.props.decision;
-    const requiredParams = ['document_id', 'reviewing_judge_id'];
-
-    if (checkoutFlow === DECISION_TYPES.OMO_REQUEST) {
-      requiredParams.push('work_product');
-
-      if (!validateWorkProductTypeAndId(this.props.decision)) {
-        return false;
-      }
-    }
+    const requiredParams = ['document_id', 'reviewing_judge_id', 'work_product'];
 
     const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param) || !decisionOpts[param]);
 

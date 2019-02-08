@@ -87,7 +87,10 @@ const saveFailure = (err: Object) => (dispatch: Dispatch) => {
   // the promise rejection below is also uncaught
   // but this seems to be by design since that's the same as the frontend handling and throwing an error
 
-  return Promise.reject(new Error(response.text));
+  return Promise.reject(
+    { text: 'the error being caught and thrown by the front end',
+      error: new Error(response.text) }
+  );
 };
 
 export const requestSave = (
@@ -153,7 +156,8 @@ export const setOrganizations = (organizations: Array<Object>) => ({
 
 export const setActiveOrganization = (id: number, name: string, isVso: boolean) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
-  payload: { id,
+  payload: {
+    id,
     name,
     isVso
   }

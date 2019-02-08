@@ -62,7 +62,7 @@ class User < ApplicationRecord
   end
 
   def administer_org_users?
-    admin? || granted?("Admin Intake")
+    admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
   end
 
   def vacols_uniq_id
