@@ -79,7 +79,9 @@ RSpec.feature "Case details" do
 
       scenario "Entire set of attributes for hearing are displayed" do
         visit "/queue"
-        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
+
+        find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+          .click_link
 
         expect(page).to have_content("Select an action")
 
@@ -91,7 +93,8 @@ RSpec.feature "Case details" do
       scenario "Post remanded appeal shows indication of earlier appeal hearing" do
         visit "/queue"
 
-        page.find(:xpath, "//tr[@id='table-row-#{post_remanded_appeal.vacols_id}']/td[1]/a").click
+        find_table_cell(post_remanded_appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+          .click_link
 
         expect(page).to have_content("Select an action")
         expect(page).to have_content(COPY::CASE_DETAILS_HEARING_ON_OTHER_APPEAL)
@@ -103,7 +106,9 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
+
+        find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+          .click_link
 
         hearing = appeal.hearings.first
         expect(page).to have_content("Type: #{hearing.readable_request_type}")
@@ -121,10 +126,14 @@ RSpec.feature "Case details" do
 
       scenario "Fewer attributes of hearing are displayed" do
         visit "/queue"
-        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
+        find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+          .click_link
 
         worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
-        expect(worksheet_link.text).to eq("View Hearing Worksheet")
+        expect(worksheet_link.text).to eq("View VLJ Hearing Worksheet")
+
+        details_link = page.find("a[href='/hearings/#{hearing.external_id}/details']")
+        expect(details_link.text).to eq("View Hearing Details")
       end
     end
 
@@ -133,7 +142,8 @@ RSpec.feature "Case details" do
 
       scenario "Hearings info box is not displayed" do
         visit "/queue"
-        page.find(:xpath, "//tr[@id='table-row-#{appeal.vacols_id}']/td[1]/a").click
+        find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+          .click_link
         expect(page).not_to have_content("Hearing preference")
       end
     end
@@ -541,12 +551,12 @@ RSpec.feature "Case details" do
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
       let!(:attorney_task) do
         create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
-                                   completed_at: Time.zone.now - 4.days)
+                                   closed_at: Time.zone.now - 4.days)
       end
       let!(:judge_task) do
         create(:ama_judge_decision_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
                                                 status: Constants.TASK_STATUSES.completed,
-                                                completed_at: Time.zone.now)
+                                                closed_at: Time.zone.now)
       end
 
       before do
@@ -698,6 +708,50 @@ RSpec.feature "Case details" do
         expect(page).to have_content(judge_user.full_name)
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL)
         expect(page).to have_content(attorney_user.full_name)
+      end
+    end
+  end
+
+  describe "case timeline" do
+    context "when the only completed task is a TrackVeteranTask" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:appeal) { root_task.appeal }
+      let!(:tracking_task) do
+        FactoryBot.create(
+          :track_veteran_task,
+          appeal: appeal,
+          parent: root_task,
+          status: Constants.TASK_STATUSES.completed
+        )
+      end
+
+      it "should not show the tracking task in case timeline" do
+        visit("/queue/appeals/#{tracking_task.appeal.uuid}")
+
+        # Expect to only find the "NOD received" row and the "dispatch pending" rows.
+        expect(page).to have_css("table#case-timeline-table tbody tr", count: 2)
+      end
+    end
+  end
+
+  describe "task snapshot" do
+    context "when the only task is a TrackVeteranTask" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:appeal) { root_task.appeal }
+      let(:tracking_task) { FactoryBot.create(:track_veteran_task, appeal: appeal, parent: root_task) }
+
+      it "should not show the tracking task in task snapshot" do
+        visit("/queue/appeals/#{tracking_task.appeal.uuid}")
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_NO_ACTIVE_LABEL)
+      end
+    end
+
+    context "when the only task is an IHP task" do
+      let(:ihp_task) { FactoryBot.create(:informal_hearing_presentation_task) }
+
+      it "should show the label for the IHP task" do
+        visit("/queue/appeals/#{ihp_task.appeal.uuid}")
+        expect(page).to have_content(COPY::IHP_TASK_LABEL)
       end
     end
   end

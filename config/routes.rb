@@ -102,6 +102,7 @@ Rails.application.routes.draw do
       get :new_documents
       get :veteran
       get :power_of_attorney
+      get :hearings
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
       resources :advance_on_docket_motions, only: [:create]
@@ -126,7 +127,7 @@ Rails.application.routes.draw do
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule', to: "hearings/hearing_day#index"
-  get 'hearings/:hearing_id/details', to: "hearings/hearing_day#index"
+  get 'hearings/:hearing_id/details', to: "hearing_schedule#hearing_details_index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
@@ -138,6 +139,7 @@ Rails.application.routes.draw do
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
+  get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
 
   resources :hearings, only: [:update, :show]
 
@@ -231,6 +233,7 @@ Rails.application.routes.draw do
 
   get "styleguide", to: "styleguide#show"
 
+  get "tableau-login", to: "tableau_logins#login"
 
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 

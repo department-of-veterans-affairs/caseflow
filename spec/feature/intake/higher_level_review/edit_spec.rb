@@ -546,8 +546,7 @@ feature "Higher Level Review Edit issues" do
         click_intake_add_issue
         click_intake_no_matching_issues
 
-        fill_in "Issue category", with: active_nonrating_request_issue.issue_category
-        find("#issue-category").send_keys :enter
+        click_dropdown(text: active_nonrating_request_issue.issue_category)
         expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
         expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
                                      "#{active_nonrating_request_issue.description}")
@@ -572,6 +571,33 @@ feature "Higher Level Review Edit issues" do
             decision_date: active_nonrating_request_issue.decision_date
           )
         ).to_not be_nil
+      end
+    end
+
+    context "nonrating request issue was added and then removed" do
+      let!(:active_nonrating_request_issue) do
+        create(
+          :request_issue,
+          :nonrating,
+          review_request: higher_level_review
+        )
+      end
+
+      before do
+        higher_level_review.create_issues!([active_nonrating_request_issue])
+        active_nonrating_request_issue.remove_from_review
+        higher_level_review.reload
+      end
+
+      it "does not appear as a potential match on edit" do
+        visit "higher_level_reviews/#{nonrating_ep_claim_id}/edit"
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        click_dropdown(text: active_nonrating_request_issue.issue_category)
+
+        expect(page).to have_content("Does issue 2 match any of these issue categories?")
+        expect(page).to_not have_content("Does issue match any of the issues actively being reviewed?")
+        expect(page).to_not have_content("nonrating issue description")
       end
     end
   end
@@ -863,7 +889,7 @@ feature "Higher Level Review Edit issues" do
       expect(nonrating_epe).to_not be_nil
 
       # expect the remove/re-add to create a new RequestIssue for same RatingIssue
-      expect(higher_level_review.reload.request_issues).to_not include(request_issue)
+      expect(higher_level_review.reload.open_request_issues).to_not include(request_issue)
 
       new_version_of_request_issue = higher_level_review.request_issues.find do |ri|
         ri.description == request_issue.description
@@ -970,10 +996,14 @@ feature "Higher Level Review Edit issues" do
       expect(page).to_not have_content("PTSD denied")
 
       # assert server has updated data
-      new_request_issue = higher_level_review.reload.request_issues.first
+      new_request_issue = higher_level_review.reload.open_request_issues.first
       expect(new_request_issue.description).to eq("Left knee granted")
-      expect(request_issue.reload.review_request_id).to be_nil
+      expect(request_issue.reload.review_request_id).to_not be_nil
+      expect(request_issue).to be_closed
       expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(request_issue.closed_at).to eq(Time.zone.now)
+      expect(request_issue.closed_status).to eq("removed")
+      expect(request_issue).to be_removed
       expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update

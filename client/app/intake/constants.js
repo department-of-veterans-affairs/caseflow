@@ -47,7 +47,8 @@ export const PAGE_PATHS = {
   CANCEL_ISSUES: '/cancel',
   CONFIRMATION: '/confirmation',
   DTA_CLAIM: '/dta',
-  CLEARED_EPS: '/cleared_eps'
+  CLEARED_EPS: '/cleared_eps',
+  OUTCODED: '/outcoded'
 };
 
 export const BOOLEAN_RADIO_OPTIONS = [

@@ -44,7 +44,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def active?
-    end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
+    hlr_ep_active? || dta_claim_active?
   end
 
   def description
@@ -52,7 +52,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def status_hash
-    # need to implement. returns the details object for the status
+    { type: fetch_status }
   end
 
   def alerts
@@ -64,8 +64,41 @@ class HigherLevelReview < ClaimReview
     []
   end
 
+  def decision_event_date
+    return if dta_claim
+    return unless decision_issues.any?
+
+    if end_product_establishments.any?
+      decision_issues.first.approx_decision_date
+    else
+      decision_issues.first.promulgation_date
+    end
+  end
+
+  def dta_error_event_date
+    return if hlr_ep_active?
+    return unless dta_claim
+
+    decision_issues.find_by(disposition: DTA_ERRORS).approx_decision_date
+  end
+
+  def dta_descision_event_date
+    return if active?
+    return unless dta_claim
+
+    dta_claim.decision_event_date
+  end
+
+  def other_close_event_date
+    return if active?
+    return unless decision_issues.empty?
+    return unless end_product_establishments.any?
+
+    end_product_establishments.first.last_synced_at
+  end
+
   def events
-    # need to implement. hlr_request, hlr_decision, hlr_dta_error, or hlr_other_close
+    @events ||= AppealEvents.new(appeal: self).all
   end
 
   private
@@ -75,6 +108,7 @@ class HigherLevelReview < ClaimReview
 
     dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
     dta_supplemental_claim.create_decision_review_task_if_required!
+    dta_supplemental_claim.submit_for_processing!
     dta_supplemental_claim.start_processing_job!
   end
 
@@ -137,5 +171,30 @@ class HigherLevelReview < ClaimReview
       benefit_type_code: veteran.benefit_type_code,
       user: intake_processed_by
     )
+  end
+
+  def dta_claim
+    @dta_claim ||= SupplementalClaim.find_by(veteran_file_number: veteran_file_number,
+                                             decision_review_remanded: self)
+  end
+
+  def dta_claim_active?
+    dta_claim ? dta_claim.active? : false
+  end
+
+  def hlr_ep_active?
+    end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
+  end
+
+  def fetch_status
+    if hlr_ep_active?
+      :hlr_received
+    elsif dta_claim_active?
+      :hlr_dta_error
+    elsif dta_claim
+      dta_claim.decision_issues.empty ? :hlr_closed : :hlr_decision
+    else
+      decision_issues ? :hlr_closed : :hlr_decision
+    end
   end
 end

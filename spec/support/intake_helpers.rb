@@ -385,6 +385,33 @@ module IntakeHelpers
     rating_request_issue.decision_issues + nonrating_request_issue.decision_issues
   end
 
+  def setup_prior_claim_with_payee_code(appeal, veteran, prior_payee_code = "10")
+    prior_supplemental_claim = create(
+      :supplemental_claim,
+      veteran_file_number: veteran.file_number,
+      decision_review_remanded: appeal,
+      benefit_type: "insurance"
+    )
+
+    prior_sc_claimant = create(:claimant,
+                               review_request: prior_supplemental_claim,
+                               participant_id: appeal.claimants.first.participant_id,
+                               payee_code: appeal.claimants.first.payee_code)
+
+    Generators::EndProduct.build(
+      veteran_file_number: veteran.file_number,
+      bgs_attrs: {
+        benefit_claim_id: "claim_id",
+        claimant_first_name: prior_sc_claimant.first_name,
+        claimant_last_name: prior_sc_claimant.last_name,
+        payee_type_code: prior_payee_code,
+        claim_date: 5.days.ago
+      }
+    )
+
+    prior_supplemental_claim
+  end
+
   def check_row(label, text)
     row = find("tr", text: label)
     expect(row).to have_text(text)
@@ -394,6 +421,12 @@ module IntakeHelpers
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range)
       .and_return(rating_profile_list: { rating_profile: nil },
                   reject_reason: "Converted or Backfilled Rating - no promulgated ratings found")
+  end
+
+  def mock_locked_rating_response
+    allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range)
+      .and_return(rating_profile_list: { rating_profile: nil },
+                  reject_reason: "Locked Rating")
   end
 
   def generate_ratings_with_disabilities(
@@ -518,10 +551,11 @@ module IntakeHelpers
 
     # check that decision_request_issue is closed
     updated_request_issue = RequestIssue.find_by(id: original_request_issue.id)
-    expect(updated_request_issue.review_request).to be_nil
+    expect(updated_request_issue.review_request).to_not be_nil
+    expect(updated_request_issue).to be_closed
 
     # check that new request issue is created contesting the decision issue
-    request_issues = review_request.reload.request_issues
+    request_issues = review_request.reload.open_request_issues
     first_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.first.id)
     second_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.second.id)
 
@@ -580,5 +614,11 @@ module IntakeHelpers
     expect(request_issue_update.removed_issues.map(&:id)).to_not include(non_modified_ids)
   end
   # rubocop:enable Metrics/AbcSize
+
+  def select_agree_to_withdraw_legacy_issues(withdraw)
+    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
+      find("label", text: withdraw ? "Yes" : "N/A", match: :prefer_exact).click
+    end
+  end
 end
 # rubocop:enable Metrics/ModuleLength

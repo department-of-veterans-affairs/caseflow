@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190128211929) do
+ActiveRecord::Schema.define(version: 20190206165710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,9 +84,9 @@ ActiveRecord::Schema.define(version: 20190128211929) do
     t.datetime "established_at"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
+    t.datetime "establishment_last_submitted_at"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
-    t.datetime "last_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
     t.date "target_decision_date"
@@ -241,6 +241,7 @@ ActiveRecord::Schema.define(version: 20190128211929) do
 
   create_table "decision_issues", force: :cascade do |t|
     t.string "benefit_type"
+    t.date "caseflow_decision_date"
     t.integer "decision_review_id"
     t.string "decision_review_type"
     t.string "decision_text"
@@ -252,7 +253,7 @@ ActiveRecord::Schema.define(version: 20190128211929) do
     t.datetime "profile_date"
     t.datetime "promulgation_date"
     t.string "rating_issue_reference_id"
-    t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
+    t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "decision_issues_uniq_by_disposition_and_ref_id", unique: true
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
@@ -481,6 +482,22 @@ ActiveRecord::Schema.define(version: 20190128211929) do
     t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
   end
 
+  create_table "hearing_locations", force: :cascade do |t|
+    t.string "address"
+    t.string "city"
+    t.string "classification"
+    t.datetime "created_at", null: false
+    t.float "distance"
+    t.string "facility_id"
+    t.string "facility_type"
+    t.integer "hearing_id"
+    t.string "hearing_type"
+    t.string "name"
+    t.string "state"
+    t.datetime "updated_at", null: false
+    t.string "zip_code"
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "hearing_id", null: false
@@ -502,7 +519,7 @@ ActiveRecord::Schema.define(version: 20190128211929) do
     t.boolean "prepped"
     t.string "representative_name"
     t.string "room"
-    t.time "scheduled_time"
+    t.time "scheduled_time", null: false
     t.text "summary"
     t.boolean "transcript_requested"
     t.date "transcript_sent_date"
@@ -514,10 +531,10 @@ ActiveRecord::Schema.define(version: 20190128211929) do
     t.string "benefit_type"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
+    t.datetime "establishment_last_submitted_at"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
     t.boolean "informal_conference"
-    t.datetime "last_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
     t.boolean "same_office"
@@ -742,6 +759,8 @@ ActiveRecord::Schema.define(version: 20190128211929) do
 
   create_table "request_issues", force: :cascade do |t|
     t.string "benefit_type", null: false
+    t.datetime "closed_at"
+    t.string "closed_status"
     t.integer "contention_reference_id"
     t.integer "contested_decision_issue_id"
     t.string "contested_issue_description"
@@ -856,9 +875,9 @@ ActiveRecord::Schema.define(version: 20190128211929) do
     t.string "decision_review_remanded_type"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
+    t.datetime "establishment_last_submitted_at"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
-    t.datetime "last_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
@@ -902,6 +921,7 @@ ActiveRecord::Schema.define(version: 20190128211929) do
     t.integer "assigned_by_id"
     t.integer "assigned_to_id"
     t.string "assigned_to_type", null: false
+    t.datetime "closed_at"
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true

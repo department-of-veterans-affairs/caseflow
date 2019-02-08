@@ -32,6 +32,7 @@ import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
+import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
@@ -185,7 +186,7 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
-  routedAddColocatedTask = (props) => <AddColocatedTaskView nextStep="/queue" {...props.match.params} />;
+  routedAddColocatedTask = (props) => <AddColocatedTaskView {...props.match.params} />;
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
@@ -204,6 +205,8 @@ class QueueApp extends React.PureComponent<Props> {
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
   routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
+
+  routedCancelTaskModal = (props) => <CancelTaskModal {...props.match.params} />;
 
   routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
@@ -386,6 +389,11 @@ class QueueApp extends React.PureComponent<Props> {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.MARK_COMPLETE.value}`}
             title="Mark Task Complete | Caseflow"
             render={this.routedCompleteTaskModal} />
+          <PageRoute
+            exact
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.WITHDRAW_HEARING.value}`}
+            title="Withdraw Hearing | Caseflow"
+            render={this.routedCancelTaskModal} />
           <PageRoute
             exact
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}

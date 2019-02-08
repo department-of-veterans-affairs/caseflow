@@ -4,8 +4,15 @@ class Hearing < ApplicationRecord
   belongs_to :judge, class_name: "User"
   has_one :transcription
   has_many :hearing_views, as: :hearing
+  has_one :hearing_location, as: :hearing
   has_many :hearing_issue_notes
+
   accepts_nested_attributes_for :hearing_issue_notes
+  accepts_nested_attributes_for :transcription
+  accepts_nested_attributes_for :hearing_location
+
+  alias_attribute :location, :hearing_location
+  alias_attribute :regional_office_key, :hearing_day_regional_office
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
@@ -23,16 +30,23 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
+  delegate :veteran_available_hearing_locations, to: :appeal
+  delegate :veteran_closest_regional_office, to: :appeal
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
+  delegate :regional_office, to: :hearing_day, prefix: true
 
-  accepts_nested_attributes_for :transcription, allow_destroy: true
+  after_create :update_fields_from_hearing_day
 
   HEARING_TYPES = {
     V: "Video",
     T: "Travel",
     C: "Central"
   }.freeze
+
+  def update_fields_from_hearing_day
+    update!(judge: hearing_day.judge, room: hearing_day.room, bva_poc: hearing_day.bva_poc)
+  end
 
   def self.find_hearing_by_uuid_or_vacols_id(id)
     if UUID_REGEX.match?(id)
@@ -70,15 +84,12 @@ class Hearing < ApplicationRecord
 
   #:nocov:
   # This is all fake data that will be refactored in a future PR.
-  def regional_office_key
-    "RO19"
-  end
-
   def regional_office_name
-    "Winston-Salem, NC"
+    RegionalOffice::CITIES[regional_office_key][:label] unless regional_office_key.nil?
   end
 
   def regional_office_timezone
+    RegionalOffice::CITIES[regional_office_key][:timezone] unless regional_office_key.nil?
     "America/New_York"
   end
 
@@ -86,6 +97,14 @@ class Hearing < ApplicationRecord
     1
   end
   #:nocov:
+
+  def slot_new_hearing(hearing_day_id, hearing_location_attrs: nil, **_args)
+    # These fields are needed for the legacy hearing's version of this method
+    Hearing.create!(hearing_day_id: hearing_day_id,
+                    scheduled_time: scheduled_time,
+                    hearing_location_attributes: hearing_location_attrs,
+                    appeal: appeal)
+  end
 
   def external_id
     uuid
@@ -109,6 +128,7 @@ class Hearing < ApplicationRecord
         :appellant_last_name,
         :appellant_city,
         :appellant_state,
+        :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
         :readable_request_type,
@@ -126,7 +146,10 @@ class Hearing < ApplicationRecord
         :military_service,
         :current_issue_count,
         :appeal_representative_name,
-        :worksheet_issues
+        :location,
+        :worksheet_issues,
+        :veteran_closest_regional_office,
+        :veteran_available_hearing_locations
       ]
     )
   end

@@ -35,6 +35,13 @@ export const onHearingTimeChange = (hearingTime) => ({
   }
 });
 
+export const onHearingLocationChange = (hearingLocation) => ({
+  type: ACTIONS.HEARING_LOCATION_CHANGE,
+  payload: {
+    hearingLocation
+  }
+});
+
 export const onFetchDropdownData = (dropdownName) => ({
   type: ACTIONS.FETCH_DROPDOWN_DATA,
   payload: {
@@ -47,6 +54,13 @@ export const onReceiveDropdownData = (dropdownName, data) => ({
   payload: {
     dropdownName,
     data
+  }
+});
+
+export const onHearingOptionalTime = (optionalTime) => ({
+  type: ACTIONS.HEARING_OPTIONAL_TIME_CHANGE,
+  payload: {
+    optionalTime
   }
 });
 

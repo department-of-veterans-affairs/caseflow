@@ -127,8 +127,8 @@ class LegacyAppeal < ApplicationRecord
     quality_review: "48",
     translation: "14",
     schedule_hearing: "57",
-    awaiting_video_hearing: "38",
-    awaiting_co_hearing: "36"
+    case_storage: "81",
+    service_organization: "55"
   }.freeze
 
   def document_fetcher
@@ -174,6 +174,12 @@ class LegacyAppeal < ApplicationRecord
     [notification_date + 1.year, soc_date + 60.days].max.to_date
   end
 
+  def soc_opt_in_due_date
+    return unless soc_date || !ssoc_dates.empty?
+
+    ([soc_date] + ssoc_dates).max.to_date + 60.days
+  end
+
   def cavc_due_date
     return unless decided_by_bva?
 
@@ -184,8 +190,20 @@ class LegacyAppeal < ApplicationRecord
     !!appellant_first_name
   end
 
+  def veteran_if_exists
+    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
+  end
+
+  def veteran_closest_regional_office
+    veteran_if_exists&.closest_regional_office
+  end
+
+  def veteran_available_hearing_locations
+    veteran_if_exists&.available_hearing_locations
+  end
+
   def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
+    @veteran ||= Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number)
   end
 
   def veteran_ssn
@@ -307,6 +325,10 @@ class LegacyAppeal < ApplicationRecord
   end
 
   delegate :representatives, to: :case_record
+
+  def vsos
+    Vso.where(participant_id: [power_of_attorney.bgs_participant_id])
+  end
 
   def contested_claim
     representatives.any? { |r| r.reptype == "C" }
@@ -699,6 +721,7 @@ class LegacyAppeal < ApplicationRecord
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
       (RequestStore.store[:application] = "queue" ||
+       RequestStore.store[:application] = "hearing_schedule" ||
        RequestStore.store[:application] = "idt")
   end
 

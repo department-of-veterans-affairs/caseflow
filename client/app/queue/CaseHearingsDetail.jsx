@@ -66,6 +66,11 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
     }, {
       label: 'Judge',
       value: hearing.heldBy
+    }, {
+      label: '',
+      value: <Link href={`/hearings/${hearing.externalId}/details`}>
+        {COPY.CASE_DETAILS_HEARING_DETAILS_LINK_COPY}
+      </Link>
     }
     ];
   }

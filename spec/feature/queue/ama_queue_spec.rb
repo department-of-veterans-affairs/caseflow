@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.feature "AmaQueue" do
+  def valid_document_id
+    "12345-12345678"
+  end
+
   context "loads appellant detail view" do
     let(:attorney_first_name) { "Robby" }
     let(:attorney_last_name) { "McDobby" }
@@ -272,6 +276,27 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content("Task assigned to #{other_organization.name}")
         expect(Task.last.instructions.first).to eq(instructions)
       end
+
+      context "A TranslationTask is assigned to the organization" do
+        let(:veteran_first_name) { "Milivoj" }
+        let(:veteran_last_name) { "Veilleux" }
+        let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
+        let!(:veteran) { FactoryBot.create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
+        let!(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+        let!(:translation_task) do
+          FactoryBot.create(
+            :translation_task,
+            assigned_to: translation_organization,
+            appeal: appeal,
+            parent: appeal.root_task
+          )
+        end
+
+        scenario "the task is in the organization queue" do
+          visit translation_organization.path
+          expect(page).to have_content(veteran_full_name)
+        end
+      end
     end
 
     context "when user is a vso" do
@@ -434,6 +459,7 @@ RSpec.feature "AmaQueue" do
       fill_in "taskInstructions", with: qr_instructions
 
       click_on "Submit"
+
       expect(page).to have_content("On hold (3)")
 
       # step "judge reviews case and assigns a task to an attorney"
@@ -467,11 +493,9 @@ RSpec.feature "AmaQueue" do
       click_on veteran_full_name
 
       find(".Select-control", text: "Select an action").click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_DECISION.to_h[:label]).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label]).click
 
-      expect(page).to have_content("Select special issues (optional)")
-
-      click_on "Continue"
+      expect(page).not_to have_content("Select special issues (optional)")
 
       expect(page).to have_content("Select Dispositions")
 
@@ -479,7 +503,7 @@ RSpec.feature "AmaQueue" do
 
       expect(page).to have_content("Submit Draft Decision for Review")
 
-      fill_in "Document ID:", with: "1234"
+      fill_in "Document ID:", with: valid_document_id
       click_on "Select a judge"
       find(".Select-control", text: "Select a judge…").click
       first("div", class: "Select-option", text: judge_user.full_name).click
@@ -504,7 +528,7 @@ RSpec.feature "AmaQueue" do
       find(".Select-control", text: "Select an action", match: :first).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
-      expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
+      expect(page).to have_content("Mark as complete")
 
       click_on "Mark complete"
 
@@ -521,7 +545,7 @@ RSpec.feature "AmaQueue" do
       find(".Select-control", text: "Select an action").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
 
-      expect(page).to have_content("Mark this task \"complete\" and send the case back to #{qr_user_name_short}")
+      expect(page).to have_content("Mark as complete")
 
       click_on "Mark complete"
 
@@ -558,8 +582,6 @@ RSpec.feature "AmaQueue" do
       FactoryBot.create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :assigned)
     end
 
-    let(:document_id) { "5551212" }
-
     before do
       ["Elaine Abitong", "Byron Acero", "Jan Antonioni"].each do |attorney_name|
         another_attorney_on_the_team = FactoryBot.create(
@@ -577,8 +599,11 @@ RSpec.feature "AmaQueue" do
     it "judge can return report to attorney for corrections" do
       step "judge reviews case and assigns a task to an attorney" do
         visit "/queue"
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
 
-        click_on COPY::SWITCH_TO_ASSIGN_MODE_LINK_LABEL
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
 
         click_on veteran_full_name
 
@@ -598,9 +623,7 @@ RSpec.feature "AmaQueue" do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).to have_content("Select special issues (optional)")
-        click_label "riceCompliance"
-        click_on "Continue"
+        expect(page).not_to have_content("Select special issues (optional)")
 
         expect(page).to have_content("Select Dispositions")
         click_dropdown({ prompt: "Select disposition", text: "Allowed" }, find("#table-row-0"))
@@ -614,7 +637,7 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
-        fill_in "Document ID:", with: "12345"
+        fill_in "Document ID:", with: valid_document_id
         click_on "Select a judge"
         click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
         fill_in "notes", with: "all done"
@@ -648,9 +671,7 @@ RSpec.feature "AmaQueue" do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        expect(page).to have_content("Select special issues (optional)")
-        expect(page).to have_field("riceCompliance", checked: true, visible: false)
-        click_on "Continue"
+        expect(page).not_to have_content("Select special issues (optional)")
 
         expect(page).to have_content("Select Dispositions")
         expect(dropdown_selected_value(find("#table-row-0"))).to eq "Allowed"
@@ -664,7 +685,7 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
-        fill_in "Document ID:", with: document_id
+        fill_in "Document ID:", with: valid_document_id
         click_on "Select a judge"
         click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
         fill_in "notes", with: "corrections made"
@@ -676,12 +697,12 @@ RSpec.feature "AmaQueue" do
         )
       end
 
-      step "judge sees the case in their queue" do
+      step "judge sees the case in their review queue" do
         User.authenticate!(user: judge_user)
         visit "/queue"
 
         expect(page).to have_content veteran_full_name
-        expect(page).to have_content document_id
+        expect(page).to have_content valid_document_id
       end
     end
   end

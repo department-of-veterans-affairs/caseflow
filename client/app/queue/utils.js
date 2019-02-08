@@ -1,4 +1,4 @@
-// @flow
+/* eslint-disable max-lines */
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
@@ -47,6 +47,20 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
   }
 });
 
+export const prepareMostRecentlyHeldHearingForStore = (appealId: string, hearing) => {
+  return {
+    appealId,
+    hearing: {
+      heldBy: hearing.held_by,
+      viewedByJudge: hearing.viewed_by_judge,
+      date: hearing.date,
+      type: hearing.type,
+      externalId: hearing.external_id,
+      disposition: hearing.disposition
+    }
+  };
+};
+
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
     const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
@@ -63,12 +77,15 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_at,
+      closestRegionalOffice: task.attributes.veteran_closest_regional_office,
       createdAt: task.attributes.created_at,
-      completedOn: task.attributes.completed_at,
+      closedAt: task.attributes.closed_at,
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
+        name: task.attributes.assigned_to.name,
         id: task.attributes.assigned_to.id,
+        isOrganization: task.attributes.assigned_to.is_organization,
         type: task.attributes.assigned_to.type
       },
       assignedBy: {
@@ -90,7 +107,10 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       availableActions: task.attributes.available_actions,
       taskBusinessPayloads: task.attributes.task_business_payloads,
       caseReviewId: task.attributes.attorney_case_review_id,
-      timelineTitle: task.attributes.timeline_title
+      timelineTitle: task.attributes.timeline_title,
+      hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
+      hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
+      hideFromCaseTimeline: task.attributes.hide_from_case_timeline
     };
 
     return acc;
@@ -137,12 +157,14 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       appealType: task.attributes.appeal_type,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
-      completedOn: null,
+      closedAt: null,
       dueOn: task.attributes.due_on,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
+        isOrganization: task.attributes.assigned_to.is_organization,
+        id: task.attributes.assigned_to.id,
         type: task.attributes.assigned_to.type,
-        id: task.attributes.assigned_to.id
+        name: task.attributes.assigned_to.name
       },
       assignedBy: {
         firstName: task.attributes.assigned_by.first_name,
@@ -161,7 +183,10 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       decisionPreparedBy: null,
       availableActions: task.attributes.available_actions,
       taskBusinessPayloads: task.attributes.task_business_payloads,
-      timelineTitle: task.attributes.timeline_title
+      timelineTitle: task.attributes.timeline_title,
+      hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
+      hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
+      hideFromCaseTimeline: task.attributes.hide_from_case_timeline
     };
   });
 
@@ -220,6 +245,19 @@ export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) =>
     disposition: hearing.disposition
   }));
 
+const prepareAppealAvailableHearingLocationsForStore = (appeal: { attributes: Object }) => appeal.attributes.
+  veteran_available_hearing_locations.map((ahl) => ({
+    name: ahl.name,
+    address: ahl.address,
+    city: ahl.city,
+    state: ahl.state,
+    distance: ahl.distance,
+    facilityId: ahl.facility_id,
+    facilityType: ahl.facility_type,
+    classification: ahl.classification,
+    zipCode: ahl.zip_code
+  }));
+
 export const prepareAppealForStore =
   (appeals: Array<Object>):
     { appeals: BasicAppeals, appealDetails: AppealDetails } => {
@@ -264,6 +302,8 @@ export const prepareAppealForStore =
         veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
         veteranGender: appeal.attributes.veteran_gender,
         veteranAddress: appeal.attributes.veteran_address,
+        veteranClosestRegionalOffice: appeal.attributes.veteran_closest_regional_office,
+        veteranAvailableHearingLocations: prepareAppealAvailableHearingLocationsForStore(appeal),
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
         decisionDate: appeal.attributes.decision_date,
@@ -295,7 +335,8 @@ export const prepareClaimReviewForStore = (claimReviews: Array<Object>) => {
       caseflowVeteranId: claimReview.caseflow_veteran_id,
       claimantNames: claimReview.claimant_names,
       claimId: claimReview.claim_id,
-      endProducts: claimReview.end_products,
+      endProductStatuses: claimReview.end_product_status,
+      establishmentError: claimReview.establishment_error,
       reviewType: claimReview.review_type,
       veteranFileNumber: claimReview.veteran_file_number,
       veteranFullName: claimReview.veteran_full_name
@@ -472,6 +513,10 @@ export const taskIsOnHold = (task: Task) => {
 };
 
 export const taskActionData = (props: Object) => {
+  if (!props.task) {
+    return {};
+  }
+
   const relevantAction = props.task.availableActions.
     find((action) => props.history.location.pathname.endsWith(action.value));
 
@@ -479,6 +524,5 @@ export const taskActionData = (props: Object) => {
     return (relevantAction.data);
   }
 
-  // We should never get here since any task action the creates this modal should provide data.
-  throw new Error('Task action requires data');
+  return null;
 };

@@ -6,7 +6,8 @@ class EndProduct
   STATUSES = {
     "PEND" => "Pending",
     "CLR" => "Cleared",
-    "CAN" => "Canceled"
+    "CAN" => "Canceled",
+    "RW" => "Ready to work"
   }.freeze
 
   INACTIVE_STATUSES = %w[CAN CLR].freeze
@@ -225,11 +226,11 @@ class EndProduct
     def from_bgs_hash(hash)
       new(
         claim_id: hash[:benefit_claim_id],
-        claim_date: parse_claim_date(hash[:claim_receive_date]),
+        claim_date: parse_date(hash[:claim_receive_date]).try(:in_time_zone),
         claim_type_code: hash[:claim_type_code],
         modifier: hash[:end_product_type_code],
         status_type_code: hash[:status_type_code],
-        last_action_date: hash[:last_action_date],
+        last_action_date: parse_date(hash[:last_action_date]),
         claimant_first_name: hash[:claimant_first_name],
         claimant_last_name: hash[:claimant_last_name],
         payee_code: hash[:payee_type_code]
@@ -238,7 +239,7 @@ class EndProduct
 
     def from_establish_claim_params(hash)
       new(
-        claim_date: parse_claim_date(hash[:date]),
+        claim_date: parse_date(hash[:date]).try(:in_time_zone),
         claim_type_code: hash[:end_product_code],
         modifier: hash[:end_product_modifier],
         suppress_acknowledgement_letter: hash[:suppress_acknowledgement_letter],
@@ -250,8 +251,10 @@ class EndProduct
 
     private
 
-    def parse_claim_date(date)
-      Date.strptime(date, "%m/%d/%Y").in_time_zone
+    def parse_date(date)
+      return unless date
+
+      Date.strptime(date, "%m/%d/%Y")
     end
   end
 end

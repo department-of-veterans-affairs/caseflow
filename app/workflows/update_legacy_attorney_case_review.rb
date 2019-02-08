@@ -13,21 +13,23 @@ class UpdateLegacyAttorneyCaseReview
   end
 
   def call
-    success = valid?
+    @success = valid?
 
     if success
       update_attorney_case_review
       update_vacols_decass_table
     end
 
-    FormResponse.new(success: success, errors: errors.messages)
+    FormResponse.new(success: success, errors: [response_errors])
   end
 
   private
 
-  attr_reader :id, :document_id, :user
+  attr_reader :id, :document_id, :user, :success
 
   def update_attorney_case_review
+    return unless attorney_case_review
+
     attorney_case_review.update!(document_id: document_id)
   end
 
@@ -79,7 +81,7 @@ class UpdateLegacyAttorneyCaseReview
   end
 
   def correct_format?
-    if decision_work_product?
+    if draft_decision_work_product?
       return document_id.match?(new_decision_regex) || document_id.match?(old_decision_regex)
     end
 
@@ -88,8 +90,8 @@ class UpdateLegacyAttorneyCaseReview
     document_id.match?(ime_regex) if ime_work_product?
   end
 
-  def decision_work_product?
-    %w[DEC OTD].include?(work_product)
+  def draft_decision_work_product?
+    Constants::DECASS_WORK_PRODUCT_TYPES["DRAFT_DECISION"].include?(work_product)
   end
 
   def vha_work_product?
@@ -142,5 +144,14 @@ class UpdateLegacyAttorneyCaseReview
   def invalid_decision_document_id_message
     "Draft Decision Document IDs must be in one of these formats: " \
       "12345-12345678 or 12345678.123 or 12345678.1234"
+  end
+
+  def response_errors
+    return if success
+
+    {
+      title: "Record is invalid",
+      detail: errors.to_hash[:document_id][0]
+    }
   end
 end

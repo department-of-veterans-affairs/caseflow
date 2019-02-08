@@ -16,7 +16,10 @@ import {
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
   onHearingDateUpdate,
+  onTranscriptRequestedUpdate,
   onHearingTimeUpdate,
+  onHearingLocationUpdate,
+  onHearingRegionalOfficeUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -32,7 +35,8 @@ import {
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError
+  onResetLockHearingAfterError,
+  onHearingOptionalTime
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
@@ -88,14 +92,9 @@ export class DailyDocketContainer extends React.Component {
 
   getTime = (hearing) => {
     if (hearing.editedTime) {
-      return {
-        // eslint-disable-next-line id-length
-        h: hearing.editedTime.split(':')[0],
-        // eslint-disable-next-line id-length
-        m: hearing.editedTime.split(':')[1],
-        offset: moment.tz('America/New_York').format('Z')
-      };
+      return this.formatTime(hearing.scheduledFor, hearing.editedTime);
     }
+
     const timeObject = moment(hearing.scheduledFor);
 
     return {
@@ -106,24 +105,82 @@ export class DailyDocketContainer extends React.Component {
       offset: timeObject.format('Z')
     };
 
-  }
+  };
 
-  formatHearing = (hearing) => {
+  formatTime = (hearingDate, hearingTime) => {
+    return {
+      // eslint-disable-next-line id-length
+      h: hearingTime.split(':')[0],
+      // eslint-disable-next-line id-length
+      m: hearingTime.split(':')[1],
+      offset: moment.tz(hearingDate, 'America/New_York').format('Z')
+    };
+  };
+
+  getScheduledTime = (hearing) => {
+    let scheduledTime = null;
+
+    if (hearing.editedTime) {
+      if (hearing.editedTime === 'other') {
+        scheduledTime = hearing.editedOptionalTime;
+      } else {
+        scheduledTime = hearing.editedTime;
+      }
+    } else {
+      scheduledTime = hearing.scheduledTime;
+    }
+
+    return scheduledTime;
+  };
+
+  getScheduledFor = (hearing) => {
+    let scheduledFor = null;
+
+    if (hearing.editedTime) {
+      if (hearing.editedTime === 'other') {
+        scheduledFor = moment(hearing.scheduledFor).
+          set(this.formatTime(hearing.scheduledFor, hearing.editedOptionalTime));
+      } else {
+        scheduledFor = moment(hearing.scheduledFor).set(this.getTime(hearing));
+      }
+    } else {
+      scheduledFor = hearing.scheduledFor;
+    }
+
+    return scheduledFor;
+  };
+
+  formatMasterRecordUpdated = (hearing) => {
     const time = this.getTime(hearing);
 
+    return hearing.editedDate ? {
+      id: hearing.editedDate.hearingId,
+      time,
+      hearing_location_attributes: hearing.editedLocation ? ApiUtil.convertToSnakeCase(hearing.editedLocation) : null
+    } : null;
+  };
+
+  formatHearing = (hearing) => {
     return {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
+      transcript_requested: _.isUndefined(hearing.editedTranscriptRequested) ?
+        hearing.transcriptRequested : hearing.editedTranscriptRequested,
       notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      master_record_updated: hearing.editedDate ? { id: hearing.editedDate,
-        time } : null,
-      scheduled_for: hearing.editedTime ? moment(hearing.scheduledFor).set(time) : hearing.scheduledFor
+      hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
+        ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
+      scheduled_time: this.getScheduledTime(hearing),
+      scheduled_for: this.getScheduledFor(hearing)
     };
   };
 
   saveHearing = (hearing) => {
     const formattedHearing = this.formatHearing(hearing);
+    const formattedMasterRecordUpdated = this.formatMasterRecordUpdated(hearing);
 
-    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: { hearing: formattedHearing } }).
+    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
+      hearing: formattedHearing,
+      master_record_updated: formattedMasterRecordUpdated
+    } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
@@ -249,6 +306,10 @@ export class DailyDocketContainer extends React.Component {
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
+        onHearingOptionalTime={this.props.onHearingOptionalTime}
+        onTranscriptRequestedUpdate={this.props.onTranscriptRequestedUpdate}
+        onHearingLocationUpdate={this.props.onHearingLocationUpdate}
+        onHearingRegionalOfficeUpdate={this.props.onHearingRegionalOfficeUpdate}
         saveHearing={this.saveHearing}
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
@@ -308,6 +369,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onHearingDispositionUpdate,
   onHearingDateUpdate,
   onHearingTimeUpdate,
+  onTranscriptRequestedUpdate,
+  onHearingLocationUpdate,
+  onHearingRegionalOfficeUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -323,7 +387,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError
+  onResetLockHearingAfterError,
+  onHearingOptionalTime
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

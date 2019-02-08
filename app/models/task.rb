@@ -15,6 +15,7 @@ class Task < ApplicationRecord
 
   before_update :set_timestamps
   after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
+  after_update :update_children_status, if: :status_changed_to_completed?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -49,8 +50,15 @@ class Task < ApplicationRecord
     { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func], user) : nil }
   end
 
+  # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
   def actions_available?(user)
-    return false if [Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.completed].include?(status)
+    return false if status == Constants.TASK_STATUSES.on_hold
+
+    actions_allowable?(user)
+  end
+
+  def actions_allowable?(user)
+    return false if Constants.TASK_STATUSES.completed == status
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
     return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
@@ -70,16 +78,16 @@ class Task < ApplicationRecord
     children.where(type: AttorneyTask.name)
   end
 
-  def self.recently_completed
-    where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+  def self.recently_closed
+    where(status: Constants.TASK_STATUSES.completed, closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
 
   def self.incomplete
     where.not(status: Constants.TASK_STATUSES.completed)
   end
 
-  def self.incomplete_or_recently_completed
-    incomplete.or(recently_completed)
+  def self.incomplete_or_recently_closed
+    incomplete.or(recently_closed)
   end
 
   def self.create_many_from_params(params_array, current_user)
@@ -109,6 +117,18 @@ class Task < ApplicationRecord
     update!(params)
 
     [self]
+  end
+
+  def hide_from_queue_table_view
+    false
+  end
+
+  def hide_from_case_timeline
+    false
+  end
+
+  def hide_from_task_snapshot
+    false
   end
 
   def reassign; end
@@ -158,11 +178,13 @@ class Task < ApplicationRecord
   end
 
   def self.verify_user_can_create!(user, parent)
-    can_create = parent&.available_actions_unwrapper(user)&.any? do |action|
+    can_create = parent&.available_actions(user)&.map do |action|
+      parent.build_action_hash(action, user)
+    end&.any? do |action|
       action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
     end
 
-    unless can_create
+    if !parent&.actions_allowable?(user) || !can_create
       user_description = user ? "User #{user.id}" : "nil User"
       parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
       message = "#{user_description} cannot assign #{name}#{parent_description}."
@@ -249,12 +271,13 @@ class Task < ApplicationRecord
     {
       selected: org,
       options: [{ label: org.name, value: org.id }],
-      type: GenericTask.name
+      type: TranslationTask.name
     }
   end
 
   def add_admin_action_data(_user = nil)
     {
+      redirect_after: "/queue",
       selected: nil,
       options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
         {
@@ -263,6 +286,12 @@ class Task < ApplicationRecord
         }
       end,
       type: ColocatedTask.name
+    }
+  end
+
+  def complete_data(_user = nil)
+    {
+      modal_body: COPY::MARK_TASK_COMPLETE_COPY
     }
   end
 
@@ -292,7 +321,7 @@ class Task < ApplicationRecord
   def timeline_details
     {
       title: timeline_title,
-      date: completed_at
+      date: closed_at
     }
   end
 
@@ -329,8 +358,14 @@ class Task < ApplicationRecord
     parent.when_child_task_completed
   end
 
+  def update_children_status; end
+
+  def status_changed_to_completed?
+    saved_change_to_attribute?("status") && completed?
+  end
+
   def status_changed_to_completed_and_has_parent?
-    saved_change_to_attribute?("status") && completed? && parent
+    status_changed_to_completed? && parent
   end
 
   def users_to_options(users)
@@ -362,7 +397,7 @@ class Task < ApplicationRecord
       self.assigned_at = updated_at if assigned?
       self.started_at = updated_at if in_progress?
       self.placed_on_hold_at = updated_at if on_hold?
-      self.completed_at = updated_at if completed?
+      self.closed_at = updated_at if completed?
     end
   end
 end

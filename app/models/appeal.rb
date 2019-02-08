@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include Taskable
   include DocumentConcern
@@ -44,7 +45,21 @@ class Appeal < DecisionReview
   scope :ready_for_distribution, lambda {
     joins(:tasks)
       .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) = ?", "DistributionTask", "assigned", 1)
+      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
+              DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+  }
+
+  scope :active, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? and tasks.status != ? then 1 end) >= ?",
+              RootTask.name, Constants.TASK_STATUSES.completed, 1)
+  }
+
+  scope :ordered_by_distribution_ready_date, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
   }
 
   scope :active, lambda {
@@ -60,6 +75,7 @@ class Appeal < DecisionReview
   }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
+  STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
@@ -85,6 +101,7 @@ class Appeal < DecisionReview
   def ui_hash
     super.merge(
       docketType: docket_type,
+      isOutcoded: outcoded?,
       formType: "appeal"
     )
   end
@@ -151,7 +168,7 @@ class Appeal < DecisionReview
   def eligible_request_issues
     # It's possible that two users create issues around the same time and the sequencer gets thrown off
     # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
-    request_issues.select(&:eligible?).sort_by(&:id)
+    open_request_issues.select(&:eligible?).sort_by(&:id)
   end
 
   def issues
@@ -188,6 +205,10 @@ class Appeal < DecisionReview
     tasks.where(type: RootTask.name).where.not(status: Constants.TASK_STATUSES.completed).any?
   end
 
+  def ready_for_distribution_at
+    tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
+  end
+
   def veteran_name
     # For consistency with LegacyAppeal.veteran_name
     veteran&.name&.formatted(:form)
@@ -214,6 +235,8 @@ class Appeal < DecisionReview
            :gender,
            :date_of_birth,
            :age,
+           :closest_regional_office,
+           :available_hearing_locations,
            :country, to: :veteran, prefix: true
 
   delegate :city,
@@ -227,7 +250,11 @@ class Appeal < DecisionReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :first_name, :last_name, :name_suffix, :ssn, to: :veteran, prefix: true, allow_nil: true
+  delegate :closest_regional_office,
+           :first_name,
+           :last_name,
+           :name_suffix,
+           :ssn, to: :veteran, prefix: true, allow_nil: true
 
   def appellant
     claimants.first
@@ -292,6 +319,8 @@ class Appeal < DecisionReview
 
   def create_tasks_on_intake_success!
     RootTask.create_root_and_sub_tasks!(self)
+    create_business_line_tasks if request_issues.any?(&:requires_record_request_task?)
+    maybe_create_translation_task
   end
 
   def establish!
@@ -327,16 +356,106 @@ class Appeal < DecisionReview
     Array.wrap(appeal_status_id)
   end
 
-  def aod
-    # to be implemented
+  def active_status?
+    active? || active_ep? || active_remanded_claims?
+  end
+
+  def active_ep?
+    decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
+  end
+
+  def active_remanded_claims?
+    remand_supplemental_claims.any?(&:active?)
   end
 
   def location
-    # to be implemented
+    if active_ep? || active_remanded_claims?
+      "aoj"
+    else
+      "bva"
+    end
   end
 
   def status_hash
-    # to be implemented
+    { type: fetch_status, details: {} }
+  end
+
+  def fetch_status
+    if active?
+      fetch_pre_decision_status
+    else
+      fetch_post_decision_status
+    end
+  end
+
+  # rubocop:disable CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
+  def fetch_pre_decision_status
+    if pending_schedule_hearing_task?
+      :pending_hearing_scheduling
+    elsif hearing_pending?
+      :scheduled_hearing
+    elsif evidence_submission_hold_pending?
+      :evidentiary_period
+    elsif at_vso?
+      :at_vso
+    elsif !distributed_to_a_judge?
+      :on_docket
+    elsif distributed_to_a_judge? && decision_issues.empty?
+      :decision_in_progress
+    end
+  end
+
+  def fetch_post_decision_status
+    if !remanded_issues? && effectuation_ep? && !active_ep?
+      :bva_decision_effectuation
+    elsif remanded_sc_with_ep && !remanded_sc_with_ep.active?
+      :post_bva_dta_decision
+    elsif remanded_issues?
+      :ama_remand
+    elsif decision_issues.any? && !remanded_issues?
+      :bva_decision
+    elsif withdrawn?
+      :withdrawn
+    else decision_issues.empty?
+         :other_close
+    end
+  end
+  # rubocop:enable CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
+
+  def pending_schedule_hearing_task?
+    tasks.any? { |t| t.is_a?(ScheduleHearingTask) && !t.completed? }
+  end
+
+  def hearing_pending?
+    # This isn't available yet.
+    # tasks.any? { |t| t.is_a?(HoldHearingTask) && !t.completed? }
+  end
+
+  def evidence_submission_hold_pending?
+    tasks.any? { |t| t.is_a?(EvidenceSubmissionWindowTask) && !t.completed? }
+  end
+
+  def at_vso?
+    # This task is always open, this can be used once that task is completed
+    # tasks.any? { |t| t.is_a?(InformalHearingPresentationTask) && !t.completed? }
+  end
+
+  def distributed_to_a_judge?
+    tasks.any? { |t| t.is_a?(JudgeTask) }
+  end
+
+  def remanded_issues?
+    decision_issues.any? { |di| di.disposition == "remanded" }
+  end
+
+  def remanded_sc_with_ep
+    @remanded_sc_with_ep ||= remand_supplemental_claims.find(&:processed_in_vbms?)
+  end
+
+  def withdrawn?
+    # will implement when available
   end
 
   def alerts
@@ -355,7 +474,115 @@ class Appeal < DecisionReview
     end
   end
 
+  def docket_hash
+    return unless active_status?
+    return if location == "aoj"
+
+    {
+      type: fetch_docket_type,
+      month: Date.parse(receipt_date.to_s).change(day: 1),
+      switchDueDate: docket_switch_deadline,
+      eligibleToSwitch: eligible_to_switch_dockets?
+    }
+  end
+
+  def fetch_docket_type
+    return :new_evidence if evidence_submission_docket?
+
+    docket_name
+  end
+
+  def docket_switch_deadline
+    return unless receipt_date
+    return unless request_issues.open.any?
+    return if request_issues.any? { |ri| !ri.closed? && ri.decision_or_promulgation_date.nil? }
+
+    open_request_issues = request_issues.find_all { |ri| !ri.closed? }
+    oldest = open_request_issues.min_by(&:decision_or_promulgation_date)
+    deadline_from_oldest_request_issue = oldest.decision_or_promulgation_date + 365.days
+    deadline_from_receipt = receipt_date + 60.days
+
+    [deadline_from_receipt, deadline_from_oldest_request_issue].max
+  end
+
+  def eligible_to_switch_dockets?
+    return false unless docket_switch_deadline
+
+    # TODO: false if hearing already taken place, to be implemented
+    # https://github.com/department-of-veterans-affairs/caseflow/issues/9205
+    Time.zone.today < docket_switch_deadline
+  end
+
+  def processed_in_caseflow?
+    true
+  end
+
+  def first_distributed_to_judge_date
+    judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
+    return unless judge_tasks.any?
+
+    judge_tasks.min_by(&:created_at).created_at
+  end
+
+  def decision_event_date
+    return unless decision_issues.any?
+
+    decision_issues.first.approx_decision_date
+  end
+
+  def effectuation_ep?
+    decision_document&.end_product_establishments&.any?
+  end
+
+  def decision_effectuation_event_date
+    return if remanded_issues?
+    return unless effectuation_ep?
+    return if active_ep?
+
+    decision_document.end_product_establishments.first.last_synced_at
+  end
+
+  def dta_descision_event_date
+    return unless remanded_sc_with_ep
+    return if remanded_sc_with_ep.active?
+
+    remanded_sc_with_ep.decision_event_date
+  end
+
+  def other_close_event_date
+    return if active_status?
+    return if decision_issues.any?
+
+    root_task.completed_at
+  end
+
+  def events
+    @events ||= AppealEvents.new(appeal: self).all
+  end
+
   private
+
+  def maybe_create_translation_task
+    veteran_state_code = veteran&.state
+    va_dot_gov_address = veteran.validate_address
+    state_code = va_dot_gov_address&.dig(:state_code) || veteran_state_code
+  rescue Caseflow::Error::VaDotGovAPIError
+    state_code = veteran_state_code
+  ensure
+    TranslationTask.create_from_root_task(root_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
+  end
+
+  def create_business_line_tasks
+    request_issues.select(&:requires_record_request_task?).each do |req_issue|
+      business_line = req_issue.business_line
+      VeteranRecordRequest.create!(
+        parent: root_task,
+        appeal: self,
+        assigned_at: Time.zone.now,
+        assigned_to: business_line
+      )
+    end
+  end
 
   def bgs
     BGSService.new
@@ -376,3 +603,4 @@ class Appeal < DecisionReview
       end
   end
 end
+# rubocop:enable Metrics/ClassLength

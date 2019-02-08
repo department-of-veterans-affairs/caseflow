@@ -54,9 +54,15 @@ describe RootTask do
                    create(:claimant, participant_id: participant_id_with_no_vso)
                  ])
         end
+
+        before { RootTask.create_root_and_sub_tasks!(appeal) }
+
         it "is ready for distribution immediately" do
-          RootTask.create_root_and_sub_tasks!(appeal)
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
+        end
+
+        it "does not create a tracking task" do
+          expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(0)
         end
       end
 
@@ -68,15 +74,20 @@ describe RootTask do
                  ])
         end
 
+        before { RootTask.create_root_and_sub_tasks!(appeal) }
+
         it "blocks distribution" do
-          RootTask.create_root_and_sub_tasks!(appeal)
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
         end
 
         it "requires an informal hearing presentation" do
-          RootTask.create_root_and_sub_tasks!(appeal)
           expect(InformalHearingPresentationTask.find_by(appeal: appeal).status).to eq("assigned")
           expect(InformalHearingPresentationTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+        end
+
+        it "creates a tracking task assigned to the VSO" do
+          expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
+          expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.first.assigned_to).to eq(pva)
         end
       end
     end
@@ -173,6 +184,24 @@ describe RootTask do
     context "when user is not a member of the Mail team" do
       it "should return an empty list" do
         expect(subject).to eq([])
+      end
+    end
+  end
+
+  describe ".update_children_status" do
+    let!(:root_task) { FactoryBot.create(:root_task) }
+    let!(:appeal) { root_task.appeal }
+
+    subject { root_task.update_children_status }
+
+    context "when there are multiple children tasks" do
+      let!(:generic_task) { FactoryBot.create(:generic_task, appeal: appeal, parent: root_task) }
+      let!(:tracking_task) { FactoryBot.create(:track_veteran_task, appeal: appeal, parent: root_task) }
+
+      it "should close the tracking task but not the generic task" do
+        expect { subject }.to_not raise_error
+        expect(tracking_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(generic_task.reload.status).to_not eq(Constants.TASK_STATUSES.completed)
       end
     end
   end

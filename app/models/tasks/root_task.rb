@@ -7,9 +7,17 @@ class RootTask < GenericTask
 
   def when_child_task_completed; end
 
+  def update_children_status
+    children.where(type: TrackVeteranTask.name).where.not(status: Constants.TASK_STATUSES.completed)
+      .update_all(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def hide_from_task_snapshot
+    true
+  end
+
   def available_actions(user)
     return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if MailTeam.singleton.user_has_access?(user) && ama?
-    return [Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h] if can_create_schedule_hearings_task?(user)
 
     []
   end
@@ -28,16 +36,29 @@ class RootTask < GenericTask
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
+      create_vso_tracking_tasks(appeal, root_task)
       if FeatureToggle.enabled?(:ama_auto_case_distribution)
         create_subtasks!(appeal, root_task)
       else
-        create_vso_subtask!(appeal, root_task)
+        create_ihp_tasks!(appeal, root_task)
       end
     end
 
-    def create_vso_subtask!(appeal, parent)
+    def create_ihp_tasks!(appeal, parent)
       appeal.vsos.map do |vso_organization|
         InformalHearingPresentationTask.create!(
+          appeal: appeal,
+          parent: parent,
+          assigned_to: vso_organization
+        )
+      end
+    end
+
+    private
+
+    def create_vso_tracking_tasks(appeal, parent)
+      appeal.vsos.map do |vso_organization|
+        TrackVeteranTask.create!(
           appeal: appeal,
           parent: parent,
           assigned_to: vso_organization
@@ -62,7 +83,7 @@ class RootTask < GenericTask
       )
     end
 
-    def create_hearing_tasks!(appeal, parent)
+    def create_hearing_schedule_task!(appeal, parent)
       ScheduleHearingTask.create!(
         appeal: appeal,
         parent: parent,
@@ -77,9 +98,9 @@ class RootTask < GenericTask
         if appeal.evidence_submission_docket?
           create_evidence_submission_task!(appeal, distribution_task)
         elsif appeal.hearing_docket?
-          create_hearing_tasks!(appeal, distribution_task)
+          create_hearing_schedule_task!(appeal, distribution_task)
         else
-          vso_tasks = create_vso_subtask!(appeal, distribution_task)
+          vso_tasks = create_ihp_tasks!(appeal, distribution_task)
           # If the appeal is direct docket and there are no ihp tasks,
           # then it is initially ready for distribution.
           distribution_task.ready_for_distribution! if vso_tasks.empty?
