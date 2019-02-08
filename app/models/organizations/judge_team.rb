@@ -4,7 +4,7 @@ class JudgeTeam < Organization
   end
 
   def self.create_for_judge(user)
-    create!(name: user.css_id).tap do |org|
+    create!(name: user.css_id, url: user.css_id.downcase).tap do |org|
       OrganizationsUser.make_user_admin(user, org)
     end
   end

@@ -100,7 +100,7 @@ class DecisionReview < ApplicationRecord
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash),
+      requestIssues: open_request_issues.map(&:ui_hash),
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
@@ -190,10 +190,14 @@ class DecisionReview < ApplicationRecord
   end
 
   def active_nonrating_request_issues
-    @active_nonrating_request_issues ||= RequestIssue.nonrating.not_deleted
+    @active_nonrating_request_issues ||= RequestIssue.nonrating.open
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
       .select(&:status_active?)
+  end
+
+  def open_request_issues
+    request_issues.open
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
