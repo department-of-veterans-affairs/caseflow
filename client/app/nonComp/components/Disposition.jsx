@@ -148,6 +148,8 @@ class NonCompDispositions extends React.PureComponent {
       decisionDate = formatDateStrUtc(appeal.decisionIssues[0].caseflowDecisionDate);
     }
 
+    let editIssuesLink = null;
+
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-txt-r">
@@ -157,6 +159,10 @@ class NonCompDispositions extends React.PureComponent {
             loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
             disabled={!this.state.isFilledOut} onClick={this.handleSave}>Complete</Button>
         </div>
+      </React.Fragment>;
+
+      editIssuesLink = <React.Fragment>
+        <a className="cf-link-btn" href={appeal.editIssuesUrl}>Edit Issues</a>
       </React.Fragment>;
     }
 
@@ -168,9 +174,7 @@ class NonCompDispositions extends React.PureComponent {
             <div>Review each issue and assign the appropriate dispositions.</div>
           </div>
           <div className="usa-width-one-half cf-txt-r">
-            <a className="cf-link-btn" href={appeal.editIssuesUrl}>
-              Edit Issues
-            </a>
+            { editIssuesLink }
           </div>
         </div>
         <div className="cf-decision-list">
