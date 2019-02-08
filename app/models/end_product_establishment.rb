@@ -161,8 +161,8 @@ class EndProductEstablishment < ApplicationRecord
         synced_status: result.status_type_code,
         last_synced_at: Time.zone.now
       )
-
       sync_source!
+      close_request_issues_if_canceled!
     end
   rescue EstablishedEndProductNotFound => e
     raise e
@@ -327,7 +327,14 @@ class EndProductEstablishment < ApplicationRecord
       # delete end product in bgs & set sync status to canceled
       BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
+      close_request_issues_if_canceled!
     end
+  end
+
+  def close_request_issues_if_canceled!
+    return unless status_canceled?
+
+    request_issues.each(&:close_after_end_product_canceled!)
   end
 
   def fetch_associated_rating
