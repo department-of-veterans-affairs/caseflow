@@ -119,6 +119,7 @@ const NewTasksTab = connect(
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
       <TaskTable
+        includeHearingBadge
         includeDetailsLink
         includeTask
         includeRegionalOffice={props.belongsToHearingSchedule}
@@ -140,6 +141,7 @@ const PendingTasksTab = connect(
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION}</p>
       <TaskTable
+        includeHearingBadge
         includeDetailsLink
         includeTask
         includeRegionalOffice={props.belongsToHearingSchedule}
@@ -161,6 +163,7 @@ const OnHoldTasksTab = connect(
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       <TaskTable
+        includeHearingBadge
         includeDetailsLink
         includeTask
         includeRegionalOffice={props.belongsToHearingSchedule}
