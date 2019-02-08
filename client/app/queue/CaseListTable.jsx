@@ -1,13 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 
 import CaseDetailsLink from './CaseDetailsLink';
 import DocketTypeBadge from '../components/DocketTypeBadge';
-import HearingBadge from './components/HearingBadge';
 import Table from '../components/Table';
 import { COLORS } from '../constants/AppConstants';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
@@ -15,7 +13,6 @@ import { clearCaseListSearch } from './CaseList/CaseListActions';
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
 import COPY from '../../COPY.json';
-import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES.json';
 
 const currentAssigneeStyling = css({
   color: COLORS.GREEN
@@ -77,27 +74,6 @@ class CaseListTable extends React.PureComponent {
         valueFunction: (appeal) => labelForLocation(appeal.locationCode, this.props.userCssId)
       }
     ];
-
-    const doAnyAppealsHaveHeldHearings = Boolean(
-      _.find(this.props.appeals, (appeal) => {
-        return appeal.hearings.
-          filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
-          length;
-      }));
-
-    if (doAnyAppealsHaveHeldHearings) {
-      const hearingColumn = {
-        valueFunction: (appeal) => {
-          const hearings = appeal.hearings.
-            filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
-            sort((h1, h2) => h1.date < h2.date ? 1 : -1);
-
-          return <HearingBadge hearing={hearings[0]} />;
-        }
-      };
-
-      columns.unshift(hearingColumn);
-    }
 
     return columns;
   }
