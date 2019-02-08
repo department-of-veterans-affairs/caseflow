@@ -532,6 +532,24 @@ class Appeal < DecisionReview
     @events ||= AppealEvents.new(appeal: self).all
   end
 
+  def issues_hash
+    issue_list = decision_issues.empty? ? request_issues.open : fetch_all_decision_issues
+
+    fetch_issues_status(issue_list)
+  end
+
+  def fetch_all_decision_issues
+    di_list = decision_issues.reject(disposition: "remanded")
+
+    return di_list unless remanded_issues?
+
+    if active_remanded_claims?
+      return di_list + decision_issues.find_all(disposition: "remanded")
+    else
+      return di_list + remand_supplemental_claims.map(&:decision_issues)
+    end
+  end
+
   private
 
   def maybe_create_translation_task
@@ -573,6 +591,13 @@ class Appeal < DecisionReview
       .select do |issue|
         issue.approx_decision_date && issue.approx_decision_date < receipt_date
       end
+  end
+
+  def issue_active_status(issue)
+    return true if issue.is_a?(RequestIssue)
+    return true if issue.is_a?(DecisionIssue) && issue.disposition == "remanded"
+
+    false
   end
 end
 # rubocop:enable Metrics/ClassLength

@@ -312,4 +312,36 @@ class DecisionReview < ApplicationRecord
   def legacy_opt_in_enabled?
     FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
   end
+
+  def fetch_issues_status(issues_list)
+    issues_list.map do |issue|
+      {
+        active: issue_active_status(issue),
+        last_action: get_issue_last_action(issue),
+        date: get_issue_last_action_date(issue),
+        description: get_issue_status_description(issue),
+        diagnosticCode: issue.diagnostic_code
+      }
+    end
+  end
+
+  def get_issue_last_action(issue)
+    return if active?
+
+    issue.disposition if issue.is_a?(DecisionIssue)
+  end
+
+  def get_issue_last_action_date(issue)
+    return if active?
+
+    issue.approx_decision_date if issue.is_a?(DecisionIssue)
+  end
+
+  def get_issue_status_description(issue)
+    if issue.diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue.diagnostic_code]
+      Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue.diagnostic_code]["status_description"]
+    else
+      "#{issue.benefit_type.capitalize} issue"
+    end
+  end
 end

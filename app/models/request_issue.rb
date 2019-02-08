@@ -406,6 +406,10 @@ class RequestIssue < ApplicationRecord
     return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
+  def diagnostic_code
+    contested_rating_issue_diagnostic_code
+  end
+
   private
 
   # The contested_rating_issue_profile_date is used as an identifier to retrieve the
