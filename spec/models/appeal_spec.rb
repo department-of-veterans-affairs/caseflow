@@ -885,7 +885,7 @@ describe Appeal do
     end
   end
 
-  context "#set_target_decision_date!", focus: true do
+  context "#set_target_decision_date!" do
     let(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
     let(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
 
