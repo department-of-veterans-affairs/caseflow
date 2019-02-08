@@ -946,10 +946,11 @@ feature "Higher-Level Review" do
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                contested_issue_description: "Really old injury",
-               end_product_establishment_id: end_product_establishment.id,
+               end_product_establishment_id: nil,
                untimely_exemption: false,
                untimely_exemption_notes: "I am an exemption note",
-               benefit_type: "compensation"
+               benefit_type: "compensation",
+               ineligible_reason: "untimely"
              )).to_not be_nil
 
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
@@ -986,7 +987,7 @@ feature "Higher-Level Review" do
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
-               end_product_establishment_id: end_product_establishment.id,
+               end_product_establishment_id: nil,
                ineligible_reason: :before_ama,
                benefit_type: "compensation"
              )).to_not be_nil
@@ -1004,7 +1005,7 @@ feature "Higher-Level Review" do
                review_request: higher_level_review,
                nonrating_issue_description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
-               end_product_establishment_id: non_rating_end_product_establishment.id,
+               end_product_establishment_id: nil,
                benefit_type: "compensation"
              )).to_not be_nil
 

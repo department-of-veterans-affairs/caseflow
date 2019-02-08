@@ -141,6 +141,42 @@ describe DocumentFetcher do
       end
     end
 
+    context "when the series id is nil" do
+      let(:series_id) { nil }
+      let!(:saved_documents) do
+        [
+          Generators::Document.create(type: "Form 9", series_id: series_id, category_procedural: true),
+          Generators::Document.create(type: "NOD", series_id: series_id, category_medical: true)
+        ]
+      end
+      let(:older_comment) { "OLD_TEST_COMMENT" }
+      let(:comment) { "TEST_COMMENT" }
+      let!(:existing_annotations) do
+        [
+          Generators::Annotation.create(
+            comment: older_comment,
+            x: 1,
+            y: 2,
+            document_id: saved_documents[0].id
+          ),
+          Generators::Annotation.create(
+            comment: comment,
+            x: 1,
+            y: 2,
+            document_id: saved_documents[1].id
+          )
+        ]
+      end
+
+      it "doesn't copy metadata" do
+        expect(Document.count).to eq(2)
+        expect(Document.first.type).to eq(saved_documents[0].type)
+
+        returned_documents = document_service.find_or_create_documents!
+        expect(returned_documents.first.reload.annotations.count).to eq(0)
+      end
+    end
+
     context "when there are documents with same series_id" do
       let!(:saved_documents) do
         [

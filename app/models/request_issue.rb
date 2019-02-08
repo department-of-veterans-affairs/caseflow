@@ -30,6 +30,12 @@ class RequestIssue < ApplicationRecord
     legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
   }
 
+  enum closed_status: {
+    decided: "decided",
+    removed: "removed",
+    end_product_canceled: "end_product_canceled"
+  }
+
   # TEMPORARY CODE: used to keep decision_review and review_request in sync
   before_save :copy_review_request_to_decision_review
   before_save :set_contested_rating_issue_profile_date
@@ -129,6 +135,10 @@ class RequestIssue < ApplicationRecord
 
     def not_deleted
       where.not(review_request_id: nil)
+    end
+
+    def open
+      where(closed_at: nil)
     end
 
     def unidentified
@@ -232,6 +242,10 @@ class RequestIssue < ApplicationRecord
     !!issue_category
   end
 
+  def closed?
+    !!closed_at
+  end
+
   def description
     return contested_issue_description if contested_issue_description
     return "#{issue_category} - #{nonrating_issue_description}" if nonrating?
@@ -321,7 +335,7 @@ class RequestIssue < ApplicationRecord
   def sync_decision_issues!
     return if processed?
 
-    fail NotYetSubmitted unless submitted?
+    fail NotYetSubmitted unless submitted_and_ready?
 
     attempted!
 
@@ -355,11 +369,23 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
+  def remove!
+    update!(closed_at: Time.zone.now, closed_status: :removed)
+  end
+
+  def close_after_end_product_canceled!
+    return unless closed_at.nil?
+    return unless end_product_establishment&.reload&.status_canceled?
+
+    update!(closed_at: Time.zone.now, closed_status: :end_product_canceled)
+    legacy_issue_optin&.flag_for_rollback!
+  end
+
   # Instead of fully deleting removed issues, we instead strip them from the review so we can
   # maintain a record of the other data that was on them incase we need to revert the update.
   def remove_from_review
     transaction do
-      update!(review_request: nil)
+      remove!
       legacy_issue_optin&.flag_for_rollback!
 
       # removing a request issue also deletes the associated request_decision_issue
@@ -386,6 +412,11 @@ class RequestIssue < ApplicationRecord
 
   def next_decision_issue
     review_request.decision_issues.find { |issue| issue.contests_request_issue(id) }
+  end
+
+  def decision_or_promulgation_date
+    return decision_date if nonrating?
+    return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
   private
@@ -512,11 +543,6 @@ class RequestIssue < ApplicationRecord
     rating_with_issue ||= { issues: [] }
 
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
-  end
-
-  def decision_or_promulgation_date
-    return decision_date if nonrating?
-    return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
