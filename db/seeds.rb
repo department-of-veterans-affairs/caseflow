@@ -342,17 +342,6 @@ class SeedDB
     )
   end
 
-  def create_vacols_hearing_day(day, ro_key)
-    master_record = FactoryBot.create(
-      :case_hearing,
-      hearing_date: day.scheduled_for,
-      hearing_type: "C",
-      room: "001",
-      folder_nr: (ro_key == "C") ? "VIDEO #{ro_key}" : nil
-    )
-    day.update!(id: master_record.hearing_pkseq)
-  end
-
   def create_legacy_hearing(day, ro_key)
     case ro_key
     when "RO17"
@@ -366,7 +355,8 @@ class SeedDB
     FactoryBot.create(
       :case_hearing,
       folder_nr: folder_nr,
-      vdkey: day.id
+      vdkey: day.id,
+      board_member: User.find_by_css_id("BVAAABSHIRE").vacols_attorney_id.to_i
     )
   end
 
@@ -377,8 +367,8 @@ class SeedDB
       (1..5).each do |index|
         day = HearingDay.create!(
           regional_office: (ro_key == "C") ? nil : ro_key,
-          room: "001",
-          judge_id: User.find_by_css_id("BVAAABSHIRE"),
+          room: "1",
+          judge: User.find_by_css_id("BVAAABSHIRE"),
           request_type: (ro_key == "C") ? "C" : "V",
           scheduled_for: Time.zone.today + (index * 11).days,
           created_by: user,
@@ -389,10 +379,8 @@ class SeedDB
         when 1
           create_ama_hearing(day)
         when 2
-          create_vacols_hearing_day(day, ro_key)
           create_legacy_hearing(day, ro_key)
         when 3
-          create_vacols_hearing_day(day, ro_key)
           create_legacy_hearing(day, ro_key)
           create_ama_hearing(day)
         end
