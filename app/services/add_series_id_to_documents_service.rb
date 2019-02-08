@@ -4,7 +4,7 @@ class AddSeriesIdToDocumentsService < ApplicationJob
   def self.add_series_ids(appeal)
     documents_to_check = Document.where(file_number: appeal.veteran_file_number).where(series_id: nil)
 
-    if documents_to_check.count > 0
+    if documents_to_check.load.any?
       document_series = VBMSService.fetch_document_series_for(appeal)
 
       version_to_series_hash = document_series.reduce({}) do |map, document_versions|

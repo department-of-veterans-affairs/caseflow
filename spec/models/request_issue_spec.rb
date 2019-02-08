@@ -14,6 +14,8 @@ describe RequestIssue do
   let(:same_office) { false }
   let(:vacols_id) { nil }
   let(:vacols_sequence_id) { nil }
+  let(:closed_at) { nil }
+  let(:closed_status) { nil }
 
   let(:review) do
     create(
@@ -64,7 +66,9 @@ describe RequestIssue do
       contested_decision_issue_id: contested_decision_issue_id,
       benefit_type: benefit_type,
       vacols_id: vacols_id,
-      vacols_sequence_id: vacols_sequence_id
+      vacols_sequence_id: vacols_sequence_id,
+      closed_at: closed_at,
+      closed_status: closed_status
     )
   end
 
@@ -103,7 +107,8 @@ describe RequestIssue do
     end
 
     it "respects the delay" do
-      expect(rating_request_issue.submitted?).to eq(false)
+      expect(rating_request_issue.submitted_and_ready?).to eq(false)
+      expect(rating_request_issue.submitted?).to eq(true)
       expect(nonrating_request_issue.submitted?).to eq(true)
 
       todo = RequestIssue.requires_processing
@@ -148,6 +153,16 @@ describe RequestIssue do
 
     it "filters by whether it is associated with a review_request" do
       expect(subject.find_by(id: deleted_request_issue.id)).to be_nil
+    end
+  end
+
+  context ".open" do
+    subject { RequestIssue.open }
+
+    let!(:closed_request_issue) { create(:request_issue, :removed) }
+
+    it "filters by whether the closed_at is nil" do
+      expect(subject.find_by(id: closed_request_issue.id)).to be_nil
     end
   end
 
@@ -930,6 +945,44 @@ describe RequestIssue do
           expect(rating_request_issue.contested_rating_issue).to_not be_nil
           expect(rating_request_issue.ineligible_reason).to be_nil
         end
+      end
+    end
+  end
+
+  context "#close_after_end_product_canceled!" do
+    subject { rating_request_issue.close_after_end_product_canceled! }
+    let(:end_product_establishment) { create(:end_product_establishment, :canceled) }
+
+    it "closes the request issue" do
+      subject
+      expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+      expect(rating_request_issue.closed_status).to eq("end_product_canceled")
+    end
+
+    context "if the request issue is already closed" do
+      let(:closed_at) { 1.day.ago }
+      let(:closed_status) { "removed" }
+
+      it "does not reclose the issue" do
+        subject
+        expect(rating_request_issue.closed_at).to eq(closed_at)
+        expect(rating_request_issue.closed_status).to eq(closed_status)
+      end
+    end
+
+    context "when there is a legacy issue optin" do
+      let(:vacols_id) { vacols_issue.id }
+      let(:vacols_sequence_id) { vacols_issue.isskey }
+      let(:vacols_issue) { create(:case_issue, :disposition_remanded, isskey: 1) }
+      let(:vacols_case) do
+        create(:case, case_issues: [vacols_issue])
+      end
+      let!(:legacy_issue_optin) { create(:legacy_issue_optin, request_issue: rating_request_issue) }
+
+      it "flags the legacy issue optin for rollback" do
+        subject
+        expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+        expect(legacy_issue_optin.reload.rollback_created_at).to eq(Time.zone.now)
       end
     end
   end
