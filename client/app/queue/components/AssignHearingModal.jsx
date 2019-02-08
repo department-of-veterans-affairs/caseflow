@@ -266,7 +266,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       { displayText: '9:00 am',
         value: '9:00' },
       { displayText: '1:00 pm',
-        value: '1:00' },
+        value: '13:00' },
       { displayText: 'Other',
         value: 'other' }
     ];
