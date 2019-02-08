@@ -19,5 +19,6 @@ class DirectReviewDocket < Docket
     # if today < Time.new
   end
 
-  def self.nonpriority_receipts_since; end
+  def self.nonpriority_receipts_since
+  end
 end

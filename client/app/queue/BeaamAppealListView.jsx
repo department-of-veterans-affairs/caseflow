@@ -23,7 +23,6 @@ class BeaamListView extends React.PureComponent {
           {messages.error.detail}
         </Alert>}
         <TaskTable
-          includeHearingBadge
           includeDetailsLink
           includeType
           includeDocketNumber
