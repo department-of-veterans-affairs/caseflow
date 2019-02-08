@@ -31,7 +31,7 @@ class Appeal < DecisionReview
       .where("advance_on_docket_motions.granted = ?", true)
       .or(join_aod_motions
         .where("people.date_of_birth <= ?", 75.years.ago))
-        .distinct
+      .distinct
   }
 
   # rubocop:disable Metrics/LineLength
