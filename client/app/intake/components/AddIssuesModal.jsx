@@ -97,10 +97,11 @@ class AddIssuesModal extends React.Component {
             issue.description :
             `${issue.description} (already selected for issue ${foundIndex + 1})`;
 
-          const hasLaterIssueInChain = (issue.latestIssueInChain.id !== issue.decisionIssueId);
-
-          if (hasLaterIssueInChain) {
-            text = `${text} (Please select the most recent decision on ${issue.latestIssueInChain.date})`;
+          let hasLaterIssueInChain = false;
+          if (issue.latestIssueInChain.id && issue.latestIssueInChain.id !== issue.decisionIssueId) {
+            hasLaterIssueInChain = true;
+            text = `${text} (Please select the most recent decision on ` +
+                   `${formatDateStr(issue.latestIssueInChain.date)})`;
           }
 
           return {

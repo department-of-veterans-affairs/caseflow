@@ -4,13 +4,16 @@ class ContestableIssue
 
   attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id, :contesting_decision_review,
                 :decision_issue_id, :promulgation_date, :rating_issue_profile_date, :source_request_issues,
-                :rating_issue_disability_code
+                :rating_issue_disability_code, :rating_issue_profile_date_timestamp
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
       new(
         rating_issue_reference_id: rating_issue.reference_id,
         rating_issue_profile_date: rating_issue.profile_date.to_date,
+        # keep track of the original profile date with timestamp
+        # we need this to go from contestable issue => request issue
+        rating_issue_profile_date_timestamp: rating_issue.profile_date.to_s,
         date: rating_issue.profile_date.to_date,
         description: rating_issue.decision_text,
         ramp_claim_id: rating_issue.ramp_claim_id,
@@ -55,21 +58,38 @@ class ContestableIssue
     decision_issue? ? source_request_issues.first.decision_review_type : source_request_issues.first.review_request_type
   end
 
-  def decision_issue?
-    !!decision_issue_id
+  def next_decision_issue
+    decision_issue&.next_decision_issue || request_issue&.next_decision_issue
   end
 
   private
 
+  def decision_issue
+    return unless decision_issue?
+
+    DecisionIssue.find(decision_issue_id)
+  end
+
+  def request_issue
+    return if decision_issue?
+
+    RequestIssue.find_by(contested_rating_issue_reference_id: rating_issue_reference_id,
+                         contested_rating_issue_profile_date: rating_issue_profile_date_timestamp)
+  end
+
+  def decision_issue?
+    !!decision_issue_id
+  end
+
   def serialize_latest_decision_issue_in_chain
     {
-      id: contestable_issue_chain.last_issue&.decisionIssueId,
+      id: contestable_issue_chain.last_issue&.id,
       date: contestable_issue_chain.last_issue&.caseflow_decision_date
     }
   end
 
   def contestable_issue_chain
-    @contestable_issue_chain ||= new ContestableIssueChain(self)
+    @contestable_issue_chain ||= ContestableIssueChain.new(self)
   end
 
   def title_of_active_review

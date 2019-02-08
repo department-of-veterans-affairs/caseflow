@@ -87,6 +87,15 @@ class DecisionIssue < ApplicationRecord
     associated_request_issue.id == request_issue_id
   end
 
+  def next_decision_issue
+    next_request_issue = RequestIssue.find_by(contested_decision_issue_id: id)
+    return if next_request_issue.nil?
+
+    next_request_issue.review_request.decision_issues.find do |issue|
+      issue.contests_request_issue(next_request_issue.id)
+    end
+  end
+
   private
 
   def associated_request_issue

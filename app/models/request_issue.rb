@@ -384,6 +384,10 @@ class RequestIssue < ApplicationRecord
     !benefit_type_requires_payee_code?
   end
 
+  def next_decision_issue
+    review_request.decision_issues.find { |issue| issue.contests_request_issue(id) }
+  end
+
   private
 
   # The contested_rating_issue_profile_date is used as an identifier to retrieve the

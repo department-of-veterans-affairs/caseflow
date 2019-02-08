@@ -1,4 +1,3 @@
-
 require "support/intake_helpers"
 
 feature "Appeal Intake" do
@@ -942,59 +941,51 @@ feature "Appeal Intake" do
   end
 
   context "has a chain of prior decision issues" do
-    # let!(:rating) do
-    #   Generators::Rating.build(
-    #     participant_id: veteran.participant_id,
-    #     promulgation_date: receipt_date - 5.days,
-    #     profile_date: profile_date,
-    #     issues: [
-    #       { reference_id: "abc123", decision_text: "Left knee granted" },
-    #       { reference_id: "def456", decision_text: "PTSD denied" }
-    #     ]
-    #   )
-    # end
-    let!(:appeal) do
-      appeal, _ = start_appeal(veteran)
-      appeal
-    end
-
-    let!(:prior_request_issue_chain) do
+    let(:start_date) { Time.zone.today - 300.days }
+    let!(:request_issue_chain) do
+      prior_appeal = create(:appeal, :outcoded, veteran: veteran)
       request_issue = create(:request_issue,
-        contested_rating_issue_reference_id: "abc123",
-        contested_rating_issue_profile_date: profile_date,
-        review_request: appeal
-      )
+                             contested_rating_issue_reference_id: "old123",
+                             contested_rating_issue_profile_date: untimely_rating.profile_date,
+                             review_request: prior_appeal)
 
       decision_issue = create(:decision_issue,
-        description: "1st decision issue",
-        participant_id: veteran.participant_id,
-        decision_review: appeal,
-        caseflow_decision_date: Time.zone.today - 2.days,
-        request_issues: [request_issue])
+                              description: "decision issue 0",
+                              participant_id: veteran.participant_id,
+                              disposition: "allowed",
+                              decision_review: prior_appeal,
+                              caseflow_decision_date: start_date,
+                              request_issues: [request_issue])
 
-      last_request_issue = create(:request_issue,
-        contested_decision_issue_id: decision_issue.id,
-        # created_at: Time.zone.today - 1.days,
-        review_request: appeal
-      )
-
-      last_decision_issue = create(:decision_issue,
-        description: "2nd decision issue",
-        participant_id: veteran.participant_id,
-        decision_review: appeal,
-        caseflow_decision_date: Time.zone.today,
-        request_issues: [last_request_issue])
+      contesting_decision_issue_id = decision_issue.id
+      3.times do |index|
+        later_appeal = create(:appeal, :outcoded, veteran: veteran)
+        later_request_issue = create(:request_issue,
+                                     review_request: later_appeal,
+                                     contested_decision_issue_id: contesting_decision_issue_id)
+        later_decision_issue = create(:decision_issue,
+                                      decision_review: later_appeal,
+                                      disposition: "allowed",
+                                      participant_id: veteran.participant_id,
+                                      description: "decision issue #{1 + index}",
+                                      caseflow_decision_date: start_date + (1 + index).days,
+                                      request_issues: [later_request_issue])
+        contesting_decision_issue_id = later_decision_issue.id
+      end
     end
 
-    it "disables prior contestable issues", :focus => true do
+    it "disables prior contestable issues" do
+      start_appeal(veteran)
       visit "/intake/add_issues"
 
       click_intake_add_issue
-      binding.pry
-      datetext = "(Please select the most recent decision on #{Time.zone.today})"
-      expect(page).to have_content("Left knee granted #{datetext}") #disabled
-      expect(page).to have_content("1st decision issue #{datetext}") # disabled
-      expect(page).to have_content("2nd decision issue") # not disabled
+      last_decision_date = (start_date + 3.days).strftime("%m/%d/%Y")
+      datetext = "(Please select the most recent decision on #{last_decision_date})"
+      expect(page).to have_content("Untimely rating issue 1 #{datetext}")
+      expect(page).to have_content("decision issue 0 #{datetext}")
+      expect(page).to have_content("decision issue 1 #{datetext}")
+      expect(page).to have_content("decision issue 2 #{datetext}")
+      expect(page).to have_content("decision issue 3")
     end
   end
 end

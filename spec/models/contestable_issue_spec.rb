@@ -77,6 +77,36 @@ describe ContestableIssue do
         )
       end
     end
+
+    context "#next_decision_issue" do
+      subject { ContestableIssue.from_rating_issue(rating_issue, decision_review).next_decision_issue }
+      context "with no future decision issue" do
+        it "returns nil" do
+          expect(subject).to eq(nil)
+        end
+      end
+
+      context "with future decision issue" do
+        let!(:request_issue) do
+          create(:request_issue,
+                 review_request: decision_review,
+                 contested_rating_issue_reference_id: rating_issue.reference_id,
+                 contested_rating_issue_profile_date: rating_issue.profile_date,
+                 contested_decision_issue_id: nil)
+        end
+        let!(:decision_issue) do
+          create(:decision_issue,
+                 decision_review: decision_review,
+                 description: "decision issue for initial request issue",
+                 caseflow_decision_date: promulgation_date + 1.day,
+                 request_issues: [request_issue])
+        end
+
+        it "can find the next decision issue" do
+          expect(subject.id).to eq(decision_issue.id)
+        end
+      end
+    end
   end
 
   context ".from_decision_issue" do
@@ -124,6 +154,34 @@ describe ContestableIssue do
           sourceReviewType: nil,
           timely: false
         )
+      end
+    end
+
+    context "#next_decision_issue" do
+      subject { ContestableIssue.from_decision_issue(decision_issue, decision_review).next_decision_issue }
+      context "with no future decision issue" do
+        it "returns nil" do
+          expect(subject).to eq(nil)
+        end
+      end
+
+      context "with future decision issue" do
+        let!(:request_issue) do
+          create(:request_issue,
+                 review_request: decision_review,
+                 contested_decision_issue_id: decision_issue.id)
+        end
+        let!(:future_decision_issue) do
+          create(:decision_issue,
+                 decision_review: decision_review,
+                 description: "decision issue for initial request issue",
+                 caseflow_decision_date: promulgation_date + 1.day,
+                 request_issues: [request_issue])
+        end
+
+        it "can find the next decision issue" do
+          expect(subject.id).to eq(future_decision_issue.id)
+        end
       end
     end
   end
