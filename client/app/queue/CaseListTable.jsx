@@ -92,7 +92,9 @@ class CaseListTable extends React.PureComponent {
             filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
             sort((h1, h2) => h1.date < h2.date ? 1 : -1);
 
-          return <HearingBadge hearing={hearings[0]} />;
+          const mostRecentHearing = hearings[0];
+
+          return mostRecentHearing ? <HearingBadge hearing={hearings[0]} /> : null;
         }
       };
 
