@@ -30,7 +30,7 @@ class GenericTask < Task
       ]
     end
 
-    if task_is_assigned_to_user_within_organiztaion?(user)
+    if task_is_assigned_to_user_within_organization?(user)
       return [
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
       ]
@@ -65,7 +65,7 @@ class GenericTask < Task
 
   private
 
-  def task_is_assigned_to_user_within_organiztaion?(user)
+  def task_is_assigned_to_user_within_organization?(user)
     parent&.assigned_to.is_a?(Organization) &&
       assigned_to.is_a?(User) &&
       parent.assigned_to.user_has_access?(user)

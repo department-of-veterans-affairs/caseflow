@@ -297,6 +297,18 @@ describe ColocatedTask do
       colocated_task.update!(status: Constants.TASK_STATUSES.completed)
       expect(colocated_task.available_actions_unwrapper(colocated_user).count).to eq(0)
     end
+
+    context "when current user is Colocated admin but not task assignee" do
+      let(:colocated_admin) { FactoryBot.create(:user) }
+      before { OrganizationsUser.make_user_admin(colocated_admin, colocated_org) }
+
+      it "should include only the reassign action" do
+        expect(colocated_task.available_actions_unwrapper(colocated_admin).count).to eq(1)
+        expect(colocated_task.available_actions_unwrapper(colocated_admin).first[:label]).to(
+          eq(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label)
+        )
+      end
+    end
   end
 
   describe "round robin assignment skips admins" do

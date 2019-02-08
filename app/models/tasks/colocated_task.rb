@@ -35,10 +35,16 @@ class ColocatedTask < Task
   end
 
   # rubocop:disable Metrics/AbcSize
-  def available_actions(_user)
-    actions = [Constants.TASK_ACTIONS.PLACE_HOLD.to_h, Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h]
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
+  def available_actions(user)
+    if assigned_to != user
+      return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h] if Colocated.singleton.admins.include?(user)
 
-    if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
+      return []
+    end
+
+    if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
       send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
       actions.unshift(send_to_team)
@@ -52,12 +58,12 @@ class ColocatedTask < Task
 
     actions
   end
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/AbcSize
 
-  def actions_available?(user)
-    return false if completed? || assigned_to != user
-
-    true
+  def actions_available?(_user)
+    !completed?
   end
 
   private
