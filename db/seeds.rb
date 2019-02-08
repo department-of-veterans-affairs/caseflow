@@ -376,9 +376,9 @@ class SeedDB
 
       (1..5).each do |index|
         day = HearingDay.create!(
-          regional_office: ro_key,
+          regional_office: (ro_key == "C") ? nil : ro_key,
           room: "001",
-          bva_poc: User.find_by_css_id("BVAAABSHIRE").full_name,
+          judge_id: User.find_by_css_id("BVAAABSHIRE"),
           request_type: (ro_key == "C") ? "C" : "V",
           scheduled_for: Time.zone.today + (index * 11).days,
           created_by: user,
