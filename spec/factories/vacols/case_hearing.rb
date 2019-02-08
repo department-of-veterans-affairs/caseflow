@@ -33,19 +33,13 @@ FactoryBot.define do
     end
 
     after(:build) do |hearing, evaluator|
-      # Build Caseflow hearing day and associate with legacy hearing.
-      if hearing.vdkey.nil?
-        master_record = if hearing.hearing_type == HearingDay::REQUEST_TYPES[:central]
-                          create(:hearing_day,
-                                 scheduled_for: hearing.hearing_date,
-                                 request_type: hearing.hearing_type)
-                        else
-                          create(:case_hearing,
-                                 hearing_type: HearingDay::REQUEST_TYPES[:central],
-                                 hearing_date: hearing.hearing_date,
-                                 folder_nr: "VIDEO RO13")
-                        end
-        hearing.vdkey = master_record.id
+      # For video hearings we need to build the master record.
+      if hearing.hearing_type == HearingDay::REQUEST_TYPES[:video] && hearing.vdkey.nil?
+        master_record = create(:case_hearing,
+                               hearing_type: HearingDay::REQUEST_TYPES[:central],
+                               folder_nr: "VIDEO RO13")
+        # For some reason the returned record's sequence is one less than what is actually saved.
+        hearing.vdkey = master_record.hearing_pkseq
       end
 
       if evaluator.user
