@@ -29,19 +29,16 @@ describe HearingDayRepository do
   end
 
   context ".fetch_hearing_day_slots" do
-    subject { HearingDayRepository.fetch_hearing_day_slots(staff, hearing_day) }
-    let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
-    let(:hearing_day) do
-      create(
-        :case_hearing,
-        folder_nr: "VIDEO RO04",
-        hearing_date: Date.new(2018, 9, 20),
-        hearing_type: HearingDay::REQUEST_TYPES[:video]
-      )
+    let!(:hearing_day) do
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             regional_office: "RO18",
+             scheduled_for: Date.new(2019, 4, 15))
     end
-    it {
-      is_expected.to eq(4)
-    }
+    it "slots hearing at correct time", :focus =>true do
+      HearingDayRepository.fetch_hearing_day_slots(regional_office: "Winston-Salem")
+      expect (HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office: "Winston-Salem")).to eq(9)
+    end
   end
 
   context ".ro staff hash" do
