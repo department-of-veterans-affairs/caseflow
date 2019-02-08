@@ -393,14 +393,18 @@ class Task < ApplicationRecord
     parent&.update(status: :on_hold)
   end
 
-  # rubocop:disable CyclomaticComplexity
   def set_timestamps
     if will_save_change_to_status?
-      self.assigned_at = updated_at if assigned?
-      self.started_at = updated_at if in_progress?
-      self.placed_on_hold_at = updated_at if on_hold?
-      self.closed_at = updated_at if completed? || cancelled?
+      case status_change_to_be_saved&.last&.to_sym
+      when :assigned
+        self.assigned_at = updated_at
+      when :in_progress
+        self.started_at = updated_at
+      when :on_hold
+        self.placed_on_hold_at = updated_at
+      when :completed, :cancelled
+        self.closed_at = updated_at
+      end
     end
   end
-  # rubocop:enable CyclomaticComplexity
 end
