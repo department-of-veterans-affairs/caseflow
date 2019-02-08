@@ -483,9 +483,6 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content("Submit Draft Decision for Review")
 
       fill_in "Document ID:", with: valid_document_id
-      click_on "Select a judge"
-      find(".Select-control", text: "Select a judge…").click
-      first("div", class: "Select-option", text: judge_user.full_name).click
       fill_in "notes", with: "all done"
 
       click_on "Continue"
@@ -617,8 +614,6 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content("Submit Draft Decision for Review")
 
         fill_in "Document ID:", with: valid_document_id
-        click_on "Select a judge"
-        click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
         fill_in "notes", with: "all done"
         click_on "Continue"
 
