@@ -539,14 +539,21 @@ class Appeal < DecisionReview
   end
 
   def fetch_all_decision_issues
-    di_list = decision_issues.reject(disposition: "remanded")
+    di_list = decision_issues.reject { |di| di[:disposition] == "remanded" }
 
     return di_list unless remanded_issues?
 
     if active_remanded_claims?
-      return di_list + decision_issues.find_all(disposition: "remanded")
+      return decision_issues
     else
-      return di_list + remand_supplemental_claims.map(&:decision_issues)
+      # return di_list + remand_supplemental_claims.first.decision_issues
+      remand_supplemental_claims.each do |sc|
+        sc.decision_issues.each do |di|
+          di_list << di
+        end
+      end
+
+      return di_list
     end
   end
 
@@ -598,6 +605,14 @@ class Appeal < DecisionReview
     return true if issue.is_a?(DecisionIssue) && issue.disposition == "remanded"
 
     false
+  end
+
+  def get_issue_last_action(issue)
+    issue.disposition if issue.is_a?(DecisionIssue)
+  end
+
+  def get_issue_last_action_date(issue)
+    issue.approx_decision_date if issue.is_a?(DecisionIssue)
   end
 end
 # rubocop:enable Metrics/ClassLength
