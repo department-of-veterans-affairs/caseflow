@@ -41,11 +41,7 @@ class HearingDay < ApplicationRecord
   end
 
   def vacols_children_records
-    if request_type == REQUEST_TYPES[:central]
-      HearingRepository.fetch_co_hearings_for_date(scheduled_for)
-    else
-      HearingRepository.fetch_video_hearings_for_parent(id)
-    end
+    HearingRepository.fetch_hearings_for_parent(id)
   end
 
   def to_hash
@@ -174,30 +170,18 @@ class HearingDay < ApplicationRecord
 
     private
 
-    def hearing_days_to_array_of_days_and_hearings(total_video_and_co, is_video_hearing)
+    def hearing_days_to_array_of_days_and_hearings(total_video_and_co, _is_video_hearing)
       # We need to associate all of the hearing days from postgres with all of the
       # hearings from VACOLS. For efficiency we make one call to VACOLS and then
-      # create a hash of the results using either their ids or hearing dates as keys
-      # depending on if it's a video or CO hearing.
-      symbol_to_group_by = nil
+      # create a hash of the results using their ids.
 
-      vacols_hearings_for_days = if is_video_hearing
-                                   symbol_to_group_by = :scheduled_for
-
-                                   HearingRepository.fetch_co_hearings_for_dates(
-                                     total_video_and_co.map { |hearing_day| hearing_day[symbol_to_group_by] }
-                                   )
-                                 else
-                                   symbol_to_group_by = :id
-
-                                   HearingRepository.fetch_video_hearings_for_parents(
-                                     total_video_and_co.map { |hearing_day| hearing_day[symbol_to_group_by] }
-                                   )
-                                 end
+      vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(
+        total_video_and_co.map { |hearing_day| hearing_day[:id] }
+      )
 
       # Group the hearing days with the same keys as the hearings
       grouped_hearing_days = total_video_and_co.group_by do |hearing_day|
-        hearing_day[symbol_to_group_by].to_s
+        hearing_day[:id].to_s
       end
 
       grouped_hearing_days.map do |key, day|
