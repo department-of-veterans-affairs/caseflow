@@ -66,7 +66,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def fetch_all_decision_issues
-    all_decision_issues = decision_issues.reject(disposition: DTA_ERRORS)
+    all_decision_issues = decision_issues.reject { |di| DTA_ERRORS.include?(di[:disposition]) }
 
     all_decision_issues += dta_claim.decision_issues if dta_claim
 

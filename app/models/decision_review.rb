@@ -339,7 +339,7 @@ class DecisionReview < ApplicationRecord
 
   def get_issue_status_description(issue)
     if issue.diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue.diagnostic_code]
-      Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue.diagnostic_code]["status_description"]
+      Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue.diagnostic_code]["status_description"].capitalize
     else
       "#{issue.benefit_type.capitalize} issue"
     end
