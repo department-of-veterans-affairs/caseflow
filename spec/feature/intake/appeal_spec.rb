@@ -744,7 +744,7 @@ feature "Appeal Intake" do
     click_intake_add_issue
     click_intake_no_matching_issues
     add_intake_nonrating_issue(
-      benefit_type: "Vocational Rehab. & Employment",
+      benefit_type: "Vocational Rehabilitation & Employment",
       category: "Basic Eligibility",
       description: "Description for basic eligibility",
       date: profile_date.strftime("%D")
