@@ -224,13 +224,17 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def create_admin_action_for_schedule_hearing_task(veteran, error_key:, admin_action_type:)
-    tasks = LegacyAppeal.where(
+    appeals = LegacyAppeal.where(
       vbms_id: LegacyAppeal.convert_file_number_to_vacols(veteran.file_number)
-    ).map do |appeal|
-      ScheduleHearingTask.find_or_create_if_eligible(appeal)
-    end.compact
+    ) + Appeal.where(
+      veteran_file_number: veteran.file_number
+    )
 
-    tasks.each do |task|
+    tasks = appeals.map do |appeal|
+      ScheduleHearingTask.find_or_create_if_eligible(appeal)
+    end
+
+    tasks.compact.each do |task|
       admin_action_type.create!(
         appeal: task.appeal,
         instructions: [instructions(error_key, has_multiple: tasks.count > 1)],
