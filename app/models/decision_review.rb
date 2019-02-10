@@ -326,9 +326,11 @@ class DecisionReview < ApplicationRecord
   end
 
   def get_issue_last_action(issue)
-    return if active?
+    return if active? || !issue.is_a?(DecisionIssue)
 
-    issue.disposition if issue.is_a?(DecisionIssue)
+    return "remand" if issue.disposition == "remanded"
+
+    issue.disposition
   end
 
   def get_issue_last_action_date(issue)

@@ -1207,7 +1207,7 @@ describe Appeal do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(true)
-        expect(issue[:last_action]).to eq("remanded")
+        expect(issue[:last_action]).to eq("remand")
         expect(issue[:date]).to eq(decision_date.to_date)
         expect(issue[:description]).to eq("Rheumatoid arthritis")
 

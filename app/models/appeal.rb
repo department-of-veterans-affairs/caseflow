@@ -604,7 +604,11 @@ class Appeal < DecisionReview
   end
 
   def get_issue_last_action(issue)
-    issue.disposition if issue.is_a?(DecisionIssue)
+    return unless issue.is_a?(DecisionIssue)
+
+    return "remand" if issue.disposition == "remanded"
+
+    issue.disposition
   end
 
   def get_issue_last_action_date(issue)
