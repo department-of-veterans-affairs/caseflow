@@ -445,7 +445,7 @@ describe "Appeals API v2", type: :request do
       get "/api/v2/appeals", headers: headers
 
       json = JSON.parse(response.body)
-      
+
       # test for the 200 status-code
       expect(response).to be_success
       # check to make sure the right amount of appeals are returned
