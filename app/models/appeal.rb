@@ -539,22 +539,18 @@ class Appeal < DecisionReview
   end
 
   def fetch_all_decision_issues
+    return decision_issues unless remanded_issues?
+    return decision_issues if remanded_issues? && active_remanded_claims?
+
     di_list = decision_issues.reject { |di| di[:disposition] == "remanded" }
 
-    return di_list unless remanded_issues?
-
-    if active_remanded_claims?
-      return decision_issues
-    else
-      # return di_list + remand_supplemental_claims.first.decision_issues
-      remand_supplemental_claims.each do |sc|
-        sc.decision_issues.each do |di|
-          di_list << di
-        end
+    remand_supplemental_claims.each do |sc|
+      sc.decision_issues.each do |di|
+        di_list << di
       end
-
-      return di_list
     end
+
+    di_list
   end
 
   private

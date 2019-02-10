@@ -498,7 +498,7 @@ describe HigherLevelReview do
 
     context "claim open pending decision" do
       it "gets status for the request issues" do
-        issue_statuses = hlr.issues
+        issue_statuses = hlr.issues_hash
 
         expect(issue_statuses.empty?).to eq(false)
 
@@ -559,7 +559,7 @@ describe HigherLevelReview do
       end
 
       it "will still show the status for the request issues" do
-        issue_statuses = hlr.issues
+        issue_statuses = hlr.issues_hash
 
         expect(issue_statuses.empty?).to eq(false)
 
@@ -631,7 +631,7 @@ describe HigherLevelReview do
       end
 
       it "will get the status for the decisions issues" do
-        issue_statuses = hlr.issues
+        issue_statuses = hlr.issues_hash
         expect(issue_statuses.empty?).to eq(false)
 
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }

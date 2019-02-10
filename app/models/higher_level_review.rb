@@ -59,7 +59,7 @@ class HigherLevelReview < ClaimReview
     # need to implement. add logic to return alert enum
   end
 
-  def issues
+  def issues_hash
     issue_list = active? ? request_issues.open : fetch_all_decision_issues
 
     fetch_issues_status(issue_list)

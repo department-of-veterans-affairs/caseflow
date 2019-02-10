@@ -177,7 +177,7 @@ describe SupplementalClaim do
 
     context "claim is open, pending a decision" do
       it "status gives status info of the request issue" do
-        issue_statuses = sc.issues
+        issue_statuses = sc.issues_hash
 
         expect(issue_statuses.empty?).to eq(false)
         expect(issue_statuses.first[:active]).to eq(true)
@@ -197,7 +197,7 @@ describe SupplementalClaim do
       end
 
       it "status gives status info of the decision issue" do
-        issue_statuses = sc.issues
+        issue_statuses = sc.issues_hash
         expect(issue_statuses.empty?).to eq(false)
         expect(issue_statuses.first[:active]).to eq(false)
         expect(issue_statuses.first[:last_action]).to eq("allowed")
