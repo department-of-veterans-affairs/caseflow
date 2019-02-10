@@ -186,7 +186,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     { "DualAddressError" => "The veteran's address in VBMS is ambiguous.",
       "AddressCouldNotBeFound" => "The veteran's address in VBMS could not be found on a map.",
       "InvalidRequestStreetAddress" => "The veteran's address in VBMS does not exist or is invalid.",
-      "ForeignVeteranCase" => "This veteran lives outside of US territories." }
+      "ForeignVeteranCase" => "This veteran's address in VBMS is outside of US territories." }
   end
 
   def multiple_appeals_instructions
