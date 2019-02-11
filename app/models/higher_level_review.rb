@@ -3,6 +3,8 @@ class HigherLevelReview < ClaimReview
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
+  has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
+
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 034 035 036 037 038 039].freeze
 
   # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
@@ -26,7 +28,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def on_decision_issues_sync_processed(_end_product_establishment)
-    create_dta_supplemental_claim
+    create_remand_supplemental_claims!
   end
 
   # needed for appeal status api
@@ -44,7 +46,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def active?
-    hlr_ep_active? || dta_claim_active?
+    hlr_ep_active? || active_remanded_claims?
   end
 
   def description
@@ -65,7 +67,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def decision_event_date
-    return if dta_claim
+    return if remand_supplemental_claims.any?
     return unless decision_issues.any?
 
     if end_product_establishments.any?
@@ -77,16 +79,18 @@ class HigherLevelReview < ClaimReview
 
   def dta_error_event_date
     return if hlr_ep_active?
-    return unless dta_claim
+    return unless remand_supplemental_claims.any?
 
     decision_issues.find_by(disposition: DTA_ERRORS).approx_decision_date
   end
 
   def dta_descision_event_date
     return if active?
-    return unless dta_claim
+    return unless remand_supplemental_claims.any?
 
-    dta_claim.decision_event_date
+    # Making a guess here with the switching from a one-to-one to a one to many relationship - should this not return
+    # anything until all remand supplemental claims are done? Then should it return the last decision_event_date?
+    remand_supplemental_claims.first.decision_event_date
   end
 
   def other_close_event_date
@@ -102,59 +106,6 @@ class HigherLevelReview < ClaimReview
   end
 
   private
-
-  def create_dta_supplemental_claim
-    return if dta_issues_needing_follow_up.empty?
-
-    dta_supplemental_claim.create_issues!(build_follow_up_dta_issues)
-    dta_supplemental_claim.create_decision_review_task_if_required!
-    dta_supplemental_claim.submit_for_processing!
-    dta_supplemental_claim.start_processing_job!
-  end
-
-  def dta_issues_needing_follow_up
-    @dta_issues_needing_follow_up ||= decision_issues.where(disposition: DTA_ERRORS)
-  end
-
-  def dta_supplemental_claim
-    unless dta_issues_needing_follow_up.first.approx_decision_date
-      fail "approx_decision_date is required to create a DTA Supplemental Claim"
-    end
-
-    @dta_supplemental_claim ||= SupplementalClaim.create!(
-      veteran_file_number: veteran_file_number,
-      receipt_date: dta_issues_needing_follow_up.first.approx_decision_date,
-      decision_review_remanded: self,
-      benefit_type: benefit_type,
-      legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: veteran_is_not_claimant
-    ).tap do |sc|
-      sc.create_claimants!(
-        participant_id: claimant_participant_id,
-        payee_code: payee_code
-      )
-    end
-  end
-
-  def build_follow_up_dta_issues
-    dta_issues_needing_follow_up.map do |dta_decision_issue|
-      # do not copy over end product establishment id,
-      # review request, removed_at, disposition, and contentions
-      RequestIssue.new(
-        review_request: dta_supplemental_claim,
-        contested_decision_issue_id: dta_decision_issue.id,
-        # parent_request_issue_id: dta_issue.id, delete this from table
-        rating_issue_reference_id: dta_decision_issue.rating_issue_reference_id,
-        rating_issue_profile_date: dta_decision_issue.profile_date.to_s,
-        contested_rating_issue_reference_id: dta_decision_issue.rating_issue_reference_id,
-        contested_rating_issue_profile_date: dta_decision_issue.profile_date,
-        contested_issue_description: dta_decision_issue.description,
-        issue_category: dta_decision_issue.issue_category,
-        benefit_type: dta_decision_issue.benefit_type,
-        decision_date: dta_decision_issue.approx_decision_date
-      )
-    end
-  end
 
   def informal_conference?
     informal_conference
@@ -173,15 +124,6 @@ class HigherLevelReview < ClaimReview
     )
   end
 
-  def dta_claim
-    @dta_claim ||= SupplementalClaim.find_by(veteran_file_number: veteran_file_number,
-                                             decision_review_remanded: self)
-  end
-
-  def dta_claim_active?
-    dta_claim ? dta_claim.active? : false
-  end
-
   def hlr_ep_active?
     end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
   end
@@ -189,10 +131,14 @@ class HigherLevelReview < ClaimReview
   def fetch_status
     if hlr_ep_active?
       :hlr_received
-    elsif dta_claim_active?
+    elsif active_remanded_claims?
       :hlr_dta_error
-    elsif dta_claim
+    elsif remand_supplemental_claims.any?
       dta_claim.decision_issues.empty ? :hlr_closed : :hlr_decision
+      remand_supplemental_claims.each do |rsc|
+        return :hlr_decision if rsc.decision_issues.any?
+      end
+      return :hlr_closed
     else
       decision_issues ? :hlr_closed : :hlr_decision
     end

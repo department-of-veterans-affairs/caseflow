@@ -213,6 +213,18 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def create_remand_supplemental_claims!
+    decision_issues.remanded.uncontested.each(&:find_or_create_remand_supplemental_claim!)
+    remand_supplemental_claims.each(&:create_remand_issues!)
+    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
+    remand_supplemental_claims.each(&:submit_for_processing!)
+    remand_supplemental_claims.each(&:start_processing_job!)
+  end
+
+  def active_remanded_claims?
+    remand_supplemental_claims.any?(&:active?)
+  end
+
   private
 
   def can_contest_rating_issues?

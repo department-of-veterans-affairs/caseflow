@@ -35,6 +35,14 @@ class DecisionIssue < ApplicationRecord
     def remanded
       where(disposition: "remanded")
     end
+
+    def contested
+
+    end
+
+    def uncontested
+      
+    end
   end
 
   def approx_decision_date

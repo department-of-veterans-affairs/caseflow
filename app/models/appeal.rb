@@ -312,13 +312,6 @@ class Appeal < DecisionReview
     RootTask.find_by(appeal_id: id)
   end
 
-  def create_remand_supplemental_claims!
-    decision_issues.remanded.each(&:find_or_create_remand_supplemental_claim!)
-    remand_supplemental_claims.each(&:create_remand_issues!)
-    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
-    remand_supplemental_claims.each(&:start_processing_job!)
-  end
-
   # needed for appeal status api
   def appeal_status_id
     "A#{id}"
@@ -336,9 +329,9 @@ class Appeal < DecisionReview
     decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
   end
 
-  def active_remanded_claims?
-    remand_supplemental_claims.any?(&:active?)
-  end
+  # def active_remanded_claims?
+  #   remand_supplemental_claims.any?(&:active?)
+  # end
 
   def location
     if active_ep? || active_remanded_claims?
