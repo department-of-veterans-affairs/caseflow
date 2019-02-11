@@ -21,7 +21,8 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
     Constants.TASK_STATUSES.on_hold.to_sym => Constants.TASK_STATUSES.on_hold,
-    Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed
+    Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed,
+    Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
   def available_actions(_user)
@@ -30,6 +31,12 @@ class Task < ApplicationRecord
 
   def label
     action
+  end
+
+  # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
+  # properties of the task will not change.
+  def active?
+    ![Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled].include?(status)
   end
 
   # available_actions() returns an array of options from selected by the subclass
@@ -419,10 +426,16 @@ class Task < ApplicationRecord
 
   def set_timestamps
     if will_save_change_to_status?
-      self.assigned_at = updated_at if assigned?
-      self.started_at = updated_at if in_progress?
-      self.placed_on_hold_at = updated_at if on_hold?
-      self.closed_at = updated_at if completed?
+      case status_change_to_be_saved&.last&.to_sym
+      when :assigned
+        self.assigned_at = updated_at
+      when :in_progress
+        self.started_at = updated_at
+      when :on_hold
+        self.placed_on_hold_at = updated_at
+      when :completed, :cancelled
+        self.closed_at = updated_at
+      end
     end
   end
 end
