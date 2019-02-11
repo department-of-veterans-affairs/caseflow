@@ -146,15 +146,15 @@ describe HearingDay do
 
   context "load Central Office days for a range date" do
     let!(:hearings) do
-      [create(:case_hearing, hearing_type: HearingDay::REQUEST_TYPES[:central], folder_nr: nil),
-       create(:case_hearing, hearing_type: HearingDay::REQUEST_TYPES[:central], folder_nr: nil),
-       create(:case_hearing, hearing_type: HearingDay::REQUEST_TYPES[:central], folder_nr: nil)]
+      [create(:hearing_day, scheduled_for: Time.zone.today),
+       create(:hearing_day, scheduled_for: Time.zone.today + 1.day),
+       create(:hearing_day, scheduled_for: Time.zone.today + 2.days)]
     end
 
-    subject { HearingDay.load_days(Time.zone.today, Time.zone.today, HearingDay::REQUEST_TYPES[:central]) }
+    subject { HearingDay.load_days(Time.zone.today, Time.zone.today + 2.days, HearingDay::REQUEST_TYPES[:central]) }
 
-    it "shouldn't load any since we're past HearingDay::CASEFLOW_CO_PARENT_DATE" do
-      expect(subject[:vacols_hearings].size).to eq 0
+    it "should load all three hearing days" do
+      expect(subject[:caseflow_hearings].size).to eq 3
     end
   end
 
