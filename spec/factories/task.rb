@@ -105,6 +105,11 @@ FactoryBot.define do
       parent { create(:ama_judge_task) }
     end
 
+    factory :ama_attorney_rewrite_task do
+      type AttorneyRewriteTask.name
+      status "in_progress"
+    end
+
     factory :ama_vso_task do
       type GenericTask.name
       appeal { create(:appeal) }
