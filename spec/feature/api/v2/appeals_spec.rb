@@ -374,6 +374,13 @@ describe "Appeals API v2", type: :request do
              veteran_is_not_claimant: veteran_is_not_claimant)
     end
 
+    let!(:hlr_request_issue) do
+      create(:request_issue,
+             review_request: hlr,
+             benefit_type: benefit_type,
+             contested_rating_issue_diagnostic_code: nil)
+    end
+
     let!(:hlr_ep) do
       create(:end_product_establishment, :active, source: hlr)
     end
@@ -385,6 +392,13 @@ describe "Appeals API v2", type: :request do
              benefit_type: "pension",
              legacy_opt_in_approved: legacy_opt_in_approved,
              veteran_is_not_claimant: veteran_is_not_claimant)
+    end
+
+    let!(:sc_request_issue) do
+      create(:request_issue,
+             review_request: supplemental_claim_review,
+             benefit_type: "pension",
+             contested_rating_issue_diagnostic_code: "9999")
     end
 
     let!(:sc_ep) do
@@ -400,14 +414,18 @@ describe "Appeals API v2", type: :request do
     let(:rating_promulgated_date) { receipt_date - 40.days }
 
     let(:request_issue1) do
-      create(:request_issue, benefit_type: benefit_type)
+      create(:request_issue, benefit_type: benefit_type, contested_rating_issue_diagnostic_code: nil)
+    end
+
+    let(:request_issue2) do
+      create(:request_issue, benefit_type: "education", contested_rating_issue_diagnostic_code: nil)
     end
 
     let!(:appeal) do
       create(:appeal,
              veteran_file_number: veteran_file_number,
              receipt_date: receipt_date,
-             request_issues: [request_issue1],
+             request_issues: [request_issue1, request_issue2],
              docket_type: "evidence_submission")
     end
 
@@ -451,7 +469,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["type"]).to be_nil
       expect(json["data"].first["attributes"]["active"]).to eq(true)
       expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
-      expect(json["data"].first["attributes"]["description"]).to be_nil
+      expect(json["data"].first["attributes"]["description"]).to eq("1 compensation issue")
       expect(json["data"].first["attributes"]["aod"]).to be_nil
       expect(json["data"].first["attributes"]["location"]).to eq("aoj")
       expect(json["data"].first["attributes"]["alerts"]).to be_nil
@@ -474,7 +492,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][1]["attributes"]["type"]).to be_nil
       expect(json["data"][1]["attributes"]["active"]).to eq(false)
       expect(json["data"][1]["attributes"]["incompleteHistory"]).to eq(false)
-      expect(json["data"][1]["attributes"]["description"]).to be_nil
+      expect(json["data"][1]["attributes"]["description"]).to eq("Dental or oral condition")
       expect(json["data"][1]["attributes"]["aod"]).to be_nil
       expect(json["data"][1]["attributes"]["location"]).to eq("aoj")
       expect(json["data"][1]["attributes"]["alerts"]).to be_nil
@@ -499,12 +517,12 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["type"]).to eq("original")
       expect(json["data"][2]["attributes"]["active"]).to eq(true)
       expect(json["data"][2]["attributes"]["incompleteHistory"]).to eq(false)
-      expect(json["data"][2]["attributes"]["description"]).to be_nil
+      expect(json["data"][2]["attributes"]["description"]).to eq("2 issues")
       expect(json["data"][2]["attributes"]["aod"]).to eq(false)
       expect(json["data"][2]["attributes"]["location"]).to eq("bva")
       expect(json["data"][2]["attributes"]["alerts"]).to be_nil
       expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
-      expect(json["data"][2]["attributes"]["programArea"]).to eq("compensation")
+      expect(json["data"][2]["attributes"]["programArea"]).to eq("multiple")
       expect(json["data"][2]["attributes"]["docket"]["type"]).to eq("evidenceSubmission")
       expect(json["data"][2]["attributes"]["docket"]["month"]).to eq(Date.new(2018, 9, 1).to_s)
       expect(json["data"][2]["attributes"]["docket"]["switchDueDate"]).to eq((rating_promulgated_date + 365.days).to_s)
