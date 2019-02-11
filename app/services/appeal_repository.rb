@@ -712,6 +712,14 @@ class AppealRepository
     end
   end
 
+  def self.age_of_oldest_n_priority_appeals(num)
+    MetricsService.record("VACOLS: age_of_oldest_n_priority_appeals",
+                          name: "age_of_oldest_n_priority_appeals",
+                          service: :vacols) do
+      VACOLS::CaseDocket.age_of_oldest_n_priority_appeals(num)
+    end
+  end
+
   def self.distribute_priority_appeals(judge, genpop, limit)
     MetricsService.record("VACOLS: distribute_priority_appeals",
                           name: "distribute_priority_appeals",

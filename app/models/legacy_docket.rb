@@ -24,8 +24,9 @@ class LegacyDocket
     count(priority: false) + nod_count * NOD_ADJUSTMENT
   end
 
-  # CMGTODO
-  def age_of_n_oldest_priority_appeals(n); end
+  def age_of_n_oldest_priority_appeals(num)
+    LegacyAppeal.repository.age_of_n_oldest_priority_appeals(num)
+  end
 
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
