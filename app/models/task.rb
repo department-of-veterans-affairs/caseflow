@@ -131,8 +131,6 @@ class Task < ApplicationRecord
     false
   end
 
-  def reassign; end
-
   def legacy?
     appeal_type == LegacyAppeal.name
   end
@@ -163,12 +161,14 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete
   end
 
-  def can_be_updated_by_user?(user)
-    return true if [assigned_to, assigned_by].include?(user) ||
-                   parent&.assigned_to == user ||
-                   user.administered_teams.select { |team| team.is_a?(JudgeTeam) }.any?
+  def task_is_assigned_to_user_within_organization?(user)
+    parent&.assigned_to.is_a?(Organization) &&
+      assigned_to.is_a?(User) &&
+      parent.assigned_to.user_has_access?(user)
+  end
 
-    false
+  def can_be_updated_by_user?(user)
+    available_actions_unwrapper(user).any?
   end
 
   def verify_user_can_update!(user)
@@ -190,6 +190,31 @@ class Task < ApplicationRecord
       message = "#{user_description} cannot assign #{name}#{parent_description}."
       fail Caseflow::Error::ActionForbiddenError, message: message
     end
+  end
+
+  def reassign(reassign_params, current_user)
+    sibling = dup.tap do |t|
+      t.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
+      t.assigned_to = self.class.child_task_assignee(parent, reassign_params)
+      t.instructions = [instructions, reassign_params[:instructions]].flatten
+      t.save!
+    end
+
+    update!(status: Constants.TASK_STATUSES.completed)
+
+    children_to_update = children.reject { |t| t.status == Constants.TASK_STATUSES.completed }
+    children_to_update.each { |t| t.update!(parent_id: sibling.id) }
+
+    [sibling, self, children_to_update].flatten
+  end
+
+  def self.child_task_assignee(_parent, params)
+    Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
+  end
+
+  def self.child_assigned_by_id(parent, current_user)
+    return current_user.id if current_user
+    return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
   end
 
   def root_task(task_id = nil)

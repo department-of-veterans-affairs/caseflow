@@ -39,10 +39,14 @@ class ColocatedTask < Task
   # rubocop:disable Metrics/PerceivedComplexity
   def available_actions(user)
     if assigned_to != user
-      return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h] if Colocated.singleton.admins.include?(user)
+      if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
+        return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
+      end
 
       return []
     end
+
+    actions = [Constants.TASK_ACTIONS.PLACE_HOLD.to_h, Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h]
 
     if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
