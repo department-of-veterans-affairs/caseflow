@@ -335,8 +335,9 @@ class DecisionReview < ApplicationRecord
     issue_diagnostic_code = issue.contested_rating_issue_diagnostic_code if issue
 
     if issue_diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue_diagnostic_code]
-      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue_diagnostic_code]["status_description"].capitalize
-
+      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue_diagnostic_code]["status_description"]
+      description[0] = description[0].upcase
+      
       return description if request_issues.count - 1 == 0
 
       return "#{description} and 1 other" if request_issues.count - 1 == 1
