@@ -555,7 +555,7 @@ class SeedDB
     FactoryBot.create(:attorney_case_review, task_id: child.id)
   end
 
-  def create_task_at_colocated(appeal, judge, attorney, colocated_user, task_attributes = {})
+  def create_task_at_colocated(appeal, judge, attorney, task_attributes = {})
     parent = FactoryBot.create(
       :ama_judge_task,
       :on_hold,
@@ -577,18 +577,10 @@ class SeedDB
                       parent: atty_task,
                       assigned_by: attorney,
                       assigned_to: Colocated.singleton }.merge(task_attributes)
-    org_task = FactoryBot.create(:ama_colocated_task, :on_hold, org_task_args)
-
-    personal_task_args = org_task_args.merge(
-      parent: org_task,
-      action: org_task.action,
-      instructions: org_task.instructions,
-      assigned_to: colocated_user
-    )
-    FactoryBot.create(:ama_colocated_task, personal_task_args)
+    FactoryBot.create(:ama_colocated_task, :on_hold, org_task_args)
   end
 
-  def create_colocated_legacy_tasks(attorney, colocated_user)
+  def create_colocated_legacy_tasks(attorney)
     [
       { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
       { vacols_id: "2226048", trait: nil, additional: { action: "translation" } },
@@ -598,15 +590,7 @@ class SeedDB
       org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                         assigned_by: attorney,
                         assigned_to: Colocated.singleton }.merge(attrs[:additional] || {})
-      org_task = FactoryBot.create(:colocated_task, :on_hold, org_task_args)
-
-      personal_task_args = org_task_args.merge(
-        parent: org_task,
-        action: org_task.action,
-        instructions: org_task.instructions,
-        assigned_to: colocated_user
-      )
-      FactoryBot.create(*[:colocated_task, attrs[:trait]].compact, personal_task_args)
+      FactoryBot.create(:colocated_task, :on_hold, org_task_args)
     end
   end
 
@@ -665,7 +649,6 @@ class SeedDB
   def create_tasks
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
-    colocated = User.find_by(css_id: "BVALSPORER")
 
     create_task_at_judge_assignment(@ama_appeals[0], judge, 35.days.ago)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
@@ -673,20 +656,20 @@ class SeedDB
     create_task_at_judge_assignment(@ama_appeals[3], judge)
     create_task_at_judge_review(@ama_appeals[4], judge, attorney)
     create_task_at_judge_review(@ama_appeals[5], judge, attorney)
-    create_task_at_colocated(@ama_appeals[6], judge, attorney, colocated)
-    create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, colocated, action: "translation")
+    create_task_at_colocated(@ama_appeals[6], judge, attorney)
+    create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, action: "translation")
     create_task_at_attorney_review(@ama_appeals[7], judge, attorney)
     create_task_at_attorney_review(@ama_appeals[8], judge, attorney)
     create_task_at_judge_assignment(@ama_appeals[9], judge)
     create_task_at_judge_review(@ama_appeals[10], judge, attorney)
-    create_task_at_colocated(@ama_appeals[11], judge, attorney, colocated)
+    create_task_at_colocated(@ama_appeals[11], judge, attorney)
 
     9.times do
       appeal = FactoryBot.create(:appeal)
       create_task_at_judge_assignment(appeal, judge, Time.zone.today)
     end
 
-    create_colocated_legacy_tasks(attorney, colocated)
+    create_colocated_legacy_tasks(attorney)
 
     FactoryBot.create_list(
       :generic_task,
