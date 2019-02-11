@@ -1114,7 +1114,7 @@ describe Appeal do
         docket = appeal.docket_hash
 
         expect(docket).not_to be_nil
-        expect(docket[:type]).to eq(docket_type)
+        expect(docket[:type]).to eq("directReview")
         expect(docket[:month]).to eq(october_docket_date.to_date)
         expect(docket[:switchDueDate]).to eq((promulgation_date2 + 365.days))
         expect(docket[:eligibleToSwitch]).to eq(true)
@@ -1132,7 +1132,7 @@ describe Appeal do
         docket = appeal.docket_hash
 
         expect(docket).not_to be_nil
-        expect(docket[:type]).to eq(docket_type)
+        expect(docket[:type]).to eq("directReview")
         expect(docket[:month]).to eq(october_docket_date.to_date)
         expect(docket[:switchDueDate]).to be_nil
         expect(docket[:eligibleToSwitch]).to eq(false)
