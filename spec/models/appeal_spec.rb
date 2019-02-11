@@ -850,6 +850,64 @@ describe Appeal do
     end
   end
 
+  context "#non_priority_decisions_in_the_last_year" do
+    let!(:newer_decisions) do
+      (0..10).map do |num|
+        doc = create(:decision_document)
+        doc.appeal.update(
+          docket_type: "direct_review",
+          receipt_date: (num * 20).days.ago
+        )
+        doc.appeal
+      end
+    end
+    let!(:older_decisions) do
+      (0..10).map do |num|
+        doc = create(:decision_document)
+        doc.appeal.update(
+          docket_type: "direct_review",
+          receipt_date: (366 + (num * 20)).days.ago
+        )
+        doc.appeal
+      end
+    end
+
+    context "non-priority decision list" do
+      subject { Appeal.non_priority_decisions_in_the_last_year }
+
+      it "returns decisions from the last year" do
+        expect(subject.include?(newer_decisions))
+      end
+
+      it "does not return decisions from more than a year ago" do
+        expect(subject.include?(older_decisions))
+      end
+    end
+  end
+
+  context "#set_target_decision_date!" do
+    let(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
+    let(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
+
+    context "with direct review appeal" do
+      subject { direct_review_appeal }
+      it "sets target decision date" do
+        subject.set_target_decision_date!
+        expect(subject.target_decision_date).to eq(
+          subject.receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days
+        )
+      end
+    end
+
+    context "with not direct review appeal" do
+      subject { evidence_submission_appeal }
+      it "does not set target date" do
+        subject.set_target_decision_date!
+        expect(subject.target_decision_date).to eq(nil)
+      end
+    end
+  end
+
   context "#status_hash" do
     let(:judge) { create(:user) }
     let!(:hearings_user) { create(:hearings_coordinator) }
@@ -1114,7 +1172,7 @@ describe Appeal do
         docket = appeal.docket_hash
 
         expect(docket).not_to be_nil
-        expect(docket[:type]).to eq(docket_type)
+        expect(docket[:type]).to eq("directReview")
         expect(docket[:month]).to eq(october_docket_date.to_date)
         expect(docket[:switchDueDate]).to eq((promulgation_date2 + 365.days))
         expect(docket[:eligibleToSwitch]).to eq(true)
@@ -1132,7 +1190,7 @@ describe Appeal do
         docket = appeal.docket_hash
 
         expect(docket).not_to be_nil
-        expect(docket[:type]).to eq(docket_type)
+        expect(docket[:type]).to eq("directReview")
         expect(docket[:month]).to eq(october_docket_date.to_date)
         expect(docket[:switchDueDate]).to be_nil
         expect(docket[:eligibleToSwitch]).to eq(false)
