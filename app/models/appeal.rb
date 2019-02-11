@@ -565,7 +565,6 @@ class Appeal < DecisionReview
     # include the original remanded decision
     di_list = decision_issues.not_remanded
 
-
     remand_sc_decisions = []
     remand_supplemental_claims.each do |sc|
       sc.decision_issues.each do |di|

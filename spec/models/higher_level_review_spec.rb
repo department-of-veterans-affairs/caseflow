@@ -633,7 +633,7 @@ describe HigherLevelReview do
       it "will get the status for the decisions issues" do
         issue_statuses = hlr.issues_hash
         expect(issue_statuses.empty?).to eq(false)
-        
+
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(false)
