@@ -437,6 +437,10 @@ class Appeal < DecisionReview
           decision: di.disposition_for_status
         }
       end
+    when :pending_hearing_scheduling
+      {
+        type: "video"
+      }
     else
       {}
     end
