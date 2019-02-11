@@ -317,7 +317,7 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     if direct_review_docket?
-      update!(target_decision_date: receipt_date + DirectReviewDocket::TIME_GOAL.days)
+      update!(target_decision_date: receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days)
     end
   end
 

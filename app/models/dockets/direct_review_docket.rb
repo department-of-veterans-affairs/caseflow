@@ -1,5 +1,5 @@
 class DirectReviewDocket < Docket
-  TIME_GOAL = 365
+  DAYS_TO_DECISION_GOAL = 365
   BECOMES_DUE = -60
 
   def docket_type
@@ -13,7 +13,7 @@ class DirectReviewDocket < Docket
   def time_until_due_of_oldest_appeal; end
 
   def time_until_due_of_new_appeal
-    TIME_GOAL + BECOMES_DUE
+    DAYS_TO_DECISION_GOAL + BECOMES_DUE
   end
 
   def nonpriority_receipts_per_year
