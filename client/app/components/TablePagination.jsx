@@ -46,11 +46,9 @@ class TablePagination extends React.PureComponent {
     // Get previous number of cases so we can calculate the case range in
     // the pagination summary
     let previousCaseCount = 0;
-    let i = 0;
 
-    while (i < currentPage) {
+    for (let i = 0; i < currentPage; i += 1) {
       previousCaseCount += paginatedData[i].length;
-      i += 1;
     }
     // If there are no pages, there is no data, so the range should be 0-0.
     // Otherwise, the beginning of the range is the previous amount of cases + 1

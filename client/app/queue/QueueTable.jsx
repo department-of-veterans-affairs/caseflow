@@ -26,6 +26,9 @@ import { COLORS } from '../constants/AppConstants';
  *   - @footer {string} footer cell value for the column
  * - @rowObjects {array[object]} array of objects used to build the <tr/> rows
  * - @summary {string} table summary
+ * - @enablePagination {boolean} whether or not to enablePagination
+ * - @casesPerPage {number} how many cases to show per page,
+ *   defaults to 15 if nothing is set
  *
  * see StyleGuideTables.jsx for usage example.
  */
@@ -270,20 +273,12 @@ export default class QueueTable extends React.PureComponent {
   };
 
   paginateData = (tableData) => {
-    const duplicateTableData = tableData.slice(0);
+    const casesPerPage = this.props.casesPerPage || 15;
     const paginatedData = [];
-    const numberOfPages = (duplicateTableData.length / 15) + (duplicateTableData.length % 15 > 0 ? 1 : 0);
 
-    _.times(numberOfPages, () => {
-      let pageOfData = [];
-
-      while (pageOfData.length < 15 && duplicateTableData.length > 0) {
-        pageOfData = pageOfData.concat(duplicateTableData[0]);
-        duplicateTableData.splice(0, 1);
-      }
-
-      paginatedData.push(pageOfData);
-    });
+    for (let i = 0; i < tableData.length; i += casesPerPage) {
+      paginatedData.push(tableData.slice(i, i + casesPerPage));
+    }
 
     return paginatedData;
   }
@@ -418,5 +413,6 @@ QueueTable.propTypes = {
   }),
   userReadableColumnNames: PropTypes.object,
   alternateColumnNames: PropTypes.object,
-  enablePagination: PropTypes.bool
+  enablePagination: PropTypes.bool,
+  casesPerPage: PropTypes.number
 };
