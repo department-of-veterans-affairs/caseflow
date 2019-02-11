@@ -31,6 +31,9 @@ class Appeal < DecisionReview
       .where("advance_on_docket_motions.granted = ?", true)
       .or(join_aod_motions
         .where("people.date_of_birth <= ?", 75.years.ago))
+    # TODO: this method returns duplicate results when appeals match both clauses in the `or`.
+    # adding .distinct here throws an error when combined with other scopes using .order.
+    # ensure results are distinct.
   }
 
   # rubocop:disable Metrics/LineLength
@@ -62,6 +65,10 @@ class Appeal < DecisionReview
       .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
   }
 
+  scope :priority_ordered_by_distribution_ready_date, lambda {
+    from(all_priority).ordered_by_distribution_ready_date
+  }
+
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
@@ -80,6 +87,10 @@ class Appeal < DecisionReview
     else
       LegacyAppeal.find_or_create_by_vacols_id(id)
     end
+  end
+
+  def self.non_priority_decisions_in_the_last_year
+    all_nonpriority.joins(:decision_documents).where("receipt_date > ?", 1.year.ago).count
   end
 
   def ui_hash
@@ -302,6 +313,12 @@ class Appeal < DecisionReview
 
     clear_error!
     processed!
+  end
+
+  def set_target_decision_date!
+    if direct_review_docket?
+      update!(target_decision_date: receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days)
+    end
   end
 
   def outcoded?
