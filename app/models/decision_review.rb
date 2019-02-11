@@ -312,4 +312,45 @@ class DecisionReview < ApplicationRecord
   def legacy_opt_in_enabled?
     FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
   end
+
+  def description
+    return if request_issues.empty?
+
+    descripton = fetch_status_description_using_diagnostic_code
+    return descripton if descripton
+
+    description = fetch_status_description_using_claim_type
+    return description if description
+
+    return "1 issue" if request_issues.count == 1
+
+    "#{request_issues.count} issues"
+  end
+
+  def fetch_status_description_using_diagnostic_code
+    issue = request_issues.find do |ri|
+      !ri[:contested_rating_issue_diagnostic_code].nil?
+    end
+
+    issue_diagnostic_code = issue.contested_rating_issue_diagnostic_code if issue
+
+    if issue_diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue_diagnostic_code]
+      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue_diagnostic_code]["status_description"]
+      description[0] = description[0].upcase
+
+      return description if request_issues.count - 1 == 0
+
+      return "#{description} and 1 other" if request_issues.count - 1 == 1
+
+      return "#{description} and #{request_issues.count - 1} others"
+    end
+  end
+
+  def fetch_status_description_using_claim_type
+    return if program == "other" || program == "multiple"
+
+    return "1 #{program} issue" if request_issues.count == 1
+
+    "#{request_issues.count} #{program} issues"
+  end
 end
