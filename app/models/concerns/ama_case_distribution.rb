@@ -65,14 +65,15 @@ module AmaCaseDistribution
     }
   end
 
-  def distribute_appeals(docket, n, priority: false, genpop: "any", range: nil)
-    return [] unless n > 0
+  def distribute_appeals(docket, num, priority: false, genpop: "any", range: nil)
+    return [] unless num > 0
 
     if range.nil?
-      appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: n)
+      appeals = dockets[docket].distribute_appeals(self, priority: priority, genpop: genpop, limit: num)
     elsif docket == :legacy && priority == false
       return [] unless range > 0
-      appeals = dockets[:legacy].distribute_nonpriority_appeals(self, genpop: genpop, range: range, limit: n)
+
+      appeals = dockets[:legacy].distribute_nonpriority_appeals(self, genpop: genpop, range: range, limit: num)
     else
       return
     end
@@ -108,9 +109,9 @@ module AmaCaseDistribution
   def dockets
     @dockets ||= {
       legacy: LegacyDocket.new,
-      direct_review: AmaDirectReviewDocket.new,
-      evidence_submission: AmaEvidenceSubmissionDocket.new,
-      hearing: AmaHearingDocket.new
+      direct_review: DirectReviewDocket.new,
+      evidence_submission: EvidenceSubmissionDocket.new,
+      hearing: HearingRequestDocket.new
     }
   end
 
@@ -134,14 +135,14 @@ module AmaCaseDistribution
     (docket_margin_net_of_priority * docket_proportions[:legacy]).round
   end
 
-  def oldest_priority_appeals_by_docket(n)
+  def oldest_priority_appeals_by_docket(num)
     return {} unless n > 0
 
     dockets
       .map { |sym, docket| docket.age_of_n_oldest_priority_appeals(n).map { |age| [age, sym] } }
       .flatten
       .sort_by { |a| a[0] }
-      .first(n)
+      .first(num)
       .each_with_object(Hash.new(0)) { |a, counts| counts[a[1]] += 1 }
   end
 
@@ -217,14 +218,14 @@ module AmaCaseDistribution
         .merge!(fixed)
     end
 
-    def stochastic_allocation(n)
-      result = transform_values { |proportion| (n * proportion).floor }
-      rem = n - result.values.reduce(0, :+)
+    def stochastic_allocation(num)
+      result = transform_values { |proportion| (num * proportion).floor }
+      rem = num - result.values.reduce(0, :+)
 
       return result if rem == 0
 
       cumulative_probabilities = inject({}) do |hash, (key, proportion)|
-        probability = (n * proportion).modulo(1) / rem
+        probability = (num * proportion).modulo(1) / rem
         hash[key] = (hash.values.last || 0) + probability
         hash
       end
