@@ -18,7 +18,7 @@ describe DirectReviewDocket do
       end
 
       it "returns weighted number of appeals" do
-        expect(subject).to eq(((400 * 365) / 364).round)
+        expect(subject).to eq(((100 * 365) / 364).round)
       end
     end
 

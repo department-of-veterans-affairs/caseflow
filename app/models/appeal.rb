@@ -31,7 +31,6 @@ class Appeal < DecisionReview
       .where("advance_on_docket_motions.granted = ?", true)
       .or(join_aod_motions
         .where("people.date_of_birth <= ?", 75.years.ago))
-      .distinct
   }
 
   # rubocop:disable Metrics/LineLength
@@ -61,6 +60,10 @@ class Appeal < DecisionReview
     joins(:tasks)
       .group("appeals.id")
       .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
+  }
+
+  scope :priority_ordered_by_distribution_ready_date, lambda {
+    from(all_priority).ordered_by_distribution_ready_date
   }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
