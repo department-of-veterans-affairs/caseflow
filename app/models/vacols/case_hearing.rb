@@ -161,7 +161,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :mduser,
              :mdtime)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
-        .where("hearing_type = ? and (folder_nr != ? or folder_nr is null)", "C", "1779233")
+        .where("hearing_type = ? and folder_nr like 'VIDEO%'", "C")
     end
   end
 
