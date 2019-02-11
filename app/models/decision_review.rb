@@ -313,28 +313,6 @@ class DecisionReview < ApplicationRecord
     FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
   end
 
-  def fetch_issues_status(issues_list)
-    issues_list.map do |issue|
-      {
-        active: issue.issue_status_active?,
-        last_action: issue.issue_status_last_action,
-        date: issue.issue_status_last_action_date,
-        description: get_issue_status_description(issue),
-        diagnosticCode: issue.diagnostic_code
-      }
-    end
-  end
-
-  def get_issue_status_description(issue)
-    if issue.diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue.diagnostic_code]
-      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue.diagnostic_code]["status_description"]
-      description[0] = description[0].upcase
-      return description
-    else
-      "#{issue.benefit_type.capitalize} issue"
-    end
-  end
-
   def description
     return if request_issues.empty?
 
@@ -355,17 +333,14 @@ class DecisionReview < ApplicationRecord
     end
 
     issue_diagnostic_code = issue.contested_rating_issue_diagnostic_code if issue
+    description = fetch_diagnostic_code_status_description(issue_diagnostic_code)
+    return unless description
 
-    if issue_diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue_diagnostic_code]
-      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue_diagnostic_code]["status_description"]
-      description[0] = description[0].upcase
+    return description if request_issues.count - 1 == 0
 
-      return description if request_issues.count - 1 == 0
+    return "#{description} and 1 other" if request_issues.count - 1 == 1
 
-      return "#{description} and 1 other" if request_issues.count - 1 == 1
-
-      return "#{description} and #{request_issues.count - 1} others"
-    end
+    "#{description} and #{request_issues.count - 1} others"
   end
 
   def fetch_status_description_using_claim_type
@@ -374,5 +349,32 @@ class DecisionReview < ApplicationRecord
     return "1 #{program} issue" if request_issues.count == 1
 
     "#{request_issues.count} #{program} issues"
+  end
+
+  def fetch_issues_status(issues_list)
+    issues_list.map do |issue|
+      {
+        active: issue.issue_status_active?,
+        last_action: issue.issue_status_last_action,
+        date: issue.issue_status_last_action_date,
+        description: get_issue_status_description(issue),
+        diagnosticCode: issue.diagnostic_code
+      }
+    end
+  end
+
+  def get_issue_status_description(issue)
+    description = fetch_diagnostic_code_status_description(issue.diagnostic_code)
+    return description if description
+
+    "#{issue.benefit_type.capitalize} issue"
+  end
+
+  def fetch_diagnostic_code_status_description(diagnostic_code)
+    if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["status_description"]
+      description[0] = description[0].upcase
+      description
+    end
   end
 end

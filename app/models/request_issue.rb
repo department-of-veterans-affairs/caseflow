@@ -425,7 +425,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def issue_status_last_action
-    # this will be nil 
+    # this will be nil
     # may need to be updated if an issue is withdrawn
   end
 

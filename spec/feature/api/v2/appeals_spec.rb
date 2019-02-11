@@ -421,8 +421,8 @@ describe "Appeals API v2", type: :request do
     end
 
     let(:request_issue2) do
-      create(:request_issue, benefit_type: "education", 
-        contested_rating_issue_diagnostic_code: nil)
+      create(:request_issue, benefit_type: "education",
+                             contested_rating_issue_diagnostic_code: nil)
     end
 
     let!(:appeal) do
@@ -488,7 +488,7 @@ describe "Appeals API v2", type: :request do
       expect(issue["lastAction"]).to be_nil
       expect(issue["date"]).to be_nil
       expect(issue["diagnosticCode"]).to be_nil
-      expect(issue["description"]).to eq("Pension issue")
+      expect(issue["description"]).to eq("Compensation issue")
 
       event_type = json["data"].first["attributes"]["events"].first
       expect(event_type["type"]).to eq("hlr_request")
@@ -547,13 +547,12 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["docket"]["eligibleToSwitch"]).to eq(true)
       expect(json["data"][2]["attributes"]["status"]["type"]).to eq("on_docket")
 
-      expect(json["data"][2]["attributes"]["issues"].length).to eq(1)
+      expect(json["data"][2]["attributes"]["issues"].length).to eq(2)
       issue = json["data"][2]["attributes"]["issues"].first
       expect(issue["active"]).to eq(true)
       expect(issue["lastAction"]).to be_nil
       expect(issue["date"]).to be_nil
       expect(issue["diagnosticCode"]).to be_nil
-      expect(issue["description"]).to eq("Compensation issue")
 
       event_type = json["data"][2]["attributes"]["events"].first
       expect(event_type["type"]).to eq("ama_nod")
