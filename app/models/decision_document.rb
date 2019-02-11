@@ -3,6 +3,7 @@ class DecisionDocument < ApplicationRecord
   include UploadableDocument
 
   class NoFileError < StandardError; end
+  class NotYetSubmitted < StandardError; end
 
   belongs_to :appeal
   has_many :end_product_establishments, as: :source
@@ -40,6 +41,8 @@ class DecisionDocument < ApplicationRecord
 
   def process!
     return if processed?
+
+    fail NotYetSubmitted unless submitted_and_ready?
 
     attempted!
     upload_to_vbms!
