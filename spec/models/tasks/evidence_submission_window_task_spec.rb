@@ -59,10 +59,7 @@ describe EvidenceSubmissionWindowTask do
 
   context "timer_delay" do
     let(:task) do
-      EvidenceSubmissionWindowTask.create!(
-        appeal: appeal,
-        assigned_to: Bva.singleton
-      )
+      EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: Bva.singleton)
     end
 
     it "is marked as complete and vso tasks are created in 90 days" do
