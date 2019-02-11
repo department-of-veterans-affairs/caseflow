@@ -31,6 +31,9 @@ class Appeal < DecisionReview
       .where("advance_on_docket_motions.granted = ?", true)
       .or(join_aod_motions
         .where("people.date_of_birth <= ?", 75.years.ago))
+    # TODO: this method returns duplicate results when appeals match both clauses in the `or`.
+    # adding .distinct here throws an error when combined with other scopes using .order.
+    # ensure results are distinct.
   }
 
   # rubocop:disable Metrics/LineLength
@@ -62,6 +65,10 @@ class Appeal < DecisionReview
       .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
   }
 
+  scope :priority_ordered_by_distribution_ready_date, lambda {
+    from(all_priority).ordered_by_distribution_ready_date
+  }
+
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
@@ -80,6 +87,10 @@ class Appeal < DecisionReview
     else
       LegacyAppeal.find_or_create_by_vacols_id(id)
     end
+  end
+
+  def self.non_priority_decisions_in_the_last_year
+    all_nonpriority.joins(:decision_documents).where("receipt_date > ?", 1.year.ago).count
   end
 
   def ui_hash
@@ -302,6 +313,12 @@ class Appeal < DecisionReview
 
     clear_error!
     processed!
+  end
+
+  def set_target_decision_date!
+    if direct_review_docket?
+      update!(target_decision_date: receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days)
+    end
   end
 
   def outcoded?
@@ -532,6 +549,32 @@ class Appeal < DecisionReview
     @events ||= AppealEvents.new(appeal: self).all
   end
 
+  def issues_hash
+    issue_list = decision_issues.empty? ? request_issues.open : fetch_all_decision_issues
+
+    fetch_issues_status(issue_list)
+  end
+
+  def fetch_all_decision_issues
+    return decision_issues unless remanded_issues?
+    # only include the remanded issues they are still being worked on
+    return decision_issues if remanded_issues? && active_remanded_claims?
+
+    # if there were remanded issues and there is a decision available
+    # for them, include the decisions from the remanded SC and do not
+    # include the original remanded decision
+    di_list = decision_issues.not_remanded
+
+    remand_sc_decisions = []
+    remand_supplemental_claims.each do |sc|
+      sc.decision_issues.each do |di|
+        remand_sc_decisions << di
+      end
+    end
+
+    (di_list + remand_sc_decisions).uniq
+  end
+
   private
 
   def maybe_create_translation_task
@@ -573,6 +616,25 @@ class Appeal < DecisionReview
       .select do |issue|
         issue.approx_decision_date && issue.approx_decision_date < receipt_date
       end
+  end
+
+  def issue_active_status(issue)
+    return true if issue.is_a?(RequestIssue)
+    return true if issue.is_a?(DecisionIssue) && issue.disposition == "remanded"
+
+    false
+  end
+
+  def get_issue_last_action(issue)
+    return unless issue.is_a?(DecisionIssue)
+
+    return "remand" if issue.disposition == "remanded"
+
+    issue.disposition
+  end
+
+  def get_issue_last_action_date(issue)
+    issue.approx_decision_date if issue.is_a?(DecisionIssue)
   end
 end
 # rubocop:enable Metrics/ClassLength

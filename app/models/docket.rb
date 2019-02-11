@@ -10,14 +10,14 @@ class Docket
 
     scope = docket_appeals
     scope = scope.merge(Appeal.ready_for_distribution) if ready == true
-    scope = scope.merge(Appeal.all_priority) if priority == true
-    scope = scope.merge(Appeal.all_nonpriority) if priority == false
 
     if priority == true
-      scope.merge(Appeal.ordered_by_distribution_ready_date)
-    else
-      scope.order("receipt_date")
+      scope = scope.merge(Appeal.all_priority)
+      return scope.merge(Appeal.ordered_by_distribution_ready_date)
     end
+
+    scope = scope.merge(Appeal.all_nonpriority) if priority == false
+    scope.order("receipt_date")
   end
 
   def count(priority: nil, ready: nil)
@@ -25,7 +25,7 @@ class Docket
     # so the result of `count` will be a hash of key value pairs
     # e.g. {{[65, 65]=>2, [66, 66]=>2, [67, 67]=>2}
     # We want a # returned here, so we count the number of key value pairs.
-    appeals(priority: priority, ready: ready).count.length
+    appeals(priority: priority, ready: ready).distinct.count.length
   end
 
   def weight
