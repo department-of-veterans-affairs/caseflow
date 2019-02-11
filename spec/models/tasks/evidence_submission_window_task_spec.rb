@@ -9,8 +9,9 @@ describe EvidenceSubmissionWindowTask do
     FeatureToggle.disable!(:ama_auto_case_distribution)
   end
 
+  let!(:receipt_date) { 2.days.ago }
   let!(:appeal) do
-    create(:appeal, docket_type: "evidence_submission", claimants: [
+    create(:appeal, docket_type: "evidence_submission", receipt_date: receipt_date, claimants: [
              create(:claimant, participant_id: participant_id_with_pva)
            ])
   end
@@ -44,7 +45,7 @@ describe EvidenceSubmissionWindowTask do
     it "creates an ihp task if the appeal has a vso" do
       RootTask.create_root_and_sub_tasks!(appeal)
       expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq(0)
-      EvidenceSubmissionWindowTask.find_by(appeal: appeal).update!(status: "completed")
+      EvidenceSubmissionWindowTask.find_by(appeal: appeal).when_timer_ends
       expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq(1)
       expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
     end
@@ -58,14 +59,17 @@ describe EvidenceSubmissionWindowTask do
 
   context "timer_delay" do
     let(:task) do
-      EvidenceSubmissionWindowTask.create!(appeal: create(:appeal), assigned_to: Bva.singleton)
+      EvidenceSubmissionWindowTask.create!(
+        appeal: appeal,
+        assigned_to: Bva.singleton
+      )
     end
 
     it "is marked as complete and vso tasks are created in 90 days" do
       TaskTimerJob.perform_now
       expect(task.reload.status).to eq("assigned")
 
-      Timecop.travel(Time.zone.now + 90.days) do
+      Timecop.travel(receipt_date + 90.days) do
         TaskTimerJob.perform_now
         expect(task.reload.status).to eq("completed")
       end
