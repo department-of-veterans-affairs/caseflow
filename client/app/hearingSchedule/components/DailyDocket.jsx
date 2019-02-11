@@ -183,11 +183,17 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
+  getRegionalOffice = () => {
+    const { dailyDocket } = this.props;
+
+    return dailyDocket.requestType === 'Central' ? 'C' : dailyDocket.regionalOfficeKey;
+  }
+
   getRegionalOfficeDropdown = (hearing, readOnly) => {
     return <RegionalOfficeDropdown
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
       onChange={this.onHearingRegionalOfficeUpdate(hearing.id)}
-      value={hearing.editedRegionalOffice || hearing.regionalOfficeKey} />;
+      value={hearing.editedRegionalOffice || this.getRegionalOffice()} />;
   };
 
   getHearingLocationDropdown = (hearing, readOnly) => {
@@ -252,8 +258,10 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingDayDropdown = (hearing, readOnly) => {
-    const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
-    const staticOptions = hearing.regionalOfficeKey === currentRegionalOffice ?
+    const regionalOffice = this.getRegionalOffice();
+    const currentRegionalOffice = hearing.editedRegionalOffice || regionalOffice;
+    // if date is in the past, always add current date as an option
+    const staticOptions = regionalOffice === currentRegionalOffice ?
       [{
         label: formatDateStr(hearing.scheduledFor),
         value: {
