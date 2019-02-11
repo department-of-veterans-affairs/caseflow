@@ -954,8 +954,9 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
-    # CMGTODO
-    def nonpriority_decisions_per_year; end
+    def nonpriority_decisions_per_year
+      repository.nonpriority_decisions_per_year
+    end
   end
 end
 # rubocop:enable Metrics/ClassLength

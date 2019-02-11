@@ -139,6 +139,28 @@ describe VACOLS::CaseDocket do
     end
   end
 
+  context ".nonpriority_decisions_per_year" do
+    subject { VACOLS::CaseDocket.nonpriority_decisions_per_year }
+
+    before do
+      10.times do
+        create(:case,
+               bfddec: 6.months.ago,
+               bfac: "1",
+               bfdc: "1")
+      end
+
+      create(:case,
+             bfddec: 13.months.ago,
+             bfac: "1",
+             bfdc: "1")
+    end
+
+    it "counts decisions in the last year" do
+      expect(subject).to eq(10)
+    end
+  end
+
   context ".distribute_nonpriority_appeals" do
     let(:genpop) { "any" }
     let(:range) { nil }

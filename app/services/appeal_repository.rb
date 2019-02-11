@@ -720,6 +720,14 @@ class AppealRepository
     end
   end
 
+  def self.nonpriority_decisions_per_year
+    MetricsService.record("VACOLS: nonpriority_decisions_per_year",
+                          name: "nonpriority_decisions_per_year",
+                          service: :vacols) do
+      VACOLS::CaseDocket.nonpriority_decisions_per_year
+    end
+  end
+
   def self.distribute_priority_appeals(judge, genpop, limit)
     MetricsService.record("VACOLS: distribute_priority_appeals",
                           name: "distribute_priority_appeals",

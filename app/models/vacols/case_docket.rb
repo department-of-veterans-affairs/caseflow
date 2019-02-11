@@ -224,6 +224,15 @@ class VACOLS::CaseDocket < VACOLS::Record
     appeals.map { |appeal| appeal["bfdloout"] }
   end
 
+  def self.nonpriority_decisions_per_year
+    joins(VACOLS::Case::JOIN_AOD)
+      .where(
+        "BFDC in ('1', '3', '4') and BFDDEC >= ? and AOD = 0 and BFAC <> '7'",
+        1.year.ago
+      )
+      .count
+  end
+
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
