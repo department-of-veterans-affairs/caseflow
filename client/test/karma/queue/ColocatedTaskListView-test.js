@@ -9,7 +9,8 @@ import moment from 'moment';
 import thunk from 'redux-thunk';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import rootReducer from '../../../app/queue/reducers';
-import { onReceiveQueue, receiveNewDocuments } from '../../../app/queue/QueueActions';
+import { onReceiveQueue, receiveNewDocuments, errorFetchingDocumentCount, setAppealDocCount }
+  from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { BrowserRouter } from 'react-router-dom';
 import type { Task, BasicAppeal } from '../../../app/queue/types/models';
@@ -166,6 +167,19 @@ describe('ColocatedTaskListView', () => {
       expect(docketNumber.text()).to.include(appeal.docketNumber);
       expect(daysWaiting.text()).to.equal('1');
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
+      expect(documents.text()).to.include('Loading number of docs...');
+
+      store.dispatch(errorFetchingDocumentCount(task.externalAppealId));
+      expect(wrapper.find('td').at(6).
+        text()).to.include('Failed to Load');
+
+      store.dispatch(setAppealDocCount(task.externalAppealId, 5, true));
+      expect(wrapper.find('td').at(6).
+        text()).to.include('5');
+
+      store.dispatch(setAppealDocCount(task.externalAppealId, 6, false));
+      expect(wrapper.find('td').at(6).
+        text()).to.include('6');
     });
   });
 
