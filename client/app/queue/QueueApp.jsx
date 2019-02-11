@@ -202,8 +202,6 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
-  routedRescheduleHearing = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
-
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
   routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
@@ -319,7 +317,7 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedAssignToUser} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RESCHEDULE_HEARING.value}`}
-            render={this.routedRescheduleHearing} />
+            render={this.routedAssignToSingleTeam} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"

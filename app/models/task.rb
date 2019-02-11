@@ -282,6 +282,16 @@ class Task < ApplicationRecord
     }
   end
 
+  def assign_to_hearing_schedule_team_data(_user = nil)
+    org = HearingsManagement.singleton
+
+    {
+      selected: org,
+      options: [{ label: org.name, value: org.id }],
+      type: ScheduleHearingTask.name
+    }
+  end
+
   def add_admin_action_data(_user = nil)
     {
       redirect_after: "/queue",
