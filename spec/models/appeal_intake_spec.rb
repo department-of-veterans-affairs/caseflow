@@ -181,7 +181,8 @@ describe AppealIntake do
       Appeal.create!(
         veteran_file_number: veteran_file_number,
         receipt_date: 3.days.ago,
-        legacy_opt_in_approved: legacy_opt_in_approved
+        legacy_opt_in_approved: legacy_opt_in_approved,
+        docket_type: "direct_review"
       )
     end
 
@@ -191,6 +192,7 @@ describe AppealIntake do
       expect(intake.reload).to be_success
       expect(intake.detail.established_at).to_not be_nil
       expect(intake.detail.request_issues.count).to eq 2
+      expect(intake.detail.target_decision_date).to_not be_nil
       expect(intake.detail.request_issues.first).to have_attributes(
         contested_rating_issue_reference_id: "reference-id",
         contested_issue_description: "decision text"
