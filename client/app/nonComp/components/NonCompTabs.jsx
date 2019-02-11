@@ -41,8 +41,8 @@ class TaskTableTab extends React.PureComponent {
       predefinedColumns: this.props.predefinedColumns,
       shownTasks: this.props.tasks,
       searchText: '',
-      isReviewFilterOpen: false,
-      reviewFilterBy: null
+      // isReviewFilterOpen: false,
+      // reviewFilterBy: null
     };
   }
 
@@ -63,28 +63,28 @@ class TaskTableTab extends React.PureComponent {
       searchText: '' });
   }
 
-  onReviewTypeSearch = (reviewType) => {
-    if (reviewType === 'Clear category filter') {
-      this.setState({ shownTasks: this.state.allTasks,
-        searchText: '',
-        isReviewFilterOpen: false,
-        reviewFilterBy: reviewType });
-    } else {
-      const filteredTasks = this.state.allTasks.filter((task) => task.type === reviewType);
+  // onReviewTypeSearch = (reviewType) => {
+  //   if (reviewType === 'Clear category filter') {
+  //     this.setState({ shownTasks: this.state.allTasks,
+  //       searchText: '',
+  //       isReviewFilterOpen: false,
+  //       reviewFilterBy: reviewType });
+  //   } else {
+  //     const filteredTasks = this.state.allTasks.filter((task) => task.type === reviewType);
 
-      this.setState({ shownTasks: filteredTasks,
-        isReviewFilterOpen: false,
-        reviewFilterBy: reviewType });
-    }
-  }
+  //     this.setState({ shownTasks: filteredTasks,
+  //       isReviewFilterOpen: false,
+  //       reviewFilterBy: reviewType });
+  //   }
+  // }
 
-  onReviewFilterToggle = () => {
-    this.setState({ isReviewFilterOpen: !this.state.isReviewFilterOpen });
-  }
+  // onReviewFilterToggle = () => {
+  //   this.setState({ isReviewFilterOpen: !this.state.isReviewFilterOpen });
+  // }
 
-  checkSelectedValue = (value) => {
-    return value === this.state.reviewFilterBy;
-  }
+  // checkSelectedValue = (value) => {
+  //   return value === this.state.reviewFilterBy;
+  // }
 
   render = () => {
     return <React.Fragment>
@@ -104,11 +104,7 @@ class TaskTableTab extends React.PureComponent {
           {...this.state.predefinedColumns}
           getKeyForRow={(row, object) => object.id}
           customColumns={[claimantColumn(), veteranParticipantIdColumn(),
-            decisionReviewTypeColumn(
-              this.onReviewTypeSearch,
-              this.state.isReviewFilterOpen,
-              this.onReviewFilterToggle,
-              this.checkSelectedValue)
+            decisionReviewTypeColumn(this.state.shownTasks)
           ]}
           includeIssueCount
           tasks={this.state.shownTasks}
@@ -127,3 +123,8 @@ const NonCompTabs = connect(
 )(NonCompTabsUnconnected);
 
 export default NonCompTabs;
+
+// this.onReviewTypeSearch,
+//               this.state.isReviewFilterOpen,
+//               this.onReviewFilterToggle,
+//               this.checkSelectedValue
