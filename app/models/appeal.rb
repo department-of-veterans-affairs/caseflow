@@ -135,12 +135,6 @@ class Appeal < DecisionReview
   end
   # rubocop:enable Metrics/PerceivedComplexity
 
-  def set_target_decision_date!
-    if direct_review_docket?
-      update!(target_decision_date: receipt_date + DirectReviewDocket::TIME_GOAL.days)
-    end
-  end
-
   def attorney_case_reviews
     tasks.map(&:attorney_case_reviews).flatten
   end
@@ -319,6 +313,12 @@ class Appeal < DecisionReview
 
     clear_error!
     processed!
+  end
+
+  def set_target_decision_date!
+    if direct_review_docket?
+      update!(target_decision_date: receipt_date + DirectReviewDocket::TIME_GOAL.days)
+    end
   end
 
   def outcoded?
