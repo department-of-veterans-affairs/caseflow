@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 // @flow
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -196,7 +198,8 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAssignToSingleTeam = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
 
-  routedReassignToSingleTeam = (props) => <AssignToView isTeamAssign assigneeAlreadySelected isReassignAction {...props.match.params} />;
+  routedReassignToSingleTeam = (props) =>
+    <AssignToView isTeamAssign assigneeAlreadySelected isReassignAction {...props.match.params} />;
 
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
 
@@ -455,3 +458,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);
+
+/* eslint-enable max-lines */
