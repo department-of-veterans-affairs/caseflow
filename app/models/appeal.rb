@@ -316,7 +316,7 @@ class Appeal < DecisionReview
   end
 
   def set_target_decision_date!
-    update!(target_decision_date: DirectReviewDocket::DAYS_TO_DECISION_GOAL.days.from_now) if direct_review_docket?
+    update!(target_decision_date: receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days) if direct_review_docket?
   end
 
   def outcoded?

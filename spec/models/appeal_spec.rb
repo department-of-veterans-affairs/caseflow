@@ -893,7 +893,8 @@ describe Appeal do
       subject { direct_review_appeal }
       it "sets target decision date" do
         subject.set_target_decision_date!
-        expect(subject.target_decision_date).to eq(DirectReviewDocket::DAYS_TO_DECISION_GOAL.days.from_now.to_date)
+        expect(subject.target_decision_date).to eq(
+           subject.receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days)
       end
     end
 
