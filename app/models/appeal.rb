@@ -136,7 +136,9 @@ class Appeal < DecisionReview
   # rubocop:enable Metrics/PerceivedComplexity
 
   def set_target_decision_date!
-    update!(target_decision_date: AmaDirectReviewDocket::TIME_GOAL.days.from_now) if direct_review_docket?
+    if direct_review_docket?
+      update!(target_decision_date: receipt_date + DirectReviewDocket::TIME_GOAL.days)
+    end
   end
 
   def attorney_case_reviews
