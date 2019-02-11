@@ -109,10 +109,6 @@ class Appeal < DecisionReview
     "Original"
   end
 
-  def root_task
-    tasks.first.root_task if !tasks.empty?
-  end
-
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   # rubocop:disable Metrics/PerceivedComplexity
@@ -141,10 +137,6 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     update!(target_decision_date: AmaDirectReviewDocket::TIME_GOAL.days.from_now) if direct_review_docket?
-  end
-
-  def ready_for_distribution_at
-    tasks.select { |t| t.type == 'DistributionTask' }.map(&:assigned_at).max
   end
 
   def attorney_case_reviews
@@ -325,12 +317,6 @@ class Appeal < DecisionReview
 
     clear_error!
     processed!
-  end
-
-  def set_target_decision_date!
-    if direct_review_docket?
-      update!(target_decision_date: receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days)
-    end
   end
 
   def outcoded?
