@@ -105,6 +105,13 @@ FactoryBot.define do
       parent { create(:ama_judge_task) }
     end
 
+    factory :transcription_task do
+      type TranscriptionTask.name
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_to { TranscriptionTeam.singleton }
+    end
+
     factory :ama_vso_task do
       type GenericTask.name
       appeal { create(:appeal) }
