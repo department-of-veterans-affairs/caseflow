@@ -83,6 +83,24 @@ class DecisionIssue < ApplicationRecord
     Contention.new(description).text
   end
 
+  def issue_status_active?
+    # this is still being worked on so for the purposes of communicating
+    # to the veteran, this decision issue is still considered active
+    return true if decision_review.is_a?(Appeal) && disposition == "remanded"
+
+    false
+  end
+
+  def issue_status_last_action
+    return "remand" if disposition == "remanded"
+
+    disposition
+  end
+
+  def issue_status_last_action_date
+    approx_decision_date
+  end
+
   private
 
   def processed_in_caseflow?

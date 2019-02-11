@@ -419,6 +419,19 @@ class RequestIssue < ApplicationRecord
     contested_rating_issue_diagnostic_code
   end
 
+  def issue_status_active?
+    return review_request.active? if review_request.is_a?(HigherLevelReview) || review_request.is_a?(SupplementalClaim)
+    return true if review_request.is_a?(Appeal)
+  end
+
+  def issue_status_last_action
+    #this will always be nil for request issues
+  end
+
+  def issue_status_last_action_date
+    #this is always be nil for request issues
+  end
+
   private
 
   # The contested_rating_issue_profile_date is used as an identifier to retrieve the

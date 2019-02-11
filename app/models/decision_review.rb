@@ -316,9 +316,9 @@ class DecisionReview < ApplicationRecord
   def fetch_issues_status(issues_list)
     issues_list.map do |issue|
       {
-        active: issue_active_status(issue),
-        last_action: get_issue_last_action(issue),
-        date: get_issue_last_action_date(issue),
+        active: issue.issue_status_active?, #issue_active_status(issue),
+        last_action: issue.issue_status_last_action, #get_issue_last_action(issue),
+        date: issue.issue_status_last_action_date,
         description: get_issue_status_description(issue),
         diagnosticCode: issue.diagnostic_code
       }
@@ -341,7 +341,9 @@ class DecisionReview < ApplicationRecord
 
   def get_issue_status_description(issue)
     if issue.diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue.diagnostic_code]
-      Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue.diagnostic_code]["status_description"].capitalize
+      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[issue.diagnostic_code]["status_description"]
+      description[0] = description[0].upcase
+      return description
     else
       "#{issue.benefit_type.capitalize} issue"
     end

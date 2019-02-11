@@ -540,8 +540,12 @@ class Appeal < DecisionReview
 
   def fetch_all_decision_issues
     return decision_issues unless remanded_issues?
+    # only include the remanded issues they are still being worked on
     return decision_issues if remanded_issues? && active_remanded_claims?
 
+    # if there were remanded issues and there is a decision available
+    # for them, include the decisions from the remanded SC and do not
+    # include the original remanded decision
     di_list = decision_issues.reject { |di| di[:disposition] == "remanded" }
 
     remand_supplemental_claims.each do |sc|
