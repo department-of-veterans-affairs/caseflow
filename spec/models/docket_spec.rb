@@ -60,19 +60,15 @@ describe Docket do
     context "count" do
       let(:priority) { nil }
       subject { DirectReviewDocket.new.count(priority: priority) }
+
       it "counts appeals" do
         expect(subject).to eq(5)
       end
-      context "when looking for priority appeals" do
-        let(:priority) { true }
-        it "counts appeals" do
-          expect(subject).to eq(2)
-        end
-      end
-      context "when looking for non-priority appeals" do
+
+      context "when looking for nonpriority appeals" do
         let(:priority) { false }
-        it "counts appeals" do
-          expect(subject).to eq(3) # Currently returning 2
+        it "counts nonpriority appeals" do
+          expect(subject).to eq(3)
         end
       end
     end

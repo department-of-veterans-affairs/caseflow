@@ -65,7 +65,7 @@ class Appeal < DecisionReview
   scope :active, lambda {
     joins(:tasks)
       .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status != ? then 1 end) = ?", "RootTask", "completed", 1)
+      .having("count(case when tasks.type = ? and tasks.status != ? then 1 end) >= ?", "RootTask", "completed", 1)
   }
 
   scope :ordered_by_distribution_ready_date, lambda {
