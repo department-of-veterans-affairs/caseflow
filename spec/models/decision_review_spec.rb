@@ -76,44 +76,54 @@ describe DecisionReview do
   context "#contestable_issues" do
     subject { higher_level_review.contestable_issues }
 
+    def find_serialized_issue(serialized_contestable_issues, ref_id)
+      serialized_contestable_issues.find { |ci| ci[:ratingIssueReferenceId] == ref_id }
+    end
+
     it "creates a list of contestable rating and decision issues" do
-      expect(subject.map(&:serialize)).to include(
-        { # this rating issue got replaced with a decision issue
-          ratingIssueReferenceId: "123",
-          ratingIssueProfileDate: profile_date,
-          ratingIssueDiagnosticCode: nil,
-          decisionIssueId: decision_issues.first.id,
-          date: profile_date,
-          description: "decision issue 1",
-          rampClaimId: nil,
-          titleOfActiveReview: nil,
-          sourceReviewType: "HigherLevelReview",
-          timely: true
-        },
-        {
-          ratingIssueReferenceId: "456",
-          ratingIssueProfileDate: profile_date,
-          ratingIssueDiagnosticCode: nil,
-          decisionIssueId: nil,
-          date: profile_date,
-          description: "rating issue 2",
-          rampClaimId: nil,
-          titleOfActiveReview: nil,
-          sourceReviewType: nil,
-          timely: true
-        },
-        {
-          ratingIssueReferenceId: "789",
-          ratingIssueProfileDate: profile_date + 1.day,
-          ratingIssueDiagnosticCode: nil,
-          decisionIssueId: decision_issues.second.id,
-          date: profile_date + 1.day,
-          description: "decision issue 2",
-          rampClaimId: nil,
-          titleOfActiveReview: nil,
-          sourceReviewType: "HigherLevelReview",
-          timely: true
-        },
+      serialized_contestable_issues = subject.map(&:serialize)
+
+      expect(find_serialized_issue(serialized_contestable_issues, "123")).to eq(
+        # this rating issue got replaced with a decision issue
+        ratingIssueReferenceId: "123",
+        ratingIssueProfileDate: profile_date,
+        ratingIssueDisabilityCode: nil,
+        decisionIssueId: decision_issues.first.id,
+        date: profile_date,
+        description: "decision issue 1",
+        rampClaimId: nil,
+        titleOfActiveReview: nil,
+        sourceReviewType: "HigherLevelReview",
+        timely: true
+      )
+
+      expect(find_serialized_issue(serialized_contestable_issues, "456")).to eq(
+        ratingIssueReferenceId: "456",
+        ratingIssueProfileDate: profile_date,
+        ratingIssueDisabilityCode: nil,
+        decisionIssueId: nil,
+        date: promulgation_date,
+        description: "rating issue 2",
+        rampClaimId: nil,
+        titleOfActiveReview: nil,
+        sourceReviewType: nil,
+        timely: true
+      )
+
+      expect(find_serialized_issue(serialized_contestable_issues, "789")).to eq(
+        ratingIssueReferenceId: "789",
+        ratingIssueProfileDate: profile_date + 1.day,
+        ratingIssueDisabilityCode: nil,
+        decisionIssueId: decision_issues.second.id,
+        date: profile_date + 1.day,
+        description: "decision issue 2",
+        rampClaimId: nil,
+        titleOfActiveReview: nil,
+        sourceReviewType: "HigherLevelReview",
+        timely: true
+      )
+
+      expect(serialized_contestable_issues).to include(
         ratingIssueReferenceId: nil,
         ratingIssueProfileDate: profile_date + 2.days,
         ratingIssueDiagnosticCode: nil,
