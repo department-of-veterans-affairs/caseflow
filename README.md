@@ -239,6 +239,11 @@ bundle exec rails dbconsole # password is `postgres`
 
 To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
 
+You can also use Psequel (instead of SQL Developer) with the following setup (user and password is postgres):
+
+https://www.dropbox.com/s/zkf8w85yfyjejwl/Screenshot%202019-02-11%2012.19.42.png?dl=0
+
+
 ### Debugging FACOLS setup
 FACOLS (short for fake-VACOLS) is our name for the Oracle DB with mock VACOLS data that we run locally. Sometimes the above setup fails at FACOLS steps, or the app cannot connect to the FACOLS DB. Here are some frequently encountered scenarios.
 
