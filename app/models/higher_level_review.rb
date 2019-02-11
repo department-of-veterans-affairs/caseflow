@@ -47,10 +47,6 @@ class HigherLevelReview < ClaimReview
     hlr_ep_active? || dta_claim_active?
   end
 
-  def description
-    # need to impelement
-  end
-
   def status_hash
     { type: fetch_status }
   end
