@@ -31,6 +31,9 @@ class Appeal < DecisionReview
       .where("advance_on_docket_motions.granted = ?", true)
       .or(join_aod_motions
         .where("people.date_of_birth <= ?", 75.years.ago))
+    # TODO: this method returns duplicate results when appeals match both clauses in the `or`.
+    # adding .distinct here throws an error when combined with other scopes using .order.
+    # ensure results are distinct.
   }
 
   # rubocop:disable Metrics/LineLength
