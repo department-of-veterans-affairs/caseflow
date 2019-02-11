@@ -366,7 +366,7 @@ class Appeal < DecisionReview
   end
 
   def status_hash
-    { type: fetch_status, details: {} }
+    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def fetch_status
@@ -412,6 +412,46 @@ class Appeal < DecisionReview
   end
   # rubocop:enable CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
+
+  def fetch_details_for_status
+    case fetch_status
+    when :ama_remand
+      decision_issues.map do |di|
+        {
+          description: di.description_for_status,
+          decision: di.disposition_for_status
+        }
+      end
+    when :post_bva_dta_decision
+      issue_list = remanded_sc_decision_issues
+      issue_list.map do |di|
+        {
+          description: di.description_for_status,
+          decision: di.disposition_for_status
+        }
+      end
+    when :bva_decision
+      decision_issues.map do |di|
+        {
+          description: di.description_for_status,
+          decision: di.disposition_for_status
+        }
+      end
+    else
+      {}
+    end
+  end
+
+  def remanded_sc_decision_issues
+    issue_list = []
+    remand_supplemental_claims.each do |sc|
+      sc.decision_issues.map do |di|
+        issue_list << di
+      end
+    end
+
+    issue_list
+  end
 
   def pending_schedule_hearing_task?
     tasks.any? { |t| t.is_a?(ScheduleHearingTask) && !t.completed? }

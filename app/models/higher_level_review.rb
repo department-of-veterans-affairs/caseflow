@@ -48,7 +48,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def status_hash
-    { type: fetch_status }
+    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def alerts
@@ -194,6 +194,21 @@ class HigherLevelReview < ClaimReview
       dta_claim.decision_issues.empty ? :hlr_closed : :hlr_decision
     else
       decision_issues ? :hlr_closed : :hlr_decision
+    end
+  end
+
+  def fetch_details_for_status
+    case fetch_status
+    when :hlr_decision
+      issue_list = fetch_decision_issues
+      issue_list.map do |di|
+        {
+          description: di.description_for_status,
+          disposition: di.disposition_for_status
+        }
+      end
+    else
+      {}
     end
   end
 end

@@ -919,6 +919,7 @@ describe Appeal do
       it "is on docket" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:on_docket)
+        expect(status[:details]).to be_empty
       end
     end
 
@@ -931,6 +932,7 @@ describe Appeal do
       it "is waiting for hearing to be scheduled" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:pending_hearing_scheduling)
+        expect(status[:details]).to be_empty
       end
     end
 
@@ -953,6 +955,7 @@ describe Appeal do
       it "is in evidentiary period " do
         status = appeal.status_hash
         expect(status[:type]).to eq(:evidentiary_period)
+        expect(status[:details]).to be_empty
       end
     end
 
@@ -975,6 +978,7 @@ describe Appeal do
       it "waiting for a decision" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:decision_in_progress)
+        expect(status[:details]).to be_empty
       end
     end
 
@@ -985,11 +989,16 @@ describe Appeal do
                assigned_to: judge, appeal: appeal, status: judge_review_task_status)
       end
       let(:root_task_status) { "completed" }
-      let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
+      let!(:not_remanded_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "allowed")
+      end
 
       it "has a decision" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:bva_decision)
+        expect(status[:details].first[:description]).to eq("Dental or oral condition")
+        expect(status[:details].first[:decision]).to eq("allowed")
       end
     end
 
@@ -1008,6 +1017,7 @@ describe Appeal do
       it "effectuation had an ep" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:bva_decision_effectuation)
+        expect(status[:details]).to be_empty
       end
     end
 
@@ -1021,12 +1031,15 @@ describe Appeal do
       let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
       let!(:remanded_decision_issue) do
         create(:decision_issue,
-               decision_review: appeal, disposition: "remanded", benefit_type: "nca")
+               decision_review: appeal, disposition: "remanded", benefit_type: "nca", diagnostic_code: nil)
       end
 
       it "it only has a remand that was processed in caseflow" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:ama_remand)
+        expect(status[:details].count).to eq(2)
+        # expect(status[:details].first[:description]).to eq("Nca issue")
+        # expect(status[:details].first[:description]).to eq("remand")
       end
     end
 
@@ -1044,14 +1057,20 @@ describe Appeal do
       end
       let!(:remanded_issue_with_ep) do
         create(:decision_issue,
-               decision_review: appeal, disposition: "remanded", benefit_type: "compensation")
+               decision_review: appeal, disposition: "remanded", benefit_type: "compensation", diagnostic_code: "9912")
       end
       let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
       let!(:remanded_ep) { create(:end_product_establishment, source: remanded_sc, synced_status: "CLR") }
+      let!(:remanded_sc_decision) do
+        create(:decision_issue,
+               decision_review: remanded_sc, disposition: "denied", diagnostic_code: "9912")
+      end
 
       it "has a remand processed in vbms" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:post_bva_dta_decision)
+        expect(status[:details].first[:description]).to eq("Partial loss of hard palate")
+        expect(status[:details].first[:decision]).to eq("denied")
       end
     end
   end
