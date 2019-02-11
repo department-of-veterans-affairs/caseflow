@@ -36,7 +36,6 @@ class Docket
     appeals(priority: true, ready: true).limit(num).map(&:ready_for_distribution_at)
   end
 
-  # CMGTODO: unique index on distributed_cases.case_id to prevent distributing the same appeal twice
   def distribute_appeals(distribution, priority: false, limit: 1)
     Distribution.transaction do
       appeals = appeals(priority: priority, ready: true).limit(limit)
