@@ -1,6 +1,14 @@
 describe DirectReviewDocket do
+  context "#due_count" do
+    subject { DirectReviewDocket.new.due_count }
+  end
+
+  context "#time_until_due_of_oldest_appeal" do
+    subject { DirectReviewDocket.new.time_until_due_of_oldest_appeal }
+  end
+
   context "#nonpriority_receipts_per_year!" do
-    subject { DirectReviewDocket.nonpriority_receipts_per_year }
+    subject { DirectReviewDocket.new.nonpriority_receipts_per_year }
 
     context "before April 1st, 2019" do
       before { Timecop.freeze(Date.new(2019, 3, 30)) }

@@ -6,11 +6,16 @@ class DirectReviewDocket < Docket
     "direct_review"
   end
 
-  # CMGTODO
-  def due_count; end
+  def due_count
+    appeals(priority: false, ready: true)
+      .where("target_decision_date <= ?", BECOMES_DUE.days.from_now)
+  end
 
-  # CMGTODO: clamp to [0, time_until_due_of_new_appeal]
-  def time_until_due_of_oldest_appeal; end
+  def time_until_due_of_oldest_appeal
+    oldest_target = appeals(priority: false).limit(1).first.target_decision_date
+    time_until_due = Time.zone.today.to_date - oldest_target + BECOMES_DUE
+    time_until_due.clamp([0, time_until_due_of_new_appeal])
+  end
 
   def time_until_due_of_new_appeal
     DAYS_TO_DECISION_GOAL + BECOMES_DUE
