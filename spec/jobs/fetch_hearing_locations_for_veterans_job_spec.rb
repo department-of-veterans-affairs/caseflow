@@ -65,6 +65,16 @@ describe FetchHearingLocationsForVeteransJob do
             parent: tsk
           )
 
+          # task with Foreign Case admin action
+          create(:veteran, file_number: "234567816")
+          app_3 = create(:appeal, veteran_file_number: "234567816")
+          tsk_2 = ScheduleHearingTask.create!(appeal: app_3, assigned_to: HearingsManagement.singleton)
+          HearingAdminActionForeignVeteranCaseTask.create!(
+            appeal: app_3,
+            assigned_to: HearingsManagement.singleton,
+            parent: tsk_2
+          )
+
           # legacy not in location 57
           create(:veteran, file_number: "111111111")
           vac_case = create(:case, bfcurloc: "39", bfregoff: "RO01", bfcorlid: "111111111S")
@@ -118,7 +128,7 @@ describe FetchHearingLocationsForVeteransJob do
         it "fetches RO distance twice" do
           expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).twice
           FetchHearingLocationsForVeteransJob.perform_now
-          expect(AvailableHearingLocations.count).to eq 1
+          expect(AvailableHearingLocations.count).to eq 4
         end
       end
 
@@ -133,6 +143,24 @@ describe FetchHearingLocationsForVeteransJob do
             .to be_empty
           expect(AvailableHearingLocations.count).to eq 1
           expect(AvailableHearingLocations.first.distance).to eq 11.11
+        end
+      end
+
+      context "when veteran state is outside US territories" do
+        let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body(state: "AE").to_json) }
+
+        it "creates a foreign veteran case admin action" do
+          FetchHearingLocationsForVeteransJob.perform_now
+          expect(HearingAdminActionForeignVeteranCaseTask.count).to eq 1
+        end
+      end
+
+      context "when veteran country is outside US territories" do
+        let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body(country_code: "SZ").to_json) }
+
+        it "creates a foreign veteran case admin action" do
+          FetchHearingLocationsForVeteransJob.perform_now
+          expect(HearingAdminActionForeignVeteranCaseTask.count).to eq 1
         end
       end
 
@@ -234,45 +262,12 @@ describe FetchHearingLocationsForVeteransJob do
         }
 
         distance_response = HTTPI::Response.new(200, [], body.to_json)
-        allow(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response)
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
       end
 
       it "updates veteran closest_regional_office with fetched RO within veteran's state" do
         job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address)
         expect(Veteran.first.closest_regional_office).to eq expected_ro
-      end
-
-      context "when veteran state is outside US territories" do
-        let(:mock_va_dot_gov_address) do
-          {
-            lat: 0.0,
-            long: 0.0,
-            state_code: "SS",
-            country_code: "US"
-          }
-        end
-
-        it "raises FetchHearingLocationsJobError" do
-          expect { job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
-            .to raise_error(Caseflow::Error::FetchHearingLocationsJobError)
-        end
-      end
-
-      context "when veteran country is outside US territories" do
-        let(:mock_va_dot_gov_address) do
-          {
-            lat: 0.0,
-            long: 0.0,
-            state_code: "SS",
-            country_code: "CC"
-          }
-        end
-
-        it "raises FetchHearingLocationsJobError" do
-          expect { job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
-            .to raise_error(Caseflow::Error::FetchHearingLocationsJobError)
-        end
       end
 
       context "when ROs are not found in facility locator" do
