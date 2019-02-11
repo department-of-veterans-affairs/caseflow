@@ -3,8 +3,6 @@ import { createStore, applyMiddleware } from 'redux';
 import rootReducer from '../../../app/queue/reducers';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
-// import reducers from './reducers';
-// import { BrowserRouter } from 'react-router-dom';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 
