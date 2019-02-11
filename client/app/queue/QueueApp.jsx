@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // @flow
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -67,6 +68,7 @@ type Props = {|
   userRole: string,
   userCssId: string,
   dropdownUrls: Array<string>,
+  applicationUrls: Array<Object>,
   buildDate?: string,
   reviewActionType: string,
   userIsVsoEmployee?: boolean,
