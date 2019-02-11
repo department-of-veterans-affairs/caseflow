@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190205164106) do
+ActiveRecord::Schema.define(version: 20190206165710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,6 +89,7 @@ ActiveRecord::Schema.define(version: 20190205164106) do
     t.datetime "establishment_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
+    t.date "target_decision_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "veteran_file_number", null: false
     t.boolean "veteran_is_not_claimant"
@@ -110,14 +111,17 @@ ActiveRecord::Schema.define(version: 20190205164106) do
 
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address"
+    t.string "city"
     t.string "classification"
     t.datetime "created_at", null: false
     t.float "distance"
     t.string "facility_id"
     t.string "facility_type"
     t.string "name"
+    t.string "state"
     t.datetime "updated_at", null: false
     t.string "veteran_file_number", null: false
+    t.string "zip_code"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
@@ -755,6 +759,8 @@ ActiveRecord::Schema.define(version: 20190205164106) do
 
   create_table "request_issues", force: :cascade do |t|
     t.string "benefit_type", null: false
+    t.datetime "closed_at"
+    t.string "closed_status"
     t.integer "contention_reference_id"
     t.integer "contested_decision_issue_id"
     t.string "contested_issue_description"
@@ -886,6 +892,13 @@ ActiveRecord::Schema.define(version: 20190205164106) do
     t.string "text"
     t.datetime "updated_at", null: false
     t.index ["text"], name: "index_tags_on_text", unique: true
+  end
+
+  create_table "task_business_payloads", force: :cascade do |t|
+    t.string "description", null: false
+    t.bigint "task_id", null: false
+    t.json "values", default: {}, null: false
+    t.index ["task_id"], name: "index_task_business_payloads_on_task_id"
   end
 
   create_table "task_timers", force: :cascade do |t|
