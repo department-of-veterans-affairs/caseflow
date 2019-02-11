@@ -1,11 +1,22 @@
 class DirectReviewDocket < Docket
-  DAYS_TO_DECISION_GOAL = 365
+  TIME_GOAL = 365
+  BECOMES_DUE = -60
 
   def docket_type
     "direct_review"
   end
 
-  def self.nonpriority_receipts_per_year
+  # CMGTODO
+  def due_count; end
+
+  # CMGTODO: clamp to [0, time_until_due_of_new_appeal]
+  def time_until_due_of_oldest_appeal; end
+
+  def time_until_due_of_new_appeal
+    TIME_GOAL + BECOMES_DUE
+  end
+
+  def nonpriority_receipts_per_year
     today = Time.zone.today
 
     if today < Date.new(2019, 4, 1)
@@ -22,9 +33,5 @@ class DirectReviewDocket < Docket
     else
       DirectReviewDocket.all_nonpriority.where("receipt_date > ?", 1.year.ago).count.length
     end
-  end
-
-  def self.all_nonpriority
-    Appeal.all_nonpriority.where(docket_type: "direct_review")
   end
 end
