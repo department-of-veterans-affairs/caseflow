@@ -186,6 +186,15 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   def master_record_type
     return :video if folder_nr.match?(/VIDEO/)
+  rescue NoMethodError => e
+    Rails.logger.error("Null Folder Error Condition: #{hearing_pkseq}")
+    Raven.capture.exception(e)
+    Raven.extra_context(
+      hearing_pkseq: hearing_pkseq,
+      hearing_date: hearing_date,
+      folder_nr: folder_nr,
+      board_member: board_member
+    )
   end
 
   def update_hearing!(hearing_info)

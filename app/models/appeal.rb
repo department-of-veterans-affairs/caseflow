@@ -462,10 +462,6 @@ class Appeal < DecisionReview
     # to be implemented
   end
 
-  def description
-    # to be implemented
-  end
-
   def program
     if request_issues.all? { |ri| ri.benefit_type == request_issues.first.benefit_type }
       request_issues.first.benefit_type
@@ -487,9 +483,13 @@ class Appeal < DecisionReview
   end
 
   def fetch_docket_type
-    return :new_evidence if evidence_submission_docket?
+    api_values = {
+      "direct_review" => "directReview",
+      "hearing" => "hearingRequest",
+      "evidence_submission" => "evidenceSubmission"
+    }
 
-    docket_name
+    api_values[docket_name]
   end
 
   def docket_switch_deadline
