@@ -415,6 +415,25 @@ class RequestIssue < ApplicationRecord
     return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
+  def diagnostic_code
+    contested_rating_issue_diagnostic_code
+  end
+
+  def api_status_active?
+    return review_request.active? if review_request.is_a?(HigherLevelReview) || review_request.is_a?(SupplementalClaim)
+    return true if review_request.is_a?(Appeal)
+  end
+
+  def api_status_last_action
+    # this will be nil
+    # may need to be updated if an issue is withdrawn
+  end
+
+  def api_status_last_action_date
+    # this will be nil
+    # may need to be updated if an issue is withdrawn
+  end
+
   private
 
   # The contested_rating_issue_profile_date is used as an identifier to retrieve the
