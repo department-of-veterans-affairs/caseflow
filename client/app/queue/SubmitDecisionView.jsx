@@ -208,7 +208,11 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       <TextareaField
         label="Notes:"
         name="notes"
-        value={decisionOpts.note || _.get(attorneyCaseReviewDetails, 'note') || ''}
+        // the judges instructions take precedence in the note 
+        // over the note that the attorney previously wrote in checkout
+        value={decisionOpts.note ||
+          _.get(attorneyCaseReviewDetails, 'note_from_judge') ||
+          _.get(attorneyCaseReviewDetails, 'note_from_attorney', '')}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={marginTop(4)}
         maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
