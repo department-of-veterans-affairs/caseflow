@@ -523,7 +523,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["alerts"]).to be_nil
       expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
       expect(json["data"][2]["attributes"]["programArea"]).to eq("multiple")
-      expect(json["data"][2]["attributes"]["docket"]["type"]).to eq("new_evidence")
+      expect(json["data"][2]["attributes"]["docket"]["type"]).to eq("evidenceSubmission")
       expect(json["data"][2]["attributes"]["docket"]["month"]).to eq(Date.new(2018, 9, 1).to_s)
       expect(json["data"][2]["attributes"]["docket"]["switchDueDate"]).to eq((rating_promulgated_date + 365.days).to_s)
       expect(json["data"][2]["attributes"]["docket"]["eligibleToSwitch"]).to eq(true)
