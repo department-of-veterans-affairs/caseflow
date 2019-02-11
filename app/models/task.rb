@@ -33,6 +33,12 @@ class Task < ApplicationRecord
     action
   end
 
+  # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
+  # properties of the task will not change.
+  def active?
+    ![Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled].include?(status)
+  end
+
   # available_actions() returns an array of options from selected by the subclass
   # from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
