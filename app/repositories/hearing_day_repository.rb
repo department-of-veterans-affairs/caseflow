@@ -9,7 +9,8 @@ class HearingDayRepository
 
     # Query Operations
     def find_hearing_day(request_type, hearing_key)
-      if request_type.nil? || request_type == "V" || request_type == "C"
+      if request_type.nil? || request_type == HearingDay::REQUEST_TYPES[:central] ||
+         request_type == HearingDay::REQUEST_TYPES[:video]
         VACOLS::CaseHearing.find_hearing_day(hearing_key)
       else
         tbyear, tbtrip, tbleg = hearing_key.split("-")
@@ -21,7 +22,8 @@ class HearingDayRepository
       video_and_co = VACOLS::CaseHearing.load_days_for_range(start_date, end_date)
 
       removed_children_records = video_and_co.reject do |hearing_day|
-        hearing_day.request_type == "C" && hearing_day.scheduled_for > HearingDay::CASEFLOW_CO_PARENT_DATE
+        hearing_day.request_type == HearingDay::REQUEST_TYPES[:central] &&
+          hearing_day.scheduled_for > HearingDay::CASEFLOW_CO_PARENT_DATE
       end
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
       [removed_children_records.uniq do |hearing_day|

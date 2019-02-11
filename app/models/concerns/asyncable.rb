@@ -134,6 +134,10 @@ module Asyncable
     !!self[self.class.submitted_at_column]
   end
 
+  def submitted_and_ready?
+    !!self[self.class.submitted_at_column] && self[self.class.submitted_at_column] <= Time.zone.now
+  end
+
   def submitted_not_processed?
     submitted? && !processed?
   end

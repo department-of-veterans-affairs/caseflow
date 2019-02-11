@@ -34,7 +34,7 @@ class DistributionsController < ApplicationController
     render json: {
       errors: [{
         "error": "distribution_error",
-        "title": "Distribution Error",
+        "title": "Distribution error",
         "detail": "An error occurred while trying to retrieve cases. Please try again."
       }]
     }, status: :internal_server_error
@@ -54,14 +54,22 @@ class DistributionsController < ApplicationController
     when :not_judge
       {
         "error": error,
-        "title": "You Must Be a Judge in VACOLS",
+        "title": "You must be a judge in VACOLS",
         "detail": "In order to request a distribution, you must be listed as a judge in VACOLS."
       }
-    when :unassigned_cases
+    when :too_many_unassigned_cases
       {
         "error": error,
-        "title": "You Have Unassigned Cases",
-        "detail": "Please assign all unassigned cases before requesting a distribution."
+        "title": "Cases in your queue are waiting to be assigned",
+        "detail": "Please ensure you have eight or fewer unassigned cases before requesting more."
+      }
+    when :unassigned_cases_waiting_too_long
+      {
+        "error": error,
+        "title": "Cases in your queue are waiting to be assigned",
+        # rubocop:disable Metrics/LineLength
+        "detail": "Please assign all cases that have been waiting in your assignment queue for more than 14 days before requesting more."
+        # rubocop:enable Metrics/LineLength
       }
     when :different_user
       {
@@ -72,7 +80,7 @@ class DistributionsController < ApplicationController
     when :feature_not_enabled
       {
         "error": error,
-        "title": "Automatic Case Distribution Not Enabled",
+        "title": "Automatic case distribution not enabled",
         "detail": "The automatic case distribution feature has not yet been enabled for you."
       }
     else

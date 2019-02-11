@@ -2,7 +2,7 @@ class ScheduleHearingTask < GenericTask
   after_update :update_location_in_vacols
 
   class << self
-    def create_if_eligible(appeal)
+    def find_or_create_if_eligible(appeal)
       if appeal.is_a?(LegacyAppeal) && appeal.case_record.bfcurloc == "57" &&
          appeal.hearings.all?(&:disposition)
         ScheduleHearingTask.where.not(status: "completed").find_or_create_by!(appeal: appeal) do |task|
@@ -11,6 +11,8 @@ class ScheduleHearingTask < GenericTask
             parent: RootTask.find_or_create_by!(appeal: appeal)
           )
         end
+      elsif appeal.is_a?(Appeal)
+        ScheduleHearingTask.where.not(status: "completed").find_by(appeal: appeal)
       end
     end
 
@@ -56,27 +58,25 @@ class ScheduleHearingTask < GenericTask
   end
 
   def update_from_params(params, current_user)
-    verify_user_can_update!(current_user)
+    multi_transaction do
+      verify_user_can_update!(current_user)
 
-    task_payloads = params.delete(:business_payloads)
+      if params[:status] == Constants.TASK_STATUSES.completed
+        task_payloads = params.delete(:business_payloads)
 
-    hearing_time = task_payloads[:values][:hearing_time]
-    hearing_day_id = task_payloads[:values][:hearing_pkseq]
-    hearing_type = task_payloads[:values][:hearing_type]
-    hearing_location = task_payloads[:values][:hearing_location]
+        hearing_time = task_payloads[:values][:hearing_time]
+        hearing_day_id = task_payloads[:values][:hearing_pkseq]
+        hearing_type = task_payloads[:values][:hearing_type]
+        hearing_location = task_payloads[:values][:hearing_location]
 
-    if params[:status] == Constants.TASK_STATUSES.completed
-      slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
-    end
+        slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
+        HoldHearingTask.create_hold_hearing_task!(appeal, parent)
+      elsif params[:status] == "canceled"
+        withdraw_hearing
+        params[:status] = Constants.TASK_STATUSES.completed
+      end
 
-    super(params, current_user)
-  end
-
-  def location_based_on_hearing_type(hearing_type)
-    if hearing_type == LegacyHearing::CO_HEARING
-      LegacyAppeal::LOCATION_CODES[:awaiting_co_hearing]
-    else
-      LegacyAppeal::LOCATION_CODES[:awaiting_video_hearing]
+      super(params, current_user)
     end
   end
 
@@ -84,7 +84,8 @@ class ScheduleHearingTask < GenericTask
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
       return [
         Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h,
-        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
+        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+        Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h
       ]
     end
 
@@ -102,7 +103,37 @@ class ScheduleHearingTask < GenericTask
     }
   end
 
+  def withdraw_hearing_data(_user)
+    {
+      redirect_after: "/queue/appeals/#{appeal.external_id}",
+      modal_title: COPY::WITHDRAW_HEARING_MODAL_TITLE,
+      modal_body: COPY::WITHDRAW_HEARING_MODAL_BODY,
+      message_title: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name),
+      message_detail: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY, appeal.veteran_full_name),
+      back_to_hearing_schedule: true
+    }
+  end
+
   private
+
+  def withdraw_hearing
+    if appeal.is_a?(LegacyAppeal)
+      location = if appeal.vsos.empty?
+                   LegacyAppeal::LOCATION_CODES[:case_storage]
+                 else
+                   LegacyAppeal::LOCATION_CODES[:service_organization]
+                 end
+
+      AppealRepository.withdraw_hearing!(appeal)
+      AppealRepository.update_location!(appeal, location)
+    else
+      EvidenceSubmissionWindowTask.create!(
+        appeal: appeal,
+        parent: parent,
+        assigned_to: MailTeam.singleton
+      )
+    end
+  end
 
   def slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
     HearingRepository.slot_new_hearing(hearing_day_id,
@@ -111,7 +142,7 @@ class ScheduleHearingTask < GenericTask
                                        hearing_location_attrs: hearing_location&.to_hash,
                                        scheduled_time: hearing_time&.stringify_keys)
     if appeal.is_a?(LegacyAppeal)
-      AppealRepository.update_location!(appeal, location_based_on_hearing_type(hearing_type))
+      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end
 end

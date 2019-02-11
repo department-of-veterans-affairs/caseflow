@@ -459,7 +459,14 @@ class Fakes::BGSService
   end
 
   def cancel_end_product(veteran_id, end_product_code, end_product_modifier)
-    # noop
+    end_products = get_end_products(veteran_id)
+    matching_eps = end_products.select do |ep|
+      ep[:claim_type_code] == end_product_code && ep[:end_product_type_code] == end_product_modifier
+    end
+    matching_eps.each do |ep|
+      ep[:status_type_code] = "CAN"
+      self.class.store_end_product_record(veteran_id, ep)
+    end
   end
 
   def fetch_veteran_info(vbms_id)

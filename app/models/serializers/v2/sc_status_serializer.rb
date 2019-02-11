@@ -1,4 +1,4 @@
-class V2::SCStatusSerializer < V2::AppealSerializer
+class V2::SCStatusSerializer < ActiveModel::Serializer
   type :supplemental_claim
 
   def id
@@ -7,27 +7,30 @@ class V2::SCStatusSerializer < V2::AppealSerializer
 
   attribute :linked_review_ids, key: :appeal_ids
 
-  attribute :type do
-    # this does not apply to SC
-  end
-
-  attribute :location do
-    # for SC will always be aoj
-    "aoj"
+  attribute :updated do
+    Time.zone.now.in_time_zone("Eastern Time (US & Canada)").round.iso8601
   end
 
   attribute :incomplete_history do
     false
   end
 
-  attribute :aod do
-    # does not apply to SC
+  attribute :active?, key: :active
+  attribute :description
+
+  attribute :location do
+    "aoj"
   end
 
-  attribute :docket do
-    # doesn't apply to SC
-  end
+  attribute :aoj
+  attribute :program, key: :program_area
+  attribute :status_hash, key: :status
+  attribute :alerts
+  attribute :issues
+  attribute :events
 
-  attribute :events do
+  # Stubbed attributes
+  attribute :evidence do
+    []
   end
 end
