@@ -39,10 +39,6 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "attorney_assignment_to_colocated",
-          enable_all: true
-        },
-        {
           feature: "idt_ama_appeals",
           enable_all: true
         },

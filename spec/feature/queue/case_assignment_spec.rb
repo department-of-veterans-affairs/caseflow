@@ -7,14 +7,6 @@ RSpec.feature "Case Assignment flows" do
   let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
-  before do
-    FeatureToggle.enable! :attorney_assignment_to_colocated
-  end
-
-  after do
-    FeatureToggle.disable! :attorney_assignment_to_colocated
-  end
-
   context "given a valid legacy appeal and an attorney user" do
     let!(:appeals) do
       Array.new(3) do

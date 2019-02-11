@@ -303,14 +303,7 @@ RSpec.describe TasksController, type: :controller do
 
     context "Co-located admin action" do
       before do
-        u = FactoryBot.create(:user)
-        OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
-
-        FeatureToggle.enable!(:attorney_assignment_to_colocated)
-      end
-
-      after do
-        FeatureToggle.disable!(:attorney_assignment_to_colocated)
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
       end
 
       context "when current user is an attorney" do
