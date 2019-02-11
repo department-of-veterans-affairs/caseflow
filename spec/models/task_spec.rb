@@ -186,16 +186,18 @@ describe Task do
       end
     end
 
-    context "when there is a rewrite task" do 
-      before do 
-       FactoryBot.create(:ama_attorney_rewrite_task, appeal: appeal)
+    context "when there is a rewrite task" do
+      before do
+        FactoryBot.create(:ama_attorney_rewrite_task, appeal: appeal)
       end
       it "should return the rewrite task" do
-        expect(appeal.attorney_rewrite_task_for_appeal).to_not eq(nil)
+        rewrite_task = appeal.attorney_rewrite_task_for_appeal
+        expect(rewrite_task).to_not eq(nil)
+        expect(rewrite_task.is_a?(AttorneyRewriteTask)).to be_truthy
+        expect(rewrite_task.status == Constants.TASK_STATUSES.in_progress).to be_truthy
       end
     end
   end
-
 
   describe "#assign_to_user_data" do
     let(:organization) { create(:organization, name: "Organization") }

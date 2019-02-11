@@ -107,7 +107,7 @@ FactoryBot.define do
 
     factory :ama_attorney_rewrite_task do
       type AttorneyRewriteTask.name
-      status "in_progress"
+      status Constants.TASK_STATUSES.in_progress
     end
 
     factory :ama_vso_task do
