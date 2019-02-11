@@ -40,10 +40,6 @@ class SupplementalClaim < ClaimReview
     end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
   end
 
-  def description
-    # need to implement
-  end
-
   def status_hash
     # need to implement. returns the details object for the status
     { type: fetch_status }
