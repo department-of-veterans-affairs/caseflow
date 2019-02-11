@@ -69,3 +69,40 @@ export const SERVER_ERROR_CODES = {
 
 export const VIDEO_HEARING = 'Video';
 export const CENTRAL_OFFICE_HEARING = 'Central';
+
+export const TIME_OPTIONS = [{
+  value: '8:30',
+  label: '8:30 am ' },
+{ value: '9:00',
+  label: '9:00 am ' },
+{ value: '9:30',
+  label: '9:30 am ' },
+{ value: '10:00',
+  label: '10:00 am ' },
+{ value: '10:30',
+  label: '10:30 am ' },
+{ value: '11:00',
+  label: '11:00 am ' },
+{ value: '11:30',
+  label: '11:30 am ' },
+{ value: '12:00',
+  label: '12:00 pm ' },
+{ value: '12:30',
+  label: '12:30 pm ' },
+{ value: '13:00',
+  label: '1:00 pm ' },
+{ value: '13:30',
+  label: '1:30 pm ' },
+{ value: '14:00',
+  label: '2:00 pm ' },
+{ value: '14:30',
+  label: '2:30 pm ' },
+{ value: '15:00',
+  label: '3:00 pm ' },
+{ value: '15:30',
+  label: '3:30 pm ' },
+{ value: '16:00',
+  label: '4:00 pm ' },
+{ value: '16:30',
+  label: '4:30 pm '
+}];

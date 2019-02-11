@@ -28,10 +28,13 @@ export default class Address extends React.PureComponent<Props> {
     } = this.props.address;
 
     return <span {...addressIndentStyling}>
-      {addressLine1}
-      {addressLine2 && <React.Fragment><br /><span>{addressLine2}</span></React.Fragment>}
-      {addressLine3 && <React.Fragment><br /><span>{addressLine3}</span></React.Fragment>}
-      <span>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
+      <div>
+        <div> {addressLine1}</div>
+        <div> {addressLine2 && <React.Fragment><span>{addressLine2}</span></React.Fragment>}</div>
+        <div> {addressLine3 && <React.Fragment><span>{addressLine3}</span></React.Fragment>}</div>
+        <div> <span>{city}, {state} {zip} {country === 'USA' ? '' : country}</span></div>
+      </div>
     </span>;
+
   };
 }

@@ -100,7 +100,7 @@ class DecisionReview < ApplicationRecord
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: request_issues.map(&:ui_hash),
+      requestIssues: open_request_issues.map(&:ui_hash),
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
@@ -190,10 +190,14 @@ class DecisionReview < ApplicationRecord
   end
 
   def active_nonrating_request_issues
-    @active_nonrating_request_issues ||= RequestIssue.nonrating.not_deleted
+    @active_nonrating_request_issues ||= RequestIssue.nonrating.open
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
       .select(&:status_active?)
+  end
+
+  def open_request_issues
+    request_issues.open
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
@@ -272,7 +276,7 @@ class DecisionReview < ApplicationRecord
     veteran.ratings.reject { |rating| rating.issues.empty? }
 
     # return empty list when there are no ratings
-  rescue Rating::BackfilledRatingError => e
+  rescue Rating::BackfilledRatingError, Rating::LockedRatingError => e
     Raven.capture_exception(e)
     []
   end
@@ -307,5 +311,70 @@ class DecisionReview < ApplicationRecord
 
   def legacy_opt_in_enabled?
     FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
+  end
+
+  def description
+    return if request_issues.empty?
+
+    descripton = fetch_status_description_using_diagnostic_code
+    return descripton if descripton
+
+    description = fetch_status_description_using_claim_type
+    return description if description
+
+    return "1 issue" if request_issues.count == 1
+
+    "#{request_issues.count} issues"
+  end
+
+  def fetch_status_description_using_diagnostic_code
+    issue = request_issues.find do |ri|
+      !ri[:contested_rating_issue_diagnostic_code].nil?
+    end
+
+    issue_diagnostic_code = issue.contested_rating_issue_diagnostic_code if issue
+    description = fetch_diagnostic_code_status_description(issue_diagnostic_code)
+    return unless description
+
+    return description if request_issues.count - 1 == 0
+
+    return "#{description} and 1 other" if request_issues.count - 1 == 1
+
+    "#{description} and #{request_issues.count - 1} others"
+  end
+
+  def fetch_status_description_using_claim_type
+    return if program == "other" || program == "multiple"
+
+    return "1 #{program} issue" if request_issues.count == 1
+
+    "#{request_issues.count} #{program} issues"
+  end
+
+  def fetch_issues_status(issues_list)
+    issues_list.map do |issue|
+      {
+        active: issue.api_status_active?,
+        last_action: issue.api_status_last_action,
+        date: issue.api_status_last_action_date,
+        description: get_api_status_description(issue),
+        diagnosticCode: issue.diagnostic_code
+      }
+    end
+  end
+
+  def get_api_status_description(issue)
+    description = fetch_diagnostic_code_status_description(issue.diagnostic_code)
+    return description if description
+
+    "#{issue.benefit_type.capitalize} issue"
+  end
+
+  def fetch_diagnostic_code_status_description(diagnostic_code)
+    if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["status_description"]
+      description[0] = description[0].upcase
+      description
+    end
   end
 end

@@ -85,7 +85,8 @@ class QueueMapper
     convert_quality_to_vacols_code
     convert_one_touch_initiative_to_vacols_code
     convert_deficiencies_to_vacols_code
-    truncate_notes_at_350_characters
+    truncate_notes_at_350_characters_and_convert_to_ascii
+    truncate_comment_at_600_characters_and_convert_to_ascii
     add_modification_timestamp
   end
 
@@ -119,8 +120,12 @@ class QueueMapper
     end
   end
 
-  def truncate_notes_at_350_characters
+  def truncate_notes_at_350_characters_and_convert_to_ascii
     renamed_attributes[COLUMN_NAMES[:note]] = note[0..349].to_ascii if note
+  end
+
+  def truncate_comment_at_600_characters_and_convert_to_ascii
+    renamed_attributes[COLUMN_NAMES[:comment]] = comment[0..599].to_ascii if comment
   end
 
   def add_modification_timestamp
@@ -187,5 +192,9 @@ class QueueMapper
 
   def note
     decass_attrs[:note]
+  end
+
+  def comment
+    decass_attrs[:comment]
   end
 end
