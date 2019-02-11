@@ -25,8 +25,6 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
-  self.ignored_columns = ["completed_at"]
-
   def available_actions(_user)
     []
   end
