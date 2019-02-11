@@ -288,7 +288,14 @@ describe ColocatedTask do
   describe ".available_actions_unwrapper" do
     let(:colocated_user) { FactoryBot.create(:user) }
     let(:colocated_task) do
-      ColocatedTask.find(FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: colocated_user).id)
+      # We expect all ColocatedTasks that are assigned to individuals to have parent tasks assigned to the organization.
+      org_task = FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: Colocated.singleton)
+      FactoryBot.create(
+        :colocated_task,
+        assigned_by: attorney,
+        assigned_to: colocated_user,
+        parent: org_task
+      ).becomes(ColocatedTask)
     end
 
     it "should vary depending on status of task" do
