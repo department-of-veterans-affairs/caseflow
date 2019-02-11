@@ -52,6 +52,11 @@ class DocketCoordinator
     @docket_proportions
   end
 
+  def target_number_of_ama_hearings(num_days)
+    decisions_in_days = num_days / 365.0 * decisions_per_year
+    (decisions_in_days * docket_proportions[:hearing]).round
+  end
+
   def priority_count
     @priority_count ||= dockets
       .values
