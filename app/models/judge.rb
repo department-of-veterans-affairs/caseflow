@@ -22,7 +22,7 @@ class Judge
   end
 
   def docket?(date)
-    upcoming_hearings_on(date).count > 0
+    !upcoming_hearings_on(date).empty?
   end
 
   def upcoming_hearings_on(date, is_fetching_issues = false)

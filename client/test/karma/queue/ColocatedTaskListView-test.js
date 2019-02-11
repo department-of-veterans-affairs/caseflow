@@ -157,6 +157,7 @@ describe('ColocatedTaskListView', () => {
       const task = taskNewAssigned;
 
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
+      expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
       expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.label]);
       expect(types.text()).to.include(appeal.caseType);

@@ -1,4 +1,3 @@
-require "rails_helper"
 require "support/intake_helpers"
 
 describe DecisionDocument do
@@ -114,9 +113,12 @@ describe DecisionDocument do
       it "submits the effectuation for processing and enqueues DecisionIssueSyncJob" do
         subject
         board_grant_effectuation.reload
-        expect(board_grant_effectuation.decision_sync_submitted_at).to_not be_nil
-        expect(board_grant_effectuation).to_not be_submitted # because we set delay
-        expect(DecisionIssueSyncJob).to have_been_enqueued.with(board_grant_effectuation)
+        expect(board_grant_effectuation.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+
+        # because we set delay, neither "submitted" nor queued.
+        expect(board_grant_effectuation).to be_submitted
+        expect(board_grant_effectuation).to_not be_submitted_and_ready
+        expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(board_grant_effectuation)
       end
     end
   end
@@ -125,7 +127,7 @@ describe DecisionDocument do
     subject { decision_document.process! }
 
     before do
-      allow(decision_document).to receive(:submitted?).and_return(true)
+      allow(decision_document).to receive(:submitted_and_ready?).and_return(true)
       allow(VBMSService).to receive(:upload_document_to_vbms).and_call_original
       allow(VBMSService).to receive(:establish_claim!).and_call_original
       allow(VBMSService).to receive(:create_contentions!).and_call_original

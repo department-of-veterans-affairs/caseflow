@@ -102,6 +102,7 @@ Rails.application.routes.draw do
       get :new_documents
       get :veteran
       get :power_of_attorney
+      get :hearings
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
       resources :advance_on_docket_motions, only: [:create]
@@ -232,6 +233,7 @@ Rails.application.routes.draw do
 
   get "styleguide", to: "styleguide#show"
 
+  get "tableau-login", to: "tableau_logins#login"
 
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 

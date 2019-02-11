@@ -65,6 +65,16 @@ describe FetchHearingLocationsForVeteransJob do
             parent: tsk
           )
 
+          # task with Foreign Case admin action
+          create(:veteran, file_number: "234567816")
+          app_3 = create(:appeal, veteran_file_number: "234567816")
+          tsk_2 = ScheduleHearingTask.create!(appeal: app_3, assigned_to: HearingsManagement.singleton)
+          HearingAdminActionForeignVeteranCaseTask.create!(
+            appeal: app_3,
+            assigned_to: HearingsManagement.singleton,
+            parent: tsk_2
+          )
+
           # legacy not in location 57
           create(:veteran, file_number: "111111111")
           vac_case = create(:case, bfcurloc: "39", bfregoff: "RO01", bfcorlid: "111111111S")
@@ -118,7 +128,7 @@ describe FetchHearingLocationsForVeteransJob do
         it "fetches RO distance twice" do
           expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).twice
           FetchHearingLocationsForVeteransJob.perform_now
-          expect(AvailableHearingLocations.count).to eq 1
+          expect(AvailableHearingLocations.count).to eq 4
         end
       end
 
@@ -136,6 +146,24 @@ describe FetchHearingLocationsForVeteransJob do
         end
       end
 
+      context "when veteran state is outside US territories" do
+        let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body(state: "AE").to_json) }
+
+        it "creates a foreign veteran case admin action" do
+          FetchHearingLocationsForVeteransJob.perform_now
+          expect(HearingAdminActionForeignVeteranCaseTask.count).to eq 1
+        end
+      end
+
+      context "when veteran country is outside US territories" do
+        let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body(country_code: "SZ").to_json) }
+
+        it "creates a foreign veteran case admin action" do
+          FetchHearingLocationsForVeteransJob.perform_now
+          expect(HearingAdminActionForeignVeteranCaseTask.count).to eq 1
+        end
+      end
+
       context "when va_dot_gov_service throws an Address error" do
         before do
           message = {
@@ -147,33 +175,51 @@ describe FetchHearingLocationsForVeteransJob do
           }
 
           error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
-          allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+          allow(VADotGovService).to receive(:send_va_dot_gov_request)
+            .with(hash_including(endpoint: "address_validation/v1/validate")).and_raise(error)
+          allow(VADotGovService).to receive(:send_va_dot_gov_request)
+            .with(hash_including(endpoint: "va_facilities/v0/facilities"))
+            .and_return(distance_response)
         end
 
-        it "creates an ScheduleHearingTask and admin action" do
+        it "finds closest RO based on zipcode" do
           FetchHearingLocationsForVeteransJob.perform_now
-          tsk = ScheduleHearingTask.first
-          expect(tsk.appeal.veteran_file_number).to eq bfcorlid_file_number
-          expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
+
+          expect(Veteran.first.closest_regional_office).to eq "RO01"
+          expect(Veteran.first.available_hearing_locations.count).to eq 1
         end
 
-        context "and appeal already has schedule hearing task" do
-          let!(:task) do
-            ScheduleHearingTask.create!(appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
+        context "and Veteran has no zipcode" do
+          before do
+            Fakes::BGSService.veteran_records = {
+              "123456789" => veteran_record(file_number: "123456789S", state: nil, zip_code: nil, country: nil)
+            }
+          end
+          it "creates an ScheduleHearingTask and admin action" do
+            FetchHearingLocationsForVeteransJob.perform_now
+            tsk = ScheduleHearingTask.first
+            expect(tsk.appeal.veteran_file_number).to eq bfcorlid_file_number
+            expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
           end
 
-          it "creates an admin action" do
-            FetchHearingLocationsForVeteransJob.perform_now
-            expect(ScheduleHearingTask.first.id).to eq task.id
-            expect(HearingAdminActionVerifyAddressTask.where(parent_id: task.id).count).to eq 1
-          end
-        end
+          context "and appeal already has schedule hearing task" do
+            let!(:task) do
+              ScheduleHearingTask.create!(appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
+            end
 
-        context "and job has alreay been run on a veteran" do
-          it "only produces one admin action" do
-            FetchHearingLocationsForVeteransJob.perform_now
-            FetchHearingLocationsForVeteransJob.perform_now
-            expect(HearingAdminActionVerifyAddressTask.count).to eq 1
+            it "creates an admin action" do
+              FetchHearingLocationsForVeteransJob.perform_now
+              expect(ScheduleHearingTask.first.id).to eq task.id
+              expect(HearingAdminActionVerifyAddressTask.where(parent_id: task.id).count).to eq 1
+            end
+          end
+
+          context "and job has alreay been run on a veteran" do
+            it "only produces one admin action" do
+              FetchHearingLocationsForVeteransJob.perform_now
+              FetchHearingLocationsForVeteransJob.perform_now
+              expect(HearingAdminActionVerifyAddressTask.count).to eq 1
+            end
           end
         end
       end
@@ -216,49 +262,12 @@ describe FetchHearingLocationsForVeteransJob do
         }
 
         distance_response = HTTPI::Response.new(200, [], body.to_json)
-        allow(MetricsService).to receive(:record).with(/GET/, any_args).and_return(distance_response)
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
       end
 
       it "updates veteran closest_regional_office with fetched RO within veteran's state" do
         job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address)
         expect(Veteran.first.closest_regional_office).to eq expected_ro
-      end
-
-      context "when veteran state is outside US territories" do
-        let(:mock_va_dot_gov_address) do
-          {
-            lat: 0.0,
-            long: 0.0,
-            state_code: "SS",
-            country_code: "US"
-          }
-        end
-
-        it "raises FetchHearingLocationsJobError" do
-          expect { job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
-            .to raise_error(Caseflow::Error::FetchHearingLocationsJobError)
-            .with_message("#{mock_va_dot_gov_address[:state_code]} is not a valid state code.")
-        end
-      end
-
-      context "when veteran country is outside US territories" do
-        let(:mock_va_dot_gov_address) do
-          {
-            lat: 0.0,
-            long: 0.0,
-            state_code: "SS",
-            country_code: "CC"
-          }
-        end
-
-        it "raises FetchHearingLocationsJobError" do
-          expect { job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
-            .to raise_error(Caseflow::Error::FetchHearingLocationsJobError)
-            .with_message(
-              "#{mock_va_dot_gov_address[:country_code]} is not a valid country code."
-            )
-        end
       end
 
       context "when ROs are not found in facility locator" do
@@ -307,7 +316,7 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
   end
-  def veteran_record(file_number:, state: "MA")
+  def veteran_record(file_number:, state: "MA", zip_code: "01002", country: "USA")
     {
       file_number: file_number,
       ptcpnt_id: "123123",
@@ -322,9 +331,9 @@ describe FetchHearingLocationsForVeteransJob do
       address_line3: "",
       city: "Roanoke",
       state: state,
-      country: "USA",
+      country: country,
       date_of_birth: "1977-07-07",
-      zip_code: "99999",
+      zip_code: zip_code,
       military_post_office_type_code: "99999",
       military_postal_type_code: "99999",
       service: "99999"
