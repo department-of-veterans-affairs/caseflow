@@ -117,12 +117,15 @@ describe JudgeTask do
       let(:existing_status) { :assigned }
       let!(:jqr_task) do
         FactoryBot.create(
-          :ama_judge_quality_review_task, status: existing_status, instructions: [existing_instructions]
+          :ama_judge_quality_review_task,
+          assigned_to: judge,
+          status: existing_status,
+          instructions: [existing_instructions]
         )
       end
       let(:params) { nil }
 
-      subject { jqr_task.update_from_params(params, nil) }
+      subject { jqr_task.update_from_params(params, judge) }
 
       context "update includes instruction text" do
         let(:new_instructions) { "new instructions" }
