@@ -512,7 +512,7 @@ describe User do
         admin_orgs.each { |o| OrganizationsUser.make_user_admin(user, o) }
       end
       it "should return a list of all teams user is an admin for" do
-        expect(user.administered_teams).to eq(admin_orgs)
+        expect(user.administered_teams).to include(admin_orgs)
       end
     end
   end
