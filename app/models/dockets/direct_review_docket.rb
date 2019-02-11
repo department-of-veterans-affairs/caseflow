@@ -44,6 +44,6 @@ class DirectReviewDocket < Docket
   private
 
   def all_nonpriority
-    Appeal.all_nonpriority.where(docket_type: "direct_review")
+    Appeal.all_nonpriority.where(docket_type: docket_type)
   end
 end
