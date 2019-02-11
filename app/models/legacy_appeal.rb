@@ -103,7 +103,7 @@ class LegacyAppeal < ApplicationRecord
     us_territory_claim_philippines: "U.S. Territory claim - Philippines",
     us_territory_claim_puerto_rico_and_virgin_islands: "U.S. Territory claim - Puerto Rico and Virgin Islands",
     vamc: "VAMC",
-    vocational_rehab: "Vocational Rehab",
+    vocational_rehab: "Vocational Rehabilitation and Employment",
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
   # rubocop:enable Metrics/LineLength
