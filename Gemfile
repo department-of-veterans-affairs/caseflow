@@ -8,7 +8,7 @@ gem "active_model_serializers", "~> 0.10.0"
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "2d0e08ea4157b725242777a6f876fc199f503b61"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "1af709bbcf61931420db621237f90cb8e21f3c1c"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"

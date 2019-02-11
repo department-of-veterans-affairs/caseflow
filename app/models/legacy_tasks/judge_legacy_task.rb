@@ -7,8 +7,8 @@ class JudgeLegacyTask < LegacyTask
     end
   end
 
-  def available_actions(role)
-    return [] if role != "judge"
+  def available_actions(current_user, role)
+    return [] if role != "judge" || current_user != assigned_to
 
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,

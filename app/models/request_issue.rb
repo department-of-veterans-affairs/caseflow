@@ -30,6 +30,12 @@ class RequestIssue < ApplicationRecord
     legacy_appeal_not_eligible: "legacy_appeal_not_eligible"
   }
 
+  enum closed_status: {
+    decided: "decided",
+    removed: "removed",
+    end_product_canceled: "end_product_canceled"
+  }
+
   # TEMPORARY CODE: used to keep decision_review and review_request in sync
   before_save :copy_review_request_to_decision_review
   before_save :set_contested_rating_issue_profile_date
@@ -41,11 +47,7 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  class NilEndProductLastActionDate < StandardError
-    def initialize(request_issue_id)
-      super("Request Issue #{request_issue_id}'s end_product is missing the last action date")
-    end
-  end
+  class NotYetSubmitted < StandardError; end
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
 
@@ -133,6 +135,10 @@ class RequestIssue < ApplicationRecord
 
     def not_deleted
       where.not(review_request_id: nil)
+    end
+
+    def open
+      where(closed_at: nil)
     end
 
     def unidentified
@@ -236,6 +242,10 @@ class RequestIssue < ApplicationRecord
     !!issue_category
   end
 
+  def closed?
+    !!closed_at
+  end
+
   def description
     return contested_issue_description if contested_issue_description
     return "#{issue_category} - #{nonrating_issue_description}" if nonrating?
@@ -325,6 +335,8 @@ class RequestIssue < ApplicationRecord
   def sync_decision_issues!
     return if processed?
 
+    fail NotYetSubmitted unless submitted_and_ready?
+
     attempted!
 
     transaction do
@@ -357,11 +369,23 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
+  def remove!
+    update!(closed_at: Time.zone.now, closed_status: :removed)
+  end
+
+  def close_after_end_product_canceled!
+    return unless closed_at.nil?
+    return unless end_product_establishment&.reload&.status_canceled?
+
+    update!(closed_at: Time.zone.now, closed_status: :end_product_canceled)
+    legacy_issue_optin&.flag_for_rollback!
+  end
+
   # Instead of fully deleting removed issues, we instead strip them from the review so we can
   # maintain a record of the other data that was on them incase we need to revert the update.
   def remove_from_review
     transaction do
-      update!(review_request: nil)
+      remove!
       legacy_issue_optin&.flag_for_rollback!
 
       # removing a request issue also deletes the associated request_decision_issue
@@ -378,12 +402,36 @@ class RequestIssue < ApplicationRecord
       description: decision_issue_param[:description],
       decision_review: review_request,
       benefit_type: benefit_type,
-      promulgation_date: decision_issue_param[:decision_date]
+      caseflow_decision_date: decision_issue_param[:decision_date]
     )
   end
 
   def requires_record_request_task?
     !benefit_type_requires_payee_code?
+  end
+
+  def decision_or_promulgation_date
+    return decision_date if nonrating?
+    return contested_rating_issue.try(:promulgation_date) if rating?
+  end
+
+  def diagnostic_code
+    contested_rating_issue_diagnostic_code
+  end
+
+  def api_status_active?
+    return review_request.active? if review_request.is_a?(HigherLevelReview) || review_request.is_a?(SupplementalClaim)
+    return true if review_request.is_a?(Appeal)
+  end
+
+  def api_status_last_action
+    # this will be nil
+    # may need to be updated if an issue is withdrawn
+  end
+
+  def api_status_last_action_date
+    # this will be nil
+    # may need to be updated if an issue is withdrawn
   end
 
   private
@@ -421,9 +469,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def create_decision_issues
-    # TODO: we can probably remove this error, we've learned the issue was from date formatting
-    fail NilEndProductLastActionDate, id unless end_product_establishment.result.last_action_date
-
     if rating?
       return false unless end_product_establishment.associated_rating
 
@@ -449,6 +494,8 @@ class RequestIssue < ApplicationRecord
         participant_id: review_request.veteran.participant_id,
         disposition: contention_disposition.disposition,
         description: "#{contention_disposition.disposition}: #{description}",
+        profile_date: end_product_establishment.associated_rating&.profile_date,
+        promulgation_date: end_product_establishment.associated_rating&.promulgation_date,
         decision_review: review_request,
         benefit_type: benefit_type,
         end_product_last_action_date: end_product_establishment.result.last_action_date
@@ -511,11 +558,6 @@ class RequestIssue < ApplicationRecord
     rating_with_issue ||= { issues: [] }
 
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
-  end
-
-  def decision_or_promulgation_date
-    return decision_date if nonrating?
-    return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -649,7 +691,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).count > 0
+    review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).any?
   end
 
   def copy_review_request_to_decision_review

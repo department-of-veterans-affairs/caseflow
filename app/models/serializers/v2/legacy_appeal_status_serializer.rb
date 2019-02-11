@@ -1,4 +1,4 @@
-class V2::AppealSerializer < ActiveModel::Serializer
+class V2::LegacyAppealStatusSerializer < ActiveModel::Serializer
   type :legacy_appeal
 
   def id

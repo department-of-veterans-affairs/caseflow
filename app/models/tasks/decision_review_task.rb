@@ -18,7 +18,7 @@ class DecisionReviewTask < GenericTask
 
     transaction do
       appeal.create_decision_issues_for_tasks(decision_issue_params, decision_date)
-      update!(status: Constants.TASK_STATUSES.completed, completed_at: Time.zone.now)
+      update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
     end
 
     true
