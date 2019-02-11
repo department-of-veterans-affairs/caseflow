@@ -316,27 +316,13 @@ class DecisionReview < ApplicationRecord
   def fetch_issues_status(issues_list)
     issues_list.map do |issue|
       {
-        active: issue.issue_status_active?, #issue_active_status(issue),
-        last_action: issue.issue_status_last_action, #get_issue_last_action(issue),
+        active: issue.issue_status_active?,
+        last_action: issue.issue_status_last_action,
         date: issue.issue_status_last_action_date,
         description: get_issue_status_description(issue),
         diagnosticCode: issue.diagnostic_code
       }
     end
-  end
-
-  def get_issue_last_action(issue)
-    return if active? || !issue.is_a?(DecisionIssue)
-
-    return "remand" if issue.disposition == "remanded"
-
-    issue.disposition
-  end
-
-  def get_issue_last_action_date(issue)
-    return if active?
-
-    issue.approx_decision_date if issue.is_a?(DecisionIssue)
   end
 
   def get_issue_status_description(issue)
