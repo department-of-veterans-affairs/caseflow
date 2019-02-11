@@ -94,7 +94,7 @@ class CaseListTable extends React.PureComponent {
 
           const mostRecentHearing = hearings[0];
 
-          return mostRecentHearing ? <HearingBadge hearing={hearings[0]} /> : null;
+          return mostRecentHearing ? <HearingBadge hearing={mostRecentHearing} /> : null;
         }
       };
 
