@@ -55,13 +55,7 @@ class HigherLevelReview < ClaimReview
     # need to implement. add logic to return alert enum
   end
 
-  def issues_hash
-    issue_list = active? ? request_issues.open : fetch_all_decision_issues
-
-    fetch_issues_status(issue_list)
-  end
-
-  def fetch_all_decision_issues
+  def fetch_all_decision_issues_for_api_status
     all_decision_issues = decision_issues.reject { |di| DTA_ERRORS.include?(di[:disposition]) }
 
     all_decision_issues += dta_claim.decision_issues if dta_claim

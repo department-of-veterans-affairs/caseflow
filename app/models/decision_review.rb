@@ -354,16 +354,16 @@ class DecisionReview < ApplicationRecord
   def fetch_issues_status(issues_list)
     issues_list.map do |issue|
       {
-        active: issue.issue_status_active?,
-        last_action: issue.issue_status_last_action,
-        date: issue.issue_status_last_action_date,
-        description: get_issue_status_description(issue),
+        active: issue.api_status_active?,
+        last_action: issue.api_status_last_action,
+        date: issue.api_status_last_action_date,
+        description: get_api_status_description(issue),
         diagnosticCode: issue.diagnostic_code
       }
     end
   end
 
-  def get_issue_status_description(issue)
+  def get_api_status_description(issue)
     description = fetch_diagnostic_code_status_description(issue.diagnostic_code)
     return description if description
 

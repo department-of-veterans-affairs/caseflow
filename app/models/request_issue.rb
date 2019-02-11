@@ -419,17 +419,17 @@ class RequestIssue < ApplicationRecord
     contested_rating_issue_diagnostic_code
   end
 
-  def issue_status_active?
+  def api_status_active?
     return review_request.active? if review_request.is_a?(HigherLevelReview) || review_request.is_a?(SupplementalClaim)
     return true if review_request.is_a?(Appeal)
   end
 
-  def issue_status_last_action
+  def api_status_last_action
     # this will be nil
     # may need to be updated if an issue is withdrawn
   end
 
-  def issue_status_last_action_date
+  def api_status_last_action_date
     # this will be nil
     # may need to be updated if an issue is withdrawn
   end

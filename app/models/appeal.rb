@@ -563,15 +563,17 @@ class Appeal < DecisionReview
     # if there were remanded issues and there is a decision available
     # for them, include the decisions from the remanded SC and do not
     # include the original remanded decision
-    di_list = decision_issues.reject { |di| di[:disposition] == "remanded" }
+    di_list = decision_issues.not_remanded
 
+
+    remand_sc_decisions = []
     remand_supplemental_claims.each do |sc|
       sc.decision_issues.each do |di|
-        di_list << di
+        remand_sc_decisions << di
       end
     end
 
-    di_list
+    (di_list + remand_sc_decisions).uniq
   end
 
   private

@@ -35,6 +35,10 @@ class DecisionIssue < ApplicationRecord
     def remanded
       where(disposition: "remanded")
     end
+
+    def not_remanded
+      where.not(disposition: "remanded")
+    end
   end
 
   def approx_decision_date
@@ -83,7 +87,7 @@ class DecisionIssue < ApplicationRecord
     Contention.new(description).text
   end
 
-  def issue_status_active?
+  def api_status_active?
     # this is still being worked on so for the purposes of communicating
     # to the veteran, this decision issue is still considered active
     return true if decision_review.is_a?(Appeal) && disposition == "remanded"
@@ -91,13 +95,13 @@ class DecisionIssue < ApplicationRecord
     false
   end
 
-  def issue_status_last_action
+  def api_status_last_action
     return "remand" if disposition == "remanded"
 
     disposition
   end
 
-  def issue_status_last_action_date
+  def api_status_last_action_date
     approx_decision_date
   end
 

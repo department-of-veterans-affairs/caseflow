@@ -1198,7 +1198,7 @@ describe Appeal do
     end
   end
 
-  context "#item_hash" do
+  context "#issues_hash" do
     let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
 
     let(:request_issue1) do
