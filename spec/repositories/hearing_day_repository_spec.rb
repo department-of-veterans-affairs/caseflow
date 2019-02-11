@@ -1,17 +1,9 @@
 describe HearingDayRepository do
-  context ".fetch_hearing_day_slots", skip: "Flakey test" do
-    subject { HearingDayRepository.fetch_hearing_day_slots(regional_office: "Winston-Salem") }
-    let!(:staff) { create(:staff, stafkey: "RO18", stc2: 2, stc3: 3, stc4: 4) }
-    let(:hearing_day) do
-      create(
-        :case_hearing,
-        folder_nr: "VIDEO RO18",
-        hearing_date: Date.new(2018, 9, 20),
-        hearing_type: HearingDay::REQUEST_TYPES[:video]
-      )
-    end
+  context ".fetch_hearing_day_slots" do
+    subject { HearingDayRepository.fetch_hearing_day_slots(regional_office) }
+    let(:regional_office) { "RO18" }
     it {
-      is_expected.to eq(10)
+      is_expected.to eq(12)
     }
   end
 
