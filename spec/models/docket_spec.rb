@@ -27,9 +27,10 @@ describe Docket do
         subject { DirectReviewDocket.new.appeals }
         it "returns all appeals if no option given" do
           expect(subject.include?(appeal)).to eq(true)
+          expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
+          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
           expect(subject.include?(aod_age_appeal)).to eq(true)
           expect(subject.include?(aod_motion_appeal)).to eq(true)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
         end
       end
 
@@ -37,9 +38,10 @@ describe Docket do
         subject { DirectReviewDocket.new.appeals(priority: true, ready: true) }
         it "returns priority/ready appeals" do
           expect(subject.include?(appeal)).to eq(false)
+          expect(subject.include?(denied_aod_motion_appeal)).to eq(false)
+          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(false)
           expect(subject.include?(aod_age_appeal)).to eq(true)
           expect(subject.include?(aod_motion_appeal)).to eq(true)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(false)
         end
       end
 
@@ -47,17 +49,31 @@ describe Docket do
         subject { DirectReviewDocket.new.appeals(priority: false) }
         it "returns nonpriority appeals" do
           expect(subject.include?(appeal)).to eq(true)
+          expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
+          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
           expect(subject.include?(aod_age_appeal)).to eq(false)
           expect(subject.include?(aod_motion_appeal)).to eq(false)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
         end
       end
     end
 
     context "count" do
-      subject { DirectReviewDocket.new.count(priority: false) }
+      let(:priority) { nil }
+      subject { DirectReviewDocket.new.count(priority: priority) }
       it "counts appeals" do
-        expect(subject > 0).to eq(true)
+        expect(subject).to eq(5)
+      end
+      context "when looking for priority appeals" do
+        let(:priority) { true }
+        it "counts appeals" do
+          expect(subject).to eq(2)
+        end
+      end
+      context "when looking for non-priority appeals" do
+        let(:priority) { false }
+        it "counts appeals" do
+          expect(subject).to eq(3) # Currently returning 2
+        end
       end
     end
 

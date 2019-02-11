@@ -22,10 +22,9 @@ class Docket
 
   def count(priority: nil, ready: nil)
     # The underlying scopes here all use `group_by` statements,
-    # so the result of `count` will be a hash of key value pairs
-    # e.g. {{[65, 65]=>2, [66, 66]=>2, [67, 67]=>2}
-    # We want a # returned here, so we count the number of key value pairs.
-    appeals(priority: priority, ready: ready).count.length
+    # so we count using a subquery finding the relevant ids.
+    appeal_ids = appeals(priority: priority, ready: ready).select("appeals.id")
+    Appeal.where(id: appeal_ids).count
   end
 
   def weight
