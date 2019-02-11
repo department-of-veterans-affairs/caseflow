@@ -1,25 +1,25 @@
-# rubocop:disable Metrics/ModuleLength
 module AmaCaseDistribution
   extend ActiveSupport::Concern
 
-  # MINIMUM_LEGACY_PROPORTION + MAXIMUM_DIRECT_REVIEW_PROPORTION cannot exceed 1.
-  MINIMUM_LEGACY_PROPORTION = 0.1
-  MAXIMUM_DIRECT_REVIEW_PROPORTION = 0.8
-
-  # A lever controlling how many direct review docket appeals are distributed before the time goal is reached.
-  # A lower number will distribute fewer appeals, accelerating faster toward the time goal.
-  INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT = 0.67
+  delegate :dockets,
+           :docket_proportions,
+           :priority_count,
+           :direct_review_due_count,
+           :pacesetting_direct_review_proportion,
+           :interpolated_minimum_direct_review_proportion,
+           to: :docket_coordinator
 
   private
+
+  def docket_coordinator
+    @docket_coordinator ||= DocketCoordinator.new
+  end
 
   def ama_distribution
     @appeals = []
     @rem = batch_size
     @remaining_docket_proportions = docket_proportions.clone
     @nonpriority_iterations = 0
-
-    # Count the number of priority appeals available before we distribute anything.
-    priority_count
 
     # Distribute priority appeals that are tied to judges (not genpop).
     distribute_appeals(:legacy, @rem, priority: true, genpop: "not_genpop")
@@ -106,22 +106,6 @@ module AmaCaseDistribution
       end
   end
 
-  def dockets
-    @dockets ||= {
-      legacy: LegacyDocket.new,
-      direct_review: DirectReviewDocket.new,
-      evidence_submission: EvidenceSubmissionDocket.new,
-      hearing: HearingRequestDocket.new
-    }
-  end
-
-  def priority_count
-    @priority_count ||= dockets
-      .values
-      .map { |docket| docket.count(priority: true, ready: true) }
-      .reduce(0, :+)
-  end
-
   def priority_target
     proportion = [priority_count.to_f / total_batch_size, 1].min
     (proportion * batch_size).ceil
@@ -145,104 +129,4 @@ module AmaCaseDistribution
       .first(num)
       .each_with_object(Hash.new(0)) { |a, counts| counts[a[1]] += 1 }
   end
-
-  def docket_proportions
-    return @docket_proportions if @docket_proportions
-
-    # We distribute appeals proportional to each docket's "weight," basically the number of pending appeals.
-    # LegacyDocket makes adjustments to the weight to account for pre-Form 9 appeals.
-    @docket_proportions = dockets
-      .transform_values(&:weight)
-      .extend(ProportionHash)
-
-    # Prevent divide by zero errors if 100% of the docket margin is priority.
-    return @docket_proportions.normalize! if docket_margin_net_of_priority == 0
-
-    # Unlike the other dockets, the direct review docket observes a time goal.
-    # We distribute appeals from the docket sufficient to meet the goal, instead of proportionally.
-    # When there are no or few "due" direct review appeals, we instead calculate a curve out.
-    direct_review_proportion = (direct_review_due_count / docket_margin_net_of_priority)
-      .clamp(interpolated_minimum_direct_review_proportion, MAXIMUM_DIRECT_REVIEW_PROPORTION)
-
-    @docket_proportions.add_fixed_proportions!(direct_review: direct_review_proportion)
-
-    # The legacy docket proportion is subject to a minimum, provided we have at least that many legacy appeals.
-    if @docket_proportions[:legacy] < MINIMUM_LEGACY_PROPORTION
-      legacy_proportion = [
-        MINIMUM_LEGACY_PROPORTION,
-        dockets[:legacy].count(priority: false, ready: true).to_f / docket_margin_net_of_priority
-      ].min
-
-      @docket_proportions.add_fixed_proportions!(
-        legacy: legacy_proportion,
-        direct_review: direct_review_proportion
-      )
-    end
-
-    @docket_proportions
-  end
-
-  def direct_review_due_count
-    @direct_review_due_count ||= dockets[:direct_review].due_count
-  end
-
-  def interpolated_minimum_direct_review_proportion
-    return @interpolated_minimum_direct_review_proportion if @interpolated_minimum_direct_review_proportion
-
-    t = 1 - (dockets[:direct_review].time_until_due_of_oldest_appeal /
-             dockets[:direct_review].time_until_due_of_new_appeal)
-
-    @interpolated_minimum_direct_review_proportion =
-      (pacesetting_direct_review_proportion * t * INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT)
-        .clamp(0, MAXIMUM_DIRECT_REVIEW_PROPORTION)
-  end
-
-  def pacesetting_direct_review_proportion
-    return @pacesetting_direct_review_proportion if @pacesetting_direct_review_proportion
-
-    receipts_per_year = dockets[:direct_review].nonpriority_receipts_per_year
-    decisions_per_year = Appeal.nonpriority_decisions_per_year + LegacyAppeal.nonpriority_decisions_per_year
-
-    @pacesetting_direct_review_proportion = receipts_per_year / decisions_per_year
-  end
-
-  module ProportionHash
-    def normalize!(to: 1.0)
-      total = values.reduce(0, :+)
-      transform_values! { |proportion| proportion * (to / total) }
-    end
-
-    def add_fixed_proportions!(fixed)
-      except!(*fixed.keys)
-        .normalize!(to: 1.0 - fixed.values.reduce(0, :+))
-        .merge!(fixed)
-    end
-
-    def stochastic_allocation(num)
-      result = transform_values { |proportion| (num * proportion).floor }
-      rem = num - result.values.reduce(0, :+)
-
-      return result if rem == 0
-
-      cumulative_probabilities = inject({}) do |hash, (key, proportion)|
-        probability = (num * proportion).modulo(1) / rem
-        hash[key] = (hash.values.last || 0) + probability
-        hash
-      end
-
-      rem.times do
-        random = rand
-        pick = cumulative_probabilities.find { |_, cumprob| cumprob > random }
-        key = pick ? pick[0] : cumulative_probabilities.keys.last
-        result[key] += 1
-      end
-
-      result
-    end
-
-    def all_zero?
-      all? { |_, proportion| proportion == 0 }
-    end
-  end
 end
-# rubocop:enable Metrics/ModuleLength
