@@ -90,7 +90,7 @@ export const receiveNewDocuments = ({ appealId, newDocuments }: { appealId: stri
   }
 });
 
-export const getNewDocuments = (appealId: string, cached?: boolean, altDate?: string) => (dispatch: Dispatch) => {
+export const getNewDocuments = (appealId: string, cached?: boolean, onHoldDate?: string) => (dispatch: Dispatch) => {
   dispatch({
     type: ACTIONS.STARTED_LOADING_DOCUMENTS,
     payload: {
@@ -103,10 +103,10 @@ export const getNewDocuments = (appealId: string, cached?: boolean, altDate?: st
 
   let query = cached ? 'cached' : '';
 
-  if (altDate) {
-    const timestamp = moment(altDate).unix();
+  if (onHoldDate) {
+    const timestamp = moment(onHoldDate).unix();
 
-    query += query ? `&${timestamp}` : timestamp;
+    query += query ? `&placed_on_hold_date=${timestamp}` : `placed_on_hold_date=${timestamp}`;
   }
 
   ApiUtil.get(`/appeals/${appealId}/new_documents${query ? `?${query}` : ''}`, requestOptions).then((response) => {

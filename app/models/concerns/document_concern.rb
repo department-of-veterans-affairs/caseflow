@@ -10,15 +10,15 @@ module DocumentConcern
 
   # Retrieves any documents that have been uploaded more recently than the user has viewed
   # the appeal or an optional provided date
-  def new_documents_from_caseflow(user, alt_date_timestamp = nil)
+  def new_documents_from_caseflow(user, placed_on_hold_timestamp = nil)
     caseflow_documents = Document.where(file_number: veteran_file_number)
-    return new_documents_for_user(user, alt_date_timestamp) if caseflow_documents.empty?
+    return new_documents_for_user(user, placed_on_hold_timestamp) if caseflow_documents.empty?
 
     appeal_view = appeal_views.find_by(user: user)
-    return caseflow_documents if !appeal_view && !alt_date_timestamp
+    return caseflow_documents if !appeal_view && !placed_on_hold_timestamp
 
-    alt_date = alt_date_timestamp ? DateTime.strptime(alt_date_timestamp, "%s") : Time.zone.at(0)
-    compare_date = appeal_view ? [alt_date, appeal_view.last_viewed_at].max : alt_date
+    placed_on_hold_at = placed_on_hold_timestamp ? DateTime.strptime(placed_on_hold_timestamp, "%s") : Time.zone.at(0)
+    compare_date = appeal_view ? [placed_on_hold_at, appeal_view.last_viewed_at].max : placed_on_hold_at
 
     filter_docs_by_date(caseflow_documents, compare_date)
   end
