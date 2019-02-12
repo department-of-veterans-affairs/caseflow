@@ -28,7 +28,7 @@ describe TimeableTask do
     task = SomeTimedTask.create!(appeal: appeal, assigned_to: Bva.singleton)
     timers = TaskTimer.where(task: task)
     expect(timers.length).to eq(1)
-    expect(timers.first.last_submitted_at).to eq(Time.zone.today + 5.days)
+    expect(timers.first.last_submitted_at.to_date).to eq(Time.zone.today + 5.days)
   end
 
   context "when not correctly configured" do
