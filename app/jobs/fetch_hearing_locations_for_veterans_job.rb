@@ -22,8 +22,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       .joins("
         LEFT OUTER JOIN (SELECT parent_id FROM tasks
         WHERE type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
-        AND status not in (?)) admin_actions
-        ON admin_actions.parent_id = id", Task.inactive_statuses)
+        AND status not in ('cancelled', 'completed')) admin_actions
+        ON admin_actions.parent_id = id")
       .where("admin_actions.parent_id IS NULL").limit(QUERY_LIMIT)
       .map { |task| task.appeal.veteran&.id }.compact
   end
