@@ -48,6 +48,7 @@ class SubmitDecisionView extends React.PureComponent {
         [key]: value
       });
     });
+
   }
 
   // this handles the case where there is no document_id on this.props.decision.opts
@@ -60,7 +61,7 @@ class SubmitDecisionView extends React.PureComponent {
 
       _.merge(decision.opts, { document_id: _.get(attorneyCaseRewriteDetails, 'document_id'),
         note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
-        overtime: _.get(attorneyCaseRewriteDetails, 'overtime'),
+        overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
         reviewing_judge_id: _.get(attorneyCaseRewriteDetails, 'assigned_judge.id')
       });
     const extendedDecision = { ...decision };
@@ -119,6 +120,11 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props;
 
     const issuesToPass = !isLegacyAppeal && amaDecisionIssues ? decisionIssues : issues;
+    // not sure why this is happening, it's causing tests to fail, the backend can't handle a null response at this point
+
+    if (decision.opts.overtime === null) {
+      decision.opts.overtime = false;
+    }
     const payload = buildCaseReviewPayload(checkoutFlow, decision,
       userRole, issuesToPass, { isLegacyAppeal });
 
