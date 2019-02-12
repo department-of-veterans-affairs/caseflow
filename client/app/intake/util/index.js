@@ -23,6 +23,10 @@ export const convertStringToBoolean = (string) => {
   return null;
 };
 
+export const benefitTypeLooksLikeCompensation = (benefitType) => {
+  return (benefitType === 'compensation' || benefitType === 'pension');
+};
+
 export const getReceiptDateError = (responseErrorCodes, state) => (
   {
     blank:
