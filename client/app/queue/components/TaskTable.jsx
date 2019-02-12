@@ -210,6 +210,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     return this.props.includeDueDate ? {
       header: COPY.CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE,
       tooltip: <React.Fragment>Calendar days this case <br /> has been assigned to you</React.Fragment>,
+      align: 'center',
       valueFunction: (task: TaskWithAppeal) => {
         if (!this.taskHasDASRecord(task)) {
           return null;
@@ -234,6 +235,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
       span: this.collapseColumnIfNoDASRecord,
       tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
+      align: 'center',
       valueFunction: (task: TaskWithAppeal) => {
         return <React.Fragment>
           <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>{moment().startOf('day').
@@ -249,6 +251,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
   caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
+    align: 'center',
     valueFunction: (task: TaskWithAppeal) => {
       return <React.Fragment>
         <OnHoldLabel task={task} />
