@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190118155859) do
+ActiveRecord::Schema.define(version: 20190208191441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,10 +84,12 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.datetime "established_at"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
+    t.datetime "establishment_last_submitted_at"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
+    t.date "target_decision_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "veteran_file_number", null: false
     t.boolean "veteran_is_not_claimant"
@@ -133,6 +135,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.datetime "decision_sync_submitted_at"
     t.bigint "end_product_establishment_id"
     t.bigint "granted_decision_issue_id", null: false
+    t.datetime "last_submitted_at"
     t.index ["appeal_id"], name: "index_board_grant_effectuations_on_appeal_id"
     t.index ["decision_document_id"], name: "index_board_grant_effectuations_on_decision_document_id"
     t.index ["end_product_establishment_id"], name: "index_board_grant_effectuations_on_end_product_establishment_id"
@@ -226,6 +229,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.datetime "created_at", null: false
     t.date "decision_date", null: false
     t.string "error"
+    t.datetime "last_submitted_at"
     t.datetime "processed_at"
     t.string "redacted_document_location", null: false
     t.datetime "submitted_at"
@@ -237,6 +241,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
 
   create_table "decision_issues", force: :cascade do |t|
     t.string "benefit_type"
+    t.date "caseflow_decision_date"
     t.integer "decision_review_id"
     t.string "decision_review_type"
     t.string "decision_text"
@@ -248,7 +253,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.datetime "profile_date"
     t.datetime "promulgation_date"
     t.string "rating_issue_reference_id"
-    t.index ["rating_issue_reference_id", "participant_id"], name: "decision_issues_uniq_idx", unique: true
+    t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "decision_issues_uniq_by_disposition_and_ref_id", unique: true
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
@@ -317,10 +322,10 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.string "description"
     t.string "file_number"
     t.integer "previous_document_version_id"
-    t.date "upload_date"
     t.date "received_at"
     t.string "series_id"
     t.string "type"
+    t.date "upload_date"
     t.string "vbms_document_id", null: false
     t.index ["file_number"], name: "index_documents_on_file_number"
     t.index ["series_id"], name: "index_documents_on_series_id"
@@ -344,7 +349,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.datetime "established_at"
     t.datetime "last_synced_at"
     t.string "modifier"
-    t.string "payee_code"
+    t.string "payee_code", null: false
     t.string "reference_id"
     t.bigint "source_id", null: false
     t.string "source_type", null: false
@@ -477,6 +482,22 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.index ["request_issue_id"], name: "index_hearing_issue_notes_on_request_issue_id"
   end
 
+  create_table "hearing_locations", force: :cascade do |t|
+    t.string "address"
+    t.string "city"
+    t.string "classification"
+    t.datetime "created_at", null: false
+    t.float "distance"
+    t.string "facility_id"
+    t.string "facility_type"
+    t.integer "hearing_id"
+    t.string "hearing_type"
+    t.string "name"
+    t.string "state"
+    t.datetime "updated_at", null: false
+    t.string "zip_code"
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "hearing_id", null: false
@@ -488,6 +509,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
 
   create_table "hearings", force: :cascade do |t|
     t.integer "appeal_id", null: false
+    t.string "bva_poc"
     t.string "disposition"
     t.boolean "evidence_window_waived"
     t.integer "hearing_day_id", null: false
@@ -496,9 +518,11 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.string "notes"
     t.boolean "prepped"
     t.string "representative_name"
-    t.time "scheduled_time"
+    t.string "room"
+    t.time "scheduled_time", null: false
     t.text "summary"
     t.boolean "transcript_requested"
+    t.date "transcript_sent_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "witness"
   end
@@ -507,6 +531,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.string "benefit_type"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
+    t.datetime "establishment_last_submitted_at"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
     t.boolean "informal_conference"
@@ -734,6 +759,8 @@ ActiveRecord::Schema.define(version: 20190118155859) do
 
   create_table "request_issues", force: :cascade do |t|
     t.string "benefit_type", null: false
+    t.datetime "closed_at"
+    t.string "closed_status"
     t.integer "contention_reference_id"
     t.integer "contested_decision_issue_id"
     t.string "contested_issue_description"
@@ -756,6 +783,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.string "ineligible_reason"
     t.boolean "is_unidentified"
     t.string "issue_category"
+    t.datetime "last_submitted_at"
     t.string "nonrating_issue_description"
     t.text "notes"
     t.integer "parent_request_issue_id"
@@ -788,6 +816,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.datetime "attempted_at"
     t.integer "before_request_issue_ids", null: false, array: true
     t.string "error"
+    t.datetime "last_submitted_at"
     t.datetime "processed_at"
     t.bigint "review_id", null: false
     t.string "review_type", null: false
@@ -846,6 +875,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.string "decision_review_remanded_type"
     t.datetime "establishment_attempted_at"
     t.string "establishment_error"
+    t.datetime "establishment_last_submitted_at"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
     t.boolean "legacy_opt_in_approved"
@@ -875,6 +905,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.datetime "attempted_at"
     t.datetime "created_at", null: false
     t.string "error"
+    t.datetime "last_submitted_at"
     t.datetime "processed_at"
     t.datetime "submitted_at"
     t.bigint "task_id", null: false
@@ -890,7 +921,7 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.integer "assigned_by_id"
     t.integer "assigned_to_id"
     t.string "assigned_to_type", null: false
-    t.datetime "completed_at"
+    t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true
     t.integer "on_hold_duration"
@@ -909,6 +940,19 @@ ActiveRecord::Schema.define(version: 20190118155859) do
     t.datetime "updated_at", null: false
     t.integer "user_count"
     t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true
+  end
+
+  create_table "transcriptions", force: :cascade do |t|
+    t.date "expected_return_date"
+    t.bigint "hearing_id"
+    t.date "problem_notice_sent_date"
+    t.string "problem_type"
+    t.string "requested_remedy"
+    t.date "sent_to_transcriber_date"
+    t.string "task_number"
+    t.string "transcriber"
+    t.date "uploaded_to_vbms_date"
+    t.index ["hearing_id"], name: "index_transcriptions_on_hearing_id"
   end
 
   create_table "user_quotas", id: :serial, force: :cascade do |t|

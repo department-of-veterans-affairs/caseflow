@@ -40,42 +40,39 @@ class SupplementalClaim < ClaimReview
     end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
   end
 
-  def description
-    # need to implement
-  end
-
-  def aoj
-    # need to implement. add logic to return proper enum: - vba, vha, nca, other
-  end
-
-  def program
-    case benefit_type
-    when "voc_rehab"
-      "vre"
-    when "vha"
-      "medical"
-    when "nca"
-      "burial"
-    else
-      benefit_type
-    end
-  end
-
   def status_hash
     # need to implement. returns the details object for the status
+    { type: fetch_status }
   end
 
   def alerts
     # need to implement. add logic to return alert enum
   end
 
-  def issues
-    # need to implement. get request and corresponding rating issue
-    []
+  def decision_event_date
+    return unless decision_issues.any?
+
+    if end_product_establishments.any?
+      decision_issues.first.approx_decision_date
+    else
+      decision_issues.first.promulgation_date
+    end
+  end
+
+  def other_close_event_date
+    return if active?
+    return unless decision_issues.empty?
+    return unless end_product_establishments.any?
+
+    end_product_establishments.first.last_synced_at
   end
 
   def events
-    # need to implement
+    @events ||= AppealEvents.new(appeal: self).all
+  end
+
+  def fetch_all_decision_issues_for_api_status
+    decision_issues
   end
 
   private
@@ -92,7 +89,7 @@ class SupplementalClaim < ClaimReview
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
       claim_date: receipt_date,
-      payee_code: payee_code,
+      payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
       code: ep_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
@@ -122,5 +119,13 @@ class SupplementalClaim < ClaimReview
 
   def remanded_decision_issues
     decision_review_remanded.decision_issues.remanded.where(benefit_type: benefit_type)
+  end
+
+  def fetch_status
+    if active?
+      :sc_recieved
+    else
+      decision_issues.empty? ? :sc_closed : :sc_decision
+    end
   end
 end

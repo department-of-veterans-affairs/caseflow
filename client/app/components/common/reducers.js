@@ -6,7 +6,8 @@ export const initialState = {
     judges: {},
     hearingCoordinators: {},
     regionalOffices: {}
-  }
+  },
+  forms: {}
 };
 
 const dropdownsReducer = (state = {}, action = {}) => {
@@ -26,6 +27,24 @@ const dropdownsReducer = (state = {}, action = {}) => {
         $set: {
           options: action.payload.data,
           isFetching: false
+        }
+      }
+    });
+  default:
+    return state;
+  }
+};
+
+const formsReducer = (state = {}, action = {}) => {
+  const formState = state[action.payload.formName] || {};
+
+  switch (action.type) {
+  case ACTIONS.CHANGE_FORM_DATA:
+    return update(state, {
+      [action.payload.formName]: {
+        $set: {
+          ...formState,
+          ...action.payload.formData
         }
       }
     });
@@ -66,11 +85,29 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         $set: action.payload.hearingTime
       }
     });
+  case ACTIONS.HEARING_OPTIONAL_TIME_CHANGE:
+    return update(state, {
+      selectedOptionalTime: {
+        $set: action.payload.optionalTime
+      }
+    });
+  case ACTIONS.HEARING_LOCATION_CHANGE:
+    return update(state, {
+      selectedHearingLocation: {
+        $set: action.payload.hearingLocation
+      }
+    });
   case ACTIONS.FETCH_DROPDOWN_DATA:
   case ACTIONS.RECEIVE_DROPDOWN_DATA:
     return update(state, {
       dropdowns: {
         $set: dropdownsReducer(state.dropdowns, action)
+      }
+    });
+  case ACTIONS.CHANGE_FORM_DATA:
+    return update(state, {
+      forms: {
+        $set: formsReducer(state.forms, action)
       }
     });
   default:

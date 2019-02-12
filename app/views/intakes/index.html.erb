@@ -1,15 +1,3 @@
 <% content_for :full_page_content do %>
-  <%= react_component("BaseContainer", props: {
-    userDisplayName: current_user.display_name,
-    serverIntake: intake_in_progress ? intake_in_progress.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user)) : {},
-    dropdownUrls: dropdown_urls,
-    page: "Intake",
-    feedbackUrl: feedback_url,
-    buildDate: build_date,
-    featureToggles: {
-      intakeAma: FeatureToggle.enabled?(:intakeAma, user: current_user),
-      legacyOptInEnabled: FeatureToggle.enabled?(:intake_legacy_opt_in, user: current_user),
-      useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
-    }
-  }) %>
+  <%= react_component("BaseContainer", props: index_props) %>
 <% end %>

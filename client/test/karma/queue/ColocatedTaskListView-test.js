@@ -57,11 +57,13 @@ describe('ColocatedTaskListView', () => {
     externalAppealId: '3bd1567a-4f07-473c-aefc-3738a6cf58fe',
     assignedOn: moment().subtract(47, 'hours').
       format(),
-    completedOn: null,
+    closedAt: null,
     dueOn: null,
     assignedTo: {
       cssId: 'BVALSPORER',
+      name: 'Judge with cases',
       type: 'User',
+      isOrganization: true,
       id: 7
     },
     assignedBy: {
@@ -79,7 +81,11 @@ describe('ColocatedTaskListView', () => {
     onHoldDuration: null,
     decisionPreparedBy: null,
     availableActions: [],
-    taskBusinessPayloads: []
+    taskBusinessPayloads: [],
+    hideFromQueueTableView: false,
+    hideFromCaseTimeline: false,
+    hideFromTaskSnapshot: false,
+    closestRegionalOffice: ''
   });
 
   const appealTemplate: BasicAppeal = {
@@ -161,6 +167,7 @@ describe('ColocatedTaskListView', () => {
       const [caseDetails, columnTasks, types, docketNumber, daysWaiting, documents] = wrappers;
       const task = taskNewAssigned;
 
+      expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
       expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.label]);

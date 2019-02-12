@@ -37,6 +37,8 @@ const connectedIssueDiv = css({
   marginBottom: '10px'
 });
 
+const paragraphH3SiblingStyle = css({ marginTop: '0px !important' });
+
 const exampleDiv = css({
   color: COLORS.GREY,
   fontStyle: 'Italic'
@@ -96,11 +98,17 @@ class SelectDispositionsView extends React.PureComponent {
   getPrevStepUrl = () => {
     const {
       appealId,
+      appeal,
       taskId,
       checkoutFlow
     } = this.props;
 
-    return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
+    if (appeal.isLegacyAppeal) {
+      return `/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/special_issues`;
+    }
+
+    return `/queue/appeals/${appealId}`;
+
   }
 
   validateForm = () => {
@@ -287,7 +295,7 @@ class SelectDispositionsView extends React.PureComponent {
       >
 
         <div {...contestedIssueStyling}>
-          Contested Issue
+          {COPY.CONTESTED_ISSUE}
           <ul>
             {
               connectedRequestIssues.map((issue) => <li key={issue.id}>{issue.description}</li>)
@@ -298,7 +306,7 @@ class SelectDispositionsView extends React.PureComponent {
         {!editingExistingIssue &&
           <React.Fragment>
             <h3>{COPY.DECISION_ISSUE_MODAL_TITLE}</h3>
-            <p>{COPY.DECISION_ISSUE_MODAL_SUB_TITLE}</p>
+            <p {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_SUB_TITLE}</p>
           </React.Fragment>
         }
 
@@ -337,6 +345,7 @@ class SelectDispositionsView extends React.PureComponent {
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE}</h3>
         <SearchableDropdown
+          errorMessage={highlightModal && !decisionIssue.diagnostic_code ? 'This field is required' : null}
           name="Diagnostic code"
           placeholder={COPY.DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE}
           hideLabel
@@ -346,7 +355,7 @@ class SelectDispositionsView extends React.PureComponent {
           onChange={(diagnosticCode) => this.setState({
             decisionIssue: {
               ...decisionIssue,
-              diagnostic_code: diagnosticCode.value
+              diagnostic_code: diagnosticCode ? diagnosticCode.value : ''
             }
           })}
         />
@@ -366,7 +375,7 @@ class SelectDispositionsView extends React.PureComponent {
           })}
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_DESCRIPTION}</h3>
-        <p {...exampleDiv}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
+        <p {...exampleDiv} {...paragraphH3SiblingStyle}>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_EXAMPLE}</p>
         <h3>{COPY.DECISION_ISSUE_MODAL_CONNECTED_ISSUES_TITLE}</h3>
         <SearchableDropdown
           name="Issues"

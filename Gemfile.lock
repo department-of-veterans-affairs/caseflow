@@ -23,8 +23,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: 3b9edeeaebe3e6a49bb27e8d08486ed8b3959db4
-  ref: 3b9edeeaebe3e6a49bb27e8d08486ed8b3959db4
+  revision: 0d56a6c6a2ec314f97bce863f6aeffe837d75a13
+  ref: 0d56a6c6a2ec314f97bce863f6aeffe837d75a13
   specs:
     connect_vbms (1.2.0)
       httpclient (~> 2.8.0)
@@ -37,8 +37,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 2d0e08ea4157b725242777a6f876fc199f503b61
-  ref: 2d0e08ea4157b725242777a6f876fc199f503b61
+  revision: 1af709bbcf61931420db621237f90cb8e21f3c1c
+  ref: 1af709bbcf61931420db621237f90cb8e21f3c1c
   specs:
     bgs (0.2)
       nokogiri (~> 1.8.2)

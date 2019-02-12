@@ -20,10 +20,12 @@ const serverData = {
             pg_id: 10
           },
           assigned_on: '2018-08-02T17:37:03.000Z',
-          completed_at: null,
+          closed_at: null,
           assigned_to: {
             css_id: 'BVANKUVALIS',
+            name: 'name',
             id: 130,
+            isOrganization: false,
             type: 'User'
           },
           case_type: 'Post Remand',
@@ -44,7 +46,10 @@ const serverData = {
           veteran_file_number: '767574947',
           veteran_name: 'Mills, Beulah, J',
           work_product: 'OTD',
-          status: 'Assigned'
+          status: 'Assigned',
+          hide_from_queue_table_view: false,
+          hide_from_case_timeline: false,
+          hide_from_task_snapshot: false
         },
         id: '3625593',
         type: 'judge_legacy_tasks'
@@ -65,12 +70,15 @@ describe('QueueLoadingScreen', () => {
         appealType: 'LegacyAppeal',
         externalAppealId: '3625593',
         assignedOn: '2018-08-02T17:37:03.000Z',
-        completedOn: null,
+        closedAt: null,
         dueOn: '2018-08-11T00:00:00.000Z',
         assignedTo: {
           cssId: 'BVANKUVALIS',
+          name: 'name',
           id: 130,
-          type: 'User'
+          type: 'User',
+          // eslint-disable-next-line no-undefined
+          isOrganization: undefined
         },
         // eslint-disable-next-line no-undefined
         availableActions: undefined,
@@ -93,7 +101,10 @@ describe('QueueLoadingScreen', () => {
         previousTaskAssignedOn: '2018-08-02T17:37:03.000Z',
         status: 'Assigned',
         decisionPreparedBy: null,
-        type: 'LegacyJudgeTask'
+        type: 'LegacyJudgeTask',
+        hideFromQueueTableView: false,
+        hideFromCaseTimeline: false,
+        hideFromTaskSnapshot: false
       }
     });
   });

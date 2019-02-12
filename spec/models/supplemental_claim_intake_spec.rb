@@ -270,6 +270,7 @@ describe SupplementalClaimIntake do
     end
 
     context "when benefit type is non comp" do
+      before { RequestStore[:current_user] = user }
       let(:benefit_type) { "fiduciary" }
 
       it "creates DecisionReviewTask" do
@@ -279,6 +280,11 @@ describe SupplementalClaimIntake do
 
         expect(intake.detail.tasks.count).to eq(1)
         expect(intake.detail.tasks.first).to be_a(DecisionReviewTask)
+      end
+
+      it "adds user to organization" do
+        subject
+        expect(OrganizationsUser.find_by(user: user, organization: intake.detail.business_line)).to_not be_nil
       end
     end
 

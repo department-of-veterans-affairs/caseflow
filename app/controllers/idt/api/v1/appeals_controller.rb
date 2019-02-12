@@ -50,10 +50,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
             else
               []
             end
-
-    if feature_enabled?(:idt_ama_appeals)
-      tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
-    end
+    tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
     tasks.reject { |task| (task.is_a?(JudgeLegacyTask) && task.action == "assign") || task.is_a?(JudgeAssignTask) }
   end
 
@@ -63,9 +60,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def appeals_by_file_number
     appeals = LegacyAppeal.fetch_appeals_by_file_number(file_number).select(&:activated?)
-    if feature_enabled?(:idt_ama_appeals)
-      appeals += Appeal.where(veteran_file_number: file_number)
-    end
+    appeals += Appeal.where(veteran_file_number: file_number)
     appeals
   end
 
@@ -84,9 +79,13 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     ActiveModelSerializers::SerializableResource.new(
       appeal,
       serializer: ::Idt::V1::AppealDetailsSerializer,
-      include_addresses: BvaDispatch.singleton.user_has_access?(user),
+      include_addresses: include_addresses_in_response?,
       base_url: request.base_url
     ).as_json
+  end
+
+  def include_addresses_in_response?
+    BvaDispatch.singleton.user_has_access?(user) || user.intake_user?
   end
 
   def json_appeals_with_tasks(tasks)

@@ -43,6 +43,8 @@ const containingDivStyling = css({
 const listStyling = css({
   listStyleType: 'none',
   verticalAlign: 'super',
+  display: 'flex',
+  flexWrap: 'wrap',
   padding: '1rem 0 0 0'
 });
 
@@ -102,21 +104,23 @@ export class CaseTitleDetails extends React.PureComponent {
     });
   }
 
-  submitForm = (appealId) => () => {
+  submitForm = (reviewId, legacy) => () => {
     const payload = {
       data: {
-        document_id: this.state.value
+        document_id: this.state.value,
+        legacy,
+        review_id: reviewId
       }
     };
 
-    this.props.requestPatch(`/case_reviews/${appealId}`, payload, { title: 'Document Id Saved!' }).
+    this.props.requestPatch(`/case_reviews/${reviewId}`, payload, { title: 'Document Id Saved!' }).
       then(() => {
         this.handleModalClose();
       }).
       catch((error) => {
-        const documentIdErrors = JSON.parse(error.message).errors.document_id;
+        const documentIdErrors = JSON.parse(error.message).errors;
 
-        const documentIdErrorText = documentIdErrors && documentIdErrors[0];
+        const documentIdErrorText = documentIdErrors && documentIdErrors[0].detail;
 
         this.setState({
           highlightModal: true,
@@ -185,8 +189,8 @@ export class CaseTitleDetails extends React.PureComponent {
       { !userIsVsoEmployee && appeal && appeal.documentID &&
         <React.Fragment>
           <h4>{COPY.TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}</h4>
-          <div><CopyTextButton text={this.state.value || appeal.documentID} />
-            { !appeal.isLegacyAppeal &&
+          <div id="document-id"><CopyTextButton text={this.state.value || appeal.documentID} />
+            { appeal.canEditDocumentId &&
               <Button
                 linkStyling
                 onClick={this.handleModalClose} >
@@ -205,7 +209,7 @@ export class CaseTitleDetails extends React.PureComponent {
               { classNames: ['usa-button'],
                 name: 'Save',
                 disabled: !this.state.value,
-                onClick: this.submitForm(appeal.caseReviewId)
+                onClick: this.submitForm(appeal.caseReviewId, appeal.isLegacyAppeal)
               }
             ]}
             closeHandler={this.handleModalClose}
@@ -216,6 +220,7 @@ export class CaseTitleDetails extends React.PureComponent {
               placeholder={appeal.documentID}
               value={this.state.value}
               onChange={this.changeButtonState}
+              autoComplete="off"
               required />
 
           </Modal>}

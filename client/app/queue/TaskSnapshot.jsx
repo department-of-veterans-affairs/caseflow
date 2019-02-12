@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
   appealWithDetailSelector,
-  nonRootActionableTasksForAppeal
+  taskSnapshotTasksForAppeal
 } from './selectors';
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
@@ -27,7 +27,6 @@ type Params = {|
 |};
 
 type Props = Params & {|
-  userRole: string,
   appeal: Appeal
 |};
 
@@ -35,14 +34,13 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 
   render = () => {
     const {
-      appeal
+      appeal,
+      tasks
     } = this.props;
 
     let sectionBody = COPY.TASK_SNAPSHOT_NO_ACTIVE_LABEL;
-    const tasks = this.props.tasks;
-    const taskLength = tasks.length;
 
-    if (taskLength) {
+    if (tasks.length) {
       sectionBody = <table {...tableStyling}>
         <tbody>
           { <TaskRows appeal={appeal} taskList={tasks} timeline={false} /> }
@@ -63,12 +61,9 @@ export class TaskSnapshot extends React.PureComponent<Props> {
 }
 
 const mapStateToProps = (state: State, ownProps: Params) => {
-  const { userRole } = state.ui;
-
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
-    userRole,
-    tasks: nonRootActionableTasksForAppeal(state, { appealId: ownProps.appealId })
+    tasks: taskSnapshotTasksForAppeal(state, { appealId: ownProps.appealId })
   };
 };
 

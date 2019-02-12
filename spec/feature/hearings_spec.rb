@@ -23,19 +23,21 @@ RSpec.feature "Hearings" do
       end
       create(:case_hearing,
              board_member: vacols_staff.sattyid,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: 2500.days.from_now,
              folder_nr: create(:case).bfkey)
-      create(:case_hearing, board_member: vacols_staff.sattyid, hearing_type: "C", hearing_date: 3.days.ago)
+      create(:case_hearing, board_member: vacols_staff.sattyid,
+                            hearing_type: HearingDay::REQUEST_TYPES[:central],
+                            hearing_date: 3.days.ago)
       create(:case_hearing,
              board_member: vacols_staff.sattyid,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: 6.days.ago,
              folder_nr: create(:case).bfkey)
-      create(:hearing, judge: current_user)
+      create(:hearing, hearing_day: create(:hearing_day, judge: current_user))
       create(:case_hearing,
              board_member: vacols_staff.sattyid,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: DateTime.new(2019, 3, 2, 9, 0, 0, "+0"),
              folder_nr: create(:case).bfkey)
     end
@@ -128,7 +130,7 @@ RSpec.feature "Hearings" do
       fill_in "1.notes", with: "This is a note about the hearing!"
       find(".checkbox-wrapper-1-prep").find(".cf-form-checkbox").click
       find(".dropdown-1-disposition").click
-      find("#react-select-5--option-1").click
+      find("#react-select-2--option-1").click
       find("label", text: "Yes, Waive 90 Day Hold").click
 
       visit "/hearings/dockets/2019-03-02"

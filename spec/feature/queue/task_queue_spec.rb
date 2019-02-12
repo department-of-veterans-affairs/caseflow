@@ -52,8 +52,37 @@ RSpec.feature "Task queue" do
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
     end
 
+    # context "hearings" do
+    #   context "if a task has a hearing" do
+    #     let!(:attorney_task_with_hearing) do
+    #       FactoryBot.create(
+    #         :ama_attorney_task,
+    #         :in_progress,
+    #         assigned_to: attorney_user
+    #       )
+    #     end
+
+    #     let!(:hearing) { create(:hearing, appeal: attorney_task_with_hearing.appeal, disposition: "held") }
+
+    #     before do
+    #       visit "/queue"
+    #     end
+
+    #     it "shows the hearing badge" do
+    #       expect(page).to have_selector(".cf-hearing-badge")
+    #       expect(find(".cf-hearing-badge")).to have_content("H")
+    #     end
+    #   end
+
+    #   context "if no tasks have hearings" do
+    #     it "does not show the hearing badge" do
+    #       expect(page).not_to have_selector(".cf-hearing-badge")
+    #     end
+    #   end
+    # end
+
     it "supports custom sorting" do
-      docket_number_column_header = page.find(:xpath, "//thead/tr/th[3]/span/span[1]")
+      docket_number_column_header = page.find(:xpath, "//thead/tr/th[2]/span/span[1]")
       docket_number_column_header.click
       docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[3]/span[3]")
       expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
@@ -121,8 +150,8 @@ RSpec.feature "Task queue" do
     it "should be able to take actions on task from VSO queue" do
       expect(page).to have_content(COPY::ORGANIZATION_QUEUE_TABLE_TITLE % vso.name)
 
-      case_details_link = page.find(:xpath, "//tbody/tr/td[1]/a")
-      case_details_link.click
+      find_table_cell(vso_task.id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+        .click_link
       expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
 
       # Marking the task as complete correctly changes the task's status in the database.
@@ -133,6 +162,44 @@ RSpec.feature "Task queue" do
 
       expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, vso_task.appeal.veteran_full_name))
       expect(Task.find(vso_task.id).status).to eq("completed")
+    end
+  end
+
+  context "VSO team queue" do
+    let(:vso_employee) { FactoryBot.create(:user, roles: ["VSO"]) }
+    let(:vso) { FactoryBot.create(:vso) }
+
+    let(:unassigned_count) { 3 }
+    let(:assigned_count) { 7 }
+    let(:tracking_task_count) { 14 }
+
+    before do
+      FactoryBot.create_list(:informal_hearing_presentation_task, unassigned_count, :in_progress, assigned_to: vso)
+      FactoryBot.create_list(:informal_hearing_presentation_task, assigned_count, :on_hold, assigned_to: vso)
+      FactoryBot.create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
+
+      allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+      User.authenticate!(user: vso_employee)
+      visit(vso.path)
+    end
+
+    it "shows the right number of cases in each tab" do
+      step("Unassigned tab") do
+        expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, vso.name))
+        expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+      end
+
+      step("Assigned tab") do
+        find("button", text: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)).click
+        expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, vso.name))
+        expect(find("tbody").find_all("tr").length).to eq(assigned_count)
+      end
+
+      step("All cases tab") do
+        find("button", text: format(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE, assigned_count)).click
+        expect(page).to have_content(format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, vso.name))
+        expect(find("tbody").find_all("tr").length).to eq(tracking_task_count)
+      end
     end
   end
 
@@ -147,7 +214,7 @@ RSpec.feature "Task queue" do
     end
 
     context "when we are a member of the mail team and a root task exists for the appeal" do
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal).becomes(RootTask) }
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
       let(:instructions) { "Some instructions for how to complete the task" }
 
       it "should allow us to assign a mail task to a user" do
@@ -217,6 +284,10 @@ RSpec.feature "Task queue" do
       expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
     end
 
+    it "does not show all cases tab for non-VSO organization" do
+      expect(page).to_not have_content(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE)
+    end
+
     it "shows the right number of cases in each tab" do
       # Unassigned tab
       expect(page).to have_content(
@@ -265,7 +336,7 @@ RSpec.feature "Task queue" do
         visit("/queue/appeals/#{appeal.external_id}")
 
         find(".Select-control", text: "Select an action…").click
-        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SEND_BACK_TO_ATTORNEY.to_h[:label]).click
+        find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
@@ -370,7 +441,15 @@ RSpec.feature "Task queue" do
     end
 
     context "judge user's queue table view" do
-      let!(:caseflow_review_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge_user) }
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let!(:caseflow_review_task) do
+        FactoryBot.create(
+          :ama_judge_decision_review_task,
+          assigned_to: judge_user,
+          parent: root_task,
+          appeal: root_task.appeal
+        )
+      end
       let!(:legacy_review_task) do
         FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case, :assigned, user: judge_user))
       end

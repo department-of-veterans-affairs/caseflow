@@ -4,6 +4,8 @@ class GenericTask < Task
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
   # task active at a time for a single appeal.
   def verify_org_task_unique
+    return if status == Constants.TASK_STATUSES.completed
+
     if Task.where(type: type, assigned_to: assigned_to, appeal: appeal)
         .where.not(status: Constants.TASK_STATUSES.completed).any? &&
        assigned_to.is_a?(Organization)
@@ -45,16 +47,6 @@ class GenericTask < Task
     []
   end
   # rubocop:enable Metrics/MethodLength
-
-  def update_from_params(params, current_user)
-    verify_user_can_update!(current_user)
-
-    return reassign(params[:reassign], current_user) if params[:reassign]
-
-    update!(status: params[:status]) if params[:status]
-
-    [self]
-  end
 
   def reassign(reassign_params, current_user)
     reassign_params[:instructions] = [instructions, reassign_params[:instructions]].flatten
@@ -98,16 +90,18 @@ class GenericTask < Task
     end
 
     def create_child_task(parent, current_user, params)
-      parent.update!(status: Constants.TASK_STATUSES.on_hold)
+      transaction do
+        parent.update!(status: Constants.TASK_STATUSES.on_hold)
 
-      Task.create!(
-        type: name,
-        appeal: parent.appeal,
-        assigned_by_id: child_assigned_by_id(parent, current_user),
-        parent_id: parent.id,
-        assigned_to: child_task_assignee(parent, params),
-        instructions: params[:instructions]
-      )
+        Task.create!(
+          type: name,
+          appeal: parent.appeal,
+          assigned_by_id: child_assigned_by_id(parent, current_user),
+          parent_id: parent.id,
+          assigned_to: child_task_assignee(parent, params),
+          instructions: params[:instructions]
+        )
+      end
     end
 
     def child_task_assignee(_parent, params)

@@ -18,6 +18,8 @@ describe "Appeals API v2", type: :request do
     end
   end
 
+  let(:api_key) { ApiKey.create!(consumer_name: "Testington Roboterson") }
+
   context "Appeal list" do
     before do
       DocketSnapshot.create
@@ -97,38 +99,6 @@ describe "Appeals API v2", type: :request do
 
     let!(:another_veteran_appeal) do
       create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "333222333S"))
-    end
-
-    let(:api_key) { ApiKey.create!(consumer_name: "Testington Roboterson") }
-
-    let(:veteran_file_number) { "111223333" }
-    let!(:veteran) { create(:veteran, file_number: veteran_file_number) }
-    let(:receipt_date) { nil }
-    let(:benefit_type) { "compensation" }
-    let(:informal_conference) { nil }
-    let(:same_office) { nil }
-    let(:legacy_opt_in_approved) { false }
-    let(:veteran_is_not_claimant) { false }
-    let(:profile_date) { receipt_date - 1 }
-
-    let!(:claim_review) do
-      create(:higher_level_review,
-             veteran_file_number: veteran_file_number,
-             receipt_date: receipt_date,
-             informal_conference: informal_conference,
-             same_office: same_office,
-             benefit_type: benefit_type,
-             legacy_opt_in_approved: legacy_opt_in_approved,
-             veteran_is_not_claimant: veteran_is_not_claimant)
-    end
-
-    let!(:supplemental_claim_review) do
-      create(:supplemental_claim,
-             veteran_file_number: veteran_file_number,
-             receipt_date: nil,
-             benefit_type: benefit_type,
-             legacy_opt_in_approved: legacy_opt_in_approved,
-             veteran_is_not_claimant: veteran_is_not_claimant)
     end
 
     before do
@@ -376,14 +346,110 @@ describe "Appeals API v2", type: :request do
 
       expect(ApiView.count).to eq(1)
     end
+  end
 
-    it "returns list of hlrs for veteran with SSN" do
+  context "All HLR, SC and Appeals" do
+    Time.zone = "America/New_York"
+    before do
+      Timecop.freeze(Time.utc(2018, 11, 28))
+    end
+
+    let(:veteran_file_number) { "111223333" }
+    let(:receipt_date) { Date.new(2018, 9, 20) }
+    let(:benefit_type) { "compensation" }
+    let(:informal_conference) { nil }
+    let(:same_office) { nil }
+    let(:legacy_opt_in_approved) { false }
+    let(:veteran_is_not_claimant) { false }
+    let(:profile_date) { receipt_date - 1 }
+
+    let!(:hlr) do
+      create(:higher_level_review,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             informal_conference: informal_conference,
+             same_office: same_office,
+             benefit_type: benefit_type,
+             legacy_opt_in_approved: legacy_opt_in_approved,
+             veteran_is_not_claimant: veteran_is_not_claimant)
+    end
+
+    let!(:hlr_request_issue) do
+      create(:request_issue,
+             review_request: hlr,
+             benefit_type: benefit_type,
+             contested_rating_issue_diagnostic_code: nil)
+    end
+
+    let!(:hlr_ep) do
+      create(:end_product_establishment, :active, source: hlr)
+    end
+
+    let!(:supplemental_claim_review) do
+      create(:supplemental_claim,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             benefit_type: "pension",
+             legacy_opt_in_approved: legacy_opt_in_approved,
+             veteran_is_not_claimant: veteran_is_not_claimant)
+    end
+
+    let!(:sc_request_issue) do
+      create(:request_issue,
+             review_request: supplemental_claim_review,
+             benefit_type: "pension",
+             contested_rating_issue_diagnostic_code: "9999")
+    end
+
+    let!(:sc_ep) do
+      create(:end_product_establishment,
+             :cleared, source: supplemental_claim_review, last_synced_at: receipt_date + 100.days)
+    end
+
+    let!(:decision_issue) do
+      create(:decision_issue,
+             decision_review: supplemental_claim_review,
+             disposition: "denied",
+             end_product_last_action_date: receipt_date + 100.days)
+    end
+
+    let(:rating_promulgated_date) { receipt_date - 40.days }
+
+    let(:request_issue1) do
+      create(:request_issue, benefit_type: benefit_type,
+                             contested_rating_issue_diagnostic_code: nil)
+    end
+
+    let(:request_issue2) do
+      create(:request_issue, benefit_type: "education",
+                             contested_rating_issue_diagnostic_code: nil)
+    end
+
+    let!(:appeal) do
+      create(:appeal,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             request_issues: [request_issue1, request_issue2],
+             docket_type: "evidence_submission")
+    end
+
+    let!(:task) { create(:task, :in_progress, type: RootTask.name, appeal: appeal) }
+
+    before do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
         veteran_file_number
       end
 
-      FeatureToggle.enable!(:api_appeal_status_v3)
+      allow_any_instance_of(RequestIssue).to receive(:decision_or_promulgation_date).and_return(rating_promulgated_date)
 
+      FeatureToggle.enable!(:api_appeal_status_v3)
+    end
+
+    after do
+      FeatureToggle.disable!(:api_appeal_status_v3)
+    end
+
+    it "returns list of hlr, sc, appeal for veteran with SSN" do
       headers = {
         "ssn": veteran_file_number,
         "Authorization": "Token token=#{api_key.key_string}"
@@ -396,47 +462,101 @@ describe "Appeals API v2", type: :request do
       # test for the 200 status-code
       expect(response).to be_success
       # check to make sure the right amount of appeals are returned
-      expect(json["data"].length).to eq(2)
+      expect(json["data"].length).to eq(3)
 
       # check the attribtues on the hlr
       expect(json["data"].first["type"]).to eq("higherLevelReview")
       expect(json["data"].first["id"]).to include("HLR")
       expect(json["data"].first["attributes"]["appealIds"].length).to eq(1)
       expect(json["data"].first["attributes"]["appealIds"].first).to include("HLR")
-      expect(json["data"].first["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
+      expect(json["data"].first["attributes"]["updated"]).to eq("2018-11-27T19:00:00-05:00")
       expect(json["data"].first["attributes"]["type"]).to be_nil
-      expect(json["data"].first["attributes"]["active"]).to eq(false)
+      expect(json["data"].first["attributes"]["active"]).to eq(true)
       expect(json["data"].first["attributes"]["incompleteHistory"]).to eq(false)
-      expect(json["data"].first["attributes"]["description"]).to be_nil
+      expect(json["data"].first["attributes"]["description"]).to eq("1 compensation issue")
       expect(json["data"].first["attributes"]["aod"]).to be_nil
       expect(json["data"].first["attributes"]["location"]).to eq("aoj")
       expect(json["data"].first["attributes"]["alerts"]).to be_nil
-      expect(json["data"].first["attributes"]["aoj"]).to be_nil
+      expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
       expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["docket"]).to be_nil
-      expect(json["data"].first["attributes"]["status"]).to be_nil
-      expect(json["data"].first["attributes"]["issues"].length).to eq(0)
+      expect(json["data"].first["attributes"]["status"]["type"]).to eq("hlr_received")
+
+      expect(json["data"].first["attributes"]["issues"].length).to eq(1)
+      issue = json["data"].first["attributes"]["issues"].first
+      expect(issue["active"]).to eq(true)
+      expect(issue["lastAction"]).to be_nil
+      expect(issue["date"]).to be_nil
+      expect(issue["diagnosticCode"]).to be_nil
+      expect(issue["description"]).to eq("Compensation issue")
+
+      event_type = json["data"].first["attributes"]["events"].first
+      expect(event_type["type"]).to eq("hlr_request")
+      expect(event_type["date"]).to eq(receipt_date.to_s)
 
       # check the attributes on the sc
       expect(json["data"][1]["type"]).to eq("supplementalClaim")
       expect(json["data"][1]["id"]).to include("SC")
       expect(json["data"][1]["attributes"]["appealIds"].length).to eq(1)
       expect(json["data"][1]["attributes"]["appealIds"].first).to include("SC")
-      expect(json["data"][1]["attributes"]["updated"]).to eq("2015-01-01T07:00:00-05:00")
+      expect(json["data"][1]["attributes"]["updated"]).to eq("2018-11-27T19:00:00-05:00")
       expect(json["data"][1]["attributes"]["type"]).to be_nil
       expect(json["data"][1]["attributes"]["active"]).to eq(false)
       expect(json["data"][1]["attributes"]["incompleteHistory"]).to eq(false)
-      expect(json["data"][1]["attributes"]["description"]).to be_nil
+      expect(json["data"][1]["attributes"]["description"]).to eq("Dental or oral condition")
       expect(json["data"][1]["attributes"]["aod"]).to be_nil
       expect(json["data"][1]["attributes"]["location"]).to eq("aoj")
       expect(json["data"][1]["attributes"]["alerts"]).to be_nil
-      expect(json["data"][1]["attributes"]["aoj"]).to be_nil
-      expect(json["data"][1]["attributes"]["programArea"]).to eq("compensation")
+      expect(json["data"][1]["attributes"]["aoj"]).to eq("vba")
+      expect(json["data"][1]["attributes"]["programArea"]).to eq("pension")
       expect(json["data"][1]["attributes"]["docket"]).to be_nil
-      expect(json["data"][1]["attributes"]["status"]).to be_nil
-      expect(json["data"][1]["attributes"]["issues"].length).to eq(0)
+      expect(json["data"][1]["attributes"]["status"]["type"]).to eq("sc_decision")
 
-      FeatureToggle.disable!(:api_appeal_status_v3)
+      expect(json["data"][1]["attributes"]["issues"].length).to eq(1)
+      issue = json["data"][1]["attributes"]["issues"].first
+      expect(issue["active"]).to eq(false)
+      expect(issue["lastAction"]).to eq("denied")
+      expect(issue["date"]).to eq((receipt_date + 100.days).to_s)
+      expect(issue["diagnosticCode"]).to eq("9999")
+      expect(issue["description"]).to eq("Dental or oral condition")
+
+      request_event = json["data"][1]["attributes"]["events"].find { |e| e["type"] == "sc_request" }
+      expect(request_event["date"]).to eq(receipt_date.to_s)
+
+      decision_event = json["data"][1]["attributes"]["events"].find { |e| e["type"] == "sc_decision" }
+      expect(decision_event["date"]).to eq((receipt_date + 100.days).to_s)
+
+      # checkout the attributes on the appeal
+      expect(json["data"][2]["type"]).to eq("appeal")
+      expect(json["data"][2]["id"]).to include("A")
+      expect(json["data"][2]["attributes"]["appealIds"].length).to eq(1)
+      expect(json["data"][2]["attributes"]["appealIds"].first).to include("A")
+      expect(json["data"][2]["attributes"]["updated"]).to eq("2018-11-27T19:00:00-05:00")
+      expect(json["data"][2]["attributes"]["type"]).to eq("original")
+      expect(json["data"][2]["attributes"]["active"]).to eq(true)
+      expect(json["data"][2]["attributes"]["incompleteHistory"]).to eq(false)
+      expect(json["data"][2]["attributes"]["description"]).to eq("2 issues")
+      expect(json["data"][2]["attributes"]["aod"]).to eq(false)
+      expect(json["data"][2]["attributes"]["location"]).to eq("bva")
+      expect(json["data"][2]["attributes"]["alerts"]).to be_nil
+      expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
+      expect(json["data"][2]["attributes"]["programArea"]).to eq("multiple")
+      expect(json["data"][2]["attributes"]["docket"]["type"]).to eq("evidenceSubmission")
+      expect(json["data"][2]["attributes"]["docket"]["month"]).to eq(Date.new(2018, 9, 1).to_s)
+      expect(json["data"][2]["attributes"]["docket"]["switchDueDate"]).to eq((rating_promulgated_date + 365.days).to_s)
+      expect(json["data"][2]["attributes"]["docket"]["eligibleToSwitch"]).to eq(true)
+      expect(json["data"][2]["attributes"]["status"]["type"]).to eq("on_docket")
+
+      expect(json["data"][2]["attributes"]["issues"].length).to eq(2)
+      issue = json["data"][2]["attributes"]["issues"].first
+      expect(issue["active"]).to eq(true)
+      expect(issue["lastAction"]).to be_nil
+      expect(issue["date"]).to be_nil
+      expect(issue["diagnosticCode"]).to be_nil
+
+      event_type = json["data"][2]["attributes"]["events"].first
+      expect(event_type["type"]).to eq("ama_nod")
+      expect(event_type["date"]).to eq(receipt_date.to_s)
     end
   end
 end

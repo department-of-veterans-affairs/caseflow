@@ -18,17 +18,19 @@ class DecisionReviewTask < GenericTask
 
     transaction do
       appeal.create_decision_issues_for_tasks(decision_issue_params, decision_date)
-      update!(status: Constants.TASK_STATUSES.completed, completed_at: Time.zone.now)
+      update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
     end
 
     true
   end
 
+  delegate :ui_hash, to: :appeal, prefix: true
+
   private
 
   def validate_task(decision_issue_params)
-    if !in_progress?
-      @error_code = :task_not_in_progress
+    if completed?
+      @error_code = :task_completed
     elsif !validate_decision_issue_per_request_issue(decision_issue_params)
       @error_code = :invalid_decision_issue_per_request_issue
     end

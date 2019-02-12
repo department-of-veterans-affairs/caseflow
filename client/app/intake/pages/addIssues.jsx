@@ -81,13 +81,17 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.CLEARED_EPS} />;
     }
 
+    if (intakeData.isOutcoded) {
+      return <Redirect to={PAGE_PATHS.OUTCODED} />;
+    }
+
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData, useAmaActivationDate);
 
       return <div className="issues">
         <div>
           { issues.map((issue, index) => {
-            return <div className="issue" key={`issue-${index}`}>
+            return <div className="issue" key={`issue-${index}`} id={`issue-${issue.referenceId}`}>
               <AddedIssue
                 issue={issue}
                 issueIdx={index}

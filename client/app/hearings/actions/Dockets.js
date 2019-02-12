@@ -26,9 +26,10 @@ export const populateUpcomingHearings = (upcomingHearings) => ({
   }
 });
 
-export const populateDailyDocket = (dailyDocket, date) => ({
+export const populateDailyDocket = (hearingDay, dailyDocket, date) => ({
   type: Constants.POPULATE_DAILY_DOCKET,
   payload: {
+    hearingDay,
     dailyDocket,
     date
   }
@@ -273,14 +274,14 @@ export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
   if (!dailyDocket || !dailyDocket[date]) {
     ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
       then((response) => {
-        dispatch(populateDailyDocket(response.body, date));
+        dispatch(populateDailyDocket(response.body.hearingDay, response.body.dailyDocket, date));
       }, (err) => {
         dispatch(handleDocketServerError(err));
       });
   }
 };
 
-export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
+export const setPrepped = (hearingId, hearingExternalId, prepped, date) => (dispatch) => {
   const payload = {
     hearingId,
     prepped,
@@ -291,7 +292,7 @@ export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
   dispatch(setHearingPrepped(payload,
     CATEGORIES.HEARING_WORKSHEET_PAGE));
 
-  ApiUtil.patch(`/hearings/${hearingId}`, { data: { prepped } }).
+  ApiUtil.patch(`/hearings/${hearingExternalId}`, { data: { prepped } }).
     then(() => {
       // request was successful
     },

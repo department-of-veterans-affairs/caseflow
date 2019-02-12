@@ -110,7 +110,8 @@ class Fakes::BGSService
         epe = EndProductEstablishment.find_or_create_by!(
           reference_id: in_active_review_reference_id,
           veteran_file_number: veteran.file_number,
-          source: hlr
+          source: hlr,
+          payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
           review_request: hlr,
@@ -132,7 +133,8 @@ class Fakes::BGSService
           reference_id: completed_review_reference_id,
           veteran_file_number: veteran.file_number,
           source: previous_hlr,
-          synced_status: "CLR"
+          synced_status: "CLR",
+          payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
           review_request: previous_hlr,
@@ -178,7 +180,8 @@ class Fakes::BGSService
         EndProductEstablishment.find_or_create_by!(
           reference_id: claim_id,
           veteran_file_number: veteran.file_number,
-          source: sc
+          source: sc,
+          payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
@@ -194,7 +197,8 @@ class Fakes::BGSService
         epe = EndProductEstablishment.find_or_create_by!(
           reference_id: claim_id,
           veteran_file_number: veteran.file_number,
-          source: hlr
+          source: hlr,
+          payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
           review_request: hlr,
@@ -225,6 +229,7 @@ class Fakes::BGSService
           established_at: 1.day.ago
         )
         EndProductEstablishment.find_or_create_by!(reference_id: claim_id, source: ramp_election) do |e|
+          e.payee_code = EndProduct::DEFAULT_PAYEE_CODE
           e.veteran_file_number = veteran.file_number
           e.last_synced_at = 10.minutes.ago
           e.synced_status = "CLR"
@@ -454,7 +459,14 @@ class Fakes::BGSService
   end
 
   def cancel_end_product(veteran_id, end_product_code, end_product_modifier)
-    # noop
+    end_products = get_end_products(veteran_id)
+    matching_eps = end_products.select do |ep|
+      ep[:claim_type_code] == end_product_code && ep[:end_product_type_code] == end_product_modifier
+    end
+    matching_eps.each do |ep|
+      ep[:status_type_code] = "CAN"
+      self.class.store_end_product_record(veteran_id, ep)
+    end
   end
 
   def fetch_veteran_info(vbms_id)
@@ -594,7 +606,7 @@ class Fakes::BGSService
   end
 
   def get_participant_id_for_user(user)
-    return VSO_PARTICIPANT_ID if user.css_id == "VSO"
+    return VSO_PARTICIPANT_ID if user.css_id =~ /.*_VSO/
 
     DEFAULT_PARTICIPANT_ID
   end

@@ -5,6 +5,7 @@ FactoryBot.define do
     source { create(:ramp_election, veteran_file_number: veteran_file_number) }
     code "030HLRR"
     modifier "030"
+    payee_code EndProduct::DEFAULT_PAYEE_CODE
 
     trait :cleared do
       synced_status "CLR"
@@ -25,7 +26,7 @@ FactoryBot.define do
           claim_type_code: end_product_establishment.code,
           end_product_type_code: end_product_establishment.modifier,
           benefit_claim_id: end_product_establishment.reference_id,
-          last_action_date: 5.days.ago
+          last_action_date: 5.days.ago.to_formatted_s(:short_date)
         }
       )
     end

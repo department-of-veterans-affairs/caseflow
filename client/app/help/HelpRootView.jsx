@@ -13,7 +13,7 @@ class HelpRootView extends React.Component {
       { name: 'Reader Help',
         url: '/reader/help' },
       { name: 'Hearings Help',
-        url: '/hearings/help' },
+        url: '/hearing_prep/help' },
       { name: 'Intake Help',
         url: '/intake/help' },
       { name: 'Queue Help',

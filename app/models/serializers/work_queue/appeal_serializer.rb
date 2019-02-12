@@ -79,6 +79,28 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
 
+  attribute :veteran_closest_regional_office do
+    object.veteran_closest_regional_office
+  end
+
+  attribute :veteran_available_hearing_locations do
+    locations = object.veteran_available_hearing_locations || []
+
+    locations.map do |ahl|
+      {
+        name: ahl.name,
+        address: ahl.address,
+        city: ahl.city,
+        state: ahl.state,
+        distance: ahl.distance,
+        facility_id: ahl.facility_id,
+        facility_type: ahl.facility_type,
+        classification: ahl.classification,
+        zip_code: ahl.zip_code
+      }
+    end
+  end
+
   attribute :external_id do
     object.uuid
   end
@@ -128,6 +150,13 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
 
   attribute :attorney_case_review_id do
     latest_attorney_case_review&.id
+  end
+
+  attribute :can_edit_document_id do
+    AmaDocumentIdPolicy.new(
+      user: @instance_options[:user],
+      case_review: latest_attorney_case_review
+    ).editable?
   end
 
   def latest_attorney_case_review

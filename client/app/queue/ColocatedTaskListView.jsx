@@ -6,7 +6,7 @@ import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
 import TaskTable from './components/TaskTable';
-import QueueSelectorDropdown from './components/QueueSelectorDropdown';
+import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import {
@@ -80,7 +80,7 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
     return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} styling={marginBottom(1)} />}
       <h1 {...fullWidth}>{COPY.COLOCATED_QUEUE_PAGE_TABLE_TITLE}</h1>
-      <QueueSelectorDropdown organizations={organizations} />
+      <QueueOrganizationDropdown organizations={organizations} />
       <TabWindow name="tasks-tabwindow" tabs={tabs} />
     </AppSegment>;
   };
@@ -109,13 +109,17 @@ const NewFileIcon = connect(
   (props: { tasks: Array<TaskWithAppeal> }) => <NewFileAll tasks={props.tasks} useOnHoldDate />);
 
 const NewTasksTab = connect(
-  (state: State) => ({ tasks: newTasksByAssigneeCssIdSelector(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => {
+  (state: State) => ({
+    tasks: newTasksByAssigneeCssIdSelector(state),
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
+  }))(
+  (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
         includeTask
+        includeRegionalOffice={props.belongsToHearingSchedule}
         includeType
         includeDocketNumber
         includeDaysWaiting
@@ -126,13 +130,17 @@ const NewTasksTab = connect(
   });
 
 const OnHoldTasksTab = connect(
-  (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => {
+  (state: State) => ({
+    tasks: onHoldTasksByAssigneeCssIdSelector(state),
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
+  }))(
+  (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
         includeTask
+        includeRegionalOffice={props.belongsToHearingSchedule}
         includeType
         includeDocketNumber
         includeDaysOnHold
@@ -145,13 +153,17 @@ const OnHoldTasksTab = connect(
   });
 
 const CompleteTasksTab = connect(
-  (state: State) => ({ tasks: completeTasksByAssigneeCssIdSelector(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => {
+  (state: State) => ({
+    tasks: completeTasksByAssigneeCssIdSelector(state),
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
+  }))(
+  (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
       <TaskTable
         includeDetailsLink
         includeTask
+        includeRegionalOffice={props.belongsToHearingSchedule}
         includeType
         includeDocketNumber
         includeCompletedDate

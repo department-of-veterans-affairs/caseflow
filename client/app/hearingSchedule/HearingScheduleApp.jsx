@@ -12,18 +12,21 @@ import ReviewAssignmentsContainer from './containers/ReviewAssignmentsContainer'
 import ListScheduleContainer from './containers/ListScheduleContainer';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
+import HearingDetailsContainer from './containers/DetailsContainer';
 import ScrollToTop from '../components/ScrollToTop';
 
 export default class HearingScheduleApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
       userRoleAssign,
-      userRoleBuild
+      userRoleBuild,
+      userInHearingsOrganization
     } = this.props;
 
     return {
       userRoleAssign,
-      userRoleBuild
+      userRoleBuild,
+      userInHearingsOrganization
     };
   };
 
@@ -42,6 +45,8 @@ export default class HearingScheduleApp extends React.PureComponent {
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.userPermissionProps()} />;
   routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
   routeForDailyDocket = () => <DailyDocketContainer {...this.userPermissionProps()} />;
+  routeForHearingDetails = ({ match: { params }, history }) =>
+    <HearingDetailsContainer hearingId={params.hearingId} history={history} {...this.userPermissionProps()} />;
 
   render = () => <BrowserRouter basename="/hearings">
     <NavigationBar
@@ -57,6 +62,12 @@ export default class HearingScheduleApp extends React.PureComponent {
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app">
+          <PageRoute
+            exact
+            path="/:hearingId/details"
+            title="Hearing Details"
+            render={this.routeForHearingDetails}
+          />
           <PageRoute
             exact
             path="/schedule"

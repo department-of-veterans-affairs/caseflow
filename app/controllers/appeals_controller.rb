@@ -27,6 +27,7 @@ class AppealsController < ApplicationController
       format.json do
         caseflow_veteran_id = params[:caseflow_veteran_id]
         veteran_file_number = Veteran.find(caseflow_veteran_id).file_number
+
         render json: {
           appeals: get_appeals_for_file_number(veteran_file_number),
           claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
@@ -62,6 +63,28 @@ class AppealsController < ApplicationController
       representative_address: appeal.representative_address
     }
   end
+
+  # :nocov:
+  def hearings
+    most_recently_held_hearing = appeal.hearings
+      .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
+      .max_by(&:scheduled_for)
+
+    render json:
+      if most_recently_held_hearing
+        {
+          held_by: most_recently_held_hearing.judge.present? ? most_recently_held_hearing.judge.full_name : "",
+          viewed_by_judge: !most_recently_held_hearing.hearing_views.empty?,
+          date: most_recently_held_hearing.scheduled_for,
+          type: most_recently_held_hearing.readable_request_type,
+          external_id: most_recently_held_hearing.external_id,
+          disposition: most_recently_held_hearing.disposition
+        }
+      else
+        {}
+      end
+  end
+  # :nocov:
 
   # For legacy appeals, veteran address and birth/death dates are
   # the only data that is being pulled from BGS, the rest are from VACOLS for now

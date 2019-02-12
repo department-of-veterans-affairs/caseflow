@@ -121,12 +121,17 @@ class HearingDayEditModal extends React.Component {
   initialState = () => {
     // find labels in options before passing values to modal
     const room = _.findKey(HEARING_ROOMS_LIST, { label: this.props.dailyDocket.room }) || this.props.dailyDocket.room;
-    const roomOption = { label: HEARING_ROOMS_LIST[room.toString()].label,
-      value: room.toString() };
+
+    if (room) {
+      const roomOption = { label: HEARING_ROOMS_LIST[room.toString()].label,
+        value: room.toString() };
+
+      this.props.selectHearingRoom(roomOption);
+    }
+
     const judge = _.find(this.props.activeJudges, { value: (this.props.dailyDocket.judgeId || '').toString() });
     const coordinator = _.find(this.props.activeCoordinators, { label: this.props.dailyDocket.bvaPoc });
 
-    this.props.selectHearingRoom(roomOption);
     this.props.selectVlj(judge);
     this.props.selectHearingCoordinator(coordinator);
     this.props.setNotes(this.props.dailyDocket.notes);
@@ -158,7 +163,7 @@ class HearingDayEditModal extends React.Component {
           name="room"
           label="Select Room"
           readOnly={!this.state.modifyRoom}
-          value={this.props.hearingRoom.value}
+          value={this.props.hearingRoom ? this.props.hearingRoom.value : null}
           onChange={(value, label) => this.onRoomChange({
             value,
             label
