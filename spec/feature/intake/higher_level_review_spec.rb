@@ -1014,7 +1014,7 @@ feature "Higher-Level Review" do
       duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.detect(&:duplicate_of_rating_issue_in_active_review?)
       expect(duplicate_request_issues).to include(request_issue_in_progress)
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
@@ -1024,7 +1024,7 @@ feature "Higher-Level Review" do
       hlr_request_issues = RequestIssue.where(contested_rating_issue_reference_id: higher_level_review_reference_id)
       expect(hlr_request_issues.count).to eq(2)
 
-      ineligible_due_to_previous_hlr = hlr_request_issues.select(&:higher_level_review_to_higher_level_review?).first
+      ineligible_due_to_previous_hlr = hlr_request_issues.detect(&:higher_level_review_to_higher_level_review?)
       expect(hlr_request_issues).to include(previous_request_issue)
       expect(ineligible_due_to_previous_hlr).to_not eq(previous_request_issue)
       expect(ineligible_due_to_previous_hlr.contention_reference_id).to be_nil
