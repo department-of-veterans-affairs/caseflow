@@ -110,6 +110,8 @@ export default class DailyDocket extends React.Component {
   onHearingRegionalOfficeUpdate = (hearingId) => (regionalOffice) =>
     this.props.onHearingRegionalOfficeUpdate(hearingId, regionalOffice);
 
+  onInvalidForm = (hearingId) => (invalid) => this.props.onInvalidForm(hearingId, invalid);
+
   saveHearing = (hearing) => () => this.props.saveHearing(hearing);
 
   cancelHearingUpdate = (hearing) => () => this.props.onCancelHearingUpdate(hearing);
@@ -178,7 +180,12 @@ export default class DailyDocket extends React.Component {
       strongLabel
       options={DISPOSITION_OPTIONS}
       value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
-      onChange={this.onHearingDispositionUpdate(hearing.id)}
+      onChange={(option) => {
+        this.onHearingDispositionUpdate(hearing.id)(option);
+        if (option.value === 'postponed') {
+          this.onHearingDateUpdate(hearing.id)(null);
+        }
+      }}
       readOnly={readOnly || !_.isUndefined(hearing.editedDate)}
     />;
   };
@@ -275,7 +282,8 @@ export default class DailyDocket extends React.Component {
       label="Hearing Day"
       key={currentRegionalOffice}
       regionalOffice={currentRegionalOffice}
-      value={hearing.editedDate ? hearing.editedDate : hearing.scheduledFor}
+      errorMessage={hearing.invalid ? hearing.invalid.hearingDate : null}
+      value={_.isUndefined(hearing.editedDate) ? hearing.scheduledFor : hearing.editedDate}
       readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
       staticOptions={staticOptions}
       onChange={this.onHearingDateUpdate(hearing.id)} />;
@@ -340,6 +348,21 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
+  validateAndSaveHearing = (hearing) => {
+    return () => {
+      if (hearing.editedDisposition === 'postponed' &&
+        (!hearing.editedDate ||
+          formatDateStr(hearing.editedDate.scheduledFor) === formatDateStr(hearing.scheduledFor))) {
+        return this.onInvalidForm(hearing.id)({ hearingDate: 'Please select a new hearing date.' });
+      }
+
+      this.saveHearing(hearing)();
+      this.onInvalidForm(hearing.id)({
+        hearingDate: null
+      });
+    };
+  }
+
   getSaveButton = (hearing) => {
     return hearing.edited ? <div {...css({
       content: ' ',
@@ -355,7 +378,7 @@ export default class DailyDocket extends React.Component {
       <Button
         styling={css({ float: 'right' })}
         disabled={hearing.dateEdited && !hearing.dispositionEdited}
-        onClick={this.saveHearing(hearing)}>
+        onClick={this.validateAndSaveHearing(hearing)}>
         Save
       </Button>
     </div> : null;
@@ -588,6 +611,7 @@ DailyDocket.propTypes = {
   onHearingDispositionUpdate: PropTypes.func,
   onHearingTimeUpdate: PropTypes.func,
   onHearingRegionalOfficeUpdate: PropTypes.func,
+  onInvalidForm: PropTypes.func,
   openModal: PropTypes.func,
   deleteHearingDay: PropTypes.func,
   notes: PropTypes.string,
