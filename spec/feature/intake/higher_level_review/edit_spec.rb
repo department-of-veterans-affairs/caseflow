@@ -32,12 +32,13 @@ feature "Higher Level Review Edit issues" do
   end
 
   let(:receipt_date) { Time.zone.today - 20 }
+  let(:promulgation_date) { receipt_date - 1 }
   let(:profile_date) { "2017-11-02T07:00:00.000Z" }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
@@ -504,6 +505,10 @@ feature "Higher Level Review Edit issues" do
       expect(page).to have_content("Military Retired Pay")
 
       click_intake_add_issue
+
+      rating_date = promulgation_date.strftime("%m/%d/%Y")
+      expect(page).to have_content("Past decisions from #{rating_date}")
+
       click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
