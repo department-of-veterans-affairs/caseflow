@@ -915,7 +915,6 @@ ActiveRecord::Schema.define(version: 20190211164106) do
     t.integer "assigned_to_id"
     t.string "assigned_to_type", null: false
     t.datetime "closed_at"
-    t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true
     t.integer "on_hold_duration"

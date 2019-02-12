@@ -313,7 +313,9 @@ class AppealRepository
   def self.cases_that_need_hearings
     VACOLS::Case.where(bfhr: "1", bfcurloc: "57").or(VACOLS::Case.where(bfhr: "2", bfdocind: "V", bfcurloc: "57"))
       .joins(:folder).order("folder.tinum")
-      .includes(:correspondent, :case_issues, folder: [:outcoder])
+      .includes(:correspondent, :case_issues, :case_hearings, folder: [:outcoder]).reject do |case_record|
+        case_record.case_hearings.any? { |hearing| hearing.hearing_disp.nil? }
+      end
   end
 
   # rubocop:disable Metrics/AbcSize

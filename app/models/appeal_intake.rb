@@ -36,6 +36,7 @@ class AppealIntake < DecisionReviewIntake
   def complete!(request_params)
     super(request_params) do
       detail.update!(established_at: Time.zone.now)
+      detail.set_target_decision_date!
       detail.create_tasks_on_intake_success!
       detail.submit_for_processing!
       if run_async?

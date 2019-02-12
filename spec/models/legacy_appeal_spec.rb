@@ -1627,7 +1627,7 @@ describe LegacyAppeal do
 
       it { expect(subject.length).to eq(4) }
       it { is_expected.to include("Foreign claim - compensation claims, dual claims, appeals") }
-      it { is_expected.to include("Vocational Rehab") }
+      it { is_expected.to include("Vocational Rehabilitation and Employment") }
       it { is_expected.to include(/Education - GI Bill, dependents educational assistance/) }
       it { is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands") }
     end

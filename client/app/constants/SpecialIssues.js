@@ -288,7 +288,7 @@ const SPECIAL_ISSUES = [
     queueSectionOrder: 4
   },
   {
-    display: 'Vocational Rehab',
+    display: 'Vocational Rehabilitation and Employment',
     queueDisplay: 'Vocational Rehabilitation and Employment (VR&E)',
     specialIssue: 'vocationalRehab',
     snakeCase: 'vocational_rehab',

@@ -294,4 +294,48 @@ describe AppealRepository do
       end
     end
   end
+
+  context "#cases_that_need_hearings" do
+    let!(:case_without_hearing) { create(:case, bfcurloc: "57", bfhr: "1") }
+    let!(:case_with_closed_hearing) do
+      create(
+        :case,
+        bfcurloc: "57",
+        bfhr: "1",
+        case_hearings: [create(:case_hearing, hearing_disp: "H")]
+      )
+    end
+    let!(:case_with_open_hearing) do
+      create(
+        :case,
+        bfcurloc: "57",
+        bfhr: "1",
+        case_hearings: [create(:case_hearing, hearing_disp: nil)]
+      )
+    end
+    let!(:case_with_two_closed_hearings) do
+      create(
+        :case,
+        bfcurloc: "57",
+        bfhr: "1",
+        case_hearings: create_list(:case_hearing, 2, hearing_disp: "H")
+      )
+    end
+    let!(:case_with_two_open_hearings) do
+      create(
+        :case,
+        bfcurloc: "57",
+        bfhr: "1",
+        case_hearings: create_list(:case_hearing, 2, hearing_disp: nil)
+      )
+    end
+
+    it "excludes cases that have open hearings" do
+      expect(AppealRepository.cases_that_need_hearings).to match_array(
+        [
+          case_without_hearing, case_with_closed_hearing, case_with_two_closed_hearings
+        ]
+      )
+    end
+  end
 end
