@@ -54,6 +54,7 @@ export default class HearingScheduleApp extends React.PureComponent {
       defaultUrl="/schedule"
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
+      applicationUrls={this.props.applicationUrls}
       logoProps={{
         overlapColor: LOGO_COLORS.HEARING_SCHEDULE.OVERLAP,
         accentColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT
