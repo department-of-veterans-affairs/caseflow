@@ -366,7 +366,7 @@ class Appeal < DecisionReview
   end
 
   def status_hash
-    { type: fetch_status, details: {} }
+    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def fetch_status
@@ -412,6 +412,63 @@ class Appeal < DecisionReview
   end
   # rubocop:enable CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
+
+  # rubocop:disable Metrics/MethodLength
+  def fetch_details_for_status
+    case fetch_status
+    when :bva_decision
+      {
+        issues: api_issues_for_status_details_issues(decision_issues)
+      }
+    when :ama_remand
+      {
+        issues: api_issues_for_status_details_issues(decision_issues)
+      }
+    when :post_bva_dta_decision
+      post_bva_dta_decision_status_details
+    when :bva_decision_effectuation
+      {
+        bvaDecisionDate: decision_event_date,
+        aojDecisionDate: decision_effectuation_event_date
+      }
+    when :pending_hearing_scheduling
+      {
+        type: "video"
+      }
+    else
+      {}
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def post_bva_dta_decision_status_details
+    issue_list = remanded_sc_decision_issues
+    {
+      issues: api_issues_for_status_details_issues(issue_list),
+      bvaDecisionDate: decision_event_date,
+      aojDecisionDate: dta_descision_event_date
+    }
+  end
+
+  def api_issues_for_status_details_issues(issue_list)
+    issue_list.map do |issue|
+      {
+        description: issue.api_status_description,
+        disposition: issue.api_status_disposition
+      }
+    end
+  end
+
+  def remanded_sc_decision_issues
+    issue_list = []
+    remand_supplemental_claims.each do |sc|
+      sc.decision_issues.map do |di|
+        issue_list << di
+      end
+    end
+
+    issue_list
+  end
 
   def pending_schedule_hearing_task?
     tasks.active.where(type: ScheduleHearingTask.name).any?
@@ -616,25 +673,6 @@ class Appeal < DecisionReview
       .select do |issue|
         issue.approx_decision_date && issue.approx_decision_date < receipt_date
       end
-  end
-
-  def issue_active_status(issue)
-    return true if issue.is_a?(RequestIssue)
-    return true if issue.is_a?(DecisionIssue) && issue.disposition == "remanded"
-
-    false
-  end
-
-  def get_issue_last_action(issue)
-    return unless issue.is_a?(DecisionIssue)
-
-    return "remand" if issue.disposition == "remanded"
-
-    issue.disposition
-  end
-
-  def get_issue_last_action_date(issue)
-    issue.approx_decision_date if issue.is_a?(DecisionIssue)
   end
 end
 # rubocop:enable Metrics/ClassLength

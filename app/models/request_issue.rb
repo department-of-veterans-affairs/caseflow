@@ -434,7 +434,22 @@ class RequestIssue < ApplicationRecord
     # may need to be updated if an issue is withdrawn
   end
 
+  def api_status_description
+    description = fetch_diagnostic_code_status_description(diagnostic_code)
+    return description if description
+
+    "#{benefit_type.capitalize} issue"
+  end
+
   private
+
+  def fetch_diagnostic_code_status_description(diagnostic_code)
+    if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["status_description"]
+      description[0] = description[0].upcase
+      description
+    end
+  end
 
   # The contested_rating_issue_profile_date is used as an identifier to retrieve the
   # appropriate rating. It needs to be saved in the same format and time zone that it
