@@ -20,7 +20,7 @@ describe Distribution do
       end
     end
 
-    Distribution.destroy_all
+    DistributedCase.delete_all
   end
 
   after do
