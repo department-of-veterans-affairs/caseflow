@@ -47,7 +47,6 @@ class Judge
   end
 
   def get_dockets_slots(dockets)
-    # binding.pry
     # fetching all the RO keys of the dockets
     regional_office_keys = dockets.map { |_date, docket| docket.regional_office_key }
 
@@ -59,7 +58,7 @@ class Judge
     dockets.map do |date, docket|
       record = ro_staff_hash[docket.regional_office_key]
       [date, (if record
-                HearingDayRepository.fetch_hearing_day_slots(regional_office: docket.regional_office_key[:regional_office])
+                HearingDayRepository.fetch_hearing_day_slots(docket.regional_office_key)
               end)]
     end.to_h
   end

@@ -31,26 +31,7 @@ class HearingDayRepository
       [video_and_co, travel_board]
     end
 
-    # STAFF.STC2 is the Travel Board limit for Mon and Fri
-    # STAFF.STC3 is the Travel Board limit for Tue, Wed, Thur
-    # STAFF.STC4 is the Video limit
-    def slots_based_on_type(staff:, type:, date:)
-      case type
-      when HearingDay::REQUEST_TYPES[:central]
-        11
-      when HearingDay::REQUEST_TYPES[:video]
-        staff.stc4
-      when HearingDay::REQUEST_TYPES[:travel]
-        (date.monday? || date.friday?) ? staff.stc2 : staff.stc3
-      end
-    end
-
     def fetch_hearing_day_slots(regional_office)
-      # returns the total slots for the hearing day's regional office.
-      if regional_office == nil
-        return 12
-      end
-      
       HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
     end
 
