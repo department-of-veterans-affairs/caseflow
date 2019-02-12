@@ -159,7 +159,7 @@ class AddEditIssueView extends React.Component<Params> {
       );
     }
 
-    requestPromise.then((resp) => this.updateIssuesFromServer(JSON.parse(resp.text)));
+    requestPromise.then((resp) => this.updateIssuesFromServer(JSON.parse(resp.text))).catch((err) => console.log('the error on requestSave: ', err));
   };
 
   updateIssuesFromServer = (response) => {

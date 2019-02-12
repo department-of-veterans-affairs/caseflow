@@ -144,7 +144,8 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 
           this.props.onReceiveAmaTasks(response.tasks.data);
         }
-      });
+      }).
+      catch((err) => console.log('the error on requestSave: ', err));
   }
 
   singleIssueTemplate = (action, total, index) => {

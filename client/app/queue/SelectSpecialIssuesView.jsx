@@ -41,7 +41,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
 
     const data = ApiUtil.convertToSnakeCase({ specialIssues });
 
-    this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, null);
+    this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, null).catch((err) => console.log('the error on requestSave: ', err));
   };
   render() {
     const { specialIssues } = this.props;

@@ -159,7 +159,8 @@ class EvaluateDecisionView extends React.PureComponent {
       then(() => this.props.deleteAppeal(appealId), (response) => {
         // eslint-disable-next-line no-console
         console.log(response);
-      });
+      }).
+      catch((err) => console.log('the error on requestSave: ', err));
   }
 
   getDisplayOptions = (opts) => _.map(JUDGE_CASE_REVIEW_OPTIONS[opts.toUpperCase()],
