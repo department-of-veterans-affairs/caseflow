@@ -544,6 +544,7 @@ export default class DailyDocket extends React.Component {
         VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
         Coordinator: {this.props.dailyDocket.bvaPoc} <br />
         Hearing type: {this.props.dailyDocket.requestType} <br />
+        Regional office: {this.props.dailyDocket.regionalOffice}<br />
         Room number: {this.props.dailyDocket.room}
       </span>
       <div {...noMarginStyling}>
