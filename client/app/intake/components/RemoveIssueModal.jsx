@@ -4,10 +4,10 @@ import React from 'react';
 
 import { removeIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
-import { benefitTypeLooksLikeCompensation } from '../util';
+import { benefitTypeProcessedInVBMS } from '../util';
 
 const removeIssueMessage = (intakeData) => {
-  if (intakeData.benefitType && !benefitTypeLooksLikeCompensation(intakeData.benefitType)) {
+  if (intakeData.benefitType && !benefitTypeProcessedInVBMS(intakeData.benefitType)) {
     return <div>
       <p>The contention you selected will be removed from the decision review.</p>
       <p>Are you sure you want to remove this issue?</p>

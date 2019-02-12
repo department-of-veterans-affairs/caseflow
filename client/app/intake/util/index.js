@@ -23,7 +23,7 @@ export const convertStringToBoolean = (string) => {
   return null;
 };
 
-export const benefitTypeLooksLikeCompensation = (benefitType) => {
+export const benefitTypeProcessedInVBMS = (benefitType) => {
   return (benefitType === 'compensation' || benefitType === 'pension');
 };
 
