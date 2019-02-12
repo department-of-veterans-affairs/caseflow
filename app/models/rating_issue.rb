@@ -5,7 +5,7 @@ class RatingIssue
   include ActiveModel::Model
 
   attr_accessor :reference_id, :decision_text, :profile_date, :associated_end_products,
-                :promulgation_date, :participant_id, :rba_contentions_data, :disability_code,
+                :promulgation_date, :participant_id, :rba_contentions_data, :diagnostic_code,
                 :benefit_type
 
   class << self
@@ -18,7 +18,7 @@ class RatingIssue
         associated_end_products: rating.associated_end_products,
         promulgation_date: rating.promulgation_date,
         participant_id: rating.participant_id,
-        disability_code: bgs_data[:dgnstc_tc],
+        diagnostic_code: bgs_data[:dgnstc_tc],
         benefit_type: rating.pension? ? :pension : :compensation
       )
     end
@@ -32,7 +32,7 @@ class RatingIssue
         promulgation_date: serialized_hash[:promulgation_date],
         profile_date: serialized_hash[:profile_date],
         rba_contentions_data: serialized_hash[:rba_contentions_data],
-        disability_code: serialized_hash[:disability_code],
+        diagnostic_code: serialized_hash[:diagnostic_code],
         benefit_type: serialized_hash[:benefit_type]
       )
     end
@@ -69,7 +69,7 @@ class RatingIssue
       title_of_active_review: title_of_active_review,
       rba_contentions_data: rba_contentions_data,
       associated_end_products: associated_end_products.map(&:serialize),
-      disability_code: disability_code,
+      diagnostic_code: diagnostic_code,
       benefit_type: benefit_type
     }
   end
