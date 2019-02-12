@@ -429,12 +429,7 @@ module IntakeHelpers
                   reject_reason: "Locked Rating")
   end
 
-  def generate_ratings_with_disabilities(
-    veteran,
-    promulgation_date,
-    profile_date,
-    issues: []
-  )
+  def generate_ratings_with_disabilities(veteran, promulgation_date, profile_date, issues: [])
     if issues == []
       issues = [
         {
@@ -460,7 +455,7 @@ module IntakeHelpers
         dis_sn: "rating#{i}",
         disability_evaluations: {
           dis_dt: promulgation_date.to_datetime,
-          dgnstc_tc: "disability_code#{i}"
+          dgnstc_tc: "diagnostic_code#{i}"
         }
       }
     end
@@ -474,7 +469,7 @@ module IntakeHelpers
     )
   end
 
-  def save_and_check_request_issues_with_disability_codes(form_name, decision_review)
+  def save_and_check_request_issues_with_diagnostic_codes(form_name, decision_review)
     click_intake_add_issue
     expect(page).to have_content("this is a disability")
     expect(page).to have_content("this is another disability")
@@ -489,12 +484,14 @@ module IntakeHelpers
       expect(page).to have_content("#{form_name} has been processed.")
     end
 
-    expect(RequestIssue.find_by(
-             contested_rating_issue_disability_code: "disability_code1",
-             contested_rating_issue_reference_id: "disability1",
-             contested_issue_description: "this is another disability",
-             decision_review: decision_review
-           )).to_not be_nil
+    expect(
+      RequestIssue.find_by(
+        contested_rating_issue_diagnostic_code: "diagnostic_code1",
+        contested_rating_issue_reference_id: "disability1",
+        contested_issue_description: "this is another disability",
+        decision_review: decision_review
+      )
+    ).to_not be_nil
   end
 
   # rubocop:disable Metrics/AbcSize
