@@ -242,6 +242,7 @@ describe Appeal do
       create(:decision_issue,
              decision_review: another_review,
              profile_date: receipt_date + 1.day,
+             promulgation_date: receipt_date + 1.day,
              benefit_type: another_review.benefit_type,
              decision_text: "something was decided in the future",
              description: "future issue",

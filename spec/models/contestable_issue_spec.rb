@@ -25,6 +25,7 @@ describe ContestableIssue do
     create(:decision_issue,
            rating_issue_reference_id: "rating1",
            profile_date: profile_date,
+           promulgation_date: promulgation_date,
            description: "this is a good decision",
            benefit_type: benefit_type)
   end
@@ -88,7 +89,7 @@ describe ContestableIssue do
         rating_issue_reference_id: "rating1",
         rating_issue_profile_date: profile_date,
         decision_issue_id: decision_issue.id,
-        date: profile_date,
+        date: promulgation_date,
         description: decision_issue.description,
         source_request_issues: decision_issue.request_issues,
         contesting_decision_review: decision_review
@@ -99,7 +100,7 @@ describe ContestableIssue do
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: nil,
         decisionIssueId: decision_issue.id,
-        date: profile_date,
+        date: promulgation_date,
         description: decision_issue.description,
         rampClaimId: nil,
         titleOfActiveReview: nil,
@@ -109,7 +110,7 @@ describe ContestableIssue do
     end
 
     context "is untimely" do
-      let(:profile_date) { Time.zone.today - 373.days }
+      let(:promulgation_date) { Time.zone.today - 373.days }
 
       it "can be serialized" do
         expect(subject.serialize).to eq(
@@ -117,7 +118,7 @@ describe ContestableIssue do
           ratingIssueProfileDate: profile_date,
           ratingIssueDiagnosticCode: nil,
           decisionIssueId: decision_issue.id,
-          date: profile_date,
+          date: promulgation_date,
           description: decision_issue.description,
           rampClaimId: nil,
           titleOfActiveReview: nil,
