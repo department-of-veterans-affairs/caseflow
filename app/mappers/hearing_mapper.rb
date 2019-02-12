@@ -55,9 +55,6 @@ module HearingMapper
     def timezone(regional_office_key)
       regional_office = RegionalOffice::CITIES[regional_office_key] ||
                         RegionalOffice::SATELLITE_OFFICES[regional_office_key]
-      # if regional_office == nil
-      #   binding.pry
-      # end
       regional_office[:timezone]
     end
 
