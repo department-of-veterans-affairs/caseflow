@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -37,37 +36,7 @@ import {
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
 
-import type {
-  Task,
-  Appeal,
-  Judges
-} from './types/models';
-import type { UiStateMessage } from './types/state';
-
-type Params = {|
-  appealId: string,
-  taskId: string,
-  checkoutFlow: string,
-  nextStep: string
-|};
-
-type Props = Params & {|
-  // state
-  appeal: Appeal,
-  judges: Judges,
-  decision: Object,
-  task: Task,
-  highlightFormItems: Boolean,
-  amaDecisionIssues: Boolean,
-  userRole: string,
-  error: ?UiStateMessage,
-  // dispatch
-  setDecisionOptions: typeof setDecisionOptions,
-  requestSave: typeof requestSave,
-  deleteAppeal: typeof deleteAppeal
-|};
-
-class SubmitDecisionView extends React.PureComponent<Props> {
+class SubmitDecisionView extends React.PureComponent {
 
   componentDidMount = () => {
     this.extendedDecision = this.extendDecisionOptsWithAttorneyCheckOutInfo(
@@ -89,11 +58,10 @@ class SubmitDecisionView extends React.PureComponent<Props> {
 
     const decisionOptsWithAttorneyCheckoutInfo =
 
-      _.merge(decision.opts, { document_id: attorneyCaseRewriteDetails.document_id,
-        note: attorneyCaseRewriteDetails.note_from_attorney,
-        overtime: attorneyCaseRewriteDetails.overtime,
-        reviewing_judge_id: attorneyCaseRewriteDetails.assigned_judge.id
-
+      _.merge(decision.opts, { document_id: _.get(attorneyCaseRewriteDetails, 'document_id'),
+        note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
+        overtime: _.get(attorneyCaseRewriteDetails, 'overtime'),
+        reviewing_judge_id: _.get(attorneyCaseRewriteDetails, 'assigned_judge.id')
       });
     const extendedDecision = { ...decision };
 
@@ -291,5 +259,5 @@ export default (connect(
   mapDispatchToProps
 )(
   decisionViewBase(SubmitDecisionView)
-): React.ComponentType<Params>
+)
 );
