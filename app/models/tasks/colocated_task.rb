@@ -55,7 +55,7 @@ class ColocatedTask < Task
   # rubocop:enable Metrics/AbcSize
 
   def actions_available?(user)
-    return false if completed? || assigned_to != user
+    return false if !active? || assigned_to != user
 
     true
   end
@@ -85,7 +85,7 @@ class ColocatedTask < Task
   end
 
   def all_tasks_completed_for_appeal?
-    appeal.tasks.where(type: ColocatedTask.name).map(&:status).uniq == [Constants.TASK_STATUSES.completed]
+    appeal.tasks.active.where(type: ColocatedTask.name).none?
   end
 
   def on_hold_duration_is_set

@@ -8,8 +8,7 @@ class RootTask < GenericTask
   def when_child_task_completed; end
 
   def update_children_status
-    children.where(type: TrackVeteranTask.name).where.not(status: Constants.TASK_STATUSES.completed)
-      .update_all(status: Constants.TASK_STATUSES.completed)
+    children.active.where(type: TrackVeteranTask.name).update_all(status: Constants.TASK_STATUSES.completed)
   end
 
   def hide_from_task_snapshot
@@ -24,9 +23,9 @@ class RootTask < GenericTask
 
   def can_create_schedule_hearings_task?(user)
     HearingsManagement.singleton.user_has_access?(user) &&
-      !completed? &&
+      active? &&
       legacy? &&
-      children.where(type: ScheduleHearingTask.name).where.not(status: Constants.TASK_STATUSES.completed).empty?
+      children.active.where(type: ScheduleHearingTask.name).empty?
   end
 
   def actions_available?(_user)
