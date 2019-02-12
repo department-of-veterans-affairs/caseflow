@@ -47,7 +47,10 @@ class HearingDayRepository
 
     def fetch_hearing_day_slots(regional_office)
       # returns the total slots for the hearing day's regional office.
-
+      if regional_office == nil
+        return 12
+      end
+      
       HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
     end
 
