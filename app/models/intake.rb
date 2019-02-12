@@ -89,8 +89,8 @@ class Intake < ApplicationRecord
       .where("completed_at > ?", Time.zone.now - n_days.days)
       .where(completion_status: "success")
       .order("day_completed").each do |intake|
-      completed = intake[:day_completed]
-      type = intake.type.sub("Intake", "").constantize.review_title
+      completed = intake[:day_completed].iso8601
+      type = intake.detail_type.constantize.review_title
       stats[completed] ||= { type => 0 }
       stats[completed][type] ||= 0
       stats[completed][type] += 1
