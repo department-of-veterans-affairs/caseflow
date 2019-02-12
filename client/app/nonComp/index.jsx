@@ -17,7 +17,7 @@ class NonComp extends React.PureComponent {
   render() {
     const Router = this.props.router || BrowserRouter;
     const initialState = mapDataToInitialState(this.props);
-    const appName = 'Lines of Business';
+    const appName = this.props.serverNonComp.businessLine;
 
     return <ReduxBase initialState={initialState} reducer={nonCompReducer}>
       <Router basename="/decision_reviews" {...this.props.routerTestProps}>
@@ -31,7 +31,7 @@ class NonComp extends React.PureComponent {
             userDisplayName={this.props.userDisplayName}
             dropdownUrls={this.props.dropdownUrls}
             topMessage={null}
-            defaultUrl="/">
+            defaultUrl={`/${this.props.serverNonComp.businessLineUrl}`}>
             <AppFrame>
               <AppSegment filledBackground>
                 {this.props.flash && <FlashAlerts flash={this.props.flash} />}
@@ -39,12 +39,12 @@ class NonComp extends React.PureComponent {
                   <PageRoute
                     exact
                     path="/:businessLineSlug/tasks/:taskId"
-                    title="Dispositions | Caseflow"
+                    title={`${appName} Dispositions | Caseflow`}
                     component={TaskPage} />
                   <PageRoute
                     exact
                     path="/:businessLineSlug"
-                    title="Reviews | Caseflow"
+                    title={`${appName} Reviews | Caseflow`}
                     component={ReviewPage} />
                 </div>
               </AppSegment>
