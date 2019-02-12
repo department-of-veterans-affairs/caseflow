@@ -180,14 +180,14 @@ describe HigherLevelReview do
         [
           create(:decision_issue,
                  decision_review: higher_level_review,
-                 disposition: HigherLevelReview::DTA_ERROR_PMR,
+                 disposition: DecisionIssue::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
                  profile_date: profile_date,
                  caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type),
           create(:decision_issue,
                  decision_review: higher_level_review,
-                 disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
+                 disposition: DecisionIssue::DTA_ERROR_FED_RECS,
                  rating_issue_reference_id: "rating2",
                  profile_date: profile_date,
                  caseflow_decision_date: caseflow_decision_date,
@@ -426,7 +426,7 @@ describe HigherLevelReview do
       let!(:hlr_decision_issue_with_dta_error) do
         create(:decision_issue,
                decision_review: hlr_with_dta_error,
-               disposition: HigherLevelReview::DTA_ERROR_PMR,
+               disposition: DecisionIssue::DTA_ERROR_PMR,
                rating_issue_reference_id: "rating1",
                benefit_type: benefit_type,
                end_product_last_action_date: hlr_ep_clr_date)

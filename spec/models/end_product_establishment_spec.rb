@@ -896,7 +896,7 @@ describe EndProductEstablishment do
         let!(:decision_issue) do
           create(:decision_issue,
                  decision_review: source,
-                 disposition: HigherLevelReview::DTA_ERROR_PMR,
+                 disposition: DecisionIssue::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
                  end_product_last_action_date: 5.days.ago.to_date)
         end

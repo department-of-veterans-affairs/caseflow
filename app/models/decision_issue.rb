@@ -19,6 +19,14 @@ class DecisionIssue < ApplicationRecord
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_one :contesting_request_issue, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
 
+  # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
+  # The characters an encoding is precise so don't change these unless you know they match VBMS values.
+  DTA_ERROR_PMR = "DTA Error - PMRs".freeze
+  DTA_ERROR_FED_RECS = "DTA Error - Fed Recs".freeze
+  DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs".freeze
+  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO".freeze
+  DTA_ERRORS = [DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
+
   class AppealDTAPayeeCodeError < StandardError
     def initialize(appeal_id)
       super("Can't create a SC DTA for appeal #{appeal_id} due to missing payee code")
@@ -36,12 +44,21 @@ class DecisionIssue < ApplicationRecord
       where(disposition: "remanded")
     end
 
-    def contested
+    def with_dta_error
+      where(disposition: DTA_ERRORS)
+    end
 
+    def contested
+      joins("INNER JOIN request_issues on request_issues.contested_decision_issue_id = decision_issues.id")
     end
 
     def uncontested
-      
+      joins("LEFT JOIN request_issues on decision_issues.id = request_issues.contested_decision_issue_id")
+      .where("request_issues.contested_decision_issue_id IS NULL")
+    end
+
+    def needs_dta_claim
+      remanded.or(with_dta_error).uncontested
     end
   end
 
@@ -79,8 +96,8 @@ class DecisionIssue < ApplicationRecord
     }
   end
 
-  def find_or_create_remand_supplemental_claim!
-    find_remand_supplemental_claim || create_remand_supplemental_claim!
+  def find_or_create_dta_supplemental_claim!
+    find_dta_supplemental_claim || create_dta_supplemental_claim!
   end
 
   def imo?
@@ -145,7 +162,7 @@ class DecisionIssue < ApplicationRecord
     latest_ep.payee_code
   end
 
-  def find_remand_supplemental_claim
+  def find_dta_supplemental_claim
     SupplementalClaim.find_by(
       veteran_file_number: veteran_file_number,
       decision_review_remanded: decision_review,
@@ -153,7 +170,7 @@ class DecisionIssue < ApplicationRecord
     )
   end
 
-  def create_remand_supplemental_claim!
+  def create_dta_supplemental_claim!
     # Checking our assumption that approx_decision_date will always be populated for Decision Issues
     fail "approx_decision_date is required to create a DTA Supplemental Claim" unless approx_decision_date
 
@@ -168,7 +185,7 @@ class DecisionIssue < ApplicationRecord
 
     sc.create_claimants!(
       participant_id: decision_review.claimant_participant_id,
-      payee_code: prior_payee_code
+      payee_code: decision_review.payee_code || prior_payee_code
     )
 
     sc

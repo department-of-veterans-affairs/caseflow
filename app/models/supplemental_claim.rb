@@ -36,10 +36,6 @@ class SupplementalClaim < ClaimReview
     Array.wrap(review_status_id)
   end
 
-  def active?
-    end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
-  end
-
   def description
     # need to implement
   end
@@ -61,11 +57,7 @@ class SupplementalClaim < ClaimReview
   def decision_event_date
     return unless decision_issues.any?
 
-    if end_product_establishments.any?
-      decision_issues.first.approx_decision_date
-    else
-      decision_issues.first.promulgation_date
-    end
+    decision_issues.first.approx_decision_date
   end
 
   def other_close_event_date
@@ -119,11 +111,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def remanded_decision_issues_needing_request_issues
-    remanded_decision_issues.reject(&:contesting_request_issue)
-  end
-
-  def remanded_decision_issues
-    decision_review_remanded.decision_issues.remanded.where(benefit_type: benefit_type)
+    decision_review_remanded.decision_issues.needs_dta_claim.where(benefit_type: benefit_type)
   end
 
   def fetch_status

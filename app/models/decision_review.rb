@@ -213,16 +213,32 @@ class DecisionReview < ApplicationRecord
     end
   end
 
-  def create_remand_supplemental_claims!
-    decision_issues.remanded.uncontested.each(&:find_or_create_remand_supplemental_claim!)
-    remand_supplemental_claims.each(&:create_remand_issues!)
-    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
-    remand_supplemental_claims.each(&:submit_for_processing!)
-    remand_supplemental_claims.each(&:start_processing_job!)
+  def has_incomplete_tasks?
+    tasks.reject(&:completed?).any?
   end
 
-  def active_remanded_claims?
-    remand_supplemental_claims.any?(&:active?)
+  def active?
+    end_product_establishments.any? { |ep| ep.status_active?(sync: false) } || has_incomplete_tasks?
+  end
+
+  def create_dta_supplemental_claims!
+    decision_issues.needs_dta_claim.each(&:find_or_create_dta_supplemental_claim!)
+    dta_supplemental_claims.each(&:create_remand_issues!)
+    dta_supplemental_claims.each(&:create_decision_review_task_if_required!)
+    dta_supplemental_claims.each(&:submit_for_processing!)
+    dta_supplemental_claims.each(&:start_processing_job!)
+  end
+
+  def active_dta_claims?
+    dta_supplemental_claims.any?(&:active?)
+  end
+
+  def dta_decision_event_date
+    return if active?
+    return unless dta_supplemental_claims.any?
+    return if active_dta_claims?
+
+    dta_supplemental_claims.map(&:decision_event_date).max
   end
 
   private

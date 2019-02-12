@@ -36,6 +36,32 @@ describe DecisionIssue do
   let(:decision_date) { 10.days.ago }
   let(:decision_review) { create(:supplemental_claim, benefit_type: benefit_type) }
 
+  context "scopes" do
+    let!(:contesting_request_issue) { create(:request_issue, contested_decision_issue_id: decision_issue.id)}
+
+    context ".contested" do
+      it "matches decision issue that has been contested" do
+        expect(DecisionIssue.contested).to eq([decision_issue])
+      end
+    end
+
+    context ".uncontested" do
+      let!(:uncontested_decision_issue) { create(:decision_issue)}
+      it "matches decision issues that has not been contested" do
+        expect(DecisionIssue.uncontested).to eq([uncontested_decision_issue])
+      end
+    end
+
+    context ".needs_dta_claim" do
+      let!(:uncontested_remand_di) { create(:decision_issue, id: 55, disposition: "remanded")}
+      let!(:uncontested_dta_di) { create(:decision_issue, id: 56, disposition: "DTA Error - PMRs")}
+      it "includes uncontested remanded or dta error issues" do
+        expect(DecisionIssue.needs_dta_claim).to include(uncontested_remand_di, uncontested_dta_di)
+        expect(DecisionIssue.needs_dta_claim).to_not include(decision_issue)
+      end
+    end
+  end
+
   context "#save" do
     subject { decision_issue.save }
 
@@ -277,8 +303,8 @@ describe DecisionIssue do
     end
   end
 
-  context "#find_or_create_remand_supplemental_claim!" do
-    subject { decision_issue.find_or_create_remand_supplemental_claim! }
+  context "#find_or_create_dta_supplemental_claim!" do
+    subject { decision_issue.find_or_create_dta_supplemental_claim! }
 
     context "when approx_decision_date is nil" do
       let(:decision_review) { create(:appeal) }

@@ -3,17 +3,9 @@ class HigherLevelReview < ClaimReview
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
-  has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
+  has_many :dta_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 034 035 036 037 038 039].freeze
-
-  # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
-  # The characters an encoding is precise so don't change these unless you know they match VBMS values.
-  DTA_ERROR_PMR = "DTA Error - PMRs".freeze
-  DTA_ERROR_FED_RECS = "DTA Error - Fed Recs".freeze
-  DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs".freeze
-  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO".freeze
-  DTA_ERRORS = [DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
   def self.review_title
     Constants.INTAKE_FORM_NAMES_SHORT.higher_level_review
@@ -28,7 +20,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def on_decision_issues_sync_processed(_end_product_establishment)
-    create_remand_supplemental_claims!
+    create_dta_supplemental_claims!
   end
 
   # needed for appeal status api
@@ -46,7 +38,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def active?
-    hlr_ep_active? || active_remanded_claims?
+    hlr_ep_active? || active_dta_claims?
   end
 
   def description
@@ -67,7 +59,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def decision_event_date
-    return if remand_supplemental_claims.any?
+    return if dta_supplemental_claims.any?
     return unless decision_issues.any?
 
     if end_product_establishments.any?
@@ -79,18 +71,9 @@ class HigherLevelReview < ClaimReview
 
   def dta_error_event_date
     return if hlr_ep_active?
-    return unless remand_supplemental_claims.any?
+    return unless dta_supplemental_claims.any?
 
-    decision_issues.find_by(disposition: DTA_ERRORS).approx_decision_date
-  end
-
-  def dta_descision_event_date
-    return if active?
-    return unless remand_supplemental_claims.any?
-
-    # Making a guess here with the switching from a one-to-one to a one to many relationship - should this not return
-    # anything until all remand supplemental claims are done? Then should it return the last decision_event_date?
-    remand_supplemental_claims.first.decision_event_date
+    decision_issues.with_dta_error.first.approx_decision_date
   end
 
   def other_close_event_date
@@ -131,11 +114,10 @@ class HigherLevelReview < ClaimReview
   def fetch_status
     if hlr_ep_active?
       :hlr_received
-    elsif active_remanded_claims?
+    elsif active_dta_claims?
       :hlr_dta_error
-    elsif remand_supplemental_claims.any?
-      dta_claim.decision_issues.empty ? :hlr_closed : :hlr_decision
-      remand_supplemental_claims.each do |rsc|
+    elsif dta_supplemental_claims.any?
+      dta_supplemental_claims.each do |rsc|
         return :hlr_decision if rsc.decision_issues.any?
       end
       return :hlr_closed

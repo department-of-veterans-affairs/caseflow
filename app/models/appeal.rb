@@ -9,7 +9,7 @@ class Appeal < DecisionReview
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
-  has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
+  has_many :dta_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
 
@@ -322,19 +322,19 @@ class Appeal < DecisionReview
   end
 
   def active_status?
-    active? || active_ep? || active_remanded_claims?
+    active? || active_ep? || active_dta_claims?
   end
 
   def active_ep?
     decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
   end
 
-  # def active_remanded_claims?
-  #   remand_supplemental_claims.any?(&:active?)
+  # def active_dta_claims?
+  #   dta_supplemental_claims.any?(&:active?)
   # end
 
   def location
-    if active_ep? || active_remanded_claims?
+    if active_ep? || active_dta_claims?
       "aoj"
     else
       "bva"
@@ -416,7 +416,7 @@ class Appeal < DecisionReview
   end
 
   def remanded_sc_with_ep
-    @remanded_sc_with_ep ||= remand_supplemental_claims.find(&:processed_in_vbms?)
+    @remanded_sc_with_ep ||= dta_supplemental_claims.select(&:processed_in_vbms?)
   end
 
   def withdrawn?
@@ -505,13 +505,6 @@ class Appeal < DecisionReview
     return if active_ep?
 
     decision_document.end_product_establishments.first.last_synced_at
-  end
-
-  def dta_descision_event_date
-    return unless remanded_sc_with_ep
-    return if remanded_sc_with_ep.active?
-
-    remanded_sc_with_ep.decision_event_date
   end
 
   def other_close_event_date
