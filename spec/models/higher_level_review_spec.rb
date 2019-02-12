@@ -678,12 +678,12 @@ describe HigherLevelReview do
     end
 
     let!(:hlr_decision_issue) do
-        create(:decision_issue,
-               decision_review: hlr,
-               disposition: "denied",
-               benefit_type: benefit_type,
-               end_product_last_action_date: hlr_decision_date,
-               diagnostic_code: "8877")
+      create(:decision_issue,
+             decision_review: hlr,
+             disposition: "denied",
+             benefit_type: benefit_type,
+             end_product_last_action_date: hlr_decision_date,
+             diagnostic_code: "8877")
     end
 
     it "has decision status and status details" do

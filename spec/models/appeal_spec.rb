@@ -911,7 +911,8 @@ describe Appeal do
   context "#status_hash" do
     let(:judge) { create(:user) }
     let!(:hearings_user) { create(:hearings_coordinator) }
-    let(:appeal) { create(:appeal) }
+    let!(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+    let(:appeal) { create(:appeal, receipt_date: receipt_date) }
     let(:root_task_status) { "in_progress" }
     let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status) }
 
@@ -1009,15 +1010,21 @@ describe Appeal do
         create(:ama_judge_decision_review_task,
                assigned_to: judge, appeal: appeal, status: judge_review_task_status)
       end
-      let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
+      let!(:not_remanded_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal, caseflow_decision_date: receipt_date + 60.days)
+      end
       let(:decision_document) { create(:decision_document, appeal: appeal) }
       let(:ep_status) { "CLR" }
-      let!(:effectuation_ep) { create(:end_product_establishment, source: decision_document, synced_status: ep_status) }
+      let!(:effectuation_ep) do
+        create(:end_product_establishment,
+               source: decision_document, synced_status: ep_status, last_synced_at: receipt_date + 100.days)
+      end
 
       it "effectuation had an ep" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:bva_decision_effectuation)
-        expect(status[:details]).to be_empty
+        expect(status[:details][:bvaDecisionDate]).to eq((receipt_date + 60.days).to_date)
       end
     end
 

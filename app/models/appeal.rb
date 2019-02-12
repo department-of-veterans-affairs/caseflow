@@ -420,7 +420,12 @@ class Appeal < DecisionReview
     when :ama_remand
       decision_issues_status_details
     when :post_bva_dta_decision
-      post_bva_dta_decision_details
+      post_bva_dta_decision_status_details
+    when :bva_decision_effectuation
+      {
+        bvaDecisionDate: decision_event_date,
+        aojDecisionDate: decision_effectuation_event_date
+      }
     when :pending_hearing_scheduling
       {
         type: "video"
@@ -435,7 +440,9 @@ class Appeal < DecisionReview
     issue_list.map do |di|
       {
         description: di.api_status_description,
-        disposition: di.api_status_disposition
+        disposition: di.api_status_disposition,
+        bvaDecisionDate: decision_event_date,
+        aojDecisionDate: dta_descision_event_date
       }
     end
   end
