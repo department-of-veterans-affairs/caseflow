@@ -205,4 +205,37 @@ describe RootTask do
       end
     end
   end
+
+  describe ".set_assignee" do
+    context "when retrieving an existing RootTask" do
+      let!(:root_task) { FactoryBot.create(:root_task, assigned_to: assignee) }
+      context "when the assignee is already set" do
+        let(:assignee) { Bva.singleton }
+
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to_not receive(:set_assignee)
+
+          RootTask.find(root_task.id)
+        end
+      end
+    end
+
+    context "when creating a new RootTask" do
+      context "when the assignee is already set" do
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to_not receive(:set_assignee)
+
+          RootTask.create(appeal: FactoryBot.create(:appeal), assigned_to: Bva.singleton)
+        end
+      end
+
+      context "when the assignee is not set" do
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to receive(:set_assignee).exactly(1).times
+
+          RootTask.create(appeal: FactoryBot.create(:appeal))
+        end
+      end
+    end
+  end
 end
