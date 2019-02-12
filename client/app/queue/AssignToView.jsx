@@ -135,8 +135,11 @@ class AssignToView extends React.Component<Props, ViewState> {
   }
 
   reassignTask = () => {
-    const task = this.props.task;
-    const isTeamAssign = this.props.isTeamAssign;
+    const {
+      task,
+      isTeamAssign
+    } = this.props;
+
     const payload = {
       data: {
         task: {

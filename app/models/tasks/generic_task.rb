@@ -92,6 +92,7 @@ class GenericTask < Task
     def create_child_task(parent, current_user, params)
       transaction do
         parent.update!(status: Constants.TASK_STATUSES.on_hold)
+
         Task.create!(
           type: params[:type] || name,
           appeal: parent.appeal,

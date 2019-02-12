@@ -108,7 +108,7 @@ FactoryBot.define do
     factory :transcription_task do
       type TranscriptionTask.name
       appeal { create(:appeal) }
-      parent { create(:root_task) }
+      parent { create(:root_task, appeal: appeal) }
       assigned_to { TranscriptionTeam.singleton }
     end
 
