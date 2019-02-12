@@ -65,7 +65,7 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
       sourceReviewType: currentIssue.sourceReviewType,
       rampClaimId: currentIssue.rampClaimId,
       promulgationDate: currentIssue.date,
-      date: currentIssue.date,
+      decisionDate: currentIssue.decisionDate,
       notes: args.notes,
       untimelyExemption: args.untimelyExemption,
       untimelyExemptionNotes: args.untimelyExemptionNotes,

@@ -308,7 +308,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
   case ACTIONS.SET_ISSUE_SELECTED:
     return update(state, {
       ratings: {
-        [action.payload.profileDate]: {
+        [action.payload.decisionDate]: {
           issues: {
             [action.payload.issueId]: {
               isSelected: {

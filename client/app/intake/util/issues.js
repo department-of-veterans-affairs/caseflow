@@ -160,13 +160,13 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
 export const formatContestableIssues = (contestableIssues) => {
   // order by date, otherwise all decision issues will always
   // come after rating issues regardless of date
-  const orderedContestableIssues = _.orderBy(contestableIssues, ['date'], ['desc']);
+  const orderedContestableIssues = _.orderBy(contestableIssues, ['decisionDate'], ['desc']);
 
   return orderedContestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
     contestableIssue.index = String(index);
 
-    contestableIssuesByDate[contestableIssue.date] = contestableIssuesByDate[contestableIssue.date] || {};
-    contestableIssuesByDate[contestableIssue.date][index] = contestableIssue;
+    contestableIssuesByDate[contestableIssue.decisionDate] = contestableIssuesByDate[contestableIssue.decisionDate] || {};
+    contestableIssuesByDate[contestableIssue.decisionDate][index] = contestableIssue;
 
     return contestableIssuesByDate;
   }, {});
@@ -314,22 +314,19 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
-      // todo: date works for contestable issue
-      // and profile_date works for request issue (for the edit page)
-      // fix this to use same keys
-      const profileDate = new Date(issue.date || issue.profileDate);
+      const decisionDate = new Date(issue.decisionDate);
 
       return {
         referenceId: issue.id,
         text: issue.description,
-        date: formatDateStr(profileDate),
+        date: formatDateStr(decisionDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceReviewType: issue.sourceReviewType,
         promulgationDate: issue.promulgationDate,
-        profileDate,
+        decisionDate,
         timely: issue.timely,
-        beforeAma: profileDate < amaActivationDate && !issue.rampClaimId,
+        beforeAma: decisionDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason,

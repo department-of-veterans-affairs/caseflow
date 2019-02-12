@@ -274,7 +274,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
   case ACTIONS.SET_ISSUE_SELECTED:
     return update(state, {
       ratings: {
-        [action.payload.profileDate]: {
+        [action.payload.decisionDate]: {
           issues: {
             [action.payload.issueId]: {
               isSelected: {
