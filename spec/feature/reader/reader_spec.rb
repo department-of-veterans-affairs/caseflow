@@ -352,7 +352,7 @@ RSpec.feature "Reader" do
 
     scenario "Clicking outside pdf or next pdf removes annotation mode" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-      expect(page).to have_content("Caseflow> Reader")
+      expect(page).to have_content("Caseflow Queue")
 
       add_comment_without_clicking_save("text")
       page.find("body").click
@@ -403,7 +403,7 @@ RSpec.feature "Reader" do
       end
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-      expect(page).to have_content("Caseflow> Reader")
+      expect(page).to have_content("Caseflow Queue")
 
       add_comment(text: "comment text")
 
@@ -483,7 +483,7 @@ RSpec.feature "Reader" do
 
     scenario "Add, edit, share, and delete comments" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      expect(page).to have_content("Caseflow> Reader")
+      expect(page).to have_content("Caseflow Queue")
 
       # Click on the link to the first file
       click_on documents[0].type
