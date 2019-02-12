@@ -44,6 +44,7 @@ describe DecisionReview do
              decision_text: "decision issue 1",
              benefit_type: higher_level_review.benefit_type,
              profile_date: profile_date,
+             promulgation_date: promulgation_date,
              decision_review: higher_level_review),
       create(:decision_issue,
              :rating,
@@ -52,6 +53,7 @@ describe DecisionReview do
              decision_text: "decision issue 2",
              benefit_type: higher_level_review.benefit_type,
              profile_date: profile_date + 1.day,
+             promulgation_date: promulgation_date + 1.day,
              decision_review: higher_level_review),
       create(:decision_issue,
              :nonrating,
@@ -60,6 +62,7 @@ describe DecisionReview do
              decision_text: "decision issue 3",
              benefit_type: higher_level_review.benefit_type,
              profile_date: profile_date + 2.days,
+             promulgation_date: promulgation_date + 2.days,
              decision_review: higher_level_review),
       create(:decision_issue,
              :rating,
@@ -89,7 +92,7 @@ describe DecisionReview do
         ratingIssueProfileDate: profile_date,
         ratingIssueDisabilityCode: nil,
         decisionIssueId: decision_issues.first.id,
-        date: profile_date,
+        date: promulgation_date,
         description: "decision issue 1",
         rampClaimId: nil,
         titleOfActiveReview: nil,
@@ -115,7 +118,7 @@ describe DecisionReview do
         ratingIssueProfileDate: profile_date + 1.day,
         ratingIssueDisabilityCode: nil,
         decisionIssueId: decision_issues.second.id,
-        date: profile_date + 1.day,
+        date: promulgation_date + 1.day,
         description: "decision issue 2",
         rampClaimId: nil,
         titleOfActiveReview: nil,
@@ -123,12 +126,12 @@ describe DecisionReview do
         timely: true
       )
 
-      expect(serialized_contestable_issues).to include(
+      expect(find_serialized_issue(serialized_contestable_issues, nil)).to eq(
         ratingIssueReferenceId: nil,
         ratingIssueProfileDate: profile_date + 2.days,
         ratingIssueDiagnosticCode: nil,
         decisionIssueId: decision_issues.third.id,
-        date: profile_date + 2.days,
+        date: promulgation_date + 2.days,
         description: "decision issue 3",
         rampClaimId: nil,
         titleOfActiveReview: nil,
