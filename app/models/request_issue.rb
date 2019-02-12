@@ -691,7 +691,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    review_request.tasks.where.active.any?
+    review_request.tasks.active.any?
   end
 
   def copy_review_request_to_decision_review
