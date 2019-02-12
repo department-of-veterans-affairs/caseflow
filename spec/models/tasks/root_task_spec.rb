@@ -87,7 +87,7 @@ describe RootTask do
 
         it "creates a tracking task assigned to the VSO" do
           expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
-          expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.first.assigned_to).to eq(pva)
+          expect(appeal.tasks.detect { |t| t.is_a?(TrackVeteranTask) }.assigned_to).to eq(pva)
         end
       end
     end
