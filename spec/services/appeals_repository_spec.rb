@@ -276,11 +276,13 @@ describe AppealRepository do
 
         expect(LegacyAppeal.all.pluck(:vacols_id)).to match_array(cases.pluck(:bfkey))
         expect(ScheduleHearingTask.all.pluck(:appeal_id)).to match_array(LegacyAppeal.all.pluck(:id))
+        expect(ScheduleHearingTask.first.parent.type).to eq(HearingTask.name)
+        expect(ScheduleHearingTask.first.parent.parent.type).to eq(RootTask.name)
         expect(VACOLS::Case.all.pluck(:bfcurloc).uniq).to eq([LegacyAppeal::LOCATION_CODES[:caseflow]])
       end
     end
 
-    context "when some legacy appeals already have schedul hearing tasks" do
+    context "when some legacy appeals already have schedule hearing tasks" do
       let!(:cases) { create_list(:case, 5, bfcurloc: "57", bfhr: "1") }
 
       it "doesn't duplicate tasks" do

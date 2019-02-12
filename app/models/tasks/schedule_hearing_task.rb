@@ -33,12 +33,10 @@ class ScheduleHearingTask < GenericTask
       central_office_legacy_appeal_ids = LegacyAppeal.where(vacols_id: central_office_ids).pluck(:id)
 
       if regional_office == "C"
-        legacy_appeal_tasks
-          .where("legacy_appeals.id IN (?)", central_office_legacy_appeal_ids)
+        legacy_appeal_tasks.where("legacy_appeals.id IN (?)", central_office_legacy_appeal_ids)
       else
         tasks_by_ro = legacy_appeal_tasks.where("veterans.closest_regional_office = ?", regional_office)
 
-        # Unfortunately we need to do an explicit empty check here:
         # For context: https://github.com/rails/rails/issues/778#issuecomment-432603568
         if central_office_legacy_appeal_ids.empty?
           tasks_by_ro
