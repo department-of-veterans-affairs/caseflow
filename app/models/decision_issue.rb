@@ -42,7 +42,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def approx_decision_date
-    processed_in_caseflow? ? caseflow_decision_date : claim_review_approx_decision_date
+    processed_in_caseflow? ? caseflow_decision_date : processed_in_vbms_decision_date
   end
 
   def issue_category
@@ -131,13 +131,11 @@ class DecisionIssue < ApplicationRecord
     decision_review.processed_in_caseflow?
   end
 
-  def claim_review_approx_decision_date
-    # there's an end_product_last_action_date when decision issues are created from eps
-    # but only a promulgation date when decision issues are created from noncomp
+  def processed_in_vbms_decision_date
     if promulgation_date
       promulgation_date.to_date
     else
-      end_product_last_action_date || (profile_date&.to_date)
+      end_product_last_action_date
     end
   end
 
