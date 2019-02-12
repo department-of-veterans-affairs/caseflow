@@ -81,7 +81,7 @@ describe DecisionReview do
         { # this rating issue got replaced with a decision issue
           ratingIssueReferenceId: "123",
           ratingIssueProfileDate: profile_date,
-          ratingIssueDisabilityCode: nil,
+          ratingIssueDiagnosticCode: nil,
           decisionIssueId: decision_issues.first.id,
           date: profile_date,
           description: "decision issue 1",
@@ -93,7 +93,7 @@ describe DecisionReview do
         {
           ratingIssueReferenceId: "456",
           ratingIssueProfileDate: profile_date,
-          ratingIssueDisabilityCode: nil,
+          ratingIssueDiagnosticCode: nil,
           decisionIssueId: nil,
           date: profile_date,
           description: "rating issue 2",
@@ -105,7 +105,7 @@ describe DecisionReview do
         {
           ratingIssueReferenceId: "789",
           ratingIssueProfileDate: profile_date + 1.day,
-          ratingIssueDisabilityCode: nil,
+          ratingIssueDiagnosticCode: nil,
           decisionIssueId: decision_issues.second.id,
           date: profile_date + 1.day,
           description: "decision issue 2",
@@ -116,7 +116,7 @@ describe DecisionReview do
         },
         ratingIssueReferenceId: nil,
         ratingIssueProfileDate: profile_date + 2.days,
-        ratingIssueDisabilityCode: nil,
+        ratingIssueDiagnosticCode: nil,
         decisionIssueId: decision_issues.third.id,
         date: profile_date + 2.days,
         description: "decision issue 3",

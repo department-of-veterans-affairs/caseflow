@@ -428,17 +428,19 @@ feature "Supplemental Claim Intake" do
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }
-    let!(:ratings_with_disability_codes) do
-      generate_ratings_with_disabilities(veteran,
-                                         disabiliity_receive_date,
-                                         disability_profile_date)
+    let!(:ratings_with_diagnostic_codes) do
+      generate_ratings_with_disabilities(
+        veteran,
+        disabiliity_receive_date,
+        disability_profile_date
+      )
     end
 
-    scenario "saves disability codes" do
+    scenario "saves diagnostic codes" do
       sc, = start_supplemental_claim(veteran)
       visit "/intake"
       click_intake_continue
-      save_and_check_request_issues_with_disability_codes(
+      save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.supplemental_claim,
         sc
       )

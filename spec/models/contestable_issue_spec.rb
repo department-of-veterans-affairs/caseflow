@@ -6,14 +6,14 @@ describe ContestableIssue do
   let(:decision_review) { create(:higher_level_review, receipt_date: Time.zone.now) }
   let(:profile_date) { Time.zone.today - 30 }
   let(:promulgation_date) { Time.zone.today - 30 }
-  let(:disability_code) { "disability_code" }
+  let(:diagnostic_code) { "diagnostic_code" }
   let(:rating_issue) do
     RatingIssue.new(
       reference_id: "NBA",
       participant_id: "123",
       profile_date: profile_date,
       promulgation_date: promulgation_date,
-      disability_code: disability_code,
+      diagnostic_code: diagnostic_code,
       decision_text: "This broadcast may not be reproduced",
       associated_end_products: [],
       rba_contentions_data: [{}]
@@ -41,13 +41,14 @@ describe ContestableIssue do
         date: profile_date,
         description: rating_issue.decision_text,
         source_request_issues: rating_issue.source_request_issues,
-        contesting_decision_review: decision_review
+        contesting_decision_review: decision_review,
+        rating_issue_diagnostic_code: diagnostic_code
       )
 
       expect(contestable_issue.serialize).to eq(
         ratingIssueReferenceId: rating_issue.reference_id,
         ratingIssueProfileDate: profile_date,
-        ratingIssueDisabilityCode: disability_code,
+        ratingIssueDiagnosticCode: diagnostic_code,
         decisionIssueId: nil,
         date: profile_date,
         description: rating_issue.decision_text,
@@ -65,7 +66,7 @@ describe ContestableIssue do
         expect(subject.serialize).to eq(
           ratingIssueReferenceId: rating_issue.reference_id,
           ratingIssueProfileDate: profile_date,
-          ratingIssueDisabilityCode: disability_code,
+          ratingIssueDiagnosticCode: diagnostic_code,
           decisionIssueId: nil,
           date: profile_date,
           description: rating_issue.decision_text,
@@ -96,7 +97,7 @@ describe ContestableIssue do
       expect(contestable_issue.serialize).to eq(
         ratingIssueReferenceId: "rating1",
         ratingIssueProfileDate: profile_date,
-        ratingIssueDisabilityCode: nil,
+        ratingIssueDiagnosticCode: nil,
         decisionIssueId: decision_issue.id,
         date: profile_date,
         description: decision_issue.description,
@@ -114,7 +115,7 @@ describe ContestableIssue do
         expect(subject.serialize).to eq(
           ratingIssueReferenceId: "rating1",
           ratingIssueProfileDate: profile_date,
-          ratingIssueDisabilityCode: nil,
+          ratingIssueDiagnosticCode: nil,
           decisionIssueId: decision_issue.id,
           date: profile_date,
           description: decision_issue.description,
