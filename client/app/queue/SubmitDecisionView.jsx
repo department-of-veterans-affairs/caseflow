@@ -149,7 +149,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         opts: decisionOpts
       },
       appeal: {
-        attorneyCaseReviewDetails
+        attorneyCaseRewriteDetails
       }
     } = this.props;
 
@@ -187,7 +187,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         label="This work product is overtime"
         onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
         value={decisionOpts.overtime ||
-          _.get(attorneyCaseReviewDetails, 'overtime') ||
+          _.get(attorneyCaseRewriteDetails, 'overtime') ||
           false}
         styling={css(marginBottom(1), marginTop(1))}
       />
@@ -196,7 +196,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         name="document_id"
         errorMessage={highlightFormItems ? documentIdErrorMessage : null}
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
-        value={decisionOpts.document_id || _.get(attorneyCaseReviewDetails, 'document_id')}
+        value={decisionOpts.document_id || _.get(attorneyCaseRewriteDetails, 'document_id')}
         maxLength={DOCUMENT_ID_MAX_LENGTH}
         autoComplete="off"
       />
@@ -211,8 +211,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         // the judges instructions take precedence in the note 
         // over the note that the attorney previously wrote in checkout
         value={decisionOpts.note ||
-          _.get(attorneyCaseReviewDetails, 'note_from_judge') ||
-          _.get(attorneyCaseReviewDetails, 'note_from_attorney', '')}
+          _.get(attorneyCaseRewriteDetails, 'note_from_attorney', '')}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={marginTop(4)}
         maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}

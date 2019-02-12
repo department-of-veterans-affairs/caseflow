@@ -149,7 +149,9 @@ class Appeal < DecisionReview
   end
 
   def attorney_rewrite_task_for_appeal
-    tasks.find { |t| t.is_a?(AttorneyRewriteTask) && (t.status == Constants.TASK_STATUSES.in_progress) }
+    @attorney_rewrite_task_for_appeal ||=
+      tasks.where(type: "AttorneyRewriteTask",
+                  status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
   end
 
   def eligible_request_issues

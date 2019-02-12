@@ -137,7 +137,7 @@ export type AppealDetail = {
   tasks: ?Array<Task>,
   veteranAvailableHearingLocations: ?Array<Object>,
   veteranClosestRegionalOffice: ?string,
-  attorneyCaseReviewDetails: ?Object
+  attorneyCaseRewriteDetails: ?Object
 };
 
 export type AppealDetails = { [string]: AppealDetail };

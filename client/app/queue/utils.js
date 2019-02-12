@@ -316,7 +316,7 @@ export const prepareAppealForStore =
         documentID: appeal.attributes.document_id,
         caseReviewId: appeal.attributes.attorney_case_review_id,
         canEditDocumentId: appeal.attributes.can_edit_document_id,
-        attorneyCaseReviewDetails: appeal.attributes.attorney_case_review_details
+        attorneyCaseRewriteDetails: appeal.attributes.attorney_case_rewrite_details
       };
 
       return accumulator;
