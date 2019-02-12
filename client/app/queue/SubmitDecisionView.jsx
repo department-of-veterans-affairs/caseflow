@@ -120,7 +120,8 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props;
 
     const issuesToPass = !isLegacyAppeal && amaDecisionIssues ? decisionIssues : issues;
-    // not sure why this is happening, it's causing tests to fail, the backend can't handle a null response at this point
+    // not sure why this is happening, it's causing tests to fail
+    // the backend can't handle a null response at this point
 
     if (decision.opts.overtime === null) {
       decision.opts.overtime = false;
