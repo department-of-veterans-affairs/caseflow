@@ -18,6 +18,7 @@ describe DecisionIssue do
       request_issues: request_issues,
       benefit_type: benefit_type,
       profile_date: profile_date,
+      promulgation_date: promulgation_date,
       end_product_last_action_date: end_product_last_action_date,
       caseflow_decision_date: caseflow_decision_date,
       diagnostic_code: diagnostic_code
@@ -25,6 +26,7 @@ describe DecisionIssue do
   end
 
   let(:profile_date) { 20.days.ago }
+  let(:promulgation_date) { 19.days.ago }
   let(:caseflow_decision_date) { 20.days.ago }
   let(:benefit_type) { "compensation" }
   let(:end_product_last_action_date) { 10.days.ago }
@@ -224,20 +226,29 @@ describe DecisionIssue do
     subject { decision_issue.approx_decision_date }
 
     let(:profile_date) { 5.days.ago }
+    let(:promulgation_date) { 4.days.ago }
     let(:end_product_last_action_date) { 6.days.ago }
     let(:caseflow_decision_date) { 7.days.ago }
 
     context "when the decision review is processed in caseflow" do
-      context "when there is no profile date" do
-        let(:profile_date) { nil }
+      context "when there is no promulgation date" do
+        let(:promulgation_date) { nil }
         it "returns the end_product_last_action_date" do
           expect(subject).to eq(end_product_last_action_date.to_date)
         end
+
+        context "when there is no last action date" do
+          let(:decision_review) { create(:appeal) }
+          let(:end_product_last_action_date) { nil }
+          it "returns the caseflow decision date" do
+            expect(subject).to eq(caseflow_decision_date.to_date)
+          end
+        end
       end
 
-      context "when there is a profile date" do
-        it "returns the profile_date to_date" do
-          expect(subject).to eq(profile_date.to_date)
+      context "when there is a promulgation date" do
+        it "returns the promulgation_date to_date" do
+          expect(subject).to eq(promulgation_date.to_date)
         end
       end
     end
