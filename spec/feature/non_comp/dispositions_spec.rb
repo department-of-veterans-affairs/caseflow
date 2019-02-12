@@ -96,6 +96,9 @@ feature "NonComp Dispositions Task Page" do
     scenario "displays dispositions page" do
       visit dispositions_url
 
+      within("header") do
+        expect(page).to have_css("h2", text: "National Cemetery Association")
+      end
       expect(page).to have_content("National Cemetery Association")
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
