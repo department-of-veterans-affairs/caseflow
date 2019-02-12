@@ -37,7 +37,7 @@ class HearingDay < ApplicationRecord
   end
 
   def confirm_no_children_records
-    fail HearingDayHasChildrenRecords if vacols_children_records.count > 0 || hearings.count > 0
+    fail HearingDayHasChildrenRecords if !vacols_children_records.empty? || !hearings.empty?
   end
 
   def vacols_children_records
@@ -111,7 +111,7 @@ class HearingDay < ApplicationRecord
       elsif regional_office == REQUEST_TYPES[:central]
         cf_video_and_co = where("request_type = ? and DATE(scheduled_for) between ? and ?",
                                 REQUEST_TYPES[:central], start_date, end_date)
-        video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
+        video_and_co = []
       else
         cf_video_and_co = where("regional_office = ? and DATE(scheduled_for) between ? and ?",
                                 regional_office, start_date, end_date)
@@ -166,8 +166,10 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    def find_hearing_day(hearing_key)
+    def find_hearing_day(request_type, hearing_key)
       find(hearing_key)
+    rescue ActiveRecord::RecordNotFound
+      HearingDayRepository.find_hearing_day(request_type, hearing_key)
     end
 
     private

@@ -40,10 +40,6 @@ class SupplementalClaim < ClaimReview
     end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
   end
 
-  def description
-    # need to implement
-  end
-
   def status_hash
     # need to implement. returns the details object for the status
     { type: fetch_status }
@@ -51,11 +47,6 @@ class SupplementalClaim < ClaimReview
 
   def alerts
     # need to implement. add logic to return alert enum
-  end
-
-  def issues
-    # need to implement. get request and corresponding rating issue
-    []
   end
 
   def decision_event_date
@@ -78,6 +69,10 @@ class SupplementalClaim < ClaimReview
 
   def events
     @events ||= AppealEvents.new(appeal: self).all
+  end
+
+  def fetch_all_decision_issues_for_api_status
+    decision_issues
   end
 
   private

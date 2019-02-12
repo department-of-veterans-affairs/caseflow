@@ -34,6 +34,17 @@ describe Appeal do
     end
   end
 
+  context "active appeals" do
+    let!(:active_appeal) { create(:appeal, :with_tasks) }
+    let!(:inactive_appeal) { create(:appeal, :outcoded) }
+
+    subject { Appeal.active }
+    it "returns only active appeals" do
+      expect(subject.include?(active_appeal)).to eq(true)
+      expect(subject.include?(inactive_appeal)).to eq(false)
+    end
+  end
+
   context "ready appeals" do
     let!(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
     let!(:hearing_appeal) { create(:appeal, docket_type: "hearing") }
@@ -56,6 +67,17 @@ describe Appeal do
       expect(subject.include?(evidence_submission_appeal)).to eq(false)
       # TODO: support hearing appeals
       # expect(subject.include?(hearing_appeal)).to eq(false)
+    end
+  end
+
+  context "ready appeals sorted by date" do
+    let!(:first_appeal) { create(:appeal, :with_tasks) }
+    let!(:second_appeal) { create(:appeal, :with_tasks) }
+
+    subject { Appeal.ordered_by_distribution_ready_date }
+
+    it "returns appeals ordered by when they became ready for distribution" do
+      expect(subject.find_index(first_appeal) < subject.find_index(second_appeal)).to eq(true)
     end
   end
 
@@ -479,25 +501,114 @@ describe Appeal do
   end
 
   context ".create_tasks_on_intake_success!" do
-    let(:appeal) do
-      create(:appeal)
-    end
+    let!(:appeal) { create(:appeal) }
+
+    subject { appeal.create_tasks_on_intake_success! }
 
     it "creates root and vso tasks" do
       expect(RootTask).to receive(:create_root_and_sub_tasks!).once
 
-      appeal.create_tasks_on_intake_success!
+      subject
     end
 
     context "request issue has non-comp business line" do
-      let(:appeal) do
-        create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)])
-      end
+      let!(:appeal) { create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)]) }
 
       it "creates root task and veteran record request task" do
         expect(VeteranRecordRequest).to receive(:create!).once
 
-        appeal.create_tasks_on_intake_success!
+        subject
+      end
+    end
+
+    context "creating translation tasks" do
+      let(:bgs_veteran_state) { nil }
+      let(:bgs_veteran_record) { { state: bgs_veteran_state } }
+      let(:validated_veteran_state) { nil }
+      let(:mock_va_dot_gov_address) { { state_code: validated_veteran_state } }
+      let(:veteran) { FactoryBot.create(:veteran, bgs_veteran_record: bgs_veteran_record) }
+      let(:appeal) { FactoryBot.create(:appeal, veteran: veteran) }
+
+      context "VADotGovService is responsive" do
+        before do
+          allow(VADotGovService).to receive(:validate_address).and_return(mock_va_dot_gov_address)
+        end
+
+        context "the service returns a state code" do
+          context "the state code is PR or PI" do
+            let(:validated_veteran_state) { "PR" }
+
+            it "creates a translation task" do
+              expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+
+              subject
+            end
+
+            context "the bgs veteran record has a different state code" do
+              let(:validated_veteran_state) { "PI" }
+              let(:bgs_veteran_state) { "NV" }
+
+              it "prefers the service state code and creates a translation task" do
+                expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+
+                subject
+              end
+            end
+          end
+
+          context "the state code is not PR or PI" do
+            let(:validated_veteran_state) { "NV" }
+
+            it "doesn't create a translation task" do
+              expect(TranslationTask).to_not receive(:create_from_root_task)
+
+              subject
+            end
+          end
+        end
+      end
+
+      context "the VADotGovService is not responsive" do
+        let(:message) { { "messages" => [{ "key" => "AddressCouldNotBeFound" }] } }
+        let(:error) { Caseflow::Error::VaDotGovServerError.new(code: "500", message: message) }
+
+        before do
+          allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+        end
+
+        it "fails silently" do
+          expect { subject }.to_not raise_error
+        end
+
+        context "the bgs veteran record has no state code" do
+          it "doesn't create a translation task" do
+            expect(TranslationTask).to_not receive(:create_from_root_task)
+
+            subject
+          end
+        end
+
+        context "the bgs veteran record has a state code" do
+          context "the state code is PR or PI" do
+            let(:bgs_veteran_state) { "PI" }
+
+            it "creates a translation task" do
+              expect(TranslationTask).to receive(:create_from_root_task).once.with(kind_of(RootTask))
+
+              subject
+            end
+          end
+
+          context "the state code is not PR or PI" do
+            let(:bgs_veteran_state) { "NV" }
+
+            it "doesn't create a translation task" do
+              expect(TranslationTask).to_not receive(:create_from_root_task)
+
+              subject
+            end
+          end
+        end
       end
     end
   end
@@ -739,6 +850,64 @@ describe Appeal do
     end
   end
 
+  context "#non_priority_decisions_in_the_last_year" do
+    let!(:newer_decisions) do
+      (0..10).map do |num|
+        doc = create(:decision_document)
+        doc.appeal.update(
+          docket_type: "direct_review",
+          receipt_date: (num * 20).days.ago
+        )
+        doc.appeal
+      end
+    end
+    let!(:older_decisions) do
+      (0..10).map do |num|
+        doc = create(:decision_document)
+        doc.appeal.update(
+          docket_type: "direct_review",
+          receipt_date: (366 + (num * 20)).days.ago
+        )
+        doc.appeal
+      end
+    end
+
+    context "non-priority decision list" do
+      subject { Appeal.non_priority_decisions_in_the_last_year }
+
+      it "returns decisions from the last year" do
+        expect(subject.include?(newer_decisions))
+      end
+
+      it "does not return decisions from more than a year ago" do
+        expect(subject.include?(older_decisions))
+      end
+    end
+  end
+
+  context "#set_target_decision_date!" do
+    let(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
+    let(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
+
+    context "with direct review appeal" do
+      subject { direct_review_appeal }
+      it "sets target decision date" do
+        subject.set_target_decision_date!
+        expect(subject.target_decision_date).to eq(
+          subject.receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days
+        )
+      end
+    end
+
+    context "with not direct review appeal" do
+      subject { evidence_submission_appeal }
+      it "does not set target date" do
+        subject.set_target_decision_date!
+        expect(subject.target_decision_date).to eq(nil)
+      end
+    end
+  end
+
   context "#status_hash" do
     let(:judge) { create(:user) }
     let!(:hearings_user) { create(:hearings_coordinator) }
@@ -965,6 +1134,192 @@ describe Appeal do
 
         effectuation_event = events.find { |e| e.type == :bva_decision_effectuation }
         expect(effectuation_event).to be_nil
+      end
+    end
+  end
+
+  context "#docket_hash" do
+    let(:october_docket_date) { Time.new("2018", "10", "01").utc }
+    let(:receipt_date) { october_docket_date + 20.days }
+
+    let(:promulgation_date1) { receipt_date - 50.days }
+    let(:request_issue1) { create(:request_issue) }
+    let(:promulgation_date2) { receipt_date - 60.days }
+    let(:request_issue2) { create(:request_issue) }
+    let(:promulgation_date3) { receipt_date - 100.days }
+    let(:removed_request_issue) { create(:request_issue, :removed, closed_at: receipt_date) }
+
+    let(:docket_type) { "direct_review" }
+    let!(:appeal) do
+      create(:appeal,
+             receipt_date: receipt_date,
+             request_issues: [request_issue1, request_issue2, removed_request_issue],
+             docket_type: docket_type)
+    end
+
+    let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
+
+    context "all request issues have a decision or promulgation date" do
+      before do
+        Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+
+        allow(request_issue1).to receive(:decision_or_promulgation_date).and_return(promulgation_date1)
+        allow(request_issue2).to receive(:decision_or_promulgation_date).and_return(promulgation_date2)
+        allow(removed_request_issue).to receive(:decision_or_promulgation_date).and_return(promulgation_date3)
+      end
+
+      it "is direct review, in Oct month, has docket switch deadline and is eligible to switch" do
+        docket = appeal.docket_hash
+
+        expect(docket).not_to be_nil
+        expect(docket[:type]).to eq("directReview")
+        expect(docket[:month]).to eq(october_docket_date.to_date)
+        expect(docket[:switchDueDate]).to eq((promulgation_date2 + 365.days))
+        expect(docket[:eligibleToSwitch]).to eq(true)
+      end
+    end
+
+    context "cannot get decision or promulgation date for an open request issue" do
+      before do
+        Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+
+        allow(request_issue2).to receive(:decision_or_promulgation_date).and_return(promulgation_date2)
+      end
+
+      it "is direct review, in Oct month, has no switch deadline and is not eligible to switch" do
+        docket = appeal.docket_hash
+
+        expect(docket).not_to be_nil
+        expect(docket[:type]).to eq("directReview")
+        expect(docket[:month]).to eq(october_docket_date.to_date)
+        expect(docket[:switchDueDate]).to be_nil
+        expect(docket[:eligibleToSwitch]).to eq(false)
+      end
+    end
+  end
+
+  context "#issues_hash" do
+    let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+
+    let(:request_issue1) do
+      create(:request_issue,
+             benefit_type: "compensation", contested_rating_issue_diagnostic_code: "5002")
+    end
+    let(:request_issue2) do
+      create(:request_issue,
+             benefit_type: "pension", contested_rating_issue_diagnostic_code: nil)
+    end
+
+    let!(:appeal) do
+      create(:appeal, receipt_date: receipt_date,
+                      request_issues: [request_issue1, request_issue2])
+    end
+
+    let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
+
+    context "appeal pending a decision" do
+      it "is status of the request issues" do
+        issue_statuses = appeal.issues_hash
+
+        expect(issue_statuses.empty?).to eq(false)
+
+        issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
+        expect(issue).to_not be_nil
+        expect(issue[:active]).to eq(true)
+        expect(issue[:last_action]).to be_nil
+        expect(issue[:date]).to be_nil
+        expect(issue[:description]).to eq("Rheumatoid arthritis")
+
+        issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
+        expect(issue2).to_not be_nil
+        expect(issue2[:active]).to eq(true)
+        expect(issue2[:last_action]).to be_nil
+        expect(issue2[:date]).to be_nil
+        expect(issue2[:description]).to eq("Pension issue")
+      end
+    end
+
+    context "have decisions, one is remanded" do
+      let!(:decision_date) { receipt_date + 130.days }
+      let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
+
+      let!(:not_remanded_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal, benefit_type: "pension", disposition: "allowed",
+               diagnostic_code: nil,
+               caseflow_decision_date: decision_date)
+      end
+      let!(:remanded_issue_with_ep) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "remanded", benefit_type: "compensation",
+               diagnostic_code: "5002", caseflow_decision_date: decision_date)
+      end
+      let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let!(:remanded_ep) { create(:end_product_establishment, source: remanded_sc, synced_status: "PEND") }
+
+      it "remanded decision as active, other decision as inactive" do
+        issue_statuses = appeal.issues_hash
+
+        expect(issue_statuses.empty?).to eq(false)
+
+        issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
+        expect(issue).to_not be_nil
+        expect(issue[:active]).to eq(true)
+        expect(issue[:last_action]).to eq("remand")
+        expect(issue[:date]).to eq(decision_date.to_date)
+        expect(issue[:description]).to eq("Rheumatoid arthritis")
+
+        issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
+        expect(issue2).to_not be_nil
+        expect(issue2[:active]).to eq(false)
+        expect(issue2[:last_action]).to eq("allowed")
+        expect(issue2[:date]).to eq(decision_date.to_date)
+        expect(issue2[:description]).to eq("Pension issue")
+      end
+    end
+
+    context "remanded sc has decision" do
+      let!(:decision_date) { receipt_date + 130.days }
+      let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
+
+      let!(:not_remanded_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal, benefit_type: "pension", disposition: "allowed",
+               diagnostic_code: nil,
+               caseflow_decision_date: decision_date)
+      end
+      let!(:remanded_issue_with_ep) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "remanded", benefit_type: "compensation",
+               diagnostic_code: "5002", caseflow_decision_date: decision_date)
+      end
+      let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let!(:remanded_ep) { create(:end_product_establishment, source: remanded_sc, synced_status: "CLR") }
+      let(:remand_sc_decision_date) { decision_date + 30.days }
+
+      let!(:remanded_sc_decision) do
+        create(:decision_issue,
+               decision_review: remanded_sc, disposition: "denied", benefit_type: "compensation",
+               diagnostic_code: "5002", end_product_last_action_date: remand_sc_decision_date)
+      end
+
+      it "has the remand sc decision and other decision" do
+        issue_statuses = appeal.issues_hash
+
+        expect(issue_statuses.empty?).to eq(false)
+        issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
+        expect(issue).to_not be_nil
+        expect(issue[:active]).to eq(false)
+        expect(issue[:last_action]).to eq("denied")
+        expect(issue[:date]).to eq(remand_sc_decision_date.to_date)
+        expect(issue[:description]).to eq("Rheumatoid arthritis")
+
+        issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
+        expect(issue2).to_not be_nil
+        expect(issue2[:active]).to eq(false)
+        expect(issue2[:last_action]).to eq("allowed")
+        expect(issue2[:date]).to eq(decision_date.to_date)
+        expect(issue2[:description]).to eq("Pension issue")
       end
     end
   end

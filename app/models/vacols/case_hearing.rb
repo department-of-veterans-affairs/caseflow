@@ -91,13 +91,6 @@ class VACOLS::CaseHearing < VACOLS::Record
                                  VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
-    def load_days_for_central_office(start_date, end_date)
-      select_schedule_days.where("hearing_type = ? and (folder_nr NOT LIKE ? OR folder_nr IS NULL) " \
-                                  "and trunc(hearing_date) between ? and ?",
-                                 HearingDay::REQUEST_TYPES[:central], "%VIDEO%", VacolsHelper.day_only_str(start_date),
-                                 VacolsHelper.day_only_str(end_date)).order(:hearing_date)
-    end
-
     def load_days_for_regional_office(regional_office, start_date, end_date)
       select_schedule_days.where("folder_nr = ? and trunc(hearing_date) between ? and ?",
                                  "VIDEO #{regional_office}", VacolsHelper.day_only_str(start_date),
@@ -168,7 +161,7 @@ class VACOLS::CaseHearing < VACOLS::Record
              :mduser,
              :mdtime)
         .joins("left outer join vacols.staff on staff.sattyid = board_member")
-        .where("hearing_type = ? and (folder_nr != ? or folder_nr is null)", "C", "1779233")
+        .where("hearing_type = ? and folder_nr like 'VIDEO%'", "C")
     end
   end
 
@@ -186,6 +179,15 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   def master_record_type
     return :video if folder_nr.match?(/VIDEO/)
+  rescue NoMethodError => e
+    Rails.logger.error("Null Folder Error Condition: #{hearing_pkseq}")
+    Raven.capture.exception(e)
+    Raven.extra_context(
+      hearing_pkseq: hearing_pkseq,
+      hearing_date: hearing_date,
+      folder_nr: folder_nr,
+      board_member: board_member
+    )
   end
 
   def update_hearing!(hearing_info)

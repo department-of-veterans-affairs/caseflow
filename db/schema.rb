@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190205201919) do
+ActiveRecord::Schema.define(version: 20190208191441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,6 +89,7 @@ ActiveRecord::Schema.define(version: 20190205201919) do
     t.datetime "establishment_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
+    t.date "target_decision_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "veteran_file_number", null: false
     t.boolean "veteran_is_not_claimant"
@@ -758,6 +759,8 @@ ActiveRecord::Schema.define(version: 20190205201919) do
 
   create_table "request_issues", force: :cascade do |t|
     t.string "benefit_type", null: false
+    t.datetime "closed_at"
+    t.string "closed_status"
     t.integer "contention_reference_id"
     t.integer "contested_decision_issue_id"
     t.string "contested_issue_description"
@@ -919,7 +922,6 @@ ActiveRecord::Schema.define(version: 20190205201919) do
     t.integer "assigned_to_id"
     t.string "assigned_to_type", null: false
     t.datetime "closed_at"
-    t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true
     t.integer "on_hold_duration"

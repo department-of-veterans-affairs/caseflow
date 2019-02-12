@@ -47,10 +47,6 @@ class HigherLevelReview < ClaimReview
     hlr_ep_active? || dta_claim_active?
   end
 
-  def description
-    # need to impelement
-  end
-
   def status_hash
     { type: fetch_status }
   end
@@ -59,9 +55,12 @@ class HigherLevelReview < ClaimReview
     # need to implement. add logic to return alert enum
   end
 
-  def issues
-    # need to implement. get request and corresponding rating issue
-    []
+  def fetch_all_decision_issues_for_api_status
+    all_decision_issues = decision_issues.reject { |di| DTA_ERRORS.include?(di[:disposition]) }
+
+    all_decision_issues += dta_claim.decision_issues if dta_claim
+
+    all_decision_issues
   end
 
   def decision_event_date

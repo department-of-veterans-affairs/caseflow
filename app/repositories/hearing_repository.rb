@@ -72,7 +72,7 @@ class HearingRepository
     end
 
     def slot_new_hearing(parent_record_id, scheduled_time:, appeal:, hearing_type: nil, hearing_location_attrs: nil)
-      hearing_day = HearingDay.find_hearing_day(parent_record_id)
+      hearing_day = HearingDay.find_hearing_day(nil, parent_record_id)
       hearing_day_hash = HearingDay.to_hash(hearing_day)
 
       hearing_datetime = hearing_day_hash[:scheduled_for].to_datetime.change(

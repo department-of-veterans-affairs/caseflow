@@ -31,21 +31,11 @@ class V2::AppealStatusSerializer < ActiveModel::Serializer
   attribute :program, key: :program_area
   attribute :status_hash, key: :status
   attribute :alerts
-
-  attribute :docket do
-    # to be implemented
-    # as docket_hash in appeal object
-  end
-
+  attribute :docket_hash, key: :docket
   attribute :issues
   attribute :events
 
-  attribute :issues do
-    # to be implemented
-    # will need to override method used
-    # issues already exists in appeal
-    []
-  end
+  attribute :issues_hash, key: :issues
 
   # Stubbed attributes
   attribute :evidence do

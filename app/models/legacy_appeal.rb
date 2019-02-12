@@ -103,7 +103,7 @@ class LegacyAppeal < ApplicationRecord
     us_territory_claim_philippines: "U.S. Territory claim - Philippines",
     us_territory_claim_puerto_rico_and_virgin_islands: "U.S. Territory claim - Puerto Rico and Virgin Islands",
     vamc: "VAMC",
-    vocational_rehab: "Vocational Rehab",
+    vocational_rehab: "Vocational Rehabilitation and Employment",
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
   # rubocop:enable Metrics/LineLength
@@ -126,7 +126,9 @@ class LegacyAppeal < ApplicationRecord
     caseflow: "CASEFLOW",
     quality_review: "48",
     translation: "14",
-    schedule_hearing: "57"
+    schedule_hearing: "57",
+    case_storage: "81",
+    service_organization: "55"
   }.freeze
 
   def document_fetcher
@@ -170,6 +172,12 @@ class LegacyAppeal < ApplicationRecord
     return unless notification_date && soc_date
 
     [notification_date + 1.year, soc_date + 60.days].max.to_date
+  end
+
+  def soc_opt_in_due_date
+    return unless soc_date || !ssoc_dates.empty?
+
+    ([soc_date] + ssoc_dates).max.to_date + 60.days
   end
 
   def cavc_due_date
@@ -317,6 +325,10 @@ class LegacyAppeal < ApplicationRecord
   end
 
   delegate :representatives, to: :case_record
+
+  def vsos
+    Vso.where(participant_id: [power_of_attorney.bgs_participant_id])
+  end
 
   def contested_claim
     representatives.any? { |r| r.reptype == "C" }
@@ -709,6 +721,7 @@ class LegacyAppeal < ApplicationRecord
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
       (RequestStore.store[:application] = "queue" ||
+       RequestStore.store[:application] = "hearing_schedule" ||
        RequestStore.store[:application] = "idt")
   end
 
