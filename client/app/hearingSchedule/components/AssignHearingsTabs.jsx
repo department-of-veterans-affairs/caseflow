@@ -201,7 +201,7 @@ export default class AssignHearingsTabs extends React.Component {
       ),
       time: null,
       externalId: appeal.attributes.externalAppealId
-    }))
+    }));
   };
 
   upcomingHearingsRows = (hearings) => {

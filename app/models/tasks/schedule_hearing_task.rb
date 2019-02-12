@@ -32,6 +32,9 @@ class ScheduleHearingTask < GenericTask
       central_office_ids = VACOLS::Case.where(bfhr: 1, bfcurloc: "CASEFLOW").pluck(:bfkey)
       central_office_legacy_appeal_ids = LegacyAppeal.where(vacols_id: central_office_ids).pluck(:id)
 
+      # For legacy appeals, we need to only provide a central office hearing if they explicitly
+      # chose one. Likewise, we can't use DC if it's the closest regional office unless they
+      # chose a central office hearing.
       if regional_office == "C"
         legacy_appeal_tasks.where("legacy_appeals.id IN (?)", central_office_legacy_appeal_ids)
       else

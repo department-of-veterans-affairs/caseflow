@@ -1,5 +1,3 @@
-require "benchmark"
-
 RSpec.describe TasksController, type: :controller do
   before do
     Fakes::Initializer.load!
