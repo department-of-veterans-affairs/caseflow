@@ -44,7 +44,7 @@ class CancelTaskModal extends React.Component<Props> {
     const payload = {
       data: {
         task: {
-          status: 'canceled'
+          status: 'cancelled'
         }
       }
     };
