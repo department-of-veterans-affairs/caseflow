@@ -52,12 +52,12 @@ describe DecisionIssue do
       end
     end
 
-    context ".needs_dta_claim" do
+    context ".needs_remand_claim" do
       let!(:uncontested_remand_di) { create(:decision_issue, id: 55, disposition: "remanded")}
       let!(:uncontested_dta_di) { create(:decision_issue, id: 56, disposition: "DTA Error - PMRs")}
       it "includes uncontested remanded or dta error issues" do
-        expect(DecisionIssue.needs_dta_claim).to include(uncontested_remand_di, uncontested_dta_di)
-        expect(DecisionIssue.needs_dta_claim).to_not include(decision_issue)
+        expect(DecisionIssue.needs_remand_claim).to include(uncontested_remand_di, uncontested_dta_di)
+        expect(DecisionIssue.needs_remand_claim).to_not include(decision_issue)
       end
     end
   end
@@ -303,8 +303,8 @@ describe DecisionIssue do
     end
   end
 
-  context "#find_or_create_dta_supplemental_claim!" do
-    subject { decision_issue.find_or_create_dta_supplemental_claim! }
+  context "#find_or_create_remand_supplemental_claim!" do
+    subject { decision_issue.find_or_create_remand_supplemental_claim! }
 
     context "when approx_decision_date is nil" do
       let(:decision_review) { create(:appeal) }

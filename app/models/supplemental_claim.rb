@@ -111,7 +111,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def remanded_decision_issues_needing_request_issues
-    decision_review_remanded.decision_issues.needs_dta_claim.where(benefit_type: benefit_type)
+    decision_review_remanded.decision_issues.needs_remand_claim.where(benefit_type: benefit_type)
   end
 
   def fetch_status

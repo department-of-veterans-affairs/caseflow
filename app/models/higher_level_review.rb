@@ -3,7 +3,7 @@ class HigherLevelReview < ClaimReview
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
   end
 
-  has_many :dta_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
+  has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   END_PRODUCT_MODIFIERS = %w[030 031 032 033 034 035 036 037 038 039].freeze
 
@@ -20,7 +20,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def on_decision_issues_sync_processed(_end_product_establishment)
-    create_dta_supplemental_claims!
+    create_remand_supplemental_claims!
   end
 
   # needed for appeal status api
@@ -38,7 +38,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def active?
-    hlr_ep_active? || active_dta_claims?
+    hlr_ep_active? || active_remand_claims?
   end
 
   def description
@@ -59,7 +59,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def decision_event_date
-    return if dta_supplemental_claims.any?
+    return if remand_supplemental_claims.any?
     return unless decision_issues.any?
 
     if end_product_establishments.any?
@@ -71,7 +71,7 @@ class HigherLevelReview < ClaimReview
 
   def dta_error_event_date
     return if hlr_ep_active?
-    return unless dta_supplemental_claims.any?
+    return unless remand_supplemental_claims.any?
 
     decision_issues.with_dta_error.first.approx_decision_date
   end
@@ -114,10 +114,10 @@ class HigherLevelReview < ClaimReview
   def fetch_status
     if hlr_ep_active?
       :hlr_received
-    elsif active_dta_claims?
+    elsif active_remand_claims?
       :hlr_dta_error
-    elsif dta_supplemental_claims.any?
-      dta_supplemental_claims.each do |rsc|
+    elsif remand_supplemental_claims.any?
+      remand_supplemental_claims.each do |rsc|
         return :hlr_decision if rsc.decision_issues.any?
       end
       return :hlr_closed

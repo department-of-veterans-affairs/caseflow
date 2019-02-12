@@ -57,7 +57,7 @@ class DecisionIssue < ApplicationRecord
       .where("request_issues.contested_decision_issue_id IS NULL")
     end
 
-    def needs_dta_claim
+    def needs_remand_claim
       remanded.or(with_dta_error).uncontested
     end
   end
@@ -96,8 +96,8 @@ class DecisionIssue < ApplicationRecord
     }
   end
 
-  def find_or_create_dta_supplemental_claim!
-    find_dta_supplemental_claim || create_dta_supplemental_claim!
+  def find_or_create_remand_supplemental_claim!
+    find_remand_supplemental_claim || create_remand_supplemental_claim!
   end
 
   def imo?
@@ -162,7 +162,7 @@ class DecisionIssue < ApplicationRecord
     latest_ep.payee_code
   end
 
-  def find_dta_supplemental_claim
+  def find_remand_supplemental_claim
     SupplementalClaim.find_by(
       veteran_file_number: veteran_file_number,
       decision_review_remanded: decision_review,
@@ -170,7 +170,7 @@ class DecisionIssue < ApplicationRecord
     )
   end
 
-  def create_dta_supplemental_claim!
+  def create_remand_supplemental_claim!
     # Checking our assumption that approx_decision_date will always be populated for Decision Issues
     fail "approx_decision_date is required to create a DTA Supplemental Claim" unless approx_decision_date
 

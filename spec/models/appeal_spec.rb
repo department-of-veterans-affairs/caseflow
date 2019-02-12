@@ -81,13 +81,13 @@ describe Appeal do
     end
   end
 
-  context "#create_dta_supplemental_claims!" do
+  context "#create_remand_supplemental_claims!" do
     let(:veteran) { create(:veteran) }
     let(:appeal) do
       create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number)
     end
 
-    subject { appeal.create_dta_supplemental_claims! }
+    subject { appeal.create_remand_supplemental_claims! }
 
     let!(:remanded_decision_issue) do
       create(
