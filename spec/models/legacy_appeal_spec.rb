@@ -225,6 +225,35 @@ describe LegacyAppeal do
     end
   end
 
+  context "#soc_opt_in_due_date" do
+    subject { appeal.soc_opt_in_due_date }
+
+    context "when is no soc" do
+      let(:vacols_case) do
+        create(:case)
+      end
+
+      let(:soc_date) { nil }
+      it { is_expected.to eq(nil) }
+    end
+
+    context "when there is an soc" do
+      let(:vacols_case) do
+        create(:case, bfdsoc: 1.day.ago)
+      end
+
+      it { is_expected.to eq((vacols_case.bfdsoc + 60.days).to_date) }
+    end
+
+    context "when there are multiple socs" do
+      let(:vacols_case) do
+        create(:case, bfdsoc: 1.year.ago, bfssoc1: 6.months.ago, bfssoc2: 1.day.ago)
+      end
+
+      it { is_expected.to eq((vacols_case.bfssoc2 + 60.days).to_date) }
+    end
+  end
+
   context "#cavc_due_date" do
     subject { appeal.cavc_due_date }
 
@@ -1598,7 +1627,7 @@ describe LegacyAppeal do
 
       it { expect(subject.length).to eq(4) }
       it { is_expected.to include("Foreign claim - compensation claims, dual claims, appeals") }
-      it { is_expected.to include("Vocational Rehab") }
+      it { is_expected.to include("Vocational Rehabilitation and Employment") }
       it { is_expected.to include(/Education - GI Bill, dependents educational assistance/) }
       it { is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands") }
     end

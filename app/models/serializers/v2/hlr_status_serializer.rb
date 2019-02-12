@@ -1,4 +1,4 @@
-class V2::HLRStatusSerializer < V2::AppealSerializer
+class V2::HLRStatusSerializer < ActiveModel::Serializer
   type :higher_level_review
 
   def id
@@ -7,27 +7,30 @@ class V2::HLRStatusSerializer < V2::AppealSerializer
 
   attribute :linked_review_ids, key: :appeal_ids
 
-  attribute :type do
-    # this does not apply to HLR
-  end
-
-  attribute :location do
-    # for HLR will always be aoj
-    "aoj"
+  attribute :updated do
+    Time.zone.now.in_time_zone("Eastern Time (US & Canada)").round.iso8601
   end
 
   attribute :incomplete_history do
     false
   end
 
-  attribute :aod do
-    # does not apply to HLR
+  attribute :active?, key: :active
+  attribute :description
+
+  attribute :location do
+    "aoj"
   end
 
-  attribute :docket do
-    # doesn't apply to HLRs
-  end
+  attribute :aoj
+  attribute :program, key: :program_area
+  attribute :status_hash, key: :status
+  attribute :alerts
+  attribute :issues_hash, key: :issues
+  attribute :events
 
-  attribute :events do
+  # Stubbed attributes
+  attribute :evidence do
+    []
   end
 end

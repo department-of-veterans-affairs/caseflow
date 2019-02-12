@@ -95,7 +95,7 @@ class TaskRows extends React.PureComponent {
   };
 
   assignedOnListItem = (task) => {
-    if (task.completedOn) {
+    if (task.closedAt) {
       return null;
     }
 
@@ -103,9 +103,9 @@ class TaskRows extends React.PureComponent {
       <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
-  completedOnListItem = (task) => {
-    return task.completedOn ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}</dt>
-      <dd><DateString date={task.completedOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+  closedAtListItem = (task) => {
+    return task.closedAt ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}</dt>
+      <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
   dueDateListItem = (task) => {
@@ -114,7 +114,7 @@ class TaskRows extends React.PureComponent {
   }
 
   daysWaitingListItem = (task) => {
-    if (task.completedOn) {
+    if (task.closedAt) {
       return null;
     }
 
@@ -154,7 +154,7 @@ class TaskRows extends React.PureComponent {
   }
 
   taskLabelListItem = (task) => {
-    if (task.completedOn) {
+    if (task.closedAt) {
       return null;
     }
 
@@ -228,17 +228,17 @@ class TaskRows extends React.PureComponent {
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>
               { this.assignedOnListItem(task) }
-              { this.completedOnListItem(task) }
+              { this.closedAtListItem(task) }
               { this.dueDateListItem(task) }
-              { !task.completedOn && this.daysWaitingListItem(task) }
+              { !task.closedAt && this.daysWaitingListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
-            task.completedOn ? '' : greyDotTimelineStyling].join(' ')}>
-            { task.completedOn && timeline ? <GreenCheckmark /> : <GrayDot /> }
+            task.closedAt ? '' : greyDotTimelineStyling].join(' ')}>
+            { task.closedAt && timeline ? <GreenCheckmark /> : <GrayDot /> }
             { (((index < taskList.length) && timeline) || (index < taskList.length - 1 && !timeline)) &&
               <div {...grayLineStyling} className={[timeline ? grayLineTimelineStyling : '',
-                task.completedOn ? '' : greyDotAndlineStyling].join(' ')} /> }
+                task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
           </td>
           <td {...taskInformationContainerStyling}
             className={timeline ? taskInformationTimelineContainerStyling : ''}>

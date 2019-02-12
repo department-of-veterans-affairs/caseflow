@@ -47,25 +47,57 @@ class HigherLevelReview < ClaimReview
     hlr_ep_active? || dta_claim_active?
   end
 
-  def description
-    # need to impelement
-  end
-
   def status_hash
-    { type: fetch_status }
+    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def alerts
     # need to implement. add logic to return alert enum
   end
 
-  def issues
-    # need to implement. get request and corresponding rating issue
-    []
+  def fetch_all_decision_issues_for_api_status
+    all_decision_issues = decision_issues.reject { |di| DTA_ERRORS.include?(di[:disposition]) }
+
+    all_decision_issues += dta_claim.decision_issues if dta_claim
+
+    all_decision_issues
+  end
+
+  def decision_event_date
+    return if dta_claim
+    return unless decision_issues.any?
+
+    if end_product_establishments.any?
+      decision_issues.first.approx_decision_date
+    else
+      decision_issues.first.promulgation_date
+    end
+  end
+
+  def dta_error_event_date
+    return if hlr_ep_active?
+    return unless dta_claim
+
+    decision_issues.find_by(disposition: DTA_ERRORS).approx_decision_date
+  end
+
+  def dta_descision_event_date
+    return if active?
+    return unless dta_claim
+
+    dta_claim.decision_event_date
+  end
+
+  def other_close_event_date
+    return if active?
+    return unless decision_issues.empty?
+    return unless end_product_establishments.any?
+
+    end_product_establishments.first.last_synced_at
   end
 
   def events
-    # need to implement. hlr_request, hlr_decision, hlr_dta_error, or hlr_other_close
+    @events ||= AppealEvents.new(appeal: self).all
   end
 
   private
@@ -159,9 +191,30 @@ class HigherLevelReview < ClaimReview
     elsif dta_claim_active?
       :hlr_dta_error
     elsif dta_claim
-      dta_claim.decision_issues.empty ? :hlr_closed : :hlr_decision
+      dta_claim.decision_issues.empty? ? :hlr_closed : :hlr_decision
     else
-      decision_issues ? :hlr_closed : :hlr_decision
+      decision_issues.empty? ? :hlr_closed : :hlr_decision
+    end
+  end
+
+  def fetch_details_for_status
+    case fetch_status
+    when :hlr_decision
+      issue_list = fetch_all_decision_issues_for_api_status
+      {
+        issues: api_issues_for_status_details_issues(issue_list)
+      }
+    else
+      {}
+    end
+  end
+
+  def api_issues_for_status_details_issues(issue_list)
+    issue_list.map do |issue|
+      {
+        description: issue.api_status_description,
+        disposition: issue.api_status_disposition
+      }
     end
   end
 end

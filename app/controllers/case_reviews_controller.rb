@@ -1,9 +1,4 @@
 class CaseReviewsController < ApplicationController
-  CASE_REVIEW_CLASSES = {
-    AttorneyCaseReview: AttorneyCaseReview,
-    JudgeCaseReview: JudgeCaseReview
-  }.freeze
-
   rescue_from Caseflow::Error::UserRepositoryError do |e|
     handle_non_critical_error("case_reviews", e)
   end
@@ -13,16 +8,17 @@ class CaseReviewsController < ApplicationController
   end
 
   def complete
-    return invalid_type_error unless case_review_class
+    result = CompleteCaseReview.new(case_review_class: case_review_class, params: complete_params).call
 
-    record = case_review_class.complete(complete_params)
-    return invalid_record_error(record) unless record.valid?
-
-    create_quality_review_task(record)
-
-    response = { task: record }
-    response[:issues] = record.appeal.issues
-    render json: response
+    if result.success?
+      case_review = result.extra[:case_review]
+      render json: {
+        task: case_review,
+        issues: case_review.appeal.issues
+      }
+    else
+      render json: result.to_h, status: :bad_request
+    end
   end
 
   def update
@@ -38,35 +34,13 @@ class CaseReviewsController < ApplicationController
 
   private
 
-  def create_quality_review_task(record)
-    return if record.appeal.is_a?(LegacyAppeal) ||
-              !record.is_a?(JudgeCaseReview) ||
-              record.task.parent.is_a?(QualityReviewTask)
-
-    root_task = record.task.root_task
-    if QualityReviewCaseSelector.select_case_for_quality_review?
-      QualityReviewTask.create_from_root_task(root_task)
-    else
-      BvaDispatchTask.create_from_root_task(root_task)
-    end
-  end
-
   def case_review_class
-    CASE_REVIEW_CLASSES[params["tasks"][:type].try(:to_sym)]
-  end
-
-  def invalid_type_error
-    render json: {
-      "errors": [
-        "title": "Invalid Case Review Type Error",
-        "detail": "Case review type is invalid, valid types: #{CASE_REVIEW_CLASSES.keys}"
-      ]
-    }, status: :bad_request
+    params["tasks"].fetch(:type)
   end
 
   def complete_params
-    return attorney_case_review_params if case_review_class == AttorneyCaseReview
-    return judge_case_review_params if case_review_class == JudgeCaseReview
+    return attorney_case_review_params if case_review_class == "AttorneyCaseReview"
+    return judge_case_review_params if case_review_class == "JudgeCaseReview"
   end
 
   def attorney_case_review_params
@@ -110,9 +84,5 @@ class CaseReviewsController < ApplicationController
         :post_aoj
       ]
     ]
-  end
-
-  def ama?
-    params["task_id"] !~ LegacyTask::TASK_ID_REGEX
   end
 end
