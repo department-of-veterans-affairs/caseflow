@@ -88,7 +88,8 @@ class SubmitDecisionView extends React.PureComponent<Props> {
   extendDecisionOptsWithAttorneyCheckOutInfo = (decision, attorneyCaseRewriteDetails) => {
 
     const decisionOptsWithAttorneyCheckoutInfo =
-      Object.assign({}, decision.opts, { document_id: attorneyCaseRewriteDetails.document_id,
+
+      _.merge(decision.opts, { document_id: attorneyCaseRewriteDetails.document_id,
         note: attorneyCaseRewriteDetails.note_from_attorney,
         overtime: attorneyCaseRewriteDetails.overtime,
         reviewing_judge_id: attorneyCaseRewriteDetails.assigned_judge.id
