@@ -41,21 +41,20 @@ class HigherLevelReview < ClaimReview
     hlr_ep_active? || active_remand_claims?
   end
 
-  def description
-    # need to impelement
-  end
-
   def status_hash
-    { type: fetch_status }
+    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def alerts
     # need to implement. add logic to return alert enum
   end
 
-  def issues
-    # need to implement. get request and corresponding rating issue
-    []
+  def fetch_all_decision_issues_for_api_status
+    all_decision_issues = decision_issues.reject { |di| DTA_ERRORS.include?(di[:disposition]) }
+
+    all_decision_issues += dta_claim.decision_issues if dta_claim
+
+    all_decision_issues
   end
 
   def decision_event_date
@@ -122,7 +121,28 @@ class HigherLevelReview < ClaimReview
       end
       return :hlr_closed
     else
-      decision_issues ? :hlr_closed : :hlr_decision
+      decision_issues.empty? ? :hlr_closed : :hlr_decision
+    end
+  end
+
+  def fetch_details_for_status
+    case fetch_status
+    when :hlr_decision
+      issue_list = fetch_all_decision_issues_for_api_status
+      {
+        issues: api_issues_for_status_details_issues(issue_list)
+      }
+    else
+      {}
+    end
+  end
+
+  def api_issues_for_status_details_issues(issue_list)
+    issue_list.map do |issue|
+      {
+        description: issue.api_status_description,
+        disposition: issue.api_status_disposition
+      }
     end
   end
 end

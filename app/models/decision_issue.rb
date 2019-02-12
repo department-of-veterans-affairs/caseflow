@@ -60,6 +60,10 @@ class DecisionIssue < ApplicationRecord
     def needs_remand_claim
       remanded.or(with_dta_error).uncontested
     end
+
+    def not_remanded
+      where.not(disposition: "remanded")
+    end
   end
 
   def approx_decision_date
@@ -108,7 +112,45 @@ class DecisionIssue < ApplicationRecord
     Contention.new(description).text
   end
 
+  def api_status_active?
+    # this is still being worked on so for the purposes of communicating
+    # to the veteran, this decision issue is still considered active
+    return true if decision_review.is_a?(Appeal) && disposition == "remanded"
+
+    false
+  end
+
+  def api_status_last_action
+    return "remand" if disposition == "remanded"
+
+    disposition
+  end
+
+  def api_status_last_action_date
+    approx_decision_date
+  end
+
+  def api_status_disposition
+    "remand" if disposition == "remanded"
+    disposition
+  end
+
+  def api_status_description
+    description = fetch_diagnostic_code_status_description(diagnostic_code)
+    return description if description
+
+    "#{benefit_type.capitalize} issue"
+  end
+
   private
+
+  def fetch_diagnostic_code_status_description(diagnostic_code)
+    if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["status_description"]
+      description[0] = description[0].upcase
+      description
+    end
+  end
 
   def processed_in_caseflow?
     decision_review.processed_in_caseflow?

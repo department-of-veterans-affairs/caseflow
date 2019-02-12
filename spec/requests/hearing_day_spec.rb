@@ -143,8 +143,9 @@ RSpec.describe "Hearing Schedule", type: :request do
       }
       get "/hearings/hearing_day", params: { start_date: "2017-01-01", end_date: "2017-06-15" }, headers: headers
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearings"].size).to eq(3)
-      expect(JSON.parse(response.body)["hearings"][2]["regional_office"]).to eq("Louisville, KY")
+      # Pull only Video hearing days from VACOLS
+      expect(JSON.parse(response.body)["hearings"].size).to eq(1)
+      expect(JSON.parse(response.body)["hearings"][0]["regional_office"]).to eq("Louisville, KY")
     end
   end
 

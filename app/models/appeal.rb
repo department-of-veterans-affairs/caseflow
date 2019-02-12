@@ -31,6 +31,9 @@ class Appeal < DecisionReview
       .where("advance_on_docket_motions.granted = ?", true)
       .or(join_aod_motions
         .where("people.date_of_birth <= ?", 75.years.ago))
+    # TODO: this method returns duplicate results when appeals match both clauses in the `or`.
+    # adding .distinct here throws an error when combined with other scopes using .order.
+    # ensure results are distinct.
   }
 
   # rubocop:disable Metrics/LineLength
@@ -62,6 +65,10 @@ class Appeal < DecisionReview
       .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
   }
 
+  scope :priority_ordered_by_distribution_ready_date, lambda {
+    from(all_priority).ordered_by_distribution_ready_date
+  }
+
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
@@ -80,6 +87,10 @@ class Appeal < DecisionReview
     else
       LegacyAppeal.find_or_create_by_vacols_id(id)
     end
+  end
+
+  def self.non_priority_decisions_in_the_last_year
+    all_nonpriority.joins(:decision_documents).where("receipt_date > ?", 1.year.ago).count
   end
 
   def ui_hash
@@ -133,7 +144,7 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
+    task = tasks.order(created_at: :desc).detect { |t| t.is_a?(JudgeTask) }
     task ? task.assigned_to.try(:full_name) : ""
   end
 
@@ -304,6 +315,12 @@ class Appeal < DecisionReview
     processed!
   end
 
+  def set_target_decision_date!
+    if direct_review_docket?
+      update!(target_decision_date: receipt_date + DirectReviewDocket::DAYS_TO_DECISION_GOAL.days)
+    end
+  end
+
   def outcoded?
     root_task && root_task.status == Constants.TASK_STATUSES.completed
   end
@@ -342,7 +359,7 @@ class Appeal < DecisionReview
   end
 
   def status_hash
-    { type: fetch_status, details: {} }
+    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def fetch_status
@@ -389,6 +406,63 @@ class Appeal < DecisionReview
   # rubocop:enable CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 
+  # rubocop:disable Metrics/MethodLength
+  def fetch_details_for_status
+    case fetch_status
+    when :bva_decision
+      {
+        issues: api_issues_for_status_details_issues(decision_issues)
+      }
+    when :ama_remand
+      {
+        issues: api_issues_for_status_details_issues(decision_issues)
+      }
+    when :post_bva_dta_decision
+      post_bva_dta_decision_status_details
+    when :bva_decision_effectuation
+      {
+        bvaDecisionDate: decision_event_date,
+        aojDecisionDate: decision_effectuation_event_date
+      }
+    when :pending_hearing_scheduling
+      {
+        type: "video"
+      }
+    else
+      {}
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def post_bva_dta_decision_status_details
+    issue_list = remanded_sc_decision_issues
+    {
+      issues: api_issues_for_status_details_issues(issue_list),
+      bvaDecisionDate: decision_event_date,
+      aojDecisionDate: dta_descision_event_date
+    }
+  end
+
+  def api_issues_for_status_details_issues(issue_list)
+    issue_list.map do |issue|
+      {
+        description: issue.api_status_description,
+        disposition: issue.api_status_disposition
+      }
+    end
+  end
+
+  def remanded_sc_decision_issues
+    issue_list = []
+    remand_supplemental_claims.each do |sc|
+      sc.decision_issues.map do |di|
+        issue_list << di
+      end
+    end
+
+    issue_list
+  end
+
   def pending_schedule_hearing_task?
     tasks.any? { |t| t.is_a?(ScheduleHearingTask) && !t.completed? }
   end
@@ -427,10 +501,6 @@ class Appeal < DecisionReview
     # to be implemented
   end
 
-  def description
-    # to be implemented
-  end
-
   def program
     if request_issues.all? { |ri| ri.benefit_type == request_issues.first.benefit_type }
       request_issues.first.benefit_type
@@ -452,9 +522,13 @@ class Appeal < DecisionReview
   end
 
   def fetch_docket_type
-    return :new_evidence if evidence_submission_docket?
+    api_values = {
+      "direct_review" => "directReview",
+      "hearing" => "hearingRequest",
+      "evidence_submission" => "evidenceSubmission"
+    }
 
-    docket_name
+    api_values[docket_name]
   end
 
   def docket_switch_deadline
@@ -516,6 +590,32 @@ class Appeal < DecisionReview
 
   def events
     @events ||= AppealEvents.new(appeal: self).all
+  end
+
+  def issues_hash
+    issue_list = decision_issues.empty? ? request_issues.open : fetch_all_decision_issues
+
+    fetch_issues_status(issue_list)
+  end
+
+  def fetch_all_decision_issues
+    return decision_issues unless remanded_issues?
+    # only include the remanded issues they are still being worked on
+    return decision_issues if remanded_issues? && active_remanded_claims?
+
+    # if there were remanded issues and there is a decision available
+    # for them, include the decisions from the remanded SC and do not
+    # include the original remanded decision
+    di_list = decision_issues.not_remanded
+
+    remand_sc_decisions = []
+    remand_supplemental_claims.each do |sc|
+      sc.decision_issues.each do |di|
+        remand_sc_decisions << di
+      end
+    end
+
+    (di_list + remand_sc_decisions).uniq
   end
 
   private
