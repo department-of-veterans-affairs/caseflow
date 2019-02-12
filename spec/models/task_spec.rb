@@ -182,7 +182,8 @@ describe Task do
 
     context "when there is no rewrite task" do
       it "should return nil" do
-        expect(appeal.attorney_rewrite_task_for_appeal).to eq(nil)
+        rewrite_task = appeal.attorney_rewrite_task_for_appeal
+        expect(rewrite_task.empty?).to be_truthy
       end
     end
 
@@ -192,9 +193,9 @@ describe Task do
       end
       it "should return the rewrite task" do
         rewrite_task = appeal.attorney_rewrite_task_for_appeal
-        expect(rewrite_task).to_not eq(nil)
-        expect(rewrite_task.is_a?(AttorneyRewriteTask)).to be_truthy
-        expect(rewrite_task.status == Constants.TASK_STATUSES.in_progress).to be_truthy
+        expect(rewrite_task.empty?).to be_falsy
+        expect(rewrite_task.first.is_a?(AttorneyRewriteTask)).to be_truthy
+        expect(rewrite_task.first.status).to eq(Constants.TASK_STATUSES.in_progress || Constants.TASK_STATUSES.assigned)
       end
     end
   end
