@@ -25,7 +25,7 @@ class AppealRepository
     # Associate the cases we pulled from VACOLS to the appeals of the tasks.
     tasks.each do |t|
       if t.appeal.is_a?(LegacyAppeal)
-        case_record = cases.select { |cr| cr.id == t.appeal.vacols_id }.first
+        case_record = cases.detect { |cr| cr.id == t.appeal.vacols_id }
         set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
       end
     end
