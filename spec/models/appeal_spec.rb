@@ -932,7 +932,7 @@ describe Appeal do
       it "is waiting for hearing to be scheduled" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:pending_hearing_scheduling)
-        expect(status[:details]).to be_empty
+        expect(status[:details][:type]).to eq("video")
       end
     end
 
@@ -998,7 +998,7 @@ describe Appeal do
         status = appeal.status_hash
         expect(status[:type]).to eq(:bva_decision)
         expect(status[:details].first[:description]).to eq("Dental or oral condition")
-        expect(status[:details].first[:decision]).to eq("allowed")
+        expect(status[:details].first[:disposition]).to eq("allowed")
       end
     end
 
@@ -1038,8 +1038,6 @@ describe Appeal do
         status = appeal.status_hash
         expect(status[:type]).to eq(:ama_remand)
         expect(status[:details].count).to eq(2)
-        # expect(status[:details].first[:description]).to eq("Nca issue")
-        # expect(status[:details].first[:description]).to eq("remand")
       end
     end
 
@@ -1070,7 +1068,7 @@ describe Appeal do
         status = appeal.status_hash
         expect(status[:type]).to eq(:post_bva_dta_decision)
         expect(status[:details].first[:description]).to eq("Partial loss of hard palate")
-        expect(status[:details].first[:decision]).to eq("denied")
+        expect(status[:details].first[:disposition]).to eq("denied")
       end
     end
   end

@@ -650,4 +650,47 @@ describe HigherLevelReview do
       end
     end
   end
+
+  context "#status_hash" do
+    let(:receipt_date) { Time.new("2018", "03", "01").utc }
+    let(:benefit_type) { "compensation" }
+    let(:hlr_decision_date) { receipt_date + 30.days }
+
+    let!(:hlr) do
+      create(:higher_level_review,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             benefit_type: benefit_type)
+    end
+
+    let!(:request_issue1) do
+      create(:request_issue,
+             review_request: hlr,
+             benefit_type: benefit_type,
+             contested_rating_issue_diagnostic_code: "8877")
+    end
+
+    let!(:hlr_ep) do
+      create(:end_product_establishment,
+             :cleared,
+             source: hlr,
+             last_synced_at: hlr_decision_date)
+    end
+
+    let!(:hlr_decision_issue) do
+        create(:decision_issue,
+               decision_review: hlr,
+               disposition: "denied",
+               benefit_type: benefit_type,
+               end_product_last_action_date: hlr_decision_date,
+               diagnostic_code: "8877")
+    end
+
+    it "has decision status and status details" do
+      status = hlr.status_hash
+      expect(status[:type]).to eq(:hlr_decision)
+      expect(status[:details].first[:description]).to eq("Undiagnosed hemic or lymphatic condition")
+      expect(status[:details].first[:disposition]).to eq("denied")
+    end
+  end
 end

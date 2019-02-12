@@ -105,12 +105,12 @@ class DecisionIssue < ApplicationRecord
     approx_decision_date
   end
 
-  def disposition_for_status
+  def api_status_disposition
     "remand" if disposition == "remanded"
     disposition
   end
 
-  def description_for_status
+  def api_status_description
     description = fetch_diagnostic_code_status_description(diagnostic_code)
     return description if description
 

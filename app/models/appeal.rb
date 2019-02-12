@@ -415,34 +415,37 @@ class Appeal < DecisionReview
 
   def fetch_details_for_status
     case fetch_status
-    when :ama_remand
-      decision_issues.map do |di|
-        {
-          description: di.description_for_status,
-          decision: di.disposition_for_status
-        }
-      end
-    when :post_bva_dta_decision
-      issue_list = remanded_sc_decision_issues
-      issue_list.map do |di|
-        {
-          description: di.description_for_status,
-          decision: di.disposition_for_status
-        }
-      end
     when :bva_decision
-      decision_issues.map do |di|
-        {
-          description: di.description_for_status,
-          decision: di.disposition_for_status
-        }
-      end
+      decision_issues_status_details
+    when :ama_remand
+      decision_issues_status_details
+    when :post_bva_dta_decision
+      post_bva_dta_decision_details
     when :pending_hearing_scheduling
       {
         type: "video"
       }
     else
       {}
+    end
+  end
+
+  def post_bva_dta_decision_status_details
+    issue_list = remanded_sc_decision_issues
+    issue_list.map do |di|
+      {
+        description: di.api_status_description,
+        disposition: di.api_status_disposition
+      }
+    end
+  end
+
+  def decision_issues_status_details
+    decision_issues.map do |di|
+      {
+        description: di.api_status_description,
+        disposition: di.api_status_disposition
+      }
     end
   end
 
@@ -660,25 +663,6 @@ class Appeal < DecisionReview
       .select do |issue|
         issue.approx_decision_date && issue.approx_decision_date < receipt_date
       end
-  end
-
-  def issue_active_status(issue)
-    return true if issue.is_a?(RequestIssue)
-    return true if issue.is_a?(DecisionIssue) && issue.disposition == "remanded"
-
-    false
-  end
-
-  def get_issue_last_action(issue)
-    return unless issue.is_a?(DecisionIssue)
-
-    return "remand" if issue.disposition == "remanded"
-
-    issue.disposition
-  end
-
-  def get_issue_last_action_date(issue)
-    issue.approx_decision_date if issue.is_a?(DecisionIssue)
   end
 end
 # rubocop:enable Metrics/ClassLength

@@ -512,6 +512,11 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][1]["attributes"]["docket"]).to be_nil
       expect(json["data"][1]["attributes"]["status"]["type"]).to eq("sc_decision")
 
+      status_details = json["data"][1]["attributes"]["status"]["details"]
+      expect(status_details.length).to eq(1)
+      expect(status_details.first["description"]).to eq("Dental or oral condition")
+      expect(status_details.first["disposition"]).to eq("denied")
+
       expect(json["data"][1]["attributes"]["issues"].length).to eq(1)
       issue = json["data"][1]["attributes"]["issues"].first
       expect(issue["active"]).to eq(false)

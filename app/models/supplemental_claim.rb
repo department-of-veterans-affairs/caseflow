@@ -135,8 +135,8 @@ class SupplementalClaim < ClaimReview
     when :sc_decision
       decision_issues.map do |di|
         {
-          description: di.description_for_status,
-          disposition: di.disposition_for_status
+          description: di.api_status_description,
+          disposition: di.api_status_disposition
         }
       end
     else
