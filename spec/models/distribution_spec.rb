@@ -201,6 +201,11 @@ describe Distribution do
       end
 
       it "correctly distributes cases" do
+        evidence_submission_cases[0...2].each do |appeal|
+          appeal.tasks
+            .find_by(type: EvidenceSubmissionWindowTask.name)
+            .update!(status: :completed)
+        end
         subject.distribute!
         expect(subject.valid?).to eq(true)
         expect(subject.status).to eq("completed")
@@ -222,7 +227,7 @@ describe Distribution do
         expect(subject.distributed_cases.where(priority: true, docket: "direct_review").count).to eq(1)
         expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
         expect(subject.distributed_cases.where(docket: "direct_review").count).to be >= 3
-        expect(subject.distributed_cases.where(docket: "evidence_submission").count).to be >= 2
+        expect(subject.distributed_cases.where(docket: "evidence_submission").count).to eq(2)
       end
     end
   end
