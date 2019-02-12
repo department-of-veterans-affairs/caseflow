@@ -31,7 +31,7 @@ class DocketCoordinator
     # Unlike the other dockets, the direct review docket observes a time goal.
     # We distribute appeals from the docket sufficient to meet the goal, instead of proportionally.
     # When there are no or few "due" direct review appeals, we instead calculate a curve out.
-    direct_review_proportion = (direct_review_due_count / docket_margin_net_of_priority)
+    direct_review_proportion = (direct_review_due_count.to_f / docket_margin_net_of_priority)
       .clamp(interpolated_minimum_direct_review_proportion, MAXIMUM_DIRECT_REVIEW_PROPORTION)
 
     @docket_proportions.add_fixed_proportions!(direct_review: direct_review_proportion)
@@ -71,7 +71,7 @@ class DocketCoordinator
   def interpolated_minimum_direct_review_proportion
     return @interpolated_minimum_direct_review_proportion if @interpolated_minimum_direct_review_proportion
 
-    t = 1 - (dockets[:direct_review].time_until_due_of_oldest_appeal /
+    t = 1 - (dockets[:direct_review].time_until_due_of_oldest_appeal.to_f /
              dockets[:direct_review].time_until_due_of_new_appeal)
 
     @interpolated_minimum_direct_review_proportion =
@@ -84,13 +84,13 @@ class DocketCoordinator
 
     receipts_per_year = dockets[:direct_review].nonpriority_receipts_per_year
 
-    @pacesetting_direct_review_proportion = receipts_per_year / decisions_per_year
+    @pacesetting_direct_review_proportion = receipts_per_year.to_f / decisions_per_year
   end
 
   private
 
   def total_batch_size
-    JudgeTeam.all.map(&:non_admins).flatten.count * CASES_PER_ATTORNEY
+    JudgeTeam.all.map(&:non_admins).flatten.count * Distribution::CASES_PER_ATTORNEY
   end
 
   def docket_margin_net_of_priority
