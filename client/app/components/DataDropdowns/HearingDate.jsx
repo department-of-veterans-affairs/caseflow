@@ -83,7 +83,7 @@ class HearingDateDropdown extends React.Component {
     const { value, hearingDates: { options } } = this.props;
 
     if (!value) {
-      return options[0];
+      return options ? options[0] : {};
     }
 
     const comparison = typeof (value) === 'string' ?
