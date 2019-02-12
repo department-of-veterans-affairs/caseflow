@@ -1,6 +1,6 @@
 class DirectReviewDocket < Docket
   DAYS_TO_DECISION_GOAL = 365
-  BECOMES_DUE = -60
+  DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION = 60
 
   def docket_type
     "direct_review"
@@ -8,18 +8,18 @@ class DirectReviewDocket < Docket
 
   def due_count
     appeal_ids = appeals(priority: false, ready: true)
-      .where("target_decision_date <= ?", BECOMES_DUE.days.ago)
+      .where("target_decision_date <= ?", DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION.days.from_now)
     Appeal.where(id: appeal_ids).count
   end
 
   def time_until_due_of_oldest_appeal
     oldest_target = appeals(priority: false).limit(1).first.target_decision_date
-    time_until_due = Integer(oldest_target - Time.zone.today.to_date) + BECOMES_DUE
+    time_until_due = Integer(oldest_target - Time.zone.today.to_date) - DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION
     time_until_due.clamp(0, time_until_due_of_new_appeal)
   end
 
   def time_until_due_of_new_appeal
-    DAYS_TO_DECISION_GOAL + BECOMES_DUE
+    DAYS_TO_DECISION_GOAL - DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION
   end
 
   def nonpriority_receipts_per_year
