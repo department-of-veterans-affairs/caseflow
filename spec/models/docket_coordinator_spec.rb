@@ -63,21 +63,21 @@ describe DocketCoordinator do
 
   let!(:due_direct_review_cases) do
     (0...due_direct_review_count).map do
-      appeal = create(:appeal,
-                      :with_tasks,
-                      docket_type: "direct_review",
-                      receipt_date: 11.months.ago)
-      appeal.set_target_decision_date!
+      create(:appeal,
+             :with_tasks,
+             docket_type: "direct_review",
+             receipt_date: 11.months.ago,
+             target_decision_date: 1.month.from_now)
     end
   end
 
   let!(:other_direct_review_cases) do
     (0...10).map do
-      appeal = create(:appeal,
-                      :with_tasks,
-                      docket_type: "direct_review",
-                      receipt_date: 61.days.ago)
-      appeal.set_target_decision_date!
+      create(:appeal,
+             :with_tasks,
+             docket_type: "direct_review",
+             receipt_date: 61.days.ago,
+             target_decision_date: 304.days.from_now)
     end
   end
 
