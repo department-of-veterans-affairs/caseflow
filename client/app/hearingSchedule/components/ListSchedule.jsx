@@ -6,6 +6,7 @@ import { css } from 'glamor';
 import moment from 'moment';
 
 import FilterableTable from '../../components/FilterableTable';
+
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
@@ -28,6 +29,15 @@ const formatVljName = (lastName, firstName) => {
   if (lastName && firstName) {
     return `${lastName}, ${firstName}`;
   }
+};
+
+const judgeNameToIdMap = (hearings) => {
+  let nameToIdMap = {};
+
+  _.forEach(hearings, (hearingDay) => nameToIdMap[formatVljName(hearingDay.judgeLastName,
+    hearingDay.judgeFirstName)] = hearingDay.judgeId);
+
+  return nameToIdMap;
 };
 
 const inlineFormStyling = css({
