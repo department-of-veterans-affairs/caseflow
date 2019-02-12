@@ -66,7 +66,7 @@ RSpec.feature "Hearings" do
       expect(get_hearings(3)).to eql("2")
 
       # Validate help link
-      find("#menu-trigger").click
+      find("a", text: "DSUSER (DSUSER)").click
       find_link("Help").click
       expect(page).to have_content("Welcome to the Hearings Help page!")
     end
