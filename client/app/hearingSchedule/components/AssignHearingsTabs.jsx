@@ -5,7 +5,8 @@ import moment from 'moment';
 import _ from 'lodash';
 import LEGACY_APPEAL_TYPES_BY_ID from '../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 
-import Table from '../../components/Table';
+// import Table from '../../components/Table';
+import QueueTable from '../../queue/QueueTable';
 import TabWindow from '../../components/TabWindow';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { renderAppealType } from '../../queue/utils';
@@ -52,7 +53,7 @@ const AvailableVeteransTable = ({ rows, columns }) => {
     </div>;
   }
 
-  return <Table
+  return <QueueTable
     columns={removeTimeColumn}
     rowObjects={rows}
     summary="scheduled-hearings-table"
@@ -65,7 +66,7 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => (
   <div>
     <Link to={`/schedule/docket/${selectedHearingDay.id}`}>
       {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }</Link>
-    <Table
+    <QueueTable
       columns={columns}
       rowObjects={rows}
       summary="scheduled-hearings-table"
@@ -76,26 +77,6 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => (
 );
 
 export default class AssignHearingsTabs extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      amaAppeals: {
-        dropdownIsOpen: false,
-        filteredBy: null
-      },
-      legacyAppeals: {
-        dropdownIsOpen: false,
-        filteredBy: null
-      },
-      upcomingHearings: {
-        dropdownIsOpen: false,
-        filteredBy: null
-      }
-    };
-  }
-
   isAmaAppeal = (appeal) => {
     return appeal.attributes.appealType === 'Appeal';
   };
@@ -273,10 +254,7 @@ export default class AssignHearingsTabs extends React.Component {
   }
 
   tabWindowColumns = (data, { tab }) => {
-
     const { selectedRegionalOffice, selectedHearingDay } = this.props;
-
-    const state = this.state[tab];
     let locationFilterValues = this.getLocationFilterValues(data, tab);
 
     locationFilterValues.unshift({
@@ -323,24 +301,11 @@ export default class AssignHearingsTabs extends React.Component {
       header: 'Suggested Location',
       align: 'left',
       valueName: 'suggestedLocation',
-      getFilterValues: locationFilterValues,
-      isDropdownFilterOpen: state.dropdownIsOpen,
+      enableFilter: true,
+      columnName: 'suggestedLocation',
+      tableData: data,
       label: 'Filter by location',
-      anyFiltersAreSet: true,
-      toggleDropdownFilterVisiblity: () => this.setState({
-        [tab]: {
-          ...state,
-          dropdownIsOpen: !state.dropdownIsOpen
-        }
-      }),
-      setSelectedValue: (val) => {
-        this.setState({
-          [tab]: {
-            dropdownIsOpen: false,
-            filteredBy: val === 'all' ? null : val
-          }
-        });
-      }
+      enableClearFiltersRow: true
     },
     {
       header: 'Time',

@@ -163,7 +163,8 @@ export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, 'Custom'];
 export const COLUMN_NAMES = {
   'appeal.caseType': 'Case Type',
   'appeal.docketName': 'Docket Number',
-  label: 'Task(s)'
+  label: 'Task(s)',
+  type: 'Type'
 };
 
 export const DOCKET_NAME_FILTERS = {

@@ -40,9 +40,7 @@ class TaskTableTab extends React.PureComponent {
       allTasks: this.props.tasks,
       predefinedColumns: this.props.predefinedColumns,
       shownTasks: this.props.tasks,
-      searchText: '',
-      // isReviewFilterOpen: false,
-      // reviewFilterBy: null
+      searchText: ''
     };
   }
 
@@ -62,29 +60,6 @@ class TaskTableTab extends React.PureComponent {
     this.setState({ shownTasks: this.state.allTasks,
       searchText: '' });
   }
-
-  // onReviewTypeSearch = (reviewType) => {
-  //   if (reviewType === 'Clear category filter') {
-  //     this.setState({ shownTasks: this.state.allTasks,
-  //       searchText: '',
-  //       isReviewFilterOpen: false,
-  //       reviewFilterBy: reviewType });
-  //   } else {
-  //     const filteredTasks = this.state.allTasks.filter((task) => task.type === reviewType);
-
-  //     this.setState({ shownTasks: filteredTasks,
-  //       isReviewFilterOpen: false,
-  //       reviewFilterBy: reviewType });
-  //   }
-  // }
-
-  // onReviewFilterToggle = () => {
-  //   this.setState({ isReviewFilterOpen: !this.state.isReviewFilterOpen });
-  // }
-
-  // checkSelectedValue = (value) => {
-  //   return value === this.state.reviewFilterBy;
-  // }
 
   render = () => {
     return <React.Fragment>
@@ -123,8 +98,3 @@ const NonCompTabs = connect(
 )(NonCompTabsUnconnected);
 
 export default NonCompTabs;
-
-// this.onReviewTypeSearch,
-//               this.state.isReviewFilterOpen,
-//               this.onReviewFilterToggle,
-//               this.checkSelectedValue
