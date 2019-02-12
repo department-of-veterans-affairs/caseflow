@@ -20,25 +20,8 @@ class HearingDayRepository
 
     def load_days_for_range(start_date, end_date)
       video_and_co = VACOLS::CaseHearing.load_days_for_range(start_date, end_date)
-
-      removed_children_records = video_and_co.reject do |hearing_day|
-        hearing_day.request_type == HearingDay::REQUEST_TYPES[:central] &&
-          hearing_day.scheduled_for > HearingDay::CASEFLOW_CO_PARENT_DATE
-      end
       travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
-      [removed_children_records.uniq do |hearing_day|
-        [hearing_day.scheduled_for.to_date,
-         hearing_day.room,
-         hearing_day.request_type]
-      end, travel_board]
-    end
-
-    def load_days_for_central_office(start_date, end_date)
-      end_date = (end_date > HearingDay::CASEFLOW_CO_PARENT_DATE) ? HearingDay::CASEFLOW_CO_PARENT_DATE : end_date
-      video_and_co = VACOLS::CaseHearing.load_days_for_central_office(start_date, end_date)
-
-      travel_board = []
-      [video_and_co.uniq { |hearing_day| [hearing_day.scheduled_for.to_date, hearing_day[:room]] }, travel_board]
+      [video_and_co, travel_board]
     end
 
     def load_days_for_regional_office(regional_office, start_date, end_date)

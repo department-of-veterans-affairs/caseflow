@@ -408,17 +408,21 @@ describe "Appeals API v2", type: :request do
 
     let!(:decision_issue) do
       create(:decision_issue,
-             decision_review: supplemental_claim_review, end_product_last_action_date: receipt_date + 100.days)
+             decision_review: supplemental_claim_review,
+             disposition: "denied",
+             end_product_last_action_date: receipt_date + 100.days)
     end
 
     let(:rating_promulgated_date) { receipt_date - 40.days }
 
     let(:request_issue1) do
-      create(:request_issue, benefit_type: benefit_type, contested_rating_issue_diagnostic_code: nil)
+      create(:request_issue, benefit_type: benefit_type,
+                             contested_rating_issue_diagnostic_code: nil)
     end
 
     let(:request_issue2) do
-      create(:request_issue, benefit_type: "education", contested_rating_issue_diagnostic_code: nil)
+      create(:request_issue, benefit_type: "education",
+                             contested_rating_issue_diagnostic_code: nil)
     end
 
     let!(:appeal) do
@@ -477,7 +481,14 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["docket"]).to be_nil
       expect(json["data"].first["attributes"]["status"]["type"]).to eq("hlr_received")
-      expect(json["data"].first["attributes"]["issues"].length).to eq(0)
+
+      expect(json["data"].first["attributes"]["issues"].length).to eq(1)
+      issue = json["data"].first["attributes"]["issues"].first
+      expect(issue["active"]).to eq(true)
+      expect(issue["lastAction"]).to be_nil
+      expect(issue["date"]).to be_nil
+      expect(issue["diagnosticCode"]).to be_nil
+      expect(issue["description"]).to eq("Compensation issue")
 
       event_type = json["data"].first["attributes"]["events"].first
       expect(event_type["type"]).to eq("hlr_request")
@@ -500,7 +511,14 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][1]["attributes"]["programArea"]).to eq("pension")
       expect(json["data"][1]["attributes"]["docket"]).to be_nil
       expect(json["data"][1]["attributes"]["status"]["type"]).to eq("sc_decision")
-      expect(json["data"][1]["attributes"]["issues"].length).to eq(0)
+
+      expect(json["data"][1]["attributes"]["issues"].length).to eq(1)
+      issue = json["data"][1]["attributes"]["issues"].first
+      expect(issue["active"]).to eq(false)
+      expect(issue["lastAction"]).to eq("denied")
+      expect(issue["date"]).to eq((receipt_date + 100.days).to_s)
+      expect(issue["diagnosticCode"]).to eq("9999")
+      expect(issue["description"]).to eq("Dental or oral condition")
 
       request_event = json["data"][1]["attributes"]["events"].find { |e| e["type"] == "sc_request" }
       expect(request_event["date"]).to eq(receipt_date.to_s)
@@ -528,7 +546,13 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["docket"]["switchDueDate"]).to eq((rating_promulgated_date + 365.days).to_s)
       expect(json["data"][2]["attributes"]["docket"]["eligibleToSwitch"]).to eq(true)
       expect(json["data"][2]["attributes"]["status"]["type"]).to eq("on_docket")
-      expect(json["data"][2]["attributes"]["issues"].length).to eq(0)
+
+      expect(json["data"][2]["attributes"]["issues"].length).to eq(2)
+      issue = json["data"][2]["attributes"]["issues"].first
+      expect(issue["active"]).to eq(true)
+      expect(issue["lastAction"]).to be_nil
+      expect(issue["date"]).to be_nil
+      expect(issue["diagnosticCode"]).to be_nil
 
       event_type = json["data"][2]["attributes"]["events"].first
       expect(event_type["type"]).to eq("ama_nod")

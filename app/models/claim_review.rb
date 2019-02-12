@@ -178,6 +178,12 @@ class ClaimReview < DecisionReview
     end
   end
 
+  def issues_hash
+    issue_list = active? ? request_issues.open : fetch_all_decision_issues_for_api_status
+
+    fetch_issues_status(issue_list)
+  end
+
   private
 
   def can_contest_rating_issues?
@@ -208,5 +214,9 @@ class ClaimReview < DecisionReview
 
   def matching_request_issue(contention_id)
     RequestIssue.find_by!(contention_reference_id: contention_id)
+  end
+
+  def issue_active_status(_issue)
+    active?
   end
 end

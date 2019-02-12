@@ -49,11 +49,6 @@ class SupplementalClaim < ClaimReview
     # need to implement. add logic to return alert enum
   end
 
-  def issues
-    # need to implement. get request and corresponding rating issue
-    []
-  end
-
   def decision_event_date
     return unless decision_issues.any?
 
@@ -74,6 +69,10 @@ class SupplementalClaim < ClaimReview
 
   def events
     @events ||= AppealEvents.new(appeal: self).all
+  end
+
+  def fetch_all_decision_issues_for_api_status
+    decision_issues
   end
 
   private
