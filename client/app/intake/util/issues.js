@@ -165,7 +165,8 @@ export const formatContestableIssues = (contestableIssues) => {
   return orderedContestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
     contestableIssue.index = String(index);
 
-    contestableIssuesByDate[contestableIssue.decisionDate] = contestableIssuesByDate[contestableIssue.decisionDate] || {};
+    contestableIssuesByDate[contestableIssue.decisionDate] =
+      contestableIssuesByDate[contestableIssue.decisionDate] || {};
     contestableIssuesByDate[contestableIssue.decisionDate][index] = contestableIssue;
 
     return contestableIssuesByDate;
