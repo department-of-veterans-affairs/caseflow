@@ -1442,11 +1442,8 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Reader")
       click_on Document.last.type
 
-      expect(page).to have_content("This document has been updated")
-
-      click_on "Got It"
-      expect(page).to_not have_content("This document has been updated")
       expect(page).to have_content("test comment")
+      expect(page).to_not have_content("This document has been updated")
     end
   end
 end
