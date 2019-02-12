@@ -91,7 +91,7 @@ module AmaCaseDistribution
 
     dockets.each do |docket|
       docket_count = @appeals.count { |appeal| appeal.docket == docket.to_s && !appeal.priority }
-      proportion = docket_count / nonpriority_target
+      proportion = docket_count.to_f / nonpriority_target
       @remaining_docket_proportions[docket] = [@remaining_docket_proportions[docket] - proportion, 0].max
     end
   end

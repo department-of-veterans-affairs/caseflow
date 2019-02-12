@@ -105,7 +105,7 @@ describe DocketCoordinator do
       )
       expect(docket_coordinator.pacesetting_direct_review_proportion).to eq(0.1)
       expect(docket_coordinator.interpolated_minimum_direct_review_proportion).to eq(0.067)
-      expect(docket_coordinator.target_number_of_ama_hearings(730)).to eq(400)
+      expect(docket_coordinator.target_number_of_ama_hearings(2.years)).to eq(400)
     end
 
     context "when the direct review proportion would exceed 80%" do
