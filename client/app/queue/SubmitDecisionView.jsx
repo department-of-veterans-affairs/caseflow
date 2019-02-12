@@ -68,15 +68,49 @@ type Props = Params & {|
 |};
 
 class SubmitDecisionView extends React.PureComponent<Props> {
+
+  componentDidMount = () => {
+    this.extendedDecision = this.extendDecisionOptsWithAttorneyCheckOutInfo(
+      this.props.decision,
+      this.props.appeal.attorneyCaseRewriteDetails);
+
+    _.each(this.extendedDecision.opts, (value, key) => {
+      this.props.setDecisionOptions({
+        [key]: value
+      });
+    });
+  }
+
+  // this handles the case where there is no document_id on this.props.decision.opts
+  // and it comes from this.props.appeal.attorneyCaseRewriteDetails instead
+  // if you don't do this you will get validation errors and a 400 for a missing document_id
+  // this is also needed to keep the onChange values in sync
+  extendDecisionOptsWithAttorneyCheckOutInfo = (decision, attorneyCaseRewriteDetails) => {
+
+    const decisionOptsWithAttorneyCheckoutInfo =
+      Object.assign({}, decision.opts, { document_id: attorneyCaseRewriteDetails.document_id,
+        note: attorneyCaseRewriteDetails.note_from_attorney,
+        overtime: attorneyCaseRewriteDetails.overtime,
+        reviewing_judge_id: attorneyCaseRewriteDetails.assigned_judge.id
+
+      });
+    const extendedDecision = { ...decision };
+
+    extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
+
+    return extendedDecision;
+  }
   validateForm = () => {
     const {
       opts: decisionOpts
     } = this.props.decision;
-    const requiredParams = ['document_id', 'reviewing_judge_id', 'work_product'];
 
+    const requiredParams = ['document_id', 'reviewing_judge_id', 'work_product'];
     const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param) || !decisionOpts[param]);
 
-    return !missingParams.length;
+    const isValid = !missingParams.length;
+
+    return isValid;
   };
 
   getPrevStepUrl = () => {
@@ -116,7 +150,8 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     } = this.props;
 
     const issuesToPass = !isLegacyAppeal && amaDecisionIssues ? decisionIssues : issues;
-    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issuesToPass, { isLegacyAppeal });
+    const payload = buildCaseReviewPayload(checkoutFlow, decision,
+      userRole, issuesToPass, { isLegacyAppeal });
 
     const fields = {
       type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ?
@@ -147,9 +182,6 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       checkoutFlow,
       decision: {
         opts: decisionOpts
-      },
-      appeal: {
-        attorneyCaseRewriteDetails
       }
     } = this.props;
 
@@ -158,7 +190,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
 
     if (!decisionOpts.document_id) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_REQUIRED;
-    } else if (checkoutFlow === DECISION_TYPES.OMO_REQUEST && !validateWorkProductTypeAndId(this.props.decision)) {
+    } else if (checkoutFlow === DECISION_TYPES.OMO_REQUEST && !validateWorkProductTypeAndId(this.extendedDecision)) {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_INVALID;
     }
 
@@ -186,9 +218,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         name="overtime"
         label="This work product is overtime"
         onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
-        value={decisionOpts.overtime ||
-          _.get(attorneyCaseRewriteDetails, 'overtime') ||
-          false}
+        value={decisionOpts.overtime || false}
         styling={css(marginBottom(1), marginTop(1))}
       />
       <TextField
@@ -196,7 +226,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         name="document_id"
         errorMessage={highlightFormItems ? documentIdErrorMessage : null}
         onChange={(value) => this.props.setDecisionOptions({ document_id: value })}
-        value={decisionOpts.document_id || _.get(attorneyCaseRewriteDetails, 'document_id')}
+        value={decisionOpts.document_id}
         maxLength={DOCUMENT_ID_MAX_LENGTH}
         autoComplete="off"
       />
@@ -208,10 +238,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       <TextareaField
         label="Notes:"
         name="notes"
-        // the judges instructions take precedence in the note 
-        // over the note that the attorney previously wrote in checkout
-        value={decisionOpts.note ||
-          _.get(attorneyCaseRewriteDetails, 'note_from_attorney', '')}
+        value={decisionOpts.note || ''}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={marginTop(4)}
         maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
