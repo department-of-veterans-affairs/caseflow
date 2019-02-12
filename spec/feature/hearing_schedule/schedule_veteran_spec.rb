@@ -247,7 +247,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(text: "Denver")
 
       within find(".dropdown-hearingDate") do
-        click_dropdown(index: 0)
+        click_dropdown(index: 1)
       end
 
       find("label", text: "9:00 am").click
