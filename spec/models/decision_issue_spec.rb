@@ -37,27 +37,30 @@ describe DecisionIssue do
   let(:decision_review) { create(:supplemental_claim, benefit_type: benefit_type) }
 
   context "scopes" do
-    let!(:contesting_request_issue) { create(:request_issue, contested_decision_issue_id: decision_issue.id)}
+    let!(:ri_contesting_decision_issue) { create(:request_issue, contested_decision_issue_id: decision_issue.id) }
+    let!(:uncontested_di) { create(:decision_issue, disposition: "other") }
+    let!(:uncontested_remand_di) { create(:decision_issue, id: 55, disposition: "remanded") }
+    let!(:uncontested_dta_di) { create(:decision_issue, id: 55, disposition: "DTA Error - Fed Recs") }
+    let!(:granted_di) { create(:decision_issue, id: 55, disposition: "DTA Error - Fed Recs") }
 
     context ".contested" do
       it "matches decision issue that has been contested" do
         expect(DecisionIssue.contested).to eq([decision_issue])
+        expect(DecisionIssue.contested).to_not include(uncontested_di)
       end
     end
 
     context ".uncontested" do
-      let!(:uncontested_decision_issue) { create(:decision_issue)}
       it "matches decision issues that has not been contested" do
-        expect(DecisionIssue.uncontested).to eq([uncontested_decision_issue])
+        expect(DecisionIssue.uncontested).to include(uncontested_di, uncontested_remand_di, uncontested_dta_di)
+        expect(DecisionIssue.uncontested).to_not include(decision_issue)
       end
     end
 
-    context ".needs_remand_claim" do
-      let!(:uncontested_remand_di) { create(:decision_issue, id: 55, disposition: "remanded")}
-      let!(:uncontested_dta_di) { create(:decision_issue, id: 56, disposition: "DTA Error - PMRs")}
-      it "includes uncontested remanded or dta error issues" do
-        expect(DecisionIssue.needs_remand_claim).to include(uncontested_remand_di, uncontested_dta_di)
-        expect(DecisionIssue.needs_remand_claim).to_not include(decision_issue)
+    context ".remanded" do
+      it "includes decision issues with remand and dta error dispositions" do
+        expect(DecisionIssue.remanded).to include(uncontested_remand_di, uncontested_dta_di)
+        expect(DecisionIssue.remanded).to_not include(decision_issue, uncontested_di)
       end
     end
   end

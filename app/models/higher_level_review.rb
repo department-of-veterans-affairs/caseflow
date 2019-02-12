@@ -119,7 +119,7 @@ class HigherLevelReview < ClaimReview
       remand_supplemental_claims.each do |rsc|
         return :hlr_decision if rsc.decision_issues.any?
       end
-      return :hlr_closed
+      :hlr_closed
     else
       decision_issues.empty? ? :hlr_closed : :hlr_decision
     end

@@ -41,11 +41,12 @@ class DecisionIssue < ApplicationRecord
     end
 
     def remanded
-      where(disposition: "remanded")
+      # DTA Errors are a subcategory of remands
+      where(disposition: "remanded").or(where(disposition: DTA_ERRORS))
     end
 
-    def with_dta_error
-      where(disposition: DTA_ERRORS)
+    def not_remanded
+      where.not(disposition: "remanded")
     end
 
     def contested
@@ -54,15 +55,7 @@ class DecisionIssue < ApplicationRecord
 
     def uncontested
       joins("LEFT JOIN request_issues on decision_issues.id = request_issues.contested_decision_issue_id")
-      .where("request_issues.contested_decision_issue_id IS NULL")
-    end
-
-    def needs_remand_claim
-      remanded.or(with_dta_error).uncontested
-    end
-
-    def not_remanded
-      where.not(disposition: "remanded")
+        .where("request_issues.contested_decision_issue_id IS NULL")
     end
   end
 
