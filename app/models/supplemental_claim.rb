@@ -42,7 +42,8 @@ class SupplementalClaim < ClaimReview
 
   def status_hash
     # need to implement. returns the details object for the status
-    { type: fetch_status }
+
+    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def alerts
@@ -126,6 +127,26 @@ class SupplementalClaim < ClaimReview
       :sc_recieved
     else
       decision_issues.empty? ? :sc_closed : :sc_decision
+    end
+  end
+
+  def fetch_details_for_status
+    case fetch_status
+    when :sc_decision
+      {
+        issues: api_issues_for_status_details_issues
+      }
+    else
+      {}
+    end
+  end
+
+  def api_issues_for_status_details_issues
+    decision_issues.map do |issue|
+      {
+        description: issue.api_status_description,
+        disposition: issue.api_status_disposition
+      }
     end
   end
 end
