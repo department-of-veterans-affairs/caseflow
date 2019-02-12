@@ -3,15 +3,13 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
-// import Table from '../../components/Table';
+
 import QueueTable from '../../queue/QueueTable';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
-// import FilterRibbon from '../../components/FilterRibbon';
 import PropTypes from 'prop-types';
 import { CSVLink } from 'react-csv';
 import {
-  // toggleTypeFilterVisibility, toggleLocationFilterVisibility, toggleVljFilterVisibility,
   onReceiveHearingSchedule,
   onViewStartDateChange,
   onViewEndDateChange
@@ -32,27 +30,6 @@ const formatVljName = (lastName, firstName) => {
   }
 };
 
-// const populateFilterDropDowns = (resultSet, filterName) => {
-//   let countByFilterName = _.countBy(resultSet, filterName);
-//   let uniqueOptions = [];
-
-//   for (let key in countByFilterName) {
-//     if (key && key !== 'null' && key !== 'undefined') {
-//       uniqueOptions.push({
-//         value: key,
-//         displayText: `${key} (${countByFilterName[key]})`
-//       });
-//     } else {
-//       uniqueOptions.push({
-//         value: 'null',
-//         displayText: `<<blank>> (${countByFilterName[key]})`
-//       });
-//     }
-//   }
-
-//   return _.sortBy(uniqueOptions, 'displayText');
-// };
-
 const judgeNameToIdMap = (hearings) => {
   let nameToIdMap = {};
 
@@ -61,18 +38,6 @@ const judgeNameToIdMap = (hearings) => {
 
   return nameToIdMap;
 };
-
-// const filterSchedule = (scheduleToFilter, filterName, value) => {
-//   let filteredSchedule = {};
-
-//   for (let key in scheduleToFilter) {
-//     if (String(scheduleToFilter[key][filterName]) === String(value)) {
-//       filteredSchedule[key] = scheduleToFilter[key];
-//     }
-//   }
-
-//   return filteredSchedule;
-// };
 
 const inlineFormStyling = css({
   '> div': {
@@ -132,11 +97,6 @@ class ListSchedule extends React.Component {
   };
 
   getHearingScheduleColumns = () => {
-
-    // const uniqueRequestTypes = populateFilterDropDowns(hearingScheduleRows, 'requestType');
-    // const uniqueVljs = populateFilterDropDowns(hearingScheduleRows, 'vlj');
-    // const uniqueLocations = populateFilterDropDowns(hearingScheduleRows, 'regionalOffice');
-
     return [
       {
         header: 'Date',
@@ -155,11 +115,7 @@ class ListSchedule extends React.Component {
         columnName: 'requestType',
         tableData: this.getHearingScheduleRows(false),
         label: 'Filter by type',
-        // getFilterValues: uniqueRequestTypes,
-        // isDropdownFilterOpen: this.props.filterTypeIsOpen,
-        anyFiltersAreSet: false
-        // toggleDropdownFilterVisibility: this.props.toggleTypeFilterVisibility,
-        // setSelectedValue: this.setTypeSelectedValue
+        enableClearFiltersRow: false
       },
       {
         header: 'Regional Office',
@@ -169,11 +125,7 @@ class ListSchedule extends React.Component {
         columnName: 'regionalOffice',
         tableData: this.getHearingScheduleRows(false),
         label: 'Filter by location',
-        // getFilterValues: uniqueLocations,
-        // isDropdownFilterOpen: this.props.filterLocationIsOpen,
-        anyFiltersAreSet: false
-        // toggleDropdownFilterVisibility: this.props.toggleLocationFilterVisibility,
-        // setSelectedValue: this.setLocationSelectedValue
+        enableClearFiltersRow: false
       },
       {
         header: 'Room',
@@ -191,55 +143,10 @@ class ListSchedule extends React.Component {
         columnName: 'vlj',
         tableData: this.getHearingScheduleRows(false),
         label: 'Filter by VLJ',
-        // getFilterValues: uniqueVljs,
-        // isDropdownFilterOpen: this.props.filterVljIsOpen,
-        anyFiltersAreSet: false
-        // toggleDropdownFilterVisibility: this.props.toggleVljFilterVisibility,
-        // setSelectedValue: this.setVljSelectedValue
+        enableClearFiltersRow: false
       }
     ];
   }
-
-  // clearFilteredByList = () => {
-  //   this.setState({
-  //     filteredByList: []
-  //   });
-  //   this.props.onApply();
-  // };
-
-  // setTypeSelectedValue = (value) => {
-  //   this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'requestType', value));
-  //   this.setState({
-  //     filteredByList: this.state.filteredByList.concat(['Hearing Type'])
-  //   });
-  //   this.props.toggleTypeFilterVisibility();
-  // };
-
-  // setLocationSelectedValue = (value) => {
-  //   this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'regionalOffice', value));
-  //   this.setState({
-  //     filteredByList: this.state.filteredByList.concat(['Hearing Location'])
-  //   });
-  //   this.props.toggleLocationFilterVisibility();
-  // };
-
-  // /*
-  //   As props.hearingSchedule does not have judge full name we need to create a full name to judgeId mapping
-  //   to use when receiving the full name through the value parameter.
-  //  */
-  // setVljSelectedValue = (value) => {
-  //   const judges = judgeNameToIdMap(this.props.hearingSchedule);
-
-  //   if (value === 'null') {
-  //     this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'judgeLastName', null));
-  //   } else {
-  //     this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'judgeId', judges[value]));
-  //   }
-  //   this.setState({
-  //     filteredByList: this.state.filteredByList.concat(['VLJ'])
-  //   });
-  //   this.props.toggleVljFilterVisibility();
-  // };
 
   render() {
     const hearingScheduleRows = this.getHearingScheduleRows(false);
@@ -280,14 +187,16 @@ class ListSchedule extends React.Component {
               title: 'Unable to load the hearing schedule.'
             }}>
 
-            <div className="cf-push-left">
-              { this.props.userRoleBuild &&
-                <Button
-                  linkStyling
-                  onClick={this.props.openModal} >
-                  Add Hearing Date
-                </Button>
-              }
+            <div {...clearfix}>
+              <div className="cf-push-left">
+                { this.props.userRoleBuild &&
+                  <Button
+                    linkStyling
+                    onClick={this.props.openModal} >
+                    Add Hearing Date
+                  </Button>
+                }
+              </div>
             </div>
             <QueueTable
               columns={hearingScheduleColumns}

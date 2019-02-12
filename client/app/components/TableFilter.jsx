@@ -25,7 +25,7 @@ import FilterOption from './FilterOption';
  *   - @updateFilters {function} updates the filteredByList
  *   - @isDropdownFilterOpen {boolean} a property from the store that is updated by
  *     toggleDropdownFilterVisibility, and should receive the specific column name
- *   - @anyFiltersAreSet {boolean} determines whether the "Clear All Filters" option
+ *   - @enableClearFiltersRow {boolean} determines whether the "Clear All Filters" option
  *     in the dropdown is enabled
  *   - @customFilterLabels {object} key-value pairs translating the data values to
  *     user readable text
@@ -103,7 +103,7 @@ class TableFilter extends React.PureComponent {
       toggleDropdownFilterVisibility,
       filteredByList,
       isDropdownFilterOpen,
-      anyFiltersAreSet,
+      enableClearFiltersRow,
       label,
       valueName,
       getFilterValues
@@ -134,11 +134,10 @@ class TableFilter extends React.PureComponent {
 
         {isDropdownFilterOpen &&
           <QueueDropdownFilter
+            enableClearFilters={enableClearFiltersRow}
             clearFilters={() => this.clearFilteredByList(columnName)}
             name={valueName}
-            isClearEnabled={anyFiltersAreSet}
-            handleClose={() => toggleDropdownFilterVisibility(columnName)}
-            addClearFiltersRow>
+            handleClose={() => toggleDropdownFilterVisibility(columnName)}>
             <FilterOption
               options={filterOptions}
               setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
@@ -153,7 +152,7 @@ TableFilter.propTypes = {
   enableFilter: PropTypes.bool,
   tableData: PropTypes.array,
   columnName: PropTypes.string,
-  anyFiltersAreSet: PropTypes.bool,
+  enableClearFiltersRow: PropTypes.bool,
   customFilterLabels: PropTypes.object,
   label: PropTypes.string,
   valueName: PropTypes.string,

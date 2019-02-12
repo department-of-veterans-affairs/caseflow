@@ -41,10 +41,9 @@ class QueueDropdownFilter extends React.PureComponent {
       <div className="cf-dropdown-filter" style={{ top: '10px' }} ref={(rootElem) => {
         this.rootElem = rootElem;
       }}>
-        {this.props.addClearFiltersRow &&
+        {this.props.enableClearFilters &&
           <div className="cf-filter-option-row">
-            <button className="cf-text-button" onClick={this.props.clearFilters}
-              disabled={!this.props.isClearEnabled}>
+            <button className="cf-text-button" onClick={this.props.clearFilters}>
               <div className="cf-clear-filter-button-wrapper">
                 Clear {displayName} filter
               </div>
@@ -82,10 +81,9 @@ class QueueDropdownFilter extends React.PureComponent {
 
 QueueDropdownFilter.propTypes = {
   children: PropTypes.node,
-  isClearEnabled: PropTypes.bool,
+  enableClearFilters: PropTypes.bool,
   clearFilters: PropTypes.func,
-  handleClose: PropTypes.func,
-  addClearFiltersRow: PropTypes.bool
+  handleClose: PropTypes.func
 };
 
 export default QueueDropdownFilter;

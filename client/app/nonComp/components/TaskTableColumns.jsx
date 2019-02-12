@@ -18,15 +18,6 @@ export const veteranParticipantIdColumn = () => {
   };
 };
 
-const createFilterDropdown = (values) => {
-  return values.map((value) => {
-    return {
-      value,
-      displayText: value
-    };
-  });
-};
-
 export const decisionReviewTypeColumn = (totalData) => {
   return {
     header: 'Type',
@@ -37,15 +28,8 @@ export const decisionReviewTypeColumn = (totalData) => {
     valueFunction: (task) => task.type,
     label: 'Filter by type',
     valueName: 'type',
-    getFilterValues: createFilterDropdown(['Clear category filter', 'Board Grant',
-      'Higher-Level Review', 'Remand - Supplemental Claim', 'Record Request',
-      'Supplemental Claim']),
-    anyFiltersAreSet: false,
-    // isDropdownFilterOpen: isFilterOpen,
-    // toggleDropdownFilterVisibility: onFilterToggle,
-    // setSelectedValue: onFilter,
+    enableClearFiltersRow: false,
     useCheckbox: true,
-    // checkSelectedValue,
     // order determines where this column displays
     // make it -1 so this column is always last
     order: -1
