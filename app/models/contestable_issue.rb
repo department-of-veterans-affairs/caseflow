@@ -39,7 +39,7 @@ class ContestableIssue
       ratingIssueProfileDate: rating_issue_profile_date,
       ratingIssueDiagnosticCode: rating_issue_diagnostic_code,
       decisionIssueId: decision_issue_id,
-      decision_date: date,
+      decisionDate: decision_date,
       description: description,
       rampClaimId: ramp_claim_id,
       titleOfActiveReview: title_of_active_review,
