@@ -207,4 +207,51 @@ describe SupplementalClaim do
       end
     end
   end
+
+  context "#status" do
+    let(:receipt_date) { Time.new("2018", "03", "01").utc }
+    let(:benefit_type) { "compensation" }
+
+    let(:sc) do
+      SupplementalClaim.new(
+        veteran_file_number: veteran_file_number,
+        receipt_date: receipt_date,
+        benefit_type: benefit_type
+      )
+    end
+
+    let(:ep_status) { "PEND" }
+    let!(:sc_ep) do
+      create(:end_product_establishment,
+             synced_status: ep_status, source: sc)
+    end
+
+    context "SC received" do
+      it "has status sc_recieved" do
+        status = sc.status_hash
+        expect(status).to_not be_nil
+        expect(status[:type]).to eq(:sc_recieved)
+        expect(status[:details]).to be_empty
+      end
+    end
+
+    context "SC gets a decision" do
+      let(:ep_status) { "CLR" }
+
+      let!(:decision_issue) do
+        create(:decision_issue,
+               decision_review: sc, end_product_last_action_date: receipt_date + 100.days,
+               benefit_type: benefit_type, diagnostic_code: nil, disposition: "allowed")
+      end
+
+      it "has status sc_decision" do
+        status = sc.status_hash
+
+        expect(status).to_not be_nil
+        expect(status[:type]).to eq(:sc_decision)
+        expect(status[:details].first[:description]).to eq("Compensation issue")
+        expect(status[:details].first[:disposition]).to eq("allowed")
+      end
+    end
+  end
 end
