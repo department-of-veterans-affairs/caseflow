@@ -82,6 +82,22 @@ class Intake < ApplicationRecord
       )
   end
 
+  def self.user_stats(user, n_days = 60)
+    stats = {}
+    Intake.select("intakes.*, date(completed_at) as day_completed")
+      .where(user: user)
+      .where("completed_at > ?", Time.zone.now - n_days.days)
+      .where(completion_status: "success")
+      .order("day_completed").each do |intake|
+      completed = intake[:day_completed]
+      type = intake.type.sub("Intake", "").constantize.review_title
+      stats[completed] ||= { type => 0 }
+      stats[completed][type] ||= 0
+      stats[completed][type] += 1
+    end
+    stats
+  end
+
   def pending?
     !!completion_started_at && completion_started_at > COMPLETION_TIMEOUT.ago
   end
