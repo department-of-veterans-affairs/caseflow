@@ -2,8 +2,8 @@
 class ContestableIssue
   include ActiveModel::Model
 
-  attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id, :contesting_decision_review,
-                :decision_issue_id, :promulgation_date, :rating_issue_profile_date, :source_request_issues,
+  attr_accessor :rating_issue_reference_id, :decision_date, :description, :ramp_claim_id, :contesting_decision_review,
+                :decision_issue_id, :rating_issue_profile_date, :source_request_issues,
                 :rating_issue_diagnostic_code
 
   class << self
@@ -11,7 +11,7 @@ class ContestableIssue
       new(
         rating_issue_reference_id: rating_issue.reference_id,
         rating_issue_profile_date: rating_issue.profile_date.to_date,
-        date: rating_issue.promulgation_date.to_date,
+        decision_date: rating_issue.promulgation_date.to_date,
         description: rating_issue.decision_text,
         ramp_claim_id: rating_issue.ramp_claim_id,
         source_request_issues: rating_issue.source_request_issues,
@@ -25,7 +25,7 @@ class ContestableIssue
         rating_issue_reference_id: decision_issue.rating_issue_reference_id,
         rating_issue_profile_date: decision_issue.profile_date.try(:to_date),
         decision_issue_id: decision_issue.id,
-        date: decision_issue.approx_decision_date,
+        decision_date: decision_issue.approx_decision_date,
         description: decision_issue.description,
         source_request_issues: decision_issue.request_issues.open,
         contesting_decision_review: contesting_decision_review
@@ -39,7 +39,7 @@ class ContestableIssue
       ratingIssueProfileDate: rating_issue_profile_date,
       ratingIssueDiagnosticCode: rating_issue_diagnostic_code,
       decisionIssueId: decision_issue_id,
-      date: date,
+      decision_date: date,
       description: description,
       rampClaimId: ramp_claim_id,
       titleOfActiveReview: title_of_active_review,
@@ -98,6 +98,6 @@ class ContestableIssue
   end
 
   def timely?
-    date && contesting_decision_review.timely_issue?(date)
+    decision_date && contesting_decision_review.timely_issue?(decision_date)
   end
 end
