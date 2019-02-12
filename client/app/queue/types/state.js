@@ -86,6 +86,7 @@ export type QueueState = {|
   claimReviews: ClaimReviews,
   editingIssue: Object,
   docCountForAppeal: {[string]: Object},
+  mostRecentlyHeldHearingForAppeal: {[string]: Object},
   stagedChanges: {
     appeals: {[string]: Object},
     taskDecision: {
@@ -110,6 +111,7 @@ export type CommonComponentState = {|
   selectedRegionalOffice: { label: string, value: string },
   selectedHearingDate: string,
   selectedHearingTime: string,
+  selectedOptionalTime: string,
   selectedHearingDay: Object,
   selectedHearingLocation: Object
 |};

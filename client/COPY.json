@@ -119,12 +119,15 @@
   "COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION": "New cases assigned to you:",
   "COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION": "Cases no longer on hold:",
   "COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION": "Cases on hold (will return to \"Pending action\" tab when hold is completed):",
-  "COLOCATED_QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last two weeks):",
+  "QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION": "Cases completed (last two weeks):",
 
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE": "Unassigned (%d)",
   "ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION": "Cases owned by the %s team that are unassigned to a person.",
   "ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION": "Cases assigned to a member of the %s team.",
   "ORGANIZATIONAL_QUEUE_EMPTY_STATE_MESSAGE": "This queue is empty. You can ",
+
+  "ALL_CASES_QUEUE_TABLE_TAB_TITLE": "All cases",
+  "ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",
 
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
   "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign Cases",
@@ -320,6 +323,8 @@
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "review",
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "quality review",
 
+  "IHP_TASK_LABEL": "Prepare Informal Hearing Presentation",
+
   "ADDRESS_CHANGE_MAIL_TASK_LABEL": "Change of address",
   "AOD_MOTION_MAIL_TASK_LABEL": "Motion to Advance on Docket",
   "APPEAL_WITHDRAWAL_MAIL_TASK_LABEL": "Withdrawal of appeal",
@@ -344,5 +349,11 @@
 
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
-  "CLAIMANT_NOT_FOUND_END": " for assistance."
+  "CLAIMANT_NOT_FOUND_END": " for assistance.",
+
+  "WITHDRAW_HEARING_MODAL_TITLE": "Confirm withdraw hearing",
+  "WITHDRAW_HEARING_MODAL_BODY": "Withdrawing this hearing request will remove this veteran from the hearing pool.",
+  "WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE": "You have successfully withdrawn %s's hearing request",
+  "WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY": "%s has been removed from the hearing schedule and has been sent to the next appropriate location"
+
 }

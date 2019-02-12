@@ -65,22 +65,27 @@ const saveSuccess = (message: UiStateMessage, response: Object) => (dispatch: Di
   return Promise.resolve(response);
 };
 
-const saveFailure = (resp: Object) => (dispatch: Dispatch) => {
-  const { response } = resp;
-  let responseObject = {
-    errors: [{
-      title: 'Error',
-      detail: 'There was an error processing your request. ' +
-        'Please retry your action and contact support if errors persist.'
-    }]
-  };
+const saveFailure = (err: Object) => (dispatch: Dispatch) => {
+  const { response } = err;
+  let uiErrorMessage;
 
   try {
-    responseObject = JSON.parse(response.text);
-  } catch (ex) { /* pass */ }
+    uiErrorMessage = JSON.parse(response.text);
+  } catch (ex) {
+    // the default case if there is no `text` node in the response (ie the backend did not return sufficient info)
+    uiErrorMessage = {
+      errors: [{
+        title: 'Error',
+        detail: 'There was an error processing your request. ' +
+        'Please retry your action and contact support if errors persist.'
+      }]
+    };
+  }
 
-  dispatch(showErrorMessage(responseObject.errors[0]));
+  dispatch(showErrorMessage(uiErrorMessage.errors[0]));
   dispatch({ type: ACTIONS.SAVE_FAILURE });
+  // the promise rejection below is also uncaught
+  // but this seems to be by design since that's the same as the frontend handling and throwing an error
 
   return Promise.reject(new Error(response.text));
 };
@@ -90,12 +95,15 @@ export const requestSave = (
 ): Function => (dispatch: Dispatch) => {
   dispatch(hideErrorMessage());
   dispatch(hideSuccessMessage());
+
   dispatch({ type: ACTIONS.REQUEST_SAVE });
 
-  return ApiUtil[verb](url, params).then(
-    (resp) => dispatch(saveSuccess(successMessage, resp)),
-    (resp) => dispatch(saveFailure(resp))
-  );
+  return ApiUtil[verb](url, params).
+    then(
+      (resp) => dispatch(saveSuccess(successMessage, resp)),
+
+    ).
+    catch((err) => dispatch(saveFailure(err)));
 };
 
 export const requestPatch = (url: string, params: Object, successMessage: UiStateMessage) =>
@@ -145,7 +153,8 @@ export const setOrganizations = (organizations: Array<Object>) => ({
 
 export const setActiveOrganization = (id: number, name: string, isVso: boolean) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
-  payload: { id,
+  payload: {
+    id,
     name,
     isVso
   }

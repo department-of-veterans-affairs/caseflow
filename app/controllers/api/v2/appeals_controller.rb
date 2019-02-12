@@ -27,7 +27,7 @@ class Api::V2::AppealsController < Api::ApplicationController
       else
         ActiveModelSerializers::SerializableResource.new(
           legacy_appeals,
-          each_serializer: ::V2::AppealSerializer,
+          each_serializer: ::V2::LegacyAppealStatusSerializer,
           key_transform: :camel_lower
         ).as_json
       end

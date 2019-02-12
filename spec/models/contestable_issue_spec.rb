@@ -3,7 +3,8 @@ describe ContestableIssue do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
 
-  let(:decision_review) { create(:higher_level_review, receipt_date: Time.zone.now) }
+  let(:decision_review) { create(:higher_level_review, receipt_date: Time.zone.now, benefit_type: benefit_type) }
+  let(:benefit_type) { "compensation" }
   let(:profile_date) { Time.zone.today - 30 }
   let(:promulgation_date) { Time.zone.today - 30 }
   let(:diagnostic_code) { "diagnostic_code" }
@@ -20,13 +21,13 @@ describe ContestableIssue do
     )
   end
   let(:profile_date) { Time.zone.today }
+
   let(:decision_issue) do
-    DecisionIssue.new(
-      id: "1",
-      rating_issue_reference_id: "rating1",
-      profile_date: profile_date,
-      description: "this is a good decision"
-    )
+    create(:decision_issue,
+           rating_issue_reference_id: "rating1",
+           profile_date: profile_date,
+           description: "this is a good decision",
+           benefit_type: benefit_type)
   end
 
   context ".from_rating_issue" do

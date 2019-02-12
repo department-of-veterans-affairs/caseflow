@@ -682,7 +682,7 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
-               end_product_establishment_id: end_product_establishment.id,
+               end_product_establishment_id: nil,
                ineligible_reason: :before_ama
              )).to_not be_nil
 
@@ -698,7 +698,7 @@ feature "Supplemental Claim Intake" do
                review_request: supplemental_claim,
                nonrating_issue_description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
-               end_product_establishment_id: non_rating_end_product_establishment.id
+               end_product_establishment_id: nil
              )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
@@ -744,7 +744,7 @@ feature "Supplemental Claim Intake" do
           sc, = start_supplemental_claim(veteran, is_comp: false)
           create(:decision_issue,
                  decision_review: sc,
-                 profile_date: receipt_date - 1.day,
+                 caseflow_decision_date: receipt_date - 1.day,
                  benefit_type: sc.benefit_type,
                  decision_text: "something was decided",
                  participant_id: veteran.participant_id)

@@ -1,4 +1,8 @@
+require "support/intake_helpers"
+
 describe DecisionDocument do
+  include IntakeHelpers
+
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
     FeatureToggle.enable!(:create_board_grant_effectuations)
@@ -8,8 +12,14 @@ describe DecisionDocument do
     FeatureToggle.disable!(:create_board_grant_effectuations)
   end
 
+  let(:veteran) { create(:veteran) }
+  let(:appeal) do
+    create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number)
+  end
+
   let(:decision_document) do
-    create(:decision_document, file: file, processed_at: processed_at, uploaded_to_vbms_at: uploaded_to_vbms_at)
+    create(:decision_document, file: file, processed_at: processed_at,
+                               uploaded_to_vbms_at: uploaded_to_vbms_at, appeal: appeal)
   end
 
   let(:file) { nil }
@@ -102,8 +112,13 @@ describe DecisionDocument do
       before { end_product_establishment.update!(synced_status: "CLR") }
       it "submits the effectuation for processing and enqueues DecisionIssueSyncJob" do
         subject
-        expect(board_grant_effectuation.reload).to be_submitted
-        expect(DecisionIssueSyncJob).to have_been_enqueued.with(board_grant_effectuation)
+        board_grant_effectuation.reload
+        expect(board_grant_effectuation.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+
+        # because we set delay, neither "submitted" nor queued.
+        expect(board_grant_effectuation).to be_submitted
+        expect(board_grant_effectuation).to_not be_submitted_and_ready
+        expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(board_grant_effectuation)
       end
     end
   end
@@ -112,10 +127,13 @@ describe DecisionDocument do
     subject { decision_document.process! }
 
     before do
+      allow(decision_document).to receive(:submitted_and_ready?).and_return(true)
       allow(VBMSService).to receive(:upload_document_to_vbms).and_call_original
       allow(VBMSService).to receive(:establish_claim!).and_call_original
       allow(VBMSService).to receive(:create_contentions!).and_call_original
     end
+
+    let!(:prior_sc_with_payee_code) { setup_prior_claim_with_payee_code(appeal, veteran) }
 
     context "the document has already been uploaded" do
       let(:uploaded_to_vbms_at) { Time.zone.now }
@@ -150,7 +168,9 @@ describe DecisionDocument do
 
           expect(decision_document.attempted_at).to eq(Time.zone.now)
           expect(decision_document.processed_at).to eq(Time.zone.now)
-          expect(SupplementalClaim.find_by(decision_review_remanded: decision_document.appeal)).to be_nil
+
+          expect(SupplementalClaim.where(decision_review_remanded: decision_document.appeal)
+            .where.not(id: prior_sc_with_payee_code.id)).to eq([])
         end
       end
 
@@ -160,13 +180,14 @@ describe DecisionDocument do
             :decision_issue,
             decision_review: decision_document.appeal,
             disposition: "remanded",
-            profile_date: 5.days.ago
+            caseflow_decision_date: decision_document.decision_date
           )
         end
 
         it "creates remand supplemental claim" do
           subject
-          expect(SupplementalClaim.find_by(decision_review_remanded: decision_document.appeal)).to_not be_nil
+          expect(SupplementalClaim.where(decision_review_remanded: decision_document.appeal)
+              .where.not(id: prior_sc_with_payee_code.id).length).to eq(1)
         end
       end
 

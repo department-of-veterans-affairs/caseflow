@@ -15,12 +15,14 @@ class Task < ApplicationRecord
 
   before_update :set_timestamps
   after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
+  after_update :update_children_status, if: :status_changed_to_completed?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
     Constants.TASK_STATUSES.on_hold.to_sym => Constants.TASK_STATUSES.on_hold,
-    Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed
+    Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed,
+    Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
   def available_actions(_user)
@@ -29,6 +31,12 @@ class Task < ApplicationRecord
 
   def label
     action
+  end
+
+  # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
+  # properties of the task will not change.
+  def active?
+    ![Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled].include?(status)
   end
 
   # available_actions() returns an array of options from selected by the subclass
@@ -77,16 +85,16 @@ class Task < ApplicationRecord
     children.where(type: AttorneyTask.name)
   end
 
-  def self.recently_completed
-    where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+  def self.recently_closed
+    where(status: Constants.TASK_STATUSES.completed, closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
 
   def self.incomplete
     where.not(status: Constants.TASK_STATUSES.completed)
   end
 
-  def self.incomplete_or_recently_completed
-    incomplete.or(recently_completed)
+  def self.incomplete_or_recently_closed
+    incomplete.or(recently_closed)
   end
 
   def self.create_many_from_params(params_array, current_user)
@@ -270,7 +278,7 @@ class Task < ApplicationRecord
     {
       selected: org,
       options: [{ label: org.name, value: org.id }],
-      type: GenericTask.name
+      type: TranslationTask.name
     }
   end
 
@@ -320,7 +328,7 @@ class Task < ApplicationRecord
   def timeline_details
     {
       title: timeline_title,
-      date: completed_at
+      date: closed_at
     }
   end
 
@@ -357,8 +365,14 @@ class Task < ApplicationRecord
     parent.when_child_task_completed
   end
 
+  def update_children_status; end
+
+  def status_changed_to_completed?
+    saved_change_to_attribute?("status") && completed?
+  end
+
   def status_changed_to_completed_and_has_parent?
-    saved_change_to_attribute?("status") && completed? && parent
+    status_changed_to_completed? && parent
   end
 
   def users_to_options(users)
@@ -387,10 +401,16 @@ class Task < ApplicationRecord
 
   def set_timestamps
     if will_save_change_to_status?
-      self.assigned_at = updated_at if assigned?
-      self.started_at = updated_at if in_progress?
-      self.placed_on_hold_at = updated_at if on_hold?
-      self.completed_at = updated_at if completed?
+      case status_change_to_be_saved&.last&.to_sym
+      when :assigned
+        self.assigned_at = updated_at
+      when :in_progress
+        self.started_at = updated_at
+      when :on_hold
+        self.placed_on_hold_at = updated_at
+      when :completed, :cancelled
+        self.closed_at = updated_at
+      end
     end
   end
 end

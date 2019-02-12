@@ -7,6 +7,9 @@ RSpec.feature "Attorney checkout flow" do
   let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
+  let(:valid_document_id) { "12345678.123" }
+  let(:invalid_document_id) { "222333" }
+
   context "given a valid ama appeal" do
     let(:issue_note) { "Test note" }
     let(:issue_description) { "Tinnitus" }
@@ -41,22 +44,6 @@ RSpec.feature "Attorney checkout flow" do
       expect(page).not_to have_content "Correct issues"
 
       click_dropdown(index: 0)
-      click_label "radiation"
-
-      click_on "Continue"
-
-      # Ensure we can reload the flow and the special issue is saved
-      click_on "Cancel"
-      click_on "Yes, cancel"
-
-      click_dropdown(index: 0)
-
-      # Radiation should still be checked
-      expect(page).to have_field("radiation", checked: true, visible: false)
-
-      # Radiation should also be marked in the database
-      expect(appeal.special_issue_list.radiation).to eq(true)
-      click_on "Continue"
 
       expect(page).to have_content "Select disposition"
       issue_dispositions = page.find_all(
@@ -91,9 +78,8 @@ RSpec.feature "Attorney checkout flow" do
 
       expect(page).to have_content("Submit Draft Decision for Review")
 
-      document_id = Array.new(35).map { rand(10) }.join
-      fill_in "document_id", with: document_id
-      expect(page.find("#document_id").value.length).to eq 30
+      fill_in "document_id", with: invalid_document_id
+      expect(page.find("#document_id").value.length).to eq 6
 
       fill_in "notes", with: "note"
 
@@ -101,10 +87,15 @@ RSpec.feature "Attorney checkout flow" do
       click_dropdown(index: 0)
 
       click_on "Continue"
+
+      expect(page).to have_content "Record is invalid"
+      expect(page).to have_content "Document ID of type Draft Decision must be in one of these formats"
+
+      fill_in "document_id", with: valid_document_id
+      click_on "Continue"
+
       expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
-
       expect(page.current_path).to eq("/queue")
-
       expect(appeal.reload.request_issues.where(disposition: "remanded").count).to eq(2)
       expect(appeal.request_issues.where(disposition: "allowed").count).to eq(2)
       expect(appeal.request_issues.map(&:remand_reasons).flatten.size).to eq 3
@@ -296,9 +287,8 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
-        document_id = Array.new(35).map { rand(10) }.join
-        fill_in "document_id", with: document_id
-        expect(page.find("#document_id").value.length).to eq 30
+        fill_in "document_id", with: valid_document_id
+        expect(page.find("#document_id").value.length).to eq 12
 
         fill_in "notes", with: "note"
 
@@ -337,10 +327,7 @@ RSpec.feature "Attorney checkout flow" do
 
         expect(page).to have_content "Correct issues"
         expect(page).to have_content("Added to 2 issues", count: 2)
-        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_CHECKOUT.label)
-
-        # Skip the special issues page
-        click_on "Continue"
+        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
 
         expect(page).to have_content(decision_issue_text)
 
@@ -538,9 +525,8 @@ RSpec.feature "Attorney checkout flow" do
         click_on "Continue"
         expect(page).to have_content("Submit Draft Decision for Review")
 
-        document_id = Array.new(35).map { rand(10) }.join
-        fill_in "document_id", with: document_id
-        expect(page.find("#document_id").value.length).to eq 30
+        fill_in "document_id", with: invalid_document_id
+        expect(page.find("#document_id").value.length).to eq 6
 
         fill_in "notes", with: "this is a decision note"
 
@@ -551,6 +537,13 @@ RSpec.feature "Attorney checkout flow" do
         expect(page).to have_content(judge_user.full_name)
 
         click_on "Continue"
+
+        expect(page).to have_content "Record is invalid"
+        expect(page).to have_content "Document ID of type Draft Decision must be in one of these formats"
+
+        fill_in "document_id", with: valid_document_id
+        click_on "Continue"
+
         expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
         expect(page.current_path).to eq("/queue")
@@ -627,7 +620,7 @@ RSpec.feature "Attorney checkout flow" do
 
         visit "/queue"
 
-        issue_count = find(:xpath, "//tbody/tr[@id='table-row-#{appeal.vacols_id}']/td[4]").text
+        issue_count = find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE).text
         expect(issue_count.to_i).to eq(old_issues_count - 1)
       end
     end

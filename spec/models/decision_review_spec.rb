@@ -35,7 +35,6 @@ describe DecisionReview do
     )
   end
   let(:appeal) { create(:appeal) }
-  let!(:decision_document) { create(:decision_document, decision_date: profile_date + 3.days, appeal: appeal) }
   let!(:decision_issues) do
     [
       create(:decision_issue,
@@ -69,7 +68,8 @@ describe DecisionReview do
              decision_text: "appeal decision issue",
              benefit_type: higher_level_review.benefit_type,
              description: "test",
-             decision_review: appeal)
+             decision_review: appeal,
+             caseflow_decision_date: profile_date + 3.days)
     ]
   end
 
@@ -132,6 +132,7 @@ describe DecisionReview do
         create(:decision_issue,
                decision_review: supplemental_claim,
                profile_date: receipt_date + 1.day,
+               end_product_last_action_date: receipt_date + 1.day,
                benefit_type: supplemental_claim.benefit_type,
                decision_text: "something was decided in the future",
                description: "future decision issue",
@@ -178,7 +179,8 @@ describe DecisionReview do
                benefit_type: "compensation",
                decision_text: "my appeal is outcoded",
                description: "completed appeal issue",
-               participant_id: veteran.participant_id)
+               participant_id: veteran.participant_id,
+               caseflow_decision_date: outcoded_decision_doc.decision_date)
       end
 
       it "does not return the issue in contestable issues" do

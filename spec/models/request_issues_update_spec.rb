@@ -1,5 +1,3 @@
-require "rails_helper"
-
 describe RequestIssuesUpdate do
   before do
     Time.zone = "America/New_York"
@@ -291,17 +289,17 @@ describe RequestIssuesUpdate do
           )
 
           removed_issue = RequestIssue.find_by(id: existing_legacy_opt_in_request_issue_id)
-          expect(removed_issue).to have_attributes(
-            review_request: nil
-          )
+          expect(removed_issue.review_request).to_not be_nil
           expect(removed_issue.removed_at).to_not be_nil
+          expect(removed_issue).to be_closed
+          expect(removed_issue).to be_removed
           expect(removed_issue.legacy_issue_optin.rollback_processed_at).to_not be_nil
 
           expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
 
-          new_map = rating_end_product_establishment.send(
+          new_map = rating_end_product_establishment.reload.send(
             :rating_issue_contention_map,
-            review.request_issues.reload
+            review.reload.open_request_issues
           )
 
           expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
