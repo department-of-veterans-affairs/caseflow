@@ -53,7 +53,7 @@ class GenericTask < Task
 
     children.active.each { |t| t.update!(parent_id: sibling.id) }
 
-    [sibling, self, children.active].flatten
+    [sibling, self, sibling.children].flatten
   end
 
   def can_be_updated_by_user?(user)
