@@ -19,6 +19,8 @@ describe Distribution do
         OrganizationsUser.add_user_to_organization(attorney, team)
       end
     end
+
+    Distribution.destroy_all
   end
 
   after do
