@@ -120,11 +120,10 @@ module AmaCaseDistribution
   end
 
   def oldest_priority_appeals_by_docket(num)
-    return {} unless n > 0
+    return {} unless num > 0
 
     dockets
-      .map { |sym, docket| docket.age_of_n_oldest_priority_appeals(n).map { |age| [age, sym] } }
-      .flatten
+      .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals(num).map { |age| [age, sym] } }
       .sort_by { |a| a[0] }
       .first(num)
       .each_with_object(Hash.new(0)) { |a, counts| counts[a[1]] += 1 }

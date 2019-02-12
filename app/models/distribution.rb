@@ -29,7 +29,7 @@ class Distribution < ApplicationRecord
 
     update(status: "started")
 
-    if FeatureToggle.enabled?(:ama_case_distribution, user: RequestStore.store[:current_user])
+    if FeatureToggle.enabled?(:ama_auto_case_distribution, user: RequestStore.store[:current_user])
       ama_distribution
       update(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     else
