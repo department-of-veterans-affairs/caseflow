@@ -46,7 +46,7 @@ class HearingsController < ApplicationController
                                                                      long: va_dot_gov_address[:long],
                                                                      ids: facility_ids) }
     rescue Caseflow::Error::VaDotGovAPIError => e
-      render json: { message: e.message, status: "ERROR" }
+      render json: { message: e.message["messages"][0]["key"] }, status: :bad_request
     end
   end
 
