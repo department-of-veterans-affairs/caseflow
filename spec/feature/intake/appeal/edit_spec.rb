@@ -178,16 +178,18 @@ feature "Appeal Edit issues" do
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date - 1.day }
     let(:disability_profile_date) { receipt_date - 10.days }
-    let!(:ratings_with_disability_codes) do
-      generate_ratings_with_disabilities(veteran,
-                                         disabiliity_receive_date,
-                                         disability_profile_date)
+    let!(:ratings_with_diagnostic_codes) do
+      generate_ratings_with_disabilities(
+        veteran,
+        disabiliity_receive_date,
+        disability_profile_date
+      )
     end
 
-    scenario "saves disability codes" do
+    scenario "saves diagnostic codes" do
       visit "appeals/#{appeal.uuid}/edit/"
 
-      save_and_check_request_issues_with_disability_codes(
+      save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.appeal,
         appeal
       )
