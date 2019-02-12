@@ -39,7 +39,7 @@ class JudgeTask < Task
       Rails.logger.info("Found #{evidence_count} eligible evidence submission tasks.")
       Rails.logger.info("Found #{direct_review_count} direct review tasks.")
       Rails.logger.info("Would assign #{tasks.length}, batch size is #{batch_size}.")
-      Rails.logger.info("First assignee would be #{next_assignee.css_id}")
+      Rails.logger.info("First assignee would be #{JudgeAssignTaskDistributor.new.next_assignee.css_id}")
       return
     end
 

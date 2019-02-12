@@ -32,12 +32,12 @@ describe ColocatedTask do
           expect(vacols_case.bfcurloc).to be_nil
           expect(Task.where(type: ColocatedTask.name).count).to eq 0
 
-          team_task = subject.select { |t| t.assigned_to.is_a?(Colocated) }.first
+          team_task = subject.detect { |t| t.assigned_to.is_a?(Colocated) }
           expect(team_task.valid?).to be true
           expect(team_task.status).to eq(Constants.TASK_STATUSES.on_hold)
           expect(team_task.assigned_to).to eq(Colocated.singleton)
 
-          user_task = subject.select { |t| t.assigned_to.is_a?(User) }.first
+          user_task = subject.detect { |t| t.assigned_to.is_a?(User) }
           expect(user_task.valid?).to be true
           expect(user_task.status).to eq "assigned"
           expect(user_task.assigned_at).to_not eq nil

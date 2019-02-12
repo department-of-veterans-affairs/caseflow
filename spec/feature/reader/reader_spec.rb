@@ -1093,8 +1093,7 @@ RSpec.feature "Reader" do
     end
 
     context "Tags" do
-      # :nocov:
-      scenario "adding and deleting tags", skip: true do
+      scenario "adding and deleting tags" do
         TAG1 = "Medical".freeze
         TAG2 = "Law document".freeze
 
@@ -1130,12 +1129,8 @@ RSpec.feature "Reader" do
         # getting remove buttons of all tags
         cancel_icons = page.all(".Select-value-icon", count: 1)
 
-        # rubocop:disable all
         # delete all tags
-        for i in (cancel_icons.length - 1).downto(0)
-          cancel_icons[i].click
-        end
-        # rubocop:enable all
+        cancel_icons[0].click
 
         # expecting the page not to have any tags
         expect(page).not_to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
@@ -1148,7 +1143,6 @@ RSpec.feature "Reader" do
         # verify that the tags on the previous document still exist
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
       end
-      # :nocov:
 
       context "Share tags among all documents in a case" do
         scenario "Shouldn't show auto suggestions" do
@@ -1448,11 +1442,8 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Reader")
       click_on Document.last.type
 
-      expect(page).to have_content("This document has been updated")
-
-      click_on "Got It"
-      expect(page).to_not have_content("This document has been updated")
       expect(page).to have_content("test comment")
+      expect(page).to_not have_content("This document has been updated")
     end
   end
 end

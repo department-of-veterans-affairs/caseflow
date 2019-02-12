@@ -42,7 +42,7 @@ class Rating
     return [] if rating_profile[:rating_issues].nil?
 
     [rating_profile[:rating_issues]].flatten.map do |issue_data|
-      issue_data[:dgnstc_tc] = disability_codes(rating_profile).dig(issue_data[:dis_sn], :dgnstc_tc)
+      issue_data[:dgnstc_tc] = diagnostic_codes.dig(issue_data[:dis_sn], :dgnstc_tc)
       RatingIssue.from_bgs_hash(self, issue_data)
     end
   end
@@ -53,11 +53,11 @@ class Rating
 
   private
 
-  def disability_codes(rating_profile)
-    @disability_codes ||= create_disability_codes(rating_profile)
+  def diagnostic_codes
+    @diagnostic_codes ||= generate_diagnostic_codes
   end
 
-  def create_disability_codes(rating_profile)
+  def generate_diagnostic_codes
     return {} unless rating_profile[:disabilities]
 
     Array.wrap(rating_profile[:disabilities]).reduce({}) do |disability_map, disability|
@@ -65,6 +65,7 @@ class Rating
 
       if disability_map[disability[:dis_sn]].nil? ||
          disability_map[disability[:dis_sn]][:date] < disability_time
+
         disability_map[disability[:dis_sn]] = {
           dgnstc_tc: get_diagnostic_code(disability[:disability_evaluations]),
           date: disability_time

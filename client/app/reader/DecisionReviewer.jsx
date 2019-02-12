@@ -17,6 +17,7 @@ import { CATEGORIES } from './analytics';
 import { documentCategories } from './constants';
 import _ from 'lodash';
 import NavigationBar from '../components/NavigationBar';
+import CaseSearchLink from '../components/CaseSearchLink';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { LOGO_COLORS } from '../constants/AppConstants';
 
@@ -137,6 +138,7 @@ export class DecisionReviewer extends React.PureComponent {
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       applicationUrls={this.props.applicationUrls}
+      rightNavElement={<CaseSearchLink />}
       defaultUrl="/queue"
       outsideCurrentRouter>
       <PageRoute
