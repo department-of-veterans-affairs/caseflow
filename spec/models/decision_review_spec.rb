@@ -90,7 +90,7 @@ describe DecisionReview do
         # this rating issue got replaced with a decision issue
         ratingIssueReferenceId: "123",
         ratingIssueProfileDate: profile_date,
-        ratingIssueDisabilityCode: nil,
+        ratingIssueDiagnosticCode: nil,
         decisionIssueId: decision_issues.first.id,
         date: promulgation_date,
         description: "decision issue 1",
@@ -103,7 +103,7 @@ describe DecisionReview do
       expect(find_serialized_issue(serialized_contestable_issues, "456")).to eq(
         ratingIssueReferenceId: "456",
         ratingIssueProfileDate: profile_date,
-        ratingIssueDisabilityCode: nil,
+        ratingIssueDiagnosticCode: nil,
         decisionIssueId: nil,
         date: promulgation_date,
         description: "rating issue 2",
@@ -116,7 +116,7 @@ describe DecisionReview do
       expect(find_serialized_issue(serialized_contestable_issues, "789")).to eq(
         ratingIssueReferenceId: "789",
         ratingIssueProfileDate: profile_date + 1.day,
-        ratingIssueDisabilityCode: nil,
+        ratingIssueDiagnosticCode: nil,
         decisionIssueId: decision_issues.second.id,
         date: promulgation_date + 1.day,
         description: "decision issue 2",
