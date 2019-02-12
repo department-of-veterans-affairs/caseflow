@@ -249,6 +249,8 @@ describe ScheduleHearingTask do
   end
 
   context ".tasks_for_ro" do
+    let(:regional_office) { "RO17" }
+
     context "when there are AMA ScheduleHearingTasks" do
       let(:veteran_at_ro) { create(:veteran, closest_regional_office: regional_office) }
       let(:appeal_for_veteran_at_ro) { create(:appeal, veteran: veteran_at_ro) }
