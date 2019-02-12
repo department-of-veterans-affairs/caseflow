@@ -254,7 +254,11 @@ class EndProduct
     def parse_date(date)
       return unless date
 
-      Date.strptime(date, "%m/%d/%Y")
+      begin
+        Date.iso8601(date)
+      rescue ArgumentError => _err
+        Date.strptime(date, "%m/%d/%Y")
+      end
     end
   end
 end
