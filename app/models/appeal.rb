@@ -413,12 +413,17 @@ class Appeal < DecisionReview
   # rubocop:enable CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 
+  # rubocop:disable Metrics/MethodLength
   def fetch_details_for_status
     case fetch_status
     when :bva_decision
-      decision_issues_status_details
+      {
+        issues: api_issues_for_status_details_issues(decision_issues)
+      }
     when :ama_remand
-      decision_issues_status_details
+      {
+        issues: api_issues_for_status_details_issues(decision_issues)
+      }
     when :post_bva_dta_decision
       post_bva_dta_decision_status_details
     when :bva_decision_effectuation
@@ -434,24 +439,22 @@ class Appeal < DecisionReview
       {}
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def post_bva_dta_decision_status_details
     issue_list = remanded_sc_decision_issues
-    issue_list.map do |di|
-      {
-        description: di.api_status_description,
-        disposition: di.api_status_disposition,
-        bvaDecisionDate: decision_event_date,
-        aojDecisionDate: dta_descision_event_date
-      }
-    end
+    {
+      issues: api_issues_for_status_details_issues(issue_list),
+      bvaDecisionDate: decision_event_date,
+      aojDecisionDate: dta_descision_event_date
+    }
   end
 
-  def decision_issues_status_details
-    decision_issues.map do |di|
+  def api_issues_for_status_details_issues(issue_list)
+    issue_list.map do |issue|
       {
-        description: di.api_status_description,
-        disposition: di.api_status_disposition
+        description: issue.api_status_description,
+        disposition: issue.api_status_disposition
       }
     end
   end

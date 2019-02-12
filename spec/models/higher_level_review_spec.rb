@@ -690,8 +690,8 @@ describe HigherLevelReview do
       it "has decision status and status details" do
         status = hlr.status_hash
         expect(status[:type]).to eq(:hlr_decision)
-        expect(status[:details].first[:description]).to eq("Undiagnosed hemic or lymphatic condition")
-        expect(status[:details].first[:disposition]).to eq("denied")
+        expect(status[:details][:issues].first[:description]).to eq("Undiagnosed hemic or lymphatic condition")
+        expect(status[:details][:issues].first[:disposition]).to eq("denied")
       end
     end
 
@@ -748,8 +748,8 @@ describe HigherLevelReview do
         status = hlr.status_hash
 
         expect(status[:type]).to eq(:hlr_decision)
-        expect(status[:details].first[:description]).to eq("Dental or oral condition")
-        expect(status[:details].first[:disposition]).to eq("allowed")
+        expect(status[:details][:issues].first[:description]).to eq("Dental or oral condition")
+        expect(status[:details][:issues].first[:disposition]).to eq("allowed")
       end
     end
   end

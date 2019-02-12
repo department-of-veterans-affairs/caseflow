@@ -133,14 +133,20 @@ class SupplementalClaim < ClaimReview
   def fetch_details_for_status
     case fetch_status
     when :sc_decision
-      decision_issues.map do |di|
-        {
-          description: di.api_status_description,
-          disposition: di.api_status_disposition
-        }
-      end
+      {
+        issues: api_issues_for_status_details_issues
+      }
     else
       {}
+    end
+  end
+
+  def api_issues_for_status_details_issues
+    decision_issues.map do |issue|
+      {
+        description: issue.api_status_description,
+        disposition: issue.api_status_disposition
+      }
     end
   end
 end

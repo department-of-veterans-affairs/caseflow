@@ -249,8 +249,8 @@ describe SupplementalClaim do
 
         expect(status).to_not be_nil
         expect(status[:type]).to eq(:sc_decision)
-        expect(status[:details].first[:description]).to eq("Compensation issue")
-        expect(status[:details].first[:disposition]).to eq("allowed")
+        expect(status[:details][:issues].first[:description]).to eq("Compensation issue")
+        expect(status[:details][:issues].first[:disposition]).to eq("allowed")
       end
     end
   end
