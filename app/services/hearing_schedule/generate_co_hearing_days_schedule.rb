@@ -36,7 +36,8 @@ class GenerateCOHearingDaysSchedule
         HearingDay.create_hearing_day(
           scheduled_for: scheduled_for,
           request_type: HearingDay::REQUEST_TYPES[:central],
-          room: "2"
+          room: "2",
+          bva_poc: "CAROL COLEMAN-DEW"
         )
       end
     end
