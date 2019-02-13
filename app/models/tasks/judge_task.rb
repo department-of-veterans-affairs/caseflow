@@ -22,7 +22,6 @@ class JudgeTask < Task
   end
 
   #:nocov:
-  # rubocop:disable Metrics/AbcSize
   def self.backfill_ramp_appeals_with_tasks(dry_run: true)
     # Find all unassigned tasks and sort them by the NOD date
     tasks = unassigned_ramp_tasks.sort_by { |task| task.appeal.receipt_date }
@@ -43,14 +42,14 @@ class JudgeTask < Task
   end
 
   def self.backfill_tasks(root_tasks)
-    transaction do 
+    transaction do
       root_tasks.each do |root_task|
         Rails.logger.info("Creating subtasks for appeal #{root_task.appeal.id}")
         RootTask.create_subtasks!(root_task.appeal, root_task)
-        distribution_task = DistributionTask.where(parent: root_task).first
+        distribution_task = DistributionTask.find_by(parent: root_task)
         # Update any open IHP tasks if they exist so that they block distribution.
         ihp_task = InformalHearingPresentationTask.find_by(appeal: root_task.appeal)
-        ihp_task.update!(parent: distribution_task) if ihp_task
+        ihp_task&.update!(parent: distribution_task)
         # Ensure direct review appeals have their decision date set.
         root_task.appeal.set_target_decision_date!
       end
