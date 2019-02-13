@@ -61,7 +61,7 @@ json_config = <<EOS.strip_heredoc
         {
           feature: "ama_auto_case_distribution",
           enable_all: true
-        },        
+        },
         {
           feature: "ama_acd_tasks",
           enable_all: true
