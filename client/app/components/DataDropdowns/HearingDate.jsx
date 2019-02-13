@@ -19,7 +19,7 @@ class HearingDateDropdown extends React.Component {
     const { hearingDates: { options }, validateValueOnMount, onChange } = this.props;
 
     if (!_.isEqual(prevProps.hearingDates.options, options) && validateValueOnMount) {
-      const option = this.getSelectedOption();
+      const option = this.getSelectedOption() || {};
 
       onChange(option.value, option.label);
     }
