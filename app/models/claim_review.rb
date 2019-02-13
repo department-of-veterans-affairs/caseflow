@@ -127,6 +127,10 @@ class ClaimReview < DecisionReview
     end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
 
+  def active?
+    processed_in_vbms? ? end_product_establishments.any? { |ep| ep.status_active?(sync: false) } : incomplete_tasks?
+  end
+
   def search_table_ui_hash
     {
       caseflow_veteran_id: claim_veteran&.id,
@@ -185,6 +189,10 @@ class ClaimReview < DecisionReview
   end
 
   private
+
+  def incomplete_tasks?
+    tasks.reject(&:completed?).any?
+  end
 
   def can_contest_rating_issues?
     processed_in_vbms?

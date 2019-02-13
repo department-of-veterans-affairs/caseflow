@@ -37,10 +37,6 @@ class HigherLevelReview < ClaimReview
     false
   end
 
-  def active?
-    hlr_ep_active? || active_remanded_claims?
-  end
-
   def status_hash
     { type: fetch_status, details: fetch_details_for_status }
   end
@@ -68,14 +64,14 @@ class HigherLevelReview < ClaimReview
   end
 
   def dta_error_event_date
-    return if hlr_ep_active?
+    return if active?
     return unless remand_supplemental_claims.any?
 
     decision_issues.remanded.first.approx_decision_date
   end
 
   def other_close_event_date
-    return if active?
+    return if active? || active_remanded_claims?
     return unless decision_issues.empty?
     return unless end_product_establishments.any?
 
@@ -105,12 +101,8 @@ class HigherLevelReview < ClaimReview
     )
   end
 
-  def hlr_ep_active?
-    end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
-  end
-
   def fetch_status
-    if hlr_ep_active?
+    if active?
       :hlr_received
     elsif active_remanded_claims?
       :hlr_dta_error

@@ -36,10 +36,6 @@ class SupplementalClaim < ClaimReview
     Array.wrap(review_status_id)
   end
 
-  def description
-    # need to implement
-  end
-
   def status_hash
     # need to implement. returns the details object for the status
 

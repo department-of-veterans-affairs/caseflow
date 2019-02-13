@@ -213,14 +213,6 @@ class DecisionReview < ApplicationRecord
     end
   end
 
-  def incomplete_tasks?
-    tasks.reject(&:completed?).any?
-  end
-
-  def active?
-    end_product_establishments.any? { |ep| ep.status_active?(sync: false) } || incomplete_tasks?
-  end
-
   def create_remand_supplemental_claims!
     decision_issues.remanded.uncontested.each(&:find_or_create_remand_supplemental_claim!)
     remand_supplemental_claims.each(&:create_remand_issues!)
