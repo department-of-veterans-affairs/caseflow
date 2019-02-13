@@ -43,7 +43,7 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.second["attributes"]["veteran_file_number"]).to eq task2.appeal.veteran_file_number
 
         # Ensure we include recently completed tasks
-        expect(response_body.select { |task| task["id"] == task13.id.to_s }.count).to eq 1
+        expect(response_body.count { |task| task["id"] == task13.id.to_s }).to eq 1
 
         ama_tasks = response_body.select { |task| task["type"] == "attorney_tasks" }
         expect(ama_tasks.size).to eq 4
@@ -66,7 +66,6 @@ RSpec.describe TasksController, type: :controller do
 
     context "when user is a colocated admin" do
       let(:role) { :colocated_role }
-
       let!(:task4) do
         create(:colocated_task, assigned_to: user, appeal: create(:legacy_appeal, vacols_case: create(:case, :aod)))
       end
@@ -81,21 +80,19 @@ RSpec.describe TasksController, type: :controller do
         get :index, params: { user_id: user.id, role: "colocated" }
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 3
-        assigned = response_body[0]
-        expect(assigned["id"]).to eq task4.id.to_s
+
+        assigned = response_body.find { |task| task["id"] == task4.id.to_s }
         expect(assigned["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
         expect(assigned["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(assigned["attributes"]["placed_on_hold_at"]).to be nil
         expect(assigned["attributes"]["aod"]).to be true
 
-        in_progress = response_body[1]
-        expect(in_progress["id"]).to eq task5.id.to_s
+        in_progress = response_body.find { |task| task["id"] == task5.id.to_s }
         expect(in_progress["attributes"]["status"]).to eq Constants.TASK_STATUSES.in_progress
         expect(in_progress["attributes"]["assigned_to"]["id"]).to eq user.id
         expect(in_progress["attributes"]["placed_on_hold_at"]).to be nil
 
-        ama = response_body[2]
-        expect(ama["id"]).to eq task_ama_colocated_aod.id.to_s
+        ama = response_body.find { |task| task["id"] == task_ama_colocated_aod.id.to_s }
         expect(ama["attributes"]["aod"]).to be true
       end
     end
@@ -114,16 +111,19 @@ RSpec.describe TasksController, type: :controller do
         get :index, params: { user_id: user.id, role: "judge" }
         response_body = JSON.parse(response.body)["tasks"]["data"]
         expect(response_body.size).to eq 3
-        expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-        expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq user.id
-        expect(response_body.first["attributes"]["placed_on_hold_at"]).to be nil
 
-        expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.in_progress
-        expect(response_body.second["attributes"]["assigned_to"]["id"]).to eq user.id
-        expect(response_body.second["attributes"]["placed_on_hold_at"]).to be nil
+        assigned = response_body.find { |task| task["id"] == task8.id.to_s }
+        expect(assigned["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+        expect(assigned["attributes"]["assigned_to"]["id"]).to eq user.id
+        expect(assigned["attributes"]["placed_on_hold_at"]).to be nil
+
+        in_progress = response_body.find { |task| task["id"] == task9.id.to_s }
+        expect(in_progress["attributes"]["status"]).to eq Constants.TASK_STATUSES.in_progress
+        expect(in_progress["attributes"]["assigned_to"]["id"]).to eq user.id
+        expect(in_progress["attributes"]["placed_on_hold_at"]).to be nil
 
         # Ensure we include recently completed tasks
-        expect(response_body.select { |task| task["id"] == task10.id.to_s }.count).to eq 1
+        expect(response_body.count { |task| task["id"] == task10.id.to_s }).to eq 1
       end
     end
 
@@ -688,7 +688,7 @@ RSpec.describe TasksController, type: :controller do
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 
-        expect(appeal.tasks.count).to eq 3
+        expect(appeal.tasks.size).to eq 3
       end
     end
   end

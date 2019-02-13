@@ -29,6 +29,15 @@ class ApplicationController < ApplicationBaseController
 
   private
 
+  def manage_teams_menu_items
+    current_user.administered_teams.map do |team|
+      {
+        title: "#{team.name} team management",
+        link: team.user_admin_path
+      }
+    end
+  end
+
   def handle_non_critical_error(endpoint, err)
     if !err.class.method_defined? :serialize_response
       code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
@@ -95,6 +104,30 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :logo_path
 
+  def application_urls
+    urls = [{
+      title: "Queue",
+      link: "/queue"
+    }]
+
+    if current_user.can?("Hearing Prep")
+      urls << {
+        title: "Hearing Prep",
+        link: "/hearings/dockets"
+      }
+    end
+    if current_user.can?("Build HearSched") || current_user.can?("Edit HearSched")
+      urls << {
+        title: "Hearing Schedule",
+        link: "/hearings/schedule"
+      }
+    end
+
+    # Only return the URL list if the user has applications to switch between
+    (urls.length > 1) ? urls : nil
+  end
+  helper_method :application_urls
+
   def dropdown_urls
     urls = [
       {
@@ -108,12 +141,15 @@ class ApplicationController < ApplicationBaseController
       }
     ]
 
-    if ApplicationController.dependencies_faked?
-      urls.append(title: "Switch User",
-                  link: url_for(controller: "/test/users", action: "index"))
+    if current_user&.administered_teams&.any?
+      urls.concat(manage_teams_menu_items)
     end
-    urls.append(title: "Sign Out",
-                link: url_for(controller: "/sessions", action: "destroy"))
+
+    if ApplicationController.dependencies_faked?
+      urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))
+    end
+
+    urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)
 
     urls
   end
