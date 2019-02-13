@@ -340,7 +340,6 @@ class AppealRepository
     LegacyAppeal.where(vacols_id: ids.map(&:first) - vacols_ids_with_schedule_tasks).each do |appeal|
       parent = HearingTask.find_or_create_by!(
         appeal: appeal,
-        status: Constants.TASK_STATUSES.assigned.to_sym,
         parent: RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
       ) { |task| task.assigned_to = Bva.singleton }
       ScheduleHearingTask.find_or_create_by!(appeal: appeal, status: Constants.TASK_STATUSES.assigned.to_sym) do |task|
