@@ -94,10 +94,10 @@ describe RootTask do
 
     context "when an evidence submission docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       let(:appeal) do
         create(:appeal, docket_type: "evidence_submission", claimants: [
@@ -114,10 +114,10 @@ describe RootTask do
 
     context "when a hearing docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       let(:appeal) do
         create(:appeal, docket_type: "hearing", claimants: [

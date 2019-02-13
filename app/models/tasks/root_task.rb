@@ -37,7 +37,7 @@ class RootTask < GenericTask
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
       create_vso_tracking_tasks(appeal, root_task)
-      if FeatureToggle.enabled?(:ama_auto_case_distribution)
+      if FeatureToggle.enabled?(:ama_acd_task_creation)
         create_subtasks!(appeal, root_task)
       else
         create_ihp_tasks!(appeal, root_task)
@@ -46,8 +46,10 @@ class RootTask < GenericTask
 
     def create_ihp_tasks!(appeal, parent)
       appeal.vsos.map do |vso_organization|
+
+        # For some RAMP appeals, this method may run twice.
         existing_tasks = InformalHearingPresentationTask.where(
-          appeal: appeal,
+          appeal: appeal, 
           assigned_to: vso_organization
         )
         return existing_tasks.first unless existing_tasks.empty?
@@ -60,7 +62,7 @@ class RootTask < GenericTask
       end
     end
 
-    # TODO: make this private again after RAMPs are all backfilled
+    # TODO: make this private again after RAMPs are refilled
     # private
 
     def create_vso_tracking_tasks(appeal, parent)
