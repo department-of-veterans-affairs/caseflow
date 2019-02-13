@@ -25,13 +25,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
         AND status != 'completed') admin_actions
         ON admin_actions.parent_id = id")
       .where("admin_actions.parent_id IS NULL")
-      .map do |task|
-        if task.appeal.is_a?(Appeal)
-          task.appeal.veteran_file_number
-        else
-          LegacyAppeal.veteran_file_number_from_bfcorlid(task.appeal.vbms_id)
-        end
-      end.compact
+      .map { |task| task.appeal.veteran_file_number }.compact
   end
 
   def missing_veteran_file_numbers
