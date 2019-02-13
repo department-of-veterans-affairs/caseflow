@@ -85,13 +85,15 @@ feature "Higher Level Review Edit issues" do
 
   let(:legacy_opt_in_approved) { false }
 
+  let(:benefit_type) { "compensation" }
+
   let!(:higher_level_review) do
     HigherLevelReview.create!(
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
       informal_conference: false,
       same_office: false,
-      benefit_type: "compensation",
+      benefit_type: benefit_type,
       veteran_is_not_claimant: true,
       legacy_opt_in_approved: legacy_opt_in_approved
     )
@@ -650,6 +652,34 @@ feature "Higher Level Review Edit issues" do
       )
 
       expect(page).to have_content("2 issues")
+    end
+  end
+
+  context "when the HLR has a non-compensation benefit type" do
+    let(:benefit_type) { "education" }
+    let(:request_issues) { [request_issue] }
+    let!(:request_issue) do
+      create(
+        :request_issue,
+        review_request: higher_level_review,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    before do
+      higher_level_review.create_issues!(request_issues)
+      higher_level_review.establish!
+      higher_level_review.reload
+    end
+
+    it "does not mention VBMS when removing an issue" do
+      visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
+      expect(page).to have_content(request_issue.contested_issue_description)
+
+      click_remove_intake_issue_by_text(request_issue.contested_issue_description)
+      expect(page).to have_content("The contention you selected will be removed from the decision review.")
     end
   end
 

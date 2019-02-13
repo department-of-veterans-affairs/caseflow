@@ -1,0 +1,100 @@
+.usa-table-borderless {
+  width: 100%;
+
+  th,
+  td {
+    border-bottom-color: $color-gray-lighter;
+  }
+
+  td {
+    &:first-child {
+      padding-left: 0;
+    }
+  }
+}
+
+.cf-table-wrapper:focus {
+  outline: none;
+}
+
+.cf-filter-summary {
+  margin-bottom: 1em;
+}
+
+.cf-filter-option-row {
+  margin: 0;
+
+  button {
+    background-color: $color-white;
+    border-bottom: 1px solid $color-gray-lighter;
+    border-radius: 0;
+    color: $color-gray-dark;
+    font-weight: inherit;
+    margin: 0;
+    padding: 15px 10px;
+    text-align: left;
+    width: 100%;
+
+    &:hover {
+      background-color: $color-gray;
+      color: $color-white;
+    }
+  }
+
+  label {
+    padding: 10px;
+    margin: 0;
+  }
+}
+
+.cf-clear-filters-link {
+  margin: 0;
+  padding: 0 1rem;
+}
+
+// ===========================*
+// Pagination
+// ============================*/
+
+.cf-pagination-summary {
+  float: left;
+  margin-bottom: 2em;
+  width: 40%;
+}
+
+.cf-pagination-pages {
+  float: right;
+  margin-bottom: 2em;
+  text-align: right;
+  width: 60%;
+
+  button {
+    background-color: $color-white;
+    border-top: $color-gray-light 1px solid;
+    border-bottom: $color-gray-light 1px solid;
+    border-right: $color-gray-light 1px solid;
+    border-radius: 0;
+    color: $cf-link;
+    font-weight: inherit;
+    margin: 0;
+    padding: 0.5em 0.7em;
+
+    &:first-child {
+      border-left: $color-gray-light 1px solid;
+      border-radius: 0.15em 0 0 0.15em;
+    }
+
+    &:last-child {
+      border-radius: 0 0.15em 0.15em 0;
+    }
+
+    &:disabled {
+      color: $color-gray-light;
+    }
+
+    &.cf-current-page {
+      background-color: $color-blue-darkest;
+      color: $color-white;
+    }
+  }
+}

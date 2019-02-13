@@ -120,6 +120,44 @@ describe Claimant do
   end
 
   context "#valid?" do
+    context "participant_id" do
+      let(:participant_id) { "1234" }
+
+      let(:review_request) do
+        build(:higher_level_review,
+              id: 1,
+              benefit_type: "fiduciary",
+              veteran_file_number: create(:veteran).file_number)
+      end
+
+      let!(:claimant) do
+        create(:claimant, review_request: review_request, participant_id: participant_id)
+      end
+
+      context "when created with the same participant_id and the same review_request" do
+        subject { build(:claimant, review_request: review_request, participant_id: participant_id) }
+
+        it "requires uniqueness" do
+          expect(subject).to_not be_valid
+          expect(subject.errors.messages[:participant_id]).to eq ["has already been taken"]
+        end
+      end
+
+      context "when created with the same participant_id and different review_request" do
+        let(:review_request2) do
+          build(:appeal,
+                id: 1,
+                veteran_file_number: create(:veteran).file_number)
+        end
+
+        subject { build(:claimant, review_request: review_request2, participant_id: participant_id) }
+
+        it "does not require uniqueness" do
+          expect(subject).to be_valid
+        end
+      end
+    end
+
     context "payee_code" do
       let(:review_request) do
         build(:higher_level_review, benefit_type: benefit_type, veteran_file_number: create(:veteran).file_number)
