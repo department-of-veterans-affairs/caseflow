@@ -46,6 +46,7 @@ class JudgeTask < Task
     root_tasks.each do |root_task|
       Rails.logger.info("Creating subtasks for appeal #{root_task.appeal.id}")
       RootTask.create_subtasks!(root_task.appeal, root_task)
+      root_task.appeal.set_target_decision_date!
     end
   end
 
