@@ -121,13 +121,15 @@ class Appeal < DecisionReview
       active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
       if active_tasks == [root_task]
         location_code = COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
-      elsif !active_tasks.empty?
+      elsif active_tasks.any?
         most_recent_assignee = active_tasks.order(updated_at: :desc).first.assigned_to
         location_code = if most_recent_assignee.is_a?(Organization)
                           most_recent_assignee.name
                         else
                           most_recent_assignee.css_id
                         end
+      else
+        location_code = status_hash[:type].to_s.titleize
       end
     end
 

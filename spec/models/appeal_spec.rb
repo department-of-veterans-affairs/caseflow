@@ -650,6 +650,7 @@ describe Appeal do
       let(:appeal_organization) { create(:appeal) }
       let(:user) { create(:user) }
       let(:appeal_user) { create(:appeal) }
+      let(:appeal_on_hold) { create(:appeal) }
 
       before do
         organization_root_task = create(:root_task, appeal: appeal_organization)
@@ -657,6 +658,9 @@ describe Appeal do
 
         user_root_task = create(:root_task, appeal: appeal_user)
         create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
+
+        on_hold_root_task = create(:root_task, appeal: appeal_on_hold)
+        create(:generic_task, status: :on_hold, appeal: appeal_on_hold, parent: on_hold_root_task)
       end
 
       it "if the most recent assignee is an organization it returns the organization name" do
@@ -665,6 +669,10 @@ describe Appeal do
 
       it "if the most recent assignee is not an organization it returns the id" do
         expect(appeal_user.location_code).to eq(user.css_id)
+      end
+
+      it "if the task is on hold but there isn't an assignee" do
+        expect(appeal_on_hold.location_code).to eq(:on_docket.to_s.titleize)
       end
     end
   end
