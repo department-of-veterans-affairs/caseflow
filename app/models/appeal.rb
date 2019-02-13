@@ -385,13 +385,11 @@ class Appeal < DecisionReview
   end
 
   def fetch_post_decision_status
-    if !remanded_issues? && effectuation_ep? && !active_ep?
+    if remanded_issues?
+      active_remanded_claims_with_ep? ? :post_bva_dta_decision : :ama_remand
+    elsif effectuation_ep? && !active_ep?
       :bva_decision_effectuation
-    elsif !active_remanded_claims_with_ep?
-      :post_bva_dta_decision
-    elsif remanded_issues?
-      :ama_remand
-    elsif decision_issues.any? && !remanded_issues?
+    elsif decision_issues.any?
       :bva_decision
     elsif withdrawn?
       :withdrawn

@@ -983,7 +983,7 @@ describe Appeal do
       end
     end
 
-    context "have a decision with no remands or effection" do
+    context "have a decision with no remands or effectuation" do
       let(:judge_review_task_status) { "completed" }
       let!(:judge_review_task) do
         create(:ama_judge_decision_review_task,
@@ -1039,10 +1039,15 @@ describe Appeal do
       let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
       let!(:remanded_decision_issue) do
         create(:decision_issue,
-               decision_review: appeal, disposition: "remanded", benefit_type: "nca", diagnostic_code: nil)
+               decision_review: appeal,
+               disposition: "remanded",
+               benefit_type: "nca",
+               diagnostic_code: nil,
+               caseflow_decision_date: 1.day.ago)
       end
 
       it "it only has a remand that was processed in caseflow" do
+        appeal.create_remand_supplemental_claims!
         status = appeal.status_hash
         expect(status[:type]).to eq(:ama_remand)
         expect(status[:details][:issues].count).to eq(2)
@@ -1075,14 +1080,29 @@ describe Appeal do
                diagnostic_code: "9912",
                caseflow_decision_date: receipt_date + 60.days)
       end
-      let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let(:remanded_sc) do
+        create(
+          :supplemental_claim,
+          veteran_file_number: appeal.veteran_file_number,
+          decision_review_remanded: appeal,
+          benefit_type: remanded_issue.benefit_type
+        )
+      end
+      let!(:remanded_sc_with_ep) do
+        create(
+          :supplemental_claim,
+          veteran_file_number: appeal.veteran_file_number,
+          decision_review_remanded: appeal,
+          benefit_type: remanded_issue_with_ep.benefit_type
+        )
+      end
       let!(:remanded_ep) do
         create(:end_product_establishment,
-               :cleared, source: remanded_sc, last_synced_at: receipt_date + 100.days)
+               :cleared, source: remanded_sc_with_ep, last_synced_at: receipt_date + 100.days)
       end
       let!(:remanded_sc_decision) do
         create(:decision_issue,
-               decision_review: remanded_sc,
+               decision_review: remanded_sc_with_ep,
                disposition: "denied",
                diagnostic_code: "9912",
                end_product_last_action_date: receipt_date + 100.days)
