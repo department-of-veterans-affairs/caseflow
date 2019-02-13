@@ -243,7 +243,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       admin_action_type.create!(
         appeal: task.appeal,
         instructions: [instructions(error_key, has_multiple: tasks.count > 1)],
-        assigned_to: HearingsManagement.singleton,
+        assigned_to: HearingsAdmin.singleton,
         parent: task
       )
     end
