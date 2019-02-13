@@ -84,6 +84,32 @@ RSpec.feature "Intake Manager Page" do
 
       expect(page).not_to have_selector("#table-row-5")
     end
+
+    scenario "choose a user to see stats" do
+      user1 = create(:user)
+      user2 = create(:user)
+
+      5.times do
+        Intake.create!(
+          user: user1,
+          veteran_file_number: veteran_file_number,
+          detail_type: "SupplementalClaim",
+          completed_at: busy_day,
+          completion_status: "success"
+        )
+      end
+      5.times do
+        Intake.create!(
+          user: user2,
+          veteran_file_number: veteran_file_number,
+          detail_type: "HigherLevelReview",
+          completed_at: busy_day,
+          completion_status: "success"
+        )
+      end
+
+      visit "/intake/manager"
+    end
   end
 
   scenario "Unauthorized user access" do
