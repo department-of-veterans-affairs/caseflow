@@ -34,9 +34,6 @@ class ColocatedTask < Task
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def available_actions(user)
     if assigned_to != user
       if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
@@ -46,25 +43,27 @@ class ColocatedTask < Task
       return []
     end
 
-    actions = [Constants.TASK_ACTIONS.PLACE_HOLD.to_h, Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h]
+    available_actions_with_conditions([
+                                        Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
+                                        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h
+                                      ])
+  end
 
+  def available_actions_with_conditions(core_actions)
     if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
       send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
-      actions.unshift(send_to_team)
-    else
-      actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
+      return core_actions.unshift(send_to_team)
     end
+
+    core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
 
     if action == "translation" && appeal.is_a?(Appeal)
-      actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
+      core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
     end
 
-    actions
+    core_actions
   end
-  # rubocop:enable Metrics/PerceivedComplexity
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/AbcSize
 
   def actions_available?(_user)
     active?
