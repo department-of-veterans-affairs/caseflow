@@ -91,7 +91,6 @@ export type Task = {
     lastName: string,
   },
   availableActions: Array<{ label?: string, value: string, data: ?Object }>,
-  taskBusinessPayloads: Array<{description: string, values: Object}>,
   hideFromQueueTableView: boolean,
   hideFromCaseTimeline: boolean,
   hideFromTaskSnapshot: boolean,
