@@ -1,6 +1,6 @@
 class RootTask < GenericTask
   # Set assignee to the Bva organization automatically so we don't have to set it when we create RootTasks.
-  after_initialize :set_assignee, if: -> { assigned_to.nil? }
+  after_initialize :set_assignee, if: -> { assigned_to_id.nil? }
 
   def set_assignee
     self.assigned_to = Bva.singleton
