@@ -1,9 +1,11 @@
 describe Docket do
   before do
     FeatureToggle.enable!(:ama_auto_case_distribution)
+    Distribution.skip_callback(:commit, :after, :enqueue_distribution_job)
   end
   after do
     FeatureToggle.disable!(:ama_auto_case_distribution)
+    Distribution.set_callback(:commit, :after, :enqueue_distribution_job)
   end
 
   context "docket" do
@@ -89,9 +91,9 @@ describe Docket do
         end
       end
 
-      let!(:judge_user) { create(:user) }
+      let(:judge_user) { create(:user) }
       let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
-      let!(:distribution) { Distribution.create!(judge: judge_user) }
+      let(:distribution) { Distribution.create!(judge: judge_user) }
 
       context "nonpriority appeals" do
         subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 10) }

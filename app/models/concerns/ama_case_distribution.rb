@@ -75,7 +75,7 @@ module AmaCaseDistribution
 
       appeals = dockets[:legacy].distribute_nonpriority_appeals(self, genpop: genpop, range: range, limit: num)
     else
-      return
+      fail "'range' is only a valid argument when distributing nonpriority, legacy appeals"
     end
 
     @appeals += appeals

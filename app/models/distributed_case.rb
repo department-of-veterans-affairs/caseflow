@@ -3,15 +3,15 @@ class DistributedCase < ApplicationRecord
   belongs_to :task
 
   validates :distribution, :case_id, :docket, :ready_at, presence: true
-  validates :genpop, inclusion: [true, false], if: :hearing_docket
-  validates :genpop_query, presence: true, if: :hearing_docket
+  validates :genpop, inclusion: [true, false], if: :docket_has_hearing_option
+  validates :genpop_query, presence: true, if: :docket_has_hearing_option
   validates :task_id, presence: true, if: :ama_docket
   validates :docket_index, presence: true, if: :legacy_nonpriority
   validates :priority, inclusion: [true, false]
 
   private
 
-  def hearing_docket
+  def docket_has_hearing_option
     %w[legacy hearing].include?(docket)
   end
 

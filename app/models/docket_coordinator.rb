@@ -53,7 +53,7 @@ class DocketCoordinator
   end
 
   def target_number_of_ama_hearings(time_period)
-    decisions_in_days = time_period.to_f / 1.year.to_f * decisions_per_year
+    decisions_in_days = time_period.to_f / 1.year.to_f * nonpriority_decisions_per_year
     (decisions_in_days * docket_proportions[:hearing]).round
   end
 
@@ -71,20 +71,23 @@ class DocketCoordinator
   def interpolated_minimum_direct_review_proportion
     return @interpolated_minimum_direct_review_proportion if @interpolated_minimum_direct_review_proportion
 
-    t = 1 - (dockets[:direct_review].time_until_due_of_oldest_appeal.to_f /
-             dockets[:direct_review].time_until_due_of_new_appeal)
+    interpolator = 1 - (dockets[:direct_review].time_until_due_of_oldest_appeal.to_f /
+                        dockets[:direct_review].time_until_due_of_new_appeal)
 
     @interpolated_minimum_direct_review_proportion =
-      (pacesetting_direct_review_proportion * t * INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT)
+      (pacesetting_direct_review_proportion * interpolator * INTERPOLATED_DIRECT_REVIEW_PROPORTION_ADJUSTMENT)
         .clamp(0, MAXIMUM_DIRECT_REVIEW_PROPORTION)
   end
 
   def pacesetting_direct_review_proportion
+    # The pacesetting proportion is the percentage of our nonpriority decision capacity that would need to go
+    # to direct reviews in order to keep pace with what is arriving.
+
     return @pacesetting_direct_review_proportion if @pacesetting_direct_review_proportion
 
     receipts_per_year = dockets[:direct_review].nonpriority_receipts_per_year
 
-    @pacesetting_direct_review_proportion = receipts_per_year.to_f / decisions_per_year
+    @pacesetting_direct_review_proportion = receipts_per_year.to_f / nonpriority_decisions_per_year
   end
 
   private
@@ -97,7 +100,7 @@ class DocketCoordinator
     [total_batch_size - priority_count, 0].max
   end
 
-  def decisions_per_year
-    @decisions_per_year ||= [LegacyAppeal, Appeal].map(&:nonpriority_decisions_per_year).reduce(0, :+)
+  def nonpriority_decisions_per_year
+    @nonpriority_decisions_per_year ||= [LegacyAppeal, Appeal].map(&:nonpriority_decisions_per_year).reduce(0, :+)
   end
 end
