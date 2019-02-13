@@ -37,7 +37,7 @@ class RootTask < GenericTask
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
       create_vso_tracking_tasks(appeal, root_task)
-      if FeatureToggle.enabled?(:ama_acd_task_creation)
+      if FeatureToggle.enabled?(:ama_acd_tasks)
         create_subtasks!(appeal, root_task)
       else
         create_ihp_tasks!(appeal, root_task)
