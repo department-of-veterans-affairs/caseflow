@@ -483,10 +483,6 @@ class Appeal < DecisionReview
     tasks.any? { |t| t.is_a?(JudgeTask) }
   end
 
-  def remanded_issues?
-    decision_issues.remanded.any?
-  end
-
   def withdrawn?
     # will implement when available
   end
@@ -557,18 +553,12 @@ class Appeal < DecisionReview
     judge_tasks.min_by(&:created_at).created_at
   end
 
-  def decision_event_date
-    return unless decision_issues.any?
-
-    decision_issues.first.approx_decision_date
-  end
-
   def effectuation_ep?
     decision_document&.end_product_establishments&.any?
   end
 
   def decision_effectuation_event_date
-    return if remanded_issues?
+    return if decision_issues.remanded.any?
     return unless effectuation_ep?
     return if active_ep?
 
@@ -590,26 +580,6 @@ class Appeal < DecisionReview
     issue_list = decision_issues.empty? ? request_issues.open : fetch_all_decision_issues
 
     fetch_issues_status(issue_list)
-  end
-
-  def fetch_all_decision_issues
-    return decision_issues unless remanded_issues?
-    # only include the remanded issues they are still being worked on
-    return decision_issues if remanded_issues? && active_remanded_claims?
-
-    # if there were remanded issues and there is a decision available
-    # for them, include the decisions from the remanded SC and do not
-    # include the original remanded decision
-    di_list = decision_issues.not_remanded
-
-    remand_sc_decisions = []
-    remand_supplemental_claims.each do |sc|
-      sc.decision_issues.each do |di|
-        remand_sc_decisions << di
-      end
-    end
-
-    (di_list + remand_sc_decisions).uniq
   end
 
   private

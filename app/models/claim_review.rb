@@ -183,7 +183,7 @@ class ClaimReview < DecisionReview
   end
 
   def issues_hash
-    issue_list = active? ? request_issues.open : fetch_all_decision_issues_for_api_status
+    issue_list = active? ? request_issues.open : fetch_all_decision_issues
 
     fetch_issues_status(issue_list)
   end

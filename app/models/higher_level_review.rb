@@ -45,24 +45,6 @@ class HigherLevelReview < ClaimReview
     # need to implement. add logic to return alert enum
   end
 
-  def fetch_all_decision_issues_for_api_status
-    all_decision_issues = decision_issues.not_remanded
-    remand_supplemental_claims.each { |rsc| all_decision_issues += rsc.decision_issues }
-
-    all_decision_issues
-  end
-
-  def decision_event_date
-    return if remand_supplemental_claims.any?
-    return unless decision_issues.any?
-
-    if end_product_establishments.any?
-      decision_issues.first.approx_decision_date
-    else
-      decision_issues.first.promulgation_date
-    end
-  end
-
   def dta_error_event_date
     return if active?
     return unless remand_supplemental_claims.any?
@@ -119,7 +101,7 @@ class HigherLevelReview < ClaimReview
   def fetch_details_for_status
     case fetch_status
     when :hlr_decision
-      issue_list = fetch_all_decision_issues_for_api_status
+      issue_list = fetch_all_decision_issues
       {
         issues: api_issues_for_status_details_issues(issue_list)
       }

@@ -296,68 +296,6 @@ describe HigherLevelReview do
     end
   end
 
-  context "#active" do
-    let(:synced_status) { "CLR" }
-    let(:dta_ep_sync_status) { "PEND" }
-    let(:veteran_file_number) { "123456789" }
-    let!(:hlr_with_dta_error) { create(:higher_level_review, veteran_file_number: veteran_file_number) }
-    let!(:hlr_end_product) do
-      create(:end_product_establishment,
-             source: hlr_with_dta_error,
-             synced_status: synced_status)
-    end
-
-    let!(:dta_sc) do
-      create(:supplemental_claim,
-             veteran_file_number: veteran_file_number,
-             decision_review_remanded: hlr_with_dta_error)
-    end
-
-    let!(:dta_ep) do
-      create(:end_product_establishment,
-             source: dta_sc,
-             synced_status: dta_ep_sync_status)
-    end
-
-    let(:veteran_file_number2) { "111223333" }
-    let!(:hlr_no_dta_error) { create(:higher_level_review, veteran_file_number: veteran_file_number2) }
-    let!(:hlr_ep) do
-      create(:end_product_establishment,
-             source: hlr_no_dta_error,
-             synced_status: synced_status)
-    end
-
-    context "there is a dta error" do
-      it "hlr active, has active dta error ep" do
-        expect(hlr_with_dta_error.active?).to eq(true)
-      end
-    end
-
-    context "dta error ep cleared" do
-      let(:dta_ep_sync_status) { "CLR" }
-
-      it "hlr is not active" do
-        expect(hlr_with_dta_error.active?).to eq(false)
-      end
-    end
-
-    context "there is no dta error" do
-      let(:synced_status) { "PEND" }
-
-      it "has active ep" do
-        expect(hlr_no_dta_error.active?).to eq(true)
-      end
-    end
-
-    context "ep is cleared" do
-      let(:synced_status) { "CLR" }
-
-      it "has cleared ep" do
-        expect(hlr_no_dta_error.active?).to eq(false)
-      end
-    end
-  end
-
   context "#events" do
     let(:veteran_file_number) { "123456789" }
     let(:promulgation_date) { receipt_date + 130.days }
@@ -373,6 +311,7 @@ describe HigherLevelReview do
         create(:decision_issue,
                decision_review: hlr,
                disposition: "not a dta error",
+               profile_date: promulgation_date,
                promulgation_date: promulgation_date)
       end
 
@@ -566,13 +505,13 @@ describe HigherLevelReview do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(true)
-        expect(issue[:last_action]).to be_nil
-        expect(issue[:date]).to be_nil
+        expect(issue[:last_action]).to eq("DTA Error - PMRs")
+        expect(issue[:date]).to eq(hlr_decision_issue_with_dta_error.approx_decision_date)
         expect(issue[:description]).to eq("Dental or oral condition")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
         expect(issue2).to_not be_nil
-        expect(issue2[:active]).to eq(true)
+        expect(issue2[:active]).to eq(false)
         expect(issue2[:last_action]).to be_nil
         expect(issue2[:date]).to be_nil
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")

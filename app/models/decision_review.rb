@@ -229,12 +229,38 @@ class DecisionReview < ApplicationRecord
     active_remanded_claims&.any?
   end
 
+  def decision_event_date
+    return unless decision_issues.any?
+
+    decision_issues.map(&:approx_decision_date).compact.min
+  end
+
   def remand_decision_event_date
     return if active?
     return unless remand_supplemental_claims.any?
     return if active_remanded_claims?
 
     remand_supplemental_claims.map(&:decision_event_date).max
+  end
+
+  def fetch_all_decision_issues
+    return decision_issues unless decision_issues.remanded.any?
+    # only include the remanded issues if they are still being worked on
+    return decision_issues if active_remanded_claims?
+
+    # if there were remanded issues and there is a decision available
+    # for them, include the decisions from the remanded SC and do not
+    # include the original remanded decision
+    di_list = decision_issues.not_remanded
+
+    remand_sc_decisions = []
+    remand_supplemental_claims.each do |sc|
+      sc.decision_issues.each do |di|
+        remand_sc_decisions << di
+      end
+    end
+
+    (di_list + remand_sc_decisions).uniq
   end
 
   private

@@ -46,12 +46,6 @@ class SupplementalClaim < ClaimReview
     # need to implement. add logic to return alert enum
   end
 
-  def decision_event_date
-    return unless decision_issues.any?
-
-    decision_issues.first.approx_decision_date
-  end
-
   def other_close_event_date
     return if active?
     return unless decision_issues.empty?
@@ -62,10 +56,6 @@ class SupplementalClaim < ClaimReview
 
   def events
     @events ||= AppealEvents.new(appeal: self).all
-  end
-
-  def fetch_all_decision_issues_for_api_status
-    decision_issues
   end
 
   private

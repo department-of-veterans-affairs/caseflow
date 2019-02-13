@@ -108,9 +108,7 @@ class DecisionIssue < ApplicationRecord
   def api_status_active?
     # this is still being worked on so for the purposes of communicating
     # to the veteran, this decision issue is still considered active
-    return true if decision_review.is_a?(Appeal) && disposition == "remanded"
-
-    false
+    disposition && REMAND_DISPOSITIONS.include?(disposition)
   end
 
   def api_status_last_action
