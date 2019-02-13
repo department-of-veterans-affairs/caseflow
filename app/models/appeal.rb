@@ -339,19 +339,15 @@ class Appeal < DecisionReview
   end
 
   def active_status?
-    active? || active_ep? || active_remand_claims?
+    active? || active_ep? || active_remanded_claims?
   end
 
   def active_ep?
     decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
   end
 
-  # def active_remand_claims?
-  #   remand_supplemental_claims.any?(&:active?)
-  # end
-
   def location
-    if active_ep? || active_remand_claims?
+    if active_ep? || active_remanded_claims?
       "aoj"
     else
       "bva"
@@ -391,7 +387,7 @@ class Appeal < DecisionReview
   def fetch_post_decision_status
     if !remanded_issues? && effectuation_ep? && !active_ep?
       :bva_decision_effectuation
-    elsif remanded_supplemental_claims_with_ep && !remanded_supplemental_claims_with_ep.select(&active?).any?
+    elsif !active_remanded_claims_with_ep?
       :post_bva_dta_decision
     elsif remanded_issues?
       :ama_remand
@@ -439,7 +435,7 @@ class Appeal < DecisionReview
     {
       issues: api_issues_for_status_details_issues(issue_list),
       bvaDecisionDate: decision_event_date,
-      aojDecisionDate: dta_descision_event_date
+      aojDecisionDate: remand_decision_event_date
     }
   end
 
@@ -489,8 +485,8 @@ class Appeal < DecisionReview
     decision_issues.any? { |di| di.disposition == "remanded" }
   end
 
-  def remanded_supplemental_claims_with_ep
-    @remanded_supplemental_claims_with_ep ||= remand_supplemental_claims.select(&:processed_in_vbms?)
+  def active_remanded_claims_with_ep?
+    active_remanded_claims&.select(&:processed_in_vbms?)&.any?
   end
 
   def withdrawn?
@@ -578,7 +574,7 @@ class Appeal < DecisionReview
     return unless effectuation_ep?
     return if active_ep?
 
-    decision_document.end_product_establishments.first.last_synced_at
+    decision_document.end_product_establishments.first.last_synced_at.to_date
   end
 
   def other_close_event_date

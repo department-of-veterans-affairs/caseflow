@@ -25,7 +25,8 @@ class DecisionIssue < ApplicationRecord
   DTA_ERROR_FED_RECS = "DTA Error - Fed Recs".freeze
   DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs".freeze
   DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO".freeze
-  DTA_ERRORS = [DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
+  REMAND = "remanded".freeze
+  REMAND_DISPOSITIONS = [REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
   class AppealDTAPayeeCodeError < StandardError
     def initialize(appeal_id)
@@ -41,12 +42,11 @@ class DecisionIssue < ApplicationRecord
     end
 
     def remanded
-      # DTA Errors are a subcategory of remands
-      where(disposition: "remanded").or(where(disposition: DTA_ERRORS))
+      where(disposition: REMAND_DISPOSITIONS)
     end
 
     def not_remanded
-      where.not(disposition: "remanded")
+      where.not(disposition: REMAND_DISPOSITIONS)
     end
 
     def contested

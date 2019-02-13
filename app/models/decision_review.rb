@@ -229,14 +229,18 @@ class DecisionReview < ApplicationRecord
     remand_supplemental_claims.each(&:start_processing_job!)
   end
 
-  def active_remand_claims?
-    remand_supplemental_claims.any?(&:active?)
+  def active_remanded_claims
+    remand_supplemental_claims&.select(&:active?)
+  end
+
+  def active_remanded_claims?
+    active_remanded_claims&.any?
   end
 
   def remand_decision_event_date
     return if active?
     return unless remand_supplemental_claims.any?
-    return if active_remand_claims?
+    return if active_remanded_claims?
 
     remand_supplemental_claims.map(&:decision_event_date).max
   end

@@ -38,7 +38,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def active?
-    hlr_ep_active? || active_remand_claims?
+    hlr_ep_active? || active_remanded_claims?
   end
 
   def status_hash
@@ -50,9 +50,8 @@ class HigherLevelReview < ClaimReview
   end
 
   def fetch_all_decision_issues_for_api_status
-    all_decision_issues = decision_issues.reject { |di| DTA_ERRORS.include?(di[:disposition]) }
-
-    all_decision_issues += dta_claim.decision_issues if dta_claim
+    all_decision_issues = decision_issues.not_remanded
+    remand_supplemental_claims.each { |rsc| all_decision_issues += rsc.decision_issues }
 
     all_decision_issues
   end
@@ -72,7 +71,7 @@ class HigherLevelReview < ClaimReview
     return if hlr_ep_active?
     return unless remand_supplemental_claims.any?
 
-    decision_issues.with_dta_error.first.approx_decision_date
+    decision_issues.remanded.first.approx_decision_date
   end
 
   def other_close_event_date
@@ -113,7 +112,7 @@ class HigherLevelReview < ClaimReview
   def fetch_status
     if hlr_ep_active?
       :hlr_received
-    elsif active_remand_claims?
+    elsif active_remanded_claims?
       :hlr_dta_error
     elsif remand_supplemental_claims.any?
       remand_supplemental_claims.each do |rsc|

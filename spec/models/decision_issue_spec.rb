@@ -1,4 +1,3 @@
-require "rails_helper"
 require "support/intake_helpers"
 
 describe DecisionIssue do
@@ -40,8 +39,8 @@ describe DecisionIssue do
     let!(:ri_contesting_decision_issue) { create(:request_issue, contested_decision_issue_id: decision_issue.id) }
     let!(:uncontested_di) { create(:decision_issue, disposition: "other") }
     let!(:uncontested_remand_di) { create(:decision_issue, id: 55, disposition: "remanded") }
-    let!(:uncontested_dta_di) { create(:decision_issue, id: 55, disposition: "DTA Error - Fed Recs") }
-    let!(:granted_di) { create(:decision_issue, id: 55, disposition: "DTA Error - Fed Recs") }
+    let!(:uncontested_dta_di) { create(:decision_issue, id: 56, disposition: "DTA Error - Fed Recs") }
+    let!(:granted_di) { create(:decision_issue, id: 57, disposition: "DTA Error - Fed Recs") }
 
     context ".contested" do
       it "matches decision issue that has been contested" do
@@ -61,6 +60,13 @@ describe DecisionIssue do
       it "includes decision issues with remand and dta error dispositions" do
         expect(DecisionIssue.remanded).to include(uncontested_remand_di, uncontested_dta_di)
         expect(DecisionIssue.remanded).to_not include(decision_issue, uncontested_di)
+      end
+    end
+
+    context ".not_remanded" do
+      it "includes decision issues with remand and dta error dispositions" do
+        expect(DecisionIssue.not_remanded).to include(decision_issue, uncontested_di)
+        expect(DecisionIssue.not_remanded).to_not include(uncontested_remand_di, uncontested_dta_di)
       end
     end
   end
