@@ -29,7 +29,9 @@ module FeatureHelper
       selector = "div[id$='--option-#{options[:index]}']"
     end
 
-    dropdown.sibling(".Select-menu-outer").find(selector, **keyword_args).click
+    menu_selector = ".Select-menu-outer"
+    dropdown.sibling(menu_selector).find(selector, **keyword_args).click
+    expect(container).to_not have_css(menu_selector)
   end
 
   def dropdown_selected_value(container = page)
