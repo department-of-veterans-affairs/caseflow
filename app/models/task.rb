@@ -212,10 +212,9 @@ class Task < ApplicationRecord
 
     update!(status: Constants.TASK_STATUSES.completed)
 
-    children_to_update = children.reject { |t| t.status == Constants.TASK_STATUSES.completed }
-    children_to_update.each { |t| t.update!(parent_id: sibling.id) }
+    children.active.each { |t| t.update!(parent_id: sibling.id) }
 
-    [sibling, self, children_to_update].flatten
+    [sibling, self, sibling.children].flatten
   end
 
   def self.child_task_assignee(_parent, params)
