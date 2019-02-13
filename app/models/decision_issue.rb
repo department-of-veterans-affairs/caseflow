@@ -105,7 +105,27 @@ class DecisionIssue < ApplicationRecord
     approx_decision_date
   end
 
+  def api_status_disposition
+    "remand" if disposition == "remanded"
+    disposition
+  end
+
+  def api_status_description
+    description = fetch_diagnostic_code_status_description(diagnostic_code)
+    return description if description
+
+    "#{benefit_type.capitalize} issue"
+  end
+
   private
+
+  def fetch_diagnostic_code_status_description(diagnostic_code)
+    if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["status_description"]
+      description[0] = description[0].upcase
+      description
+    end
+  end
 
   def processed_in_caseflow?
     decision_review.processed_in_caseflow?

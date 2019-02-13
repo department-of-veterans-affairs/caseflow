@@ -36,7 +36,8 @@ import {
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
   onResetLockHearingAfterError,
-  onHearingOptionalTime
+  onHearingOptionalTime,
+  onInvalidForm
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
@@ -331,6 +332,7 @@ export class DailyDocketContainer extends React.Component {
         notes={this.props.notes}
         onErrorHearingDayLock={this.props.onErrorHearingDayLock}
         onResetLockHearingAfterError={this.props.onResetLockHearingAfterError}
+        onInvalidForm={this.props.onInvalidForm}
       />
       {this.state.modalOpen &&
       <HearingDayEditModal
@@ -372,6 +374,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onTranscriptRequestedUpdate,
   onHearingLocationUpdate,
   onHearingRegionalOfficeUpdate,
+  onInvalidForm,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,

@@ -1,9 +1,11 @@
 describe Docket do
   before do
     FeatureToggle.enable!(:ama_auto_case_distribution)
+    Distribution.skip_callback(:commit, :after, :enqueue_distribution_job)
   end
   after do
     FeatureToggle.disable!(:ama_auto_case_distribution)
+    Distribution.set_callback(:commit, :after, :enqueue_distribution_job)
   end
 
   context "docket" do
@@ -27,9 +29,10 @@ describe Docket do
         subject { DirectReviewDocket.new.appeals }
         it "returns all appeals if no option given" do
           expect(subject.include?(appeal)).to eq(true)
+          expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
+          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
           expect(subject.include?(aod_age_appeal)).to eq(true)
           expect(subject.include?(aod_motion_appeal)).to eq(true)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
         end
       end
 
@@ -37,9 +40,10 @@ describe Docket do
         subject { DirectReviewDocket.new.appeals(priority: true, ready: true) }
         it "returns priority/ready appeals" do
           expect(subject.include?(appeal)).to eq(false)
+          expect(subject.include?(denied_aod_motion_appeal)).to eq(false)
+          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(false)
           expect(subject.include?(aod_age_appeal)).to eq(true)
           expect(subject.include?(aod_motion_appeal)).to eq(true)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(false)
         end
       end
 
@@ -47,17 +51,27 @@ describe Docket do
         subject { DirectReviewDocket.new.appeals(priority: false) }
         it "returns nonpriority appeals" do
           expect(subject.include?(appeal)).to eq(true)
+          expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
+          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
           expect(subject.include?(aod_age_appeal)).to eq(false)
           expect(subject.include?(aod_motion_appeal)).to eq(false)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
         end
       end
     end
 
     context "count" do
-      subject { DirectReviewDocket.new.count(priority: false) }
+      let(:priority) { nil }
+      subject { DirectReviewDocket.new.count(priority: priority) }
+
       it "counts appeals" do
-        expect(subject > 0).to eq(true)
+        expect(subject).to eq(5)
+      end
+
+      context "when looking for nonpriority appeals" do
+        let(:priority) { false }
+        it "counts nonpriority appeals" do
+          expect(subject).to eq(3)
+        end
       end
     end
 
@@ -77,9 +91,9 @@ describe Docket do
         end
       end
 
-      let!(:judge_user) { create(:user) }
+      let(:judge_user) { create(:user) }
       let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
-      let!(:distribution) { Distribution.create!(judge: judge_user) }
+      let(:distribution) { Distribution.create!(judge: judge_user) }
 
       context "nonpriority appeals" do
         subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 10) }
