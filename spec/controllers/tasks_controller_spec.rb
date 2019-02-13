@@ -555,7 +555,7 @@ RSpec.describe TasksController, type: :controller do
       let(:new_attorney) { create(:user) }
 
       it "should update successfully" do
-        User.stub = judge
+        User.stub = attorney
         create(:staff, :attorney_role, sdomainid: new_attorney.css_id)
         patch :update, params: { task: { assigned_to_id: new_attorney.id }, id: attorney_task.id }
         expect(response.status).to eq 200

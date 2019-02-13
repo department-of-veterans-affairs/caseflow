@@ -194,7 +194,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def status_active?(sync: false)
     sync! if sync
-    !EndProduct::INACTIVE_STATUSES.include?(synced_status)
+    synced_status.nil? || !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
   def associate_rating_request_issues!
