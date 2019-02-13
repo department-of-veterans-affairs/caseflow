@@ -56,7 +56,7 @@ class ContestableIssue
   end
 
   def next_decision_issues
-    decision_issue&.next_decision_issues || contesting_request_issues.map(&:next_decision_issues).flatten
+    associated_decision_issue&.next_decision_issues || contested_by_request_issue.map(&:next_decision_issues).flatten
   end
 
   def latest_contestable_issues
@@ -65,13 +65,13 @@ class ContestableIssue
 
   private
 
-  def decision_issue
+  def associated_decision_issue
     return unless decision_issue?
 
     DecisionIssue.find(decision_issue_id)
   end
 
-  def contesting_request_issues
+  def contested_by_request_issue
     return [] if decision_issue?
 
     RequestIssue.where(contested_rating_issue_reference_id: rating_issue_reference_id,

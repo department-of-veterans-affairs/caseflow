@@ -84,7 +84,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def contests_request_issue(request_issue_id)
-    associated_request_issue.id == request_issue_id
+    request_issues.any{ |request_issue| request_issue.id == request_issue_id}
   end
 
   def next_decision_issues
