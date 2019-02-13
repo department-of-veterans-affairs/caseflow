@@ -55,8 +55,8 @@ class Appeal < DecisionReview
   scope :active, lambda {
     joins(:tasks)
       .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status != ? then 1 end) >= ?",
-              RootTask.name, Constants.TASK_STATUSES.completed, 1)
+      .having("count(case when tasks.type = ? and tasks.status not in (?) then 1 end) >= ?",
+              RootTask.name, Task.inactive_statuses, 1)
   }
 
   scope :ordered_by_distribution_ready_date, lambda {
@@ -89,8 +89,12 @@ class Appeal < DecisionReview
     end
   end
 
-  def self.non_priority_decisions_in_the_last_year
-    all_nonpriority.joins(:decision_documents).where("receipt_date > ?", 1.year.ago).count
+  def self.nonpriority_decisions_per_year
+    appeal_ids = all_nonpriority
+      .joins(:decision_documents)
+      .where("decision_date > ?", 1.year.ago)
+      .select("appeals.id")
+    where(id: appeal_ids).count
   end
 
   def ui_hash
@@ -185,7 +189,7 @@ class Appeal < DecisionReview
   end
 
   def active?
-    tasks.where(type: RootTask.name).where.not(status: Constants.TASK_STATUSES.completed).any?
+    tasks.active.where(type: RootTask.name).any?
   end
 
   def ready_for_distribution_at
@@ -471,21 +475,21 @@ class Appeal < DecisionReview
   end
 
   def pending_schedule_hearing_task?
-    tasks.any? { |t| t.is_a?(ScheduleHearingTask) && !t.completed? }
+    tasks.active.where(type: ScheduleHearingTask.name).any?
   end
 
   def hearing_pending?
     # This isn't available yet.
-    # tasks.any? { |t| t.is_a?(HoldHearingTask) && !t.completed? }
+    # tasks.active.where(type: HoldHearingTask.name).any?
   end
 
   def evidence_submission_hold_pending?
-    tasks.any? { |t| t.is_a?(EvidenceSubmissionWindowTask) && !t.completed? }
+    tasks.active.where(type: EvidenceSubmissionWindowTask.name).any?
   end
 
   def at_vso?
     # This task is always open, this can be used once that task is completed
-    # tasks.any? { |t| t.is_a?(InformalHearingPresentationTask) && !t.completed? }
+    # tasks.active.where(type: InformalHearingPresentationTask.name).any?
   end
 
   def distributed_to_a_judge?

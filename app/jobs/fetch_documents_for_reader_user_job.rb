@@ -17,8 +17,7 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
     update_fetched_at(reader_user)
     legacy_appeals = reader_user.user.current_case_assignments
 
-    ama_user_tasks = Task.where(assigned_to: reader_user.user)
-      .where.not(status: Constants.TASK_STATUSES.completed)
+    ama_user_tasks = Task.active.where(assigned_to: reader_user.user)
     ama_appeals = ama_user_tasks.map(&:appeal).uniq
 
     fetch_documents_for_appeals(legacy_appeals + ama_appeals)

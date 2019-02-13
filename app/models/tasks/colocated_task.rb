@@ -34,30 +34,39 @@ class ColocatedTask < Task
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
-  def available_actions(_user)
-    actions = [Constants.TASK_ACTIONS.PLACE_HOLD.to_h, Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h]
+  def available_actions(user)
+    if assigned_to != user
+      if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
+        return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
+      end
 
-    if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
+      return []
+    end
+
+    available_actions_with_conditions([
+                                        Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
+                                        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h
+                                      ])
+  end
+
+  def available_actions_with_conditions(core_actions)
+    if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
       send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
-      actions.unshift(send_to_team)
-    else
-      actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
+      return core_actions.unshift(send_to_team)
     end
+
+    core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
 
     if action == "translation" && appeal.is_a?(Appeal)
-      actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
+      core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
     end
 
-    actions
+    core_actions
   end
-  # rubocop:enable Metrics/AbcSize
 
-  def actions_available?(user)
-    return false if completed? || assigned_to != user
-
-    true
+  def actions_available?(_user)
+    active?
   end
 
   private
@@ -85,7 +94,7 @@ class ColocatedTask < Task
   end
 
   def all_tasks_completed_for_appeal?
-    appeal.tasks.where(type: ColocatedTask.name).map(&:status).uniq == [Constants.TASK_STATUSES.completed]
+    appeal.tasks.active.where(type: ColocatedTask.name).none?
   end
 
   def on_hold_duration_is_set
