@@ -304,8 +304,7 @@ export default class AssignHearingsTabs extends React.Component {
       enableFilter: true,
       columnName: 'suggestedLocation',
       tableData: data,
-      label: 'Filter by location',
-      enableClearFiltersRow: true
+      label: 'Filter by location'
     },
     {
       header: 'Time',

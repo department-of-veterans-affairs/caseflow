@@ -115,7 +115,7 @@ class ListSchedule extends React.Component {
         columnName: 'requestType',
         tableData: this.getHearingScheduleRows(false),
         label: 'Filter by type',
-        enableClearFiltersRow: false
+        disableClearFiltersRow: true
       },
       {
         header: 'Regional Office',
@@ -125,7 +125,7 @@ class ListSchedule extends React.Component {
         columnName: 'regionalOffice',
         tableData: this.getHearingScheduleRows(false),
         label: 'Filter by location',
-        enableClearFiltersRow: false
+        disableClearFiltersRow: true
       },
       {
         header: 'Room',
@@ -143,7 +143,7 @@ class ListSchedule extends React.Component {
         columnName: 'vlj',
         tableData: this.getHearingScheduleRows(false),
         label: 'Filter by VLJ',
-        enableClearFiltersRow: false
+        disableClearFiltersRow: true
       }
     ];
   }
