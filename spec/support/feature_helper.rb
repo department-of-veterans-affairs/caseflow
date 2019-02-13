@@ -71,22 +71,27 @@ module FeatureHelper
     container.find(selector, **keyword_args)
   end
 
-  def click_dropdown_menu_item(dropdown, selector, keyword_args)
-    dropdown.sibling(".Select-menu-outer").find(selector, **keyword_args).click
+  # sometimes the dropdown menu hasn't appeared after the first click
+  def try_clicking_dropdown_menu_item(dropdown, selector, keyword_args)
+    tries = 3
+    until dropdown_menu_visible?(dropdown) || tries <= 0
+      dropdown.click
+      tries -= 1
+    end
+
+    click_dropdown_menu_item(dropdown, selector, keyword_args)
   end
 
-  def try_clicking_dropdown_menu_item(dropdown, selector, keyword_args)
-    begin
-      click_dropdown_menu_item(dropdown, selector, keyword_args)
-    rescue Capybara::ElementNotFound
-      begin
-        dropdown.find(".Select-placeholder").click
-        click_dropdown_menu_item(dropdown, selector, keyword_args)
-      rescue Capybara::ElementNotFound
-        dropdown.find(".Select-value").click
-        click_dropdown_menu_item(dropdown, selector, keyword_args)
-      end
-    end
+  def dropdown_menu_visible?(dropdown)
+    dropdown.sibling(".Select-menu-outer")
+  rescue Capybara::ElementNotFound
+    false
+  else
+    true
+  end
+
+  def click_dropdown_menu_item(dropdown, selector, keyword_args)
+    dropdown.sibling(".Select-menu-outer").find(selector, **keyword_args).click
   end
 
   def generate_text(length)
