@@ -28,7 +28,7 @@ class GenericTask < Task
       ]
     end
 
-    if task_is_assigned_to_user_within_organiztaion?(user)
+    if task_is_assigned_to_user_within_organization?(user)
       return [
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
       ]
@@ -46,27 +46,7 @@ class GenericTask < Task
   end
   # rubocop:enable Metrics/MethodLength
 
-  def reassign(reassign_params, current_user)
-    reassign_params[:instructions] = [instructions, reassign_params[:instructions]].flatten
-    sibling = self.class.create_child_task(parent, current_user, reassign_params)
-    update!(status: Constants.TASK_STATUSES.completed)
-
-    children.active.each { |t| t.update!(parent_id: sibling.id) }
-
-    [sibling, self, sibling.children].flatten
-  end
-
-  def can_be_updated_by_user?(user)
-    available_actions_unwrapper(user).any?
-  end
-
   private
-
-  def task_is_assigned_to_user_within_organiztaion?(user)
-    parent&.assigned_to.is_a?(Organization) &&
-      assigned_to.is_a?(User) &&
-      parent.assigned_to.user_has_access?(user)
-  end
 
   def task_is_assigned_to_users_organization?(user)
     assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
@@ -99,15 +79,6 @@ class GenericTask < Task
           instructions: params[:instructions]
         )
       end
-    end
-
-    def child_task_assignee(_parent, params)
-      Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
-    end
-
-    def child_assigned_by_id(parent, current_user)
-      return current_user.id if current_user
-      return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
     end
   end
 end
