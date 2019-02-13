@@ -28,7 +28,7 @@ export const decisionReviewTypeColumn = (totalData) => {
     valueFunction: (task) => task.type,
     label: 'Filter by type',
     valueName: 'type',
-    enableClearFiltersRow: false,
+    disableClearFiltersRow: true,
     useCheckbox: true,
     // order determines where this column displays
     // make it -1 so this column is always last
