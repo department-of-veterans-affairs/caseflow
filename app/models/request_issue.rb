@@ -410,8 +410,8 @@ class RequestIssue < ApplicationRecord
     !benefit_type_requires_payee_code?
   end
 
-  def next_decision_issue
-    review_request.decision_issues.find { |issue| issue.contests_request_issue(id) }
+  def next_decision_issues
+    review_request.decision_issues.select { |issue| issue.contests_request_issue(id) }
   end
 
   def decision_or_promulgation_date

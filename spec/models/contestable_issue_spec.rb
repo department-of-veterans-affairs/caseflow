@@ -77,36 +77,6 @@ describe ContestableIssue do
         )
       end
     end
-
-    context "#next_decision_issue" do
-      subject { ContestableIssue.from_rating_issue(rating_issue, decision_review).next_decision_issue }
-      context "with no future decision issue" do
-        it "returns nil" do
-          expect(subject).to eq(nil)
-        end
-      end
-
-      context "with future decision issue" do
-        let!(:request_issue) do
-          create(:request_issue,
-                 review_request: decision_review,
-                 contested_rating_issue_reference_id: rating_issue.reference_id,
-                 contested_rating_issue_profile_date: rating_issue.profile_date,
-                 contested_decision_issue_id: nil)
-        end
-        let!(:decision_issue) do
-          create(:decision_issue,
-                 decision_review: decision_review,
-                 description: "decision issue for initial request issue",
-                 caseflow_decision_date: promulgation_date + 1.day,
-                 request_issues: [request_issue])
-        end
-
-        it "can find the next decision issue" do
-          expect(subject.id).to eq(decision_issue.id)
-        end
-      end
-    end
   end
 
   context ".from_decision_issue" do
@@ -156,32 +126,105 @@ describe ContestableIssue do
         )
       end
     end
+  end
 
-    context "#next_decision_issue" do
-      subject { ContestableIssue.from_decision_issue(decision_issue, decision_review).next_decision_issue }
-      context "with no future decision issue" do
-        it "returns nil" do
-          expect(subject).to eq(nil)
-        end
+  context "#latest_contestable_issues" do
+    let(:appeal) { create(:appeal) }
+    let(:starting_date) { Time.zone.now - 20.days }
+    let!(:request_issue_for_rating) { create(:request_issue, :rating, review_request: appeal) }
+    let!(:rating_contestable_issue) do
+      rating_issue = RatingIssue.new(
+        reference_id: "NBA",
+        participant_id: "123",
+        profile_date: starting_date - 2.days,
+        promulgation_date: starting_date - 3.days,
+        decision_text: "This broadcast may not be reproduced",
+        associated_end_products: [],
+        rba_contentions_data: [{}]
+      )
+
+      ContestableIssue.from_rating_issue(rating_issue, appeal)
+    end
+
+    let(:contesting_decision_issue) do
+      request_issue = create(:request_issue,
+                             review_request: appeal,
+                             contested_rating_issue_reference_id: rating_contestable_issue.rating_issue_reference_id,
+                             contested_rating_issue_profile_date: rating_contestable_issue.rating_issue_profile_date,
+                             contested_decision_issue_id: nil)
+
+      create(:decision_issue,
+             decision_review: appeal,
+             description: "decision issue for initial request issue",
+             caseflow_decision_date: starting_date,
+             request_issues: [request_issue])
+    end
+
+    let!(:another_contestable_issue) do
+      another_appeal = create(:appeal)
+      request_issue = create(:request_issue,
+                             review_request: another_appeal,
+                             contested_decision_issue_id: contesting_decision_issue.id)
+      decision_issue = create(:decision_issue,
+                              decision_review: another_appeal,
+                              description: "another decision issue",
+                              caseflow_decision_date: starting_date + 1.day,
+                              request_issues: [request_issue])
+      ContestableIssue.from_decision_issue(decision_issue, another_appeal)
+    end
+
+    let!(:future_contestable_issues) do
+      contestable_issues = []
+      contesting_decision_issue_id = contesting_decision_issue.id
+      3.times do |index|
+        future_appeal = create(:appeal)
+        future_request_issue = create(:request_issue,
+                                      review_request: future_appeal,
+                                      contested_decision_issue_id: contesting_decision_issue_id)
+        future_decision_issue = create(:decision_issue,
+                                       decision_review: future_appeal,
+                                       description: "decision issue #{index}",
+                                       caseflow_decision_date: starting_date + index.days,
+                                       request_issues: [future_request_issue])
+        contesting_decision_issue_id = future_decision_issue.id
+        contestable_issues << ContestableIssue.from_decision_issue(future_decision_issue, future_appeal)
       end
 
-      context "with future decision issue" do
-        let!(:request_issue) do
-          create(:request_issue,
-                 review_request: decision_review,
-                 contested_decision_issue_id: decision_issue.id)
-        end
-        let!(:future_decision_issue) do
-          create(:decision_issue,
-                 decision_review: decision_review,
-                 description: "decision issue for initial request issue",
-                 caseflow_decision_date: promulgation_date + 1.day,
-                 request_issues: [request_issue])
-        end
+      contestable_issues
+    end
 
-        it "can find the next decision issue" do
-          expect(subject.id).to eq(future_decision_issue.id)
-        end
+    # rubocop:disable Metrics/AbcSize
+    def check_latest_contestable_issues(latest_contestable_issues)
+      # finds another_contestable_issue & the lastest of the future_contestable_issues
+
+      expect(latest_contestable_issues.length).to eq(2)
+      found_another_contestable_issue = latest_contestable_issues.find do |issue|
+        issue.contesting_decision_review == another_contestable_issue.contesting_decision_review &&
+          issue.decision_issue_id == another_contestable_issue.decision_issue_id
+      end
+      found_future_contestable_issue = latest_contestable_issues.find do |issue|
+        issue.contesting_decision_review == future_contestable_issues.last.contesting_decision_review &&
+          issue.decision_issue_id == future_contestable_issues.last.decision_issue_id
+      end
+      expect(found_another_contestable_issue).to_not be_nil
+      expect(found_future_contestable_issue).to_not be_nil
+    end
+    # rubocop:enable Metrics/AbcSize
+
+    context "from the middle of a chain of decision issues" do
+      let!(:starting_contestable_issue) do
+        ContestableIssue.from_decision_issue(contesting_decision_issue, appeal)
+      end
+      it "finds latest contestable issues" do
+        latest_contestable_issues = starting_contestable_issue.latest_contestable_issues
+        check_latest_contestable_issues(latest_contestable_issues)
+      end
+    end
+
+    context "from a contestable rating issue" do
+      it "finds latest contestable issues" do
+        latest_contestable_issues = rating_contestable_issue.latest_contestable_issues
+        check_latest_contestable_issues(latest_contestable_issues)
       end
     end
   end

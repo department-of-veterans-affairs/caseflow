@@ -10,10 +10,7 @@ class ContestableIssue
     def from_rating_issue(rating_issue, contesting_decision_review)
       new(
         rating_issue_reference_id: rating_issue.reference_id,
-        rating_issue_profile_date: rating_issue.profile_date.to_date,
-        # keep track of the original profile date with timestamp
-        # we need this to go from contestable issue => request issue
-        rating_issue_profile_date_timestamp: rating_issue.profile_date.to_s,
+        rating_issue_profile_date: rating_issue.profile_date,
         date: rating_issue.profile_date.to_date,
         description: rating_issue.decision_text,
         ramp_claim_id: rating_issue.ramp_claim_id,
@@ -26,7 +23,7 @@ class ContestableIssue
     def from_decision_issue(decision_issue, contesting_decision_review)
       new(
         rating_issue_reference_id: decision_issue.rating_issue_reference_id,
-        rating_issue_profile_date: decision_issue.profile_date.try(:to_date),
+        rating_issue_profile_date: decision_issue.profile_date,
         decision_issue_id: decision_issue.id,
         date: decision_issue.approx_decision_date,
         description: decision_issue.description,
@@ -39,7 +36,7 @@ class ContestableIssue
   def serialize
     {
       ratingIssueReferenceId: rating_issue_reference_id,
-      ratingIssueProfileDate: rating_issue_profile_date,
+      ratingIssueProfileDate: rating_issue_profile_date.try(:to_date),
       ratingIssueDisabilityCode: rating_issue_disability_code,
       decisionIssueId: decision_issue_id,
       date: date,
@@ -48,7 +45,7 @@ class ContestableIssue
       titleOfActiveReview: title_of_active_review,
       sourceReviewType: source_review_type,
       timely: timely?,
-      latestIssueInChain: serialize_latest_decision_issue_in_chain
+      latestIssueInChain: serialize_latest_decision_issues
     }
   end
 
@@ -58,8 +55,12 @@ class ContestableIssue
     decision_issue? ? source_request_issues.first.decision_review_type : source_request_issues.first.review_request_type
   end
 
-  def next_decision_issue
-    decision_issue&.next_decision_issue || request_issue&.next_decision_issue
+  def next_decision_issues
+    decision_issue&.next_decision_issues || contesting_request_issues.map(&:next_decision_issues).flatten
+  end
+
+  def latest_contestable_issues
+    @latest_contestable_issues ||= find_latest_contestable_issue
   end
 
   private
@@ -70,26 +71,33 @@ class ContestableIssue
     DecisionIssue.find(decision_issue_id)
   end
 
-  def request_issue
-    return if decision_issue?
+  def contesting_request_issues
+    return [] if decision_issue?
 
-    RequestIssue.find_by(contested_rating_issue_reference_id: rating_issue_reference_id,
-                         contested_rating_issue_profile_date: rating_issue_profile_date_timestamp)
+    RequestIssue.where(contested_rating_issue_reference_id: rating_issue_reference_id,
+                       contested_rating_issue_profile_date: rating_issue_profile_date.to_s)
   end
 
   def decision_issue?
     !!decision_issue_id
   end
 
-  def serialize_latest_decision_issue_in_chain
-    {
-      id: contestable_issue_chain.last_issue&.id,
-      date: contestable_issue_chain.last_issue&.caseflow_decision_date
-    }
+  def serialize_latest_decision_issues
+    serialized_issues = latest_contestable_issues.map do |latest_contestable_issue|
+      {
+        id: latest_contestable_issue.decision_issue_id,
+        date: latest_contestable_issue.date
+      }
+    end
+    serialized_issues.sort_by { |issue| issue[:date] }
   end
 
-  def contestable_issue_chain
-    @contestable_issue_chain ||= ContestableIssueChain.new(self)
+  def find_latest_contestable_issue
+    return [self] if next_decision_issues.blank?
+
+    next_decision_issues.map do |decision_issue|
+      ContestableIssue.from_decision_issue(decision_issue, decision_issue.decision_review).latest_contestable_issues
+    end.flatten
   end
 
   def title_of_active_review
