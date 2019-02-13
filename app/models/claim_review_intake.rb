@@ -53,17 +53,17 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   def create_claimant!
     if request_params[:veteran_is_not_claimant] == true
-      Claimant.create!(
+      Claimant.find_or_initialize_by(
         participant_id: request_params[:claimant],
         payee_code: need_payee_code? ? request_params[:payee_code] : nil,
         review_request: detail
-      )
+      ).tap(&:save!)
     else
-      Claimant.create!(
+      Claimant.find_or_initialize_by(
         participant_id: veteran.participant_id,
         payee_code: nil,
         review_request: detail
-      )
+      ).tap(&:save!)
     end
     update_person!
   end
