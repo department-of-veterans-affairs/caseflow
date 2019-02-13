@@ -196,7 +196,7 @@ class RequestIssue < ApplicationRecord
         rating_issue_reference_id: data[:rating_issue_reference_id],
         rating_issue_profile_date: data[:rating_issue_profile_date],
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
-        contested_rating_issue_disability_code: data[:rating_issue_disability_code],
+        contested_rating_issue_diagnostic_code: data[:rating_issue_diagnostic_code],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
@@ -415,7 +415,41 @@ class RequestIssue < ApplicationRecord
     return contested_rating_issue.try(:promulgation_date) if rating?
   end
 
+  def diagnostic_code
+    contested_rating_issue_diagnostic_code
+  end
+
+  def api_status_active?
+    return review_request.active? if review_request.is_a?(HigherLevelReview) || review_request.is_a?(SupplementalClaim)
+    return true if review_request.is_a?(Appeal)
+  end
+
+  def api_status_last_action
+    # this will be nil
+    # may need to be updated if an issue is withdrawn
+  end
+
+  def api_status_last_action_date
+    # this will be nil
+    # may need to be updated if an issue is withdrawn
+  end
+
+  def api_status_description
+    description = fetch_diagnostic_code_status_description(diagnostic_code)
+    return description if description
+
+    "#{benefit_type.capitalize} issue"
+  end
+
   private
+
+  def fetch_diagnostic_code_status_description(diagnostic_code)
+    if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["status_description"]
+      description[0] = description[0].upcase
+      description
+    end
+  end
 
   # The contested_rating_issue_profile_date is used as an identifier to retrieve the
   # appropriate rating. It needs to be saved in the same format and time zone that it
@@ -672,7 +706,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).any?
+    review_request.tasks.active.any?
   end
 
   def copy_review_request_to_decision_review

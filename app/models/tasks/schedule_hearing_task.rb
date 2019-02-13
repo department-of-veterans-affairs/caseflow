@@ -3,7 +3,7 @@ class ScheduleHearingTask < GenericTask
 
   class << self
     def find_or_create_if_eligible(appeal)
-      if appeal.is_a?(LegacyAppeal) && appeal.case_record.bfcurloc == "57" &&
+      if appeal.is_a?(LegacyAppeal) && appeal.case_record&.bfcurloc == "57" &&
          appeal.hearings.all?(&:disposition)
         ScheduleHearingTask.where.not(status: "completed").find_or_create_by!(appeal: appeal) do |task|
           task.update(
@@ -16,25 +16,51 @@ class ScheduleHearingTask < GenericTask
       end
     end
 
-    def tasks_for_ro(regional_office)
-      # Get all legacy tasks for this RO
-      legacy_appeal_tasks = AppealRepository.appeals_ready_for_hearing_schedule(regional_office).map do |appeal|
-        ScheduleHearingTask.new(
-          appeal: appeal,
-          status: Constants.TASK_STATUSES.in_progress.to_sym,
-          assigned_to: HearingsManagement.singleton
-        )
-      end
+    def legacy_tasks_for_ro(regional_office, incomplete_tasks)
+      # Joining to legacy appeals is more difficult because we don't store the veteran file number
+      # we only have the bfcorlid, which needs to be modified according to the
+      # LegacyAppeal.veteran_file_number_from_bfcorlid function. It is written here in SQL.
+      legacy_appeal_tasks = incomplete_tasks
+        .joins("INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id")
+        .joins("INNER JOIN veterans ON
+                  CASE
+                    WHEN substring(legacy_appeals.vbms_id from length(legacy_appeals.vbms_id) for 1) = 'C'
+                      THEN lpad(regexp_replace(legacy_appeals.vbms_id, '[^0-9]', ''), 8, '0')
+                    ELSE regexp_replace(legacy_appeals.vbms_id, '[^0-9]', '')
+                  END = veterans.file_number")
 
+      central_office_ids = VACOLS::Case.where(bfhr: 1, bfcurloc: "CASEFLOW").pluck(:bfkey)
+      central_office_legacy_appeal_ids = LegacyAppeal.where(vacols_id: central_office_ids).pluck(:id)
+
+      # For legacy appeals, we need to only provide a central office hearing if they explicitly
+      # chose one. Likewise, we can't use DC if it's the closest regional office unless they
+      # chose a central office hearing.
+      if regional_office == "C"
+        legacy_appeal_tasks.where("legacy_appeals.id IN (?)", central_office_legacy_appeal_ids)
+      else
+        tasks_by_ro = legacy_appeal_tasks.where("veterans.closest_regional_office = ?", regional_office)
+
+        # For context: https://github.com/rails/rails/issues/778#issuecomment-432603568
+        if central_office_legacy_appeal_ids.empty?
+          tasks_by_ro
+        else
+          tasks_by_ro.where("legacy_appeals.id NOT IN (?)", central_office_legacy_appeal_ids)
+        end
+      end
+    end
+
+    def tasks_for_ro(regional_office)
       # Get all tasks associated with AMA appeals and the regional_office
-      appeal_tasks = ScheduleHearingTask.where(
-        appeal_type: Appeal.name,
-        status: Constants.TASK_STATUSES.assigned.to_sym
-      ).joins("INNER JOIN appeals ON appeals.id = appeal_id")
+      incomplete_tasks = ScheduleHearingTask.where(
+        "status = ? OR status = ?",
+        Constants.TASK_STATUSES.assigned.to_sym,
+        Constants.TASK_STATUSES.in_progress.to_sym
+      ).includes(:assigned_to, :assigned_by, :appeal, attorney_case_reviews: [:attorney])
+      appeal_tasks = incomplete_tasks.joins("INNER JOIN appeals ON appeals.id = appeal_id")
         .joins("INNER JOIN veterans ON appeals.veteran_file_number = veterans.file_number")
         .where("veterans.closest_regional_office = ?", regional_office)
 
-      legacy_appeal_tasks + appeal_tasks
+      legacy_tasks_for_ro(regional_office, incomplete_tasks) + appeal_tasks
     end
   end
 

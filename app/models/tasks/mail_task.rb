@@ -42,8 +42,7 @@ class MailTask < GenericTask
     end
 
     def most_recent_active_task_assignee(parent)
-      parent.appeal.tasks.where(assigned_to_type: User.name).where.not(status: Constants.TASK_STATUSES.completed)
-        .order(:created_at).last&.assigned_to
+      parent.appeal.tasks.active.where(assigned_to_type: User.name).order(:created_at).last&.assigned_to
     end
   end
 

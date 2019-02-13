@@ -315,20 +315,22 @@ feature "Appeal Intake" do
     complete_appeal
   end
 
-  context "ratings with disabiliity codes" do
+  context "ratings with diagnostic codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }
-    let!(:ratings_with_disability_codes) do
-      generate_ratings_with_disabilities(veteran,
-                                         disabiliity_receive_date,
-                                         disability_profile_date)
+    let!(:ratings_with_diagnostic_codes) do
+      generate_ratings_with_disabilities(
+        veteran,
+        disabiliity_receive_date,
+        disability_profile_date
+      )
     end
 
-    scenario "saves disability codes" do
+    scenario "saves diagnostic codes" do
       appeal, = start_appeal(veteran)
       visit "/intake"
       click_intake_continue
-      save_and_check_request_issues_with_disability_codes(
+      save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.appeal,
         appeal
       )
@@ -619,7 +621,7 @@ feature "Appeal Intake" do
            )).to_not be_nil
 
     duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
-    ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
+    ineligible_issue = duplicate_request_issues.detect(&:duplicate_of_rating_issue_in_active_review?)
 
     expect(duplicate_request_issues.count).to eq(2)
     expect(duplicate_request_issues).to include(request_issue_in_progress)
@@ -744,7 +746,7 @@ feature "Appeal Intake" do
     click_intake_add_issue
     click_intake_no_matching_issues
     add_intake_nonrating_issue(
-      benefit_type: "Vocational Rehab. & Employment",
+      benefit_type: "Vocational Rehabilitation and Employment",
       category: "Basic Eligibility",
       description: "Description for basic eligibility",
       date: profile_date.strftime("%D")
