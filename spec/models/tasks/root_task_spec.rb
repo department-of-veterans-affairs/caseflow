@@ -87,7 +87,7 @@ describe RootTask do
 
         it "creates a tracking task assigned to the VSO" do
           expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
-          expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.first.assigned_to).to eq(pva)
+          expect(appeal.tasks.detect { |t| t.is_a?(TrackVeteranTask) }.assigned_to).to eq(pva)
         end
       end
     end
@@ -128,7 +128,8 @@ describe RootTask do
       it "blocks distribution with schedule hearing task" do
         RootTask.create_root_and_sub_tasks!(appeal)
         expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
-        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("HearingTask")
+        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.parent.class.name).to eq("DistributionTask")
       end
     end
 

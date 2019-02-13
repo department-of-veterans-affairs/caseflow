@@ -45,7 +45,7 @@ module LegacyCaseDistribution
     {
       batch_size: batch_size,
       total_batch_size: total_batch_size,
-      priority_count: priority_count
+      priority_count: legacy_priority_count
     }
   end
 
@@ -53,16 +53,16 @@ module LegacyCaseDistribution
     @docket ||= LegacyDocket.new
   end
 
-  def priority_count
+  def legacy_priority_count
     docket.count(priority: true, ready: true)
   end
 
   def net_docket_range
-    [total_batch_size - priority_count, 0].max
+    [total_batch_size - legacy_priority_count, 0].max
   end
 
   def target_number_of_priority_appeals
-    proportion = [priority_count.to_f / total_batch_size, 1.0].min
+    proportion = [legacy_priority_count.to_f / total_batch_size, 1.0].min
     (proportion * batch_size).ceil
   end
 end

@@ -89,8 +89,12 @@ class Appeal < DecisionReview
     end
   end
 
-  def self.non_priority_decisions_in_the_last_year
-    all_nonpriority.joins(:decision_documents).where("receipt_date > ?", 1.year.ago).count
+  def self.nonpriority_decisions_per_year
+    appeal_ids = all_nonpriority
+      .joins(:decision_documents)
+      .where("decision_date > ?", 1.year.ago)
+      .select("appeals.id")
+    where(id: appeal_ids).count
   end
 
   def ui_hash
@@ -144,7 +148,7 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
+    task = tasks.order(created_at: :desc).detect { |t| t.is_a?(JudgeTask) }
     task ? task.assigned_to.try(:full_name) : ""
   end
 
@@ -366,7 +370,7 @@ class Appeal < DecisionReview
   end
 
   def status_hash
-    { type: fetch_status, details: {} }
+    { type: fetch_status, details: fetch_details_for_status }
   end
 
   def fetch_status
@@ -412,6 +416,63 @@ class Appeal < DecisionReview
   end
   # rubocop:enable CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
+
+  # rubocop:disable Metrics/MethodLength
+  def fetch_details_for_status
+    case fetch_status
+    when :bva_decision
+      {
+        issues: api_issues_for_status_details_issues(decision_issues)
+      }
+    when :ama_remand
+      {
+        issues: api_issues_for_status_details_issues(decision_issues)
+      }
+    when :post_bva_dta_decision
+      post_bva_dta_decision_status_details
+    when :bva_decision_effectuation
+      {
+        bvaDecisionDate: decision_event_date,
+        aojDecisionDate: decision_effectuation_event_date
+      }
+    when :pending_hearing_scheduling
+      {
+        type: "video"
+      }
+    else
+      {}
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def post_bva_dta_decision_status_details
+    issue_list = remanded_sc_decision_issues
+    {
+      issues: api_issues_for_status_details_issues(issue_list),
+      bvaDecisionDate: decision_event_date,
+      aojDecisionDate: dta_descision_event_date
+    }
+  end
+
+  def api_issues_for_status_details_issues(issue_list)
+    issue_list.map do |issue|
+      {
+        description: issue.api_status_description,
+        disposition: issue.api_status_disposition
+      }
+    end
+  end
+
+  def remanded_sc_decision_issues
+    issue_list = []
+    remand_supplemental_claims.each do |sc|
+      sc.decision_issues.map do |di|
+        issue_list << di
+      end
+    end
+
+    issue_list
+  end
 
   def pending_schedule_hearing_task?
     tasks.any? { |t| t.is_a?(ScheduleHearingTask) && !t.completed? }
@@ -547,6 +608,32 @@ class Appeal < DecisionReview
 
   def events
     @events ||= AppealEvents.new(appeal: self).all
+  end
+
+  def issues_hash
+    issue_list = decision_issues.empty? ? request_issues.open : fetch_all_decision_issues
+
+    fetch_issues_status(issue_list)
+  end
+
+  def fetch_all_decision_issues
+    return decision_issues unless remanded_issues?
+    # only include the remanded issues they are still being worked on
+    return decision_issues if remanded_issues? && active_remanded_claims?
+
+    # if there were remanded issues and there is a decision available
+    # for them, include the decisions from the remanded SC and do not
+    # include the original remanded decision
+    di_list = decision_issues.not_remanded
+
+    remand_sc_decisions = []
+    remand_supplemental_claims.each do |sc|
+      sc.decision_issues.each do |di|
+        remand_sc_decisions << di
+      end
+    end
+
+    (di_list + remand_sc_decisions).uniq
   end
 
   private

@@ -4,9 +4,17 @@ import React from 'react';
 
 import { removeIssue } from '../actions/addIssues';
 import Modal from '../../components/Modal';
+import { benefitTypeProcessedInVBMS } from '../util';
 
-const removeIssueMessage = (formType) => {
-  if (formType === 'appeal') {
+const removeIssueMessage = (intakeData) => {
+  if (intakeData.benefitType && !benefitTypeProcessedInVBMS(intakeData.benefitType)) {
+    return <div>
+      <p>The contention you selected will be removed from the decision review.</p>
+      <p>Are you sure you want to remove this issue?</p>
+    </div>;
+  }
+
+  if (intakeData.formType === 'appeal') {
     return <div>
       <p>The issue you selected will be removed from the list of issues on appeal.</p>
       <p>Are you sure that this issue is not listed on the veteran's NOD and that you want to remove it?</p> </div>;
@@ -45,7 +53,7 @@ class RemoveIssueModal extends React.PureComponent {
         title="Remove issue"
       >
 
-        { removeIssueMessage(intakeData.formType) }
+        { removeIssueMessage(intakeData) }
 
       </Modal>
     </div>;
