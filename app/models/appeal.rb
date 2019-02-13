@@ -115,31 +115,14 @@ class Appeal < DecisionReview
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
-  # rubocop:disable Metrics/PerceivedComplexity
   def location_code
-    location_code = nil
+    return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    if root_task && root_task.status == Constants.TASK_STATUSES.completed
-      location_code = COPY::CASE_LIST_TABLE_POST_DECISION_LABEL
-    else
-      active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
-      if active_tasks == [root_task]
-        location_code = COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
-      elsif active_tasks.any?
-        most_recent_assignee = active_tasks.order(updated_at: :desc).first.assigned_to
-        location_code = if most_recent_assignee.is_a?(Organization)
-                          most_recent_assignee.name
-                        else
-                          most_recent_assignee.css_id
-                        end
-      else
-        location_code = status_hash[:type].to_s.titleize
-      end
-    end
+    active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+    return active_tasks.order(:updated_at).last.assigned_to_label if active_tasks.any?
 
-    location_code
+    tasks.order(:updated_at).last.assigned_to_label
   end
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def attorney_case_reviews
     tasks.map(&:attorney_case_reviews).flatten

@@ -18,4 +18,8 @@ class DistributionTask < GenericTask
   def ready_for_distribution_at
     assigned_at
   end
+
+  def assigned_to_label
+    COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
+  end
 end
