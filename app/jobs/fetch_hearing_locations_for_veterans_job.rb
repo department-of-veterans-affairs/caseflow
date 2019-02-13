@@ -71,8 +71,13 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
+  def create_schedule_hearing_tasks
+    AppealRepository.create_schedule_hearing_tasks
+  end
+
   def perform
     RequestStore.store[:current_user] = User.system_user
+    create_schedule_hearing_tasks
     create_missing_veterans
 
     veterans.each do |veteran|

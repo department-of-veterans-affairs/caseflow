@@ -424,7 +424,8 @@ describe RequestIssue do
         vacols_sequence_id: 2,
         contested_decision_issue_id: contested_decision_issue_id,
         ineligible_reason: "untimely",
-        ineligible_due_to_id: 345
+        ineligible_due_to_id: 345,
+        rating_issue_diagnostic_code: "2222"
       }
     end
 
@@ -442,7 +443,8 @@ describe RequestIssue do
         ramp_claim_id: "ramp_claim_id",
         vacols_sequence_id: 2,
         ineligible_reason: "untimely",
-        ineligible_due_to_id: 345
+        ineligible_due_to_id: 345,
+        contested_rating_issue_diagnostic_code: "2222"
       )
     end
 

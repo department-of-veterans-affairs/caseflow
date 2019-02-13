@@ -20,6 +20,7 @@ describe RatingIssue do
         profile_date: profile_date,
         promulgation_date: promulgation_date,
         decision_text: "This broadcast may not be reproduced",
+        diagnostic_code: "1234",
         associated_end_products: [],
         rba_contentions_data: [{}]
       )
@@ -34,6 +35,7 @@ describe RatingIssue do
         profile_date: profile_date,
         promulgation_date: promulgation_date,
         decision_text: "This broadcast may not be reproduced",
+        diagnostic_code: "1234",
         rba_contentions_data: [{}]
       )
     end
@@ -61,7 +63,8 @@ describe RatingIssue do
     let(:bgs_record) do
       {
         rba_issue_id: "NBA",
-        decn_txt: "This broadcast may not be reproduced"
+        decn_txt: "This broadcast may not be reproduced",
+        dgnstc_tc: "3001"
       }
     end
 
@@ -73,6 +76,7 @@ describe RatingIssue do
         decision_text: "This broadcast may not be reproduced",
         profile_date: profile_date,
         contention_reference_ids: [],
+        diagnostic_code: "3001",
         benefit_type: :pension
       )
     end

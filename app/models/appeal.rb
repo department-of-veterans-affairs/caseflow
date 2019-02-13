@@ -89,8 +89,12 @@ class Appeal < DecisionReview
     end
   end
 
-  def self.non_priority_decisions_in_the_last_year
-    all_nonpriority.joins(:decision_documents).where("receipt_date > ?", 1.year.ago).count
+  def self.nonpriority_decisions_per_year
+    appeal_ids = all_nonpriority
+      .joins(:decision_documents)
+      .where("decision_date > ?", 1.year.ago)
+      .select("appeals.id")
+    where(id: appeal_ids).count
   end
 
   def ui_hash
@@ -144,7 +148,7 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.order(:created_at).select { |t| t.is_a?(JudgeTask) }.last
+    task = tasks.order(created_at: :desc).detect { |t| t.is_a?(JudgeTask) }
     task ? task.assigned_to.try(:full_name) : ""
   end
 
