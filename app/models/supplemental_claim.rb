@@ -47,7 +47,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def alerts
-    # need to implement. add logic to return alert enum
+    @alerts ||= ApiStatusAlerts.new(decision_review: self).all
   end
 
   def decision_event_date
@@ -74,6 +74,27 @@ class SupplementalClaim < ClaimReview
 
   def fetch_all_decision_issues_for_api_status
     decision_issues
+  end
+
+  def available_review_options
+    # the decision review options available to contest the decision for this claim
+    # need to check if decision_review_remanded is contested claim somehow and only return ["appeal"]
+    return ["higher_level_review", "appeal"] if benefit_type == "fiduciary"
+
+    ["supplemental_claim", "higher_level_review", "appeal"]
+  end
+
+  def due_date_to_appeal_decision
+    # the deadline to contest the decision for this claim
+    decision_event_date + 365.days
+  end
+
+  def have_decision?
+    fetch_status == :sc_decision
+  end
+
+  def decision_date_for_api_alert
+    decision_event_date
   end
 
   private

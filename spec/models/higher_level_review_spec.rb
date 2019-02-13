@@ -706,6 +706,7 @@ describe HigherLevelReview do
       end
 
       let(:hlr_decision_date) { receipt_date + 30.days }
+
       let!(:hlr_decision_issue_with_dta_error) do
         create(:decision_issue,
                decision_review: hlr,
@@ -735,6 +736,7 @@ describe HigherLevelReview do
       end
 
       let(:dta_sc_decision_date) { receipt_date + 60.days }
+
       let!(:dta_sc_decision_issue) do
         create(:decision_issue,
                decision_review: dta_sc,
@@ -750,6 +752,38 @@ describe HigherLevelReview do
         expect(status[:type]).to eq(:hlr_decision)
         expect(status[:details][:issues].first[:description]).to eq("Dental or oral condition")
         expect(status[:details][:issues].first[:disposition]).to eq("allowed")
+      end
+    end
+  end
+
+  context "#alerts" do
+    let(:receipt_date) { Time.new("2018", "03", "01").utc }
+    let(:benefit_type) { "compensation" }
+
+    context "there is a dta error" do
+      let(:hlr_decision_date) { receipt_date + 100.days }
+      let!(:hlr_ep) do
+        create(:end_product_establishment,
+             :cleared,
+             source: hlr,
+             last_synced_at: hlr_decision_date)
+      end
+
+      let!(:dta_ep) { create(:end_product_establishment, :cleared, source: dta_sc) }
+
+      let(:dta_sc_decision_date) { receipt_date + 150.days }
+
+      it "has alert with dta sc decision date" do
+        alerts = hlr.alerts
+        
+        expect(alerts.empty?).to be(false)
+        expect(alerts.first[:type]).to eq("ama_post_decision")
+        expect(alerts.first[:details][:decisionDate]).to eq(dta_sc_decision_date)
+        expect(alerts.first[:details][:dueDate]).to eq(dta_sc_decision_date+365.days)
+        expect(alerts.first[:details][:cavcDueDate]).to be_nil 
+
+        available_options = ["supplemental_claim", "appeal"]
+        expect(alerts.first[:details][:availableOptions]).to eq(available_options)
       end
     end
   end

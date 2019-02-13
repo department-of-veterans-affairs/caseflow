@@ -52,7 +52,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def alerts
-    # need to implement. add logic to return alert enum
+    @alerts ||= ApiStatusAlerts.new(decision_review: self).all
   end
 
   def fetch_all_decision_issues_for_api_status
@@ -98,6 +98,29 @@ class HigherLevelReview < ClaimReview
 
   def events
     @events ||= AppealEvents.new(appeal: self).all
+  end
+
+  def have_decision?
+    fetch_status == :hlr_decision
+  end
+
+  def due_date_to_appeal_decision
+    # the deadline to contest the decision for this claim
+    return dta_descision_event_date + 365.days if dta_claim
+
+    decision_event_date + 365.days
+  end
+
+  def decision_date_for_api_alert
+    return dta_descision_event_date if dta_claim
+
+    decision_event_date
+  end
+
+  def available_review_options
+    ["appeal"] if benefit_type == "fiduciary"
+
+    ["supplemental_claim", "appeal"]
   end
 
   private
