@@ -8,7 +8,8 @@ class RootTask < GenericTask
   def when_child_task_completed; end
 
   def update_children_status
-    children.active.where(type: TrackVeteranTask.name).update_all(status: Constants.TASK_STATUSES.completed)
+    children.where(type: TrackVeteranTask.name).where.not(status: Constants.TASK_STATUSES.completed)
+      .update_all(status: Constants.TASK_STATUSES.completed)
   end
 
   def hide_from_task_snapshot
@@ -23,9 +24,9 @@ class RootTask < GenericTask
 
   def can_create_schedule_hearings_task?(user)
     HearingsManagement.singleton.user_has_access?(user) &&
-      active? &&
+      !completed? &&
       legacy? &&
-      children.active.where(type: ScheduleHearingTask.name).empty?
+      children.where(type: ScheduleHearingTask.name).where.not(status: Constants.TASK_STATUSES.completed).empty?
   end
 
   def actions_available?(_user)
@@ -45,6 +46,12 @@ class RootTask < GenericTask
 
     def create_ihp_tasks!(appeal, parent)
       appeal.vsos.map do |vso_organization|
+        existing_tasks = InformalHearingPresentationTask.where(
+          appeal: appeal,
+          assigned_to: vso_organization
+        )
+        return existing_tasks.first unless existing_tasks.empty?
+
         InformalHearingPresentationTask.create!(
           appeal: appeal,
           parent: parent,
@@ -53,7 +60,8 @@ class RootTask < GenericTask
       end
     end
 
-    private
+    # TODO: make this private again after RAMPs are all backfilled
+    # private
 
     def create_vso_tracking_tasks(appeal, parent)
       appeal.vsos.map do |vso_organization|
@@ -83,15 +91,9 @@ class RootTask < GenericTask
     end
 
     def create_hearing_schedule_task!(appeal, parent)
-      hearing_task = HearingTask.create!(
-        appeal: appeal,
-        assigned_to: Bva.singleton,
-        parent: parent
-      )
-
       ScheduleHearingTask.create!(
         appeal: appeal,
-        parent: hearing_task,
+        parent: parent,
         assigned_to: HearingsManagement.singleton
       )
     end

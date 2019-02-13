@@ -4,7 +4,9 @@ class DistributionTask < GenericTask
   # is marked complete because distribution tasks are used
   # to signal that cases are ready for assignment to judges.
   def update_status_if_children_tasks_are_complete
-    ready_for_distribution! if children.any? && children.active.none?
+    if children.any? && children.all? { |t| t.status == Constants.TASK_STATUSES.completed }
+      ready_for_distribution!
+    end
   end
 
   def ready_for_distribution!

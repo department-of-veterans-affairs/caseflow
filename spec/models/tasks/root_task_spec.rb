@@ -152,6 +152,19 @@ describe RootTask do
         expect(InformalHearingPresentationTask.second.assigned_to).to eq(vva)
       end
 
+      it "does not create a task for a VSO if one already exists for that appeal", focus: true do
+        InformalHearingPresentationTask.create!(
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: vva
+        )
+        RootTask.create_root_and_sub_tasks!(appeal)
+
+        expect(InformalHearingPresentationTask.count).to eq(2)
+        expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
+        expect(InformalHearingPresentationTask.second.assigned_to).to eq(vva)
+      end
+
       it "creates RootTask assigned to Bva organization" do
         RootTask.create_root_and_sub_tasks!(appeal)
         expect(RootTask.last.assigned_to).to eq(Bva.singleton)
