@@ -34,7 +34,7 @@ import { COLORS } from '../constants/AppConstants';
  */
 const scrollTo = (dest = this, opts) => scrollToComponent(dest, _.defaults(opts, {
   align: 'top',
-  duration: 1000,
+  duration: 800,
   ease: 'outCube',
   offset: -35
 }));
