@@ -18,11 +18,11 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def veteran_ids_from_tasks
-    ScheduleHearingTask.where.not(status: "completed")
+    ScheduleHearingTask.active
       .joins("
         LEFT OUTER JOIN (SELECT parent_id FROM tasks
         WHERE type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
-        AND status != 'completed') admin_actions
+        AND status not in ('cancelled', 'completed')) admin_actions
         ON admin_actions.parent_id = id")
       .where("admin_actions.parent_id IS NULL").limit(QUERY_LIMIT)
       .map { |task| task.appeal.veteran&.id }.compact
@@ -71,8 +71,13 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
+  def create_schedule_hearing_tasks
+    AppealRepository.create_schedule_hearing_tasks
+  end
+
   def perform
     RequestStore.store[:current_user] = User.system_user
+    create_schedule_hearing_tasks
     create_missing_veterans
 
     veterans.each do |veteran|
