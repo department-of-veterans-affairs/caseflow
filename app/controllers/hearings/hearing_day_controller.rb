@@ -173,6 +173,7 @@ class Hearings::HearingDayController < HearingScheduleController
       converted[k] = if k == "room"
                        HearingDayMapper.label_for_room(v)
                      elsif k == "regional_office" && !v.nil?
+                       converted["regional_office_key"] = v
                        HearingDayMapper.city_for_regional_office(v)
                      elsif k == "request_type"
                        HearingDayMapper.label_for_type(v)
