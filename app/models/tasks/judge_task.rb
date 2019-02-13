@@ -66,7 +66,7 @@ class JudgeTask < Task
   end
 
   def self.eligible_for_assignment?(task)
-    return false if task.completed?
+    return false if !task.active?
     return false if task.appeal.nil?
     return false if task.appeal.class == LegacyAppeal
     return false if task.appeal.docket_name.nil?
@@ -79,7 +79,7 @@ class JudgeTask < Task
       return false if task.appeal.receipt_date > 90.days.ago
     end
 
-    task.children.all? { |t| !t.is_a?(JudgeTask) && t.completed? }
+    task.children.all? { |t| !t.is_a?(JudgeTask) && !t.active? }
   end
   #:nocov:
   # rubocop:enable Metrics/AbcSize
