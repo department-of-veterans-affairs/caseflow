@@ -850,37 +850,27 @@ describe Appeal do
     end
   end
 
-  context "#non_priority_decisions_in_the_last_year" do
+  context "#nonpriority_decisions_per_year" do
     let!(:newer_decisions) do
-      (0..10).map do |num|
-        doc = create(:decision_document)
-        doc.appeal.update(
-          docket_type: "direct_review",
-          receipt_date: (num * 20).days.ago
-        )
+      (0...18).map do |num|
+        doc = create(:decision_document, decision_date: (num * 20).days.ago)
+        doc.appeal.update(docket_type: "direct_review")
         doc.appeal
       end
     end
     let!(:older_decisions) do
-      (0..10).map do |num|
-        doc = create(:decision_document)
-        doc.appeal.update(
-          docket_type: "direct_review",
-          receipt_date: (366 + (num * 20)).days.ago
-        )
+      (0...2).map do |num|
+        doc = create(:decision_document, decision_date: (366 + (num * 20)).days.ago)
+        doc.appeal.update(docket_type: "direct_review")
         doc.appeal
       end
     end
 
     context "non-priority decision list" do
-      subject { Appeal.non_priority_decisions_in_the_last_year }
+      subject { Appeal.nonpriority_decisions_per_year }
 
       it "returns decisions from the last year" do
-        expect(subject.include?(newer_decisions))
-      end
-
-      it "does not return decisions from more than a year ago" do
-        expect(subject.include?(older_decisions))
+        expect(subject).to eq(18)
       end
     end
   end
@@ -1024,8 +1014,8 @@ describe Appeal do
       it "effectuation had an ep" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:bva_decision_effectuation)
-        expect(status[:details][:bvaDecisionDate]).to eq((receipt_date + 60.days).to_date)
-        expect(status[:details][:aojDecisionDate]).to eq((receipt_date + 100.days).to_date)
+        expect(status[:details][:bvaDecisionDate].to_date).to eq((receipt_date + 60.days).to_date)
+        expect(status[:details][:aojDecisionDate].to_date).to eq((receipt_date + 100.days).to_date)
       end
     end
 
@@ -1093,8 +1083,8 @@ describe Appeal do
         expect(status[:type]).to eq(:post_bva_dta_decision)
         expect(status[:details][:issues].first[:description]).to eq("Partial loss of hard palate")
         expect(status[:details][:issues].first[:disposition]).to eq("denied")
-        expect(status[:details][:bvaDecisionDate]).to eq((receipt_date + 60.days).to_date)
-        expect(status[:details][:aojDecisionDate]).to eq((receipt_date + 100.days).to_date)
+        expect(status[:details][:bvaDecisionDate].to_date).to eq((receipt_date + 60.days).to_date)
+        expect(status[:details][:aojDecisionDate].to_date).to eq((receipt_date + 100.days).to_date)
       end
     end
   end
@@ -1309,14 +1299,14 @@ describe Appeal do
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(true)
         expect(issue[:last_action]).to eq("remand")
-        expect(issue[:date]).to eq(decision_date.to_date)
+        expect(issue[:date].to_date).to eq(decision_date.to_date)
         expect(issue[:description]).to eq("Rheumatoid arthritis")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
         expect(issue2[:last_action]).to eq("allowed")
-        expect(issue2[:date]).to eq(decision_date.to_date)
+        expect(issue2[:date].to_date).to eq(decision_date.to_date)
         expect(issue2[:description]).to eq("Pension issue")
       end
     end
@@ -1354,14 +1344,14 @@ describe Appeal do
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(false)
         expect(issue[:last_action]).to eq("denied")
-        expect(issue[:date]).to eq(remand_sc_decision_date.to_date)
+        expect(issue[:date].to_date).to eq(remand_sc_decision_date.to_date)
         expect(issue[:description]).to eq("Rheumatoid arthritis")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
         expect(issue2[:last_action]).to eq("allowed")
-        expect(issue2[:date]).to eq(decision_date.to_date)
+        expect(issue2[:date].to_date).to eq(decision_date.to_date)
         expect(issue2[:description]).to eq("Pension issue")
       end
     end

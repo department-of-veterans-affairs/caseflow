@@ -14,11 +14,11 @@ class AppealIntake < DecisionReviewIntake
 
     transaction do
       detail.assign_attributes(review_params)
-      Claimant.create!(
+      Claimant.find_or_initialize_by(
         participant_id: claimant_participant_id,
         payee_code: nil,
         review_request: detail
-      )
+      ).tap(&:save!)
       update_person!
       detail.save(context: :intake_review)
     end

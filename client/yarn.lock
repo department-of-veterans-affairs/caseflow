@@ -54,9 +54,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#db7d55c":
+"@department-of-veterans-affairs/caseflow-frontend-toolkit@https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#f8928f5":
   version "2.6.1"
-  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#db7d55ce2852b5d6275bf1bf497b4e7c98571799"
+  resolved "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#f8928f503fd4efc34cbc1f7b2f79612c13571412"
   dependencies:
     classnames "^2.2.5"
     glamor "^2.20.40"
