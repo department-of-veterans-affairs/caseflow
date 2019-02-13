@@ -113,14 +113,15 @@ class TasksController < ApplicationController
   def ready_for_hearing_schedule
     ro = HearingDayMapper.validate_regional_office(params[:ro])
 
+    tasks = ScheduleHearingTask.tasks_for_ro(ro)
+    AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+
     render json: {
-      data: ScheduleHearingTask.tasks_for_ro(ro).map do |task|
-        ActiveModelSerializers::SerializableResource.new(
-          task,
-          user: current_user,
-          role: user_role
-        ).as_json[:data]
-      end
+      data: ActiveModelSerializers::SerializableResource.new(
+        tasks,
+        user: current_user,
+        role: user_role
+      ).as_json[:data]
     }
   end
 
