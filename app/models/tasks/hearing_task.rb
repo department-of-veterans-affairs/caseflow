@@ -1,0 +1,2 @@
+class HearingTask < GenericTask
+end

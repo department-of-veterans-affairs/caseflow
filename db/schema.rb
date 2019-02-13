@@ -896,13 +896,6 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.index ["text"], name: "index_tags_on_text", unique: true
   end
 
-  create_table "task_business_payloads", force: :cascade do |t|
-    t.string "description", null: false
-    t.bigint "task_id", null: false
-    t.json "values", default: {}, null: false
-    t.index ["task_id"], name: "index_task_business_payloads_on_task_id"
-  end
-
   create_table "task_timers", force: :cascade do |t|
     t.datetime "attempted_at"
     t.datetime "created_at", null: false
