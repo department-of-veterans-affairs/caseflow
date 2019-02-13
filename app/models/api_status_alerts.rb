@@ -13,6 +13,14 @@ class ApiStatusAlerts
     ].compact
   end
 
+  def appeal
+    [
+      post_decision,
+      post_remand_decision,
+
+    ].compact
+  end
+
   def post_decision
     return unless decision_review.have_decision?
     return unless Time.zone.today < decision_review.due_date_to_appeal_decision 
@@ -31,7 +39,18 @@ class ApiStatusAlerts
   end
 
   def post_remand_decision
-    return unless decision_review.have_remand_decision?
-    return
+    return unless decision_review.dta_decision_event_date
+    return unless Time.zone.today < decision_review.dta_decision_event_date + 365.days
+
+    {
+      type: "ama_post_decision",
+      details: 
+      {
+        decisionDate: decision_review.dta_decision_event_date,
+        availableOptions: decision_review.available_review_options,
+        dueDate: decision_review.dta_decision_event_date + 365.days,
+        cavcDueDate: decision_review.dta_decision_event_date + 120.days
+      }
+    }
   end
 end

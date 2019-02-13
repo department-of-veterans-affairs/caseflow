@@ -108,7 +108,7 @@ class HigherLevelReview < ClaimReview
     # the deadline to contest the decision for this claim
     return dta_descision_event_date + 365.days if dta_claim
 
-    decision_event_date + 365.days
+    return decision_event_date + 365.days if decision_event_date
   end
 
   def decision_date_for_api_alert

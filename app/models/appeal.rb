@@ -632,6 +632,21 @@ class Appeal < DecisionReview
     (di_list + remand_sc_decisions).uniq
   end
 
+  def have_decision?
+    return true if fetch_status == :bva_decision
+    return true if fetch_status == :ama_remand && decision_issues.not_remanded.any?
+
+    false
+  end
+
+  def due_date_to_appeal_decision
+    decision_event_date + 365.days if decision_event_date
+  end
+
+  def cavc_due_date
+    decision_event_date + 120.days if decision_event_date
+  end
+
   private
 
   def maybe_create_translation_task

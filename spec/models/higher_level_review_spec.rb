@@ -760,6 +760,13 @@ describe HigherLevelReview do
     let(:receipt_date) { Time.new("2018", "03", "01").utc }
     let(:benefit_type) { "compensation" }
 
+    let!(:hlr) do
+        create(:higher_level_review,
+               veteran_file_number: veteran_file_number,
+               receipt_date: receipt_date,
+               benefit_type: benefit_type)
+    end
+
     context "there is a dta error" do
       let(:hlr_decision_date) { receipt_date + 100.days }
       let!(:hlr_ep) do
@@ -769,9 +776,31 @@ describe HigherLevelReview do
              last_synced_at: hlr_decision_date)
       end
 
+      let!(:hlr_decision_issue_with_dta_error) do
+        create(:decision_issue,
+               decision_review: hlr,
+               disposition: HigherLevelReview::DTA_ERROR_PMR,
+               benefit_type: benefit_type,
+               end_product_last_action_date: hlr_decision_date,
+               diagnostic_code: "9999")
+      end
+
+      let!(:dta_sc) do
+        create(:supplemental_claim,
+               veteran_file_number: veteran_file_number,
+               decision_review_remanded: hlr)
+      end
+
       let!(:dta_ep) { create(:end_product_establishment, :cleared, source: dta_sc) }
 
       let(:dta_sc_decision_date) { receipt_date + 150.days }
+      let!(:dta_sc_decision_issue) do
+        create(:decision_issue,
+               decision_review: dta_sc,
+               disposition: "allowed",
+               benefit_type: benefit_type,
+               end_product_last_action_date: dta_sc_decision_date)
+      end
 
       it "has alert with dta sc decision date" do
         alerts = hlr.alerts

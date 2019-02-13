@@ -86,7 +86,7 @@ class SupplementalClaim < ClaimReview
 
   def due_date_to_appeal_decision
     # the deadline to contest the decision for this claim
-    decision_event_date + 365.days
+    decision_event_date + 365.days if decision_event_date
   end
 
   def have_decision?
