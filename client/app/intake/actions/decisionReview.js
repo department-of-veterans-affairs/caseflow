@@ -136,10 +136,10 @@ export const setPayeeCode = (payeeCode) => ({
   }
 });
 
-export const setIssueSelected = (decisionDate, issueId, isSelected) => ({
+export const setIssueSelected = (approxDecisionDate, issueId, isSelected) => ({
   type: ACTIONS.SET_ISSUE_SELECTED,
   payload: {
-    decisionDate,
+    approxDecisionDate,
     issueId,
     isSelected
   },

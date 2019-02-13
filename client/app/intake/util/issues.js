@@ -160,14 +160,14 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
 export const formatContestableIssues = (contestableIssues) => {
   // order by date, otherwise all decision issues will always
   // come after rating issues regardless of date
-  const orderedContestableIssues = _.orderBy(contestableIssues, ['decisionDate'], ['desc']);
+  const orderedContestableIssues = _.orderBy(contestableIssues, ['approxDecisionDate'], ['desc']);
 
   return orderedContestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
     contestableIssue.index = String(index);
 
-    contestableIssuesByDate[contestableIssue.decisionDate] =
-      contestableIssuesByDate[contestableIssue.decisionDate] || {};
-    contestableIssuesByDate[contestableIssue.decisionDate][index] = contestableIssue;
+    contestableIssuesByDate[contestableIssue.approxDecisionDate] =
+      contestableIssuesByDate[contestableIssue.approxDecisionDate] || {};
+    contestableIssuesByDate[contestableIssue.approxDecisionDate][index] = contestableIssue;
 
     return contestableIssuesByDate;
   }, {});
@@ -315,19 +315,19 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
-      const decisionDate = new Date(issue.decisionDate);
+      const approxDecisionDate = new Date(issue.approxDecisionDate);
 
       return {
         referenceId: issue.id,
         text: issue.description,
-        date: formatDateStr(decisionDate),
+        date: formatDateStr(approxDecisionDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceReviewType: issue.sourceReviewType,
         promulgationDate: issue.promulgationDate,
-        decisionDate,
+        approxDecisionDate,
         timely: issue.timely,
-        beforeAma: decisionDate < amaActivationDate && !issue.rampClaimId,
+        beforeAma: approxDecisionDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason,

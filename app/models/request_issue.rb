@@ -282,7 +282,7 @@ class RequestIssue < ApplicationRecord
       rating_issue_profile_date: contested_rating_issue_profile_date,
       description: description,
       contention_text: contention_text,
-      decision_date: contested_issue ? contested_issue.decision_date : decision_date,
+      approx_decision_date: contested_issue ? contested_issue.approx_decision_date : decision_date,
       category: issue_category,
       notes: notes,
       is_unidentified: is_unidentified,

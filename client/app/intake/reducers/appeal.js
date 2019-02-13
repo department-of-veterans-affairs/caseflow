@@ -260,7 +260,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
   case ACTIONS.SET_ISSUE_SELECTED:
     return update(state, {
       ratings: {
-        [action.payload.decisionDate]: {
+        [action.payload.approxDecisionDate]: {
           issues: {
             [action.payload.issueId]: {
               isSelected: {
