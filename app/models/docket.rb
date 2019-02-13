@@ -70,6 +70,10 @@ class Docket
                                action: "assign")
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
 
+      Rails.logger.info("Closing distribution task for appeal #{appeal.id}")
+      appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
+      Rails.logger.info("Closing distribution task with task id #{task.id} to #{task.assigned_to.css_id}")
+
       task
     end
   end
