@@ -29,9 +29,7 @@ module FeatureHelper
       selector = "div[id$='--option-#{options[:index]}']"
     end
 
-    menu_selector = ".Select-menu-outer"
-    dropdown.sibling(menu_selector).find(selector, **keyword_args).click
-    expect(container).to_not have_css(menu_selector)
+    try_clicking_dropdown_menu_item(dropdown, selector, keyword_args)
   end
 
   def dropdown_selected_value(container = page)
@@ -71,6 +69,24 @@ module FeatureHelper
     keyword_args[:wait] = options[:wait] if options[:wait].present? && options[:wait] > 0
 
     container.find(selector, **keyword_args)
+  end
+
+  def click_dropdown_menu_item(dropdown, selector, keyword_args)
+    dropdown.sibling(".Select-menu-outer").find(selector, **keyword_args).click
+  end
+
+  def try_clicking_dropdown_menu_item(dropdown, selector, keyword_args)
+    begin
+      click_dropdown_menu_item(dropdown, selector, keyword_args)
+    rescue Capybara::ElementNotFound
+      begin
+        dropdown.find(".Select-placeholder").click
+        click_dropdown_menu_item(dropdown, selector, keyword_args)
+      rescue Capybara::ElementNotFound
+        dropdown.find(".Select-value").click
+        click_dropdown_menu_item(dropdown, selector, keyword_args)
+      end
+    end
   end
 
   def generate_text(length)
