@@ -35,32 +35,40 @@ class JudgeTask < Task
       Rails.logger.info("Found #{evidence_count} eligible evidence submission tasks.")
       Rails.logger.info("Found #{direct_review_count} direct review tasks.")
       Rails.logger.info("Found #{hearing_count} hearing tasks.")
-      Rails.logger.info("Would assign #{tasks.length}, batch size is #{batch_size}.")
+      Rails.logger.info("Would assign #{tasks.length}.")
       return
     end
 
-    create_many_from_root_tasks(tasks)
+    backfill_tasks(tasks)
   end
 
-  def self.create_many_from_root_tasks(root_tasks)
-    root_tasks.each do |root_task|
-      Rails.logger.info("Creating subtasks for appeal #{root_task.appeal.id}")
-      RootTask.create_subtasks!(root_task.appeal, root_task)
-      root_task.appeal.set_target_decision_date!
+  def self.backfill_tasks(root_tasks)
+    transaction do 
+      root_tasks.each do |root_task|
+        Rails.logger.info("Creating subtasks for appeal #{root_task.appeal.id}")
+        RootTask.create_subtasks!(root_task.appeal, root_task)
+        distribution_task = DistributionTask.where(parent: root_task).first
+        # Update any open IHP tasks if they exist so that they block distribution.
+        ihp_task = InformalHearingPresentationTask.find_by(appeal: root_task.appeal)
+        ihp_task.update!(parent: distribution_task) if ihp_task
+        # Ensure direct review appeals have their decision date set.
+        root_task.appeal.set_target_decision_date!
+      end
     end
   end
 
   def self.unassigned_ramp_tasks
-    RootTask.includes(:appeal).all.select { |task| eligible_for_assignment?(task) }
+    RootTask.includes(:appeal).all.select { |task| eligible_for_backfill?(task) }
   end
 
-  def self.eligible_for_assignment?(task)
+  def self.eligible_for_backfill?(task)
+    # All RAMP appeals have completed RootTasks.
     return false if !task.active?
     return false if task.appeal.nil?
     return false if task.appeal.class == LegacyAppeal
     return false if task.appeal.docket_name.nil?
 
-    task.children.all? { |t| !t.is_a?(JudgeTask) && !t.active? }
+    task.children.all? { |t| !t.is_a?(JudgeTask) }
   end
   #:nocov:
   # rubocop:enable Metrics/AbcSize
