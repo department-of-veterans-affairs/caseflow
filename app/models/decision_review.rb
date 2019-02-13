@@ -283,7 +283,7 @@ class DecisionReview < ApplicationRecord
 
   def ratings_cache_key
     # change timestamp in order to clear old cache
-    "#{veteran_file_number}-ratings-11282018"
+    "#{veteran_file_number}-ratings-02082019"
   end
 
   def formatted_receipt_date
@@ -332,8 +332,7 @@ class DecisionReview < ApplicationRecord
       !ri[:contested_rating_issue_diagnostic_code].nil?
     end
 
-    issue_diagnostic_code = issue.contested_rating_issue_diagnostic_code if issue
-    description = fetch_diagnostic_code_status_description(issue_diagnostic_code)
+    description = issue.api_status_description if issue
     return unless description
 
     return description if request_issues.count - 1 == 0
@@ -357,24 +356,9 @@ class DecisionReview < ApplicationRecord
         active: issue.api_status_active?,
         last_action: issue.api_status_last_action,
         date: issue.api_status_last_action_date,
-        description: get_api_status_description(issue),
+        description: issue.api_status_description,
         diagnosticCode: issue.diagnostic_code
       }
-    end
-  end
-
-  def get_api_status_description(issue)
-    description = fetch_diagnostic_code_status_description(issue.diagnostic_code)
-    return description if description
-
-    "#{issue.benefit_type.capitalize} issue"
-  end
-
-  def fetch_diagnostic_code_status_description(diagnostic_code)
-    if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
-      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["status_description"]
-      description[0] = description[0].upcase
-      description
     end
   end
 end

@@ -199,6 +199,40 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
   # rubocop:enable Metrics/MethodLength
 
+  def self.age_of_n_oldest_priority_appeals(num)
+    conn = connection
+
+    query = <<-SQL
+      select BFKEY, BFDLOOUT, VLJ
+      from (
+        select BFKEY, BFDLOOUT,
+          case when BFHINES is null or BFHINES <> 'GP' then nvl(VLJ_HEARINGS.VLJ, VLJ_PRIORDEC.VLJ) end VLJ
+        from (
+          #{SELECT_READY_APPEALS}
+            and (BFAC = '7' or AOD = '1')
+          order by BFDLOOUT
+        ) BRIEFF
+        #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+        #{JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS}
+      )
+      where VLJ is null and rownum <= ?
+    SQL
+
+    fmtd_query = sanitize_sql_array([query, num])
+
+    appeals = conn.exec_query(fmtd_query).to_hash
+    appeals.map { |appeal| appeal["bfdloout"] }
+  end
+
+  def self.nonpriority_decisions_per_year
+    joins(VACOLS::Case::JOIN_AOD)
+      .where(
+        "BFDC in ('1', '3', '4') and BFDDEC >= ? and AOD = 0 and BFAC <> '7'",
+        1.year.ago
+      )
+      .count
+  end
+
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
