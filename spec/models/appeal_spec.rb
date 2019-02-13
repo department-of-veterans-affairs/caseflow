@@ -1014,8 +1014,8 @@ describe Appeal do
       it "effectuation had an ep" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:bva_decision_effectuation)
-        expect(status[:details][:bvaDecisionDate]).to eq((receipt_date + 60.days).to_date)
-        expect(status[:details][:aojDecisionDate]).to eq((receipt_date + 100.days).to_date)
+        expect(status[:details][:bvaDecisionDate].to_date).to eq((receipt_date + 60.days).to_date)
+        expect(status[:details][:aojDecisionDate].to_date).to eq((receipt_date + 100.days).to_date)
       end
     end
 
@@ -1083,8 +1083,8 @@ describe Appeal do
         expect(status[:type]).to eq(:post_bva_dta_decision)
         expect(status[:details][:issues].first[:description]).to eq("Partial loss of hard palate")
         expect(status[:details][:issues].first[:disposition]).to eq("denied")
-        expect(status[:details][:bvaDecisionDate]).to eq((receipt_date + 60.days).to_date)
-        expect(status[:details][:aojDecisionDate]).to eq((receipt_date + 100.days).to_date)
+        expect(status[:details][:bvaDecisionDate].to_date).to eq((receipt_date + 60.days).to_date)
+        expect(status[:details][:aojDecisionDate].to_date).to eq((receipt_date + 100.days).to_date)
       end
     end
   end
@@ -1299,14 +1299,14 @@ describe Appeal do
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(true)
         expect(issue[:last_action]).to eq("remand")
-        expect(issue[:date]).to eq(decision_date.to_date)
+        expect(issue[:date].to_date).to eq(decision_date.to_date)
         expect(issue[:description]).to eq("Rheumatoid arthritis")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
         expect(issue2[:last_action]).to eq("allowed")
-        expect(issue2[:date]).to eq(decision_date.to_date)
+        expect(issue2[:date].to_date).to eq(decision_date.to_date)
         expect(issue2[:description]).to eq("Pension issue")
       end
     end
@@ -1344,14 +1344,14 @@ describe Appeal do
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(false)
         expect(issue[:last_action]).to eq("denied")
-        expect(issue[:date]).to eq(remand_sc_decision_date.to_date)
+        expect(issue[:date].to_date).to eq(remand_sc_decision_date.to_date)
         expect(issue[:description]).to eq("Rheumatoid arthritis")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
         expect(issue2[:last_action]).to eq("allowed")
-        expect(issue2[:date]).to eq(decision_date.to_date)
+        expect(issue2[:date].to_date).to eq(decision_date.to_date)
         expect(issue2[:description]).to eq("Pension issue")
       end
     end
