@@ -315,19 +315,19 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
-      const approxDecisionDate = new Date(issue.approxDecisionDate);
+      const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
 
       return {
         referenceId: issue.id,
         text: issue.description,
-        date: formatDateStr(approxDecisionDate),
+        date: formatDateStr(decisionDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceReviewType: issue.sourceReviewType,
         promulgationDate: issue.promulgationDate,
-        approxDecisionDate,
+        decisionDate,
         timely: issue.timely,
-        beforeAma: approxDecisionDate < amaActivationDate && !issue.rampClaimId,
+        beforeAma: decisionDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason,
