@@ -282,6 +282,8 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.string "genpop_query"
     t.boolean "priority"
     t.datetime "ready_at"
+    t.integer "task_id"
+    t.index ["case_id"], name: "index_distributed_cases_on_case_id", unique: true
   end
 
   create_table "distributions", force: :cascade do |t|
