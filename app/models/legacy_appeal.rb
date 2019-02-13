@@ -899,6 +899,10 @@ class LegacyAppeal < ApplicationRecord
       end
     end
 
+    def nonpriority_decisions_per_year
+      repository.nonpriority_decisions_per_year
+    end
+
     private
 
     def close_single(appeal:, user:, closed_on:, disposition:)

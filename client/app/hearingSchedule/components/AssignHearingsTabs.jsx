@@ -3,6 +3,7 @@ import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import moment from 'moment';
 import _ from 'lodash';
+import LEGACY_APPEAL_TYPES_BY_ID from '../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
@@ -177,7 +178,17 @@ export default class AssignHearingsTabs extends React.Component {
       return filteredBy === appeal.attributes.veteranAvailableHearingLocations[0].facilityId;
     });
 
-    return _.map(filtered, (appeal, index) => ({
+    const sortedByAodCavc = _.sortBy(filtered, (appeal) => {
+      if (appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand) {
+        return 0;
+      } else if (appeal.attributes.aod) {
+        return 1;
+      }
+
+      return 2;
+    });
+
+    return _.map(sortedByAodCavc, (appeal, index) => ({
       number: <span>{index + 1}.</span>,
       caseDetails: this.getCaseDetailsInformation(appeal),
       type: renderAppealType({
