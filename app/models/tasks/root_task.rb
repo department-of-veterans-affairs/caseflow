@@ -85,9 +85,15 @@ class RootTask < GenericTask
     end
 
     def create_hearing_schedule_task!(appeal, parent)
+      hearing_task = HearingTask.create!(
+        appeal: appeal,
+        assigned_to: Bva.singleton,
+        parent: parent
+      )
+
       ScheduleHearingTask.create!(
         appeal: appeal,
-        parent: parent,
+        parent: hearing_task,
         assigned_to: HearingsManagement.singleton
       )
     end

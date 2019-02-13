@@ -128,7 +128,8 @@ describe RootTask do
       it "blocks distribution with schedule hearing task" do
         RootTask.create_root_and_sub_tasks!(appeal)
         expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
-        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("HearingTask")
+        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.parent.class.name).to eq("DistributionTask")
       end
     end
 
