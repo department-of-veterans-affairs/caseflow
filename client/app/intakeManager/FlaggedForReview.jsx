@@ -70,12 +70,23 @@ export default class FlaggedForReview extends Component {
             slowReRendersAreOk />
         </div>
         <div>
-          <a href="/stats">
-            <Button linkStyling>View stats</Button>
-          </a>
-          <a href="/intake">
-            <Button classNames={['usa-button-secondary']}>Begin intake</Button>
-          </a>
+          <ul style={{listStyle: 'none'}}>
+            <li>
+              <a href="#cf-user-stats">
+                <Button classNames={['usa-button-secondary']}>User Intake stats</Button>
+              </a>
+            </li>
+            <li>
+              <a href="/stats">
+                <Button classNames={['usa-button-secondary']}>Global Intake stats</Button>
+              </a>
+            </li>
+            <li>
+              <a href="/intake">
+                <Button classNames={['usa-button-secondary']}>Begin intake</Button>
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </div>;

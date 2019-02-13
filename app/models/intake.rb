@@ -90,12 +90,12 @@ class Intake < ApplicationRecord
       .where(completion_status: "success")
       .order("day_completed").each do |intake|
       completed = intake[:day_completed].iso8601
-      type = intake.detail_type.constantize.review_title
-      stats[completed] ||= { type => 0 }
+      type = intake.detail_type.underscore.to_sym
+      stats[completed] ||= { type => 0, date: completed }
       stats[completed][type] ||= 0
       stats[completed][type] += 1
     end
-    stats
+    stats.sort.map { |entry| entry[1] }.reverse
   end
 
   def pending?

@@ -7,7 +7,11 @@ class IntakeManagerController < ApplicationController
   end
 
   def user_stats
-    render json: Intake.user_stats(user)
+    if user
+      render json: Intake.user_stats(user)
+    else
+      render json: [], status: :not_found
+    end
   end
 
   def verify_access
