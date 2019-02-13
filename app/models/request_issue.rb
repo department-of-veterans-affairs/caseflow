@@ -343,6 +343,7 @@ class RequestIssue < ApplicationRecord
       return unless create_decision_issues
 
       end_product_establishment.on_decision_issue_sync_processed(self)
+      clear_error!
       processed!
     end
   end
@@ -706,7 +707,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    review_request.tasks.where.not(status: Constants.TASK_STATUSES.completed).any?
+    review_request.tasks.active.any?
   end
 
   def copy_review_request_to_decision_review
