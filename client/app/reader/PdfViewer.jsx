@@ -240,7 +240,7 @@ export class PdfViewer extends React.Component {
             featureToggles={this.props.featureToggles}
           />
         </div>
-        {doc.wasUpdated && this.updatedDocumentModal()}
+        {doc.wasUpdated}
         {this.props.deleteAnnotationModalIsOpenFor && <Modal
           buttons={[
             { classNames: ['cf-modal-link', 'cf-btn-link'],

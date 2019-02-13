@@ -5,7 +5,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   QUERY_LIMIT = 500
 
   def veterans
-    @veterans ||= Veteran.where("file_number IN (?) OR veterans.id IN (?)", file_numbers, veteran_ids_from_tasks)
+    @veterans ||= Veteran.where("file_number IN (?)", file_numbers + file_numbers_from_tasks)
       .left_outer_joins(:available_hearing_locations)
       .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
       .limit(QUERY_LIMIT)
@@ -17,15 +17,15 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  def veteran_ids_from_tasks
-    ScheduleHearingTask.where.not(status: "completed")
+  def file_numbers_from_tasks
+    ScheduleHearingTask.active
       .joins("
         LEFT OUTER JOIN (SELECT parent_id FROM tasks
         WHERE type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
-        AND status != 'completed') admin_actions
+        AND status not in ('cancelled', 'completed')) admin_actions
         ON admin_actions.parent_id = id")
-      .where("admin_actions.parent_id IS NULL").limit(QUERY_LIMIT)
-      .map { |task| task.appeal.veteran&.id }.compact
+      .where("admin_actions.parent_id IS NULL")
+      .map { |task| task.appeal.veteran_file_number }.compact
   end
 
   def missing_veteran_file_numbers
@@ -71,12 +71,17 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
+  def create_schedule_hearing_tasks
+    AppealRepository.create_schedule_hearing_tasks
+  end
+
   def perform
     RequestStore.store[:current_user] = User.system_user
+    create_schedule_hearing_tasks
     create_missing_veterans
 
     veterans.each do |veteran|
-      perform_once_for(veteran)
+      break if perform_once_for(veteran) == false
     end
   end
 
@@ -84,8 +89,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     begin
       va_dot_gov_address = validate_veteran_address(veteran)
     rescue Caseflow::Error::VaDotGovLimitError
-      sleep 60
-      va_dot_gov_address = validate_veteran_address(veteran)
+      return false
     rescue Caseflow::Error::VaDotGovAPIError => error
       va_dot_gov_address = validate_zip_code_or_handle_error(veteran, error: error)
       return nil if va_dot_gov_address.nil?
@@ -114,12 +118,12 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def validate_zip_code_or_handle_error(veteran, error:)
     if veteran.zip_code.nil? || veteran.state.nil? || veteran.country.nil?
-      handle_error(error.message["messages"][0]["key"], veteran)
+      handle_error(error, veteran)
       nil
     else
       lat_lng = ZipCodeToLatLngMapper::MAPPING[veteran.zip_code[0..4]]
       if lat_lng.nil?
-        handle_error(error.message["messages"][0]["key"], veteran)
+        handle_error(error, veteran)
         return nil
       end
       { lat: lat_lng[0], long: lat_lng[1], country_code: veteran.country, state_code: veteran.state }
@@ -203,7 +207,16 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     instructions + multiple_appeals_instructions
   end
 
-  def handle_error(error_key, veteran)
+  def get_error_key(error)
+    if error == "ForeignVeteranCase"
+      "ForeignVeteranCase"
+    elsif error.message["messages"] && error.message["messages"][0]
+      error.message["messages"][0]["key"]
+    end
+  end
+
+  def handle_error(error, veteran)
+    error_key = get_error_key(error)
     case error_key
     when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress"
       create_admin_action_for_schedule_hearing_task(
