@@ -103,7 +103,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         category: issue.category,
         decisionIssueId: issue.contested_decision_issue_id,
         description: issue.description,
-        decisionDate: formatDateStr(issue.decision_date),
+        decisionDate: formatDateStr(issue.approx_decision_date),
         ineligibleReason: issue.ineligible_reason,
         ineligibleDueToId: issue.ineligible_due_to_id,
         reviewRequestTitle: issue.review_request_title,
@@ -139,7 +139,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       isRating: true,
       ratingIssueReferenceId: issue.rating_issue_reference_id,
       ratingIssueProfileDate: issueDate.toISOString(),
-      date: issue.decision_date,
+      approxDecisionDate: issue.approx_decision_date,
       decisionIssueId: issue.contested_decision_issue_id,
       notes: issue.notes,
       description: issue.description,
@@ -315,6 +315,9 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
+      if (!issue.decisionDate && !issue.approxDecisionDate) {
+        throw new Error('no decision date');
+      }
       const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
 
       return {
