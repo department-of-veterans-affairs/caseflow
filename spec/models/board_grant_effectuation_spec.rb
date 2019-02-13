@@ -101,6 +101,16 @@ describe BoardGrantEffectuation do
           expect(board_grant_effectuation).to be_processed
         end
       end
+
+      context "when previous attempt failed" do
+        let(:contention_reference_id) { "1111" }
+
+        it "clears error" do
+          board_grant_effectuation.decision_sync_error = "previous error"
+          subject
+          expect(board_grant_effectuation.decision_sync_error).to be_nil
+        end
+      end
     end
   end
 

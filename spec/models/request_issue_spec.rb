@@ -1066,6 +1066,7 @@ describe RequestIssue do
             end
 
             it "creates decision issues based on rating issues" do
+              rating_request_issue.decision_sync_error = "previous error"
               subject
               expect(rating_request_issue.decision_issues.count).to eq(1)
               expect(rating_request_issue.decision_issues.first).to have_attributes(
@@ -1081,6 +1082,7 @@ describe RequestIssue do
                 end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
               )
               expect(rating_request_issue.processed?).to eq(true)
+              expect(rating_request_issue.decision_sync_error).to be_nil
             end
 
             context "when decision issue with disposition and rating issue already exists" do
