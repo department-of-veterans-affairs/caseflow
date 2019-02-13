@@ -385,8 +385,8 @@ class Appeal < DecisionReview
   end
 
   def fetch_post_decision_status
-    if remanded_issues?
-      active_remanded_claims_with_ep? ? :post_bva_dta_decision : :ama_remand
+    if remand_supplemental_claims.any?
+      active_remanded_claims? ? :ama_remand : :post_bva_dta_decision
     elsif effectuation_ep? && !active_ep?
       :bva_decision_effectuation
     elsif decision_issues.any?
@@ -480,11 +480,7 @@ class Appeal < DecisionReview
   end
 
   def remanded_issues?
-    decision_issues.any? { |di| di.disposition == "remanded" }
-  end
-
-  def active_remanded_claims_with_ep?
-    active_remanded_claims&.select(&:processed_in_vbms?)&.any?
+    decision_issues.remanded.any?
   end
 
   def withdrawn?
