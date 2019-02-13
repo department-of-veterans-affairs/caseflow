@@ -2,7 +2,7 @@
   <%= react_component("HearingSchedule", props: {
     feedbackUrl: feedback_url,
     userDisplayName: current_user.display_name,
-    userRoleAssign: current_user.can?('Assign HearSched'),
+    userRoleAssign: current_user.can?('Edit HearSched') || current_user.can?('Build HearSched'),
     userRoleBuild: current_user.can?('Build HearSched'),
     userInHearingsOrganization: HearingsManagement.singleton.users.include?(current_user),
     userId: current_user.id,
