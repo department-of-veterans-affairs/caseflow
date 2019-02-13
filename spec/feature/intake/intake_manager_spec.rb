@@ -2,8 +2,7 @@ require "rails_helper"
 
 RSpec.feature "Intake Manager Page" do
   before do
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 12, 8))
+    Timecop.freeze(post_ramp_start_date)
   end
 
   context "As a user with Admin Intake role" do
@@ -86,8 +85,10 @@ RSpec.feature "Intake Manager Page" do
     end
 
     scenario "choose a user to see stats" do
+      veteran_file_number = "1234"
       user1 = create(:user)
       user2 = create(:user)
+      busy_day = 3.days.ago
 
       5.times do
         Intake.create!(
@@ -98,17 +99,32 @@ RSpec.feature "Intake Manager Page" do
           completion_status: "success"
         )
       end
-      5.times do
+      3.times do
         Intake.create!(
           user: user2,
           veteran_file_number: veteran_file_number,
           detail_type: "HigherLevelReview",
-          completed_at: busy_day,
+          completed_at: busy_day - 2.days,
           completion_status: "success"
         )
       end
 
       visit "/intake/manager"
+
+      busy_day_ymd = busy_day.strftime("%F")
+
+      expect(page).to_not have_content(busy_day_ymd)
+      expect(page).to_not have_content("5")
+
+      fill_in "Enter the User ID", with: user1.css_id
+      click_on "Search"
+
+      expect(page).to have_content("#{busy_day_ymd} 5")
+
+      fill_in "Enter the User ID", with: user2.css_id
+      click_on "Search"
+
+      expect(page).to have_content("#{(busy_day - 2.days).strftime('%F')} 3")
     end
   end
 

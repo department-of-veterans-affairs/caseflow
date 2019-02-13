@@ -70,7 +70,7 @@ export default class FlaggedForReview extends Component {
             slowReRendersAreOk />
         </div>
         <div>
-          <ul style={{listStyle: 'none'}}>
+          <ul style={{ listStyle: 'none' }}>
             <li>
               <a href="#cf-user-stats">
                 <Button classNames={['usa-button-secondary']}>User Intake stats</Button>

@@ -332,13 +332,15 @@ describe Intake do
     end
 
     it "returns array of hashes of day-by-day stats" do
-      expect(subject).to eq([
-        {
-          higher_level_review: 5,
-          supplemental_claim: 5,
-          date: busy_day.to_date.to_s
-        }
-      ])
+      expect(subject).to eq(
+        [
+          {
+            higher_level_review: 5,
+            supplemental_claim: 5,
+            date: busy_day.to_date.to_s
+          }
+        ]
+      )
     end
   end
 
