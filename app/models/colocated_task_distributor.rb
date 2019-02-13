@@ -7,7 +7,7 @@ class ColocatedTaskDistributor < RoundRobinTaskDistributor
   def next_assignee(options = {})
     open_assignee = options.dig(:appeal)
       &.tasks
-      &.where&.not(status: Constants.TASK_STATUSES.completed)
+      &.active
       &.find_by(assigned_to: User.where(css_id: list_of_assignees))
       &.assigned_to
 
