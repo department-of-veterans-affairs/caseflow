@@ -198,8 +198,7 @@ class Appeal < DecisionReview
 
   def sync_tracking_tasks
     # Check if there are existing tracking tasks.
-    active_tracking_tasks = tasks.where(type: TrackVeteranTask.name)
-      .where.not(status: Constants.TASK_STATUSES.completed)
+    active_tracking_tasks = tasks.active.where(type: TrackVeteranTask.name)
 
     cached_vsos = active_tracking_tasks.map(&:assigned_to)
     fresh_vsos = vsos
@@ -210,10 +209,10 @@ class Appeal < DecisionReview
       TrackVeteranTask.create!(appeal: self, parent: parent, assigned_to: new_vso)
     end
 
-    # Close all TrackVeteranTasks for VSOs that are no
+    # Close all TrackVeteranTasks for VSOs that are no longer representing the appellant.
     outdated_vsos = cached_vsos - fresh_vsos
     active_tracking_tasks.select { |t| outdated_vsos.include?(t.assigned_to) }.each do |task|
-      task.update!(status: Constants.TASK_STATUSES.completed)
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
     end
   end
 
