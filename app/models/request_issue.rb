@@ -472,7 +472,7 @@ class RequestIssue < ApplicationRecord
     self.contested_rating_issue_profile_date ||= contested_rating_issue&.profile_date
   end
 
-  # TODO extend this to cover nonrating request issues
+  # TODO: extend this to cover nonrating request issues
   def build_contested_issue
     return unless review_request
 
