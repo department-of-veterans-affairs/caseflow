@@ -63,14 +63,15 @@ class IssuesController < ApplicationController
   end
 
   def issue_params
-    params.require("issues")
+    safe_params = params.require("issues")
       .permit(:note,
               :program,
               :issue,
               :level_1,
               :level_2,
               :level_3).to_h
-      .merge!(vacols_user_id: current_user.vacols_uniq_id)
+    safe_params[:vacols_user_id] = current_user.vacols_uniq_id
+    safe_params
   end
 
   def create_params

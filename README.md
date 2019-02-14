@@ -430,8 +430,6 @@ adding [`focus: true`](https://relishapp.com/rspec/rspec-core/v/2-6/docs/filteri
 +context "test my new feature", focus: true do
 ```
 
-Make sure to remove the `focus: true` before marking your pr ready to merge! Otherwise CI may only run the tests you've focused.
-
 ### Guard
 
 In addition, if you are iterating on a subset of tests, [`guard`](https://github.com/guard/guard-rspec) is a useful tool that will

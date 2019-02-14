@@ -42,8 +42,7 @@ class MailTask < GenericTask
     end
 
     def most_recent_active_task_assignee(parent)
-      parent.appeal.tasks.where(assigned_to_type: User.name).where.not(status: Constants.TASK_STATUSES.completed)
-        .order(:created_at).last&.assigned_to
+      parent.appeal.tasks.active.where(assigned_to_type: User.name).order(:created_at).last&.assigned_to
     end
   end
 
@@ -60,7 +59,7 @@ class AddressChangeMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
@@ -134,7 +133,7 @@ class EvidenceOrArgumentMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
@@ -170,7 +169,7 @@ class HearingRelatedMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
@@ -194,7 +193,7 @@ class PowerOfAttorneyRelatedMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
@@ -227,7 +226,7 @@ class ReturnedUndeliverableCorrespondenceMailTask < MailTask
 
   def self.child_task_assignee(parent, _params)
     return BvaDispatch.singleton if !case_active?(parent)
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
     return most_recent_active_task_assignee(parent) if most_recent_active_task_assignee(parent)
 
     fail Caseflow::Error::MailRoutingError

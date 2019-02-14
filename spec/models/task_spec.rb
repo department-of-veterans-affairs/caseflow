@@ -104,29 +104,14 @@ describe Task do
 
     context "when user is an assignee" do
       let(:user) { create(:user) }
-      let(:task) { create(:task, type: "Task", assigned_to: user) }
-
-      it { is_expected.to be_truthy }
-    end
-
-    context "when user is a task parent assignee" do
-      let(:user) { create(:user) }
-      let(:parent) { create(:task, type: "Task", assigned_to: user) }
-      let(:task) { create(:task, type: "Task", parent: parent) }
-
-      it { is_expected.to be_truthy }
-    end
-
-    context "when user is any judge" do
-      let(:user) { create(:user, css_id: "BVABDANIEL") }
-      let(:task) { create(:task, type: "Task", assigned_to: user) }
+      let(:task) { create(:generic_task, assigned_to: user).becomes(GenericTask) }
 
       it { is_expected.to be_truthy }
     end
 
     context "when user does not have access" do
       let(:user) { create(:user) }
-      let(:task) { create(:task, type: "Task", assigned_to: create(:user)) }
+      let(:task) { create(:generic_task, assigned_to: create(:user)) }
 
       it { is_expected.to be(false) }
     end
@@ -327,6 +312,52 @@ describe Task do
     end
   end
 
+  describe ".active?" do
+    let(:status) { nil }
+    let(:task) { FactoryBot.create(:generic_task, status: status) }
+    subject { task.active? }
+
+    context "when status is assigned" do
+      let(:status) { Constants.TASK_STATUSES.assigned }
+
+      it "is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is in_progress" do
+      let(:status) { Constants.TASK_STATUSES.in_progress }
+
+      it "is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is on_hold" do
+      let(:status) { Constants.TASK_STATUSES.on_hold }
+
+      it "is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is completed" do
+      let(:status) { Constants.TASK_STATUSES.completed }
+
+      it "is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when status is cancelled" do
+      let(:status) { Constants.TASK_STATUSES.cancelled }
+
+      it "is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   describe "#actions_available?" do
     let(:user) { create(:user) }
 
@@ -508,6 +539,50 @@ describe Task do
         expect { AttorneyTask.verify_user_can_create!(user, task) }.to raise_error(
           Caseflow::Error::ActionForbiddenError
         )
+      end
+    end
+  end
+
+  describe ".set_timestamps" do
+    let(:task) { FactoryBot.create(:task) }
+
+    context "when status changes to in_progress" do
+      let(:status) { Constants.TASK_STATUSES.in_progress }
+
+      it "should set started_at timestamp" do
+        expect(task.started_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.started_at).to_not eq(nil)
+      end
+    end
+
+    context "when status changes to on_hold" do
+      let(:status) { Constants.TASK_STATUSES.on_hold }
+
+      it "should set placed_on_hold_at timestamp" do
+        expect(task.placed_on_hold_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.placed_on_hold_at).to_not eq(nil)
+      end
+    end
+
+    context "when status changes to completed" do
+      let(:status) { Constants.TASK_STATUSES.completed }
+
+      it "should set closed_at timestamp" do
+        expect(task.closed_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.closed_at).to_not eq(nil)
+      end
+    end
+
+    context "when status changes to cancelled" do
+      let(:status) { Constants.TASK_STATUSES.cancelled }
+
+      it "should set closed_at timestamp" do
+        expect(task.closed_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.closed_at).to_not eq(nil)
       end
     end
   end

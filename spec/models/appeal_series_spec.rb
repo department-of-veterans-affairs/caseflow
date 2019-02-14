@@ -448,11 +448,12 @@ describe AppealSeries do
         [
           create(:case_issue, issseq: 1, issprog: "02", isscode: "17", isslev1: "02"),
           create(:case_issue, issseq: 2, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252"),
-          create(:case_issue, issseq: 3, issprog: "02", isscode: "15", isslev1: "03", isslev2: "9432")
+          create(:case_issue, issseq: 3, issprog: "02", isscode: "12", isslev1: "05"),
+          create(:case_issue, issseq: 4, issprog: "02", isscode: "15", isslev1: "03", isslev2: "9432")
         ]
       end
 
-      it { is_expected.to eq("Service connection, limitation of thigh motion (flexion), and 2 others") }
+      it { is_expected.to eq("Service connection, limitation of thigh motion (flexion), and 3 others") }
     end
 
     context "when those issues do not have commas" do

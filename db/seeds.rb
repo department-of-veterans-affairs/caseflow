@@ -88,6 +88,10 @@ class SeedDB
     user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
     OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+
+    admin = User.create(css_id: "VLJ_SUPPORT_ADMIN", station_id: 101, full_name: "VLJ Support admin", roles: %w[Reader])
+    FactoryBot.create(:staff, :colocated_role, user: admin, sdept: "DSP")
+    OrganizationsUser.make_user_admin(admin, Colocated.singleton)
   end
 
   def create_vso_users_and_tasks
@@ -316,6 +320,127 @@ class SeedDB
 
   def create_hearings
     Generators::Hearing.create
+  end
+
+  def create_ama_hearing(day)
+    vet = Generators::Veteran.build(
+      file_number: Faker::Number.number(9).to_s,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+    vet.save
+
+    app = FactoryBot.create(
+      :appeal,
+      veteran_file_number: vet.file_number,
+      docket_type: "hearing"
+    )
+
+    Hearing.create(
+      hearing_day: day,
+      appeal: app,
+      bva_poc: User.find_by_css_id("BVAAABSHIRE").full_name,
+      scheduled_time: Time.utc(
+        Time.zone.today.year, Time.zone.today.month, Time.zone.today.day, 9, 0, 0
+      )
+    )
+  end
+
+  def create_legacy_hearing(day, ro_key)
+    case ro_key
+    when "RO17"
+      folder_nr = "3620725"
+    when "RO45"
+      folder_nr = "3411278"
+    when "C"
+      folder_nr = "3542942"
+    end
+
+    FactoryBot.create(
+      :case_hearing,
+      folder_nr: folder_nr,
+      vdkey: day.id,
+      board_member: User.find_by_css_id("BVAAABSHIRE").vacols_attorney_id.to_i
+    )
+  end
+
+  def create_hearing_days
+    %w[C RO17 RO45].each do |ro_key|
+      user = User.find_by(css_id: "BVATWARNER")
+
+      (1..5).each do |index|
+        day = HearingDay.create!(
+          regional_office: (ro_key == "C") ? nil : ro_key,
+          room: "1",
+          judge: User.find_by_css_id("BVAAABSHIRE"),
+          request_type: (ro_key == "C") ? "C" : "V",
+          scheduled_for: Time.zone.today + (index * 11).days,
+          created_by: user,
+          updated_by: user
+        )
+
+        case index
+        when 1
+          create_ama_hearing(day)
+        when 2
+          create_legacy_hearing(day, ro_key)
+        when 3
+          create_legacy_hearing(day, ro_key)
+          create_ama_hearing(day)
+        end
+      end
+    end
+  end
+
+  def create_legacy_case_with_open_schedule_hearing_task(ro_key)
+    case ro_key
+    when "RO17"
+      vacols_id = "2668454"
+    when "RO45"
+      vacols_id = "3261587"
+    when "C"
+      vacols_id = "3019752"
+    end
+
+    appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
+
+    ScheduleHearingTask.create!(
+      appeal: appeal,
+      assigned_to: HearingsManagement.singleton,
+      parent: RootTask.find_or_create_by!(appeal: appeal)
+    )
+  end
+
+  def create_ama_case_with_open_schedule_hearing_task(ro_key)
+    vet = Generators::Veteran.build(
+      file_number: Faker::Number.number(9).to_s,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+
+    vet.closest_regional_office = ro_key
+    vet.save
+
+    appeal = FactoryBot.create(
+      :appeal,
+      :with_tasks,
+      number_of_claimants: 1,
+      veteran_file_number: vet.file_number,
+      docket_type: "hearing"
+    )
+
+    ScheduleHearingTask.create!(
+      appeal: appeal,
+      assigned_to: HearingsManagement.singleton,
+      parent: RootTask.find_or_create_by!(appeal: appeal)
+    )
+  end
+
+  def create_veterans_ready_for_hearing
+    %w[C RO45 RO17].each do |ro_key|
+      create_legacy_case_with_open_schedule_hearing_task(ro_key)
+      create_ama_case_with_open_schedule_hearing_task(ro_key)
+    end
   end
 
   def create_api_key
@@ -551,7 +676,7 @@ class SeedDB
     FactoryBot.create(:attorney_case_review, task_id: child.id)
   end
 
-  def create_task_at_colocated(appeal, judge, attorney, colocated_user, task_attributes = {})
+  def create_task_at_colocated(appeal, judge, attorney, task_attributes = {})
     parent = FactoryBot.create(
       :ama_judge_task,
       :on_hold,
@@ -573,18 +698,10 @@ class SeedDB
                       parent: atty_task,
                       assigned_by: attorney,
                       assigned_to: Colocated.singleton }.merge(task_attributes)
-    org_task = FactoryBot.create(:ama_colocated_task, :on_hold, org_task_args)
-
-    personal_task_args = org_task_args.merge(
-      parent: org_task,
-      action: org_task.action,
-      instructions: org_task.instructions,
-      assigned_to: colocated_user
-    )
-    FactoryBot.create(:ama_colocated_task, personal_task_args)
+    FactoryBot.create(:ama_colocated_task, :on_hold, org_task_args)
   end
 
-  def create_colocated_legacy_tasks(attorney, colocated_user)
+  def create_colocated_legacy_tasks(attorney)
     [
       { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
       { vacols_id: "2226048", trait: nil, additional: { action: "translation" } },
@@ -594,15 +711,7 @@ class SeedDB
       org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                         assigned_by: attorney,
                         assigned_to: Colocated.singleton }.merge(attrs[:additional] || {})
-      org_task = FactoryBot.create(:colocated_task, :on_hold, org_task_args)
-
-      personal_task_args = org_task_args.merge(
-        parent: org_task,
-        action: org_task.action,
-        instructions: org_task.instructions,
-        assigned_to: colocated_user
-      )
-      FactoryBot.create(*[:colocated_task, attrs[:trait]].compact, personal_task_args)
+      FactoryBot.create(:colocated_task, :on_hold, org_task_args)
     end
   end
 
@@ -661,7 +770,6 @@ class SeedDB
   def create_tasks
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
-    colocated = User.find_by(css_id: "BVALSPORER")
 
     create_task_at_judge_assignment(@ama_appeals[0], judge, 35.days.ago)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
@@ -669,20 +777,20 @@ class SeedDB
     create_task_at_judge_assignment(@ama_appeals[3], judge)
     create_task_at_judge_review(@ama_appeals[4], judge, attorney)
     create_task_at_judge_review(@ama_appeals[5], judge, attorney)
-    create_task_at_colocated(@ama_appeals[6], judge, attorney, colocated)
-    create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, colocated, action: "translation")
+    create_task_at_colocated(@ama_appeals[6], judge, attorney)
+    create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, action: "translation")
     create_task_at_attorney_review(@ama_appeals[7], judge, attorney)
     create_task_at_attorney_review(@ama_appeals[8], judge, attorney)
     create_task_at_judge_assignment(@ama_appeals[9], judge)
     create_task_at_judge_review(@ama_appeals[10], judge, attorney)
-    create_task_at_colocated(@ama_appeals[11], judge, attorney, colocated)
+    create_task_at_colocated(@ama_appeals[11], judge, attorney)
 
     9.times do
       appeal = FactoryBot.create(:appeal)
       create_task_at_judge_assignment(appeal, judge, Time.zone.today)
     end
 
-    create_colocated_legacy_tasks(attorney, colocated)
+    create_colocated_legacy_tasks(attorney)
 
     FactoryBot.create_list(
       :generic_task,
@@ -801,6 +909,7 @@ class SeedDB
     description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
     notes = "Pain disorder with 100\% evaluation per examination"
 
+    FeatureToggle.enable!(:ama_acd_tasks)
     FeatureToggle.enable!(:ama_auto_case_distribution)
 
     @ama_appeals << FactoryBot.create(
@@ -840,6 +949,8 @@ class SeedDB
     create_tags
     create_ama_appeals
     create_users
+    create_hearing_days
+    create_veterans_ready_for_hearing
     create_tasks
     create_higher_level_review_tasks
 
@@ -852,6 +963,8 @@ class SeedDB
     create_ama_hearing_appeals
     create_board_grant_tasks
     create_veteran_record_request_tasks
+
+    FetchHearingLocationsForVeteransJob.perform_now
 
     return if Rails.env.development?
 

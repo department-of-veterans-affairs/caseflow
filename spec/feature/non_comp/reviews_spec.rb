@@ -37,7 +37,7 @@ feature "NonComp Reviews Queue" do
                :in_progress,
                appeal: appeal,
                assigned_to: non_comp_org,
-               assigned_at: today)
+               assigned_at: 1.day.ago)
       ]
     end
 

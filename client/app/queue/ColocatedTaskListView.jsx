@@ -113,7 +113,7 @@ export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListVi
 const NewTasksTab = connect(
   (state: State) => ({
     tasks: newTasksByAssigneeCssIdSelector(state),
-    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
   }))(
   (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
     return <React.Fragment>
@@ -135,7 +135,7 @@ const NewTasksTab = connect(
 const PendingTasksTab = connect(
   (state: State) => ({
     tasks: pendingTasksByAssigneeCssIdSelector(state),
-    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
   }))(
   (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
     return <React.Fragment>
@@ -157,7 +157,7 @@ const PendingTasksTab = connect(
 const OnHoldTasksTab = connect(
   (state: State) => ({
     tasks: onHoldTasksByAssigneeCssIdSelector(state),
-    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
   }))(
   (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
     return <React.Fragment>
@@ -179,7 +179,7 @@ const OnHoldTasksTab = connect(
 const CompleteTasksTab = connect(
   (state: State) => ({
     tasks: completeTasksByAssigneeCssIdSelector(state),
-    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
   }))(
   (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
     return <React.Fragment>

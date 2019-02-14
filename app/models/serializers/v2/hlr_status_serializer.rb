@@ -26,7 +26,7 @@ class V2::HLRStatusSerializer < ActiveModel::Serializer
   attribute :program, key: :program_area
   attribute :status_hash, key: :status
   attribute :alerts
-  attribute :issues
+  attribute :issues_hash, key: :issues
   attribute :events
 
   # Stubbed attributes
