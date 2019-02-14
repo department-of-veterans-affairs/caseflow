@@ -603,7 +603,7 @@ class Appeal < DecisionReview
     return if active_status?
     return if decision_issues.any?
 
-    root_task.completed_at
+    root_task.closed_at
   end
 
   def events

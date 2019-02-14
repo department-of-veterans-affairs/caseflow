@@ -210,7 +210,7 @@ class Task < ApplicationRecord
       t.save!
     end
 
-    update!(status: Constants.TASK_STATUSES.completed)
+    update!(status: Constants.TASK_STATUSES.cancelled)
 
     children.active.each { |t| t.update!(parent_id: sibling.id) }
 
