@@ -106,6 +106,18 @@ describe FetchHearingLocationsForVeteransJob do
         end
       end
 
+      context "when veteran requests central office" do
+        let!(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S", bfhr: 1) }
+        let(:distance_response) do
+          HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11, id: "vba_372").to_json)
+        end
+
+        it "sets Central as closest_regional_office" do
+          FetchHearingLocationsForVeteransJob.perform_now
+          expect(LegacyAppeal.first.closest_regional_office).to eq "C"
+        end
+      end
+
       context "when veteran closest_regional_office is in state with multiple ROs/AHLs" do
         let(:facility_ids) do
           ohio_ro = RegionalOffice::CITIES["RO25"]

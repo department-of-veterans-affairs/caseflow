@@ -41,7 +41,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def fetch_and_update_ro_for_appeal(appeal, va_dot_gov_address:)
-    state_code = if appeal.is_a?(LegacyAppeal) && appeal.case_record&.bfhr == 1 # request_type is Central
+    state_code = if appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
                    "DC"
                  else
                    get_state_code(va_dot_gov_address, appeal: appeal)
