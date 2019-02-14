@@ -66,7 +66,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   def perform
     RequestStore.store[:current_user] = User.system_user
     create_schedule_hearing_tasks
-    create_missing_veterans
 
     appeals.each do |appeal|
       break if perform_once_for(appeal) == false
@@ -92,7 +91,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   private
 
-  def validate_veteran_address(appeal)
+  def validate_appellant_address(appeal)
     address = appeal.appellant.address
 
     VADotGovService.validate_address(
