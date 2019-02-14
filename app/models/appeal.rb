@@ -120,8 +120,9 @@ class Appeal < DecisionReview
 
     active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
     return active_tasks.order(:updated_at).last.assigned_to_label if active_tasks.any?
+    return tasks.order(:updated_at).last.assigned_to_label if tasks.any?
 
-    tasks.order(:updated_at).last.assigned_to_label
+    status_hash[:type].to_s.titleize
   end
 
   def attorney_case_reviews

@@ -628,8 +628,8 @@ describe Appeal do
 
     context "if there are no active tasks" do
       let(:appeal) { create(:appeal) }
-      it "returns nil" do
-        expect(appeal.location_code).to eq(nil)
+      it "returns 'other close'" do
+        expect(appeal.location_code).to eq(:other_close.to_s.titleize)
       end
     end
 
@@ -651,6 +651,7 @@ describe Appeal do
       let(:user) { create(:user) }
       let(:appeal_user) { create(:appeal) }
       let(:appeal_on_hold) { create(:appeal) }
+      let(:today) { Time.zone.today }
 
       before do
         organization_root_task = create(:root_task, appeal: appeal_organization)
@@ -659,8 +660,8 @@ describe Appeal do
         user_root_task = create(:root_task, appeal: appeal_user)
         create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
 
-        on_hold_root_task = create(:root_task, appeal: appeal_on_hold)
-        create(:generic_task, status: :on_hold, appeal: appeal_on_hold, parent: on_hold_root_task)
+        on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
+        create(:generic_task, status: :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
       end
 
       it "if the most recent assignee is an organization it returns the organization name" do
@@ -671,8 +672,8 @@ describe Appeal do
         expect(appeal_user.location_code).to eq(user.css_id)
       end
 
-      it "if the task is on hold but there isn't an assignee" do
-        expect(appeal_on_hold.location_code).to eq(:on_docket.to_s.titleize)
+      it "if the task is on hold but there isn't an assignee it returns something" do
+        expect(appeal_on_hold.location_code).not_to eq(nil)
       end
     end
   end
