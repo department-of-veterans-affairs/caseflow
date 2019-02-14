@@ -4,37 +4,51 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   QUERY_LIMIT = 500
 
-  def appeals_from_file_numbers
-    @appeals_from_file_numbers ||= VACOLS::Case.where(bfcurloc: 57).pluck(:bfkey).map do |bfkey|
+  def appeal_bfkeys
+    @appeal_bfkeys ||= VACOLS::Case.where(bfcurloc: 57).limit(QUERY_LIMIT).pluck(:bfkey)
+  end
+
+  def appeals_from_vacols
+    @appeals_from_vacols ||= LegacyAppeal.where(vacols_id: appeal_bfkeys)
+  end
+
+  def appeals_missing_from_vacols
+    @appeals_missing_from_vacols ||= (appeal_bfkeys - appeals_from_vacols.pluck(:vacols_id)).map do |bfkey|
       LegacyAppeal.find_or_create_by_vacols_id(bfkey)
     end
   end
 
   def find_appeals_ready_for_geomatching(appeal_type)
-    appeal_type.left_outer_joins(:available_hearing_locations)
+    appeal_type.joins(:available_hearing_locations)
       .joins("
-        LEFT OUTER JOINS (
-          SELECT appeal_id from tasks
+        LEFT OUTER JOIN (SELECT appeal_id FROM tasks
           WHERE type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
-          AND status NOT IN ('cancelled', 'completed')
-        ) admin_actions ON admin_actions.appeal_id = #{appeal_type.table_name}.id
+          AND status NOT IN ('cancelled', 'completed')) admin_actions
+          ON admin_actions.appeal_id = id
       ").joins("
-        LEFT OUTER JOINS (
-          SELECT appeal_id from tasks
+        LEFT OUTER JOIN (SELECT appeal_id from tasks
           WHERE type = 'ScheduleHearingTask'
-          AND status NOT IN ('cancelled', 'completed')
-        ) sch_tasks ON sch_.appeal_id = #{appeal_type.table_name}.id
-      ").where("sch_tasks.appeal_id IS NOT NULL and admin_actions.appeal_id IS NULL").limit(QUERY_LIMIT / 2)
+          AND status NOT IN ('cancelled', 'completed')) sch_tasks
+          ON sch_tasks.appeal_id = id
+      ").where("sch_tasks.appeal_id IS NOT NULL AND admin_actions.appeal_id IS NULL")
+      .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
+      .limit(QUERY_LIMIT / 2)
   end
 
   def appeals
-    @appeals ||= (appeals_from_file_numbers +
+    @appeals ||= (appeals_from_vacols +
+                 appeals_missing_from_vacols +
                  find_appeals_ready_for_geomatching(LegacyAppeal) +
                  find_appeals_ready_for_geomatching(Appeal))[0..QUERY_LIMIT]
   end
 
   def fetch_and_update_ro_for_appeal(appeal, va_dot_gov_address:)
-    state_code = get_state_code(va_dot_gov_address, appeal: appeal)
+    state_code = if appeal.is_a?(LegacyAppeal) && appeal.bfhr == 1 # request_type is Central
+                   "DC"
+                 else
+                   get_state_code(va_dot_gov_address, appeal: appeal)
+                 end
+
     facility_ids = ro_facility_ids_for_state(state_code)
 
     distances = VADotGovService.get_distance(
@@ -147,6 +161,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def create_available_location_for_appeal(appeal, facility:)
     AvailableHearingLocations.create(
+      veteran_file_number: "null", # make migration backwards compatible
       appeal: appeal,
       distance: facility[:distance],
       facility_id: facility[:facility_id],

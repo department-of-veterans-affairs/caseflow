@@ -112,7 +112,8 @@ ActiveRecord::Schema.define(version: 20190214174317) do
 
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address"
-    t.string "appeal_id"
+    t.integer "appeal_id"
+    t.string "appeal_type"
     t.string "city"
     t.string "classification"
     t.datetime "created_at", null: false
