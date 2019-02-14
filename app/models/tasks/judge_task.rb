@@ -22,7 +22,7 @@ class JudgeTask < Task
   end
 
   #:nocov:
-  def self.backfill_ramp_appeals_with_tasks(dry_run: true)
+  def JudgeTask.backfill_ramp_appeals_with_tasks(dry_run: false)
     # Find all unassigned tasks and sort them by the NOD date
     tasks = unassigned_ramp_tasks.sort_by { |task| task.appeal.receipt_date }
 
@@ -67,7 +67,7 @@ class JudgeTask < Task
     return false if task.appeal.class != Appeal
     return false if task.appeal.docket_name.nil?
 
-    task.children.all? { |t| !t.is_a?(JudgeTask) && !t.is_a?(DistributionTask) && !t.is_a?(ScheduleHearingTask) }
+    task.children.all? { |t| !t.is_a?(JudgeTask) }
   end
   #:nocov:
 end
