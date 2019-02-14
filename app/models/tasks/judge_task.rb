@@ -48,7 +48,7 @@ class JudgeTask < Task
         RootTask.create_subtasks!(root_task.appeal, root_task)
         distribution_task = DistributionTask.find_by(parent: root_task)
         # Update any open IHP tasks if they exist so that they block distribution.
-        ihp_task = InformalHearingPresentationTask.find_by(appeal: root_task.appeal)
+        ihp_task = InformalHearingPresentationTask.active.find_by(appeal: root_task.appeal)
         ihp_task&.update!(parent: distribution_task)
         # Ensure direct review appeals have their decision date set.
         root_task.appeal.set_target_decision_date!
@@ -64,7 +64,7 @@ class JudgeTask < Task
     # All RAMP appeals have completed RootTasks.
     return false if !task.active?
     return false if task.appeal.nil?
-    return false if task.appeal.class == LegacyAppeal
+    return false if task.appeal.class != Appeal
     return false if task.appeal.docket_name.nil?
 
     task.children.all? { |t| !t.is_a?(JudgeTask) }
