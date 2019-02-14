@@ -22,7 +22,7 @@ class JudgeTask < Task
   end
 
   #:nocov:
-  def JudgeTask.backfill_ramp_appeals_with_tasks(dry_run: false)
+  def backfill_ramp_appeals_with_tasks(dry_run: true)
     # Find all unassigned tasks and sort them by the NOD date
     tasks = unassigned_ramp_tasks.sort_by { |task| task.appeal.receipt_date }
 
