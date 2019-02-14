@@ -33,6 +33,10 @@ class RootTask < GenericTask
     true
   end
 
+  def assigned_to_label
+    COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
+  end
+
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
