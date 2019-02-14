@@ -1,6 +1,5 @@
 class DocumentFetcher
   include ActiveModel::Model
-  include DocumentConcern
 
   attr_accessor :appeal, :use_efolder
 
