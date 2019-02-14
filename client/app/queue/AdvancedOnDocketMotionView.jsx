@@ -72,7 +72,9 @@ class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
           this.props.setAppealAod(appeal.externalId);
         }
       }).
-      catch((err) => console.log('the error on requestSave: ', err));
+      catch(() => {
+        // handle the error from the frontend
+      });
   }
 
   render = () => {

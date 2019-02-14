@@ -161,7 +161,9 @@ class EvaluateDecisionView extends React.PureComponent {
         // eslint-disable-next-line no-console
         console.log(response);
       }).
-      catch((err) => console.log('the error on requestSave: ', err));
+      catch(() => {
+        // handle the error from the frontend
+      });
   }
 
   getDisplayOptions = (opts) => _.map(JUDGE_CASE_REVIEW_OPTIONS[opts.toUpperCase()],

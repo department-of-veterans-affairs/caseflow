@@ -121,7 +121,9 @@ class AssignToView extends React.Component<Props, ViewState> {
 
         this.props.onReceiveAmaTasks(response.tasks.data);
       }).
-      catch((err) => console.log('the error on requestSave: ', err));
+      catch(() => {
+        // handle the error from the frontend
+      });
   }
 
   getAssignee = () => {
