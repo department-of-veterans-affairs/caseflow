@@ -23,7 +23,7 @@ feature "Intake Edit Confirmation" do
       create(:request_issue,
              rating_issue_reference_id: "def456",
              rating_issue_profile_date: rating.profile_date,
-             review_request: decision_review,
+             decision_review: decision_review,
              description: "PTSD denied")
     end
 

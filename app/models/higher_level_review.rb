@@ -140,7 +140,7 @@ class HigherLevelReview < ClaimReview
       # do not copy over end product establishment id,
       # review request, removed_at, disposition, and contentions
       RequestIssue.new(
-        review_request: dta_supplemental_claim,
+        decision_review: dta_supplemental_claim,
         contested_decision_issue_id: dta_decision_issue.id,
         # parent_request_issue_id: dta_issue.id, delete this from table
         rating_issue_reference_id: dta_decision_issue.rating_issue_reference_id,

@@ -29,7 +29,7 @@ class NonCompDecisionIssue extends React.PureComponent {
   }
 
   dispositionOptions = () => {
-    const isSupplementalClaim = this.props.issue.review_request_title === 'Supplemental Claim';
+    const isSupplementalClaim = this.props.issue.decision_review_title === 'Supplemental Claim';
 
     return DISPOSITION_OPTIONS.filter((code) => {
       return !isSupplementalClaim || code !== 'DTA Error';

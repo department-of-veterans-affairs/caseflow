@@ -3,8 +3,17 @@ describe ContestableIssue do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
 
-  let(:decision_review) { create(:higher_level_review, receipt_date: Time.zone.now, benefit_type: benefit_type) }
+  let(:decision_review) do
+    create(
+      :higher_level_review,
+      :with_end_product_establishment, # We need this for the status_active? check, but remove when that's refactored
+      receipt_date: Time.zone.now,
+      benefit_type: benefit_type
+    )
+  end
+
   let(:benefit_type) { "compensation" }
+  let(:caseflow_decision_date) { Time.zone.today - 20 }
   let(:profile_date) { Time.zone.today - 30 }
   let(:promulgation_date) { Time.zone.today - 30 }
   let(:diagnostic_code) { "diagnostic_code" }
@@ -23,11 +32,15 @@ describe ContestableIssue do
   let(:profile_date) { Time.zone.today }
 
   let(:decision_issue) do
-    create(:decision_issue,
-           rating_issue_reference_id: "rating1",
-           profile_date: profile_date,
-           description: "this is a good decision",
-           benefit_type: benefit_type)
+    create(
+      :decision_issue,
+      decision_review: create(:appeal),
+      rating_issue_reference_id: "rating1",
+      profile_date: profile_date,
+      description: "this is a good decision",
+      benefit_type: benefit_type,
+      caseflow_decision_date: caseflow_decision_date
+    )
   end
 
   context ".from_rating_issue" do
@@ -41,9 +54,9 @@ describe ContestableIssue do
         decision_issue_id: nil,
         date: profile_date,
         description: rating_issue.decision_text,
-        source_request_issues: rating_issue.source_request_issues,
         contesting_decision_review: decision_review,
-        rating_issue_diagnostic_code: diagnostic_code
+        rating_issue_diagnostic_code: diagnostic_code,
+        source_review_type: nil
       )
 
       expect(contestable_issue.serialize).to eq(
@@ -89,10 +102,11 @@ describe ContestableIssue do
         rating_issue_reference_id: "rating1",
         rating_issue_profile_date: profile_date,
         decision_issue_id: decision_issue.id,
-        date: profile_date,
+        date: caseflow_decision_date,
         description: decision_issue.description,
-        source_request_issues: decision_issue.request_issues,
-        contesting_decision_review: decision_review
+        source_request_issues: decision_issue.request_issues.open,
+        contesting_decision_review: decision_review,
+        source_review_type: "Appeal"
       )
 
       expect(contestable_issue.serialize).to eq(
@@ -100,17 +114,17 @@ describe ContestableIssue do
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: nil,
         decisionIssueId: decision_issue.id,
-        date: profile_date,
+        date: caseflow_decision_date,
         description: decision_issue.description,
         rampClaimId: nil,
         titleOfActiveReview: nil,
-        sourceReviewType: nil,
+        sourceReviewType: "Appeal",
         timely: true
       )
     end
 
     context "is untimely" do
-      let(:profile_date) { Time.zone.today - 373.days }
+      let(:caseflow_decision_date) { Time.zone.today - 373.days }
 
       it "can be serialized" do
         expect(subject.serialize).to eq(
@@ -118,14 +132,76 @@ describe ContestableIssue do
           ratingIssueProfileDate: profile_date,
           ratingIssueDiagnosticCode: nil,
           decisionIssueId: decision_issue.id,
-          date: profile_date,
+          date: caseflow_decision_date,
           description: decision_issue.description,
           rampClaimId: nil,
           titleOfActiveReview: nil,
-          sourceReviewType: nil,
+          sourceReviewType: "Appeal",
           timely: false
         )
       end
+    end
+  end
+
+  context "#source_review_type" do
+    subject { contestable_issue.source_review_type }
+
+    context "when rating issue" do
+      let(:contestable_issue) do
+        ContestableIssue.from_rating_issue(rating_issue, decision_review)
+      end
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when decision issue" do
+      let(:contestable_issue) do
+        ContestableIssue.from_decision_issue(decision_issue, decision_review)
+      end
+
+      it { is_expected.to eq("Appeal") }
+    end
+  end
+
+  context "#title_of_active_review" do
+    subject { contestable_issue.title_of_active_review }
+
+    let(:contestable_issue) do
+      ContestableIssue.from_rating_issue(rating_issue, decision_review)
+    end
+
+    context "when there are no conflicting request issues" do
+      it { is_expected.to be_nil }
+    end
+
+    context "when there are conflicting request issues on a decision issue" do
+      let(:contestable_issue) do
+        ContestableIssue.from_decision_issue(decision_issue, decision_review)
+      end
+
+      context "when the conflicting request issue is on another decision review" do
+        let!(:conflicting_request_issue) do
+          create(:request_issue, contested_decision_issue: decision_issue)
+        end
+
+        it { is_expected.to eq(conflicting_request_issue.review_title) }
+      end
+
+      context "when the conflicting request issue is on the same decision review" do
+        let!(:conflicting_request_issue) do
+          create(:request_issue, contested_decision_issue: decision_issue, decision_review: decision_review)
+        end
+
+        it { is_expected.to be_nil }
+      end
+    end
+
+    context "when there are conflicting request issues on a rating issue" do
+      let!(:conflicting_request_issue) do
+        create(:request_issue, contested_rating_issue_reference_id: rating_issue.reference_id)
+      end
+
+      it { is_expected.to eq(conflicting_request_issue.review_title) }
     end
   end
 end

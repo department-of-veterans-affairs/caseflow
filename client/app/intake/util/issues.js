@@ -102,7 +102,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         decisionDate: formatDateStr(issue.decision_date),
         ineligibleReason: issue.ineligible_reason,
         ineligibleDueToId: issue.ineligible_due_to_id,
-        reviewRequestTitle: issue.review_request_title,
+        decisionReviewTitle: issue.decision_review_title,
         contentionText: issue.contention_text,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
@@ -354,7 +354,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       vacolsSequenceId: issue.vacolsSequenceId,
       vacolsIssue: issue.vacolsIssue,
       eligibleForSocOptIn: issue.eligibleForSocOptIn,
-      reviewRequestTitle: issue.reviewRequestTitle
+      decisionReviewTitle: issue.decisionReviewTitle
     };
   });
 };

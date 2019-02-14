@@ -185,7 +185,7 @@ class SeedDB
         [3, 4, 5].sample,
         contested_issue_description: description,
         notes: "Pain disorder with 100\% evaluation per examination",
-        review_request: root.appeal
+        decision_review: root.appeal
       )
       parent = FactoryBot.create(
         :bva_dispatch_task,
@@ -461,7 +461,7 @@ class SeedDB
                           :nonrating,
                           end_product_establishment: epe,
                           veteran_participant_id: veteran.participant_id,
-                          review_request: higher_level_review)
+                          decision_review: higher_level_review)
       end
       FactoryBot.create(:higher_level_review_task,
                         assigned_to: Organization.find_by(name: "National Cemetery Association"),
@@ -615,7 +615,7 @@ class SeedDB
     )
 
     eligible_request_issue = RequestIssue.create!(
-      review_request: higher_level_review,
+      decision_review: higher_level_review,
       issue_category: "Military Retired Pay",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
@@ -625,7 +625,7 @@ class SeedDB
     )
 
     untimely_request_issue = RequestIssue.create!(
-      review_request: higher_level_review,
+      decision_review: higher_level_review,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "12345",
@@ -816,7 +816,7 @@ class SeedDB
                                               description: "#{index} #{description}",
                                               notes: "#{index} #{notes}",
                                               benefit_type: nca.url,
-                                              review_request: board_grant_task.appeal)
+                                              decision_review: board_grant_task.appeal)
 
       request_issues.each do |request_issue|
         # create matching decision issue
