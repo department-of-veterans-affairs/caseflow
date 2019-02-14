@@ -156,11 +156,11 @@ describe ScheduleHearingTask do
     end
   end
 
-  context ".tasks_for_ro" do
+  context ".legacy_tasks_for_ro" do
     let(:regional_office) { "RO17" }
     let(:number_of_cases) { 10 }
 
-    context "when there are legacy cases" do
+    context "when there are no cases CO hearings" do
       let!(:cases) do
         create_list(:case, number_of_cases,
                     bfregoff: regional_office,
@@ -169,16 +169,87 @@ describe ScheduleHearingTask do
                     bfdocind: HearingDay::REQUEST_TYPES[:video])
       end
 
+      let!(:c_number_case) do
+        create(
+          :case,
+          bfcorlid: "1234C",
+          bfregoff: regional_office,
+          bfhr: "2",
+          bfcurloc: 57,
+          bfdocind: HearingDay::REQUEST_TYPES[:video]
+        )
+      end
+
+      let!(:veterans) do
+        VACOLS::Case.all.map do |vacols_case|
+          create(
+            :veteran,
+            closest_regional_office: regional_office,
+            file_number: LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
+          )
+        end
+      end
+
       let!(:non_hearing_cases) do
         create_list(:case, number_of_cases)
       end
 
       it "returns tasks for all relevant appeals in location 57" do
+        AppealRepository.create_schedule_hearing_tasks
+
         tasks = ScheduleHearingTask.tasks_for_ro(regional_office)
+
+        expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(cases.pluck(:bfkey) + [c_number_case.bfkey])
+      end
+    end
+
+    context "when there are cases with central office hearings" do
+      let!(:cases) do
+        create_list(:case, number_of_cases,
+                    bfregoff: regional_office,
+                    bfhr: "1",
+                    bfcurloc: "57",
+                    bfdocind: HearingDay::REQUEST_TYPES[:central])
+      end
+
+      let!(:video_cases) do
+        create_list(:case, number_of_cases,
+                    bfregoff: regional_office,
+                    bfhr: "2",
+                    bfcurloc: "57",
+                    bfdocind: HearingDay::REQUEST_TYPES[:video])
+      end
+
+      let!(:veterans) do
+        VACOLS::Case.all.map do |vacols_case|
+          create(
+            :veteran,
+            closest_regional_office: regional_office,
+            file_number: LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
+          )
+        end
+      end
+
+      it "returns tasks for all CO hearings in location 57" do
+        AppealRepository.create_schedule_hearing_tasks
+
+        tasks = ScheduleHearingTask.tasks_for_ro("C")
 
         expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(cases.pluck(:bfkey))
       end
+
+      it "does not return tasks for regional office when marked as CO" do
+        AppealRepository.create_schedule_hearing_tasks
+
+        tasks = ScheduleHearingTask.tasks_for_ro(regional_office)
+
+        expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(video_cases.pluck(:bfkey))
+      end
     end
+  end
+
+  context ".tasks_for_ro" do
+    let(:regional_office) { "RO17" }
 
     context "when there are AMA ScheduleHearingTasks" do
       let(:veteran_at_ro) { create(:veteran, closest_regional_office: regional_office) }

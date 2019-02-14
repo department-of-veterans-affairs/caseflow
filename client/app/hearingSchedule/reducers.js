@@ -149,6 +149,20 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         }
       }
     });
+
+  case ACTIONS.INVALID_FORM:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          invalid: {
+            $set: {
+              ...(state.hearings[action.payload.hearingId].invalid || {}),
+              ...action.payload.invalid
+            }
+          }
+        }
+      }
+    });
   case ACTIONS.SELECTED_HEARING_DAY_CHANGE:
     return update(state, {
       selectedHearingDay: {

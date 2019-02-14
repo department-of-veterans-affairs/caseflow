@@ -45,7 +45,7 @@ class DecisionReviewsController < ApplicationController
 
   def in_progress_tasks
     apply_task_serializer(
-      business_line.tasks.includes([:assigned_to, :appeal]).order(assigned_at: :desc).reject(&:completed?)
+      business_line.tasks.active.includes([:assigned_to, :appeal]).order(assigned_at: :desc)
     )
   end
 
