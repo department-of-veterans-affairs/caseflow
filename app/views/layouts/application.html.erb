@@ -66,7 +66,7 @@
         release: "<%= Rails.application.config.build_version[:commit][0..6] %>",
         dataCallback: function(data) {
           if (Raven.caseflowAppName) {
-            data.fingerprint = ["{{default}}", Raven.caseflowAppName]
+            data.fingerprint = ["{{ default }}", Raven.caseflowAppName]
           }
           return data;
         }
