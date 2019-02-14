@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
+import moment from 'moment';
 
 import QueueTable from '../../queue/QueueTable';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -18,7 +19,7 @@ import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
-import moment from 'moment';
+import { COLUMN_NAMES } from '../constants';
 
 const downloadButtonStyling = css({
   marginTop: '60px'
@@ -202,6 +203,7 @@ class ListSchedule extends React.Component {
               columns={hearingScheduleColumns}
               rowObjects={hearingScheduleRows}
               summary="hearing-schedule"
+              alternateColumnNames={COLUMN_NAMES}
               slowReRendersAreOk />
           </LoadingDataDisplay>
         </div>

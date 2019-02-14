@@ -43,6 +43,8 @@ class TableFilter extends React.PureComponent {
 
     for (let key in countByColumnName) { // eslint-disable-line guard-for-in
       let displayText = `<<blank>> (${countByColumnName[key]})`;
+      const keyValue = key === 'undefined' || key === 'null' ? 'null' : key;
+      const checked = filtersForColumn ? filtersForColumn.includes(keyValue) : false;
 
       if (key && key !== 'null' && key !== 'undefined') {
         if (customFilterLabels && customFilterLabels[key]) {
@@ -54,12 +56,13 @@ class TableFilter extends React.PureComponent {
         uniqueOptions.push({
           value: key,
           displayText,
-          checked: filtersForColumn ? filtersForColumn.includes(key) : false
+          checked
         });
       } else {
         uniqueOptions.push({
           value: 'null',
-          displayText
+          displayText,
+          checked
         });
       }
     }
@@ -105,8 +108,7 @@ class TableFilter extends React.PureComponent {
       isDropdownFilterOpen,
       disableClearFiltersRow,
       label,
-      valueName,
-      getFilterValues
+      valueName
     } = this.props;
 
     const iconStyle = css({
@@ -116,11 +118,7 @@ class TableFilter extends React.PureComponent {
       verticalAlign: 'middle'
     }, hover({ cursor: 'pointer' }));
 
-    const filterOptions = tableData && columnName ?
-      this.filterDropdownOptions(tableData, columnName) :
-      // Keeping the historical prop `getFilterValues` for backwards compatibility,
-      // will remove this once all apps are using this new component.
-      getFilterValues;
+    const filterOptions = this.filterDropdownOptions(tableData, columnName);
 
     return (
       <span {...iconStyle}>
