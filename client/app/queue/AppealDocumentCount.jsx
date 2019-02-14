@@ -62,8 +62,10 @@ class AppealDocumentCount extends React.PureComponent {
         return docCountForAppeal.precise;
       } else if (cached && _.isNumber(docCountForAppeal.cached)) {
         return docCountForAppeal.cached;
-      } else if (loadingText && (docCountForAppeal.loading || docCountForAppeal.error)) {
-        return docCountForAppeal.error || <span {...documentCountStyling}>Loading number of docs...</span>;
+      } else if (docCountForAppeal.error) {
+        return docCountForAppeal.error;
+      } else if (loadingText && docCountForAppeal.loading) {
+        return <span {...documentCountStyling}>Loading number of docs...</span>;
       }
     }
 
