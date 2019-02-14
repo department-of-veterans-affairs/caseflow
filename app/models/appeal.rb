@@ -119,8 +119,12 @@ class Appeal < DecisionReview
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
     active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
-    return active_tasks.order(:updated_at).last.assigned_to_label if active_tasks.any?
-    return tasks.order(:updated_at).last.assigned_to_label if tasks.any?
+    return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
+
+    on_hold_tasks = tasks.where(status: Constants.TASK_STATUSES.on_hold)
+    return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
+
+    return most_recently_assigned_to_label(tasks) if tasks.any?
 
     status_hash[:type].to_s.titleize
   end
@@ -623,6 +627,10 @@ class Appeal < DecisionReview
   end
 
   private
+
+  def most_recently_assigned_to_label(tasks)
+    tasks.order(:updated_at).last.assigned_to_label
+  end
 
   def maybe_create_translation_task
     veteran_state_code = veteran&.state
