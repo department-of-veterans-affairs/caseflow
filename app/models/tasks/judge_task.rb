@@ -70,5 +70,4 @@ class JudgeTask < Task
     task.children.all? { |t| !t.is_a?(JudgeTask) }
   end
   #:nocov:
-  # rubocop:enable Metrics/AbcSize
 end
