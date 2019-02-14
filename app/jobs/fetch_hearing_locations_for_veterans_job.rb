@@ -11,20 +11,26 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def find_appeals_ready_for_geomatching(appeal_type)
-    appeal_type.left_outer_joins(:available_hearing_locations).where("
-      id NOT IN (
-        SELECT appeal_id FROM tasks
-        WHERE type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
-        AND status NOT IN ('cancelled', 'completed')
-      )
-    ").where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
-      .limit(QUERY_LIMIT / 2)
+    appeal_type.left_outer_joins(:available_hearing_locations)
+      .joins("
+        LEFT OUTER JOINS (
+          SELECT appeal_id from tasks
+          WHERE type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
+          AND status NOT IN ('cancelled', 'completed')
+        ) admin_actions ON admin_actions.appeal_id = #{appeal_type.table_name}.id
+      ").joins("
+        LEFT OUTER JOINS (
+          SELECT appeal_id from tasks
+          WHERE type = 'ScheduleHearingTask'
+          AND status NOT IN ('cancelled', 'completed')
+        ) sch_tasks ON sch_.appeal_id = #{appeal_type.table_name}.id
+      ").where("sch_tasks.appeal_id IS NOT NULL and admin_actions.appeal_id IS NULL").limit(QUERY_LIMIT / 2)
   end
 
   def appeals
-    @appeals ||= appeals_from_file_numbers +
+    @appeals ||= (appeals_from_file_numbers +
                  find_appeals_ready_for_geomatching(LegacyAppeal) +
-                 find_appeals_ready_for_geomatching(Appeal)
+                 find_appeals_ready_for_geomatching(Appeal))[0..QUERY_LIMIT]
   end
 
   def fetch_and_update_ro_for_appeal(appeal, va_dot_gov_address:)
