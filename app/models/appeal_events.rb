@@ -173,7 +173,8 @@ class AppealEvents
   end
 
   def bva_decision_effectuation_event
-    AppealEvent.new(type: :bva_decision_effectuation, date: appeal.decision_effectuation_event_date)
+    AppealEvent.new(type: :bva_decision_effectuation,
+                    date: appeal.remanded_issues? ? nil : appeal.decision_effectuation_event_date)
   end
 
   def other_close_event
