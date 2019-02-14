@@ -119,6 +119,14 @@ export const onHearingOptionalTime = (hearingId, optionalTime) => ({
   }
 });
 
+export const onInvalidForm = (hearingId, invalid) => ({
+  type: ACTIONS.INVALID_FORM,
+  payload: {
+    hearingId,
+    invalid
+  }
+});
+
 export const onSelectedHearingDayChange = (selectedHearingDay) => ({
   type: ACTIONS.SELECTED_HEARING_DAY_CHANGE,
   payload: {

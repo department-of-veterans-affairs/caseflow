@@ -8,6 +8,10 @@ const getNonVeteranClaimant = (intakeData) => {
     return relationship.value === intakeData.claimant;
   });
 
+  if (!intakeData.payeeCode) {
+    return claimant[0].displayText;
+  }
+
   return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
 };
 
@@ -199,7 +203,7 @@ const formatRatingRequestIssues = (state) => {
         rating_issue_reference_id: issue.ratingIssueReferenceId,
         decision_text: issue.description,
         rating_issue_profile_date: issue.ratingIssueProfileDate,
-        rating_issue_disability_code: issue.ratingIssueDisabilityCode,
+        rating_issue_diagnostic_code: issue.ratingIssueDiagnosticCode,
         notes: issue.notes,
         untimely_exemption: issue.untimelyExemption,
         untimely_exemption_notes: issue.untimelyExemptionNotes,

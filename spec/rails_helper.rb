@@ -114,14 +114,12 @@ ActiveJob::Base.queue_adapter = :test
 # Convenience methods for stubbing current user
 module StubbableUser
   module ClassMethods
+    attr_writer :stub
+
     def clear_stub!
       Functions.delete_all_keys!
       @stub = nil
       @system_user = nil
-    end
-
-    def stub=(user)
-      @stub = user
     end
 
     def authenticate!(css_id: nil, roles: nil, user: nil)

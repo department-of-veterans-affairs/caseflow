@@ -387,6 +387,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
           getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
           defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
           alternateColumnNames={COLUMN_NAMES}
+          enablePagination
           rowClassNames={(task) =>
             this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />
       </div>
