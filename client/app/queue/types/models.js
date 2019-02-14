@@ -134,8 +134,8 @@ export type AppealDetail = {
   powerOfAttorney: ?PowerOfAttorney,
   caseflowVeteranId: ?string,
   tasks: ?Array<Task>,
-  veteranAvailableHearingLocations: ?Array<Object>,
-  veteranClosestRegionalOffice: ?string
+  availableHearingLocations: ?Array<Object>,
+  closestRegionalOffice: ?string
 };
 
 export type AppealDetails = { [string]: AppealDetail };

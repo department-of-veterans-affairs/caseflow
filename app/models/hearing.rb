@@ -30,8 +30,7 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
-  delegate :veteran_available_hearing_locations, to: :appeal
-  delegate :veteran_closest_regional_office, to: :appeal
+  delegate :available_hearing_locations, to: :appeal
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
@@ -151,8 +150,7 @@ class Hearing < ApplicationRecord
         :appeal_representative_name,
         :location,
         :worksheet_issues,
-        :veteran_closest_regional_office,
-        :veteran_available_hearing_locations
+        :available_hearing_locations
       ]
     )
   end

@@ -205,8 +205,8 @@ export default class DailyDocket extends React.Component {
 
   getHearingLocationDropdown = (hearing, readOnly) => {
     const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
-    let staticHearingLocations = hearing.veteranAvailableHearingLocations ?
-      _.values(hearing.veteranAvailableHearingLocations) : [];
+    let staticHearingLocations = hearing.availableHearingLocations ?
+      _.values(hearing.availableHearingLocations) : [];
 
     // always static for now
     if (staticHearingLocations.length === 0 && hearing.location) {

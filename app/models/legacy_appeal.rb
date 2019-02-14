@@ -199,10 +199,6 @@ class LegacyAppeal < ApplicationRecord
     @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
   end
 
-  def veteran_available_hearing_locations
-    veteran_if_exists&.available_hearing_locations
-  end
-
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number)
   end

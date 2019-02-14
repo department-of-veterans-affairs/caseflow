@@ -223,7 +223,6 @@ class Appeal < DecisionReview
            :gender,
            :date_of_birth,
            :age,
-           :closest_regional_office,
            :available_hearing_locations,
            :country, to: :veteran, prefix: true
 

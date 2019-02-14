@@ -125,8 +125,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       return;
     }
 
-    if (appeal.veteranAvailableHearingLocations) {
-      const location = appeal.veteranAvailableHearingLocations[0];
+    if (appeal.availableHearingLocations) {
+      const location = appeal.availableHearingLocations[0];
 
       if (location) {
         this.props.onHearingLocationChange({
@@ -196,8 +196,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       selectedHearingLocation
     } = this.props;
 
-    const veteranHearingLocations = appeal.veteranAvailableHearingLocations || [];
-    const hearingLocation = selectedHearingLocation || veteranHearingLocations[0];
+    const appealHearingLocations = appeal.availableHearingLocations || [];
+    const hearingLocation = selectedHearingLocation || appealHearingLocations[0];
 
     const payload = {
       data: {
@@ -386,8 +386,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           key={`ahl-dropdown__${currentRegionalOffice || ''}`}
           regionalOffice={currentRegionalOffice}
           veteranFileNumber={appeal.veteranFileNumber}
-          dynamic={appeal.veteranClosestRegionalOffice !== currentRegionalOffice}
-          staticHearingLocations={appeal.veteranAvailableHearingLocations}
+          dynamic={appeal.closestRegionalOffice !== currentRegionalOffice}
+          staticHearingLocations={appeal.availableHearingLocations}
           onChange={this.props.onHearingLocationChange}
           value={selectedHearingLocation}
         />}
