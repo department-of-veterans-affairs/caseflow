@@ -15,8 +15,8 @@ describe DecisionReviewTask do
     let(:task_status) { "assigned" }
     let!(:request_issues) do
       [
-        create(:request_issue, :rating, review_request: hlr, benefit_type: benefit_type),
-        create(:request_issue, :rating, review_request: hlr, benefit_type: benefit_type)
+        create(:request_issue, :rating, decision_review: hlr, benefit_type: benefit_type),
+        create(:request_issue, :rating, decision_review: hlr, benefit_type: benefit_type)
       ]
     end
     let(:decision_date) { "01/01/2019" }
