@@ -667,9 +667,9 @@ feature "Higher Level Review Edit issues" do
       create(
         :request_issue,
         review_request: higher_level_review,
-        contested_rating_issue_reference_id: "def456",
-        contested_rating_issue_profile_date: rating.profile_date,
-        contested_issue_description: "PTSD denied"
+        issue_category: "Accrued",
+        decision_date: 1.month.ago,
+        nonrating_issue_description: "test description"
       )
     end
 
@@ -681,9 +681,9 @@ feature "Higher Level Review Edit issues" do
 
     it "does not mention VBMS when removing an issue" do
       visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
-      expect(page).to have_content(request_issue.contested_issue_description)
+      expect(page).to have_content(request_issue.nonrating_issue_description)
 
-      click_remove_intake_issue_by_text(request_issue.contested_issue_description)
+      click_remove_intake_issue_by_text(request_issue.nonrating_issue_description)
       expect(page).to have_content("The contention you selected will be removed from the decision review.")
     end
   end
