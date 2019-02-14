@@ -16,6 +16,11 @@ class Issue
     @labels
   end
 
+  attr_writer :appeal
+  def appeal
+    @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(id)
+  end
+
   attr_writer :cavc_decisions
   def cavc_decisions
     # This should probably always be preloaded to avoid each issue triggering an additional VACOLS query.
