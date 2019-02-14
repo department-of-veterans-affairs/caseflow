@@ -42,11 +42,19 @@ describe RatingIssue do
   context ".from_bgs_hash" do
     subject { RatingIssue.from_bgs_hash(rating, bgs_record) }
 
+    let(:associated_claims) do
+      [
+        { clm_id: "abc123", bnft_clm_tc: "040SCR" },
+        { clm_id: "dcf345", bnft_clm_tc: "154IVMC9PMC" }
+      ]
+    end
+
     let!(:rating) do
       Generators::Rating.build(
         participant_id: "123",
         promulgation_date: promulgation_date,
-        profile_date: profile_date
+        profile_date: profile_date,
+        associated_claims: associated_claims
       )
     end
 
@@ -64,7 +72,8 @@ describe RatingIssue do
         reference_id: "NBA",
         decision_text: "This broadcast may not be reproduced",
         profile_date: profile_date,
-        contention_reference_id: nil
+        contention_reference_ids: [],
+        benefit_type: :pension
       )
     end
 
@@ -82,7 +91,8 @@ describe RatingIssue do
           reference_id: "NBA",
           decision_text: "This broadcast may not be reproduced",
           profile_date: profile_date,
-          contention_reference_id: "foul"
+          contention_reference_ids: ["foul"],
+          benefit_type: :pension
         )
       end
     end
@@ -92,7 +102,10 @@ describe RatingIssue do
         {
           rba_issue_id: "NBA",
           decn_txt: "This broadcast may not be reproduced",
-          rba_issue_contentions: [{ prfil_dt: Time.zone.now, cntntn_id: "foul" }]
+          rba_issue_contentions: [
+            { prfil_dt: Time.zone.now, cntntn_id: "foul" },
+            { prfil_dt: Time.zone.now, cntntn_id: "dunk" }
+          ]
         }
       end
 
@@ -101,7 +114,7 @@ describe RatingIssue do
           reference_id: "NBA",
           decision_text: "This broadcast may not be reproduced",
           profile_date: profile_date,
-          contention_reference_id: "foul"
+          contention_reference_ids: %w[foul dunk]
         )
       end
     end

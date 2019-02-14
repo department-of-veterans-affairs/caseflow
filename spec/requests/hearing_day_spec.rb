@@ -143,26 +143,30 @@ RSpec.describe "Hearing Schedule", type: :request do
       }
       get "/hearings/hearing_day", params: { start_date: "2017-01-01", end_date: "2017-06-15" }, headers: headers
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearings"].size).to eq(3)
-      expect(JSON.parse(response.body)["hearings"][2]["regional_office"]).to eq("Louisville, KY")
+      # Pull only Video hearing days from VACOLS
+      expect(JSON.parse(response.body)["hearings"].size).to eq(1)
+      expect(JSON.parse(response.body)["hearings"][0]["regional_office"]).to eq("Louisville, KY")
     end
   end
 
   describe "Show a hearing day with its children hearings" do
+    let!(:regional_office) do
+      create(:staff, stafkey: "RO13", stc4: 11)
+    end
     let!(:child_hearing) do
       create(:case_hearing,
-             hearing_type: "V",
+             hearing_type: HearingDay::REQUEST_TYPES[:video],
              hearing_date: DateTime.new(2018, 4, 2, 8, 30, 0, "+0"),
              folder_nr: create(:case).bfkey)
     end
     let!(:co_hearing) do
       create(:case_hearing,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: DateTime.new(2018, 4, 2, 9, 0, 0, "+0"),
              folder_nr: create(:case).bfkey)
     end
 
-    it "returns video children hearings", skip: "This test is flaky" do
+    it "returns video children hearings" do
       headers = {
         "ACCEPT" => "application/json"
       }
@@ -176,7 +180,7 @@ RSpec.describe "Hearing Schedule", type: :request do
       headers = {
         "ACCEPT" => "application/json"
       }
-      get "/hearings/hearing_day/" + co_hearing.hearing_pkseq.to_s, headers: headers
+      get "/hearings/hearing_day/" + co_hearing.vdkey.to_s, headers: headers
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)["hearing_day"]["request_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing_day"]["hearings"].count).to eq(1)
@@ -331,13 +335,15 @@ RSpec.describe "Hearing Schedule", type: :request do
       create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
     let!(:hearing_day) do
-      create(:hearing_day, hearing_type: "C", scheduled_for: Date.new(2019, 1, 7))
+      create(:hearing_day,
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
+             scheduled_for: Date.new(2019, 1, 7))
     end
     let!(:hearings) do
       RequestStore[:current_user] = user
       Generators::Vacols::Staff.create(sattyid: "111")
       create(:case_hearing,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: VacolsHelper.format_datetime_with_utc_timezone(Time.zone.local(2019, 0o1, 0o7, 9, 0, 0)),
              folder_nr: appeal.vacols_id,
              vdkey: hearing_day.id)

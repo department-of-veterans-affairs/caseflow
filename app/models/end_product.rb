@@ -6,7 +6,8 @@ class EndProduct
   STATUSES = {
     "PEND" => "Pending",
     "CLR" => "Cleared",
-    "CAN" => "Canceled"
+    "CAN" => "Canceled",
+    "RW" => "Ready to work"
   }.freeze
 
   INACTIVE_STATUSES = %w[CAN CLR].freeze
@@ -40,7 +41,7 @@ class EndProduct
 
   EFFECTUATION_CODES = {
     "030BGR" => "Board Grant Rating",
-    "030BGNR" => "Board Grant Non-Rating",
+    "030BGRNR" => "Board Grant Non-Rating",
     "030BGRPMC" => "PMC Board Grant Rating",
     "030BGNRPMC" => "PMC Board Grant Non-Rating"
   }.freeze
@@ -79,6 +80,8 @@ class EndProduct
   CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES).merge(EFFECTUATION_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
+
+  DEFAULT_PAYEE_CODE = "00".freeze
 
   attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :last_action_date,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter, :payee_code,
@@ -223,11 +226,11 @@ class EndProduct
     def from_bgs_hash(hash)
       new(
         claim_id: hash[:benefit_claim_id],
-        claim_date: parse_claim_date(hash[:claim_receive_date]),
+        claim_date: parse_date(hash[:claim_receive_date]).try(:in_time_zone),
         claim_type_code: hash[:claim_type_code],
         modifier: hash[:end_product_type_code],
         status_type_code: hash[:status_type_code],
-        last_action_date: hash[:last_action_date],
+        last_action_date: parse_date(hash[:last_action_date]),
         claimant_first_name: hash[:claimant_first_name],
         claimant_last_name: hash[:claimant_last_name],
         payee_code: hash[:payee_type_code]
@@ -236,20 +239,26 @@ class EndProduct
 
     def from_establish_claim_params(hash)
       new(
-        claim_date: parse_claim_date(hash[:date]),
+        claim_date: parse_date(hash[:date]).try(:in_time_zone),
         claim_type_code: hash[:end_product_code],
         modifier: hash[:end_product_modifier],
         suppress_acknowledgement_letter: hash[:suppress_acknowledgement_letter],
         gulf_war_registry: hash[:gulf_war_registry],
         station_of_jurisdiction: hash[:station_of_jurisdiction],
-        payee_code: hash[:payee_code] || "00"
+        payee_code: hash[:payee_code] || DEFAULT_PAYEE_CODE
       )
     end
 
     private
 
-    def parse_claim_date(date)
-      Date.strptime(date, "%m/%d/%Y").in_time_zone
+    def parse_date(date)
+      return unless date
+
+      begin
+        Date.iso8601(date)
+      rescue ArgumentError => _err
+        Date.strptime(date, "%m/%d/%Y")
+      end
     end
   end
 end

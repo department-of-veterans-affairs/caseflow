@@ -44,9 +44,10 @@ describe Veteran do
   let(:service) { [{ branch_of_service: "army" }] }
 
   context ".find_or_create_by_file_number" do
-    subject { Veteran.find_or_create_by_file_number(file_number) }
+    subject { Veteran.find_or_create_by_file_number(file_number, sync_name: sync_name) }
 
     let(:file_number) { "444555666" }
+    let(:sync_name) { false }
 
     context "when veteran exists in the DB" do
       let!(:saved_veteran) do
@@ -98,6 +99,34 @@ describe Veteran do
         let(:file_number) { "88556677" }
 
         it { is_expected.to be nil }
+      end
+    end
+
+    context "exists in BGS with different name than in Caseflow" do
+      let!(:veteran) { create(:veteran, file_number: file_number) }
+
+      before do
+        Fakes::BGSService.veteran_records[file_number][:last_name] = "Changed"
+      end
+
+      context "sync_name flag is true" do
+        let(:sync_name) { true }
+
+        it "updates Caseflow cache when found by file number" do
+          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+          expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
+          expect(veteran.reload.last_name).to eq "Changed"
+        end
+      end
+
+      context "sync_name flag is false" do
+        let(:sync_name) { false }
+
+        it "does not update Caseflow cache when found by file number" do
+          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+          expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
+          expect(veteran.reload.last_name).to eq "Smith"
+        end
       end
     end
   end
@@ -437,6 +466,184 @@ describe Veteran do
 
     it "returns nil if a Veteran does not exist in BGS or Caseflow" do
       expect(described_class.find_by_file_number_or_ssn("000000000")).to be_nil
+    end
+
+    context "exists in BGS with different name than in Caseflow" do
+      before do
+        Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
+      end
+
+      context "sync_name flag is true" do
+        let(:sync_name) { true }
+
+        it "updates Caseflow cache when found by file number" do
+          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+          expect(described_class.find_by_file_number_or_ssn(file_number, sync_name: sync_name)).to eq(veteran)
+          expect(veteran.reload.last_name).to eq "Changed"
+        end
+
+        it "updates Caseflow cache when found by SSN" do
+          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+          expect(described_class.find_by_file_number_or_ssn(ssn, sync_name: sync_name)).to eq(veteran)
+          expect(veteran.reload.last_name).to eq "Changed"
+        end
+      end
+
+      context "sync_name flag is false" do
+        let(:sync_name) { false }
+
+        it "does not update Caseflow cache when found by file number" do
+          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+          expect(described_class.find_by_file_number_or_ssn(file_number, sync_name: sync_name)).to eq(veteran)
+          expect(veteran.reload.last_name).to eq "Smith"
+        end
+
+        it "does not update Caseflow cache when found by SSN" do
+          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+          expect(described_class.find_by_file_number_or_ssn(ssn, sync_name: sync_name)).to eq(veteran)
+          expect(veteran.reload.last_name).to eq "Smith"
+        end
+      end
+    end
+  end
+
+  describe ".find_or_create_by_file_number_or_ssn" do
+    let(:file_number) { "123456789" }
+    let(:ssn) { file_number.to_s.reverse } # our fakes do this
+    let!(:veteran) { create(:veteran, file_number: file_number) }
+
+    it "fetches based on file_number" do
+      expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran)
+    end
+
+    it "fetches based on SSN" do
+      expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran)
+    end
+
+    context "does not exist in Caseflow" do
+      before do
+        veteran.destroy! # leaves it in BGS
+      end
+
+      it "returns a new Veteran by SSN" do
+        new_veteran = described_class.find_or_create_by_file_number_or_ssn(ssn)
+
+        expect(new_veteran.file_number).to eq(file_number)
+        expect(new_veteran.id).to_not eq(veteran.id)
+      end
+
+      it "returns a new Veteran by file number" do
+        new_veteran = described_class.find_or_create_by_file_number_or_ssn(file_number)
+
+        expect(new_veteran.ssn).to eq(ssn)
+        expect(new_veteran.id).to_not eq(veteran.id)
+      end
+    end
+
+    context "exists in BGS with different name than in Caseflow" do
+      before do
+        Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
+      end
+
+      context "sync_name flag is true" do
+        let(:sync_name) { true }
+
+        it "updates Caseflow cache when found by file number" do
+          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+          expect(described_class.find_or_create_by_file_number_or_ssn(file_number, sync_name: sync_name)).to eq(veteran)
+          expect(veteran.reload.last_name).to eq "Changed"
+        end
+
+        it "updates Caseflow cache when found by SSN" do
+          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+          expect(described_class.find_or_create_by_file_number_or_ssn(ssn, sync_name: sync_name)).to eq(veteran)
+          expect(veteran.reload.last_name).to eq "Changed"
+        end
+      end
+
+      context "sync_name flag is false" do
+        let(:sync_name) { false }
+
+        it "does not update Caseflow cache when found by file number" do
+          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+          expect(described_class.find_or_create_by_file_number_or_ssn(file_number, sync_name: sync_name)).to eq(veteran)
+          expect(veteran.reload.last_name).to eq "Smith"
+        end
+
+        it "does not update Caseflow cache when found by SSN" do
+          expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
+          expect(described_class.find_or_create_by_file_number_or_ssn(ssn, sync_name: sync_name)).to eq(veteran)
+          expect(veteran.reload.last_name).to eq "Smith"
+        end
+      end
+    end
+  end
+
+  describe "#stale_name?" do
+    let(:first_name) { "Jane" }
+    let(:last_name) { "Doe" }
+    let(:middle_name) { "Q" }
+    let(:name_suffix) { "Esq" }
+    let(:bgs_first_name) { first_name }
+    let(:bgs_last_name) { last_name }
+    let(:bgs_middle_name) { middle_name }
+    let(:bgs_name_suffix) { name_suffix }
+    let!(:veteran) do
+      create(
+        :veteran,
+        first_name: first_name,
+        last_name: last_name,
+        middle_name: middle_name,
+        name_suffix: name_suffix,
+        bgs_veteran_record: {
+          first_name: bgs_first_name,
+          last_name: bgs_last_name,
+          middle_name: bgs_middle_name,
+          name_suffix: bgs_name_suffix
+        }
+      )
+    end
+
+    subject { veteran.stale_name? }
+
+    context "no difference" do
+      it { is_expected.to eq(false) }
+    end
+
+    context "first_name is nil" do
+      let(:first_name) { nil }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "last_name is nil" do
+      let(:last_name) { nil }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "first_name does not match BGS" do
+      let(:bgs_first_name) { "Changed" }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "last_name does not match BGS" do
+      let(:bgs_last_name) { "Changed" }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "middle_name does not match BGS" do
+      let(:bgs_middle_name) { "Changed" }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "name_suffix does not match BGS" do
+      let(:bgs_name_suffix) { "Changed" }
+
+      it { is_expected.to eq(true) }
     end
   end
 end

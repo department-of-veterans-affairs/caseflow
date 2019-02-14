@@ -64,7 +64,6 @@ Install the base dependencies via Homebrew:
     brew install rbenv nodenv yarn
     brew tap ouchxp/nodenv
     brew install nodenv-nvmrc
-    brew install postgresql
     brew tap caskroom/cask
     brew cask install chromedriver
 
@@ -388,6 +387,38 @@ add more links and users as needed.
 To run the test suite:
 
     bundle exec rake
+
+### Testing frontend changes in feature specs
+
+Making frontend changes requires Webpack to compile the assets in order for the
+spec to pick up the changes. To automatically compile assets after every change,
+you can turn on Webpack's [Hot Module Replacement](https://webpack.js.org/concepts/hot-module-replacement/)
+by setting the env var `REACT_ON_RAILS_ENV` to `HOT` in your Terminal session.
+
+For example:
+```console
+export REACT_ON_RAILS_ENV=HOT
+bundle exec rspec spec/feature/queue/case_details_spec.rb:350
+```
+or
+```console
+REACT_ON_RAILS_ENV=HOT bundle exec rspec spec/feature/queue/case_details_spec.rb:350
+```
+
+For less typing, create an alias in your shell profile (such as `.bash_profile`):
+```
+alias ber='REACT_ON_RAILS_ENV=HOT bundle exec rspec'
+```
+To run a specific test with this alias:
+```console
+ber spec/feature/queue/case_details_spec.rb:350
+```
+
+The webpack server also needs to be running while you are testing. Run this
+command in a separate Terminal pane:
+```
+cd client && yarn run dev:hot
+```
 
 ### focus
 

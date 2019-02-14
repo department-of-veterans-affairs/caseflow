@@ -25,6 +25,7 @@ describe ClaimReview do
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:benefit_type) { "compensation" }
+  let(:ineligible_reason) { nil }
 
   let(:rating_request_issue) do
     build(
@@ -33,7 +34,8 @@ describe ClaimReview do
       contested_rating_issue_reference_id: "reference-id",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       contested_issue_description: "decision text",
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      ineligible_reason: ineligible_reason
     )
   end
 
@@ -55,7 +57,8 @@ describe ClaimReview do
       nonrating_issue_description: "Issue text",
       issue_category: "surgery",
       decision_date: 4.days.ago.to_date,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      ineligible_reason: ineligible_reason
     )
   end
 
@@ -122,7 +125,7 @@ describe ClaimReview do
       create(
         :higher_level_review,
         receipt_date: receipt_date,
-        establishment_submitted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
+        establishment_last_submitted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 5).days.ago,
         establishment_attempted_at: (ClaimReview::REQUIRES_PROCESSING_WINDOW_DAYS + 1).days.ago
       )
     end
@@ -176,6 +179,39 @@ describe ClaimReview do
     context "decided more than a year ago" do
       it "considers it untimely" do
         expect(subject.timely_issue?(Time.zone.today - 400)).to eq(false)
+      end
+    end
+  end
+
+  context "#add_user_to_business_line!" do
+    subject { claim_review.add_user_to_business_line! }
+
+    before { RequestStore[:current_user] = user }
+    let(:user) { Generators::User.build }
+
+    context "when the intake is a" do
+      let(:benefit_type) { "compensation" }
+
+      it { is_expected.to be_nil }
+    end
+
+    context "when the intake is not compensation or pension" do
+      let(:benefit_type) { "education" }
+
+      context "when the user is already on the organization" do
+        let!(:existing_record) { OrganizationsUser.add_user_to_organization(user, claim_review.business_line) }
+
+        it "returns the existing record" do
+          expect(subject).to eq(existing_record)
+        end
+      end
+
+      context "when the user isn't added to the organization" do
+        it "adds the user to the organization" do
+          expect(OrganizationsUser.existing_record(user, claim_review.business_line)).to be_nil
+          subject
+          expect(OrganizationsUser.find_by(user: user, organization: claim_review.business_line)).to_not be_nil
+        end
       end
     end
   end
@@ -292,6 +328,17 @@ describe ClaimReview do
     context "when there's more than one issue" do
       let(:issues) { [rating_request_issue, non_rating_request_issue] }
 
+      context "when they're all ineligible" do
+        let(:ineligible_reason) { "duplicate_of_rating_issue_in_active_review" }
+
+        it "does not create end product establishments" do
+          subject
+
+          expect(rating_request_issue.reload.end_product_establishment).to be_nil
+          expect(non_rating_request_issue.reload.end_product_establishment).to be_nil
+        end
+      end
+
       it "creates the issues and assigns end product establishments to them" do
         subject
 
@@ -308,6 +355,24 @@ describe ClaimReview do
           expect(rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRRPMC")
           expect(non_rating_request_issue.reload.end_product_establishment).to have_attributes(code: "030HLRNRPMC")
         end
+      end
+    end
+
+    context "when there is a canceled end product establishment" do
+      let!(:canceled_epe) do
+        create(:end_product_establishment,
+               :canceled,
+               code: rating_request_issue.end_product_code,
+               source: claim_review,
+               veteran_file_number: claim_review.veteran.file_number)
+      end
+
+      let(:issues) { [non_rating_request_issue, rating_request_issue] }
+
+      it "does not attempt to re-use the canceled EPE" do
+        subject
+
+        expect(claim_review.reload.end_product_establishments.count).to eq(3)
       end
     end
   end
@@ -612,8 +677,10 @@ describe ClaimReview do
     context "when there are more than one end product establishments" do
       let(:issues) { [non_rating_request_issue, rating_request_issue] }
 
-      it "establishes the claim and creates the contetions in VBMS for each one" do
+      it "establishes the claim and creates the contentions in VBMS for each one" do
         subject
+
+        expect(claim_review.end_product_establishments.count).to eq(2)
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
@@ -715,6 +782,40 @@ describe ClaimReview do
 
     it "removes duplicate claimant names, if they exist" do
       expect([*sc].map(&:search_table_ui_hash).first[:claimant_names].length).to eq(1)
+    end
+  end
+
+  describe "#search_table_statuses" do
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
+    subject { claim_review.search_table_statuses }
+
+    context "claim says 'Processed in Caseflow' if it is processed in Caseflow" do
+      let(:benefit_type) { "foobar" }
+      let!(:expected_result) do
+        [{
+          ep_code: "Processed in Caseflow",
+          ep_status: ""
+        }]
+      end
+
+      it { is_expected.to eq expected_result }
+    end
+
+    context "if it is not processed in Caseflow and there are no end products" do
+      let(:benefit_type) { "compensation" }
+
+      it { is_expected.to eq [] }
+    end
+
+    context "if it is not processed in Caseflow and there are end products" do
+      let(:benefit_type) { "compensation" }
+      let(:end_product_establishment) { create(:end_product_establishment, source: claim_review) }
+
+      before do
+        end_product_establishment.commit!
+      end
+
+      it { is_expected.to have_attributes(length: 1) }
     end
   end
 

@@ -59,12 +59,14 @@ class DocumentFetcher
   def create_new_document!(document, ids)
     document.save!
 
-    # Find the most recent saved document with the given series_id that is not in the list of ids passed.
-    previous_documents = Document.where(series_id: document.series_id).order(:id)
-      .where.not(vbms_document_id: ids)
+    if document.series_id
+      # Find the most recent saved document with the given series_id that is not in the list of ids passed.
+      previous_documents = Document.where(series_id: document.series_id).order(:id)
+        .where.not(vbms_document_id: ids)
 
-    if previous_documents.count > 0
-      document.copy_metadata_from_document(previous_documents.last)
+      if previous_documents.any?
+        document.copy_metadata_from_document(previous_documents.last)
+      end
     end
 
     document

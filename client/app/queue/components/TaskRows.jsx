@@ -66,15 +66,17 @@ const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
 class TaskRows extends React.PureComponent {
   constructor(props) {
     super(props);
+
     this.state = {
-      taskInstructionsIsVisible: false
+      taskInstructionsIsVisible: { }
     };
   }
 
-  toggleTaskInstructionsVisibility = () => {
-    const prevState = this.state.taskInstructionsIsVisible;
+  toggleTaskInstructionsVisibility = (task) => {
+    const previousState = Object.assign({}, this.state.taskInstructionsIsVisible);
 
-    this.setState({ taskInstructionsIsVisible: !prevState });
+    previousState[task.uniqueId] = previousState[task.uniqueId] ? !previousState[task.uniqueId] : true;
+    this.setState({ taskInstructionsIsVisible: previousState });
   }
 
   daysSinceTaskAssignmentListItem = (task) => {
@@ -93,7 +95,7 @@ class TaskRows extends React.PureComponent {
   };
 
   assignedOnListItem = (task) => {
-    if (task.completedOn) {
+    if (task.closedAt) {
       return null;
     }
 
@@ -101,9 +103,9 @@ class TaskRows extends React.PureComponent {
       <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
-  completedOnListItem = (task) => {
-    return task.completedOn ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}</dt>
-      <dd><DateString date={task.completedOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+  closedAtListItem = (task) => {
+    return task.closedAt ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}</dt>
+      <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
   dueDateListItem = (task) => {
@@ -112,6 +114,10 @@ class TaskRows extends React.PureComponent {
   }
 
   daysWaitingListItem = (task) => {
+    if (task.closedAt) {
+      return null;
+    }
+
     return taskIsOnHold(task) ? <div><dt>{COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE}</dt>
       <dd><OnHoldLabel task={task} /></dd></div> : this.daysSinceTaskAssignmentListItem(task);
   }
@@ -148,7 +154,7 @@ class TaskRows extends React.PureComponent {
   }
 
   taskLabelListItem = (task) => {
-    if (task.completedOn) {
+    if (task.closedAt) {
       return null;
     }
 
@@ -161,9 +167,9 @@ class TaskRows extends React.PureComponent {
       return <br />;
     }
 
-    return <React.Fragment key={`${task.uniqueId}fragment`}>
-      {task.instructions.map((text) => <React.Fragment key={`${task.uniqueId}span`}>
-        <span key={`${task.uniqueId}instructions`}>{text}</span><br /></React.Fragment>)}
+    return <React.Fragment key={`${task.uniqueId} fragment`}>
+      {task.instructions.map((text) => <React.Fragment key={`${task.uniqueId} span`}>
+        <span key={`${task.uniqueId} instructions`}>{text}</span><br /></React.Fragment>)}
     </React.Fragment>;
   }
 
@@ -173,7 +179,7 @@ class TaskRows extends React.PureComponent {
     }
 
     return <div>
-      { this.state.taskInstructionsIsVisible &&
+      { this.state.taskInstructionsIsVisible[task.uniqueId] &&
       <React.Fragment key={`${task.uniqueId}instructions_text`} >
         <dt>{COPY.TASK_SNAPSHOT_TASK_INSTRUCTIONS_LABEL}</dt>
         <dd>{this.taskInstructionsWithLineBreaks(task)}</dd>
@@ -182,13 +188,17 @@ class TaskRows extends React.PureComponent {
         linkStyling
         styling={css({ padding: '0' })}
         id={task.uniqueId}
-        name={this.state.taskInstructionsIsVisible ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
+        name={this.state.taskInstructionsIsVisible[task.uniqueId] ? COPY.TASK_SNAPSHOT_HIDE_TASK_INSTRUCTIONS_LABEL :
           COPY.TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL}
-        onClick={this.toggleTaskInstructionsVisibility} />
+        onClick={() => this.toggleTaskInstructionsVisibility(task)} />
     </div>;
   }
 
   showActionsListItem = (task, appeal) => {
+    if (task.availableActions.length <= 0) {
+      return null;
+    }
+
     return this.showActionsSection(task) ? <div><h3>{COPY.TASK_SNAPSHOT_ACTION_BOX_TITLE}</h3>
       <ActionsDropdown task={task} appealId={appeal.externalId} /></div> : null;
   }
@@ -218,17 +228,17 @@ class TaskRows extends React.PureComponent {
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>
               { this.assignedOnListItem(task) }
-              { this.completedOnListItem(task) }
+              { this.closedAtListItem(task) }
               { this.dueDateListItem(task) }
-              { !task.completedOn && this.daysWaitingListItem(task) }
+              { !task.closedAt && this.daysWaitingListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
-            task.completedOn ? '' : greyDotTimelineStyling].join(' ')}>
-            { task.completedOn && timeline ? <GreenCheckmark /> : <GrayDot /> }
+            task.closedAt ? '' : greyDotTimelineStyling].join(' ')}>
+            { task.closedAt && timeline ? <GreenCheckmark /> : <GrayDot /> }
             { (((index < taskList.length) && timeline) || (index < taskList.length - 1 && !timeline)) &&
               <div {...grayLineStyling} className={[timeline ? grayLineTimelineStyling : '',
-                task.completedOn ? '' : greyDotAndlineStyling].join(' ')} /> }
+                task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
           </td>
           <td {...taskInformationContainerStyling}
             className={timeline ? taskInformationTimelineContainerStyling : ''}>
@@ -240,7 +250,8 @@ class TaskRows extends React.PureComponent {
               { this.taskInstructionsListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
-          { !timeline && <td {...taskActionsContainerStyling}> { this.showActionsListItem(task, appeal) } </td> }
+          { !timeline && <td {...taskActionsContainerStyling}>
+            { this.showActionsListItem(task, appeal) } </td> }
         </tr>
       ) }
       { timeline && appeal.isLegacyAppeal && <tr>

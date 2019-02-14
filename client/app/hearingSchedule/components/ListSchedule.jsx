@@ -51,6 +51,15 @@ const populateFilterDropDowns = (resultSet, filterName) => {
   return _.sortBy(uniqueOptions, 'displayText');
 };
 
+const judgeNameToIdMap = (hearings) => {
+  let nameToIdMap = {};
+
+  _.forEach(hearings, (hearingDay) => nameToIdMap[formatVljName(hearingDay.judgeLastName,
+    hearingDay.judgeFirstName)] = hearingDay.judgeId);
+
+  return nameToIdMap;
+};
+
 const filterSchedule = (scheduleToFilter, filterName, value) => {
   let filteredSchedule = {};
 
@@ -144,7 +153,7 @@ class ListSchedule extends React.Component {
         getFilterValues: uniqueRequestTypes,
         isDropdownFilterOpen: this.props.filterTypeIsOpen,
         anyFiltersAreSet: false,
-        toggleDropdownFilterVisiblity: this.props.toggleTypeFilterVisibility,
+        toggleDropdownFilterVisibility: this.props.toggleTypeFilterVisibility,
         setSelectedValue: this.setTypeSelectedValue
       },
       {
@@ -155,7 +164,7 @@ class ListSchedule extends React.Component {
         getFilterValues: uniqueLocations,
         isDropdownFilterOpen: this.props.filterLocationIsOpen,
         anyFiltersAreSet: false,
-        toggleDropdownFilterVisiblity: this.props.toggleLocationFilterVisibility,
+        toggleDropdownFilterVisibility: this.props.toggleLocationFilterVisibility,
         setSelectedValue: this.setLocationSelectedValue
       },
       {
@@ -174,7 +183,7 @@ class ListSchedule extends React.Component {
         getFilterValues: uniqueVljs,
         isDropdownFilterOpen: this.props.filterVljIsOpen,
         anyFiltersAreSet: false,
-        toggleDropdownFilterVisiblity: this.props.toggleVljFilterVisibility,
+        toggleDropdownFilterVisibility: this.props.toggleVljFilterVisibility,
         setSelectedValue: this.setVljSelectedValue
       }
     ];
@@ -203,8 +212,18 @@ class ListSchedule extends React.Component {
     this.props.toggleLocationFilterVisibility();
   };
 
+  /*
+    As props.hearingSchedule does not have judge full name we need to create a full name to judgeId mapping
+    to use when receiving the full name through the value parameter.
+   */
   setVljSelectedValue = (value) => {
-    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'judgeName', value));
+    const judges = judgeNameToIdMap(this.props.hearingSchedule);
+
+    if (value === 'null') {
+      this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'judgeLastName', null));
+    } else {
+      this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'judgeId', judges[value]));
+    }
     this.setState({
       filteredByList: this.state.filteredByList.concat(['VLJ'])
     });

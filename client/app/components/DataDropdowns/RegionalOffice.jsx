@@ -45,7 +45,7 @@ class RegionalOfficeDropdown extends React.Component {
         });
       });
 
-      regionalOfficeOptions.sort((first, second) => (first.label - second.label));
+      regionalOfficeOptions.sort((first, second) => (first.label < second.label ? -1 : 1));
 
       this.props.onReceiveDropdownData('regionalOffices', regionalOfficeOptions);
     });
@@ -71,7 +71,7 @@ class RegionalOfficeDropdown extends React.Component {
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value, option.label)}
+        onChange={(option) => onChange((option || {}).value, (option || {}).label)}
         options={options}
         errorMessage={errorMessage}
         placeholder={placeholder} />

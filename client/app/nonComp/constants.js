@@ -12,3 +12,5 @@ export const DECISION_ISSUE_UPDATE_STATUS = {
   SUCCEED: 'SUCCEED',
   FAIL: 'FAIL'
 };
+
+export const BOA_ADDRESS = '425 I St NW, Washington DC, 20001';

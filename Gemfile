@@ -8,12 +8,12 @@ gem "active_model_serializers", "~> 0.10.0"
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "2d0e08ea4157b725242777a6f876fc199f503b61"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "1af709bbcf61931420db621237f90cb8e21f3c1c"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8dde00d67b7c629e4b871f8dcb3617bfe989b3db"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "3b9edeeaebe3e6a49bb27e8d08486ed8b3959db4"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "0d56a6c6a2ec314f97bce863f6aeffe837d75a13"
 gem "dogstatsd-ruby"
 gem "holidays", "~> 6.4"
 # Use jquery as the JavaScript library

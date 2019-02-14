@@ -22,7 +22,7 @@ describe EndProductEstablishment do
   let(:payee_code) { "00" }
   let(:reference_id) { nil }
   let(:same_office) { false }
-  let(:source) { HigherLevelReview.new(veteran_file_number: veteran_file_number, same_office: same_office) }
+  let(:source) { create(:higher_level_review, veteran_file_number: veteran_file_number, same_office: same_office) }
   let(:invalid_modifiers) { nil }
   let(:synced_status) { nil }
   let(:committed_at) { nil }
@@ -582,6 +582,16 @@ describe EndProductEstablishment do
   context "#sync!" do
     subject { end_product_establishment.sync! }
 
+    let!(:request_issues) do
+      [
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
+          review_request: source
+        )
+      ]
+    end
+
     context "returns true if inactive" do
       let(:synced_status) { EndProduct::INACTIVE_STATUSES.first }
 
@@ -596,10 +606,11 @@ describe EndProductEstablishment do
 
     context "when a matching end product has been established" do
       let(:reference_id) { matching_ep.claim_id }
+      let(:status_type_code) { "CLR" }
       let!(:matching_ep) do
         Generators::EndProduct.build(
           veteran_file_number: veteran_file_number,
-          bgs_attrs: { status_type_code: "CAN" }
+          bgs_attrs: { status_type_code: status_type_code }
         )
       end
 
@@ -609,7 +620,7 @@ describe EndProductEstablishment do
         end
 
         it "re-raises  error" do
-          expect { subject }.to raise_error(EndProductEstablishment::BGSSyncError)
+          expect { subject }.to raise_error(::BGSSyncError)
         end
       end
 
@@ -625,7 +636,7 @@ describe EndProductEstablishment do
         end
 
         it "re-raises a transient ignorable error" do
-          expect { subject }.to raise_error(EndProductEstablishment::TransientBGSSyncError)
+          expect { subject }.to raise_error(::TransientBGSSyncError)
         end
       end
 
@@ -640,7 +651,7 @@ describe EndProductEstablishment do
         end
 
         it "re-raises a transient ignorable error" do
-          expect { subject }.to raise_error(EndProductEstablishment::TransientBGSSyncError)
+          expect { subject }.to raise_error(::TransientBGSSyncError)
         end
       end
 
@@ -661,10 +672,63 @@ describe EndProductEstablishment do
         end
       end
 
+      context "when the end product is canceled" do
+        let(:status_type_code) { "CAN" }
+
+        it "closes request issues" do
+          subject
+          expect(end_product_establishment.reload.synced_status).to eq("CAN")
+          expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
+          expect(request_issues.first.closed_status).to eq("end_product_canceled")
+        end
+      end
+
       it "updates last_synced_at and synced_status" do
         subject
         expect(end_product_establishment.reload.last_synced_at).to eq(Time.zone.now)
+        expect(end_product_establishment.reload.synced_status).to eq("CLR")
+      end
+    end
+  end
+
+  context "#cancel_unused_end_product!" do
+    subject { end_product_establishment.cancel_unused_end_product! }
+    let(:removed_at) { nil }
+    let!(:request_issues) do
+      [
+        create(
+          :request_issue,
+          end_product_establishment: end_product_establishment,
+          review_request: source,
+          removed_at: removed_at
+        )
+      ]
+    end
+
+    context "when there are no active request issues" do
+      let(:removed_at) { 1.day.ago }
+      it "cancels the end product and closes request issues" do
+        subject
         expect(end_product_establishment.reload.synced_status).to eq("CAN")
+        expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
+        expect(request_issues.first.closed_status).to eq("end_product_canceled")
+      end
+    end
+
+    context "when source is a RampReview" do
+      let(:source) { create(:ramp_election) }
+      it "does nothing" do
+        expect(subject).to be_nil
+        expect(end_product_establishment.reload.synced_status).to be_nil
+        expect(request_issues.first.closed_status).to be_nil
+      end
+    end
+
+    context "when there are still active request issues" do
+      it "does nothing" do
+        expect(subject).to be_nil
+        expect(end_product_establishment.reload.synced_status).to be_nil
+        expect(request_issues.first.closed_status).to be_nil
       end
     end
   end
@@ -754,31 +818,35 @@ describe EndProductEstablishment do
     end
 
     context "when the end product establishment has request issues" do
-      let!(:request_issues) do
-        [
-          create(
-            :request_issue,
-            end_product_establishment: end_product_establishment,
-            review_request: source,
-            decision_sync_submitted_at: nil
-          ),
-          create(
-            :request_issue,
-            end_product_establishment: end_product_establishment,
-            review_request: source,
-            decision_sync_submitted_at: nil
-          )
-        ]
+      let(:rating_issue) do
+        create(
+          :request_issue,
+          :rating,
+          end_product_establishment: end_product_establishment,
+          review_request: source,
+          decision_sync_submitted_at: nil
+        )
       end
+      let(:nonrating_issue) do
+        create(
+          :request_issue,
+          :nonrating,
+          end_product_establishment: end_product_establishment,
+          review_request: source,
+          decision_sync_submitted_at: nil
+        )
+      end
+      let!(:request_issues) { [rating_issue, nonrating_issue] }
 
       it "submits each request issue and starts decision sync job" do
         subject
 
-        expect(request_issues.first.reload.decision_sync_submitted_at).to_not be_nil
-        expect(request_issues.second.reload.decision_sync_submitted_at).to_not be_nil
+        # delay in processing should be 1 day for rating, immediatly for nonrating
+        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+        expect(nonrating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now)
 
-        expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.first)
-        expect(DecisionIssueSyncJob).to have_been_enqueued.with(request_issues.second)
+        expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(rating_issue)
+        expect(DecisionIssueSyncJob).to have_been_enqueued.with(nonrating_issue)
       end
     end
 
@@ -796,24 +864,23 @@ describe EndProductEstablishment do
       it "submits each effectuation and starts decision sync job" do
         subject
 
-        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to_not be_nil
-        expect(DecisionIssueSyncJob).to have_been_enqueued.with(board_grant_effectuation)
+        # delay in processing should be 1 day
+        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+        expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(board_grant_effectuation)
       end
     end
   end
 
   context "#on_decision_issue_sync_processed" do
-    subject { end_product_establishment.on_decision_issue_sync_processed }
+    subject { end_product_establishment.on_decision_issue_sync_processed(processing_request_issue) }
     let(:processed_at) { Time.zone.now }
-    let!(:request_issues) do
-      [
-        create(:request_issue,
-               review_request: source,
-               decision_sync_processed_at: Time.zone.now),
-        create(:request_issue,
-               review_request: source,
-               decision_sync_processed_at: processed_at)
-      ]
+
+    let(:processing_request_issue) do
+      create(:request_issue, review_request: source)
+    end
+
+    let!(:processed_request_issue) do
+      create(:request_issue, review_request: source, decision_sync_processed_at: Time.zone.now)
     end
 
     context "when decision issues are all synced" do
@@ -855,11 +922,117 @@ describe EndProductEstablishment do
     end
 
     context "when decision issues are not all synced" do
-      let(:processed_at) { nil }
+      let!(:not_processed_request_issue) do
+        create(:request_issue, review_request: source)
+      end
 
       it "does nothing" do
         subject
         expect(SupplementalClaim.find_by(decision_review_remanded: source)).to be_nil
+      end
+    end
+  end
+
+  context "#status" do
+    subject { epe.status }
+
+    context "if there is an end product" do
+      let(:epe) do
+        create(
+          :end_product_establishment,
+          source: source,
+          veteran_file_number: veteran_file_number,
+          modifier: modifier,
+          synced_status: synced_status,
+          established_at: 30.days.ago,
+          committed_at: 30.days.ago
+        )
+      end
+
+      let(:modifier) { nil }
+
+      context "and there is a modifier, show the modifier" do
+        let(:modifier) { "037" }
+
+        context "when there is a status" do
+          let(:synced_status) { "CLR" }
+
+          let!(:pending_request_issue) do
+            create(
+              :request_issue,
+              review_request: epe.source,
+              end_product_establishment: epe
+            )
+          end
+
+          it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared") }
+
+          context "when there are pending request issues to sync" do
+            let!(:pending_request_issue) do
+              create(
+                :request_issue,
+                review_request: epe.source,
+                end_product_establishment: epe,
+                decision_sync_submitted_at: Time.zone.now + 1.second
+              )
+            end
+
+            it { is_expected.to eq(ep_code: "EP 037", ep_status: "Cleared, Syncing decisions...") }
+
+            context "when there are pending request issues to sync with errors" do
+              let!(:errored_request_issue) do
+                create(
+                  :request_issue,
+                  review_request: epe.source,
+                  end_product_establishment: epe,
+                  decision_sync_submitted_at: Time.zone.now,
+                  decision_sync_error: "oh no"
+                )
+              end
+
+              it do
+                is_expected.to eq(
+                  ep_code: "EP 037",
+                  ep_status: "Cleared, Decisions sync failed. Support notified."
+                )
+              end
+            end
+          end
+        end
+      end
+
+      context "if there is no modifier, shows unknown" do
+        it { is_expected.to eq(ep_code: "EP Unknown", ep_status: "") }
+      end
+    end
+
+    context "if there is not an end product" do
+      let(:epe) do
+        create(
+          :end_product_establishment,
+          source: source,
+          veteran_file_number: veteran_file_number,
+          established_at: nil
+        )
+      end
+
+      context "if there was an error establishing the claim review" do
+        before { source.establishment_error = "big error" }
+        let(:expected_result) do
+          { ep_code: "",
+            ep_status: COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED }
+        end
+
+        it { is_expected.to eq expected_result }
+      end
+
+      context "if it is establishing" do
+        let(:expected_result) do
+          { ep_code: "",
+            ep_status: COPY::OTHER_REVIEWS_TABLE_ESTABLISHING }
+        end
+
+        it { is_expected.to eq expected_result }
       end
     end
   end

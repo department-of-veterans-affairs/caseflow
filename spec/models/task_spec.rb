@@ -216,6 +216,51 @@ describe Task do
     end
   end
 
+  describe "#return_to_attorney_data" do
+    let(:attorney) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Janet Avilez") }
+    let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+    let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
+    let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
+    let(:judge_task) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
+    let!(:attorney_task) do
+      FactoryBot.create(:ama_attorney_task, assigned_to: attorney, parent: judge_task, appeal: judge_task.appeal)
+    end
+
+    subject { judge_task.return_to_attorney_data }
+
+    context "there aren't any attorneys on the JudgeTeam" do
+      it "still shows the assigned attorney in selected and options" do
+        expect(subject[:selected]).to eq attorney
+        expect(subject[:options]).to eq [{ label: attorney.full_name, value: attorney.id }]
+      end
+    end
+
+    context "there are attorneys on the JudgeTeam" do
+      let(:attorney_names) { ["Jesse Abrecht", "Brenda Akery", "Crystal Andregg"] }
+
+      before do
+        OrganizationsUser.add_user_to_organization(attorney, judge_team)
+
+        attorney_names.each do |attorney_name|
+          another_attorney_on_the_team = FactoryBot.create(
+            :user, station_id: User::BOARD_STATION_ID, full_name: attorney_name
+          )
+          FactoryBot.create(:staff, :attorney_role, user: another_attorney_on_the_team)
+          OrganizationsUser.add_user_to_organization(another_attorney_on_the_team, judge_team)
+        end
+      end
+
+      it "shows the assigned attorney in selected, and all attorneys in options" do
+        expect(subject[:selected]).to eq attorney
+        expect(judge_team.non_admins.count).to eq attorney_names.count + 1
+        judge_team.non_admins.each do |team_attorney|
+          expect(subject[:options]).to include(label: team_attorney.full_name, value: team_attorney.id)
+        end
+      end
+    end
+  end
+
   describe ".root_task" do
     context "when sub-sub-sub...task has a root task" do
       let(:root_task) { FactoryBot.create(:root_task) }
@@ -282,6 +327,87 @@ describe Task do
     end
   end
 
+  describe ".active?" do
+    let(:status) { nil }
+    let(:task) { FactoryBot.create(:generic_task, status: status) }
+    subject { task.active? }
+
+    context "when status is assigned" do
+      let(:status) { Constants.TASK_STATUSES.assigned }
+
+      it "is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is in_progress" do
+      let(:status) { Constants.TASK_STATUSES.in_progress }
+
+      it "is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is on_hold" do
+      let(:status) { Constants.TASK_STATUSES.on_hold }
+
+      it "is active" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when status is completed" do
+      let(:status) { Constants.TASK_STATUSES.completed }
+
+      it "is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when status is cancelled" do
+      let(:status) { Constants.TASK_STATUSES.cancelled }
+
+      it "is not active" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
+  describe "#actions_available?" do
+    let(:user) { create(:user) }
+
+    context "when task status is on_hold" do
+      let(:task) { create(:generic_task, status: "on_hold") }
+
+      it "returns false" do
+        expect(task.actions_available?(user)).to eq(false)
+      end
+    end
+  end
+
+  describe "#actions_allowable?" do
+    let(:user) { create(:user) }
+
+    context "when task status is completed" do
+      let(:task) { create(:generic_task, status: "completed") }
+
+      it "returns false" do
+        expect(task.actions_allowable?(user)).to eq(false)
+      end
+    end
+
+    context "when user has subtask assigned to them" do
+      let(:organization) { create(:organization) }
+      let(:parent_task) { create(:generic_task, assigned_to: organization) }
+      let!(:task) { create(:generic_task, assigned_to: user, parent: parent_task) }
+
+      it "returns false" do
+        OrganizationsUser.add_user_to_organization(user, organization)
+        expect(parent_task.actions_allowable?(user)).to eq(false)
+      end
+    end
+  end
+
   describe "#create_from_params" do
     let!(:judge) { FactoryBot.create(:user) }
     let!(:attorney) { FactoryBot.create(:user) }
@@ -292,10 +418,19 @@ describe Task do
     before do
       FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
+
+      # Monkey patching might not be the best option, but we want to define a test_func
+      # for our available actions unwrapper to call. This is the simplest way to do it
+      class Task
+        def test_func(_user)
+          { type: Task.name }
+        end
+      end
+
       allow_any_instance_of(Task)
-        .to receive(:available_actions_unwrapper)
+        .to receive(:available_actions)
         .with(attorney)
-        .and_return([{ data: { type: Task.name } }])
+        .and_return([{ label: "test label", value: "test/path", func: "test_func" }])
     end
 
     subject { Task.create_from_params(params, attorney) }
@@ -363,6 +498,106 @@ describe Task do
 
       it "should not create a child task when a task assigned to the organization is created" do
         expect(subject.children).to eq([])
+      end
+    end
+  end
+
+  describe "#verify_user_can_create!" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:task) { FactoryBot.create(:generic_task) }
+
+    before do
+      allow(task).to receive(:available_actions).and_return(dummy_actions)
+    end
+
+    context "when task has an available action" do
+      let(:dummy_actions) do
+        [
+          { label: "test label", value: "test/path", func: "assign_to_attorney_data" }
+        ]
+      end
+
+      it "should not throw an error" do
+        expect { AttorneyTask.verify_user_can_create!(user, task) }.to_not raise_error(
+          Caseflow::Error::ActionForbiddenError
+        )
+      end
+
+      context "when task is completed" do
+        it "should throw an error" do
+          task.update!(status: :completed)
+          expect { AttorneyTask.verify_user_can_create!(user, task) }.to raise_error(
+            Caseflow::Error::ActionForbiddenError
+          )
+        end
+      end
+    end
+
+    context "when task has no available actions with AttorneyTask type" do
+      let(:dummy_actions) do
+        [
+          { label: "test label", value: "test/path", func: "assign_to_privacy_team_data" }
+        ]
+      end
+
+      it "should throw an error" do
+        expect { AttorneyTask.verify_user_can_create!(user, task) }.to raise_error(
+          Caseflow::Error::ActionForbiddenError
+        )
+      end
+    end
+
+    context "when task has no available actions" do
+      let(:dummy_actions) { [] }
+
+      it "should throw an error" do
+        expect { AttorneyTask.verify_user_can_create!(user, task) }.to raise_error(
+          Caseflow::Error::ActionForbiddenError
+        )
+      end
+    end
+  end
+
+  describe ".set_timestamps" do
+    let(:task) { FactoryBot.create(:task) }
+
+    context "when status changes to in_progress" do
+      let(:status) { Constants.TASK_STATUSES.in_progress }
+
+      it "should set started_at timestamp" do
+        expect(task.started_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.started_at).to_not eq(nil)
+      end
+    end
+
+    context "when status changes to on_hold" do
+      let(:status) { Constants.TASK_STATUSES.on_hold }
+
+      it "should set placed_on_hold_at timestamp" do
+        expect(task.placed_on_hold_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.placed_on_hold_at).to_not eq(nil)
+      end
+    end
+
+    context "when status changes to completed" do
+      let(:status) { Constants.TASK_STATUSES.completed }
+
+      it "should set closed_at timestamp" do
+        expect(task.closed_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.closed_at).to_not eq(nil)
+      end
+    end
+
+    context "when status changes to cancelled" do
+      let(:status) { Constants.TASK_STATUSES.cancelled }
+
+      it "should set closed_at timestamp" do
+        expect(task.closed_at).to eq(nil)
+        task.update!(status: status)
+        expect(task.closed_at).to_not eq(nil)
       end
     end
   end

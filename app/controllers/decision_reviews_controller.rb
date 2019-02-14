@@ -40,15 +40,19 @@ class DecisionReviewsController < ApplicationController
   end
 
   def task
-    @task ||= DecisionReviewTask.find(task_id)
+    @task ||= Task.includes([:appeal, :assigned_to]).find(task_id)
   end
 
   def in_progress_tasks
-    apply_task_serializer(business_line.tasks.order(assigned_at: :desc).reject(&:completed?))
+    apply_task_serializer(
+      business_line.tasks.includes([:assigned_to, :appeal]).order(assigned_at: :desc).reject(&:completed?)
+    )
   end
 
   def completed_tasks
-    apply_task_serializer(business_line.tasks.order(completed_at: :desc).select(&:completed?))
+    apply_task_serializer(
+      business_line.tasks.includes([:assigned_to, :appeal]).order(closed_at: :desc).select(&:completed?)
+    )
   end
 
   def business_line
@@ -60,15 +64,15 @@ class DecisionReviewsController < ApplicationController
   private
 
   def decision_date
-    return if task.is_a? BoardGrantEffectuationTask
+    return unless task.instance_of? DecisionReviewTask
 
-    Date.parse(params.require("decision_date")).to_datetime
+    Date.parse(allowed_params.require("decision_date")).to_datetime
   end
 
   def decision_issue_params
-    return if task.is_a? BoardGrantEffectuationTask
+    return unless task.instance_of? DecisionReviewTask
 
-    params.require("decision_issues").map do |decision_issue_param|
+    allowed_params.require("decision_issues").map do |decision_issue_param|
       decision_issue_param.permit(:request_issue_id, :disposition, :description)
     end
   end
@@ -99,6 +103,13 @@ class DecisionReviewsController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:decision_review_business_line_slug, :business_line_slug, :task_id)
+    params.permit(
+      :decision_review_business_line_slug,
+      :decision_review,
+      :decision_date,
+      :business_line_slug,
+      :task_id,
+      decision_issues: [:description, :disposition, :request_issue_id]
+    )
   end
 end

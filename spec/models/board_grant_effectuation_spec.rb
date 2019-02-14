@@ -44,8 +44,8 @@ describe BoardGrantEffectuation do
         promulgation_date: 15.days.ago,
         profile_date: 20.days.ago,
         issues: [
-          { reference_id: "ref_id1", decision_text: "PTSD denied", contention_reference_id: "contention_ref_id" },
-          { reference_id: "ref_id2", decision_text: "Left leg", contention_reference_id: "contention_ref_id2" }
+          { reference_id: "ref_id1", decision_text: "PTSD denied", contention_reference_id: "1111" },
+          { reference_id: "ref_id2", decision_text: "Left leg", contention_reference_id: "2222" }
         ],
         associated_claims: associated_claims
       )
@@ -72,7 +72,7 @@ describe BoardGrantEffectuation do
       let(:associated_claims) { [{ clm_id:  "ep_ref_id", bnft_clm_tc: "ep_code" }] }
 
       context "when a matching rating issue is found" do
-        let(:contention_reference_id) { "contention_ref_id" }
+        let(:contention_reference_id) { "1111" }
 
         it "Updates the granted decision issue" do
           subject
@@ -87,7 +87,7 @@ describe BoardGrantEffectuation do
       end
 
       context "when a matching rating issue is not found" do
-        let(:contention_reference_id) { "not_found" }
+        let(:contention_reference_id) { "9999" }
 
         it "is processed but does not update granted decision issue" do
           subject
@@ -127,7 +127,7 @@ describe BoardGrantEffectuation do
       let!(:not_matching_end_product_establishment) do
         FactoryBot.create(
           :end_product_establishment,
-          code: "030BGNR",
+          code: "030BGRNR",
           source: decision_document
         )
       end
@@ -217,7 +217,7 @@ describe BoardGrantEffectuation do
             payee_code: "00",
             benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
             user: User.system_user,
-            code: "030BGNR"
+            code: "030BGRNR"
           )
         end
       end
