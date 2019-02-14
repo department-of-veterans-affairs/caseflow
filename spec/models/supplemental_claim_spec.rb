@@ -170,7 +170,7 @@ describe SupplementalClaim do
     end
     let!(:request_issue) do
       create(:request_issue,
-             review_request: sc,
+             decision_review: sc,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: nil)
     end
