@@ -125,3 +125,9 @@ export const SPREADSHEET_TYPES = {
     template: '/JudgeAssignmentTemplate.xlsx'
   }
 };
+
+export const COLUMN_NAMES = {
+  requestType: 'Type',
+  regionalOffice: 'Regional Office',
+  vlj: 'VLJ'
+};

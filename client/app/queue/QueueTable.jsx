@@ -87,9 +87,7 @@ const HeaderRow = (props) => {
           </span>;
         }
 
-        // Keeping the historical prop `getFilterValues` for backwards compatibility,
-        // will remove this once all apps are using this new component.
-        if (column.enableFilter || column.getFilterValues) {
+        if (column.enableFilter) {
           filterIcon = <TableFilter
             {...column}
             toggleDropdownFilterVisibility={(columnName) => props.toggleDropdownFilterVisibility(columnName)}
@@ -264,7 +262,9 @@ export default class QueueTable extends React.PureComponent {
 
         // Only return the data point if it contains the value of the filter
         filteredData = filteredData.filter((row) => {
-          return filteredByList[columnName].includes(_.get(row, columnName));
+          const rowValue = typeof _.get(row, columnName) === 'undefined' ? 'null' : _.get(row, columnName);
+
+          return filteredByList[columnName].includes(rowValue);
         });
       }
     }
@@ -411,7 +411,6 @@ QueueTable.propTypes = {
     sortColIdx: PropTypes.number,
     sortAscending: PropTypes.bool
   }),
-  userReadableColumnNames: PropTypes.object,
   alternateColumnNames: PropTypes.object,
   enablePagination: PropTypes.bool,
   casesPerPage: PropTypes.number
