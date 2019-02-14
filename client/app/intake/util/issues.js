@@ -8,6 +8,10 @@ const getNonVeteranClaimant = (intakeData) => {
     return relationship.value === intakeData.claimant;
   });
 
+  if (!intakeData.payeeCode) {
+    return claimant[0].displayText;
+  }
+
   return `${claimant[0].displayText} (payee code ${intakeData.payeeCode})`;
 };
 

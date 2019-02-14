@@ -909,6 +909,7 @@ class SeedDB
     description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
     notes = "Pain disorder with 100\% evaluation per examination"
 
+    FeatureToggle.enable!(:ama_acd_tasks)
     FeatureToggle.enable!(:ama_auto_case_distribution)
 
     @ama_appeals << FactoryBot.create(
@@ -962,6 +963,8 @@ class SeedDB
     create_ama_hearing_appeals
     create_board_grant_tasks
     create_veteran_record_request_tasks
+
+    FetchHearingLocationsForVeteransJob.perform_now
 
     return if Rails.env.development?
 

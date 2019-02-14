@@ -10,16 +10,15 @@ RSpec.feature "Judge assignment to attorney" do
   let(:appeal_one) { FactoryBot.create(:appeal) }
   let(:appeal_two) { FactoryBot.create(:appeal) }
 
+  let!(:judge_task_one) { create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_one) }
+  let!(:judge_task_two) { create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_two) }
+
   before do
     team_attorneys.each do |attorney|
       create(:staff, :attorney_role, user: attorney)
       OrganizationsUser.add_user_to_organization(attorney, judge_team)
     end
-  end
 
-  before do
-    create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_one)
-    create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_two)
     User.authenticate!(user: judge.user)
   end
 
@@ -38,40 +37,44 @@ RSpec.feature "Judge assignment to attorney" do
       case_rows = page.find_all("tr[id^='table-row-']")
       expect(case_rows.length).to eq(2)
 
-      # step "checks both cases and assigns them to an attorney"
-      scroll_element_in_to_view(".usa-table-borderless")
-      check "1", allow_label_click: true
-      check "2", allow_label_click: true
+      step "checks both cases and assigns them to an attorney" do
+        scroll_element_in_to_view(".usa-table-borderless")
+        check judge_task_one.id.to_s, allow_label_click: true
+        check judge_task_two.id.to_s, allow_label_click: true
 
-      safe_click ".Select"
-      click_dropdown(text: attorney_one.full_name)
+        safe_click ".Select"
+        click_dropdown(text: attorney_one.full_name)
 
-      click_on "Assign 2 cases"
-      expect(page).to have_content("Assigned 2 cases")
+        click_on "Assign 2 cases"
+        expect(page).to have_content("Assigned 2 cases")
+      end
 
-      # step "navigates to the attorney's case list"
-      click_on "#{attorney_one.full_name} (2)"
-      expect(page).to have_content("#{attorney_one.full_name}'s Cases")
+      step "navigates to the attorney's case list" do
+        click_on "#{attorney_one.full_name} (2)"
+        expect(page).to have_content("#{attorney_one.full_name}'s Cases")
 
-      case_rows = page.find_all("tr[id^='table-row-']")
-      expect(case_rows.length).to eq(2)
+        case_rows = page.find_all("tr[id^='table-row-']")
+        expect(case_rows.length).to eq(2)
+      end
 
-      # step "checks one case and assigns it to another attorney"
-      scroll_element_in_to_view(".usa-table-borderless")
-      check "3", allow_label_click: true
+      step "checks one case and assigns it to another attorney" do
+        scroll_element_in_to_view(".usa-table-borderless")
+        check attorney_one.tasks.first.id.to_s, allow_label_click: true
 
-      safe_click ".Select"
-      click_dropdown(text: attorney_two.full_name)
+        safe_click ".Select"
+        click_dropdown(text: attorney_two.full_name)
 
-      click_on "Assign 1 case"
-      expect(page).to have_content("Assigned 1 case")
+        click_on "Assign 1 case"
+        expect(page).to have_content("Assigned 1 case")
+      end
 
-      # step "navigates to the other attorney's case list"
-      click_on "#{attorney_two.full_name} (1)"
-      expect(page).to have_content("#{attorney_two.full_name}'s Cases")
+      step "navigates to the other attorney's case list" do
+        click_on "#{attorney_two.full_name} (1)"
+        expect(page).to have_content("#{attorney_two.full_name}'s Cases")
 
-      case_rows = page.find_all("tr[id^='table-row-']")
-      expect(case_rows.length).to eq(1)
+        case_rows = page.find_all("tr[id^='table-row-']")
+        expect(case_rows.length).to eq(1)
+      end
     end
   end
 

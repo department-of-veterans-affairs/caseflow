@@ -344,6 +344,7 @@ class RequestIssue < ApplicationRecord
       return unless create_decision_issues
 
       end_product_establishment.on_decision_issue_sync_processed(self)
+      clear_error!
       processed!
     end
   end

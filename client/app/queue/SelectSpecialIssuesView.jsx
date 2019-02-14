@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -41,7 +40,10 @@ class SelectSpecialIssuesView extends React.PureComponent {
 
     const data = ApiUtil.convertToSnakeCase({ specialIssues });
 
-    this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, null);
+    this.props.requestSave(`/appeals/${appeal.externalId}/special_issues`, { data }, null).
+      catch(() => {
+        // handle the error from the frontend
+      });
   };
   render() {
     const { specialIssues } = this.props;
