@@ -512,7 +512,7 @@ describe HigherLevelReview do
         issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
-        expect(issue2[:last_action]).to be_nil
+        expect(issue2[:last_action]).to eq("denied")
         expect(issue2[:date]).to be_nil
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
