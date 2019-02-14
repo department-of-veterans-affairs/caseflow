@@ -45,7 +45,7 @@ class RootTask < GenericTask
     end
 
     def create_ihp_tasks!(appeal, parent)
-      appeal.vsos.map do |vso_organization|
+      appeal.vsos.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
         # For some RAMP appeals, this method may run twice.
         existing_tasks = InformalHearingPresentationTask.where(
           appeal: appeal,
@@ -113,6 +113,7 @@ class RootTask < GenericTask
           create_evidence_submission_task!(appeal, distribution_task)
         elsif appeal.hearing_docket?
           create_hearing_schedule_task!(appeal, distribution_task)
+          create_ihp_tasks!(appeal, distribution_task)
         else
           vso_tasks = create_ihp_tasks!(appeal, distribution_task)
           # If the appeal is direct docket and there are no ihp tasks,
