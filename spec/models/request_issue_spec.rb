@@ -202,6 +202,23 @@ describe RequestIssue do
         expect(RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)).to be_nil
       end
     end
+
+    context "EPE does not yet have a synced status" do
+      let(:active_rating_request_issue) do
+        rating_request_issue.tap do |ri|
+          ri.update!(end_product_establishment: create(:end_product_establishment))
+        end
+      end
+
+      let(:rating_issue) do
+        RatingIssue.new(reference_id: active_rating_request_issue.contested_rating_issue_reference_id)
+      end
+
+      it "treats EPE as active" do
+        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
+        expect(in_review).to eq(rating_request_issue)
+      end
+    end
   end
 
   context "#end_product_code" do
@@ -1049,6 +1066,7 @@ describe RequestIssue do
             end
 
             it "creates decision issues based on rating issues" do
+              rating_request_issue.decision_sync_error = "previous error"
               subject
               expect(rating_request_issue.decision_issues.count).to eq(1)
               expect(rating_request_issue.decision_issues.first).to have_attributes(
@@ -1064,6 +1082,7 @@ describe RequestIssue do
                 end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
               )
               expect(rating_request_issue.processed?).to eq(true)
+              expect(rating_request_issue.decision_sync_error).to be_nil
             end
 
             context "when decision issue with disposition and rating issue already exists" do
