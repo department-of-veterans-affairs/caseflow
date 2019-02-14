@@ -95,7 +95,7 @@ feature "Appeal Edit issues" do
 
   let(:nonrating_request_issue_attributes) do
     {
-      review_request: appeal,
+      decision_review: appeal,
       issue_category: "Military Retired Pay",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
@@ -107,7 +107,7 @@ feature "Appeal Edit issues" do
 
   let(:rating_request_issue_attributes) do
     {
-      review_request: appeal,
+      decision_review: appeal,
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date,
       contested_issue_description: "PTSD denied",

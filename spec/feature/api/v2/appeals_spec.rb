@@ -376,7 +376,7 @@ describe "Appeals API v2", type: :request do
 
     let!(:hlr_request_issue) do
       create(:request_issue,
-             review_request: hlr,
+             decision_review: hlr,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: nil)
     end
@@ -396,7 +396,7 @@ describe "Appeals API v2", type: :request do
 
     let!(:sc_request_issue) do
       create(:request_issue,
-             review_request: supplemental_claim_review,
+             decision_review: supplemental_claim_review,
              benefit_type: "pension",
              contested_rating_issue_diagnostic_code: "9999")
     end

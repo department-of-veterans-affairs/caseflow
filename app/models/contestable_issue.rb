@@ -4,11 +4,10 @@ class ContestableIssue
 
   # approx_decision_date is our best guess at the decision date.
   # it is used for timeliness checks on the client side and for user display.
-
   attr_accessor :rating_issue_reference_id, :approx_decision_date, :description,
                 :ramp_claim_id, :contesting_decision_review,
                 :decision_issue_id, :rating_issue_profile_date, :source_request_issues,
-                :rating_issue_diagnostic_code
+                :rating_issue_diagnostic_code, :source_decision_review
 
   class << self
     def from_rating_issue(rating_issue, contesting_decision_review)
@@ -18,9 +17,13 @@ class ContestableIssue
         approx_decision_date: rating_issue.promulgation_date.to_date,
         description: rating_issue.decision_text,
         ramp_claim_id: rating_issue.ramp_claim_id,
-        source_request_issues: rating_issue.source_request_issues,
         contesting_decision_review: contesting_decision_review,
-        rating_issue_diagnostic_code: rating_issue.diagnostic_code
+        rating_issue_diagnostic_code: rating_issue.diagnostic_code,
+
+        # TODO: These should never be set unless there is a decision issue. We should refactor this to
+        # account for that.
+        source_request_issues: rating_issue.source_request_issues,
+        source_decision_review: rating_issue.source_request_issues.first&.decision_review
       )
     end
 
@@ -32,6 +35,7 @@ class ContestableIssue
         approx_decision_date: decision_issue.approx_decision_date,
         description: decision_issue.description,
         source_request_issues: decision_issue.request_issues.open,
+        source_decision_review: decision_issue.decision_review,
         contesting_decision_review: contesting_decision_review
       )
     end
@@ -53,19 +57,19 @@ class ContestableIssue
   end
 
   def source_review_type
-    return unless source_request_issues.first
+    source_decision_review&.class&.name
+  end
 
-    decision_issue? ? source_request_issues.first.decision_review_type : source_request_issues.first.review_request_type
+  # If a contestable issue is currently being reviewed by an open request issue on another decision review,
+  # then this method returns the title of that review.
+  def title_of_active_review
+    conflicting_request_issue.try(:review_title)
   end
 
   private
 
   def decision_issue?
     !!decision_issue_id
-  end
-
-  def title_of_active_review
-    conflicting_request_issue.try(:review_title)
   end
 
   def conflicting_request_issue_by_rating
@@ -81,7 +85,7 @@ class ContestableIssue
   end
 
   def potentially_conflicting_request_issues
-    RequestIssue.where.not(review_request: contesting_decision_review)
+    RequestIssue.where.not(decision_review: contesting_decision_review)
   end
 
   def conflicting_request_issue
@@ -97,8 +101,8 @@ class ContestableIssue
   def different_decision_review(found_request_issue)
     return unless found_request_issue
 
-    found_request_issue.review_request_id != contesting_decision_review.id ||
-      found_request_issue.review_request_type != contesting_decision_review.class.name
+    found_request_issue.decision_review_id != contesting_decision_review.id ||
+      found_request_issue.decision_review_type != contesting_decision_review.class.name
   end
 
   def timely?
