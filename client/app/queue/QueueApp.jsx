@@ -394,13 +394,9 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK.value}`}
+            path={'/queue/appeals/:appealId/tasks/:taskId/' +
+              `(${TASK_ACTIONS.WITHDRAW_HEARING.value}|${TASK_ACTIONS.CANCEL_TASK.value})`}
             title="Cancel task | Caseflow"
-            render={this.routedCancelTaskModal} />
-          <PageRoute
-            exact
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.WITHDRAW_HEARING.value}`}
-            title="Withdraw Hearing | Caseflow"
             render={this.routedCancelTaskModal} />
           <PageRoute
             exact

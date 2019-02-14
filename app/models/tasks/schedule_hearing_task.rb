@@ -97,9 +97,8 @@ class ScheduleHearingTask < GenericTask
 
         slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
         HoldHearingTask.create_hold_hearing_task!(appeal, parent)
-      elsif params[:status] == "canceled"
+      elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
-        params[:status] = Constants.TASK_STATUSES.completed
       end
 
       super(params, current_user)

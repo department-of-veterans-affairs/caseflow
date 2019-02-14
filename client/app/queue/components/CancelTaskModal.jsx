@@ -15,6 +15,7 @@ import {
 } from '../uiReducer/uiActions';
 import editModalBase from './EditModalBase';
 import { taskActionData } from '../utils';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 
 import type { State } from '../types/state';
 import type { Task, Appeal } from '../types/models';
@@ -44,7 +45,7 @@ class CancelTaskModal extends React.Component<Props> {
     const payload = {
       data: {
         task: {
-          status: 'cancelled'
+          status: TASK_STATUSES.cancelled
         }
       }
     };
