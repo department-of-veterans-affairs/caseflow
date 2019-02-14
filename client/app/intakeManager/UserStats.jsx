@@ -14,10 +14,6 @@ export default class UserStats extends React.PureComponent {
     };
   }
 
-  transformUserStats = (stats) => {
-    return stats;
-  }
-
   handleUserSelect = (value) => this.setState({ selectedUser: value });
   handleUserSwitch = () => {
     const userId = this.state.selectedUser;
@@ -36,7 +32,7 @@ export default class UserStats extends React.PureComponent {
     ApiUtil.get(`/intake/manager/users/${userId}`).then((response) => {
       this.setState({
         error: false,
-        userStats: this.transformUserStats(JSON.parse(response.text)),
+        userStats: JSON.parse(response.text),
         isSwitching: false
       });
     }).
@@ -49,10 +45,6 @@ export default class UserStats extends React.PureComponent {
         });
       });
   };
-
-  clearSearch = () => {
-    this.setState({ userSelect: null });
-  }
 
   render = () => {
     const columns = [
@@ -82,6 +74,12 @@ export default class UserStats extends React.PureComponent {
       }
     ];
 
+    let tbl = '';
+
+    if (this.state.userStats.length > 0) {
+      tbl = <Table columns={columns} rowObjects={this.state.userStats} slowReRendersAreOk />
+    }
+
     return <div className="cf-app-segment cf-app-segment--alt cf-manager-intakes">
       <div id="cf-user-stats">
         <div>
@@ -92,14 +90,12 @@ export default class UserStats extends React.PureComponent {
               title="Enter the User ID"
               onSubmit={this.handleUserSwitch}
               onChange={this.handleUserSelect}
-              onClearSearch={this.clearSearch}
-              value={this.state.userSelect}
               loading={this.state.isSwitching}
               submitUsingEnterKey
             />
           </section>
           <div className="cf-error">{this.state.error}</div>
-          <Table columns={columns} rowObjects={this.state.userStats} slowReRendersAreOk />
+          { tbl }
         </div>
       </div>
     </div>;

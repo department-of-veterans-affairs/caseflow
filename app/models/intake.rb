@@ -86,7 +86,7 @@ class Intake < ApplicationRecord
     stats = {}
     Intake.select("intakes.*, date(completed_at) as day_completed")
       .where(user: user)
-      .where("completed_at > ?", Time.zone.now - n_days.days)
+      .where("completed_at > ?", Time.zone.now.end_of_day - n_days.days)
       .where(completion_status: "success")
       .order("day_completed").each do |intake|
       completed = intake[:day_completed].iso8601

@@ -84,6 +84,11 @@ RSpec.feature "Intake Manager Page" do
       expect(page).not_to have_selector("#table-row-5")
     end
 
+    def select_user_stats(css_id)
+      fill_in "Enter the User ID", with: css_id
+      click_on "Search"
+    end
+
     scenario "choose a user to see stats" do
       veteran_file_number = "1234"
       user1 = create(:user)
@@ -116,15 +121,14 @@ RSpec.feature "Intake Manager Page" do
       expect(page).to_not have_content(busy_day_ymd)
       expect(page).to_not have_content("5")
 
-      fill_in "Enter the User ID", with: user1.css_id
-      click_on "Search"
-
+      select_user_stats(user1.css_id)
       expect(page).to have_content("#{busy_day_ymd} 5")
 
-      fill_in "Enter the User ID", with: user2.css_id
-      click_on "Search"
-
+      select_user_stats(user2.css_id)
       expect(page).to have_content("#{(busy_day - 2.days).strftime('%F')} 3")
+
+      select_user_stats("nosuchuser")
+      expect(page).to have_content("Not found: nosuchuser")
     end
   end
 
