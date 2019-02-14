@@ -16,6 +16,14 @@ describe User do
     Fakes::AuthenticationService.user_session = nil
   end
 
+  context ".find_by_css_id" do
+    let!(:user) { create(:user, css_id: "FOOBAR") }
+
+    it "searches case insensitively" do
+      expect(User.find_by_css_id("fooBaR")).to eq(user)
+    end
+  end
+
   context "#regional_office" do
     context "when RO can't be determined using station_id" do
       subject { user.regional_office }
