@@ -476,7 +476,7 @@ describe LegacyAppeal do
     let!(:appeal) { Generators::LegacyAppeal.create }
     let!(:vacols_case) { create(:case, documents: documents) }
 
-    subject { appeal.new_documents_for_user(user) }
+    subject { appeal.new_documents_for_user(user: user) }
 
     context "when appeal has no appeal view" do
       it "should return all documents" do
