@@ -17,6 +17,7 @@ describe HigherLevelReview do
   let(:legacy_opt_in_approved) { false }
   let(:veteran_is_not_claimant) { false }
   let(:profile_date) { receipt_date - 1 }
+  let(:promulgation_date) { receipt_date - 1 }
   let(:caseflow_decision_date) { nil }
 
   let(:higher_level_review) do
@@ -183,6 +184,7 @@ describe HigherLevelReview do
                  disposition: HigherLevelReview::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
                  profile_date: profile_date,
+                 promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type),
           create(:decision_issue,
@@ -190,6 +192,7 @@ describe HigherLevelReview do
                  disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
                  rating_issue_reference_id: "rating2",
                  profile_date: profile_date,
+                 promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type),
           create(:decision_issue,
@@ -236,7 +239,7 @@ describe HigherLevelReview do
         expect(supplemental_claim.request_issues.count).to eq(2)
 
         first_dta_request_issue = RequestIssue.find_by(
-          review_request: supplemental_claim,
+          decision_review: supplemental_claim,
           contested_decision_issue_id: decision_issues.first.id,
           contested_rating_issue_reference_id: "rating1",
           contested_rating_issue_profile_date: decision_issues.first.profile_date.to_s,
@@ -250,7 +253,7 @@ describe HigherLevelReview do
         expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDER")
 
         second_dta_request_issue = RequestIssue.find_by(
-          review_request: supplemental_claim,
+          decision_review: supplemental_claim,
           contested_decision_issue_id: decision_issues.second.id,
           contested_rating_issue_reference_id: "rating2",
           contested_rating_issue_profile_date: decision_issues.second.profile_date.to_s,
@@ -477,14 +480,14 @@ describe HigherLevelReview do
 
     let!(:request_issue1) do
       create(:request_issue,
-             review_request: hlr,
+             decision_review: hlr,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: "9999")
     end
 
     let!(:request_issue2) do
       create(:request_issue,
-             review_request: hlr,
+             decision_review: hlr,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: "8877")
     end
@@ -553,7 +556,7 @@ describe HigherLevelReview do
 
       let!(:dta_request_issue) do
         create(:request_issue,
-               review_request: dta_sc,
+               decision_review: dta_sc,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "9999")
       end
@@ -615,7 +618,7 @@ describe HigherLevelReview do
 
       let!(:dta_request_issue) do
         create(:request_issue,
-               review_request: dta_sc,
+               decision_review: dta_sc,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "9999")
       end
@@ -666,7 +669,7 @@ describe HigherLevelReview do
     context "has a decision" do
       let!(:request_issue1) do
         create(:request_issue,
-               review_request: hlr,
+               decision_review: hlr,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "8877")
       end
@@ -729,7 +732,7 @@ describe HigherLevelReview do
 
       let!(:dta_request_issue) do
         create(:request_issue,
-               review_request: dta_sc,
+               decision_review: dta_sc,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "9999")
       end

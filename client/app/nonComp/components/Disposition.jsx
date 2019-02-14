@@ -29,7 +29,7 @@ class NonCompDecisionIssue extends React.PureComponent {
   }
 
   dispositionOptions = () => {
-    const isSupplementalClaim = this.props.issue.review_request_title === 'Supplemental Claim';
+    const isSupplementalClaim = this.props.issue.decision_review_title === 'Supplemental Claim';
 
     return DISPOSITION_OPTIONS.filter((code) => {
       return !isSupplementalClaim || code !== 'DTA Error';
@@ -51,7 +51,7 @@ class NonCompDecisionIssue extends React.PureComponent {
       index,
       disabled
     } = this.props;
-    let issueDate = formatDateStr(issue.rating_issue_profile_date || issue.decision_date);
+    let issueDate = formatDateStr(issue.approx_decision_date);
 
     return <div className="cf-decision">
       <hr />

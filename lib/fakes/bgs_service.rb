@@ -114,7 +114,7 @@ class Fakes::BGSService
           payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
-          review_request: hlr,
+          decision_review: hlr,
           benefit_type: "compensation",
           end_product_establishment: epe,
           contested_rating_issue_reference_id: in_active_review_reference_id
@@ -137,7 +137,7 @@ class Fakes::BGSService
           payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
-          review_request: previous_hlr,
+          decision_review: previous_hlr,
           benefit_type: "compensation",
           end_product_establishment: cleared_epe,
           rating_issue_reference_id: completed_review_reference_id,
@@ -201,7 +201,7 @@ class Fakes::BGSService
           payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
-          review_request: hlr,
+          decision_review: hlr,
           benefit_type: "compensation",
           end_product_establishment: epe,
           contention_reference_id: contention_reference_id

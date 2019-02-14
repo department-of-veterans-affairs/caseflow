@@ -96,6 +96,9 @@ class RatingIssue
     @contention_reference_ids ||= calculate_contention_reference_ids
   end
 
+  # TODO: if request issues are found to be the source of a rating issue that with no matching decision issue,
+  # that means we did not create a decision issue somewhere. This is a problem and we should probably throw an
+  # error in this scenario. For now we will assume this does not happen.
   def source_request_issues
     return [] if contention_reference_ids.empty?
 
