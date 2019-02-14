@@ -21,7 +21,7 @@ describe('HearingBadge', () => {
 
     it('doesn\'t show if there are no hearings', () => {
       const store = getStore();
-      const wrapper = getHearingBadge(store, undefined);
+      const wrapper = getHearingBadge(store, undefined); // eslint-disable-line no-undefined
 
       expect(wrapper.find('div')).to.have.length(0);
     });
