@@ -41,6 +41,8 @@ feature "Higher-Level Review" do
 
   let(:receipt_date) { Date.new(2018, 9, 20) }
 
+  let(:promulgation_date) { receipt_date - 10.days }
+
   let(:benefit_type) { "compensation" }
 
   let(:untimely_days) { 372.days }
@@ -54,7 +56,7 @@ feature "Higher-Level Review" do
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.days,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -726,6 +728,15 @@ feature "Higher-Level Review" do
 
         expect(page).to have_content("1 issue")
       end
+    end
+
+    scenario "Add Issues modal uses promulgation date" do
+      start_higher_level_review(veteran)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      rating_date = promulgation_date.strftime("%m/%d/%Y")
+
+      expect(page).to have_content("Past decisions from #{rating_date}")
     end
 
     scenario "HLR comp" do
