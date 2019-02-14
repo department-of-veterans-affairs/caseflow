@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -159,6 +160,9 @@ class EvaluateDecisionView extends React.PureComponent {
       then(() => this.props.deleteAppeal(appealId), (response) => {
         // eslint-disable-next-line no-console
         console.log(response);
+      }).
+      catch(() => {
+        // handle the error from the frontend
       });
   }
 

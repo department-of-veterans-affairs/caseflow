@@ -381,10 +381,10 @@ class Appeal < DecisionReview
       :evidentiary_period
     elsif at_vso?
       :at_vso
-    elsif !distributed_to_a_judge?
-      :on_docket
-    elsif distributed_to_a_judge? && decision_issues.empty?
+    elsif distributed_to_a_judge?
       :decision_in_progress
+    else
+      :on_docket
     end
   end
 
