@@ -103,7 +103,7 @@ class SupplementalClaim < ClaimReview
   def build_request_issues_from_remand
     remanded_decision_issues_needing_request_issues.map do |remand_decision_issue|
       RequestIssue.new(
-        review_request: self,
+        decision_review: self,
         contested_decision_issue_id: remand_decision_issue.id,
         contested_rating_issue_reference_id: remand_decision_issue.rating_issue_reference_id,
         contested_rating_issue_profile_date: remand_decision_issue.profile_date,
