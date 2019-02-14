@@ -53,6 +53,8 @@ class HigherLevelReview < ClaimReview
 
   def alerts
     # need to implement. add logic to return alert enum
+
+    []
   end
 
   def fetch_all_decision_issues_for_api_status

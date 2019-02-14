@@ -410,8 +410,8 @@ class Appeal < DecisionReview
       :bva_decision
     elsif withdrawn?
       :withdrawn
-    else decision_issues.empty?
-         :other_close
+    else
+      :other_close
     end
   end
   # rubocop:enable CyclomaticComplexity
@@ -510,6 +510,8 @@ class Appeal < DecisionReview
 
   def alerts
     # to be implemented
+
+    []
   end
 
   def program

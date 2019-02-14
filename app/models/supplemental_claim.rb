@@ -48,6 +48,7 @@ class SupplementalClaim < ClaimReview
 
   def alerts
     # need to implement. add logic to return alert enum
+    []
   end
 
   def decision_event_date
