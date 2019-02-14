@@ -103,10 +103,10 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         category: issue.category,
         decisionIssueId: issue.contested_decision_issue_id,
         description: issue.description,
-        decisionDate: formatDateStr(issue.decision_date),
+        decisionDate: formatDateStr(issue.approx_decision_date),
         ineligibleReason: issue.ineligible_reason,
         ineligibleDueToId: issue.ineligible_due_to_id,
-        reviewRequestTitle: issue.review_request_title,
+        decisionReviewTitle: issue.decision_review_title,
         contentionText: issue.contention_text,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
@@ -139,7 +139,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       isRating: true,
       ratingIssueReferenceId: issue.rating_issue_reference_id,
       ratingIssueProfileDate: issueDate.toISOString(),
-      date: issue.decision_date,
+      approxDecisionDate: issue.approx_decision_date,
       decisionIssueId: issue.contested_decision_issue_id,
       notes: issue.notes,
       description: issue.description,
@@ -160,13 +160,14 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
 export const formatContestableIssues = (contestableIssues) => {
   // order by date, otherwise all decision issues will always
   // come after rating issues regardless of date
-  const orderedContestableIssues = _.orderBy(contestableIssues, ['date'], ['desc']);
+  const orderedContestableIssues = _.orderBy(contestableIssues, ['approxDecisionDate'], ['desc']);
 
   return orderedContestableIssues.reduce((contestableIssuesByDate, contestableIssue, index) => {
     contestableIssue.index = String(index);
 
-    contestableIssuesByDate[contestableIssue.date] = contestableIssuesByDate[contestableIssue.date] || {};
-    contestableIssuesByDate[contestableIssue.date][index] = contestableIssue;
+    contestableIssuesByDate[contestableIssue.approxDecisionDate] =
+      contestableIssuesByDate[contestableIssue.approxDecisionDate] || {};
+    contestableIssuesByDate[contestableIssue.approxDecisionDate][index] = contestableIssue;
 
     return contestableIssuesByDate;
   }, {});
@@ -314,22 +315,23 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
-      // todo: date works for contestable issue
-      // and profile_date works for request issue (for the edit page)
-      // fix this to use same keys
-      const profileDate = new Date(issue.date || issue.profileDate);
+      if (!issue.decisionDate && !issue.approxDecisionDate) {
+        console.warn(issue);
+        throw new Error('no decision date');
+      }
+      const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
 
       return {
         referenceId: issue.id,
         text: issue.description,
-        date: formatDateStr(profileDate),
+        date: formatDateStr(decisionDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceReviewType: issue.sourceReviewType,
         promulgationDate: issue.promulgationDate,
-        profileDate,
+        decisionDate,
         timely: issue.timely,
-        beforeAma: profileDate < amaActivationDate && !issue.rampClaimId,
+        beforeAma: decisionDate < amaActivationDate && !issue.rampClaimId,
         untimelyExemption: issue.untimelyExemption,
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         ineligibleReason: issue.ineligibleReason,
@@ -358,7 +360,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       vacolsSequenceId: issue.vacolsSequenceId,
       vacolsIssue: issue.vacolsIssue,
       eligibleForSocOptIn: issue.eligibleForSocOptIn,
-      reviewRequestTitle: issue.reviewRequestTitle
+      decisionReviewTitle: issue.decisionReviewTitle
     };
   });
 };

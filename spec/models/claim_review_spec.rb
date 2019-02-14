@@ -30,7 +30,7 @@ describe ClaimReview do
   let(:rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       contested_rating_issue_reference_id: "reference-id",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       contested_issue_description: "decision text",
@@ -42,7 +42,7 @@ describe ClaimReview do
   let(:second_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       contested_rating_issue_reference_id: "reference-id2",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       contested_issue_description: "another decision text",
@@ -53,7 +53,7 @@ describe ClaimReview do
   let(:non_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       nonrating_issue_description: "Issue text",
       issue_category: "surgery",
       decision_date: 4.days.ago.to_date,
@@ -65,7 +65,7 @@ describe ClaimReview do
   let(:second_non_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       nonrating_issue_description: "some other issue",
       issue_category: "something",
       decision_date: 3.days.ago.to_date,
