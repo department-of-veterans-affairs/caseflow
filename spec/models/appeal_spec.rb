@@ -206,7 +206,7 @@ describe Appeal do
     end
 
     context "when providing an on_hold date" do
-      subject { appeal.new_documents_for_user(user, 4.days.ago.to_i.to_s) }
+      subject { appeal.new_documents_for_user(user, true, 4.days.ago.to_i.to_s) }
 
       context "When one document's upload date is after on hold date" do
         it "should return only the newest document" do

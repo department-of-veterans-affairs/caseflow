@@ -9,9 +9,10 @@ module DocumentConcern
   end
 
   # Retrieves any documents that have been uploaded more recently than the user has viewed
-  # the appeal or an optional provided date
-  def new_documents_for_user(user, placed_on_hold_timestamp = nil)
-    caseflow_documents = Document.where(file_number: veteran_file_number)
+  # the appeal or an optional provided date. Try to load docs from caseflow if cached is
+  # true, load from vbms otherwise
+  def new_documents_for_user(user, cached = true, placed_on_hold_timestamp = nil)
+    caseflow_documents = cached ? Document.where(file_number: veteran_file_number) : documents
     if caseflow_documents.empty?
       find_or_create_documents!
       caseflow_documents = Document.where(file_number: veteran_file_number)
