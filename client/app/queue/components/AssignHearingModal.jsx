@@ -387,7 +387,9 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           regionalOffice={currentRegionalOffice}
           veteranFileNumber={appeal.veteranFileNumber}
           dynamic={appeal.veteranClosestRegionalOffice !== currentRegionalOffice}
-          staticHearingLocations={appeal.veteranAvailableHearingLocations}
+          staticHearingLocations={
+            _.isEmpty(appeal.veteranAvailableHearingLocations) ? null : appeal.veteranAvailableHearingLocations
+          }
           onChange={this.props.onHearingLocationChange}
           value={selectedHearingLocation}
         />}

@@ -47,9 +47,9 @@ class VeteranHearingLocationsDropdown extends React.Component {
   componentDidMount() {
     const { dropdownName, dynamic, staticHearingLocations } = this.props;
 
-    if (dynamic || !staticHearingLocations) {
+    if (dynamic) {
       setTimeout(this.getLocations, 0);
-    } else {
+    } else if (staticHearingLocations) {
       this.props.onReceiveDropdownData(
         dropdownName,
         generateHearingLocationOptions(staticHearingLocations)
