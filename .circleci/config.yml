@@ -65,6 +65,7 @@ jobs:
     steps:
       - checkout
       - setup_ruby_dependencies
+      - setup_js_dependencies
       - run:
           name: Danger
           command: |
