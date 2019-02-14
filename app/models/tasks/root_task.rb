@@ -1,5 +1,6 @@
 class RootTask < GenericTask
-  after_initialize :set_assignee
+  # Set assignee to the Bva organization automatically so we don't have to set it when we create RootTasks.
+  after_initialize :set_assignee, if: -> { assigned_to_id.nil? }
 
   def set_assignee
     self.assigned_to = Bva.singleton
@@ -8,8 +9,7 @@ class RootTask < GenericTask
   def when_child_task_completed; end
 
   def update_children_status
-    children.where(type: TrackVeteranTask.name).where.not(status: Constants.TASK_STATUSES.completed)
-      .update_all(status: Constants.TASK_STATUSES.completed)
+    children.active.where(type: TrackVeteranTask.name).update_all(status: Constants.TASK_STATUSES.completed)
   end
 
   def hide_from_task_snapshot
@@ -24,9 +24,9 @@ class RootTask < GenericTask
 
   def can_create_schedule_hearings_task?(user)
     HearingsManagement.singleton.user_has_access?(user) &&
-      !completed? &&
+      active? &&
       legacy? &&
-      children.where(type: ScheduleHearingTask.name).where.not(status: Constants.TASK_STATUSES.completed).empty?
+      children.active.where(type: ScheduleHearingTask.name).empty?
   end
 
   def actions_available?(_user)
@@ -37,7 +37,7 @@ class RootTask < GenericTask
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
       create_vso_tracking_tasks(appeal, root_task)
-      if FeatureToggle.enabled?(:ama_auto_case_distribution)
+      if FeatureToggle.enabled?(:ama_acd_tasks)
         create_subtasks!(appeal, root_task)
       else
         create_ihp_tasks!(appeal, root_task)
@@ -46,6 +46,13 @@ class RootTask < GenericTask
 
     def create_ihp_tasks!(appeal, parent)
       appeal.vsos.map do |vso_organization|
+        # For some RAMP appeals, this method may run twice.
+        existing_tasks = InformalHearingPresentationTask.where(
+          appeal: appeal,
+          assigned_to: vso_organization
+        )
+        return existing_tasks.first unless existing_tasks.empty?
+
         InformalHearingPresentationTask.create!(
           appeal: appeal,
           parent: parent,
@@ -54,7 +61,8 @@ class RootTask < GenericTask
       end
     end
 
-    private
+    # TODO: make this private again after RAMPs are refilled
+    # private
 
     def create_vso_tracking_tasks(appeal, parent)
       appeal.vsos.map do |vso_organization|
@@ -84,9 +92,15 @@ class RootTask < GenericTask
     end
 
     def create_hearing_schedule_task!(appeal, parent)
+      hearing_task = HearingTask.create!(
+        appeal: appeal,
+        assigned_to: Bva.singleton,
+        parent: parent
+      )
+
       ScheduleHearingTask.create!(
         appeal: appeal,
-        parent: parent,
+        parent: hearing_task,
         assigned_to: HearingsManagement.singleton
       )
     end

@@ -4,13 +4,15 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { css } from 'glamor';
 
 const centerTextStyling = css({
-  textAlign: 'center'
+  textAlign: 'center',
+  height: '300px',
+  marginTop: '75px'
 });
 
 const LoadingScreen = ({ spinnerColor, message }) =>
   <AppSegment filledBackground>
     <div {...centerTextStyling}>
-      {loadingSymbolHtml('', '300px', spinnerColor)}
+      {loadingSymbolHtml('', '150px', spinnerColor)}
       <p>{message}</p>
     </div>
   </AppSegment>;

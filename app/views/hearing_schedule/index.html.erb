@@ -4,9 +4,11 @@
     userDisplayName: current_user.display_name,
     userRoleAssign: current_user.can?('Assign HearSched'),
     userRoleBuild: current_user.can?('Build HearSched'),
-    userInHearingsOrganization: HearingsManagement.singleton.users.include?(current_user),
+    userInHearingsOrganization: (HearingsManagement.singleton.users.include?(current_user) ||
+        TranscriptionTeam.singleton.users.include?(current_user)),
     userId: current_user.id,
     userCssId: current_user.css_id,
-    dropdownUrls: dropdown_urls
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls
   }) %>
 <% end %>

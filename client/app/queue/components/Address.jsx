@@ -11,6 +11,11 @@ const addressIndentStyling = css({
   verticalAlign: 'top'
 });
 
+const flexColumnStyling = css({
+  display: 'flex',
+  flexDirection: 'column'
+});
+
 type Props = {|
   address: AddressType
 |};
@@ -28,10 +33,13 @@ export default class Address extends React.PureComponent<Props> {
     } = this.props.address;
 
     return <span {...addressIndentStyling}>
-      {addressLine1}
-      {addressLine2 && <React.Fragment><br /><span>{addressLine2}</span></React.Fragment>}
-      {addressLine3 && <React.Fragment><br /><span>{addressLine3}</span></React.Fragment>}
-      <span>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
+      <span {...flexColumnStyling}>
+        <span> {addressLine1}</span>
+        <span> {addressLine2 && <React.Fragment><span>{addressLine2}</span></React.Fragment>}</span>
+        <span> {addressLine3 && <React.Fragment><span>{addressLine3}</span></React.Fragment>}</span>
+        <span> <span>{city}, {state} {zip} {country === 'USA' ? '' : country}</span></span>
+      </span>
     </span>;
+
   };
 }

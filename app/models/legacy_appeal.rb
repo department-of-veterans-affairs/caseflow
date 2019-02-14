@@ -103,19 +103,17 @@ class LegacyAppeal < ApplicationRecord
     us_territory_claim_philippines: "U.S. Territory claim - Philippines",
     us_territory_claim_puerto_rico_and_virgin_islands: "U.S. Territory claim - Puerto Rico and Virgin Islands",
     vamc: "VAMC",
-    vocational_rehab: "Vocational Rehab",
+    vocational_rehab: "Vocational Rehabilitation and Employment",
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
   # rubocop:enable Metrics/LineLength
 
-  # TODO: the type code should be the base value, and should be
-  #       converted to be human readable, not vis-versa
-  # TODO: integrate with Constants::LEGACY_APPEAL_TYPES_BY_ID
+  # Codes for Appeals Status API
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
     "Reconsideration" => "reconsideration",
-    "Court Remand" => "cavc_remand",
+    "Court Remand" => "post_cavc_remand",
     "Clear and Unmistakable Error" => "cue"
   }.freeze
 
@@ -806,10 +804,9 @@ class LegacyAppeal < ApplicationRecord
       AppealRepository
     end
 
-    # rubocop:disable Metrics/ParameterLists
     # Wraps the closure of appeals in a transaction
     # add additional code inside the transaction by passing a block
-    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:, &inside_transaction)
+    def close(appeal: nil, appeals: nil, user:, closed_on:, disposition:)
       fail "Only pass either appeal or appeals" if appeal && appeals
 
       repository.transaction do
@@ -822,10 +819,9 @@ class LegacyAppeal < ApplicationRecord
           )
         end
 
-        inside_transaction.call if block_given?
+        yield if block_given?
       end
     end
-    # rubocop:enable Metrics/ParameterLists
 
     def reopen(appeals:, user:, disposition:, safeguards: true, reopen_issues: true)
       repository.transaction do
@@ -899,6 +895,10 @@ class LegacyAppeal < ApplicationRecord
       VACOLS::Case::BVA_DISPOSITION_CODES.map do |code|
         Constants::VACOLS_DISPOSITIONS_BY_ID[code]
       end
+    end
+
+    def nonpriority_decisions_per_year
+      repository.nonpriority_decisions_per_year
     end
 
     private
