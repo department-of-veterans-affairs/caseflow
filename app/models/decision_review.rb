@@ -244,10 +244,6 @@ class DecisionReview < ApplicationRecord
   end
 
   def fetch_all_decision_issues
-    return decision_issues unless decision_issues.remanded.any?
-    # only include the remanded issues if they are still being worked on
-    return decision_issues if active_remanded_claims?
-
     # if there were remanded issues and there is a decision available
     # for them, include the decisions from the remanded SC and do not
     # include the original remanded decision

@@ -582,6 +582,14 @@ class Appeal < DecisionReview
     fetch_issues_status(issue_list)
   end
 
+  def fetch_all_decision_issues
+    return decision_issues unless decision_issues.remanded.any?
+    # only include the remanded issues if they are still being worked on
+    return decision_issues if active_remanded_claims?
+
+    super
+  end
+
   private
 
   def maybe_create_translation_task

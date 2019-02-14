@@ -53,7 +53,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def other_close_event_date
-    return if active? || active_remanded_claims?
+    return if active_status?
     return unless decision_issues.empty?
     return unless end_product_establishments.any?
 

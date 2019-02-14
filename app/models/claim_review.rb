@@ -131,6 +131,10 @@ class ClaimReview < DecisionReview
     processed_in_vbms? ? end_product_establishments.any? { |ep| ep.status_active?(sync: false) } : incomplete_tasks?
   end
 
+  def active_status?
+    active? || active_remanded_claims?
+  end
+
   def search_table_ui_hash
     {
       caseflow_veteran_id: claim_veteran&.id,
@@ -183,7 +187,7 @@ class ClaimReview < DecisionReview
   end
 
   def issues_hash
-    issue_list = active? ? request_issues.open : fetch_all_decision_issues
+    issue_list = active_status? ? request_issues.open : fetch_all_decision_issues
 
     fetch_issues_status(issue_list)
   end

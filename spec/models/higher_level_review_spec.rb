@@ -505,15 +505,15 @@ describe HigherLevelReview do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(true)
-        expect(issue[:last_action]).to eq("DTA Error - PMRs")
-        expect(issue[:date]).to eq(hlr_decision_issue_with_dta_error.approx_decision_date)
+        expect(issue[:last_action]).to be_nil
+        expect(issue[:date]).to be_nil
         expect(issue[:description]).to eq("Dental or oral condition")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
         expect(issue2).to_not be_nil
-        expect(issue2[:active]).to eq(false)
-        expect(issue2[:last_action]).to eq("denied")
-        expect(issue2[:date]).to eq(hlr_decision_issue.approx_decision_date)
+        expect(issue2[:active]).to eq(true)
+        expect(issue[:last_action]).to be_nil
+        expect(issue[:date]).to be_nil
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
     end
