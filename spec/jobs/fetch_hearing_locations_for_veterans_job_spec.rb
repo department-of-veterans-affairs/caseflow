@@ -1,4 +1,3 @@
-require "rspec"
 require "rails_helper"
 require "faker"
 
@@ -15,7 +14,7 @@ describe FetchHearingLocationsForVeteransJob do
       Fakes::BGSService.veteran_records = { "123456789" => veteran_record(file_number: "123456789S", state: "MA") }
     end
 
-    describe "#appeals", focus: true do
+    describe "#appeals" do
       context "when veterans exist in location 57 or have schedule hearing tasks" do
         # Legacy appeal with schedule hearing task
         let!(:veteran_2) { create(:veteran, file_number: "999999999") }
@@ -159,6 +158,11 @@ describe FetchHearingLocationsForVeteransJob do
       end
 
       context "when va_dot_gov_service throws an Address error" do
+        let!(:vacols_case) do
+          create(:case,
+                 bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S",
+                 correspondent: create(:correspondent, saddrzip: "01002", saddrstt: "MA", saddrcnty: "USA"))
+        end
         before do
           message = {
             "messages" => [
@@ -184,6 +188,11 @@ describe FetchHearingLocationsForVeteransJob do
         end
 
         context "and Veteran has no zipcode" do
+          let!(:vacols_case) do
+            create(:case,
+                   bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S",
+                   correspondent: create(:correspondent, saddrzip: nil))
+          end
           before do
             Fakes::BGSService.veteran_records = {
               "123456789" => veteran_record(file_number: "123456789S", state: nil, zip_code: nil, country: nil)

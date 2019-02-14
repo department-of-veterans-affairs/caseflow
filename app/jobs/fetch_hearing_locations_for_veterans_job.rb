@@ -19,18 +19,16 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def find_appeals_ready_for_geomatching(appeal_type)
-    appeal_type.joins(:available_hearing_locations)
-      .joins("
-        LEFT OUTER JOIN (SELECT appeal_id FROM tasks
-          WHERE type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
-          AND status NOT IN ('cancelled', 'completed')) admin_actions
-          ON admin_actions.appeal_id = id
-      ").joins("
-        LEFT OUTER JOIN (SELECT appeal_id from tasks
-          WHERE type = 'ScheduleHearingTask'
-          AND status NOT IN ('cancelled', 'completed')) sch_tasks
-          ON sch_tasks.appeal_id = id
-      ").where("sch_tasks.appeal_id IS NOT NULL AND admin_actions.appeal_id IS NULL")
+    appeal_type.left_outer_joins(:available_hearing_locations)
+      .where("#{appeal_type.table_name}.id IN (SELECT t.appeal_id FROM tasks t
+          LEFT OUTER JOIN tasks admin_actions
+          ON t.id = admin_actions.parent_id
+          AND admin_actions.type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
+          AND admin_actions.status NOT IN ('cancelled', 'completed')
+          WHERE t.appeal_type = '#{appeal_type.name}'
+          AND admin_actions.id IS NULL AND t.type = 'ScheduleHearingTask'
+          AND t.status NOT IN ('cancelled', 'completed')
+        )")
       .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
       .limit(QUERY_LIMIT / 2)
   end
@@ -43,7 +41,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def fetch_and_update_ro_for_appeal(appeal, va_dot_gov_address:)
-    state_code = if appeal.is_a?(LegacyAppeal) && appeal.bfhr == 1 # request_type is Central
+    state_code = if appeal.is_a?(LegacyAppeal) && appeal.case_record&.bfhr == 1 # request_type is Central
                    "DC"
                  else
                    get_state_code(va_dot_gov_address, appeal: appeal)
@@ -111,32 +109,37 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   private
 
+  def get_appellant_address(appeal)
+    appeal.is_a?(LegacyAppeal) ? appeal.appellant[:address] : appeal.appellant.address
+  end
+
   def validate_appellant_address(appeal)
-    address = appeal.appellant.address
+    address = get_appellant_address(appeal)
 
     VADotGovService.validate_address(
-      address_line1: address.address_line1,
-      address_line2: address.address_line2,
-      address_line3: address.address_line3,
-      city: address.city,
-      state: address.state,
-      country: address.country,
-      zip_code: address.zip_code
+      address_line1: address[:address_line1],
+      address_line2: address[:address_line2],
+      address_line3: address[:address_line3],
+      city: address[:city],
+      state: address[:state],
+      country: address[:country],
+      zip_code: address[:zip_code]
     )
   end
 
   def validate_zip_code_or_handle_error(appeal, error:)
-    address = appeal.appellant.address
-    if address.zip.nil? || address.state.nil? || address.country.nil?
+    address = get_appellant_address(appeal)
+    if address[:zip].nil? || address[:state].nil? || address[:country].nil?
       handle_error(error, appeal)
       nil
     else
-      lat_lng = ZipCodeToLatLngMapper::MAPPING[address.zip[0..4]]
+      lat_lng = ZipCodeToLatLngMapper::MAPPING[address[:zip][0..4]]
+
       if lat_lng.nil?
         handle_error(error, appeal)
         return nil
       end
-      { lat: lat_lng[0], long: lat_lng[1], country_code: address.country, state_code: address.state }
+      { lat: lat_lng[0], long: lat_lng[1], country_code: address[:country], state_code: address[:state] }
     end
   end
 
