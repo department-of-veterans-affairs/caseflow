@@ -192,7 +192,7 @@ describe JudgeTask do
           parent: root_task1,
           status: "assigned",
           assigned_to: create(:vso)
-        ) 
+        )
       end
       let!(:ihp_task2) do
         InformalHearingPresentationTask.create!(
@@ -200,14 +200,14 @@ describe JudgeTask do
           parent: root_task2,
           status: "completed",
           assigned_to: create(:vso)
-        ) 
+        )
       end
 
       it "creates DistributionTasks" do
         expect(DistributionTask.all.count).to eq 0
         subject
         expect(DistributionTask.all.count).to eq 3
-      end      
+      end
 
       it "reassigns incomplete ihp tasks so they block distribution" do
         subject
