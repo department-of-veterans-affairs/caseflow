@@ -14,6 +14,7 @@ class LegacyAppeal < ApplicationRecord
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_one :special_issue_list, as: :appeal
+  has_many :available_hearing_locations, as: :appeal
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -186,16 +187,16 @@ class LegacyAppeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
+  def appellant
+    claimant
+  end
+
   def appellant_is_not_veteran
     !!appellant_first_name
   end
 
   def veteran_if_exists
     @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
-  end
-
-  def veteran_closest_regional_office
-    veteran_if_exists&.closest_regional_office
   end
 
   def veteran_available_hearing_locations

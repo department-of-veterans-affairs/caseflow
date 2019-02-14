@@ -6,6 +6,7 @@ class Appeal < DecisionReview
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :hearings
+  has_many :available_hearing_locations, as: :appeal
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
@@ -236,12 +237,6 @@ class Appeal < DecisionReview
   def advanced_on_docket
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
-
-  delegate :closest_regional_office,
-           :first_name,
-           :last_name,
-           :name_suffix,
-           :ssn, to: :veteran, prefix: true, allow_nil: true
 
   def appellant
     claimants.first
