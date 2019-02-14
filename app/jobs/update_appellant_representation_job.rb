@@ -5,6 +5,6 @@ class UpdateAppellantRepresentationJob < CaseflowJob
   def perform
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
-    Appeal.all_active.each(&:sync_tracking_tasks)
+    Appeal.active.each(&:sync_tracking_tasks)
   end
 end

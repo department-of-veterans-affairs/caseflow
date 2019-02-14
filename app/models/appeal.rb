@@ -196,19 +196,6 @@ class Appeal < DecisionReview
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
-  # Optimized version of Appeal.select(&:active?)
-  def self.all_active
-    find_by_sql(["
-      SELECT
-        distinct(appeals.*)
-      FROM appeals
-      INNER JOIN tasks
-        ON appeals.id = tasks.appeal_id
-      WHERE tasks.type = ?
-        AND tasks.status not in (?)
-      ORDER BY appeals.id", RootTask.name, Constants.TASK_STATUSES.completed])
-  end
-
   def sync_tracking_tasks
     # Check if there are existing tracking tasks.
     active_tracking_tasks = tasks.where(type: TrackVeteranTask.name)
