@@ -32,12 +32,13 @@ feature "Higher Level Review Edit issues" do
   end
 
   let(:receipt_date) { Time.zone.today - 20 }
+  let(:promulgation_date) { receipt_date - 1 }
   let(:profile_date) { "2017-11-02T07:00:00.000Z" }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
@@ -504,6 +505,10 @@ feature "Higher Level Review Edit issues" do
       expect(page).to have_content("Military Retired Pay")
 
       click_intake_add_issue
+
+      rating_date = promulgation_date.strftime("%m/%d/%Y")
+      expect(page).to have_content("Past decisions from #{rating_date}")
+
       click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
@@ -662,9 +667,9 @@ feature "Higher Level Review Edit issues" do
       create(
         :request_issue,
         review_request: higher_level_review,
-        contested_rating_issue_reference_id: "def456",
-        contested_rating_issue_profile_date: rating.profile_date,
-        contested_issue_description: "PTSD denied"
+        issue_category: "Accrued",
+        decision_date: 1.month.ago,
+        nonrating_issue_description: "test description"
       )
     end
 
@@ -676,9 +681,9 @@ feature "Higher Level Review Edit issues" do
 
     it "does not mention VBMS when removing an issue" do
       visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
-      expect(page).to have_content(request_issue.contested_issue_description)
+      expect(page).to have_content(request_issue.nonrating_issue_description)
 
-      click_remove_intake_issue_by_text(request_issue.contested_issue_description)
+      click_remove_intake_issue_by_text(request_issue.nonrating_issue_description)
       expect(page).to have_content("The contention you selected will be removed from the decision review.")
     end
   end
