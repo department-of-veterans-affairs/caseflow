@@ -315,8 +315,9 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         isUnidentified: true
       };
     } else if (issue.isRating) {
+      console.log(issue);
       if (!issue.decisionDate && !issue.approxDecisionDate) {
-        throw new Error('no decision date');
+        //throw new Error('no decision date');
       }
       const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
 

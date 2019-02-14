@@ -9,19 +9,24 @@ feature "Intake Edit Confirmation" do
 
   let!(:current_user) { User.authenticate!(roles: ["Mail Intake"]) }
   let!(:intake) { create(:intake, :completed, detail: decision_review, user_id: current_user.id) }
+  let(:rating_reference_id) { "def456" }
 
   describe "when editing a decision review" do
-    let(:rating) do
+    let!(:rating) do
       Generators::Rating.build(
         participant_id: decision_review.veteran.participant_id,
         profile_date: decision_review.receipt_date - 1.month,
-        issues: [{ decision_text: "Left knee granted" }, { reference_id: "def456", decision_text: "PTSD denied" }]
+        promulgation_date: decision_review.receipt_date - 2.months,
+        issues: [
+          { reference_id: rating_reference_id, decision_text: "Left knee granted" },
+          { reference_id: rating_reference_id, decision_text: "PTSD denied" }
+        ]
       )
     end
 
     let(:request_issue) do
       create(:request_issue,
-             rating_issue_reference_id: "def456",
+             rating_issue_reference_id: rating_reference_id,
              rating_issue_profile_date: rating.profile_date,
              review_request: decision_review,
              description: "PTSD denied")
@@ -40,6 +45,7 @@ feature "Intake Edit Confirmation" do
 
           it "confirms that an EP is being established" do
             visit edit_path
+            binding.pry
             click_intake_add_issue
             click_intake_no_matching_issues
             add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%D"))
