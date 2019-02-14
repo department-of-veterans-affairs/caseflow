@@ -163,6 +163,7 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         ...state.docCountForAppeal,
         [action.payload.appealId]: {
           ...state.docCountForAppeal[action.payload.appealId],
+          error: null,
           loading: true
         }
       }
