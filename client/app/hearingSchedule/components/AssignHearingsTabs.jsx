@@ -39,6 +39,8 @@ const tableNumberStyling = css({
 });
 
 const AvailableVeteransTable = ({ rows, columns }) => {
+  let removeTimeColumn = columns.slice(0, 5);
+
   if (_.isEmpty(rows)) {
     return <div>
       <StatusMessage
@@ -51,7 +53,7 @@ const AvailableVeteransTable = ({ rows, columns }) => {
   }
 
   return <Table
-    columns={columns}
+    columns={removeTimeColumn}
     rowObjects={rows}
     summary="scheduled-hearings-table"
     slowReRendersAreOk
