@@ -59,7 +59,7 @@ class AddressChangeMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
@@ -133,7 +133,7 @@ class EvidenceOrArgumentMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
@@ -169,7 +169,7 @@ class HearingRelatedMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
@@ -193,7 +193,7 @@ class PowerOfAttorneyRelatedMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
@@ -226,7 +226,7 @@ class ReturnedUndeliverableCorrespondenceMailTask < MailTask
 
   def self.child_task_assignee(parent, _params)
     return BvaDispatch.singleton if !case_active?(parent)
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
     return most_recent_active_task_assignee(parent) if most_recent_active_task_assignee(parent)
 
     fail Caseflow::Error::MailRoutingError

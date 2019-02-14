@@ -1,10 +1,10 @@
 describe DirectReviewDocket do
   before do
-    FeatureToggle.enable!(:ama_auto_case_distribution)
+    FeatureToggle.enable!(:ama_acd_tasks)
   end
 
   after do
-    FeatureToggle.disable!(:ama_auto_case_distribution)
+    FeatureToggle.disable!(:ama_acd_tasks)
   end
 
   context "#due_count" do
