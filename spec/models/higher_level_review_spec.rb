@@ -17,6 +17,7 @@ describe HigherLevelReview do
   let(:legacy_opt_in_approved) { false }
   let(:veteran_is_not_claimant) { false }
   let(:profile_date) { receipt_date - 1 }
+  let(:promulgation_date) { receipt_date - 1 }
   let(:caseflow_decision_date) { nil }
 
   let(:higher_level_review) do
@@ -183,6 +184,7 @@ describe HigherLevelReview do
                  disposition: HigherLevelReview::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
                  profile_date: profile_date,
+                 promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type),
           create(:decision_issue,
@@ -190,6 +192,7 @@ describe HigherLevelReview do
                  disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
                  rating_issue_reference_id: "rating2",
                  profile_date: profile_date,
+                 promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type),
           create(:decision_issue,
