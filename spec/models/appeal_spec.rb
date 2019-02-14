@@ -51,10 +51,10 @@ describe Appeal do
     let!(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
 
     before do
-      FeatureToggle.enable!(:ama_auto_case_distribution)
+      FeatureToggle.enable!(:ama_acd_tasks)
     end
     after do
-      FeatureToggle.disable!(:ama_auto_case_distribution)
+      FeatureToggle.disable!(:ama_acd_tasks)
     end
     subject { Appeal.ready_for_distribution }
 

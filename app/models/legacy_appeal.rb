@@ -108,14 +108,12 @@ class LegacyAppeal < ApplicationRecord
   }.freeze
   # rubocop:enable Metrics/LineLength
 
-  # TODO: the type code should be the base value, and should be
-  #       converted to be human readable, not vis-versa
-  # TODO: integrate with Constants::LEGACY_APPEAL_TYPES_BY_ID
+  # Codes for Appeals Status API
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
     "Reconsideration" => "reconsideration",
-    "Court Remand" => "cavc_remand",
+    "Court Remand" => "post_cavc_remand",
     "Clear and Unmistakable Error" => "cue"
   }.freeze
 
