@@ -559,21 +559,21 @@ feature "Appeal Intake" do
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_rating_issue_reference_id: "xyz123",
              contested_issue_description: "Left knee granted 2",
              notes: "I am an issue note"
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_issue_description: "Really old injury",
              untimely_exemption: false,
              untimely_exemption_notes: "I am an exemption note"
            )).to_not be_nil
 
     active_duty_adjustments_request_issue = RequestIssue.find_by!(
-      review_request: appeal,
+      decision_review: appeal,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
       decision_date: profile_date
@@ -582,8 +582,8 @@ feature "Appeal Intake" do
     expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
 
     another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
-      review_request_type: "Appeal",
-      review_request_id: appeal.id,
+      decision_review_type: "Appeal",
+      decision_review_id: appeal.id,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Another Description for Active Duty Adjustments"
     )
@@ -593,33 +593,33 @@ feature "Appeal Intake" do
     expect(another_active_duty_adjustments_request_issue.untimely_exemption_notes).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              unidentified_issue_text: "This is an unidentified issue",
              is_unidentified: true
            )).to_not be_nil
 
     # Issues before AMA
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_issue_description: "Non-RAMP Issue before AMA Activation",
              ineligible_reason: :before_ama
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_issue_description: "Issue before AMA Activation from RAMP",
              ineligible_reason: nil,
              ramp_claim_id: "ramp_claim_id"
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              nonrating_issue_description: "A nonrating issue before AMA",
              ineligible_reason: :before_ama
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              nonrating_issue_description: "A nonrating issue before AMA",
              decision_date: pre_ramp_start_date
            )).to_not be_nil
@@ -640,7 +640,7 @@ feature "Appeal Intake" do
     let!(:previous_appeal_request_issue) do
       create(
         :request_issue,
-        review_request: previous_appeal,
+        decision_review: previous_appeal,
         contested_rating_issue_reference_id: appeal_reference_id
       )
     end
