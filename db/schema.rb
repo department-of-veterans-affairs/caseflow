@@ -500,6 +500,14 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.string "zip_code"
   end
 
+  create_table "hearing_task_associations", force: :cascade do |t|
+    t.bigint "hearing_id", null: false
+    t.bigint "hearing_task_id", null: false
+    t.string "hearing_type", null: false
+    t.index ["hearing_task_id"], name: "index_hearing_task_associations_on_hearing_task_id"
+    t.index ["hearing_type", "hearing_id"], name: "index_hearing_task_associations_on_hearing_type_and_hearing_id"
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "hearing_id", null: false
@@ -896,24 +904,6 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.index ["text"], name: "index_tags_on_text", unique: true
   end
 
-<<<<<<< HEAD
-  create_table "task_associated_objects", force: :cascade do |t|
-    t.bigint "hearing_id", null: false
-    t.string "hearing_type", null: false
-    t.bigint "hold_hearing_task_id", null: false
-    t.index ["hearing_type", "hearing_id"], name: "index_task_associated_objects_on_hearing_type_and_hearing_id"
-    t.index ["hold_hearing_task_id"], name: "index_task_associated_objects_on_hold_hearing_task_id"
-  end
-
-  create_table "task_business_payloads", force: :cascade do |t|
-    t.string "description", null: false
-    t.bigint "task_id", null: false
-    t.json "values", default: {}, null: false
-    t.index ["task_id"], name: "index_task_business_payloads_on_task_id"
-  end
-
-=======
->>>>>>> master
   create_table "task_timers", force: :cascade do |t|
     t.datetime "attempted_at"
     t.datetime "created_at", null: false

@@ -48,8 +48,9 @@ describe ScheduleHearingTask do
     context "AMA appeal" do
       let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video]) }
       let(:appeal) { create(:appeal) }
+      let(:hearing_task) { HearingTask.create!(appeal: appeal)}
       let(:schedule_hearing_task) do
-        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user)
+        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, parent: hearing_task)
       end
       let(:update_params) do
         {
@@ -83,9 +84,9 @@ describe ScheduleHearingTask do
 
         expect(HoldHearingTask.count).to eq(1)
         expect(HoldHearingTask.first.appeal).to eq(appeal)
-        expect(TaskAssociatedObject.count).to eq(1)
-        expect(TaskAssociatedObject.first.hearing).to eq(Hearing.first)
-        expect(TaskAssociatedObject.first.hold_hearing_task).to eq(HoldHearingTask.first)
+        expect(HearingTaskAssociation.count).to eq(1)
+        expect(HearingTaskAssociation.first.hearing).to eq(Hearing.first)
+        expect(HearingTaskAssociation.first.hearing_task).to eq(HearingTask.first)
       end
     end
 
