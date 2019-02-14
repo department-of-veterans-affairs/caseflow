@@ -67,7 +67,7 @@ class JudgeTask < Task
     return false if task.appeal.class != Appeal
     return false if task.appeal.docket_name.nil?
 
-    task.children.all? { |t| !t.is_a?(JudgeTask) }
+    task.children.all? { |t| !t.is_a?(JudgeTask) && !t.is_a?(DistributionTask) && !t.is_a?(ScheduleHearingTask) }
   end
   #:nocov:
 end
