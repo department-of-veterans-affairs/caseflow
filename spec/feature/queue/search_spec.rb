@@ -71,7 +71,7 @@ RSpec.feature "Search" do
         context "and it also has appeals" do
           let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
           let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
-          let!(:eligible_request_issue) { create(:request_issue, review_request: higher_level_review) }
+          let!(:eligible_request_issue) { create(:request_issue, decision_review: higher_level_review) }
 
           before do
             visit "/search"
