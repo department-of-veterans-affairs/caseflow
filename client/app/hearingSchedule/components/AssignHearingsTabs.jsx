@@ -39,7 +39,7 @@ const tableNumberStyling = css({
 });
 
 const AvailableVeteransTable = ({ rows, columns }) => {
-  let removeTimeColumn = columns.slice(0, 5);
+  let removeTimeColumn = _.slice(columns, 0, -1);
 
   if (_.isEmpty(rows)) {
     return <div>
