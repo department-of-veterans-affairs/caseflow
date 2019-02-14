@@ -144,6 +144,7 @@ feature "NonComp Board Grant Task Page" do
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
       expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
+      expect(page).to have_content(prior_date.strftime("%m/%d/%Y"))
 
       # expect to have the two granted decision issues
       expect(page).to have_content("GRANTED", count: 2)
