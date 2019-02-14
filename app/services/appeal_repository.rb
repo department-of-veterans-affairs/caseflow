@@ -21,7 +21,10 @@ class AppealRepository
 
     # Load the VACOLS case records associated with legacy tasks into memory in a single batch.
     cases = (vacols_records_for_appeals(legacy_appeal_ids) || []).group_by(&:id)
-    aod = VACOLS::Case.aod(legacy_appeal_ids)
+
+    aod = legacy_appeal_ids.in_groups_of(1000, false).reduce({}) do |acc, group|
+      acc.merge(VACOLS::Case.aod(group))
+    end
 
     # Associate the cases we pulled from VACOLS to the appeals of the tasks.
     tasks.each do |t|
