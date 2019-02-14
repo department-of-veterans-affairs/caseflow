@@ -21,7 +21,7 @@ class IntakeManagerController < ApplicationController
   private
 
   def user
-    @user ||= User.find_by(css_id: user_css_id)
+    @user ||= User.find_by_css_id(user_css_id)
   end
 
   def user_css_id
