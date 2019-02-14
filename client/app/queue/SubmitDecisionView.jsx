@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable no-console */
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -132,7 +131,9 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       then(() => {
         this.props.deleteAppeal(appealId);
       }).
-      catch((err) => console.log('the error on requestSave ', err));
+      catch(() => {
+        // handle the error from the frontend
+      });
   };
 
   render = () => {

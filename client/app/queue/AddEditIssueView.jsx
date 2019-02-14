@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable no-console */
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
