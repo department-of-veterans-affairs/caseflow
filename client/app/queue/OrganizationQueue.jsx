@@ -134,7 +134,7 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName }) => <Re
   <TaskTable
     includeDetailsLink
     includeTask
-    includeRegionalOffice={organizationName === 'Hearings Management'}
+    includeRegionalOffice={organizationName === 'Hearing Management'}
     includeType
     includeDocketNumber
     includeDaysWaiting
@@ -148,7 +148,7 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName }) =>
   <TaskTable
     includeDetailsLink
     includeTask
-    includeRegionalOffice={organizationName === 'Hearings Management'}
+    includeRegionalOffice={organizationName === 'Hearing Management'}
     includeType
     includeAssignedTo
     includeDocketNumber
