@@ -1,0 +1,16 @@
+speedups:
+  # Disabled because argument is actually faster.
+  # See https://github.com/DamirSvrtan/fasterer/issues/37
+  fetch_with_argument_vs_block: false
+  # Disabled for now because the while loop version is uglier and harder to
+  # read, so we'll only change it on a case by case basis if it makes a
+  # significant difference
+  each_with_index_vs_while: false
+
+exclude_paths:
+  # These files are ignored because some methods are being incorrectly flagged,
+  # and fasterer doesn't yet have a way to disable a check on a single method
+  # like Rubocop.
+  - "db/seeds.rb"
+  - "vendor/**/*.rb"
+  - "app/mappers/zip_code_to_lat_lng_mapper.rb"

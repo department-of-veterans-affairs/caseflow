@@ -53,6 +53,9 @@ class CreateMailTaskDialog extends React.Component {
         const response = JSON.parse(resp.text);
 
         this.props.onReceiveAmaTasks(response.tasks.data);
+      }).
+      catch(() => {
+        // handle the error from the frontend
       });
   }
 

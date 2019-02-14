@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190206165710) do
+ActiveRecord::Schema.define(version: 20190212142949) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -282,6 +282,8 @@ ActiveRecord::Schema.define(version: 20190206165710) do
     t.string "genpop_query"
     t.boolean "priority"
     t.datetime "ready_at"
+    t.integer "task_id"
+    t.index ["case_id"], name: "index_distributed_cases_on_case_id", unique: true
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -894,13 +896,6 @@ ActiveRecord::Schema.define(version: 20190206165710) do
     t.index ["text"], name: "index_tags_on_text", unique: true
   end
 
-  create_table "task_business_payloads", force: :cascade do |t|
-    t.string "description", null: false
-    t.bigint "task_id", null: false
-    t.json "values", default: {}, null: false
-    t.index ["task_id"], name: "index_task_business_payloads_on_task_id"
-  end
-
   create_table "task_timers", force: :cascade do |t|
     t.datetime "attempted_at"
     t.datetime "created_at", null: false
@@ -922,7 +917,6 @@ ActiveRecord::Schema.define(version: 20190206165710) do
     t.integer "assigned_to_id"
     t.string "assigned_to_type", null: false
     t.datetime "closed_at"
-    t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true
     t.integer "on_hold_duration"
@@ -932,6 +926,8 @@ ActiveRecord::Schema.define(version: 20190206165710) do
     t.string "status", default: "assigned"
     t.string "type"
     t.datetime "updated_at", null: false
+    t.index ["appeal_type", "appeal_id"], name: "index_tasks_on_appeal_type_and_appeal_id"
+    t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // @flow
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -67,6 +68,7 @@ type Props = {|
   userRole: string,
   userCssId: string,
   dropdownUrls: Array<string>,
+  applicationUrls: Array<Object>,
   buildDate?: string,
   reviewActionType: string,
   userIsVsoEmployee?: boolean,
@@ -240,12 +242,13 @@ class QueueApp extends React.PureComponent<Props> {
       defaultUrl={this.props.caseSearchHomePage ? '/search' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
+      applicationUrls={this.props.applicationUrls}
       logoProps={{
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT
       }}
       rightNavElement={<CaseSearchLink />}
-      appName="">
+      appName="Queue">
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app">
