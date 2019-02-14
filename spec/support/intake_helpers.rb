@@ -505,6 +505,8 @@ module IntakeHelpers
 
     # check that we cannot add the same issue again
     click_intake_add_issue
+    decision_date = contested_decision_issues.first.end_product_last_action_date.strftime("%m/%d/%Y")
+    expect(page).to have_content("Past decisions from #{decision_date}")
     expect(page).to have_css("input[disabled]", visible: false)
     expect(page).to have_content("PTSD denied (already selected for")
 

@@ -360,9 +360,12 @@ feature "Appeal Intake" do
   scenario "Add / Remove Issues page" do
     duplicate_reference_id = "xyz789"
     old_reference_id = "old1234"
+    promulgation_date = receipt_date - 40.days
+    rating_date = promulgation_date.strftime("%m/%d/%Y")
+
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 40.days,
+      promulgation_date: promulgation_date,
       profile_date: receipt_date - 50.days,
       issues: [
         { reference_id: "xyz123", decision_text: "Left knee granted 2" },
@@ -407,6 +410,7 @@ feature "Appeal Intake" do
 
     # clicking the add issues button should bring up the modal
     click_intake_add_issue
+    expect(page).to have_content("Past decisions from #{rating_date}")
     expect(page).to have_content("Add issue 1")
     expect(page).to have_content("Does issue 1 match any of these issues")
     expect(page).to have_content("Left knee granted 2")

@@ -14,7 +14,7 @@ describe ContestableIssue do
 
   let(:benefit_type) { "compensation" }
   let(:caseflow_decision_date) { Time.zone.today - 20 }
-  let(:profile_date) { Time.zone.today - 30 }
+  let(:profile_date) { Time.zone.today }
   let(:promulgation_date) { Time.zone.today - 30 }
   let(:diagnostic_code) { "diagnostic_code" }
   let(:rating_issue) do
@@ -29,14 +29,13 @@ describe ContestableIssue do
       rba_contentions_data: [{}]
     )
   end
-  let(:profile_date) { Time.zone.today }
 
   let(:decision_issue) do
     create(
       :decision_issue,
       decision_review: create(:appeal),
       rating_issue_reference_id: "rating1",
-      profile_date: profile_date,
+      promulgation_date: promulgation_date,
       description: "this is a good decision",
       benefit_type: benefit_type,
       caseflow_decision_date: caseflow_decision_date
@@ -52,7 +51,7 @@ describe ContestableIssue do
         rating_issue_reference_id: rating_issue.reference_id,
         rating_issue_profile_date: profile_date,
         decision_issue_id: nil,
-        date: profile_date,
+        approx_decision_date: promulgation_date,
         description: rating_issue.decision_text,
         contesting_decision_review: decision_review,
         rating_issue_diagnostic_code: diagnostic_code,
@@ -64,7 +63,7 @@ describe ContestableIssue do
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: diagnostic_code,
         decisionIssueId: nil,
-        date: profile_date,
+        approxDecisionDate: promulgation_date,
         description: rating_issue.decision_text,
         rampClaimId: nil,
         titleOfActiveReview: nil,
@@ -74,7 +73,7 @@ describe ContestableIssue do
     end
 
     context "is untimely" do
-      let(:profile_date) { Time.zone.today - 373.days }
+      let(:promulgation_date) { Time.zone.today - 373.days }
 
       it "can be serialized" do
         expect(subject.serialize).to eq(
@@ -82,7 +81,7 @@ describe ContestableIssue do
           ratingIssueProfileDate: profile_date,
           ratingIssueDiagnosticCode: diagnostic_code,
           decisionIssueId: nil,
-          date: profile_date,
+          approxDecisionDate: promulgation_date,
           description: rating_issue.decision_text,
           rampClaimId: nil,
           titleOfActiveReview: nil,
@@ -102,7 +101,7 @@ describe ContestableIssue do
         rating_issue_reference_id: "rating1",
         rating_issue_profile_date: profile_date,
         decision_issue_id: decision_issue.id,
-        date: caseflow_decision_date,
+        approx_decision_date: caseflow_decision_date,
         description: decision_issue.description,
         source_request_issues: decision_issue.request_issues.open,
         contesting_decision_review: decision_review,
@@ -114,7 +113,7 @@ describe ContestableIssue do
         ratingIssueProfileDate: profile_date,
         ratingIssueDiagnosticCode: nil,
         decisionIssueId: decision_issue.id,
-        date: caseflow_decision_date,
+        approxDecisionDate: caseflow_decision_date,
         description: decision_issue.description,
         rampClaimId: nil,
         titleOfActiveReview: nil,
@@ -132,7 +131,7 @@ describe ContestableIssue do
           ratingIssueProfileDate: profile_date,
           ratingIssueDiagnosticCode: nil,
           decisionIssueId: decision_issue.id,
-          date: caseflow_decision_date,
+          approxDecisionDate: caseflow_decision_date,
           description: decision_issue.description,
           rampClaimId: nil,
           titleOfActiveReview: nil,

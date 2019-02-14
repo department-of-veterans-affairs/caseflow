@@ -283,7 +283,7 @@ class RequestIssue < ApplicationRecord
       rating_issue_profile_date: contested_rating_issue_profile_date,
       description: description,
       contention_text: contention_text,
-      decision_date: contested_issue ? contested_issue.date : decision_date,
+      approx_decision_date: approx_decision_date_of_issue_being_contested,
       category: issue_category,
       notes: notes,
       is_unidentified: is_unidentified,
@@ -297,6 +297,16 @@ class RequestIssue < ApplicationRecord
       title_of_active_review: title_of_active_review,
       contested_decision_issue_id: contested_decision_issue_id
     }
+  end
+
+  def approx_decision_date_of_issue_being_contested
+    if contested_issue
+      contested_issue.approx_decision_date
+    elsif decision_date
+      decision_date
+    elsif decision_issues.any?
+      decision_issues.first.approx_decision_date
+    end
   end
 
   def validate_eligibility!
@@ -463,6 +473,7 @@ class RequestIssue < ApplicationRecord
     self.contested_rating_issue_profile_date ||= contested_rating_issue&.profile_date
   end
 
+  # TODO: extend this to cover nonrating request issues
   def build_contested_issue
     return unless decision_review
 
