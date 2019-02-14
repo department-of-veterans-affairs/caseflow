@@ -119,6 +119,7 @@ const NewTasksTab = connect(
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
       <TaskTable
+        includeHearingBadge
         includeDetailsLink
         includeTask
         includeRegionalOffice={props.belongsToHearingSchedule}
