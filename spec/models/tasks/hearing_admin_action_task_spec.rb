@@ -22,7 +22,7 @@ describe HearingAdminActionTask do
       VADotGovService = Fakes::VADotGovService
       verify_address_task.update!(status: "completed")
 
-      expect(Veteran.first.closest_regional_office).to eq "RO14"
+      expect(Veteran.first.closest_regional_office).to eq "RO17"
       expect(Veteran.first.available_hearing_locations.count).to eq 1
     end
   end
