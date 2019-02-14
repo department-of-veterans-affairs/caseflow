@@ -23,7 +23,7 @@ const reducer = combineReducers({
 class Intake extends React.PureComponent {
   componentDidMount() {
     if (window.Raven) {
-      Raven.caseflowAppName = 'intake';
+      window.Raven.caseflowAppName = 'intake';
     }
   }
 
