@@ -92,7 +92,7 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
       eligibleForSocOptIn: args.eligibleForSocOptIn,
       ineligibleDueToId: args.ineligibleDueToId,
       ineligibleReason: args.ineligibleReason,
-      reviewRequestTitle: args.reviewRequestTitle
+      decisionReviewTitle: args.decisionReviewTitle
     }
   });
 };

@@ -17,7 +17,7 @@ feature "correcting issues" do
       expect(page).to_not have_content "first request issue"
       expect(DecisionIssue.count).to eq 1
       expect(RequestDecisionIssue.count).to eq 1
-      expect(first_request_issue.reload.review_request).to_not be_nil
+      expect(first_request_issue.reload.decision_review).to_not be_nil
       expect(first_request_issue).to be_closed
       expect(first_request_issue).to be_removed
     end
@@ -36,7 +36,7 @@ feature "correcting issues" do
       expect(page).to_not have_content "with many decision issues"
       expect(DecisionIssue.pluck(:id)).to eq [3]
       expect(RequestDecisionIssue.count).to eq 1
-      expect(request_issue.reload.review_request).to_not be_nil
+      expect(request_issue.reload.decision_review).to_not be_nil
       expect(request_issue).to be_closed
       expect(request_issue).to be_removed
     end
@@ -59,7 +59,7 @@ feature "correcting issues" do
       expect(page).to_not have_content "with a shared decision issue"
       expect(DecisionIssue.pluck(:id)).to eq [1]
       expect(RequestDecisionIssue.count).to eq 1
-      expect(request_issue.reload.review_request).to_not be_nil
+      expect(request_issue.reload.decision_review).to_not be_nil
       expect(request_issue).to be_closed
       expect(request_issue).to be_removed
       expect(page).to_not have_content "Added to 2 issues"

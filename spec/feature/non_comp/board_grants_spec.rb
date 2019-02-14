@@ -32,7 +32,7 @@ feature "NonComp Board Grant Task Page" do
       request_issue = create(:request_issue,
                              :nonrating,
                              veteran_participant_id: veteran.participant_id,
-                             review_request: appeal,
+                             decision_review: appeal,
                              benefit_type: nca_org.url)
 
       request_issue.create_decision_issue_from_params(
@@ -118,7 +118,7 @@ feature "NonComp Board Grant Task Page" do
         request_issue = create(:request_issue,
                                :nonrating,
                                veteran_participant_id: veteran.participant_id,
-                               review_request: appeal,
+                               decision_review: appeal,
                                benefit_type: vha_org.url)
 
         request_issue.create_decision_issue_from_params(
