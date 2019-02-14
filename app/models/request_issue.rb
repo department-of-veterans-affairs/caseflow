@@ -432,7 +432,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def api_status_active?
-    return review_request.active_status? if decision_review.is_a?(ClaimReview)
+    return decision_review.active_status? if decision_review.is_a?(ClaimReview)
     return true if decision_review.is_a?(Appeal)
   end
 
