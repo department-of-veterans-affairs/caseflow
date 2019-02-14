@@ -964,6 +964,8 @@ class SeedDB
     create_board_grant_tasks
     create_veteran_record_request_tasks
 
+    FetchHearingLocationsForVeteransJob.perform_now
+
     return if Rails.env.development?
 
     # The fake data here is only necessary when we're not running
