@@ -133,10 +133,6 @@ class RequestIssue < ApplicationRecord
       ).where.not(issue_category: nil)
     end
 
-    def not_deleted
-      where.not(review_request_id: nil)
-    end
-
     def open
       where(closed_at: nil)
     end
@@ -183,6 +179,10 @@ class RequestIssue < ApplicationRecord
       attrs = attrs.merge(review_request: decision_review) if decision_review
 
       new(attrs).tap(&:validate_eligibility!)
+    end
+
+    def active_or_decided
+      open.where(decision_sync_error: nil).where.not(decision_sync_submitted_at: nil)
     end
 
     private
@@ -408,10 +408,6 @@ class RequestIssue < ApplicationRecord
 
   def requires_record_request_task?
     !benefit_type_requires_payee_code?
-  end
-
-  def next_decision_issues
-    review_request.decision_issues.select { |issue| issue.contests_request_issue(id) }
   end
 
   def decision_or_promulgation_date

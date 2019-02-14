@@ -87,21 +87,6 @@ class DecisionIssue < ApplicationRecord
     Contention.new(description).text
   end
 
-  def contests_request_issue(request_issue_id)
-    request_issues.any{ |request_issue| request_issue.id == request_issue_id}
-  end
-
-  def next_decision_issues
-    next_request_issues = RequestIssue.where(contested_decision_issue_id: id)
-    return if next_request_issues.empty?
-
-    next_request_issues.map do |next_request_issue|
-      next_request_issue.review_request.decision_issues.find do |issue|
-        issue.contests_request_issue(next_request_issue.id)
-      end
-    end.flatten
-  end
-
   def api_status_active?
     # this is still being worked on so for the purposes of communicating
     # to the veteran, this decision issue is still considered active

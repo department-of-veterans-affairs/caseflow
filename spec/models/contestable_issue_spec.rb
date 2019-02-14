@@ -152,6 +152,7 @@ describe ContestableIssue do
                              review_request: appeal,
                              contested_rating_issue_reference_id: rating_contestable_issue.rating_issue_reference_id,
                              contested_rating_issue_profile_date: rating_contestable_issue.rating_issue_profile_date,
+                             decision_sync_submitted_at: starting_date,
                              contested_decision_issue_id: nil)
 
       create(:decision_issue,
@@ -161,19 +162,6 @@ describe ContestableIssue do
              request_issues: [request_issue])
     end
 
-    let!(:another_contestable_issue) do
-      another_appeal = create(:appeal)
-      request_issue = create(:request_issue,
-                             review_request: another_appeal,
-                             contested_decision_issue_id: contesting_decision_issue.id)
-      decision_issue = create(:decision_issue,
-                              decision_review: another_appeal,
-                              description: "another decision issue",
-                              caseflow_decision_date: starting_date + 1.day,
-                              request_issues: [request_issue])
-      ContestableIssue.from_decision_issue(decision_issue, another_appeal)
-    end
-
     let!(:future_contestable_issues) do
       contestable_issues = []
       contesting_decision_issue_id = contesting_decision_issue.id
@@ -181,6 +169,7 @@ describe ContestableIssue do
         future_appeal = create(:appeal)
         future_request_issue = create(:request_issue,
                                       review_request: future_appeal,
+                                      decision_sync_submitted_at: starting_date + index.days,
                                       contested_decision_issue_id: contesting_decision_issue_id)
         future_decision_issue = create(:decision_issue,
                                        decision_review: future_appeal,
@@ -194,18 +183,26 @@ describe ContestableIssue do
       contestable_issues
     end
 
+    # one request issue can have multiple decisions
+    let!(:another_contestable_issue) do
+      decision_issue = create(:decision_issue,
+                              decision_review: future_contestable_issues.second.contesting_decision_review,
+                              description: "another decision issue",
+                              caseflow_decision_date: starting_date + 4.days,
+                              request_issues: future_contestable_issues.second.source_request_issues)
+      ContestableIssue.from_decision_issue(decision_issue, future_contestable_issues.second.contesting_decision_review)
+    end
+
     # rubocop:disable Metrics/AbcSize
     def check_latest_contestable_issues(latest_contestable_issues)
-      # finds another_contestable_issue & the lastest of the future_contestable_issues
-
       expect(latest_contestable_issues.length).to eq(2)
       found_another_contestable_issue = latest_contestable_issues.find do |issue|
         issue.contesting_decision_review == another_contestable_issue.contesting_decision_review &&
-          issue.decision_issue_id == another_contestable_issue.decision_issue_id
+          issue.decision_issue.id == another_contestable_issue.decision_issue.id
       end
       found_future_contestable_issue = latest_contestable_issues.find do |issue|
         issue.contesting_decision_review == future_contestable_issues.last.contesting_decision_review &&
-          issue.decision_issue_id == future_contestable_issues.last.decision_issue_id
+          issue.decision_issue.id == future_contestable_issues.last.decision_issue.id
       end
       expect(found_another_contestable_issue).to_not be_nil
       expect(found_future_contestable_issue).to_not be_nil

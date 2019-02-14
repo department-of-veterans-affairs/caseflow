@@ -3,7 +3,7 @@ class ContestableIssue
   include ActiveModel::Model
 
   attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id, :contesting_decision_review,
-                :decision_issue_id, :promulgation_date, :rating_issue_profile_date, :source_request_issues,
+                :decision_issue, :promulgation_date, :rating_issue_profile_date, :source_request_issues,
                 :rating_issue_diagnostic_code
 
   class << self
@@ -24,9 +24,9 @@ class ContestableIssue
       new(
         rating_issue_reference_id: decision_issue.rating_issue_reference_id,
         rating_issue_profile_date: decision_issue.profile_date,
-        decision_issue_id: decision_issue.id,
         date: decision_issue.approx_decision_date,
         description: decision_issue.description,
+        decision_issue: decision_issue,
         source_request_issues: decision_issue.request_issues.open,
         contesting_decision_review: contesting_decision_review
       )
@@ -38,61 +38,62 @@ class ContestableIssue
       ratingIssueReferenceId: rating_issue_reference_id,
       ratingIssueProfileDate: rating_issue_profile_date.try(:to_date),
       ratingIssueDiagnosticCode: rating_issue_diagnostic_code,
-      decisionIssueId: decision_issue_id,
+      decisionIssueId: decision_issue&.id,
       date: date,
       description: description,
       rampClaimId: ramp_claim_id,
       titleOfActiveReview: title_of_active_review,
       sourceReviewType: source_review_type,
       timely: timely?,
-      latestIssueInChain: serialize_latest_decision_issues
+      latestIssuesInChain: serialize_latest_decision_issues
     }
+  end
+
+  def serialize_decision_id_and_date
+    { id: decision_issue&.id, date: date }
   end
 
   def source_review_type
     return unless source_request_issues.first
 
-    decision_issue? ? source_request_issues.first.decision_review_type : source_request_issues.first.review_request_type
+    !decision_issue.nil? ? source_request_issues.first.decision_review_type : source_request_issues.first.review_request_type
   end
 
   def next_decision_issues
-    associated_decision_issue&.next_decision_issues || contested_by_request_issue.map(&:next_decision_issues).flatten
+    contested_by_request_issue&.decision_issues
   end
 
   def latest_contestable_issues
-    @latest_contestable_issues ||= find_latest_contestable_issue
+    # walks up the chain of request & decision issues until it finds the latest
+    # decision issue in the chain (which will be the issue itself if no later decision issues exist)
+    @latest_contestable_issues ||= find_latest_contestable_issues
   end
 
   private
 
-  def associated_decision_issue
-    return unless decision_issue?
-
-    DecisionIssue.find(decision_issue_id)
-  end
-
   def contested_by_request_issue
-    return [] if decision_issue?
-
-    RequestIssue.where(contested_rating_issue_reference_id: rating_issue_reference_id,
-                       contested_rating_issue_profile_date: rating_issue_profile_date.to_s)
+    find_contested_request_issue_by_rating_issue || find_contested_request_issue_by_decision_issue
   end
 
-  def decision_issue?
-    !!decision_issue_id
+  def find_contested_request_issue_by_rating_issue
+    # only find based on rating issue if a decision issue does not exist
+    # otherwise we end up with a cycle where we find the same request issues over and over again
+    return nil if !rating_issue_reference_id || !decision_issue.nil?
+
+    RequestIssue.active_or_decided.find_by(contested_rating_issue_reference_id: rating_issue_reference_id, contested_decision_issue_id: nil)
+  end
+
+  def find_contested_request_issue_by_decision_issue
+    return nil unless decision_issue&.id
+
+    RequestIssue.active_or_decided.find_by(contested_decision_issue_id: decision_issue.id)
   end
 
   def serialize_latest_decision_issues
-    serialized_issues = latest_contestable_issues.map do |latest_contestable_issue|
-      {
-        id: latest_contestable_issue.decision_issue_id,
-        date: latest_contestable_issue.date
-      }
-    end
-    serialized_issues.sort_by { |issue| issue[:date] }
+    latest_contestable_issues.map(&:serialize_decision_id_and_date).sort_by { |issue| issue[:date] }
   end
 
-  def find_latest_contestable_issue
+  def find_latest_contestable_issues
     return [self] if next_decision_issues.blank?
 
     next_decision_issues.map do |decision_issue|
@@ -111,9 +112,9 @@ class ContestableIssue
   end
 
   def conflicting_request_issue_by_decision_issue
-    return unless decision_issue_id
+    return unless decision_issue&.id
 
-    potentially_conflicting_request_issues.find_active_by_contested_decision_id(decision_issue_id)
+    potentially_conflicting_request_issues.find_active_by_contested_decision_id(decision_issue.id)
   end
 
   def potentially_conflicting_request_issues
