@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable no-console */
 import { ACTIONS } from './uiConstants';
 import ApiUtil from '../../util/ApiUtil';
 

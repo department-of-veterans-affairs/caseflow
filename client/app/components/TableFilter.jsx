@@ -88,10 +88,11 @@ class TableFilter extends React.PureComponent {
   }
 
   clearFilteredByList = (columnName) => {
-    const oldList = this.props.filteredByList;
-    let newList = _.set(oldList, columnName, []);
+    const filterList = this.props.filteredByList;
 
-    this.props.updateFilters(newList);
+    filterList[columnName] = [];
+
+    this.props.updateFilters(filterList);
     this.props.toggleDropdownFilterVisibility(columnName);
   }
 
