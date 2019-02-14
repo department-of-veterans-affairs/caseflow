@@ -42,7 +42,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def approx_decision_date
-    processed_in_caseflow? ? caseflow_decision_date : processed_in_vbms_decision_date
+    processed_in_caseflow? ? caseflow_decision_date : approx_processed_in_vbms_decision_date
   end
 
   def issue_category
@@ -131,7 +131,9 @@ class DecisionIssue < ApplicationRecord
     decision_review.processed_in_caseflow?
   end
 
-  def processed_in_vbms_decision_date
+  # the decision date is approximate but we need it for timeliness checks.
+  # see also ContestableIssue.approx_decision_date
+  def approx_processed_in_vbms_decision_date
     if promulgation_date
       promulgation_date.to_date
     else
