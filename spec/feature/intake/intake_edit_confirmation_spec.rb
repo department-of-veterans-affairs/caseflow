@@ -18,7 +18,7 @@ feature "Intake Edit Confirmation" do
         profile_date: decision_review.receipt_date - 1.month,
         promulgation_date: decision_review.receipt_date - 2.months,
         issues: [
-          { reference_id: rating_reference_id, decision_text: "Left knee granted" },
+          { decision_text: "Left knee granted" },
           { reference_id: rating_reference_id, decision_text: "PTSD denied" }
         ]
       )
