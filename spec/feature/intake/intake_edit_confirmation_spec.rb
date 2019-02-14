@@ -24,10 +24,10 @@ feature "Intake Edit Confirmation" do
       )
     end
 
-    let(:request_issue) do
+    let!(:request_issue) do
       create(:request_issue,
-             rating_issue_reference_id: rating_reference_id,
-             rating_issue_profile_date: rating.profile_date,
+             contested_rating_issue_reference_id: rating_reference_id,
+             contested_rating_issue_profile_date: rating.profile_date,
              review_request: decision_review,
              description: "PTSD denied")
     end
@@ -35,17 +35,17 @@ feature "Intake Edit Confirmation" do
     before do
       decision_review.create_issues!([request_issue])
       decision_review.establish!
+      decision_review.reload
     end
 
     describe "given common behavior for claim reviews" do
       [:higher_level_review, :supplemental_claim].each do |claim_review_type|
         describe "given a #{claim_review_type}" do
           let(:decision_review) { create(claim_review_type, veteran_file_number: create(:veteran).file_number) }
-          let(:edit_path) { "#{claim_review_type.to_s.pluralize}/#{get_claim_id(decision_review)}/edit" }
+          let(:edit_path) { "#{claim_review_type.to_s.pluralize}/#{decision_review.uuid}/edit" }
 
           it "confirms that an EP is being established" do
             visit edit_path
-            binding.pry
             click_intake_add_issue
             click_intake_no_matching_issues
             add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%D"))

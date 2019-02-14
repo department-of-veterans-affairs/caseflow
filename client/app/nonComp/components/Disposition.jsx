@@ -51,8 +51,7 @@ class NonCompDecisionIssue extends React.PureComponent {
       index,
       disabled
     } = this.props;
-    // TODO this might need to be a contestable issue instead so we can consistently use .decision_date
-    let issueDate = formatDateStr(issue.rating_issue_profile_date || issue.decision_date);
+    let issueDate = formatDateStr(issue.approx_decision_date);
 
     return <div className="cf-decision">
       <hr />
