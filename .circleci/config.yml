@@ -6,9 +6,9 @@ jobs:
     resource_class: large
     steps:
       - checkout
-      - setup_db
       - setup_ruby_dependencies
       - setup_js_dependencies
+      - setup_db
       - run:
           name: Setup testfiles directory
           command: ~/project/ci-bin/capture-log "mkdir -p ~/project/tmp/testfiles"
