@@ -513,7 +513,7 @@ describe HigherLevelReview do
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
         expect(issue2[:last_action]).to eq("denied")
-        expect(issue2[:date]).to be_nil
+        expect(issue2[:date]).to eq(hlr_decision_issue.approx_decision_date)
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
     end
