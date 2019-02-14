@@ -41,9 +41,13 @@ RSpec.feature "Case details" do
   end
 
   context "hearings pane on attorney task detail view" do
+    let(:veteran_first_name) { "Linda" }
+    let(:veteran_last_name) { "Verne" }
     let!(:veteran) do
       FactoryBot.create(
         :veteran,
+        first_name: veteran_first_name,
+        last_name: veteran_last_name,
         file_number: 123_456_789
       )
     end
@@ -134,6 +138,29 @@ RSpec.feature "Case details" do
 
         details_link = page.find("a[href='/hearings/#{hearing.external_id}/details']")
         expect(details_link.text).to eq("View Hearing Details")
+      end
+
+      context "the user has a VSO role" do
+        let!(:vso) { FactoryBot.create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
+        let!(:vso_user) { FactoryBot.create(:user, :vso_role) }
+        let!(:vso_task) { FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: appeal) }
+
+        before do
+          OrganizationsUser.add_user_to_organization(vso_user, vso)
+          allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+          User.authenticate!(user: vso_user)
+        end
+
+        scenario "worksheet and details links are not visible" do
+          visit vso.path
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+          expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
+          expect(page).to_not have_content("View VLJ Hearing Worksheet")
+          expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
+          expect(page).to_not have_content("View Hearing Details")
+          expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/details']")
+        end
       end
     end
 
