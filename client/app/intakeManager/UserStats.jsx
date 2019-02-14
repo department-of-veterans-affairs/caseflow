@@ -77,7 +77,7 @@ export default class UserStats extends React.PureComponent {
     let tbl = '';
 
     if (this.state.userStats.length > 0) {
-      tbl = <Table columns={columns} rowObjects={this.state.userStats} slowReRendersAreOk />
+      tbl = <Table columns={columns} rowObjects={this.state.userStats} slowReRendersAreOk />;
     }
 
     return <div className="cf-app-segment cf-app-segment--alt cf-manager-intakes">
