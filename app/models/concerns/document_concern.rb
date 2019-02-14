@@ -10,7 +10,7 @@ module DocumentConcern
 
   # Retrieves any documents that have been uploaded more recently than the user has viewed
   # the appeal or an optional provided date
-  def new_documents_from_caseflow(user, placed_on_hold_timestamp = nil)
+  def new_documents_for_user(user, placed_on_hold_timestamp = nil)
     caseflow_documents = Document.where(file_number: veteran_file_number)
     if caseflow_documents.empty?
       find_or_create_documents!
