@@ -94,11 +94,7 @@ feature "Appeal Intake" do
 
     scenario "veteran cannot be claimant" do
       create(:appeal, veteran_file_number: veteran.file_number)
-      intake = AppealIntake.new(veteran_file_number: veteran.file_number, user: current_user)
-      intake.start!
-
-      visit "/intake"
-      expect(page).to have_css("input[disabled][id=different-claimant-option_false]", visible: false)
+      check_deceased_veteran_claimant(AppealIntake.new(veteran_file_number: veteran.file_number, user: current_user))
     end
   end
 

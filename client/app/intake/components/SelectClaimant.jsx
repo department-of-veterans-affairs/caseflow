@@ -1,7 +1,10 @@
 import React from 'react';
 import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
-import { BOOLEAN_RADIO_OPTIONS, DECEASED_PAYEE_CODES, LIVING_PAYEE_CODES } from '../constants';
+import { BOOLEAN_RADIO_OPTIONS,
+  BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE,
+  DECEASED_PAYEE_CODES,
+  LIVING_PAYEE_CODES } from '../constants';
 import COPY from '../../../COPY.json';
 
 export default class SelectClaimant extends React.PureComponent {
@@ -76,7 +79,9 @@ export default class SelectClaimant extends React.PureComponent {
 
     if (isVeteranDeceased) {
       // disable veteran claimant option if veteran is deceased
-      veteranClaimantOptions[0].disabled = true;
+      veteranClaimantOptions = BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE;
+      // set claimant value to someone other than the veteran
+      setVeteranIsNotClaimant('true');
     }
 
     return <div className="cf-different-claimant">
