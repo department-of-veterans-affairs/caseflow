@@ -12,7 +12,10 @@ module DocumentConcern
   # the appeal or an optional provided date
   def new_documents_from_caseflow(user, placed_on_hold_timestamp = nil)
     caseflow_documents = Document.where(file_number: veteran_file_number)
-    return new_documents_for_user(user, placed_on_hold_timestamp) if caseflow_documents.empty?
+    if caseflow_documents.empty?
+      find_or_create_documents!
+      caseflow_documents = Document.where(file_number: veteran_file_number)
+    end
 
     appeal_view = appeal_views.find_by(user: user)
     return caseflow_documents if !appeal_view && !placed_on_hold_timestamp
