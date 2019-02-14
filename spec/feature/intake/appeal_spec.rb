@@ -286,8 +286,7 @@ feature "Appeal Intake" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
   end
 
-  scenario "intake can still be completed when ratings are backfilled" do
-    mock_backfilled_rating_response
+  def complete_appeal
     start_appeal(veteran_no_ratings)
 
     visit "/intake"
@@ -306,20 +305,32 @@ feature "Appeal Intake" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.appeal} has been processed.")
   end
 
-  context "ratings with disabiliity codes" do
+  scenario "intake can still be completed when ratings are backfilled" do
+    mock_backfilled_rating_response
+    complete_appeal
+  end
+
+  scenario "intake can still be completed when ratings are locked" do
+    mock_locked_rating_response
+    complete_appeal
+  end
+
+  context "ratings with diagnostic codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }
-    let!(:ratings_with_disability_codes) do
-      generate_ratings_with_disabilities(veteran,
-                                         disabiliity_receive_date,
-                                         disability_profile_date)
+    let!(:ratings_with_diagnostic_codes) do
+      generate_ratings_with_disabilities(
+        veteran,
+        disabiliity_receive_date,
+        disability_profile_date
+      )
     end
 
-    scenario "saves disability codes" do
+    scenario "saves diagnostic codes" do
       appeal, = start_appeal(veteran)
       visit "/intake"
       click_intake_continue
-      save_and_check_request_issues_with_disability_codes(
+      save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.appeal,
         appeal
       )
@@ -349,9 +360,12 @@ feature "Appeal Intake" do
   scenario "Add / Remove Issues page" do
     duplicate_reference_id = "xyz789"
     old_reference_id = "old1234"
+    promulgation_date = receipt_date - 40.days
+    rating_date = promulgation_date.strftime("%m/%d/%Y")
+
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 40.days,
+      promulgation_date: promulgation_date,
       profile_date: receipt_date - 50.days,
       issues: [
         { reference_id: "xyz123", decision_text: "Left knee granted 2" },
@@ -396,6 +410,7 @@ feature "Appeal Intake" do
 
     # clicking the add issues button should bring up the modal
     click_intake_add_issue
+    expect(page).to have_content("Past decisions from #{rating_date}")
     expect(page).to have_content("Add issue 1")
     expect(page).to have_content("Does issue 1 match any of these issues")
     expect(page).to have_content("Left knee granted 2")
@@ -610,7 +625,7 @@ feature "Appeal Intake" do
            )).to_not be_nil
 
     duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
-    ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
+    ineligible_issue = duplicate_request_issues.detect(&:duplicate_of_rating_issue_in_active_review?)
 
     expect(duplicate_request_issues.count).to eq(2)
     expect(duplicate_request_issues).to include(request_issue_in_progress)
@@ -636,13 +651,11 @@ feature "Appeal Intake" do
              request_issues: [previous_appeal_request_issue],
              rating_issue_reference_id: appeal_reference_id,
              participant_id: veteran.participant_id,
-             promulgation_date: 1.month.ago,
              description: "appeal decision issue",
              decision_text: "appeal decision issue",
-             benefit_type: "compensation")
+             benefit_type: "compensation",
+             caseflow_decision_date: profile_date)
     end
-
-    let!(:decision_document) { create(:decision_document, decision_date: profile_date, appeal: previous_appeal) }
 
     scenario "the issue is ineligible" do
       start_appeal(
@@ -737,7 +750,7 @@ feature "Appeal Intake" do
     click_intake_add_issue
     click_intake_no_matching_issues
     add_intake_nonrating_issue(
-      benefit_type: "Vocational Rehab. & Employment",
+      benefit_type: "Vocational Rehabilitation and Employment",
       category: "Basic Eligibility",
       description: "Description for basic eligibility",
       date: profile_date.strftime("%D")
@@ -892,6 +905,44 @@ feature "Appeal Intake" do
       expect(page).to have_content("Add this issue")
       add_intake_rating_issue("Left knee granted")
       expect(page).to have_content("Left knee granted")
+    end
+  end
+
+  context "has prior non-comp claims with decision issues" do
+    let(:prior_noncomp_decision_review) do
+      create(:higher_level_review,
+             benefit_type: "nca",
+             veteran_file_number: veteran_no_ratings.file_number)
+    end
+    # decision_issue_date needs to be before reciept date to show up
+    let(:decision_issue_date) { receipt_date - 2.days }
+    let!(:decision_issues) do
+      [
+        # non comp decision issues do not have end_product_last_action date
+        # but do have promulgation date
+        create(:decision_issue,
+               disposition: "Granted",
+               description: "granted issue",
+               participant_id: veteran_no_ratings.participant_id,
+               decision_review: prior_noncomp_decision_review,
+               caseflow_decision_date: decision_issue_date),
+        create(:decision_issue,
+               disposition: "Dismissed",
+               description: "dismissed issue",
+               participant_id: veteran_no_ratings.participant_id,
+               decision_review: prior_noncomp_decision_review,
+               caseflow_decision_date: decision_issue_date)
+      ]
+    end
+
+    it "shows prior decision issues as contestable" do
+      start_appeal(veteran_no_ratings)
+
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      expect(page).to have_content(decision_issue_date.strftime("%m/%d/%Y"))
+      expect(page).to have_content("granted issue")
+      expect(page).to have_content("dismissed issue")
     end
   end
 end

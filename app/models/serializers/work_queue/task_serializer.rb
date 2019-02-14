@@ -9,7 +9,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :assigned_at
   attribute :started_at
   attribute :created_at
-  attribute :completed_at
+  attribute :closed_at
   attribute :placed_on_hold_at
   attribute :on_hold_duration
   attribute :instructions
@@ -101,11 +101,5 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
 
   attribute :available_actions do
     object.available_actions_unwrapper(@instance_options[:user])
-  end
-
-  attribute :task_business_payloads do
-    object.task_business_payloads.map do |payload|
-      { description: payload.description, values: payload.values }
-    end
   end
 end

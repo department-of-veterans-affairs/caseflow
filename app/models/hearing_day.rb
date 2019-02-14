@@ -37,15 +37,11 @@ class HearingDay < ApplicationRecord
   end
 
   def confirm_no_children_records
-    fail HearingDayHasChildrenRecords if vacols_children_records.count > 0 || hearings.count > 0
+    fail HearingDayHasChildrenRecords if !vacols_children_records.empty? || !hearings.empty?
   end
 
   def vacols_children_records
-    if request_type == REQUEST_TYPES[:central]
-      HearingRepository.fetch_co_hearings_for_date(scheduled_for)
-    else
-      HearingRepository.fetch_video_hearings_for_parent(id)
-    end
+    HearingRepository.fetch_hearings_for_parent(id)
   end
 
   def to_hash
@@ -82,7 +78,11 @@ class HearingDay < ApplicationRecord
                       else
                         Time.zone.parse(scheduled_for).to_datetime
                       end
-      comparison_date = (hearing_hash[:request_type] == "C") ? CASEFLOW_CO_PARENT_DATE : CASEFLOW_V_PARENT_DATE
+      comparison_date = if hearing_hash[:request_type] == REQUEST_TYPES[:central]
+                          CASEFLOW_CO_PARENT_DATE
+                        else
+                          CASEFLOW_V_PARENT_DATE
+                        end
       if scheduled_for > comparison_date
         hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
         create(hearing_hash).to_hash
@@ -110,8 +110,8 @@ class HearingDay < ApplicationRecord
         video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
       elsif regional_office == REQUEST_TYPES[:central]
         cf_video_and_co = where("request_type = ? and DATE(scheduled_for) between ? and ?",
-                                "C", start_date, end_date)
-        video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
+                                REQUEST_TYPES[:central], start_date, end_date)
+        video_and_co = []
       else
         cf_video_and_co = where("regional_office = ? and DATE(scheduled_for) between ? and ?",
                                 regional_office, start_date, end_date)
@@ -174,30 +174,18 @@ class HearingDay < ApplicationRecord
 
     private
 
-    def hearing_days_to_array_of_days_and_hearings(total_video_and_co, is_video_hearing)
+    def hearing_days_to_array_of_days_and_hearings(total_video_and_co, _is_video_hearing)
       # We need to associate all of the hearing days from postgres with all of the
       # hearings from VACOLS. For efficiency we make one call to VACOLS and then
-      # create a hash of the results using either their ids or hearing dates as keys
-      # depending on if it's a video or CO hearing.
-      symbol_to_group_by = nil
+      # create a hash of the results using their ids.
 
-      vacols_hearings_for_days = if is_video_hearing
-                                   symbol_to_group_by = :scheduled_for
-
-                                   HearingRepository.fetch_co_hearings_for_dates(
-                                     total_video_and_co.map { |hearing_day| hearing_day[symbol_to_group_by] }
-                                   )
-                                 else
-                                   symbol_to_group_by = :id
-
-                                   HearingRepository.fetch_video_hearings_for_parents(
-                                     total_video_and_co.map { |hearing_day| hearing_day[symbol_to_group_by] }
-                                   )
-                                 end
+      vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(
+        total_video_and_co.map { |hearing_day| hearing_day[:id] }
+      )
 
       # Group the hearing days with the same keys as the hearings
       grouped_hearing_days = total_video_and_co.group_by do |hearing_day|
-        hearing_day[symbol_to_group_by].to_s
+        hearing_day[:id].to_s
       end
 
       grouped_hearing_days.map do |key, day|

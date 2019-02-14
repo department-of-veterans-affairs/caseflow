@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable no-console */
 import { ACTIONS } from './uiConstants';
 import ApiUtil from '../../util/ApiUtil';
 
@@ -153,7 +154,8 @@ export const setOrganizations = (organizations: Array<Object>) => ({
 
 export const setActiveOrganization = (id: number, name: string, isVso: boolean) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
-  payload: { id,
+  payload: {
+    id,
     name,
     isVso
   }

@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.feature "AmaQueue" do
+  def valid_document_id
+    "12345-12345678"
+  end
+
   context "loads appellant detail view" do
     let(:attorney_first_name) { "Robby" }
     let(:attorney_last_name) { "McDobby" }
@@ -272,6 +276,27 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content("Task assigned to #{other_organization.name}")
         expect(Task.last.instructions.first).to eq(instructions)
       end
+
+      context "A TranslationTask is assigned to the organization" do
+        let(:veteran_first_name) { "Milivoj" }
+        let(:veteran_last_name) { "Veilleux" }
+        let(:veteran_full_name) { "#{veteran_first_name} #{veteran_last_name}" }
+        let!(:veteran) { FactoryBot.create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
+        let!(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+        let!(:translation_task) do
+          FactoryBot.create(
+            :translation_task,
+            assigned_to: translation_organization,
+            appeal: appeal,
+            parent: appeal.root_task
+          )
+        end
+
+        scenario "the task is in the organization queue" do
+          visit translation_organization.path
+          expect(page).to have_content(veteran_full_name)
+        end
+      end
     end
 
     context "when user is a vso" do
@@ -478,7 +503,7 @@ RSpec.feature "AmaQueue" do
 
       expect(page).to have_content("Submit Draft Decision for Review")
 
-      fill_in "Document ID:", with: "1234"
+      fill_in "Document ID:", with: valid_document_id
       click_on "Select a judge"
       find(".Select-control", text: "Select a judge…").click
       first("div", class: "Select-option", text: judge_user.full_name).click
@@ -557,8 +582,6 @@ RSpec.feature "AmaQueue" do
       FactoryBot.create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :assigned)
     end
 
-    let(:document_id) { "5551212" }
-
     before do
       ["Elaine Abitong", "Byron Acero", "Jan Antonioni"].each do |attorney_name|
         another_attorney_on_the_team = FactoryBot.create(
@@ -614,7 +637,7 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
-        fill_in "Document ID:", with: "12345"
+        fill_in "Document ID:", with: valid_document_id
         click_on "Select a judge"
         click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
         fill_in "notes", with: "all done"
@@ -662,7 +685,7 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content("Submit Draft Decision for Review")
 
-        fill_in "Document ID:", with: document_id
+        fill_in "Document ID:", with: valid_document_id
         click_on "Select a judge"
         click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
         fill_in "notes", with: "corrections made"
@@ -679,7 +702,7 @@ RSpec.feature "AmaQueue" do
         visit "/queue"
 
         expect(page).to have_content veteran_full_name
-        expect(page).to have_content document_id
+        expect(page).to have_content valid_document_id
       end
     end
   end

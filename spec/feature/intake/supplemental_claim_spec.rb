@@ -428,17 +428,19 @@ feature "Supplemental Claim Intake" do
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }
-    let!(:ratings_with_disability_codes) do
-      generate_ratings_with_disabilities(veteran,
-                                         disabiliity_receive_date,
-                                         disability_profile_date)
+    let!(:ratings_with_diagnostic_codes) do
+      generate_ratings_with_disabilities(
+        veteran,
+        disabiliity_receive_date,
+        disability_profile_date
+      )
     end
 
-    scenario "saves disability codes" do
+    scenario "saves diagnostic codes" do
       sc, = start_supplemental_claim(veteran)
       visit "/intake"
       click_intake_continue
-      save_and_check_request_issues_with_disability_codes(
+      save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.supplemental_claim,
         sc
       )
@@ -680,7 +682,7 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                review_request: supplemental_claim,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
-               end_product_establishment_id: end_product_establishment.id,
+               end_product_establishment_id: nil,
                ineligible_reason: :before_ama
              )).to_not be_nil
 
@@ -696,13 +698,13 @@ feature "Supplemental Claim Intake" do
                review_request: supplemental_claim,
                nonrating_issue_description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
-               end_product_establishment_id: non_rating_end_product_establishment.id
+               end_product_establishment_id: nil
              )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.detect(&:duplicate_of_rating_issue_in_active_review?)
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
       expect(RequestIssue.find_by(contested_rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
@@ -742,7 +744,7 @@ feature "Supplemental Claim Intake" do
           sc, = start_supplemental_claim(veteran, is_comp: false)
           create(:decision_issue,
                  decision_review: sc,
-                 profile_date: receipt_date - 1.day,
+                 caseflow_decision_date: receipt_date - 1.day,
                  benefit_type: sc.benefit_type,
                  decision_text: "something was decided",
                  participant_id: veteran.participant_id)

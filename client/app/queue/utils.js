@@ -47,6 +47,20 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
   }
 });
 
+export const prepareMostRecentlyHeldHearingForStore = (appealId: string, hearing) => {
+  return {
+    appealId,
+    hearing: {
+      heldBy: hearing.held_by,
+      viewedByJudge: hearing.viewed_by_judge,
+      date: hearing.date,
+      type: hearing.type,
+      externalId: hearing.external_id,
+      disposition: hearing.disposition
+    }
+  };
+};
+
 export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   tasks.reduce((acc, task: Object): Tasks => {
     const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
@@ -65,7 +79,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       assignedOn: task.attributes.assigned_at,
       closestRegionalOffice: task.attributes.veteran_closest_regional_office,
       createdAt: task.attributes.created_at,
-      completedOn: task.attributes.completed_at,
+      closedAt: task.attributes.closed_at,
       dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
@@ -91,7 +105,6 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       instructions: task.attributes.instructions,
       decisionPreparedBy,
       availableActions: task.attributes.available_actions,
-      taskBusinessPayloads: task.attributes.task_business_payloads,
       caseReviewId: task.attributes.attorney_case_review_id,
       timelineTitle: task.attributes.timeline_title,
       hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
@@ -143,7 +156,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       appealType: task.attributes.appeal_type,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
-      completedOn: null,
+      closedAt: null,
       dueOn: task.attributes.due_on,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
@@ -168,7 +181,6 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       status: task.attributes.status,
       decisionPreparedBy: null,
       availableActions: task.attributes.available_actions,
-      taskBusinessPayloads: task.attributes.task_business_payloads,
       timelineTitle: task.attributes.timeline_title,
       hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,

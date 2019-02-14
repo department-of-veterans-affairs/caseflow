@@ -32,12 +32,13 @@ feature "Higher Level Review Edit issues" do
   end
 
   let(:receipt_date) { Time.zone.today - 20 }
+  let(:promulgation_date) { receipt_date - 1 }
   let(:profile_date) { "2017-11-02T07:00:00.000Z" }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
@@ -85,13 +86,15 @@ feature "Higher Level Review Edit issues" do
 
   let(:legacy_opt_in_approved) { false }
 
+  let(:benefit_type) { "compensation" }
+
   let!(:higher_level_review) do
     HigherLevelReview.create!(
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
       informal_conference: false,
       same_office: false,
-      benefit_type: "compensation",
+      benefit_type: benefit_type,
       veteran_is_not_claimant: true,
       legacy_opt_in_approved: legacy_opt_in_approved
     )
@@ -502,6 +505,10 @@ feature "Higher Level Review Edit issues" do
       expect(page).to have_content("Military Retired Pay")
 
       click_intake_add_issue
+
+      rating_date = promulgation_date.strftime("%m/%d/%Y")
+      expect(page).to have_content("Past decisions from #{rating_date}")
+
       click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
@@ -650,6 +657,34 @@ feature "Higher Level Review Edit issues" do
       )
 
       expect(page).to have_content("2 issues")
+    end
+  end
+
+  context "when the HLR has a non-compensation benefit type" do
+    let(:benefit_type) { "education" }
+    let(:request_issues) { [request_issue] }
+    let!(:request_issue) do
+      create(
+        :request_issue,
+        review_request: higher_level_review,
+        issue_category: "Accrued",
+        decision_date: 1.month.ago,
+        nonrating_issue_description: "test description"
+      )
+    end
+
+    before do
+      higher_level_review.create_issues!(request_issues)
+      higher_level_review.establish!
+      higher_level_review.reload
+    end
+
+    it "does not mention VBMS when removing an issue" do
+      visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
+      expect(page).to have_content(request_issue.nonrating_issue_description)
+
+      click_remove_intake_issue_by_text(request_issue.nonrating_issue_description)
+      expect(page).to have_content("The contention you selected will be removed from the decision review.")
     end
   end
 
@@ -889,7 +924,7 @@ feature "Higher Level Review Edit issues" do
       expect(nonrating_epe).to_not be_nil
 
       # expect the remove/re-add to create a new RequestIssue for same RatingIssue
-      expect(higher_level_review.reload.request_issues).to_not include(request_issue)
+      expect(higher_level_review.reload.open_request_issues).to_not include(request_issue)
 
       new_version_of_request_issue = higher_level_review.request_issues.find do |ri|
         ri.description == request_issue.description
@@ -996,10 +1031,14 @@ feature "Higher Level Review Edit issues" do
       expect(page).to_not have_content("PTSD denied")
 
       # assert server has updated data
-      new_request_issue = higher_level_review.reload.request_issues.first
+      new_request_issue = higher_level_review.reload.open_request_issues.first
       expect(new_request_issue.description).to eq("Left knee granted")
-      expect(request_issue.reload.review_request_id).to be_nil
+      expect(request_issue.reload.review_request_id).to_not be_nil
+      expect(request_issue).to be_closed
       expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(request_issue.closed_at).to eq(Time.zone.now)
+      expect(request_issue.closed_status).to eq("removed")
+      expect(request_issue).to be_removed
       expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update

@@ -144,6 +144,9 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 
           this.props.onReceiveAmaTasks(response.tasks.data);
         }
+      }).
+      catch(() => {
+        // handle the error from the frontend
       });
   }
 

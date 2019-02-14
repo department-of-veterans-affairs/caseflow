@@ -32,12 +32,12 @@ describe ColocatedTask do
           expect(vacols_case.bfcurloc).to be_nil
           expect(Task.where(type: ColocatedTask.name).count).to eq 0
 
-          team_task = subject.select { |t| t.assigned_to.is_a?(Colocated) }.first
+          team_task = subject.detect { |t| t.assigned_to.is_a?(Colocated) }
           expect(team_task.valid?).to be true
           expect(team_task.status).to eq(Constants.TASK_STATUSES.on_hold)
           expect(team_task.assigned_to).to eq(Colocated.singleton)
 
-          user_task = subject.select { |t| t.assigned_to.is_a?(User) }.first
+          user_task = subject.detect { |t| t.assigned_to.is_a?(User) }
           expect(user_task.valid?).to be true
           expect(user_task.status).to eq "assigned"
           expect(user_task.assigned_at).to_not eq nil
@@ -272,7 +272,7 @@ describe ColocatedTask do
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
-        expect(colocated_admin_action.completed_at).to eq time6
+        expect(colocated_admin_action.closed_at).to eq time6
 
         time7 = Time.utc(2015, 1, 9, 12, 0, 0)
         Timecop.freeze(time7)
@@ -280,7 +280,7 @@ describe ColocatedTask do
         # go back to in-progres - should reset date
         expect(colocated_admin_action.reload.started_at).to eq time5
         expect(colocated_admin_action.placed_on_hold_at).to eq time3
-        expect(colocated_admin_action.completed_at).to eq time6
+        expect(colocated_admin_action.closed_at).to eq time6
       end
     end
   end
@@ -288,7 +288,14 @@ describe ColocatedTask do
   describe ".available_actions_unwrapper" do
     let(:colocated_user) { FactoryBot.create(:user) }
     let(:colocated_task) do
-      ColocatedTask.find(FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: colocated_user).id)
+      # We expect all ColocatedTasks that are assigned to individuals to have parent tasks assigned to the organization.
+      org_task = FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: Colocated.singleton)
+      FactoryBot.create(
+        :colocated_task,
+        assigned_by: attorney,
+        assigned_to: colocated_user,
+        parent: org_task
+      ).becomes(ColocatedTask)
     end
 
     it "should vary depending on status of task" do
@@ -296,6 +303,18 @@ describe ColocatedTask do
 
       colocated_task.update!(status: Constants.TASK_STATUSES.completed)
       expect(colocated_task.available_actions_unwrapper(colocated_user).count).to eq(0)
+    end
+
+    context "when current user is Colocated admin but not task assignee" do
+      let(:colocated_admin) { FactoryBot.create(:user) }
+      before { OrganizationsUser.make_user_admin(colocated_admin, colocated_org) }
+
+      it "should include only the reassign action" do
+        expect(colocated_task.available_actions_unwrapper(colocated_admin).count).to eq(1)
+        expect(colocated_task.available_actions_unwrapper(colocated_admin).first[:label]).to(
+          eq(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label)
+        )
+      end
     end
   end
 

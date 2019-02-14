@@ -60,7 +60,7 @@ export type Task = {
   appealType: string,
   externalAppealId: string,
   assignedOn: string,
-  completedOn: ?string,
+  closedAt: ?string,
   dueOn: ?string,
   assignedTo: {
     cssId: ?string,
@@ -91,7 +91,6 @@ export type Task = {
     lastName: string,
   },
   availableActions: Array<{ label?: string, value: string, data: ?Object }>,
-  taskBusinessPayloads: Array<{description: string, values: Object}>,
   hideFromQueueTableView: boolean,
   hideFromCaseTimeline: boolean,
   hideFromTaskSnapshot: boolean,

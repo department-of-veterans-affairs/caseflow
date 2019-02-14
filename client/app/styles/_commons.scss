@@ -771,23 +771,6 @@ form {
   }
 }
 
-//--- Table styles ---*/
-.usa-table-borderless {
-  width: 100%;
-
-  th,
-  td {
-    border-bottom-color: $color-gray-lighter;
-  }
-
-  td {
-    &:first-child {
-      padding-left: 0;
-    }
-  }
-}
-
-
 // ===========================*
 // Form-related states
 // ============================*/

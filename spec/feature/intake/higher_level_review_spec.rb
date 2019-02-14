@@ -41,6 +41,8 @@ feature "Higher-Level Review" do
 
   let(:receipt_date) { Date.new(2018, 9, 20) }
 
+  let(:promulgation_date) { receipt_date - 10.days }
+
   let(:benefit_type) { "compensation" }
 
   let(:untimely_days) { 372.days }
@@ -54,7 +56,7 @@ feature "Higher-Level Review" do
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.days,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -555,8 +557,7 @@ feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
-  scenario "intake can still be completed when ratings are backfilled" do
-    mock_backfilled_rating_response
+  def complete_higher_level_review
     start_higher_level_review(veteran_no_ratings)
 
     visit "/intake"
@@ -575,20 +576,32 @@ feature "Higher-Level Review" do
     expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been processed.")
   end
 
+  scenario "intake can still be completed when ratings are backfilled" do
+    mock_backfilled_rating_response
+    complete_higher_level_review
+  end
+
+  scenario "intake can still be completed when ratings are locked" do
+    mock_locked_rating_response
+    complete_higher_level_review
+  end
+
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }
-    let!(:ratings_with_disability_codes) do
-      generate_ratings_with_disabilities(veteran,
-                                         disabiliity_receive_date,
-                                         disability_profile_date)
+    let!(:ratings_with_diagnostic_codes) do
+      generate_ratings_with_disabilities(
+        veteran,
+        disabiliity_receive_date,
+        disability_profile_date
+      )
     end
 
-    scenario "saves disability codes" do
+    scenario "saves diagnostic codes" do
       hlr, = start_higher_level_review(veteran)
       visit "/intake"
       click_intake_continue
-      save_and_check_request_issues_with_disability_codes(
+      save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.higher_level_review,
         hlr
       )
@@ -696,6 +709,7 @@ feature "Higher-Level Review" do
              promulgation_date: another_promulgation_date,
              decision_text: "supplemental claim decision issue",
              profile_date: profile_date,
+             end_product_last_action_date: profile_date,
              benefit_type: previous_supplemental_claim.benefit_type)
     end
 
@@ -714,6 +728,15 @@ feature "Higher-Level Review" do
 
         expect(page).to have_content("1 issue")
       end
+    end
+
+    scenario "Add Issues modal uses promulgation date" do
+      start_higher_level_review(veteran)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      rating_date = promulgation_date.strftime("%m/%d/%Y")
+
+      expect(page).to have_content("Past decisions from #{rating_date}")
     end
 
     scenario "HLR comp" do
@@ -936,10 +959,11 @@ feature "Higher-Level Review" do
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                contested_issue_description: "Really old injury",
-               end_product_establishment_id: end_product_establishment.id,
+               end_product_establishment_id: nil,
                untimely_exemption: false,
                untimely_exemption_notes: "I am an exemption note",
-               benefit_type: "compensation"
+               benefit_type: "compensation",
+               ineligible_reason: "untimely"
              )).to_not be_nil
 
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
@@ -976,7 +1000,7 @@ feature "Higher-Level Review" do
       expect(RequestIssue.find_by(
                review_request: higher_level_review,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
-               end_product_establishment_id: end_product_establishment.id,
+               end_product_establishment_id: nil,
                ineligible_reason: :before_ama,
                benefit_type: "compensation"
              )).to_not be_nil
@@ -994,14 +1018,14 @@ feature "Higher-Level Review" do
                review_request: higher_level_review,
                nonrating_issue_description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
-               end_product_establishment_id: non_rating_end_product_establishment.id,
+               end_product_establishment_id: nil,
                benefit_type: "compensation"
              )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.detect(&:duplicate_of_rating_issue_in_active_review?)
       expect(duplicate_request_issues).to include(request_issue_in_progress)
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
@@ -1011,7 +1035,7 @@ feature "Higher-Level Review" do
       hlr_request_issues = RequestIssue.where(contested_rating_issue_reference_id: higher_level_review_reference_id)
       expect(hlr_request_issues.count).to eq(2)
 
-      ineligible_due_to_previous_hlr = hlr_request_issues.select(&:higher_level_review_to_higher_level_review?).first
+      ineligible_due_to_previous_hlr = hlr_request_issues.detect(&:higher_level_review_to_higher_level_review?)
       expect(hlr_request_issues).to include(previous_request_issue)
       expect(ineligible_due_to_previous_hlr).to_not eq(previous_request_issue)
       expect(ineligible_due_to_previous_hlr.contention_reference_id).to be_nil
@@ -1050,13 +1074,11 @@ feature "Higher-Level Review" do
                request_issues: [previous_appeal_request_issue],
                rating_issue_reference_id: appeal_reference_id,
                participant_id: veteran.participant_id,
-               promulgation_date: another_promulgation_date,
                description: "appeal decision issue",
                decision_text: "appeal decision issue",
-               benefit_type: "compensation")
+               benefit_type: "compensation",
+               caseflow_decision_date: profile_date)
       end
-
-      let!(:decision_document) { create(:decision_document, decision_date: profile_date, appeal: previous_appeal) }
 
       scenario "the issue is ineligible" do
         start_higher_level_review(
@@ -1146,13 +1168,13 @@ feature "Higher-Level Review" do
           hlr, = start_higher_level_review(veteran, is_comp: false)
           create(:decision_issue,
                  decision_review: hlr,
-                 profile_date: receipt_date - 1.day,
+                 caseflow_decision_date: receipt_date - 1.day,
                  benefit_type: hlr.benefit_type,
                  decision_text: "something was decided in the past",
                  participant_id: veteran.participant_id)
           create(:decision_issue,
                  decision_review: hlr,
-                 profile_date: receipt_date + 1.day,
+                 caseflow_decision_date: receipt_date + 1.day,
                  benefit_type: hlr.benefit_type,
                  decision_text: "something was decided in the future",
                  participant_id: veteran.participant_id)
@@ -1167,18 +1189,13 @@ feature "Higher-Level Review" do
       end
 
       context "no contestable issues present" do
-        before do
-          education_org = create(:business_line, name: "Education", url: "education")
-          OrganizationsUser.add_user_to_organization(current_user, education_org)
-          FeatureToggle.enable!(:decision_reviews)
-        end
-
-        after do
-          FeatureToggle.disable!(:decision_reviews)
-        end
+        before { FeatureToggle.enable!(:decision_reviews) }
+        after { FeatureToggle.disable!(:decision_reviews) }
+        let!(:business_line) { create(:business_line, name: "Education", url: "education") }
 
         scenario "no rating issues show on first Add Issues modal" do
           hlr, = start_higher_level_review(veteran, is_comp: false)
+          expect(OrganizationsUser.existing_record(current_user, Organization.find_by(url: "education"))).to be_nil
           visit "/intake/add_issues"
 
           expect(page).to have_content("Add / Remove Issues")
@@ -1201,6 +1218,7 @@ feature "Higher-Level Review" do
           # should redirect to tasks review page
           expect(page).to have_content("Reviews needing action")
           expect(current_path).to eq("/decision_reviews/education")
+          expect(OrganizationsUser.existing_record(current_user, Organization.find_by(url: "education"))).to_not be_nil
           expect(page).to have_content("Success!")
 
           # request issue should have matching benefit type

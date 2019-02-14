@@ -94,22 +94,17 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def fetch_hearings(hearing_day, id)
-    if hearing_day[:request_type] == "V"
-      {
-        hearings: HearingRepository.fetch_video_hearings_for_parent(id),
-        regional_office: hearing_day[:regional_office]
-      }
-    elsif hearing_day[:request_type] == "C"
-      {
-        hearings: HearingRepository.fetch_co_hearings_for_date(hearing_day[:scheduled_for]),
-        regional_office: "C"
-      }
-    else
-      {
+    unless hearing_day[:request_type] == "V" || hearing_day[:request_type] == "C"
+      return {
         hearings: [],
         regional_office: nil
       }
     end
+
+    {
+      hearings: HearingRepository.fetch_hearings_for_parent(id),
+      regional_office: (hearing_day[:request_type] == "C") ? "C" : hearing_day[:regional_office]
+    }
   end
 
   def update_params
@@ -178,6 +173,7 @@ class Hearings::HearingDayController < HearingScheduleController
       converted[k] = if k == "room"
                        HearingDayMapper.label_for_room(v)
                      elsif k == "regional_office" && !v.nil?
+                       converted["regional_office_key"] = v
                        HearingDayMapper.city_for_regional_office(v)
                      elsif k == "request_type"
                        HearingDayMapper.label_for_type(v)

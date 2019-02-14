@@ -37,7 +37,7 @@ feature "NonComp Reviews Queue" do
                :in_progress,
                appeal: appeal,
                assigned_to: non_comp_org,
-               assigned_at: today)
+               assigned_at: 1.day.ago)
       ]
     end
 
@@ -47,12 +47,12 @@ feature "NonComp Reviews Queue" do
                :completed,
                appeal: hlr_a,
                assigned_to: non_comp_org,
-               completed_at: last_week),
+               closed_at: last_week),
         create(:higher_level_review_task,
                :completed,
                appeal: hlr_b,
                assigned_to: non_comp_org,
-               completed_at: today)
+               closed_at: today)
       ]
     end
 
@@ -88,7 +88,7 @@ feature "NonComp Reviews Queue" do
       expect(page).to have_content("Higher-Level Review", count: 2)
       expect(page).to have_content("Date Completed")
 
-      # ordered by completed_at descending
+      # ordered by closed_at descending
       expect(page).to have_content(
         /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review #{veteran_a.name} 5\d+ 0 [\d\/]+/
       )
