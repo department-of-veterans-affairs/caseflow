@@ -47,7 +47,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def alerts
-    @alerts ||= ApiStatusAlerts.new(decision_review: self).all
+    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
   end
 
   def decision_event_date
@@ -79,9 +79,9 @@ class SupplementalClaim < ClaimReview
   def available_review_options
     # the decision review options available to contest the decision for this claim
     # need to check if decision_review_remanded is contested claim somehow and only return ["appeal"]
-    return ["higher_level_review", "appeal"] if benefit_type == "fiduciary"
+    return %w[higher_level_review appeal] if benefit_type == "fiduciary"
 
-    ["supplemental_claim", "higher_level_review", "appeal"]
+    %w[supplemental_claim higher_level_review appeal]
   end
 
   def due_date_to_appeal_decision
@@ -89,7 +89,7 @@ class SupplementalClaim < ClaimReview
     decision_event_date + 365.days if decision_event_date
   end
 
-  def have_decision?
+  def api_alerts_have_decision?
     fetch_status == :sc_decision
   end
 

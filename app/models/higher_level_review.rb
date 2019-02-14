@@ -52,7 +52,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def alerts
-    @alerts ||= ApiStatusAlerts.new(decision_review: self).all
+    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
   end
 
   def fetch_all_decision_issues_for_api_status
@@ -81,7 +81,7 @@ class HigherLevelReview < ClaimReview
     decision_issues.find_by(disposition: DTA_ERRORS).approx_decision_date
   end
 
-  def dta_descision_event_date
+  def dta_decision_event_date
     return if active?
     return unless dta_claim
 
@@ -100,19 +100,19 @@ class HigherLevelReview < ClaimReview
     @events ||= AppealEvents.new(appeal: self).all
   end
 
-  def have_decision?
+  def api_alerts_have_decision?
     fetch_status == :hlr_decision
   end
 
   def due_date_to_appeal_decision
     # the deadline to contest the decision for this claim
-    return dta_descision_event_date + 365.days if dta_claim
+    return dta_decision_event_date + 365.days if dta_claim
 
     return decision_event_date + 365.days if decision_event_date
   end
 
   def decision_date_for_api_alert
-    return dta_descision_event_date if dta_claim
+    return dta_decision_event_date if dta_claim
 
     decision_event_date
   end
@@ -120,7 +120,7 @@ class HigherLevelReview < ClaimReview
   def available_review_options
     ["appeal"] if benefit_type == "fiduciary"
 
-    ["supplemental_claim", "appeal"]
+    %w[supplemental_claim appeal]
   end
 
   private

@@ -761,19 +761,19 @@ describe HigherLevelReview do
     let(:benefit_type) { "compensation" }
 
     let!(:hlr) do
-        create(:higher_level_review,
-               veteran_file_number: veteran_file_number,
-               receipt_date: receipt_date,
-               benefit_type: benefit_type)
+      create(:higher_level_review,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             benefit_type: benefit_type)
     end
 
     context "there is a dta error" do
       let(:hlr_decision_date) { receipt_date + 100.days }
       let!(:hlr_ep) do
         create(:end_product_establishment,
-             :cleared,
-             source: hlr,
-             last_synced_at: hlr_decision_date)
+               :cleared,
+               source: hlr,
+               last_synced_at: hlr_decision_date)
       end
 
       let!(:hlr_decision_issue_with_dta_error) do
@@ -804,14 +804,14 @@ describe HigherLevelReview do
 
       it "has alert with dta sc decision date" do
         alerts = hlr.alerts
-        
+
         expect(alerts.empty?).to be(false)
         expect(alerts.first[:type]).to eq("ama_post_decision")
         expect(alerts.first[:details][:decisionDate]).to eq(dta_sc_decision_date)
-        expect(alerts.first[:details][:dueDate]).to eq(dta_sc_decision_date+365.days)
-        expect(alerts.first[:details][:cavcDueDate]).to be_nil 
+        expect(alerts.first[:details][:dueDate]).to eq(dta_sc_decision_date + 365.days)
+        expect(alerts.first[:details][:cavcDueDate]).to be_nil
 
-        available_options = ["supplemental_claim", "appeal"]
+        available_options = %w[supplemental_claim appeal]
         expect(alerts.first[:details][:availableOptions]).to eq(available_options)
       end
     end

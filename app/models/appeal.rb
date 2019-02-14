@@ -350,10 +350,10 @@ class Appeal < DecisionReview
   end
 
   def active_status?
-    active? || active_ep? || active_remanded_claims?
+    active? || active_effectuation_ep? || active_remanded_claims?
   end
 
-  def active_ep?
+  def active_effectuation_ep?
     decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
   end
 
@@ -362,7 +362,7 @@ class Appeal < DecisionReview
   end
 
   def location
-    if active_ep? || active_remanded_claims?
+    if active_effectuation_ep? || active_remanded_claims?
       "aoj"
     else
       "bva"
@@ -400,7 +400,7 @@ class Appeal < DecisionReview
   end
 
   def fetch_post_decision_status
-    if !remanded_issues? && effectuation_ep? && !active_ep?
+    if !remanded_issues? && effectuation_ep? && !active_effectuation_ep?
       :bva_decision_effectuation
     elsif remanded_sc_with_ep && !remanded_sc_with_ep.active?
       :post_bva_dta_decision
@@ -450,7 +450,7 @@ class Appeal < DecisionReview
     {
       issues: api_issues_for_status_details_issues(issue_list),
       bvaDecisionDate: decision_event_date,
-      aojDecisionDate: dta_descision_event_date
+      aojDecisionDate: dta_decision_event_date
     }
   end
 
@@ -509,7 +509,7 @@ class Appeal < DecisionReview
   end
 
   def alerts
-    # to be implemented
+    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
   end
 
   def program
@@ -585,14 +585,13 @@ class Appeal < DecisionReview
   end
 
   def decision_effectuation_event_date
-    return if remanded_issues?
     return unless effectuation_ep?
-    return if active_ep?
+    return if active_effectuation_ep?
 
     decision_document.end_product_establishments.first.last_synced_at
   end
 
-  def dta_descision_event_date
+  def dta_decision_event_date
     return unless remanded_sc_with_ep
     return if remanded_sc_with_ep.active?
 
@@ -636,11 +635,17 @@ class Appeal < DecisionReview
     (di_list + remand_sc_decisions).uniq
   end
 
-  def have_decision?
-    return true if fetch_status == :bva_decision
-    return true if fetch_status == :ama_remand && decision_issues.not_remanded.any?
+  def api_alerts_have_decision?
+    case fetch_status
+    when :bva_decision, :ama_remand, :bva_decision_effectuation, :post_bva_dta_decision
+      return true
+    else
+      false
+    end
+  end
 
-    false
+  def decision_date_for_api_alert
+    decision_date
   end
 
   def due_date_to_appeal_decision
@@ -649,6 +654,12 @@ class Appeal < DecisionReview
 
   def cavc_due_date
     decision_event_date + 120.days if decision_event_date
+  end
+
+  def available_review_options
+    return ["cavc"] if request_issues.any? { |ri| ri.benefit_type == "fiduciary" }
+
+    %w[supplemental_claim cavc]
   end
 
   private
