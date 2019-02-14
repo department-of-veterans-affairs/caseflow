@@ -132,7 +132,13 @@ feature "correcting issues" do
   end
 
   def decision_issue(id)
-    create(:decision_issue, id: id, description: "decision with id #{id}", decision_review: create(:appeal))
+    create(
+      :decision_issue,
+      id: id,
+      description: "decision with id #{id}",
+      caseflow_decision_date: Time.zone.today,
+      decision_review: create(:appeal)
+    )
   end
 
   def judge_user
