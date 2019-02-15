@@ -721,7 +721,7 @@ describe HigherLevelReview do
       let!(:hlr_decision_issue_with_dta_error) do
         create(:decision_issue,
                decision_review: hlr,
-               disposition: HigherLevelReview::DTA_ERROR_PMR,
+               disposition: DecisionIssue::DTA_ERROR_PMR,
                benefit_type: benefit_type,
                end_product_last_action_date: hlr_decision_date,
                diagnostic_code: "9999")

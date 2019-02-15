@@ -381,7 +381,7 @@ class Appeal < DecisionReview
   def fetch_post_decision_status
     if remand_supplemental_claims.any?
       active_remanded_claims? ? :ama_remand : :post_bva_dta_decision
-    elsif effectuation_ep? && !active_ep?
+    elsif effectuation_ep? && !active_effectuation_ep?
       :bva_decision_effectuation
     elsif decision_issues.any?
       :bva_decision
@@ -551,14 +551,7 @@ class Appeal < DecisionReview
     return unless effectuation_ep?
     return if active_effectuation_ep?
 
-    decision_document.end_product_establishments.first.last_synced_at
-  end
-
-  def dta_decision_event_date
-    return unless remanded_sc_with_ep
-    return if remanded_sc_with_ep.active?
-
-    remanded_sc_with_ep.decision_event_date
+    decision_document.end_product_establishments.first.last_synced_at.to_date
   end
 
   def other_close_event_date

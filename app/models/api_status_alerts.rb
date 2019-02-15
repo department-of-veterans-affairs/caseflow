@@ -23,7 +23,7 @@ class ApiStatusAlerts
       post_decision,
       post_remand_decision,
       post_effectuation
-    ].compact
+    ].flatten.compact.uniq
   end
 
   def post_decision
@@ -44,19 +44,21 @@ class ApiStatusAlerts
   end
 
   def post_remand_decision
-    return unless decision_review.dta_decision_event_date
-    return unless Time.zone.today < decision_review.dta_decision_event_date + 365.days
+    return unless decision_review.remand_decision_event_date
+    return unless Time.zone.today < decision_review.remand_decision_event_date + 365.days
 
-    {
-      type: "ama_post_decision",
-      details:
+    decision_review.remand_supplemental_claims.map do |remand_sc|
       {
-        decisionDate: decision_review.dta_decision_event_date,
-        availableOptions: decision_review.available_review_options,
-        dueDate: decision_review.dta_decision_event_date + 365.days,
-        cavcDueDate: decision_review.dta_decision_event_date + 120.days
+        type: "ama_post_decision",
+        details:
+        {
+          decisionDate: remand_sc.decision_event_date,
+          availableOptions: decision_review.available_review_options,
+          dueDate: remand_sc.decision_event_date + 365.days,
+          cavcDueDate: remand_sc.decision_event_date + 120.days
+        }
       }
-    }
+    end
   end
 
   def post_effectuation

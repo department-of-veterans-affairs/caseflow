@@ -50,13 +50,6 @@ class HigherLevelReview < ClaimReview
   end
 
   def dta_error_event_date
-    return if hlr_ep_active?
-    return unless dta_claim
-
-    decision_issues.find_by(disposition: DTA_ERRORS).approx_decision_date
-  end
-
-  def dta_decision_event_date
     return if active?
     return unless remand_supplemental_claims.any?
 
@@ -81,13 +74,13 @@ class HigherLevelReview < ClaimReview
 
   def due_date_to_appeal_decision
     # the deadline to contest the decision for this claim
-    return dta_decision_event_date + 365.days if dta_claim
+    return remand_decision_event_date + 365.days if remand_decision_event_date
 
     return decision_event_date + 365.days if decision_event_date
   end
 
   def decision_date_for_api_alert
-    return dta_decision_event_date if dta_claim
+    return remand_decision_event_date if remand_decision_event_date
 
     decision_event_date
   end

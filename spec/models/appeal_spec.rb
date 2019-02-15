@@ -1435,9 +1435,9 @@ describe Appeal do
     # the remand
     let!(:remanded_decision_issue) do
       create(:decision_issue,
-             decision_review: appeal, disposition: "remanded", benefit_type: "compensation")
+             decision_review: appeal, disposition: "remanded", benefit_type: "compensation", caseflow_decision_date: decision_date)
     end
-    let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+    let!(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
     let(:remanded_ep_clr_date) { receipt_date + 200.days }
     let!(:remanded_ep) { create(:end_product_establishment, :cleared, source: remanded_sc) }
     let!(:remanded_sc_decision_issue) do
@@ -1448,7 +1448,7 @@ describe Appeal do
 
     it "it has 3 ama_post_decision alerts" do
       alerts = appeal.alerts
-
+      
       expect(alerts.count).to eq(3)
 
       expect(alerts[0][:type]).to eq("ama_post_decision")
