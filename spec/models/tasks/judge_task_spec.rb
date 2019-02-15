@@ -206,6 +206,8 @@ describe JudgeTask do
       it "creates DistributionTasks" do
         expect(DistributionTask.all.count).to eq 0
         subject
+        # run subject twice to see if it double creates tasks
+        subject
         expect(DistributionTask.all.count).to eq 3
       end
 
