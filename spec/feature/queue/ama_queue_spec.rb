@@ -252,7 +252,7 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content("Task reassigned to #{user_name}")
         old_task = translation_task.reload.children.find { |task| task.assigned_to == other_user }
-        expect(old_task.status).to eq("completed")
+        expect(old_task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
         # On hold tasks should not be visible on the case details screen
         # expect(page).to_not have_content("Actions")
