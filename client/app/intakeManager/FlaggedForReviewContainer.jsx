@@ -5,6 +5,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { fetchFlaggedForReview } from './actions';
 import LoadingContainer from '../components/LoadingContainer';
 import FlaggedForReview from './FlaggedForReview';
+import UserStats from './UserStats';
 
 export class FlaggedForReviewContainer extends Component {
   componentDidMount() {
@@ -24,7 +25,10 @@ export class FlaggedForReviewContainer extends Component {
       </div>;
     }
 
-    return <FlaggedForReview {...this.props} />;
+    return <div>
+      <UserStats />
+      <FlaggedForReview {...this.props} />
+    </div>;
   }
 }
 

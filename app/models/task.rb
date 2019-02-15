@@ -383,6 +383,10 @@ class Task < ApplicationRecord
     ::WorkQueue::TaskSerializer
   end
 
+  def assigned_to_label
+    assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
+  end
+
   private
 
   def create_and_auto_assign_child_task(options = {})
