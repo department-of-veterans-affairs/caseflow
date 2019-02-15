@@ -27,7 +27,7 @@ class ApiStatusAlerts
   end
 
   def post_decision
-    return unless decision_review.api_alerts_have_decision?
+    return unless decision_review.api_alerts_show_decision_alert?
     return unless Time.zone.today < decision_review.due_date_to_appeal_decision
     return if decision_review.is_a?(Appeal) && Time.zone.today > decision_review.cavc_due_date
 

@@ -46,6 +46,8 @@ class HigherLevelReview < ClaimReview
   end
 
   def active_status?
+    # for the purposes for appeal status api, an HLR is considered active if there are
+    # still active remand claims.
     active? || active_remanded_claims?
   end
 
@@ -68,8 +70,10 @@ class HigherLevelReview < ClaimReview
     @events ||= AppealEvents.new(appeal: self).all
   end
 
-  def api_alerts_have_decision?
-    fetch_status == :hlr_decision
+  def api_alerts_show_decision_alert?
+    # for HLR only want to show the decision alert when the HLR is no longer active,
+    # meaning any remands have been resolved. 
+    active_status?
   end
 
   def due_date_to_appeal_decision
