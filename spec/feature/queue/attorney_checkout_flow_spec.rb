@@ -17,7 +17,11 @@ RSpec.feature "Attorney checkout flow" do
       FactoryBot.create(
         :appeal,
         number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(:request_issue, 4, description: issue_description, notes: issue_note)
+        request_issues: FactoryBot.build_list(
+          :request_issue, 4,
+          contested_issue_description: issue_description,
+          notes: issue_note
+        )
       )
     end
 
