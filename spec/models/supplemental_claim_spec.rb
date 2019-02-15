@@ -150,7 +150,7 @@ describe SupplementalClaim do
       expect { subject }.to change(supplemental_claim.request_issues, :count).by(1)
 
       expect(supplemental_claim.request_issues.last).to have_attributes(
-        review_request: supplemental_claim,
+        decision_review: supplemental_claim,
         contested_decision_issue_id: decision_issue_needing_remand.id,
         contested_rating_issue_reference_id: decision_issue_needing_remand.rating_issue_reference_id,
         contested_rating_issue_profile_date: decision_issue_needing_remand.profile_date,
@@ -159,7 +159,7 @@ describe SupplementalClaim do
       )
 
       expect(RequestIssue.find_by(
-               review_request: supplemental_claim,
+               decision_review: supplemental_claim,
                contested_decision_issue_id: already_contested_remanded_di.id,
                contested_rating_issue_reference_id: already_contested_remanded_di.rating_issue_reference_id,
                contested_rating_issue_profile_date: already_contested_remanded_di.profile_date,

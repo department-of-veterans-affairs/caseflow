@@ -45,6 +45,10 @@ class HigherLevelReview < ClaimReview
     # need to implement. add logic to return alert enum
   end
 
+  def active_status?
+    active? || active_remanded_claims?
+  end
+
   def dta_error_event_date
     return if active?
     return unless remand_supplemental_claims.any?

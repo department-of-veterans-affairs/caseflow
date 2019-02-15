@@ -119,6 +119,10 @@ class SupplementalClaim < ClaimReview
     end
   end
 
+  def fetch_all_decision_issues
+    decision_issues
+  end
+
   def api_issues_for_status_details_issues
     decision_issues.map do |issue|
       {

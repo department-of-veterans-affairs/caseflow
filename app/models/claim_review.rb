@@ -132,7 +132,7 @@ class ClaimReview < DecisionReview
   end
 
   def active_status?
-    active? || active_remanded_claims?
+    active?
   end
 
   def search_table_ui_hash

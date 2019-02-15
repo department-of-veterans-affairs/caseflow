@@ -93,7 +93,7 @@ RSpec.feature "Intake Manager Page" do
       veteran_file_number = "1234"
       user1 = create(:user)
       user2 = create(:user)
-      busy_day = 3.days.ago
+      busy_day = 3.days.ago.beginning_of_day
 
       5.times do
         Intake.create!(

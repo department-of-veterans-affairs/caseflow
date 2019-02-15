@@ -363,7 +363,7 @@ class Appeal < DecisionReview
   end
 
   def fetch_status
-    if active_status?
+    if active?
       fetch_pre_decision_status
     else
       fetch_post_decision_status
