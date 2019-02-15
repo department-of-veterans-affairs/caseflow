@@ -49,7 +49,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     distances = VADotGovService.get_distance(ids: facility_ids, lat: va_dot_gov_address[:lat],
                                              long: va_dot_gov_address[:long])
-    closest_ro = RegionalOffice::CITIES.find { |_k, v| v[:facility_locator_id] == distances[0][:facility_id] }[1]
+    closest_ro = RegionalOffice::CITIES.find { |_k, v| v[:facility_locator_id] == distances[0][:facility_id] }[0]
 
     appeal.update(closest_regional_office: closest_ro)
 
