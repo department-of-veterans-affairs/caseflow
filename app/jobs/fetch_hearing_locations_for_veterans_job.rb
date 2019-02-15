@@ -19,6 +19,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def find_appeals_ready_for_geomatching(appeal_type)
+    # Appeals that have not had an available_hearing_locations updated in the last week
+    # and have an active ScheduleHearingTask
+    # that is not blocked by an VerifyAddress or ForeignVeteranCase admin action
     appeal_type.left_outer_joins(:available_hearing_locations)
       .where("#{appeal_type.table_name}.id IN (SELECT t.appeal_id FROM tasks t
           LEFT OUTER JOIN tasks admin_actions
@@ -41,22 +44,13 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def fetch_and_update_ro_for_appeal(appeal, va_dot_gov_address:)
-    state_code = if appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
-                   "DC"
-                 else
-                   get_state_code(va_dot_gov_address, appeal: appeal)
-                 end
-
+    state_code = get_state_code(va_dot_gov_address, appeal: appeal)
     facility_ids = ro_facility_ids_for_state(state_code)
 
-    distances = VADotGovService.get_distance(
-      lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: facility_ids
-    )
+    distances = VADotGovService.get_distance(ids: facility_ids, lat: va_dot_gov_address[:lat],
+                                             long: va_dot_gov_address[:long])
+    closest_ro = RegionalOffice::CITIES.find { |_k, v| v[:facility_locator_id] == distances[0][:facility_id] }[1]
 
-    closest_ro_index = RegionalOffice::CITIES.values.find_index do |ro|
-      ro[:facility_locator_id] == distances[0][:facility_id]
-    end
-    closest_ro = RegionalOffice::CITIES.keys[closest_ro_index]
     appeal.update(closest_regional_office: closest_ro)
 
     { closest_regional_office: closest_ro, facility: distances[0] }
@@ -81,15 +75,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     AppealRepository.create_schedule_hearing_tasks
   end
 
-  def perform
-    RequestStore.store[:current_user] = User.system_user
-    create_schedule_hearing_tasks
-
-    appeals.each do |appeal|
-      break if perform_once_for(appeal) == false
-    end
-  end
-
   def perform_once_for(appeal)
     begin
       va_dot_gov_address = validate_appellant_address(appeal)
@@ -104,6 +89,15 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       create_available_locations_for_appeal(appeal, va_dot_gov_address: va_dot_gov_address)
     rescue Caseflow::Error::FetchHearingLocationsJobError
       nil
+    end
+  end
+
+  def perform
+    RequestStore.store[:current_user] = User.system_user
+    create_schedule_hearing_tasks
+
+    appeals.each do |appeal|
+      break if perform_once_for(appeal) == false
     end
   end
 
@@ -178,7 +172,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     )
   end
 
-  def get_state_code(va_dot_gov_address, appeal:)
+  def get_state_code(va_dot_gov_address, appeal:) # rubocop:disable Metrics/CyclomaticComplexity
+    return "DC" if appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
+
     state_code = case va_dot_gov_address[:country_code]
                  # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
                  when "GQ", "AQ", "RM", "FM", "CQ", "PS"
