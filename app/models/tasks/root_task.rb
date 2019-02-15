@@ -51,13 +51,11 @@ class RootTask < GenericTask
     def create_ihp_tasks!(appeal, parent)
       appeal.vsos.map do |vso_organization|
         # For some RAMP appeals, this method may run twice.
-        existing_tasks = InformalHearingPresentationTask.where(
+        existing_task = InformalHearingPresentationTask.find_by(
           appeal: appeal,
           assigned_to: vso_organization
         )
-        return existing_tasks.first unless existing_tasks.empty?
-
-        InformalHearingPresentationTask.create!(
+        existing_task || InformalHearingPresentationTask.create!(
           appeal: appeal,
           parent: parent,
           assigned_to: vso_organization
