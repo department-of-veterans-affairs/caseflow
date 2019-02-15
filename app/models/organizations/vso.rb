@@ -1,6 +1,4 @@
 class Vso < Organization
-  has_one :vso_config, dependent: :destroy
-
   def user_has_access?(user)
     return false unless user.roles.include?("VSO")
 
@@ -12,9 +10,8 @@ class Vso < Organization
     false
   end
 
-  # TODO: Only write IHPs for appeals that are assigned to this VSO.
   def should_write_ihp?(appeal)
-    ihp_writing_configs.include?(appeal.docket_type) # && appeal.vsos.include?(self)
+    ihp_writing_configs.include?(appeal.docket_type) && appeal.vsos.include?(self)
   end
 
   private
