@@ -26,8 +26,12 @@ feature "Higher-Level Review" do
 
   let(:veteran_file_number) { "123412345" }
 
+  let(:date_of_death) { nil }
   let(:veteran) do
-    Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
+    Generators::Veteran.build(file_number: veteran_file_number,
+                              first_name: "Ed",
+                              last_name: "Merica",
+                              date_of_death: date_of_death)
   end
 
   let(:veteran_no_ratings) do
@@ -99,6 +103,17 @@ feature "Higher-Level Review" do
         { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
     )
+  end
+
+  context "veteran is deceased" do
+    let(:date_of_death) { Time.zone.today - 1.day }
+
+    scenario "veteran cannot be claimant" do
+      create(:higher_level_review, veteran_file_number: veteran.file_number)
+      check_deceased_veteran_claimant(
+        HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: current_user)
+      )
+    end
   end
 
   it "Creates an end product and contentions for it" do
