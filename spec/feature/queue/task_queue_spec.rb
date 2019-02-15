@@ -460,4 +460,24 @@ RSpec.feature "Task queue" do
       end
     end
   end
+
+  describe "GenericTask" do
+    context "when it is assigned to the current user" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:appeal) { root_task.appeal }
+      let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
+
+      before { User.authenticate!(user: user) }
+
+      it "allows the user to cancel the task" do
+        visit("queue/appeals/#{task.appeal.external_id}")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CANCEL_TASK_MODAL_TITLE)
+        click_button("Submit")
+        expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
+        expect(page.current_path).to eq("/queue")
+        expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+    end
+  end
 end

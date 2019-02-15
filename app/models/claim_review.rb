@@ -178,12 +178,7 @@ class ClaimReview < DecisionReview
   end
 
   def aoj
-    case benefit_type
-    when "compensation", "pension", "fiduciary", "insurance", "education", "voc_rehab", "loan_guaranty"
-      "vba"
-    else
-      benefit_type
-    end
+    request_issues.first.api_aoj_from_benefit_type
   end
 
   def issues_hash
