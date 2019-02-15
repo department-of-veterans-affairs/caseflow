@@ -1,5 +1,15 @@
 # rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
+  # TODO: remove this eventually, used to protect caching from screwing up removed columns
+  self.ignored_columns = [
+    "contested_rating_issue_disability_code",
+    "rating_issue_reference_id",
+    "rating_issue_profile_date",
+    "review_request_id",
+    "review_request_type",
+    "description"
+  ]
+
   include Asyncable
   include HasBusinessLine
 
