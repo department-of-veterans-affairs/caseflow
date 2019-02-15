@@ -57,7 +57,6 @@ class SubmitDecisionView extends React.PureComponent {
   setInitialDecisionOptions = (decision, attorneyCaseRewriteDetails) => {
 
     const decisionOptsWithAttorneyCheckoutInfo =
-      console.log(this.props.appeal, 'the appeal');
 
     _.merge(decision.opts, { document_id: _.get(this.props, 'appeal.documentID'),
       note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
@@ -70,7 +69,6 @@ class SubmitDecisionView extends React.PureComponent {
     if (extendedDecision.opts && extendedDecision.opts.overtime === null) {
       extendedDecision.opts.overtime = false;
     }
-    console.log(extendedDecision, 'the extended decision');
 
     return extendedDecision;
   }
