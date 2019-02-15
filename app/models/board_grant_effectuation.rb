@@ -53,6 +53,7 @@ class BoardGrantEffectuation < ApplicationRecord
     return unless associated_rating
 
     update_from_matching_rating_issue!
+    clear_error!
     processed!
   end
 

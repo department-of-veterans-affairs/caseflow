@@ -511,6 +511,8 @@ export const taskIsOnHold = (task: Task) => {
   return task.status === TASK_STATUSES.on_hold;
 };
 
+export const taskIsActive = (task: Task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
+
 export const taskActionData = (props: Object) => {
   if (!props.task) {
     return {};

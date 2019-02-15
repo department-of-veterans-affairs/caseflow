@@ -43,10 +43,10 @@ describe RootTask do
 
     context "when a direct docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       context "when it has no vso representation" do
         let(:appeal) do
@@ -94,10 +94,10 @@ describe RootTask do
 
     context "when an evidence submission docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       let(:appeal) do
         create(:appeal, docket_type: "evidence_submission", claimants: [
@@ -114,10 +114,10 @@ describe RootTask do
 
     context "when a hearing docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       let(:appeal) do
         create(:appeal, docket_type: "hearing", claimants: [
@@ -150,6 +150,19 @@ describe RootTask do
         expect(InformalHearingPresentationTask.count).to eq(2)
         expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
         expect(InformalHearingPresentationTask.second.assigned_to).to eq(vva)
+      end
+
+      it "does not create a task for a VSO if one already exists for that appeal" do
+        InformalHearingPresentationTask.create!(
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: vva
+        )
+        RootTask.create_root_and_sub_tasks!(appeal)
+
+        expect(InformalHearingPresentationTask.count).to eq(2)
+        expect(InformalHearingPresentationTask.first.assigned_to).to eq(vva)
+        expect(InformalHearingPresentationTask.second.assigned_to).to eq(pva)
       end
 
       it "creates RootTask assigned to Bva organization" do
@@ -203,6 +216,39 @@ describe RootTask do
         expect { subject }.to_not raise_error
         expect(tracking_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(generic_task.reload.status).to_not eq(Constants.TASK_STATUSES.completed)
+      end
+    end
+  end
+
+  describe ".set_assignee" do
+    context "when retrieving an existing RootTask" do
+      let!(:root_task) { FactoryBot.create(:root_task, assigned_to: assignee) }
+      context "when the assignee is already set" do
+        let(:assignee) { Bva.singleton }
+
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to_not receive(:set_assignee)
+
+          RootTask.find(root_task.id)
+        end
+      end
+    end
+
+    context "when creating a new RootTask" do
+      context "when the assignee is already set" do
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to_not receive(:set_assignee)
+
+          RootTask.create(appeal: FactoryBot.create(:appeal), assigned_to: Bva.singleton)
+        end
+      end
+
+      context "when the assignee is not set" do
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to receive(:set_assignee).exactly(1).times
+
+          RootTask.create(appeal: FactoryBot.create(:appeal))
+        end
       end
     end
   end

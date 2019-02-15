@@ -13,8 +13,8 @@ class Task < ApplicationRecord
   after_create :put_parent_on_hold
 
   before_update :set_timestamps
-  after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
-  after_update :update_children_status, if: :status_changed_to_completed?
+  after_update :update_parent_status, if: :task_just_closed_and_has_parent?
+  after_update :update_children_status, if: :task_just_closed?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -141,8 +141,6 @@ class Task < ApplicationRecord
     false
   end
 
-  def reassign; end
-
   def legacy?
     appeal_type == LegacyAppeal.name
   end
@@ -173,12 +171,14 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete
   end
 
-  def can_be_updated_by_user?(user)
-    return true if [assigned_to, assigned_by].include?(user) ||
-                   parent&.assigned_to == user ||
-                   user.administered_teams.select { |team| team.is_a?(JudgeTeam) }.any?
+  def task_is_assigned_to_user_within_organization?(user)
+    parent&.assigned_to.is_a?(Organization) &&
+      assigned_to.is_a?(User) &&
+      parent.assigned_to.user_has_access?(user)
+  end
 
-    false
+  def can_be_updated_by_user?(user)
+    available_actions_unwrapper(user).any?
   end
 
   def verify_user_can_update!(user)
@@ -200,6 +200,30 @@ class Task < ApplicationRecord
       message = "#{user_description} cannot assign #{name}#{parent_description}."
       fail Caseflow::Error::ActionForbiddenError, message: message
     end
+  end
+
+  def reassign(reassign_params, current_user)
+    sibling = dup.tap do |t|
+      t.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
+      t.assigned_to = self.class.child_task_assignee(parent, reassign_params)
+      t.instructions = [instructions, reassign_params[:instructions]].flatten
+      t.save!
+    end
+
+    update!(status: Constants.TASK_STATUSES.cancelled)
+
+    children.active.each { |t| t.update!(parent_id: sibling.id) }
+
+    [sibling, self, sibling.children].flatten
+  end
+
+  def self.child_task_assignee(_parent, params)
+    Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
+  end
+
+  def self.child_assigned_by_id(parent, current_user)
+    return current_user.id if current_user
+    return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
   end
 
   def root_task(task_id = nil)
@@ -231,6 +255,15 @@ class Task < ApplicationRecord
 
   def mail_assign_to_organization_data(_user = nil)
     { options: MailTask.subclass_routing_options }
+  end
+
+  def cancel_task_data(_user = nil)
+    {
+      modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
+      modal_body: COPY::CANCEL_TASK_MODAL_DETAIL,
+      message_title: format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name),
+      message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigned_by.full_name)
+    }
   end
 
   def assign_to_user_data(user = nil)
@@ -350,6 +383,10 @@ class Task < ApplicationRecord
     ::WorkQueue::TaskSerializer
   end
 
+  def assigned_to_label
+    assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
+  end
+
   private
 
   def create_and_auto_assign_child_task(options = {})
@@ -370,12 +407,12 @@ class Task < ApplicationRecord
 
   def update_children_status; end
 
-  def status_changed_to_completed?
-    saved_change_to_attribute?("status") && completed?
+  def task_just_closed?
+    saved_change_to_attribute?("status") && !active?
   end
 
-  def status_changed_to_completed_and_has_parent?
-    status_changed_to_completed? && parent
+  def task_just_closed_and_has_parent?
+    task_just_closed? && parent
   end
 
   def users_to_options(users)

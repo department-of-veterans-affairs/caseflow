@@ -14,6 +14,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
   before do
     OrganizationsUser.add_user_to_organization(current_user, HearingsManagement.singleton)
     OrganizationsUser.add_user_to_organization(other_user, HearingsManagement.singleton)
+    OrganizationsUser.add_user_to_organization(current_user, HearingAdmin.singleton)
+    OrganizationsUser.add_user_to_organization(other_user, HearingAdmin.singleton)
   end
 
   context "When creating Caseflow Central hearings" do
@@ -104,11 +106,11 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
   context "when scheduling an AMA hearing" do
     before do
-      FeatureToggle.enable!(:ama_auto_case_distribution)
+      FeatureToggle.enable!(:ama_acd_tasks)
     end
 
     after do
-      FeatureToggle.disable!(:ama_auto_case_distribution)
+      FeatureToggle.disable!(:ama_acd_tasks)
     end
 
     let!(:hearing_day) do
@@ -201,13 +203,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown(text: HearingAdminActionIncarceratedVeteranTask.label)
         fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 1"
 
-        # Second admin action
-        # click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
-        # within all('div[id^="action_"]', count: 2)[1] do
-        #   click_dropdown(text: HearingAdminActionContestedClaimantTask.label)
-        #   fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 2"
-        # end
-
         click_on "Assign Action"
         expect(page).to have_content("You have assigned an administrative action")
 
@@ -240,7 +235,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
       # Schedule veteran!
       find("a", text: "Switch views").click
-      click_on "Hearings Management team"
+      click_on "Hearing Management team"
 
       click_on "Bob Smith"
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
@@ -280,7 +275,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_on "Submit"
 
       expect(page).to have_content("You have successfully withdrawn")
-      expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(Constants.TASK_STATUSES.completed)
+      expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(Constants.TASK_STATUSES.cancelled)
       expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
 
       click_on "Back to Hearing Schedule"

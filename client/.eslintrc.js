@@ -11,6 +11,7 @@ module.exports = {
     'max-statements': 'off'
   },
   globals: {
-    $ReadOnly: true
+    $ReadOnly: true,
+    Raven: true
   }
 };

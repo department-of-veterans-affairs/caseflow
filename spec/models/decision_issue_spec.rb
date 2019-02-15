@@ -1,4 +1,3 @@
-require "rails_helper"
 require "support/intake_helpers"
 
 describe DecisionIssue do
@@ -18,6 +17,7 @@ describe DecisionIssue do
       request_issues: request_issues,
       benefit_type: benefit_type,
       profile_date: profile_date,
+      promulgation_date: promulgation_date,
       end_product_last_action_date: end_product_last_action_date,
       caseflow_decision_date: caseflow_decision_date,
       diagnostic_code: diagnostic_code
@@ -25,6 +25,7 @@ describe DecisionIssue do
   end
 
   let(:profile_date) { 20.days.ago }
+  let(:promulgation_date) { 19.days.ago }
   let(:caseflow_decision_date) { 20.days.ago }
   let(:benefit_type) { "compensation" }
   let(:end_product_last_action_date) { 10.days.ago }
@@ -35,6 +36,42 @@ describe DecisionIssue do
   let(:decision_text) { "decision text" }
   let(:decision_date) { 10.days.ago }
   let(:decision_review) { create(:supplemental_claim, benefit_type: benefit_type) }
+
+  context "scopes" do
+    let!(:ri_contesting_decision_issue) { create(:request_issue, contested_decision_issue_id: decision_issue.id) }
+    let!(:uncontested_di) { create(:decision_issue, disposition: "other") }
+    let!(:uncontested_remand_di) { create(:decision_issue, id: 55, disposition: "remanded") }
+    let!(:uncontested_dta_di) { create(:decision_issue, id: 56, disposition: "DTA Error - Fed Recs") }
+    let!(:granted_di) { create(:decision_issue, id: 57, disposition: "DTA Error - Fed Recs") }
+
+    context ".contested" do
+      it "matches decision issue that has been contested" do
+        expect(DecisionIssue.contested).to eq([decision_issue])
+        expect(DecisionIssue.contested).to_not include(uncontested_di)
+      end
+    end
+
+    context ".uncontested" do
+      it "matches decision issues that has not been contested" do
+        expect(DecisionIssue.uncontested).to include(uncontested_di, uncontested_remand_di, uncontested_dta_di)
+        expect(DecisionIssue.uncontested).to_not include(decision_issue)
+      end
+    end
+
+    context ".remanded" do
+      it "includes decision issues with remand and dta error dispositions" do
+        expect(DecisionIssue.remanded).to include(uncontested_remand_di, uncontested_dta_di)
+        expect(DecisionIssue.remanded).to_not include(decision_issue, uncontested_di)
+      end
+    end
+
+    context ".not_remanded" do
+      it "includes decision issues with remand and dta error dispositions" do
+        expect(DecisionIssue.not_remanded).to include(decision_issue, uncontested_di)
+        expect(DecisionIssue.not_remanded).to_not include(uncontested_remand_di, uncontested_dta_di)
+      end
+    end
+  end
 
   context "#save" do
     subject { decision_issue.save }
@@ -224,20 +261,29 @@ describe DecisionIssue do
     subject { decision_issue.approx_decision_date }
 
     let(:profile_date) { 5.days.ago }
+    let(:promulgation_date) { 4.days.ago }
     let(:end_product_last_action_date) { 6.days.ago }
     let(:caseflow_decision_date) { 7.days.ago }
 
     context "when the decision review is processed in caseflow" do
-      context "when there is no profile date" do
-        let(:profile_date) { nil }
+      context "when there is no promulgation date" do
+        let(:promulgation_date) { nil }
         it "returns the end_product_last_action_date" do
           expect(subject).to eq(end_product_last_action_date.to_date)
         end
+
+        context "when there is no last action date" do
+          let(:decision_review) { create(:appeal) }
+          let(:end_product_last_action_date) { nil }
+          it "returns the caseflow decision date" do
+            expect(subject).to eq(caseflow_decision_date.to_date)
+          end
+        end
       end
 
-      context "when there is a profile date" do
-        it "returns the profile_date to_date" do
-          expect(subject).to eq(profile_date.to_date)
+      context "when there is a promulgation date" do
+        it "returns the promulgation_date to_date" do
+          expect(subject).to eq(promulgation_date.to_date)
         end
       end
     end

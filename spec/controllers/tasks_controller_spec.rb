@@ -194,7 +194,7 @@ RSpec.describe TasksController, type: :controller do
 
             task_attributes = response_body["tasks"]["data"].find { |task| task["id"] == org_1_member_task.id.to_s }
 
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(4)
 
             # org count minus one since we can't assign to ourselves.
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
@@ -221,7 +221,7 @@ RSpec.describe TasksController, type: :controller do
             response_body = JSON.parse(response.body)
             task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
 
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(4)
 
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
               action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
@@ -555,7 +555,7 @@ RSpec.describe TasksController, type: :controller do
       let(:new_attorney) { create(:user) }
 
       it "should update successfully" do
-        User.stub = judge
+        User.stub = attorney
         create(:staff, :attorney_role, sdomainid: new_attorney.css_id)
         patch :update, params: { task: { assigned_to_id: new_attorney.id }, id: attorney_task.id }
         expect(response.status).to eq 200

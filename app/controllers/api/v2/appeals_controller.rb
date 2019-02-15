@@ -53,6 +53,7 @@ class Api::V2::AppealsController < Api::ApplicationController
     @appeals ||= Appeal.where(veteran_file_number: veteran_file_number)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def all_reviews_and_appeals
     hlr_json = ActiveModelSerializers::SerializableResource.new(
       hlrs,
@@ -72,8 +73,15 @@ class Api::V2::AppealsController < Api::ApplicationController
       key_transform: :camel_lower
     ).as_json
 
-    { data: hlr_json[:data] + sc_json[:data] + appeal_json[:data] }
+    legacy_appeal_json = ActiveModelSerializers::SerializableResource.new(
+      legacy_appeals,
+      each_serializer: ::V2::LegacyAppealStatusSerializer,
+      key_transform: :camel_lower
+    ).as_json
+
+    { data: hlr_json[:data] + sc_json[:data] + appeal_json[:data] + legacy_appeal_json[:data] }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def vbms_id
     @vbms_id ||= LegacyAppeal.convert_file_number_to_vacols(veteran_file_number)
