@@ -33,11 +33,15 @@ class RootTask < GenericTask
     true
   end
 
+  def assigned_to_label
+    COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
+  end
+
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
       create_vso_tracking_tasks(appeal, root_task)
-      if FeatureToggle.enabled?(:ama_auto_case_distribution)
+      if FeatureToggle.enabled?(:ama_acd_tasks)
         create_subtasks!(appeal, root_task)
       else
         create_ihp_tasks!(appeal, root_task)
@@ -46,7 +50,12 @@ class RootTask < GenericTask
 
     def create_ihp_tasks!(appeal, parent)
       appeal.vsos.map do |vso_organization|
-        InformalHearingPresentationTask.create!(
+        # For some RAMP appeals, this method may run twice.
+        existing_task = InformalHearingPresentationTask.find_by(
+          appeal: appeal,
+          assigned_to: vso_organization
+        )
+        existing_task || InformalHearingPresentationTask.create!(
           appeal: appeal,
           parent: parent,
           assigned_to: vso_organization
@@ -54,7 +63,8 @@ class RootTask < GenericTask
       end
     end
 
-    private
+    # TODO: make this private again after RAMPs are refilled
+    # private
 
     def create_vso_tracking_tasks(appeal, parent)
       appeal.vsos.map do |vso_organization|

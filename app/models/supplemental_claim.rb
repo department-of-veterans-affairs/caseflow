@@ -36,10 +36,6 @@ class SupplementalClaim < ClaimReview
     Array.wrap(review_status_id)
   end
 
-  def active?
-    end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
-  end
-
   def status_hash
     # need to implement. returns the details object for the status
 
@@ -48,16 +44,6 @@ class SupplementalClaim < ClaimReview
 
   def alerts
     @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
-  end
-
-  def decision_event_date
-    return unless decision_issues.any?
-
-    if end_product_establishments.any?
-      decision_issues.first.approx_decision_date
-    else
-      decision_issues.first.promulgation_date
-    end
   end
 
   def other_close_event_date
@@ -123,7 +109,7 @@ class SupplementalClaim < ClaimReview
   def build_request_issues_from_remand
     remanded_decision_issues_needing_request_issues.map do |remand_decision_issue|
       RequestIssue.new(
-        review_request: self,
+        decision_review: self,
         contested_decision_issue_id: remand_decision_issue.id,
         contested_rating_issue_reference_id: remand_decision_issue.rating_issue_reference_id,
         contested_rating_issue_profile_date: remand_decision_issue.profile_date,
@@ -136,11 +122,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def remanded_decision_issues_needing_request_issues
-    remanded_decision_issues.reject(&:contesting_request_issue)
-  end
-
-  def remanded_decision_issues
-    decision_review_remanded.decision_issues.remanded.where(benefit_type: benefit_type)
+    decision_review_remanded.decision_issues.remanded.uncontested.where(benefit_type: benefit_type)
   end
 
   def fetch_status
@@ -160,6 +142,10 @@ class SupplementalClaim < ClaimReview
     else
       {}
     end
+  end
+
+  def fetch_all_decision_issues
+    decision_issues
   end
 
   def api_issues_for_status_details_issues

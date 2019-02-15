@@ -19,6 +19,15 @@ class DecisionIssue < ApplicationRecord
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_one :contesting_request_issue, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
 
+  # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
+  # The characters an encoding is precise so don't change these unless you know they match VBMS values.
+  DTA_ERROR_PMR = "DTA Error - PMRs".freeze
+  DTA_ERROR_FED_RECS = "DTA Error - Fed Recs".freeze
+  DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs".freeze
+  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO".freeze
+  REMAND = "remanded".freeze
+  REMAND_DISPOSITIONS = [REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
+
   class AppealDTAPayeeCodeError < StandardError
     def initialize(appeal_id)
       super("Can't create a SC DTA for appeal #{appeal_id} due to missing payee code")
@@ -33,16 +42,25 @@ class DecisionIssue < ApplicationRecord
     end
 
     def remanded
-      where(disposition: "remanded")
+      where(disposition: REMAND_DISPOSITIONS)
     end
 
     def not_remanded
-      where.not(disposition: "remanded")
+      where.not(disposition: REMAND_DISPOSITIONS)
+    end
+
+    def contested
+      joins("INNER JOIN request_issues on request_issues.contested_decision_issue_id = decision_issues.id")
+    end
+
+    def uncontested
+      joins("LEFT JOIN request_issues on decision_issues.id = request_issues.contested_decision_issue_id")
+        .where("request_issues.contested_decision_issue_id IS NULL")
     end
   end
 
   def approx_decision_date
-    processed_in_caseflow? ? caseflow_decision_date : claim_review_approx_decision_date
+    processed_in_caseflow? ? caseflow_decision_date : approx_processed_in_vbms_decision_date
   end
 
   def issue_category
@@ -70,8 +88,7 @@ class DecisionIssue < ApplicationRecord
       requestIssueId: request_issues&.first&.id,
       description: description,
       disposition: disposition,
-      promulgationDate: promulgation_date,
-      caseflowDecisionDate: caseflow_decision_date
+      approxDecisionDate: approx_decision_date
     }
   end
 
@@ -90,9 +107,7 @@ class DecisionIssue < ApplicationRecord
   def api_status_active?
     # this is still being worked on so for the purposes of communicating
     # to the veteran, this decision issue is still considered active
-    return true if decision_review.is_a?(Appeal) && disposition == "remanded"
-
-    false
+    disposition && REMAND_DISPOSITIONS.include?(disposition)
   end
 
   def api_status_last_action
@@ -131,13 +146,13 @@ class DecisionIssue < ApplicationRecord
     decision_review.processed_in_caseflow?
   end
 
-  def claim_review_approx_decision_date
-    # there's an end_product_last_action_date when decision issues are created from eps
-    # but only a promulgation date when decision issues are created from noncomp
-    if profile_date
-      profile_date.to_date
+  # the decision date is approximate but we need it for timeliness checks.
+  # see also ContestableIssue.approx_decision_date
+  def approx_processed_in_vbms_decision_date
+    if promulgation_date
+      promulgation_date.to_date
     else
-      end_product_last_action_date || (promulgation_date&.to_date)
+      end_product_last_action_date
     end
   end
 
@@ -202,7 +217,7 @@ class DecisionIssue < ApplicationRecord
 
     sc.create_claimants!(
       participant_id: decision_review.claimant_participant_id,
-      payee_code: prior_payee_code
+      payee_code: decision_review.payee_code || prior_payee_code
     )
 
     sc
