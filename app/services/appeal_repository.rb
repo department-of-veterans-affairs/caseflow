@@ -328,6 +328,7 @@ class AppealRepository
       .select("legacy_appeals.vacols_id").uniq
   end
 
+  # rubocop:disable Metrics/AbcSize
   def self.create_schedule_hearing_tasks
     # Create legacy appeals where needed
     ids = cases_that_need_hearings.pluck(:bfkey, :bfcorlid)
@@ -345,14 +346,17 @@ class AppealRepository
         appeal: appeal,
         parent: RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
       ) { |task| task.assigned_to = Bva.singleton }
-      ScheduleHearingTask.find_or_create_by!(appeal: appeal, status: Constants.TASK_STATUSES.assigned.to_sym) do |task|
-        task.assigned_to = HearingsManagement.singleton
-        task.parent = parent
+      if ScheduleHearingTask.where(appeal: appeal).where.not(status: Constants.TASK_STATUSES.completed).empty?
+        ScheduleHearingTask.create!(appeal: appeal) do |task|
+          task.assigned_to = HearingsManagement.singleton
+          task.parent = parent
+        end
       end
 
       update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def self.withdraw_hearing!(appeal)
     appeal.case_record.update!(bfhr: "5", bfha: "5")
