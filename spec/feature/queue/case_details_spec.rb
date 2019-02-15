@@ -578,7 +578,7 @@ RSpec.feature "Case details" do
     before { FeatureToggle.enable!(:ama_decision_issues) }
     after { FeatureToggle.disable!(:ama_decision_issues) }
 
-    let(:request_issue) { create(:request_issue, description: "knee pain", notes: notes) }
+    let(:request_issue) { create(:request_issue, contested_issue_description: "knee pain", notes: notes) }
     let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
 
     context "when notes are nil" do

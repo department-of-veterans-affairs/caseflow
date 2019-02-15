@@ -591,8 +591,7 @@ describe RequestIssue do
         contested_rating_issue_profile_date: profile_date,
         contested_issue_description: "a rating request issue",
         contention_reference_id: contention_reference_id,
-        end_product_establishment: previous_end_product_establishment,
-        description: "a rating request issue"
+        end_product_establishment: previous_end_product_establishment
       ).tap(&:submit_for_processing!)
     end
 
@@ -668,8 +667,7 @@ describe RequestIssue do
         :request_issue,
         decision_review: appeal_in_progress,
         contested_rating_issue_reference_id: duplicate_appeal_reference_id,
-        contested_issue_description: "Appealed injury",
-        description: "Appealed injury"
+        contested_issue_description: "Appealed injury"
       )
     end
 
@@ -716,8 +714,7 @@ describe RequestIssue do
         :request_issue,
         end_product_establishment: active_epe,
         contested_rating_issue_reference_id: duplicate_reference_id,
-        contested_issue_description: "Old injury",
-        description: "Old injury"
+        contested_issue_description: "Old injury"
       )
     end
 
