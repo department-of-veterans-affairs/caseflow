@@ -162,29 +162,6 @@ describe Task do
     end
   end
 
-  describe "#attorney_rewrite_task_for_appeal" do
-    let!(:appeal) { FactoryBot.create(:appeal) }
-
-    context "when there is no rewrite task" do
-      it "should return nil" do
-        rewrite_task = appeal.attorney_rewrite_task_for_appeal
-        expect(rewrite_task.empty?).to be_truthy
-      end
-    end
-
-    context "when there is a rewrite task" do
-      before do
-        FactoryBot.create(:ama_attorney_rewrite_task, appeal: appeal)
-      end
-      it "should return the rewrite task" do
-        rewrite_task = appeal.attorney_rewrite_task_for_appeal
-        expect(rewrite_task.empty?).to be_falsy
-        expect(rewrite_task.first.is_a?(AttorneyRewriteTask)).to be_truthy
-        expect(rewrite_task.first.status).to eq(Constants.TASK_STATUSES.in_progress || Constants.TASK_STATUSES.assigned)
-      end
-    end
-  end
-
   describe "#assign_to_user_data" do
     let(:organization) { create(:organization, name: "Organization") }
     let(:users) { create_list(:user, 3) }

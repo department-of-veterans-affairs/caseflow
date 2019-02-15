@@ -39,7 +39,7 @@ import COPY from '../../COPY.json';
 class SubmitDecisionView extends React.PureComponent {
 
   componentDidMount = () => {
-    this.extendedDecision = this.extendDecisionOptsWithAttorneyCheckOutInfo(
+    this.extendedDecision = this.setInitialDecisionOptions(
       this.props.decision,
       this.props.appeal.attorneyCaseRewriteDetails);
 
@@ -48,18 +48,17 @@ class SubmitDecisionView extends React.PureComponent {
         [key]: value
       });
     });
-
   }
 
   // this handles the case where there is no document_id on this.props.decision.opts
   // and it comes from this.props.appeal.attorneyCaseRewriteDetails instead
   // if you don't do this you will get validation errors and a 400 for a missing document_id
   // this is also needed to keep the onChange values in sync
-  extendDecisionOptsWithAttorneyCheckOutInfo = (decision, attorneyCaseRewriteDetails) => {
+  setInitialDecisionOptions = (decision, attorneyCaseRewriteDetails) => {
 
     const decisionOptsWithAttorneyCheckoutInfo =
 
-      _.merge(decision.opts, { document_id: _.get(attorneyCaseRewriteDetails, 'document_id'),
+      _.merge(decision.opts, { document_id: _.get(this.props.appeal, 'documentId'),
         note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
         overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
         reviewing_judge_id: _.get(attorneyCaseRewriteDetails, 'assigned_judge.id')
@@ -67,6 +66,9 @@ class SubmitDecisionView extends React.PureComponent {
     const extendedDecision = { ...decision };
 
     extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
+    if (extendedDecision.opts.overtime === null) {
+      extendedDecision.opts.overtime = false;
+    }
 
     return extendedDecision;
   }
@@ -120,12 +122,6 @@ class SubmitDecisionView extends React.PureComponent {
     } = this.props;
 
     const issuesToPass = !isLegacyAppeal && amaDecisionIssues ? decisionIssues : issues;
-    // not sure why this is happening, it's causing tests to fail
-    // the backend can't handle a null response at this point
-
-    if (decision.opts.overtime === null) {
-      decision.opts.overtime = false;
-    }
     const payload = buildCaseReviewPayload(checkoutFlow, decision,
       userRole, issuesToPass, { isLegacyAppeal });
 
@@ -148,10 +144,7 @@ class SubmitDecisionView extends React.PureComponent {
   };
 
   getDefaultJudgeSelector = () => {
-    const legacyJudgeSelector = _.get(this.props, 'task.addedByCssId', null);
-    const amaJudgeSelector = _.get(this.props.appeal, 'assignedJudge.full_name');
-
-    return legacyJudgeSelector || amaJudgeSelector || '';
+    return this.props.task.isLegacy ? this.props.task.addedByCssId : this.props.task.assignedBy.pgId;
   }
 
   render = () => {

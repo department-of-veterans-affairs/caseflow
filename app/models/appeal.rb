@@ -143,12 +143,6 @@ class Appeal < DecisionReview
     task ? task.assigned_to.try(:full_name) : ""
   end
 
-  def attorney_rewrite_task_for_appeal
-    @attorney_rewrite_task_for_appeal ||=
-      tasks.where(type: "AttorneyRewriteTask",
-                  status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
-  end
-
   def eligible_request_issues
     # It's possible that two users create issues around the same time and the sequencer gets thrown off
     # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
