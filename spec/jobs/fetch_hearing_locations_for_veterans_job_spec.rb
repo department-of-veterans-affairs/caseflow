@@ -82,6 +82,12 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
 
+    describe "#validate_zip_code" do
+      it "returns correct zip code" do
+        job.validate_zip_code(legacy_appeal, error: nil)
+      end
+    end
+
     describe "#perform" do
       let(:distance_response) { HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11).to_json) }
       let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body.to_json) }

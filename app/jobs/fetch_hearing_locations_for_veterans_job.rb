@@ -33,7 +33,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
           AND t.status NOT IN ('cancelled', 'completed')
         )")
       .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
-      .limit(QUERY_LIMIT / 2)
+      .limit(QUERY_LIMIT)
   end
 
   def appeals
