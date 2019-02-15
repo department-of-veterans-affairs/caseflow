@@ -513,17 +513,15 @@ RSpec.feature "Case details" do
         let!(:request_issue) do
           FactoryBot.create(
             :request_issue,
-            review_request_id: appeal.id,
-            contested_issue_description: issue_description,
-            review_request_type: "Appeal"
+            decision_review: appeal,
+            contested_issue_description: issue_description
           )
         end
         let!(:request_issue2) do
           FactoryBot.create(
             :request_issue,
-            review_request_id: appeal.id,
-            contested_issue_description: issue_description2,
-            review_request_type: "Appeal"
+            decision_review: appeal,
+            contested_issue_description: issue_description2
           )
         end
 
