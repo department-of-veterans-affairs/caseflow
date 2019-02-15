@@ -51,6 +51,29 @@ RSpec.describe IntakesController do
         expect(vet.last_name).to eq "Merica"
       end
     end
+
+    context "vetern in BGS and not accessible to user" do
+      before do
+        Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = [file_number]
+      end
+      after do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+      end
+
+      let(:file_number) { "999887777" }
+      let!(:veteran) {} # no-op
+
+      it "does not create Veteran db record in Caseflow" do
+        expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
+        post :create, params: { file_number: file_number, form_type: "higher_level_review" }
+        binding.pry
+        expect(response.status).to eq(422)
+        expect(controller.send(:new_intake).error_code).to eq("veteran_not_accessible")
+        expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
+        binding.pry
+      end
+    end
   end
 
   describe "#complete" do
