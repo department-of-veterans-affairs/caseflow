@@ -53,6 +53,13 @@ class Appeal < DecisionReview
               DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
   }
 
+  scope :non_ihp, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? then 1 end) = ?",
+              InformalHearingPresentationTask.name, 0)
+  }
+
   scope :active, lambda {
     joins(:tasks)
       .group("appeals.id")
