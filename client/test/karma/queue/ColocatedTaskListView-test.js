@@ -82,7 +82,6 @@ describe('ColocatedTaskListView', () => {
     onHoldDuration: null,
     decisionPreparedBy: null,
     availableActions: [],
-    taskBusinessPayloads: [],
     hideFromQueueTableView: false,
     hideFromCaseTimeline: false,
     hideFromTaskSnapshot: false,

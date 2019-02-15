@@ -25,22 +25,24 @@ describe ClaimReview do
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:benefit_type) { "compensation" }
+  let(:ineligible_reason) { nil }
 
   let(:rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       contested_rating_issue_reference_id: "reference-id",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       contested_issue_description: "decision text",
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      ineligible_reason: ineligible_reason
     )
   end
 
   let(:second_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       contested_rating_issue_reference_id: "reference-id2",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       contested_issue_description: "another decision text",
@@ -51,18 +53,19 @@ describe ClaimReview do
   let(:non_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       nonrating_issue_description: "Issue text",
       issue_category: "surgery",
       decision_date: 4.days.ago.to_date,
-      benefit_type: benefit_type
+      benefit_type: benefit_type,
+      ineligible_reason: ineligible_reason
     )
   end
 
   let(:second_non_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       nonrating_issue_description: "some other issue",
       issue_category: "something",
       decision_date: 3.days.ago.to_date,
@@ -156,6 +159,50 @@ describe ClaimReview do
     context ".expired_without_processing" do
       it "matches reviews unfinished but outside the retry window" do
         expect(HigherLevelReview.expired_without_processing).to eq([claim_review_attempts_ended])
+      end
+    end
+  end
+
+  context "#active?" do
+    subject { claim_review.active? }
+
+    context "when it is processed in Caseflow and has completed tasks" do
+      let(:benefit_type) { "nca" }
+      let!(:completed_task) { create(:task, :completed, appeal: claim_review) }
+
+      it { is_expected.to be false }
+
+      context "when there are any incomplete tasks" do
+        let!(:in_progress_task) { create(:task, :in_progress, appeal: claim_review) }
+
+        it "returns true" do
+          expect(subject).to eq(true)
+        end
+      end
+    end
+
+    context "when it is processed in VBMS and has a cleared EPE" do
+      let(:benefit_type) { "compensation" }
+      let!(:cleared_epe) do
+        create(:end_product_establishment,
+               :cleared,
+               code: rating_request_issue.end_product_code,
+               source: claim_review,
+               veteran_file_number: claim_review.veteran.file_number)
+      end
+
+      it { is_expected.to be false }
+
+      context "when there is at least one active end product establishment" do
+        let!(:active_epe) do
+          create(:end_product_establishment,
+                 :active,
+                 code: rating_request_issue.end_product_code,
+                 source: claim_review,
+                 veteran_file_number: claim_review.veteran.file_number)
+        end
+
+        it { is_expected.to be true }
       end
     end
   end
@@ -324,6 +371,17 @@ describe ClaimReview do
 
     context "when there's more than one issue" do
       let(:issues) { [rating_request_issue, non_rating_request_issue] }
+
+      context "when they're all ineligible" do
+        let(:ineligible_reason) { "duplicate_of_rating_issue_in_active_review" }
+
+        it "does not create end product establishments" do
+          subject
+
+          expect(rating_request_issue.reload.end_product_establishment).to be_nil
+          expect(non_rating_request_issue.reload.end_product_establishment).to be_nil
+        end
+      end
 
       it "creates the issues and assigns end product establishments to them" do
         subject

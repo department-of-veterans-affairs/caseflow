@@ -3,11 +3,13 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { css, hover } from 'glamor';
 import _ from 'lodash';
+import scrollToComponent from 'react-scroll-to-component';
 
 import Tooltip from '../components/Tooltip';
 import { DoubleArrow } from '../components/RenderFunctions';
 import TableFilter from '../components/TableFilter';
 import FilterSummary from '../components/FilterSummary';
+import TablePagination from '../components/TablePagination';
 import { COLORS } from '../constants/AppConstants';
 
 /**
@@ -24,9 +26,26 @@ import { COLORS } from '../constants/AppConstants';
  *   - @footer {string} footer cell value for the column
  * - @rowObjects {array[object]} array of objects used to build the <tr/> rows
  * - @summary {string} table summary
+ * - @enablePagination {boolean} whether or not to enablePagination
+ * - @casesPerPage {number} how many cases to show per page,
+ *   defaults to 15 if nothing is set
  *
  * see StyleGuideTables.jsx for usage example.
  */
+const scrollTo = (dest = this, opts) => scrollToComponent(dest, _.defaults(opts, {
+  align: 'top',
+  duration: 800,
+  ease: 'outCube',
+  offset: -35
+}));
+
+const focusElement = (el = this) => {
+  if (el.tabIndex <= 0) {
+    el.setAttribute('tabindex', '-1');
+  }
+  el.focus();
+};
+
 const helperClasses = {
   center: 'cf-txt-c',
   left: 'cf-txt-l',
@@ -145,7 +164,7 @@ class BodyRows extends React.PureComponent {
     const { rowObjects, bodyClassName, columns, rowClassNames, tbodyRef, id, getKeyForRow, bodyStyling } = this.props;
 
     return <tbody className={bodyClassName} ref={tbodyRef} id={id} {...bodyStyling}>
-      {rowObjects.map((object, rowNumber) => {
+      {rowObjects && rowObjects.map((object, rowNumber) => {
         const key = getKeyForRow(rowNumber, object);
 
         return <Row
@@ -180,7 +199,8 @@ export default class QueueTable extends React.PureComponent {
       sortAscending: true,
       sortColIdx: null,
       areDropdownFiltersOpen: {},
-      filteredByList: {}
+      filteredByList: {},
+      currentPage: 0
     };
 
     if (defaultSort) {
@@ -223,6 +243,10 @@ export default class QueueTable extends React.PureComponent {
 
   updateFilteredByList = (newList) => {
     this.setState({ filteredByList: newList });
+
+    // When filters are added or changed, default back to the first page of data
+    // because the number of pages could have changed as data is filtered out.
+    this.updateCurrentPage(0);
   };
 
   filterTableData = (data: Array<Object>) => {
@@ -248,6 +272,24 @@ export default class QueueTable extends React.PureComponent {
     return filteredData;
   };
 
+  paginateData = (tableData) => {
+    const casesPerPage = this.props.casesPerPage || 15;
+    const paginatedData = [];
+
+    for (let i = 0; i < tableData.length; i += casesPerPage) {
+      paginatedData.push(tableData.slice(i, i + casesPerPage));
+    }
+
+    return paginatedData;
+  }
+
+  updateCurrentPage = (newPage) => {
+    this.setState({ currentPage: newPage });
+
+    scrollTo(this);
+    focusElement(this.elementForFocus);
+  }
+
   render() {
     const {
       columns,
@@ -262,11 +304,23 @@ export default class QueueTable extends React.PureComponent {
       caption,
       id,
       styling,
-      bodyStyling
+      bodyStyling,
+      enablePagination
     } = this.props;
+
+    // Steps to calculate table data to display:
+    // 1. Sort data
     let rowObjects = this.sortRowObjects();
 
+    // 2. Filter data
     rowObjects = this.filterTableData(rowObjects);
+    const totalCases = rowObjects.length;
+
+    // 3. Generate paginated data
+    const paginatedData = this.paginateData(rowObjects);
+
+    // 4. Display only the data for the current page
+    rowObjects = rowObjects.length > 0 ? paginatedData[this.state.currentPage] : rowObjects;
 
     let keyGetter = getKeyForRow;
 
@@ -278,11 +332,21 @@ export default class QueueTable extends React.PureComponent {
       }
     }
 
-    return <div>
+    return <div className="cf-table-wrapper" ref={(div) => {
+      this.elementForFocus = div;
+    }}>
       <FilterSummary
         filteredByList={this.state.filteredByList}
         alternateColumnNames={this.props.alternateColumnNames}
         clearFilteredByList={(newList) => this.updateFilteredByList(newList)} />
+      {
+        enablePagination &&
+        <TablePagination
+          paginatedData={paginatedData}
+          currentPage={this.state.currentPage}
+          totalCasesCount={totalCases}
+          updatePage={(newPage) => this.updateCurrentPage(newPage)} />
+      }
       <table
         id={id}
         className={`usa-table-borderless ${this.props.className}`}
@@ -315,6 +379,14 @@ export default class QueueTable extends React.PureComponent {
           {...this.state} />
         <FooterRow columns={columns} />
       </table>
+      {
+        enablePagination &&
+        <TablePagination
+          paginatedData={paginatedData}
+          currentPage={this.state.currentPage}
+          totalCasesCount={totalCases}
+          updatePage={(newPage) => this.updateCurrentPage(newPage)} />
+      }
     </div>;
   }
 }
@@ -339,5 +411,8 @@ QueueTable.propTypes = {
     sortColIdx: PropTypes.number,
     sortAscending: PropTypes.bool
   }),
-  userReadableColumnNames: PropTypes.object
+  userReadableColumnNames: PropTypes.object,
+  alternateColumnNames: PropTypes.object,
+  enablePagination: PropTypes.bool,
+  casesPerPage: PropTypes.number
 };

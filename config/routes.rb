@@ -160,6 +160,7 @@ Rails.application.routes.draw do
     get "/", to: 'intakes#index'
     get "/manager", to: 'intake_manager#index'
     get "/manager/flagged_for_review", to: 'intake_manager#flagged_for_review'
+    get "/manager/users/:user_css_id", to: 'intake_manager#user_stats'
   end
 
   resources :intakes, path: "/intake", only: [:index, :create, :destroy] do
@@ -233,6 +234,7 @@ Rails.application.routes.draw do
 
   get "styleguide", to: "styleguide#show"
 
+  get "tableau-login", to: "tableau_logins#login"
 
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 

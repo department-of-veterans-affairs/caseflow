@@ -50,7 +50,7 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
             else
               []
             end
-    tasks += Task.where(assigned_to: user).where.not(status: [:completed, :on_hold])
+    tasks += Task.active.where(assigned_to: user).where.not(status: :on_hold)
     tasks.reject { |task| (task.is_a?(JudgeLegacyTask) && task.action == "assign") || task.is_a?(JudgeAssignTask) }
   end
 

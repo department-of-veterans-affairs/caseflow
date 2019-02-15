@@ -10,7 +10,7 @@ class DecisionReviewIntake < Intake
       legacy_opt_in_approved: detail.legacy_opt_in_approved,
       legacyAppeals: detail.serialized_legacy_appeals,
       ratings: detail.serialized_ratings,
-      requestIssues: detail.request_issues.map(&:ui_hash),
+      requestIssues: detail.request_issues.open.map(&:ui_hash),
       activeNonratingRequestIssues: detail.active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: detail.contestable_issues.map(&:serialize)
     )
@@ -28,7 +28,7 @@ class DecisionReviewIntake < Intake
     detail.errors.messages
   end
 
-  def complete!(request_params, &additional_transactions)
+  def complete!(request_params)
     return if complete? || pending?
 
     req_issues = request_params[:request_issues] || []
@@ -36,7 +36,7 @@ class DecisionReviewIntake < Intake
       start_completion!
       detail.request_issues.destroy_all unless detail.request_issues.empty?
       detail.create_issues!(build_issues(req_issues))
-      additional_transactions.call
+      yield
       complete_with_status!(:success)
     end
   end

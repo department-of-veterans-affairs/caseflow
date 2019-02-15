@@ -39,9 +39,11 @@ class UserRepository
 
       results = {}
       users.each do |user|
-        results.merge!(user.sattyid => { css_id: user.sdomainid,
-                                         first_name: user.snamef,
-                                         last_name: user.snamel })
+        results[user.sattyid] = {
+          css_id: user.sdomainid,
+          first_name: user.snamef,
+          last_name: user.snamel
+        }
       end
       results
     end

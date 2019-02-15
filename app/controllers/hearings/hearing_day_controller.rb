@@ -24,7 +24,7 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def show
-    hearing_day = HearingDay.find_hearing_day(params[:id])
+    hearing_day = HearingDay.find_hearing_day(nil, params[:id])
     hearing_day_hash = HearingDay.to_hash(hearing_day)
 
     hearings, regional_office = fetch_hearings(hearing_day_hash, params[:id]).values_at(:hearings, :regional_office)
@@ -173,6 +173,7 @@ class Hearings::HearingDayController < HearingScheduleController
       converted[k] = if k == "room"
                        HearingDayMapper.label_for_room(v)
                      elsif k == "regional_office" && !v.nil?
+                       converted["regional_office_key"] = v
                        HearingDayMapper.city_for_regional_office(v)
                      elsif k == "request_type"
                        HearingDayMapper.label_for_type(v)

@@ -26,8 +26,12 @@ feature "Supplemental Claim Intake" do
 
   let(:veteran_file_number) { "123412345" }
 
+  let(:date_of_death) { nil }
   let(:veteran) do
-    Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
+    Generators::Veteran.build(file_number: veteran_file_number,
+                              first_name: "Ed",
+                              last_name: "Merica",
+                              date_of_death: date_of_death)
   end
 
   let(:veteran_no_ratings) do
@@ -102,6 +106,17 @@ feature "Supplemental Claim Intake" do
         { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
     )
+  end
+
+  context "veteran is deceased" do
+    let(:date_of_death) { Time.zone.today - 1.day }
+
+    scenario "veteran cannot be claimant" do
+      create(:supplemental_claim, veteran_file_number: veteran.file_number)
+      check_deceased_veteran_claimant(
+        SupplementalClaimIntake.new(veteran_file_number: veteran.file_number, user: current_user)
+      )
+    end
   end
 
   it "Creates an end product" do
@@ -428,17 +443,19 @@ feature "Supplemental Claim Intake" do
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }
-    let!(:ratings_with_disability_codes) do
-      generate_ratings_with_disabilities(veteran,
-                                         disabiliity_receive_date,
-                                         disability_profile_date)
+    let!(:ratings_with_diagnostic_codes) do
+      generate_ratings_with_disabilities(
+        veteran,
+        disabiliity_receive_date,
+        disability_profile_date
+      )
     end
 
-    scenario "saves disability codes" do
+    scenario "saves diagnostic codes" do
       sc, = start_supplemental_claim(veteran)
       visit "/intake"
       click_intake_continue
-      save_and_check_request_issues_with_disability_codes(
+      save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.supplemental_claim,
         sc
       )
@@ -654,7 +671,7 @@ feature "Supplemental Claim Intake" do
       expect(non_rating_end_product_establishment).to_not be_nil
 
       expect(RequestIssue.find_by(
-               review_request: supplemental_claim,
+               decision_review: supplemental_claim,
                contested_rating_issue_reference_id: "xyz123",
                contested_issue_description: "Left knee granted 2",
                end_product_establishment_id: end_product_establishment.id,
@@ -662,7 +679,7 @@ feature "Supplemental Claim Intake" do
              )).to_not be_nil
 
       expect(RequestIssue.find_by(
-               review_request: supplemental_claim,
+               decision_review: supplemental_claim,
                issue_category: "Active Duty Adjustments",
                nonrating_issue_description: "Description for Active Duty Adjustments",
                decision_date: 1.month.ago.to_date,
@@ -670,7 +687,7 @@ feature "Supplemental Claim Intake" do
              )).to_not be_nil
 
       expect(RequestIssue.find_by(
-               review_request: supplemental_claim,
+               decision_review: supplemental_claim,
                unidentified_issue_text: "This is an unidentified issue",
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id
@@ -678,14 +695,14 @@ feature "Supplemental Claim Intake" do
 
       # Issues before AMA
       expect(RequestIssue.find_by(
-               review_request: supplemental_claim,
+               decision_review: supplemental_claim,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
-               end_product_establishment_id: end_product_establishment.id,
+               end_product_establishment_id: nil,
                ineligible_reason: :before_ama
              )).to_not be_nil
 
       expect(RequestIssue.find_by(
-               review_request: supplemental_claim,
+               decision_review: supplemental_claim,
                contested_issue_description: "Issue before AMA Activation from RAMP",
                ineligible_reason: nil,
                ramp_claim_id: "ramp_claim_id",
@@ -693,16 +710,16 @@ feature "Supplemental Claim Intake" do
              )).to_not be_nil
 
       expect(RequestIssue.find_by(
-               review_request: supplemental_claim,
+               decision_review: supplemental_claim,
                nonrating_issue_description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
-               end_product_establishment_id: non_rating_end_product_establishment.id
+               end_product_establishment_id: nil
              )).to_not be_nil
 
       duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
 
-      ineligible_issue = duplicate_request_issues.select(&:duplicate_of_rating_issue_in_active_review?).first
+      ineligible_issue = duplicate_request_issues.detect(&:duplicate_of_rating_issue_in_active_review?)
       expect(ineligible_issue).to_not eq(request_issue_in_progress)
       expect(ineligible_issue.contention_reference_id).to be_nil
       expect(RequestIssue.find_by(contested_rating_issue_reference_id: old_reference_id).eligible?).to eq(true)
@@ -797,7 +814,7 @@ feature "Supplemental Claim Intake" do
 
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
-                   review_request: sc,
+                   decision_review: sc,
                    issue_category: "Accrued",
                    benefit_type: sc.benefit_type
                  )).to_not be_nil

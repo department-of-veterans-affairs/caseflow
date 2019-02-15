@@ -20,8 +20,7 @@ import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
 
 import {
-  requestPatch,
-  requestSave
+  requestPatch
 } from './uiReducer/uiActions';
 
 const editButton = css({
@@ -251,7 +250,6 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave,
   requestPatch
 }, dispatch);
 

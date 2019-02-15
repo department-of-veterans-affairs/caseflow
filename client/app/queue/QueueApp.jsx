@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // @flow
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -32,6 +33,7 @@ import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
+import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
@@ -66,6 +68,7 @@ type Props = {|
   userRole: string,
   userCssId: string,
   dropdownUrls: Array<string>,
+  applicationUrls: Array<Object>,
   buildDate?: string,
   reviewActionType: string,
   userIsVsoEmployee?: boolean,
@@ -205,6 +208,8 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
 
+  routedCancelTaskModal = (props) => <CancelTaskModal {...props.match.params} />;
+
   routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
   routedSendColocatedTaskModal = (props) =>
@@ -237,12 +242,13 @@ class QueueApp extends React.PureComponent<Props> {
       defaultUrl={this.props.caseSearchHomePage ? '/search' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
+      applicationUrls={this.props.applicationUrls}
       logoProps={{
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT
       }}
       rightNavElement={<CaseSearchLink />}
-      appName="">
+      appName="Queue">
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app">
@@ -386,6 +392,12 @@ class QueueApp extends React.PureComponent<Props> {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.MARK_COMPLETE.value}`}
             title="Mark Task Complete | Caseflow"
             render={this.routedCompleteTaskModal} />
+          <PageRoute
+            exact
+            path={'/queue/appeals/:appealId/tasks/:taskId/' +
+              `(${TASK_ACTIONS.WITHDRAW_HEARING.value}|${TASK_ACTIONS.CANCEL_TASK.value})`}
+            title="Cancel task | Caseflow"
+            render={this.routedCancelTaskModal} />
           <PageRoute
             exact
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}

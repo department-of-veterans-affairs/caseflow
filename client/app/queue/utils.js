@@ -105,7 +105,6 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
       instructions: task.attributes.instructions,
       decisionPreparedBy,
       availableActions: task.attributes.available_actions,
-      taskBusinessPayloads: task.attributes.task_business_payloads,
       caseReviewId: task.attributes.attorney_case_review_id,
       timelineTitle: task.attributes.timeline_title,
       hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
@@ -182,7 +181,6 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
       status: task.attributes.status,
       decisionPreparedBy: null,
       availableActions: task.attributes.available_actions,
-      taskBusinessPayloads: task.attributes.task_business_payloads,
       timelineTitle: task.attributes.timeline_title,
       hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
       hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
@@ -511,6 +509,8 @@ export const taskIsOnHold = (task: Task) => {
 
   return task.status === TASK_STATUSES.on_hold;
 };
+
+export const taskIsActive = (task: Task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
 
 export const taskActionData = (props: Object) => {
   if (!props.task) {

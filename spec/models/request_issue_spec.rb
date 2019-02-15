@@ -14,6 +14,8 @@ describe RequestIssue do
   let(:same_office) { false }
   let(:vacols_id) { nil }
   let(:vacols_sequence_id) { nil }
+  let(:closed_at) { nil }
+  let(:closed_status) { nil }
 
   let(:review) do
     create(
@@ -53,7 +55,7 @@ describe RequestIssue do
   let!(:rating_request_issue) do
     create(
       :request_issue,
-      review_request: review,
+      decision_review: review,
       contested_rating_issue_reference_id: contested_rating_issue_reference_id,
       contested_rating_issue_profile_date: profile_date,
       contested_issue_description: "a rating request issue",
@@ -64,14 +66,16 @@ describe RequestIssue do
       contested_decision_issue_id: contested_decision_issue_id,
       benefit_type: benefit_type,
       vacols_id: vacols_id,
-      vacols_sequence_id: vacols_sequence_id
+      vacols_sequence_id: vacols_sequence_id,
+      closed_at: closed_at,
+      closed_status: closed_status
     )
   end
 
   let!(:nonrating_request_issue) do
     create(
       :request_issue,
-      review_request: review,
+      decision_review: review,
       nonrating_issue_description: "a nonrating request issue description",
       contested_issue_description: nonrating_contested_issue_description,
       issue_category: "a category",
@@ -88,7 +92,7 @@ describe RequestIssue do
   let!(:unidentified_issue) do
     create(
       :request_issue,
-      review_request: review,
+      decision_review: review,
       unidentified_issue_text: "an unidentified issue",
       is_unidentified: true
     )
@@ -103,7 +107,8 @@ describe RequestIssue do
     end
 
     it "respects the delay" do
-      expect(rating_request_issue.submitted?).to eq(false)
+      expect(rating_request_issue.submitted_and_ready?).to eq(false)
+      expect(rating_request_issue.submitted?).to eq(true)
       expect(nonrating_request_issue.submitted?).to eq(true)
 
       todo = RequestIssue.requires_processing
@@ -144,10 +149,20 @@ describe RequestIssue do
   context ".not_deleted" do
     subject { RequestIssue.not_deleted }
 
-    let!(:deleted_request_issue) { create(:request_issue, review_request: nil) }
+    let!(:deleted_request_issue) { create(:request_issue, decision_review: nil) }
 
-    it "filters by whether it is associated with a review_request" do
+    it "filters by whether it is associated with a decision_review" do
       expect(subject.find_by(id: deleted_request_issue.id)).to be_nil
+    end
+  end
+
+  context ".open" do
+    subject { RequestIssue.open }
+
+    let!(:closed_request_issue) { create(:request_issue, :removed) }
+
+    it "filters by whether the closed_at is nil" do
+      expect(subject.find_by(id: closed_request_issue.id)).to be_nil
     end
   end
 
@@ -185,6 +200,23 @@ describe RequestIssue do
 
       it "ignores request issues" do
         expect(RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)).to be_nil
+      end
+    end
+
+    context "EPE does not yet have a synced status" do
+      let(:active_rating_request_issue) do
+        rating_request_issue.tap do |ri|
+          ri.update!(end_product_establishment: create(:end_product_establishment))
+        end
+      end
+
+      let(:rating_issue) do
+        RatingIssue.new(reference_id: active_rating_request_issue.contested_rating_issue_reference_id)
+      end
+
+      it "treats EPE as active" do
+        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
+        expect(in_review).to eq(rating_request_issue)
       end
     end
   end
@@ -364,7 +396,7 @@ describe RequestIssue do
       let!(:request_issue_in_active_review) do
         create(
           :request_issue,
-          review_request: previous_higher_level_review,
+          decision_review: previous_higher_level_review,
           contested_rating_issue_reference_id: higher_level_review_reference_id,
           contention_reference_id: contention_reference_id,
           end_product_establishment: active_epe,
@@ -376,7 +408,7 @@ describe RequestIssue do
       let!(:ineligible_request_issue) do
         create(
           :request_issue,
-          review_request: new_higher_level_review,
+          decision_review: new_higher_level_review,
           contested_rating_issue_reference_id: higher_level_review_reference_id,
           contention_reference_id: contention_reference_id,
           ineligible_reason: :duplicate_of_rating_issue_in_active_review,
@@ -409,7 +441,8 @@ describe RequestIssue do
         vacols_sequence_id: 2,
         contested_decision_issue_id: contested_decision_issue_id,
         ineligible_reason: "untimely",
-        ineligible_due_to_id: 345
+        ineligible_due_to_id: 345,
+        rating_issue_diagnostic_code: "2222"
       }
     end
 
@@ -427,7 +460,8 @@ describe RequestIssue do
         ramp_claim_id: "ramp_claim_id",
         vacols_sequence_id: 2,
         ineligible_reason: "untimely",
-        ineligible_due_to_id: 345
+        ineligible_due_to_id: 345,
+        contested_rating_issue_diagnostic_code: "2222"
       )
     end
 
@@ -519,7 +553,7 @@ describe RequestIssue do
   end
 
   context "#review_title" do
-    it "munges the review_request_type appropriately" do
+    it "munges the decision_review_type appropriately" do
       expect(rating_request_issue.review_title).to eq "Higher-Level Review"
     end
   end
@@ -552,7 +586,7 @@ describe RequestIssue do
     let!(:previous_request_issue) do
       create(
         :request_issue,
-        review_request: previous_higher_level_review,
+        decision_review: previous_higher_level_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
         contested_rating_issue_profile_date: profile_date,
         contested_issue_description: "a rating request issue",
@@ -620,7 +654,7 @@ describe RequestIssue do
     let!(:previous_request_issue) do
       create(
         :request_issue,
-        review_request: previous_review,
+        decision_review: previous_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
         contention_reference_id: contention_reference_id
       )
@@ -632,7 +666,7 @@ describe RequestIssue do
     let(:appeal_request_issue_in_progress) do
       create(
         :request_issue,
-        review_request: appeal_in_progress,
+        decision_review: appeal_in_progress,
         contested_rating_issue_reference_id: duplicate_appeal_reference_id,
         contested_issue_description: "Appealed injury",
         description: "Appealed injury"
@@ -921,7 +955,7 @@ describe RequestIssue do
         let(:rating_promulgation_date) { 10.years.ago }
 
         it "does not flag rating issues before AMA" do
-          rating_request_issue.review_request.legacy_opt_in_approved = true
+          rating_request_issue.decision_review.legacy_opt_in_approved = true
           rating_request_issue.vacols_id = "something"
           rating_request_issue.contested_rating_issue_reference_id = "xyz123"
 
@@ -930,6 +964,44 @@ describe RequestIssue do
           expect(rating_request_issue.contested_rating_issue).to_not be_nil
           expect(rating_request_issue.ineligible_reason).to be_nil
         end
+      end
+    end
+  end
+
+  context "#close_after_end_product_canceled!" do
+    subject { rating_request_issue.close_after_end_product_canceled! }
+    let(:end_product_establishment) { create(:end_product_establishment, :canceled) }
+
+    it "closes the request issue" do
+      subject
+      expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+      expect(rating_request_issue.closed_status).to eq("end_product_canceled")
+    end
+
+    context "if the request issue is already closed" do
+      let(:closed_at) { 1.day.ago }
+      let(:closed_status) { "removed" }
+
+      it "does not reclose the issue" do
+        subject
+        expect(rating_request_issue.closed_at).to eq(closed_at)
+        expect(rating_request_issue.closed_status).to eq(closed_status)
+      end
+    end
+
+    context "when there is a legacy issue optin" do
+      let(:vacols_id) { vacols_issue.id }
+      let(:vacols_sequence_id) { vacols_issue.isskey }
+      let(:vacols_issue) { create(:case_issue, :disposition_remanded, isskey: 1) }
+      let(:vacols_case) do
+        create(:case, case_issues: [vacols_issue])
+      end
+      let!(:legacy_issue_optin) { create(:legacy_issue_optin, request_issue: rating_request_issue) }
+
+      it "flags the legacy issue optin for rollback" do
+        subject
+        expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+        expect(legacy_issue_optin.reload.rollback_created_at).to eq(Time.zone.now)
       end
     end
   end
@@ -943,7 +1015,7 @@ describe RequestIssue do
       let!(:decision_issue) do
         rating_request_issue.decision_issues.create!(
           participant_id: veteran.participant_id,
-          decision_review: rating_request_issue.review_request,
+          decision_review: rating_request_issue.decision_review,
           benefit_type: review.benefit_type,
           disposition: "allowed",
           end_product_last_action_date: Time.zone.now
@@ -994,6 +1066,7 @@ describe RequestIssue do
             end
 
             it "creates decision issues based on rating issues" do
+              rating_request_issue.decision_sync_error = "previous error"
               subject
               expect(rating_request_issue.decision_issues.count).to eq(1)
               expect(rating_request_issue.decision_issues.first).to have_attributes(
@@ -1009,6 +1082,7 @@ describe RequestIssue do
                 end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
               )
               expect(rating_request_issue.processed?).to eq(true)
+              expect(rating_request_issue.decision_sync_error).to be_nil
             end
 
             context "when decision issue with disposition and rating issue already exists" do

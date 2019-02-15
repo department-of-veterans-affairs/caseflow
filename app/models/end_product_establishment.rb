@@ -161,8 +161,8 @@ class EndProductEstablishment < ApplicationRecord
         synced_status: result.status_type_code,
         last_synced_at: Time.zone.now
       )
-
       sync_source!
+      close_request_issues_if_canceled!
     end
   rescue EstablishedEndProductNotFound => e
     raise e
@@ -194,7 +194,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def status_active?(sync: false)
     sync! if sync
-    !EndProduct::INACTIVE_STATUSES.include?(synced_status)
+    synced_status.nil? || !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
   def associate_rating_request_issues!
@@ -327,7 +327,14 @@ class EndProductEstablishment < ApplicationRecord
       # delete end product in bgs & set sync status to canceled
       BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
+      close_request_issues_if_canceled!
     end
+  end
+
+  def close_request_issues_if_canceled!
+    return unless status_canceled?
+
+    request_issues.each(&:close_after_end_product_canceled!)
   end
 
   def fetch_associated_rating
@@ -336,8 +343,12 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def open_request_issues
+    request_issues.reject(&:closed?)
+  end
+
   def rating_request_issues
-    request_issues.select(&:rating?)
+    open_request_issues.select(&:rating?)
   end
 
   def unassociated_rating_request_issues
@@ -345,7 +356,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def eligible_request_issues
-    request_issues.select(&:eligible?)
+    open_request_issues.select(&:eligible?)
   end
 
   def eligible_rating_request_issues

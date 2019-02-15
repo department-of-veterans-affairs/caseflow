@@ -73,5 +73,27 @@ describe('QueueTable', () => {
 
       expect(wrapper.find('tr')).to.have.length(3);
     });
+
+    it('updates current page', () => {
+      wrapper = mount(
+        <QueueTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+      );
+
+      wrapper.instance().updateCurrentPage(1);
+      wrapper.update();
+
+      expect(wrapper.instance().state.currentPage).to.equal(1);
+    });
+
+    it('paginates table data', () => {
+      wrapper = mount(
+        <QueueTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+      );
+
+      const paginatedData = wrapper.instance().paginateData(rowObjects);
+
+      expect(paginatedData).to.have.length(1);
+      expect(rowObjects).to.include(paginatedData[0][0]);
+    });
   });
 });

@@ -3,6 +3,7 @@ Rails.application.configure do
   config.after_initialize do
     Bullet.enable        = true
     Bullet.bullet_logger = true
+    Bullet.rails_logger  = true
   end
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -56,8 +57,10 @@ Rails.application.configure do
     end
   end
 
-  # Send logs to stdout
-  config.logger = Logger.new(STDOUT)
+  unless ENV['RAILS_ENABLE_TEST_LOG']
+    config.logger = Logger.new(nil)
+    config.log_level = :error
+  end
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true

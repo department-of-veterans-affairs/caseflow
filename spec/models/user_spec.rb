@@ -16,6 +16,14 @@ describe User do
     Fakes::AuthenticationService.user_session = nil
   end
 
+  context ".find_by_css_id" do
+    let!(:user) { create(:user, css_id: "FOOBAR") }
+
+    it "searches case insensitively" do
+      expect(User.find_by_css_id("fooBaR")).to eq(user)
+    end
+  end
+
   context "#regional_office" do
     context "when RO can't be determined using station_id" do
       subject { user.regional_office }
@@ -512,7 +520,7 @@ describe User do
         admin_orgs.each { |o| OrganizationsUser.make_user_admin(user, o) }
       end
       it "should return a list of all teams user is an admin for" do
-        expect(user.administered_teams).to eq(admin_orgs)
+        expect(user.administered_teams).to include(*admin_orgs)
       end
     end
   end

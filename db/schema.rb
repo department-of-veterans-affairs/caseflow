@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190205201919) do
+ActiveRecord::Schema.define(version: 20190214214208) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 20190205201919) do
   end
 
   create_table "appeals", force: :cascade do |t|
+    t.string "closest_regional_office"
     t.string "docket_type"
     t.datetime "established_at"
     t.datetime "establishment_attempted_at"
@@ -89,6 +90,7 @@ ActiveRecord::Schema.define(version: 20190205201919) do
     t.datetime "establishment_submitted_at"
     t.boolean "legacy_opt_in_approved"
     t.date "receipt_date"
+    t.date "target_decision_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "veteran_file_number", null: false
     t.boolean "veteran_is_not_claimant"
@@ -110,6 +112,8 @@ ActiveRecord::Schema.define(version: 20190205201919) do
 
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address"
+    t.integer "appeal_id"
+    t.string "appeal_type"
     t.string "city"
     t.string "classification"
     t.datetime "created_at", null: false
@@ -119,7 +123,7 @@ ActiveRecord::Schema.define(version: 20190205201919) do
     t.string "name"
     t.string "state"
     t.datetime "updated_at", null: false
-    t.string "veteran_file_number", null: false
+    t.string "veteran_file_number"
     t.string "zip_code"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
@@ -281,6 +285,8 @@ ActiveRecord::Schema.define(version: 20190205201919) do
     t.string "genpop_query"
     t.boolean "priority"
     t.datetime "ready_at"
+    t.integer "task_id"
+    t.index ["case_id"], name: "index_distributed_cases_on_case_id", unique: true
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -580,6 +586,7 @@ ActiveRecord::Schema.define(version: 20190205201919) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
+    t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.boolean "dic_death_or_accrued_benefits_united_states", default: false
     t.string "dispatched_to_station"
@@ -758,6 +765,8 @@ ActiveRecord::Schema.define(version: 20190205201919) do
 
   create_table "request_issues", force: :cascade do |t|
     t.string "benefit_type", null: false
+    t.datetime "closed_at"
+    t.string "closed_status"
     t.integer "contention_reference_id"
     t.integer "contested_decision_issue_id"
     t.string "contested_issue_description"
@@ -891,13 +900,6 @@ ActiveRecord::Schema.define(version: 20190205201919) do
     t.index ["text"], name: "index_tags_on_text", unique: true
   end
 
-  create_table "task_business_payloads", force: :cascade do |t|
-    t.string "description", null: false
-    t.bigint "task_id", null: false
-    t.json "values", default: {}, null: false
-    t.index ["task_id"], name: "index_task_business_payloads_on_task_id"
-  end
-
   create_table "task_timers", force: :cascade do |t|
     t.datetime "attempted_at"
     t.datetime "created_at", null: false
@@ -919,7 +921,6 @@ ActiveRecord::Schema.define(version: 20190205201919) do
     t.integer "assigned_to_id"
     t.string "assigned_to_type", null: false
     t.datetime "closed_at"
-    t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.text "instructions", default: [], array: true
     t.integer "on_hold_duration"
@@ -929,6 +930,8 @@ ActiveRecord::Schema.define(version: 20190205201919) do
     t.string "status", default: "assigned"
     t.string "type"
     t.datetime "updated_at", null: false
+    t.index ["appeal_type", "appeal_id"], name: "index_tasks_on_appeal_type_and_appeal_id"
+    t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|

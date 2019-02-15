@@ -358,7 +358,7 @@ module IntakeHelpers
     create(:request_issue,
            :with_nonrating_decision_issue,
            nonrating_issue_description: "Test nonrating decision issue",
-           review_request: decision_review,
+           decision_review: decision_review,
            decision_date: decision_review.receipt_date - 1.day,
            issue_category: issue_category,
            veteran_participant_id: veteran.participant_id)
@@ -370,7 +370,7 @@ module IntakeHelpers
            contested_rating_issue_reference_id: contested_rating_issue_reference_id,
            contested_rating_issue_profile_date: decision_review.receipt_date - 1.day,
            contested_issue_description: "Test rating decision issue",
-           review_request: decision_review,
+           decision_review: decision_review,
            veteran_participant_id: veteran.participant_id)
   end
 
@@ -423,12 +423,13 @@ module IntakeHelpers
                   reject_reason: "Converted or Backfilled Rating - no promulgated ratings found")
   end
 
-  def generate_ratings_with_disabilities(
-    veteran,
-    promulgation_date,
-    profile_date,
-    issues: []
-  )
+  def mock_locked_rating_response
+    allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range)
+      .and_return(rating_profile_list: { rating_profile: nil },
+                  reject_reason: "Locked Rating")
+  end
+
+  def generate_ratings_with_disabilities(veteran, promulgation_date, profile_date, issues: [])
     if issues == []
       issues = [
         {
@@ -454,7 +455,7 @@ module IntakeHelpers
         dis_sn: "rating#{i}",
         disability_evaluations: {
           dis_dt: promulgation_date.to_datetime,
-          dgnstc_tc: "disability_code#{i}"
+          dgnstc_tc: "diagnostic_code#{i}"
         }
       }
     end
@@ -468,7 +469,7 @@ module IntakeHelpers
     )
   end
 
-  def save_and_check_request_issues_with_disability_codes(form_name, decision_review)
+  def save_and_check_request_issues_with_diagnostic_codes(form_name, decision_review)
     click_intake_add_issue
     expect(page).to have_content("this is a disability")
     expect(page).to have_content("this is another disability")
@@ -483,18 +484,26 @@ module IntakeHelpers
       expect(page).to have_content("#{form_name} has been processed.")
     end
 
-    expect(RequestIssue.find_by(
-             contested_rating_issue_disability_code: "disability_code1",
-             contested_rating_issue_reference_id: "disability1",
-             contested_issue_description: "this is another disability",
-             decision_review: decision_review
-           )).to_not be_nil
+    expect(
+      RequestIssue.find_by(
+        contested_rating_issue_diagnostic_code: "diagnostic_code1",
+        contested_rating_issue_reference_id: "disability1",
+        contested_issue_description: "this is another disability",
+        decision_review: decision_review
+      )
+    ).to_not be_nil
+  end
+
+  def check_deceased_veteran_claimant(intake)
+    intake.start!
+    visit "/intake"
+    expect(page).to have_css("input[disabled][id=different-claimant-option_false]", visible: false)
   end
 
   # rubocop:disable Metrics/AbcSize
   def verify_decision_issues_can_be_added_and_removed(page_url,
                                                       original_request_issue,
-                                                      review_request,
+                                                      decision_review,
                                                       contested_decision_issues)
     visit page_url
     expect(page).to have_content("currently contesting decision issue")
@@ -502,6 +511,8 @@ module IntakeHelpers
 
     # check that we cannot add the same issue again
     click_intake_add_issue
+    decision_date = contested_decision_issues.first.end_product_last_action_date.strftime("%m/%d/%Y")
+    expect(page).to have_content("Past decisions from #{decision_date}")
     expect(page).to have_css("input[disabled]", visible: false)
     expect(page).to have_content("PTSD denied (already selected for")
 
@@ -545,10 +556,11 @@ module IntakeHelpers
 
     # check that decision_request_issue is closed
     updated_request_issue = RequestIssue.find_by(id: original_request_issue.id)
-    expect(updated_request_issue.review_request).to be_nil
+    expect(updated_request_issue.decision_review).to_not be_nil
+    expect(updated_request_issue).to be_closed
 
     # check that new request issue is created contesting the decision issue
-    request_issues = review_request.reload.request_issues
+    request_issues = decision_review.reload.open_request_issues
     first_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.first.id)
     second_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.second.id)
 
@@ -587,12 +599,12 @@ module IntakeHelpers
     expect(page).to have_content("has been processed")
 
     first_not_modified_request_issue = RequestIssue.find_by(
-      review_request: decision_review,
+      decision_review: decision_review,
       contested_decision_issue_id: contested_decision_issues.first.id
     )
 
     second_not_modified_request_issue = RequestIssue.find_by(
-      review_request: decision_review,
+      decision_review: decision_review,
       contested_decision_issue_id: contested_decision_issues.second.id
     )
 
