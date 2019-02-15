@@ -20,16 +20,17 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     end
 
     let!(:veteran) { create(:veteran, file_number: "123456789") }
+    let!(:vacols_case) { create(:case, bfcorlid: "123456789S") }
+    let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
     let!(:hearing_location) do
       create(:available_hearing_locations,
-             veteran_file_number: "123456789",
+             appeal_id: legacy_appeal.id,
+             appeal_type: "LegacyAppeal",
              city: "Holdrege",
              state: "NE",
              distance: 0,
              facility_type: "va_health_facility")
     end
-    let!(:vacols_case) { create(:case, bfcorlid: "123456789S") }
-    let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
     let!(:case_hearing) { create(:case_hearing, vdkey: hearing_day.id, folder_nr: legacy_appeal.vacols_id) }
     let!(:legacy_hearing) { create(:legacy_hearing, vacols_id: case_hearing.hearing_pkseq, appeal: legacy_appeal) }

@@ -147,7 +147,7 @@ RSpec.describe TasksController, type: :controller do
           )
         end
         let!(:legacy_appeal) do
-          create(:legacy_appeal, vacols_case: vacols_case)
+          create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "RO04")
         end
         let!(:task) do
           create(:generic_task, assigned_to: user, appeal: legacy_appeal)
