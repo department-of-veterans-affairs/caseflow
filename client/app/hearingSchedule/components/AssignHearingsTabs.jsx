@@ -11,7 +11,7 @@ import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { renderAppealType } from '../../queue/utils';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import StatusMessage from '../../components/StatusMessage';
-import { getFacilityType } from '../../components/DataDropdowns/VeteranHearingLocations';
+import { getFacilityType } from '../../components/DataDropdowns/AppealHearingLocations';
 
 const veteranNotAssignedStyle = css({ fontSize: '3rem' });
 const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>

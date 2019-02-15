@@ -33,7 +33,7 @@ import RadioField from '../../components/RadioField';
 import {
   HearingDateDropdown,
   RegionalOfficeDropdown,
-  VeteranHearingLocationsDropdown
+  AppealHearingLocationsDropdown
 } from '../../components/DataDropdowns';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
@@ -352,7 +352,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const {
       selectedHearingDay, selectedRegionalOffice, appeal,
       selectedHearingTime, openHearing, selectedHearingLocation,
-      selectedOptionalTime
+      selectedOptionalTime, appealId
     } = this.props;
 
     const { invalid } = this.state;
@@ -380,12 +380,13 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           value={selectedRegionalOffice || initVals.regionalOffice}
           validateValueOnMount />
 
-        {selectedRegionalOffice && <VeteranHearingLocationsDropdown
+        {selectedRegionalOffice && <AppealHearingLocationsDropdown
           errorMessage={invalid.location}
           label="Suggested Hearing Location"
           key={`ahl-dropdown__${currentRegionalOffice || ''}`}
           regionalOffice={currentRegionalOffice}
-          veteranFileNumber={appeal.veteranFileNumber}
+          appealId={appealId}
+          appealType={appeal.docketName === 'legacy' ? 'legacy' : 'ama'}
           dynamic={appeal.closestRegionalOffice !== currentRegionalOffice}
           staticHearingLocations={appeal.availableHearingLocations}
           onChange={this.props.onHearingLocationChange}

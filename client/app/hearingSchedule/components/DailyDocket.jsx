@@ -23,7 +23,7 @@ import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/Render
 import {
   RegionalOfficeDropdown,
   HearingDateDropdown,
-  VeteranHearingLocationsDropdown
+  AppealHearingLocationsDropdown
 } from '../../components/DataDropdowns';
 
 const tableRowStyling = css({
@@ -213,9 +213,10 @@ export default class DailyDocket extends React.Component {
       staticHearingLocations = [hearing.location];
     }
 
-    return <VeteranHearingLocationsDropdown
+    return <AppealHearingLocationsDropdown
       readOnly={readOnly}
-      veteranFileNumber={hearing.veteranFileNumber}
+      appealType={hearing.docketName === 'legacy' ? 'legacy' : 'ama'}
+      appealId={hearing.appealId}
       regionalOffice={currentRegionalOffice}
       staticHearingLocations={staticHearingLocations}
       dynamic={false}

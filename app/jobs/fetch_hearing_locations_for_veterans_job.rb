@@ -101,7 +101,17 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  private
+  def self.validate_address_for_appeal(appeal)
+    f = FetchHearingLocationsForVeteransJob.new
+    begin
+      va_dot_gov_address = f.validate_appellant_address(appeal)
+    rescue Caseflow::Error::VaDotGovAPIError => error
+      va_dot_gov_address = f.validate_zip_code(appeal, error: error)
+      return nil if va_dot_gov_address.nil?
+    end
+
+    va_dot_gov_address
+  end
 
   def get_appellant_address(appeal)
     appeal.is_a?(LegacyAppeal) ? appeal.appellant[:address] : appeal.appellant.address
@@ -121,6 +131,21 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     )
   end
 
+  def validate_zip_code(appeal, error:)
+    address = get_appellant_address(appeal)
+    if address[:zip].nil? || address[:state].nil? || address[:country].nil?
+      fail error
+    else
+      lat_lng = ZipCodeToLatLngMapper::MAPPING[address[:zip][0..4]]
+
+      if lat_lng.nil?
+        fail error
+      end
+
+      { lat: lat_lng[0], long: lat_lng[1], country_code: address[:country], state_code: address[:state] }
+    end
+  end
+
   def validate_zip_code_or_handle_error(appeal, error:)
     address = get_appellant_address(appeal)
     if address[:zip].nil? || address[:state].nil? || address[:country].nil?
@@ -136,6 +161,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       { lat: lat_lng[0], long: lat_lng[1], country_code: address[:country], state_code: address[:state] }
     end
   end
+
+  private
 
   def facility_ids_for_ro(regional_office_id)
     (RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
