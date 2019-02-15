@@ -42,10 +42,10 @@ class AddedIssue extends React.PureComponent {
         cssKlasses: cssKlassesWithError.concat(['issue-unidentified']) };
     }
     if (issue.titleOfActiveReview ||
-      (issue.reviewRequestTitle && issue.ineligibleReason === 'duplicate_of_nonrating_issue_in_active_review')
+      (issue.decisionReviewTitle && issue.ineligibleReason === 'duplicate_of_nonrating_issue_in_active_review')
     ) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.replace(
-        '{review_title}', issue.titleOfActiveReview || issue.reviewRequestTitle
+        '{review_title}', issue.titleOfActiveReview || issue.decisionReviewTitle
       );
     } else if (issue.ineligibleReason) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
