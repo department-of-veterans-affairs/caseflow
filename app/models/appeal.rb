@@ -387,7 +387,7 @@ class Appeal < DecisionReview
       :bva_decision
     elsif withdrawn?
       :withdrawn
-    else 
+    else
       :other_close
     end
   end
