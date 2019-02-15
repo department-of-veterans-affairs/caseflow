@@ -157,7 +157,7 @@ describe Appeal do
     end
   end
 
-  context "#new_documents_from_caseflow" do
+  context "#new_documents_for_user" do
     before do
       documents.each { |document| document.update(file_number: appeal.veteran_file_number) }
     end
@@ -173,32 +173,60 @@ describe Appeal do
 
     let!(:appeal) { create(:appeal) }
 
-    subject { appeal.new_documents_from_caseflow(user) }
+    context "when no alternative date is provided" do
+      subject { appeal.new_documents_for_user(user: user) }
 
-    context "when appeal has no appeal view" do
-      it "should return all documents" do
-        expect(subject).to match_array(documents)
-      end
-    end
-
-    context "when appeal has an appeal view newer than documents" do
-      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
-
-      it "should return no documents" do
-        expect(subject).to eq([])
-      end
-
-      context "when one document is missing a received at date" do
-        it "should return no documents" do
-          documents[0].update(upload_date: nil)
-          expect(subject).to eq([])
+      context "when appeal has no appeal view" do
+        it "should return all documents" do
+          expect(subject).to match_array(documents)
         end
       end
 
-      context "when one document is newer than the appeal view date" do
-        it "should return the newer document" do
-          documents[0].update(upload_date: -2.days.ago)
+      context "when appeal has an appeal view newer than documents" do
+        let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
+
+        it "should return no documents" do
+          expect(subject).to eq([])
+        end
+
+        context "when one document is missing a received at date" do
+          it "should return no documents" do
+            documents[0].update(upload_date: nil)
+            expect(subject).to eq([])
+          end
+        end
+
+        context "when one document is newer than the appeal view date" do
+          it "should return the newer document" do
+            documents[0].update(upload_date: -2.days.ago)
+            expect(subject).to eq([documents[0]])
+          end
+        end
+      end
+    end
+
+    context "when providing an on_hold date" do
+      subject { appeal.new_documents_for_user(user: user, placed_on_hold_at: 4.days.ago.to_i.to_s) }
+
+      context "When one document's upload date is after on hold date" do
+        it "should return only the newest document" do
+          documents[0].update(upload_date: 3.days.ago)
           expect(subject).to eq([documents[0]])
+        end
+      end
+
+      context "when appeal has an appeal view newer than the on hold date" do
+        let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: 2.days.ago) }
+
+        it "should return no documents" do
+          expect(subject).to eq([])
+        end
+
+        context "when one document's upload date is after the last viewed date" do
+          it "should return the document uploaded after the view, but not the one after the hold date" do
+            documents[1].update(upload_date: 1.day.ago)
+            expect(subject).to eq([documents[1]])
+          end
         end
       end
     end

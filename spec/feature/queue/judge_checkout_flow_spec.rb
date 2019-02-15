@@ -12,7 +12,11 @@ RSpec.feature "Judge checkout flow" do
       FactoryBot.create(
         :appeal,
         number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(:request_issue, 1, description: "Tinnitus", disposition: "allowed")
+        request_issues: FactoryBot.build_list(
+          :request_issue, 1,
+          contested_issue_description: "Tinnitus",
+          disposition: "allowed"
+        )
       )
     end
 
