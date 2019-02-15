@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190214214208) do
+ActiveRecord::Schema.define(version: 20190214222656) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -994,6 +994,14 @@ ActiveRecord::Schema.define(version: 20190214214208) do
     t.string "name_suffix"
     t.string "participant_id"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
+  end
+
+  create_table "vso_configs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "ihp_dockets", array: true
+    t.integer "organization_id"
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_vso_configs_on_organization_id"
   end
 
   create_table "worksheet_issues", id: :serial, force: :cascade do |t|
