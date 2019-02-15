@@ -232,6 +232,12 @@
   "MARK_TASK_COMPLETE_BUTTON": "Mark complete",
   "MARK_TASK_COMPLETE_CONFIRMATION": "%s's case has been marked complete",
   "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
+  
+  "CANCEL_TASK_MODAL_TITLE": "Cancel task",
+  "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to the assigner",
+  "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
+  "CANCEL_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been cancelled",
+
   "HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL": "Marking this task as complete will remove this admin action from your active tasks.",
 
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",

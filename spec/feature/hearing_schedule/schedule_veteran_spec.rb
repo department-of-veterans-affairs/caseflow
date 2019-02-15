@@ -275,7 +275,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_on "Submit"
 
       expect(page).to have_content("You have successfully withdrawn")
-      expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(Constants.TASK_STATUSES.completed)
+      expect(appeal.tasks.where(type: ScheduleHearingTask.name).first.status).to eq(Constants.TASK_STATUSES.cancelled)
       expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
 
       click_on "Back to Hearing Schedule"
