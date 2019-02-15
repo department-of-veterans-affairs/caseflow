@@ -355,7 +355,6 @@ class AppealRepository
       update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   def self.withdraw_hearing!(appeal)
     appeal.case_record.update!(bfhr: "5", bfha: "5")
