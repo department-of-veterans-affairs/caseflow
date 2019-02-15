@@ -53,6 +53,13 @@ class Appeal < DecisionReview
               DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
   }
 
+  scope :non_ihp, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? then 1 end) = ?",
+              InformalHearingPresentationTask.name, 0)
+  }
+
   scope :active, lambda {
     joins(:tasks)
       .group("appeals.id")
@@ -80,7 +87,7 @@ class Appeal < DecisionReview
   end
 
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
-           :new_documents_for_user, :manifest_vva_fetched_at, to: :document_fetcher
+           :manifest_vva_fetched_at, to: :document_fetcher
 
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
