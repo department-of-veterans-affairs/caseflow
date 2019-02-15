@@ -140,6 +140,7 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName }) => <Re
     includeDocketNumber
     includeDaysWaiting
     includeReaderLink
+    includeNewDocsIcon
     tasks={tasks}
   />
 </React.Fragment>;
