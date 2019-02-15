@@ -10,6 +10,7 @@ import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiRedu
 import ApiUtil from '../util/ApiUtil';
 import _ from 'lodash';
 import pluralize from 'pluralize';
+import moment from 'moment';
 import type { Dispatch } from './types/state';
 import type {
   Task,
@@ -90,7 +91,7 @@ export const receiveNewDocuments = ({ appealId, newDocuments }: { appealId: stri
   }
 });
 
-export const getNewDocuments = (appealId: string, cached: ?boolean) => (dispatch: Dispatch) => {
+export const getNewDocuments = (appealId: string, cached?: boolean, onHoldDate?: string) => (dispatch: Dispatch) => {
   dispatch({
     type: ACTIONS.STARTED_LOADING_DOCUMENTS,
     payload: {
@@ -101,7 +102,15 @@ export const getNewDocuments = (appealId: string, cached: ?boolean) => (dispatch
     timeout: { response: 5 * 60 * 1000 }
   };
 
-  ApiUtil.get(`/appeals/${appealId}/new_documents${cached ? '?cached' : ''}`, requestOptions).then((response) => {
+  let query = cached ? 'cached' : '';
+
+  if (onHoldDate) {
+    const timestamp = moment(onHoldDate).unix();
+
+    query += query ? `&placed_on_hold_date=${timestamp}` : `placed_on_hold_date=${timestamp}`;
+  }
+
+  ApiUtil.get(`/appeals/${appealId}/new_documents${query ? `?${query}` : ''}`, requestOptions).then((response) => {
     const resp = JSON.parse(response.text);
 
     dispatch(receiveNewDocuments({
