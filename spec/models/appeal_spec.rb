@@ -1460,7 +1460,7 @@ describe Appeal do
       expect(alerts[0][:details][:cavcDueDate].to_date).to eq((decision_date + 120.days).to_date)
 
       expect(alerts[1][:type]).to eq("ama_post_decision")
-      expect(alerts[1][:details][:availableOptions]).to eq(%w[supplemental_claim cavc])
+      expect(alerts[1][:details][:availableOptions]).to eq(%w[supplemental_claim higher_level_review appeal])
       expect(alerts[1][:details][:dueDate].to_date).to eq((remanded_ep_clr_date + 365.days).to_date)
       expect(alerts[1][:details][:cavcDueDate].to_date).to eq((remanded_ep_clr_date + 120.days).to_date)
 

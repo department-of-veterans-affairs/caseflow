@@ -53,7 +53,7 @@ class ApiStatusAlerts
         details:
         {
           decisionDate: remand_sc.decision_event_date,
-          availableOptions: decision_review.available_review_options,
+          availableOptions: remand_sc.available_review_options,
           dueDate: remand_sc.decision_event_date + 365.days,
           cavcDueDate: remand_sc.decision_event_date + 120.days
         }

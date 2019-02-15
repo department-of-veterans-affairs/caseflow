@@ -70,19 +70,6 @@ class SupplementalClaim < ClaimReview
     %w[supplemental_claim higher_level_review appeal]
   end
 
-  def due_date_to_appeal_decision
-    # the deadline to contest the decision for this claim
-    decision_event_date + 365.days if decision_event_date
-  end
-
-  def api_alerts_have_decision?
-    fetch_status == :sc_decision
-  end
-
-  def decision_date_for_api_alert
-    decision_event_date
-  end
-
   private
 
   def end_product_created_by

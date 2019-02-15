@@ -579,23 +579,6 @@ class Appeal < DecisionReview
     super
   end
 
-  def api_alerts_have_decision?
-    case fetch_status
-    when :bva_decision, :ama_remand, :bva_decision_effectuation, :post_bva_dta_decision
-      return true
-    else
-      false
-    end
-  end
-
-  def decision_date_for_api_alert
-    decision_date
-  end
-
-  def due_date_to_appeal_decision
-    decision_event_date + 365.days if decision_event_date
-  end
-
   def cavc_due_date
     decision_event_date + 120.days if decision_event_date
   end

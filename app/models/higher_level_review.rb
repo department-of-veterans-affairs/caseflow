@@ -71,9 +71,9 @@ class HigherLevelReview < ClaimReview
   end
 
   def api_alerts_show_decision_alert?
-    # for HLR only want to show the decision alert when the HLR is no longer active,
+    # for HLR, only want to show the decision alert when the HLR is no longer active,
     # meaning any remands have been resolved. 
-    active_status?
+    !active_status? || decision_issues.any?
   end
 
   def due_date_to_appeal_decision
