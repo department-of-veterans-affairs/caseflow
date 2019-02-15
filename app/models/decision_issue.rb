@@ -88,8 +88,7 @@ class DecisionIssue < ApplicationRecord
       requestIssueId: request_issues&.first&.id,
       description: description,
       disposition: disposition,
-      promulgationDate: promulgation_date,
-      caseflowDecisionDate: caseflow_decision_date
+      approxDecisionDate: approx_decision_date
     }
   end
 
