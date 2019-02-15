@@ -115,29 +115,19 @@ class Appeal < DecisionReview
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
-  # rubocop:disable Metrics/PerceivedComplexity
   def location_code
-    location_code = nil
+    return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    if root_task && root_task.status == Constants.TASK_STATUSES.completed
-      location_code = COPY::CASE_LIST_TABLE_POST_DECISION_LABEL
-    else
-      active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
-      if active_tasks == [root_task]
-        location_code = COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
-      elsif !active_tasks.empty?
-        most_recent_assignee = active_tasks.order(updated_at: :desc).first.assigned_to
-        location_code = if most_recent_assignee.is_a?(Organization)
-                          most_recent_assignee.name
-                        else
-                          most_recent_assignee.css_id
-                        end
-      end
-    end
+    active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+    return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
 
-    location_code
+    on_hold_tasks = tasks.where(status: Constants.TASK_STATUSES.on_hold)
+    return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
+
+    return most_recently_assigned_to_label(tasks) if tasks.any?
+
+    status_hash[:type].to_s.titleize
   end
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def attorney_case_reviews
     tasks.map(&:attorney_case_reviews).flatten
@@ -333,13 +323,6 @@ class Appeal < DecisionReview
     RootTask.find_by(appeal_id: id)
   end
 
-  def create_remand_supplemental_claims!
-    decision_issues.remanded.each(&:find_or_create_remand_supplemental_claim!)
-    remand_supplemental_claims.each(&:create_remand_issues!)
-    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
-    remand_supplemental_claims.each(&:start_processing_job!)
-  end
-
   # needed for appeal status api
   def appeal_status_id
     "A#{id}"
@@ -355,10 +338,6 @@ class Appeal < DecisionReview
 
   def active_ep?
     decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
-  end
-
-  def active_remanded_claims?
-    remand_supplemental_claims.any?(&:active?)
   end
 
   def location
@@ -392,21 +371,19 @@ class Appeal < DecisionReview
       :evidentiary_period
     elsif at_vso?
       :at_vso
-    elsif !distributed_to_a_judge?
-      :on_docket
-    elsif distributed_to_a_judge? && decision_issues.empty?
+    elsif distributed_to_a_judge?
       :decision_in_progress
+    else
+      :on_docket
     end
   end
 
   def fetch_post_decision_status
-    if !remanded_issues? && effectuation_ep? && !active_ep?
+    if remand_supplemental_claims.any?
+      active_remanded_claims? ? :ama_remand : :post_bva_dta_decision
+    elsif effectuation_ep? && !active_ep?
       :bva_decision_effectuation
-    elsif remanded_sc_with_ep && !remanded_sc_with_ep.active?
-      :post_bva_dta_decision
-    elsif remanded_issues?
-      :ama_remand
-    elsif decision_issues.any? && !remanded_issues?
+    elsif decision_issues.any?
       :bva_decision
     elsif withdrawn?
       :withdrawn
@@ -450,7 +427,7 @@ class Appeal < DecisionReview
     {
       issues: api_issues_for_status_details_issues(issue_list),
       bvaDecisionDate: decision_event_date,
-      aojDecisionDate: dta_descision_event_date
+      aojDecisionDate: remand_decision_event_date
     }
   end
 
@@ -494,14 +471,6 @@ class Appeal < DecisionReview
 
   def distributed_to_a_judge?
     tasks.any? { |t| t.is_a?(JudgeTask) }
-  end
-
-  def remanded_issues?
-    decision_issues.any? { |di| di.disposition == "remanded" }
-  end
-
-  def remanded_sc_with_ep
-    @remanded_sc_with_ep ||= remand_supplemental_claims.find(&:processed_in_vbms?)
   end
 
   def withdrawn?
@@ -574,29 +543,16 @@ class Appeal < DecisionReview
     judge_tasks.min_by(&:created_at).created_at
   end
 
-  def decision_event_date
-    return unless decision_issues.any?
-
-    decision_issues.first.approx_decision_date
-  end
-
   def effectuation_ep?
     decision_document&.end_product_establishments&.any?
   end
 
   def decision_effectuation_event_date
-    return if remanded_issues?
+    return if decision_issues.remanded.any?
     return unless effectuation_ep?
     return if active_ep?
 
-    decision_document.end_product_establishments.first.last_synced_at
-  end
-
-  def dta_descision_event_date
-    return unless remanded_sc_with_ep
-    return if remanded_sc_with_ep.active?
-
-    remanded_sc_with_ep.decision_event_date
+    decision_document.end_product_establishments.first.last_synced_at.to_date
   end
 
   def other_close_event_date
@@ -617,26 +573,18 @@ class Appeal < DecisionReview
   end
 
   def fetch_all_decision_issues
-    return decision_issues unless remanded_issues?
-    # only include the remanded issues they are still being worked on
-    return decision_issues if remanded_issues? && active_remanded_claims?
+    return decision_issues unless decision_issues.remanded.any?
+    # only include the remanded issues if they are still being worked on
+    return decision_issues if active_remanded_claims?
 
-    # if there were remanded issues and there is a decision available
-    # for them, include the decisions from the remanded SC and do not
-    # include the original remanded decision
-    di_list = decision_issues.not_remanded
-
-    remand_sc_decisions = []
-    remand_supplemental_claims.each do |sc|
-      sc.decision_issues.each do |di|
-        remand_sc_decisions << di
-      end
-    end
-
-    (di_list + remand_sc_decisions).uniq
+    super
   end
 
   private
+
+  def most_recently_assigned_to_label(tasks)
+    tasks.order(:updated_at).last.assigned_to_label
+  end
 
   def maybe_create_translation_task
     veteran_state_code = veteran&.state

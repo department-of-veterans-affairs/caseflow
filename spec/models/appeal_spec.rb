@@ -51,10 +51,10 @@ describe Appeal do
     let!(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
 
     before do
-      FeatureToggle.enable!(:ama_auto_case_distribution)
+      FeatureToggle.enable!(:ama_acd_tasks)
     end
     after do
-      FeatureToggle.disable!(:ama_auto_case_distribution)
+      FeatureToggle.disable!(:ama_acd_tasks)
     end
     subject { Appeal.ready_for_distribution }
 
@@ -270,6 +270,7 @@ describe Appeal do
       create(:decision_issue,
              decision_review: another_review,
              profile_date: receipt_date + 1.day,
+             promulgation_date: receipt_date + 1.day,
              benefit_type: another_review.benefit_type,
              decision_text: "something was decided in the future",
              description: "future issue",
@@ -656,8 +657,8 @@ describe Appeal do
 
     context "if there are no active tasks" do
       let(:appeal) { create(:appeal) }
-      it "returns nil" do
-        expect(appeal.location_code).to eq(nil)
+      it "returns 'other close'" do
+        expect(appeal.location_code).to eq(:other_close.to_s.titleize)
       end
     end
 
@@ -678,6 +679,8 @@ describe Appeal do
       let(:appeal_organization) { create(:appeal) }
       let(:user) { create(:user) }
       let(:appeal_user) { create(:appeal) }
+      let(:appeal_on_hold) { create(:appeal) }
+      let(:today) { Time.zone.today }
 
       before do
         organization_root_task = create(:root_task, appeal: appeal_organization)
@@ -685,6 +688,9 @@ describe Appeal do
 
         user_root_task = create(:root_task, appeal: appeal_user)
         create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
+
+        on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
+        create(:generic_task, status: :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
       end
 
       it "if the most recent assignee is an organization it returns the organization name" do
@@ -693,6 +699,10 @@ describe Appeal do
 
       it "if the most recent assignee is not an organization it returns the id" do
         expect(appeal_user.location_code).to eq(user.css_id)
+      end
+
+      it "if the task is on hold but there isn't an assignee it returns something" do
+        expect(appeal_on_hold.location_code).not_to eq(nil)
       end
     end
   end
@@ -1001,7 +1011,7 @@ describe Appeal do
       end
     end
 
-    context "have a decision with no remands or effection" do
+    context "have a decision with no remands or effectuation" do
       let(:judge_review_task_status) { "completed" }
       let!(:judge_review_task) do
         create(:ama_judge_decision_review_task,
@@ -1047,7 +1057,7 @@ describe Appeal do
       end
     end
 
-    context "has a remand" do
+    context "has an active remand" do
       let(:root_task_status) { "completed" }
       let(:judge_review_task_status) { "completed" }
       let!(:judge_review_task) do
@@ -1057,17 +1067,23 @@ describe Appeal do
       let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
       let!(:remanded_decision_issue) do
         create(:decision_issue,
-               decision_review: appeal, disposition: "remanded", benefit_type: "nca", diagnostic_code: nil)
+               decision_review: appeal,
+               disposition: "remanded",
+               benefit_type: "nca",
+               diagnostic_code: nil,
+               caseflow_decision_date: 1.day.ago)
       end
 
-      it "it only has a remand that was processed in caseflow" do
+      it "it has status ama_remand" do
+        appeal.create_remand_supplemental_claims!
+        appeal.remand_supplemental_claims.each(&:reload)
         status = appeal.status_hash
         expect(status[:type]).to eq(:ama_remand)
         expect(status[:details][:issues].count).to eq(2)
       end
     end
 
-    context "has more than one remanded decision" do
+    context "has multiple remands" do
       let(:root_task_status) { "completed" }
       let(:judge_review_task_status) { "completed" }
       let!(:judge_review_task) do
@@ -1093,26 +1109,68 @@ describe Appeal do
                diagnostic_code: "9912",
                caseflow_decision_date: receipt_date + 60.days)
       end
-      let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
-      let!(:remanded_ep) do
-        create(:end_product_establishment,
-               :cleared, source: remanded_sc, last_synced_at: receipt_date + 100.days)
+      let!(:remanded_sc) do
+        create(
+          :supplemental_claim,
+          veteran_file_number: appeal.veteran_file_number,
+          decision_review_remanded: appeal,
+          benefit_type: remanded_issue.benefit_type
+        )
       end
       let!(:remanded_sc_decision) do
         create(:decision_issue,
                decision_review: remanded_sc,
+               disposition: "granted",
+               diagnostic_code: "9915",
+               caseflow_decision_date: receipt_date + 101.days)
+      end
+      let!(:remanded_sc_with_ep) do
+        create(
+          :supplemental_claim,
+          veteran_file_number: appeal.veteran_file_number,
+          decision_review_remanded: appeal,
+          benefit_type: remanded_issue_with_ep.benefit_type
+        )
+      end
+      let!(:remanded_ep) do
+        create(:end_product_establishment,
+               :cleared, source: remanded_sc_with_ep, last_synced_at: receipt_date + 100.days)
+      end
+      let!(:remanded_sc_with_ep_decision) do
+        create(:decision_issue,
+               decision_review: remanded_sc_with_ep,
                disposition: "denied",
                diagnostic_code: "9912",
                end_product_last_action_date: receipt_date + 100.days)
       end
 
-      it "has a remand processed in vbms" do
-        status = appeal.status_hash
-        expect(status[:type]).to eq(:post_bva_dta_decision)
-        expect(status[:details][:issues].first[:description]).to eq("Partial loss of hard palate")
-        expect(status[:details][:issues].first[:disposition]).to eq("denied")
-        expect(status[:details][:bvaDecisionDate].to_date).to eq((receipt_date + 60.days).to_date)
-        expect(status[:details][:aojDecisionDate].to_date).to eq((receipt_date + 100.days).to_date)
+      context "they are all complete" do
+        let!(:remanded_sc_task) { create(:task, :completed, appeal: remanded_sc) }
+        it "has post_bva_dta_decision status,shows the latest decision date, and remand dedision issues" do
+          status = appeal.status_hash
+          expect(status[:type]).to eq(:post_bva_dta_decision)
+          expect(status[:details][:issues]).to include(
+            { description: "Partial loss of upper jaw", disposition: "granted" },
+            description: "Partial loss of hard palate", disposition: "denied"
+          )
+          expect(status[:details][:bvaDecisionDate]).to eq((receipt_date + 60.days).to_date)
+          expect(status[:details][:aojDecisionDate]).to eq((receipt_date + 101.days).to_date)
+        end
+      end
+
+      context "they are not all complete" do
+        let!(:remanded_sc_task) { create(:task, :in_progress, appeal: remanded_sc) }
+        it "has ama_remand status, no decision dates, and shows appeals decision issues" do
+          status = appeal.status_hash
+          expect(status[:type]).to eq(:ama_remand)
+          expect(status[:details][:issues]).to include(
+            { description: "Dental or oral condition", disposition: "allowed" },
+            { description: "Partial loss of hard palate", disposition: "remanded" },
+            description: "Partial loss of hard palate", disposition: "remanded"
+          )
+          expect(status[:details][:bvaDecisionDate]).to be_nil
+          expect(status[:details][:aojDecisionDate]).to be_nil
+        end
       end
     end
   end

@@ -111,12 +111,13 @@ const NewFileIcon = connect(
 const NewTasksTab = connect(
   (state: State) => ({
     tasks: newTasksByAssigneeCssIdSelector(state),
-    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
   }))(
   (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
       <TaskTable
+        includeHearingBadge
         includeDetailsLink
         includeTask
         includeRegionalOffice={props.belongsToHearingSchedule}
@@ -132,12 +133,13 @@ const NewTasksTab = connect(
 const OnHoldTasksTab = connect(
   (state: State) => ({
     tasks: onHoldTasksByAssigneeCssIdSelector(state),
-    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
   }))(
   (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       <TaskTable
+        includeHearingBadge
         includeDetailsLink
         includeTask
         includeRegionalOffice={props.belongsToHearingSchedule}
@@ -155,12 +157,13 @@ const OnHoldTasksTab = connect(
 const CompleteTasksTab = connect(
   (state: State) => ({
     tasks: completeTasksByAssigneeCssIdSelector(state),
-    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearings Management')
+    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
   }))(
   (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
       <TaskTable
+        includeHearingBadge
         includeDetailsLink
         includeTask
         includeRegionalOffice={props.belongsToHearingSchedule}

@@ -64,8 +64,9 @@ class AppealsController < ApplicationController
     }
   end
 
-  # :nocov:
   def hearings
+    log_hearings_request
+
     most_recently_held_hearing = appeal.hearings
       .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
       .max_by(&:scheduled_for)
@@ -84,7 +85,6 @@ class AppealsController < ApplicationController
         {}
       end
   end
-  # :nocov:
 
   # For legacy appeals, veteran address and birth/death dates are
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
@@ -133,6 +133,16 @@ class AppealsController < ApplicationController
   end
 
   private
+
+  def log_hearings_request
+    # Log requests to this endpoint to try to investigate cause addressed by this rollback:
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/9271
+    DataDogService.increment_counter(
+      metric_group: "request_counter",
+      metric_name: "hearings_for_appeal",
+      app_name: RequestStore[:application]
+    )
+  end
 
   def request_issues_update
     @request_issues_update ||= RequestIssuesUpdate.new(

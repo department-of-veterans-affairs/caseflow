@@ -157,15 +157,16 @@ describe('ColocatedTaskListView', () => {
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(12);
+      expect(cells).to.have.length(14);
       const wrappers = [];
 
       for (let i = 0; i < cells.length / 2; i++) {
         wrappers.push(cells.at(i));
       }
-      const [caseDetails, columnTasks, types, docketNumber, daysWaiting, documents] = wrappers;
+      const [hearings, caseDetails, columnTasks, types, docketNumber, daysWaiting, documents] = wrappers;
       const task = taskNewAssigned;
 
+      expect(hearings.text()).to.include('');
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
@@ -175,7 +176,7 @@ describe('ColocatedTaskListView', () => {
       expect(daysWaiting.text()).to.equal('1');
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
 
-      const onHoldDaysWaiting = cells.at(10);
+      const onHoldDaysWaiting = cells.at(12);
 
       expect(onHoldDaysWaiting.text()).to.equal(daysOnHold.toString());
       expect(onHoldDaysWaiting.find('.cf-red-text')).to.exist;
@@ -242,14 +243,15 @@ describe('ColocatedTaskListView', () => {
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(12);
+      expect(cells).to.have.length(14);
       const wrappers = [];
 
       for (let i = 0; i < cells.length / 2; i++) {
         wrappers.push(cells.at(i));
       }
-      const [caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers;
+      const [hearings, caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers;
 
+      expect(hearings.text()).to.include('');
       expect(caseDetails.text()).to.include(appeal.veteranFullName);
       expect(caseDetails.text()).to.include(appeal.veteranFileNumber);
       expect(columnTasks.text()).to.include(CO_LOCATED_ADMIN_ACTIONS[task.label]);
