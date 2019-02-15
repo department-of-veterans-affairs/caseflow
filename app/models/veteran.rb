@@ -261,6 +261,10 @@ class Veteran < ApplicationRecord
 
       return nil unless veteran.found?
 
+      Rails.logger.warn(
+        %(create_by_file_number file_number:#{file_number} found:true accessible:#{v.accessible?})
+      )
+
       before_create_veteran_by_file_number # Used to simulate race conditions
       veteran.tap do |v|
         v.update!(participant_id: v.ptcpnt_id)
