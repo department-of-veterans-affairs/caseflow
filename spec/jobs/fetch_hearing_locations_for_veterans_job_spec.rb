@@ -84,7 +84,8 @@ describe FetchHearingLocationsForVeteransJob do
 
     describe "#validate_zip_code" do
       it "returns correct zip code" do
-        job.validate_zip_code(legacy_appeal, error: nil)
+        address = job.validate_zip_code(legacy_appeal, error: nil)
+        expect(address[:lat]).to eq 42.364031 # 01002 zipcode latitude
       end
     end
 
