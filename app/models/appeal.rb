@@ -503,11 +503,9 @@ class Appeal < DecisionReview
   end
 
   def aoj
-    if all_request_issues_same_aoj?
-      request_issues.first.api_aoj_from_benefit_type
-    else
-      "other"
-    end
+    return "other" unless all_request_issues_same_aoj?
+
+    request_issues.first.api_aoj_from_benefit_type
   end
 
   def all_request_issues_same_aoj?
