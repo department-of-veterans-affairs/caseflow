@@ -33,6 +33,10 @@ class RootTask < GenericTask
     true
   end
 
+  def assigned_to_label
+    COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
+  end
+
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
@@ -47,13 +51,11 @@ class RootTask < GenericTask
     def create_ihp_tasks!(appeal, parent)
       appeal.vsos.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
         # For some RAMP appeals, this method may run twice.
-        existing_tasks = InformalHearingPresentationTask.where(
+        existing_task = InformalHearingPresentationTask.find_by(
           appeal: appeal,
           assigned_to: vso_organization
         )
-        return existing_tasks.first unless existing_tasks.empty?
-
-        InformalHearingPresentationTask.create!(
+        existing_task || InformalHearingPresentationTask.create!(
           appeal: appeal,
           parent: parent,
           assigned_to: vso_organization
