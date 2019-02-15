@@ -41,7 +41,7 @@ class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
     this.extendedDecision = this.setInitialDecisionOptions(
       this.props.decision,
-      this.props.appeal.attorneyCaseRewriteDetails);
+      this.props.appeal && this.props.appeal.attorneyCaseRewriteDetails);
 
     _.each(this.extendedDecision.opts, (value, key) => {
       this.props.setDecisionOptions({
@@ -57,18 +57,20 @@ class SubmitDecisionView extends React.PureComponent {
   setInitialDecisionOptions = (decision, attorneyCaseRewriteDetails) => {
 
     const decisionOptsWithAttorneyCheckoutInfo =
+      console.log(this.props.appeal, 'the appeal');
 
-      _.merge(decision.opts, { document_id: _.get(this.props.appeal, 'documentId'),
-        note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
-        overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
-        reviewing_judge_id: _.get(attorneyCaseRewriteDetails, 'assigned_judge.id')
-      });
+    _.merge(decision.opts, { document_id: _.get(this.props, 'appeal.documentID'),
+      note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
+      overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
+      reviewing_judge_id: _.get(this.props, 'task.assignedBy.pgId')
+    });
     const extendedDecision = { ...decision };
 
     extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
-    if (extendedDecision.opts.overtime === null) {
+    if (extendedDecision.opts && extendedDecision.opts.overtime === null) {
       extendedDecision.opts.overtime = false;
     }
+    console.log(extendedDecision, 'the extended decision');
 
     return extendedDecision;
   }
@@ -144,7 +146,9 @@ class SubmitDecisionView extends React.PureComponent {
   };
 
   getDefaultJudgeSelector = () => {
-    return this.props.task.isLegacy ? this.props.task.addedByCssId : this.props.task.assignedBy.pgId;
+    return this.props.task && this.props.task.isLegacy ?
+      this.props.task.addedByCssId :
+      this.props.task && this.props.task.assignedBy.pgId;
   }
 
   render = () => {
@@ -247,7 +251,7 @@ const mapStateToProps = (state, ownProps) => {
     error,
     userRole,
     highlightFormItems,
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)
+    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal && appeal.decisionIssues)
   };
 };
 
