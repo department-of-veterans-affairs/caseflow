@@ -144,6 +144,7 @@ class SubmitDecisionView extends React.PureComponent {
   };
 
   getDefaultJudgeSelector = () => {
+
     return this.props.task && this.props.task.isLegacy ?
       this.props.task.addedByCssId :
       this.props.task && this.props.task.assignedBy.pgId;

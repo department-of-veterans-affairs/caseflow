@@ -49,10 +49,8 @@ class JudgeSelectComponent extends React.PureComponent<Props> {
 
   setDefaultJudge = (judges) => {
     const judge =
-       // for legacy
        _.find(judges, { css_id: this.props.judgeSelector }) ||
-       // for ama
-       _.find(judges, { full_name: this.props.judgeSelector });
+       _.find(judges, { id: this.props.judgeSelector });
 
     if (judge) {
       this.props.setDecisionOptions({
