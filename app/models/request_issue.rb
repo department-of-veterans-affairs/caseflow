@@ -460,6 +460,15 @@ class RequestIssue < ApplicationRecord
     "#{benefit_type.capitalize} issue"
   end
 
+  def api_aoj_from_benefit_type
+    case benefit_type
+    when "compensation", "pension", "fiduciary", "insurance", "education", "voc_rehab", "loan_guaranty"
+      "vba"
+    else
+      benefit_type
+    end
+  end
+
   private
 
   def fetch_diagnostic_code_status_description(diagnostic_code)
