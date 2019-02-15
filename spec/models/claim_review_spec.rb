@@ -163,6 +163,50 @@ describe ClaimReview do
     end
   end
 
+  context "#active?" do
+    subject { claim_review.active? }
+
+    context "when it is processed in Caseflow and has completed tasks" do
+      let(:benefit_type) { "nca" }
+      let!(:completed_task) { create(:task, :completed, appeal: claim_review) }
+
+      it { is_expected.to be false }
+
+      context "when there are any incomplete tasks" do
+        let!(:in_progress_task) { create(:task, :in_progress, appeal: claim_review) }
+
+        it "returns true" do
+          expect(subject).to eq(true)
+        end
+      end
+    end
+
+    context "when it is processed in VBMS and has a cleared EPE" do
+      let(:benefit_type) { "compensation" }
+      let!(:cleared_epe) do
+        create(:end_product_establishment,
+               :cleared,
+               code: rating_request_issue.end_product_code,
+               source: claim_review,
+               veteran_file_number: claim_review.veteran.file_number)
+      end
+
+      it { is_expected.to be false }
+
+      context "when there is at least one active end product establishment" do
+        let!(:active_epe) do
+          create(:end_product_establishment,
+                 :active,
+                 code: rating_request_issue.end_product_code,
+                 source: claim_review,
+                 veteran_file_number: claim_review.veteran.file_number)
+        end
+
+        it { is_expected.to be true }
+      end
+    end
+  end
+
   context "#timely_issue?" do
     before do
       Timecop.freeze(Time.utc(2019, 4, 24, 12, 0, 0))
