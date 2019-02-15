@@ -13,8 +13,8 @@ class Task < ApplicationRecord
   after_create :put_parent_on_hold
 
   before_update :set_timestamps
-  after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
-  after_update :update_children_status, if: :status_changed_to_completed?
+  after_update :update_parent_status, if: :task_just_closed_and_has_parent?
+  after_update :update_children_status, if: :task_just_closed?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -210,7 +210,7 @@ class Task < ApplicationRecord
       t.save!
     end
 
-    update!(status: Constants.TASK_STATUSES.completed)
+    update!(status: Constants.TASK_STATUSES.cancelled)
 
     children.active.each { |t| t.update!(parent_id: sibling.id) }
 
@@ -255,6 +255,15 @@ class Task < ApplicationRecord
 
   def mail_assign_to_organization_data(_user = nil)
     { options: MailTask.subclass_routing_options }
+  end
+
+  def cancel_task_data(_user = nil)
+    {
+      modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
+      modal_body: COPY::CANCEL_TASK_MODAL_DETAIL,
+      message_title: format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name),
+      message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigned_by.full_name)
+    }
   end
 
   def assign_to_user_data(user = nil)
@@ -398,12 +407,12 @@ class Task < ApplicationRecord
 
   def update_children_status; end
 
-  def status_changed_to_completed?
-    saved_change_to_attribute?("status") && completed?
+  def task_just_closed?
+    saved_change_to_attribute?("status") && !active?
   end
 
-  def status_changed_to_completed_and_has_parent?
-    status_changed_to_completed? && parent
+  def task_just_closed_and_has_parent?
+    task_just_closed? && parent
   end
 
   def users_to_options(users)
