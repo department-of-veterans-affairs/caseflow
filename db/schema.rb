@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190212142949) do
+ActiveRecord::Schema.define(version: 20190214214208) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
   end
 
   create_table "appeals", force: :cascade do |t|
+    t.string "closest_regional_office"
     t.string "docket_type"
     t.datetime "established_at"
     t.datetime "establishment_attempted_at"
@@ -111,6 +112,8 @@ ActiveRecord::Schema.define(version: 20190212142949) do
 
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address"
+    t.integer "appeal_id"
+    t.string "appeal_type"
     t.string "city"
     t.string "classification"
     t.datetime "created_at", null: false
@@ -120,7 +123,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.string "name"
     t.string "state"
     t.datetime "updated_at", null: false
-    t.string "veteran_file_number", null: false
+    t.string "veteran_file_number"
     t.string "zip_code"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
@@ -583,6 +586,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
+    t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.boolean "dic_death_or_accrued_benefits_united_states", default: false
     t.string "dispatched_to_station"
