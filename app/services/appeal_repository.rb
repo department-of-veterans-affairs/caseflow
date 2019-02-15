@@ -345,9 +345,11 @@ class AppealRepository
         appeal: appeal,
         parent: RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
       ) { |task| task.assigned_to = Bva.singleton }
-      ScheduleHearingTask.find_or_create_by!(appeal: appeal, status: Constants.TASK_STATUSES.assigned.to_sym) do |task|
-        task.assigned_to = HearingsManagement.singleton
-        task.parent = parent
+      if ScheduleHearingTask.where(appeal: appeal).where.not(status: Constants.TASK_STATUSES.completed).empty?
+        ScheduleHearingTask.create!(appeal: appeal) do |task|
+          task.assigned_to = HearingsManagement.singleton
+          task.parent = parent
+        end
       end
 
       update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
