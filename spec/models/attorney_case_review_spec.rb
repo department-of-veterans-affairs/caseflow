@@ -8,24 +8,24 @@ describe AttorneyCaseReview do
   context "#delete_and_create_decision_issues!" do
     let!(:appeal) { create(:appeal) }
     let(:task) { create(:ama_attorney_task, appeal: appeal) }
-    let!(:request_issue1) { create(:request_issue, review_request: appeal) }
+    let!(:request_issue1) { create(:request_issue, decision_review: appeal) }
     let(:decision_issue1) { build(:decision_issue) }
-    let!(:request_issue2) { create(:request_issue, review_request: appeal, decision_issues: [decision_issue1]) }
+    let!(:request_issue2) { create(:request_issue, decision_review: appeal, decision_issues: [decision_issue1]) }
 
     let(:remand_reason1) { create(:ama_remand_reason) }
     let(:remand_reason2) { create(:ama_remand_reason) }
     let(:decision_issue2) do
       create(:decision_issue, remand_reasons: [remand_reason1, remand_reason2], decision_review: appeal)
     end
-    let!(:request_issue3) { create(:request_issue, review_request: appeal, decision_issues: [decision_issue2]) }
-    let!(:request_issue4) { create(:request_issue, review_request: appeal) }
+    let!(:request_issue3) { create(:request_issue, decision_review: appeal, decision_issues: [decision_issue2]) }
+    let!(:request_issue4) { create(:request_issue, decision_review: appeal) }
 
-    let!(:request_issue5) { create(:request_issue, review_request: appeal) }
+    let!(:request_issue5) { create(:request_issue, decision_review: appeal) }
 
     let(:decision_issue3) { create(:decision_issue, decision_review: appeal) }
     let(:decision_issue4) { create(:decision_issue, decision_review: appeal) }
     let!(:request_issue6) do
-      create(:request_issue, review_request: appeal, decision_issues: [decision_issue3, decision_issue4])
+      create(:request_issue, decision_review: appeal, decision_issues: [decision_issue3, decision_issue4])
     end
 
     subject { AttorneyCaseReview.new(issues: issues, task_id: task.id).delete_and_create_decision_issues! }
@@ -272,16 +272,16 @@ describe AttorneyCaseReview do
         let(:task) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney) }
         let(:task_id) { task.id }
         let!(:request_issue1) do
-          create(:request_issue, review_request: task.appeal, disposition: "remanded")
+          create(:request_issue, decision_review: task.appeal, disposition: "remanded")
         end
         # should delete this remand reason since disposition will be changed to 'allowed'
         let!(:remand_reason1) { create(:ama_remand_reason, request_issue: request_issue1) }
 
-        let!(:request_issue2) { create(:request_issue, review_request: task.appeal) }
+        let!(:request_issue2) { create(:request_issue, decision_review: task.appeal) }
 
         # For this issue, ensure we delete remand reasons that are not passed in the request
         let!(:request_issue3) do
-          create(:request_issue, review_request: task.appeal, disposition: "remanded")
+          create(:request_issue, decision_review: task.appeal, disposition: "remanded")
         end
         let!(:remand_reasons) do
           [

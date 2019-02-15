@@ -133,16 +133,39 @@ describe SupplementalClaim do
       )
     end
 
+    let!(:already_contested_remanded_di) do
+      create(
+        :decision_issue,
+        disposition: "remanded",
+        benefit_type: benefit_type,
+        decision_review: decision_review_remanded,
+        rating_issue_reference_id: "1234",
+        description: "a description"
+      )
+    end
+
+    let!(:ri_contesting_di) { create(:request_issue, contested_decision_issue_id: already_contested_remanded_di.id) }
+
     it "creates remand issues for appropriate decision issues" do
       expect { subject }.to change(supplemental_claim.request_issues, :count).by(1)
 
       expect(supplemental_claim.request_issues.last).to have_attributes(
+        decision_review: supplemental_claim,
         contested_decision_issue_id: decision_issue_needing_remand.id,
         contested_rating_issue_reference_id: decision_issue_needing_remand.rating_issue_reference_id,
         contested_rating_issue_profile_date: decision_issue_needing_remand.profile_date,
         contested_issue_description: decision_issue_needing_remand.description,
         benefit_type: benefit_type
       )
+
+      expect(RequestIssue.find_by(
+               decision_review: supplemental_claim,
+               contested_decision_issue_id: already_contested_remanded_di.id,
+               contested_rating_issue_reference_id: already_contested_remanded_di.rating_issue_reference_id,
+               contested_rating_issue_profile_date: already_contested_remanded_di.profile_date,
+               contested_issue_description: already_contested_remanded_di.description,
+               benefit_type: benefit_type
+             )).to be_nil
     end
 
     it "doesn't create duplicate remand issues" do
@@ -170,7 +193,7 @@ describe SupplementalClaim do
     end
     let!(:request_issue) do
       create(:request_issue,
-             review_request: sc,
+             decision_review: sc,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: nil)
     end
