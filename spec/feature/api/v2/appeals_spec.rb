@@ -464,7 +464,7 @@ describe "Appeals API v2", type: :request do
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(3)
 
-      # check the attribtues on the hlr
+      # check the attributes on the hlr
       expect(json["data"].first["type"]).to eq("higherLevelReview")
       expect(json["data"].first["id"]).to include("HLR")
       expect(json["data"].first["attributes"]["appealIds"].length).to eq(1)
