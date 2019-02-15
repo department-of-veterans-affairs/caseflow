@@ -59,7 +59,6 @@ describe('ColocatedTaskListView', () => {
     assignedOn: moment().subtract(47, 'hours').
       format(),
     closedAt: null,
-    dueOn: null,
     assignedTo: {
       cssId: 'BVALSPORER',
       name: 'Judge with cases',

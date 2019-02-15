@@ -61,7 +61,6 @@ export type Task = {
   externalAppealId: string,
   assignedOn: string,
   closedAt: ?string,
-  dueOn: ?string,
   assignedTo: {
     cssId: ?string,
     type: string,
