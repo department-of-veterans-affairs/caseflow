@@ -5,8 +5,8 @@ RSpec.feature "Case details" do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
 
-  let(:attorney_first_name) { "Robby" }
-  let(:attorney_last_name) { "McDobby" }
+  let(:attorney_first_name) { "Chanel" }
+  let(:attorney_last_name) { "Afshari" }
   let!(:attorney_user) do
     FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}")
   end
@@ -20,8 +20,8 @@ RSpec.feature "Case details" do
     )
   end
 
-  let(:judge_first_name) { "Jane" }
-  let(:judge_last_name) { "Ricotta-Lotta" }
+  let(:judge_first_name) { "Eeva" }
+  let(:judge_last_name) { "Jovich" }
   let!(:judge_user) { FactoryBot.create(:user, full_name: "#{judge_first_name} #{judge_last_name}") }
   let!(:vacols_judge) do
     FactoryBot.create(
@@ -133,6 +133,8 @@ RSpec.feature "Case details" do
         find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
           .click_link
 
+        expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
+        scroll_element_in_to_view("#hearings-section")
         worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
         expect(worksheet_link.text).to eq("View VLJ Hearing Worksheet")
 
@@ -156,6 +158,7 @@ RSpec.feature "Case details" do
           click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
+          scroll_element_in_to_view("#hearings-section")
           expect(page).to_not have_content("View VLJ Hearing Worksheet")
           expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
           expect(page).to_not have_content("View Hearing Details")
