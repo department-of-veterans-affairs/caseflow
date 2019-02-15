@@ -93,6 +93,8 @@ feature "Appeal Intake" do
     let(:date_of_death) { Time.zone.today - 1.day }
 
     scenario "veteran cannot be claimant" do
+      # save the veteran first, otherwise creating an appeal will create a new veteran
+      veteran.save!
       create(:appeal, veteran_file_number: veteran.file_number)
       check_deceased_veteran_claimant(AppealIntake.new(veteran_file_number: veteran.file_number, user: current_user))
     end

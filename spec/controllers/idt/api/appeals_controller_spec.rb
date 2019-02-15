@@ -316,7 +316,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
               expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
               expect(response_body["attributes"]["status"]).to eq nil
-              expect(response_body["attributes"]["veteran_is_deceased"]).to eq true
+              expect(response_body["attributes"]["veteran_is_deceased"]).to eq false
               expect(response_body["attributes"]["veteran_ssn"]).to eq ama_appeals.first.veteran_ssn
               expect(response_body["attributes"]["veteran_death_date"]).to eq "05/25/2016"
               expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq true
