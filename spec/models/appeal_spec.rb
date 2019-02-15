@@ -45,7 +45,7 @@ describe Appeal do
     end
   end
 
-  context "ready appeals", focus: true do
+  context "ready appeals" do
     let!(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
     let!(:hearing_appeal) { create(:appeal, docket_type: "hearing") }
     let!(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
@@ -65,7 +65,6 @@ describe Appeal do
 
       expect(subject.include?(direct_review_appeal)).to eq(true)
       expect(subject.include?(evidence_submission_appeal)).to eq(false)
-      # TODO: support hearing appeals
       expect(subject.include?(hearing_appeal)).to eq(false)
     end
 
