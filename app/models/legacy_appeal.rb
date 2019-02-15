@@ -345,7 +345,7 @@ class LegacyAppeal < ApplicationRecord
         middle_name: veteran_middle_initial,
         last_name: veteran_last_name,
         name_suffix: veteran_name_suffix,
-        address: address_from_veteran_record,
+        address: address_from_veteran_record_or_corres_entry(case_record.correspondent),
         representative: representative_to_hash
       }
     end
