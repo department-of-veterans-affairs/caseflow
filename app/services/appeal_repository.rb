@@ -328,7 +328,6 @@ class AppealRepository
       .select("legacy_appeals.vacols_id").uniq
   end
 
-  # rubocop:disable Metrics/AbcSize
   def self.create_schedule_hearing_tasks
     # Create legacy appeals where needed
     ids = cases_that_need_hearings.pluck(:bfkey, :bfcorlid)
