@@ -484,6 +484,18 @@ class Appeal < DecisionReview
     []
   end
 
+  def aoj
+    return "other" unless all_request_issues_same_aoj?
+
+    request_issues.first.api_aoj_from_benefit_type
+  end
+
+  def all_request_issues_same_aoj?
+    request_issues.all? do |ri|
+      ri.api_aoj_from_benefit_type == request_issues.first.api_aoj_from_benefit_type
+    end
+  end
+
   def program
     if request_issues.all? { |ri| ri.benefit_type == request_issues.first.benefit_type }
       request_issues.first.benefit_type
