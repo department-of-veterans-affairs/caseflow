@@ -128,6 +128,15 @@ export const getNewDocuments = (appealId: string, cached?: boolean, onHoldDate?:
   });
 };
 
+export const loadAppealDocCount = (appealId: string) => (dispatch: Dispatch) => {
+  dispatch({
+    type: ACTIONS.STARTED_DOC_COUNT_REQUEST,
+    payload: {
+      appealId
+    }
+  });
+};
+
 export const getAppealValue = (appealId: string, endpoint: string, name: string) => (dispatch: Dispatch) => {
   dispatch({
     type: ACTIONS.STARTED_LOADING_APPEAL_VALUE,
@@ -159,11 +168,12 @@ export const getAppealValue = (appealId: string, endpoint: string, name: string)
   });
 };
 
-export const setAppealDocCount = (appealId: string, docCount: number) => ({
+export const setAppealDocCount = (appealId: string, docCount: number, cached: boolean) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
     appealId,
-    docCount
+    docCount,
+    cached
   }
 });
 
@@ -310,11 +320,10 @@ const errorTasksAndAppealsOfAttorney = ({ attorneyId, error }) => ({
   }
 });
 
-export const errorFetchingDocumentCount = (appealId: string, error: Object) => ({
+export const errorFetchingDocumentCount = (appealId: string) => ({
   type: ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT,
   payload: {
-    appealId,
-    error
+    appealId
   }
 });
 

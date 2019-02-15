@@ -85,7 +85,12 @@ export type QueueState = {|
   amaTasks: Tasks,
   claimReviews: ClaimReviews,
   editingIssue: Object,
-  docCountForAppeal: {[string]: Object},
+  docCountForAppeal: {[string]: {
+    precise: number,
+    cached: number,
+    error: string,
+    loading: boolean
+  }},
   mostRecentlyHeldHearingForAppeal: {[string]: Object},
   stagedChanges: {
     appeals: {[string]: Object},
