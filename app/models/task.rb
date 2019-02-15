@@ -13,8 +13,8 @@ class Task < ApplicationRecord
   after_create :put_parent_on_hold
 
   before_update :set_timestamps
-  after_update :update_parent_status, if: :status_changed_to_closed_and_has_parent?
-  after_update :update_children_status, if: :status_changed_to_closed?
+  after_update :update_parent_status, if: :task_just_closed_and_has_parent?
+  after_update :update_children_status, if: :task_just_closed?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -407,12 +407,12 @@ class Task < ApplicationRecord
 
   def update_children_status; end
 
-  def status_changed_to_closed?
+  def task_just_closed?
     saved_change_to_attribute?("status") && !active?
   end
 
-  def status_changed_to_closed_and_has_parent?
-    status_changed_to_closed? && parent
+  def task_just_closed_and_has_parent?
+    task_just_closed? && parent
   end
 
   def users_to_options(users)
