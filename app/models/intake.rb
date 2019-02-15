@@ -31,6 +31,7 @@ class Intake < ApplicationRecord
   }.freeze
 
   attr_reader :error_data
+  attr_writer :veteran
 
   def self.in_progress
     where(completed_at: nil).where(started_at: IN_PROGRESS_EXPIRES_AFTER.ago..Time.zone.now)
@@ -40,13 +41,14 @@ class Intake < ApplicationRecord
     where(completed_at: nil).where(started_at: Time.zone.at(0)...IN_PROGRESS_EXPIRES_AFTER.ago)
   end
 
-  def self.build(form_type:, veteran_file_number:, user:)
+  def self.build(form_type:, veteran:, user:)
     intake_classname = FORM_TYPES[form_type.to_sym]
 
     fail FormTypeNotSupported unless intake_classname
 
     intake_classname.constantize.new(
-      veteran_file_number: veteran_file_number,
+      veteran: veteran,
+      veteran_file_number: veteran.try(:file_number),
       user: user
     )
   end

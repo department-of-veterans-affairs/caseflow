@@ -22,13 +22,27 @@ RSpec.describe IntakesController do
       expect(Intake.last.veteran_file_number).to eq(file_number)
     end
 
-    context "veteran does not yet exist in our db" do
-      let(:file_number) { "999887777" }
+    context "veteran name is out of sync with BGS" do
       let!(:veteran) { create(:veteran, file_number: file_number, first_name: nil, last_name: nil) }
       before { Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica") }
 
-      it "will create a Veteran record in our db with name populated" do
-        #expect(Veteran.find_by_file_number_or_ssn(file_number).first_name).to be_nil
+      it "will update the Veteran name in Caseflow" do
+        post :create, params: { file_number: file_number, form_type: "higher_level_review" }
+        expect(response.status).to eq(200)
+        vet = Veteran.find_by_file_number_or_ssn(file_number)
+        expect(vet).to_not be_nil
+        expect(vet.first_name).to eq "Ed"
+        expect(vet.last_name).to eq "Merica"
+      end
+    end
+
+    context "veteran in BGS but not yet in Caseflow" do
+      let(:file_number) { "999887777" }
+      let!(:veteran) {} # no-op
+      before { Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica") }
+
+      it "will create the Veteran in Caseflow" do
+        expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
         post :create, params: { file_number: file_number, form_type: "higher_level_review" }
         expect(response.status).to eq(200)
         vet = Veteran.find_by_file_number_or_ssn(file_number)

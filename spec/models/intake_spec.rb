@@ -38,13 +38,13 @@ describe Intake do
     )
   end
 
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205050", country: country) }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, country: country) }
 
   let(:completion_status) { nil }
   let(:completion_started_at) { nil }
 
   context ".build" do
-    subject { Intake.build(form_type: form_type, veteran_file_number: veteran_file_number, user: user) }
+    subject { Intake.build(form_type: form_type, veteran: veteran, user: user) }
 
     context "when form_type is supported" do
       let(:form_type) { "ramp_election" }
@@ -430,6 +430,8 @@ describe Intake do
 
     context "veteran not found in bgs" do
       let(:veteran_file_number) { "11111111" }
+
+      before { Fakes::BGSService.veteran_records[veteran_file_number] = nil }
 
       it "adds veteran_not_found and returns false" do
         expect(subject).to eq(false)

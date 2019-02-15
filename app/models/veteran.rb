@@ -198,7 +198,6 @@ class Veteran < ApplicationRecord
     end
 
     def find_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
-      binding.pry
       if file_number_or_ssn.to_s.length == 9
         find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name) ||
           find_by_ssn(file_number_or_ssn, sync_name: sync_name)
@@ -235,8 +234,6 @@ class Veteran < ApplicationRecord
     def find_and_maybe_backfill_name(file_number, sync_name: false)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
-
-      binding.pry
 
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
