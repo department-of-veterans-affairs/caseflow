@@ -136,10 +136,10 @@ RSpec.feature "Case details" do
         expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
         scroll_element_in_to_view("#hearings-section")
         worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
-        expect(worksheet_link.text).to eq("View VLJ Hearing Worksheet")
+        expect(worksheet_link.text).to eq(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
 
         details_link = page.find("a[href='/hearings/#{hearing.external_id}/details']")
-        expect(details_link.text).to eq("View Hearing Details")
+        expect(details_link.text).to eq(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
       end
 
       context "the user has a VSO role" do
@@ -159,9 +159,9 @@ RSpec.feature "Case details" do
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
           scroll_element_in_to_view("#hearings-section")
-          expect(page).to_not have_content("View VLJ Hearing Worksheet")
+          expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
           expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
-          expect(page).to_not have_content("View Hearing Details")
+          expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
           expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/details']")
         end
       end
