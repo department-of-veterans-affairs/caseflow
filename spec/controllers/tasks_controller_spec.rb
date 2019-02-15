@@ -740,23 +740,23 @@ RSpec.describe TasksController, type: :controller do
       end
       let(:closest_regional_office) { "RO10" }
       let(:address) { "Fake Address" }
-      let!(:veteran) { create(:veteran, closest_regional_office: closest_regional_office) }
-      let!(:hearing_location) do
-        create(
-          :available_hearing_locations,
-          veteran_file_number: veteran.file_number,
-          address: address,
-          distance: 0,
-          facility_type: "va_health_facility"
-        )
-      end
+      let!(:veteran) { create(:veteran) }
 
       it "gets veterans ready for hearing schedule" do
         BGSService.instance_methods(false).each do |method_name|
           expect_any_instance_of(BGSService).not_to receive(method_name)
         end
 
-        AppealRepository.create_schedule_hearing_tasks
+        AppealRepository.create_schedule_hearing_tasks.each do |appeal|
+          appeal.update(closest_regional_office: closest_regional_office)
+
+          AvailableHearingLocations.create(
+            appeal: appeal,
+            address: address,
+            distance: 0,
+            facility_type: "va_health_facility"
+          )
+        end
 
         get :ready_for_hearing_schedule, params: { ro: closest_regional_office }
         expect(response).to have_http_status(:success)
@@ -764,7 +764,7 @@ RSpec.describe TasksController, type: :controller do
 
         expect(data.size).to be(1)
         expect(data.first["attributes"]["closest_regional_office"]).to eq(closest_regional_office)
-        expect(data.first["attributes"]["veteran_available_hearing_locations"].first["address"]).to eq(
+        expect(data.first["attributes"]["available_hearing_locations"].first["address"]).to eq(
           address
         )
       end

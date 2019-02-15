@@ -59,7 +59,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   def create_available_locations_for_appeal(appeal, va_dot_gov_address:)
     ro = fetch_and_update_ro_for_appeal(appeal, va_dot_gov_address: va_dot_gov_address)
     facility_ids = facility_ids_for_ro(ro[:closest_regional_office])
-    AvailableHearingLocations.where(appeal_id: appeal.id).destroy_all
+    AvailableHearingLocations.where(appeal: appeal).destroy_all
 
     if facility_ids.length == 1
       create_available_location_for_appeal(appeal, facility: ro[:facility])
