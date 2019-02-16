@@ -131,6 +131,10 @@ class EndProductEstablishment < ApplicationRecord
     reference_id && cached_result.description_with_routing
   end
 
+  def rating?
+    RequestIssue::END_PRODUCT_CODES.find_all_values_for(:rating).include?(code)
+  end
+
   # Find an end product that has the traits of the end product that should be created.
   def preexisting_end_product
     @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }

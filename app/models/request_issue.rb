@@ -239,6 +239,12 @@ class RequestIssue < ApplicationRecord
     contested_rating_issue_reference_id
   end
 
+  # If a request issue gets a DTA error, the follow up request issue may not have a rating_issue_reference_id
+  # But the request issue should still be added to a rating End Product
+  def dta_rating?
+    DecisionIssue.find(contested_issue.decision_issue_id)&.associated_request_issue&.end_product_establishment&.rating?
+  end
+
   # TODO: If a nonrating decision issue is contested, the request issue should also be considered
   #       nonrating. Currently it won't be because we don't copy over these fields from the contested
   #       decision issue if they are present.
@@ -469,6 +475,10 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def contested_issue
+    @contested_issue ||= build_contested_issue
+  end
+
   private
 
   def fetch_diagnostic_code_status_description(diagnostic_code)
@@ -498,10 +508,6 @@ class RequestIssue < ApplicationRecord
     elsif contested_rating_issue
       ContestableIssue.from_rating_issue(contested_rating_issue, decision_review)
     end
-  end
-
-  def contested_issue
-    @contested_issue ||= build_contested_issue
   end
 
   def title_of_active_review
@@ -577,7 +583,7 @@ class RequestIssue < ApplicationRecord
 
     return preexisting_decision_issue if preexisting_decision_issue
 
-    DecisionIssue.create!(
+    decision_issues.create!(
       rating_issue_reference_id: rating_issue.reference_id,
       disposition: contention_disposition.disposition,
       participant_id: rating_issue.participant_id,
@@ -699,7 +705,7 @@ class RequestIssue < ApplicationRecord
     if decision_review.decision_review_remanded.is_a?(Appeal)
       end_product_codes[:appeal][contested_decision_issue.imo? ? :imo : :not_imo]
     else
-      end_product_codes[:claim_review][rating? ? :rating : :nonrating]
+      end_product_codes[:claim_review][dta_rating? ? :rating : :nonrating]
     end
   end
 

@@ -320,6 +320,30 @@ describe RequestIssue do
           context "when rating" do
             let(:request_issue) { rating_request_issue }
             it { is_expected.to eq "040HDERPMC" }
+
+            context "when missing rating_issue_reference_id but comes from a previous rating request issue" do
+              let(:contested_rating_issue_reference_id) { nil }
+              # let(:decision_issue) { create(:decision_issue, decision_review: decision_review_remanded, request_issues: [original_request_issue]) }
+              let(:original_request_issue) { create(
+                :request_issue,
+                decision_review: decision_review_remanded,
+                end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+                )}
+
+              let(:decision_issue) do
+                create(:decision_issue,
+                  decision_review: decision_review_remanded,
+                  request_issues: [original_request_issue]
+                )
+              end
+
+              it "is assigned a rating ep code" do
+                binding.pry
+                expect(request_issue.rating?).to be_falsey
+                expect(request_issue.dta_rating?).to be true
+                expect(subject).to eq("040HDERPMC")
+              end
+            end
           end
 
           context "when nonrating" do
