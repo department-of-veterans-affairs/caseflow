@@ -52,39 +52,39 @@ RSpec.feature "Task queue" do
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
     end
 
-    # context "hearings" do
-    #   context "if a task has a hearing" do
-    #     let!(:attorney_task_with_hearing) do
-    #       FactoryBot.create(
-    #         :ama_attorney_task,
-    #         :in_progress,
-    #         assigned_to: attorney_user
-    #       )
-    #     end
+    context "hearings" do
+      context "if a task has a hearing" do
+        let!(:attorney_task_with_hearing) do
+          FactoryBot.create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user
+          )
+        end
 
-    #     let!(:hearing) { create(:hearing, appeal: attorney_task_with_hearing.appeal, disposition: "held") }
+        let!(:hearing) { create(:hearing, appeal: attorney_task_with_hearing.appeal, disposition: "held") }
 
-    #     before do
-    #       visit "/queue"
-    #     end
+        before do
+          visit "/queue"
+        end
 
-    #     it "shows the hearing badge" do
-    #       expect(page).to have_selector(".cf-hearing-badge")
-    #       expect(find(".cf-hearing-badge")).to have_content("H")
-    #     end
-    #   end
+        it "shows the hearing badge" do
+          expect(page).to have_selector(".cf-hearing-badge")
+          expect(find(".cf-hearing-badge")).to have_content("H")
+        end
+      end
 
-    #   context "if no tasks have hearings" do
-    #     it "does not show the hearing badge" do
-    #       expect(page).not_to have_selector(".cf-hearing-badge")
-    #     end
-    #   end
-    # end
+      context "if no tasks have hearings" do
+        it "does not show the hearing badge" do
+          expect(page).not_to have_selector(".cf-hearing-badge")
+        end
+      end
+    end
 
     it "supports custom sorting" do
-      docket_number_column_header = page.find(:xpath, "//thead/tr/th[2]/span/span[1]")
+      docket_number_column_header = page.find(:xpath, "//thead/tr/th[3]/span/span[1]")
       docket_number_column_header.click
-      docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[3]/span[3]")
+      docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[4]/span[3]")
       expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
       docket_number_column_header.click
       expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
@@ -457,6 +457,26 @@ RSpec.feature "Task queue" do
       it "should display both legacy and caseflow review tasks" do
         visit("/queue")
         expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 2))
+      end
+    end
+  end
+
+  describe "GenericTask" do
+    context "when it is assigned to the current user" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:appeal) { root_task.appeal }
+      let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
+
+      before { User.authenticate!(user: user) }
+
+      it "allows the user to cancel the task" do
+        visit("queue/appeals/#{task.appeal.external_id}")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CANCEL_TASK_MODAL_TITLE)
+        click_button("Submit")
+        expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
+        expect(page.current_path).to eq("/queue")
+        expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
     end
   end

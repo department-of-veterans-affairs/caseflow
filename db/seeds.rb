@@ -185,7 +185,7 @@ class SeedDB
         [3, 4, 5].sample,
         contested_issue_description: description,
         notes: "Pain disorder with 100\% evaluation per examination",
-        review_request: root.appeal
+        decision_review: root.appeal
       )
       parent = FactoryBot.create(
         :bva_dispatch_task,
@@ -461,7 +461,7 @@ class SeedDB
                           :nonrating,
                           end_product_establishment: epe,
                           veteran_participant_id: veteran.participant_id,
-                          review_request: higher_level_review)
+                          decision_review: higher_level_review)
       end
       FactoryBot.create(:higher_level_review_task,
                         assigned_to: Organization.find_by(name: "National Cemetery Association"),
@@ -515,6 +515,7 @@ class SeedDB
     LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
     LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
     LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
+    LegacyAppeal.create(vacols_id: "2657227", vbms_id: "169397130S")
   end
 
   def create_higher_level_reviews_and_supplemental_claims
@@ -615,7 +616,7 @@ class SeedDB
     )
 
     eligible_request_issue = RequestIssue.create!(
-      review_request: higher_level_review,
+      decision_review: higher_level_review,
       issue_category: "Military Retired Pay",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
@@ -625,7 +626,7 @@ class SeedDB
     )
 
     untimely_request_issue = RequestIssue.create!(
-      review_request: higher_level_review,
+      decision_review: higher_level_review,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "12345",
@@ -706,7 +707,8 @@ class SeedDB
       { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
       { vacols_id: "2226048", trait: nil, additional: { action: "translation" } },
       { vacols_id: "2249056", trait: :in_progress },
-      { vacols_id: "2306397", trait: :on_hold }
+      { vacols_id: "2306397", trait: :on_hold },
+      { vacols_id: "2657227", trait: :completed_hold }
     ].each do |attrs|
       org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                         assigned_by: attorney,
@@ -816,7 +818,7 @@ class SeedDB
                                               description: "#{index} #{description}",
                                               notes: "#{index} #{notes}",
                                               benefit_type: nca.url,
-                                              review_request: board_grant_task.appeal)
+                                              decision_review: board_grant_task.appeal)
 
       request_issues.each do |request_issue|
         # create matching decision issue

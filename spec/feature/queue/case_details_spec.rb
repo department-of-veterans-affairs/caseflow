@@ -171,7 +171,6 @@ RSpec.feature "Case details" do
         expect(page).to have_content("About the Veteran")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
-        expect(page).to have_content("5/25/2016")
         expect(page).to have_content(appeal.regional_office.city)
         expect(page).to have_content(appeal.veteran_address_line_1)
       end
@@ -514,17 +513,15 @@ RSpec.feature "Case details" do
         let!(:request_issue) do
           FactoryBot.create(
             :request_issue,
-            review_request_id: appeal.id,
-            contested_issue_description: issue_description,
-            review_request_type: "Appeal"
+            decision_review: appeal,
+            contested_issue_description: issue_description
           )
         end
         let!(:request_issue2) do
           FactoryBot.create(
             :request_issue,
-            review_request_id: appeal.id,
-            contested_issue_description: issue_description2,
-            review_request_type: "Appeal"
+            decision_review: appeal,
+            contested_issue_description: issue_description2
           )
         end
 
@@ -581,7 +578,7 @@ RSpec.feature "Case details" do
     before { FeatureToggle.enable!(:ama_decision_issues) }
     after { FeatureToggle.disable!(:ama_decision_issues) }
 
-    let(:request_issue) { create(:request_issue, description: "knee pain", notes: notes) }
+    let(:request_issue) { create(:request_issue, contested_issue_description: "knee pain", notes: notes) }
     let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
 
     context "when notes are nil" do

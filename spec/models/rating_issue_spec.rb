@@ -130,7 +130,7 @@ describe RatingIssue do
     end
 
     let(:reference_id) { "abc123" }
-    let(:review_request_type) { "SupplementalClaim" }
+    let(:decision_review_type) { "SupplementalClaim" }
     let(:inactive_end_product_establishment) { create(:end_product_establishment, :cleared) }
     let(:active_end_product_establishment) { create(:end_product_establishment, :active) }
 
@@ -139,7 +139,7 @@ describe RatingIssue do
         :request_issue,
         end_product_establishment: active_end_product_establishment,
         contested_rating_issue_reference_id: reference_id,
-        review_request_type: review_request_type
+        decision_review_type: decision_review_type
       )
     end
 
@@ -148,7 +148,7 @@ describe RatingIssue do
         :request_issue,
         end_product_establishment: inactive_end_product_establishment,
         contested_rating_issue_reference_id: reference_id,
-        review_request_type: review_request_type
+        decision_review_type: decision_review_type
       )
     end
 
@@ -160,7 +160,7 @@ describe RatingIssue do
     end
 
     context "removed issue" do
-      let(:review_request_type) { nil }
+      let(:decision_review_type) { nil }
 
       it "returns nil if the issue has been removed" do
         request_issue

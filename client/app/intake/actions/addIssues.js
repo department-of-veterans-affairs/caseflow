@@ -64,8 +64,7 @@ export const addRatingRequestIssue = (args) => (dispatch) => {
       timely: currentIssue.timely,
       sourceReviewType: currentIssue.sourceReviewType,
       rampClaimId: currentIssue.rampClaimId,
-      promulgationDate: currentIssue.date,
-      date: currentIssue.date,
+      decisionDate: currentIssue.approxDecisionDate,
       notes: args.notes,
       untimelyExemption: args.untimelyExemption,
       untimelyExemptionNotes: args.untimelyExemptionNotes,
@@ -93,7 +92,7 @@ export const addNonratingRequestIssue = (args) => (dispatch) => {
       eligibleForSocOptIn: args.eligibleForSocOptIn,
       ineligibleDueToId: args.ineligibleDueToId,
       ineligibleReason: args.ineligibleReason,
-      reviewRequestTitle: args.reviewRequestTitle
+      decisionReviewTitle: args.decisionReviewTitle
     }
   });
 };
