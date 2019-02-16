@@ -14,7 +14,7 @@ class Docket
     if priority == true
       scope = scope.merge(Appeal.all_priority)
       # TODO: remove the `.uniq` when Appeal.all_priority is fixed to return unique results.
-      return scopes.merge(Appeal.ordered_by_distribution_ready_date).uniq
+      return scope.merge(Appeal.ordered_by_distribution_ready_date).uniq
     end
 
     scope = scope.merge(Appeal.all_nonpriority) if priority == false
